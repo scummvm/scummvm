@@ -33,7 +33,7 @@ template<typename T>
 HSQOBJECT sqtoobj(HSQUIRRELVM v, T value);
 
 template<typename T>
-void sqpush(HSQUIRRELVM v, T value);
+SQInteger sqpush(HSQUIRRELVM v, T value);
 
 template<typename T>
 SQRESULT sqget(HSQUIRRELVM v, int index, T &value);

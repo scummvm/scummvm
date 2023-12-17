@@ -21,6 +21,7 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
+#include "twp/ids.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/squirrel/squirrel.h"
@@ -237,9 +238,7 @@ static SQInteger gameTime(HSQUIRRELVM v) {
 	return 0;
 }
 
-static SQInteger include(HSQUIRRELVM v) {
-	warning("TODO: sysInclude: not implemented");
-	return 0;
+static SQInteger sysInclude(HSQUIRRELVM v) {
 	const SQChar *filename;
 	if (SQ_FAILED(sqget(v, 2, filename))) {
 		return sq_throwerror(v, "failed to get filename");
@@ -369,7 +368,7 @@ void sqgame_register_syslib(HSQUIRRELVM v) {
 	regFunc(v, dumpvar, _SC("dumpvar"));
 	regFunc(v, exCommand, _SC("exCommand"));
 	regFunc(v, gameTime, _SC("gameTime"));
-	regFunc(v, include, _SC("include"));
+	regFunc(v, sysInclude, _SC("include"));
 	regFunc(v, inputController, _SC("inputController"));
 	regFunc(v, inputHUD, _SC("inputHUD"));
 	regFunc(v, inputOff, _SC("inputOff"));
@@ -390,6 +389,204 @@ void sqgame_register_syslib(HSQUIRRELVM v) {
 	regFunc(v, stopthread, _SC("stopthread"));
 	regFunc(v, threadid, _SC("threadid"));
 	regFunc(v, threadpauseable, _SC("threadpauseable"));
+}
+
+static void regConst(HSQUIRRELVM v, const char *name, int value) {
+	SQObject obj = sqtoobj(v, value);
+	_table(v->_roottable)->NewSlot(sqtoobj(v, name), SQObjectPtr(obj));
+}
+
+void sqgame_register_constants(HSQUIRRELVM v) {
+	regConst(v, "ALL", ALL);
+	regConst(v, "HERE", HERE);
+	regConst(v, "GONE", GONE);
+	regConst(v, "OFF", OFF);
+	regConst(v, "ON", ON);
+	regConst(v, "FULL", FULL);
+	regConst(v, "EMPTY", EMPTY);
+	regConst(v, "OPEN", OPEN);
+	regConst(v, "CLOSED", CLOSED);
+	regConst(v, "FALSE", FALSE);
+	regConst(v, "TRUE", TRUE);
+	regConst(v, "MOUSE", MOUSE);
+	regConst(v, "CONTROLLER", CONTROLLER);
+	regConst(v, "DIRECTDRIVE", DIRECTDRIVE);
+	regConst(v, "TOUCH", TOUCH);
+	regConst(v, "REMOTE", REMOTE);
+	regConst(v, "FADE_IN", FADE_IN);
+	regConst(v, "FADE_OUT", FADE_OUT);
+	regConst(v, "FADE_WOBBLE", FADE_WOBBLE);
+	regConst(v, "FADE_WOBBLE_TO_SEPIA", FADE_WOBBLE_TO_SEPIA);
+	regConst(v, "FACE_FRONT", FACE_FRONT);
+	regConst(v, "FACE_BACK", FACE_BACK);
+	regConst(v, "FACE_LEFT", FACE_LEFT);
+	regConst(v, "FACE_RIGHT", FACE_RIGHT);
+	regConst(v, "FACE_FLIP", FACE_FLIP);
+	regConst(v, "DIR_FRONT", DIR_FRONT);
+	regConst(v, "DIR_BACK", DIR_BACK);
+	regConst(v, "DIR_LEFT", DIR_LEFT);
+	regConst(v, "DIR_RIGHT", DIR_RIGHT);
+	regConst(v, "LINEAR", LINEAR);
+	regConst(v, "EASE_IN", EASE_IN);
+	regConst(v, "EASE_INOUT", EASE_INOUT);
+	regConst(v, "EASE_OUT", EASE_OUT);
+	regConst(v, "SLOW_EASE_IN", SLOW_EASE_IN);
+	regConst(v, "SLOW_EASE_OUT", SLOW_EASE_OUT);
+	regConst(v, "LOOPING", LOOPING);
+	regConst(v, "SWING", SWING);
+	regConst(v, "ALIGN_LEFT", ALIGN_LEFT);
+	regConst(v, "ALIGN_CENTER", ALIGN_CENTER);
+	regConst(v, "ALIGN_RIGHT", ALIGN_RIGHT);
+	regConst(v, "ALIGN_TOP", ALIGN_TOP);
+	regConst(v, "ALIGN_BOTTOM", ALIGN_BOTTOM);
+	regConst(v, "LESS_SPACING", LESS_SPACING);
+	regConst(v, "EX_ALLOW_SAVEGAMES", EX_ALLOW_SAVEGAMES);
+	regConst(v, "EX_POP_CHARACTER_SELECTION", EX_POP_CHARACTER_SELECTION);
+	regConst(v, "EX_CAMERA_TRACKING", EX_CAMERA_TRACKING);
+	regConst(v, "EX_BUTTON_HOVER_SOUND", EX_BUTTON_HOVER_SOUND);
+	regConst(v, "EX_RESTART", EX_RESTART);
+	regConst(v, "EX_IDLE_TIME", EX_IDLE_TIME);
+	regConst(v, "EX_AUTOSAVE", EX_AUTOSAVE);
+	regConst(v, "EX_AUTOSAVE_STATE", EX_AUTOSAVE_STATE);
+	regConst(v, "EX_DISABLE_SAVESYSTEM", EX_DISABLE_SAVESYSTEM);
+	regConst(v, "EX_SHOW_OPTIONS", EX_SHOW_OPTIONS);
+	regConst(v, "EX_OPTIONS_MUSIC", EX_OPTIONS_MUSIC);
+	regConst(v, "EX_FORCE_TALKIE_TEXT", EX_FORCE_TALKIE_TEXT);
+	regConst(v, "GRASS_BACKANDFORTH", GRASS_BACKANDFORTH);
+	regConst(v, "EFFECT_NONE", EFFECT_NONE);
+	regConst(v, "DOOR", DOOR);
+	regConst(v, "DOOR_LEFT", DOOR_LEFT);
+	regConst(v, "DOOR_RIGHT", DOOR_RIGHT);
+	regConst(v, "DOOR_BACK", DOOR_BACK);
+	regConst(v, "DOOR_FRONT", DOOR_FRONT);
+	regConst(v, "FAR_LOOK", FAR_LOOK);
+	regConst(v, "USE_WITH", USE_WITH);
+	regConst(v, "USE_ON", USE_ON);
+	regConst(v, "USE_IN", USE_IN);
+	regConst(v, "GIVEABLE", GIVEABLE);
+	regConst(v, "TALKABLE", TALKABLE);
+	regConst(v, "IMMEDIATE", IMMEDIATE);
+	regConst(v, "FEMALE", FEMALE);
+	regConst(v, "MALE", MALE);
+	regConst(v, "PERSON", PERSON);
+	regConst(v, "REACH_HIGH", REACH_HIGH);
+	regConst(v, "REACH_MED", REACH_MED);
+	regConst(v, "REACH_LOW", REACH_LOW);
+	regConst(v, "REACH_NONE", REACH_NONE);
+	regConst(v, "VERB_WALKTO", VERB_WALKTO);
+	regConst(v, "VERB_LOOKAT", VERB_LOOKAT);
+	regConst(v, "VERB_TALKTO", VERB_TALKTO);
+	regConst(v, "VERB_PICKUP", VERB_PICKUP);
+	regConst(v, "VERB_OPEN", VERB_OPEN);
+	regConst(v, "VERB_CLOSE", VERB_CLOSE);
+	regConst(v, "VERB_PUSH", VERB_PUSH);
+	regConst(v, "VERB_PULL", VERB_PULL);
+	regConst(v, "VERB_GIVE", VERB_GIVE);
+	regConst(v, "VERB_USE", VERB_USE);
+	regConst(v, "VERB_DIALOG", VERB_DIALOG);
+	regConst(v, "VERBFLAG_INSTANT", VERBFLAG_INSTANT);
+	regConst(v, "NO", NO);
+	regConst(v, "YES", YES);
+	regConst(v, "UNSELECTABLE", UNSELECTABLE);
+	regConst(v, "SELECTABLE", SELECTABLE);
+	regConst(v, "TEMP_UNSELECTABLE", TEMP_UNSELECTABLE);
+	regConst(v, "TEMP_SELECTABLE", TEMP_SELECTABLE);
+	regConst(v, "MAC", MAC);
+	regConst(v, "WIN", WIN);
+	regConst(v, "LINUX", LINUX);
+	regConst(v, "XBOX", XBOX);
+	regConst(v, "IOS", IOS);
+	regConst(v, "ANDROID", ANDROID);
+	regConst(v, "SWITCH", SWITCH);
+	regConst(v, "PS4", PS4);
+	regConst(v, "EFFECT_NONE", EFFECT_NONE);
+	regConst(v, "EFFECT_SEPIA", EFFECT_SEPIA);
+	regConst(v, "EFFECT_EGA", EFFECT_EGA);
+	regConst(v, "EFFECT_VHS", EFFECT_VHS);
+	regConst(v, "EFFECT_GHOST", EFFECT_GHOST);
+	regConst(v, "EFFECT_BLACKANDWHITE", EFFECT_BLACKANDWHITE);
+	regConst(v, "UI_INPUT_ON", UI_INPUT_ON);
+	regConst(v, "UI_INPUT_OFF", UI_INPUT_OFF);
+	regConst(v, "UI_VERBS_ON", UI_VERBS_ON);
+	regConst(v, "UI_VERBS_OFF", UI_VERBS_OFF);
+	regConst(v, "UI_HUDOBJECTS_ON", UI_HUDOBJECTS_ON);
+	regConst(v, "UI_HUDOBJECTS_OFF", UI_HUDOBJECTS_OFF);
+	regConst(v, "UI_CURSOR_ON", UI_CURSOR_ON);
+	regConst(v, "UI_CURSOR_OFF", UI_CURSOR_OFF);
+	regConst(v, "KEY_UP", KEY_UP);
+	regConst(v, "KEY_RIGHT", KEY_RIGHT);
+	regConst(v, "KEY_DOWN", KEY_DOWN);
+	regConst(v, "KEY_LEFT", KEY_LEFT);
+	regConst(v, "KEY_PAD1", KEY_PAD1);
+	regConst(v, "KEY_PAD2", KEY_PAD2);
+	regConst(v, "KEY_PAD3", KEY_PAD3);
+	regConst(v, "KEY_PAD4", KEY_PAD4);
+	regConst(v, "KEY_PAD5", KEY_PAD5);
+	regConst(v, "KEY_PAD6", KEY_PAD6);
+	regConst(v, "KEY_PAD7", KEY_PAD7);
+	regConst(v, "KEY_PAD8", KEY_PAD8);
+	regConst(v, "KEY_PAD9", KEY_PAD9);
+	regConst(v, "KEY_ESCAPE", KEY_ESCAPE);
+	regConst(v, "KEY_TAB", KEY_TAB);
+	regConst(v, "KEY_RETURN", KEY_RETURN);
+	regConst(v, "KEY_BACKSPACE", KEY_BACKSPACE);
+	regConst(v, "KEY_SPACE", KEY_SPACE);
+	regConst(v, "KEY_A", KEY_A);
+	regConst(v, "KEY_B", KEY_B);
+	regConst(v, "KEY_C", KEY_C);
+	regConst(v, "KEY_D", KEY_D);
+	regConst(v, "KEY_E", KEY_E);
+	regConst(v, "KEY_F", KEY_F);
+	regConst(v, "KEY_G", KEY_G);
+	regConst(v, "KEY_H", KEY_H);
+	regConst(v, "KEY_I", KEY_I);
+	regConst(v, "KEY_J", KEY_J);
+	regConst(v, "KEY_K", KEY_K);
+	regConst(v, "KEY_L", KEY_L);
+	regConst(v, "KEY_M", KEY_M);
+	regConst(v, "KEY_N", KEY_N);
+	regConst(v, "KEY_O", KEY_O);
+	regConst(v, "KEY_P", KEY_P);
+	regConst(v, "KEY_Q", KEY_Q);
+	regConst(v, "KEY_R", KEY_R);
+	regConst(v, "KEY_S", KEY_S);
+	regConst(v, "KEY_T", KEY_T);
+	regConst(v, "KEY_U", KEY_U);
+	regConst(v, "KEY_V", KEY_V);
+	regConst(v, "KEY_W", KEY_W);
+	regConst(v, "KEY_X", KEY_X);
+	regConst(v, "KEY_Y", KEY_Y);
+	regConst(v, "KEY_Z", KEY_Z);
+	regConst(v, "KEY_0", KEY_0);
+	regConst(v, "KEY_1", KEY_1);
+	regConst(v, "KEY_2", KEY_2);
+	regConst(v, "KEY_3", KEY_3);
+	regConst(v, "KEY_4", KEY_4);
+	regConst(v, "KEY_5", KEY_5);
+	regConst(v, "KEY_6", KEY_6);
+	regConst(v, "KEY_7", KEY_7);
+	regConst(v, "KEY_8", KEY_8);
+	regConst(v, "KEY_9", KEY_9);
+	regConst(v, "KEY_F1", KEY_F1);
+	regConst(v, "KEY_F2", KEY_F2);
+	regConst(v, "KEY_F3", KEY_F3);
+	regConst(v, "KEY_F4", KEY_F4);
+	regConst(v, "KEY_F5", KEY_F5);
+	regConst(v, "KEY_F6", KEY_F6);
+	regConst(v, "KEY_F7", KEY_F7);
+	regConst(v, "KEY_F8", KEY_F8);
+	regConst(v, "KEY_F9", KEY_F9);
+	regConst(v, "KEY_F10", KEY_F10);
+	regConst(v, "KEY_F11", KEY_F11);
+	regConst(v, "KEY_F12", KEY_F12);
+	regConst(v, "BUTTON_A", BUTTON_A);
+	regConst(v, "BUTTON_B", BUTTON_B);
+	regConst(v, "BUTTON_X", BUTTON_X);
+	regConst(v, "BUTTON_Y", BUTTON_Y);
+	regConst(v, "BUTTON_START", BUTTON_START);
+	regConst(v, "BUTTON_BACK", BUTTON_BACK);
+	regConst(v, "BUTTON_MOUSE_LEFT", BUTTON_MOUSE_LEFT);
+	regConst(v, "BUTTON_MOUSE_RIGHT", BUTTON_MOUSE_RIGHT);
 }
 
 } // namespace Twp

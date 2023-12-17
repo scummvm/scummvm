@@ -19,22 +19,20 @@
  *
  */
 
-#ifndef TWP_SQGAME_H
-#define TWP_SQGAME_H
-
-#include <stddef.h>
-#include "twp/squirrel/squirrel.h"
+#include "twp/callback.h"
 
 namespace Twp {
 
-void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger nparamscheck = 0, const SQChar *typemask = NULL);
-void sqgame_register_constants(HSQUIRRELVM v);
-void sqgame_register_syslib(HSQUIRRELVM v);
-void sqgame_register_objlib(HSQUIRRELVM v);
-void sqgame_register_genlib(HSQUIRRELVM v);
-void sqgame_register_actorlib(HSQUIRRELVM v);
-void sqgame_register_roomlib(HSQUIRRELVM v);
-void sqgame_register_soundlib(HSQUIRRELVM v);
+void Callback::call() {
+	sqcall(name, args);
+}
+
+bool Callback::update(float elapsed) {
+	self.elapsed += elapsed;
+	bool result = self.elapsed > self.duration;
+	if (result)
+		call();
+	return result;
+}
 
 } // namespace Twp
-#endif

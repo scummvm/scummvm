@@ -130,7 +130,7 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 	return obj;
 }
 
-int Object::getId() {
+int Object::getId() const {
 	SQInteger result = 0;
 	sqgetf(_table, "_id", result);
 	return (int)result;
@@ -361,6 +361,42 @@ void Object::delObject() {
 
 void Object::stopObjectMotors() {
 	debug("TODO: stopObjectMotors");
+}
+
+void Object::setFacing(Facing facing) {
+  if (_facing != facing) {
+    debug("set facing: %d", facing);
+    bool update = !(((_facing == FACE_LEFT) && (facing == FACE_RIGHT)) || ((_facing == FACE_RIGHT) && (facing == FACE_LEFT)));
+    _facing = facing;
+    if (update && _nodeAnim)
+      play(_animName, _animLoop);
+  }
+}
+
+Facing Object::getDoorFacing() {
+  int flags = getFlags();
+  if (flags & DOOR_LEFT)
+    return FACE_LEFT;
+  else if (flags & DOOR_RIGHT)
+    return FACE_RIGHT;
+  else if (flags & DOOR_FRONT)
+    return FACE_FRONT;
+  else
+    return FACE_BACK;
+}
+
+bool Object::inInventory() {
+  return isObject(getId()) && getIcon().size() > 0;
+}
+
+bool Object::contains(Math::Vector2d pos) {
+  Math::Vector2d p = pos - _node->getPos() - _node->getOffset();
+  return _hotspot.contains(p.getX(), p.getY());
+}
+
+void Object::dependentOn(Object* dependentObj, int state) {
+  _dependentState = state;
+  _dependentObj = dependentObj;
 }
 
 } // namespace Twp

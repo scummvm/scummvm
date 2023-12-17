@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/stream.h"
@@ -41,6 +42,7 @@
 #include "twp/squtil.h"
 #include "twp/object.h"
 #include "twp/ids.h"
+#include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
@@ -113,10 +115,19 @@ Common::Error TwpEngine::run() {
 	f.open("ThimbleweedPark.ggpack1");
 	_pack.open(&f, key);
 
+	// TODO: load with selected lang
+	GGPackEntryReader entry;
+	entry.open(_pack, "ThimbleweedText_en.tsv");
+	_textDb.parseTsv(entry);
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
+
+	HSQUIRRELVM v = _vm.get();
+	execNutEntry(v, "Defines.nut");
+	execBnutEntry(v, "Boot.bnut");
 
 	const SQChar *code = R"(
 	MainStreet <- {
@@ -203,14 +214,13 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 	debug("Load room: %s", name.c_str());
 	Room *result;
 	if (name == "Void") {
-		error("TODO: room Void");
-		// result = new Room(name, table);
-		// result.scene = new Scene();
-		// Layer* layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
-		// layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "background");
-		// result->_layers.push_back(layer);
-		// // TODO:; result->scene.addChild(layer->node);
-		// sqsetf(sqrootTbl(v), name, result->table);
+		result = new Room(name, table);
+		result->_scene = new Scene();
+		Layer* layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
+		layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray());
+		result->_layers.push_back(layer);
+		result->_scene->addChild(layer->_node);
+		sqsetf(sqrootTbl(v), name, result->_table);
 	} else {
 		result = new Room(name, table);
 		Common::String background;
@@ -371,46 +381,71 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	_scene->addChild(_room->_scene);
 	_room->_lights._numLights = 0;
 	// TODO:   _room->overlay = Transparent;
-	//_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
+	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	//   if (_actor)
 	//     _hud.verb = _hud.actorSlot(_actor).verbs[0];
 
-	//   TODO: move current actor to the new room
+	// move current actor to the new room
 	Math::Vector2d camPos;
-	//   if not gEngine.actor.isNil:
-	//     self.cancelSentence(nil)
-	//     if not door.isNil:
-	//       let facing = getOppositeFacing(door.getDoorFacing())
-	//       gEngine.actor.room = room
-	//       if not door.isNil:
-	//         gEngine.actor.setFacing(facing)
-	//         gEngine.actor.node.pos = door.getUsePos
-	//       camPos = gEngine.actor.node.pos
+	if (_actor) {
+		cancelSentence();
+		if (door) {
+			Facing facing = getOppositeFacing(door->getDoorFacing());
+			_actor->_room = room;
+			if (door) {
+				_actor->setFacing(facing);
+				_actor->_node->setPos(door->getUsePos());
+			}
+			camPos = _actor->_node->getPos();
+		}
+	}
 
 	_camera.setRoom(room);
 	_camera.setAt(camPos);
 
-	//   // call actor enter function and objects enter function
-	//   actorEnter();
-	//   for layer in room.layers:
-	//     for obj in layer.objects:
-	//       if rawExists(obj.table, "enter"):
-	//         call(self.v, obj.table, "enter")
+	// call actor enter function and objects enter function
+	actorEnter();
+	for (int i = 0; i < room->_layers.size(); i++) {
+		Layer *layer = room->_layers[i];
+		for (int j = 0; j < layer->_objects.size(); j++) {
+			Object *obj = layer->_objects[i];
+			if (sqrawexists(obj->_table, "enter"))
+				sqcall(obj->_table, "enter");
+		}
+	}
 
-	//   // call room enter function with the door as a parameter if requested
-	//   let nparams = paramCount(self.v, self.room.table, "enter")
-	//   if nparams == 2:
-	//     if door.isNil:
-	//       var doorTable: HSQOBJECT
-	//       sq_resetobject(doorTable)
-	//       call(self.v, self.room.table, "enter", [doorTable])
-	//     else:
-	//       call(self.v, self.room.table, "enter", [door.table])
-	//   else:
-	//     call(self.v, self.room.table, "enter")
+	// call room enter function with the door as a parameter if requested
+	int nparams = sqparamCount(v, _room->_table, "enter");
+	if (nparams == 2) {
+		if (!door) {
+			HSQOBJECT doorTable;
+			sq_resetobject(&doorTable);
+			HSQOBJECT args[] = {doorTable};
+			sqcall(_room->_table, "enter", 1, args);
+		} else {
+			HSQOBJECT args[] = {door->_table};
+			sqcall(_room->_table, "enter", 1, args);
+		}
+	} else {
+		sqcall(_room->_table, "enter");
+	}
 
-	//   # call global function enteredRoom with the room as argument
-	//   call("enteredRoom", [room.table])
+	// call global function enteredRoom with the room as argument
+	{
+		HSQOBJECT args[] = {room->_table};
+		sqcall("enteredRoom", 1, args);
+	}
+}
+
+void TwpEngine::actorEnter() {
+	if (_actor)
+		sqcall(_actor->_table, "actorEnter");
+	if (_room) {
+		if (sqrawexists(_room->_table, "actorEnter")) {
+			HSQOBJECT args[] = {_actor->_table};
+			sqcall(_room->_table, "actorEnter", 1, args);
+		}
+	}
 }
 
 void TwpEngine::exitRoom(Room *nextRoom) {
@@ -473,12 +508,21 @@ void TwpEngine::actorExit() {
 	}
 }
 
+void TwpEngine::cancelSentence(Object *actor) {
+	debug("cancelSentence");
+	if (!actor)
+		actor = _actor;
+	if (actor)
+		actor->_exec.enabled = false;
+}
+
 void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
 	GGPackEntryReader reader;
 	reader.open(_pack, entry);
 	GGBnutReader nut;
 	nut.open(&reader);
 	Common::String code = nut.readString();
+	//debug("%s", code.c_str());
 	sqexec(v, code.c_str());
 }
 
@@ -488,6 +532,7 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 		debug("read existing '%s'", entry.c_str());
 		reader.open(_pack, entry);
 		Common::String code = reader.readString();
+		//debug("%s", code.c_str());
 		sqexec(v, code.c_str());
 	} else {
 		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
@@ -514,6 +559,33 @@ void TwpEngine::follow(Object *actor) {
 		if (oldRoom != actor->_room)
 			cameraAt(pos);
 	}
+}
+
+template<typename TFunc>
+void objsAt(Math::Vector2d pos, TFunc func) {
+	// TODO
+	// if g_engine->_uiInv->_obj && g_engine->_room->fullscreen == FullscreenRoom)
+	// 	func(g_engine->_uiInv._obj);
+	for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+		Layer *layer = g_engine->_room->_layers[i];
+		for (int j = 0; j < layer->_objects.size(); j++) {
+			Object *obj = layer->_objects[j];
+			if (obj != g_engine->_actor && (obj->_touchable || obj->inInventory()) && obj->_node->isVisible() && obj->_objType == otNone && obj->contains(pos))
+				func(obj);
+		}
+	}
+}
+
+Object *TwpEngine::objAt(Math::Vector2d pos) {
+	int zOrder = INT_MAX;
+	Object *result = nullptr;
+	objsAt(pos, [&](Object *obj) {
+		if (obj->_node->getZSort() < zOrder) {
+			result = obj;
+			zOrder = obj->_node->getZSort();
+		}
+	});
+	return result;
 }
 
 } // End of namespace Twp

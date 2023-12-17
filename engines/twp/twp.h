@@ -37,6 +37,8 @@
 #include "twp/ggpack.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/camera.h"
+#include "twp/prefs.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -71,9 +73,11 @@ public:
 	 * Gets the random source
 	 */
 	Common::RandomSource& getRandomSource() { return _randomSource; }
+	Preferences& getPrefs() { return _prefs; }
 
 	HSQUIRRELVM getVm() { return _vm.get(); }
 	inline Gfx& getGfx() { return _gfx; }
+	inline TextDb& getTextDb() { return _textDb; }
 
 	bool hasFeature(EngineFeature f) const override {
 		return
@@ -108,8 +112,11 @@ public:
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
 
 	void setActor(Object* actor) { _actor = actor; }
+	Object* objAt(Math::Vector2d pos);
+
 	Room* defineRoom(const Common::String& name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
+	void enterRoom(Room *room, Object *door = nullptr);
 
 	void cameraAt(Math::Vector2d at);
 	void follow(Object* actor);
@@ -120,9 +127,10 @@ public:
 private:
 	void update(float elapsedMs);
 	void draw();
-	void enterRoom(Room *room, Object *door = nullptr);
 	void exitRoom(Room *nextRoom);
+	void actorEnter();
 	void actorExit();
+	void cancelSentence(Object* actor = nullptr);
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -144,10 +152,12 @@ public:
 	Lighting* _lighting = nullptr;
 	Scene* _scene = nullptr;
 	Camera _camera;
+	TextDb _textDb;
 
 private:
 	Gfx _gfx;
 	Vm _vm;
+	Preferences _prefs;
 };
 
 extern TwpEngine *g_engine;
