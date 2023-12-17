@@ -63,25 +63,32 @@ public:
 	//! In an indexed file this is (probably) the highest index plus one,
 	//! while in a named file it's (probably) the actual count
 	uint32 getCount() const {
-		return _count;
+		return _entries.size();
 	}
 
 	//! Get the highest index in the file
 	//! Guaranteed to be sufficiently large for a vector that needs to
 	//!  store the indexed entries of this file
 	uint32 getIndexCount() const {
-		return _count;
+		return _entries.size();
 	}
 
 	static bool isFlexFile(Common::SeekableReadStream *rs);
 
 protected:
 	Common::SeekableReadStream *_rs;
-	uint32 _count;
 	bool _valid;
 
+	struct FileEntry {
+		uint32 _offset;
+		uint32 _size;
+		FileEntry() : _offset(0), _size(0) {}
+	};
+
+	Common::Array<FileEntry> _entries;
+
 private:
-	uint32 getOffset(uint32 index);
+	bool readMetadata();
 };
 
 } // End of namespace Ultima8

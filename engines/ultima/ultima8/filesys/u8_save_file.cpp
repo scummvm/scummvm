@@ -55,7 +55,7 @@ bool U8SaveFile::readMetadata() {
 	for (unsigned int i = 0; i < count; ++i) {
 		uint32 namelen = _rs->readUint32LE();
 		char *name = new char[namelen];
-		_rs->read(name, static_cast<int32>(namelen));
+		_rs->read(name, namelen);
 
 		FileEntry fe;
 		fe._size = _rs->readUint32LE();
