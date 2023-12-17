@@ -34,13 +34,13 @@ private:
 	machine *_series2 = nullptr;
 	int _series3 = 0;
 	int _frame = 0;
-	int _val2 = 0;
-	int _val3 = 0;
+	int _deputyMode = 0;
+	int _deputyShould = 0;
 	int _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
+	int _sherrifMode = 0;
+	int _sherrifShould = 0;
+	int _wilburMode = 0;
+	int _wilburShould = 0;
 	bool _assetsFreed = false;
 	bool _flag1 = false;
 
