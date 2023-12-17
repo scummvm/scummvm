@@ -75,9 +75,15 @@ public:
 	uint16 _charWidth;
 	uint16 _charHeight;
 
+	byte* _cursorData;
+	uint16 _cursorWidth;
+	uint16 _cursorHeight;
+
 	byte* _borderData;
 	uint16 _borderWidth;
 	uint16 _borderHeight;
+
+	byte* _shadingTable;
 
 	byte* _borderHighlightData;
 	uint16 _borderHighlightWidth;
