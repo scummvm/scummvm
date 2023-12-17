@@ -147,7 +147,6 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
 
 	// Now, if there is anything left, it should be filled in with black
 	if (updateRectList) {
-
 		tempRect = updateRectList;
 		while (tempRect) {
 			vmng_black_out_video(tempRect->x1, tempRect->y1, tempRect->x2, tempRect->y2);
@@ -214,7 +213,7 @@ bool ResizeScreen(void *scrnContent, int32 newW, int32 newH) {
 
 static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2) {
 	Graphics::Surface *screen = g_system->lockScreen();
-	Common::Rect r(x1, y1, x2, y2);
+	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
 	screen->fillRect(r, 0);
 	g_system->unlockScreen();
 }
@@ -316,21 +315,30 @@ static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool d
 	origY1 = myScreen->y1;
 	origX2 = myScreen->x2;
 	origY2 = myScreen->y2;
+
 	if (!deltaMove) {
 		parmX -= origX1;
 		parmY -= origY1;
 	}
 	if (!(myScreen->scrnFlags & SF_OFFSCRN)) {
-		if ((myScreen->x2 + parmX) > MAX_VIDEO_X) parmX = MAX_VIDEO_X - myScreen->x2;
-		else if ((myScreen->x1 + parmX) < 0) parmX = -myScreen->x1;
-		if ((myScreen->y2 + parmY) > MAX_VIDEO_Y) parmY = MAX_VIDEO_Y - myScreen->y2;
-		else if ((myScreen->y1 + parmY) < 0) parmY = -myScreen->y1;
+		if ((myScreen->x2 + parmX) > MAX_VIDEO_X)
+			parmX = MAX_VIDEO_X - myScreen->x2;
+		else if ((myScreen->x1 + parmX) < 0)
+			parmX = -myScreen->x1;
+		if ((myScreen->y2 + parmY) > MAX_VIDEO_Y)
+			parmY = MAX_VIDEO_Y - myScreen->y2;
+		else if ((myScreen->y1 + parmY) < 0)
+			parmY = -myScreen->y1;
 	}
-	if (!(parmX || parmY)) return false;
+
+	if (!(parmX || parmY))
+		return false;
+
 	myScreen->x1 += parmX;
 	myScreen->y1 += parmY;
 	myScreen->x2 += parmX;
 	myScreen->y2 += parmY;
+
 	if (parmY > 0) {
 		RestoreScreens(origX1, origY1, origX2, myScreen->y1 - 1);
 		if (parmX > 0) {
