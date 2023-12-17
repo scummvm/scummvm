@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-16 21:14+0000\n"
-"PO-Revision-Date: 2023-12-17 07:41+0000\n"
+"PO-Revision-Date: 2023-12-17 17:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2232,7 +2232,7 @@ msgstr ""
 
 #: gui/options.cpp:2648
 msgid "Debug level:"
-msgstr "Nivel de depuración:"
+msgstr "Niv. de depuración:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2652 gui/options.cpp:2791
@@ -2430,7 +2430,7 @@ msgstr "Directorio /raíz/:"
 
 #: gui/options.cpp:2757
 msgid "Server's port:"
-msgstr "Puerto del servidor:"
+msgstr "Puerto de servidor:"
 
 #: gui/options.cpp:2757
 msgid "Port for server to use"
@@ -3056,15 +3056,15 @@ msgstr "Hercules ámbar"
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr "Diariamente"
+msgstr "Una vez al día"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr "Semanalmente"
+msgstr "Una vez a la semana"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr "Mensualmente"
+msgstr "Una vez al mes"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
