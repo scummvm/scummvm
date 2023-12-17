@@ -165,8 +165,6 @@ void Macs2Engine::readResourceFile() {
 	_charWidth = file.readUint16LE();
 	_charHeight = file.readUint16LE();
 	_charData = new byte[_charWidth * _charHeight];
-
-
 	file.read(_charData, _charWidth * _charHeight);
 
 	// Load the data for a border part
@@ -222,6 +220,21 @@ void Macs2Engine::readResourceFile() {
 	// _map = readRLEImage(0x00248FCE, file);
 	_map = readRLEImage(0x0024B0DF, file);
 
+	// Load the data for the mouse cursor
+
+	// TODO: Figure out which is the correct one
+	// file.seek(0x00003C74);
+	file.seek(0x0000524A);
+	_cursorWidth = file.readUint16LE();
+	_cursorHeight = file.readUint16LE();
+	_cursorData = new byte[_cursorWidth * _cursorHeight];
+	file.read(_cursorData, _cursorWidth* _cursorHeight);
+
+	// Load the shading table
+	file.seek(0x00248ECB);
+	_shadingTable = new byte[256];
+	file.read(_shadingTable, 256);
+
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -232,17 +245,17 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 Macs2Engine::~Macs2Engine() {
 }
 
-void Func9F4D(Common::MemoryReadStream * stream) {
+void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 	// Read an opcode (would be 0037:9F07) - [bp-1h]
 	byte opcode = stream->readByte();
 	debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
 
-	uint16 value = stream->readUint16BE();
+	uint16 value = stream->readUint16LE();
 	debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
 
 	if (opcode == 0xFF) {
 		// TODO: Long list of opcode handling here
-		if (opcode == 0x26) {
+		if (value == 0x26) {
 			// TODO: Implement this part:
 	/* l0037_A19E:
 		cmp	byte ptr[1014h], 0h
@@ -257,9 +270,65 @@ void Func9F4D(Common::MemoryReadStream * stream) {
 		xor ax, ax
 			mov[bp - 4h], ax
 			mov[bp - 2h], ax */
+
+			// For now just returning 0 by default
+			out1 = 0;
+			out2 = 0;
+			return;
 		}
 	}
 }
+
+byte ScriptReadByte(Common::MemoryReadStream* stream) {
+	const int64 pos = stream->pos();
+	const byte result = stream->readByte();
+	debug("Script read (byte): %.2x at offset %.4x\n", result, pos);
+	return result;
+}
+
+void FuncA3D2(Common::MemoryReadStream* stream) {
+	
+	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
+	// TODO: Figure out end condition
+	for (;;) {
+		const byte opcode = ScriptReadByte(stream);
+		const byte val = ScriptReadByte(stream);
+		if (opcode > 3) {
+			if (opcode <= 6) {
+				skipValue++;
+			}
+			if (opcode == 8) {
+				if (skipValue == 1) {
+					skipValue--;
+				}
+			}
+			if (opcode == 7) {
+				skipValue--;
+			}
+			// Do the skipping
+			stream->seek(val, SEEK_CUR);
+			debug("A3D2 skipping %u bytes for opcode %.2x (%u)", val, opcode, skipValue);
+			// TODO: Add a log here
+			if (skipValue != 0) {
+				// Continue the loop if there is data left in the stream
+			}
+			else {
+				if (skipValue != 0) {
+					// TODO: Implement:
+					// mov	word ptr [1028h],1Dh
+					// TODO: Add an assert here to see if this ever happens in practice
+				}
+				break;
+			}
+			// TODO: Continue here
+		}
+		else {
+			break;
+		}
+	}
+}
+
+
 
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
@@ -269,18 +338,37 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 	for (;;) {
 		
 
+		// l0037_DB89:
 
 
 		// Read an opcode (would be 0037:9F07) - [bp-1h]
-		byte opcode1 = stream->readByte();
+		byte opcode1 = ScriptReadByte(stream);
 
 		// Read another value - TODO: Not sure yet what this does - [bp-2h]
-		byte val1 = stream->readByte();
+		byte val1 = ScriptReadByte(stream);
 
-		debug("Script read (byte): %.2x at offset %.4x\n", opcode1, stream->pos());
-			
-		debug("Script read (byte): %.2x at offset %.4x\n", val1, stream->pos());
-		break;
+		// TODO: Handle other opcodes above
+		if (opcode1 == 0x04) {
+			// l0037_DC44:
+			uint16 v1;
+			uint16 v2;
+			Func9F4D(stream, v1, v2);
+			if ((v1 | v2) == 0) {
+				FuncA3D2(stream);
+			}
+			else {
+				// TODO: Implement
+				assert(false);
+			}
+		}
+		else {
+			break;
+		}
+
+		// TODO: Handle other opcodes below
+		
+
+		
 	}
 }
 

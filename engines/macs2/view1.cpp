@@ -30,6 +30,20 @@ namespace Macs2 {
 		_backgroundSurface = g_engine->_bgImageShip;
 	}
 
+	void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height)
+	{
+		Graphics::ManagedSurface s = getSurface();
+		for (uint16 xOffset = 0; xOffset < width; xOffset++) {
+			for (uint16 yOffset = 0; yOffset < height; yOffset++) {
+				const uint16 currentX = x + xOffset;
+				const uint16 currentY = y + yOffset;
+				const uint32 currentValue = s.getPixel(currentX, currentY);
+				const uint32 newValue = g_engine->_shadingTable[currentValue];
+				s.setPixel(currentX, currentY, newValue);
+			}
+		}
+	}
+
 	bool View1::msgFocus(const FocusMessage &msg) {
 	//Common::fill(&_pal[0], &_pal[256 * 3], 0);
 	// _offset = 128;
@@ -112,10 +126,16 @@ void View1::draw() {
 	DrawSprite(200, 50, g_engine->_flagWidths[0], g_engine->_flagHeights[0], g_engine->_flagData[0], s);
 	DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
 	DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
+
+	// Draw the mouse cursor
+	DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
 	
 	
 	//for (int i = 0; i < 100; ++i)
 	//	s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
+
+	// Draw a shaded rectangle
+	drawDarkRectangle(50, 50, 100, 50);
 }
 
 bool View1::tick() {
