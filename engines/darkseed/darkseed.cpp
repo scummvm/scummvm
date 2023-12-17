@@ -32,6 +32,7 @@
 #include "graphics/palette.h"
 #include "img.h"
 #include "pal.h"
+#include "pic.h"
 #include "titlefont.h"
 
 namespace Darkseed {
@@ -96,6 +97,18 @@ Common::Error DarkseedEngine::run() {
 //		_screen->copyRectToSurface(house.getPixels().data(), house.getWidth(), house.getX(), house.getY(), house.getWidth(), house.getHeight());
 //	_screen->copyRectToSurfaceWithKey(letterD.getPixels().data(), letterD.getWidth(), 24, 24, letterD.getWidth(), letterD.getHeight(), 0);
 //	_screen->copyRectToSurfaceWithKey(letterD1.getPixels().data(), letterD1.getWidth(), 24+1, 24, letterD1.getWidth(), letterD1.getHeight(), 0);
+
+	Pic frame;
+	frame.load("cframe.pic");
+	_screen->copyRectToSurface(frame.getPixels().data(), frame.getWidth(), 0, 0, frame.getWidth(), frame.getHeight());
+
+	Pic room;
+	room.load("bed1a.pic");
+	_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+
+	Pal roomPal;
+	roomPal.load("room0.pal");
+
 	_screen->update();
 	// Simple event handling loop
 	byte pal[256 * 3] = { 0 };
