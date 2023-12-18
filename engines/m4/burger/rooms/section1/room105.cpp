@@ -28,8 +28,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-// TODO: Double-check if the belows should be !strcmp
-#define COMPARE(X) strcmp(conv_sound_to_play(), X)
+#define COMPARE(X) Common::String(conv_sound_to_play()).equalsIgnoreCase(X)
 
 enum {
 	kCHANGE_ELGUS_ANIMATION = 1
@@ -332,7 +331,7 @@ void Room105::daemon() {
 				player_set_commands_allowed(true);
 
 				if (_G(flags)[V033] == 3) {
-					handleDeed2();
+					complaintsDept();
 				} else {
 					conv_resume();
 				}
@@ -406,11 +405,11 @@ void Room105::daemon() {
 				digi_play(conv_sound_to_play(), 1, 255, 10);
 				break;
 
-			case 18:
-			{
+			case 18: {
 				const seriesPlayBreak *PLAYS[3] = { PLAY16, PLAY17, PLAY18 };
+				_elgusShould = 21;
 				series_play_with_breaks(PLAYS[imath_ranged_rand(0, 2)],
-					"105eg10", 0xa00, 1, 3, 6, 100, 0, ZERO);
+					"105eg10", 0xa00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 			}
 
@@ -439,8 +438,8 @@ void Room105::daemon() {
 					_flag1 = false;
 					_flag4 = false;
 					_flag2 = false;
-					enteringMayorsOffice();
-					handleDeed3();
+					mayorsDoor();
+					mayorsOffice();
 					kernel_timing_trigger(60, 12);
 				} else {
 					player_set_commands_allowed(true);
@@ -502,7 +501,7 @@ void Room105::daemon() {
 				kernel_trigger_dispatch_now(kCHANGE_ELGUS_ANIMATION);
 
 				if (_G(flags)[V033] == 2) {
-					handleDeed3();
+					mayorsOffice();
 				} else {
 					conv_resume();
 				}
@@ -541,13 +540,13 @@ void Room105::daemon() {
 				break;
 
 			case 29:
-				_elgusMode = 25;
+				_elgusShould = 25;
 				series_play("105mg03", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 9);
 				series_play("105mg03s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 9);
 				break;
 
 			case 30:
-				_elgusMode = 25;
+				_elgusShould = 25;
 				series_play("105mg05", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 7);
 				series_play("105mg05s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 7);
 				break;
@@ -559,7 +558,7 @@ void Room105::daemon() {
 				break;
 
 			case 32:
-				_elgusMode = 33;
+				_elgusShould = 33;
 				series_play_with_breaks(PLAY11, "105mg08", 0xf00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
@@ -576,14 +575,14 @@ void Room105::daemon() {
 					_flag4 = false;
 					_flag2 = false;
 					loadAssets3();
-					handleDeed2();
+					complaintsDept();
 					kernel_timing_trigger(60, 13);
 				} else if (_flag2) {
 					_flag1 = false;
 					_flag4 = false;
 					_flag2 = false;
 					loadAssets4();
-					handleDeed1();
+					townRecords();
 					kernel_timing_trigger(60, 11);
 				} else {
 					player_set_commands_allowed(true);
@@ -637,7 +636,7 @@ void Room105::daemon() {
 				kernel_trigger_dispatch_now(kCHANGE_ELGUS_ANIMATION);
 
 				if (_G(flags)[V033] == 2) {
-					handleDeed3();
+					mayorsOffice();
 				} else {
 					conv_resume();
 				}
@@ -661,14 +660,14 @@ void Room105::daemon() {
 					_flag4 = false;
 					_flag2 = false;
 					loadAssets3();
-					handleDeed2();
+					complaintsDept();
 					kernel_timing_trigger(60, 13);
 				} else if (_flag2) {
 					_flag1 = false;
 					_flag4 = false;
 					_flag2 = false;
 					loadAssets4();
-					handleDeed1();
+					townRecords();
 					kernel_timing_trigger(60, 11);
 				} else {
 					player_set_commands_allowed(true);
@@ -748,7 +747,7 @@ void Room105::daemon() {
 				series_play("105ag02", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 
 				if (_G(flags)[V033] == 1) {
-					handleDeed1();
+					townRecords();
 				} else {
 					conv_resume();
 				}
@@ -845,7 +844,7 @@ void Room105::daemon() {
 					_flag4 = false;
 					_flag2 = false;
 					loadAssets3();
-					handleDeed2();
+					complaintsDept();
 					kernel_timing_trigger(60, 13);
 
 				} else if (_flag4) {
@@ -1092,7 +1091,7 @@ void Room105::daemon() {
 			_flag1 = false;
 			_flag4 = false;
 			_flag2 = false;
-			handleDeed2();
+			complaintsDept();
 		}
 		break;
 
@@ -1112,7 +1111,7 @@ void Room105::daemon() {
 			_flag1 = false;
 			_flag4 = false;
 			_flag2 = false;
-			handleDeed3();
+			mayorsOffice();
 		} else {
 			kernel_trigger_dispatch_now(kCHANGE_ELGUS_ANIMATION);
 		}
@@ -1126,12 +1125,12 @@ void Room105::daemon() {
 			_elgusMode = 42;
 			kernel_trigger_dispatch_now(kCHANGE_ELGUS_ANIMATION);
 		} else {
-			handleDeed1();
+			townRecords();
 		}
 		break;
 
 	case 19:
-		talkTo();
+		startConv13();
 		break;
 
 	case 20:
@@ -1340,7 +1339,7 @@ void Room105::parser() {
 	} else if (player_said("conv13")) {
 		conv13();
 	} else if (player_said("talk to")) {
-		talkTo();
+		startConv13();
 	} else if (lookFlag && player_said("town records")) {
 		if (_G(flags)[V112]) {
 			switch (_G(kernel).trigger) {
@@ -1381,7 +1380,7 @@ void Room105::parser() {
 
 			if (!_G(flags)[V112]) {
 				_G(flags)[V298] = 1;
-				enteringMayorsOffice();
+				mayorsDoor();
 			}
 		} else if (player_said("GEAR", "complaints dept.")) {
 			player_set_commands_allowed(false);
@@ -1564,7 +1563,7 @@ void Room105::conv12() {
 			if (node == 1) {
 				digi_stop(2);
 
-				if (COMPARE("10n02011")) {
+ 				if (COMPARE("10n02011")) {
 					digi_unload("105ancr1");
 				} else if (COMPARE("10n02012")) {
 					digi_unload("105ancr2");
@@ -1670,13 +1669,13 @@ void Room105::conv13() {
 	}
 }
 
-void Room105::talkTo() {
+void Room105::startConv13() {
 	_val1 = 1;
 	conv_load_and_prepare("conv13", 5);
 	conv_play_curr();
 }
 
-void Room105::enteringMayorsOffice() {
+void Room105::mayorsDoor() {
 	if (_G(flags)[V031]) {
 		_val8 = 1;
 		loadAssets2();
@@ -1753,7 +1752,7 @@ void Room105::unloadAssets4() {
 		series_unload(_series4[i]);
 }
 
-void Room105::handleDeed1() {
+void Room105::townRecords() {
 	_val1 = 1;
 	conv_load_and_prepare("conv12", 2);
 	conv_export_pointer_curr(&_G(flags)[V033], 0);
@@ -1762,16 +1761,16 @@ void Room105::handleDeed1() {
 	conv_play_curr();
 }
 
-void Room105::handleDeed2() {
+void Room105::complaintsDept() {
 	_val1 = 1;
-	conv_load_and_prepare("conv12", 4);
+	conv_load_and_prepare("conv11", 4);
 	conv_export_pointer_curr(&_G(flags)[V032], 0);
 	conv_export_pointer_curr(&_G(flags)[V033], 3);
 	conv_export_value_curr(inv_player_has("deed") ? 1 : 0, 5);
 	conv_play_curr();
 }
 
-void Room105::handleDeed3() {
+void Room105::mayorsOffice() {
 	_val1 = 1;
 	conv_load_and_prepare("conv10", 3);
 	conv_export_value_curr(inv_player_has("deed") ? 1 : 0, 0);
