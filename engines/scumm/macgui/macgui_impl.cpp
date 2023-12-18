@@ -133,7 +133,14 @@ int MacGuiImpl::delay(uint32 ms) {
 // --------------------------------------------------------------------------
 
 void MacGuiImpl::menuCallback(int id, Common::String &name, void *data) {
-	((MacGuiImpl *)data)->handleMenu(id, name);
+	MacGuiImpl *gui = (MacGuiImpl *)data;
+
+	gui->handleMenu(id, name);
+
+	if (gui->_forceMenuClosed) {
+		gui->_windowManager->getMenu()->closeMenu();
+		gui->_forceMenuClosed = false;
+	}
 }
 
 void MacGuiImpl::initialize() {
@@ -240,6 +247,17 @@ bool MacGuiImpl::handleMenu(int id, Common::String &name) {
 
 	// This is how we keep the menu bar visible.
 	Graphics::MacMenu *menu = _windowManager->getMenu();
+
+	// If the menu is opened through a shortcut key, force it to activate
+	// to avoid screen corruption. In that case, we also force the menu to
+	// close afterwards, or the game will stay paused. Which is
+	// particularly bad during a restart.
+
+	if (!menu->_active) {
+		_windowManager->activateMenu();
+		_forceMenuClosed = true;
+	}
+
 	menu->closeMenu();
 	menu->setActive(true);
 	menu->setVisible(true);

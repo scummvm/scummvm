@@ -52,7 +52,6 @@ protected:
 	ScummEngine *_vm = nullptr;
 	OSystem *_system = nullptr;
 
-	Graphics::MacWindowManager *_windowManager = nullptr;
 	Graphics::Surface *_surface = nullptr;
 	MacGuiImpl::MacDialogWindow *_bannerWindow = nullptr;
 
@@ -586,6 +585,9 @@ public:
 
 	MacGuiImpl(ScummEngine *vm, Common::String resourceFile);
 	virtual ~MacGuiImpl();
+
+	Graphics::MacWindowManager *_windowManager = nullptr;
+	bool _forceMenuClosed = false;
 
 	Graphics::Surface *surface() { return _surface; }
 
