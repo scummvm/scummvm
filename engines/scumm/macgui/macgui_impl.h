@@ -150,16 +150,17 @@ protected:
 public:
 	class MacGuiObject {
 	protected:
+		Common::Rect _bounds;
 		bool _redraw = false;
 		bool _enabled = false;
 		bool _visible = true;
-		Common::Rect _bounds;
 
 	public:
 		MacGuiObject(Common::Rect bounds, bool enabled) : _bounds(bounds), _enabled(enabled) {}
 		virtual ~MacGuiObject() {}
 
 		Common::Rect getBounds() const { return _bounds; }
+		bool getRedraw() const { return _redraw; }
 		bool isEnabled() const { return _enabled; }
 		bool isVisible() const { return _visible; }
 	};
@@ -629,5 +630,4 @@ public:
 };
 
 } // End of namespace Scumm
-
 #endif
