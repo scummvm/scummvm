@@ -49,6 +49,7 @@
 #include "ultima/nuvie/core/magic.h"
 #include "ultima/nuvie/files/tmx_map.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -940,7 +941,13 @@ bool Script::play_cutscene(const char *script_file) {
 
 	ConsoleHide();
 
-	return run_lua_file(script_file_path.c_str());
+	// FIXME: For now we disable the keymapper during cutscenes so input works correctly
+	// (e.g. for character name entry or skipping the intro)
+
+	g_system->getEventManager()->getKeymapper()->setEnabled(false);
+	bool retVal = run_lua_file(script_file_path.c_str());
+	g_system->getEventManager()->getKeymapper()->setEnabled(true);
+	return retVal;
 }
 
 MovementStatus Script::call_player_before_move_action(sint16 *rel_x, sint16 *rel_y) {
