@@ -87,6 +87,8 @@ void ActionShowKeys(int param);
 void ActionDecreaseDebug(int param);
 void ActionIncreaseDebug(int param);
 void ActionCloseGumps(int param);
+void ActionToggleAltCodeMode(int param);
+void ActionAppendAltCode(int param);
 void ActionUseItem(int param);
 
 void ActionAssetViewer(int param);

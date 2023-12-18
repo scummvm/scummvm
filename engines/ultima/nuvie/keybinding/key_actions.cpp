@@ -449,6 +449,17 @@ void ActionCloseGumps(int param) {
 	EVENT->close_gumps();
 }
 
+void ActionToggleAltCodeMode (int param) {
+	if (EVENT->get_mode() == MOVE_MODE) {
+		EVENT->toggleAltCodeMode(param == kAltCodeModeBegin ? true : false);
+	}
+}
+
+void ActionAppendAltCode(int param) {
+	if (EVENT->get_mode() == MOVE_MODE)
+		EVENT->appendAltCode(param);
+}
+
 void ActionUseItem(int param) {
 	if (EVENT->get_mode() != MOVE_MODE && EVENT->get_mode() != EQUIP_MODE)
 		return;

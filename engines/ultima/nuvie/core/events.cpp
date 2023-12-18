@@ -238,74 +238,6 @@ bool Events::handleSDL_KEYDOWN(const Common::Event *event_) {
 		return true;
 	}
 
-	byte mods = event_->kbd.flags;
-	// alt-code input
-	if (mods & Common::KBD_ALT) {
-		if (mode == MOVE_MODE)
-			switch (event_->kbd.keycode) {
-			case Common::KEYCODE_KP0:
-			case Common::KEYCODE_0:
-				alt_code_str[alt_code_len++] = '0';
-				break;
-
-			case Common::KEYCODE_KP1:
-			case Common::KEYCODE_1:
-				alt_code_str[alt_code_len++] = '1';
-				break;
-
-			case Common::KEYCODE_KP2:
-			case Common::KEYCODE_2:
-				alt_code_str[alt_code_len++] = '2';
-				break;
-
-			case Common::KEYCODE_KP3:
-			case Common::KEYCODE_3:
-				alt_code_str[alt_code_len++] = '3';
-				break;
-
-			case Common::KEYCODE_KP4:
-			case Common::KEYCODE_4:
-				alt_code_str[alt_code_len++] = '4';
-				break;
-
-			case Common::KEYCODE_KP5:
-			case Common::KEYCODE_5:
-				alt_code_str[alt_code_len++] = '5';
-				break;
-
-			case Common::KEYCODE_KP6:
-			case Common::KEYCODE_6:
-				alt_code_str[alt_code_len++] = '6';
-				break;
-
-			case Common::KEYCODE_KP7:
-			case Common::KEYCODE_7:
-				alt_code_str[alt_code_len++] = '7';
-				break;
-
-			case Common::KEYCODE_KP8:
-			case Common::KEYCODE_8:
-				alt_code_str[alt_code_len++] = '8';
-				break;
-
-			case Common::KEYCODE_KP9:
-			case Common::KEYCODE_9:
-				alt_code_str[alt_code_len++] = '9';
-				break;
-			default:
-				keybinder->HandleEvent(event_);
-				return true;
-			}
-		if (alt_code_len != 0) {
-			alt_code_str[alt_code_len] = '\0';
-			if (alt_code_len == 3) {
-				alt_code(alt_code_str);
-				clear_alt_code();
-			}
-		}
-		return true;
-	}
-
 	keybinder->HandleEvent(event_);
 
 	return true;
@@ -347,9 +279,6 @@ bool Events::handleEvent(const Common::Event *event_) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_KEYUP:
-		if (event_->kbd.flags & Common::KBD_ALT) {
-			clear_alt_code();
-		}
 		break;
 
 	case Common::EVENT_KEYDOWN:
@@ -360,10 +289,10 @@ bool Events::handleEvent(const Common::Event *event_) {
 		return false;
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 		keybinder->handleScummVMBoundEvent(event_);
 		break;
 
-	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 	default:
 		break;
 	}
@@ -1669,10 +1598,9 @@ void Events::alt_code_input(const char *in) {
 	}
 }
 
-/* Get an alt-code from `cs' and use it.
+/* Use alt-code in `c'.
  */
-void Events::alt_code(const char *cs) {
-	uint16 c = (uint16) strtol(cs, nullptr, 10);
+void Events::alt_code(int c) {
 	switch (c) {
 	case 300: // display portrait by number
 		scroll->display_string("Portrait? ");
@@ -3826,6 +3754,18 @@ bool Events::input_really_needs_directon() const {
 		return true;
 	else
 		return false;
+}
+
+void Events::toggleAltCodeMode(bool enable) {
+	if (!enable && altCodeVal != 0)
+		alt_code(altCodeVal); // leaving alt-code mode: evaluate it
+	// a code was either just handled or we newly entered alt-code mode: reset it
+	clear_alt_code();
+}
+
+void Events::appendAltCode(int code) {
+	altCodeVal *= 10;
+	altCodeVal += code;
 }
 
 bool shouldQuit() {
