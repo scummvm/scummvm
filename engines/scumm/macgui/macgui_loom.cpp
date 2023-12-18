@@ -82,19 +82,19 @@ bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 	// 95 is a used for the rest of the notes.
 
 	switch (fontId) {
-	case FontId::kLoomFontSmall:
+	case kLoomFontSmall:
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kLoomFontMedium:
+	case kLoomFontMedium:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kLoomFontLarge:
+	case kLoomFontLarge:
 		id = _gameFontId;
 		size = 13;
 		slant = Graphics::kMacFontRegular;
