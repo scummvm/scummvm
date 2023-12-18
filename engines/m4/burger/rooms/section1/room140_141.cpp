@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/rooms/section1/room141.h"
+#include "m4/burger/rooms/section1/room140_141.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/gr_series.h"
@@ -135,11 +135,11 @@ static const seriesStreamBreak SERIES4[] = {
 };
 
 
-void Room141::preload() {
+void Room140_141::preload() {
 	_G(player).walker_in_this_scene = false;
 }
 
-void Room141::init() {
+void Room140_141::init() {
 	digi_preload("144_001");
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
@@ -213,7 +213,7 @@ void Room141::init() {
 	digi_play_loop("144_001", 3, 180);
 }
 
-void Room141::daemon() {
+void Room140_141::daemon() {
 	int frame;
 
 	switch (_G(kernel).trigger) {
@@ -853,7 +853,7 @@ void Room141::daemon() {
 	}
 }
 
-void Room141::parser() {
+void Room140_141::parser() {
 	bool lookFlag = player_said("look") || player_said("look at");
 
 	if (player_said("conv20")) {
@@ -908,7 +908,7 @@ done:
 	_G(player).command_ready = false;
 }
 
-void Room141::conv20() {
+void Room140_141::conv20() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	int who = conv_whos_talking();
 	int node = conv_current_node();
@@ -1031,7 +1031,7 @@ void Room141::conv20() {
 	}
 }
 
-void Room141::playRandom() {
+void Room140_141::playRandom() {
 	if (_flag1 && !_flag2) {
 		_flag1 = false;
 		digi_play(Common::String::format("140t001%c", 'a' + imath_ranged_rand(0, 5)).c_str(),
@@ -1039,7 +1039,7 @@ void Room141::playRandom() {
 	}
 }
 
-void Room141::loadSeries() {
+void Room140_141::loadSeries() {
 	static const char *NAMES[34] = {
 		"140pe02", "140pe02s", "140pe03", "140pe03s", "140pe04",
 		"140pe04s", "140pe06", "140pe06s", "140pe07", "140pe07s",
