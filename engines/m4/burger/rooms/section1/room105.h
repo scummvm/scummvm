@@ -60,8 +60,8 @@ private:
 	void conv11();
 	void conv12();
 	void conv13();
-	void talkTo();
-	void enteringMayorsOffice();
+	void startConv13();
+	void mayorsDoor();
 	void loadAssets1();
 	void loadAssets2();
 	void loadAssets3();
@@ -70,9 +70,9 @@ private:
 	void unloadAssets2();
 	void unloadAssets3();
 	void unloadAssets4();
-	void handleDeed1();
-	void handleDeed2();
-	void handleDeed3();
+	void townRecords();
+	void complaintsDept();
+	void mayorsOffice();
 
 public:
 	Room105() : Room() {}
