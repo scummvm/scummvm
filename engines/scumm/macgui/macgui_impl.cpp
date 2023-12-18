@@ -397,31 +397,31 @@ const Graphics::Font *MacGuiImpl::getFont(FontId fontId) {
 
 bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	switch (fontId) {
-	case FontId::kAboutFontHeaderOutside:
+	case kAboutFontHeaderOutside:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontOutline;
 		return true;
 
-	case FontId::kAboutFontHeaderInside:
+	case kAboutFontHeaderInside:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
 		return true;
 
-	case FontId::kAboutFontBold:
+	case kAboutFontBold:
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kAboutFontExtraBold:
+	case kAboutFontExtraBold:
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular | Graphics::kMacFontExtend;
 		return true;
 
-	case FontId::kAboutFontRegular:
+	case kAboutFontRegular:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontRegular;

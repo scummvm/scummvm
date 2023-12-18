@@ -984,31 +984,31 @@ bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) c
 	// headline. The rest of the Indy 3 verb GUI uses Geneva.
 
 	switch (fontId) {
-	case FontId::kIndy3FontSmall:
+	case kIndy3FontSmall:
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kIndy3FontMedium:
+	case kIndy3FontMedium:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kIndy3VerbFontRegular:
+	case kIndy3VerbFontRegular:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
-	case FontId::kIndy3VerbFontBold:
+	case kIndy3VerbFontBold:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
 
-	case FontId::kIndy3VerbFontOutline:
+	case kIndy3VerbFontOutline:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
