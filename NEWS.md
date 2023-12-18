@@ -1,6 +1,12 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.8.1 (????-??-??)
+
+ SCUMM:
+   - Fix screen corruption (and sometimes even crashes) in Mac Loom and
+     Indiana Jones and the Last Crusade when using menu shortcut keys.
+
 #### 2.8.0 (2023-12-30)
 
  New games:
