@@ -229,6 +229,9 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	for (int i = 0; i < ARRAYSIZE(PerPartyMemberActionDescriptions); i++)
 		keyMap->addAction(actionDescriptionFromNuvieAction(PerPartyMemberActionDescriptions[i]));
 
+	for (int i = 0; i < ARRAYSIZE(CheatKeyDescriptions); ++i)
+		keyMap->addAction(actionDescriptionFromNuvieAction(CheatKeyDescriptions[i]));
+
 	return keymapArray;
 }
 
