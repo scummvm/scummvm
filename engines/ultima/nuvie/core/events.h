@@ -204,8 +204,7 @@ private:
 	EventInput input; // collected/received input (of any type)
 // Std::vector<EventMode> mode_stack; // current mode is at the end of the list
 	int ts; //timestamp for TimeLeft() method.
-	char alt_code_str[4]; // string representation of alt-code input
-	uint8 alt_code_len; // how many characters have been input for alt-code
+	int altCodeVal;
 	uint16 active_alt_code; // alt-code that needs more input
 	uint8 alt_code_input_num; // alt-code can get multiple inputs
 
@@ -401,12 +400,13 @@ public:
 	void walk_to_mouse_cursor(uint32 mx, uint32 my);
 	void multiuse(uint16 wx, uint16 wy);
 
-	void alt_code(const char *cs);
+	void alt_code(int c);
 	void alt_code_input(const char *in);
-	void clear_alt_code() {
-		alt_code_str[0] = '\0';
-		alt_code_len = 0;
-	}
+	void clear_alt_code() { altCodeVal = 0; }
+
+	void toggleAltCodeMode(bool enable);
+	void appendAltCode(int code);
+
 	bool alt_code_teleport(const char *location_string);
 	void alt_code_infostring();
 	void alt_code_teleport_menu(uint32 selection);

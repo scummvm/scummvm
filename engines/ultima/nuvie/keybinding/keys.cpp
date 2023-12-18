@@ -64,6 +64,10 @@ struct Action {
 	ActionKeyType keyType;
 };
 
+const char *appendAltCodeActionStr = "ALT_CODE";
+const char *toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
+const uint toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr); // to identify END (KEYUP) events for alt-code mode toggle action
+
 const Action NuvieActions[] = {
 	{ "WALK_WEST", ActionWalkWest, Action::KeyNormal, true, WEST_KEY  },
 	{ "WALK_EAST", ActionWalkEast, Action::KeyNormal, true, EAST_KEY },
@@ -134,6 +138,8 @@ const Action NuvieActions[] = {
 	{ "HEAL_PARTY", ActionHealParty, Action::KeyCheat, true, OTHER_KEY },
 	{ "TELEPORT_TO_CURSOR", ActionTeleportToCursor, Action::KeyCheat, true, OTHER_KEY },
 	{ "TOGGLE_CHEATS", ActionToggleCheats, Action::KeyNormal, true, OTHER_KEY },
+	{ toggleAltCodeModeActionStr, ActionToggleAltCodeMode, Action::KeyNormal, true, OTHER_KEY },
+	{ appendAltCodeActionStr, ActionAppendAltCode, Action::KeyNormal, true, OTHER_KEY },
 	{ "DO_NOTHING", ActionDoNothing, Action::KeyNotShown, true, OTHER_KEY },
 };
 
@@ -402,10 +408,17 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 }
 
 bool KeyBinder::handleScummVMBoundEvent(const Common::Event *ev) {
-	ParseHashedActionMap::iterator iter = _actionsHashed.find(ev->customType);
-	if (iter != _actionsHashed.end()) {
-		const ActionType action = iter->_value;
-		return DoAction(action);
+
+	if (ev->type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		ParseHashedActionMap::iterator iter = _actionsHashed.find(ev->customType);
+		if (iter != _actionsHashed.end()) {
+			const ActionType action = iter->_value;
+			return DoAction(action);
+		}
+	} else if (ev->type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && ev->customType == toggleAltCodeModeEventID) {
+		// Evaluate and reset alt code when corresponding key is released
+		ActionToggleAltCodeMode(kAltCodeModeEnd);
+		return true;
 	}
 	return false;
 }
@@ -691,6 +704,17 @@ void KeyBinder::FillParseMaps() {
 			at.param = i;
 			_actionsHashed[actionId.hash()] = at;
 		}
+	}
+
+	if (!_actions.contains(appendAltCodeActionStr))
+			error("No base definition for alt-code action %s", appendAltCodeActionStr);
+	for (int i = 0; i <= 9; ++i) {
+		Common::String actionId = Common::String::format("%s_%d", appendAltCodeActionStr, i);
+		const Action *action = _actions[appendAltCodeActionStr];
+		ActionType at;
+		at.action = action;
+		at.param = i;
+		_actionsHashed[actionId.hash()] = at;
 	}
 }
 

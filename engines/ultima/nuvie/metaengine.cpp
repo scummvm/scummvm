@@ -107,6 +107,17 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	{ "INCREASE_DEBUG", "Increase debug", "C+i", nullptr },
 	{ "CLOSE_GUMPS", "Close gumps", "z", nullptr },
 	//{ "USE_ITEM", "Use item", nullptr, nullptr }, // TODO: this takes an item no parameter
+	{ "TOGGLE_ALT_CODE_MODE", "Enter ALT code (hold)", "LALT", nullptr },
+	{ "ALT_CODE_0", "ALT Code 0", "A+KP0", "A+0" },
+	{ "ALT_CODE_1", "ALT Code 1", "A+KP1", "A+1" },
+	{ "ALT_CODE_2", "ALT Code 2", "A+KP2", "A+2" },
+	{ "ALT_CODE_3", "ALT Code 3", "A+KP3", "A+3" },
+	{ "ALT_CODE_4", "ALT Code 4", "A+KP4", "A+4" },
+	{ "ALT_CODE_5", "ALT Code 5", "A+KP5", "A+5" },
+	{ "ALT_CODE_6", "ALT Code 6", "A+KP6", "A+6" },
+	{ "ALT_CODE_7", "ALT Code 7", "A+KP7", "A+7" },
+	{ "ALT_CODE_8", "ALT Code 8", "A+KP8", "A+8" },
+	{ "ALT_CODE_9", "ALT Code 9", "A+KP9", "A+9" },
 };
 
 static const NuvieActionDescription CheatKeyDescriptions[] = {
