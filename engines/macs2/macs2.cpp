@@ -91,6 +91,8 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& fil
 	return result;
 }
 
+
+
 void Macs2Engine::readResourceFile() {
 	Common::File file;
 	if (!file.open("RESOURCE.MCS"))
@@ -431,6 +433,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+void GlyphData::ReadFromeFile(Common::File &file) {
+	// TODO: Implement
 }
 
 } // End of namespace Macs2
