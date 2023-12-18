@@ -2561,7 +2561,14 @@ int MacGui::delay(uint32 ms) {
 // --------------------------------------------------------------------------
 
 void MacGui::menuCallback(int id, Common::String &name, void *data) {
-	((MacGui *)data)->handleMenu(id, name);
+	MacGui *gui = (MacGui *)data;
+
+	gui->handleMenu(id, name);
+
+	if (gui->_forceMenuClosed) {
+		gui->_windowManager->getMenu()->closeMenu();
+		gui->_forceMenuClosed = false;
+	}
 }
 
 void MacGui::initialize() {
@@ -2668,6 +2675,17 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	// This is how we keep the menu bar visible.
 	Graphics::MacMenu *menu = _windowManager->getMenu();
+
+	// If the menu is opened through a shortcut key, force it to activate
+	// to avoid screen corruption. In that case, we also force the menu to
+	// close afterwards, or the game will stay paused. Which is
+	// particularly bad during a restart.
+
+	if (!menu->_active) {
+		_windowManager->activateMenu();
+		_forceMenuClosed = true;
+	}
+
 	menu->closeMenu();
 	menu->setActive(true);
 	menu->setVisible(true);
@@ -2676,10 +2694,12 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	int saveSlotToHandle = -1;
 	Common::String savegameName;
 
+	bool result = true;
+
 	switch (id) {
 	case 100:	// About
 		runAboutDialog();
-		return true;
+		break;
 
 	case 200:	// Open
 		if (runOpenDialog(saveSlotToHandle)) {
@@ -2690,7 +2710,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 			}
 		}
 
-		return true;
+		break;
 
 	case 201:	// Save
 		if (runSaveDialog(saveSlotToHandle, savegameName)) {
@@ -2699,17 +2719,17 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 			}
 		}
 
-		return true;
+		break;
 
 	case 202:	// Restart
 		if (runRestartDialog())
 			_vm->restart();
-		return true;
+		break;
 
 	case 203:	// Pause
 		if (!_vm->_messageBannerActive)
 			_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
-		return true;
+		break;
 
 	// In the original, the Edit menu is active during save dialogs, though
 	// only Cut, Copy and Paste.
@@ -2719,10 +2739,14 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	case 302:	// Copy
 	case 303:	// Paste
 	case 304:	// Clear
-		return true;
+		break;
+
+	default:
+		result = false;
+		break;
 	}
 
-	return false;
+	return result;
 }
 
 void MacGui::updateWindowManager() {
