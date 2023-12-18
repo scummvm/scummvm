@@ -2694,12 +2694,10 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	int saveSlotToHandle = -1;
 	Common::String savegameName;
 
-	bool result = true;
-
 	switch (id) {
 	case 100:	// About
 		runAboutDialog();
-		break;
+		return true;
 
 	case 200:	// Open
 		if (runOpenDialog(saveSlotToHandle)) {
@@ -2710,7 +2708,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 			}
 		}
 
-		break;
+		return true;
 
 	case 201:	// Save
 		if (runSaveDialog(saveSlotToHandle, savegameName)) {
@@ -2719,17 +2717,17 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 			}
 		}
 
-		break;
+		return true;
 
 	case 202:	// Restart
 		if (runRestartDialog())
 			_vm->restart();
-		break;
+		return true;
 
 	case 203:	// Pause
 		if (!_vm->_messageBannerActive)
 			_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
-		break;
+		return true;
 
 	// In the original, the Edit menu is active during save dialogs, though
 	// only Cut, Copy and Paste.
@@ -2739,14 +2737,10 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	case 302:	// Copy
 	case 303:	// Paste
 	case 304:	// Clear
-		break;
-
-	default:
-		result = false;
-		break;
+		return true;
 	}
 
-	return result;
+	return false;
 }
 
 void MacGui::updateWindowManager() {
