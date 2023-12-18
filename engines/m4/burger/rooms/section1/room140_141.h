@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION1_ROOM141_H
-#define M4_BURGER_ROOMS_SECTION1_ROOM141_H
+#ifndef M4_BURGER_ROOMS_SECTION1_ROOM140_141_H
+#define M4_BURGER_ROOMS_SECTION1_ROOM140_141_H
 
 #include "m4/burger/rooms/room.h"
 
@@ -28,7 +28,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room141 : public Room {
+class Room140_141 : public Room {
 private:
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
@@ -47,8 +47,8 @@ private:
 	void loadSeries();
 
 public:
-	Room141() : Room() {}
-	~Room141() override {}
+	Room140_141() : Room() {}
+	~Room140_141() override {}
 
 	void preload() override;
 	void init() override;

@@ -36,7 +36,7 @@
 #include "m4/burger/rooms/section1/room137.h"
 #include "m4/burger/rooms/section1/room138.h"
 #include "m4/burger/rooms/section1/room139_144.h"
-#include "m4/burger/rooms/section1/room141.h"
+#include "m4/burger/rooms/section1/room140_141.h"
 #include "m4/burger/rooms/section1/room142.h"
 #include "m4/burger/rooms/section1/room143.h"
 #include "m4/burger/rooms/section1/room145.h"
@@ -71,7 +71,7 @@ private:
 	Room137 _room137;
 	Room138 _room138;
 	Room139_144 _room139_144;
-	Room141 _room141;
+	Room140_141 _room140_141;
 	Room142 _room142;
 	Room143 _room143;
 	Room145 _room145;
