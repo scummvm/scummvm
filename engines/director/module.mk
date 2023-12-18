@@ -60,7 +60,9 @@ MODULE_OBJS = \
 	lingo/xlibs/blitpict.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/colorxobj.o \
+	lingo/xlibs/colorcursorxobj.o \
 	lingo/xlibs/consumer.o \
+	lingo/xlibs/cursorxobj.o \
 	lingo/xlibs/darkenscreen.o \
 	lingo/xlibs/developerStack.o \
 	lingo/xlibs/dialogsxobj.o \
@@ -87,11 +89,15 @@ MODULE_OBJS = \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/maniacbg.o \
+	lingo/xlibs/mapnavigatorxobj.o \
+	lingo/xlibs/memcheckxobj.o \
 	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/misc.o \
 	lingo/xlibs/miscx.o \
+	lingo/xlibs/mmaskxobj.o \
 	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
+	lingo/xlibs/movieidxxobj.o \
 	lingo/xlibs/movutils.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
@@ -99,6 +105,7 @@ MODULE_OBJS = \
 	lingo/xlibs/porta.o \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
+	lingo/xlibs/qtcatmovieplayerxobj.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/qtvr.o \
 	lingo/xlibs/quicktime.o \

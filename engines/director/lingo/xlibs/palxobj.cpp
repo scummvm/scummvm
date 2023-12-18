@@ -24,6 +24,7 @@
  * USED IN:
  * Majestic-mac
  * chopsuey-mac
+ * Jewels of the Oracle - Mac
  *
  *************************************/
 
@@ -59,6 +60,7 @@ const char *PalXObj::fileNames[] = {
 	"PalXObj",
 	"FixPalette",
 	"FixPaletteXObj",
+	"PALETTE.XOB",    //  Jewels of the Oracle - Mac
 	nullptr
 };
 
