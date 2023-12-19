@@ -152,8 +152,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Ultima VI - German Patch 1.6 https://sirjohn.de/ultima-6/
 	// Note: Not all user interface elements are translated in ScummVM
-	// FIXME: Why is there no "enhanced" entry for this? If this is intentional it should be documented.
-	ENTRY_ULTIMA6_NORMAL("converse.a", "5242f0228bbc9c3a60c7aa6071499688", 198797,
+	ENTRY_ULTIMA6("converse.a", "5242f0228bbc9c3a60c7aa6071499688", 198797,
 				Common::DE_DEU,
 				Common::kPlatformDOS),
 
