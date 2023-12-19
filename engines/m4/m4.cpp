@@ -225,7 +225,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	for (int i = 0; i < KERNEL_SCRATCH_SIZE; ++i)
 		s.syncAsUint32LE(_G(kernel).scratch[i]);
 
-	s.syncAsByte(_G(kernel)._val1);
+	s.syncAsByte(_G(kernel).unused);
 	s.syncAsSint16LE(_G(kernel).last_save);
 	s.syncAsSint16LE(_G(game).room_id);
 	s.syncAsSint16LE(_G(game).new_room);
@@ -242,7 +242,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 		s.syncAsByte(_G(kernel).restore_game);
 		s.syncAsSint32LE(_G(game).digi_overall_volume_percent);
 		s.syncAsSint32LE(_G(game).midi_overall_volume_percent);
-		s.syncAsByte(_G(kernel)._val2);
+		s.syncAsByte(_G(kernel).camera_pan_instant);
 	}
 
 	_G(player).syncGame(s);

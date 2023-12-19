@@ -65,7 +65,6 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		int index = _sectionMachine1->myAnim8->myRegs[IDX_CELS_INDEX];
 		const GerbilPoint *points = _gerbilTable + index;
 
-		// TODO: Double check the modulus/divisions are correct
 		diff = points[3]._x - points[0]._x;
 		x1 = points[0]._x + (index % 3) * diff / 3;
 

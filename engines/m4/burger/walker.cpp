@@ -204,7 +204,6 @@ void Walker::unloadSprites() {
 		for (int i = 0; i < 7; ++i)
 			series_unload(i);
 
-		// TODO: This seems like it would leak memory
 		_G(my_walker) = nullptr;
 	}
 }

@@ -46,7 +46,7 @@ char *env_find(const Common::String &descName) {
 }
 
 char *env_get_path(char *resultPath, int room_num, char *fileName) {
-	error("TODO: env_get_path");
+	error("env_get_path not implemented in ScummVM");
 }
 
 } // End of namespace M4

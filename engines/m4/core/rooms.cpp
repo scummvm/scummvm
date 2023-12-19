@@ -387,7 +387,7 @@ void Sections::pal_game_task() {
 			error_show(FL, 'BUF!');
 
 		if (_cameraShiftAmount) {
-			if (_G(kernel)._val2) {
+			if (_G(kernel).camera_pan_instant) {
 				delta = _cameraShiftAmount;
 				_cameraShiftAmount = 0;
 			} else if (_cameraShiftAmount > 0) {
@@ -400,7 +400,7 @@ void Sections::pal_game_task() {
 		}
 
 		if (_cameraShift_vert_Amount) {
-			if (_G(kernel)._val2) {
+			if (_G(kernel).camera_pan_instant) {
 				delta = _cameraShift_vert_Amount;
 				_cameraShift_vert_Amount = 0;
 			} else if (_cameraShift_vert_Amount > 0) {
