@@ -120,7 +120,7 @@ void Room903::daemon() {
 		break;
 
 	case 7:
-		GUI::CreateLoadMenuFromMain(_G(master_palette));
+		g_engine->showLoadScreen(true);
 		break;
 
 	case 8:

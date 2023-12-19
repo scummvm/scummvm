@@ -78,6 +78,10 @@ public:
 
 	void syncFlags(Common::Serializer &s) override;
 
+	void showSaveScreen() override;
+	void showLoadScreen(bool fromMainMenu = false) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+
 	void global_daemon() override;
 	void global_pre_parser() override;
 	void global_parser() override;

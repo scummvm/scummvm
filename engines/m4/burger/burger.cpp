@@ -24,6 +24,7 @@
 #include "m4/burger/vars.h"
 #include "m4/burger/core/conv.h"
 #include "m4/burger/gui/gui_gizmo.h"
+#include "m4/burger/gui/game_menu.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
@@ -790,6 +791,34 @@ void BurgerEngine::wilburTeleported() {
 	}
 
 	_G(kernel).trigger_mode = oldMode;
+}
+
+void BurgerEngine::showSaveScreen() {
+	if (_useOriginalSaveLoad) {
+		GUI::CreateF2SaveMenu(_G(master_palette));
+	} else {
+		M4Engine::showSaveScreen();
+	}
+}
+
+void BurgerEngine::showLoadScreen(bool fromMainMenu) {
+	if (_useOriginalSaveLoad) {
+		if (fromMainMenu)
+			GUI::CreateLoadMenuFromMain(_G(master_palette));
+		else
+			GUI::CreateF3LoadMenu(_G(master_palette));
+
+	} else {
+		M4Engine::showLoadScreen(fromMainMenu);
+	}
+}
+
+bool BurgerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (g_vars && _G(game).room_id == 903)
+		// Allow loading games from the main menu
+		return true;
+	else
+		return M4Engine::canLoadGameStateCurrently(msg);
 }
 
 } // namespace Burger

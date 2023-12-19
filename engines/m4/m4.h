@@ -59,6 +59,8 @@ private:
 	Common::InSaveFile *getOriginalSave(int slot) const;
 
 protected:
+	bool _useOriginalSaveLoad = false;
+
 	// Engine APIs
 	Common::Error run() override;
 
@@ -137,6 +139,16 @@ public:
 	 * Lists the saves
 	 */
 	SaveStateList listSaves() const;
+
+	/**
+	 * Show save game dialog
+	 */
+	virtual void showSaveScreen();
+
+	/**
+	 * Show restore game dialog
+	 */
+	virtual void showLoadScreen(bool fromMainMenu = false);
 
 	/**
 	 * Show the engine information

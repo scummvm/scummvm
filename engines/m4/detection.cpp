@@ -41,7 +41,8 @@ const DebugChannelDef M4MetaEngineDetection::debugFlagList[] = {
 };
 
 M4MetaEngineDetection::M4MetaEngineDetection() : AdvancedMetaEngineDetection(M4::gameDescriptions,
-	sizeof(M4::M4GameDescription), M4::m4Games) {
+		sizeof(M4::M4GameDescription), M4::m4Games) {
+	_guiOptions = GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD);
 }
 
 REGISTER_PLUGIN_STATIC(M4_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, M4MetaEngineDetection);
