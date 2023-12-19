@@ -304,7 +304,7 @@ void OSystem_Atari::initBackend() {
 	atariEventSource->setGraphicsManager(atariGraphicsManager);
 
 #ifdef DISABLE_FANCY_THEMES
-	// On the slim build force "STMIDI" as the audio driver, i.e. do not attempt
+	// On the lite build force "STMIDI" as the audio driver, i.e. do not attempt
 	// to emulate anything by default. That prevents mixing silence and enable
 	// us to stop DMA playback which takes unnecessary cycles.
 	if (!ConfMan.hasKey("music_driver")) {

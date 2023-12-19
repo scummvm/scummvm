@@ -124,8 +124,7 @@ This one is still built and provided by Keith.
   optimal, but untested as of yet (I have been unable to get MIDI to work on my
   FireBee).
 
-- Removed features: FLAC, MPEG2, Network/Cloud Support, HQ Scalers,
-  GIF Support, MOD Support.
+- Removed features: FLAC, MPEG2, Network/Cloud Support, HQ Scalers.
 
 
 The rest of this document describes things specific to the Full / Lite package.
@@ -530,7 +529,7 @@ Closing words
 Many optimisations and improvements wouldn't be possible without help of Eero
 Tamminen, so thank you for all the help with profiling in Hatari.
 
-Miro Kropacek aka MiKRO / Mystic Bytes, 16.12.2023
+Miro Kropacek aka MiKRO / Mystic Bytes, 19.12.2023
 Kosice / Slovakia
 miro.kropacek@gmail.com
 http://mikro.atari.org
