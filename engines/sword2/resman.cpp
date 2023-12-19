@@ -314,12 +314,10 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		if (res == ENGLISH_SPEECH_FONT_ID && _vm->_isKorTrs) {
 			// Load Korean Font
 			uint32 korFontSize = 0;
-			Common::File *korFontFile = nullptr;
-
-			korFontFile = new Common::File();
-			korFontFile->open("bs2k.fnt");
-			if (korFontFile->isOpen()) {
-				korFontSize = korFontFile->size();
+			Common::File korFontFile;
+			korFontFile.open("bs2k.fnt");
+			if (korFontFile.isOpen()) {
+				korFontSize = korFontFile.size();
 			}
 
 			// Ok, we know the length so try and allocate the memory.
@@ -330,8 +328,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			file->read(_resList[res].ptr, len);
 
 			if (korFontSize > 0) {
-				korFontFile->read(_resList[res].ptr + len, korFontSize);
-				korFontFile->close();
+				korFontFile.read(_resList[res].ptr + len, korFontSize);
 			}
 
 			len += korFontSize;
