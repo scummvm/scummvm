@@ -62,23 +62,18 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 
 		switch (tag) {
 		case TEXT_CHUNK:
-			//fprintf( conv_fp, "TEXT_CHUNK\n" );
 			break;
 
 		case MESSAGE_CHUNK:
-			//fprintf( conv_fp, "MESSAGE_CHUNK\n" );
 			break;
 
 		case ENTRY_CHUNK:
-			//fprintf( conv_fp, "ENTRY_CHUNK\n" );
 			break;
 
 		case FALL_CHUNK:
-			//fprintf( conv_fp, "FALL_CHUNK\n" );
 			break;
 
 		case C_ASGN_CHUNK:
-			//fprintf( conv_fp, "C_ASGN_CHUNK\n" );
 			c_asgn = get_c_asgn(c, i);
 
 			decl = get_decl(c, c_asgn->c_op_l);
@@ -91,14 +86,12 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case ASGN_CHUNK:
-			//fprintf( conv_fp, "ASGN_CHUNK\n" );
 			asgn = get_asgn(c, i);
 			decl = get_decl(c, asgn->index);
 			conv_set_decl_val(decl, conv_ops_process_asgn(conv_get_decl_val(decl), asgn->op, asgn->opnd1));
 			break;
 
 		case HIDE_CHUNK:
-			//fprintf( conv_fp, "HIDE_CHUNK\n" );
 			misc = get_misc(c, i);
 			entry = get_hash_entry(c, misc->index);
 
@@ -107,7 +100,6 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case CHDE_CHUNK:
-			//fprintf( conv_fp, "CHDE_CHUNK\n" );
 			c_misc = get_c_misc(c, i);
 			entry = get_hash_entry(c, c_misc->index);
 
@@ -121,7 +113,6 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case UHID_CHUNK:
-			//fprintf( conv_fp, "UHID_CHUNK\n" );
 			misc = get_misc(c, i);
 			entry = get_hash_entry(c, misc->index);
 			if (!(entry->status & DESTROYED)) {
@@ -131,7 +122,6 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case CUHD_CHUNK:
-			//fprintf( conv_fp, "CUHD_CHUNK\n" );
 			c_misc = get_c_misc(c, i);
 			entry = get_hash_entry(c, c_misc->index);
 
@@ -147,14 +137,12 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case DSTR_CHUNK:
-			//fprintf( conv_fp, "DSTR_CHUNK\n" );
 			misc = get_misc(c, i);
 			entry = get_hash_entry(c, misc->index);
 			entry->status |= DESTROYED;
 			break;
 
 		case CDST_CHUNK:
-			//fprintf( conv_fp, "CDST_CHUNK\n" );
 			c_misc = get_c_misc(c, i);
 			entry = get_hash_entry(c, c_misc->index);
 
@@ -166,7 +154,6 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			break;
 
 		case COND_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_GOTO_CHUNK\n" );
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
@@ -175,15 +162,11 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 
 			if (conv_ops_cond_successful(l_op, c_goto->op, r_op)) {
 				c->myCNode = c_goto->index;
-
-				//////term_message( "COND GOTO %x", c->myCNode );
-				//fprintf( conv_fp, "COND GOTO %x\n", c->myCNode );
 				return;
 			}
 			break;
 
 		case COND_EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_EXIT_GOTO_CHUNK\n" );
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
@@ -198,14 +181,11 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 					c->exit_now = CONV_QUIT;
 					c->myCNode = CONV_QUIT;
 				}
-				//////term_message( "COND EXIT GOTO %x", c->myCNode );
-				//fprintf( conv_fp, "COND EXIT GOTO %x\n", c->myCNode );
 				return;
 			}
 			break;
 
 		case EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "EXIT_GOTO_CHUNK\n" );
 			go = get_goto(c, i);
 
 			if (go->index != CONV_QUIT) {
@@ -215,39 +195,31 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 				c->exit_now = CONV_QUIT;
 				c->myCNode = CONV_QUIT;
 			}
-			//////term_message( "EXIT GOTO %x", c->myCNode );
-			//fprintf( conv_fp, "EXIT GOTO %x\n", c->myCNode );
 			return;
 
 		case GOTO_CHUNK:
-			//////fprintf( conv_fp, "GOTO_CHUNK\n" );
 			go = get_goto(c, i);
 			c->myCNode = go->index;
-			//////term_message( "GOTO %x", c->myCNode );
-			//fprintf( conv_fp, "GOTO %x\n", c->myCNode );
 			return;
 
-			//replies are non-player responses
+		// Replies are non-player responses
 		case REPLY_CHUNK:
-			//fprintf( conv_fp, "REPLY_CHUNK\n" );
 			break;
 
 		case COND_REPLY_CHUNK:
-			//fprintf( conv_fp, "COND_REPLY_CHUNK\n" );
 			break;
 
 		case WEIGHT_REPLY_CHUNK:
-			//fprintf( conv_fp, "WEIGHT_REPLY_CHUNK\n" );
 			break;
 
 		case WEIGHT_PREPLY_CHUNK:
-			//fprintf( conv_fp, "WEIGHT_PREPLY_CHUNK\n" );
 			break;
 
 		default:
 			conv_ops_unknown_chunk(tag, "conv_exec_entry");
 			break;
 		}
+
 		i = next;
 	}
 }
@@ -279,72 +251,55 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 
 		switch (tag) {
 		case TEXT_CHUNK:
-			//fprintf( conv_fp, "TEXT_CHUNK\n" );
 			break;
 
 		case MESSAGE_CHUNK:
-			//fprintf( conv_fp, "MESSAGE_CHUNK\n" );
 			break;
 
 		case ENTRY_CHUNK:
-			//fprintf( conv_fp, "ENTRY_CHUNK\n" );
 			break;
 
 		case FALL_CHUNK:
-			//fprintf( conv_fp, "FALL_CHUNK\n" );
 			break;
 
 		case C_ASGN_CHUNK:
-			//fprintf( conv_fp, "C_ASGN_CHUNK\n" );
 			break;
 
 		case ASGN_CHUNK:
-			//fprintf( conv_fp, "ASGN_CHUNK\n" );
 			break;
 
 		case HIDE_CHUNK:
-			//fprintf( conv_fp, "HIDE_CHUNK\n" );
 			break;
 
 		case CHDE_CHUNK:
-			//fprintf( conv_fp, "CHDE_CHUNK\n" );
 			break;
 
 		case UHID_CHUNK:
-			//fprintf( conv_fp, "UHID_CHUNK\n" );
 			break;
 
 		case CUHD_CHUNK:
-			//fprintf( conv_fp, "CUHD_CHUNK\n" );
 			break;
 
 		case DSTR_CHUNK:
-			//fprintf( conv_fp, "DSTR_CHUNK\n" );
 			break;
 
 		case CDST_CHUNK:
-			//fprintf( conv_fp, "CDST_CHUNK\n" );
 			break;
 
 		case COND_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_GOTO_CHUNK\n" );
 			break;
 
 		case COND_EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_EXIT_GOTO_CHUNK\n" );
 			break;
 
 		case EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "EXIT_GOTO_CHUNK\n" );
 			break;
 
 		case GOTO_CHUNK:
-			//fprintf( conv_fp, "GOTO_CHUNK\n" );
 			break;
 
 		case REPLY_CHUNK:
 			reply = get_reply(c, i);
-			//fprintf( conv_fp, "REPLY_CHUNK\n" );
 
 			if (is_valid) {
 				result = 1;
@@ -353,11 +308,9 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 				if (!strcmp(_G(cdd).mesg, "")) {
 					text_len = conv_ops_text_strlen(get_string(c, reply->index + sizeof(mesg_chunk)));
 
-					////fprintf( conv_fp, "reply->index %x text_len %d\n", reply->index, text_len );
 					Common::strcpy_s(_G(cdd).mesg, get_string(c, reply->index + sizeof(mesg_chunk) + text_len));
 					_G(cdd).mesg_snd_file = get_string(c, reply->index + sizeof(mesg_chunk));
-					//////term_message( "Rreply %s", _G(cdd).mesg_snd_file );
-					////fprintf( conv_fp, "Rreply %s %x\n", _G(cdd).mesg_snd_file, c->myCNode );
+
 				} else {
 					Common::strcat_s(_G(cdd).mesg, " ");
 					text_len = conv_ops_text_strlen(get_string(c, reply->index + sizeof(mesg_chunk)));
@@ -368,7 +321,6 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 			break;
 
 		case COND_REPLY_CHUNK:
-			//fprintf( conv_fp, "COND_REPLY_CHUNK\n" );
 			c_reply = get_c_reply(c, i);
 			decl = get_decl(c, c_reply->op_l);
 
@@ -383,8 +335,7 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 					text_len = conv_ops_text_strlen(get_string(c, c_reply->index + sizeof(mesg_chunk)));
 					Common::strcpy_s(_G(cdd).mesg, get_string(c, c_reply->index + sizeof(mesg_chunk) + text_len));
 					_G(cdd).mesg_snd_file = get_string(c, c_reply->index + sizeof(mesg_chunk));
-					//////term_message( "cond reply %s", _G(cdd).mesg_snd_file );
-					////fprintf( conv_fp, "cond reply %s %x\n", _G(cdd).mesg_snd_file, c->myCNode );
+
 				} else {
 					Common::strcat_s(_G(cdd).mesg, " ");
 					text_len = conv_ops_text_strlen(get_string(c, c_reply->index + sizeof(mesg_chunk)));
@@ -395,7 +346,6 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 			break;
 
 		case WEIGHT_REPLY_CHUNK:
-			//fprintf( conv_fp, "WEIGHT_REPLY_CHUNK\n" );
 			cSize = i;
 			w_reply = get_w_reply(c, i);
 			cSize += sizeof(w_reply_chunk);
@@ -438,7 +388,6 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 			break;
 
 		case WEIGHT_PREPLY_CHUNK:
-			//fprintf( conv_fp, "WEIGHT_REPLY_CHUNK\n" );
 			cSize = i;
 			w_reply = get_w_reply(c, i);
 			cSize += sizeof(w_reply_chunk);
@@ -524,14 +473,13 @@ static void find_true_ent(int entry_num, Conv *c) {
 			break;
 		}
 
-		//ent will now be pointing at an ENTRY or FALLTHROUGH
+		// ent will now be pointing at an ENTRY or FALLTHROUGH
 		sub_ent = next;
 		conv_ops_get_entry(sub_ent, &next, &tag, c);
 		switch (tag) {
 		case FALL_CHUNK:
-			//we either want to jump to a new node
-			//or skip to the first offset.
-			//fprintf( conv_fp, "FALL_CHUNK 1.\n" );
+			// We either want to jump to a new node
+			// or skip to the first offset.
 
 			fall = get_fall(c, sub_ent);
 			assert(fall);
@@ -555,7 +503,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 
 	_GC(ent) = 0;
 
-	//not only i<entry_num, check to see entry->num_entries
+	// Not only i<entry_num, check to see entry->num_entries
 	for (i = 0, n = 0; n < num_ents; n++) {
 		offset = get_long(c, ent);
 		entry = get_entry(c, ent + offset);
@@ -566,7 +514,6 @@ static void find_true_ent(int entry_num, Conv *c) {
 		if (((entry->status) & 0x00000003) && ok_status(entry)) //was 1
 			i++;
 
-		//fprintf( conv_fp, "find_true_ent _GC(ent)++\n" );
 		_GC(ent)++;
 
 		ent += sizeof(int32);
@@ -587,7 +534,7 @@ static int conv_get_node_text(Conv *c) {
 	_G(cdd).num_txt_ents = 0;
 	_GC(width) = 0; _GC(height) = 0;
 
-	//conv _get_node_text will either get a NODE or LNODE
+	// conv _get_node_text will either get a NODE or LNODE
 	conv_ops_get_entry(offset, &next, &tag, c);
 	offset = 0; //not needed.?
 	_GC(n_t_e) = 0;
@@ -608,14 +555,14 @@ static int conv_get_node_text(Conv *c) {
 		break;
 
 	default:
-		//handle error.
+		// handle error.
 		break;
 	}
 
 	switch (tag) {
 	case LNODE_CHUNK:
-		//was in bounds.
-		//lnode->entry_num starts at 0. in the chunk.
+		// was in bounds.
+		// lnode->entry_num starts at 0. in the chunk.
 		if (lnode->entry_num >= lnode->num_entries)
 			lnode->entry_num = 0;
 
@@ -646,7 +593,7 @@ static int conv_get_node_text(Conv *c) {
 		}
 
 		lnode->entry_num++;
-		//fprintf( conv_fp, "2. lnode_chunk: conv_get_node_text _GC(ent)=lnode->entry_num++!!!!\n" );
+
 		_GC(ent) = lnode->entry_num;
 		break;
 
@@ -679,7 +626,6 @@ static int conv_get_node_text(Conv *c) {
 
 				c->myCNode = fall->index;
 				c->mode = CONV_GET_TEXT_MODE;
-				//fprintf( conv_fp, "FALLTHROUGH!\n" );
 				result = 0;
 			}
 		}
@@ -698,25 +644,25 @@ void conv_shutdown(void) {
 	_GC(myTextScrn) = nullptr;
 }
 
-// Simplify me.
 static void conv_start(Conv *c) {
 	int32 ok = 1, ent = 0, tag = 0, next;
 	decl_chunk *decl;
 
 	switch (c->exit_now) {
-	case CONV_OK: // Potential prob. when entering while loop.
+	case CONV_OK:
+		// Potential prob. when entering while loop.
 		break;
 
-		// Goto_exit encountered.
-		//a conversation state.
+	// Goto_exit encountered.
+	// a conversation state.
 	case CONV_BAIL:
 		return;
 
-		// Goodbye forever.
+	// Goodbye forever.
 	case CONV_QUIT:
 		return;
 
-		//new conv. no restore file on hard disk.
+	//new conv. no restore file on hard disk.
 	case CONV_NEW:
 		c->exit_now = CONV_OK;
 		c->myCNode = 0;
@@ -746,11 +692,10 @@ static void conv_start(Conv *c) {
 	}
 	c->myCNode = ent;
 
-	//if we exit, the current node is set, the next node is null
+	// if we exit, the current node is set, the next node is null
 }
 
 static int conv_next_node(Conv *c) {
-	//delete me....
 	if (c->myCNode == -1)
 		return 0;
 
@@ -779,9 +724,8 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 	int i = 0;
 	int32 sub_ent = 0;
 	int	result = 1;
-	//int changed = 0;
 
-	//repeat fallthrough till done
+	// Repeat fallthrough till done
 	for (;; ) {
 		// Start by getting the current NODE or LNODE
 		conv_ops_get_entry(ent, &next, &tag, c);
@@ -805,18 +749,18 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 			break;
 		}
 
-		//ent will now be pointing at an ENTRY or FALLTHROUGH
+		// ent will now be pointing at an ENTRY or FALLTHROUGH
 		sub_ent = next;
 		conv_ops_get_entry(sub_ent, &next, &tag, c);
 		switch (tag) {
 		case FALL_CHUNK:
-			//we either want to jump to a new node
-			//or skip to the first offset.
+			// We either want to jump to a new node
+			// or skip to the first offset.
 
 			fall = get_fall(c, sub_ent);
 			assert(fall);
 
-			//do this to skip the fall chunk and all will be fine.
+			// Do this to skip the fall chunk and all will be fine.
 			ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
 			n++; //don't increment i.
 			break;
@@ -832,7 +776,7 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 			break;
 	}
 
-	//not only i<entry_num, check to see entry->num_entries
+	// Not only i<entry_num, check to see entry->num_entries
 	while ((i < entry_num) && (n < num_ents)) {
 		offset = get_long(c, ent);
 		entry = get_entry(c, ent + offset);
@@ -869,37 +813,28 @@ static int conv_run(Conv *c) {
 	if (!c)
 		return 0;
 
-	int /*i=0,*/ result = 0;
+	int result = 0;
 	int ok = 1;
 
 	if (conv_next_node(c)) {
 		switch (c->exit_now) {
 		case CONV_NEW:
-			//term_message( "conv_run CONV_NEW" );
 			break;
 
 		case CONV_QUIT:
-			//term_message( "conv_run CONV_QUIT" );
 			break;
 
 		case CONV_BAIL:
-			//term_message( "conv_run CONV_BAIL" );
 			break;
 
 		case CONV_OK:
-			//term_message( "conv_run CONV_OK" );
 			while (ok && conv_next_node(c)) {
 				switch (c->mode) {
 				case CONV_GET_TEXT_MODE:
 					cdd_init();
-					//////fprintf( conv_fp, "conv_run cdd_init\n" );
-
-					//////term_message( "conv_run CONV_GET_TEXT_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_GET_TEXT_MODE %x\n", c->myCNode );
 
 					c->mode = CONV_GET_MESG_MODE;
 					if (conv_get_node_text(c)) {
-						//////fprintf( conv_fp, "got some text %d\n", _G(cdd).num_txt_ents );
 						ok = 0;
 						if (_G(cdd).num_txt_ents) { //node
 							mouse_unlock_sprite();
@@ -908,25 +843,20 @@ static int conv_run(Conv *c) {
 							textBoxInit();
 						} else { //linear node.
 							conv_set_event(-1);
-							//////term_message( "conv_run LNODE text entry" );
+
 							Common::strcpy_s(_G(player).verb, get_conv_name()); //was verb.
 							c->c_entry_num = 1;
 						}
-					} ////else fprintf( conv_fp, "didn't get any text\n" );
+					}
 					break;
 
 				case CONV_GET_MESG_MODE:
 					cdd_init();
-					//////fprintf( conv_fp, "conv_run cdd_init\n" );
-
-					//////term_message( "conv_run CONV_GET_MESG_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_GET_MESG_MODE %x %d\n", c->myCNode, c->c_entry_num );
 
 					if (conv_process_entry(c->c_entry_num, c, CONV_GET_MESG_MODE)) {
 						mouse_unlock_sprite();
 						mouse_lock_sprite(5);
 
-						//////fprintf( conv_fp, "conv_run successful\n" );
 						conv_set_event(-1);
 						Common::strcpy_s(_G(player).verb, get_conv_name());
 
@@ -936,9 +866,6 @@ static int conv_run(Conv *c) {
 					break;
 
 				case CONV_UPDATE_MODE:
-					//////term_message( "conv_run CONV_UPDATE_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_UPDATE_MODE %x\n", c->myCNode );
-					//////term_message( "conv_process_entry %d", c->c_entry_num );
 					conv_process_entry(c->c_entry_num, c, CONV_UPDATE_MODE);
 
 					c->mode = CONV_GET_TEXT_MODE;
@@ -998,13 +925,9 @@ void set_dlg_rect() {
 	screen_x_size = VIDEO_W;
 	screen_y_size = (game_buff_ptr->y2 - game_buff_ptr->y1);
 
-	//term_message( "y2 %d", game_buff_ptr->y2 );
-	//term_message( "y1 %d", game_buff_ptr->y1 );
-
 	_GC(height) = gr_font_get_height() + _GC(conv_font_spacing_v); // Must have....
 	_GC(width) += 2 * _GC(conv_font_spacing_h);
 
-	//fprintf( conv_fp, "_GC(width) %d _GC(height) %d _G(cdd).nte %d\n", _GC(width), _GC(height), _G(cdd).num_txt_ents );
 	sizex = _GC(width);
 	sizey = _G(cdd).num_txt_ents * (_GC(height))+_GC(conv_font_spacing_v);
 
@@ -1052,7 +975,6 @@ void set_dlg_rect() {
 	if (_GC(r_y1) < 0)
 		_GC(r_y1) = 0;
 
-	//fprintf( conv_fp, "_GC(r_x1) %d sizex %d\n", _GC(r_x1), sizex );
 	_GC(r_y2) = _GC(r_y1) + sizey - 1;
 	_GC(r_x2) = _GC(r_x1) + sizex - 1;
 

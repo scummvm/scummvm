@@ -207,8 +207,6 @@ GrBuff *load_codes(SysFile *code_file) {
 	x_size = convert_intel16(x_size);
 	y_size = convert_intel16(y_size);
 
-	//int buffer_size = (int)(x_size * y_size);
-
 	GrBuff *temp = new GrBuff(x_size, y_size);
 	if (!temp) {
 		error_show(FL, 'OOM!', "load_codes: %d bytes", (int16)(x_size * y_size));
@@ -317,8 +315,7 @@ static Common::String get_attribute_filename(const SceneDef *rdef) {
 }
 
 static void recreate_animation_draw_screen(GrBuff **loadBuf) {
-	// remove previous animation draw screen
-
+	// Remove previous animation draw screen
 	if (_G(gameDrawBuff)) {
 		gui_buffer_deregister((Buffer *)_G(gameDrawBuff));
 		delete _G(gameDrawBuff);
@@ -358,6 +355,5 @@ static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry)
 		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colours
 	}
 }
-
 
 } // End of namespace M4
