@@ -472,14 +472,12 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			} else {
 				find_offset = offset;
 			}
-			if (next_record == offset) // only one record of fname in hash table
-			{
+			if (next_record == offset) { // only one record of fname in hash table
 				finded = 1;
 			} else {
 				offset = next_record;
 			}
-		} else    // collision here, search the next entry to see if it is empty until find a empty one
-		{
+		} else {   // collision here, search the next entry to see if it is empty until find a empty one
 			next_entry = (next_entry + 1) % hash_table_size;  // search the hash table a round way
 			offset = HASH_RECORD_LENGTH * next_entry + 4; // 4 bytes is header of hash file, store hash_table_size
 		}
