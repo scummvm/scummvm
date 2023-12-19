@@ -1205,8 +1205,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 
 int32 GetWSAssetCELFrameRate(uint32 hash) {
-	uint32 *celsPtr;	// *mainAssetPtr, 
-//	int32 assetSize;
+	uint32 *celsPtr;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1233,8 +1232,7 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 
 
 int32 GetWSAssetCELPixSpeed(uint32 hash) {
-	uint32 *celsPtr;	// *mainAssetPtr, 
-//	int32 assetSize;
+	uint32 *celsPtr;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1259,10 +1257,9 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 	return celsPtr[CELS_PIX_SPEED];
 }
 
-
 int32 ws_get_sprite_width(uint32 hash, int32 index) {
-	uint32 *celsPtr, *offsets, *data, *myCelSource;	// *mainAssetPtr, 
-	int32 numCels;	// AssetSize, 
+	uint32 *celsPtr, *offsets, *data, *myCelSource;
+	int32 numCels;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1304,10 +1301,9 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	return (int32)myCelSource[CELS_W];
 }
 
-
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
-	uint32 *celsPtr, *offsets, *data, *myCelSource;	// *mainAssetPtr, 
-	int32 numCels;	// assetSize, 
+	uint32 *celsPtr, *offsets, *data, *myCelSource; 
+	int32 numCels;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1381,9 +1377,8 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 	return _GWS(globalSEQUHandles)[hash];
 }
 
-
 MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int32 *machInstrOffset) {
-	uint32 *machPtr;	// *mainAssetPtr, 
+	uint32 *machPtr;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1457,10 +1452,8 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 	return _GWS(globalDATAHandles)[hash];
 }
 
-
 int32 ws_GetDATACount(uint32 hash) {
-	uint32 *dataPtr;	// *mainAssetPtr, 
-//	int32 assetSize;
+	uint32 *dataPtr;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1486,7 +1479,6 @@ int32 ws_GetDATACount(uint32 hash) {
 	// Return the number of rows in the data block
 	return dataPtr[DATA_REC_COUNT];
 }
-
 
 static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	uint32 celsType, celsSize, numColors, *myColors;
@@ -1839,7 +1831,6 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 }
 
 void ws_CloseSSstream(CCB *myCCB) {
-
 	// Verify the parameters
 	if ((!myCCB) || (!(myCCB->flags & CCB_DISC_STREAM))) {
 		ws_LogErrorMsg(FL, "Invalid CCB* given.");
