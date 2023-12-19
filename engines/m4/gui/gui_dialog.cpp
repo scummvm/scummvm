@@ -617,8 +617,7 @@ static void DialogShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 		while (myRect) {
 			d->dlgBuffer->refresh_video(myRect->x1, myRect->y1, myRect->x1 - myScreen->x1, myRect->y1 - myScreen->y1,
 				myRect->x2 - myScreen->x1, myRect->y2 - myScreen->y1);
-			//vmng_refresh_video(myRect->x1, myRect->y1, myRect->x1 - myScreen->x1, myRect->y1 - myScreen->y1,
-			//							myRect->x2 - myScreen->x1, myRect->y2 - myScreen->y1, d->dlgBuffer);
+
 			myRect = myRect->next;
 		}
 	} else {

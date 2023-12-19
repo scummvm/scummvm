@@ -788,8 +788,8 @@ bool GetPrevListItem(Item *myItem) {
 }
 
 bool GetPrevPageList(Item *myItem) {
-	int32			i;
-	bool			changed = false;
+	int32 i;
+	bool changed = false;
 
 	if (myItem->currItem && myItem->viewBottom) {
 		for (i = 0; i < (myItem->listView - 1); i++) {
@@ -882,9 +882,9 @@ bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int32 parm1
 }
 
 bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset) {
-	int32 			listboxContentX2, itemOffset, fontHeight;
+	int32 listboxContentX2, itemOffset, fontHeight;
 	ListItem *myListItem;
-	M4Rect			interiorRect;
+	M4Rect interiorRect;
 	ButtonDrawRec	bdr;
 	Font *currFont;
 
@@ -1166,10 +1166,10 @@ static bool Item_UndoTextFieldChange(void) {
 }
 
 void SetTextBlockBegin(Item *myItem, int32 relXPos) {
-	char				myChar, *scan;
-	bool				finished = false;
-	M4Rect				interiorRect;
-	ButtonDrawRec		bdr;
+	char myChar, *scan;
+	bool finished = false;
+	M4Rect interiorRect;
+	ButtonDrawRec bdr;
 
 	bdr.el_type = TEXTFIELD;
 	bdr.pressed = true;	//since this procedure will only be called myItem is the default item
@@ -1196,10 +1196,10 @@ void SetTextBlockBegin(Item *myItem, int32 relXPos) {
 }
 
 void SetTextBlockEnd(Item *myItem, int32 relXPos) {
-	char				myChar, *scan;
-	bool				finished = false;
-	M4Rect				interiorRect;
-	ButtonDrawRec		bdr;
+	char myChar, *scan;
+	bool finished = false;
+	M4Rect interiorRect;
+	ButtonDrawRec bdr;
 
 	bdr.el_type = TEXTFIELD;
 	bdr.pressed = true;	//since this procedure will only be called myItem is the default item
