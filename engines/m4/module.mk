@@ -46,7 +46,6 @@ MODULE_OBJS = \
 	graphics/gr_series.o \
 	graphics/gr_sprite.o \
 	graphics/gr_surface.o \
-	graphics/graphics.o \
 	graphics/krn_pal.o \
 	graphics/rend.o \
 	gui/gui_buffer.o \

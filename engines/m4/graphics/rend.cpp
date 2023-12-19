@@ -990,42 +990,6 @@ void render_sprite_to_8BBM(RendGrBuff *Destination, DrawRequestX *dr, RendCell *
 	UpdateRect->y1 = MAX(UpdateRect->y1, ClipRectangle->y1);
 	UpdateRect->y2 = MIN(UpdateRect->y2, ClipRectangle->y2);
 
-#ifdef DEBUGGING_REND
-	{
-		int32 i;
-
-		for (i = 0; i < 11; ++i)
-			if (renderer == fn[i].addr) {
-				term_message("renderer: %s", fn[i].name);
-				break;
-			}
-	}
-#endif
-
-#ifdef DEBUGGING_REND
-	/* hilite update rectangle */
-	{
-		int32 i;
-		uint8 *p;
-
-		p = (uint8 *)Destination->PixMap + UpdateRect->y1 * Destination->Width;
-		for (i = UpdateRect->x1; i <= UpdateRect->x2; ++i)
-			*(p + i) = ~(*(p + i));
-
-		p = (uint8 *)Destination->PixMap + UpdateRect->y2 * Destination->Width;
-		for (i = UpdateRect->x1; i <= UpdateRect->x2; ++i)
-			*(p + i) = ~(*(p + i));
-
-		p = (uint8 *)Destination->PixMap + UpdateRect->x1;
-		for (i = UpdateRect->y1; i <= UpdateRect->y2; ++i)
-			*(p + i * Destination->Width) = ~(*(p + i * Destination->Width));
-
-		p = (uint8 *)Destination->PixMap + UpdateRect->x2;
-		for (i = UpdateRect->y1; i <= UpdateRect->y2; ++i)
-			*(p + i * Destination->Width) = ~(*(p + i * Destination->Width));
-	}
-#endif
-
 	for (;;) {
 		errY -= dr->scale_y;
 
