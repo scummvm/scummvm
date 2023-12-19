@@ -1636,6 +1636,11 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		_allProjUuidMap[detProject] = _engineUuidMap[detProject] = detUUID;
 	}
 
+	// Scan for resources
+	for (int i = 0; i < kEngineDataGroupCount; i++) {
+		createDataFilesList(static_cast<EngineDataGroup>(i), setup.srcDir, setup.defines, _engineDataGroupDefs[i].dataFiles, _engineDataGroupDefs[i].winHeaderPath);
+	}
+
 	createWorkspace(setup);
 
 	StringList in, ex, pchDirs, pchEx;
@@ -2257,6 +2262,117 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	}
 	if (shouldInclude.size() != 1)
 		error("Malformed file " + moduleMkFile);
+}
+
+static EngineDataGroupResolution s_engineDataResolutions[] = {
+	{kEngineDataGroupNormal,	"dists/engine-data/engine_data.mk",			"dists/scummvm_rc_engine_data.rh"},
+	{kEngineDataGroupBig,		"dists/engine-data/engine_data_big.mk",		"dists/scummvm_rc_engine_data_big.rh"},
+	{kEngineDataGroupCore,		"dists/engine-data/engine_data_core.mk",	"dists/scummvm_rc_engine_data_core.rh"},
+};
+
+void ProjectProvider::createDataFilesList(EngineDataGroup engineDataGroup, const std::string &baseDir, const StringList &defines, StringList &outDataFiles, std::string &outWinHeaderPath) const {
+	outDataFiles.clear();
+
+	const EngineDataGroupResolution *resolution = nullptr;
+
+	for (const EngineDataGroupResolution &resolutionCandidate : s_engineDataResolutions) {
+		if (resolutionCandidate.engineDataGroup == engineDataGroup) {
+			resolution = &resolutionCandidate;
+			break;
+		}
+	}
+
+	if (!resolution)
+		error("Engine data group resolution wasn't defined");
+
+	std::string mkFile = baseDir + "/" + resolution->mkFilePath;
+	std::ifstream moduleMk(mkFile.c_str());
+	if (!moduleMk)
+		error(mkFile + " is not present");
+
+	outWinHeaderPath = resolution->winHeaderPath;
+
+	std::stack<bool> shouldInclude;
+	shouldInclude.push(true);
+
+	std::string line;
+	for (;;) {
+		std::getline(moduleMk, line);
+
+		if (moduleMk.eof())
+			break;
+
+		if (moduleMk.fail())
+			error(std::string("Failed while reading from ") + mkFile);
+
+		TokenList tokens = tokenize(line);
+		if (tokens.empty())
+			continue;
+
+		TokenList::const_iterator i = tokens.begin();
+		if (*i == "DIST_FILES_LIST") {
+			if (tokens.size() < 3)
+				error("Malformed DIST_FILES_LIST definition in " + mkFile);
+			++i;
+
+			if (*i != "+=")
+				error("Malformed DIST_FILES_LIST definition in " + mkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = unifyPath(*i);
+
+					if (shouldInclude.top()) {
+						outDataFiles.push_back(filename);
+					}
+					++i;
+				}
+			}
+		} else if (*i == "ifdef") {
+			if (tokens.size() < 2)
+				error("Malformed ifdef in " + mkFile);
+			++i;
+
+			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
+				shouldInclude.push(false);
+			else
+				shouldInclude.push(true && shouldInclude.top());
+		} else if (*i == "ifndef") {
+			if (tokens.size() < 2)
+				error("Malformed ifndef in " + mkFile);
+			++i;
+
+			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
+				shouldInclude.push(true && shouldInclude.top());
+			else
+				shouldInclude.push(false);
+		} else if (*i == "else") {
+			bool last = shouldInclude.top();
+			shouldInclude.pop();
+			shouldInclude.push(!last && shouldInclude.top());
+		} else if (*i == "endif") {
+			if (shouldInclude.size() <= 1)
+				error("endif without ifdef found in " + mkFile);
+			shouldInclude.pop();
+		} else if (*i == "elif") {
+			error("Unsupported operation 'elif' in " + mkFile);
+		} else if (*i == "ifeq" || *i == "ifneq") {
+			// XXX
+			shouldInclude.push(false);
+		} else if (*i == "#") {
+			// Comment, ignore
+		} else
+			error("Unknown definition line in " + mkFile);
+	}
+
+	if (shouldInclude.size() != 1)
+		error("Malformed file " + mkFile);
 }
 
 void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
