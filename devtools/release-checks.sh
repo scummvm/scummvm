@@ -312,7 +312,6 @@ declare -a distfiles=(
   "dists/engine-data/README#%FILE%:"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
   "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"dists/engine-data/%FILE%\""
-  "dists/win32/migration.txt#%FILE%"
 )
 
 OLDIFS="$IFS"
