@@ -42,12 +42,10 @@ enum {
 static RenderResult skip_RLE8_line() {
 	uint8 *from = _GR(sourceAddress);
 
-	for (;;)
-	{
+	for (;;) {
 		if (*from++)
 			++from;
-		else if (*from++ <= kJumpXY)
-		{
+		else if (*from++ <= kJumpXY) {
 			_GR(sourceAddress) = from;
 			return (RenderResult)(*(from - 1));
 		} else
@@ -342,8 +340,7 @@ static RenderResult r_4() {
 	int32 PixelPos = _GR(StartingPixelPos);
 	long Inc = _GR(Increment);
 
-	for (;;)
-	{
+	for (;;) {
 #ifdef OPTIMIZE_CLIP
 		if (Inc == 1) {
 			if (PixelPos >= _GR(RightPorch)) {
