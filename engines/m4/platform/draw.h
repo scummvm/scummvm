@@ -44,37 +44,6 @@ extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
  */
 extern size_t RLE8Decode_Size(byte *src, int pitch);
 
-
-extern void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y);
-extern void RLE_DrawRev(Buffer *src, Buffer *dest, int32 x, int32 y);
-extern void RLE_DrawDepth(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode);
-extern void RLE_DrawDepthRev(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode);
-
-extern void Raw_Draw(Buffer *src, Buffer *dest, int32 x, int32 y);
-extern void Raw_DrawRev(Buffer *src, Buffer *dest, int32 x, int32 y);
-extern void Raw_DrawDepth(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode);
-extern void Raw_DrawDepthRev(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode);
-
-extern void Raw_SDraw(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawRev(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawDepth(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawDepthRev(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, uint8 *palette, uint8 *inverseColorTable);
-
-extern void RLE_DrawOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset);
-extern void RLE_DrawDepthOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset);
-extern void RLE_DrawRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset);
-extern void RLE_DrawDepthRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset);
-
-extern void Raw_DrawOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset);
-extern void Raw_DrawRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset);
-extern void Raw_DrawDepthOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset);
-extern void Raw_DrawDepthRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset);
-
-extern void Raw_SDrawOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, int32 leftOffset, int32 rightOffset, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawDepthOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset, uint8 *palette, uint8 *inverseColorTable);
-extern void Raw_SDrawDepthRevOffs(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode, int32 leftOffset, int32 rightOffset, uint8 *palette, uint8 *inverseColorTable);
-
 } // namespace M4
 
 #endif
