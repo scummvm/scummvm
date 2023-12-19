@@ -49,11 +49,6 @@ void Room::parser() {
 	_G(kernel).trigger = KT_DAEMON;
 }
 
-void Section::daemon() {
-	warning("TODO: section daemon");
-	_G(kernel).continue_handling_trigger = true;
-}
-
 
 void Sections::global_section_constructor() {
 	uint sectionNum = _G(game).new_section;

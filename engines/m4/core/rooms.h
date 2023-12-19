@@ -76,7 +76,7 @@ public:
 	Room *operator[](uint roomNum);
 
 	virtual void global_room_init() {}
-	virtual void daemon();
+	virtual void daemon() = 0;
 	virtual void tick() {}
 	virtual void pre_parser() {}
 	virtual void parser() {}

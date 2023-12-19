@@ -71,6 +71,4 @@ void error_look_up(quadchar errorcode, char *result_string) {
 	}
 }
 
-
-
 } // namespace M4
