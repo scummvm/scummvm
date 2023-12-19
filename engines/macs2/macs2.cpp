@@ -348,6 +348,31 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 		byte val1 = ScriptReadByte(stream);
 
 		// TODO: Handle other opcodes above
+		if (opcode1 == 0x01) {
+			assert(false);
+			// TODO: Implement - this looks like some kind of bookkeeping since it doesn't determine if we continue or not?
+			// TODO: Maybe skip for now and note if it should be implemented later
+				/*
+				call	far 0037h:9F07h
+				call	far 0037h : 9F23h
+				mov[bp - 11h], ax
+				call	far 0037h : 9F4Dh
+				mov	cx, ax
+				mov	bx, dx
+				mov	ax, [bp - 11h]
+				shl	ax, 2h
+				les	di, [06C6h]
+				add	di, ax
+				mov	es : [di - 4h] , cx
+				mov	es : [di - 2h] , bx
+				// This jumps ahead to the end of the loop
+				jmp	0E3BAh
+				*/
+		}
+		else if (opcode1 == 0x02 || opcode1 == 0x03) {
+			// TODO: Implement
+			assert(false);
+		}
 		if (opcode1 == 0x04) {
 			// l0037_DC44:
 			uint16 v1;
