@@ -58,17 +58,13 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 		error_show(FL, 'OOM!', "scaled buffer h:%uld w:%uld", D->h, D->stride);
 
 	ErrY = 50;
-	for (i = 0; i < S->h; ++i)
-	{
+	for (i = 0; i < S->h; ++i) {
 		ErrY += ScaleY;
-		while (ErrY >= 100)
-		{
+		while (ErrY >= 100) {
 			ErrX = 50;
-			for (j = 0; j < S->w; ++j)
-			{
+			for (j = 0; j < S->w; ++j) {
 				ErrX += ScaleX;
-				while (ErrX >= 100)
-				{
+				while (ErrX >= 100) {
 					*pScaled++ = *pData;
 					ErrX -= 100;
 				}

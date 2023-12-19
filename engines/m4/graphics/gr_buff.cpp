@@ -68,8 +68,7 @@ void GrBuff::alloc_pixmap() {
 	pixmap = NewHandle(pitch * height, "pixmap");
 	if (!pixmap) {
 		term_message("GrBuff::alloc_pixmap(): Trying to free up %d bytes", pitch * height);
-		if (MakeMem(pitch * height, "pixmap"))
-		{
+		if (MakeMem(pitch * height, "pixmap")) {
 			pixmap = NewHandle(pitch * height, "pixmap");
 			if (!pixmap)
 				error_show(FL, 15, "pixmap h:%d w:%d bytes:%d", height, pitch, pitch * height);
@@ -82,8 +81,7 @@ void GrBuff::alloc_pixmap() {
 }
 
 uint8 *GrBuff::get_pixmap() {
-	if (pixmap)
-	{
+	if (pixmap) {
 		lock();
 		return (uint8 *)*pixmap;
 	}
@@ -91,8 +89,7 @@ uint8 *GrBuff::get_pixmap() {
 }
 
 Buffer *GrBuff::get_buffer() {
-	if (pixmap)
-	{
+	if (pixmap) {
 		lock();
 		dummy.data = (uint8 *)*pixmap;
 		dummy.w = w;
@@ -108,7 +105,6 @@ Buffer *GrBuff::get_buffer() {
 void GrBuff::refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2) {
 	vmng_refresh_video(scrnX, scrnY, x1, y1, x2, y2, get_buffer());
 }
-
 
 int32 gr_buffer_free(Buffer *buf) {
 	buf->w = buf->h = buf->stride = 0;
@@ -155,11 +151,11 @@ int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 
 	memset(buf->data, 0, buf->stride * h);
 
-	return(true);
+	return (true);
 }
 
 bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
-	int32 dx, int32 dy, int32 w, int32 h) {
+                           int32 dx, int32 dy, int32 w, int32 h) {
 	// stupid check for no data
 	if (!from || !to || !from->data || !to->data)
 		error_show(FL, 'BUF!', "buff_rect_copy2");
