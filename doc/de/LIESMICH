@@ -2048,12 +2048,6 @@ Verzeichnis gespeichert, auf welches über den Pfad
 „%APPDATA%\ScummVM\Saved Games\“ zugegriffen werden kann. Es wird auch sichtbar,
 wenn die Anzeige versteckter Dateien im Windows Explorer aktiviert wird.
 
-Hinweis für Anwender von Windows NT4/2000/XP/Vista/7/8/10: Das Standard-
-Verzeichnis für Spielstände wurde bei ScummVM 1.5.0 geändert. Die
-Stapelverarbeitungsdatei migration.bat kann verwendet werden, um die Spielstände
-vom alten Standard-Verzeichnis in das neue zu kopieren.
-
-
 6.1) Automatische Speicherung der Spielstände:
 ---- -----------------------------------------
 Bei einigen Spielen (nämlich „Beneath a Steel Sky“, „Flight of the Amazon
