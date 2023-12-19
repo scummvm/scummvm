@@ -129,16 +129,18 @@ Common::Error TwpEngine::run() {
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
 
-	const SQChar *code = R"(
-	MainStreet <- {
-		background = "MainStreet"
-		enter = function(enter_door) {}
-	}
-	defineRoom(MainStreet)
-	cameraInRoom(MainStreet)
-	cameraAt(0,128)
-	cameraPanTo(2820, 128, 5000, 2)
-	)";
+	// const SQChar *code = R"(
+	// MainStreet <- {
+	// 	background = "MainStreet"
+	// 	enter = function(enter_door) {}
+	// }
+	// defineRoom(MainStreet)
+	// cameraInRoom(MainStreet)
+	// cameraAt(0,128)
+	// cameraPanTo(2820, 128, 5000, 2)
+	// )";
+
+	const SQChar *code = "cameraInRoom(StartScreen)";
 
 	_vm.exec(code);
 
@@ -228,6 +230,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 		GGPackEntryReader entry;
 		entry.open(_pack, background + ".wimpy");
 		result->load(entry);
+		result->_name = name;
 		result->_pseudo = pseudo;
 		for (int i = 0; i < result->_layers.size(); i++) {
 			Layer *layer = result->_layers[i];

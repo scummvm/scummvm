@@ -264,7 +264,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	_anim = anim;
 	_disabled = false;
 	setName(anim->name);
-	_sheet = anim->sheet.size() == 0 ? _obj->_room->_sheet : anim->sheet;
+	_sheet = (anim->sheet.size() == 0 && _obj->_room) ? _obj->_room->_sheet : anim->sheet;
 	_frames = anim->frames;
 	_frameIndex = instant && _frames.size() > 0 ? _frames.size() - 1 : 0;
 	_frameDuration = 1.0 / _getFps(fps, anim->fps);
@@ -337,12 +337,23 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 		SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
 		const SpriteSheetFrame &sf = sheet->frameTable[frame];
 		Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
-		float x = flipX? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left: 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
+		float x = flipX ? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left : 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
 		float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
 		Math::Vector3d pos(int(-x), int(y), 0.f);
 		trsf.translate(pos);
 		g_engine->getGfx().drawSprite(sf.frame, *texture, getColor(), trsf, flipX);
 	}
+}
+
+ActorNode::ActorNode(Object *obj)
+	: Node(obj->_key), _object(obj) {
+}
+
+int ActorNode::getZSort() const { return getPos().getY(); }
+
+Math::Vector2d ActorNode::getScale() const {
+	float y = _object->_room->getScaling(_object->_node->getPos().getY());
+	return Math::Vector2d(y, y);
 }
 
 Scene::Scene() : Node("Scene") {}

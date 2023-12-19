@@ -122,8 +122,8 @@
 #define VERB_USE  10
 #define VERB_DIALOG  13
 #define VERBFLAG_INSTANT  1
-#define NO  0
-#define YES  1
+#define TWP_NO  0
+#define TWP_YES  1
 #define UNSELECTABLE  0
 #define SELECTABLE  1
 #define TEMP_UNSELECTABLE  2

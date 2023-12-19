@@ -485,8 +485,8 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "VERB_USE", VERB_USE);
 	regConst(v, "VERB_DIALOG", VERB_DIALOG);
 	regConst(v, "VERBFLAG_INSTANT", VERBFLAG_INSTANT);
-	regConst(v, "NO", NO);
-	regConst(v, "YES", YES);
+	regConst(v, "NO", TWP_NO);
+	regConst(v, "YES", TWP_YES);
 	regConst(v, "UNSELECTABLE", UNSELECTABLE);
 	regConst(v, "SELECTABLE", SELECTABLE);
 	regConst(v, "TEMP_UNSELECTABLE", TEMP_UNSELECTABLE);

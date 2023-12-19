@@ -129,6 +129,8 @@ Room *sqroom(HSQOBJECT table);
 Room *sqroom(HSQUIRRELVM v, int i);
 Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
+Object* sqactor(HSQOBJECT table);
+Object* sqactor(HSQUIRRELVM v, int i);
 
 } // namespace Twp
 
