@@ -316,6 +316,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA6,
 		0
 	},
+	// Ultima VI - alternative release - Enhanced
+	// TRAC #14659
+	{
+		{
+			"ultima6_enh",
+			0,
+			AD_ENTRY1s("converse.a", "ee22a6ac3964f9ff11a48fcb3f4a9389", 162458),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA6
+		},
+		GAME_ULTIMA6,
+		GF_VGA_ENHANCED
+	},
 #endif
 
 #ifdef ENABLE_ULTIMA8
