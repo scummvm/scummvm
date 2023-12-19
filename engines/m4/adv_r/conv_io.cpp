@@ -293,22 +293,18 @@ static int32 find_state(char *s, char *c, int file_size) {
 	char name[9];
 	int32 size = 0, offset = 0;
 
-	////fprintf( conv_fp, "find_state %s\n", s );
 	while (offset < file_size) {
 		cstrncpy(name, &c[offset], 8);
-		////fprintf( conv_fp, "name '%s' offset %d\n", name, offset );
 		name[8] = '\0';
 
 		if (!scumm_strnicmp(name, s, 8)) {
 			offset += 8 * sizeof(char);
-			////fprintf( conv_fp, "state found\n" );
 			goto handled;
 		}
 
 		offset += 8 * sizeof(char);
 		if (offset < file_size) {
 			memcpy(&size, &c[offset], sizeof(int32));
-			////fprintf( conv_fp, "size %x\n", size );
 		}
 
 		offset += size + sizeof(int32);
@@ -316,7 +312,6 @@ static int32 find_state(char *s, char *c, int file_size) {
 
 	offset = -1;
 
-	////fprintf( conv_fp, "state not found\n" );
 handled:
 	return offset;
 }
@@ -346,7 +341,7 @@ void find_and_set_conv_name(Conv *c) {
 
 static void conv_save_state(Conv *c) {
 	//-------------------------------------------------------------------------------
-	// calculate amt_to_write by counting up the size of DECL_CHUNKs.
+	// Calculate amt_to_write by counting up the size of DECL_CHUNKs.
 	// the number of ENTRY_CHUNKs affects the amt_to_write
 	// also extract fname from the CONV_CHUNK
 
@@ -473,7 +468,6 @@ static void conv_save_state(Conv *c) {
 
 	int32 e_flags = 0;
 	short flag_index = 0;
-	//	short flag_num = 0;
 
 	ent = 0;
 	c->myCNode = 0;
@@ -506,7 +500,6 @@ static void conv_save_state(Conv *c) {
 
 			if (flag_index == 32) {
 				flag_index = 0;
-				//flag_num++;
 
 				memcpy(&conv_save_buff[offset], &e_flags, sizeof(int32));
 				offset += sizeof(int32);
@@ -515,7 +508,6 @@ static void conv_save_state(Conv *c) {
 				e_flags = 0;
 			}
 
-			//fprintf( conv_fp, "entry->status %d\n", entry->status );
 			e_flags |= ((entry->status & 0x0000000f) << flag_index);
 
 			flag_index += 4;
@@ -598,11 +590,10 @@ static Conv *conv_restore_state(Conv *c) {
 	Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
 	offset = find_state(fname, conv_save_buff, file_size);
 
-	// nick 960501 changed from a return c to a goto in order to corret an insidious memory leak!
 	if (offset == -1)
 		goto i_am_so_done;
 
-	//skip header.
+	// Skip header.
 	offset += sizeof(int32);
 
 	memcpy(&myCNode, &conv_save_buff[offset], sizeof(int32));
@@ -641,15 +632,9 @@ static Conv *conv_restore_state(Conv *c) {
 
 		switch (tag) {
 		case LNODE_CHUNK:
-			if (myCNode == ent) {
-				//dont_update_ents = 1;
-			} else {
-				//dont_update_ents = 0;
-			}
 			break;
 
 		case NODE_CHUNK:
-			//dont_update_ents = 0;
 			break;
 
 		case ENTRY_CHUNK:
@@ -667,7 +652,6 @@ static Conv *conv_restore_state(Conv *c) {
 
 			val = (e_flags >> flag_index) & 0x0000000f;
 			entry->status = val;
-			//fprintf( conv_fp, "entry->status %d\n", entry->status );
 
 			flag_index += 4;
 			break;
@@ -681,7 +665,7 @@ static Conv *conv_restore_state(Conv *c) {
 	c->myCNode = myCNode;
 	if (c->myCNode == CONV_QUIT) {
 		c->exit_now = CONV_QUIT;
-		////fprintf( conv_fp, "c->myCNode == CONV_QUIT conv_unload()\n" );
+
 		conv_unload(c);
 		c = nullptr;
 	} else c->exit_now = CONV_OK;

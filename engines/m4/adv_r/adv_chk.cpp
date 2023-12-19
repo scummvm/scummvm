@@ -43,22 +43,22 @@ static HotSpotRec *read_hotspots(SysFile *fpdef, HotSpotRec *h, int32 num) {
 	for (i = 0; i < num; i++) {
 		buffPtr = &x1;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->ul_x");
+			error_show(FL, 0, "Could not read ul_x");
 		x1 = convert_intel32(x1);
 
 		buffPtr = &y1;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->ul_y");
+			error_show(FL, 0, "Could not read ul_y");
 		y1 = convert_intel32(y1);
 
 		buffPtr = &x2;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->lr_x");
+			error_show(FL, 0, "Could not read lr_x");
 		x2 = convert_intel32(x2);
 
 		buffPtr = &y2;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->lr_y");
+			error_show(FL, 0, "Could not read lr_y");
 		y2 = convert_intel32(y2);
 
 		h = hotspot_new(x1, y1, x2, y2);
@@ -69,42 +69,42 @@ static HotSpotRec *read_hotspots(SysFile *fpdef, HotSpotRec *h, int32 num) {
 
 		buffPtr = &a;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->feet_x");
+			error_show(FL, 0, "Could not read feet_x");
 		a = convert_intel32(a);
 		h->feet_x = a;
 
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->feet_y");
+			error_show(FL, 0, "Could not read feet_y");
 		a = convert_intel32(a);
 		h->feet_y = a;
 
 		buffPtr = &b;
 		if (!fpdef->read(&buffPtr, sizeof(int8)))
-			error_show(FL, 0, "Could not read h->facing");
+			error_show(FL, 0, "Could not read facing");
 		h->facing = b;
 
 		buffPtr = &d;
 		if (!fpdef->read(&buffPtr, sizeof(bool)))
-			error_show(FL, 0, "Could not read h->active");
+			error_show(FL, 0, "Could not read active");
 		h->active = d;
 
 		buffPtr = &e;
 		if (!fpdef->read(&buffPtr, sizeof(char)))
-			error_show(FL, 0, "Could not read h->cursor_number");
+			error_show(FL, 0, "Could not read cursor_number");
 		h->cursor_number = e;
 
 		if (!fpdef->read(&buffPtr, sizeof(char)))
-			error_show(FL, 0, "Could not read h->syntax");
+			error_show(FL, 0, "Could not read syntax");
 		h->syntax = e;
 
 		buffPtr = &a;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->vocabID");
+			error_show(FL, 0, "Could not read vocabID");
 		a = convert_intel32(a);
 		h->vocabID = a;
 
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->verbID");
+			error_show(FL, 0, "Could not read verbID");
 		a = convert_intel32(a);
 		h->verbID = a;
 
@@ -112,55 +112,55 @@ static HotSpotRec *read_hotspots(SysFile *fpdef, HotSpotRec *h, int32 num) {
 
 		buffPtr = &str_len;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->vocab length");
+			error_show(FL, 0, "Could not read vocab length");
 		str_len = convert_intel32(str_len);
 
 		if (str_len) {
 			buffPtr = &s[0];
 			if (!fpdef->read(&buffPtr, str_len))
-				error_show(FL, 0, "Could not read h->vocab");
+				error_show(FL, 0, "Could not read vocab");
 			hotspot_newVocab(h, s);
 		}
 
 		buffPtr = &str_len;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->verb length");
+			error_show(FL, 0, "Could not read verb length");
 		str_len = convert_intel32(str_len);
 
 		if (str_len) {
 			buffPtr = &s[0];
 			if (!fpdef->read(&buffPtr, str_len))
-				error_show(FL, 0, "Could not read h->verb");
+				error_show(FL, 0, "Could not read verb");
 			hotspot_newVerb(h, s);
 		}
 
 		buffPtr = &str_len;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->prep length");
+			error_show(FL, 0, "Could not read prep length");
 		str_len = convert_intel32(str_len);
 
 		if (str_len) {
 			buffPtr = &s[0];
 			if (!fpdef->read(&buffPtr, str_len))
-				error_show(FL, 0, "Could not read h->prep");
+				error_show(FL, 0, "Could not read prep");
 			hotspot_newPrep(h, s);
 		}
 
 		buffPtr = &str_len;
 		if (!fpdef->read(&buffPtr, sizeof(int32)))
-			error_show(FL, 0, "Could not read h->sprite");
+			error_show(FL, 0, "Could not read sprite");
 		str_len = convert_intel32(str_len);
 
 		if (str_len) {
 			buffPtr = &s[0];
 			if (!fpdef->read(&buffPtr, str_len))
-				error_show(FL, 0, "Could not read h->sprite");
+				error_show(FL, 0, "Could not read sprite");
 			hotspot_new_sprite(h, s);
 		}
 
 		buffPtr = &c;
 		if (!fpdef->read(&buffPtr, sizeof(int16)))
-			error_show(FL, 0, "Could not read h->sprite");
+			error_show(FL, 0, "Could not read sprite");
 		c = convert_intel16(c);
 		h->hash = c;
 	}
@@ -248,6 +248,7 @@ int db_def_chk_read(int16 room_code, SceneDef *rdef) {
 
 	load_def(&fpdef);
 	fpdef.close();
+
 	return -1; // everything happy code
 }
 

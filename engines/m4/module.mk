@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	adv_r/adv_chk.o \
 	adv_r/adv_control.o \
 	adv_r/adv_file.o \
-	adv_r/adv_game.o \
 	adv_r/adv_hotspot.o \
 	adv_r/adv_interface.o \
 	adv_r/adv_inv.o \
@@ -24,7 +23,6 @@ MODULE_OBJS = \
 	adv_r/conv.o \
 	adv_r/conv_io.o \
 	adv_r/db_env.o \
-	adv_r/kernel.o \
 	adv_r/other.o \
 	core/cstring.o \
 	core/errors.o \
