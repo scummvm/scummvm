@@ -288,58 +288,6 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 
 bool examining_inventory_object = false;
 
-#ifdef UNUSED
-void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int delay,
-	int32 x, int32 y, int32 triggerNum, char *digi_name, int32 digi_trigger) {
-
-	remember_esc_key = GetSystemHotkey(KEY_ESCAPE);
-	RemoveSystemHotkey(KEY_ESCAPE);
-
-	interface_hide();
-
-	_GP(exam_saved_hotspots) = _G(currentSceneDef).hotspots;
-	_G(currentSceneDef).hotspots = nullptr;
-
-	_GP(myFadeTrigger) = kernel_trigger_create(triggerNum);
-
-	krn_fade_to_grey(pal, steps, delay);
-
-	_GP(seriesHash) = series_load(picName, -1, pal);		// Preload sprite so we can unload it
-	gr_pal_set_range(pal, FREE_START, 197);                 // Set that series colors into VGA
-	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
-
-	Buffer *grey_screen = _G(gameDrawBuff)->get_buffer();
-	krn_SetGreyVideoMode(
-		// Grey rectangle
-		0, 0, MAX_VIDEO_X, screen_height(grey_screen) + _G(kernel).letter_box_y,
-		// Color rectangle
-		x, y, x + ws_get_sprite_width(_GP(seriesHash), 0) - 1, y + ws_get_sprite_height(_GP(seriesHash), 0) - 1);
-	_G(gameDrawBuff)->release();
-
-	// Play the sprite series as a loop
-	int32 status;
-	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
-	_GP(seriesAnim8) = series_play_xy(picName, -1, FORWARD,
-		x - game_buff_ptr->x1, y - game_buff_ptr->y1, 100, 0, 7, -1);
-
-	if (digi_name) {
-		digi_play(digi_name, 1, 255, digi_trigger);
-	}
-
-	player_set_commands_allowed(true);
-
-	CycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
-		_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
-
-	game_pause(true);
-
-	_G(inverse_pal)->release();
-	_G(game_bgBuff)->release();
-
-	PauseEngines();
-}
-#endif
-
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 	if (!_GP(seriesAnim8) || _GP(seriesHash) < 0)
 		return;
