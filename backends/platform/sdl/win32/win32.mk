@@ -4,6 +4,32 @@
 
 WIN32PATH ?= $(DESTDIR)
 
+clean-win32-resource-embed:
+
+clean: clean-win32-resource-embed
+
+.PHONY: clean-win32-resource-embed
+
+define win32-resource-embed-macro=
+$(1): configure.stamp
+	@echo '    GENERATE' $$@
+	@echo $$(foreach filename,$$($(2)),$$(filename)) | sed -e 's/ /\n/g' | sed -E 's/(.*\/)(.+)/\2 FILE "\1\2"/g' >> $$@
+
+dists/scummvm.o: $(1)
+
+clean-win32-resource-embed-$(1):
+	$(RM) $(srcdir)/$(1)
+
+clean-win32-resource-embed: clean-win32-resource-embed-$(1)
+
+.PHONY: clean-win32-resource-embed-$(1)
+
+endef
+
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data_core.rh,DIST_FILES_ENGINEDATA_BASE_CORE))
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data.rh,DIST_FILES_ENGINEDATA_BASE))
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data_big.rh,DIST_FILES_ENGINEDATA_BASE_BIG))
+
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32-data: all
 	mkdir -p $(WIN32PATH)

@@ -1038,45 +1038,9 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("gui/themes/gui-icons.dat");
 		files.push_back("gui/themes/shaders.dat");
 		files.push_back("gui/themes/translations.dat");
-		files.push_back("dists/engine-data/access.dat");
-		files.push_back("dists/engine-data/achievements.dat");
-		files.push_back("dists/engine-data/classicmacfonts.dat");
-		files.push_back("dists/engine-data/cryo.dat");
-		files.push_back("dists/engine-data/cryomni3d.dat");
-		files.push_back("dists/engine-data/drascula.dat");
-		files.push_back("dists/engine-data/encoding.dat");
-		files.push_back("dists/engine-data/fonts.dat");
-		files.push_back("dists/engine-data/fonts-cjk.dat");
-		files.push_back("dists/engine-data/freescape.dat");
-		files.push_back("dists/engine-data/hadesch_translations.dat");
-		files.push_back("dists/engine-data/helpdialog.zip");
-		files.push_back("dists/engine-data/hugo.dat");
-		files.push_back("dists/engine-data/kyra.dat");
-		files.push_back("dists/engine-data/lure.dat");
-		files.push_back("dists/engine-data/macgui.dat");
-		files.push_back("dists/engine-data/myst3.dat");
-		files.push_back("dists/engine-data/monkey4-patch.m4b");
-		files.push_back("dists/engine-data/grim-patch.lab");
-		files.push_back("dists/engine-data/macventure.dat");
-		files.push_back("dists/engine-data/mm.dat");
-		files.push_back("dists/engine-data/mort.dat");
-		files.push_back("dists/engine-data/nancy.dat");
-		files.push_back("dists/engine-data/neverhood.dat");
-		files.push_back("dists/engine-data/prince_translation.dat");
-		files.push_back("dists/engine-data/queen.tbl");
-		files.push_back("dists/engine-data/sky.cpt");
-		files.push_back("dists/engine-data/supernova.dat");
-		files.push_back("dists/engine-data/teenagent.dat");
-		files.push_back("dists/engine-data/titanic.dat");
-		files.push_back("dists/engine-data/tony.dat");
-		files.push_back("dists/engine-data/toon.dat");
-		files.push_back("dists/engine-data/ultima.dat");
-		files.push_back("dists/engine-data/ultima8.dat");
-		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/ios7/ios-help.zip");
 		files.push_back("dists/ios7/LaunchScreen_ios.storyboard");
 		files.push_back("dists/tvos/LaunchScreen_tvos.storyboard");
-		files.push_back("dists/pred.dic");
 		files.push_back("dists/networking/wwwroot.zip");
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_GRIM")) {
 			files.push_back("engines/grim/shaders/grim_dim.fragment");
@@ -1184,7 +1148,17 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("LICENSES/CatharonLicense.txt");
 		files.push_back("NEWS.md");
 		files.push_back("README.md");
+
+		for (int i = 0; i < kEngineDataGroupCount; i++) {
+			for (const std::string &filename : _engineDataGroupDefs[i].dataFiles) {
+				if (std::find(files.begin(), files.end(), filename) != files.end())
+					error("Resource file " + filename + " was included multiple times");
+
+				files.push_back(filename);
+			}
+		}
 	}
+
 	return files;
 }
 

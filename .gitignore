@@ -121,6 +121,8 @@ project.xcworkspace
 /dists/engine-data/testbed-audiocd-files/testbed.out
 /dists/engine-data/playground3d
 
+/dists/scummvm_rc_*.rh
+
 
 /doc/*.aux
 /doc/*.dvi

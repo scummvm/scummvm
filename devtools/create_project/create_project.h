@@ -107,6 +107,9 @@ struct EngineDesc {
 	bool operator==(const std::string &n) const {
 		return (name == n);
 	}
+
+	EngineDesc() : enable(false) {
+	}
 };
 
 typedef std::list<EngineDesc> EngineDescList;
@@ -315,6 +318,20 @@ enum MSVC_Architecture {
 std::string getMSVCArchName(MSVC_Architecture arch);
 std::string getMSVCConfigName(MSVC_Architecture arch);
 
+enum EngineDataGroup {
+	kEngineDataGroupNormal,
+	kEngineDataGroupCore,
+	kEngineDataGroupBig,
+
+	kEngineDataGroupCount,
+};
+
+struct EngineDataGroupResolution {
+	EngineDataGroup engineDataGroup;
+	const char *mkFilePath;
+	const char *winHeaderPath;
+};
+
 /**
  * Creates a list of all supported versions of Visual Studio.
  *
@@ -500,6 +517,11 @@ struct FileNode {
 
 class ProjectProvider {
 public:
+	struct EngineDataGroupDef {
+		StringList dataFiles;
+		std::string winHeaderPath;
+	};
+
 	typedef std::map<std::string, std::string> UUIDMap;
 
 	/**
@@ -535,6 +557,8 @@ protected:
 
 	UUIDMap _engineUuidMap; ///< List of (project name, UUID) pairs
 	UUIDMap _allProjUuidMap;
+
+	EngineDataGroupDef _engineDataGroupDefs[kEngineDataGroupCount];
 
 	/**
 	 *  Create workspace/solution file
@@ -622,6 +646,16 @@ protected:
 	 * @param excludeList Reference to a list, where excluded files should be added.
 	 */
 	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, StringList &pchDirs, StringList &pchExclude, bool forDetection = false) const;
+
+	/**
+	 * Creates a list of data files from a specified .mk file
+	 *
+	 * @param makeFilePath Path to the engine data makefile.
+	 * @param defines List of set defines.
+	 * @param outDataFiles Output list of data files.
+	 * @param outWinHeaderPath Output Windows resource header path.
+	 */
+	void createDataFilesList(EngineDataGroup engineDataGroup, const std::string &baseDir, const StringList &defines, StringList &outDataFiles, std::string &outWinHeaderPath) const;
 
 	/**
 	 * Creates an UUID for every enabled engine of the

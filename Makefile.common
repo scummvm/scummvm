@@ -406,110 +406,20 @@ DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.z
 endif
 
 # Engine data files
-DIST_FILES_ENGINEDATA=
-ifdef ENABLE_ACCESS
-DIST_FILES_ENGINEDATA+=access.dat
-endif
-ifdef ENABLE_CRYO
-DIST_FILES_ENGINEDATA+=cryo.dat
-endif
-ifdef ENABLE_CRYOMNI3D
-DIST_FILES_ENGINEDATA+=cryomni3d.dat
-endif
-ifdef ENABLE_DRASCULA
-DIST_FILES_ENGINEDATA+=drascula.dat
-endif
-ifdef ENABLE_HADESCH
-DIST_FILES_ENGINEDATA+=hadesch_translations.dat
-endif
-ifdef ENABLE_HUGO
-DIST_FILES_ENGINEDATA+=hugo.dat
-endif
-ifdef ENABLE_KYRA
-DIST_FILES_ENGINEDATA+=kyra.dat
-endif
-ifdef ENABLE_LURE
-DIST_FILES_ENGINEDATA+=lure.dat
-endif
-ifdef ENABLE_MACVENTURE
-DIST_FILES_ENGINEDATA+=macventure.dat
-endif
-ifdef ENABLE_MORTEVIELLE
-DIST_FILES_ENGINEDATA+=mort.dat
-endif
-ifdef ENABLE_NANCY
-DIST_FILES_ENGINEDATA+=nancy.dat
-endif
-ifdef ENABLE_NEVERHOOD
-DIST_FILES_ENGINEDATA+=neverhood.dat
-endif
-ifdef ENABLE_PRINCE
-DIST_FILES_ENGINEDATA+=prince_translation.dat
-endif
-ifdef ENABLE_QUEEN
-DIST_FILES_ENGINEDATA+=queen.tbl
-endif
-ifdef ENABLE_SKY
-DIST_FILES_ENGINEDATA+=sky.cpt
-endif
-ifdef ENABLE_SUPERNOVA
-DIST_FILES_ENGINEDATA+=supernova.dat
-endif
-ifdef ENABLE_TEENAGENT
-DIST_FILES_ENGINEDATA+=teenagent.dat
-endif
-ifdef ENABLE_TITANIC
-DIST_FILES_ENGINEDATA+=titanic.dat
-endif
-ifdef ENABLE_TONY
-DIST_FILES_ENGINEDATA+=tony.dat
-endif
-ifdef ENABLE_TOON
-DIST_FILES_ENGINEDATA+=toon.dat
-endif
-ifdef ENABLE_ULTIMA
-DIST_FILES_ENGINEDATA+=ultima.dat
-DIST_FILES_ENGINEDATA+=ultima8.dat
-endif
-ifdef ENABLE_WINTERMUTE
-DIST_FILES_ENGINEDATA+=wintermute.zip
-endif
-ifdef ENABLE_MM
-DIST_FILES_ENGINEDATA+=mm.dat
-endif
-ifdef ENABLE_FREESCAPE
-DIST_FILES_ENGINEDATA+=freescape.dat
-endif
-ifdef USE_FREETYPE2
-DIST_FILES_ENGINEDATA+=fonts.dat
-endif
-ifdef ENABLE_GRIM
-DIST_FILES_ENGINEDATA+=grim-patch.lab
-endif
-ifdef ENABLE_MONKEY4
-DIST_FILES_ENGINEDATA+=monkey4-patch.m4b
-endif
-ifdef ENABLE_MYST3
-DIST_FILES_ENGINEDATA+=myst3.dat
-endif
-DIST_FILES_ENGINEDATA+=achievements.dat
-DIST_FILES_ENGINEDATA+=classicmacfonts.dat
-DIST_FILES_ENGINEDATA+=encoding.dat
-DIST_FILES_ENGINEDATA+=helpdialog.zip
-DIST_FILES_ENGINEDATA+=macgui.dat
-DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
+DIST_FILES_LIST=
+-include $(srcdir)/dists/engine-data/engine_data_core.mk
+DIST_FILES_ENGINEDATA_BASE_CORE:=$(DIST_FILES_LIST)
 
-# pred.dic is currently only used for the AGI engine
-ifdef ENABLE_AGI
-DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
-endif
+DIST_FILES_LIST=
+-include $(srcdir)/dists/engine-data/engine_data.mk
+DIST_FILES_ENGINEDATA_BASE:=$(DIST_FILES_LIST)
 
-# fonts-cjk.dat is used only on systems with plenty of memory
-ifdef USE_FREETYPE2
-DIST_FILES_ENGINEDATA_BIG+=fonts-cjk.dat
-endif
+DIST_FILES_LIST=
+-include $(srcdir)/dists/engine-data/engine_data_big.mk
+DIST_FILES_ENGINEDATA_BASE_BIG:=$(DIST_FILES_LIST)
 
-DIST_FILES_ENGINEDATA_BIG:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA_BIG))
+DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/,$(DIST_FILES_ENGINEDATA_BASE_CORE) $(DIST_FILES_ENGINEDATA_BASE))
+DIST_FILES_ENGINEDATA_BIG:=$(addprefix $(srcdir)/,$(DIST_FILES_ENGINEDATA_BASE_BIG))
 
 # Shaders: install if USE_OPENGL_SHADERS is defined
 DIST_FILES_SHADERS=
