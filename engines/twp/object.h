@@ -80,6 +80,7 @@ struct Sentence {
 
 class Anim;
 class Room;
+class Motor;
 class Node;
 class Layer;
 
@@ -149,6 +150,8 @@ public:
 	void setCostume(const Common::String &name, const Common::String &sheet);
 	void stand();
 
+	void update(float elapsedSec);
+
 private:
 	Common::String suffix() const;
 	// Plays an animation specified by the state
@@ -204,6 +207,7 @@ public:
     float _popElapsed = 0.f;
     int _popCount = 0;
 	Sentence _exec;
+	Motor* _moveTo = nullptr;
 };
 
 } // namespace Twp

@@ -163,33 +163,41 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 
 	// assign an id
 	setId(obj->_table, newObjId());
-	debug("Create object with new table: %s #%d}", obj->_name.c_str(), obj->getId());
+	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
 	obj->_touchable = false;
 
 	Text txt(fontName, text, hAlign, vAlign, maxWidth);
 
-	// TODO:
-	//   let node = newTextNode(text)
-	//   var v = 0.5f
-	//   case vAlign:
-	//   of tvTop:
-	//     v = 0f
-	//   of tvCenter:
-	//     v = 0.5f
-	//   of tvBottom:
-	//     v = 1f
-	//   case hAlign:
-	//   of thLeft:
-	//     node.setAnchorNorm(vec2(0f, v))
-	//   of thCenter:
-	//     node.setAnchorNorm(vec2(0.5f, v))
-	//   of thRight:
-	//     node.setAnchorNorm(vec2(1f, v))
-	//   obj.node = node
-	//   self.layer(0).objects.add(obj);
-	//   self.layer(0).node.addChild obj.node;
-	//   obj.layer = self.layer(0);
+	TextNode *node = new TextNode();
+	node->setText(txt);
+	float y = 0.5f;
+	switch (vAlign) {
+	case tvTop:
+		y = 0.f;
+		break;
+	case tvCenter:
+		y = 0.5f;
+		break;
+	case tvBottom:
+		y = 1.f;
+		break;
+	}
+	switch (hAlign) {
+	case thLeft:
+		node->setAnchorNorm(Math::Vector2d(0.f, y));
+		break;
+	case thCenter:
+		node->setAnchorNorm(Math::Vector2d(0.5f, y));
+		break;
+	case thRight:
+		node->setAnchorNorm(Math::Vector2d(1.f, y));
+		break;
+	}
+	obj->_node = node;
+	layer(0)->_objects.push_back(obj);
+	layer(0)->_node->addChild(obj->_node);
+	obj->_layer = layer(0);
 
 	g_engine->_objects.push_back(obj);
 
@@ -359,6 +367,25 @@ float Room::getScaling(float yPos) {
 	return _scaling.getScaling(yPos);
 }
 
+void Room::objectParallaxLayer(Object *obj, int zsort) {
+	Layer *l = layer(zsort);
+	if (obj->_layer != l) {
+		// removes object from old layer
+		int id = obj->getId();
+		for (int i = 0; i < obj->_layer->_objects.size(); i++) {
+			if (obj->_layer->_objects[i]->getId() == id) {
+				obj->_layer->_objects.remove_at(i);
+				break;
+			}
+		}
+		// adds object to the new one
+		l->_objects.push_back(obj);
+		// update scenegraph
+		l->_node->addChild(obj->_node);
+		obj->_layer = l;
+	}
+}
+
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
 	_names.push_back(name);
 	_parallax = parallax;
@@ -391,7 +418,7 @@ float Scaling::getScaling(float yPos) {
 			return scale;
 		}
 	}
-	return values[values.size()-1].scale;
+	return values[values.size() - 1].scale;
 }
 
 } // namespace Twp

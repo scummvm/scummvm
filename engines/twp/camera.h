@@ -52,6 +52,8 @@ struct InterpolationMethod {
 	bool swing = false;
 };
 
+InterpolationMethod intToInterpolationMethod(int value);
+
 static float linear(float t) { return t; }
 
 static float easeIn(float t) {

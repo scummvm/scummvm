@@ -29,6 +29,25 @@
 #include "common/str.h"
 
 namespace Twp {
+
+struct KerningKey {
+	int first;
+	int second;
+};
+bool operator==(const KerningKey &l, const KerningKey &r);
+
+} // namespace Twp
+
+namespace Common {
+
+template<>
+struct Hash<Twp::KerningKey> : public Common::UnaryFunction<Twp::KerningKey, uint> {
+	uint operator()(Twp::KerningKey val) const { return (uint)(val.first ^ val.second); }
+};
+
+} // namespace Common
+
+namespace Twp {
 typedef int32 CodePoint;
 
 // represents a glyph: a part of an image for a specific font character
@@ -60,8 +79,44 @@ public:
 	virtual Common::String getName() override final { return _name; }
 
 private:
-	Common::HashMap<int, Glyph> _glyphs;
+	Common::HashMap<CodePoint, Glyph> _glyphs;
 	int _lineHeight;
+	Common::String _name;
+};
+
+struct Char {
+	int id = 0;
+	int x = 0;
+	int y = 0;
+	int w = 0;
+	int h = 0;
+	int xoff = 0;
+	int yoff = 0;
+	int xadv = 0;
+	int page = 0;
+	int chnl = 0;
+	Common::String _letter;
+};
+
+class BmFont : public Font {
+public:
+	virtual ~BmFont();
+	void load(const Common::String &path);
+
+	virtual int getLineHeight() override final { return _lnHeight; }
+	virtual float getKerning(CodePoint prev, CodePoint next) override final;
+	virtual Glyph getGlyph(CodePoint chr) override final;
+	virtual Common::String getName() override final { return _name; }
+
+private:
+	Common::HashMap<CodePoint, Glyph> _glyphs;
+	Common::HashMap<KerningKey, float> _kernings;
+	int _lnHeight = 0;
+	int _base = 0;
+	int _scaleW = 0;
+	int _scaleH = 0;
+	int _pages = 0;
+	int _packed = 0;
 	Common::String _name;
 };
 
@@ -81,9 +136,10 @@ enum TextVAlignment {
 // A text can contains color in hexadecimal with this format: #RRGGBB
 class Text {
 public:
-	Text(const Common::String& fontName, const Common::String& text, TextHAlignment hAlign = thCenter, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f, Color color = Color());
+	Text();
+	Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thCenter, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f, Color color = Color());
 
-	void setText(const Common::String& text) {
+	void setText(const Common::String &text) {
 		_txt = text;
 		_dirty = true;
 	}
@@ -113,26 +169,28 @@ public:
 	}
 	TextVAlignment getVAlign() { return _vAlign; }
 
-	Font* getFont() { return _font; }
+	void setFont(const Common::String &fontName);
+	Font *getFont() { return _font; }
+	Math::Vector2d getBounds();
 
-	void draw(Gfx& gfx, Math::Matrix4 trsf = Math::Matrix4());
+	void draw(Gfx &gfx, Math::Matrix4 trsf = Math::Matrix4());
 
 private:
 	void update();
 
 private:
-	Font* _font;
+	Font *_font = nullptr;
 	Common::String _fontName;
-	Texture* _texture;
+	Texture *_texture = nullptr;
 	Common::String _txt;
 	Color _col;
 	TextHAlignment _hAlign;
 	TextVAlignment _vAlign;
 	Common::Array<Vertex> _vertices;
 	Math::Vector2d _bnds;
-	float _maxW;
+	float _maxW = 0;
 	Common::Array<Common::Rect> _quads;
-	bool _dirty;
+	bool _dirty = false;
 };
 
 } // namespace Twp

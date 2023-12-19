@@ -152,6 +152,13 @@ void Node::setAnchor(Math::Vector2d anchor) {
 	}
 }
 
+void Node::setAnchorNorm(Math::Vector2d anchorNorm) {
+	if (_anchorNorm != anchorNorm) {
+		_anchorNorm = anchorNorm;
+		_anchor = _size * _anchorNorm;
+	}
+}
+
 void Node::setSize(Math::Vector2d size) {
 	if (_size != size) {
 		_size = size;
@@ -264,7 +271,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	_anim = anim;
 	_disabled = false;
 	setName(anim->name);
-	_sheet = (anim->sheet.size() == 0 && _obj->_room) ? _obj->_room->_sheet : anim->sheet;
+	_sheet = anim->sheet;
 	_frames = anim->frames;
 	_frameIndex = instant && _frames.size() > 0 ? _frames.size() - 1 : 0;
 	_frameDuration = 1.0 / _getFps(fps, anim->fps);
@@ -334,6 +341,12 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 	if (_frameIndex < _frames.size()) {
 		const Common::String &frame = _frames[_frameIndex];
 		bool flipX = _obj->getFacing() == FACE_LEFT;
+		if (_sheet.size() == 0) {
+			_sheet = _obj->_sheet;
+			if (_sheet.size() == 0 && _obj->_room) {
+				_sheet = _obj->_room->_sheet;
+			}
+		}
 		SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
 		const SpriteSheetFrame &sf = sheet->frameTable[frame];
 		Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
@@ -354,6 +367,33 @@ int ActorNode::getZSort() const { return getPos().getY(); }
 Math::Vector2d ActorNode::getScale() const {
 	float y = _object->_room->getScaling(_object->_node->getPos().getY());
 	return Math::Vector2d(y, y);
+}
+
+TextNode::TextNode() : Node("text") {
+}
+
+TextNode::~TextNode() {}
+
+void TextNode::setText(Text text) {
+	_text = text;
+	setSize(text.getBounds());
+}
+
+void TextNode::updateBounds() {
+	setSize(_text.getBounds());
+}
+
+Rectf TextNode::getRect() const {
+	Math::Vector2d size = _size * _scale;
+	return Rectf::fromPosAndSize(getAbsPos() + Math::Vector2d(0, -size.getY()) + Math::Vector2d(-size.getX(), size.getY()) * _anchorNorm, size);
+}
+
+void TextNode::onColorUpdated(Color color) {
+	_text.setColor(color);
+}
+
+void TextNode::drawCore(Math::Matrix4 trsf) {
+	_text.draw(g_engine->getGfx(), trsf);
 }
 
 Scene::Scene() : Node("Scene") {}

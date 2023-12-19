@@ -23,6 +23,8 @@
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 #include "twp/object.h"
+#include "twp/camera.h"
+#include "twp/motor.h"
 #include "twp/room.h"
 #include "twp/scenegraph.h"
 #include "squirrel/squirrel.h"
@@ -255,34 +257,32 @@ static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Places the specified object at the given x and y coordinates in the current room.
+//
+// .. code-block:: Squirrel
+// objectAt(text, 160,90)
+// objectAt(obj, leftMargin, topLinePos)
 static SQInteger objectAt(HSQUIRRELVM v) {
-	HSQOBJECT o;
-	sq_getstackobj(v, 2, &o);
-
-	SQInteger id;
-	sqgetf(o, "_id", id);
-
-	Object **pObj = Common::find_if(g_engine->_objects.begin(), g_engine->_objects.end(), [&](Object *o) {
-		SQObjectPtr id2;
-		_table(o->_table)->Get(sqtoobj(v, "_id"), id2);
-		return id == _integer(id2);
-	});
-
-	if (!pObj)
+	Object *obj = sqobj(v, 2);
+	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-
-	// TODO:
-	// Object* obj = *pObj;
-	// SQInteger x, y;
-	// if (SQ_FAILED(sq_getinteger(v, 3, &x)))
-	// 	return sq_throwerror(v, "failed to get x");
-	// if (SQ_FAILED(sq_getinteger(v, 4, &y)))
-	// 	return sq_throwerror(v, "failed to get y");
-	// obj->x = x;
-	// obj->y = y;
-	// debug("Object at: %lld, %lld", x, y);
-
-	return 0;
+	if (sq_gettop(v) == 3) {
+		Object *spot = sqobj(v, 3);
+		if (!spot)
+			return sq_throwerror(v, "failed to get spot");
+		obj->_node->setPos(spot->getUsePos());
+		return 0;
+	}
+	if (sq_gettop(v) == 4) {
+		SQInteger x, y;
+		if (SQ_FAILED(sq_getinteger(v, 3, &x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sq_getinteger(v, 4, &y)))
+			return sq_throwerror(v, "failed to get y");
+		obj->_node->setPos(Math::Vector2d(x, y));
+		return 0;
+	}
+	return sq_throwerror(v, "invalid number of arguments");
 }
 
 static SQInteger objectBumperCycle(HSQUIRRELVM v) {
@@ -388,21 +388,63 @@ static SQInteger objectHotspot(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get right");
 	if (SQ_FAILED(sqget(v, 6, bottom)))
 		return sq_throwerror(v, "failed to get bottom");
-	if(bottom<top)
+	if (bottom < top)
 		SWAP(bottom, top);
 	obj->_hotspot = Common::Rect(left, top, right, bottom);
 	return 0;
 }
 
+// Used for inventory object, it changes the object's icon to be the new one specified.
+//
+// .. code-block:: Squirrel
+// objectIcon(obj, "glowing_spell_book")
+// objectIcon(obj, "spell_book")
 static SQInteger objectIcon(HSQUIRRELVM v) {
-	// TODO: objectIcon
-	warning("objectIcon not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	switch (sq_gettype(v, 3)) {
+	case OT_STRING: {
+		Common::String icon;
+		if (SQ_FAILED(sqget(v, 3, icon)))
+			return sq_throwerror(v, "failed to get icon");
+		obj->setIcon(icon);
+		return 0;
+	}
+	case OT_ARRAY: {
+		Common::String icon;
+		Common::StringArray icons;
+		int fps;
+		sq_push(v, 3);
+		sq_pushnull(v); // null iterator
+		if (SQ_SUCCEEDED(sq_next(v, -2)))
+			sqget(v, -1, fps);
+		sq_pop(v, 2);
+		while (SQ_SUCCEEDED(sq_next(v, -2))) {
+			sqget(v, -1, icon);
+			icons.push_back(icon);
+			sq_pop(v, 2);
+		}
+		sq_pop(v, 2); // pops the null iterator and object
+		obj->setIcon(fps, icons);
+		return 0;
+	}
+	default:
+		return sq_throwerror(v, "invalid argument type");
+	}
 }
 
+// Specifies whether the object is affected by lighting elements.
+// Note: this is currently used for actor objects, but can also be used for room objects.
+// Lighting background flat art would be hard and probably look odd.
 static SQInteger objectLit(HSQUIRRELVM v) {
-	// TODO: objectLit
-	warning("objectLit not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object or actor");
+	bool lit = false;
+	if (SQ_FAILED(sqget(v, 3, lit)))
+		return sq_throwerror(v, "failed to get lit");
+	obj->_lit = lit;
 	return 0;
 }
 
@@ -412,27 +454,75 @@ static SQInteger objectMoveTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Instantly offsets the object (image, use position, hotspot) with respect to the origin of the object.
+//
+// .. code-block:: Squirrel
+// objectOffset(coroner, 0, 0)
+// objectOffset(SewerManhole.sewerManholeDime, 0, 96)
 static SQInteger objectOffset(HSQUIRRELVM v) {
-	// TODO: objectOffset
-	warning("objectOffset not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		int x = 0;
+		int y = 0;
+		if (SQ_FAILED(sqget(v, 3, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 4, y)))
+			return sq_throwerror(v, "failed to get y");
+		if (obj->_moveTo)
+			obj->_moveTo->disable();
+		obj->_node->setOffset(Math::Vector2d(x, y));
+	}
 	return 0;
 }
 
 static SQInteger objectOffsetTo(HSQUIRRELVM v) {
-	// TODO: objectOffsetTo
-	warning("objectOffsetTo not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		int x = 0;
+		int y = 0;
+		if (SQ_FAILED(sqget(v, 3, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 4, y)))
+			return sq_throwerror(v, "failed to get y");
+		float duration = 0.5f;
+		if (sq_gettop(v) >= 5)
+			if (SQ_FAILED(sqget(v, 5, duration)))
+				return sq_throwerror(v, "failed to get duration");
+		SQInteger interpolation = 0;
+		if ((sq_gettop(v) >= 6) && (SQ_FAILED(sq_getinteger(v, 6, &interpolation))))
+			interpolation = 0;
+		Math::Vector2d destPos(x, y);
+		obj->_moveTo = new OffsetTo(duration, obj, destPos, intToInterpolationMethod(interpolation));
+	}
 	return 0;
 }
 
+// Returns the actor who owns the specified object/inventory item.
+// If there is no owner, returns false.
+//
+// .. code-block:: Squirrel
+// objectOwner(dime) == currentActor
+// !objectOwner(countyMap1)
 static SQInteger objectOwner(HSQUIRRELVM v) {
-	// TODO: objectOwner
-	warning("objectOwner not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	if (!obj->_owner)
+		sq_pushnull(v);
+	else
+		sq_pushobject(v, obj->_owner->_table);
+	return 1;
 }
 
+// Changes the object's layer.
 static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
-	// TODO: objectParallaxLayer
-	warning("objectParallaxLayer not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	int layer = 0;
+	if (SQ_FAILED(sqget(v, 3, layer)))
+		return sq_throwerror(v, "failed to get parallax layer");
+	g_engine->_room->objectParallaxLayer(obj, layer);
 	return 0;
 }
 
@@ -442,33 +532,71 @@ static SQInteger objectParent(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns the x-coordinate of the given object or actor.
 static SQInteger objectPosX(HSQUIRRELVM v) {
-	// TODO: objectPosX
-	warning("objectPosX not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	float x = obj->getUsePos().getX() + obj->_hotspot.left + obj->_hotspot.width() / 2.0f;
+	sqpush(v, (int)x);
+	return 1;
 }
 
+// Returns the y-coordinate of the given object or actor.
 static SQInteger objectPosY(HSQUIRRELVM v) {
-	// TODO: objectPosY
-	warning("objectPosY not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	float y = obj->getUsePos().getY() + obj->_hotspot.top + obj->_hotspot.height() / 2.0f;
+	sqpush(v, (int)y);
+	return 1;
 }
 
+// Sets the rendering offset of the actor to x and y.
+//
+// A rendering offset of 0,0 would cause them to be rendered from the middle of their image.
+// Actor's are typically adjusted so they are rendered from the middle of the bottom of their feet.
+// To maintain sanity, it is best if all actors have the same image size and are all adjust the same, but this is not a requirement.
 static SQInteger objectRenderOffset(HSQUIRRELVM v) {
-	// TODO: objectRenderOffset
-	warning("objectRenderOffset not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	SQInteger x, y;
+	if (SQ_FAILED(sq_getinteger(v, 3, &x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sq_getinteger(v, 4, &y)))
+		return sq_throwerror(v, "failed to get y");
+	obj->_node->setRenderOffset(Math::Vector2d(x, y));
 	return 0;
 }
 
+// Returns the room of a given object or actor.
 static SQInteger objectRoom(HSQUIRRELVM v) {
-	// TODO: objectRoom
-	warning("objectRoom not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	if (!obj->_room)
+		sq_pushnull(v);
+	else
+		sqpush(v, obj->_room->_table);
+	return 1;
 }
 
+// Sets the rotation of object to the specified amount instantly.
+//
+// .. code-block:: Squirrel
+// objectRotate(pigeonVanBackWheel, 0)
 static SQInteger objectRotate(HSQUIRRELVM v) {
-	// TODO: objectRotate
-	warning("objectRotate not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		float rotation = 0.0f;
+		if (SQ_FAILED(sqget(v, 3, rotation)))
+			return sq_throwerror(v, "failed to get rotation");
+		// TODO: obj->rotateTo
+		// if (!obj->rotateTo)
+		//   obj->rotateTo.disable();
+		obj->_node->setRotation(rotation);
+	}
 	return 0;
 }
 
@@ -478,9 +606,15 @@ static SQInteger objectRotateTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Sets how scaled the object's image will appear on screen. 1 is no scaling.
 static SQInteger objectScale(HSQUIRRELVM v) {
-	// TODO: objectScale
-	warning("objectScale not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	float scale = 0.0f;
+	if (SQ_FAILED(sqget(v, 3, scale)))
+		return sq_throwerror(v, "failed to get scale");
+	obj->_node->setScale(Math::Vector2d(scale, scale));
 	return 0;
 }
 
@@ -490,10 +624,15 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Sets the object in the screen space.
+// It means that its position is relative to the screen, not to the room.
 static SQInteger objectScreenSpace(HSQUIRRELVM v) {
-	// TODO: objectScreenSpace
-	warning("objectScreenSpace not implemented");
+	warning("TODO: objectShader not implemented");
 	return 0;
+	// Object *obj = sqobj(v, 2);
+	// if (!obj)
+	// 	return sq_throwerror(v, "failed to get object");
+	// g_engine->_screen->addChild(obj->_node);
 }
 
 static SQInteger objectShader(HSQUIRRELVM v) {
