@@ -223,7 +223,7 @@ void SysFile::open_read() {
 }
 
 void SysFile::open_write() {
-	error("TODO: open_write if needed");
+	error("open_write is not implemented in ScummVM");
 }
 
 Common::String SysFile::get_last_string(const Common::String &src) {

@@ -76,12 +76,6 @@ extern void  inv_move_object(const Common::String &itemName, int32 scene);
 extern bool  inv_object_is_here(const Common::String &itemName);
 extern bool  inv_object_in_scene(const Common::String &itemName, int32 scene);
 
-// private
-
-extern void MoveBP(const char *s, int32 from, int32 to);
-extern void InsertBP(const char *s, int32 where);
-
-// private
 
 extern void inv_sync_game(Common::Serializer &s);
 

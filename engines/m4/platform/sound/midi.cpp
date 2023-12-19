@@ -26,7 +26,7 @@ namespace M4 {
 namespace Sound {
 
 void Midi::task() {
-	warning("TODO: Midi::task");
+	// No implementation
 }
 
 void Midi::loop() {
@@ -34,11 +34,11 @@ void Midi::loop() {
 }
 
 void Midi::stop() {
-	warning("TODO: Midi::stop");
+	// No implementation
 }
 
 void Midi::set_overall_volume(int vol) {
-	warning("TODO: Midi::set_overall_volume");
+	// No implementation
 }
 
 } // namespace Sound

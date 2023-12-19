@@ -132,7 +132,7 @@ void Vars::game_systems_initialize(byte flags) {
 	fire_up_gui();
 
 	if (flags & INSTALL_SOUND_DRIVERS) {
-		warning("TODO: sound init");
+		// No implementation
 	} else {
 		term_message("Sound driver installation skipped");
 	}

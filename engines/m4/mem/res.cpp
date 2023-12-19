@@ -36,7 +36,6 @@ namespace M4 {
 
 Resources::~Resources() {
 	delete _fp;
-	// TODO: Delete resource entries
 }
 
 

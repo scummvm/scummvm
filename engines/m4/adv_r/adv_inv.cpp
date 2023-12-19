@@ -30,7 +30,6 @@ namespace M4 {
 
 #define MAX_NAME_LENGTH 40
 
-// TODO: Move more stuff into InventoryBase class
 static char *inv_get_name(const Common::String &itemName);
 
 InventoryBase::~InventoryBase() {
@@ -254,44 +253,6 @@ bool inv_object_is_here(const Common::String &itemName) {
 
 bool inv_object_in_scene(const Common::String &itemName, int32 scene) {
 	return (inv_where_is(itemName) == scene);
-}
-
-void MoveBP(char *s, int32 from, int32 to) {
-#ifdef TODO
-	Dialog *d = inv_dialog;
-	Item *myItem;
-	char        old_loc[MAX_PLYR_STRING_LEN],
-		new_loc[MAX_PLYR_STRING_LEN],
-		curr_loc[MAX_PLYR_STRING_LEN];
-
-	cstrupr(s);
-
-	sprintf(old_loc, "%s %d", s, from);
-	sprintf(new_loc, "%s %d", s, to);
-
-	if ((myItem = Dialog_Get_Item(d, 100)) == nullptr) return; //bp list.
-
-	while (GetPrevListItem(myItem)) {
-	}
-	if ((myItem = Dialog_Get_Item(d, 100)) == nullptr) return; //bp list.
-
-	for (;; ) {
-		sprintf(curr_loc, "%s", Dialog_GetCurrListItemPrompt(d, myItem, 100));
-
-		if (!strcmp(old_loc, curr_loc)) {
-			Dialog_Change_List_Item(d, myItem, 100,
-				Dialog_GetCurrListItem(d, myItem, 100), 0, //listTag == 0?
-				new_loc, 0, LIST_ALPH, true); //true: REFRESH
-
-			break;
-		}
-
-		if (!GetNextListItem(myItem))
-			break;
-	}
-#else
-	error("TODO: MoveBP");
-#endif
 }
 
 } // End of namespace M4
