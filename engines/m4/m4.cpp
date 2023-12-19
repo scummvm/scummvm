@@ -82,6 +82,7 @@ Common::Error M4Engine::run() {
 		setDebugger(new Console());
 
 		// Check for launcher savegame to load
+		_useOriginalSaveLoad = ConfMan.getBool("original_menus");
 		if (ConfMan.hasKey("save_slot")) {
 			_G(kernel).restore_slot = ConfMan.getInt("save_slot");
 			_G(game).previous_room = KERNEL_RESTORING_GAME;
@@ -127,6 +128,14 @@ bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 
 bool M4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return g_vars && INTERFACE_VISIBLE && player_commands_allowed();
+}
+
+void M4Engine::showSaveScreen() {
+	saveGameDialog();
+}
+
+void M4Engine::showLoadScreen(bool fromMainMenu) {
+	loadGameDialog();
 }
 
 Common::Error M4Engine::loadGameState(int slot) {

@@ -88,6 +88,8 @@ void Hotkeys::disable_hot_keys() {
 void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_F2, saveGame);
 	AddSystemHotkey(KEY_F3, loadGame);
+	AddSystemHotkey(KEY_F5, saveGame);
+	AddSystemHotkey(KEY_F7, loadGame);
 
 	AddSystemHotkey(KEY_ALT_X, exit_program);
 	AddSystemHotkey(KEY_CTRL_X, exit_program);
@@ -145,11 +147,11 @@ void Hotkeys::exit_program(void *, void *) {
 }
 
 void Hotkeys::saveGame(void *, void *) {
-	warning("TODO: hotkey");
+	g_engine->showSaveScreen();
 }
 
 void Hotkeys::loadGame(void *, void *) {
-	warning("TODO: hotkey");
+	g_engine->showLoadScreen();
 }
 
 void Hotkeys::adv_hyperwalk_to_final_destination(void *a, void *b) {
