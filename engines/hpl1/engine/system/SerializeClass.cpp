@@ -812,7 +812,7 @@ void cSerializeClass::LoadArray(TiXmlElement *apElement, iSerializable *apData, 
 			if (*pValuePtr == NULL) {
 				*pValuePtr = pSavedClass->mpCreateFunc();
 			} else {
-				hplDelete(pValuePtr);
+				hplDelete(*pValuePtr);
 				*pValuePtr = pSavedClass->mpCreateFunc();
 			}
 
