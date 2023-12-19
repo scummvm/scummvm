@@ -389,6 +389,7 @@ Common::SeekableReadStream *KingdomGame::loadAResource(int reznum) {
 	Common::File *file = new Common::File();
 	if(!file->open(path)) {
 		warning("Failed to open %s", path.c_str());
+		delete file;
 		return nullptr;
 	} else {
 		return file;
