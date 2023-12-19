@@ -181,10 +181,8 @@ void vmng_AddRectToRectList(RectList **theRectList, int32 rectX1, int32 rectY1, 
 					mem_free_to_stash(dirtyRect, _G(memtypeRECT));
 					myRect = nullptr;
 				}
-			}
-
-			//else get the next rect
-			else {
+			} else {
+				// else get the next rect
 				myRect = myRect->next;
 			}
 		}
@@ -201,11 +199,11 @@ void vmng_AddRectToRectList(RectList **theRectList, int32 rectX1, int32 rectY1, 
 			cleanRectList = dirtyRect;
 		}
 
-		//get the next dirty rect
+		// get the next dirty rect
 		dirtyRect = dirtyRectList;
 	}
 
-	//now, just add the clean list onto the dirty list
+	// now, just add the clean list onto the dirty list
 	if (cleanRectList) {
 
 		//now add the entire cleanRectList to the front of myRectList
