@@ -79,6 +79,7 @@ void cPreMenu::LoadConfig() {
 	if (pXmlDoc->LoadFile() == false) {
 		Error("Couldn't load XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	////////////////////////////////////////////////
