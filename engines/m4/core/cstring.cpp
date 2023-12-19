@@ -331,18 +331,6 @@ bool stringIsFloat(char *str) {
 	int16 bail = 0;
 	bool  decimal_seen = false;
 
-	/*
-	while (*str) {
-		if (!cstr_isdigit(*str))
-			return false;
-		++str;
-		++bail;
-		if (bail>256)
-			return false;
-	}
-	return true;
-	*/
-
 	while (*str) {
 		if (*str == '.') {
 			if (!decimal_seen)

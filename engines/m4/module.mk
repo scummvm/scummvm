@@ -26,7 +26,6 @@ MODULE_OBJS = \
 	adv_r/other.o \
 	core/cstring.o \
 	core/errors.o \
-	core/globals.o \
 	core/imath.o \
 	core/mouse.o \
 	core/param.o \

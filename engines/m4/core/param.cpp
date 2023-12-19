@@ -26,19 +26,13 @@
 
 namespace M4 {
 
-static bool param_inited = false;
-
 void param_init() {
-	param_inited = true;
 }
 
 void param_shutdown() {
-	param_inited = false;
 }
 
 void parse_all_flags() {
-	assert(param_inited);
-
 	if (ConfMan.hasKey("LOG"))
 		_G(kernel).use_log_file = ConfMan.getBool("LOG");
 
