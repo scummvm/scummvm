@@ -116,7 +116,7 @@ void player_inform_walker_new_scale(int32 frontY, int32 backY, int32 frontS, int
 }
 
 
-// this routine must also load shadow animations
+// This routine must also load shadow animations
 
 bool player_load_series(const char *walkerName, const char *shadowName, bool load_palette) {
 	int i;
@@ -124,7 +124,7 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 	char assetPath[MAX_FILENAME_SIZE];
 	char *tempPtr;
 
-	//LOAD WALKER
+	// Load walker
 	db_rmlst_get_asset_room_path(walkerName, assetPath, &thatRoomCode);
 	tempPtr = strrchr(assetPath, '.');
 	if (!tempPtr)
@@ -136,11 +136,10 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 
 	for (i = 1; i <= 5; i++) {
 		*tempPtr = (char)((int32)'0' + i);
-		//env_get_path(fullPath, thatRoomCode, assetPath);
 		AddWSAssetCELS(assetPath, i - 1, load_palette ? _G(master_palette) : nullptr);
 	}
 
-	//LOAD WALKER SHADOW
+	// Load walker shadow
 	db_rmlst_get_asset_room_path(shadowName, assetPath, &thatRoomCode);
 	tempPtr = strrchr(assetPath, '.');
 	if (!tempPtr)

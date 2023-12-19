@@ -220,7 +220,7 @@ const char *inv_get_verbs(const Common::String &itemName) {
 	return nullptr;
 }
 
-// this is provided so that when restoring a game from a save file,
+// This is provided so that when restoring a game from a save file,
 // we store a pointer to the registered name, not to an unmanaged
 // memory pointer.
 
