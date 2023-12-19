@@ -324,6 +324,8 @@ void cMeshLoaderMSH::SaveFloatData(TiXmlElement *apRoot, int alSize, const char 
 		case 6:
 			snprintf(sTemp, 20, "%.6f", apData[i]);
 			break;
+		default:
+			error("trying to serialize a floating point value with a precision that is not in the range 1-6");
 		}
 
 		sData += sTemp;
