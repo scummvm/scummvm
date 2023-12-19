@@ -24,10 +24,15 @@
 #include "twp/object.h"
 #include "twp/scenegraph.h"
 #include "twp/squtil.h"
+#include "twp/util.h"
+#include "twp/ggpack.h"
 
 namespace Twp {
 
-static int gObjectId = START_OBJECTID;
+#define STAND_ANIMNAME "stand"
+#define HEAD_ANIMNAME "head"
+#define WALK_ANIMNAME "walk"
+#define REACH_ANIMNAME "reach"
 
 Object::Object()
 	: _talkOffset(0, 90) {
@@ -41,93 +46,16 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 	: _talkOffset(0, 90), _table(o), _key(key) {
 }
 
-Object *Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
-	Object *obj = new Object();
-	obj->_temporary = true;
-
-	HSQUIRRELVM v = g_engine->getVm();
-
-	// create a table for this object
-	sq_newtable(v);
-	sq_getstackobj(v, -1, &obj->_table);
-	sq_addref(v, &obj->_table);
-	sq_pop(v, 1);
-
-	// assign an id
-	setId(obj->_table, gObjectId++);
-	Common::String name = frames.size() > 0 ? frames[0] : "noname";
-	sqsetf(obj->_table, "name", name);
-	obj->_key = name;
-	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
-
-	obj->_room = this;
-	obj->_sheet = sheet;
-	obj->_touchable = false;
-
-	// create anim if any
-	if (frames.size() > 0) {
-		ObjectAnimation objAnim;
-		objAnim.name = "state0";
-		objAnim.frames.push_back(frames);
-		obj->_anims.push_back(objAnim);
-	}
-
-	obj->_node->setZSort(1);
-	layer(0)->_objects.push_back(obj);
-	layer(0)->_node->addChild(obj->_node);
-	obj->_layer = layer(0);
-	obj->setState(0);
-
-	g_engine->_objects.push_back(obj);
-
-	return obj;
-}
-
-Object *Room::createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth) {
-	Object *obj = new Object();
-	obj->_temporary = true;
-
-	HSQUIRRELVM v = g_engine->getVm();
-
-	// create a table for this object
-	sq_newtable(v);
-	sq_getstackobj(v, -1, &obj->_table);
-	sq_addref(v, &obj->_table);
-	sq_pop(v, 1);
-
-	// assign an id
-	setId(obj->_table, gObjectId++);
-	debug("Create object with new table: %s #%d}", obj->_name.c_str(), obj->getId());
-	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
-	obj->_touchable = false;
-
-	Text txt(fontName, text, hAlign, vAlign, maxWidth);
-
-	// TODO:
-	//   let node = newTextNode(text)
-	//   var v = 0.5f
-	//   case vAlign:
-	//   of tvTop:
-	//     v = 0f
-	//   of tvCenter:
-	//     v = 0.5f
-	//   of tvBottom:
-	//     v = 1f
-	//   case hAlign:
-	//   of thLeft:
-	//     node.setAnchorNorm(vec2(0f, v))
-	//   of thCenter:
-	//     node.setAnchorNorm(vec2(0.5f, v))
-	//   of thRight:
-	//     node.setAnchorNorm(vec2(1f, v))
-	//   obj.node = node
-	//   self.layer(0).objects.add(obj);
-	//   self.layer(0).node.addChild obj.node;
-	//   obj.layer = self.layer(0);
-
-	g_engine->_objects.push_back(obj);
-
-	return obj;
+Object *Object::createActor() {
+	Object *result = new Object();
+	result->_hotspot = Common::Rect(-18, 0, 37, 71);
+	result->_facing = FACE_FRONT;
+	result->_useWalkboxes = true;
+	result->showLayer("blink", false);
+	result->showLayer("eyes_left", false);
+	result->showLayer("eyes_right", false);
+	result->setHeadIndex(1);
+	return result;
 }
 
 int Object::getId() const {
@@ -186,12 +114,19 @@ bool Object::playCore(const Common::String &state, bool loop, bool instant) {
 }
 
 void Object::showLayer(const Common::String &layer, bool visible) {
-	Common::String *s = Common::find(_hiddenLayers.begin(), _hiddenLayers.end(), layer);
+	int index = -1;
+	for (int i = 0; i < _hiddenLayers.size(); i++) {
+		if (_hiddenLayers[i] == layer) {
+			index = i;
+			break;
+		}
+	}
+
 	if (visible) {
-		if (s)
-			_hiddenLayers.remove_at(s - &_hiddenLayers[0]);
+		if (index != -1)
+			_hiddenLayers.remove_at(index);
 	} else {
-		if (!s)
+		if (index == -1)
 			_hiddenLayers.push_back(layer);
 	}
 	if (_node != NULL) {
@@ -356,7 +291,7 @@ void Object::setRoom(Room *room) {
 
 void Object::delObject() {
 	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
-    _node->getParent()->removeChild(_node);
+	_node->getParent()->removeChild(_node);
 }
 
 void Object::stopObjectMotors() {
@@ -364,39 +299,111 @@ void Object::stopObjectMotors() {
 }
 
 void Object::setFacing(Facing facing) {
-  if (_facing != facing) {
-    debug("set facing: %d", facing);
-    bool update = !(((_facing == FACE_LEFT) && (facing == FACE_RIGHT)) || ((_facing == FACE_RIGHT) && (facing == FACE_LEFT)));
-    _facing = facing;
-    if (update && _nodeAnim)
-      play(_animName, _animLoop);
-  }
+	if (_facing != facing) {
+		debug("set facing: %d", facing);
+		bool update = !(((_facing == FACE_LEFT) && (facing == FACE_RIGHT)) || ((_facing == FACE_RIGHT) && (facing == FACE_LEFT)));
+		_facing = facing;
+		if (update && _nodeAnim)
+			play(_animName, _animLoop);
+	}
 }
 
 Facing Object::getDoorFacing() {
-  int flags = getFlags();
-  if (flags & DOOR_LEFT)
-    return FACE_LEFT;
-  else if (flags & DOOR_RIGHT)
-    return FACE_RIGHT;
-  else if (flags & DOOR_FRONT)
-    return FACE_FRONT;
-  else
-    return FACE_BACK;
+	int flags = getFlags();
+	if (flags & DOOR_LEFT)
+		return FACE_LEFT;
+	else if (flags & DOOR_RIGHT)
+		return FACE_RIGHT;
+	else if (flags & DOOR_FRONT)
+		return FACE_FRONT;
+	else
+		return FACE_BACK;
 }
 
 bool Object::inInventory() {
-  return isObject(getId()) && getIcon().size() > 0;
+	return isObject(getId()) && getIcon().size() > 0;
 }
 
 bool Object::contains(Math::Vector2d pos) {
-  Math::Vector2d p = pos - _node->getPos() - _node->getOffset();
-  return _hotspot.contains(p.getX(), p.getY());
+	Math::Vector2d p = pos - _node->getPos() - _node->getOffset();
+	return _hotspot.contains(p.getX(), p.getY());
 }
 
-void Object::dependentOn(Object* dependentObj, int state) {
-  _dependentState = state;
-  _dependentObj = dependentObj;
+void Object::dependentOn(Object *dependentObj, int state) {
+	_dependentState = state;
+	_dependentObj = dependentObj;
+}
+
+Common::String Object::getAnimName(const Common::String &key) {
+	if (_animNames.contains(key))
+		return _animNames[key];
+	return key;
+}
+
+void Object::setHeadIndex(int head) {
+	for (int i = 0; i <= 6; i++) {
+		showLayer(Common::String::format("%s%d", getAnimName(STAND_ANIMNAME).c_str(), i), i == head);
+	}
+}
+
+bool Object::isWalking() {
+	// TODO: return not self.walkTo.isNil and self.walkTo.enabled();
+	return false;
+}
+
+void Object::stopWalking() {
+	// TODO: stopWalking
+	//   if (_walkTo)
+	//     _walkTo->disable();
+}
+
+void Object::setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach) {
+	if (head.size() > 0)
+		setHeadIndex(0);
+	_animNames[HEAD_ANIMNAME] = head;
+	showLayer(_animNames[HEAD_ANIMNAME], true);
+	setHeadIndex(1);
+	if (stand.size() > 0)
+		_animNames[STAND_ANIMNAME] = stand;
+	if (walk.size() > 0)
+		_animNames[WALK_ANIMNAME] = walk;
+	if (reach.size() > 0)
+		_animNames[REACH_ANIMNAME] = reach;
+	if (isWalking())
+		play(getAnimName(WALK_ANIMNAME), true);
+}
+
+void Object::blinkRate(float min, float max) {
+	// TODO:
+	//   if (min == 0.0 && max == 0.0)
+	//     _blink = nil;
+	//   else:
+	//     _blink = new Blink(this, min, max);
+}
+
+void Object::setCostume(const Common::String &name, const Common::String &sheet) {
+	GGPackEntryReader entry;
+	entry.open(g_engine->_pack, name + ".json");
+
+	GGHashMapDecoder dec;
+	Common::JSONValue *json = dec.open(&entry);
+	const Common::JSONObject& jCostume = json->asObject();
+
+	parseObjectAnimations(jCostume["animations"]->asArray(), _anims);
+	_costumeName = name;
+	_costumeSheet = sheet;
+	if ((sheet.size() == 0) && jCostume.contains("sheet")) {
+		_sheet = jCostume["sheet"]->asString();
+	} else {
+		_sheet = sheet;
+	}
+	stand();
+
+	delete json;
+}
+
+void Object::stand() {
+  play(getAnimName(STAND_ANIMNAME));
 }
 
 } // namespace Twp

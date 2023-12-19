@@ -98,19 +98,19 @@ SQInteger sqpush(HSQUIRRELVM v, Rectf value) {
 }
 
 template<>
-SQInteger sqpush(HSQUIRRELVM v, Common::JSONValue* node) {
-  if(node->isIntegerNumber()) {
-	return sqpush(v, (int)node->asIntegerNumber());
-  } else if(node->isString()) {
-    return sqpush(v, node->asString());
-  } else if(node->isString()) {
-    return sqpush(v, (float)node->asNumber());
-  } else if(node->isNull()) {
-	sq_pushnull(v);
-	return 1;
-  } else {
-    return sq_throwerror(v, "This kind of node is not supported");
-  }
+SQInteger sqpush(HSQUIRRELVM v, Common::JSONValue *node) {
+	if (node->isIntegerNumber()) {
+		return sqpush(v, (int)node->asIntegerNumber());
+	} else if (node->isString()) {
+		return sqpush(v, node->asString());
+	} else if (node->isString()) {
+		return sqpush(v, (float)node->asNumber());
+	} else if (node->isNull()) {
+		sq_pushnull(v);
+		return 1;
+	} else {
+		return sq_throwerror(v, "This kind of node is not supported");
+	}
 }
 
 template<>
@@ -256,6 +256,12 @@ Room *sqroom(HSQUIRRELVM v, int i) {
 
 Object *sqobj(HSQOBJECT table) {
 	int id = getId(table);
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+    	Object* actor = g_engine->_actors[i];
+		if (getId(actor->_table) == id)
+			return actor;
+	}
+
 	for (int i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
 		for (int j = 0; j < room->_layers.size(); j++) {
@@ -274,6 +280,23 @@ Object *sqobj(HSQUIRRELVM v, int i) {
 	HSQOBJECT table;
 	sq_getstackobj(v, i, &table);
 	return sqobj(table);
+}
+
+Object *sqactor(HSQOBJECT table) {
+	int id = getId(table);
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+		Object *actor = g_engine->_actors[i];
+		if (actor->getId() == id)
+			return actor;
+	}
+	return nullptr;
+}
+
+Object *sqactor(HSQUIRRELVM v, int i) {
+	HSQOBJECT table;
+	if (SQ_SUCCEEDED(sqget(v, i, table)))
+		return sqactor(table);
+	return nullptr;
 }
 
 int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {

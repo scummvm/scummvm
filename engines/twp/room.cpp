@@ -27,26 +27,10 @@
 #include "twp/scenegraph.h"
 #include "twp/ids.h"
 #include "twp/object.h"
+#include "twp/util.h"
 #include "common/algorithm.h"
 
 namespace Twp {
-
-static Math::Vector2d parseVec2(const Common::String &s) {
-	float x, y;
-	sscanf(s.c_str(), "{%f,%f}", &x, &y);
-	return {x, y};
-}
-
-static Common::Rect parseRect(const Common::String &s) {
-	float x1, y1;
-	float x2, y2;
-	sscanf(s.c_str(), "{{%f,%f},{%f,%f}}", &x1, &y1, &x2, &y2);
-	return Common::Rect(x1, y1, x2, y2);
-}
-
-static bool toBool(const Common::JSONObject &jNode, const Common::String &key) {
-	return jNode.contains(key) && jNode[key]->asIntegerNumber() == 1;
-}
 
 static ObjectType toObjectType(const Common::JSONObject &jObject) {
 	if (toBool(jObject, "prop"))
@@ -98,60 +82,6 @@ static Walkbox parseWalkbox(const Common::String &text) {
 	return Walkbox(points);
 }
 
-static float parseFps(const Common::JSONValue &jFps) {
-	if (jFps.isNumber())
-		return jFps.asNumber();
-	if (jFps.isIntegerNumber())
-		return jFps.asIntegerNumber();
-	error("fps should be a number: %s", jFps.stringify().c_str());
-}
-
-static ObjectAnimation parseObjectAnimation(const Common::JSONObject &jAnim) {
-	ObjectAnimation result;
-	if (jAnim.contains("sheet"))
-		result.sheet = jAnim["sheet"]->asString();
-	result.name = jAnim["name"]->asString();
-	result.loop = toBool(jAnim, "loop");
-	result.fps = jAnim.contains("fps") ? parseFps(*jAnim["fps"]) : 0.f;
-	result.flags = jAnim.contains("flags") && jAnim["flags"]->isIntegerNumber() ? jAnim["flags"]->asIntegerNumber() : 0;
-	if (jAnim.contains("frames") && jAnim["frames"]->isArray()) {
-		const Common::JSONArray &jFrames = jAnim["frames"]->asArray();
-		for (auto it = jFrames.begin(); it != jFrames.end(); it++) {
-			Common::String name = (*it)->asString();
-			result.frames.push_back(name);
-		}
-	}
-
-	if (jAnim.contains("layers") && jAnim["layers"]->isArray()) {
-		const Common::JSONArray &jLayers = jAnim["layers"]->asArray();
-		for (auto it = jLayers.begin(); it != jLayers.end(); it++) {
-			ObjectAnimation layer = parseObjectAnimation((*it)->asObject());
-			result.layers.push_back(layer);
-		}
-	}
-
-	if (jAnim.contains("triggers") && jAnim["triggers"]->isArray()) {
-		const Common::JSONArray &jTriggers = jAnim["triggers"]->asArray();
-		for (auto it = jTriggers.begin(); it != jTriggers.end(); it++) {
-			result.triggers.push_back((*it)->isString() ? (*it)->asString() : "null");
-		}
-	}
-
-	if (jAnim.contains("offsets") && jAnim["offsets"]->isArray()) {
-		const Common::JSONArray &jOffsets = jAnim["offsets"]->asArray();
-		for (auto it = jOffsets.begin(); it != jOffsets.end(); it++) {
-			result.offsets.push_back(parseVec2((*it)->asString()));
-		}
-	}
-	return result;
-}
-
-static void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims) {
-	for (auto it = jAnims.begin(); it != jAnims.end(); it++) {
-		anims.push_back(parseObjectAnimation((*it)->asObject()));
-	}
-}
-
 static Scaling parseScaling(const Common::JSONArray &jScalings) {
 	float scale;
 	int y;
@@ -175,6 +105,95 @@ Room::~Room() {
 		delete _layers[i];
 	}
 	delete _scene;
+}
+
+Object *Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
+	Object *obj = new Object();
+	obj->_temporary = true;
+
+	HSQUIRRELVM v = g_engine->getVm();
+
+	// create a table for this object
+	sq_newtable(v);
+	sq_getstackobj(v, -1, &obj->_table);
+	sq_addref(v, &obj->_table);
+	sq_pop(v, 1);
+
+	// assign an id
+	setId(obj->_table, newObjId());
+	Common::String name = frames.size() > 0 ? frames[0] : "noname";
+	sqsetf(obj->_table, "name", name);
+	obj->_key = name;
+	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
+
+	obj->_room = this;
+	obj->_sheet = sheet;
+	obj->_touchable = false;
+
+	// create anim if any
+	if (frames.size() > 0) {
+		ObjectAnimation objAnim;
+		objAnim.name = "state0";
+		objAnim.frames.push_back(frames);
+		obj->_anims.push_back(objAnim);
+	}
+
+	obj->_node->setZSort(1);
+	layer(0)->_objects.push_back(obj);
+	layer(0)->_node->addChild(obj->_node);
+	obj->_layer = layer(0);
+	obj->setState(0);
+
+	g_engine->_objects.push_back(obj);
+
+	return obj;
+}
+
+Object *Room::createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth) {
+	Object *obj = new Object();
+	obj->_temporary = true;
+
+	HSQUIRRELVM v = g_engine->getVm();
+
+	// create a table for this object
+	sq_newtable(v);
+	sq_getstackobj(v, -1, &obj->_table);
+	sq_addref(v, &obj->_table);
+	sq_pop(v, 1);
+
+	// assign an id
+	setId(obj->_table, newObjId());
+	debug("Create object with new table: %s #%d}", obj->_name.c_str(), obj->getId());
+	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
+	obj->_touchable = false;
+
+	Text txt(fontName, text, hAlign, vAlign, maxWidth);
+
+	// TODO:
+	//   let node = newTextNode(text)
+	//   var v = 0.5f
+	//   case vAlign:
+	//   of tvTop:
+	//     v = 0f
+	//   of tvCenter:
+	//     v = 0.5f
+	//   of tvBottom:
+	//     v = 1f
+	//   case hAlign:
+	//   of thLeft:
+	//     node.setAnchorNorm(vec2(0f, v))
+	//   of thCenter:
+	//     node.setAnchorNorm(vec2(0.5f, v))
+	//   of thRight:
+	//     node.setAnchorNorm(vec2(1f, v))
+	//   obj.node = node
+	//   self.layer(0).objects.add(obj);
+	//   self.layer(0).node.addChild obj.node;
+	//   obj.layer = self.layer(0);
+
+	g_engine->_objects.push_back(obj);
+
+	return obj;
 }
 
 void Room::load(Common::SeekableReadStream &s) {
@@ -333,6 +352,11 @@ Light *Room::createLight(Color color, Math::Vector2d pos) {
 	result->color = color;
 	result->pos = pos;
 	_lights._numLights++;
+	return result;
+}
+
+float Room::getScaling(float yPos) {
+	return _scaling.getScaling(yPos);
 }
 
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
@@ -349,6 +373,25 @@ Layer::Layer(const Common::StringArray &name, Math::Vector2d parallax, int zsort
 
 Walkbox::Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible)
 	: _polygon(polygon), _visible(visible) {
+}
+
+float Scaling::getScaling(float yPos) {
+	if (values.size() == 0)
+		return 1.0f;
+	for (int i = 0; i < values.size(); i++) {
+		ScalingValue scaling = values[i];
+		if (yPos < scaling.y) {
+			if (i == 0)
+				return values[i].scale;
+			ScalingValue prevScaling = values[i - 1];
+			float dY = scaling.y - prevScaling.y;
+			float dScale = scaling.scale - prevScaling.scale;
+			float p = (yPos - prevScaling.y) / dY;
+			float scale = prevScaling.scale + (p * dScale);
+			return scale;
+		}
+	}
+	return values[values.size()-1].scale;
 }
 
 } // namespace Twp

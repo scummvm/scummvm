@@ -68,6 +68,8 @@ struct ScalingValue {
 struct Scaling {
 	Common::Array<ScalingValue> values;
 	Common::String trigger;
+
+	float getScaling(float yPos);
 };
 
 struct Light {
@@ -107,6 +109,7 @@ public:
 	Object *getObj(const Common::String& key);
 
 	Light *createLight(Color color, Math::Vector2d pos);
+	float getScaling(float yPos);
 
 public:
 	Common::String _name;              // Name of the room

@@ -22,7 +22,10 @@
 #ifndef TWP_UTIL_H
 #define TWP_UTIL_H
 
+#include "twp/ids.h"
+#include "twp/object.h"
 #include "math/vector2d.h"
+#include "common/formats/json.h"
 
 namespace Twp {
 
@@ -35,9 +38,16 @@ T clamp(T x, T a, T b) {
 	return x;
 }
 
-Math::Vector2d operator*(Math::Vector2d v, float f) {
-	return Math::Vector2d(v.getX() * f, v.getY() * f);
-}
+Math::Vector2d operator*(Math::Vector2d v, float f);
+
+Facing getFacing(int dir, Facing facing);
+Facing flip(Facing facing);
+Facing getFacingToFaceTo(Object *actor, Object *obj);
+
+bool toBool(const Common::JSONObject &jNode, const Common::String &key);
+Math::Vector2d parseVec2(const Common::String &s);
+Common::Rect parseRect(const Common::String &s);
+void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims);
 
 } // namespace Twp
 

@@ -168,6 +168,17 @@ private:
     Object* _obj;
 };
 
+class ActorNode final: public Node {
+public:
+	ActorNode(Object* obj);
+
+	int getZSort() const override final;
+	Math::Vector2d getScale() const override final;
+
+private:
+	Object* _object = nullptr;
+};
+
 class Scene: public Node {
 public:
 	Scene();

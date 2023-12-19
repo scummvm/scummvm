@@ -109,20 +109,26 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 		switch (hAlign) {
 		case 0x0000000010000000:
 			thAlign = thLeft;
+			break;
 		case 0x0000000020000000:
 			thAlign = thCenter;
+			break;
 		case 0x0000000040000000:
 			thAlign = thRight;
+			break;
 		default:
 			return sq_throwerror(v, "failed to get halign");
 		}
 		switch (vAlign) {
 		case 0xFFFFFFFF80000000:
 			tvAlign = tvTop;
+			break;
 		case 0x0000000001000000:
 			tvAlign = tvBottom;
+			break;
 		default:
 			tvAlign = tvTop;
+			break;
 		}
 	}
 	debug("Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
@@ -382,7 +388,9 @@ static SQInteger objectHotspot(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get right");
 	if (SQ_FAILED(sqget(v, 6, bottom)))
 		return sq_throwerror(v, "failed to get bottom");
-	obj->_hotspot = Common::Rect(left, top, right - left + 1, bottom - top + 1);
+	if(bottom<top)
+		SWAP(bottom, top);
+	obj->_hotspot = Common::Rect(left, top, right, bottom);
 	return 0;
 }
 
@@ -545,6 +553,7 @@ static SQInteger objectTouchable(HSQUIRRELVM v) {
 		obj->_touchable = touchable;
 		return 0;
 	}
+	return sq_throwerror(v, "objectTouchable: invalid argument");
 }
 
 //  Sets the zsort order of an object, essentially the order in which an object is drawn on the screen.

@@ -447,10 +447,17 @@ static SQInteger markStat(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns the internal int value of x
 static SQInteger ord(HSQUIRRELVM v) {
-	// TODO: ord
-	warning("ord not implemented");
-	return 0;
+	Common::String letter;
+	if (SQ_FAILED(sqget(v, 2, letter)))
+		return sq_throwerror(v, "Failed to get letter");
+	if (letter.size() > 0) {
+		sq_pushinteger(v, (int)(letter[0]));
+	} else {
+		sq_pushinteger(v, 0);
+	}
+	return 1;
 }
 
 static SQInteger pushSentence(HSQUIRRELVM v) {
@@ -630,7 +637,7 @@ void sqgame_register_genlib(HSQUIRRELVM v) {
 	regFunc(v, markStat, _SC("markStat"));
 	regFunc(v, ord, _SC("ord"));
 	regFunc(v, pushSentence, _SC("pushSentence"));
-	regFunc(v, randomFrom, _SC("randomFrom"));
+	regFunc(v, randomFrom, _SC("randomfrom"));
 	regFunc(v, randomOdds, _SC("randomOdds"));
 	regFunc(v, randomseed, _SC("randomseed"));
 	regFunc(v, refreshUI, _SC("refreshUI"));

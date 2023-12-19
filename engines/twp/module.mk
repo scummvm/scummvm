@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	soundlib.o \
 	prefs.o \
 	tsv.o \
+	util.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

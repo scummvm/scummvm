@@ -28,6 +28,7 @@
 #include "math/vector2d.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/ids.h"
+#include "twp/gfx.h"
 
 namespace Twp {
 
@@ -69,6 +70,7 @@ struct VerbId {
 	int id = 0;
 };
 
+class Object;
 struct Sentence {
     VerbId verb;
     Object* noun1 = nullptr;
@@ -85,6 +87,8 @@ class Object {
 public:
 	Object();
 	Object(HSQOBJECT o, const Common::String& key);
+
+	static Object* createActor();
 
 	int getId() const;
 
@@ -135,6 +139,15 @@ public:
 	void delObject();
 	void stopObjectMotors();
 	void dependentOn(Object* dependentObj, int state);
+
+	Common::String getAnimName(const Common::String &key);
+	void setHeadIndex(int head);
+	void setAnimationNames(const Common::String& head, const Common::String& stand, const Common::String& walk, const Common::String& reach);
+	bool isWalking();
+	void stopWalking();
+	void blinkRate(float min, float max);
+	void setCostume(const Common::String &name, const Common::String &sheet);
+	void stand();
 
 private:
 	Common::String suffix() const;
