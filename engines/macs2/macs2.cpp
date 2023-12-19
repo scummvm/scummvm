@@ -245,15 +245,37 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 Macs2Engine::~Macs2Engine() {
+
+
 }
+
+// Does what 9F23 does
+uint16 ScriptReadWord(Common::MemoryReadStream* stream) {
+	const int64 pos = stream->pos();
+	const uint16 result = stream->readUint16LE();
+	debug("Script read (word): %.4x at offset %.4x\n", result, pos);
+	return result;
+}
+
+// Does pretty much what 9F07 does
+byte ScriptReadByte(Common::MemoryReadStream* stream) {
+
+	const int64 pos = stream->pos();
+	const byte result = stream->readByte();
+	debug("Script read (byte): %.2x at offset %.4x\n", result, pos);
+	return result;
+}
+
+// #define ScriptNoEntry assert(false);
+#define ScriptNoEntry debug("Unhandled case in script handling");
 
 void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 	// Read an opcode (would be 0037:9F07) - [bp-1h]
-	byte opcode = stream->readByte();
-	debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
+	byte opcode = ScriptReadByte(stream);
+	// debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
 
-	uint16 value = stream->readUint16LE();
-	debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
+	uint16 value = ScriptReadWord(stream);
+	// debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
 
 	if (opcode == 0xFF) {
 		// TODO: Long list of opcode handling here
@@ -279,14 +301,12 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 			return;
 		}
 	}
+	else {
+		ScriptNoEntry
+	}
 }
 
-byte ScriptReadByte(Common::MemoryReadStream* stream) {
-	const int64 pos = stream->pos();
-	const byte result = stream->readByte();
-	debug("Script read (byte): %.2x at offset %.4x\n", result, pos);
-	return result;
-}
+
 
 void FuncA3D2(Common::MemoryReadStream* stream) {
 	
@@ -310,6 +330,7 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 			// Do the skipping
 			stream->seek(val, SEEK_CUR);
 			debug("A3D2 skipping %u bytes for opcode %.2x (%u)", val, opcode, skipValue);
+			
 			// TODO: Add a log here
 			if (skipValue != 0) {
 				// Continue the loop if there is data left in the stream
@@ -351,9 +372,13 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 
 		// TODO: Handle other opcodes above
 		if (opcode1 == 0x01) {
-			assert(false);
-			// TODO: Implement - this looks like some kind of bookkeeping since it doesn't determine if we continue or not?
-			// TODO: Maybe skip for now and note if it should be implemented later
+			ScriptReadByte(stream);
+			ScriptReadWord(stream);
+			uint16 result1;
+			uint16 result2;
+
+			Func9F4D(stream, result1, result2);
+			// TODO: Implement properly - this looks like some kind of bookkeeping since it doesn't determine if we continue or not?
 				/*
 				call	far 0037h:9F07h
 				call	far 0037h : 9F23h
@@ -373,8 +398,8 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 		}
 		else if (opcode1 == 0x02 || opcode1 == 0x03) {
 			// TODO: Implement
-			assert(false);
-		}
+			ScriptNoEntry
+		} else
 		if (opcode1 == 0x04) {
 			// l0037_DC44:
 			uint16 v1;
@@ -385,7 +410,7 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 			}
 			else {
 				// TODO: Implement
-				assert(false);
+				ScriptNoEntry
 			}
 		}
 		else {
