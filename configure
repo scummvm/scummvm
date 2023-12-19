@@ -3988,6 +3988,9 @@ if test -n "$_host"; then
 			_backend="wii"
 			_build_scalers=no
 			_build_aspect=no
+			_tinygl=no
+			_nuked_opl=no
+			_mt32emu=no
 			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
