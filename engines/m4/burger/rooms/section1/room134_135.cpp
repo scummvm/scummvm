@@ -164,6 +164,7 @@ void Room134_135::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 1:
+		// Burl enters town normally
 		_val2 = 1;
 		_val6 = 21;
 
@@ -176,6 +177,7 @@ void Room134_135::daemon() {
 		break;
 
 	case 2:
+		// Burl is entering town
 		kernel_trigger_dispatch_now(_G(flags)[kRoadOpened] ? 26 : 1);
 		break;
 
@@ -352,6 +354,7 @@ void Room134_135::daemon() {
 		break;
 
 	case 26:
+		// Burl crashing truck off of bridge
 		digi_preload("135_006");
 		_series4 = series_play("135dt02", 3840, 0, 27, 6, 0, 100, 0, 0, 0, 13);
 		break;
@@ -767,7 +770,7 @@ void Room134_135::daemon() {
 		}
 		break;
 
-	case 10028:
+	case kBurlEntersTown:
 		if (player_commands_allowed() && _G(player).walker_visible &&
 				INTERFACE_VISIBLE && !digi_play_state(1)) {
 			Section1::updateDisablePlayer();
@@ -775,7 +778,7 @@ void Room134_135::daemon() {
 			digi_play("100_013", 2, 255, -1);
 			kernel_timing_trigger(240, 2);
 		} else {
-			kernel_timing_trigger(60, 10028);
+			kernel_timing_trigger(60, kBurlEntersTown);
 		}
 		break;
 
@@ -828,7 +831,7 @@ void Room134_135::parser() {
 		} else if (lookFlag && player_said("baitbox")) {
 			wilbur_speech(_G(flags)[V038] ? "135w004" : "135w003");
 		} else if (lookFlag && player_said("wrecked truck")) {
-			wilbur_speech(_G(flags)[V038] ? "135w007" : "135w006");
+			wilbur_speech(_G(flags)[V052] ? "134w007" : "134w006");
 		} else if (player_said("take", "baitbox") || player_said("gear", "baitbox")) {
 			player_set_commands_allowed(false);
 			loadOdie();
