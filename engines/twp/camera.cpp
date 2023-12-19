@@ -56,62 +56,73 @@ void Camera::setAt(Math::Vector2d at) {
 }
 
 void Camera::panTo(Math::Vector2d target, float time, InterpolationKind interpolation) {
-  if (!_moving) {
-    _moving = true;
-    _init = _pos;
-    _elapsed = 0.f;
-  }
-  _function = easing(interpolation);
-  _target = target;
-  _time = time;
+	if (!_moving) {
+		_moving = true;
+		_init = _pos;
+		_elapsed = 0.f;
+	}
+	_function = easing(interpolation);
+	_target = target;
+	_time = time;
 }
 
-void Camera::update(Room* room, Object* follow, float elapsed) {
-  _room = room;
-  _elapsed += elapsed;
-  bool isMoving = _elapsed < _time;
+void Camera::update(Room *room, Object *follow, float elapsed) {
+	_room = room;
+	_elapsed += elapsed;
+	bool isMoving = _elapsed < _time;
 
-  if(_moving && !isMoving) {
-    _moving = false;
-    _time = 0.f;
-    setAt(_target);
-  }
+	if (_moving && !isMoving) {
+		_moving = false;
+		_time = 0.f;
+		setAt(_target);
+	}
 
-  if(isMoving) {
-    float t = _elapsed / _time;
-    Math::Vector2d d = _target - _init;
-    Math::Vector2d pos = _init + (d * _function.func(t));
-    setAtCore(pos);
-    return;
-  }
+	if (isMoving) {
+		float t = _elapsed / _time;
+		Math::Vector2d d = _target - _init;
+		Math::Vector2d pos = _init + (d * _function.func(t));
+		setAtCore(pos);
+		return;
+	}
 
-  if (follow && follow->_node->isVisible() && follow->_room == room) {
-    Math::Vector2d screen = room->getScreenSize();
-    Math::Vector2d pos = follow->_node->getPos();
-    Math::Vector2d margin(screen.getX() / 6.f, screen.getY() / 6.f);
-    Math::Vector2d cameraPos = getAt();
+	if (follow && follow->_node->isVisible() && follow->_room == room) {
+		Math::Vector2d screen = room->getScreenSize();
+		Math::Vector2d pos = follow->_node->getPos();
+		Math::Vector2d margin(screen.getX() / 6.f, screen.getY() / 6.f);
+		Math::Vector2d cameraPos = getAt();
 
-    Math::Vector2d d = pos - cameraPos;
-    Math::Vector2d delta = d * elapsed;
-    bool sameActor = _follow == follow;
+		Math::Vector2d d = pos - cameraPos;
+		Math::Vector2d delta = d * elapsed;
+		bool sameActor = _follow == follow;
 
-    float x, y;
-    if (sameActor && (pos.getX() > (cameraPos.getX() + margin.getX())))
-      x = pos.getX() - margin.getX();
-    else if(sameActor && (pos.getX() < (cameraPos.getX() - margin.getX())))
-      x = pos.getX() + margin.getX();
-    else
-      x = cameraPos.getX() + (d.getX() > 0? MIN(delta.getX(), d.getX()): MAX(delta.getX(), d.getX()));
-    if (sameActor && (pos.getY() > (cameraPos.getY() + margin.getY())))
-      y = pos.getY() - margin.getY();
-    else if (sameActor && (pos.getY() < (cameraPos.getY() - margin.getY())))
-      y = pos.getY() + margin.getY();
-    else
-      y = cameraPos.getY() + d.getY() > 0? MIN(delta.getY(), d.getY()): MAX(delta.getY(), d.getY());
-    setAtCore(Math::Vector2d(x, y));
-    if (!sameActor && (fabs(pos.getX() - x) < 1.f) && (fabs(pos.getY() - y) < 1.f))
-      _follow = follow;
-  }
+		float x, y;
+		if (sameActor && (pos.getX() > (cameraPos.getX() + margin.getX())))
+			x = pos.getX() - margin.getX();
+		else if (sameActor && (pos.getX() < (cameraPos.getX() - margin.getX())))
+			x = pos.getX() + margin.getX();
+		else
+			x = cameraPos.getX() + (d.getX() > 0 ? MIN(delta.getX(), d.getX()) : MAX(delta.getX(), d.getX()));
+		if (sameActor && (pos.getY() > (cameraPos.getY() + margin.getY())))
+			y = pos.getY() - margin.getY();
+		else if (sameActor && (pos.getY() < (cameraPos.getY() - margin.getY())))
+			y = pos.getY() + margin.getY();
+		else
+			y = cameraPos.getY() + d.getY() > 0 ? MIN(delta.getY(), d.getY()) : MAX(delta.getY(), d.getY());
+		setAtCore(Math::Vector2d(x, y));
+		if (!sameActor && (fabs(pos.getX() - x) < 1.f) && (fabs(pos.getY() - y) < 1.f))
+			_follow = follow;
+	}
+}
+
+InterpolationMethod intToInterpolationMethod(int value) {
+	bool loop = (value & 0x10);
+	bool swing = (value & 0x20);
+	InterpolationKind kind = (InterpolationKind)(value & 0x0F);
+	InterpolationMethod im;
+	im.kind = kind;
+	im.loop = loop;
+	im.swing = swing;
+	return im;
 }
 
 } // namespace Twp

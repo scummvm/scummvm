@@ -120,7 +120,7 @@ HSQOBJECT sqrootTbl(HSQUIRRELVM v);
 int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String& name);
 void sqcall(const Common::String &name, int numArgs = 0, HSQOBJECT *args = nullptr);
 void sqcall(HSQOBJECT o, const Common::String& name, int numArgs = 0, HSQOBJECT* args = nullptr);
-void sqexec(HSQUIRRELVM v, const char *code);
+void sqexec(HSQUIRRELVM v, const char *code, const char* filename = nullptr);
 
 class Room;
 class Object;

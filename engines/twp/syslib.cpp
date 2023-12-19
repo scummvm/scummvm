@@ -150,8 +150,20 @@ static SQInteger addFolder(HSQUIRRELVM v) {
 //   breakhere(5)
 //}
 static SQInteger breakhere(HSQUIRRELVM v) {
-	warning("TODO: breakhere: not implemented");
-	return 0;
+	SQObjectType t = sq_gettype(v, 2);
+	if (t == OT_INTEGER) {
+		int numFrames;
+		if (SQ_FAILED(sqget(v, 2, numFrames)))
+			return sq_throwerror(v, "failed to get numFrames");
+		return breakfunc(v, [&](Thread &t) { t._numFrames = numFrames; });
+	}
+	if (t == OT_FLOAT) {
+		float time;
+		if (SQ_FAILED(sqget(v, 2, time)))
+			return sq_throwerror(v, "failed to get time");
+		return breakfunc(v, [&](Thread &t) { t._waitTime = time; });
+	}
+	return sq_throwerror(v, Common::String::format("failed to get numFrames (wrong type = {%d})", t).c_str());
 }
 
 // When called in a function started with startthread, execution is suspended for time seconds.

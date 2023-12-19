@@ -26,6 +26,7 @@
 #include "twp/squtil.h"
 #include "twp/util.h"
 #include "twp/ggpack.h"
+#include "twp/motor.h"
 
 namespace Twp {
 
@@ -387,7 +388,7 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 
 	GGHashMapDecoder dec;
 	Common::JSONValue *json = dec.open(&entry);
-	const Common::JSONObject& jCostume = json->asObject();
+	const Common::JSONObject &jCostume = json->asObject();
 
 	parseObjectAnimations(jCostume["animations"]->asArray(), _anims);
 	_costumeName = name;
@@ -403,7 +404,38 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 }
 
 void Object::stand() {
-  play(getAnimName(STAND_ANIMNAME));
+	play(getAnimName(STAND_ANIMNAME));
+}
+
+void Object::update(float elapsedSec) {
+	// TODO: update
+	//   if not self.dependentObj.isNil:
+	//     self.node.visible = self.dependentObj.getState() == self.dependentState
+	//   self.alphaTo.updateMotor(elapsedSec)
+	//   self.rotateTo.updateMotor(elapsedSec)
+	if (_moveTo)
+		_moveTo->update(elapsedSec);
+	//   self.walkTo.updateMotor(elapsedSec)
+	//   self.talking.updateMotor(elapsedSec)
+	//   self.blink.updateMotor(elapsedSec)
+	//   self.turnTo.updateMotor(elapsedSec)
+	//   self.shakeTo.updateMotor(elapsedSec)
+	//   self.jiggleTo.updateMotor(elapsedSec)
+
+	if (_nodeAnim)
+		_nodeAnim->update(elapsedSec);
+
+	//   if self.icons.len > 1 and self.iconFps > 0:
+	//     self.iconElapsed += elapsedSec
+	//     if self.iconElapsed > (1f / self.iconFps.float32):
+	//       self.iconElapsed = 0f
+	//       self.iconIndex = (self.iconIndex + 1) mod self.icons.len
+
+	//   if self.popCount > 0:
+	//       self.popElapsed += elapsedSec
+	//       if self.popElapsed > 0.5f:
+	//         dec self.popCount
+	//         self.popElapsed -= 0.5f
 }
 
 } // namespace Twp

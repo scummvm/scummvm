@@ -21,6 +21,7 @@
 
 #include "twp/font.h"
 #include "twp/twp.h"
+#include "twp/ggpack.h"
 #include "common/str.h"
 #include "graphics/opengl/system_headers.h"
 
@@ -193,9 +194,71 @@ Glyph GGFont::getGlyph(CodePoint chr) {
 	return _glyphs['?'];
 }
 
+BmFont::~BmFont() {}
+
+void BmFont::load(const Common::String &name) {
+	Common::String path = name + ".fnt";
+	if (!g_engine->_pack.assetExists(path.c_str())) {
+		path = name + "Font.fnt";
+	}
+	debug("Load font %s", path.c_str());
+	GGPackEntryReader entry;
+	if (!entry.open(g_engine->_pack, path)) {
+		error("error loading font %s", path.c_str());
+	}
+	char tmp[80];
+	while (!entry.eos()) {
+		Common::String line = entry.readLine();
+		if (line.hasPrefix("common")) {
+			sscanf(line.c_str(), "common lineHeight=%d base=%d scaleW=%d scaleH=%d pages=%d packed=%d", &_lnHeight, &_base, &_scaleW, &_scaleH, &_pages, &_packed);
+		} else if (line.hasPrefix("chars")) {
+		} else if (line.hasPrefix("char")) {
+			Char c;
+			sscanf(line.c_str(), "char id=%d\tx=%d\ty=%d\twidth=%d\theight=%d\txoffset=%d\tyoffset=%d\txadvance=%d\tpage=%d\tchnl=%d\tletter=\"%s\"", &c.id, &c.x, &c.y, &c.w, &c.h, &c.xoff, &c.yoff, &c.xadv, &c.page, &c.chnl, tmp);
+			_glyphs[c.id] = Glyph{c.xadv,
+								  Common::Rect(c.xoff, _lnHeight - c.yoff - c.h, c.xoff + c.w, _lnHeight - c.yoff),
+								  Common::Rect(c.x, c.y, c.x + c.w, c.y + c.h)};
+		} else if (line.hasPrefix("kernings")) {
+		} else if (line.hasPrefix("kerning")) {
+			KerningKey key;
+			int amount = 0;
+			sscanf(line.c_str(), "kerning\tfirst=%d\tsecond=%d\tamount=%d", &key.first, &key.second, &amount);
+			_kernings[key] = amount;
+		}
+	}
+	_name = name;
+}
+
+Glyph BmFont::getGlyph(CodePoint chr) {
+	if (_glyphs.contains(chr)) {
+		return _glyphs[chr];
+	}
+	return _glyphs['?'];
+}
+
+float BmFont::getKerning(CodePoint prev, CodePoint next) {
+	return 0.f;
+}
+
+bool operator==(const KerningKey &l, const KerningKey &r) {
+	return l.first == r.first && l.second == r.second;
+}
+
 Text::Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth, Color color)
 	: _font(NULL), _fontName(fontName), _texture(NULL), _txt(text), _col(color), _hAlign(hAlign), _vAlign(vAlign), _maxW(maxWidth), _dirty(true) {
 	update();
+}
+
+Text::Text() {}
+
+void Text::setFont(const Common::String &fontName) {
+	_fontName = fontName;
+	_dirty = true;
+}
+
+Math::Vector2d Text::getBounds() {
+	update();
+	return _bnds;
 }
 
 void Text::update() {

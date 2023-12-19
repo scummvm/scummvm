@@ -65,7 +65,16 @@ public:
 	// Gets the local position for this node (relative to its parent)
 	void setPos(const Math::Vector2d& pos) { _pos = pos; }
 	Math::Vector2d getPos() const { return _pos; }
+
+	void setOffset(const Math::Vector2d& offset) { _offset = offset; }
 	Math::Vector2d getOffset() const { return _offset; }
+
+	void setRenderOffset(const Math::Vector2d& offset) { _renderOffset = offset; }
+	Math::Vector2d getRenderOffset() const { return _renderOffset; }
+
+	void setScale(const Math::Vector2d& scale) { _scale = scale; }
+	virtual Math::Vector2d getScale() const { return _scale; }
+
 	// Gets the absolute position for this node.
 	Math::Vector2d getAbsPos() const;
 
@@ -77,13 +86,16 @@ public:
 	Color getComputedColor() const { return _computedColor; }
 
 	void setAlpha(float alpha);
-	Color getAlpha() const { return _color.rgba.a; }
+	float getAlpha() const { return _color.rgba.a; }
 
 	void setZSort(int zsort) { _zOrder = zsort; }
 	virtual int getZSort() const { return _zOrder; }
-	virtual Math::Vector2d getScale() const { return _scale; }
+
+	void setRotation(float rotation) { _rotation = rotation; }
+	virtual float getRotation() const { return _rotation; }
 
 	void setAnchor(Math::Vector2d anchor);
+	void setAnchorNorm(Math::Vector2d anchorNorm);
 	void setSize(Math::Vector2d size);
 	virtual Rectf getRect() const;
 
@@ -110,7 +122,8 @@ protected:
 	Math::Vector2d _offset, _shakeOffset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
 	Color _color, _computedColor;
 	bool _visible = false;
-	float _rotation = 0.f, _rotationOffset = 0.f;
+	float _rotation = 0.f;
+	float _rotationOffset = 0.f;
 };
 
 class OverlayNode final: public Node {
@@ -157,15 +170,16 @@ private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
 
 private:
-	Common::String _sheet;
-    const ObjectAnimation* _anim;
-    bool _disabled;
+    const ObjectAnimation* _anim = nullptr;
+    bool _disabled = false;
+    Common::String _sheet;
     Common::Array<Common::String> _frames;
-    int _frameIndex;
-    float _elapsed;
-    float _frameDuration;
-    bool _loop, _instant;
-    Object* _obj;
+    int _frameIndex = 0;
+    float _elapsed = 0.f;
+    float _frameDuration = 0.f;
+    bool _loop = false;
+	bool _instant;
+    Object* _obj = nullptr;
 };
 
 class ActorNode final: public Node {
@@ -179,7 +193,24 @@ private:
 	Object* _object = nullptr;
 };
 
-class Scene: public Node {
+class TextNode final: public Node {
+public:
+	TextNode();
+	virtual ~TextNode() final;
+
+	void setText(Text text);
+	void updateBounds();
+	virtual Rectf getRect() const override final;
+
+private:
+	virtual void onColorUpdated(Color color) override final;
+	virtual void drawCore(Math::Matrix4 trsf) override final;
+
+private:
+	Text _text;
+};
+
+class Scene final: public Node {
 public:
 	Scene();
 	virtual ~Scene() final;

@@ -110,6 +110,7 @@ public:
 
 	Light *createLight(Color color, Math::Vector2d pos);
 	float getScaling(float yPos);
+	void objectParallaxLayer(Object* obj, int zsort);
 
 public:
 	Common::String _name;              // Name of the room

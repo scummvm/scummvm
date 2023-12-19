@@ -342,9 +342,9 @@ void sqcall(const Common::String &name, int numArgs, HSQOBJECT *args) {
 	sqcall(v, sqrootTbl(v), name, numArgs, args);
 }
 
-void sqexec(HSQUIRRELVM v, const char *code) {
+void sqexec(HSQUIRRELVM v, const char *code, const char* filename) {
 	SQInteger top = sq_gettop(v);
-	if (SQ_FAILED(sq_compilebuffer(v, code, strlen(code), "twp", SQTrue))) {
+	if (SQ_FAILED(sq_compilebuffer(v, code, strlen(code), filename ? filename : "twp", SQTrue))) {
 		sqstd_printcallstack(v);
 		return;
 	}

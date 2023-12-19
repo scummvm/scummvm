@@ -81,6 +81,12 @@ void TwpEngine::update(float elapsedMs) {
 			// TODO: delete it
 		}
 	}
+
+	// update objects
+	for (int i = 0; i < _objects.size(); i++) {
+		Object *obj = _objects[i];
+		obj->update(elapsedMs);
+	}
 }
 
 void TwpEngine::draw() {
@@ -137,7 +143,11 @@ Common::Error TwpEngine::run() {
 	// defineRoom(MainStreet)
 	// cameraInRoom(MainStreet)
 	// cameraAt(0,128)
-	// cameraPanTo(2820, 128, 5000, 2)
+	// //cameraPanTo(2820, 128, 5000, 2)
+	// local cr = createTextObject("SentenceFont", "Copyright 2014-2017 Terrible Toybox, Inc. All Rights Reserved. Thimbleweed Parkxe2x84xa2 is a trademark of Terrible Toybox, Inc.", ALIGN_CENTER)
+	// objectScale(cr, 0.25/2)
+	// objectAt(cr, 160, 5)
+	// objectAlpha(cr, 0.25)
 	// )";
 
 	const SQChar *code = "cameraInRoom(StartScreen)";
@@ -525,8 +535,7 @@ void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
 	GGBnutReader nut;
 	nut.open(&reader);
 	Common::String code = nut.readString();
-	//debug("%s", code.c_str());
-	sqexec(v, code.c_str());
+	sqexec(v, code.c_str(), entry.c_str());
 }
 
 void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
@@ -536,7 +545,7 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 		reader.open(_pack, entry);
 		Common::String code = reader.readString();
 		//debug("%s", code.c_str());
-		sqexec(v, code.c_str());
+		sqexec(v, code.c_str(), entry.c_str());
 	} else {
 		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
 		debug("read existing '%s'", newEntry.c_str());

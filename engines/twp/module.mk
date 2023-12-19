@@ -51,6 +51,7 @@ MODULE_OBJS = \
 	prefs.o \
 	tsv.o \
 	util.o \
+	motor.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
