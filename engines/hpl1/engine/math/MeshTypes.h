@@ -53,9 +53,11 @@ typedef tTriangleDataVec::iterator tTriangleDataVecIt;
 
 class cTriEdge {
 public:
-	int point1, point2;
-	mutable int tri1, tri2;
-	bool invert_tri2;
+	int point1 = 0;
+	int point2 = 0;
+	mutable int tri1 = 0;
+	mutable int tri2 = 0;
+	bool invert_tri2 = false;
 
 	cTriEdge() = default;
 	constexpr cTriEdge(int alPoint1, int alPoint2, int alTri1, int alTri2) : point1(alPoint1), point2(alPoint2), tri1(alTri1), tri2(alTri2), invert_tri2(false) {
