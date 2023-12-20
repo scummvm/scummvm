@@ -267,8 +267,6 @@ int main(int argc, char *argv[]) {
 	gfx_deinit();
 	gfx_video_deinit();
 
-	SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-
 	return res;
 }
 
