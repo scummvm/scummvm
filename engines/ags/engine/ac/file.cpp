@@ -418,8 +418,15 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix and flatten path");
 		child_path.Replace('/', '-');
 		String gameTarget = ConfMan.getActiveDomainName();
-		if (child_path.CompareLeftNoCase(gameTarget) != 0)
-			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+
+		// When in Quest for Glory II "import a hero" window, don't add the gamename prefix when listing saves. This way
+		// we can show saves created by the Sierra games
+		if (strcmp(_GP(game).guid, "{a46a9171-f6f9-456c-9b2b-a509b560ddc0}") || !(_G(displayed_room) == 1) || !read_only) {
+			if (child_path.CompareLeftNoCase(gameTarget) != 0)
+				child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+		} else {
+			debug("ResolveScriptPath: Skipping gameprefix for QfG2AGDI!");
+		}
 	}
 #else
 	// Create a proper ResolvedPath with FSLocation separating base location
