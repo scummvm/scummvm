@@ -636,7 +636,7 @@ bool BootScriptParser::readChar(char &c) {
 }
 
 void BootScriptParser::requeueChar(char c) {
-	assert((size_t)_numRequeuedChars < sizeof(_requeuedChars));
+	assert(_numRequeuedChars < static_cast<int>(sizeof(_requeuedChars)));
 	_requeuedChars[_numRequeuedChars++] = c;
 }
 
@@ -1867,7 +1867,7 @@ PlayerType evaluateMacPlayer(Common::Archive &fs, Common::ArchiveMember &archive
 
 	uint8 strInitialBytes[12];
 
-	if ((size_t)strStream->size() < sizeof(strInitialBytes))
+	if (strStream->size() < static_cast<int64>(sizeof(strInitialBytes)))
 		return kPlayerTypeNone;
 
 	if (strStream->read(strInitialBytes, sizeof(strInitialBytes)) != sizeof(strInitialBytes))
