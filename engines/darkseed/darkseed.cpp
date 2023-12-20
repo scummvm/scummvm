@@ -31,6 +31,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "img.h"
+#include "nsp.h"
 #include "pal.h"
 #include "pic.h"
 #include "titlefont.h"
@@ -109,16 +110,32 @@ Common::Error DarkseedEngine::run() {
 	Pal roomPal;
 	roomPal.load("room0.pal");
 
+	Nsp playerNsp;
+	playerNsp.load("tosfont.nsp"); //"cplayer.nsp");
+//	const Sprite &s = playerNsp.getSpriteAt(11);
+//
+//	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
+
 	_screen->update();
 	// Simple event handling loop
 	byte pal[256 * 3] = { 0 };
 	Common::Event e;
 	int offset = 0;
-
+	int sIdx = 0;
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+			if(e.type == Common::EVENT_KEYDOWN) {
+				sIdx++;
+				if (sIdx >= 96) {
+					sIdx = 0;
+				}
+				const Sprite &s = playerNsp.getSpriteAt(sIdx);
+				_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+				_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
+				_screen->makeAllDirty();
+			}
 		}
-
+//		_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
 		// Cycle through a simple palette
 //		++offset;
 //		for (int i = 0; i < 256; ++i)

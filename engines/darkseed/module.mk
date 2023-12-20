@@ -3,6 +3,13 @@ MODULE := engines/darkseed
 MODULE_OBJS = \
 	darkseed.o \
 	console.o \
+	anm.o \
+	img.o \
+	nsp.o \
+	pic.o \
+	pal.o \
+	titlefont.o \
+	tostext.o \
 	metaengine.o
 
 # This module can be built as a plugin
