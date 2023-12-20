@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-16 21:14+0000\n"
-"PO-Revision-Date: 2023-12-20 17:18+0000\n"
+"PO-Revision-Date: 2023-12-20 17:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -117,7 +117,7 @@ msgstr "Вибрати"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr "Візард для залучення з хмарою"
+msgstr "Майстер для залучення з хмарою"
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
@@ -198,7 +198,7 @@ msgstr "Швидкий режим: Успіх"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr "Ваше хмарне середовище було залучено!"
+msgstr "Ваше хмарне сховище було залучено!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
@@ -258,7 +258,7 @@ msgstr "Ручний режим: Помилка обробки"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
-msgstr "Хмарне середовище не було залучено."
+msgstr "Хмарне сховище не було залучено."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
@@ -288,7 +288,7 @@ msgstr "Наступний"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "Інше хмарне середовище вже є активним. Чи ви хочете його викмкути?"
+msgstr "Інше хмарне сховище вже є активним. Чи ви хочете його викмкути?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -319,7 +319,7 @@ msgstr "Ні"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
-msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
+msgstr "Заждіть, поки поточне сховище закінчить роботу, і спробуйте знов."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
@@ -2255,35 +2255,35 @@ msgstr "Перевірити зараз"
 
 #: gui/options.cpp:2692
 msgid "Active storage:"
-msgstr "Активне хмарне середовище:"
+msgstr "Активне сховище:"
 
 #: gui/options.cpp:2692
 msgid "Active cloud storage"
-msgstr "Активне хмарне середовище"
+msgstr "Активне хмарне сховище"
 
 #: gui/options.cpp:2701
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"Середовище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
+"Сховище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
 "ввімкніть його:"
 
 #: gui/options.cpp:2703
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"Середовище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
+"Сховище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
 "ввімкніть його:"
 
 #: gui/options.cpp:2704
 msgid "Enable storage"
-msgstr "Ввімкнути середовище"
+msgstr "Ввімкнути сховище"
 
 #: gui/options.cpp:2704
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
-"Підтвердіть, що хочете використовувати цей обліковий запис для цього схову"
+"Підтвердіть, що хочете використовувати цей обліковий запис для цього сховища"
 
 #: gui/options.cpp:2706 backends/platform/wii/options.cpp:113
 msgid "Username:"
@@ -2291,7 +2291,7 @@ msgstr "Користувач:"
 
 #: gui/options.cpp:2706
 msgid "Username used by this storage"
-msgstr "Обліковий запис для цього середовища"
+msgstr "Обліковий запис для цього сховища"
 
 #: gui/options.cpp:2707
 msgid "<none>"
@@ -2303,9 +2303,7 @@ msgstr "Використаний об'єм:"
 
 #: gui/options.cpp:2709
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
-"Об'єм, використаний для збережених станів ігор ScummVM на цьому хмарному "
-"середовищі"
+msgstr "Об'єм, використаний для збережених станів ігор ScummVM на цьому сховищі"
 
 #: gui/options.cpp:2712
 msgid "Last sync:"
@@ -2314,7 +2312,7 @@ msgstr "Остання синхронизація:"
 #: gui/options.cpp:2712
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
-"Час, коли було зроблено останню синхронизацію збережених ігор з цим сховом"
+"Час, коли було зроблено останню синхронизацію збережених ігор з цим сховищем"
 
 #: gui/options.cpp:2713 gui/options.cpp:3621
 msgid "<never>"
@@ -2377,16 +2375,16 @@ msgstr "Від'єднатись"
 
 #: gui/options.cpp:2730
 msgid "Stop using this storage on this device"
-msgstr "Перестаньте використовувати цей накопичувач на цьому пристрої"
+msgstr "Припинити використовувати це сховище на цьому пристрої"
 
 #: gui/options.cpp:2733
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Цей сховище ще не підключено!"
+msgstr "Це сховище ще не підключене!"
 
 #: gui/options.cpp:2735
 msgid "This storage is not connected yet!"
-msgstr "Цей сховище ще не підключено!"
+msgstr "Це сховище ще не підключене!"
 
 #: gui/options.cpp:2736
 msgid "Connect"
@@ -2394,7 +2392,7 @@ msgstr "Залучитись"
 
 #: gui/options.cpp:2736
 msgid "Connect your cloud storage account"
-msgstr "Залучитись до вашого облікового запису на хмарному середовищі"
+msgstr "Залучитись до вашого облікового запису на хмарному сховищі"
 
 #: gui/options.cpp:2749
 msgctxt "lowres"
@@ -2488,11 +2486,11 @@ msgstr "ПОМИЛКА: Не вдалося перенести наступні 
 
 #: gui/options.cpp:2972
 msgid "Failed to change cloud storage!"
-msgstr "Не вдалося змінити хмарне середовище!"
+msgstr "Не вдалося змінити хмарне сховище!"
 
 #: gui/options.cpp:2975
 msgid "Another cloud storage is already active."
-msgstr "Інше хмарне середовище вже активне."
+msgstr "Інше хмарне сховище вже активне."
 
 #: gui/options.cpp:3092
 msgid "Theme does not support selected language!"
@@ -2536,11 +2534,11 @@ msgstr "Виберіть папку /root/ для Керування файла�
 
 #: gui/options.cpp:3407
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Це хмарне середовище вже є активним. Чи ви хочете припинити процес?"
+msgstr "Це хмарне сховище вже є активним. Чи ви хочете припинити процес?"
 
 #: gui/options.cpp:3416
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
+msgstr "Заждіть, поки поточне сховище закінчить роботу, і спробуйте знов."
 
 #: gui/options.cpp:3619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
