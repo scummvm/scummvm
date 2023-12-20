@@ -19,105 +19,68 @@
  *
  */
 
-#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/gfx/image.h"
-#include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
+
 #include "common/stream.h"
+#include "common/textconsole.h"
+#include "graphics/surface.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Image *FMTOWNSImageLoader::load(Common::SeekableReadStream &stream, int width, int height, int bpp) {
-	if (width == -1 || height == -1 || bpp == -1) {
+bool FMTOWNSImageDecoder::loadStream(Common::SeekableReadStream &stream) {
+	destroy();
+
+	if (_width == -1 || _height == -1 || _bpp == -1) {
 		error("dimensions not set for fmtowns image");
 	}
 
-	assertMsg((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
+	assertMsg((_bpp == 16) | (_bpp == 4), "invalid bpp: %d", _bpp);
 
 	int rawLen = stream.size() - _offset;
+	int requiredLength = (_width * _height * _bpp / 8);
+	if (rawLen < requiredLength) {
+		warning("FMTOWNS Image of size %d does not fit anticipated size %d", rawLen, requiredLength);
+		return false;
+	}
+
 	stream.seek(_offset, 0);
 	byte *raw = (byte *) malloc(rawLen);
 	stream.read(raw, rawLen);
 
-	int requiredLength = (width * height * bpp / 8);
-	if (rawLen < requiredLength) {
-		if (raw)
-			free(raw);
-		warning("FMTOWNS Image of size %d does not fit anticipated size %d", rawLen, requiredLength);
-		return nullptr;
-	}
 
-	Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
-	if (!image) {
-		if (raw)
-			free(raw);
-		return nullptr;
-	}
+	if (_bpp == 4) {
+		_surface = new Graphics::Surface();
+		_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+		setFromRawData(raw);
 
-	if (bpp == 4) {
 		U4PaletteLoader pal;
-		image->setPalette(pal.loadEgaPalette(), 16);
-		setFromRawData(image, width, height, bpp, raw);
-//      if (width % 2)
-//          error("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
-//      byte nibble_mask = 0x0F;
-//        for (int y = 0; y < height; y++)
-// {
-//            for (int x = 0; x < width; x+=2)
-// {
-//              int byte = raw[(y * width + x) / 2];
-//              image->putPixelIndex(x  ,y,(byte & nibble_mask)  << 4);
-//              image->putPixelIndex(x+1,y,(byte              )      );
-//            }
-//        }
+		_palette = pal.loadEgaPalette();
+		_paletteColorCount = 16;
 	}
 
 
-	if (bpp == 16) {
+	if (_bpp == 16) {
+		_surface = new Graphics::Surface();
+		_surface->create(_width, _height, Graphics::PixelFormat(2, 5, 5, 5, 1, 5, 10, 0, 15));
 
-		//The FM towns uses 16 bits for graphics. I'm assuming 5R 5G 5B and 1 Misc bit.
-		//Please excuse my ugly byte manipulation code
+		uint16 *dst = (uint16 *)_surface->getPixels();
+		const uint16 *src = (const uint16 *)raw;
 
-		//Masks
-		//------------------------  //  0000000011111111    --Byte 0 and 1
-		//------------------------  //  RRRRRGGGGGBBBBB?
-		byte low5 = 0x1F;          //  11111000--------    low5
-		byte high6 = (byte)~3U;    //  --------00111111    high6
-		byte high3 = (byte)~31U;   //  00000111--------    high3
-		byte low2 = 3;             //  --------11000000    low2
-		byte lastbit = 128;        //  --------00000001    low2
-		// Warning, this diagram is left-to-right, not standard right-to-left
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				byte byte0 = raw[(y * width + x) * 2];
-				byte byte1 = raw[(y * width + x) * 2 + 1];
-
-				int r = (byte0 & low5);
-				r <<= 3;
-
-				int g = (byte0 & high3) >> 5;
-				g |= ((byte1 & low2) << 3);
-				g <<= 3;
-
-				int b = byte1 & high6;
-				b <<= 1;
-
-				// TODO: Previously r & b were reversed. See if this proper
-				// order is correct, and if not properly swap value calculations
-				image->putPixel(x, y, r, g, b,
-					lastbit & byte1 ? IM_TRANSPARENT : IM_OPAQUE);
+		for (int y = 0; y < _height; y++) {
+			for (int x = 0; x < _width; x++) {
+				dst[x] = FROM_LE_16(*src++) ^ 0x8000;
 			}
+
+			dst = (uint16 *)((uint8 *)dst + _surface->pitch);
 		}
 	}
 
-
 	free(raw);
 
-	return image;
+	return true;
 }
 
 } // End of namespace Ultima4

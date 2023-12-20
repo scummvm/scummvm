@@ -27,53 +27,57 @@
 namespace Ultima {
 namespace Ultima4 {
 
-struct RGBA;
-
 /**
- * Loader for U4 raw images.  Raw images are just an uncompressed
+ * Decoder for U4 raw images.  Raw images are just an uncompressed
  * stream of pixel data with no palette information (e.g. shapes.ega,
- * charset.ega).  This loader handles the original 4-bit images, as
+ * charset.ega).  This decoder handles the original 4-bit images, as
  * well as the 8-bit VGA upgrade images.
  */
-class U4RawImageLoader : public ImageLoader {
+class U4RawImageDecoder : public U4ImageDecoder {
 public:
-	/**
-	 * Loads in the raw image and apply the standard U4 16 or 256 color palette.
-	 */
-	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
+	U4RawImageDecoder(int width, int height, int bpp)
+	  : U4ImageDecoder(width, height, bpp) {}
+
+	bool loadStream(Common::SeekableReadStream &stream) override;
 };
 
 /**
- * Loader for U4 images with RLE compression.  Like raw images, the
+ * Decoder for U4 images with RLE compression.  Like raw images, the
  * data is just a stream of pixel data with no palette information
- * (e.g. start.ega, rune_*.ega).  This loader handles the original
+ * (e.g. start.ega, rune_*.ega).  This decoder handles the original
  * 4-bit images, as well as the 8-bit VGA upgrade images.
  */
-class U4RleImageLoader : public ImageLoader {
+class U4RleImageDecoder : public U4ImageDecoder {
 public:
-	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
+	U4RleImageDecoder(int width, int height, int bpp)
+	  : U4ImageDecoder(width, height, bpp) {}
+
+	bool loadStream(Common::SeekableReadStream &stream) override;
 };
 
 /**
- * Loader for U4 images with LZW compression.  Like raw images, the
+ * Decoder for U4 images with LZW compression.  Like raw images, the
  * data is just a stream of pixel data with no palette information
- * (e.g. title.ega, tree.ega).  This loader handles the original 4-bit
+ * (e.g. title.ega, tree.ega).  This decoder handles the original 4-bit
  * images, as well as the 8-bit VGA upgrade images.
  */
-class U4LzwImageLoader : public ImageLoader {
+class U4LzwImageDecoder : public U4ImageDecoder {
 public:
-	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
+	U4LzwImageDecoder(int width, int height, int bpp)
+	  : U4ImageDecoder(width, height, bpp) {}
+
+	bool loadStream(Common::SeekableReadStream &stream) override;
 };
 
 class U4PaletteLoader {
-	static RGBA *_bwPalette;
-	static RGBA *_egaPalette;
-	static RGBA *_vgaPalette;
+	static const byte _bwPalette[2 * 3];
+	static byte *_egaPalette;
+	static byte *_vgaPalette;
 
 public:
-	RGBA *loadBWPalette();
-	RGBA *loadEgaPalette();
-	RGBA *loadVgaPalette();
+	const byte *loadBWPalette();
+	const byte *loadEgaPalette();
+	const byte *loadVgaPalette();
 };
 
 } // End of namespace Ultima4

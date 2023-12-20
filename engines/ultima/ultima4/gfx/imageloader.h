@@ -22,8 +22,8 @@
 #ifndef ULTIMA4_GFX_IMAGELOADER_H
 #define ULTIMA4_GFX_IMAGELOADER_H
 
-#include "ultima/shared/std/containers.h"
-#include "common/str.h"
+#include "graphics/pixelformat.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -32,47 +32,35 @@ class SeekableReadStream;
 namespace Ultima {
 namespace Ultima4 {
 
-class Image;
-class ImageLoader;
-class U4FILE;
-
-class ImageLoaders {
-private:
-	Common::HashMap<Common::String, ImageLoader *> _loaderMap;
-public:
-	ImageLoaders();
-	~ImageLoaders();
-
-	/**
-	 * This class method returns the registered concrete subclass
-	 * appropriate for loading images of a type given by fileType.
-	 */
-	ImageLoader *getLoader(const Common::String &fileType);
-};
-
 /**
- * The generic image loader interface.  Image loaders should override
- * the load method to load an image from a U4FILE and register
- * themselves with registerLoader.  By convention, the type parameter
- * of load and registerLoader is the standard mime type of the image
- * file (e.g. image/png) or an xu4 specific mime type
- * (e.g. image/x-u4...).
+ * A common base for all Ultima 4 image loaders.
  */
-class ImageLoader {
+class U4ImageDecoder : public ::Image::ImageDecoder {
+public:
+	U4ImageDecoder(int width, int height, int bpp);
+	virtual ~U4ImageDecoder();
+
+	// ImageDecoder API
+	void destroy() override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+
 protected:
+	Graphics::Surface *_surface;
+	const byte *_palette;
+	uint16 _paletteColorCount;
+	int _width, _height, _bpp;
+
 	/**
 	 * Fill in the image pixel data from an uncompressed string of bytes.
 	 */
-	static void setFromRawData(Image *image, int width, int height, int bpp, const byte *rawData);
+	void setFromRawData(const byte *rawData);
 
 	/**
-	 * Sets the image from a source image
+	 * Get the expected pixel format based on the value of _bpp.
 	 */
-	static void setFromSurface(Image *image, const Graphics::ManagedSurface &src);
-public:
-	ImageLoader() {}
-	virtual ~ImageLoader() {}
-	virtual Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) = 0;
+	Graphics::PixelFormat getPixelFormatForBpp() const;
 };
 
 } // End of namespace Ultima4
