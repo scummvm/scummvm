@@ -1520,7 +1520,7 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 	case DynamicValueTypes::kBoolean:
 		return _value.asBool == other._value.asBool;
 	case DynamicValueTypes::kList:
-		return (*_value.asList.get()) == (*_value.asList.get());
+		return (*_value.asList.get()) == (*other._value.asList.get());
 	case DynamicValueTypes::kObject:
 		return _value.asObj == other._value.asObj;
 	default:
