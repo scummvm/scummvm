@@ -1230,6 +1230,16 @@ Common::Error ScummEngine::init() {
 			}
 		}
 
+		if (!macResourceFile.empty()) {
+			if (!resource.open(macResourceFile))
+				return Common::Error(Common::kReadingFailed, Common::U32String::format(_("Could not open Macintosh resource file %s"), macResourceFile.c_str()));
+
+			if (!resource.hasResFork())
+				return Common::Error(Common::kReadingFailed, Common::U32String::format(_("Could not find resource fork in Macintosh resource file %s"), macResourceFile.c_str()));
+
+			resource.close();
+		}
+
 		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
 
