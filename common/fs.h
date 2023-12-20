@@ -441,6 +441,12 @@ public:
 	 * for success.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	/**
+	 * Open an alternate stream for a specified file. A full match of relative path and file name is needed
+	 * for success.
+	 */
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const override;
 };
 
 /** @} */

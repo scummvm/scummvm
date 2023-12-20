@@ -390,6 +390,23 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) con
 	return stream;
 }
 
+SeekableReadStream *FSDirectory::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
+	if (path.toString().empty() || !_node.isDirectory())
+		return nullptr;
+
+	FSNode *node = lookupCache(_fileCache, path);
+	if (!node)
+		return nullptr;
+
+	debug(5, "FSDirectory::createReadStreamForMemberAltStream('%s', %i) -> '%s'", path.toString().c_str(), static_cast<int>(altStreamType), node->getPath().c_str());
+
+	SeekableReadStream *stream = node->createReadStreamForAltStream(altStreamType);
+	if (!stream)
+		warning("FSDirectory::createReadStreamForMemberAltStream: Can't create stream for file '%s' alt stream type %i", Common::toPrintable(path.toString()).c_str(), static_cast<int>(altStreamType));
+
+	return stream;
+}
+
 FSDirectory *FSDirectory::getSubDirectory(const Path &name, int depth, bool flat, bool ignoreClashes) {
 	return getSubDirectory(Path(), name, depth, flat, ignoreClashes);
 }
