@@ -27,17 +27,14 @@
 namespace Ultima {
 namespace Ultima4 {
 
-class FMTOWNSImageLoader : public ImageLoader {
+class FMTOWNSImageDecoder : public U4ImageDecoder {
 protected:
 	int _offset;
 public:
-	FMTOWNSImageLoader(int offset) : _offset(offset) {}
-	virtual ~FMTOWNSImageLoader() {}
+	FMTOWNSImageDecoder(int width, int height, int bpp, int offset)
+	  : U4ImageDecoder(width, height, bpp), _offset(offset) {}
 
-	/**
-	 * Loads in an FM TOWNS files, which we assume is 16 bits.
-	 */
-	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
 };
 
 } // End of namespace Ultima4

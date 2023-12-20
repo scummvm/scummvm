@@ -195,7 +195,6 @@ MODULE_OBJS += \
 	ultima4/gfx/image.o \
 	ultima4/gfx/imageloader.o \
 	ultima4/gfx/imageloader_fmtowns.o \
-	ultima4/gfx/imageloader_png.o \
 	ultima4/gfx/imageloader_u4.o \
 	ultima4/gfx/imagemgr.o \
 	ultima4/gfx/scale.o \
