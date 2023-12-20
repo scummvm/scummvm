@@ -145,7 +145,7 @@ public:
 	void setModal(bool modal);
 	bool getModal() { return _isModal; };
 	void setFileName(Common::String filename);
-	Common::String getFileName() { return getName(); }
+	Common::String getFileName() { return _fileName.toString(g_director->_dirSeparator); }
 
 	void updateBorderType();
 
@@ -186,6 +186,8 @@ public:
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
+
+	Common::Path _fileName;
 
 public:
 	Common::List<Channel *> _dirtyChannels;

@@ -324,8 +324,10 @@ Common::Point Window::getMousePos() {
 void Window::setVisible(bool visible, bool silent) {
 	// setting visible triggers movie load
 	if (!_currentMovie && !silent) {
-		Common::String movieName = getName();
-		setNextMovie(movieName);
+		if (_fileName.empty()) {
+			Common::String movieName = getName();
+			setNextMovie(movieName);
+		}
 	}
 
 	BaseMacWindow::setVisible(visible);
@@ -335,23 +337,25 @@ void Window::setVisible(bool visible, bool silent) {
 }
 
 bool Window::setNextMovie(Common::String &movieFilenameRaw) {
-	Common::Path movieFilename = findMoviePath(movieFilenameRaw);
+	_fileName = findMoviePath(movieFilenameRaw);
 
 	bool fileExists = false;
 	Common::File file;
-	if (!movieFilename.empty() && file.open(movieFilename)) {
+	if (!_fileName.empty() && file.open(_fileName)) {
 		fileExists = true;
 		file.close();
 	}
 
-	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), movieFilename.toString().c_str());
+	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), _fileName.toString().c_str());
 
 	if (!fileExists) {
-		warning("Movie %s does not exist", movieFilename.toString().c_str());
+		warning("Movie %s does not exist", _fileName.toString().c_str());
+		_fileName.set("");
 		return false;
 	}
 
-	_nextMovie.movie = movieFilename.toString(g_director->_dirSeparator);
+	_nextMovie.movie = _fileName.toString(g_director->_dirSeparator);
+
 	return true;
 }
 
