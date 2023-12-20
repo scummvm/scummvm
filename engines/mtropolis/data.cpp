@@ -1348,7 +1348,7 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 }
 
 AliasModifier::AliasModifier()
-	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0)
+	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0), unknown3(0)
 	, lengthOfName(0), guid(0), haveGUID(false) {
 }
 
@@ -1384,12 +1384,16 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 	}
 
 	if (_revision >= 4) {
-		if (!reader.readU32(lengthOfName))
+		if (!reader.readU32(unknown3))
 			return kDataReadErrorReadFailed;
-	}
 
-	if (!reader.readTerminatedStr(name, lengthOfName))
-		return kDataReadErrorReadFailed;
+		lengthOfName = 0;
+	} else {
+		if (!reader.readTerminatedStr(name, lengthOfName))
+			return kDataReadErrorReadFailed;
+
+		unknown3 = 0;
+	}
 
 	return kDataReadErrorNone;
 }

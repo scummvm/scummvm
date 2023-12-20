@@ -1344,6 +1344,7 @@ struct AliasModifier : public DataObject {
 	uint16 aliasIndexPlusOne;
 	uint32 unknown1;
 	uint32 unknown2;
+	uint32 unknown3;
 	uint32 lengthOfName;
 	uint32 guid;
 	Point editorLayoutPosition;
