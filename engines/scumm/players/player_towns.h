@@ -36,7 +36,7 @@ public:
 
 	virtual bool init() = 0;
 
-	void setSfxVolume(int vol);
+	void setSfxVolume(int vol) override;
 
 	int getSoundStatus(int sound) const override;
 

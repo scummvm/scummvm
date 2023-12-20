@@ -21,6 +21,7 @@
 
 
 #include "common/config-manager.h"
+#include "scumm/music.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
@@ -856,6 +857,9 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 	// 3 AdLib
 	// 4 Roland
 	switch (_sound->_musicType) {
+	case MDT_MACINTOSH:
+		VAR(VAR_SOUNDCARD) = (_game.id == GID_INDY3) ? 11 : 3;
+		break;
 	case MDT_NONE:
 	case MDT_PCSPK:
 		VAR(VAR_SOUNDCARD) = 0;
@@ -871,7 +875,7 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 		break;
 	default:
 		if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_LOOM && _game.version == 3))
-			&&  (_game.platform == Common::kPlatformDOS)) {
+			&& (_game.platform == Common::kPlatformDOS)) {
 			VAR(VAR_SOUNDCARD) = 4;
 		} else {
 			VAR(VAR_SOUNDCARD) = 3;

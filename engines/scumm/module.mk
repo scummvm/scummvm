@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	players/player_apple2.o \
 	players/player_he.o \
 	players/player_mac.o \
+	players/player_mac_indy3.o \
 	players/player_mod.o \
 	players/player_nes.o \
 	players/player_pce.o \

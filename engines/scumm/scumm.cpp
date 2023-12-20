@@ -62,6 +62,7 @@
 #include "scumm/players/player_sid.h"
 #include "scumm/players/player_pce.h"
 #include "scumm/players/player_apple2.h"
+#include "scumm/players/player_mac_indy3.h"
 #include "scumm/players/player_v1.h"
 #include "scumm/players/player_v2.h"
 #include "scumm/players/player_v2cms.h"
@@ -2167,6 +2168,9 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 #endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
+	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_INDY3) {
+		_musicEngine = new Player_Mac_Indy3(this, _mixer);
+		_sound->_musicType = MDT_MACINTOSH;
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
 		_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
 		((Player_V3M *)_musicEngine)->init(macInstrumentFile);
@@ -2336,10 +2340,7 @@ void ScummEngine::syncSoundSettings() {
 
 	if (_musicEngine) {
 		_musicEngine->setMusicVolume(soundVolumeMusic);
-	}
-
-	if (_townsPlayer) {
-		_townsPlayer->setSfxVolume(soundVolumeSfx);
+		_musicEngine->setSfxVolume(soundVolumeSfx);
 	}
 
 	if (ConfMan.getBool("speech_mute"))
