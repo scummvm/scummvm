@@ -42,6 +42,9 @@
 #include "ags/ags.h"
 #include "ags/globals.h"
 
+#include "gui/message.h"
+#include "common/translation.h"
+
 namespace AGS3 {
 
 using namespace AGS::Shared;
@@ -68,7 +71,18 @@ static void FillSaveList(std::set<String> &files, const String &filePattern) {
 	size_t wildcard = filePattern.FindChar('*');
 	assert(wildcard != String::NoIndex);
 	Common::String prefix(filePattern.GetCStr(), wildcard);
-	Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
+	Common::StringArray matches;
+
+	// WORKAROUND: For QfG2 AGDI import screen, list only the QfG1 exported characters
+	if ((strcmp(_GP(game).guid, "{a46a9171-f6f9-456c-9b2b-a509b560ddc0}") == 0) && _G(displayed_room) == 1) {
+		::GUI::MessageDialog dialog(_("The game will now list characters exported from the Sierra games that can be imported:\n"
+									  "1. Save files named qfg1*.sav or qfg1vga*.sav inside ScummVM save directory, or\n"
+									  "2. Any .sav file inside the QfG2 Remake game directory"), "Ok");
+		dialog.runModal();
+
+		matches = g_system->getSavefileManager()->listSavefiles("qfg1*.sav");
+	} else
+		matches = g_system->getSavefileManager()->listSavefiles(filePattern);
 
 	for (uint idx = 0; idx < matches.size(); ++idx) {
 		Common::String name = matches[idx];
