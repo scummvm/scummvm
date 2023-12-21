@@ -30,14 +30,86 @@ OffsetTo::~OffsetTo() {}
 
 OffsetTo::OffsetTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im)
 	: _obj(obj),
-	  _tween(obj->_node->getOffset(), pos, duration, im){
+	  _tween(obj->_node->getOffset(), pos, duration, im) {
 }
 
 void OffsetTo::update(float elapsed) {
-  _tween.update(elapsed);
-  _obj->_node->setOffset(_tween.current());
-  if (!_tween.running())
-    disable();
+	_tween.update(elapsed);
+	_obj->_node->setOffset(_tween.current());
+	if (!_tween.running())
+		disable();
+}
+
+MoveTo::~MoveTo() {}
+
+MoveTo::MoveTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im)
+	: _obj(obj),
+	  _tween(obj->_node->getPos(), pos, duration, im) {
+}
+
+void MoveTo::update(float elapsed) {
+	_tween.update(elapsed);
+	_obj->_node->setPos(_tween.current());
+	if (!_tween.running())
+		disable();
+}
+
+AlphaTo::~AlphaTo() {}
+
+AlphaTo::AlphaTo(float duration, Object *obj, float to, InterpolationMethod im)
+	: _obj(obj),
+	  _tween(obj->_node->getAlpha(), to, duration, im) {
+}
+
+void AlphaTo::update(float elapsed) {
+	_tween.update(elapsed);
+	float alpha = _tween.current();
+	_obj->_node->setAlpha(alpha);
+	if (!_tween.running())
+		disable();
+}
+
+RotateTo::~RotateTo() {}
+
+RotateTo::RotateTo(float duration, Node *node, float to, InterpolationMethod im)
+	: _node(node),
+	  _tween(node->getRotation(), to, duration, im) {
+}
+
+void RotateTo::update(float elapsed) {
+	_tween.update(elapsed);
+	_node->setRotation(_tween.current());
+	if (!_tween.running())
+		disable();
+}
+
+ScaleTo::~ScaleTo() {}
+
+ScaleTo::ScaleTo(float duration, Node *node, float to, InterpolationMethod im)
+	: _node(node),
+	  _tween(node->getScale().getX(), to, duration, im) {
+}
+
+void ScaleTo::update(float elapsed) {
+	_tween.update(elapsed);
+	float x = _tween.current();
+	_node->setScale(Math::Vector2d(x, x));
+	if (!_tween.running())
+		disable();
+}
+
+Shake::~Shake() {}
+
+Shake::Shake(Node *node, float amount)
+	: _node(node),
+	  _amount(amount) {
+}
+
+void Shake::update(float elapsed) {
+	_shakeTime += 40.f * elapsed;
+	_elapsed += elapsed;
+	// TODO: check if it's necessary to create a _shakeOffset in a node
+	_node->setOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
 }
 
 } // namespace Twp

@@ -244,16 +244,33 @@ static SQInteger objectAlpha(HSQUIRRELVM v) {
 		float alpha = 0.0f;
 		if (SQ_FAILED(sq_getfloat(v, 3, &alpha)))
 			return sq_throwerror(v, "failed to get alpha");
-		// TODO: if (obj->_alphaTo)
-		//  obj->_alphaTo->disable();
+		obj->setAlphaTo(nullptr);
 		obj->_node->setAlpha(alpha);
 	}
 	return 0;
 }
 
+// Changes an object's alpha from its current state to the specified alpha over the time period specified by time.
+//
+// If an interpolationMethod is used, the change will follow the rules of the easing method, e.g. LINEAR, EASE_INOUT.
+// See also stopObjectMotors.
 static SQInteger objectAlphaTo(HSQUIRRELVM v) {
-	// TODO: objectAlphaTo
-	warning("objectAlphaTo not implemented");
+	if (sq_gettype(v, 2) != OT_NULL) {
+		Object *obj = sqobj(v, 2);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object");
+		float alpha = 0.0f;
+		if (SQ_FAILED(sqget(v, 3, alpha)))
+			return sq_throwerror(v, "failed to get alpha");
+		alpha = clamp(alpha, 0.0f, 1.0f);
+		float t = 0.0f;
+		if (SQ_FAILED(sqget(v, 4, t)))
+			return sq_throwerror(v, "failed to get time");
+		int interpolation = 0;
+		if ((sq_gettop(v) >= 5) && (SQ_FAILED(sqget(v, 5, interpolation))))
+			interpolation = 0;
+		obj->setAlphaTo(new AlphaTo(t, obj, alpha, intToInterpolationMethod(interpolation)));
+	}
 	return 0;
 }
 
@@ -448,9 +465,36 @@ static SQInteger objectLit(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Moves the object to the specified location over the time period specified.
+//
+// If an interpolation method is used for the transition, it will use that.
+// Unlike `objectOffsetTo`, `objectMoveTo` moves the item to a x, y on the screen, not relative to the object's starting position.
+// If you want to move the object back again, you need to store where the object started.
+//
+// .. code-block:: Squirrel
+// objectMoveTo(this, 10, 20, 2.0)
+//
+// See also:
+// - `stopObjectMotors method <#stopObjectMotors.e>`_
+// - `objectOffsetTo method <#objectOffsetTo.e>`_
 static SQInteger objectMoveTo(HSQUIRRELVM v) {
-	// TODO: objectMoveTo
-	warning("objectMoveTo not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj) {
+		int x = 0;
+		int y = 0;
+		if (SQ_FAILED(sqget(v, 3, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 4, y)))
+			return sq_throwerror(v, "failed to get y");
+		float duration = 0.0f;
+		if (SQ_FAILED(sqget(v, 5, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		int interpolation = 0;
+		if ((sq_gettop(v) >= 6) && SQ_FAILED(sqget(v, 6, interpolation)))
+			interpolation = 0;
+		Math::Vector2d destPos = Math::Vector2d(x, y);
+		obj->setMoveTo(new MoveTo(duration, obj, destPos, intToInterpolationMethod(interpolation)));
+	}
 	return 0;
 }
 
@@ -468,8 +512,7 @@ static SQInteger objectOffset(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
-		if (obj->_moveTo)
-			obj->_moveTo->disable();
+		obj->setMoveTo(nullptr);
 		obj->_node->setOffset(Math::Vector2d(x, y));
 	}
 	return 0;
@@ -492,7 +535,7 @@ static SQInteger objectOffsetTo(HSQUIRRELVM v) {
 		if ((sq_gettop(v) >= 6) && (SQ_FAILED(sq_getinteger(v, 6, &interpolation))))
 			interpolation = 0;
 		Math::Vector2d destPos(x, y);
-		obj->_moveTo = new OffsetTo(duration, obj, destPos, intToInterpolationMethod(interpolation));
+		obj->setMoveTo(new OffsetTo(duration, obj, destPos, intToInterpolationMethod(interpolation)));
 	}
 	return 0;
 }
@@ -527,8 +570,14 @@ static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
 }
 
 static SQInteger objectParent(HSQUIRRELVM v) {
-	// TODO: objectParent
-	warning("objectParent not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get child");
+	Object *parent = sqobj(v, 3);
+	if (!parent)
+		return sq_throwerror(v, "failed to get parent");
+	obj->_parent = parent->_key;
+	parent->_node->addChild(obj->_node);
 	return 0;
 }
 
@@ -592,17 +641,34 @@ static SQInteger objectRotate(HSQUIRRELVM v) {
 		float rotation = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, rotation)))
 			return sq_throwerror(v, "failed to get rotation");
-		// TODO: obj->rotateTo
-		// if (!obj->rotateTo)
-		//   obj->rotateTo.disable();
+		obj->setRotateTo(nullptr);
 		obj->_node->setRotation(rotation);
 	}
 	return 0;
 }
 
+// Rotates the object from its current rotation to the desired rotation over duration time period.
+// The interpolationMethod specifies how the animation is played.
+// if `LOOPING` is used, it will continue to rotate as long as the rotation parameter is 360 or -360.
+//
+// .. code-block:: Squirrel
+// objectRotateTo(bridgeGrateTree, 45, 3.7, SLOW_EASE_IN)
+// objectRotateTo(AStreet.aStreetPhoneBook, 6, 2.0, SWING)
+// objectRotateTo(firefly, direction, 12, LOOPING)
 static SQInteger objectRotateTo(HSQUIRRELVM v) {
-	// TODO: objectRotateTo
-	warning("objectRotateTo not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		float rotation = 0.0f;
+		if (SQ_FAILED(sqget(v, 3, rotation)))
+			return sq_throwerror(v, "failed to get rotation");
+		float duration = 0.0f;
+		if (SQ_FAILED(sqget(v, 4, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		int interpolation = 0;
+		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
+			interpolation = 0;
+		obj->setRotateTo(new RotateTo(duration, obj->_node, rotation, intToInterpolationMethod(interpolation)));
+	}
 	return 0;
 }
 
@@ -619,8 +685,19 @@ static SQInteger objectScale(HSQUIRRELVM v) {
 }
 
 static SQInteger objectScaleTo(HSQUIRRELVM v) {
-	// TODO: objectScaleTo
-	warning("objectScaleTo not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj) {
+		float scale = 0.0f;
+		if (SQ_FAILED(sqget(v, 3, scale)))
+			return sq_throwerror(v, "failed to get scale");
+		float duration = 0.0f;
+		if (SQ_FAILED(sqget(v, 4, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		int interpolation = 0;
+		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
+			interpolation = 0;
+		obj->setRotateTo(new ScaleTo(duration, obj->_node, scale, intToInterpolationMethod(interpolation)));
+	}
 	return 0;
 }
 
@@ -766,15 +843,64 @@ static SQInteger objectValidUsePos(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Returns true if this object has a verb function for the specified verb.
+// Mostly used for testing when trying to check interactions.
+// Verb options are: VERB_WALKTO, VERB_LOOKAT, VERB_PICKUP, VERB_OPEN, VERB_CLOSE, VERB_PUSH, VERB_PULL, VERB_TALKTO.
+// Cannot use DEFAULT_VERB because that is not a real verb to the system.
+//
+// .. code-block:: Squirrel
+// if (objectValidVerb(obj, VERB_PICKUP)) {
+//    logAction("PickUp", obj)
+//    pushSentence(VERB_PICKUP, obj)
+//    tries = 0
+//}
 static SQInteger objectValidVerb(HSQUIRRELVM v) {
-	// TODO: objectValidVerb
-	warning("objectValidVerb not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object or actor");
+	int verb;
+	if (SQ_FAILED(sqget(v, 3, verb)))
+		return sq_throwerror(v, "failed to get verb");
+
+	int verbId = verb;
+	if (!g_engine->_actor) {
+		// TODO:
+		// for (vb in gEngine.hud.actorSlot(gEngine.actor).verbs) {
+		//   if (vb.id == verbId) {
+		//     if (sqrawexists(obj.table, vb.fun)) {
+		//       sqpush(v, true);
+		//       return 1;
+		// 	}
+		//   }
+		// }
+	}
+	sqpush(v, false);
+	return 1;
 }
 
 static SQInteger pickupObject(HSQUIRRELVM v) {
-	// TODO: pickupObject
-	warning("pickupObject not implemented");
+	// Picks up an object and adds it to the selected actor's inventory.
+	// The object that appears in the room is not the object you pick up, this is due to the code often needing to be very different when it's held in your inventory, plus inventory objects need icons.
+	//
+	// .. code-block:: Squirrel
+	// pickupObject(Dime)
+	Object *obj = sqobj(v, 2);
+	if (!obj) {
+		HSQOBJECT o;
+		sq_getstackobj(v, 2, &o);
+		Common::String name;
+		sqgetf(o, "name", name);
+		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, name.c_str()).c_str());
+	}
+	Object *actor = nullptr;
+	if (sq_gettop(v) >= 3) {
+		actor = sqactor(v, 3);
+		if (!actor)
+			return sq_throwerror(v, "failed to get actor");
+	}
+	if (!actor)
+		actor = g_engine->_actor;
+	actor->pickupObject(obj);
 	return 0;
 }
 
@@ -810,8 +936,13 @@ static SQInteger playObjectState(HSQUIRRELVM v) {
 }
 
 static SQInteger popInventory(HSQUIRRELVM v) {
-	// TODO: popInventory
-	warning("popInventory not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	int count;
+	if (SQ_FAILED(sqget(v, 3, count)))
+		return sq_throwerror(v, "failed to get count");
+	obj->setPop(count);
 	return 0;
 }
 
@@ -821,15 +952,28 @@ static SQInteger removeInventory(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Globally sets a default object.
+// When the player executes the sentence open painting and the painting object has no verbOpen function defined,
+// it will call the default object's verbOpen as a fallback, allowing for common failure phrase like "I can't open that.".
+// The default object can be changed at anytime, so different selectable characters can have different default responses.
 static SQInteger setDefaultObject(HSQUIRRELVM v) {
-	// TODO: setDefaultObject
-	warning("setDefaultObject not implemented");
+	HSQUIRRELVM vm = g_engine->getVm();
+	if (g_engine->_defaultObj._type != OT_NULL)
+		sq_release(vm, &g_engine->_defaultObj);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &g_engine->_defaultObj)))
+		return sq_throwerror(v, "failed to get default object");
+	sq_addref(vm, &g_engine->_defaultObj);
 	return 0;
 }
 
 static SQInteger shakeObject(HSQUIRRELVM v) {
-	// TODO: shakeObject
-	warning("shakeObject not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	float amount;
+	if (SQ_FAILED(sqget(v, 3, amount)))
+		return sq_throwerror(v, "failed to get amount");
+	obj->setShakeTo(new Shake(obj->_node, amount));
 	return 0;
 }
 

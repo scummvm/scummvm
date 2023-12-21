@@ -116,8 +116,6 @@ typedef Common::HashMap<int, TextureSlot> Textures;
 
 class Gfx {
 public:
-	Gfx();
-
 	void init();
 
 	void camera(Math::Vector2d size);
@@ -140,15 +138,15 @@ private:
 	void noTexture();
 
 private:
-	uint32 _vbo, _ebo;
+	uint32 _vbo = 0, _ebo = 0;
 	Shader _defaultShader;
-	Shader* _shader;
+	Shader* _shader = nullptr;
 	Math::Matrix4 _mvp;
 	Math::Vector2d _cameraPos;
 	Math::Vector2d _cameraSize;
 	Textures _textures;
-	Texture* _texture;
-	int32 _posLoc, _colLoc, _texCoordsLoc, _texLoc, _trsfLoc;
+	Texture* _texture = nullptr;
+	int32 _posLoc = 0, _colLoc = 0, _texCoordsLoc = 0, _texLoc = 0, _trsfLoc = 0;
 };
 }
 

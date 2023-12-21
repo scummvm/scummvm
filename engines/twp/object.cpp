@@ -295,8 +295,20 @@ void Object::delObject() {
 	_node->getParent()->removeChild(_node);
 }
 
+static void disableMotor(Motor* motor) {
+	if(motor) motor->disable();
+}
+
 void Object::stopObjectMotors() {
-	debug("TODO: stopObjectMotors");
+	disableMotor(_alphaTo);
+	disableMotor(_rotateTo);
+	disableMotor(_moveTo);
+	disableMotor(_walkTo);
+	disableMotor(_talking);
+	disableMotor(_blink);
+	disableMotor(_turnTo);
+	disableMotor(_shakeTo);
+	disableMotor(_jiggleTo);
 }
 
 void Object::setFacing(Facing facing) {
@@ -407,20 +419,45 @@ void Object::stand() {
 	play(getAnimName(STAND_ANIMNAME));
 }
 
+#define SET_MOTOR(motorTo)     \
+	if (_##motorTo) {          \
+		_##motorTo->disable(); \
+		delete _##motorTo;     \
+	}                          \
+	_##motorTo = motorTo;
+
+void Object::setAlphaTo(Motor *alphaTo) { SET_MOTOR(alphaTo); }
+void Object::setRotateTo(Motor *rotateTo) { SET_MOTOR(rotateTo); }
+void Object::setMoveTo(Motor *moveTo) { SET_MOTOR(moveTo); }
+void Object::setWalkTo(Motor *walkTo) { SET_MOTOR(walkTo); }
+void Object::setTalking(Motor *talking) { SET_MOTOR(talking); }
+void Object::setBlink(Motor *blink) { SET_MOTOR(blink); }
+void Object::setTurnTo(Motor *turnTo) { SET_MOTOR(turnTo); }
+void Object::setShakeTo(Motor *shakeTo) { SET_MOTOR(shakeTo); }
+void Object::setJiggleTo(Motor *jiggleTo) { SET_MOTOR(jiggleTo); }
+
 void Object::update(float elapsedSec) {
 	// TODO: update
 	//   if not self.dependentObj.isNil:
 	//     self.node.visible = self.dependentObj.getState() == self.dependentState
-	//   self.alphaTo.updateMotor(elapsedSec)
-	//   self.rotateTo.updateMotor(elapsedSec)
+	if (_alphaTo)
+		_alphaTo->update(elapsedSec);
+	if (_rotateTo)
+		_rotateTo->update(elapsedSec);
 	if (_moveTo)
 		_moveTo->update(elapsedSec);
-	//   self.walkTo.updateMotor(elapsedSec)
-	//   self.talking.updateMotor(elapsedSec)
-	//   self.blink.updateMotor(elapsedSec)
-	//   self.turnTo.updateMotor(elapsedSec)
-	//   self.shakeTo.updateMotor(elapsedSec)
-	//   self.jiggleTo.updateMotor(elapsedSec)
+	if (_walkTo)
+		_walkTo->update(elapsedSec);
+	if (_talking)
+		_talking->update(elapsedSec);
+	if (_blink)
+		_blink->update(elapsedSec);
+	if (_turnTo)
+		_turnTo->update(elapsedSec);
+	if (_shakeTo)
+		_shakeTo->update(elapsedSec);
+	if (_jiggleTo)
+		_jiggleTo->update(elapsedSec);
 
 	if (_nodeAnim)
 		_nodeAnim->update(elapsedSec);
@@ -436,6 +473,21 @@ void Object::update(float elapsedSec) {
 	//       if self.popElapsed > 0.5f:
 	//         dec self.popCount
 	//         self.popElapsed -= 0.5f
+}
+
+void Object::pickupObject(Object *obj) {
+	obj->_owner = this;
+	_inventory.push_back(obj);
+
+	{
+		HSQOBJECT args[]{obj->_table, _table};
+		sqcall("onPickup", 2, args);
+	}
+
+	if (sqrawexists(obj->_table, "onPickUp")) {
+		HSQOBJECT args[]{_table};
+		sqcall(obj->_table, "onPickUp", 1, args);
+	}
 }
 
 } // namespace Twp

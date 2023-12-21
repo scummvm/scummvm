@@ -130,9 +130,6 @@ void Shader::setUniform(const char *name, Math::Matrix4 value) {
 	glUseProgram(prev);
 }
 
-Gfx::Gfx() : _vbo(0), _ebo(0) {
-}
-
 void Gfx::init() {
 	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	byte pixels[] = {0xFF, 0xFF, 0xFF, 0xFF};
