@@ -33,7 +33,7 @@ template<typename T>
 struct Tween {
 public:
 	Tween(T f, T t, float duration, InterpolationMethod im)
-		: frm(f), to(t), delta(to - frm), duration(duration), value(frm), easing_f(easing(im.kind)), swing(im.swing), loop(im.loop) {
+		: frm(f), to(t), delta(t - f), duration(duration), value(f), easing_f(easing(im.kind)), swing(im.swing), loop(im.loop) {
 	}
 
 	bool running() {
@@ -102,6 +102,74 @@ private:
 private:
 	Object *_obj = nullptr;
 	Tween<Math::Vector2d> _tween;
+};
+
+class MoveTo : public Motor {
+public:
+	virtual ~MoveTo();
+	MoveTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Object *_obj = nullptr;
+	Tween<Math::Vector2d> _tween;
+};
+
+class AlphaTo : public Motor {
+public:
+	virtual ~AlphaTo();
+	AlphaTo(float duration, Object *obj, float to, InterpolationMethod im);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Object *_obj = nullptr;
+	Tween<float> _tween;
+};
+
+class Node;
+class RotateTo : public Motor {
+public:
+	virtual ~RotateTo();
+	RotateTo(float duration, Node *obj, float to, InterpolationMethod im);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Node *_node = nullptr;
+	Tween<float> _tween;
+};
+
+class ScaleTo : public Motor {
+public:
+	virtual ~ScaleTo();
+	ScaleTo(float duration, Node *node, float to, InterpolationMethod im);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Node *_node = nullptr;
+	Tween<float> _tween;
+};
+
+class Shake : public Motor {
+public:
+	virtual ~Shake();
+	Shake(Node *node, float amount);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Node *_node = nullptr;
+	float _amount = 0.f;
+	float _shakeTime = 0.f;
+	float _elapsed = 0.f;
 };
 
 } // namespace Twp

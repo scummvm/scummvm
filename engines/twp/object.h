@@ -152,6 +152,18 @@ public:
 
 	void update(float elapsedSec);
 
+	void setAlphaTo(Motor* alphaTo);
+	void setRotateTo(Motor* rotateTo);
+	void setMoveTo(Motor* moveTo);
+	void setWalkTo(Motor* walkTo);
+	void setTalking(Motor* talking);
+	void setBlink(Motor* blink);
+	void setTurnTo(Motor* turnTo);
+	void setShakeTo(Motor* shakeTo);
+	void setJiggleTo(Motor* jiggleTo);
+
+	void pickupObject(Object *obj);
+
 private:
 	Common::String suffix() const;
 	// Plays an animation specified by the state
@@ -207,7 +219,17 @@ public:
     float _popElapsed = 0.f;
     int _popCount = 0;
 	Sentence _exec;
+
+private:
+	Motor* _alphaTo = nullptr;
+	Motor* _rotateTo = nullptr;
 	Motor* _moveTo = nullptr;
+	Motor* _walkTo = nullptr;
+	Motor* _talking = nullptr;
+	Motor* _blink = nullptr;
+	Motor* _turnTo = nullptr;
+	Motor* _shakeTo = nullptr;
+	Motor* _jiggleTo = nullptr;
 };
 
 } // namespace Twp

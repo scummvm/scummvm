@@ -34,7 +34,7 @@ namespace Twp {
 static float _getFps(float fps, float animFps) {
 	if (fps != 0.f)
 		return fps;
-	return animFps == 0.f ? DEFAULT_FPS : animFps;
+	return (animFps < 1e-3) ? DEFAULT_FPS : animFps;
 }
 
 Node::Node(const Common::String &name, bool visible, Math::Vector2d scale, Color color)
@@ -192,15 +192,20 @@ Math::Matrix4 Node::getTrsf(Math::Matrix4 parentTrsf) {
 	return parentTrsf * getLocalTrsf();
 }
 
+static void scale(Math::Matrix4& m, const Math::Vector2d &v) {
+	m(0, 0) *= v.getX();
+	m(1, 1) *= v.getY();
+}
+
 Math::Matrix4 Node::getLocalTrsf() {
-	// TODO: scale
-	Math::Vector2d p = _pos + _offset + _shakeOffset;
+	Math::Vector2d p = _pos + _offset;
 	Math::Matrix4 m1;
 	m1.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
 	Math::Matrix3 mRot;
 	mRot.buildAroundZ(Math::Angle(-_rotation + _rotationOffset));
 	Math::Matrix4 m2;
 	m2.setRotation(mRot);
+	scale(m2, _scale);
 	Math::Matrix4 m3;
 	m3.translate(Math::Vector3d(_renderOffset.getX(), _renderOffset.getY(), 0.f));
 	return m1 * m2 * m3;
@@ -354,7 +359,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 		float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
 		Math::Vector3d pos(int(-x), int(y), 0.f);
 		trsf.translate(pos);
-		g_engine->getGfx().drawSprite(sf.frame, *texture, getColor(), trsf, flipX);
+		g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
 	}
 }
 

@@ -77,16 +77,23 @@ void TwpEngine::update(float elapsedMs) {
 	// update threads
 	for (int i = 0; i < _threads.size(); i++) {
 		Thread *thread = _threads[i];
-		if (thread->update(elapsedMs)) {
+		if (thread->update(elapsedMs/1000.f)) {
 			// TODO: delete it
 		}
 	}
 
 	// update objects
-	for (int i = 0; i < _objects.size(); i++) {
-		Object *obj = _objects[i];
-		obj->update(elapsedMs);
-	}
+	//for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		//Room *room = g_engine->_rooms[i];
+		Room *room = g_engine->_room;
+		for (int j = 0; j < room->_layers.size(); j++) {
+			Layer *layer = room->_layers[j];
+			for (int k = 0; k < layer->_objects.size(); k++) {
+				Object *obj = layer->_objects[k];
+				obj->update(elapsedMs/1000.f);
+			}
+		}
+	//}
 }
 
 void TwpEngine::draw() {
@@ -134,6 +141,12 @@ Common::Error TwpEngine::run() {
 	HSQUIRRELVM v = _vm.get();
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
+
+	// GGPackEntryReader reader;
+	// reader.open(_pack, "StartScreen.bnut");
+	// GGBnutReader nut;
+	// nut.open(&reader);
+	// Common::String code1 = nut.readString();
 
 	// const SQChar *code = R"(
 	// MainStreet <- {

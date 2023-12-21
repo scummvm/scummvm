@@ -119,7 +119,7 @@ protected:
 	float _zOrder = 0.f;
 	Node *_parent = nullptr;
 	Common::Array<Node *> _children;
-	Math::Vector2d _offset, _shakeOffset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
+	Math::Vector2d _offset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
 	Color _color, _computedColor;
 	bool _visible = false;
 	float _rotation = 0.f;
