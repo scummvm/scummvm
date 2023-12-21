@@ -319,35 +319,33 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 			if (opcode <= 6) {
 				skipValue++;
 			}
-			if (opcode == 8) {
-				if (skipValue == 1) {
-					skipValue--;
-				}
-			}
-			if (opcode == 7) {
+		}
+		if (opcode == 8) {
+			if (skipValue == 1) {
 				skipValue--;
 			}
-			// Do the skipping
-			stream->seek(val, SEEK_CUR);
-			debug("A3D2 skipping %u bytes for opcode %.2x (%u)", val, opcode, skipValue);
+		}
+		if (opcode == 7) {
+			skipValue--;
+		}
+		// Do the skipping
+		stream->seek(val, SEEK_CUR);
+		debug("A3D2 skipping %u bytes for opcode %.2x (%u)", val, opcode, skipValue);
 			
-			// TODO: Add a log here
-			if (skipValue != 0) {
-				// Continue the loop if there is data left in the stream
-			}
-			else {
-				if (skipValue != 0) {
-					// TODO: Implement:
-					// mov	word ptr [1028h],1Dh
-					// TODO: Add an assert here to see if this ever happens in practice
-				}
-				break;
-			}
-			// TODO: Continue here
+		// TODO: Add a log here
+		if (skipValue != 0) {
+			// Continue the loop if there is data left in the stream
+			// TODO: Check for remaining script data
 		}
 		else {
+			if (skipValue != 0) {
+				// TODO: Implement:
+				// mov	word ptr [1028h],1Dh
+				// TODO: Add an assert here to see if this ever happens in practice
+			}
 			break;
 		}
+		// TODO: Continue here
 	}
 }
 
@@ -413,7 +411,19 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 				ScriptNoEntry
 			}
 		}
+		else if (opcode1 == 0x05) {
+			ScriptNoEntry
+		}
+		// This is where handling of the opcodes > 6 continues
+		// l0037_DD3C
+		else if (opcode1 == 0x06) {
+			ScriptNoEntry
+		}
+		else if (opcode1 == 0x07) {
+			ScriptNoEntry
+		}
 		else {
+			ScriptNoEntry
 			break;
 		}
 
