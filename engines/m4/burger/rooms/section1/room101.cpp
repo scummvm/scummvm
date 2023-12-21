@@ -618,7 +618,7 @@ void Room101::daemon() {
 		}
 		break;
 
-	case 10028:
+	case kBurlEntersTown:
 		if (_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
 
@@ -629,7 +629,7 @@ void Room101::daemon() {
 			digi_play("100_013", 2, 255, -1);
 			kernel_timing_trigger(240, 24);
 		} else {
-			kernel_timing_trigger(60, 10028);
+			kernel_timing_trigger(60, kBurlEntersTown);
 		}
 		break;
 
