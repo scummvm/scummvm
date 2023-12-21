@@ -273,7 +273,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	// Nothing to add here, move along!
-	if ((!setup.devTools || !setup.tests) && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && !setup.tests && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
