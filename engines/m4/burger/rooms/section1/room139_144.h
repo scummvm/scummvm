@@ -33,7 +33,7 @@ private:
 	machine *_series1 = nullptr;
 	const char *_digi1 = nullptr;
 	int _val1 = 0;
-	int _val2 = 0;
+	int _burlFrame = 0;
 	int _burlShould = 0;
 	int _burlMode = 0;
 
