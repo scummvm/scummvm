@@ -80,7 +80,7 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 void mem_free_to_stash(void *mem, int32 memType) {
 	// _G(memBlock)[memType] is block associated with memType
 	int8 *b_ptr = (int8 *)_G(memBlock)[memType];
-	int32 index = ((long)mem - (long)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + 1);
+	int32 index = ((intptr)mem - (intptr)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + 1);
 
 	if (index < 0 || index > _G(requests)[memType])
 		error_show(FL, 'MSGF');
