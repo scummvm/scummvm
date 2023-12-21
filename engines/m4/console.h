@@ -35,6 +35,7 @@ private:
 	bool cmdItem(int argc, const char **argv);
 	bool cmdHyperwalk(int argc, const char **argv);
 	bool cmdDigi(int argc, const char **argv);
+	bool cmdTrigger(int argc, const char **argv);
 
 public:
 	Console();

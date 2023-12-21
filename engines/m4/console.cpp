@@ -30,7 +30,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("global",    WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
-	registerCmd("digi", WRAP_METHOD(Console, cmdDigi));
+	registerCmd("digi",      WRAP_METHOD(Console, cmdDigi));
+	registerCmd("trigger",   WRAP_METHOD(Console, cmdTrigger));
 }
 
 Console::~Console() {
@@ -42,7 +43,7 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 		_G(kernel).teleported_in = true;
 		return false;
 	} else {
-		debugPrintf("teleport <room number>]\n");
+		debugPrintf("teleport <room number>\n");
 		return true;
 	}
 }
@@ -96,6 +97,16 @@ bool Console::cmdDigi(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdTrigger(int argc, const char **argv) {
+	if (argc == 2) {
+		kernel_trigger_dispatch_now(atol(argv[1]));
+		return false;
+	} else {
+		debugPrintf("trigger <number>\n");
+		return true;
+	}
 }
 
 } // End of namespace M4
