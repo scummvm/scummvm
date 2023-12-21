@@ -2826,7 +2826,7 @@ void Scene95::Action1::signal() {
 		break;
 	case 5:
 		SceneItem::display(95, 4, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 13, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
