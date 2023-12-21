@@ -315,7 +315,7 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 	for (;;) {
 		const byte opcode = ScriptReadByte(stream);
 		const byte val = ScriptReadByte(stream);
-		if (opcode > 3) {
+		if (opcode >= 3) {
 			if (opcode <= 6) {
 				skipValue++;
 			}
