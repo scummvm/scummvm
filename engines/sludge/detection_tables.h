@@ -42,7 +42,10 @@ static const SludgeGameDescription gameDescriptions[] = {
 	GAME2l("outoforder", "v1.0", "gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,
 								 "out-of-order.xpm", "407086751ac167884c6585c4cad5b664", 2601,
 								 Common::EN_ANY, Common::kPlatformLinux, 0),
-	GAME2l("outoforder", "v1.0", "gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,
+	GAME2l("outoforder", "v1.0", "gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,	// 2003-02-08
+								 "Out Of Order.exe", "064d221103ca4bb7f187432b69c70efd", 68096,
+								 Common::EN_ANY, Common::kPlatformWindows, 0),
+	GAME2l("outoforder", "v1.0", "gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,	// 2003-06-05
 								 "Out Of Order.exe", "ebc386dd0cb77df68dd12d72742eb310", 68608,
 								 Common::EN_ANY, Common::kPlatformWindows, 0),
 
