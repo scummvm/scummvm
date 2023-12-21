@@ -167,6 +167,7 @@ void Room139_144::daemon() {
 		break;
 
 	case 3:
+		// Burl's truck crashing off of bridge
 		pal_fade_set_start(0);
 		ws_hide_walker();
 		terminateMachineAndNull(_series1);

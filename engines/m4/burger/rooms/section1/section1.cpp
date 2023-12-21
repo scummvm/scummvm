@@ -126,7 +126,7 @@ void Section1::daemon() {
 		_G(game).new_room = 138;
 		break;
 	case 1012:
-		_G(game).new_room = _G(flags)[V000] == 102 ? 144 : 139;
+		_G(game).new_room = _G(flags)[V000] == 1002 ? 144 : 139;
 		break;
 	case 1013:
 		_G(game).new_room = _G(flags)[V000] == 1002 ? 141 : 140;
