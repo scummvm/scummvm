@@ -110,7 +110,7 @@ static const seriesStreamBreak SERIES2[] = {
 
 void Room139_144::init() {
 	_val1 = 0;
-	_val2 = 15;
+	_burlFrame = 15;
 	digi_preload("144_001");
 
 	if (_G(game).previous_room == 144)
@@ -233,19 +233,19 @@ void Room139_144::daemon() {
 				if (imath_ranged_rand(5, 10) < ++_val1) {
 					switch (imath_ranged_rand(1, 4)) {
 					case 1:
-						_val2 = 25;
+						_burlFrame = 25;
 						break;
 
 					case 2:
-						_val2 = 36;
+						_burlFrame = 36;
 						break;
 
 					case 3:
-						_val2 = 41;
+						_burlFrame = 41;
 						break;
 
 					case 4:
-						_val2 = 42;
+						_burlFrame = 42;
 						break;
 
 					default:
@@ -283,14 +283,15 @@ void Room139_144::daemon() {
 						break;
 					}
 				} else {
-					series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, _val2, _val2);
-					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, _val2, _val2);
+					series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, _burlFrame, _burlFrame);
+					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, _burlFrame, _burlFrame);
 				}
 				break;
 
 			case 4:
 			case 5:
 				digi_play("144b002", 2);
+				_burlMode = 6;
 				series_play("144bu06", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 2);
 				series_play("144bu06s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 2);
 				break;
