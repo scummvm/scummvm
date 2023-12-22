@@ -44,6 +44,7 @@
 #include "twp/ids.h"
 #include "twp/task.h"
 #include "twp/squirrel/squirrel.h"
+#include "twp/yack.h"
 
 namespace Twp {
 
@@ -237,10 +238,11 @@ Common::Error TwpEngine::run() {
 	execBnutEntry(v, "Boot.bnut");
 
 	GGPackEntryReader reader;
-	if (reader.open(_pack, "EasyHardMode.bnut")) {
-		GGBnutReader nut;
-		nut.open(&reader);
-		Common::String code1 = nut.readString();
+	if (reader.open(_pack, "Opening.byack")) {
+		YackParser parser;
+		unique_ptr<YCompilationUnit> cu(parser.parse(&reader));
+		YackDump dump;
+		cu->accept(dump);
 	}
 
 	// const SQChar *code = "cameraInRoom(StartScreen)";
