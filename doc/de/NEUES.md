@@ -1,7 +1,13 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.0 (XXXX-XX-XX)
+#### 2.9.0 (XX.XX.XXXX)
+
+ TsAGE:
+   - Unterstützung für russische Fan-Übersetzung hinzugefügt.
+
+
+#### 2.8.0 (30.12.2023)
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
