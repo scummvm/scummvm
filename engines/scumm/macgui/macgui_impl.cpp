@@ -353,8 +353,8 @@ void MacGuiImpl::updateWindowManager() {
 			(_vm->_userPut > 0);
 	}
 
-	bool canLoad = _vm->canLoadGameStateCurrently() && saveCondition;
-	bool canSave = _vm->canSaveGameStateCurrently() && loadCondition;
+	bool canLoad = _vm->canLoadGameStateCurrently() && loadCondition;
+	bool canSave = _vm->canSaveGameStateCurrently() && saveCondition;
 
 	Graphics::MacMenuItem *gameMenu = menu->getMenuItem("Game");
 	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
