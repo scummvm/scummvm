@@ -103,7 +103,6 @@ public:
 	Object *createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);
 
 	Math::Vector2d getScreenSize();
-	Math::Vector2d roomToScreen(Math::Vector2d pos);
 
 	Layer *layer(int zsort);
 	Object *getObj(const Common::String& key);

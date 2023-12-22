@@ -39,13 +39,17 @@
 #include "twp/camera.h"
 #include "twp/prefs.h"
 #include "twp/tsv.h"
+#include "twp/scenegraph.h"
 
 namespace Twp {
 
 class Lighting;
-class Thread;
+class Task;
+class ThreadBase;
+class Cutscene;
 class Scene;
 class Room;
+class InputState;
 class Object;
 struct TwpGameDescription;
 
@@ -72,18 +76,17 @@ public:
 	/**
 	 * Gets the random source
 	 */
-	Common::RandomSource& getRandomSource() { return _randomSource; }
-	Preferences& getPrefs() { return _prefs; }
+	Common::RandomSource &getRandomSource() { return _randomSource; }
+	Preferences &getPrefs() { return _prefs; }
 
 	HSQUIRRELVM getVm() { return _vm.get(); }
-	inline Gfx& getGfx() { return _gfx; }
-	inline TextDb& getTextDb() { return _textDb; }
+	inline Gfx &getGfx() { return _gfx; }
+	inline TextDb &getTextDb() { return _textDb; }
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsLoadingDuringRuntime) ||
+			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently() override {
@@ -111,18 +114,20 @@ public:
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
 
-	void setActor(Object* actor) { _actor = actor; }
-	Object* objAt(Math::Vector2d pos);
+	void setActor(Object *actor) { _actor = actor; }
+	Object *objAt(Math::Vector2d pos);
 
-	Room* defineRoom(const Common::String& name, HSQOBJECT table, bool pseudo = false);
+	Room *defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
 	void enterRoom(Room *room, Object *door = nullptr);
 
 	void cameraAt(Math::Vector2d at);
-	void follow(Object* actor);
+	// Returns the camera position: the position of the middle of the screen.
+	Math::Vector2d cameraPos();
+	void follow(Object *actor);
 
-	void execNutEntry(HSQUIRRELVM v, const Common::String& entry);
-	void execBnutEntry(HSQUIRRELVM v,const Common::String &entry);
+	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
+	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
 
 private:
 	void update(float elapsedMs);
@@ -130,29 +135,40 @@ private:
 	void exitRoom(Room *nextRoom);
 	void actorEnter();
 	void actorExit();
-	void cancelSentence(Object* actor = nullptr);
+	void cancelSentence(Object *actor = nullptr);
+	void clickedAt(Math::Vector2d scrPos);
+	bool clickedAtHandled(Math::Vector2d roomPos);
 
 public:
 	Graphics::Screen *_screen = nullptr;
 	GGPackDecoder _pack;
 	ResManager _resManager;
-	Common::Array<Room*> _rooms;
-	Common::Array<Object*> _actors;
-	Common::Array<Object*> _objects;
-	Common::Array<Thread*> _threads;
-	Object* _actor = nullptr;
-	Object* _followActor = nullptr;
-	Room* _room = nullptr;
-	float _time = 0.f;						// time in seconds
-	Object* _noun1 = nullptr;
-	Object* _noun2 = nullptr;
+	Common::Array<Room *> _rooms;
+	Common::Array<Object *> _actors;
+	Common::Array<Object *> _objects;
+	Common::Array<ThreadBase *> _threads;
+	Common::Array<Task *> _tasks;
+	Object *_actor = nullptr;
+	Object *_followActor = nullptr;
+	Room *_room = nullptr;
+	float _time = 0.f; // time in seconds
+	Object *_noun1 = nullptr;
+	Object *_noun2 = nullptr;
 	HSQOBJECT _defaultObj;
 	bool _walkFastState = false;
 	int _frameCounter = 0;
-	Lighting* _lighting = nullptr;
-	Scene* _scene = nullptr;
+	Lighting *_lighting = nullptr;
+	Cutscene *_cutscene = nullptr;
+	Scene _scene;
+	Scene _screenScene;
+	InputState _inputState;
 	Camera _camera;
 	TextDb _textDb;
+	struct Cursor {
+		Math::Vector2d pos;
+		bool leftDown = false;
+		bool rightDown = false;
+	} _cursor;
 
 private:
 	Gfx _gfx;

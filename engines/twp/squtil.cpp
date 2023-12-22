@@ -22,6 +22,7 @@
 #include "twp/squtil.h"
 #include "twp/room.h"
 #include "twp/object.h"
+#include "twp/thread.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
 #include "squirrel/sqobject.h"
@@ -257,7 +258,7 @@ Room *sqroom(HSQUIRRELVM v, int i) {
 Object *sqobj(HSQOBJECT table) {
 	int id = getId(table);
 	for (int i = 0; i < g_engine->_actors.size(); i++) {
-    	Object* actor = g_engine->_actors[i];
+		Object *actor = g_engine->_actors[i];
 		if (getId(actor->_table) == id)
 			return actor;
 	}
@@ -315,34 +316,13 @@ int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {
 	return nparams;
 }
 
-static void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name) {
+void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const char* name) {
 	sq_pushobject(v, o);
-	sq_pushstring(v, name.c_str(), -1);
+	sq_pushstring(v, name, -1);
 	sq_get(v, -2);
 }
 
-static void sqcall(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, int numArgs, HSQOBJECT *args) {
-	SQInteger top = sq_gettop(v);
-	sqpushfunc(v, o, name);
-
-	sq_pushobject(v, o);
-	for (int i = 0; i < numArgs; i++) {
-		sq_pushobject(v, args[i]);
-	}
-	sq_call(v, 1 + numArgs, SQFalse, SQTrue);
-	sq_settop(v, top);
-}
-
-void sqcall(HSQOBJECT o, const Common::String &name, int numArgs, HSQOBJECT *args) {
-	sqcall(g_engine->getVm(), o, name, numArgs, args);
-}
-
-void sqcall(const Common::String &name, int numArgs, HSQOBJECT *args) {
-	HSQUIRRELVM v = g_engine->getVm();
-	sqcall(v, sqrootTbl(v), name, numArgs, args);
-}
-
-void sqexec(HSQUIRRELVM v, const char *code, const char* filename) {
+void sqexec(HSQUIRRELVM v, const char *code, const char *filename) {
 	SQInteger top = sq_gettop(v);
 	if (SQ_FAILED(sq_compilebuffer(v, code, strlen(code), filename ? filename : "twp", SQTrue))) {
 		sqstd_printcallstack(v);
@@ -355,6 +335,29 @@ void sqexec(HSQUIRRELVM v, const char *code, const char* filename) {
 		return;
 	}
 	sq_settop(v, top);
+}
+
+ThreadBase *sqthread(int id) {
+	if (g_engine->_cutscene) {
+		if (g_engine->_cutscene->getId() == id) {
+			return g_engine->_cutscene;
+		}
+	}
+
+	// let threads = g_engine->_threads;
+	for (int i = 0; i < g_engine->_threads.size(); i++) {
+		ThreadBase *t = g_engine->_threads[i];
+		if (t->getId() == id) {
+			return t;
+		}
+	}
+	return nullptr;
+}
+
+ThreadBase *sqthread(HSQUIRRELVM v) {
+	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](ThreadBase *t) {
+		return t->getThread() == v;
+	});
 }
 
 } // namespace Twp

@@ -28,30 +28,122 @@
 
 namespace Twp {
 
-class Thread {
+class ThreadBase {
 public:
-	Thread();
-	~Thread();
+	virtual ~ThreadBase() {}
 
-	bool call();
-	bool update(float elapsed);
+	void pause() {
+		if (_pauseable) {
+			_paused = true;
+			suspend();
+		}
+	}
+
+	void unpause() {
+		_paused = false;
+		resume();
+	}
+
+	void setName(const Common::String& name) { _name = name; }
+	Common::String getName() const { return _name; }
+
+	int getId() const { return _id; }
+	virtual HSQUIRRELVM getThread() = 0;
+
+	virtual bool isGlobal() = 0;
+
 	void suspend();
 	void resume();
+
+	virtual bool update(float elapsed) = 0;
+	virtual void stop() = 0;
+
+protected:
 	bool isDead();
 	bool isSuspended();
-	void stop();
 
 public:
-	uint64 _id=0;
-	Common::String _name;
-    bool _global = false;
-	HSQOBJECT _obj, _threadObj, _envObj, _closureObj;
-	Common::Array<HSQOBJECT> _args;
-	bool _paused=false;
 	float _waitTime = 0.f;
 	int _numFrames = 0;
+	bool _paused = false;
+	bool _pauseable = true;
+
+protected:
+	int _id = 0;
+	Common::String _name;
 	bool _stopRequest = false;
+	bool _stopped = false;
 };
-}
+
+class Thread final : public ThreadBase {
+public:
+	Thread(int id);
+	virtual ~Thread() override final;
+
+	virtual bool isGlobal() override final { return _global; }
+	virtual HSQUIRRELVM getThread() override final { return _threadObj._unVal.pThread; }
+
+	bool call();
+	virtual bool update(float elapsed) override final;
+	virtual void stop() override final;
+
+public:
+	bool _global = false;
+	HSQOBJECT _obj, _threadObj, _envObj, _closureObj;
+	Common::Array<HSQOBJECT> _args;
+};
+
+enum CutsceneState {
+	csStart,
+	csCheckEnd,
+	csOverride,
+	csCheckOverride,
+	csEnd,
+	csQuit
+};
+
+enum InputStateFlag {
+	II_FLAGS_UI_INPUT_ON = 1,
+	II_FLAGS_UI_INPUT_OFF = 2,
+	II_FLAGS_UI_VERBS_ON = 4,
+	II_FLAGS_UI_VERBS_OFF = 8,
+	II_FLAGS_UI_HUDOBJECTS_ON = 0x10,
+	II_FLAGS_UI_HUDOBJECTS_OFF = 0x20,
+	II_FLAGS_UI_CURSOR_ON = 0x40,
+	II_FLAGS_UI_CURSOR_OFF = 0x80
+};
+
+class Object;
+class Cutscene final : public ThreadBase {
+public:
+	Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
+	virtual ~Cutscene() override final;
+
+	void start();
+	virtual bool isGlobal() override final { return false; }
+	virtual HSQUIRRELVM getThread() override final { return _threadObj._unVal.pThread; }
+	virtual bool update(float elapsed) override final;
+	virtual void stop() override final;
+
+	bool hasOverride() const;
+	inline void cutsceneOverride() { _state = csOverride; }
+
+private:
+	void checkEndCutscene();
+	void checkEndCutsceneOverride();
+	void doCutsceneOverride();
+	bool isStopped();
+
+private:
+	Common::String _name;
+	HSQUIRRELVM _v;
+	HSQOBJECT _threadObj, _closure, _closureOverride, _envObj;
+	CutsceneState _state;
+	bool _showCursor = false;
+	InputStateFlag _inputState = (InputStateFlag)0;
+	Object *_actor = nullptr;
+};
+
+} // namespace Twp
 
 #endif

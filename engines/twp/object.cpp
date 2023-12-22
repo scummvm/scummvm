@@ -286,6 +286,26 @@ int Object::getFlags() {
 void Object::setRoom(Room *room) {
 	if (_room != room) {
 		stopObjectMotors();
+		Room *oldRoom = _room;
+		if (oldRoom) {
+			debug("Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
+			Layer *layer = oldRoom->layer(0);
+			if (layer) {
+				int index = find(layer->_objects, this);
+				if (index != -1)
+					layer->_objects.remove_at(index);
+				if (layer)
+					layer->_node->removeChild(_node);
+			}
+		}
+		if (room && room->layer(0) && room->layer(0)->_node) {
+			debug("Add %s in room %s", _key.c_str(), room->_name.c_str());
+			Layer *layer = room->layer(0);
+			if (layer) {
+				layer->_objects.push_back(this);
+				layer->_node->addChild(_node);
+			}
+		}
 		_room = room;
 	}
 }
@@ -295,8 +315,9 @@ void Object::delObject() {
 	_node->getParent()->removeChild(_node);
 }
 
-static void disableMotor(Motor* motor) {
-	if(motor) motor->disable();
+static void disableMotor(Motor *motor) {
+	if (motor)
+		motor->disable();
 }
 
 void Object::stopObjectMotors() {
@@ -360,14 +381,12 @@ void Object::setHeadIndex(int head) {
 }
 
 bool Object::isWalking() {
-	// TODO: return not self.walkTo.isNil and self.walkTo.enabled();
-	return false;
+	return _walkTo && _walkTo->isEnabled();
 }
 
 void Object::stopWalking() {
-	// TODO: stopWalking
-	//   if (_walkTo)
-	//     _walkTo->disable();
+	  if (_walkTo)
+	    _walkTo->disable();
 }
 
 void Object::setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach) {
@@ -479,14 +498,10 @@ void Object::pickupObject(Object *obj) {
 	obj->_owner = this;
 	_inventory.push_back(obj);
 
-	{
-		HSQOBJECT args[]{obj->_table, _table};
-		sqcall("onPickup", 2, args);
-	}
+	sqcall("onPickup", obj->_table, _table);
 
 	if (sqrawexists(obj->_table, "onPickUp")) {
-		HSQOBJECT args[]{_table};
-		sqcall(obj->_table, "onPickUp", 1, args);
+		sqcall(obj->_table, "onPickUp", _table);
 	}
 }
 

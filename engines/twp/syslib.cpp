@@ -24,6 +24,7 @@
 #include "twp/ids.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
+#include "twp/task.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
 #include "twp/squirrel/sqobject.h"
@@ -40,23 +41,17 @@
 
 namespace Twp {
 
-static Thread *thread(HSQUIRRELVM v) {
-	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](Thread *t) {
-		return t->_threadObj._unVal.pThread == v;
-	});
-}
-
 static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	HSQUIRRELVM vm = g_engine->getVm();
 	SQInteger size = sq_gettop(v);
+	int id = newThreadId();
 
-	Thread *t = new Thread();
+	Thread *t = new Thread(id);
 	t->_global = global;
 
-	static uint64 gThreadId = 300000;
 	sq_newtable(v);
 	sq_pushstring(v, _SC("_id"), -1);
-	sq_pushinteger(v, gThreadId++);
+	sq_pushinteger(v, id);
 	sq_newslot(v, -3, SQFalse);
 	sq_getstackobj(v, -1, &t->_obj);
 	sq_addref(vm, &t->_obj);
@@ -93,7 +88,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	if (SQ_SUCCEEDED(sq_getclosurename(v, 2)))
 		sq_getstring(v, -1, &name);
 
-	t->_name = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(t->_closureObj)->_function->_sourcename), _closure(t->_closureObj)->_function->_lineinfos->_line);
+	t->setName(Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(t->_closureObj)->_function->_sourcename), _closure(t->_closureObj)->_function->_lineinfos->_line));
 	sq_pop(vm, 1);
 	if (name)
 		sq_pop(v, 1); // pop name
@@ -101,23 +96,23 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 
 	g_engine->_threads.push_back(t);
 
-	debug("create thread %s", t->_name.c_str());
+	debug("create thread %s", t->getName().c_str());
 
 	// call the closure in the thread
 	if (!t->call())
 		return sq_throwerror(v, "call failed");
 
-	sq_pushobject(v, t->_obj);
+	sqpush(v, t->getId());
 	return 1;
 }
 
 template<typename F>
 static SQInteger breakfunc(HSQUIRRELVM v, const F &func) {
-	Thread *t = thread(v);
+	ThreadBase *t = sqthread(v);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	t->suspend();
-	func(*t);
+	func(t);
 	return -666;
 }
 
@@ -155,13 +150,13 @@ static SQInteger breakhere(HSQUIRRELVM v) {
 		int numFrames;
 		if (SQ_FAILED(sqget(v, 2, numFrames)))
 			return sq_throwerror(v, "failed to get numFrames");
-		return breakfunc(v, [&](Thread &t) { t._numFrames = numFrames; });
+		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_numFrames = numFrames; });
 	}
 	if (t == OT_FLOAT) {
 		float time;
 		if (SQ_FAILED(sqget(v, 2, time)))
 			return sq_throwerror(v, "failed to get time");
-		return breakfunc(v, [&](Thread &t) { t._waitTime = time; });
+		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_waitTime = time; });
 	}
 	return sq_throwerror(v, Common::String::format("failed to get numFrames (wrong type = {%d})", t).c_str());
 }
@@ -179,9 +174,26 @@ static SQInteger breaktime(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
 		return sq_throwerror(v, "failed to get time");
 	if (time == 0.f)
-		return breakfunc(v, [](Thread &t) { t._numFrames = 1; });
+		return breakfunc(v, [](ThreadBase *t) { ((Thread *)t)->_numFrames = 1; });
 	else
-		return breakfunc(v, [&](Thread &t) { t._waitTime = time; });
+		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_waitTime = time; });
+}
+
+template<typename Predicate>
+static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, ...) {
+	va_list va;
+	va_start(va, fmt);
+	Common::String name = Common::String::format(fmt, va);
+	va_end(va);
+
+	ThreadBase *curThread = sqthread(v);
+	if (!curThread)
+		return sq_throwerror(v, "Current thread should be created with startthread");
+
+	debug("curThread.id: %d", curThread->getId());
+	debug("add breakwhilecond name=%s pid=%d", name.c_str(), curThread->getId());
+	g_engine->_tasks.push_back(new BreakWhileCond<Predicate>(curThread->getId(), name, pred));
+	return -666;
 }
 
 static SQInteger breakwhileanimating(HSQUIRRELVM v) {
@@ -194,9 +206,12 @@ static SQInteger breakwhilecamera(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Breaks while a cutscene is running.
+// Once the thread finishes execution, the method will continue running.
+// It is an error to call breakwhilecutscene in a function that was not started with startthread.
 static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
-	warning("TODO: breakwhilecutscene: not implemented");
-	return 0;
+	return breakwhilecond(
+		v, [] { return g_engine->_cutscene == nullptr; }, "breakwhilecutscene()");
 }
 
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
@@ -208,10 +223,43 @@ static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
 	warning("TODO: breakwhileinputoff: not implemented");
 	return 0;
 }
+
+// Breaks while the thread referenced by threadId is running.
+// Once the thread finishes execution, the method will continue running.
+// It is an error to call breakwhilerunning in a function that was not started with startthread.
+//
+// . code-block:: Squirrel
+// local waitTID = 0
+//
+//    if ( g.in_flashback && HotelElevator.requestedFloor == 13 ) {
+//     waitTID = startthread(HotelElevator.avoidPenthouse)
+//     breakwhilerunning(waitTID)
+// }
+// waitTID = 0
+// if (HotelElevator.requestedFloor >= 0) {
+//     // Continue executing other code
+// }
 static SQInteger breakwhilerunning(HSQUIRRELVM v) {
-	warning("TODO: breakwhilerunning: not implemented");
-	return 0;
+	int id = 0;
+	if (sq_gettype(v, 2) == OT_INTEGER)
+		sqget(v, 2, id);
+	debug("breakwhilerunning: %d", id);
+
+	ThreadBase *t = sqthread(id);
+	if (!t) {
+		// TODO: sound
+		// let sound = sound(id);
+		// if (!sound) {
+		// 	warning("thread and sound not found: %d", id);
+		// 	return 0;
+		// }
+		// return breakwhilecond(v, [&] { return sound(id); }, "breakwhilerunning(%d)", id);
+		return 0;
+	}
+	return breakwhilecond(
+		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
 }
+
 static SQInteger breakwhiletalking(HSQUIRRELVM v) {
 	warning("TODO: breakwhiletalking: not implemented");
 	return 0;
@@ -226,8 +274,41 @@ static SQInteger breakwhilesound(HSQUIRRELVM v) {
 }
 
 static SQInteger cutscene(HSQUIRRELVM v) {
-	warning("TODO: cutscene: not implemented");
-	return 0;
+	HSQUIRRELVM vm = g_engine->getVm();
+	SQInteger nArgs = sq_gettop(v);
+
+	HSQOBJECT envObj;
+	sq_resetobject(&envObj);
+	if (SQ_FAILED(sq_getstackobj(v, 1, &envObj)))
+		return sq_throwerror(v, "Couldn't get environment from stack");
+
+	// create thread and store it on the stack
+	sq_newthread(vm, 1024);
+	HSQOBJECT threadObj;
+	sq_resetobject(&threadObj);
+	if (SQ_FAILED(sq_getstackobj(vm, -1, &threadObj)))
+		return sq_throwerror(v, "failed to get coroutine thread from stack");
+
+	// get the closure
+	HSQOBJECT closure;
+	sq_resetobject(&closure);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &closure)))
+		return sq_throwerror(v, "failed to get cutscene closure");
+
+	// get the cutscene override closure
+	HSQOBJECT closureOverride;
+	sq_resetobject(&closureOverride);
+	if (nArgs == 3) {
+		if (SQ_FAILED(sq_getstackobj(v, 3, &closureOverride)))
+			return sq_throwerror(v, "failed to get cutscene override closure");
+	}
+
+	Cutscene *cutscene = new Cutscene(v, threadObj, closure, closureOverride, envObj);
+	g_engine->_cutscene = cutscene;
+
+	// call the closure in the thread
+	cutscene->update(0.f);
+	return breakwhilecutscene(v);
 }
 
 static SQInteger cutsceneOverride(HSQUIRRELVM v) {
@@ -342,9 +423,27 @@ static SQInteger startglobalthread(HSQUIRRELVM v) {
 	return _startthread(v, true);
 }
 
+// Stops a thread specified by threadid.
+//
+// If the thread is not running, the command does nothing.
+//
+// See also:
+// * `startthread`
+// * `startglobalthread`
 static SQInteger stopthread(HSQUIRRELVM v) {
-	warning("TODO: stopthread: not implemented");
-	return 0;
+	int id = 0;
+	if (SQ_FAILED(sqget(v, 2, id))) {
+		sqpush(v, 0);
+		return 1;
+	}
+
+	ThreadBase *t = sqthread(id);
+	if (t) {
+		t->stop();
+	}
+
+	sqpush(v, 0);
+	return 1;
 }
 
 static SQInteger threadid(HSQUIRRELVM v) {
@@ -599,6 +698,7 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "BUTTON_BACK", BUTTON_BACK);
 	regConst(v, "BUTTON_MOUSE_LEFT", BUTTON_MOUSE_LEFT);
 	regConst(v, "BUTTON_MOUSE_RIGHT", BUTTON_MOUSE_RIGHT);
+	regConst(v, "PLATFORM", 1); // TODO: choose the right platform
 }
 
 } // namespace Twp

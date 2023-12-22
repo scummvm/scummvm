@@ -37,14 +37,10 @@ static float _getFps(float fps, float animFps) {
 	return (animFps < 1e-3) ? DEFAULT_FPS : animFps;
 }
 
-Node::Node(const Common::String &name, bool visible, Math::Vector2d scale, Color color)
+Node::Node(const Common::String &name, Math::Vector2d scale, Color color)
 	: _name(name),
-	  _parent(NULL),
 	  _color(color),
 	  _computedColor(color),
-	  _visible(visible),
-	  _rotation(0.f),
-	  _rotationOffset(0.f),
 	  _scale(scale) {
 }
 
@@ -192,7 +188,7 @@ Math::Matrix4 Node::getTrsf(Math::Matrix4 parentTrsf) {
 	return parentTrsf * getLocalTrsf();
 }
 
-static void scale(Math::Matrix4& m, const Math::Vector2d &v) {
+static void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
 	m(0, 0) *= v.getX();
 	m(1, 1) *= v.getY();
 }
@@ -352,14 +348,21 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 				_sheet = _obj->_room->_sheet;
 			}
 		}
-		SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
-		const SpriteSheetFrame &sf = sheet->frameTable[frame];
-		Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
-		float x = flipX ? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left : 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
-		float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
-		Math::Vector3d pos(int(-x), int(y), 0.f);
-		trsf.translate(pos);
-		g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
+		if (_sheet == "raw") {
+			Texture *texture = g_engine->_resManager.texture(frame);
+			Math::Vector3d pos(-texture->width / 2.f, -texture->height / 2.f, 0.f);
+			trsf.translate(pos);
+			g_engine->getGfx().drawSprite(Common::Rect(texture->width, texture->height), *texture, getComputedColor(), trsf, flipX);
+		} else {
+			SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
+			const SpriteSheetFrame &sf = sheet->frameTable[frame];
+			Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
+			float x = flipX ? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left : 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
+			float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
+			Math::Vector3d pos(int(-x), int(y), 0.f);
+			trsf.translate(pos);
+			g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
+		}
 	}
 }
 
@@ -401,7 +404,25 @@ void TextNode::drawCore(Math::Matrix4 trsf) {
 	_text.draw(g_engine->getGfx(), trsf);
 }
 
-Scene::Scene() : Node("Scene") {}
+Scene::Scene() : Node("Scene") {
+	_zOrder = -100;
+}
 Scene::~Scene() {}
+
+InputState::InputState(): Node("InputState") {}
+InputState::~InputState() {}
+
+void InputState::drawCore(Math::Matrix4 trsf) {
+	// draw cursor
+	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
+	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
+	//   if prefs(ClassicSentence) and self.hotspot:
+	//       cursorName = "hotspot_" & self.cursorName
+	const SpriteSheetFrame& sf = gameSheet->frameTable[ "cursor"];
+	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f,  - sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
+	trsf.translate(pos);
+	scale(trsf, Math::Vector2d(2.f, 2.f));
+	g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf);
+}
 
 } // namespace Twp

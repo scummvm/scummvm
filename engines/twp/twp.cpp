@@ -42,6 +42,7 @@
 #include "twp/squtil.h"
 #include "twp/object.h"
 #include "twp/ids.h"
+#include "twp/task.h"
 #include "twp/squirrel/squirrel.h"
 
 namespace Twp {
@@ -56,10 +57,28 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _gameDescription(gameDesc),
 	  _randomSource("Twp") {
 	g_engine = this;
+	sq_resetobject(&_defaultObj);
+	_screenScene.addChild(&_inputState);
 }
 
 TwpEngine::~TwpEngine() {
 	delete _screen;
+}
+
+static Math::Vector2d winToScreen(Math::Vector2d pos) {
+	return Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+}
+
+Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
+	Math::Vector2d screenSize = _room->getScreenSize();
+	pos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
+}
+
+Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
+	Math::Vector2d screenSize = _room->getScreenSize();
+	pos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+	return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
 }
 
 uint32 TwpEngine::getFeatures() const {
@@ -70,30 +89,103 @@ Common::String TwpEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-void TwpEngine::update(float elapsedMs) {
+bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
+	bool result = false;
+	int x = roomPos.getX();
+	int y = roomPos.getY();
+	if (sqrawexists(_room->_table, "clickedAt")) {
+		debug("clickedAt %d, %d", x, y);
+		sqcallfunc(result, _room->_table, "clickedAt", x, y);
+	}
+	if (!result) {
+		if (_actor && sqrawexists(_actor->_table, "clickedAt")) {
+			sqcallfunc(result, _actor->_table, "clickedAt", x, y);
+		}
+	}
+	return result;
+}
+
+void TwpEngine::clickedAt(Math::Vector2d scrPos) {
+	// TODO: update this
+	if (_room) {
+		Math::Vector2d roomPos = screenToRoom(scrPos);
+		//Object *obj = objAt(roomPos);
+
+		if (_cursor.leftDown) {
+			// button left: execute selected verb
+			clickedAtHandled(roomPos);
+			// if (!handled && obj) {
+			//     sqcall("onVerbClick");
+			//     handled = execSentence(nullptr, 1, _noun1, _noun2);
+			//   }
+			//   if not handled:
+			//     if (not self.actor.isNil and scrPos.y > 172) {
+			//       self.actor.walk(room_pos)
+			//       self.hud.verb = self.hud.actorSlot(self.actor).verbs[0]
+			// 	}
+			// Just clicking on the ground
+			//     cancelSentence(self.actor)
+		}
+		// else if _cursor.rightDown) {
+		//   // button right: execute default verb
+		//   if not obj.isNil:
+		//     discard self.execSentence(nil, obj.defaultVerbId, self.noun1, self.noun2)
+		// } else if (self.walkFastState and self.mouseState.pressed() and not self.actor.isNil and scrPos.y > 172) {
+		//   self.actor.walk(room_pos);
+		// }
+	}
+}
+
+void TwpEngine::update(float elapsed) {
+	_time += elapsed;
+
+	// update mouse pos
+	Math::Vector2d scrPos = winToScreen(_cursor.pos);
+	//_inputState.visible = _inputState.showCursor; // TODO: || _dlg.state == WaitingForChoice;
+	_inputState.setPos(scrPos);
+	// TODO:
+	// _sentence.pos = scrPos;
+	// _dlg.mousePos = scrPos;
+	if (_room) {
+		if (_cursor.leftDown)
+			clickedAt(_cursor.pos);
+	}
+
 	// update camera
-	_camera.update(_room, _followActor, elapsedMs);
+	_camera.update(_room, _followActor, elapsed);
+
+	// update tasks
+	for (auto it = _tasks.begin(); it != _tasks.end();) {
+		Task *task = *it;
+		if (task->update(elapsed)) {
+			it = _tasks.erase(it);
+			delete task;
+			continue;
+		}
+		it++;
+	}
 
 	// update threads
-	for (int i = 0; i < _threads.size(); i++) {
-		Thread *thread = _threads[i];
-		if (thread->update(elapsedMs/1000.f)) {
-			// TODO: delete it
+	for (auto it = _threads.begin(); it != _threads.end();) {
+		ThreadBase *thread = *it;
+		if (thread->update(elapsed)) {
+			it = _threads.erase(it);
+			delete thread;
+			continue;
 		}
+		it++;
 	}
 
 	// update objects
-	//for (int i = 0; i < g_engine->_rooms.size(); i++) {
-		//Room *room = g_engine->_rooms[i];
-		Room *room = g_engine->_room;
-		for (int j = 0; j < room->_layers.size(); j++) {
-			Layer *layer = room->_layers[j];
+	if (_room) {
+		for (int j = 0; j < _room->_layers.size(); j++) {
+			Layer *layer = _room->_layers[j];
 			for (int k = 0; k < layer->_objects.size(); k++) {
 				Object *obj = layer->_objects[k];
-				obj->update(elapsedMs/1000.f);
+				obj->update(elapsed);
 			}
 		}
-	//}
+	}
 }
 
 void TwpEngine::draw() {
@@ -103,7 +195,10 @@ void TwpEngine::draw() {
 	}
 	_gfx.clear(Color(0, 0, 0));
 	_gfx.use(NULL);
-	_scene->draw();
+	_scene.draw();
+
+	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+	_screenScene.draw();
 
 	g_system->updateScreen();
 }
@@ -117,7 +212,6 @@ Common::Error TwpEngine::run() {
 
 	_gfx.init();
 	_lighting = new Lighting();
-	_scene = new Scene();
 
 	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
 	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
@@ -142,28 +236,15 @@ Common::Error TwpEngine::run() {
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
 
-	// GGPackEntryReader reader;
-	// reader.open(_pack, "StartScreen.bnut");
-	// GGBnutReader nut;
-	// nut.open(&reader);
-	// Common::String code1 = nut.readString();
+	GGPackEntryReader reader;
+	if (reader.open(_pack, "EasyHardMode.bnut")) {
+		GGBnutReader nut;
+		nut.open(&reader);
+		Common::String code1 = nut.readString();
+	}
 
-	// const SQChar *code = R"(
-	// MainStreet <- {
-	// 	background = "MainStreet"
-	// 	enter = function(enter_door) {}
-	// }
-	// defineRoom(MainStreet)
-	// cameraInRoom(MainStreet)
-	// cameraAt(0,128)
-	// //cameraPanTo(2820, 128, 5000, 2)
-	// local cr = createTextObject("SentenceFont", "Copyright 2014-2017 Terrible Toybox, Inc. All Rights Reserved. Thimbleweed Parkxe2x84xa2 is a trademark of Terrible Toybox, Inc.", ALIGN_CENTER)
-	// objectScale(cr, 0.25/2)
-	// objectAt(cr, 160, 5)
-	// objectAlpha(cr, 0.25)
-	// )";
-
-	const SQChar *code = "cameraInRoom(StartScreen)";
+	// const SQChar *code = "cameraInRoom(StartScreen)";
+	const SQChar *code = "start(1)";
 
 	_vm.exec(code);
 
@@ -193,6 +274,21 @@ Common::Error TwpEngine::run() {
 				default:
 					break;
 				}
+			case Common::EVENT_MOUSEMOVE:
+				_cursor.pos = Math::Vector2d(e.mouse.x, e.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_cursor.leftDown = true;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_cursor.leftDown = false;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				_cursor.rightDown = true;
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_cursor.rightDown = false;
+				break;
 			default:
 				break;
 			}
@@ -200,8 +296,7 @@ Common::Error TwpEngine::run() {
 
 		_gfx.cameraPos(camPos);
 
-		// update threads
-		update(deltaTimeMs);
+		update(deltaTimeMs / 1000.f);
 		draw();
 
 		// Delay for a bit. All events loops should have a delay
@@ -224,16 +319,6 @@ Common::Error TwpEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
-	Math::Vector2d screenSize = _room->getScreenSize();
-	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
-}
-
-Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
-	Math::Vector2d screenSize = _room->getScreenSize();
-	return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
-}
-
 Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
 	HSQUIRRELVM v = _vm.get();
 	debug("Load room: %s", name.c_str());
@@ -241,7 +326,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 	if (name == "Void") {
 		result = new Room(name, table);
 		result->_scene = new Scene();
-		Layer* layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
+		Layer *layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
 		layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray());
 		result->_layers.push_back(layer);
 		result->_scene->addChild(layer->_node);
@@ -404,7 +489,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	if (_room)
 		_room->_scene->remove();
 	_room = room;
-	_scene->addChild(_room->_scene);
+	_scene.addChild(_room->_scene);
 	_room->_lights._numLights = 0;
 	// TODO:   _room->overlay = Transparent;
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
@@ -446,21 +531,16 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 		if (!door) {
 			HSQOBJECT doorTable;
 			sq_resetobject(&doorTable);
-			HSQOBJECT args[] = {doorTable};
-			sqcall(_room->_table, "enter", 1, args);
+			sqcall(_room->_table, "enter", doorTable);
 		} else {
-			HSQOBJECT args[] = {door->_table};
-			sqcall(_room->_table, "enter", 1, args);
+			sqcall(_room->_table, "enter", door->_table);
 		}
 	} else {
 		sqcall(_room->_table, "enter");
 	}
 
 	// call global function enteredRoom with the room as argument
-	{
-		HSQOBJECT args[] = {room->_table};
-		sqcall("enteredRoom", 1, args);
-	}
+	sqcall("enteredRoom", room->_table);
 }
 
 void TwpEngine::actorEnter() {
@@ -468,8 +548,7 @@ void TwpEngine::actorEnter() {
 		sqcall(_actor->_table, "actorEnter");
 	if (_room) {
 		if (sqrawexists(_room->_table, "actorEnter")) {
-			HSQOBJECT args[] = {_actor->_table};
-			sqcall(_room->_table, "actorEnter", 1, args);
+			sqcall(_room->_table, "actorEnter", _actor->_table);
 		}
 	}
 }
@@ -484,9 +563,8 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 
 		// call room exit function with the next room as a parameter if requested
 		int nparams = sqparamCount(v, _room->_table, "exit");
-		HSQOBJECT args[] = {nextRoom->_table};
 		if (nparams == 2) {
-			sqcall(_room->_table, "exit", 1, args);
+			sqcall(_room->_table, "exit", nextRoom->_table);
 		} else {
 			sqcall(_room->_table, "exit");
 		}
@@ -498,19 +576,20 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 				Object *obj = layer->_objects[i];
 				if (obj->_temporary) {
 					obj->delObject();
+					delete obj;
 				} else if (isActor(obj->getId()) && _actor != obj) {
 					obj->stopObjectMotors();
 				}
 			}
 		}
 
-		// call global function enteredRoom with the room as argument
-		sqcall("exitedRoom", 1, args);
+		// call global function exitedRoom with the room as argument
+		sqcall("exitedRoom", _room->_table);
 
 		// stop all local threads
 		for (int i = 0; i < _threads.size(); i++) {
-			Thread *thread = _threads[i];
-			if (!thread->_global) {
+			ThreadBase *thread = _threads[i];
+			if (!thread->isGlobal()) {
 				thread->stop();
 			}
 		}
@@ -528,8 +607,7 @@ void TwpEngine::setRoom(Room *room) {
 void TwpEngine::actorExit() {
 	if (!_actor && _room) {
 		if (sqrawexists(_room->_table, "actorExit")) {
-			HSQOBJECT args[] = {_actor->_table};
-			sqcall(_room->_table, "actorExit", 1, args);
+			sqcall(_room->_table, "actorExit", _actor->_table);
 		}
 	}
 }
@@ -557,7 +635,7 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 		debug("read existing '%s'", entry.c_str());
 		reader.open(_pack, entry);
 		Common::String code = reader.readString();
-		//debug("%s", code.c_str());
+		// debug("%s", code.c_str());
 		sqexec(v, code.c_str(), entry.c_str());
 	} else {
 		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
@@ -573,6 +651,14 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 void TwpEngine::cameraAt(Math::Vector2d at) {
 	_camera.setRoom(_room);
 	_camera.setAt(at);
+}
+
+Math::Vector2d TwpEngine::cameraPos() {
+	if (_room) {
+		Math::Vector2d screenSize = _room->getScreenSize();
+		return _camera.getAt() + screenSize / 2.0f;
+	}
+	return _camera.getAt();
 }
 
 void TwpEngine::follow(Object *actor) {
