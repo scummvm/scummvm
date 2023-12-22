@@ -76,6 +76,27 @@ extern char const *const ESP_SOUND_BTN_STRING;
 extern char const *const ESP_LOOK_BTN_STRING;
 extern char const *const ESP_PICK_BTN_STRING;
 
+// Russian version
+extern char const *const RUS_LOOK_SCENE_HOTSPOT;
+extern char const *const RUS_USE_SCENE_HOTSPOT;
+extern char const *const RUS_TALK_SCENE_HOTSPOT;
+extern char const *const RUS_SPECIAL_SCENE_HOTSPOT;
+extern char const *const RUS_DEFAULT_SCENE_HOTSPOT;
+extern char const *const RUS_SAVE_ERROR_MSG;
+extern char const *const RUS_SAVING_NOT_ALLOWED_MSG;
+extern char const *const RUS_RESTORING_NOT_ALLOWED_MSG;
+extern char const *const RUS_INV_EMPTY_MSG;
+
+// Dialogs
+extern char const *const RUS_OK_BTN_STRING;
+extern char const *const RUS_CONTINUE_BTN_STRING;
+extern char const *const RUS_CANCEL_BTN_STRING;
+extern char const *const RUS_RESTORE_BTN_STRING;
+extern char const *const RUS_SOUND_BTN_STRING;
+extern char const *const RUS_LOOK_BTN_STRING;
+extern char const *const RUS_PICK_BTN_STRING;
+
+
 namespace Ringworld {
 
 // Dialog resources
@@ -140,6 +161,36 @@ extern char const *const ESP_SCENE6100_TAKE_CONTROLS;
 extern char const *const ESP_SCENE6100_SURPRISE;
 extern char const *const ESP_SCENE6100_SWEAT;
 extern char const *const ESP_SCENE6100_VERY_WELL;
+
+// Russian version
+extern char const *const RUS_QUIT_CONFIRM_MSG;
+extern char const *const RUS_RESTART_MSG;
+extern char const *const RUS_GAME_PAUSED_MSG;
+extern char const *const RUS_QUIT_BTN_STRING;
+extern char const *const RUS_RESTART_BTN_STRING;
+extern char const *const RUS_SAVE_BTN_STRING;
+extern char const *const RUS_RESUME_BTN_STRING;
+
+// Dialog resources
+extern char const *const RUS_HELP_MSG;
+extern char const *const RUS_WATCH_INTRO_MSG;
+extern char const *const RUS_START_PLAY_BTN_STRING;
+extern char const *const RUS_INTRODUCTION_BTN_STRING;
+extern char const *const RUS_OPTIONS_MSG;
+
+// Scene specific resources
+extern char const *const RUS_EXIT_MSG;
+extern char const *const RUS_SCENE6100_CAREFUL;
+extern char const *const RUS_SCENE6100_TOUGHER;
+extern char const *const RUS_SCENE6100_ONE_MORE_HIT;
+extern char const *const RUS_SCENE6100_DOING_BEST;
+extern char const *const RUS_SCENE6100_REPAIR;
+extern char const *const RUS_SCENE6100_ROCKY_AREA;
+extern char const *const RUS_SCENE6100_REPLY;
+extern char const *const RUS_SCENE6100_TAKE_CONTROLS;
+extern char const *const RUS_SCENE6100_SURPRISE;
+extern char const *const RUS_SCENE6100_SWEAT;
+extern char const *const RUS_SCENE6100_VERY_WELL;
 
 } // End of namespace Ringworld
 

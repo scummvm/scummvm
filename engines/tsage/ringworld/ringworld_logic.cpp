@@ -351,39 +351,40 @@ void SceneArea::synchronize(Serializer &s) {
 
 RingworldInvObjectList::RingworldInvObjectList() :
 		_ESP(g_vm->getLanguage() == Common::ES_ESP),
-		_stunner(2280, 1, 2, OBJECT_STUNNER, _ESP ? "Tu paralizador." : "This is your stunner."),
-		_scanner(1, 1, 3, OBJECT_SCANNER, _ESP ? "Una unidad combinada de esc\240ner y comunicaciones." : "A combination scanner comm unit."),
-		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, _ESP ? "Una caja est\240sica." : "A stasis box."),
-		_infoDisk(40, 1, 1, OBJECT_INFODISK, _ESP ? "El infodisk que le cogiste al asesino." : "The infodisk you took from the assassin."),
-		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, _ESP ? "El negador de campos est\240sicos." : "The stasis field negator."),
-		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, _ESP ? "Una llave magn\202tica." : "A magnetic key device."),
-		_medkit(2280, 1, 7, OBJECT_MEDKIT, _ESP ? "Tu botiqu\241n." : "Your medkit."),
-		_ladder(4100, 1, 8, OBJECT_LADDER, _ESP ? "La escalera del jefe." : "The chief's ladder."),
-		_rope(4150, 1, 9, OBJECT_ROPE, _ESP ? "La cuerda del jefe." : "The chief's rope."),
-		_key(7700, 1, 11, OBJECT_KEY, _ESP ? "Una llave." : "A key."),
-		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  _ESP ? "La caja traductora delfiniana." : "The dolphin translator box."),
-		_ale(2150, 1, 10, OBJECT_ALE, _ESP ? "Una botella de cerveza." : "A bottle of ale."),
-		_paper(7700, 1, 12, OBJECT_PAPER, _ESP ? "Un trozo de papel con los n\243meros 2,4, y 3 escritos en \202l." : "A slip of paper with the numbers 2,4, and 3 written on it."),
-		_waldos(0, 1, 14, OBJECT_WALDOS, _ESP ? "Un par de brazos de la sonda averiada." : "A pair of waldos from the ruined probe."),
-		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, _ESP ? "Una caja est\240sica." : "A stasis box."),
-		_ring(8100, 2, 5, OBJECT_RING, _ESP ? "El anillo que te envi\242 Louis Wu." : "This is a signet ring sent to you by Louis Wu."),
-		_cloak(9850, 2, 6, OBJECT_CLOAK, _ESP ? "Una t\243nica de seda fina." : "A fine silk cloak."),
-		_tunic(9450, 2, 7, OBJECT_TUNIC, _ESP ? "La t\243nica manchada del patriarca." : "The patriarch's soiled tunic."),
-		_candle(9500, 2, 8, OBJECT_CANDLE, _ESP ? "Una vela de sebo." : "A tallow candle."),
-		_straw(9400, 2, 9, OBJECT_STRAW, _ESP ? "Paja limpia y seca." : "Clean, dry straw."),
-		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, _ESP ? "La cimitarra del armario del Patriarca." : "A scimitar from the Patriarch's closet."),
-		_sword(9850, 1, 17, OBJECT_SWORD, _ESP ? "La espada corta del armario del Patriarca." : "A short sword from the Patriarch's closet."),
-		_helmet(9500, 2, 4, OBJECT_HELMET, _ESP ? "Un extra\244o yelmo." : "Some type of helmet."),
-		_items(4300, 2, 10, OBJECT_ITEMS, _ESP ? "Dos interesantes objetos de la nave Tnuctipun." : "Two interesting items from the Tnuctipun vessel."),
-		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, _ESP ? "El concentrador antimateria Tnuctipun contenido en un campo est\240sico." : "The Tnuctipun anti-matter concentrator contained in a stasis field."),
-		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, _ESP ? "Un anulador de ondas neuronales." : "A purported neural wave nullifier."),
-		_peg(4045, 2, 16, OBJECT_PEG, _ESP ? "Una clavija con un s\241mbolo." : "A peg with a symbol."),
-		_vial(5100, 2, 17, OBJECT_VIAL, _ESP ? "Un frasco con la droga antiferomonas de los murci\202lagos." : "A vial of the bat creatures anti-pheromone drug."),
-		_jacket(9850, 3, 1, OBJECT_JACKET, _ESP ? "Una elegante chaqueta." : "A natty padded jacket."),
-		_tunic2(9850, 3, 2, OBJECT_TUNIC2, _ESP ? "Una t\243nica muy ligera." : "A very hairy tunic."),
-		_bone(5300, 3, 5, OBJECT_BONE, _ESP ? "Un hueso muy afilado." : "A very sharp bone."),
-		_jar(7700, 3, 4, OBJECT_JAR, _ESP ? "Un frasco lleno de una sustancia verde." : "An jar filled with a green substance."),
-		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, _ESP ? "Un frasco vac\241o." : "An empty jar.") {
+		_RUS(g_vm->getLanguage() == Common::RU_RUS),
+		_stunner(2280, 1, 2, OBJECT_STUNNER, _ESP ? "Tu paralizador." : _RUS ? "\x82\xA0\xE8 \xE1\xE2\xA0\xAD\xAD\xA5\xE0." : "This is your stunner."),  // Ваш станнер.
+		_scanner(1, 1, 3, OBJECT_SCANNER, _ESP ? "Una unidad combinada de esc\240ner y comunicaciones." : _RUS ? "\x91\xAA\xA0\xAD\xA5\xE0\x2D\xAA\xAE\xAC\xAC\xE3\xAD\xA8\xAA\xA0\xE2\xAE\xE0." : "A combination scanner comm unit."),  // Сканер-коммуникатор.
+		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, _ESP ? "Una caja est\240sica." : _RUS ? "\x8A\xAE\xAD\xE2\xA5\xA9\xAD\xA5\xE0." : "A stasis box."),  // Контейнер.
+		_infoDisk(40, 1, 1, OBJECT_INFODISK, _ESP ? "El infodisk que le cogiste al asesino." : _RUS ? "\x88\xA7\xEA\xEF\xE2\xEB\xA9 \xE3 \xAA\xA8\xAB\xAB\xA5\xE0\xA0 \xA8\xAD\xE4\xAE\xA4\xA8\xE1\xAA." : "The infodisk you took from the assassin."),  // Изъятый у киллера инфодиск.
+		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, _ESP ? "El negador de campos est\240sicos." : _RUS ? "\x88\xAD\xA2\xA5\xE0\xE2\xAE\xE0 \xE1\xE2\xA0\xA7\xA8\xE1\x2D\xAF\xAE\xAB\xEF." : "The stasis field negator."),  // Инвертор стазис-поля.
+		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, _ESP ? "Una llave magn\202tica." : _RUS ? "\x8C\xA0\xA3\xAD\xA8\xE2\xAD\xEB\xA9 \xAA\xAB\xEE\xE7." : "A magnetic key device."),  // Магнитный ключ.
+		_medkit(2280, 1, 7, OBJECT_MEDKIT, _ESP ? "Tu botiqu\241n." : _RUS ? "\x80\xAF\xE2\xA5\xE7\xAA\xA0." : "Your medkit."),  // Аптечка.
+		_ladder(4100, 1, 8, OBJECT_LADDER, _ESP ? "La escalera del jefe." : _RUS ? "\x8B\xA5\xE1\xE2\xAD\xA8\xE6\xA0 \xA2\xAE\xA6\xA4\xEF." : "The chief's ladder."),  // Лестница вождя.
+		_rope(4150, 1, 9, OBJECT_ROPE, _ESP ? "La cuerda del jefe." : _RUS ? "\x82\xA5\xE0\xF1\xA2\xAA\xA0 \xA2\xAE\xA6\xA4\xEF." : "The chief's rope."),  // Верёвка вождя.
+		_key(7700, 1, 11, OBJECT_KEY, _ESP ? "Una llave." : _RUS ? "\x8A\xAB\xEE\xE7." : "A key."),  // Ключ.
+		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  _ESP ? "La caja traductora delfiniana." : _RUS ? "\x8F\xA5\xE0\xA5\xA2\xAE\xA4\xE7\xA8\xAA \xE1 \xA4\xA5\xAB\xEC\xE4\xA8\xAD\xEC\xA5\xA3\xAE." : "The dolphin translator box."),  // Переводчик с дельфиньего.
+		_ale(2150, 1, 10, OBJECT_ALE, _ESP ? "Una botella de cerveza." : _RUS ? "\x81\xE3\xE2\xEB\xAB\xAA\xA0 \xED\xAB\xEF." : "A bottle of ale."),  // Бутылка эля.
+		_paper(7700, 1, 12, OBJECT_PAPER, _ESP ? "Un trozo de papel con los n\243meros 2,4, y 3 escritos en \202l." : _RUS ? "\x8D\xA0 \xAA\xAB\xAE\xE7\xAA\xA5 \xA1\xE3\xAC\xA0\xA3\xA8 \xAD\xA0\xE7\xA5\xE0\xE2\xA0\xAD\xEB \xE6\xA8\xE4\xE0\xEB 2, 4, 3." : "A slip of paper with the numbers 2,4, and 3 written on it."),  // На клочке бумаги начертаны цифры 2, 4, 3.
+		_waldos(0, 1, 14, OBJECT_WALDOS, _ESP ? "Un par de brazos de la sonda averiada." : _RUS ? "\x8C\xA0\xAD\xA8\xAF\xE3\xAB\xEF\xE2\xAE\xE0\xEB \xE1\xAE \xE1\xAB\xAE\xAC\xA0\xAD\xAD\xAE\xA3\xAE \xA7\xAE\xAD\xA4\xA0." : "A pair of waldos from the ruined probe."),  // Манипуляторы со сломанного зонда.
+		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, _ESP ? "Una caja est\240sica." : _RUS ? "\x8A\xAE\xAD\xE2\xA5\xA9\xAD\xA5\xE0." : "A stasis box."),  // Контейнер.
+		_ring(8100, 2, 5, OBJECT_RING, _ESP ? "El anillo que te envi\242 Louis Wu." : _RUS ? "\x9D\xE2\xAE\xE2 \xAF\xA5\xE0\xE1\xE2\xA5\xAD\xEC \xA2\xEB \xAF\xAE\xAB\xE3\xE7\xA8\xAB\xA8 \xAE\xE2 \x8B\xE3\xA8\xE1\xA0 \x82\xE3." : "This is a signet ring sent to you by Louis Wu."),  // Этот перстень вы получили от Луиса Ву.
+		_cloak(9850, 2, 6, OBJECT_CLOAK, _ESP ? "Una t\243nica de seda fina." : _RUS ? "\x98\xF1\xAB\xAA\xAE\xA2\xA0\xEF \xE2\xE3\xAD\xA8\xAA\xA0." : "A fine silk cloak."),  // Шёлковая туника.
+		_tunic(9450, 2, 7, OBJECT_TUNIC, _ESP ? "La t\243nica manchada del patriarca." : _RUS ? "\x83\xE0\xEF\xA7\xAD\xA0\xEF \xE2\xE3\xAD\xA8\xAA\xA0 \x8F\xA0\xE2\xE0\xA8\xA0\xE0\xE5\xA0." : "The patriarch's soiled tunic."),  // Грязная туника Патриарха.
+		_candle(9500, 2, 8, OBJECT_CANDLE, _ESP ? "Una vela de sebo." : _RUS ? "\x91\xA0\xAB\xEC\xAD\xA0\xEF \xE1\xA2\xA5\xE7\xA0." : "A tallow candle."),  // Сальная свеча.
+		_straw(9400, 2, 9, OBJECT_STRAW, _ESP ? "Paja limpia y seca." : _RUS ? "\x91\xE3\xE5\xA0\xEF \xA8 \xE7\xA8\xE1\xE2\xA0\xEF." : "Clean, dry straw."),  // Сухая и чистая.
+		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, _ESP ? "La cimitarra del armario del Patriarca." : _RUS ? "\x91\xAA\xA8\xAC\xA8\xE2\xA0\xE0 \xA8\xA7 \xE8\xAA\xA0\xE4\xA0 \x8F\xA0\xE2\xE0\xA8\xA0\xE0\xE5\xA0." : "A scimitar from the Patriarch's closet."),  // Скимитар из шкафа Патриарха.
+		_sword(9850, 1, 17, OBJECT_SWORD, _ESP ? "La espada corta del armario del Patriarca." : _RUS ? "\x8A\xAE\xE0\xAE\xE2\xAA\xA8\xA9 \xAC\xA5\xE7 \xA8\xA7 \xE8\xAA\xA0\xE4\xA0 \x8F\xA0\xE2\xE0\xA8\xA0\xE0\xE5\xA0." : "A short sword from the Patriarch's closet."),  // Короткий меч из шкафа Патриарха.
+		_helmet(9500, 2, 4, OBJECT_HELMET, _ESP ? "Un extra\244o yelmo." : _RUS ? "\x91\xE2\xE0\xA0\xAD\xAD\xEB\xA9 \xE8\xAB\xA5\xAC." : "Some type of helmet."),  // Странный шлем.
+		_items(4300, 2, 10, OBJECT_ITEMS, _ESP ? "Dos interesantes objetos de la nave Tnuctipun." : _RUS ? "\x8B\xEE\xA1\xAE\xAF\xEB\xE2\xAD\xEB\xA5 \xA2\xA5\xE9\xA8\xE6\xEB \xE1 \xAA\xAE\xE0\xA0\xA1\xAB\xEF \xE2\xAD\xE3\xAA\xE2\xA8\xAF\xE3\xAD\xAE\xA2." : "Two interesting items from the Tnuctipun vessel."),  // Любопытные вещицы с корабля тнуктипунов.
+		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, _ESP ? "El concentrador antimateria Tnuctipun contenido en un campo est\240sico." : _RUS ? "\x8A\xAE\xAD\xE6\xA5\xAD\xE2\xE0\xA0\xE2\xAE\xE0 \xA0\xAD\xE2\xA8\xA2\xA5\xE9\xA5\xE1\xE2\xA2\xA0 \xA2 \xE1\xE2\xA0\xA7\xA8\xE1\xAD\xAE\xAC \xAF\xAE\xAB\xA5." : "The Tnuctipun anti-matter concentrator contained in a stasis field."),  // Концентратор антивещества в стазисном поле.
+		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, _ESP ? "Un anulador de ondas neuronales." : _RUS ? "\x82\xE0\xAE\xA4\xA5 \xA1\xEB \xAD\xA5\xA2\xE0\xA0\xAB\xEC\xAD\xEB\xA9 \xAD\xA5\xA9\xE2\xE0\xA0\xAB\xA8\xA7\xA0\xE2\xAE\xE0." : "A purported neural wave nullifier."),  // Вроде бы невральный нейтрализатор.
+		_peg(4045, 2, 16, OBJECT_PEG, _ESP ? "Una clavija con un s\241mbolo." : _RUS ? "\x8A\xAE\xAB\xEB\xE8\xA5\xAA \xE1 \xE1\xA8\xAC\xA2\xAE\xAB\xAE\xAC." : "A peg with a symbol."),  // Колышек с символом.
+		_vial(5100, 2, 17, OBJECT_VIAL, _ESP ? "Un frasco con la droga antiferomonas de los murci\202lagos." : _RUS ? "\x8F\xE3\xA7\xEB\xE0\xF1\xAA \xE1 \xA0\xAD\xE2\xA8\xE4\xA5\xE0\xAE\xAC\xAE\xAD\xAE\xAC." : "A vial of the bat creatures anti-pheromone drug."),  // Пузырёк с антиферомоном.
+		_jacket(9850, 3, 1, OBJECT_JACKET, _ESP ? "Una elegante chaqueta." : _RUS ? "\x93\xE2\xA5\xAF\xAB\xF1\xAD\xAD\xA0\xEF \xE2\xE3\xAD\xA8\xAA\xA0." : "A natty padded jacket."),  // Утеплённая туника.
+		_tunic2(9850, 3, 2, OBJECT_TUNIC2, _ESP ? "Una t\243nica muy ligera." : _RUS ? "\x8F\xE3\xE8\xA8\xE1\xE2\xA0\xEF \xE2\xE3\xAD\xA8\xAA\xA0." : "A very hairy tunic."),  // Пушистая туника.
+		_bone(5300, 3, 5, OBJECT_BONE, _ESP ? "Un hueso muy afilado." : _RUS ? "\x82\xAE\xE1\xE2\xE0\xA0\xEF \xAA\xAE\xE1\xE2\xEC." : "A very sharp bone."),  // Вострая кость.
+		_jar(7700, 3, 4, OBJECT_JAR, _ESP ? "Un frasco lleno de una sustancia verde." : _RUS ? "\x91\xAE\xE1\xE3\xA4 \xE1 \xA7\xA5\xAB\xF1\xAD\xAE\xA9 \xE1\xE3\xA1\xE1\xE2\xA0\xAD\xE6\xA8\xA5\xA9." : "An jar filled with a green substance."),  // Сосуд с зелёной субстанцией.
+		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, _ESP ? "Un frasco vac\241o." : _RUS ? "\x8F\xE3\xE1\xE2\xAE\xA9 \xE1\xAE\xE1\xE3\xA4." : "An empty jar.") {  // Пустой сосуд.
 
 	// Add the items to the list
 	_itemList.push_back(&_stunner);
@@ -523,6 +524,8 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		int rc;
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			rc = MessageDialog::show(msg, ESP_QUIT_BTN_STRING, ESP_RESTART_BTN_2_STRING);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			rc = MessageDialog::show(msg, RUS_QUIT_BTN_STRING, RUS_RESTART_BTN_STRING);
 		} else {
 			rc = MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING);
 		}
@@ -540,6 +543,8 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 				int rc;
 				if (g_vm->getLanguage() == Common::ES_ESP) {
 					rc = MessageDialog::show(msg, ESP_RESTART_BTN_2_STRING, ESP_RESTORE_BTN_STRING);
+				} else if (g_vm->getLanguage() == Common::RU_RUS) {
+					rc = MessageDialog::show(msg, RUS_RESTART_BTN_STRING, RUS_RESTORE_BTN_STRING);
 				} else {
 					rc = MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING);
 				}
@@ -564,6 +569,8 @@ void RingworldGame::processEvent(Event &event) {
 			// F1 - Help
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(RUS_HELP_MSG, RUS_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
 			}
@@ -597,6 +604,8 @@ void RingworldGame::processEvent(Event &event) {
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_CONTINUE_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(RUS_GAME_PAUSED_MSG, RUS_CONTINUE_BTN_STRING);
 			} else {
 				MessageDialog::show(GAME_PAUSED_MSG, CONTINUE_BTN_STRING);
 			}
