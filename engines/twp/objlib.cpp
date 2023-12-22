@@ -151,7 +151,10 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 // deleteObject(drip)
 static SQInteger deleteObject(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
-	obj->delObject();
+	if(obj) {
+		obj->delObject();
+		delete obj;
+	}
 	return 0;
 }
 
@@ -322,7 +325,6 @@ static SQInteger objectCenter(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectColor(warningSign, 0x808000)
 static SQInteger objectColor(HSQUIRRELVM v) {
-	// TODO: objectColor
 	Object *obj = sqobj(v, 2);
 	if (obj) {
 		int color = 0;
@@ -862,7 +864,7 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, verb)))
 		return sq_throwerror(v, "failed to get verb");
 
-	int verbId = verb;
+	//int verbId = verb;
 	if (!g_engine->_actor) {
 		// TODO:
 		// for (vb in gEngine.hud.actorSlot(gEngine.actor).verbs) {
@@ -890,7 +892,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		sq_getstackobj(v, 2, &o);
 		Common::String name;
 		sqgetf(o, "name", name);
-		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, name.c_str()).c_str());
+		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_engine->_textDb.getText(name).c_str()).c_str());
 	}
 	Object *actor = nullptr;
 	if (sq_gettop(v) >= 3) {

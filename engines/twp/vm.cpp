@@ -99,16 +99,9 @@ Vm::Vm() {
 	sqgame_register_actorlib(v);
 	sqgame_register_roomlib(v);
 	sqgame_register_soundlib(v);
-
-	// TODO: constants
-	SQObject platform = sqtoobj(v, 666);
-	_table(v->_roottable)->NewSlot(sqtoobj(v, _SC("PLATFORM")), SQObjectPtr(platform));
 }
 
 Vm::~Vm() {
-	for (int i = 0; i < g_engine->_threads.size(); i++) {
-		delete g_engine->_threads[i];
-	}
 	sq_close(v);
 }
 

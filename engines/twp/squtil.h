@@ -33,10 +33,18 @@ template<typename T>
 HSQOBJECT sqtoobj(HSQUIRRELVM v, T value);
 
 template<typename T>
-SQInteger sqpush(HSQUIRRELVM v, T value);
+SQRESULT sqget(HSQUIRRELVM v, int index, T &value);
+
+SQInteger sqpush(HSQUIRRELVM v);
 
 template<typename T>
-SQRESULT sqget(HSQUIRRELVM v, int index, T &value);
+SQInteger sqpush(HSQUIRRELVM v, T value);
+
+template<typename T, typename... Args>
+void sqpush(HSQUIRRELVM v, T first, Args... args) {
+	sqpush(v, first);
+	sqpush(v, args...);
+}
 
 // set field
 template<typename T>
@@ -117,10 +125,20 @@ void sqnewf(HSQOBJECT o, const Common::String &key, T obj) {
 bool sqrawexists(HSQOBJECT obj, const Common::String &name);
 void sqsetdelegate(HSQOBJECT obj, HSQOBJECT del);
 HSQOBJECT sqrootTbl(HSQUIRRELVM v);
-int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String& name);
-void sqcall(const Common::String &name, int numArgs = 0, HSQOBJECT *args = nullptr);
-void sqcall(HSQOBJECT o, const Common::String& name, int numArgs = 0, HSQOBJECT* args = nullptr);
-void sqexec(HSQUIRRELVM v, const char *code, const char* filename = nullptr);
+
+void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const char *name);
+int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name);
+
+template<typename... T>
+void sqcall(const char *name, T... args);
+
+template<typename... T>
+void sqcall(HSQOBJECT o, const char *name, T... args);
+
+template<typename TResult, typename... T>
+static void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args);
+
+void sqexec(HSQUIRRELVM v, const char *code, const char *filename = nullptr);
 
 class Room;
 class Object;
@@ -129,8 +147,81 @@ Room *sqroom(HSQOBJECT table);
 Room *sqroom(HSQUIRRELVM v, int i);
 Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
-Object* sqactor(HSQOBJECT table);
-Object* sqactor(HSQUIRRELVM v, int i);
+Object *sqactor(HSQOBJECT table);
+Object *sqactor(HSQUIRRELVM v, int i);
+ThreadBase *sqthread(HSQUIRRELVM v);
+ThreadBase *sqthread(int id);
+
+template<typename... T>
+void sqcall(HSQUIRRELVM v, HSQOBJECT o, const char *name, T... args) {
+	constexpr std::size_t n = sizeof...(T);
+	SQInteger top = sq_gettop(v);
+	sqpushfunc(v, o, name);
+
+	sq_pushobject(v, o);
+	if (n > 0) {
+		sqpush(v, std::forward<T>(args)...);
+	}
+	sq_call(v, 1 + n, SQFalse, SQTrue);
+	sq_settop(v, top);
+}
+
+template<typename... T>
+void sqcall(HSQOBJECT o, const char *name, T... args) {
+	constexpr std::size_t n = sizeof...(T);
+	HSQUIRRELVM v = g_engine->getVm();
+	SQInteger top = sq_gettop(v);
+	sqpushfunc(v, o, name);
+
+	sq_pushobject(v, o);
+	if (n > 0) {
+		sqpush(v, std::forward<T>(args)...);
+	}
+	sq_call(v, 1 + n, SQFalse, SQTrue);
+	sq_settop(v, top);
+}
+
+template<typename... T>
+void sqcall(const char *name, T... args) {
+	constexpr std::size_t n = sizeof...(T);
+	HSQUIRRELVM v = g_engine->getVm();
+	HSQOBJECT o = sqrootTbl(v);
+	SQInteger top = sq_gettop(v);
+	sqpushfunc(v, o, name);
+
+	sq_pushobject(v, o);
+	if (n > 0) {
+		sqpush(v, std::forward<T>(args)...);
+	}
+	sq_call(v, 1 + n, SQFalse, SQTrue);
+	sq_settop(v, top);
+}
+
+template<typename TResult, typename... T>
+void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
+	constexpr std::size_t n = sizeof...(T);
+	HSQUIRRELVM v = g_engine->getVm();
+	SQInteger top = sq_gettop(v);
+	sqpush(v, o);
+	sq_pushstring(v, _SC(name), -1);
+	if (SQ_FAILED(sq_get(v, -2))) {
+		sq_settop(v, top);
+		error("can't find %s function", name);
+		return;
+	}
+	sq_remove(v, -2);
+
+	sqpush(v, o);
+	sqpush(v, std::forward<T>(args)...);
+	if (SQ_FAILED(sq_call(v, n + 1, SQTrue, SQTrue))) {
+		// sqstd_printcallstack(v);
+		sq_settop(v, top);
+		error("function %s call failed", name);
+		return;
+	}
+	sqget(v, -1, result);
+	sq_settop(v, top);
+}
 
 } // namespace Twp
 

@@ -19,47 +19,49 @@
  *
  */
 
-#ifndef TWP_UTIL_H
-#define TWP_UTIL_H
+#ifndef TWP_TASK_H
+#define TWP_TASK_H
 
-#include "twp/ids.h"
-#include "twp/object.h"
-#include "math/vector2d.h"
-#include "common/formats/json.h"
+#include "common/str.h"
+#include "twp/thread.h"
 
 namespace Twp {
 
-template<typename T>
-T clamp(T x, T a, T b) {
-	if (x < a)
-		return a;
-	if (x > b)
-		return b;
-	return x;
-}
+class Task {
+public:
+	virtual ~Task() {}
 
-Math::Vector2d operator*(Math::Vector2d v, float f);
+	virtual bool update(float elapsed) = 0;
+};
 
-Facing getFacing(int dir, Facing facing);
-Facing flip(Facing facing);
-Facing getFacingToFaceTo(Object *actor, Object *obj);
+typedef bool Predicate();
 
-bool toBool(const Common::JSONObject &jNode, const Common::String &key);
-Math::Vector2d parseVec2(const Common::String &s);
-Common::Rect parseRect(const Common::String &s);
-void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims);
-
-template<typename T>
-int find(Common::Array<T>& array, const T& o) {
-	int index = -1;
-	for (int i = 0; i < array.size(); i++) {
-		if (array[i] == o) {
-			index = i;
-			break;
-		}
+template<typename Predicate>
+class BreakWhileCond : public Task {
+public:
+	BreakWhileCond(int parentId, const Common::String &name, Predicate cond)
+		: _parentId(parentId),
+		  _name(name),
+		  _cond(cond) {
 	}
-	return index;
-}
+	virtual ~BreakWhileCond() override final {}
+
+	virtual bool update(float elapsed) override final {
+		if (_cond())
+			return false;
+		ThreadBase *pt = sqthread(_parentId);
+		if (pt) {
+			debug("Resume task: %d", _parentId);
+			pt->resume();
+		}
+		return true;
+	}
+
+private:
+	int _parentId = 0;
+	Common::String _name;
+	Predicate _cond;
+};
 
 } // namespace Twp
 

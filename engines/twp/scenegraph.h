@@ -37,7 +37,7 @@ namespace Twp {
 // Represents a node in a scene graph.
 class Node {
 public:
-	Node(const Common::String& name, bool visible = true, Math::Vector2d scale = Math::Vector2d(1, 1), Color color = Color());
+	Node(const Common::String& name, Math::Vector2d scale = Math::Vector2d(1, 1), Color color = Color());
 	virtual ~Node();
 
 	void setName(const Common::String& name) { _name = name; }
@@ -121,7 +121,7 @@ protected:
 	Common::Array<Node *> _children;
 	Math::Vector2d _offset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
 	Color _color, _computedColor;
-	bool _visible = false;
+	bool _visible = true;
 	float _rotation = 0.f;
 	float _rotationOffset = 0.f;
 };
@@ -214,6 +214,15 @@ class Scene final: public Node {
 public:
 	Scene();
 	virtual ~Scene() final;
+};
+
+class InputState final: public Node {
+public:
+	InputState();
+	virtual ~InputState() final;
+
+private:
+	virtual void drawCore(Math::Matrix4 trsf) override final;
 };
 
 } // End of namespace Twp

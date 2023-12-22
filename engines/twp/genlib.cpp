@@ -114,21 +114,54 @@ static SQInteger assetExists(HSQUIRRELVM v) {
 // actorAt(reyes, Bridge.startRight)
 // cameraAt(Bridge.bridgeBody)
 static SQInteger cameraAt(HSQUIRRELVM v) {
-	// TODO: cameraAt
-	warning("cameraAt not implemented");
+	SQInteger numArgs = sq_gettop(v);
+	Math::Vector2d pos;
+	if (numArgs == 3) {
+		int x, y;
+		if (SQ_FAILED(sqget(v, 2, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 3, y)))
+			return sq_throwerror(v, "failed to get y");
+		pos = Math::Vector2d(x, y);
+	} else if (numArgs == 2) {
+		Object *obj = sqobj(v, 2);
+		if (!obj)
+			return sq_throwerror(v, "failed to get spot or actor");
+		g_engine->follow(nullptr);
+		g_engine->setRoom(obj->_room);
+		pos = obj->getUsePos();
+	} else {
+		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
+	}
+	g_engine->follow(nullptr);
+	g_engine->cameraAt(pos);
 	return 0;
 }
 
 // Sets how far the camera can pan.
 static SQInteger cameraBounds(HSQUIRRELVM v) {
-	// TODO: cameraBounds
-	warning("cameraBounds not implemented");
+	int xMin, xMax, yMin, yMax;
+	if (SQ_FAILED(sqget(v, 2, xMin)))
+		return sq_throwerror(v, "failed to get xMin");
+	if (SQ_FAILED(sqget(v, 3, xMax)))
+		return sq_throwerror(v, "failed to get xMax");
+	if (SQ_FAILED(sqget(v, 4, yMin)))
+		return sq_throwerror(v, "failed to get yMin");
+	if (SQ_FAILED(sqget(v, 5, yMax)))
+		return sq_throwerror(v, "failed to get yMax");
+	g_engine->_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(xMin, yMin), Math::Vector2d(xMax, yMax)));
 	return 0;
 }
 
 static SQInteger cameraFollow(HSQUIRRELVM v) {
-	// TODO: cameraFollow
-	warning("cameraFollow not implemented");
+	Object *actor = sqactor(v, 2);
+	g_engine->follow(actor);
+	Math::Vector2d pos = actor->_node->getPos();
+	Room *oldRoom = g_engine->_room;
+	if (actor->_room)
+		g_engine->setRoom(actor->_room);
+	if (oldRoom != actor->_room)
+		g_engine->cameraAt(pos);
 	return 0;
 }
 
@@ -227,11 +260,8 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 
 // Returns the current camera position x, y.
 static SQInteger cameraPos(HSQUIRRELVM v) {
-	// TODO: cameraPos
-	warning("cameraPos not implemented");
-	return 0;
-	// push(v, g_engine->cameraPos())
-	// return 1;
+	sqpush(v, g_engine->cameraPos());
+	return 1;
 }
 
 // Converts an integer to a char.
@@ -292,13 +322,14 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 		sqpush(v, g_engine->getPrefs().prefsAsJson(key));
 		return 1;
 	}
-	if (sq_gettop(v) == 3) {
+	int numArgs = sq_gettop(v);
+	if (numArgs == 3) {
 		HSQOBJECT obj;
 		sq_getstackobj(v, 3, &obj);
 		sqpush(v, obj);
 		return 1;
 	}
-	return sq_throwerror(v, "invalid argument in getUserPref");
+	return 0;
 }
 
 static SQInteger getPrivatePref(HSQUIRRELVM v) {
@@ -308,7 +339,7 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 	debug("TODO: getPrivatePref");
 	// else if (g_engine->getPrefs().hasPrivPref(key))
 	// 	return sqpush(v, g_engine->getPrefs().privPrefAsJson(key));
-	//else
+	// else
 	if (sq_gettop(v) == 3) {
 		HSQOBJECT obj;
 		sq_getstackobj(v, 3, &obj);
@@ -319,9 +350,8 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 }
 
 static SQInteger incutscene(HSQUIRRELVM v) {
-	// TODO: incutscene
-	warning("incutscene not implemented");
-	return 0;
+	sqpush(v, g_engine->_cutscene != nullptr);
+	return 1;
 }
 
 static SQInteger indialog(HSQUIRRELVM v) {
@@ -395,6 +425,10 @@ static SQInteger is_table(HSQUIRRELVM v) {
 	return is_oftype(v, [](SQObjectType type) { return type == OT_TABLE; });
 }
 
+static float randf() {
+	return g_engine->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
+}
+
 // Returns a random number from from to to inclusively.
 // The number is a pseudo-random number and the game will produce the same sequence of numbers unless primed using randomSeed(seed).
 //
@@ -407,7 +441,7 @@ static SQInteger sqrandom(HSQUIRRELVM v) {
 		sq_getfloat(v, 3, &max);
 		if (min > max)
 			SWAP(min, max);
-		float scale = g_engine->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
+		float scale = randf();
 		SQFloat value = min + scale * (max - min);
 		sq_pushfloat(v, value);
 	} else {
@@ -477,22 +511,83 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Selects an item randomly from the given array or listed options.
+//
+// .. code-block:: Squirrel
+// local line = randomfrom(lines)
+// breakwhiletalking(willie)
+// mumbleLine(willie, line)
+//
+// local snd = randomfrom(soundBeep1, soundBeep2, soundBeep3, soundBeep4, soundBeep5, soundBeep6)
+// playObjectSound(snd, Highway.pigeonVan)
 static SQInteger randomFrom(HSQUIRRELVM v) {
-	// TODO: randomFrom
-	warning("randomFrom not implemented");
-	return 0;
+	if (sq_gettype(v, 2) == OT_ARRAY) {
+		HSQOBJECT obj;
+		sq_resetobject(&obj);
+		SQInteger size = sq_getsize(v, 2);
+		int index = g_engine->getRandomSource().getRandomNumber(size);
+		int i = 0;
+		sq_push(v, 2);  // array
+		sq_pushnull(v); // null iterator
+		while (SQ_SUCCEEDED(sq_next(v, -2))) {
+			sq_getstackobj(v, -1, &obj);
+			sq_pop(v, 2); // pops key and val before the nex iteration
+			if (index == i) {
+				sq_pop(v, 2); // pops the null iterator and array
+				sq_pushobject(v, obj);
+				return 1;
+			}
+			i++;
+		}
+		sq_pop(v, 2); // pops the null iterator and array
+		sq_pushobject(v, obj);
+	} else {
+		SQInteger size = sq_gettop(v);
+		int index = g_engine->getRandomSource().getRandomNumber(size - 1);
+		sq_push(v, 2 + index);
+	}
+	return 1;
 }
 
+// Returns TRUE or FALSE based on the percent, which needs to be from 0.0 to 1.0.
+//
+// A percent of 0.0 will always return FALSE and 1.0 will always return TRUE.
+// `randomOdds(0.3333)` will return TRUE about one third of the time.
+//
+// .. code-block:: Squirrel
+// if (randomOdds(0.5) { ... }
 static SQInteger randomOdds(HSQUIRRELVM v) {
-	// TODO: randomOdds
-	warning("randomOdds not implemented");
-	return 0;
+	float value = 0.0f;
+	if (SQ_FAILED(sqget(v, 2, value)))
+		return sq_throwerror(v, "failed to get value");
+	float rnd = randf();
+	bool res = rnd <= value;
+	sq_pushbool(v, res);
+	return 1;
 }
 
+// Initializes a new Rand state using the given seed.
+// Providing a specific seed will produce the same results for that seed each time.
+// The resulting state is independent of the default RNG's state.
 static SQInteger randomseed(HSQUIRRELVM v) {
-	// TODO: randomseed
-	warning("randomseed not implemented");
-	return 0;
+	SQInteger nArgs = sq_gettop(v);
+	switch (nArgs) {
+	case 1: {
+		sqpush(v, (int)g_engine->getRandomSource().getSeed());
+		return 1;
+	}
+	case 2: {
+		int seed = 0;
+		if (sq_gettype(v, 2) == OT_NULL)
+			g_engine->getRandomSource().setSeed(g_engine->getRandomSource().generateNewSeed());
+		return 0;
+		if (SQ_FAILED(sqget(v, 2, seed)))
+			return sq_throwerror(v, "failed to get seed");
+		g_engine->getRandomSource().setSeed(seed);
+		return 0;
+	}
+	}
+	return sq_throwerror(v, "invalid number of parameters for randomseed");
 }
 
 static SQInteger refreshUI(HSQUIRRELVM v) {
