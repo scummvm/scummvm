@@ -48,9 +48,9 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    const byte* _buf;
-	int64 _bufSize;
-	int64 _pos;
+    const byte* _buf = nullptr;
+	int64 _bufSize = 0;
+	int64 _pos = 0;
 };
 
 class XorStream: public Common::SeekableReadStream {
@@ -66,10 +66,10 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    Common::SeekableReadStream *_s;
-    int _previous;
-    int _start;
-    int _size;
+    Common::SeekableReadStream *_s = nullptr;
+    int _previous = 0;
+    int _start = 0;
+    int _size = 0;
     XorKey _key;
 };
 
@@ -86,9 +86,9 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    Common::SeekableReadStream *_s;
-    int64 _start;
-    int64 _size;
+    Common::SeekableReadStream *_s = nullptr;
+    int64 _start = 0;
+    int64 _size = 0;
 };
 
 class GGHashMapDecoder {
@@ -104,7 +104,7 @@ private:
 	Common::JSONValue* readArray();
 
 private:
-	Common::SeekableReadStream *_stream;
+	Common::SeekableReadStream *_stream = nullptr;
 	Common::Array<int> _offsets;
 };
 
@@ -127,7 +127,7 @@ public:
 private:
 	XorKey _key;
 	GGPackEntries _entries;
-	Common::SeekableReadStream *_s;
+	Common::SeekableReadStream *_s = nullptr;
 };
 
 class GGBnutReader: public Common::ReadStream {
