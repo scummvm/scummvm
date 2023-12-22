@@ -1785,7 +1785,7 @@ namespace Director {
 #define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
-#define WINDEMO2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
+#define WINDEMO2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_DEMO),v)
 
 static const DirectorGameDescription gameDescriptions[] = {
 	// Execute all *.lingo files in game directory
