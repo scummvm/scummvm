@@ -28,6 +28,14 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_CROW1_ANIMATION = 10,
+	kCHANGE_CROW2_ANIMATION = 11,
+	kCHANGE_CROW3_ANIMATION = 12,
+	kCHANGE_CROW4_ANIMATION = 13,
+	kCHANGE_HARRY_ANIMATION = 20
+};
+
 static const char *SAID[][4] = {
 	{ "SATELLITE DISH", "103W001", "103W002", nullptr   },
 	{ "FIRE ESCAPE",    "103W005", "103W006", nullptr   },
@@ -146,12 +154,12 @@ void Room103::init() {
 	_series2 = series_play("103door", 0x800, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	series_play("103vent", 0x100, 0, -1, 6, -1, 100, 0, 0, 0, 3);
 
-	_val4 = 12;
-	kernel_trigger_dispatch_now(10);
-	_val5 = 19;
-	kernel_trigger_dispatch_now(12);
-	_val6 = 21;
-	kernel_trigger_dispatch_now(13);
+	_crow1Should = 12;
+	kernel_trigger_dispatch_now(kCHANGE_CROW1_ANIMATION);
+	_crow3Should = 19;
+	kernel_trigger_dispatch_now(kCHANGE_CROW3_ANIMATION);
+	_crow4Should = 21;
+	kernel_trigger_dispatch_now(kCHANGE_CROW4_ANIMATION);
 
 	digi_play_loop("103_001", 3, 60);
 }
@@ -249,67 +257,62 @@ void Room103::daemon() {
 		series_play_with_breaks(PLAY2, "103ha03", 0x200, 9, 3, 12);
 		break;
 
-	case 10:
-		switch (_val4) {
+	case kCHANGE_CROW1_ANIMATION:
+		switch (_crow1Should) {
 		case 12:
 			if (imath_ranged_rand(1, 3) == 1) {
-				series_play("103cr01", 0x100, 0, 10, 30, 0, 100, 0, 0, 1, 2);
-				series_play("103cr01s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 			} else {
-				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 0, 0);
-				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 0, 0);
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 60, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 13:
 			switch (imath_ranged_rand(1, 8)) {
 			case 1:
-				_val4 = 12;
-				series_play("103cr01", 0x100, 2, 10, 30, 0, 100, 0, 0, 1, 2);
-				series_play("103cr01s", 0x100, 2, -1, 30, 0, 100, 0, 0, 1, 2);
+				_crow1Should = 12;
+				Series::series_play("103cr01", 0x100, 2, kCHANGE_CROW1_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 				break;
 
 			case 3:
-				series_play("103cr01", 0x100, 0, 10, 6, 0, 100, 0, 0, 7, 15);
-				series_play("103cr01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 7, 15);
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 6, 0, 100, 0, 0, 7, 15);
 				break;
 
 			case 4:
 			case 5:
-				_val4 = 14;
-				series_play("103cr01", 0x100, 0, 10, 30, 0, 100, 0, 0, 3, 4);
-				series_play("103cr01s", 0x100, 0, -1, 30, 0, 100, 0, 0, 3, 4);
+				_crow1Should = 14;
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 30, 0, 100, 0, 0, 3, 4);
 				break;
 
 			default:
-				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 2, 2);
-				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 2, 2);
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 60, 0, 100, 0, 0, 2, 2);
 				break;
 			}
 			break;
 
 		case 14:
 			if (imath_ranged_rand(1, 4) == 1) {
-				_val4 = 13;
-				series_play("103cr01", 0x100, 0, 10, 6, 0, 100, 0, 0, 5, 15);
-				series_play("103cr01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 5, 15);
+				_crow1Should = 13;
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 6, 0, 100, 0, 0, 5, 15);
 			} else {
-				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 4, 4);
-				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 4, 4);
+				Series::series_play("103cr01", 0x100, 0, kCHANGE_CROW1_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 			}
+			break;
+
+		default:
 			break;
 		}
 		break;
 
-	case 11:
-		switch (_val9) {
+	case kCHANGE_CROW2_ANIMATION:
+		switch (_crow2Should) {
 		case 15:
 			if (imath_ranged_rand(1, 4) == 1) {
-				_val9 = 16;
-				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 1, 2);
+				_crow2Should = 16;
+				series_play("103cr02", 0x100, 0, kCHANGE_CROW2_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
 			} else {
-				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 0, 0);
+				series_play("103cr02", 0x100, 0, kCHANGE_CROW2_ANIMATION, 70, 0, 100, 0, 0, 0, 0);
 				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 0, 0);
 			}
 			break;
@@ -317,19 +320,19 @@ void Room103::daemon() {
 		case 16:
 			switch (imath_ranged_rand(1, 5)) {
 			case 1:
-				_val9 = 15;
-				series_play("103cr02", 0x100, 2, 11, 30, 0, 100, 0, 0, 1, 2);
+				_crow2Should = 15;
+				series_play("103cr02", 0x100, 2, kCHANGE_CROW2_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 				series_play("103cr02s", 0x100, 2, -1, 30, 0, 100, 0, 0, 1, 2);
 				break;
 
 			case 2:
-				_val9 = 17;
-				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 3, 4);
+				_crow2Should = 17;
+				series_play("103cr02", 0x100, 0, kCHANGE_CROW2_ANIMATION, 30, 0, 100, 0, 0, 3, 4);
 				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 3, 4);
 				break;
 
 			default:
-				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 2, 2);
+				series_play("103cr02", 0x100, 0, kCHANGE_CROW2_ANIMATION, 70, 0, 100, 0, 0, 2, 2);
 				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 2, 2);
 				break;
 			}
@@ -338,13 +341,13 @@ void Room103::daemon() {
 		case 17:
 			switch (imath_ranged_rand(1, 6)) {
 			case 1:
-				_val9 = 16;
+				_crow2Should = 16;
 				series_play("103cr02", 0x100, 2, 11, 30, 0, 100, 0, 0, 3, 4);
 				series_play("103cr02s", 0x100, 2, -1, 30, 0, 100, 0, 0, 3, 4);
 				break;
 
 			case 2:
-				_val9 = 18;
+				_crow2Should = 18;
 				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 5, 8);
 				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 5, 8);
 				break;
@@ -358,7 +361,7 @@ void Room103::daemon() {
 
 		case 18:
 			if (imath_ranged_rand(1, 4) == 1) {
-				_val9 = 17;
+				_crow2Should = 17;
 				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 9, 12);
 				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 9, 12);
 			} else {
@@ -372,15 +375,15 @@ void Room103::daemon() {
 		}
 		break;
 
-	case 12:
-		switch (_val5) {
+	case kCHANGE_CROW3_ANIMATION:
+		switch (_crow3Should) {
 		case 19:
 			if (imath_ranged_rand(1, 4) == 1) {
-				_val5 = 20;
-				series_play("103cr03", 0x100, 0, 12, 30, 0, 100, 0, 0, 1, 2);
+				_crow3Should = 20;
+				series_play("103cr03", 0x100, 0, kCHANGE_CROW3_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 				series_play("103cr03s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
 			} else {
-				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 0, 0);
+				series_play("103cr03", 0x100, 0, kCHANGE_CROW3_ANIMATION, 80, 0, 100, 0, 0, 0, 0);
 				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 0, 0);
 			}
 			break;
@@ -388,18 +391,18 @@ void Room103::daemon() {
 		case 20:
 			switch (imath_ranged_rand(1, 6)) {
 			case 1:
-				_val5 = 19;
-				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 4, 4);
+				_crow3Should = 19;
+				series_play("103cr03", 0x100, 0, kCHANGE_CROW3_ANIMATION, 80, 0, 100, 0, 0, 4, 4);
 				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 4, 4);
 				break;
 
 			case 3:
-				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 2, 2);
+				series_play("103cr03", 0x100, 0, kCHANGE_CROW3_ANIMATION, 80, 0, 100, 0, 0, 2, 2);
 				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 2, 2);
 				break;
 
 			default:
-				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 3, 3);
+				series_play("103cr03", 0x100, 0, kCHANGE_CROW3_ANIMATION, 80, 0, 100, 0, 0, 3, 3);
 				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 3, 3);
 				break;
 			}
@@ -407,23 +410,23 @@ void Room103::daemon() {
 		}
 		break;
 
-	case 13:
-		switch (_val6) {
+	case kCHANGE_CROW4_ANIMATION:
+		switch (_crow4Should) {
 		case 21:
 			switch (imath_ranged_rand(1, 6)) {
 			case 1:
-				series_play("103cr04", 0x100, 0, 13, 6, 0, 100, 0, 0, 5, 9);
+				series_play("103cr04", 0x100, 0, kCHANGE_CROW4_ANIMATION, 6, 0, 100, 0, 0, 5, 9);
 				series_play("103cr04s", 0x100, 0, -1, 6, 0, 100, 0, 0, 5, 9);
 				break;
 
 			case 2:
-				_val6 = 22;
-				series_play("103cr04", 0x100, 0, 13, 30, 0, 100, 0, 0, 1, 2);
+				_crow4Should = 22;
+				series_play("103cr04", 0x100, 0, kCHANGE_CROW4_ANIMATION, 30, 0, 100, 0, 0, 1, 2);
 				series_play("103cr04s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
 				break;
 
 			default:
-				series_play("103cr04", 0x100, 0, 13, 90, 0, 100, 0, 0, 0, 0);
+				series_play("103cr04", 0x100, 0, kCHANGE_CROW4_ANIMATION, 90, 0, 100, 0, 0, 0, 0);
 				series_play("103cr04s", 0x100, 0, -1, 90, 0, 100, 0, 0, 0, 0);
 				break;
 			}
@@ -431,11 +434,11 @@ void Room103::daemon() {
 
 		case 22:
 			if (imath_ranged_rand(1, 4) == 1) {
-				_val6 = 21;
-				series_play("103cr04", 0x100, 2, 13, 30, 0, 100, 0, 0, 0, 1);
+				_crow4Should = 21;
+				series_play("103cr04", 0x100, 2, kCHANGE_CROW4_ANIMATION, 30, 0, 100, 0, 0, 0, 1);
 				series_play("103cr04s", 0x100, 2, -1, 30, 0, 100, 0, 0, 0, 1);
 			} else {
-				series_play("103cr04", 0x100, 0, 13, 90, 0, 100, 0, 0, 0, 2);
+				series_play("103cr04", 0x100, 0, kCHANGE_CROW4_ANIMATION, 90, 0, 100, 0, 0, 0, 2);
 				series_play("103cr04s", 0x100, 0, -1, 90, 0, 100, 0, 0, 2, 2);
 			}
 			break;
@@ -483,13 +486,13 @@ void Room103::daemon() {
 	case 19:
 		_G(flags)[V298] = 1;
 		terminateMachineAndNull(_series2);
-		series_play_with_breaks(PLAY4, "103ha02", 0x100, 20, 2, 10, 100, 0, 0);
+		series_play_with_breaks(PLAY4, "103ha02", 0x100, kCHANGE_HARRY_ANIMATION, 2, 10, 100, 0, 0);
 		_frame = 10;
-		_val8 = 9;
+		_harryShould = 9;
 		break;
 
-	case 20:
-		switch (_val8) {
+	case kCHANGE_HARRY_ANIMATION:
+		switch (_harryShould) {
 		case 9:
 			if (imath_ranged_rand(1, 2) == 1) {
 				if (++_frame >= 17)
@@ -499,7 +502,7 @@ void Room103::daemon() {
 					_frame = 12;
 			}
 
-			series_play("103ha02", 0x101, 0, 20, 10, 0, 100, 0, 0, _frame, _frame);
+			series_play("103ha02", 0x101, 0, kCHANGE_HARRY_ANIMATION, 10, 0, 100, 0, 0, _frame, _frame);
 			break;
 
 		case 10:
@@ -512,7 +515,7 @@ void Room103::daemon() {
 		break;
 
 	case 21:
-		_val8 = 10;
+		_harryShould = 10;
 		kernel_timing_trigger(1, 24);
 		break;
 
