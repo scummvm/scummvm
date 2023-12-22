@@ -38,12 +38,12 @@ private:
 	bool _flag1 = false;
 	int _val2 = 0;
 	int _val3 = 0;
-	int _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _crow1Should = 0;
+	int _crow3Should = 0;
+	int _crow4Should = 0;
 	int _val7 = 0;
-	int _val8 = 0;
-	int _val9 = 0;
+	int _harryShould = 0;
+	int _crow2Should = 0;
 	int _frame = 0;
 	int _digi1 = 0;
 	machine *_series1 = nullptr;
