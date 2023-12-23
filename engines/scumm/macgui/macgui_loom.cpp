@@ -353,9 +353,6 @@ void MacLoomGui::runAboutDialog() {
 				window->drawTexts(r, page2);
 				break;
 
-				growth = -2;
-				break;
-
 			case 7:
 				fastForward = false;
 				darkenOnly = true;
@@ -396,7 +393,6 @@ void MacLoomGui::runAboutDialog() {
 				window->drawTexts(r, page8);
 				break;
 			}
-
 
 			window->update(true);
 
