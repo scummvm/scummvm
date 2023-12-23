@@ -256,13 +256,14 @@ public:
 
 	/**
 	 * Construct a new path from the given String.
+	 * This is explicit to limit mixing strings and paths in the codebase.
 	 *
 	 * @param str       A String representing a path, e.g. "foo/bar/baz"
 	 * @param separator The directory separator used in the path string.
 	 *                  Use kNoSeparator if there is no separator.
 	 *                  Defaults to '/'.
 	 */
-	Path(const String &str, char separator = '/') :
+	explicit Path(const String &str, char separator = '/') :
 		_str(needsEncoding(str.c_str(), separator) ? encode(str.c_str(), separator) : str) { }
 
 	/**
