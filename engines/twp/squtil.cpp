@@ -344,7 +344,6 @@ ThreadBase *sqthread(int id) {
 		}
 	}
 
-	// let threads = g_engine->_threads;
 	for (int i = 0; i < g_engine->_threads.size(); i++) {
 		ThreadBase *t = g_engine->_threads[i];
 		if (t->getId() == id) {
@@ -355,6 +354,12 @@ ThreadBase *sqthread(int id) {
 }
 
 ThreadBase *sqthread(HSQUIRRELVM v) {
+	if (g_engine->_cutscene) {
+		if (g_engine->_cutscene->getThread() == v) {
+			return g_engine->_cutscene;
+		}
+	}
+
 	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](ThreadBase *t) {
 		return t->getThread() == v;
 	});

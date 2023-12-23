@@ -211,7 +211,7 @@ static SQInteger breakwhilecamera(HSQUIRRELVM v) {
 // It is an error to call breakwhilecutscene in a function that was not started with startthread.
 static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 	return breakwhilecond(
-		v, [] { return g_engine->_cutscene == nullptr; }, "breakwhilecutscene()");
+		v, [] { return g_engine->_cutscene != nullptr; }, "breakwhilecutscene()");
 }
 
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
