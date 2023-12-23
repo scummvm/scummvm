@@ -270,6 +270,48 @@ void Room137::daemon() {
 			}
 			break;
 
+		case 14:
+			switch (_sherrifShould) {
+			case 22:
+				if (imath_ranged_rand(1, 30) == 2) {
+					series_play("137sh04", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, 0, 14);
+				} else {
+					series_play("137sh01", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 12, 0, 100, 0, 0, 17, 17);
+				}
+				break;
+
+			case 23:
+				_sherrifMode = 16;
+				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 24:
+				_sherrifShould = 23;
+				series_play("137sh05", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, 0, 17);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_digi1, 1, 255, 14);
+					_digi1 = nullptr;
+				}
+				break;
+
+			case 25:
+				_sherrifShould = 26;
+				series_play("137sh06", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, 0, 23);
+				break;
+
+			case 26:
+				conv_resume_curr();
+				_sherrifShould = 22;
+				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
 		case 16:
 			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 8);
