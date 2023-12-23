@@ -39,7 +39,7 @@ struct DirectorGameDescription {
 	uint16 version;
 };
 
-extern const char *directoryGlobs[];
+extern const char *const directoryGlobs[];
 
 } // End of namespace Director
 

@@ -33,7 +33,7 @@
 #include "director/detection_tables.h"
 #include "director/detection_paths.h"
 
-static struct CustomTarget {
+static const struct CustomTarget {
 	const char *name;
 	const char *platform;
 	const char *version;

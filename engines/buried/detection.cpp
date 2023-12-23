@@ -39,7 +39,7 @@ static const PlainGameDescriptor buriedGames[] = {
 
 namespace Buried {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"win31",
 	"manual",
 	nullptr

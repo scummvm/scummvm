@@ -26,7 +26,7 @@ static const PlainGameDescriptor asylumGames[] = {
 
 namespace Asylum {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"Vids",
 	0
 };

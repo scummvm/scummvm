@@ -33,7 +33,7 @@ static const PlainGameDescriptor pinkGames[] = {
 
 #include "pink/detection_tables.h"
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"install",
 	nullptr
 };

@@ -979,7 +979,7 @@ PlainGameDescriptor AdvancedMetaEngineDetection::findGame(const char *gameId) co
 	return PlainGameDescriptor::empty();
 }
 
-static const char *grayList[] = {
+static const char *const grayList[] = {
 	"game.exe",
 	"demo.exe",
 	"game",

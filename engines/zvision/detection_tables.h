@@ -32,7 +32,7 @@ static const PlainGameDescriptor zVisionGames[] = {
 	{ 0, 0 }
 };
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"znemscr",
 	"taunts", // zgi mac
 	0

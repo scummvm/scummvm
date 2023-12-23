@@ -213,7 +213,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Trecision
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"autorun",
 	"data",
 	0

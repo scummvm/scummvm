@@ -41,7 +41,7 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"bin",
 	"M3Data",
 	"MYST3BIN",

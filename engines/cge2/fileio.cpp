@@ -271,7 +271,7 @@ EncryptedStream::~EncryptedStream() {
 	delete _readStream;
 }
 
-const char *EncryptedStream::kIdTab[] = {
+const char *const EncryptedStream::kIdTab[] = {
 	"[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
 	"Name", "Type", "Front", "East",
 	"Portable", "Transparent",
