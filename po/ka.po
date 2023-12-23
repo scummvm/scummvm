@@ -18,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.4\n"
+"X-Language-name: Georgian\n"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
