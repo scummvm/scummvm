@@ -233,7 +233,7 @@ void Room138::daemon() {
 
 				} else if (_sherrifShould == 36 && _val4 == 22) {
 					_sherrifShould = 26;
-					series_play("138cp02", 0x100, 0, kTestTimeout, 8, 0, 100, 0, 0, 0, 30);
+					series_play("138cp02", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 30);
 					randomDigi();
 
 				} else if (_val4 == 22 && !inv_object_is_here("keys") &&
