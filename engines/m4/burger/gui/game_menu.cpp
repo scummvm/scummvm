@@ -2637,25 +2637,28 @@ void cb_Game_Resume(void *, void *) {
 }
 
 void cb_Game_Save(void *, void *) {
-
 	// Destroy the game menu
 	DestroyGameMenu();
 
 	// Create the save game menu
-	CreateSaveMenu(nullptr);
+//	CreateSaveMenu(nullptr);
+	if (!g_engine->useOriginalSaveLoad())
+		menu_Shutdown(true);
+	g_engine->showSaveScreen();
 }
 
 void cb_Game_Load(void *, void *) {
-
 	// Destroy the game menu
 	DestroyGameMenu();
 
 	// Create the save game menu
-	CreateLoadMenu(nullptr);
+//	CreateLoadMenu(nullptr);
+	if (!g_engine->useOriginalSaveLoad())
+		menu_Shutdown(true);
+	g_engine->showLoadScreen();
 }
 
 void cb_Game_Main(void *, void *) {
-
 	// Destroy the game menu
 	DestroyGameMenu();
 
@@ -2681,14 +2684,12 @@ void cb_Game_Main(void *, void *) {
 }
 
 void cb_Game_Options(void *, void *) {
-
 	// Destroy the game menu
 	DestroyGameMenu();
 
 	// Create the options menu
 	CreateOptionsMenu(nullptr);
 }
-
 
 void DestroyGameMenu(void) {
 	if (!_GM(gameMenu)) {
@@ -2704,7 +2705,6 @@ void DestroyGameMenu(void) {
 	// Unload the menu sprites
 	menu_UnloadSprites();
 }
-
 
 void CreateGameMenuMain(RGB8 *myPalette) {
 	if (!_G(menuSystemInitialized)) {
