@@ -304,7 +304,7 @@ Common::Path OSystem_POSIX::getScreenshotsPath() {
 		picturesPath += "/";
 	}
 
-	static const char *SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
+	static const char *const SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
 	if (!Posix::assureDirectoryExists(SCREENSHOTS_DIR_NAME, picturesPath.c_str())) {
 		return "";
 	}

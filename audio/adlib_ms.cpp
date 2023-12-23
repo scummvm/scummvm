@@ -325,10 +325,10 @@ OplInstrumentDefinition MidiDriver_ADLIB_Multisource::OPL_RHYTHM_BANK[62] = {
 
 // Rhythm mode uses OPL channels 6, 7 and 8. The remaining channels are
 // available for melodic instruments.
-uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL2[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL2_RHYTHM[] = { 0, 1, 2, 3, 4, 5 };
-uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL3[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL3_RHYTHM[] = { 0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+const uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL2[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+const uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL2_RHYTHM[] = { 0, 1, 2, 3, 4, 5 };
+const uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL3[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+const uint8 MidiDriver_ADLIB_Multisource::MELODIC_CHANNELS_OPL3_RHYTHM[] = { 0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
 
 const uint8 MidiDriver_ADLIB_Multisource::OPL_REGISTER_RHYTHM_OFFSETS[OPL_NUM_RHYTHM_INSTRUMENTS] = { 0x11, 0x15, 0x12, 0x14, 0x10 };
 

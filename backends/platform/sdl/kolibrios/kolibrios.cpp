@@ -100,7 +100,7 @@ Common::Path OSystem_KolibriOS::getScreenshotsPath() {
 		return path;
 	}
 
-	static const char *SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
+	static const char *const SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
 	if (!KolibriOS::assureDirectoryExists(SCREENSHOTS_DIR_NAME, _writablePath.toString(Common::Path::kNativeSeparator).c_str())) {
 		return "";
 	}

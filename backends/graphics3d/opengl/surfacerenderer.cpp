@@ -173,7 +173,7 @@ void FixedSurfaceRenderer::restorePreviousState() {
 
 #if defined(USE_OPENGL_SHADERS)
 
-static const char *boxVertex =
+static const char *const boxVertex =
 	"attribute vec2 position;\n"
 	"attribute vec2 texcoord;\n"
 	"uniform vec2 offsetXY;\n"
@@ -200,7 +200,7 @@ static const char *boxVertex =
 		"gl_Position = vec4(pos, 0.0, 1.0);\n"
 	"}\n";
 
-static const char *boxFragment =
+static const char *const boxFragment =
 	"#ifdef GL_ES\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
 			"precision highp float;\n"

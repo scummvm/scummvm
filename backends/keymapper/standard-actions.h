@@ -37,24 +37,24 @@
 
 namespace Common {
 
-extern const char *kStandardActionLeftClick;
-extern const char *kStandardActionMiddleClick;
-extern const char *kStandardActionRightClick;
-extern const char *kStandardActionInteract;
-extern const char *kStandardActionSkip;
-extern const char *kStandardActionPause;
-extern const char *kStandardActionMoveUp;
-extern const char *kStandardActionMoveDown;
-extern const char *kStandardActionMoveLeft;
-extern const char *kStandardActionMoveRight;
-extern const char *kStandardActionOpenMainMenu;
-extern const char *kStandardActionLoad;
-extern const char *kStandardActionSave;
-extern const char *kStandardActionOpenSettings;
-extern const char *kStandardActionEE;
-extern const char *kStandardActionCut;
-extern const char *kStandardActionCopy;
-extern const char *kStandardActionPaste;
+extern const char *const kStandardActionLeftClick;
+extern const char *const kStandardActionMiddleClick;
+extern const char *const kStandardActionRightClick;
+extern const char *const kStandardActionInteract;
+extern const char *const kStandardActionSkip;
+extern const char *const kStandardActionPause;
+extern const char *const kStandardActionMoveUp;
+extern const char *const kStandardActionMoveDown;
+extern const char *const kStandardActionMoveLeft;
+extern const char *const kStandardActionMoveRight;
+extern const char *const kStandardActionOpenMainMenu;
+extern const char *const kStandardActionLoad;
+extern const char *const kStandardActionSave;
+extern const char *const kStandardActionOpenSettings;
+extern const char *const kStandardActionEE;
+extern const char *const kStandardActionCut;
+extern const char *const kStandardActionCopy;
+extern const char *const kStandardActionPaste;
 
 } //namespace Common
 

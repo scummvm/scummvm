@@ -1252,7 +1252,7 @@ typedef struct NSVGNamedColor {
 	unsigned int color;
 } NSVGNamedColor;
 
-NSVGNamedColor nsvg__colors[] = {
+static const NSVGNamedColor nsvg__colors[] = {
 
 	{ "red", NSVG_RGB(255, 0, 0) },
 	{ "green", NSVG_RGB( 0, 128, 0) },

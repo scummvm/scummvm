@@ -47,7 +47,7 @@ public:
 #ifdef USE_LIBCURL
 
 	static const uint32 INVALID_TIMESTAMP = UINT_MAX;
-	static const char *TIMESTAMPS_FILENAME;
+	static const char *const TIMESTAMPS_FILENAME;
 
 	static Common::HashMap<Common::String, uint32> loadTimestamps();
 	static void saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps);

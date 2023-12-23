@@ -101,7 +101,7 @@ static void resetstack (lua_State *L, int status) {
 
 
 // Added in ScummVM. Refer to http://www.lua.org/manual/5.1/manual.html
-static const char* luaErrorDescription[] = {
+static const char *const luaErrorDescription[] = {
 	"No error",
 	"Coroutine yield",	// not an actual error, see lua_resume
 	"Runtime error",

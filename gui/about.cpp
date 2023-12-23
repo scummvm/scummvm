@@ -63,7 +63,7 @@ enum {
 // TODO: Add different font sizes (for bigger headlines)
 // TODO: Allow color change in the middle of a line...
 
-static const char *copyright_text[] = {
+static const char *const copyright_text[] = {
 "",
 "C0""Copyright (C) 2001-2023 The ScummVM Team",
 "C0""https://www.scummvm.org",
@@ -72,7 +72,7 @@ static const char *copyright_text[] = {
 "",
 };
 
-static const char *gpl_text[] = {
+static const char *const gpl_text[] = {
 "",
 "C0""This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
 "C0""",
@@ -1348,7 +1348,7 @@ static const int spcolors[10 * 3] = {
 	0, 0, 0, 12, 12, 12
 };
 
-const char *codes =
+const char *const codes =
 "Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
 "Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
 

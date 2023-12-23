@@ -122,7 +122,7 @@ private:
 	/**
 	 * Transformations list
 	 */
-	static Transform _transforms[18];
+	static const Transform _transforms[18];
 
 	static const uint8 *const _scan_index_to_tab[15];
 

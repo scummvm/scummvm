@@ -40,7 +40,7 @@ public:
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \
-			extern PluginType g_##ID##_type; \
+			extern const PluginType g_##ID##_type; \
 			extern PluginObject *g_##ID##_getObject(); \
 			pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 

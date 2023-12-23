@@ -138,7 +138,7 @@ enum markdown_char_t {
 	MD_CHAR_SUPERSCRIPT,
 };
 
-static char_trigger markdown_char_ptrs[] = {
+static const char_trigger markdown_char_ptrs[] = {
 	NULL,
 	&char_emphasis,
 	&char_codespan,
@@ -687,7 +687,7 @@ static size_t char_codespan(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 
 /* char_escape • '\\' backslash escape */
 static size_t char_escape(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t offset, size_t size) {
-	static const char *escape_chars = "\\`*_{}[]()#+-.!:|&<>^~";
+	static const char *const escape_chars = "\\`*_{}[]()#+-.!:|&<>^~";
 	SDDataBuffer work = { 0, 0, 0, 0 };
 
 	if (size > 1) {
@@ -2510,7 +2510,7 @@ void SDMarkdown::version(int *ver_major, int *ver_minor, int *ver_revision) {
 
 int sd_autolink_issafe(const byte *link, size_t link_len) {
 	static const size_t valid_uris_count = 5;
-	static const char *valid_uris[] = {
+	static const char *const valid_uris[] = {
 		"/", "http://", "https://", "ftp://", "mailto:"
 	};
 

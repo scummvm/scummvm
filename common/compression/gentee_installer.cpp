@@ -237,7 +237,7 @@ private:
 
 	Common::ReadStream *_inputStream;
 
-	static byte g_matchVLCLengths[kNumMatchVLCs];
+	static const byte g_matchVLCLengths[kNumMatchVLCs];
 	uint16 _matchVLCOffsets[kNumMatchVLCs];
 
 private:
@@ -424,7 +424,7 @@ void DecompressorState::recordMatchOffset(uint matchOffset) {
 	_matchOffsetHistory[0] = matchOffset;
 }
 
-byte DecompressorState::g_matchVLCLengths[DecompressorState::kNumMatchVLCs] = {
+const byte DecompressorState::g_matchVLCLengths[DecompressorState::kNumMatchVLCs] = {
 	0, 1, 1, 2, 2,
 	2, 3, 3, 3, 3,
 	4, 4, 5, 5, 6,

@@ -55,7 +55,7 @@ enum PluginType {
 #define PLUGIN_TYPE_DETECTION_VERSION 1
 #define PLUGIN_TYPE_SCALER_VERSION 1
 
-extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
+extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 
 // Plugin linking
@@ -85,7 +85,8 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  * @see REGISTER_PLUGIN_DYNAMIC
  */
 #define REGISTER_PLUGIN_STATIC(ID,TYPE,PLUGINCLASS) \
-	PluginType g_##ID##_type = TYPE; \
+	extern const PluginType g_##ID##_type; \
+	const PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \

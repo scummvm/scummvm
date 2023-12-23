@@ -105,7 +105,7 @@ static const char *const g_libretroShaderAttributes[] = {
 };
 
 // some libretro shaders use texture without checking version
-static const char *g_compatVertex =
+static const char *const g_compatVertex =
 	"#if defined(GL_ES)\n"
 		"#if !defined(HAS_ROUND)\n"
 			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"
@@ -116,7 +116,7 @@ static const char *g_compatVertex =
 		"#endif\n"
 	"#endif\n";
 
-static const char *g_compatFragment =
+static const char *const g_compatFragment =
 	"#if defined(GL_ES)\n"
 		"#if !defined(HAS_ROUND)\n"
 			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"

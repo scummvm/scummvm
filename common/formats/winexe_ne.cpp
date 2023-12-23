@@ -157,7 +157,7 @@ bool NEResources::readNameTable(uint32 offset, uint32 size) {
 	return true;
 }
 
-static const char *s_resTypeNames[] = {
+static const char *const s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
 	"group_cursor", "", "group_icon", "name_table", "version", "dlg_include",

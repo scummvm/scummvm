@@ -76,7 +76,7 @@ static long tell_stream_wrap(void *datasource) {
 	return stream->pos();
 }
 
-static ov_callbacks g_stream_wrap = {
+static const ov_callbacks g_stream_wrap = {
 	read_stream_wrap, seek_stream_wrap, close_stream_wrap, tell_stream_wrap
 };
 
