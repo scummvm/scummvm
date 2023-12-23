@@ -169,6 +169,11 @@ void Macs2Engine::readResourceFile() {
 	_charData = new byte[_charWidth * _charHeight];
 	file.read(_charData, _charWidth * _charHeight);
 
+	// Load more characters
+	for (int i = 0; i < 10; i++) {
+		_glyphs[i].ReadFromeFile(file);
+	}
+
 	// Load the data for a border part
 	file.seek(0x64C6);
 
@@ -482,6 +487,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 void GlyphData::ReadFromeFile(Common::File &file) {
 	// TODO: Implement
+	ASCII = file.readByte();
+	Width = file.readUint16LE();
+	Height = file.readUint16LE();
+	Data = new byte[Width * Height];
+	file.read(Data, Width * Height);
 }
 
 } // End of namespace Macs2
