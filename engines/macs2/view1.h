@@ -23,6 +23,7 @@
 #define MACS2_VIEW1_H
 
 #include "macs2/events.h"
+#include "macs2/macs2.h"
 
 namespace Macs2 {
 
@@ -34,6 +35,8 @@ private:
 	Graphics::ManagedSurface _backgroundSurface;
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
+
+	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y);
 
 public:
 	View1();

@@ -44,7 +44,7 @@ namespace Macs2 {
 struct Macs2GameDescription;
 
 struct GlyphData {
-	byte*_data;
+	byte* Data;
 	char ASCII;
 	uint16 Width;
 	uint16 Height;
@@ -83,6 +83,8 @@ public:
 	char _charASCII;
 	uint16 _charWidth;
 	uint16 _charHeight;
+
+	GlyphData _glyphs[256];
 
 	byte* _cursorData;
 	uint16 _cursorWidth;
