@@ -231,7 +231,7 @@ public:
 	int number(char *s);
 	char *token(char *s);
 	char *tail(char *s);
-	int takeEnum(const char **tab, const char *text);
+	int takeEnum(const char *const *tab, const char *text);
 	ID ident(const char *s);
 	bool testBool(char *s);
 

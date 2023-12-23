@@ -121,7 +121,7 @@ static const SAGA2GameDescription gameDescriptions[] = {
 };
 } // End of namespace Saga2
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"res",
 	"win",
 	nullptr

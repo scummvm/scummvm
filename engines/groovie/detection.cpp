@@ -268,7 +268,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 };
 // clang-format on
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"MIDI",
 	"GROOVIE",
 	"MEDIA",

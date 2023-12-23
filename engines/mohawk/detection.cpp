@@ -83,7 +83,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 
 #include "mohawk/detection_tables.h"
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"all",
 	"assets1",
 	"data",

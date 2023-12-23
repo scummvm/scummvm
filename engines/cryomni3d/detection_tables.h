@@ -570,7 +570,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	/** Versailles 1685 **/
 	/* DATAS_V/ANIMACTI/LEVEL1/11D_LEB1.HNM
 	 * DATAS_V/ANIMACTI/LEVEL7/COFBOUM.HNM */

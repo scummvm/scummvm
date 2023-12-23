@@ -156,7 +156,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 
 } // End of namespace Prince
 
-const static char *directoryGlobs[] = {
+const static char *const directoryGlobs[] = {
 	"all",
 	nullptr
 };

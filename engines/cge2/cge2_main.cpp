@@ -130,9 +130,9 @@ char *CGE2Engine::tail(char *s) {
 	return s;
 }
 
-int CGE2Engine::takeEnum(const char **tab, const char *text) {
+int CGE2Engine::takeEnum(const char *const *tab, const char *text) {
 	if (text) {
-		for (const char **e = tab; *e; e++) {
+		for (const char *const *e = tab; *e; e++) {
 			if (scumm_stricmp(text, *e) == 0)
 				return e - tab;
 		}

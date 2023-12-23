@@ -24,7 +24,7 @@
 
 namespace Director {
 
-const char *directoryGlobs[] = {
+const char *const directoryGlobs[] = {
 	"install",
 	"win_data",						// L-ZONE
 	"data",
