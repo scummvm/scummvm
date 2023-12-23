@@ -53,6 +53,7 @@ Thread::Thread(int id) {
 }
 
 Thread::~Thread() {
+	debug("delete thread %d, %s, global: %s", _id, _name.c_str(), _global?"yes":"no");
 	HSQUIRRELVM v = g_engine->getVm();
 	for (int i = 0; i < _args.size(); i++) {
 		sq_release(v, &_args[i]);
