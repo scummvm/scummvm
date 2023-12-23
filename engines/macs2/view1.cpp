@@ -30,11 +30,7 @@ namespace Macs2 {
 	View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 
-		byte* cursorData = new byte[9];
-		for (int i = 0; i < 9; i++) {
-			cursorData[i] = 255;
-		}
-		CursorMan.replaceCursor(cursorData, 3, 3, 1, 1, 0);
+		CursorMan.replaceCursor(g_engine->_cursorData, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorWidth >> 1, g_engine->_cursorHeight >>1, 0);
 		CursorMan.showMouse(true);
 	}
 
