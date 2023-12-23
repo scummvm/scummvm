@@ -41,7 +41,7 @@
 #include <errno.h>	// for removeSavefile()
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-const char *DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
+const char *const DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
 #endif
 
 DefaultSaveFileManager::DefaultSaveFileManager() {

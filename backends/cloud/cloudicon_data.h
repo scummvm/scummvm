@@ -23,7 +23,7 @@
 // $ recode data..d1 <dists/cloudicon.png >cloudicon_data.h
 // The tool is from https://github.com/pinard/Recode
 
-byte cloudicon_data[] = {
+static const byte cloudicon_data[] = {
 	137,  80,  78,  71,  13,  10,  26,  10,   0,   0,   0,  13,  73,  72,  68,
 	82,   0,   0,   0,  32,   0,   0,   0,  32,   8,   6,   0,   0,   0, 115,
 	122, 122, 244,   0,   0,   0,   4, 115,  66,  73,  84,   8,   8,   8,   8,

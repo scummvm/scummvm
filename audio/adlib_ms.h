@@ -344,22 +344,22 @@ public:
 	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
 	 * disabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL2[9];
+	static const uint8 MELODIC_CHANNELS_OPL2[9];
 	/**
 	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
 	 * enabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL2_RHYTHM[6];
+	static const uint8 MELODIC_CHANNELS_OPL2_RHYTHM[6];
 	/**
 	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
 	 * disabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL3[18];
+	static const uint8 MELODIC_CHANNELS_OPL3[18];
 	/**
 	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
 	 * enabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL3_RHYTHM[15];
+	static const uint8 MELODIC_CHANNELS_OPL3_RHYTHM[15];
 	/**
 	 * The number of rhythm instruments available in OPL rhythm mode.
 	 */
@@ -1182,7 +1182,7 @@ protected:
 	// the static channel allocation mode.
 	uint8 _channelAllocations[MAXIMUM_SOURCES][MIDI_CHANNEL_COUNT];
 	// Array containing the numbers of the available melodic channels.
-	uint8 *_melodicChannels;
+	const uint8 *_melodicChannels;
 	// The number of available melodic channels (length of _melodicChannels).
 	uint8 _numMelodicChannels;
 	// The amount of notes played since the driver was opened / reset.

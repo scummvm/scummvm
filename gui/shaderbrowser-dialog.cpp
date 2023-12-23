@@ -44,8 +44,8 @@ enum {
 	kSearchClearCmd = 'SRCL',
 };
 
-const char *kFileMask = "*.glslp";
-const char *kFileExt  = "glslp";
+const char *const kFileMask = "*.glslp";
+const char *const kFileExt  = "glslp";
 
 ShaderBrowserDialog::ShaderBrowserDialog(const Common::Path &initialSelection) : Dialog("ShaderBrowser") {
 

@@ -23,23 +23,23 @@
 
 namespace Common {
 
-const char *kStandardActionLeftClick     = "LCLK";
-const char *kStandardActionMiddleClick   = "MCLK";
-const char *kStandardActionRightClick    = "RCLK";
-const char *kStandardActionInteract      = "INTRCT";
-const char *kStandardActionSkip          = "SKIP";
-const char *kStandardActionPause         = "PAUSE";
-const char *kStandardActionMoveUp        = "UP";
-const char *kStandardActionMoveDown      = "DOWN";
-const char *kStandardActionMoveLeft      = "LEFT";
-const char *kStandardActionMoveRight     = "RIGHT";
-const char *kStandardActionOpenMainMenu  = "MENU";
-const char *kStandardActionLoad          = "LOAD";
-const char *kStandardActionSave          = "SAVE";
-const char *kStandardActionOpenSettings  = "OPTS";
-const char *kStandardActionEE            = "WTF";
-const char *kStandardActionCut			 = "CUT";
-const char *kStandardActionCopy		     = "COPY";
-const char *kStandardActionPaste	     = "PASTE";
+const char *const kStandardActionLeftClick     = "LCLK";
+const char *const kStandardActionMiddleClick   = "MCLK";
+const char *const kStandardActionRightClick    = "RCLK";
+const char *const kStandardActionInteract      = "INTRCT";
+const char *const kStandardActionSkip          = "SKIP";
+const char *const kStandardActionPause         = "PAUSE";
+const char *const kStandardActionMoveUp        = "UP";
+const char *const kStandardActionMoveDown      = "DOWN";
+const char *const kStandardActionMoveLeft      = "LEFT";
+const char *const kStandardActionMoveRight     = "RIGHT";
+const char *const kStandardActionOpenMainMenu  = "MENU";
+const char *const kStandardActionLoad          = "LOAD";
+const char *const kStandardActionSave          = "SAVE";
+const char *const kStandardActionOpenSettings  = "OPTS";
+const char *const kStandardActionEE            = "WTF";
+const char *const kStandardActionCut           = "CUT";
+const char *const kStandardActionCopy          = "COPY";
+const char *const kStandardActionPaste         = "PASTE";
 
 } //namespace Common

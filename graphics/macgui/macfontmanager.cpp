@@ -34,7 +34,7 @@ namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
 // https://www.1000bit.it/support/manuali/apple/technotes/iigs/tn.iigs.041.html
-static struct FontProto {
+static const struct FontProto {
 	int id;
 	Common::Language lang;
 	Common::CodePage encoding;
@@ -77,7 +77,7 @@ struct AliasProto {
 	const char *name;
 };
 
-static AliasProto defaultAliases[] = {
+static const AliasProto defaultAliases[] = {
 	// English names for Japanese fonts
 	{ 16436,	16436,	"OsakaMono" },
 
@@ -95,13 +95,13 @@ static AliasProto defaultAliases[] = {
 	{ -1,		-1,		NULL }
 };
 
-static AliasProto latinModeAliases[] = {
+static const AliasProto latinModeAliases[] = {
 	{ 0,		16383,	"System" }, // Chicago
 	{ 1,		3,		"Application" }, // Geneva
 	{ -1,		-1,		NULL }
 };
 
-static AliasProto japaneseModeAliases[] = {
+static const AliasProto japaneseModeAliases[] = {
 	{ 0,		16384,	"System" }, // Osaka
 	{ 1,		16384,	"Application" }, // Osaka
 	{ -1,		-1,		NULL }
@@ -146,7 +146,7 @@ Common::String cleanFontName(const Common::String fontname) {
 
 MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode),
 	_language(language), _japaneseFontsLoaded(false) {
-	for (FontProto *font = defaultFonts; font->name; font++) {
+	for (const FontProto *font = defaultFonts; font->name; font++) {
 		if (!_fontInfo.contains(font->id)) {
 			FontInfo *info = new FontInfo;
 			info->lang = font->lang;
@@ -158,7 +158,7 @@ MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(m
 			_fontIds[font->name] = font->id;
 		}
 	}
-	for (AliasProto *alias = defaultAliases; alias->name; alias++) {
+	for (const AliasProto *alias = defaultAliases; alias->name; alias++) {
 		if (!_fontInfo.contains(alias->id)) {
 			FontInfo *info = new FontInfo;
 			info->aliasForId = alias->aliasForId;
@@ -194,12 +194,12 @@ MacFontManager::~MacFontManager() {
 }
 
 void MacFontManager::setLocalizedFonts() {
-	AliasProto *aliases = latinModeAliases;
+	const AliasProto *aliases = latinModeAliases;
 	if (_language == Common::JA_JPN) {
 		aliases = japaneseModeAliases;
 		loadJapaneseFonts();
 	}
-	for (AliasProto *alias = aliases; alias->name; alias++) {
+	for (const AliasProto *alias = aliases; alias->name; alias++) {
 		if (_fontInfo.contains(alias->id)) {
 			// Overwrite the font info that's already registered in case
 			// we're switching languages or something.

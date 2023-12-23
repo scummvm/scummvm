@@ -215,7 +215,7 @@ clip_func(clip_ymax, +, Y, X, Z)
 clip_func(clip_zmin, -, Z, X, Y)
 clip_func(clip_zmax, +, Z, X, Y)
 
-float(*clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
+float(*const clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
 	clip_xmin, clip_xmax,
 	clip_ymin, clip_ymax,
 	clip_zmin, clip_zmax

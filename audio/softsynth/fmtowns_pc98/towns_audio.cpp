@@ -1364,7 +1364,7 @@ void TownsAudioInterfaceInternal::pcmReset() {
 		_pcmChan[i]->clear();
 
 	memset(_pcmInstruments, 0, 128 * 32);
-	static uint8 name[] = { 0x4E, 0x6F, 0x20, 0x44, 0x61, 0x74, 0x61, 0x21 };
+	static const uint8 name[] = { 0x4E, 0x6F, 0x20, 0x44, 0x61, 0x74, 0x61, 0x21 };
 	for (int i = 0; i < 32; i++)
 		memcpy(_pcmInstruments + i * 128, name, 8);
 

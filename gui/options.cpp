@@ -146,10 +146,10 @@ enum {
 	kApplyCmd = 'appl'
 };
 
-static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
+static const char *const savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
-static const char *guiBaseLabels[] = {
+static const char *const guiBaseLabels[] = {
 	// I18N: Very large GUI scale
 	_s("Very large"),
 	// I18N: Large GUI scale
@@ -164,7 +164,7 @@ static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
-static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
+static const char *const kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {

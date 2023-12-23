@@ -62,7 +62,7 @@
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
-static OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"surfacesdl", _s("SDL Surface"), GFX_SURFACESDL},
 	{nullptr, nullptr, 0}
 };

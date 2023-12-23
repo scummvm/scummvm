@@ -102,7 +102,7 @@ public:
 private:
 	void parse(const char *sheet);
 
-	int lookupInTable(LookupTable *table, const char *key);
+	int lookupInTable(const LookupTable *table, const char *key);
 	int parseMSF(const char *str);
 
 	void parseHeaderContext(const char *line);

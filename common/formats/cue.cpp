@@ -127,7 +127,7 @@ struct CueSheet::LookupTable {
 	int value;
 };
 
-int CueSheet::lookupInTable(LookupTable *table, const char *key) {
+int CueSheet::lookupInTable(const LookupTable *table, const char *key) {
 	while (table->key) {
 		if (!strcmp(key, table->key))
 			return table->value;
@@ -147,7 +147,7 @@ int CueSheet::parseMSF(const char *str) {
 	return frm + 75 * (sec + 60 * min);
 }
 
-CueSheet::LookupTable fileTypes[] = {
+static const CueSheet::LookupTable fileTypes[] = {
 	{ "BINARY",   CueSheet::kFileTypeBinary },
 	{ "AIFF",     CueSheet::kFileTypeAIFF },
 	{ "WAVE",     CueSheet::kFileTypeWave },
@@ -208,7 +208,7 @@ void CueSheet::parseHeaderContext(const char *line) {
 	}
 }
 
-CueSheet::LookupTable trackTypes[] = {
+static const CueSheet::LookupTable trackTypes[] = {
 	{ "AUDIO",      CueSheet::kTrackTypeAudio },		// Audio (sector size: 2352)
 	{ "CDG",        CueSheet::kTrackTypeCDG },			// Karaoke CD+G (sector size: 2448)
 	{ "MODE1_RAW",  CueSheet::kTrackTypeMode1_Raw },	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
@@ -224,7 +224,7 @@ CueSheet::LookupTable trackTypes[] = {
 	{ 0, 0 }
 };
 
-CueSheet::LookupTable trackTypesSectorSizes[] = {
+static const CueSheet::LookupTable trackTypesSectorSizes[] = {
 	{ "AUDIO",      2352 },
 	{ "CDG",        2448 },
 	{ "MODE1_RAW",  2352 },
@@ -275,7 +275,7 @@ void CueSheet::parseFilesContext(const char *line) {
 
 }
 
-CueSheet::LookupTable trackFlags[] = {
+static const CueSheet::LookupTable trackFlags[] = {
 	{ "4CH",  CueSheet::kTrackFlag4ch  },
 	{ "DCP",  CueSheet::kTrackFlagDCP  },
 	{ "PRE",  CueSheet::kTrackFlagPre  },
