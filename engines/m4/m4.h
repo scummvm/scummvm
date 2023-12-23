@@ -77,6 +77,9 @@ public:
 	~M4Engine() override;
 
 	uint32 getFeatures() const;
+	bool useOriginalSaveLoad() const {
+		return _useOriginalSaveLoad;
+	}
 
 	/**
 	 * Returns the game Id
