@@ -355,9 +355,8 @@ static SQInteger incutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger indialog(HSQUIRRELVM v) {
-	// TODO: indialog
-	warning("indialog not implemented");
-	return 0;
+	sqpush(v, g_engine->_dialog.getState() != DialogState::None);
+	return 1;
 }
 
 static SQInteger integer(HSQUIRRELVM v) {
@@ -627,8 +626,19 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 }
 
 static SQInteger startDialog(HSQUIRRELVM v) {
-	// TODO: startDialog
-	warning("startDialog not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	Common::String dialog;
+	if (SQ_FAILED(sqget(v, 2, dialog)))
+		return sq_throwerror(v, "failed to get dialog");
+
+	Common::String node = "start";
+	if (nArgs == 3) {
+		if (SQ_FAILED(sqget(v, 3, node))) {
+			return sq_throwerror(v, "failed to get node");
+		}
+	}
+	Common::String actor = g_engine->_actor ? g_engine->_actor->_key : "";
+	g_engine->_dialog.start(actor, dialog, node);
 	return 0;
 }
 

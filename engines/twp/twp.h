@@ -40,6 +40,10 @@
 #include "twp/prefs.h"
 #include "twp/tsv.h"
 #include "twp/scenegraph.h"
+#include "twp/dialog.h"
+
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 namespace Twp {
 
@@ -51,6 +55,7 @@ class Scene;
 class Room;
 class InputState;
 class Object;
+class Dialog;
 struct TwpGameDescription;
 
 class TwpEngine : public Engine {
@@ -164,6 +169,7 @@ public:
 	InputState _inputState;
 	Camera _camera;
 	TextDb _textDb;
+	Dialog _dialog;
 	struct Cursor {
 		Math::Vector2d pos;
 		bool leftDown = false;

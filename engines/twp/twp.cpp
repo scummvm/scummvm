@@ -48,9 +48,6 @@
 
 namespace Twp {
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
-
 TwpEngine *g_engine;
 
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -60,6 +57,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	sq_resetobject(&_defaultObj);
 	_screenScene.addChild(&_inputState);
+	_screenScene.addChild(&_dialog);
 }
 
 TwpEngine::~TwpEngine() {
@@ -233,17 +231,25 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
+	// GGPackEntryReader reader;
+	// if (reader.open(_pack, "TronDialogs.byack")) {
+	// 	YackParser parser;
+	// 	YackTokenReader ytr;
+	// 	ytr.open(&reader);
+
+	// 	for (auto it=ytr.begin();it!=ytr.end();it++) {
+	// 		Common::String s = ytr.readText(*it);
+	// 		debug("%s [%d, %d] %s", it->toString().c_str(), it->start, it->end, s.c_str());
+	// 	}
+
+	// 	unique_ptr<YCompilationUnit> cu(parser.parse(&reader));
+	// 	YackDump dump;
+	// 	cu->accept(dump);
+	// }
+
 	HSQUIRRELVM v = _vm.get();
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
-
-	GGPackEntryReader reader;
-	if (reader.open(_pack, "Opening.byack")) {
-		YackParser parser;
-		unique_ptr<YCompilationUnit> cu(parser.parse(&reader));
-		YackDump dump;
-		cu->accept(dump);
-	}
 
 	// const SQChar *code = "cameraInRoom(StartScreen)";
 	const SQChar *code = "start(1)";

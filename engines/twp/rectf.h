@@ -51,6 +51,10 @@ public:
 	inline float right() { return r.x + r.w; }
 	inline float top() { return r.y + r.h; }
 	inline float bottom() { return r.y; }
+
+	bool contains(Math::Vector2d pos) {
+		return pos.getX() >= r.x && pos.getX() <= (r.x + r.w) && pos.getY() >= r.y && pos.getY() <= r.y + r.h;
+	}
 };
 } // namespace Twp
 
