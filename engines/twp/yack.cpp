@@ -24,35 +24,35 @@
 
 namespace Twp {
 
-Common::String Token::toString() const {
+Common::String YackToken::toString() const {
 	switch (id) {
-	case TokenId::Assign:
+	case YackTokenId::Assign:
 		return "Assign";
-	case TokenId::NewLine:
+	case YackTokenId::NewLine:
 		return "NewLine";
-	case TokenId::Colon:
+	case YackTokenId::Colon:
 		return "Colon";
-	case TokenId::Code:
+	case YackTokenId::Code:
 		return "Code";
-	case TokenId::Comment:
+	case YackTokenId::Comment:
 		return "Comment";
-	case TokenId::End:
+	case YackTokenId::End:
 		return "End";
-	case TokenId::Goto:
+	case YackTokenId::Goto:
 		return "Goto";
-	case TokenId::Identifier:
+	case YackTokenId::Identifier:
 		return "Identifier";
-	case TokenId::None:
+	case YackTokenId::None:
 		return "None";
-	case TokenId::Int:
+	case YackTokenId::Int:
 		return "Integer";
-	case TokenId::Float:
+	case YackTokenId::Float:
 		return "Float";
-	case TokenId::Condition:
+	case YackTokenId::Condition:
 		return "Condition";
-	case TokenId::String:
+	case YackTokenId::String:
 		return "String";
-	case TokenId::Whitespace:
+	case YackTokenId::Whitespace:
 		return "Whitespace";
 	default:
 		return "?";
@@ -66,12 +66,12 @@ YackTokenReader::Iterator::Iterator(YackTokenReader &reader, int64 pos)
 }
 
 YackTokenReader::Iterator::Iterator(const Iterator &it)
-	: _reader(it._reader), _pos(it._pos), _token(it._token) {
+	: _reader(it._reader), _pos(it._pos), _YackToken(it._YackToken) {
 }
 
 YackTokenReader::Iterator &YackTokenReader::Iterator::operator++() {
 	_reader->_stream->seek(_pos);
-	_reader->readToken(_token);
+	_reader->readYackToken(_YackToken);
 	_pos = _reader->_stream->pos();
 	return *this;
 }
@@ -82,16 +82,16 @@ YackTokenReader::Iterator YackTokenReader::Iterator::operator++(int) {
 	return tmp;
 }
 
-Token &YackTokenReader::Iterator::operator*() {
-	return _token;
+YackToken &YackTokenReader::Iterator::operator*() {
+	return _YackToken;
 }
 
-const Token &YackTokenReader::Iterator::operator*() const {
-	return _token;
+const YackToken &YackTokenReader::Iterator::operator*() const {
+	return _YackToken;
 }
 
-Token *YackTokenReader::Iterator::operator->() {
-	return &_token;
+YackToken *YackTokenReader::Iterator::operator->() {
+	return &_YackToken;
 }
 
 void YackTokenReader::open(Common::SeekableReadStream *stream) {
@@ -113,37 +113,37 @@ void YackTokenReader::ignore(int64 n, int delim) {
 	}
 }
 
-TokenId YackTokenReader::readCode() {
+YackTokenId YackTokenReader::readCode() {
 	byte c;
 	byte previousChar = 0;
 	while ((c = peek()) != '\n' && c != '\0') {
 		ignore();
 		if (previousChar == ' ' && c == '[' && peek() != ' ') {
 			_stream->seek(-1, SEEK_CUR);
-			return TokenId::Code;
+			return YackTokenId::Code;
 		}
 		previousChar = c;
 	}
-	return TokenId::Code;
+	return YackTokenId::Code;
 }
 
-TokenId YackTokenReader::readDollar() {
+YackTokenId YackTokenReader::readDollar() {
 	char c;
 	while ((c = peek()) != '[' && c != ' ' && c != '\n' && c != '\0') {
 		ignore();
 	}
-	return TokenId::Dollar;
+	return YackTokenId::Dollar;
 }
 
-TokenId YackTokenReader::readCondition() {
+YackTokenId YackTokenReader::readCondition() {
 	while (peek() != ']') {
 		ignore();
 	}
 	ignore();
-	return TokenId::Condition;
+	return YackTokenId::Condition;
 }
 
-TokenId YackTokenReader::readNumber() {
+YackTokenId YackTokenReader::readNumber() {
 	bool isFloat = false;
 	while (Common::isDigit(peek())) {
 		ignore();
@@ -155,21 +155,21 @@ TokenId YackTokenReader::readNumber() {
 	while (Common::isDigit(peek())) {
 		ignore();
 	}
-	return isFloat ? TokenId::Float : TokenId::Int;
+	return isFloat ? YackTokenId::Float : YackTokenId::Int;
 }
 
-TokenId YackTokenReader::readComment() {
+YackTokenId YackTokenReader::readComment() {
 	ignore(INT_MAX, '\n');
 	_stream->seek(_stream->pos() - 1);
-	return TokenId::Comment;
+	return YackTokenId::Comment;
 }
 
-TokenId YackTokenReader::readString() {
+YackTokenId YackTokenReader::readString() {
 	ignore(INT_MAX, '\"');
-	return TokenId::String;
+	return YackTokenId::String;
 }
 
-TokenId YackTokenReader::readIdentifier(char c) {
+YackTokenId YackTokenReader::readIdentifier(char c) {
 	Common::String id;
 	id += c;
 	while (Common::isAlnum(peek()) || peek() == '_') {
@@ -178,39 +178,39 @@ TokenId YackTokenReader::readIdentifier(char c) {
 	}
 	if (id == "waitwhile") {
 		readCode();
-		return TokenId::WaitWhile;
+		return YackTokenId::WaitWhile;
 	}
-	return TokenId::Identifier;
+	return YackTokenId::Identifier;
 }
 
-TokenId YackTokenReader::readTokenId() {
+YackTokenId YackTokenReader::readYackTokenId() {
 	char c;
 	_stream->read(&c, 1);
 	if (_stream->eos()) {
-		return TokenId::End;
+		return YackTokenId::End;
 	}
 
 	switch (c) {
 	case '\0':
-		return TokenId::End;
+		return YackTokenId::End;
 	case '\n':
 		_line++;
-		return TokenId::NewLine;
+		return YackTokenId::NewLine;
 	case '\t':
 	case ' ':
 		while (Common::isSpace(peek()) && peek() != '\n')
 			ignore();
-		return TokenId::Whitespace;
+		return YackTokenId::Whitespace;
 	case '!':
 		return readCode();
 	case ':':
-		return TokenId::Colon;
+		return YackTokenId::Colon;
 	case '$':
 		return readDollar();
 	case '[':
 		return readCondition();
 	case '=':
-		return TokenId::Assign;
+		return YackTokenId::Assign;
 	case '\"':
 		return readString();
 	case '#':
@@ -219,32 +219,32 @@ TokenId YackTokenReader::readTokenId() {
 	default:
 		if (c == '-' && peek() == '>') {
 			ignore();
-			return TokenId::Goto;
+			return YackTokenId::Goto;
 		}
 		if (c == '-' || Common::isDigit(c)) {
 			return readNumber();
 		} else if (Common::isAlpha(c)) {
 			return readIdentifier(c);
 		}
-		error("unknown character: %c", c);
-		return TokenId::None;
+		debug("unknown character: %c", c);
+		return YackTokenId::None;
 	}
 }
 
-bool YackTokenReader::readToken(Token &token) {
+bool YackTokenReader::readYackToken(YackToken &YackToken) {
 	int64 start = _stream->pos();
 	int line = _line;
-	auto id = readTokenId();
-	while (id == TokenId::Whitespace || id == TokenId::Comment || id == TokenId::NewLine || id == TokenId::None) {
+	auto id = readYackTokenId();
+	while (id == YackTokenId::Whitespace || id == YackTokenId::Comment || id == YackTokenId::NewLine || id == YackTokenId::None) {
 		start = _stream->pos();
 		line = _line;
-		id = readTokenId();
+		id = readYackTokenId();
 	}
 	int64 end = _stream->pos();
-	token.id = id;
-	token.start = start;
-	token.end = end;
-	token.line = line;
+	YackToken.id = id;
+	YackToken.start = start;
+	YackToken.end = end;
+	YackToken.line = line;
 	return true;
 }
 
@@ -259,8 +259,8 @@ Common::String YackTokenReader::readText(int64 pos, int64 size) {
 	return out;
 }
 
-Common::String YackTokenReader::readText(const Token &token) {
-	return readText(token.start, token.end - token.start);
+Common::String YackTokenReader::readText(const YackToken &YackToken) {
+	return readText(YackToken.start, YackToken.end - YackToken.start);
 }
 
 YackTokenReader::iterator YackTokenReader::begin() {
@@ -272,7 +272,7 @@ YackTokenReader::iterator YackTokenReader::end() {
 	return Iterator(*this, pos);
 }
 
-bool YackParser::match(const std::initializer_list<TokenId> &ids) {
+bool YackParser::match(const std::initializer_list<YackTokenId> &ids) {
 	auto it = _it;
 	for (auto id : ids) {
 		if (it->id != id)
@@ -325,10 +325,13 @@ YLabel *YackParser::parseLabel() {
 	// label
 	pLabel.reset(new YLabel(_it->line));
 	pLabel->_name = _reader.readText(*_it++);
+	debug("label %s", pLabel->_name.c_str());
 	do {
-		if (match({TokenId::Colon}) || match({TokenId::End}))
+		if (match({YackTokenId::Colon}) || match({YackTokenId::End}))
 			break;
+		YackDump d;
 		YStatement *pStatement = parseStatement();
+		pStatement->accept(d);
 		pLabel->_stmts.push_back(pStatement);
 	} while (true);
 
@@ -341,7 +344,7 @@ YStatement *YackParser::parseStatement() {
 	// expression
 	pStatement->_exp.reset(parseExpression());
 	// conditions
-	while (match({TokenId::Condition})) {
+	while (match({YackTokenId::Condition})) {
 		pStatement->_conds.push_back(parseCondition());
 	}
 	return pStatement.release();
@@ -350,6 +353,7 @@ YCond *YackParser::parseCondition() {
 	auto text = _reader.readText(*_it);
 	auto conditionText = text.substr(1, text.size() - 2);
 	auto line = _it->line;
+	_it++;
 	if (conditionText == "once") {
 		return new YOnce(line);
 	} else if (conditionText == "showonce") {
@@ -364,17 +368,17 @@ YCond *YackParser::parseCondition() {
 	return pCondition;
 }
 YExp *YackParser::parseExpression() {
-	if (match({TokenId::Identifier, TokenId::Colon, TokenId::String}))
+	if (match({YackTokenId::Identifier, YackTokenId::Colon, YackTokenId::String}))
 		return parseSayExpression();
-	if (match({TokenId::WaitWhile}))
+	if (match({YackTokenId::WaitWhile}))
 		return parseWaitWhileExpression();
-	if (match({TokenId::Identifier}))
+	if (match({YackTokenId::Identifier}))
 		return parseInstructionExpression();
-	if (match({TokenId::Goto}))
+	if (match({YackTokenId::Goto}))
 		return parseGotoExpression();
-	if (match({TokenId::Int}))
+	if (match({YackTokenId::Int}))
 		return parseChoiceExpression();
-	if (match({TokenId::Code}))
+	if (match({YackTokenId::Code}))
 		return parseCodeExpression();
 	return nullptr;
 }
@@ -408,7 +412,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "waitfor") {
 		// waitfor [actor]
 		auto pExp = new YWaitFor();
-		if (_it->id == TokenId::Identifier) {
+		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
 			pExp->_actor = actor;
 		}
@@ -416,7 +420,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "parrot") {
 		// parrot [active]
 		auto pExp = new YParrot();
-		if (_it->id == TokenId::Identifier) {
+		if (_it->id == YackTokenId::Identifier) {
 			auto active = _reader.readText(*_it++);
 			pExp->_active = active == "yes";
 		}
@@ -424,7 +428,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "dialog") {
 		// dialog [actor]
 		auto pExp = new YDialog();
-		if (_it->id == TokenId::Identifier) {
+		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
 			pExp->_actor = actor;
 		}
@@ -432,7 +436,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "override") {
 		// override [node]
 		auto pExp = new YOverride();
-		if (_it->id == TokenId::Identifier) {
+		if (_it->id == YackTokenId::Identifier) {
 			auto node = _reader.readText(*_it++);
 			pExp->_node = node;
 		}
@@ -440,7 +444,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "allowobjects") {
 		// allowobjects [allow]
 		auto pExp = new YAllowObjects();
-		if (_it->id == TokenId::Identifier) {
+		if (_it->id == YackTokenId::Identifier) {
 			auto node = _reader.readText(*_it++);
 			pExp->_active = node == "YES";
 		}
@@ -448,7 +452,7 @@ YExp *YackParser::parseInstructionExpression() {
 	} else if (identifier == "limit") {
 		// limit [number]
 		auto pExp = new YLimit();
-		if (_it->id == TokenId::Int) {
+		if (_it->id == YackTokenId::Int) {
 			auto node = _reader.readText(*_it++);
 			pExp->_max = std::strtol(node.c_str(), nullptr, 10);
 		}
@@ -474,7 +478,7 @@ YChoice *YackParser::parseChoiceExpression() {
 	auto number = atol(_reader.readText(*_it).c_str());
 	_it++;
 	Common::String text;
-	if (_it->id == TokenId::Dollar) {
+	if (_it->id == YackTokenId::Dollar) {
 		text = _reader.readText(*_it);
 	} else {
 		text = _reader.readText(*_it);
@@ -494,7 +498,7 @@ YCompilationUnit *YackParser::parse(Common::SeekableReadStream *stream) {
 	_it = _reader.begin();
 	auto pCu = unique_ptr<YCompilationUnit>();
 	pCu.reset(new YCompilationUnit());
-	while (!match({TokenId::End})) {
+	while (!match({YackTokenId::End})) {
 		pCu->_labels.push_back(parseLabel());
 	}
 	return pCu.release();

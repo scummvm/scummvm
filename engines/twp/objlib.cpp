@@ -373,7 +373,7 @@ static SQInteger objectHidden(HSQUIRRELVM v) {
 	if (obj) {
 		int hidden = 0;
 		sqget(v, 3, hidden);
-		debug("Sets object visible %s to %s", obj->_name.c_str(), hidden == 0 ? "true" : "false");
+		debug("Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(),hidden == 0 ? "true" : "false");
 		obj->_node->setVisible(hidden == 0);
 	}
 	return 0;

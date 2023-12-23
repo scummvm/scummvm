@@ -32,7 +32,7 @@ namespace Twp {
 template<typename T, class DL = Common::DefaultDeleter<T> >
 using unique_ptr = Common::ScopedPtr<T, DL>;
 
-enum class TokenId {
+enum class YackTokenId {
 	None,
 	NewLine,
 	Identifier,
@@ -54,7 +54,7 @@ enum class TokenId {
 // enumeration that lists all errors that can occur
 enum YackError {
 	ERR_NONE,              // no error
-	ERR_INVALIDTOKEN,      // invalid token
+	ERR_INVALIDYackToken,      // invalid YackToken
 	ERR_STRINGEXPECTED,    // string expected
 	ERR_COLONEXPECTED,     // `:` expected
 	ERR_COMMAEXPECTED,     // `,` expected
@@ -310,8 +310,8 @@ public:
 	virtual void defaultVisit(const YackNode &node) {}
 };
 
-struct Token {
-	TokenId id;
+struct YackToken {
+	YackTokenId id;
 	int64 start;
 	int64 end;
 	int line;
@@ -323,15 +323,15 @@ class YackTokenReader {
 public:
 	class Iterator {
 	public:
-		using value_type = Token;
+		using value_type = YackToken;
 		using difference_type = ptrdiff_t;
-		using pointer = Token *;
-		using reference = Token &;
+		using pointer = YackToken *;
+		using reference = YackToken &;
 
 	private:
 		YackTokenReader *_reader = nullptr;
 		int64 _pos = 0;
-		Token _token;
+		YackToken _YackToken;
 
 	public:
 		Iterator() {}
@@ -342,15 +342,15 @@ public:
 
 		Iterator &operator=(const Iterator &rhs) {
 			_pos = rhs._pos;
-			_token = rhs._token;
+			_YackToken = rhs._YackToken;
 			_reader = rhs._reader;
 			return *this;
 		}
 		bool operator==(const Iterator &rhs) const { return _pos == rhs._pos; }
 		bool operator!=(const Iterator &rhs) const { return _pos != rhs._pos; }
-		Token &operator*();
-		const Token &operator*() const;
-		Token *operator->();
+		YackToken &operator*();
+		const YackToken &operator*() const;
+		YackToken *operator->();
 	};
 
 	using iterator = Iterator;
@@ -360,19 +360,19 @@ public:
 
 	iterator begin();
 	iterator end();
+	Common::String readText(const YackToken &YackToken);
 
 private:
-	bool readToken(Token &token);
-	Common::String readText(const Token &token);
+	bool readYackToken(YackToken &YackToken);
 	Common::String readText(int64 pos, int64 size);
-	TokenId readTokenId();
-	TokenId readCode();
-	TokenId readCondition();
-	TokenId readDollar();
-	TokenId readNumber();
-	TokenId readComment();
-	TokenId readString();
-	TokenId readIdentifier(char c);
+	YackTokenId readYackTokenId();
+	YackTokenId readCode();
+	YackTokenId readCondition();
+	YackTokenId readDollar();
+	YackTokenId readNumber();
+	YackTokenId readComment();
+	YackTokenId readString();
+	YackTokenId readIdentifier(char c);
 	byte peek();
 	void ignore(int64 n = 1, int delim = EOF);
 
@@ -389,7 +389,7 @@ public:
 	YCompilationUnit* parse(Common::SeekableReadStream *stream);
 
 private:
-	bool match(const std::initializer_list<TokenId> &ids);
+	bool match(const std::initializer_list<YackTokenId> &ids);
 	YLabel* parseLabel();
 	YStatement *parseStatement();
 	YCond *parseCondition();
