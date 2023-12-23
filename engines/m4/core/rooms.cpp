@@ -370,9 +370,10 @@ void Sections::pal_game_task() {
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
 
 	if (!_G(kernel).pause) {
-		if (_G(please_hyperwalk)) {
-			_G(please_hyperwalk) = false;
-			toggle_through_cursors();
+		if (_G(toggle_cursor) != CURSCHANGE_NONE) {
+			CursorChange change = _G(toggle_cursor);
+			_G(toggle_cursor) = CURSCHANGE_NONE;
+			g_vars->getHotkeys()->toggle_through_cursors(change);
 		}
 
 		updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;

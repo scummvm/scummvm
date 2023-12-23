@@ -33,11 +33,7 @@ namespace M4 {
 enum {
 	CursorPositionChanged = 0,
 	LeftButtonPressed, LeftButtonReleased, RightButtonPressed,
-	RightButtonReleased, OEM_MiddleButtonPressed, OEM_MiddleButtonReleased
-#if 0
-	,
-	LeftButtonHold, RightButtonHold, OEM_MiddleButtonHold
-#endif
+	RightButtonReleased
 };
 
 /*
@@ -50,9 +46,6 @@ enum {
 #define RBD				((uint16)(1 << RightButtonPressed))
 #define RBU				((uint16)(1 << RightButtonReleased))
 #define RBH				((uint16)(1 << RightButtonHold))
-#define MBD				((uint16)(1 << OEM_MiddleButtonPressed))
-#define MBU				((uint16)(1 << OEM_MiddleButtonReleased))
-//#define MBHold			((uint16)(1 << OEM_MiddleButtonHold))
 
 #define LBC				(LBD + LBU)
 #define RBC				(RBD + RBU)
@@ -64,10 +57,12 @@ enum {
 #define _ClearMLD _mouseStateEvent &= ~LBD
 #define _MLU (_mouseStateEvent & LBU)
 #define _ClearMLU _mouseStateEvent &= ~LBU
+
 #define _MRD (_mouseStateEvent & RBD)
 #define _ClearMRD _mouseStateEvent &= ~RBD
 #define _MRU (_mouseStateEvent & RBU)
 #define _ClearMRU _mouseStateEvent &= ~RBU
+
 #define _MMOVE ((_mouseX != _oldX) || (_mouseY != _oldY))
 #define _MSAVE _oldX = _mouseX; _oldY = _mouseY
 
@@ -122,14 +117,17 @@ void Events::handleMouseEvent(const Common::Event &ev) {
 		_mouseStateEvent |= RBU;
 		ButtonState = 0;
 		break;
+
+	case Common::EVENT_WHEELDOWN:
+		_G(toggle_cursor) = CURSCHANGE_NEXT;
+		break;
+	case Common::EVENT_WHEELUP:
+		_G(toggle_cursor) = CURSCHANGE_PREVIOUS;
+		break;
 	case Common::EVENT_MBUTTONDOWN:
-		_mouseStateEvent |= MBD;
-		ButtonState = 4;
+		_G(toggle_cursor) = CURSCHANGE_TOGGLE;
 		break;
-	case Common::EVENT_MBUTTONUP:
-		_mouseStateEvent |= MBU;
-		ButtonState = 0;
-		break;
+
 	default:
 		break;
 	}
@@ -184,7 +182,7 @@ MouseEvent Events::mouse_get_event() {
 		if (_MRU) {
 			_ClearMRU;
 			_mouse_state = _MS_no_event;
-			_G(please_hyperwalk) = true;
+			_G(toggle_cursor) = CURSCHANGE_NEXT;
 			return _ME_R_release;
 		}
 		if (_MMOVE) {

@@ -140,7 +140,7 @@ public:
 	void *_custom_interface_setup = nullptr;
 	void *_custom_interface_button_handler = nullptr;
 	int _global_sound_room = 0;
-	bool _please_hyperwalk = false;
+	CursorChange _toggle_cursor = CURSCHANGE_NONE;
 	bool _i_just_hyperwalked = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
 	bool _vmng_Initted = false;

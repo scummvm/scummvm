@@ -28,6 +28,10 @@
 
 namespace M4 {
 
+enum CursorChange {
+	CURSCHANGE_NONE, CURSCHANGE_NEXT, CURSCHANGE_PREVIOUS, CURSCHANGE_TOGGLE
+};
+
 struct Hotkeys {
 private:
 	static Dialog *_teleportDialog;
@@ -96,7 +100,7 @@ public:
 	static void saveGame(void *, void *);
 	static void loadGame(void *, void *);
 
-	virtual void toggle_through_cursors() = 0;
+	virtual void toggle_through_cursors(CursorChange cursChange = CURSCHANGE_NEXT) = 0;
 };
 
 } // End of namespace M4
