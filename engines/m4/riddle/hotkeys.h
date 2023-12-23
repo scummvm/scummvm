@@ -25,11 +25,16 @@
 
 #include "m4/m4_types.h"
 #include "m4/gui/hotkeys.h"
+#include "m4/core/mouse.h"
 
 namespace M4 {
 namespace Riddle {
 
 struct Hotkeys : public M4::Hotkeys {
+private:
+	cursor_states _priorCursor = kARROW;
+
+public:
 	static void t_cb(void *, void *);
 	static void u_cb(void *, void *);
 	static void l_cb(void *, void *);
@@ -44,7 +49,7 @@ struct Hotkeys : public M4::Hotkeys {
 
 	void add_hot_keys() override;
 
-	void toggle_through_cursors() override;
+	void toggle_through_cursors(CursorChange cursChange = CURSCHANGE_NEXT) override;
 };
 
 } // namespace Riddle

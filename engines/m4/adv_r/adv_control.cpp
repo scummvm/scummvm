@@ -82,10 +82,6 @@ void adv_kill_digi_between_rooms(bool true_or_false) {
 	_G(shut_down_digi_tracks_between_rooms) = true_or_false;
 }
 
-void toggle_through_cursors() {
-	g_vars->getHotkeys()->toggle_through_cursors();
-}
-
 bool this_is_a_walkcode(int32 x, int32 y) {
 	if (!_G(screenCodeBuff))
 		return false;

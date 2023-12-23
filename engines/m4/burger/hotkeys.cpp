@@ -59,19 +59,46 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey('f', a_cb);
 }
 
-void Hotkeys::toggle_through_cursors() {
-	switch (_G(cursor_state)) {
+void Hotkeys::toggle_through_cursors(CursorChange cursChange) {
+	cursor_states newCursor = kARROW;
+
+	switch (cursChange) {
+	case CURSCHANGE_NEXT:
+		newCursor = _G(cursor_state) == kUSE ? kARROW :
+			static_cast<cursor_states>((int)_G(cursor_state) + 1);
+		break;
+
+	case CURSCHANGE_PREVIOUS:
+		newCursor = _G(cursor_state) == kARROW ? kUSE :
+			static_cast<cursor_states>((int)_G(cursor_state) - 1);
+		break;
+
+	case CURSCHANGE_TOGGLE:
+		if (_G(cursor_state) == kARROW) {
+			newCursor = _priorCursor;
+			_priorCursor = _G(cursor_state);
+		} else {
+			newCursor = kARROW;
+			_priorCursor = _G(cursor_state);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	switch (newCursor) {
 	case kARROW:
-		Hotkeys::l_cb(nullptr, nullptr);
+		Hotkeys::a_cb(nullptr, nullptr);
 		break;
 	case kLOOK:
-		Hotkeys::t_cb(nullptr, nullptr);
+		Hotkeys::l_cb(nullptr, nullptr);
 		break;
 	case kTAKE:
-		Hotkeys::u_cb(nullptr, nullptr);
+		Hotkeys::t_cb(nullptr, nullptr);
 		break;
 	case kUSE:
-		Hotkeys::a_cb(nullptr, nullptr);
+		Hotkeys::u_cb(nullptr, nullptr);
 		break;
 	default:
 		break;

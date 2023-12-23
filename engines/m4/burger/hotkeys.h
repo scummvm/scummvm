@@ -25,6 +25,7 @@
 
 #include "m4/m4_types.h"
 #include "m4/gui/hotkeys.h"
+#include "m4/core/mouse.h"
 
 namespace M4 {
 namespace Burger {
@@ -32,6 +33,7 @@ namespace Burger {
 struct Hotkeys : public M4::Hotkeys {
 private:
 	static Dialog *_versionDialog;
+	cursor_states _priorCursor = kARROW;
 
 private:
 	static void t_cb(void *, void *);
@@ -56,7 +58,7 @@ public:
 
 	void add_hot_keys() override;
 
-	void toggle_through_cursors() override;
+	void toggle_through_cursors(CursorChange cursChange = CURSCHANGE_NEXT) override;
 };
 
 } // namespace Burger
