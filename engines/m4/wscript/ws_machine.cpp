@@ -552,7 +552,7 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 	}
 
 	if (myInstruction) {
-		for (myIndex = minIndex; myIndex <= maxIndex; i++) {
+		for (myIndex = minIndex; myIndex <= maxIndex; myIndex++) {
 			if (randFlag) {
 				myCount = imath_ranged_rand(minCount, maxCount);
 			}
