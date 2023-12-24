@@ -42,7 +42,7 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 		_G(kernel).teleported_in = true;
 		return false;
 	} else {
-		debugPrintf("teleport <room number>\n");
+		debugPrintf("Currently in room %d\n", _G(game).room_id);
 		return true;
 	}
 }
