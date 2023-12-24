@@ -33,9 +33,9 @@ namespace M4 {
 #define _REDRAW_ACTIVE 4
 #define _INIT_LISTBOX 8
 
-#define _LB_BLACK	__BLACK
-#define _LB_LTGREY	0x07		//used to be 0x0c
-#define _LB_DKGREY	0x08		//used to be 0x04
+#define _LB_BLACK	0x00
+#define _LB_LTGREY	0x07
+#define _LB_DKGREY	0x08
 #define _LB_WHITE	0x0f
 #define _LB_BROWN	0x07
 

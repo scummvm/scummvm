@@ -37,7 +37,7 @@ namespace M4 {
 #define STR_FONTOFF "font offsets"
 #define STR_FONTDATA "font data"
 
-static byte font_colors[4] = { __BLACK, __WHITE, __BLACK, __DKGRAY };
+static byte font_colors[4] = { 0, 15, 0, 8 };
 constexpr byte font_intr_w = 8;
 constexpr byte font_intr_h = 8;
 

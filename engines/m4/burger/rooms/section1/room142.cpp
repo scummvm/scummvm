@@ -50,11 +50,11 @@ static const char *SAID[][4] = {
 };
 
 const WilburMatch Room142::MATCH[] = {
-	{ "GEAR", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
-	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
-	{ "GEAR", "PARKING LOT", 5, &_G(flags)[kTourBusAtDiner], 0, &_val2, 13 },
-	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[kTourBusAtDiner], 0, &_val2, 13 },
-	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &_G(flags)[kIceBoxOpened], 0, &Vars::_wilbur_should, 1 },
+	{ "GEAR", "PARKING LOT", 9, &Flags::_flags[V000], 1003, &_val1, 18 },
+	{ "LOOK AT", "PARKING LOT", 9, &Flags::_flags[V000], 1003, &_val1, 18 },
+	{ "GEAR", "PARKING LOT", 5, &Flags::_flags[kTourBusAtDiner], 0, &_val2, 13 },
+	{ "LOOK AT", "PARKING LOT", 5, &Flags::_flags[kTourBusAtDiner], 0, &_val2, 13 },
+	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &Flags::_flags[kIceBoxOpened], 0, &Vars::_wilbur_should, 1 },
 	{ "TAKE", "FANBELT", kCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
 	{ "GEAR", "BACK DOOR", 6, nullptr, 0, nullptr, 0 },
 	WILBUR_MATCH_END
