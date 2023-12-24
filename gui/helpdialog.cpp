@@ -38,6 +38,14 @@ static const char * const helpTabs[] = {
 _s("General"),
 "",
 _s(
+"## ScummVM at a Glance\n"
+"\n"
+"ScummVM is a modern reimplementation of various game engines. Once you transfer the original game data to your device, it endeavors to use it to faithfully recreate the original gaming experience. \n"
+"\n"
+"ScummVM isn't your typical emulator of DOS, Windows, or some console. Rather than a one-size-fits-all approach, it takes a meticulous route, implementing the precise game logic for each specific title or engine it supports. ScummVM will not work with game engines it does not support.\n"
+"\n"
+"ScummVM is developed by a team of volunteers and is free software. We lack an extensive testing team, possess only a limited range of devices, and cannot always address every request. We also do not run advertisements or sell you anything. Please be mindful of this when you submit a complaint or a bug report.\n"
+"\n"
 "## Where to get the games\n"
 "\n"
 "Visit [our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games) for a detailed list of supported games and where to purchase them.\n"

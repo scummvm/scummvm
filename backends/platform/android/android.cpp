@@ -1028,6 +1028,18 @@ void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
 
 static const char * const helpTabs[] = {
 
+_s("Getting help"),
+"",
+_s(
+"## Help, I'm lost!\n"
+"\n"
+"First, make sure you have the games and necessary game files ready. Check the **Where to Get the Games** section under the **General** tab. Once obtained, follow the steps outlined in the **Adding Games** tab to finish adding them on this device. Take a moment to review this process carefully, as some users encountered challenges here owing to recent Android changes.\n"
+"\n"
+"Need more help? Refer to our [online documentation for Android](https://docs.scummvm.org/en/latest/other_platforms/android.html). Got questions? Swing by our [support forums](https://forums.scummvm.org/viewforum.php?f=17) or hop on our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an [Android support channel](https://discord.com/channels/581224060529148060/1135579923185139862).\n"
+"\n"
+"Oh, and heads up, many of our supported games are intentionally tricky, sometimes mind-bogglingly so. If you're stuck in a game, think about checking out a game walkthrough. Good luck!\n"
+),
+
 _s("Touch Controls"),
 "android-help.zip",
 _s(
