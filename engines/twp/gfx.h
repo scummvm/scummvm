@@ -56,7 +56,7 @@ struct Color {
 	}
 
 	static Color rgb(int c) {
-  		return Color((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF));
+		return Color((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF));
 	}
 
 	static Color create(uint8 red, uint8 green, uint8 blue, uint8 alpha = 0xFF) {
@@ -74,13 +74,21 @@ public:
 
 class Texture {
 public:
-	void load(const Graphics::Surface& surface);
-	static void bind(const Texture *pTexture);
+	virtual ~Texture() {}
+	void load(const Graphics::Surface &surface);
+	static void bind(const Texture *texture);
+	void capture(Graphics::Surface &surface);
 
 public:
 	uint32 id;
-    int width, height;
-    uint32 fbo;
+	int width, height;
+	uint32 fbo;
+};
+
+class RenderTexture : public Texture {
+public:
+	RenderTexture(Math::Vector2d size);
+	virtual ~RenderTexture() override;
 };
 
 struct TextureSlot {
@@ -97,6 +105,9 @@ public:
 
 	void setUniform(const char *name, Math::Matrix4 value);
 	virtual void applyUniforms() {}
+	virtual int getNumTextures() { return 0;};
+	virtual int getTexture(int index) { return 0;};
+	virtual int getTextureLoc(int index) { return 0;};
 
 private:
 	uint32 loadShader(const char *code, uint32 shaderType);
@@ -123,15 +134,18 @@ public:
 	Math::Vector2d cameraPos() const { return _cameraPos; }
 	void cameraPos(Math::Vector2d pos) { _cameraPos = pos; }
 
-	void use(Shader* shader);
+	Shader *getShader() { return _shader; }
+	void use(Shader *shader);
+	void setRenderTarget(RenderTexture *target);
 
 	void clear(Color color);
-	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, Math::Matrix4 transf = Math::Matrix4(), Texture* texture = NULL);
-	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 transf = Math::Matrix4(), Texture* texture = NULL);
-	void drawLines(Vertex* vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
-	void draw(Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 trsf = Math::Matrix4(), Texture* texture = NULL);
+	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 transf = Math::Matrix4(), Texture *texture = NULL);
+	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 transf = Math::Matrix4(), Texture *texture = NULL);
+	void drawLines(Vertex *vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
+	void draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf = Math::Matrix4(), Texture *texture = NULL);
 	void drawQuad(Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
-	void drawSprite(Common::Rect textRect, Texture& texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
+	void drawSprite(Common::Rect textRect, Texture &texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
+	void drawSprite(Texture &texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 
 private:
 	Math::Matrix4 getFinalTransform(Math::Matrix4 trsf);
@@ -140,14 +154,15 @@ private:
 private:
 	uint32 _vbo = 0, _ebo = 0;
 	Shader _defaultShader;
-	Shader* _shader = nullptr;
+	Shader *_shader = nullptr;
 	Math::Matrix4 _mvp;
 	Math::Vector2d _cameraPos;
 	Math::Vector2d _cameraSize;
 	Textures _textures;
-	Texture* _texture = nullptr;
+	Texture *_texture = nullptr;
 	int32 _posLoc = 0, _colLoc = 0, _texCoordsLoc = 0, _texLoc = 0, _trsfLoc = 0;
+	int32 _oldFbo;
 };
-}
+} // namespace Twp
 
 #endif

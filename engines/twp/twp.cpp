@@ -108,9 +108,9 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 	// TODO: update this
 	if (_room) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
-		//Object *obj = objAt(roomPos);
+		// Object *obj = objAt(roomPos);
 
-		if (_cursor.leftDown) {
+		if (_cursor.isLeftClick()) {
 			// button left: execute selected verb
 			clickedAtHandled(roomPos);
 			// if (!handled && obj) {
@@ -146,9 +146,11 @@ void TwpEngine::update(float elapsed) {
 	// _sentence.pos = scrPos;
 	// _dlg.mousePos = scrPos;
 	if (_room) {
-		if (_cursor.leftDown)
+		if (_cursor.isLeftClick())
 			clickedAt(_cursor.pos);
 	}
+
+	_fadeShader->_elapsed += elapsed;
 
 	// update camera
 	_camera.update(_room, _followActor, elapsed);
@@ -164,10 +166,21 @@ void TwpEngine::update(float elapsed) {
 		it++;
 	}
 
-	// update threads
-	for (auto it = _threads.begin(); it != _threads.end();) {
+	// update threads: make a copy of the threads because during threads update, new threads can be added
+	Common::Array<ThreadBase*> threads(_threads);
+	Common::Array<ThreadBase*> threadsToRemove;
+
+	for (auto it = threads.begin(); it != threads.end(); it++) {
 		ThreadBase *thread = *it;
 		if (thread->update(elapsed)) {
+			threadsToRemove.push_back(thread);
+		}
+	}
+
+	// remove threads that are terminated
+	for (auto it = _threads.begin(); it != _threads.end();) {
+		ThreadBase *thread = *it;
+		if(find(threadsToRemove, thread)!=-1) {
 			it = _threads.erase(it);
 			delete thread;
 			continue;
@@ -187,19 +200,123 @@ void TwpEngine::update(float elapsed) {
 	}
 }
 
+void TwpEngine::setShaderEffect(RoomEffect effect) {
+	_shaderParams.effect = effect;
+	//   switch (effect) {
+	//   case RoomEffect::None:
+	//     _gfx.use(nullptr);
+	// 	break;
+	//   case RoomEffect::Sepia:
+	//     let shader = newShader(vertexShader, sepiaShader);
+	//     gfxShader(shader);
+	//     shader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
+	// 	break;
+	//   case RoomEffect::BlackAndWhite:
+	//     gfxShader(newShader(vertexShader, bwShader));
+	// 	break;
+	//   case RoomEffect::Ega:
+	//     gfxShader(newShader(vertexShader, egaShader));
+	// 	break;
+	//   case RoomEffect::Vhs:
+	//     gfxShader(newShader(vertexShader, vhsShader));
+	// 	break;
+	//   case RoomEffect::Ghost:
+	//     let shader = newShader(vertexShader, ghostShader);
+	//     gfxShader(shader);
+	// 	break;
+	//   }
+}
+
 void TwpEngine::draw() {
 	if (_room) {
 		Math::Vector2d screenSize = _room->getScreenSize();
 		_gfx.camera(screenSize);
 	}
+
+	RenderTexture renderTexture(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+	RenderTexture renderTexture2(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+	RenderTexture renderTexture3(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+
+	// draw scene into a texture
+	_gfx.setRenderTarget(&renderTexture);
 	_gfx.clear(Color(0, 0, 0));
-	_gfx.use(NULL);
+	_gfx.use(nullptr);
 	_scene.draw();
 
+	// then render this texture with room effect to another texture
+	_gfx.setRenderTarget(&renderTexture2);
+	// setShaderEffect(_room->_effect);
+	// _shaderParams.randomValue[0] = g_engine.rand.rand(0f..1f);
+	// _shaderParams.timeLapse = fmodf(_time, 1000.f);
+	// _shaderParams.iGlobalTime = _shaderParams.timeLapse;
+	// _shaderParams.updateShader();
+
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+	bool flipY = _fadeShader->_effect == FadeEffect::Wobble;
+	Math::Vector2d camPos = _gfx.camera();
+	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, flipY);
+
+	Texture *screenTexture = &renderTexture2;
+	if (_fadeShader->_effect != FadeEffect::None) {
+		// draw second room if any
+		_gfx.setRenderTarget(&renderTexture);
+		_gfx.use(nullptr);
+		_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+		_gfx.cameraPos(_fadeShader->_cameraPos);
+		_gfx.clear(Color(0, 0, 0));
+		if (_fadeShader->_effect == FadeEffect::Wobble) {
+			Math::Vector2d camSize = _fadeShader->_room->getScreenSize();
+			_gfx.camera(camSize);
+			_fadeShader->_room->_scene->draw();
+		}
+
+		_fadeShader->_fade = clamp(_fadeShader->_elapsed / _fadeShader->_duration, 0.f, 1.f);
+
+		// draw fade
+		Texture *texture1 = nullptr;
+		Texture *texture2 = nullptr;
+		switch (_fadeShader->_effect) {
+		case FadeEffect::Wobble:
+			texture1 = &renderTexture;
+			texture2 = &renderTexture2;
+			screenTexture = &renderTexture;
+			break;
+		case FadeEffect::In:
+			texture1 = &renderTexture,
+			texture2 = &renderTexture2;
+			screenTexture = &renderTexture3;
+			break;
+		case FadeEffect::Out:
+			texture1 = &renderTexture;
+			texture2 = &renderTexture2;
+			_fadeShader->_fade = 1.f - _fadeShader->_fade;
+			screenTexture = &renderTexture3;
+			break;
+		case FadeEffect::None:
+			break;
+		}
+
+		_gfx.setRenderTarget(&renderTexture3);
+		_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+		_fadeShader->_texture1 = texture1;
+		_fadeShader->_texture2 = texture2;
+		_gfx.use(_fadeShader.get());
+		_gfx.cameraPos(Math::Vector2d());
+		_gfx.drawSprite(*texture1);
+	}
+
+	// draw to screen
+	_gfx.setRenderTarget(nullptr);
+	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
+	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, flipY);
+
+	// draw UI
+	_gfx.use(nullptr);
 	_screenScene.draw();
 
 	g_system->updateScreen();
+
+	// _gfx.cameraPos(camPos);
 }
 
 Common::Error TwpEngine::run() {
@@ -210,6 +327,8 @@ Common::Error TwpEngine::run() {
 	setDebugger(new Console());
 
 	_gfx.init();
+	_fadeShader.reset(new FadeShader());
+
 	_lighting = new Lighting();
 
 	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
@@ -258,7 +377,7 @@ Common::Error TwpEngine::run() {
 
 	// Simple event handling loop
 	Common::Event e;
-	uint deltaTimeMs = 0;
+	uint time = _system->getMillis();
 	while (!shouldQuit()) {
 		const int dx = 4;
 		const int dy = 4;
@@ -304,13 +423,16 @@ Common::Error TwpEngine::run() {
 
 		_gfx.cameraPos(camPos);
 
-		update(deltaTimeMs / 1000.f);
+		uint32 newTime = _system->getMillis();
+		uint32 delta = newTime - time;
+		time = newTime;
+		update(delta / 1000.f);
 		draw();
+		_cursor.update();
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		deltaTimeMs = 10;
-		g_system->delayMillis(deltaTimeMs);
+		g_system->delayMillis(10);
 	}
 
 	return Common::kNoError;
@@ -489,7 +611,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 
 	// exit current room
 	exitRoom(_room);
-	// TODO: _fadeEffect.effect = None;
+	// TODO: _fadeShader->effect = None;
 
 	// sets the current room for scripts
 	sqsetf(sqrootTbl(v), "currentRoom", room->_table);
@@ -678,6 +800,16 @@ void TwpEngine::follow(Object *actor) {
 		if (oldRoom != actor->_room)
 			cameraAt(pos);
 	}
+}
+
+void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
+	_fadeShader->_fadeToSepia = fadeToSep;
+	_fadeShader->_effect = effect;
+	_fadeShader->_room = _room;
+	_fadeShader->_cameraPos = cameraPos();
+	_fadeShader->_duration = duration;
+	_fadeShader->_movement = effect == FadeEffect::Wobble ? 0.005f : 0.f;
+	_fadeShader->_elapsed = 0.f;
 }
 
 template<typename TFunc>

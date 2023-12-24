@@ -54,6 +54,7 @@ MODULE_OBJS = \
 	motor.o \
 	yack.o \
 	dialog.o \
+	shaders.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

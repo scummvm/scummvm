@@ -244,8 +244,43 @@ static SQInteger roomEffect(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Fades in or out (FADE_IN, FADE_OUT, FADE_WOBBLE, FADE_WOBBLE_TO_SEPIA) of the current room over the specified duration.
+//
+// Used for dramatic effect when we want to teleport the player actor to somewhere new, or when starting/ending a cutscene that takes place in another room.
+//
+// .. code-block:: Squirrel
+// roomFade(FADE_OUT, 0.5)
+// breaktime(0.5)
+// actorAt(currentActor, Alleyway.newLocationSpot)
+// cameraFollow(currentActor)
+// roomFade(FADE_IN, 0.5)
 static SQInteger roomFade(HSQUIRRELVM v) {
-	warning("TODO: roomFade not implemented");
+	SQInteger fadeType;
+	float t;
+	if (SQ_FAILED(sqget(v, 2, fadeType)))
+		return sq_throwerror(v, "failed to get fadeType");
+	if (SQ_FAILED(sqget(v, 3, t)))
+		return sq_throwerror(v, "failed to get time");
+	FadeEffect effect = FadeEffect::In;
+	bool sepia = false;
+	switch (fadeType) {
+	case FADE_IN:
+		effect = FadeEffect::In;
+		break;
+	case FADE_OUT:
+		effect = FadeEffect::Out;
+		break;
+	case FADE_WOBBLE:
+		effect = FadeEffect::Wobble;
+		break;
+	case FADE_WOBBLE_TO_SEPIA:
+		effect = FadeEffect::Wobble;
+		sepia = true;
+		break;
+	default:
+		break;
+	}
+	g_engine->fadeTo(effect, t, sepia);
 	return 0;
 }
 

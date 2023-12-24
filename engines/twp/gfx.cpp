@@ -20,6 +20,7 @@
  */
 
 #include "twp/gfx.h"
+#include "twp/twp.h"
 #include "common/debug.h"
 #include "graphics/opengl/debug.h"
 #include "graphics/opengl/context.h"
@@ -68,12 +69,57 @@ void Texture::load(const Graphics::Surface &surface) {
 	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, getFormat(surface.format.bytesPerPixel), width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
 }
 
-void Texture::bind(const Texture *pTexture) {
-	if (pTexture && pTexture->id) {
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, pTexture->id));
+void Texture::bind(const Texture *texture) {
+	if (texture && texture->id) {
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, texture->id));
 	} else {
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 	}
+}
+
+void Texture::capture(Graphics::Surface &surface) {
+	Common::Array<byte> pixels(width * height * 4);
+	GLint boundFrameBuffer;
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
+	if (boundFrameBuffer != fbo) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	}
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+	if (boundFrameBuffer != fbo) {
+		glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
+	}
+	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	surface.init(width, height, 4 * width, &pixels[0], fmt);
+}
+
+RenderTexture::RenderTexture(Math::Vector2d size) {
+	// result = RenderTexture(width: size.x, height: size.y)
+	width = size.getX();
+	height = size.getY();
+
+	// first create the framebuffer
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// then create an empty texture
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// then attach it to framebuffer object
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id, 0);
+	assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+RenderTexture::~RenderTexture() {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteTextures(1, &id);
+	glDeleteFramebuffers(1, &fbo);
 }
 
 Shader::Shader() {
@@ -180,6 +226,7 @@ void Gfx::init() {
 	GL_CALL(glEnableVertexAttribArray(_texCoordsLoc));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFbo);
 }
 
 void Gfx::clear(Color color) {
@@ -203,9 +250,9 @@ void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
 	drawPrimitives(GL_LINE_STRIP, vertices, count, trsf);
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture* texture) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture *texture) {
 	if (v_size > 0) {
-		_texture = texture ? texture: &gEmptyTexture;
+		_texture = texture ? texture : &gEmptyTexture;
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
 
 		// set blending
@@ -245,10 +292,17 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 	}
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture* texture) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture *texture) {
 	if (i_size > 0) {
-		_texture = texture ? texture: &gEmptyTexture;
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+		int num = _shader->getNumTextures();
+		if (num == 0) {
+			_texture = texture ? texture : &gEmptyTexture;
+			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+		} else {
+			for (int i = 0; i < num; i++) {
+				GL_CALL(glBindTexture(GL_TEXTURE_2D, _shader->getTexture(i)));
+			}
+		}
 
 		// set blending
 		GL_CALL(glEnable(GL_BLEND));
@@ -271,9 +325,17 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
 		GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * i_size, indices, GL_STREAM_DRAW));
 
-		GL_CALL(glActiveTexture(GL_TEXTURE0));
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
-		GL_CALL(glUniform1i(0, 0));
+		if (num == 0) {
+			GL_CALL(glActiveTexture(GL_TEXTURE0));
+			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+			GL_CALL(glUniform1i(0, 0));
+		} else {
+			for (int i = 0; i < num; i++) {
+				GL_CALL(glActiveTexture(GL_TEXTURE0 + i));
+				GL_CALL(glBindTexture(GL_TEXTURE_2D, _shader->getTexture(i)));
+				GL_CALL(glUniform1i(_shader->getTextureLoc(i), i));
+			}
+		}
 
 		_shader->setUniform("u_transform", getFinalTransform(trsf));
 		_shader->applyUniforms();
@@ -289,7 +351,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 	}
 }
 
-void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture* texture) {
+void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture *texture) {
 	drawPrimitives(GL_TRIANGLES, vertices, v_size, indices, i_size, trsf, texture);
 }
 
@@ -332,6 +394,10 @@ void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math:
 	draw(vertices, 4, quadIndices, 6, trsf, &texture);
 }
 
+void Gfx::drawSprite(Texture &texture, Color color, Math::Matrix4 trsf, bool flipX, bool flipY) {
+	drawSprite(Common::Rect(texture.width, texture.height), texture, color, trsf, flipX, flipY);
+}
+
 void Gfx::camera(Math::Vector2d size) {
 	_cameraSize = size;
 	_mvp = ortho(0.f, size.getX(), 0.f, size.getY(), -1.f, 1.f);
@@ -344,4 +410,17 @@ Math::Vector2d Gfx::camera() const {
 void Gfx::use(Shader *shader) {
 	_shader = shader ? shader : &_defaultShader;
 }
+
+void Gfx::setRenderTarget(RenderTexture *target) {
+	if (!target) {
+		glBindFramebuffer(GL_FRAMEBUFFER, _oldFbo);
+		int w = g_engine->_system->getWidth();
+		int h = g_engine->_system->getHeight();
+		glViewport(0, 0, w, h);
+	} else {
+		glBindFramebuffer(GL_FRAMEBUFFER, target->fbo);
+		glViewport(0, 0, target->width, target->height);
+	}
+}
+
 } // namespace Twp

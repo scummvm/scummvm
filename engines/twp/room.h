@@ -31,6 +31,15 @@
 
 namespace Twp {
 
+enum class RoomEffect {
+	None = 0,
+	Sepia = 1,
+	Ega = 2,
+	Vhs = 3,
+	Ghost = 4,
+	BlackAndWhite = 5
+};
+
 class Node;
 class Object;
 
@@ -105,11 +114,11 @@ public:
 	Math::Vector2d getScreenSize();
 
 	Layer *layer(int zsort);
-	Object *getObj(const Common::String& key);
+	Object *getObj(const Common::String &key);
 
 	Light *createLight(Color color, Math::Vector2d pos);
 	float getScaling(float yPos);
-	void objectParallaxLayer(Object* obj, int zsort);
+	void objectParallaxLayer(Object *obj, int zsort);
 
 public:
 	Common::String _name;              // Name of the room
@@ -128,7 +137,8 @@ public:
 	Common::Array<Object *> _triggers; // Triggers currently enabled in the room
 	bool _pseudo = false;
 	Common::Array<Object *> _objects;
-	Scene* _scene = nullptr;
+	Scene *_scene = nullptr;
+	RoomEffect _effect;
 };
 
 } // namespace Twp

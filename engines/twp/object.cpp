@@ -156,7 +156,7 @@ void Object::trig(const Common::String &name) {
 		if (_triggers.contains(trigNum)) {
 			_triggers[trigNum]->trig();
 		} else {
-			warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
+			//warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
 		}
 	} else {
 		error("todo: trig %s", name.c_str());
@@ -385,8 +385,8 @@ bool Object::isWalking() {
 }
 
 void Object::stopWalking() {
-	  if (_walkTo)
-	    _walkTo->disable();
+	if (_walkTo)
+		_walkTo->disable();
 }
 
 void Object::setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach) {
@@ -503,6 +503,23 @@ void Object::pickupObject(Object *obj) {
 	if (sqrawexists(obj->_table, "onPickUp")) {
 		sqcall(obj->_table, "onPickUp", _table);
 	}
+}
+
+void Object::stopTalking() {
+	if (_talking) {
+		_talking->disable();
+		setHeadIndex(1);
+	}
+}
+
+void Object::say(const Common::StringArray &texts, Color color) {
+	_talkingState._obj = this;
+	_talkingState._color = color;
+	_talkingState.say(texts, this);
+}
+
+void TalkingState::say(const Common::StringArray &texts, Object *obj) {
+	// TODO: obj->setTalking(new Talking(obj, texts, color));
 }
 
 } // namespace Twp

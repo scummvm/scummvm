@@ -84,6 +84,13 @@ class Motor;
 class Node;
 class Layer;
 
+struct TalkingState {
+    Object* _obj;
+    Color _color;
+
+	void say(const Common::StringArray& texts, Object* obj);
+};
+
 class Object {
 public:
 	Object();
@@ -162,6 +169,10 @@ public:
 	void setShakeTo(Motor* shakeTo);
 	void setJiggleTo(Motor* jiggleTo);
 
+	Motor* getTalking() { return _talking; }
+	void stopTalking();
+	void say(const Common::StringArray& texts, Color color);
+
 	void pickupObject(Object *obj);
 
 private:
@@ -230,6 +241,7 @@ private:
 	Motor* _turnTo = nullptr;
 	Motor* _shakeTo = nullptr;
 	Motor* _jiggleTo = nullptr;
+	TalkingState _talkingState;
 };
 
 } // namespace Twp

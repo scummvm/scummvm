@@ -329,9 +329,7 @@ YLabel *YackParser::parseLabel() {
 	do {
 		if (match({YackTokenId::Colon}) || match({YackTokenId::End}))
 			break;
-		YackDump d;
 		YStatement *pStatement = parseStatement();
-		pStatement->accept(d);
 		pLabel->_stmts.push_back(pStatement);
 	} while (true);
 
