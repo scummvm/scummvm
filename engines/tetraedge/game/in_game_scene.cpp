@@ -1729,7 +1729,7 @@ void InGameScene::update() {
 
 			if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
 				if (c->lookingAtTallThing())
-					headRot.setY(headRot.getY() + c->charLookingAtOffset());
+					headRot.setY(c->charLookingAtOffset());
 			}
 
 			c->setHeadRotation(headRot);
