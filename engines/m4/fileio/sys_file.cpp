@@ -97,7 +97,7 @@ void SysFile::open_read_low_level() {
 	Hag_Name_Record *temp_ptr;
 	char *temp_name;
 	Common::String last_string;
-	Common::String local_name, resource_hag;
+	Common::String resource_hag;
 	Common::File hagfile_fp;
 
 	if (filename.empty()) {
@@ -111,7 +111,7 @@ void SysFile::open_read_low_level() {
 			// Use hag file
 			// Get hagfile table list here
 			if (!temp_fp.open(_G(hag).hash_file))
-				error("Hash file not found: %s", _G(hag).hash_file.c_str());
+				error("Hash file not found: %s", _G(hag).hash_file.toString().c_str());
 
 			hash_table_size = temp_fp.readUint32LE();
 			if (!temp_fp.seek(hash_table_size * HASH_RECORD_LENGTH, SEEK_CUR))
@@ -127,10 +127,10 @@ void SysFile::open_read_low_level() {
 				assert(temp_ptr);
 
 				// Check hag file exists or not
-				local_name = f_extension_new(hag_name, "HAG");
+				Common::Path local_name(f_extension_new(hag_name, "HAG"));
 
 				if (!Common::File::exists(local_name))
-					error("couldn't find hag file: %s", local_name.c_str());
+					error("couldn't find hag file: %s", local_name.toString().c_str());
 
 				// put into hag_name_list //
 				Common::strcpy_s(temp_ptr->filename, hag_name);
@@ -156,7 +156,7 @@ void SysFile::open_read_low_level() {
 			if (!_G(hag).hag_flag) {
 				if (temp_name) {
 					filename = temp_name;
-					_fp = f_io_open(filename, "rb");
+					_fp = f_io_open(Common::Path(filename), "rb");
 
 					if (!_fp && show_error_flag)
 						error("Failed opening - %s", filename.c_str());
@@ -260,7 +260,7 @@ bool SysFile::open_hash_file() {
 
 	hashfp = dynamic_cast<Common::SeekableReadStream *>(f_io_open(_G(hag).hash_file, "rb"));
 	if (!hashfp) {
-		warning("open_hash_file: %s", _G(hag).hash_file.c_str());
+		warning("open_hash_file: %s", _G(hag).hash_file.toString().c_str());
 		hag_success = false;
 		return false;
 	}
@@ -310,10 +310,10 @@ bool SysFile::open_hash_file() {
 			}
 			if (!found) {
 				// hag file is not open, try the current directory first, then RESOURCE_PATH
-				temp_fp = f_io_open(hag_name, "rb");
+				temp_fp = f_io_open(Common::Path(hag_name), "rb");
 				if (!temp_fp) {
 					// hag_file is not in current directory, search for RESOURCE_PATH
-					temp_fp = f_io_open(temp_name, "rb");
+					temp_fp = f_io_open(Common::Path(temp_name), "rb");
 					if (!temp_fp) {
 						error("hag file not found: %s", hag_name.c_str());
 						hag_success = 0;
@@ -458,7 +458,7 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			local_name = local_hag_name;
 			//			sprintf(local_name, "%s%s", exec_path, local_hag_name);
 
-			if (Common::File::exists(local_name)) {
+			if (Common::File::exists(Common::Path(local_name))) {
 				finded = 1;
 				find_offset = offset;
 				break;
@@ -509,9 +509,9 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 Common::Stream *SysFile::open_by_first_char() {
 	if (filename.hasPrefix("*")) {
 		// MADS folder file in original
-		_fp = f_io_open(filename.c_str() + 1, "rb");
+		_fp = f_io_open(Common::Path(filename.c_str() + 1, '/'), "rb");
 	} else {
-		_fp = f_io_open(filename, "rb");
+		_fp = f_io_open(Common::Path(filename, '/'), "rb");
 	}
 
 	if (!_fp) {
@@ -647,8 +647,8 @@ void sysfile_init(bool in_hag_mode) {
 	_G(hag).hag_flag = in_hag_mode;
 
 	if (in_hag_mode) {
-		_G(hag).hash_file = Common::String::format("%s.has",
-			g_engine->getGameType() == GType_Riddle ? "ripley" : "burger");
+		_G(hag).hash_file = Common::Path(Common::String::format("%s.has",
+			g_engine->getGameType() == GType_Riddle ? "ripley" : "burger"));
 		term_message("Initialized in hag mode");
 	} else {
 		term_message("Initialized in file mode");

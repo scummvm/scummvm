@@ -26,7 +26,7 @@
 
 namespace M4 {
 
-Common::Stream *f_io_open(const Common::String &filename, const Common::String &mode) {
+Common::Stream *f_io_open(const Common::Path &filename, const Common::String &mode) {
 	if (mode.hasPrefix("r")) {
 		if (filename.empty())
 			return nullptr;
@@ -39,7 +39,7 @@ Common::Stream *f_io_open(const Common::String &filename, const Common::String &
 		return nullptr;
 
 	} else {
-		return g_system->getSavefileManager()->openForSaving(filename);
+		return g_system->getSavefileManager()->openForSaving(filename.baseName());
 	}
 }
 

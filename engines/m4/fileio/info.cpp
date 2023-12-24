@@ -23,11 +23,11 @@
 
 namespace M4 {
 
-bool f_info_exists(const Common::String &filename) {
+bool f_info_exists(const Common::Path &filename) {
 	return Common::File::exists(filename);
 }
 
-size_t f_info_get_file_size(const Common::String &filename) {
+size_t f_info_get_file_size(const Common::Path &filename) {
 	Common::File f;
 	return f.open(filename) ? f.size() : 0;
 }
