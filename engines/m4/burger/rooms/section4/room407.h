@@ -64,7 +64,7 @@ private:
 	int _roxyShould = 0;
 	int _val4 = 0;
 	int _vipeShould = 0;
-	int _digiTrigger = 0;
+	//int _digiTrigger = 0;
 
 	void loadSeries();
 	void conv87();

@@ -98,7 +98,7 @@ private:
 	int _ticks = 0;
 	int _dogShould = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	//int _val3 = 0;
 	int _val4 = 0;
 	int _mayorShould = 0;
 	int _val6 = 0;

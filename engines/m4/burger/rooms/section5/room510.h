@@ -52,7 +52,7 @@ private:
 	};
 	static const ButtonDef _BUTTONS[BUTTON_COUNT];
 	Button _buttons[BUTTON_COUNT];
-	machine *_buttonSeries[BUTTON_COUNT];
+	//machine *_buttonSeries[BUTTON_COUNT];
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;

@@ -61,7 +61,7 @@ private:
 	static int32 _val1;
 	static int32 _val2;
 	static int32 _val3;
-	int _val4 = 0;
+	//int _val4 = 0;
 
 	void checkAction();
 	void faceTruck();
