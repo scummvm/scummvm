@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "m4/burger/burger.h"
+#include "m4/burger/console.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/core/conv.h"
 #include "m4/burger/gui/gui_gizmo.h"
@@ -159,6 +160,10 @@ BurgerEngine::~BurgerEngine() {
 
 M4::Vars *BurgerEngine::createVars() {
 	return new Burger::Vars();
+}
+
+void BurgerEngine::setupConsole() {
+	setDebugger(new Burger::Console());
 }
 
 void BurgerEngine::showEngineInfo() {

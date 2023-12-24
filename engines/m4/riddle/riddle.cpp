@@ -23,6 +23,7 @@
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
+#include "m4/console.h"
 
 namespace M4 {
 namespace Riddle {
@@ -42,6 +43,10 @@ RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 
 M4::Vars *RiddleEngine::createVars() {
 	return new Riddle::Vars();
+}
+
+void RiddleEngine::setupConsole() {
+	setDebugger(new M4::Console());
 }
 
 void RiddleEngine::showEngineInfo() {

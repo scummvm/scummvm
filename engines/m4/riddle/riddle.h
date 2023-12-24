@@ -53,6 +53,11 @@ protected:
 	 */
 	M4::Vars *createVars() override;
 
+	/**
+	 * Sets up the debugging console
+	 */
+	void setupConsole() override;
+
 public:
 	RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	~RiddleEngine() override {}

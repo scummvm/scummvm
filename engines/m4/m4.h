@@ -69,6 +69,11 @@ protected:
 	 */
 	virtual Vars *createVars() = 0;
 
+	/**
+	 * Sets up the debugging console
+	 */
+	virtual void setupConsole() = 0;
+
 public:
 	Graphics::Screen *_screen = nullptr;
 

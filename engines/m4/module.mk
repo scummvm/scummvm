@@ -172,6 +172,7 @@ MODULE_OBJS = \
 	burger/rooms/section9/room951.o \
 	burger/rooms/section9/room971.o \
 	burger/burger.o \
+	burger/console.o \
 	burger/flags.o \
 	burger/hotkeys.o \
 	burger/inventory.o \

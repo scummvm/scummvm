@@ -67,6 +67,11 @@ protected:
 	 */
 	M4::Vars *createVars() override;
 
+	/**
+	 * Sets up the debugging console
+	 */
+	void setupConsole() override;
+
 public:
 	BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	~BurgerEngine() override;

@@ -70,6 +70,7 @@ Common::Language M4Engine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
@@ -79,7 +80,7 @@ Common::Error M4Engine::run() {
 
 	if (vars->init()) {
 		// Set the console
-		setDebugger(new Console());
+		setupConsole();
 
 		// Check for launcher savegame to load
 		_useOriginalSaveLoad = ConfMan.getBool("original_menus");

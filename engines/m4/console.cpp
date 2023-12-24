@@ -20,8 +20,10 @@
  */
 
 #include "m4/console.h"
+#include "m4/m4.h"
 #include "m4/vars.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 
@@ -32,9 +34,6 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
 	registerCmd("digi",      WRAP_METHOD(Console, cmdDigi));
 	registerCmd("trigger",   WRAP_METHOD(Console, cmdTrigger));
-}
-
-Console::~Console() {
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
