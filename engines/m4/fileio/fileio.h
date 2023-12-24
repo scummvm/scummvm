@@ -54,7 +54,7 @@ struct Hag_Record {
 	Hag_Record *next;
 };
 
-Common::Stream *f_io_open(const Common::String &filename, const Common::String &mode);
+Common::Stream *f_io_open(const Common::Path &filename, const Common::String &mode);
 void f_io_close(Common::Stream *stream);
 
 } // namespace M4

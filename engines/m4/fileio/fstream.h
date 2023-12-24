@@ -33,7 +33,7 @@ class StreamFile {
 private:
 	Common::File _file;
 public:
-	StreamFile(const Common::String &filename);
+	StreamFile(const Common::Path &filename);
 	~StreamFile() {}
 
 	int32 read(Handle bufferHandle, int32 n);

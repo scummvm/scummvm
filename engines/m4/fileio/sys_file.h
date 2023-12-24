@@ -39,7 +39,7 @@ struct Hash_Record {
 struct Hag_Statics {
 	bool hag_flag = false;
 	bool first_read_flag = false;
-	Common::String hash_file;
+	Common::Path hash_file;
 	Hag_Name_Record *hag_name_list = nullptr;
 	Hag_Record *hag_file_list = nullptr;
 };

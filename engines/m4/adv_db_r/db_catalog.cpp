@@ -38,9 +38,7 @@ static int compare_catalog_entries_for_search(const void *n1, const void *n2);
 bool read_catalog() {
 	Common::File f;
 	size_t size = 0;
-	Common::String myFilename;
-
-	myFilename = "roomsdb.chk";
+	Common::Path myFilename("roomsdb.chk");
 
 	if (!f.open(myFilename))
 		return false;

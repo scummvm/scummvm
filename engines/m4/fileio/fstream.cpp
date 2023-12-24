@@ -28,9 +28,9 @@ namespace M4 {
 
 #define STR_STRMREQ "stream request"
 
-StreamFile::StreamFile(const Common::String &filename) {
+StreamFile::StreamFile(const Common::Path &filename) {
 	if (!_file.open(filename))
-		error("Could not open - %s", filename.c_str());
+		error("Could not open - %s", filename.toString().c_str());
 }
 
 int32 StreamFile::read(Handle bufferHandle, int32 n) {
