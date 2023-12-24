@@ -292,7 +292,7 @@ void Room138::daemon() {
 			case 35:
 				kernel_timing_trigger(120, 7);
 
-				if (inv_object_is_here("keys"))
+				if (!inv_object_is_here("keys"))
 					_G(flags)[kPoliceState] = 6;
 
 				_G(flags)[kPoliceCheckCtr] = 200;
@@ -556,6 +556,7 @@ void Room138::daemon() {
 		break;
 
 	case 6:
+		// Waking them up
 		_sherrifShould = 33;
 		_deputyShould = 23;
 		player_set_commands_allowed(false);
@@ -654,10 +655,10 @@ void Room138::parser() {
 		_wilburShould = 11;
 
 	} else if (player_said("talk to") &&
-			(player_said("sherrif") || player_said("deputy"))) {
+			(player_said("sheriff") || player_said("deputy"))) {
 		player_set_commands_allowed(false);
 		_G(flags)[kPoliceState] = 3;
-		wilbur_speech("138w610");
+		wilbur_speech("138w610", 6, 138);
 		_wilburShould = 15;
 
 	} else if (player_said("take", "keys") && !inv_player_has("keys")) {
