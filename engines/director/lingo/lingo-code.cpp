@@ -1451,11 +1451,13 @@ void LC::c_tell() {
 		warning("LC::c_tell(): wrong argument type: %s", window.type2str());
 		return;
 	}
-	if (static_cast<Window *>(window.u.obj)->getCurrentMovie() == nullptr) {
+	Window *w = static_cast<Window *>(window.u.obj);
+	w->ensureMovieIsLoaded();
+	if (w->getCurrentMovie() == nullptr) {
 		warning("LC::c_tell(): window has no movie");
 		return;
 	}
-	g_director->setCurrentWindow(static_cast<Window *>(window.u.obj));
+	g_director->setCurrentWindow(w);
 
 }
 

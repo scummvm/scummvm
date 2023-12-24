@@ -137,6 +137,8 @@ public:
 	void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
+	void ensureMovieIsLoaded();
+
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible) override;

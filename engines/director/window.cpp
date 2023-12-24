@@ -239,6 +239,8 @@ void Window::setTitleVisible(bool titleVisible) {
 }
 
 Datum Window::getStageRect() {
+	ensureMovieIsLoaded();
+
 	Common::Rect rect = getInnerDimensions();
 	Datum d;
 	d.type = RECT;
@@ -260,6 +262,8 @@ bool Window::setStageRect(Datum datum) {
 	// Unpack rect from datum
 	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
 
+	ensureMovieIsLoaded();
+
 	setInnerDimensions(rect);
 
 	return true;
@@ -277,6 +281,7 @@ void Window::setModal(bool modal) {
 
 void Window::setFileName(Common::String filename) {
 	setNextMovie(filename);
+	ensureMovieIsLoaded();
 }
 
 void Window::reset() {
@@ -323,17 +328,29 @@ Common::Point Window::getMousePos() {
 
 void Window::setVisible(bool visible, bool silent) {
 	// setting visible triggers movie load
-	if (!_currentMovie && !silent) {
+	if (!_currentMovie && !silent)
+		ensureMovieIsLoaded();
+
+	BaseMacWindow::setVisible(visible);
+
+	if (visible)
+		_wm->setActiveWindow(_id);
+}
+
+void Window::ensureMovieIsLoaded() {
+	if (!_currentMovie) {
 		if (_fileName.empty()) {
 			Common::String movieName = getName();
 			setNextMovie(movieName);
 		}
 	}
 
-	BaseMacWindow::setVisible(visible);
+	if (_nextMovie.movie.empty()) {
+		warning("Window::ensureMovieIsLoaded(): No movie to load");
+		return;
+	}
 
-	if (visible)
-		_wm->setActiveWindow(_id);
+	loadNextMovie();
 }
 
 bool Window::setNextMovie(Common::String &movieFilenameRaw) {
@@ -418,6 +435,8 @@ bool Window::loadNextMovie() {
 	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
 	Archive *mov = g_director->openArchive(archivePath);
 
+	_nextMovie.movie.clear(); // Clearing it, so we will not attempt to load again
+
 	if (!mov)
 		return false;
 
@@ -429,7 +448,6 @@ bool Window::loadNextMovie() {
 	debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	g_lingo->resetLingo();
 	loadNewSharedCast(previousSharedCast);
 	return true;
 }
@@ -456,7 +474,8 @@ bool Window::step() {
 	if (!_nextMovie.movie.empty()) {
 		if (!loadNextMovie())
 			return (_vm->getGameGID() == GID_TESTALL);
-		_nextMovie.movie.clear();
+
+		g_lingo->resetLingo();
 	}
 
 	// play current movie

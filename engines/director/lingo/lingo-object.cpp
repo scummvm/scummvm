@@ -639,6 +639,12 @@ Datum Window::getField(int field) {
 		return getModal();
 	case kTheFileName:
 		return getFileName();
+	case kTheDrawRect:
+	case kTheSourceRect:
+	// case kTheImage:
+	// case kThePicture::
+		ensureMovieIsLoaded();  // Remove fallthrough once implemented
+		// fallthrough
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
@@ -725,6 +731,9 @@ void LM::m_moveToBack(int nargs) {
 
 void LM::m_moveToFront(int nargs) {
 	g_lingo->printSTUBWithArglist("m_moveToFront", nargs);
+
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
+	me->ensureMovieIsLoaded();
 	g_lingo->dropStack(nargs);
 }
 
