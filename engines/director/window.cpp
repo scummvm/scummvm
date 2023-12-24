@@ -343,6 +343,8 @@ void Window::ensureMovieIsLoaded() {
 			Common::String movieName = getName();
 			setNextMovie(movieName);
 		}
+	} else if (_nextMovie.movie.empty()) { // The movie is loaded and no next movie to load
+		return;
 	}
 
 	if (_nextMovie.movie.empty()) {
