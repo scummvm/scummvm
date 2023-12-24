@@ -33,6 +33,7 @@
 #include "graphics/screen.h"
 #include "twp/detection.h"
 #include "twp/vm.h"
+#include "twp/shaders.h"
 #include "twp/resmanager.h"
 #include "twp/ggpack.h"
 #include "twp/squirrel/squirrel.h"
@@ -130,6 +131,7 @@ public:
 	// Returns the camera position: the position of the middle of the screen.
 	Math::Vector2d cameraPos();
 	void follow(Object *actor);
+	void fadeTo(FadeEffect effect, float duration, bool fadeToSep = false);
 
 	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
 	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
@@ -143,6 +145,7 @@ private:
 	void cancelSentence(Object *actor = nullptr);
 	void clickedAt(Math::Vector2d scrPos);
 	bool clickedAtHandled(Math::Vector2d roomPos);
+	void setShaderEffect(RoomEffect effect);
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -172,14 +175,24 @@ public:
 	Dialog _dialog;
 	struct Cursor {
 		Math::Vector2d pos;
+		bool oldLeftDown = false;
 		bool leftDown = false;
+		bool oldRightDown = false;
 		bool rightDown = false;
+
+		void update() {
+			oldLeftDown = leftDown;
+			oldRightDown = rightDown;
+		}
+		bool isLeftClick() { return oldLeftDown && !leftDown; }
 	} _cursor;
 
 private:
 	Gfx _gfx;
 	Vm _vm;
 	Preferences _prefs;
+	ShaderParams _shaderParams;
+	unique_ptr<FadeShader> _fadeShader;
 };
 
 extern TwpEngine *g_engine;

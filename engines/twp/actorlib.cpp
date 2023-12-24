@@ -275,14 +275,23 @@ static SQInteger actorRoom(HSQUIRRELVM v) {
 	return 1;
 }
 
-static SQInteger actorHideLayer(HSQUIRRELVM v) {
-	warning("TODO: actorHideLayer not implemented");
+static SQInteger actorShowHideLayer(HSQUIRRELVM v, bool visible) {
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Common::String layer;
+	if (SQ_FAILED(sqget(v, 3, layer)))
+		return sq_throwerror(v, "failed to get layer");
+	actor->showLayer(layer, visible);
 	return 0;
 }
 
+static SQInteger actorHideLayer(HSQUIRRELVM v) {
+	return actorShowHideLayer(v, false);
+}
+
 static SQInteger actorShowLayer(HSQUIRRELVM v) {
-	warning("TODO: actorShowLayer not implemented");
-	return 0;
+	return actorShowHideLayer(v, true);
 }
 
 static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
@@ -296,43 +305,110 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 }
 
 static SQInteger actorPosX(HSQUIRRELVM v) {
-	warning("TODO: actorPosX not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	sqpush(v, actor->_node->getPos().getX());
+	return 1;
 }
 
 static SQInteger actorPosY(HSQUIRRELVM v) {
-	warning("TODO: actorPosY not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	sqpush(v, actor->_node->getPos().getY());
+	return 1;
 }
 
+// Plays the specified animation from the player's costume JSON filename.
+// If YES loop the animation. Default is NO.
 static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
-	warning("TODO: actorPlayAnimation not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Common::String animation;
+	if (SQ_FAILED(sqget(v, 3, animation)))
+		return sq_throwerror(v, "failed to get animation");
+	int loop = 0;
+	if ((sq_gettop(v) >= 4) && (SQ_FAILED(sqget(v, 4, loop))))
+		return sq_throwerror(v, "failed to get loop");
+	debug("Play anim %s %s loop=%s", actor->_key.c_str(), animation.c_str(), loop ? "yes" : "no");
+	actor->play(animation, loop != 0);
 	return 0;
 }
 
+// Sets the rendering offset of the actor to x and y.
+//
+// A rendering offset of 0,0 would cause them to be rendered from the middle of their image.
+// Actor's are typically adjusted so they are rendered from the middle of the bottom of their feet.
+// To maintain sanity, it is best if all actors have the same image size and are all adjust the same, but this is not a requirement.
 static SQInteger actorRenderOffset(HSQUIRRELVM v) {
-	warning("TODO: actorRenderOffset not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int x, y;
+	if (SQ_FAILED(sqget(v, 3, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 4, y)))
+		return sq_throwerror(v, "failed to get y");
+	actor->_node->setRenderOffset(Math::Vector2d(x, y));
 	return 0;
 }
 
 static SQInteger actorStand(HSQUIRRELVM v) {
-	warning("TODO: actorStand not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	actor->stand();
 	return 0;
 }
 
+// Makes the specified actor stop moving immediately.
+//
+// . code-block:: Squirrel
+// actorStopWalking(currentActor)
+// actorStopWalking(postalworker)
 static SQInteger actorStopWalking(HSQUIRRELVM v) {
-	warning("TODO: actorStopWalking not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	actor->stopWalking();
+	actor->stand();
 	return 0;
 }
 
+// Set the text color of the specified actor's text that appears when they speak.
 static SQInteger actorTalkColors(HSQUIRRELVM v) {
-	warning("TODO: actorTalkColors not implemented");
+	Object *actor = sqobj(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int color;
+	if (SQ_FAILED(sqget(v, 3, color)))
+		return sq_throwerror(v, "failed to get talk color");
+	actor->_talkColor = Color::rgb(color);
 	return 0;
 }
 
+// If an actor is specified, returns true if that actor is currently talking.
+// If no actor is specified, returns true if the player's current actor is currently talking.
+//
+// . code-block:: Squirrel
+// actorTalking()
+// actorTalking(vo)
 static SQInteger actorTalking(HSQUIRRELVM v) {
-	warning("TODO: actorTalking not implemented");
-	return 0;
+	Object *actor = nullptr;
+	if (sq_gettop(v) == 2) {
+		actor = sqobj(v, 2);
+		if (!actor) {
+			sqpush(v, false);
+			return 1;
+		}
+	} else {
+		actor = g_engine->_actor;
+	}
+	bool isTalking = actor && actor->getTalking() && actor->getTalking()->isEnabled();
+	sqpush(v, isTalking);
+	return 1;
 }
 
 static SQInteger actorTurnTo(HSQUIRRELVM v) {
@@ -340,23 +416,64 @@ static SQInteger actorTurnTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Specifies the offset that will be applied to the actor's speech text that appears on screen.
 static SQInteger actorTalkOffset(HSQUIRRELVM v) {
-	warning("TODO: actorTalkOffset not implemented");
+	Object *actor = sqobj(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int x, y;
+	if (SQ_FAILED(sqget(v, 3, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 4, y)))
+		return sq_throwerror(v, "failed to get y");
+	actor->_talkOffset = Math::Vector2d(x, y);
 	return 0;
 }
 
 static SQInteger actorUsePos(HSQUIRRELVM v) {
-	warning("TODO: actorUsePos not implemented");
+	Math::Vector2d usePos;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Object *obj = sqobj(v, 3);
+	if (!obj)
+		usePos = Math::Vector2d();
+	else
+		usePos = obj->_usePos;
+	if (sq_gettop(v) == 4) {
+		int dir;
+		if (SQ_FAILED(sqget(v, 4, dir)))
+			return sq_throwerror(v, "failed to get direction");
+		else
+			actor->_useDir = (Direction)dir;
+	}
+	actor->_usePos = usePos;
 	return 0;
 }
 
+// Specifies whether the actor needs to abide by walkboxes or not.
+//
+// . code-block:: Squirrel
+// actorUseWalkboxes(coroner, NO)
 static SQInteger actorUseWalkboxes(HSQUIRRELVM v) {
-	warning("TODO: actorUseWalkboxes not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int useWalkboxes = 1;
+	if (SQ_FAILED(sqget(v, 3, useWalkboxes)))
+		return sq_throwerror(v, "failed to get useWalkboxes");
+	actor->_useWalkboxes = useWalkboxes != 0;
 	return 0;
 }
 
 static SQInteger actorVolume(HSQUIRRELVM v) {
-	warning("TODO: actorVolume not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	float volume = 0.0f;
+	if (SQ_FAILED(sqget(v, 3, volume)))
+		return sq_throwerror(v, "failed to get volume");
+	actor->_volume = volume;
 	return 0;
 }
 
@@ -418,9 +535,56 @@ static SQInteger flashSelectableActor(HSQUIRRELVM v) {
 	return 0;
 }
 
-static SQInteger sayLine(HSQUIRRELVM v) {
-	warning("TODO: sayLine not implemented");
+static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
+	Object *obj;
+	int index;
+	Common::StringArray texts;
+	if (sq_gettype(v, 2) == OT_TABLE) {
+		obj = sqobj(v, 2);
+		index = 3;
+	} else {
+		index = 2;
+		obj = g_engine->_actor;
+	}
+
+	if (sq_gettype(v, index) == OT_ARRAY) {
+		HSQOBJECT arr;
+		sq_getstackobj(v, index, &arr);
+		sqgetitems(arr, [&](HSQOBJECT item) { texts.push_back(sq_objtostring(&item)); });
+	} else {
+		int numIds = sq_gettop(v) - index + 1;
+		for (int i = 0; i < numIds; i++) {
+			if (sq_gettype(v, index + i) != OT_NULL) {
+				Common::String text;
+				if (SQ_FAILED(sqget(v, index + i, text)))
+					return sq_throwerror(v, "failed to get text");
+				texts.push_back(text);
+			}
+		}
+	}
+	debug("sayline: {obj.key}, {texts}");
+	obj->say(texts, obj->_talkColor);
 	return 0;
+}
+
+static void stopTalking() {
+	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
+		Layer *layer = *it;
+		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
+			(*it2)->stopTalking();
+		}
+	}
+}
+
+// Causes an actor to say a line of dialog and play the appropriate talking animations.
+// In the first example, the actor ray will say the line.
+// In the second, the selected actor will say the line.
+// In the third example, the first line is displayed, then the second one.
+// See also:
+// - `mumbleLine method`
+static SQInteger sayLine(HSQUIRRELVM v) {
+	stopTalking();
+	return sayOrMumbleLine(v);
 }
 
 static SQInteger sayLineAt(HSQUIRRELVM v) {
@@ -469,13 +633,32 @@ static SQInteger masterActorArray(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Makes actor say a line or multiple lines.
+// Unlike sayLine this line will not interrupt any other talking on the screen.
+// Cannot be interrupted by normal sayLines.
+// See also:
+// - `sayLine method`.
 static SQInteger mumbleLine(HSQUIRRELVM v) {
-	warning("TODO: mumbleLine not implemented");
-	return 0;
+	return sayOrMumbleLine(v);
 }
 
+// Stops all the current sayLines or mumbleLines that the actor is currently saying or are queued to be said.
+// Passing ALL will stop anyone who is talking to stop.
+// If no parameter is passed, it will stop the currentActor talking.
 static SQInteger stopTalking(HSQUIRRELVM v) {
-	warning("TODO: stopTalking not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	if (nArgs == 2) {
+		if (sq_gettype(v, 2) == OT_INTEGER) {
+			stopTalking();
+		} else {
+			Object *actor = sqobj(v, 2);
+			if (!actor)
+				return sq_throwerror(v, "failed to get actor/object");
+			actor->stopTalking();
+		}
+	} else if (nArgs == 1) {
+		g_engine->_actor->stopTalking();
+	}
 	return 0;
 }
 
@@ -488,9 +671,25 @@ static SQInteger selectActor(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns an array of all the actors that are currently within a specified trigger box.
+//
+// . code-block:: Squirrel
+// local stepsArray = triggerActors(AStreet.bookStoreLampTrigger)
+// if (stepsArray.len()) {    // someone's on the steps
+// }
 static SQInteger triggerActors(HSQUIRRELVM v) {
-	warning("TODO: triggerActors not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	sq_newarray(v, 0);
+	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
+		Object* actor = *it;
+		if (obj->contains(actor->_node->getPos())) {
+			sq_pushobject(v, actor->_table);
+			sq_arrayappend(v, -2);
+		}
+	}
+	return 1;
 }
 
 static SQInteger verbUIColors(HSQUIRRELVM v) {
