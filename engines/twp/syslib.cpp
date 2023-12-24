@@ -190,7 +190,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	if (!curThread)
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
-	debug("curThread.id: %d", curThread->getId());
+	debug("curThread.id: %d, %s", curThread->getId(), curThread->getName().c_str());
 	debug("add breakwhilecond name=%s pid=%d", name.c_str(), curThread->getId());
 	g_engine->_tasks.push_back(new BreakWhileCond<Predicate>(curThread->getId(), name, pred));
 	return -666;
@@ -201,9 +201,11 @@ static SQInteger breakwhileanimating(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Breaks while a camera is moving.
+// Once the thread finishes execution, the method will continue running.
+// It is an error to call breakwhilecamera in a function that was not started with startthread.
 static SQInteger breakwhilecamera(HSQUIRRELVM v) {
-	warning("TODO: breakwhilecamera: not implemented");
-	return 0;
+	return breakwhilecond(v, [] { return g_engine->_camera.isMoving();}, "breakwhilecamera()");
 }
 
 // Breaks while a cutscene is running.
@@ -215,8 +217,8 @@ static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
-	warning("TODO: breakwhiledialog: not implemented");
-	return 0;
+	return breakwhilecond(
+		v, [] { return g_engine->_dialog.getState() != DialogState::None;}, "breakwhiledialog()");
 }
 
 static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
@@ -326,9 +328,17 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns how long (in seconds) the game has been played for in total (not just this session).
+//// Saved when the game is saved.
+// Also used for testing.
+// The value is a float, so 1 = 1 second, 0.5 = half a second.
+//
+// . code-block:: Squirrel
+// if (gameTime() > (time+testerTronTimeOut)) { // Do something
+// }
 static SQInteger gameTime(HSQUIRRELVM v) {
-	warning("TODO: gameTime: not implemented");
-	return 0;
+	sqpush(v, g_engine->_time);
+	return 1;
 }
 
 static SQInteger sysInclude(HSQUIRRELVM v) {
@@ -395,9 +405,12 @@ static SQInteger logWarning(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns game time in milliseconds.
+// Based on when the machine is booted and runs all the time (not paused or saved).
+// See also gameTime, which is in seconds.
 static SQInteger microTime(HSQUIRRELVM v) {
-	warning("TODO: microTime: not implemented");
-	return 0;
+	sqpush(v, g_engine->_time * 1000.0f);
+	return 1;
 }
 
 static SQInteger moveCursorTo(HSQUIRRELVM v) {

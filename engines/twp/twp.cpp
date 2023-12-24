@@ -137,6 +137,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 
 void TwpEngine::update(float elapsed) {
 	_time += elapsed;
+	_frameCounter++;
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
@@ -155,20 +156,17 @@ void TwpEngine::update(float elapsed) {
 	// update camera
 	_camera.update(_room, _followActor, elapsed);
 
-	// update tasks
-	for (auto it = _tasks.begin(); it != _tasks.end();) {
-		Task *task = *it;
-		if (task->update(elapsed)) {
-			it = _tasks.erase(it);
-			delete task;
-			continue;
+	// update cutscene
+	if (_cutscene) {
+		if (_cutscene->update(elapsed)) {
+			delete _cutscene;
+			_cutscene = nullptr;
 		}
-		it++;
 	}
 
 	// update threads: make a copy of the threads because during threads update, new threads can be added
-	Common::Array<ThreadBase*> threads(_threads);
-	Common::Array<ThreadBase*> threadsToRemove;
+	Common::Array<ThreadBase *> threads(_threads);
+	Common::Array<ThreadBase *> threadsToRemove;
 
 	for (auto it = threads.begin(); it != threads.end(); it++) {
 		ThreadBase *thread = *it;
@@ -180,9 +178,20 @@ void TwpEngine::update(float elapsed) {
 	// remove threads that are terminated
 	for (auto it = _threads.begin(); it != _threads.end();) {
 		ThreadBase *thread = *it;
-		if(find(threadsToRemove, thread)!=-1) {
+		if (find(threadsToRemove, thread) != -1) {
 			it = _threads.erase(it);
 			delete thread;
+			continue;
+		}
+		it++;
+	}
+
+	// update tasks
+	for (auto it = _tasks.begin(); it != _tasks.end();) {
+		Task *task = *it;
+		if (task->update(elapsed)) {
+			it = _tasks.erase(it);
+			delete task;
 			continue;
 		}
 		it++;

@@ -308,9 +308,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 }
 
 static SQInteger frameCounter(HSQUIRRELVM v) {
-	// TODO: frameCounter
-	warning("frameCounter not implemented");
-	return 0;
+	return sqpush(v, g_engine->_frameCounter);
 }
 
 static SQInteger getUserPref(HSQUIRRELVM v) {
