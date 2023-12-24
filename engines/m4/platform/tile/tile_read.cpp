@@ -31,7 +31,7 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 	int32 value;
 	uint8 buf[4];
 	int	i;
-	byte *byte_ptr;
+	//byte *byte_ptr;
 	void *bufferHandle;
 
 	// Initalize return parameters
@@ -88,16 +88,16 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 
 	// Write color table
 	for (i = 0; i < 256; i++) {
-		byte_ptr = (byte *)&value;
+		//byte_ptr = (byte *)&value;
 		bufferHandle = &buf[0];
 		ifp->read((MemHandle)&bufferHandle, 4);
 		value = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
 
-		byte_ptr++;
+		//byte_ptr++;
 		pal[i].r = (value >> 16) & 0x0ff;
-		byte_ptr++;
+		//byte_ptr++;
 		pal[i].g = (value >> 8) & 0x0ff;
-		byte_ptr++;
+		//byte_ptr++;
 		pal[i].b = (value) & 0x0ff;
 	}
 }

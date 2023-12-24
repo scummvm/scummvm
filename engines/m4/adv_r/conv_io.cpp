@@ -98,7 +98,7 @@ Conv *conv_get_handle(void) {
 
 void conv_set_handle(Conv *c) {
 	_GC(globConv) = c;
-} 
+}
 
 void conv_resume(Conv *c) {
 	conv_go(c);
@@ -556,7 +556,7 @@ static Conv *conv_restore_state(Conv *c) {
 	decl_chunk *decl;
 
 	int32 num_decls = 0, num_entries = 0;
-	short flag_num = 0, flag_index = 0;
+	short /*flag_num = 0, */flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
 	int32 myCNode;
@@ -642,7 +642,7 @@ static Conv *conv_restore_state(Conv *c) {
 
 			if (flag_index == 32) {
 				flag_index = 0;
-				flag_num++;
+				//flag_num++;
 			}
 
 			if (flag_index == 0) {
