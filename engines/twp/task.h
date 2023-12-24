@@ -51,7 +51,7 @@ public:
 			return false;
 		ThreadBase *pt = sqthread(_parentId);
 		if (pt) {
-			debug("Resume task: %d", _parentId);
+			debug("Resume task: %d, %s", _parentId, pt->getName().c_str());
 			pt->resume();
 		}
 		return true;

@@ -50,10 +50,11 @@ void ThreadBase::resume() {
 
 Thread::Thread(int id) {
 	_id = id;
+	_pauseable = true;
 }
 
 Thread::~Thread() {
-	debug("delete thread %d, %s, global: %s", _id, _name.c_str(), _global?"yes":"no");
+	debug("delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
 	HSQUIRRELVM v = g_engine->getVm();
 	for (int i = 0; i < _args.size(); i++) {
 		sq_release(v, &_args[i]);
@@ -101,14 +102,13 @@ void Thread::stop() {
 }
 
 Cutscene::Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
-	: _name("cutscene"),
-	  _v(v),
+	: _v(v),
 	  _threadObj(threadObj),
 	  _closure(closure),
 	  _closureOverride(closureOverride),
 	  _envObj(envObj) {
 
-	_pauseable = false;
+	_name = "cutscene";
 	_id = newThreadId();
 	//_inputState = g_engine->inputState.getState();
 	_actor = g_engine->_followActor;
@@ -179,11 +179,12 @@ void Cutscene::checkEndCutsceneOverride() {
 }
 
 bool Cutscene::update(float elapsed) {
-	if (_waitTime > 0)
+	if (_waitTime > 0) {
 		_waitTime -= elapsed;
-	if (_waitTime <= 0) {
-		_waitTime = 0;
-		resume();
+		if (_waitTime <= 0) {
+			_waitTime = 0;
+			resume();
+		}
 	} else if (_numFrames > 0) {
 		_numFrames -= 1;
 		_numFrames = 0;

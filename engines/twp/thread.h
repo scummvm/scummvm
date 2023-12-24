@@ -66,7 +66,7 @@ public:
 	float _waitTime = 0.f;
 	int _numFrames = 0;
 	bool _paused = false;
-	bool _pauseable = true;
+	bool _pauseable = false;
 
 protected:
 	int _id = 0;
@@ -135,7 +135,6 @@ private:
 	bool isStopped();
 
 private:
-	Common::String _name;
 	HSQUIRRELVM _v;
 	HSQOBJECT _threadObj, _closure, _closureOverride, _envObj;
 	CutsceneState _state;

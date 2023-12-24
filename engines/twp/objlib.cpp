@@ -151,7 +151,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 // deleteObject(drip)
 static SQInteger deleteObject(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
-	if(obj) {
+	if (obj) {
 		obj->delObject();
 		delete obj;
 	}
@@ -373,7 +373,7 @@ static SQInteger objectHidden(HSQUIRRELVM v) {
 	if (obj) {
 		int hidden = 0;
 		sqget(v, 3, hidden);
-		debug("Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(),hidden == 0 ? "true" : "false");
+		debug("Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(), hidden == 0 ? "true" : "false");
 		obj->_node->setVisible(hidden == 0);
 	}
 	return 0;
@@ -743,15 +743,15 @@ static SQInteger objectState(HSQUIRRELVM v) {
 	if (nArgs == 2) {
 		sqpush(v, obj->_state);
 		return 1;
-	} else if (nArgs == 3) {
+	}
+	if (nArgs == 3) {
 		int state;
 		if (SQ_FAILED(sqget(v, 3, state)))
 			return sq_throwerror(v, "failed to get state");
 		obj->setState(state);
 		return 0;
-	} else {
-		return sq_throwerror(v, "invalid number of arguments");
 	}
+	return sq_throwerror(v, "invalid number of arguments");
 }
 
 // Gets or sets if an object is player touchable.
@@ -864,7 +864,7 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, verb)))
 		return sq_throwerror(v, "failed to get verb");
 
-	//int verbId = verb;
+	// int verbId = verb;
 	if (!g_engine->_actor) {
 		// TODO:
 		// for (vb in gEngine.hud.actorSlot(gEngine.actor).verbs) {
