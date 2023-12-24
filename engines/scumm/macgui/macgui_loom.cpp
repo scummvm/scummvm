@@ -270,7 +270,7 @@ void MacLoomGui::runAboutDialog() {
 	window->show();
 
 	int scene = 0;
-	int status = 0;
+	DelayStatus status = kDelayDone;
 
 	Common::Rect r(0, 0, 404, 154);
 	int growth = -2;
@@ -325,10 +325,10 @@ void MacLoomGui::runAboutDialog() {
 			status = delay(50);
 		}
 
-		if (status == 1)
+		if (status == kDelayInterrupted)
 			fastForward = true;
 
-		if (status == 2)
+		if (status == kDelayAborted)
 			break;
 
 		if (changeScene) {
@@ -385,7 +385,7 @@ void MacLoomGui::runAboutDialog() {
 		}
 	}
 
-	if (status != 2)
+	if (status != kDelayAborted)
 		delay();
 
 	_windowManager->popCursor();

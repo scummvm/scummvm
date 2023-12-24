@@ -89,7 +89,7 @@ bool MacGuiImpl::handleEvent(Common::Event event) {
 	return _windowManager->processEvent(event);
 }
 
-int MacGuiImpl::delay(uint32 ms) {
+MacGuiImpl::DelayStatus MacGuiImpl::delay(uint32 ms) {
 	uint32 to;
 
 	to = _system->getMillis() + ms;
@@ -100,10 +100,10 @@ int MacGuiImpl::delay(uint32 ms) {
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				return 2;
+				return kDelayAborted;
 
 			case Common::EVENT_LBUTTONDOWN:
-				return 1;
+				return kDelayInterrupted;
 
 			default:
 				break;
@@ -118,7 +118,7 @@ int MacGuiImpl::delay(uint32 ms) {
 		}
 	}
 
-	return 0;
+	return kDelayDone;
 }
 
 // --------------------------------------------------------------------------

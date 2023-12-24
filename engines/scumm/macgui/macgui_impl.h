@@ -65,6 +65,12 @@ protected:
 
 	byte _unicodeToMacRoman[96];
 
+	enum DelayStatus {
+		kDelayDone = 0,
+		kDelayInterrupted = 1,
+		kDelayAborted
+	};
+
 	enum Color {
 		kBlack = 0,
 		kBlue = 1,
@@ -130,7 +136,7 @@ protected:
 		kStyleRounded
 	};
 
-	int delay(uint32 ms = 0);
+	MacGuiImpl::DelayStatus delay(uint32 ms = 0);
 
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 

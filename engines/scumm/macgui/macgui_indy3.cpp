@@ -1143,7 +1143,7 @@ void MacIndy3Gui::runAboutDialog() {
 	// 10 fps.
 
 	int scene = 0;
-	int status = 0;
+	DelayStatus status = kDelayDone;
 
 	int trainX = -2;
 	int trolleyX = width + 1;
@@ -1268,10 +1268,10 @@ void MacIndy3Gui::runAboutDialog() {
 		window->update();
 		status = delay((scene == 0) ? 33 : 100);
 
-		if (status == 2)
+		if (status == kDelayAborted)
 			break;
 
-		if (status == 1 || changeScene) {
+		if (status == kDelayInterrupted || changeScene) {
 			changeScene = false;
 			scene++;
 			waitFrames = 50;	// ~5 seconds
@@ -1324,7 +1324,7 @@ void MacIndy3Gui::runAboutDialog() {
 		}
 	}
 
-	if (status != 2)
+	if (status != kDelayAborted)
 		delay();
 
 	_windowManager->popCursor();
