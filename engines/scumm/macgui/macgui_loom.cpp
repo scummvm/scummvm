@@ -238,10 +238,34 @@ void MacLoomGui::runAboutDialog() {
 		TEXT_END_MARKER
 	};
 
+	struct AboutPage {
+		const TextLine *text;
+		int waitFrames;
+	};
+
+	AboutPage aboutPages[] = {
+		{ nullptr,  60 },	// ~3 seconds
+		{ page1,    40 },	// ~2 seconds
+		{ page2,   130 },	// ~6.5 seconds
+		{ page3,    80 },	// ~4 seconds
+		{ page4,    80 },
+		{ page5,    80 },
+		{ page6,    80 },
+		{ page7,   260 },	// ~13 seconds
+		{ page8,     0 }
+	};
+
+	int page = 0;
+
 	// I've based the animation speed on what it looks like when Mini vMac
 	// emulates an old black-and-white Mac at normal speed. It looks a bit
 	// different in Basilisk II, but that's probably because it emulates a
 	// much faster Mac.
+	//
+	// The animation is either either growing or shrinking, depending on
+	// if growth is positive or negative. During each scene, the animation
+	// may reach its smallest point, at which time it bounces back. When
+	// it reaches its outer limit, the scene ends.
 
 	window->show();
 
@@ -301,9 +325,6 @@ void MacLoomGui::runAboutDialog() {
 			status = delay(50);
 		}
 
-		// We can't actually skip to the end of a scene, because the
-		// animation has to be drawn.
-
 		if (status == 1)
 			fastForward = true;
 
@@ -314,83 +335,46 @@ void MacLoomGui::runAboutDialog() {
 			changeScene = false;
 			scene++;
 
+			// Animations happen on even-numbered scenes. All
+			// animations start in an inwards direction.
+			//
+			// Odd-numbered scenes are the text pages where it
+			// waits for a bit before continuing. This is where
+			// fast-forwarding (by clicking) stops. Unlike Last
+			// Crusade, we can't just skip the animation because
+			// everything has to be drawn. (Well, some could
+			// probably be skipped, but I doubt it's worth the
+			// trouble to do so.)
+
+			if ((scene % 2) == 0)
+				growth = -2;
+			else {
+				fastForward = false;
+				darkenOnly = true;
+
+				if (aboutPages[page].text)
+					window->drawTexts(r, aboutPages[page].text);
+
+				waitFrames = aboutPages[page].waitFrames;
+				page++;
+			}
+
 			switch (scene) {
 			case 1:
-				fastForward = false;
-				waitFrames = 60;	// ~3 seconds
-				darkenOnly = true;
 				window->drawSprite(lucasFilm, 134, 61);
 				break;
 
-			case 2:
-			case 6:
-			case 8:
-			case 10:
-			case 12:
-			case 14:
-			case 16:
-				growth = -2;
-				break;
-
-			case 3:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 40;	// ~2 seconds
-				window->drawTexts(r, page1);
-				break;
-
 			case 4:
-				growth = -2;
+				// All subsequent text pages are larger, which
+				// we compensate by making the inner bounce
+				// happen earlier.
+
 				innerBounce -= 8;
 				targetTop -= 16;
 				break;
 
 			case 5:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 130;	// ~6.5 seconds
 				window->drawSprite(loom, 95, 38);
-				window->drawTexts(r, page2);
-				break;
-
-			case 7:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 80;	// ~4 seconds
-				window->drawTexts(r, page3);
-				break;
-
-			case 9:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 80;
-				window->drawTexts(r, page4);
-				break;
-
-			case 11:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 80;
-				window->drawTexts(r, page5);
-				break;
-
-			case 13:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 80;
-				window->drawTexts(r, page6);
-				break;
-
-			case 15:
-				fastForward = false;
-				darkenOnly = true;
-				waitFrames = 260;	// ~13 seconds
-				window->drawTexts(r, page7);
-				break;
-
-			case 17:
-				fastForward = false;
-				window->drawTexts(r, page8);
 				break;
 			}
 
