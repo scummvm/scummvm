@@ -526,20 +526,21 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			boneMatrix.rotate(rot1);
 			boneMatrix.rotate(rot2);
 		} else {
-			float lastHeadX = _lastHeadRotation.getX();
-			float minX = (lastHeadX > 0) ? -0.1 : 0.1;
-			float newX = (fabs(minX) > fabs(lastHeadX)) ? 0.0 : minX + lastHeadX;
+			// Return the head to the centerpoint if there is no anchor.
+			const float lastHeadX = _lastHeadRotation.getX();
+			const float headXAdjust = (lastHeadX > 0) ? -0.1 : 0.1;
+			const float newX = (fabs(headXAdjust) > fabs(lastHeadX)) ? 0.0 : lastHeadX + headXAdjust;
 			_lastHeadRotation.setX(newX);
 
-			float lastHeadY = _lastHeadRotation.getY();
-			float minY = (lastHeadY > 0) ? -0.1 : 0.1;
-			float newY = (fabs(minY) > fabs(lastHeadY)) ? 0.0 : minY + lastHeadY;
+			const float lastHeadY = _lastHeadRotation.getY();
+			const float headYAdjust = (lastHeadY > 0) ? -0.1 : 0.1;
+			const float newY = (fabs(headYAdjust) > fabs(lastHeadY)) ? 0.0 : lastHeadY + headYAdjust;
 			_lastHeadRotation.setY(newY);
 
 			_headRotation = _lastHeadRotation;
 
-			TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
-			TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
+			const TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
+			const TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
 			boneMatrix.rotate(rot1);
 			boneMatrix.rotate(rot2);
 			_lastHeadBoneTrans = boneMatrix.translation();
