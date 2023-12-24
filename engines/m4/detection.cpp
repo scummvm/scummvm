@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/str-array.h"
-#include "common/translation.h"
 #include "common/util.h"
 #include "m4/detection.h"
 #include "m4/detection_tables.h"
