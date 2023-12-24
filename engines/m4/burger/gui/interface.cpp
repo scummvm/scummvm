@@ -354,7 +354,12 @@ void Interface::trackIcons() {
 	case 11:
 		// Game menu
 		other_save_game_for_resurrection();
-		CreateGameMenu(_G(master_palette));
+
+		if (g_engine->useOriginalSaveLoad()) {
+			CreateGameMenu(_G(master_palette));
+		} else {
+			g_engine->openMainMenuDialog();
+		}
 		break;
 
 	}
