@@ -1040,7 +1040,7 @@ void Room105::daemon() {
 		player_set_commands_allowed(_flag5);
 		_flag5 = false;
 		break;
-		
+
 	case 5:
 		player_set_commands_allowed(true);
 		break;
@@ -1430,7 +1430,7 @@ void Room105::conv10() {
 		} else {
 			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			conv_resume();
-		}	
+		}
 	} else if (conv_sound_to_play()) {
 		if (who <= 0) {
 			if (node == 23)
@@ -1511,7 +1511,7 @@ void Room105::conv11() {
 				_flag4 = true;
 
 			if (node != 7 &&
-					(node != 8 || entry != 0) && (node != 9 || node != 2) &&
+					(node != 8 || entry != 0) && (node != 9 || entry != 2) &&
 					(node != 11 || entry != 3) && (node != 12 || entry != 3)) {
 				if (node == 13 && entry == 0) {
 					_elgusShould = 9;
