@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-16 21:14+0000\n"
-"PO-Revision-Date: 2023-12-14 14:23+0000\n"
+"PO-Revision-Date: 2023-12-25 18:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1188,6 +1188,55 @@ msgid ""
 "see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
 "connect_cloud.html) "
 msgstr ""
+"## Oppkobling til en skytjeneste - hurtigmodus\n"
+"\n"
+"1. Fra startsiden, velg **Globale instillinger** deretter fliken **Sky**.\n"
+"\n"
+"2. Velg din foretrukne skylagringstjeneste fra **Aktiv lagring** fra "
+"nedtrekksmenyen og velg **Koble til**.\n"
+"\n"
+"\t  ![Select cloud service](choose_storage.png \"Select cloud service\""
+"){w=70%}\n"
+"\n"
+"3. Velg **Hurtigmodus**.\n"
+"\n"
+"\t  ![Quick mode](quick_mode.png \"Quick mode\"){w=70%}\n"
+"\n"
+"4. Velg **Kjør nettjener** and then select **Neste** \n"
+"\n"
+"\t  ![Run server](run_server.png \"Run server\"){w=70%}\n"
+"\n"
+"  ![Next step](server_next.png \"Next step\"){w=70%}\n"
+"\n"
+"5. Åpne lenken.\n"
+"\n"
+"\t  ![Open the link](open_link.png \"Open the link\"){w=70%}\n"
+"\n"
+"6. I vinduet som åpnes velges den skylagringstjenesten som skal det skal "
+"kobles til.\n"
+"\n"
+"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
+"service\"){w=70%}\n"
+"\n"
+"7. Logg på den valgte skytjenesten. Når ferdig, vend tilbake til ScummVM.\n"
+"\n"
+"8. På bekreftelsessiden velges **Avslutt** for å avslutte.\n"
+"\n"
+"\t  ![Success](cloud_success.png \"Success\"){w=70%}\n"
+"9. Tilbake i hovedfluken Sky, velg **Aktiver lagring**.\n"
+"\n"
+"\t  ![Enable storage](enable_storage.png \"Enable storage\"){w=70%}\n"
+"\n"
+"10. Du er ferdig og klar til å benytte skyfunksjonalitet! Anvend "
+"skyfunksjonen for å lagre spillprogresjon eller spillfiler mellom enheter.\n"
+"\n"
+"\t  ![Cloud functionality](cloud_functions.png \"Cloud functionality\""
+"){w=70%}\n"
+"\n"
+"   For ytterligere informasjon og får informasjon om hvordan veiviseren for "
+"manuell oppkobling skal benyttes henvises til [Cloud "
+"documentation](https://docs.scummvm.org/en/latest/use_scummvm/connect_cloud."
+"html) "
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -4705,21 +4754,6 @@ msgid "Adding Games"
 msgstr "Legg til spill"
 
 #: backends/platform/android/android.cpp:1093
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4756,19 +4790,40 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
-"I denne nye utgaven av ScummVM Android har det blitt gjort større endringer "
-"til filtilgangssystemet for å utbedre støtten for moderne versjoner av "
-"Android-operativsystemet.\n"
-"Derfor må du konfigurere SAF for å kunne legge til spill.\n"
+"## Legge til spill \n"
 "\n"
-"1. I ScummVM-utforskeren bruker du «Gå opp» frem til du når «Rot»-mappen, "
-"hvor du finner alternativet «Legg til ny mappe».\n"
-"2. Velg denne og bla deg frem til «Hovedmappen» for de forskjellige "
-"undermappene til spillene dine, som f.eks. «SD-kort > Mine Spill». Trykk på "
-"«Bruk denne mappen».\n"
-"3. Nå dukker det opp en «Mine Spill»-mappe i hovedmappen til ScummVM-"
-"utforskeren.\n"
-"4. Bla deg gjennom denne mappen for å finne fildataen til spillene dine."
+"1. Velg **Legg til spill...** fra startsiden. \n"
+"\n"
+"2. Velg **Opp et nivå** til du kommer til rotmappen med **<Legg til ny "
+"mappe>** i ScummVMs filutforsker.\n"
+"\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root\""
+"){w=70%}\n"
+"\n"
+"3. Dobbeltklikk **<Legg til ny mappe>**. Naviger i din enhets filutforsker "
+"til spilmappen. For eksempel **SD kort>ScummVMgames**. \n"
+"\n"
+"4. Velg **Bruk denne mappen**. \n"
+"\n"
+"  ![OS selectable folder](fs-folder.png \"OS selectable folder\"){w=70%}\n"
+"\n"
+"5. Velg **TILLAT** for å gi ScummVM tilgang til mappen. \n"
+"\n"
+"  ![OS access permission dialog](fs-permission.png \"OS access permission\""
+"){w=70%}\n"
+"\n"
+"6. Dobbeltklikk i ScummVMs filutforsker for å bla gjennom spillmappen. Legg "
+"til et spill ved å velge undermappen som Iinneholder de nødvendige "
+"spillfilene, velg deretter **Velg**.\n"
+"\n"
+"  ![SAF folder added](browser-folder-in-list.png \"SAF folder added\"){w=70%}"
+"\n"
+"\n"
+"Steg  2 og 3 gjennomføres kun en gang. For å legge til ytterligere spill "
+"gjentas steg 1 og steg 6.\n"
+"\n"
+"Se [Android documentation](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html) for more information.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -5121,6 +5176,23 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## Legge til spill \n"
+"\n"
+"1. Kopier de nødvendige spillfilene til ScummVM-appen. Det finnes flere "
+"måter å gjøre dette på, se [Transferring game files "
+"documentation](https://docs.scummvm.org/en/latest/other_platforms/ios.html"
+"#transferring-game-files) for ytterligere informasjon.\n"
+"\n"
+"2. Velg **Legg til spill...** fra startsiden. \n"
+"\n"
+"3. Naviger frem til mappen med spillfiler i ScummVMs filutforsker, "
+"dobbeltklikk for å bla til undermappen som inneholder de tillagte "
+"spillfiler, derettter trykk **Velg**. \n"
+"\n"
+"Gjenta ovenfor beskrevne steg for å legge til flere spill.\n"
+"\n"
+"Se [iOS documentation](https://docs.scummvm.org/en/latest/other_platforms/ios"
+".html) for ytterligere informasjon.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:327
 msgid ""
@@ -5143,6 +5215,24 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## Trykkberøringshandlinger\n"
+"\n"
+"### Trykk berøringsområdet\n"
+"\n"
+"Trykk berøringsområdet for å gjøre et venstre museklikk\n"
+"### Avspill/Pause\n"
+"\n"
+"Trykk Avspill/Pause for å gjøre et høyre museklikk\n"
+"\n"
+"### Global hovedmeny\n"
+"\n"
+"For å åpne den globale hovedmenyen, trykk Tilbake/Meny- knappen.\n"
+"\n"
+"## Virtuelt tastatur\n"
+"\n"
+"Trykk og hold Avspill/Pause-knappen for å åpne det virtuelle tastaturet. For "
+"å stenge det virtuelle tastaturet, trykk Tilbake/Meny-knappen.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:350
 msgid ""
@@ -5164,6 +5254,23 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## Legge til spill \n"
+"\n"
+"1. Kopier de nødvendige spillfilene til ScummVM-appen. Dette kan gjøres på "
+"flere vis, se [Transferring game files documentation](https://docs.scummvm."
+"org/en/latest/other_platforms/tvos.html#transferring-game-files) for more "
+"information.\n"
+"\n"
+"2. Velg **Legg til spill...** fra startsiden. \n"
+"\n"
+"3. Dobbeltklikk for å navigere fram til tillagt spillmappe i ScummVMs "
+"filutforsker. Legg til et spill ved å velge undermappen med de nødvendige "
+"spillfiler og trykk **Velg**.\n"
+"\n"
+"For å legge til ytterliger spill gjentas de ovenstående steg. \n"
+"\n"
+"Se [tvOS documentation](https://docs.scummvm.org/en/latest/other_platforms/"
+"tvos.html) for ytterligere informasjon.\n"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5193,19 +5300,19 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | Avslutt (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | Avslutt (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1037
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | Avslutt (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1038
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | Avslutt (other platforms)\n"
 
 #: backends/platform/sdl/sdl.cpp:1041
 msgid ""
@@ -5224,6 +5331,19 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u`  | Demper all lyd\n"
+"| `Ctrl+m`  | Skrur av/på musefangst\n"
+"| `Ctrl+Alt` and `9` or `0` | Blar forover/bakover mellom grafikkfiltre\n"
+"| `Ctrl+Alt` and `+` or `-` | Øker/senker skaleringsfaktoren\n"
+"| `Ctrl+Alt+a` | Skru av/på sideforholdskorreksjon\n"
+"| `Ctrl+Alt+f` | Blar mellom nærmeste nabo og bilinjær interpolering (Skrur "
+"grafikkfiltre av/på)\n"
+"| `Ctrl+Alt+s` | Blar gjennom strekkmodus\n"
+"| `Alt+Enter`   | Veksler mellom fullskjerms- og vindusvisning\n"
+"| `Alt+s`          | Tar et skjermbilde\n"
+"| `Ctrl+F7`       | Åpner virtuelt tastatur (om tilgjengelig). Dette kan "
+"også åpnes ved langt trykk på midtre museknapp eller hjul.\n"
+"| `Ctrl+Alt+d` | Åpner ScummVMs debugger\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -5637,18 +5757,14 @@ msgstr "Legg til meny for hastighet (tilsvarende PC-versjonen)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Dette spillet støttes ikke."
+msgstr "Dette spillet støtter ikke innlasting"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Dette spillet støttes ikke."
+msgstr "Dette spillet støtter ikke lagring"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -5834,13 +5950,15 @@ msgstr "Språkvalg for spill med støtte for flere språk"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Aktiver ScummVM lagringshåndtering"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Koble aldri ut ScummVM lagringshåndtering og autolagring.\n"
+"MERK: Dette kan forårsake lagringsdubletter og andre anomalier."
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
@@ -5882,6 +6000,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Spillets egen inlastningsgrensesnitt bør benytte for å beholdes den "
+"originale spillopplevelsen.\n"
+"Du kan imidlertid overstyre instillingen i Spillinstillinger."
 
 #: engines/ags/ags.cpp:323
 msgid ""
@@ -5889,6 +6010,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Spillets eget lagringsgrensesnitt bør benyttes for å beholde den originale "
+"spillopplevelsen.\n"
+"Du kan imidlertid overstyre instillingen i Spillinstillinger."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6615,37 +6739,27 @@ msgstr "Skyt"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Stig/Fly opp"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Fly ned"
+msgstr "Nedstigning/Fly ned"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Endre kommando"
+msgstr "Endre modus"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Gå sidelengs mot venstre"
+msgstr "Roter mot venstre"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Gå sidelengs mot høyre"
+msgstr "Roter mot høyre"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Meny"
+msgstr "Info Meny"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7746,6 +7860,8 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"Kopiér xeen.cc fra en utgave av World of Xeen eller Clouds of Xeen til din "
+"Might and Magic 1 spillmappe for å spille i utvidet modus."
 
 #: engines/mm/shared/utils/engine_data.cpp:282
 #: engines/ultima/shared/engine/data_archive.cpp:86
@@ -8191,7 +8307,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "Billedviser"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8243,9 +8359,8 @@ msgid "Fast move modifier"
 msgstr "Modifikator for hurtig bevegelse"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
 msgid "Show/hide maze map"
-msgstr "Vis tastatur"
+msgstr "Vis/gjem labyrintkart"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -8276,33 +8391,35 @@ msgstr ""
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Fiks myklåsninger"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Fiks tilfeller hvor det å overse/glemme noe tidlig i spillet hindrer deg fra "
+"videre fremdrift."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Fiks irritasjonsmoment"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Fiks diverse mindre irritasjonsmoment."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Utvidet telleverk"
+msgstr "Forleng sluttspillstelleverket"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Få litt ekstra tid før spillets siste utfordring feiler på tid. Dette er en "
+"offisiell oppdatering fra HeR Interactive."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8916,51 +9033,55 @@ msgstr "Ekspert"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Utvidelser:"
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Bruk de opprinnelige menyene"
+msgstr "Fiks originalkodens feil."
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Fikser feil som fantes i originalutgivelsen, og merkbare grafikk-/"
+"audioproblemer."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Audiovisuelle forbedringer"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Gjør justeringer som ikke er feilrelaterte for visse audio-/grafikkelementer "
+"(f.eks. endringer relatert til versjonskonsistens)."
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Bruk restaurert innhold"
+msgstr "Restaurert innhold"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Restaurerer dialoger, grafikk- og audioelementer som opprinnelig ble kuttet "
+"i originalutgivelsen."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Moderne UI/UX justeringer"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Aktiverer visse moderniteter; f.eks. fjerning av fake lydladningsskjerm i "
+"Sam & Max, og forbedrer tidlige lagringsmenyer."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
@@ -9103,10 +9224,8 @@ msgid "Save / Load dialog"
 msgstr "Lagre- / åpne-dialog"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Velg shader"
+msgstr "Valgskjerm"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
@@ -9781,11 +9900,13 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1182
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
+"Dette spillet fordrer exe-filen til 'Indy' Macintosh for å vise rett fonter."
 
 #: engines/scumm/scumm.cpp:1207
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Dette spillet krever exe-filen til 'Loom' Macintosh for å vise rett fonter."
 
 #: engines/scumm/scumm.cpp:1227
 msgid ""
@@ -9843,6 +9964,8 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Ikke-implementert kodesti funnet i lydprogramvaremoteren, vennligst fyll ut "
+"en feilrapport på https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -10573,6 +10696,9 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Tillater flytt av mus over kortere avstander uten å kanselere museklikk. "
+"Hvis dette er skrudd av vil musebevegelser efter klikking på musknappen "
+"kanseleres."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
