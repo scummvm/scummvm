@@ -491,7 +491,10 @@ Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *pr
 
 	CorrectItemWidthHeight(item, fontHeight);
 	if (type == LISTBOX) {
-		if (!sizeofGUIelement_border(LISTBOX, &listboxWidth, &listboxHeight)) return nullptr;
+		if (!sizeofGUIelement_border(LISTBOX, &listboxWidth, &listboxHeight)) {
+			Item_destroy(item);
+			return nullptr;
+		}
 		item->listView = (item->h - listboxHeight - 2) / fontHeight;
 	}
 	return item;
