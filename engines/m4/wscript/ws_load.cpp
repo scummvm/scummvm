@@ -119,7 +119,7 @@ bool InitWSAssets() {
 	if ((_GWS(globalCELSnames) = (char **)mem_alloc(sizeof(char *) * 256, "CELS resource table")) == nullptr) {
 		return false;
 	}
-	if ((_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(Handle) * 256, "CELS Handles table")) == nullptr) {
+	if ((_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle *) * 256, "CELS Handles table")) == nullptr) {
 		return false;
 	}
 	if ((_GWS(globalCELSoffsets) = (int32 *)mem_alloc(sizeof(int32 *) * 256, "CELS offsets table")) == nullptr) {
@@ -280,7 +280,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		finished = true;
 	}
 
-	// Process each chunk according to type 
+	// Process each chunk according to type
 	while (!finished) {
 		// Read in the chunk size and hash number
 		if (!GetNextint32(&parseAssetPtr, endOfAssetBlock, &chunkSize)) {
@@ -870,7 +870,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 		*parseAssetPtr += *numColors << 2;
 
-		// The palette info has been processed, now it can be stored 
+		// The palette info has been processed, now it can be stored
 		if (myPalette) {
 			tempPtr = (uint32 *)(&palData[1]);
 			for (i = 0; i < (uint32)*numColors; i++) {
@@ -1302,7 +1302,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 }
 
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
-	uint32 *celsPtr, *offsets, *data, *myCelSource; 
+	uint32 *celsPtr, *offsets, *data, *myCelSource;
 	int32 numCels;
 
 	// Ensure the WS loader has been initialized.
