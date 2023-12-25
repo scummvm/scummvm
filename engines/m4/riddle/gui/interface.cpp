@@ -396,7 +396,7 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 			if (!mouse_set_sprite(hotspot->cursor_number))
 				mouse_set_sprite(kArrowCursor);
 
-			strncpy(_verbText, hotspot->verb, 40);
+			Common::strlcpy(_verbText, hotspot->verb, 40);
 		}
 
 		Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ?
@@ -406,7 +406,7 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 
 		tmp = hotspot->vocab;
 		tmp.toUppercase();
-		strncpy(_nounText, tmp.c_str(), 40);
+		Common::strlcpy(_nounText, tmp.c_str(), 40);
 
 		_hotspot = hotspot;
 	}

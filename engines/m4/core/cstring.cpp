@@ -70,11 +70,7 @@ void cstrncpy(char *dest, const char *src, const int16 max_len) {
 	if (!src || !dest)
 		return;
 
-	int16 count = 0;
-	do {
-		*dest++ = *src;
-		++count;
-	} while (*src++ && (count < max_len));
+	Common::strlcpy(dest, src, max_len);
 }
 
 char *cstrupr(char *src) {
@@ -151,7 +147,7 @@ void strdel(char *inp, int indx, int count) {
 	if (indx >= (int)strlen(inp) || !count)
 		return;
 
-	strncpy(&inp[indx], &inp[indx + count], count);
+	Common::strlcpy(&inp[indx], &inp[indx + count], count);
 }
 
 
@@ -164,7 +160,7 @@ void strseg(char *work, char *work2, int indx, int count) {
 	char *s = nullptr;
 
 	s = &work2[indx];
-	strncpy(work, s, count);
+	Common::strlcpy(work, s, count);
 }
 
 

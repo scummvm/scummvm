@@ -177,10 +177,10 @@ static void load_def(SysFile *fpdef) {
 
 	buffPtr = &s[0];
 	fpdef->read(&buffPtr, MAX_FILENAME_SIZE);
-	strncpy(_G(myDef)->art_base, s, MAX_FILENAME_SIZE);
+	Common::strlcpy(_G(myDef)->art_base, s, MAX_FILENAME_SIZE);
 
 	fpdef->read(&buffPtr, MAX_FILENAME_SIZE);
-	strncpy(_G(myDef)->picture_base, s, MAX_FILENAME_SIZE);
+	Common::strlcpy(_G(myDef)->picture_base, s, MAX_FILENAME_SIZE);
 
 	buffPtr = &a;
 	fpdef->read(&buffPtr, sizeof(int32));

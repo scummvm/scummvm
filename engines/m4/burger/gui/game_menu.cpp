@@ -842,7 +842,7 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 	}
 	buttonInfo->buttonType = buttonType;
 
-	// Note: prompt is not duplicated, therefore, make sure the name is stored in non-volatile memory 
+	// Note: prompt is not duplicated, therefore, make sure the name is stored in non-volatile memory
 	buttonInfo->prompt = prompt;
 	buttonInfo->specialTag = tag - 1000;
 
@@ -2000,7 +2000,7 @@ bool menu_LoadSprites(const char *series, int32 numSprites) {
 	}
 	_GM(menuSeriesResource) = mem_strdup(series);
 
-	// Update the palette for the menu        
+	// Update the palette for the menu
 	gr_pal_set_range(_GM(menuPalette), 59, 197);  // Rid
 
 	_GM(spriteCount) = numSprites;
@@ -3229,7 +3229,7 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 
 	// Save the game
 	// Copy the string so the save games will all be "RIPxxx.SAV"
-	strncpy(_G(game).save_file_name, "BURG", 8);
+	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
 	saveGameFailed = (bool)kernel_save_game(_GM(slotSelected), myText->prompt, 80, _GM(saveLoadThumbNail), _GM(sizeofThumbData));
 
 	// If the save game failed, bring up the err menu
@@ -3303,7 +3303,7 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 
 	// Load the game
 	// Copy the string so the kernel_load_game will find a saved game of the format: "RIPxxx.SAV"
-//	strncpy(_G(game).save_file_name, "BURG", 8);
+//	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
 
 	// Kill the menu
 	DestroySaveLoadMenu(false);
@@ -3513,10 +3513,10 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 			}
 		}
 
-		// Else we must determine whether the thumbnail needs to be replaced with the empty thumbnail.  
+		// Else we must determine whether the thumbnail needs to be replaced with the empty thumbnail.
 		else {
 
-			// If the mouse has moved outside of the entire range of all 10 buttons, 
+			// If the mouse has moved outside of the entire range of all 10 buttons,
 			//or it is over a button which is not hilited it is to be removed.
 			if (menu_CursorInsideItem(myItem, x, y)
 				|| (x < SL_SCROLL_FIELD_X)

@@ -587,7 +587,7 @@ bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListI
 	if (changedItem) newListItem = changedItem;
 	else {
 		if ((newListItem = (ListItem *)mem_alloc(sizeof(ListItem), STR_LIST)) == nullptr) return false;
-		strncpy(newListItem->prompt, prompt, 79);
+		Common::strlcpy(newListItem->prompt, prompt, 80);
 		newListItem->tag = listTag;
 	}
 	//Add it into the list in the correct place...
@@ -1237,7 +1237,7 @@ static int32 CopyTextBlock(Item *myItem) {
 			endBlock = myItem->aux;
 		}
 		numOfCopiedChars = endBlock - beginBlock;
-		strncpy(_G(items).clipBoard, beginBlock, 99);
+		Common::strlcpy(_G(items).clipBoard, beginBlock, 100);
 		if (endBlock - beginBlock <= 99) {
 			_G(items).clipBoard[endBlock - beginBlock] = '\0';
 		} else numOfCopiedChars = 99;
