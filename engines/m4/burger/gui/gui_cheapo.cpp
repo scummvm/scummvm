@@ -111,7 +111,7 @@ TextField::~TextField() {
 void TextField::set_string(const char *string) {
 	_must_redraw = true;
 
-	if (string == nullptr && string != nullptr) {
+	if (string != nullptr && *string != '\0') {
 		_string[0] = '\0';
 		return;
 	}
