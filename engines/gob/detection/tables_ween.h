@@ -254,7 +254,7 @@
 		"ween",
 		"Demo",
 		AD_ENTRY1("intro.stk", "2e9c2898f6bf206ede801e3b2e7ee428"),
-		UNK_LANG,
+		EN_USA,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
