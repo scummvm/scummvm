@@ -25,6 +25,7 @@
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/task.h"
+#include "twp/scenegraph.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
 #include "twp/squirrel/sqobject.h"
@@ -196,16 +197,34 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	return -666;
 }
 
+static bool isAnimating(Object *obj) {
+	return obj->_nodeAnim->_anim && !obj->_nodeAnim->_disabled && obj->_animName != obj->getAnimName(STAND_ANIMNAME);
+}
+
+// When called in a function started with startthread, execution is suspended until animatingItem has completed its animation.
+// Note, animatingItem can be an actor or an object.
+// It is an error to call breakwhileanimating in a function that was not started with `startthread`.
+//
+// . code-block:: Squirrel
+// actorFace(ray, FACE_LEFT)
+// actorCostume(ray, "RayVomit")
+// actorPlayAnimation(ray, "vomit")
+// breakwhileanimating(ray)
+// actorCostume(ray, "RayAnimation")
 static SQInteger breakwhileanimating(HSQUIRRELVM v) {
-	warning("TODO: breakwhileanimating: not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	return breakwhilecond(
+		v, [obj]() { return isAnimating(obj); }, "breakwhileanimating(%s)", obj->_key.c_str());
 }
 
 // Breaks while a camera is moving.
 // Once the thread finishes execution, the method will continue running.
 // It is an error to call breakwhilecamera in a function that was not started with startthread.
 static SQInteger breakwhilecamera(HSQUIRRELVM v) {
-	return breakwhilecond(v, [] { return g_engine->_camera.isMoving();}, "breakwhilecamera()");
+	return breakwhilecond(
+		v, [] { return g_engine->_camera.isMoving(); }, "breakwhilecamera()");
 }
 
 // Breaks while a cutscene is running.
@@ -218,7 +237,7 @@ static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
 	return breakwhilecond(
-		v, [] { return g_engine->_dialog.getState() != DialogState::None;}, "breakwhiledialog()");
+		v, [] { return g_engine->_dialog.getState() != DialogState::None; }, "breakwhiledialog()");
 }
 
 static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
@@ -262,14 +281,71 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
 }
 
+// Returns true if at least 1 actor is talking.
+static bool isSomeoneTalking() {
+	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
+		Object *obj = *it;
+		if (obj->getTalking() && obj->getTalking()->isEnabled())
+			return true;
+	}
+	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
+		Layer *layer = *it;
+		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
+			Object *obj = *it2;
+			if (obj->getTalking() && obj->getTalking()->isEnabled())
+				return true;
+		}
+	}
+	return false;
+}
+
+// If an actor is specified, breaks until actor has finished talking.
+// If no actor is specified, breaks until ALL actors have finished talking.
+// Once talking finishes, the method will continue running.
+// It is an error to call breakwhiletalking in a function that was not started with startthread.
+//
+// . code-block:: Squirrel
+// while(closeToWillie()) {
+//     local line = randomfrom(lines)
+//     breakwhiletalking(willie)
+//     mumbleLine(willie, line)
+//     breakwhiletalking(willie)
+// }
 static SQInteger breakwhiletalking(HSQUIRRELVM v) {
-	warning("TODO: breakwhiletalking: not implemented");
-	return 0;
+	SQInteger nArgs = sq_gettop(v);
+	if (nArgs == 1) {
+		return breakwhilecond(
+			v, []() { return isSomeoneTalking(); }, "breakwhiletalking(all)");
+	}
+	if (nArgs == 2) {
+		Object *obj = sqobj(v, 2);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object");
+		return breakwhilecond(
+			v, [obj]() { return obj->getTalking() && obj->getTalking()->isEnabled(); }, "breakwhiletalking(%s)", obj->_name.c_str());
+	}
+
+	return sq_throwerror(v, "Invalid number of arguments for breakwhiletalking");
 }
+
+// If an actor is specified, breaks until actor has finished walking.
+// Once arrived at destination, the method will continue running.
+// It is an error to call breakwhilewalking in a function that was not started with `startthread`.
+//
+// . code-block:: Squirrel
+// startthread(@(){
+//    actorWalkTo(currentActor, Nickel.copyTron)
+//    breakwhilewalking(currentActor)
+//    pushSentence(VERB_USE, nickel, Nickel.copyTron)
+//})
 static SQInteger breakwhilewalking(HSQUIRRELVM v) {
-	warning("TODO: breakwhilewalking: not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	return breakwhilecond(
+		v, [obj]() { return obj->getWalkTo() && obj->getWalkTo()->isEnabled(); }, "breakwhilewalking(%s)", obj->_name.c_str());
 }
+
 static SQInteger breakwhilesound(HSQUIRRELVM v) {
 	warning("TODO: breakwhilesound: not implemented");
 	return 0;
@@ -314,7 +390,8 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger cutsceneOverride(HSQUIRRELVM v) {
-	warning("TODO: cutsceneOverride: not implemented");
+	debug("cutsceneOverride");
+	g_engine->_cutscene->cutsceneOverride();
 	return 0;
 }
 
@@ -391,17 +468,35 @@ static SQInteger isInputOn(HSQUIRRELVM v) {
 }
 
 static SQInteger logEvent(HSQUIRRELVM v) {
-	warning("TODO: logEvent: not implemented");
+	SQInteger numArgs = sq_gettop(v);
+	Common::String msg, event;
+	if (SQ_FAILED(sqget(v, 2, event)))
+		return sq_throwerror(v, "failed to get event");
+	if (numArgs == 3) {
+		if (SQ_FAILED(sqget(v, 3, event)))
+			return sq_throwerror(v, "failed to get message");
+		msg = event + ": " + msg;
+	}
+	debug("%s", msg.c_str());
 	return 0;
 }
 
+// Like a print statement, but gets sent to the output log file instead.
+// Useful for testing.
 static SQInteger logInfo(HSQUIRRELVM v) {
-	warning("TODO: logInfo: not implemented");
+	Common::String msg;
+	if (SQ_FAILED(sqget(v, 2, msg)))
+		return sq_throwerror(v, "failed to get message");
+	debug("%s", msg.c_str());
 	return 0;
 }
 
+// Sends a warning message to the output log file.
 static SQInteger logWarning(HSQUIRRELVM v) {
-	warning("TODO: logWarning: not implemented");
+	Common::String msg;
+	if (SQ_FAILED(sqget(v, 2, msg)))
+		return sq_throwerror(v, "failed to get message");
+	warning("%s", msg.c_str());
 	return 0;
 }
 
@@ -459,13 +554,43 @@ static SQInteger stopthread(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Returns the thread ID of the currently running script/thread.
+//
+// If no thread is running, it will return 0.
+//
+// . code-block:: Squirrel
+// Phone <-
+// {
+//     phoneRingingTID = 0
+//     script phoneRinging(number) {
+//         phoneRingingTID = threadid()
+//         ...
+//     }
+//     function clickedButton(...) {
+//         if (!phoneRingingTID) {
+//             ...
+//         }
+//     }
+// }
 static SQInteger threadid(HSQUIRRELVM v) {
-	warning("TODO: threadid: not implemented");
-	return 0;
+	ThreadBase *t = sqthread(v);
+	if (t)
+		sqpush(v, t->getId());
+	else
+		sqpush(v, 0);
+	return 1;
 }
 
+// Specify whether a thread should be pauseable or not.
+// If a thread is not pauseable, it won't be possible to pause this thread.
 static SQInteger threadpauseable(HSQUIRRELVM v) {
-	warning("TODO: threadpauseable: not implemented");
+	ThreadBase *t = sqthread(v, 2);
+	if (t)
+		return sq_throwerror(v, "failed to get thread");
+	int pauseable = 0;
+	if (SQ_FAILED(sqget(v, 3, pauseable)))
+		return sq_throwerror(v, "failed to get pauseable");
+	t->_pauseable = pauseable != 0;
 	return 0;
 }
 

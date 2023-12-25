@@ -30,11 +30,6 @@
 
 namespace Twp {
 
-#define STAND_ANIMNAME "stand"
-#define HEAD_ANIMNAME "head"
-#define WALK_ANIMNAME "walk"
-#define REACH_ANIMNAME "reach"
-
 Object::Object()
 	: _talkOffset(0, 90) {
 	_node = new Node("newObj");
@@ -156,7 +151,7 @@ void Object::trig(const Common::String &name) {
 		if (_triggers.contains(trigNum)) {
 			_triggers[trigNum]->trig();
 		} else {
-			//warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
+			// warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
 		}
 	} else {
 		error("todo: trig %s", name.c_str());
@@ -516,6 +511,21 @@ void Object::say(const Common::StringArray &texts, Color color) {
 	_talkingState._obj = this;
 	_talkingState._color = color;
 	_talkingState.say(texts, this);
+}
+
+void Object::resetLockFacing() {
+	_facingMap.clear();
+}
+
+void Object::lockFacing(int facing) {
+  _facingLockValue = facing;
+}
+
+void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
+	_facingMap[FACE_LEFT] = left;
+	_facingMap[FACE_RIGHT] = right;
+	_facingMap[FACE_FRONT] = front;
+	_facingMap[FACE_BACK] = back;
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {

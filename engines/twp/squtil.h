@@ -150,6 +150,7 @@ Object *sqobj(HSQUIRRELVM v, int i);
 Object *sqactor(HSQOBJECT table);
 Object *sqactor(HSQUIRRELVM v, int i);
 ThreadBase *sqthread(HSQUIRRELVM v);
+ThreadBase *sqthread(HSQUIRRELVM v, int id);
 ThreadBase *sqthread(int id);
 
 template<typename... T>

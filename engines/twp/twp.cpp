@@ -435,7 +435,7 @@ Common::Error TwpEngine::run() {
 		uint32 newTime = _system->getMillis();
 		uint32 delta = newTime - time;
 		time = newTime;
-		update(delta / 1000.f);
+		update(8.f*delta / 1000.f);
 		draw();
 		_cursor.update();
 
@@ -846,6 +846,28 @@ Object *TwpEngine::objAt(Math::Vector2d pos) {
 		}
 	});
 	return result;
+}
+
+void TwpEngine::setActor(Object *actor, bool userSelected) {
+	_actor = actor;
+	_hud._actor = actor;
+	if (!_hud.getParent() && actor) {
+		_screenScene.addChild(&_hud);
+	} else if (_hud.getParent() && !actor) {
+		_screenScene.removeChild(&_hud);
+	}
+
+	// call onActorSelected callbacks
+	sqcall("onActorSelected", actor->_table, userSelected);
+	Room *room = !actor ? nullptr : actor->_room;
+	if (room) {
+		if (sqrawexists(room->_table, "onActorSelected")) {
+			sqcall(room->_table, "onActorSelected", actor->_table, userSelected);
+		}
+	}
+
+	if (actor)
+		follow(actor);
 }
 
 } // End of namespace Twp

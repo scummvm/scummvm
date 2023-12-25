@@ -128,4 +128,14 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 	}
 }
 
+float distanceSquared(Math::Vector2d p1, Math::Vector2d p2) {
+	float dx = p1.getX() - p2.getX();
+	float dy = p1.getY() - p2.getY();
+	return dx * dx + dy * dy;
+}
+
+float distance(Math::Vector2d p1, Math::Vector2d p2) {
+	return sqrt(distanceSquared(p1, p2));
+}
+
 } // namespace Twp
