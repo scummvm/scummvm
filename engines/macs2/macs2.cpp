@@ -276,9 +276,15 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 
 	uint16 value = ScriptReadWord(stream);
 	// debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
-
+	// TODO: There is some code required here to follow the logic exactly of going from opcode 1 to 2
 	if (opcode == 0x02) {
 		// TODO: We need to start handling opcode2 in this case
+		if (value == 0x0a) {
+			// l0037_A0C5:
+			// TODO: Confirm that nothing else is done in this case and that this code does run
+			out1 = 1;
+			out2 = 0;
+		}
 	}
 	else
 	if (opcode == 0xFF) {
