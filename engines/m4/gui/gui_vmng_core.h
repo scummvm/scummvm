@@ -34,7 +34,7 @@ namespace M4 {
  * @remarks		Should be called once during program initialization,
  *				after dpmi_init_mem() has been called. 
  */
-extern bool vmng_init();
+bool vmng_init();
 
 /**
  * Shutdown the GUI view manager, and release all resources.
@@ -65,7 +65,7 @@ void vmng_shutdown();
  * in the list of inactive windows. A call to vmng_screen_show() will activate
  * (make visible) this window.
  */
-extern ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 scrnType, uint32 scrnFlags,
+ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 scrnType, uint32 scrnFlags,
 	void *scrnContent, RefreshFunc redraw, EventHandler evtHandler);
 
 /**
@@ -78,13 +78,13 @@ extern ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2,
  * @returns		the ScreenContext* associated with the window which was created for
  * the structure scrnContent. returns nullptr if now window was found.
  */
-extern ScreenContext *vmng_screen_find(void *scrnContent, int32 *status);	// was FindScreen
+ScreenContext *vmng_screen_find(void *scrnContent, int32 *status);	// was FindScreen
 
 /**
  * Remove a window from the active list, and place it on the inactive list
  * @param		The window identifier
  */
-extern void vmng_screen_hide(void *scrnContent); // was HideScreen
+void vmng_screen_hide(void *scrnContent); // was HideScreen
 
 /**
  * Place a window at the front of its layer on the active list.
@@ -93,7 +93,7 @@ extern void vmng_screen_hide(void *scrnContent); // was HideScreen
  * into the list at the front of its layer (SF_BACKGRND, SF_DRIFTER, SF_FLOATER, or SF_SURFACE).
  * If the window is already active, it will be moved to the front of its layer.
  */
-extern void vmng_screen_show(void *scrnContent); // was ShowScreen
+void vmng_screen_show(void *scrnContent); // was ShowScreen
 
 /**
  * Place a window at the back of its layer.
@@ -101,21 +101,21 @@ extern void vmng_screen_show(void *scrnContent); // was ShowScreen
  * @remarks		Essentially this procedure does the same as vmng_screen_show(),
  * the only difference is that the window is at the back of its layer.
  */
-extern void vmng_screen_to_back(void *scrnContent); // was MoveScreenToBack
+void vmng_screen_to_back(void *scrnContent); // was MoveScreenToBack
 
 /**
  * Release all resources associated with the window.
  * @param scrnContent	The window Identifier.
  */
-extern void vmng_screen_dispose(void *scrnContent);  // was DestroyScreen
+void vmng_screen_dispose(void *scrnContent);  // was DestroyScreen
 
-extern void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer);
+void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer);
 
 /**
  * Remove the window from either the active list of windows, or the inactive list,
  * wherever it was found.
  */
-extern ScreenContext *ExtractScreen(void *scrnContent, int32 status);
+ScreenContext *ExtractScreen(void *scrnContent, int32 status);
 
 } // End of namespace M4
 

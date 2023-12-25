@@ -115,45 +115,45 @@ struct Item_Globals {
 	char clipBoard[100] = { 0 };
 };
 
-extern bool InitItems(void);
-extern Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb);
-extern void Item_destroy(Item *myItem);
-extern void Item_empty_list(Item *myItem);
-extern Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag,
+bool InitItems(void);
+Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb);
+void Item_destroy(Item *myItem);
+void Item_empty_list(Item *myItem);
+Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag,
 	ItemType type, M4CALLBACK cb, int32 promptMax);
-extern Item *ItemFind(Item *itemList, int32 tag);
-extern bool Item_SetViewBottom(Item *i);
-extern bool ListItemExists(Item *myItem, char *prompt, int32 listTag);
-extern bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListItem *changedItem);
-extern bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag);
-extern bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
+Item *ItemFind(Item *itemList, int32 tag);
+bool Item_SetViewBottom(Item *i);
+bool ListItemExists(Item *myItem, char *prompt, int32 listTag);
+bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListItem *changedItem);
+bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag);
+bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
 	char *newPrompt, int32 newTag, int32 changeMode);
-extern void ViewCurrListItem(Item *myItem);
-extern ListItem *ListItemFind(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
-extern bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
-extern bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset);
-extern bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType);
-extern bool ResetDefaultListBox(Item *myItem);
-extern bool Item_change_prompt(Item *myItem, const char *newPrompt);
-extern void Item_ClearOrigPrompt(void);
-extern Item *Item_RestoreTextField(void);
-extern Item *Item_CheckTextField(void);
-extern void Item_SaveTextField(Item *myItem);
-extern void SetTextBlockBegin(Item *myItem, int32 relXPos);
-extern void SetTextBlockEnd(Item *myItem, int32 relXPos);
-extern bool Item_TextEdit(Item *myItem, int32 parm1);
-extern bool GetNextListItem(Item *myItem);
-extern bool GetNextPageList(Item *myItem);
-extern bool GetPrevListItem(Item *myItem);
-extern bool GetPrevPageList(Item *myItem);
-extern bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType);
-extern void Item_format(Item *i);
-extern Item *Item_set_default(Item *itemList, Item *currDefault, int32 tag);
-extern Item *Item_set_pressed(Item *itemList, Item *myItem, int32 tag);
-extern Item *Item_set_unpressed(Item *itemList, Item *myItem, int32 tag);
-extern Item *Item_set_cancel(Item *itemList, int32 tag);
-extern Item *Item_set_next_default(Item *currDefault, Item *itemList);
-extern Item *Item_set_prev_default(Item *currDefault, Item *listBottom);
+void ViewCurrListItem(Item *myItem);
+ListItem *ListItemFind(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
+bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
+bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset);
+bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType);
+bool ResetDefaultListBox(Item *myItem);
+bool Item_change_prompt(Item *myItem, const char *newPrompt);
+void Item_ClearOrigPrompt(void);
+Item *Item_RestoreTextField(void);
+Item *Item_CheckTextField(void);
+void Item_SaveTextField(Item *myItem);
+void SetTextBlockBegin(Item *myItem, int32 relXPos);
+void SetTextBlockEnd(Item *myItem, int32 relXPos);
+bool Item_TextEdit(Item *myItem, int32 parm1);
+bool GetNextListItem(Item *myItem);
+bool GetNextPageList(Item *myItem);
+bool GetPrevListItem(Item *myItem);
+bool GetPrevPageList(Item *myItem);
+bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType);
+void Item_format(Item *i);
+Item *Item_set_default(Item *itemList, Item *currDefault, int32 tag);
+Item *Item_set_pressed(Item *itemList, Item *myItem, int32 tag);
+Item *Item_set_unpressed(Item *itemList, Item *myItem, int32 tag);
+Item *Item_set_cancel(Item *itemList, int32 tag);
+Item *Item_set_next_default(Item *currDefault, Item *itemList);
+Item *Item_set_prev_default(Item *currDefault, Item *listBottom);
 
 } // End of namespace M4
 

@@ -28,14 +28,14 @@
 
 namespace M4 {
 
-extern RectList *vmng_CreateNewRect(int32 x1, int32 y1, int32 x2, int32 y2);
-extern void vmng_AddRectToRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
-extern RectList *vmng_DuplicateRectList(RectList *myRectList);
-extern bool vmng_RectIntersectsRectList(RectList *myRectList, int32 x1, int32 y1, int32 x2, int32 y2);
-extern bool vmng_RectListValid(RectList *myRectList);
-extern bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 clipX2, int32 clipY2);
-extern void vmng_DisposeRectList(RectList **rectList);
-extern void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+RectList *vmng_CreateNewRect(int32 x1, int32 y1, int32 x2, int32 y2);
+void vmng_AddRectToRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+RectList *vmng_DuplicateRectList(RectList *myRectList);
+bool vmng_RectIntersectsRectList(RectList *myRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+bool vmng_RectListValid(RectList *myRectList);
+bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 clipX2, int32 clipY2);
+void vmng_DisposeRectList(RectList **rectList);
+void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
 
 } // End of namespace M4
 

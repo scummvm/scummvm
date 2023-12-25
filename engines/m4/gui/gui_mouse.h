@@ -66,14 +66,14 @@ struct Mouse_Globals {
 	int32 _oldY = MAX_VIDEO_Y >> 1;				// position where the mouse sprite was last drawn is here.
 };
 
-extern bool gui_mouse_init();
-extern void gui_mouse_shutdown();
-extern bool mouse_set_sprite(int32 spriteNum);
-extern void gui_mouse_refresh();
-extern void mouse_hide();
-extern void mouse_show();
-extern void mouse_lock_sprite(int32 mouseNum);
-extern void mouse_unlock_sprite();
+bool gui_mouse_init();
+void gui_mouse_shutdown();
+bool mouse_set_sprite(int32 spriteNum);
+void gui_mouse_refresh();
+void mouse_hide();
+void mouse_show();
+void mouse_lock_sprite(int32 mouseNum);
+void mouse_unlock_sprite();
 
 } // End of namespace M4
 

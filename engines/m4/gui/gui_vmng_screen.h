@@ -36,7 +36,7 @@ namespace M4 {
  * @param x2			Window bottom-right X
  * @param y2			Window bottom-right Y
  */
-extern bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2);
+bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2);
 
 /**
  * Change which procedure will be called when a portion of the window
@@ -44,7 +44,7 @@ extern bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, 
  * @param scrnContent	The window identifier
  * @param  redraw		The new refresh function pointer
  */
-extern bool vmng_SetScreenRefresh(void *scrnContent, RefreshFunc redraw);
+bool vmng_SetScreenRefresh(void *scrnContent, RefreshFunc redraw);
 
 /**
  * Add a "hot key" to a window.
@@ -53,7 +53,7 @@ extern bool vmng_SetScreenRefresh(void *scrnContent, RefreshFunc redraw);
  * to be executed.
  * @param callback		The function to be executed when "myKey" is pressed
  */
-extern bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback);
+bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback);
 
 /**
  * Remove a hot key
@@ -62,17 +62,17 @@ extern bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback);
  * @returns		False if either the window or the "hot key" could not be found,
  * TRUE if successful
  */
-extern bool RemoveScreenHotkey(void *scrnContent, int32 myKey);
+bool RemoveScreenHotkey(void *scrnContent, int32 myKey);
 
 /**
  * Obvious shell to MoveScreen
  */
-extern bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY);
+bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY);
 
 /**
  * Obvious shell to MoveScreen
  */
-extern bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
+bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
 
 /**
  * Resize the windows width and/or height
@@ -80,7 +80,7 @@ extern bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
  * @param newH		The new height of the window.  If <= 0, the old window height will remain.
  * @returns		TRUE if the window was found, FALSE otherwise
  */
-extern bool ResizeScreen(void *scrnContent, int32 newW, int32 newH);
+bool ResizeScreen(void *scrnContent, int32 newW, int32 newH);
 
 /**
  * Restore the monitor image by redrawing the visible portions of each window
@@ -90,17 +90,17 @@ extern bool ResizeScreen(void *scrnContent, int32 newW, int32 newH);
  * @param updateX2	Rectangle bottom-right X
  * @param updateY2	Rectangle bottom-right Y
  */
-extern void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 updateY2);
+void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 updateY2);
 
 /**
  * A shell to RestoreScreens
  */
-extern void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen);
+void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen);
 
 /**
  * Capture a screenshot to a bitmap.
  */
-extern void Screen2BuffC(int8 *Buff);
+void Screen2BuffC(int8 *Buff);
 
 } // End of namespace M4
 
