@@ -49,6 +49,8 @@ Math::Vector2d parseVec2(const Common::String &s);
 Common::Rect parseRect(const Common::String &s);
 void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims);
 
+float distance(Math::Vector2d p1, Math::Vector2d p2);
+
 template<typename T>
 int find(Common::Array<T>& array, const T& o) {
 	int index = -1;

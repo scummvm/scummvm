@@ -30,6 +30,11 @@
 #include "twp/ids.h"
 #include "twp/gfx.h"
 
+#define STAND_ANIMNAME "stand"
+#define HEAD_ANIMNAME "head"
+#define WALK_ANIMNAME "walk"
+#define REACH_ANIMNAME "reach"
+
 namespace Twp {
 
 enum ObjectType {
@@ -124,6 +129,9 @@ public:
 
 	void showLayer(const Common::String &layer, bool visible);
 	Facing getFacing() const;
+	void lockFacing(int facing);
+	void lockFacing(Facing left, Facing right, Facing front, Facing back);
+	void resetLockFacing();
 	void trig(const Common::String &name);
 
 	void setPop(int count);
@@ -163,6 +171,7 @@ public:
 	void setRotateTo(Motor* rotateTo);
 	void setMoveTo(Motor* moveTo);
 	void setWalkTo(Motor* walkTo);
+	Motor* getWalkTo() const { return _walkTo; }
 	void setTalking(Motor* talking);
 	void setBlink(Motor* blink);
 	void setTurnTo(Motor* turnTo);

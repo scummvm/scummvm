@@ -42,6 +42,7 @@
 #include "twp/tsv.h"
 #include "twp/scenegraph.h"
 #include "twp/dialog.h"
+#include "twp/hud.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -120,7 +121,7 @@ public:
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
 
-	void setActor(Object *actor) { _actor = actor; }
+	void setActor(Object *actor, bool userSelected = false);
 	Object *objAt(Math::Vector2d pos);
 
 	Room *defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
@@ -186,6 +187,7 @@ public:
 		}
 		bool isLeftClick() { return oldLeftDown && !leftDown; }
 	} _cursor;
+	Hud _hud;
 
 private:
 	Gfx _gfx;

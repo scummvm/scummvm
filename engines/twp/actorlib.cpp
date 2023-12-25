@@ -194,13 +194,48 @@ static SQInteger actorCostume(HSQUIRRELVM v) {
 }
 
 static SQInteger actorDistanceTo(HSQUIRRELVM v) {
-	warning("TODO: actorDistanceTo not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Object *obj = nullptr;
+	if (sq_gettop(v) == 3)
+		obj = sqobj(v, 3);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	else
+		obj = g_engine->_actor;
+	sqpush(v, distance(actor->_node->getPos(), obj->getUsePos()));
+	return 1;
 }
 
 static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
-	warning("TODO: actorDistanceWithin not implemented");
-	return 0;
+	SQInteger nArgs = sq_gettop(v);
+	if (nArgs == 3) {
+		Object *actor1 = g_engine->_actor;
+		Object *actor2 = sqactor(v, 2);
+		if (!actor2)
+			return sq_throwerror(v, "failed to get actor");
+		Object *obj = sqobj(v, 3);
+		if (!obj)
+			return sq_throwerror(v, "failed to get spot");
+		// not sure about this, needs to be check one day ;)
+		sqpush(v, distance(actor1->_node->getAbsPos(), obj->getUsePos()) < distance(actor2->_node->getAbsPos(), obj->getUsePos()));
+		return 1;
+	} else if (nArgs == 4) {
+		Object *actor = sqactor(v, 2);
+		if (!actor)
+			return sq_throwerror(v, "failed to get actor");
+		Object *obj = sqobj(v, 3);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object");
+		int dist;
+		if (SQ_FAILED(sqget(v, 4, dist)))
+			return sq_throwerror(v, "failed to get distance");
+		sqpush(v, distance(actor->_node->getAbsPos(), obj->getUsePos()) < dist);
+		return 1;
+	} else {
+		return sq_throwerror(v, "actorDistanceWithin not implemented");
+	}
 }
 
 // Makes the actor face a given direction.
@@ -252,9 +287,22 @@ static SQInteger actorHidden(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns an array of all the actors that are currently within a specified trigger box.
+//
+// . code-block:: Squirrel
+// local stepsArray = triggerActors(AStreet.bookStoreLampTrigger)
+// if (stepsArray.len()) {    // someone's on the steps
+// }
 static SQInteger actorInTrigger(HSQUIRRELVM v) {
-	warning("TODO: actorInTrigger not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Object *obj = sqobj(v, 3);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	bool inside = obj->contains(actor->_node->getAbsPos());
+	sqpush(v, inside);
+	return 1;
 }
 
 static SQInteger actorInWalkbox(HSQUIRRELVM v) {
@@ -299,8 +347,41 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 	return 0;
 }
 
+// If a direction is specified: makes the actor face a given direction, which cannot be changed no matter what the player does.
+// Directions are: FACE_FRONT, FACE_BACK, FACE_LEFT, FACE_RIGHT.
+// If "NO" is specified, it removes all locking and allows the actor to change its facing direction based on player input or otherwise.
 static SQInteger actorLockFacing(HSQUIRRELVM v) {
-	warning("TODO: actorLockFacing not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	switch (sq_gettype(v, 3)) {
+	case OT_INTEGER: {
+		int facing = 0;
+		if (SQ_FAILED(sqget(v, 3, facing)))
+			return sq_throwerror(v, "failed to get facing");
+		actor->lockFacing(facing);
+	} break;
+	case OT_TABLE: {
+		HSQOBJECT obj;
+		int back = FACE_BACK;
+		int front = FACE_FRONT;
+		int left = FACE_LEFT;
+		int right = FACE_RIGHT;
+		int reset = 0;
+		sq_getstackobj(v, 3, &obj);
+		sqgetf(v, obj, "back", back);
+		sqgetf(v, obj, "front", front);
+		sqgetf(v, obj, "left", left);
+		sqgetf(v, obj, "right", right);
+		sqgetf(v, obj, "reset", reset);
+		if (reset != 0)
+			actor->resetLockFacing();
+		else
+			actor->lockFacing((Facing)left, (Facing)right, (Facing)front, (Facing)back);
+	} break;
+	default:
+		return sq_throwerror(v, "unknown facing type");
+	}
 	return 0;
 }
 
@@ -683,7 +764,7 @@ static SQInteger triggerActors(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get object");
 	sq_newarray(v, 0);
 	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
-		Object* actor = *it;
+		Object *actor = *it;
 		if (obj->contains(actor->_node->getPos())) {
 			sq_pushobject(v, actor->_table);
 			sq_arrayappend(v, -2);
@@ -693,7 +774,45 @@ static SQInteger triggerActors(HSQUIRRELVM v) {
 }
 
 static SQInteger verbUIColors(HSQUIRRELVM v) {
-	warning("TODO: verbUIColors not implemented");
+	int actorSlot;
+	if (SQ_FAILED(sqget(v, 2, actorSlot)))
+		return sq_throwerror(v, "failed to get actorSlot");
+	HSQOBJECT table;
+	if (SQ_FAILED(sqget(v, 3, table)))
+		return sq_throwerror(v, "failed to get table");
+	if (!sq_istable(table))
+		return sq_throwerror(v, "failed to get verb definitionTable");
+
+	// get mandatory colors
+	int
+		sentence = 0,
+		verbNormal = 0,
+		verbNormalTint = 0,
+		verbHighlight = 0,
+		verbHighlightTint = 0,
+		inventoryFrame = 0,
+		inventoryBackground = 0;
+	sqgetf(table, "sentence", sentence);
+	sqgetf(table, "verbNormal", verbNormal);
+	sqgetf(table, "verbNormalTint", verbNormalTint);
+	sqgetf(table, "verbHighlight", verbHighlight);
+	sqgetf(table, "verbHighlightTint", verbHighlightTint);
+	sqgetf(table, "inventoryFrame", inventoryFrame);
+	sqgetf(table, "inventoryBackground", inventoryBackground);
+
+	// get optional colors
+	int
+		retroNormal = verbNormal;
+	int retroHighlight = verbNormalTint;
+	int dialogNormal = verbNormal;
+	int dialogHighlight = verbHighlight;
+	sqgetf(table, "retroNormal", retroNormal);
+	sqgetf(table, "retroHighlight", retroHighlight);
+	sqgetf(table, "dialogNormal", dialogNormal);
+	sqgetf(table, "dialogHighlight", dialogHighlight);
+
+	g_engine->_hud._actorSlots[actorSlot - 1].verbUiColors =
+		VerbUiColors{.sentence = Color::rgb(sentence), .verbNormal = Color::rgb(verbNormal), .verbNormalTint = Color::rgb(verbNormalTint), .verbHighlight = Color::rgb(verbHighlight), .verbHighlightTint = Color::rgb(verbHighlightTint), .inventoryFrame = Color::rgb(inventoryFrame), .inventoryBackground = Color::rgb(inventoryBackground), .retroNormal = Color::rgb(retroNormal), .retroHighlight = Color::rgb(retroHighlight), .dialogNormal = Color::rgb(dialogNormal), .dialogHighlight = Color::rgb(dialogHighlight)};
 	return 0;
 }
 

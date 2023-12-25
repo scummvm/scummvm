@@ -97,6 +97,7 @@ public:
 	void setAnchor(Math::Vector2d anchor);
 	void setAnchorNorm(Math::Vector2d anchorNorm);
 	void setSize(Math::Vector2d size);
+	Math::Vector2d getSize() const { return _size; }
 	virtual Rectf getRect() const;
 
 	void draw(Math::Matrix4 parent = Math::Matrix4());
@@ -116,7 +117,7 @@ private:
 protected:
 	Common::String _name;
 	Math::Vector2d _pos;
-	float _zOrder = 0.f;
+	int _zOrder = 0;
 	Node *_parent = nullptr;
 	Common::Array<Node *> _children;
 	Math::Vector2d _offset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
@@ -168,10 +169,11 @@ public:
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
-
-private:
+public:
     const ObjectAnimation* _anim = nullptr;
     bool _disabled = false;
+
+private:
     Common::String _sheet;
     Common::Array<Common::String> _frames;
     int _frameIndex = 0;

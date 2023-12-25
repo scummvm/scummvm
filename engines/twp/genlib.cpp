@@ -252,7 +252,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
 	Math::Vector2d halfScreen(g_engine->_room->getScreenSize() / 2.f);
-	debug("cameraPanTo: {pos}, dur={duration}, method={interpolation}");
+	debug("cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
 	g_engine->follow(nullptr);
 	g_engine->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
 	return 0;
@@ -276,35 +276,72 @@ static SQInteger sqChr(HSQUIRRELVM v) {
 
 // Returns x coordinates of the mouse in screen coordinates.
 static SQInteger cursorPosX(HSQUIRRELVM v) {
-	// TODO: cursorPosX
-	warning("cursorPosX not implemented");
-	return 0;
-
-	//   let scrPos = winToScreen(mousePos())
-	//   push(v, scrPos.x)
-	//   return 1;
+	sqpush(v, g_engine->_cursor.pos.getX());
+	return 1;
 }
 
 // Returns y coordinates of the mouse in screen coordinates.
 static SQInteger cursorPosY(HSQUIRRELVM v) {
-	// TODO: cursorPosY
-	warning("cursorPosY not implemented");
-	return 0;
-	//   let scrPos = winToScreen(mousePos())
-	//   push(v, scrPos.y)
-	//   return 1;
+	sqpush(v, g_engine->_cursor.pos.getY());
+	return 1;
 }
 
 static SQInteger distance(HSQUIRRELVM v) {
-	// TODO: distance
-	warning("distance not implemented");
-	return 0;
+	if (sq_gettype(v, 2) == OT_INTEGER) {
+		int num1;
+		if (SQ_FAILED(sqget(v, 2, num1)))
+			return sq_throwerror(v, "failed to get num1");
+		int num2;
+		if (SQ_FAILED(sqget(v, 3, num2)))
+			return sq_throwerror(v, "failed to get num2");
+		float d = abs(num1 - num2);
+		sqpush(v, d);
+		return 1;
+	}
+
+	Object *obj1 = sqobj(v, 2);
+	if (!obj1)
+		return sq_throwerror(v, "failed to get object1 or actor1");
+	Object *obj2 = sqobj(v, 3);
+	if (!obj2)
+		return sq_throwerror(v, "failed to get object2 or actor2");
+	Math::Vector2d d = obj1->_node->getAbsPos() - obj2->_node->getAbsPos();
+	sqpush(v, sqrt(d.getX() * d.getX() + d.getY() * d.getY()));
+	return 1;
 }
 
 static SQInteger findScreenPosition(HSQUIRRELVM v) {
-	// TODO: findScreenPosition
-	warning("findScreenPosition not implemented");
-	return 0;
+	if (sq_gettype(v, 2) == OT_INTEGER) {
+		int verb;
+		if (SQ_FAILED(sqget(v, 2, verb)))
+			return sq_throwerror(v, "failed to get verb");
+		ActorSlot *actorSlot = g_engine->_hud.actorSlot(g_engine->_actor);
+		for (int i = 1; i < 22; i++) {
+			Verb vb = actorSlot->verbs[i];
+			if (vb.id.id == verb) {
+				SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
+				SpriteSheetFrame *verbFrame = &verbSheet->frameTable[Common::String::format("%s_en", vb.image.c_str())];
+				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
+				debug("findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
+				sqpush(v, pos);
+				return 1;
+			}
+		}
+		return sq_throwerror(v, "failed to find verb");
+	}
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object or actor");
+	if (obj->inInventory()) {
+		// TODO: sqpush(v, g_engine->_uiInv.getPos(obj));
+		return 1;
+	}
+
+	Math::Vector2d rPos = g_engine->roomToScreen(obj->_node->getAbsPos());
+	Math::Vector2d pos(rPos.getX() + obj->_node->getSize().getX() / 2.f, rPos.getY() + obj->_node->getSize().getY() / 2.f);
+	debug("findScreenPosition({obj.name}) => {pos}");
+	sqpush(v, pos);
+	return 1;
 }
 
 static SQInteger frameCounter(HSQUIRRELVM v) {
@@ -593,10 +630,18 @@ static SQInteger refreshUI(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns the x and y dimensions of the current screen/window.
+//
+// .. code-block:: Squirrel
+// function clickedAt(x,y) {
+//     local screenHeight = screenSize().y
+//     local exitButtonB = screenHeight - (exitButtonPadding + 16)
+//     if (y > exitButtonB) { ... }
+// }
 static SQInteger screenSize(HSQUIRRELVM v) {
-	// TODO: screenSize
-	warning("screenSize not implemented");
-	return 0;
+	Math::Vector2d screen = g_engine->_room->getScreenSize();
+	sqpush(v, screen);
+	return 1;
 }
 
 static SQInteger setDebugger(HSQUIRRELVM v) {
@@ -618,8 +663,37 @@ static SQInteger setUserPref(HSQUIRRELVM v) {
 }
 
 static SQInteger setVerb(HSQUIRRELVM v) {
-	// TODO: setVerb
-	warning("setVerb not implemented");
+	int actorSlot;
+	if (SQ_FAILED(sqget(v, 2, actorSlot)))
+		return sq_throwerror(v, "failed to get actor slot");
+	int verbSlot;
+	if (SQ_FAILED(sqget(v, 3, verbSlot)))
+		return sq_throwerror(v, "failed to get verb slot");
+	HSQOBJECT table;
+	if (SQ_FAILED(sqget(v, 4, table)))
+		return sq_throwerror(v, "failed to get verb definitionTable");
+	if (!sq_istable(table))
+		return sq_throwerror(v, "verb definitionTable is not a table");
+	int id;
+	Common::String image;
+	Common::String text;
+	Common::String fun;
+	Common::String key;
+	int flags = 0;
+	sqgetf(table, "verb", id);
+	sqgetf(table, "text", text);
+	if (sqrawexists(table, "image"))
+		sqgetf(table, "image", image);
+	if (sqrawexists(table, "func"))
+		sqgetf(table, "func", fun);
+	if (sqrawexists(table, "key"))
+		sqgetf(table, "key", key);
+	if (sqrawexists(table, "flags"))
+		sqgetf(table, "flags", flags);
+	debug("setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
+	VerbId verbId;
+	verbId.id = id;
+	g_engine->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb{.id = verbId, .image = image, .fun = fun, .text = text, .key = key, .flags = flags};
 	return 0;
 }
 

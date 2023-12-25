@@ -163,7 +163,7 @@ void Node::setSize(Math::Vector2d size) {
 }
 
 static int cmpNodes(const Node *x, const Node *y) {
-	return y->getZSort() < x->getZSort();
+	return y->getZSort() <= x->getZSort();
 }
 
 void Node::draw(Math::Matrix4 parent) {
