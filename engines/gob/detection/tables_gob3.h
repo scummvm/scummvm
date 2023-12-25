@@ -508,7 +508,7 @@
 		"gob3",
 		"Non-interactive Demo",
 		AD_ENTRY1s("intro.stk", "b9b898fccebe02b69c086052d5024a55", 600143),
-		UNK_LANG,
+		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)

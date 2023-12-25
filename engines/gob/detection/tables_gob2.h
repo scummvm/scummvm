@@ -628,7 +628,7 @@
 		"gob2",
 		"Non-Interactive Demo",
 		AD_ENTRY1("intro.stk", "8b1c98ff2ab2e14f47a1b891e9b92217"),
-		UNK_LANG,
+		EN_GRB,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
