@@ -27,6 +27,7 @@
 #include "common/compression/vise.h"
 #include "common/formats/winexe.h"
 #include "common/compression/installshieldv3_archive.h"
+#include "common/compression/installshield_cab.h"
 
 #include "graphics/maccursor.h"
 #include "graphics/wincursor.h"
@@ -1118,6 +1119,7 @@ private:
 		kArchiveTypeMacVISE,
 		kArchiveTypeStuffIt,
 		kArchiveTypeInstallShieldV3,
+		kArchiveTypeInstallShieldCab,
 	};
 
 	struct EnumBinding {
@@ -1184,13 +1186,17 @@ void BootScriptContext::addArchive(ArchiveType archiveType, const Common::String
 
 			Common::SeekableReadStream *stream = nullptr;
 
-			if (_isMac)
-				stream = Common::MacResManager::openFileOrDataFork(path, *junction._archive);
-			else
-				stream = junction._archive->createReadStreamForMember(path);
+			bool isSingleStreamArchive = (archiveType != kArchiveTypeInstallShieldCab);
 
-			if (!stream)
-				error("Couldn't mount archive from path %s", archivePath.c_str());
+			if (isSingleStreamArchive) {
+				if (_isMac)
+					stream = Common::MacResManager::openFileOrDataFork(path, *junction._archive);
+				else
+					stream = junction._archive->createReadStreamForMember(path);
+
+				if (!stream)
+					error("Couldn't mount archive from path %s", archivePath.c_str());
+			}
 
 			Common::Archive *archive = nullptr;
 
@@ -1202,6 +1208,10 @@ void BootScriptContext::addArchive(ArchiveType archiveType, const Common::String
 					Common::InstallShieldV3 *isa = new Common::InstallShieldV3();
 					if (isa->open(stream))
 						archive = isa;
+				}
+				break;
+			case kArchiveTypeInstallShieldCab: {
+					archive = Common::makeInstallShieldArchive(path, *junction._archive);
 				}
 				break;
 			case kArchiveTypeStuffIt:
@@ -1420,7 +1430,8 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 
 	const EnumBinding archiveTypeEnum[] = {ENUM_BINDING(kArchiveTypeMacVISE),
 										   ENUM_BINDING(kArchiveTypeStuffIt),
-										   ENUM_BINDING(kArchiveTypeInstallShieldV3)};
+										   ENUM_BINDING(kArchiveTypeInstallShieldV3),
+										   ENUM_BINDING(kArchiveTypeInstallShieldCab)};
 
 
 	Common::String str1, str2, str3, str4;
