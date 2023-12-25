@@ -291,7 +291,7 @@ bool intr_LineCrossesRect(int32 line_x1, int32 line_y1, int32 line_x2, int32 lin
 
 		// Because the midpoint is an integer (round-off err), make sure it isn't the same
 		// as one of the two endpoints.
-		if (((mX == p1X) && (mY == p1Y)) || ((mX == p1X) && (mY == p1Y))) {
+		if (((mX == p1X) && (mY == p1Y)) || ((mX == p2X) && (mY == p2Y))) {
 			return false;
 		}
 
