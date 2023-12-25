@@ -54,6 +54,17 @@ Archive *makeInstallShieldArchive(const Common::Path &baseName);
 /**
  * This factory method creates an Archive instance corresponding to the content
  * of the single- or multi-file InstallShield cabinet with the given base name
+ * in a specified archive.
+ *
+ * May return nullptr in case of a failure.
+ *
+ * @param baseName The base filename, e.g. the "data" in "data1.cab"
+ */
+Archive *makeInstallShieldArchive(const Common::Path &baseName, Common::Archive &archive);
+
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the single- or multi-file InstallShield cabinet with the given base name
  *
  * May return nullptr in case of a failure.
  * 
