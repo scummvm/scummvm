@@ -38,7 +38,10 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	uint16 ErrX, ErrY, i, j;
 	uint8 *pScaled, *pData = S->data;
 
-	if (!D || !S)
+	if (!D)
+		error_show(FL, 'BUF!', "scale sprite NULL D");
+
+	if (!S)
 		error_show(FL, 'BUF!', "scale sprite h:%d w:%d sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
 
 	/* calculate new x size */
