@@ -53,9 +53,6 @@ extern void gui_buffer_system_shutdown();
 					Any changes to the contents will be made by the user.
  */
 extern bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler);
-
-extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
-
 extern void gui_buffer_deregister(void *myBuf);
 
 extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);

@@ -55,7 +55,6 @@ int32 gr_font_string_width(const Common::String &str, int32 auto_spacing = 1);
 Font *gr_font_load(const char *fontName);
 
 extern void font_set_colors(uint8 alt1, uint8 alt2, uint8 foreground);
-extern void gr_font_set_color(uint8 foreground);
 
 } // namespace M4
 

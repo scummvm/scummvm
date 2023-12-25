@@ -162,7 +162,6 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 	assert(myCCB->currLocation);
 	Buffer Destination;
 	DrawRequest dr;
-	RendCell Frame;
 
 	Destination.w = source->w;
 	Destination.h = source->h;
@@ -181,6 +180,9 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 	dr.ICT = ICT;
 	dr.srcDepth = myCCB->layer >> 8;
 
+// FIXME: Unused Code. Remove?
+#if 0
+	RendCell Frame;
 	Frame.hot_x = myCCB->source->xOffset;
 	Frame.hot_y = myCCB->source->yOffset;
 	Frame.Width = source->w;
@@ -192,6 +194,7 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 		Frame.Comp = (uint32)source->encoding;
 	}
 	Frame.data = source->data;
+#endif
 
 	// And draw the sprite
 	gr_sprite_draw(&dr);

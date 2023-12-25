@@ -508,8 +508,6 @@ struct MenuGlobals {
 	int32 remember_digestability;		// For cancelling out of the options menu
 };
 
-extern void CreateGameMenu(RGB8 *myPalette);
-extern void CreateGameMenuFromMain(RGB8 *myPalette);
 extern void CreateGameMenuMain(RGB8 *myPalette);
 
 } // namespace GUI

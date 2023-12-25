@@ -54,11 +54,6 @@ extern int32 kernel_trigger_create(int32 trigger_num);
 extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
 
 /**
- * Dispatches a trigger
- */
-extern bool kernel_trigger_dispatchx(int32 trigger_num);
-
-/**
  * Dispatches a trigger.
  * @returns		Returns true if the trigger was handled. If the trigger is for
  * a different room that current room_id, returns false. If no trigger_mode was
