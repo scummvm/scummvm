@@ -2227,6 +2227,8 @@ GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h)
 	srcBuff = myMenu->menuBuffer->get_buffer();
 	destBuff = copyOfBackground->get_buffer();
 	if ((!srcBuff) || (!destBuff)) {
+		delete copyOfBackground;
+
 		return nullptr;
 	}
 
