@@ -798,7 +798,7 @@ void Room143::daemon() {
 			default:
 				_G(flags)[V298] = 0;
 				_burlMode = 20;
-				series_play_with_breaks(PLAY9, "143bu04", 0xa00, kCHANGE_BURL_ANIMATION, 3);				
+				series_play_with_breaks(PLAY9, "143bu04", 0xa00, kCHANGE_BURL_ANIMATION, 3);
 				break;
 			}
 			break;
@@ -1384,7 +1384,7 @@ void Room143::conv35() {
 						(node == 12 && entry == 2) ||
 						(node == 13 && entry == 1) ||
 						(node == 15) ||
-						(node = 16 && entry == 0) ||
+						(node == 16 && entry == 0) ||
 						(node == 16 && entry == 2) ||
 						(node == 17 && entry == 0) ||
 						(node == 18 && entry == 0) ||
