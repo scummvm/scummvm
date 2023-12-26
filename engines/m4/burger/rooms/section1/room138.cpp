@@ -204,7 +204,7 @@ void Room138::daemon() {
 
 		case 23:
 			_deputyMode = 24;
-			series_play("138cp06", 0500, 0, kCHANGE_DEPUTY_ANIMATION, 6, 0, 100, 0, 0, 46, 49);
+			series_play("138cp06", 0x500, 0, kCHANGE_DEPUTY_ANIMATION, 6, 0, 100, 0, 0, 46, 49);
 			digi_play("138_004", 1, 255);
 			break;
 
