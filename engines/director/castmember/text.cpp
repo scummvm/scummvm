@@ -233,6 +233,13 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	Graphics::MacFont macFont(_fontId, _fontSize, _textSlant);
 	g_director->_wm->_fontMan->getFont(&macFont);
 	_fontId = macFont.getId();
+
+	// If the text is empty, that means we ignored the font and now
+	// set the text height to a minimal one.
+	//
+	// This fixes `number of chars` in Lingo Workshop
+	if (_textType == kTextTypeAdjustToFit && _ftext.empty())
+		_initialRect.setHeight(macFont.getSize() + (2 * _borderSize) + _gutterSize + _boxShadow);
 }
 
 bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
