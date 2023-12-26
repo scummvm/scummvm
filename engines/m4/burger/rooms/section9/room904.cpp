@@ -162,7 +162,7 @@ static const char *const CREDITS_ENG[] = {
 	"Conversations:  Robert Aitken",
 	nullptr,
 	"Production",
-	"Procucer:  Fran\xe7""ois Robillard,",
+	"Producer:  Fran\xe7""ois Robillard",
 	" ",
 	"Assistant Producer:  Danielle Cooper",
 	nullptr,
@@ -216,7 +216,8 @@ static const char *const CREDITS_ENG[] = {
 	"and Offspring who often made do without",
 	"their loved ones so that this product could",
 	"be made.",
-	" "
+	nullptr,
+	" ",
 	" ",
 	nullptr,
 	"Back To Main Menu",
