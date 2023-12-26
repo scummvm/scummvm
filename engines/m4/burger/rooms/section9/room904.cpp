@@ -225,7 +225,7 @@ static const char *const CREDITS_ENG[] = {
 	nullptr
 };
 
-static const char *const CREDITS[] = {
+static const char *const CREDITS_DEU[] = {
 	"Entwurf",
 	"Spielentwurf:  Robert Aitken",
 	" ",
@@ -442,6 +442,8 @@ static const char *const CREDITS[] = {
 	nullptr
 };
 
+#define CREDITS (g_engine->getLanguage() == Common::DE_DEU ? CREDITS_DEU : CREDITS_ENG)
+
 void Room904::preload() {
 	_G(player).walker_in_this_scene = false;
 }
@@ -621,7 +623,7 @@ void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 
 	playRandomSound(-1, 2);
 
-	if (strncmp(credit, "Haupt", 5)) {
+	if (strncmp(credit, "Haupt", 5) && strncmp(credit, "Back ", 5)) {
 		mouse_set_sprite(kArrowCursor);
 		gr_font_set(_G(font_conv));
 		_fontHeight = gr_font_get_height();
