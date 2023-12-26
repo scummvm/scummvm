@@ -141,9 +141,9 @@ static void sort_catalog() {
 
 		switch (tag) {
 		case _T_ROOM:
-			snprintf(&pCatalogIter[(3 * sizeof(short))], 256, "%03d!", room_number);
+			snprintf(&pCatalogIter[(3 * sizeof(uint16))], 256, "%03d!", room_number);
 
-			i = (3 * sizeof(short)) + (5 * sizeof(char));
+			i = (3 * sizeof(uint16)) + (5 * sizeof(char));
 
 			for (;;) {
 				if (!pCatalogIter[i])
@@ -153,7 +153,7 @@ static void sort_catalog() {
 			break;
 
 		default:
-			cstrupr(pCatalogIter + (2 * sizeof(short)));
+			cstrupr(pCatalogIter + (2 * sizeof(uint16)));
 			break;
 		}
 
@@ -196,7 +196,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	if (c_size)
 		*c_size = 0;
 
-	short size = convert_intel16(*(short *)&c[0]);
+	short size = convert_intel16(*(uint16 *)&c[0]);
 
 	if (!size)
 		return nullptr;
@@ -204,17 +204,17 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	if (c_size)
 		*c_size = size;
 
-	int32 x = sizeof(short);
+	int32 x = sizeof(uint16);
 
-	int16 theTag = convert_intel16(*(short *)&c[x]);
+	int16 theTag = convert_intel16(*(uint16 *)&c[x]);
 	if (tag)
 		*tag = theTag;
 
-	x += sizeof(short); // tag
+	x += sizeof(uint16); // tag
 
 	if ((theTag == _T_ROOM) && room) {
-		*room = convert_intel16(*(short *)&c[x]);
-		x += sizeof(short);
+		*room = convert_intel16(*(uint16 *)&c[x]);
+		x += sizeof(uint16);
 	}
 
 	for (i = 0; c[x]; x++) {
@@ -251,7 +251,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	}
 
 	if ((theTag != _T_ROOM) && room)
-		*room = convert_intel16(*(short *)&c[size - (sizeof(short))]);
+		*room = convert_intel16(*(uint16 *)&c[size - (sizeof(uint16))]);
 
 	return &c[size];
 }

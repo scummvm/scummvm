@@ -408,12 +408,12 @@ Font *gr_font_load(const char *fontName) {
 		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 2);
 
 	// offset table
-	newFont->offset = (short *)mem_alloc(256 * sizeof(short), STR_FONTOFF);
+	newFont->offset = (short *)mem_alloc(256 * sizeof(int16), STR_FONTOFF);
 	if (!newFont->offset)
 		error_show(FL, 'OOM!', "font offset table");
 
 	bufferHandle = newFont->offset;
-	fontFile.read(&bufferHandle, 256 * sizeof(short));
+	fontFile.read(&bufferHandle, 256 * sizeof(int16));
 
 	for (int i = 0; i < 256; i++)
 		newFont->offset[i] = convert_intel16(newFont->offset[i]);
