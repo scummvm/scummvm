@@ -48,6 +48,17 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
+		uint16 currentX = x;
+		uint16 currentY = y;
+		for (int i = 0; i < count; i++) {
+			const Macs2::GlyphData &currentData = data[i];
+			DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s);
+			currentX += currentData.Width;
+			// TODO: Maybe handle end of line
+		}
+	}
+
 	bool View1::msgFocus(const FocusMessage &msg) {
 	//Common::fill(&_pal[0], &_pal[256 * 3], 0);
 	// _offset = 128;
@@ -143,6 +154,9 @@ void View1::draw() {
 
 	// Draw a shaded rectangle
 	drawDarkRectangle(50, 50, 100, 50);
+
+	// Draw all glyphs
+	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
 }
 
 bool View1::tick() {

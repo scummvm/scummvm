@@ -36,7 +36,7 @@ private:
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
 
-	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y);
+	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
 public:
 	View1();
