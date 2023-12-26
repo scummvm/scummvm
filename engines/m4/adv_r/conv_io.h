@@ -89,10 +89,6 @@ struct Converstation_Globals {
 	void syncGame(Common::Serializer &s);
 
 	void conv_reset_all();
-	void conv_reset(const char *filename);
-
-	void conv_play(Conv *c);
-	void conv_go(Conv *c);
 };
 
 Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
@@ -117,8 +113,8 @@ const char *get_conv_name();
 const char *conv_sound_to_play();
 int32 conv_whos_talking();
 
-int32 conv_get_decl_val(decl_chunk *decl);
-void conv_set_decl_val(decl_chunk *decl, int32 val);
+int32 conv_get_decl_val(Conv *c, decl_chunk *decl);
+void conv_set_decl_val(Conv *c, decl_chunk *decl, int32 val);
 void conv_export_value(Conv *c, int32 val, int index);
 void conv_export_value_curr(int32 val, int index);
 void conv_export_pointer(Conv *c, int32 *val, int index);

@@ -78,18 +78,18 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			c_asgn = get_c_asgn(c, i);
 
 			decl = get_decl(c, c_asgn->c_op_l);
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 
 			if (conv_ops_cond_successful(l_op, c_asgn->c_op, c_asgn->c_op_r)) {
 				decl = get_decl(c, c_asgn->index);
-				conv_set_decl_val(decl, conv_ops_process_asgn(conv_get_decl_val(decl), c_asgn->op, c_asgn->opnd1));
+				conv_set_decl_val(c, decl, conv_ops_process_asgn(conv_get_decl_val(c, decl), c_asgn->op, c_asgn->opnd1));
 			}
 			break;
 
 		case ASGN_CHUNK:
 			asgn = get_asgn(c, i);
 			decl = get_decl(c, asgn->index);
-			conv_set_decl_val(decl, conv_ops_process_asgn(conv_get_decl_val(decl), asgn->op, asgn->opnd1));
+			conv_set_decl_val(c, decl, conv_ops_process_asgn(conv_get_decl_val(c, decl), asgn->op, asgn->opnd1));
 			break;
 
 		case HIDE_CHUNK:
@@ -105,7 +105,7 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			entry = get_hash_entry(c, c_misc->index);
 
 			decl = get_decl(c, c_misc->c_op_l);
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 
 			if (conv_ops_cond_successful(l_op, c_misc->c_op, c_misc->c_op_r)) {
 				if (!(entry->status & DESTROYED))
@@ -127,7 +127,7 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			entry = get_hash_entry(c, c_misc->index);
 
 			decl = get_decl(c, c_misc->c_op_l);
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 
 			if (conv_ops_cond_successful(l_op, c_misc->c_op, c_misc->c_op_r)) {
 				if (!(entry->status & DESTROYED)) {
@@ -148,7 +148,7 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			entry = get_hash_entry(c, c_misc->index);
 
 			decl = get_decl(c, c_misc->c_op_l);
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 
 			if (conv_ops_cond_successful(l_op, c_misc->c_op, c_misc->c_op_r))
 				entry->status |= DESTROYED;
@@ -158,7 +158,7 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 			r_op = c_goto->opnd2; //val
 
 			if (conv_ops_cond_successful(l_op, c_goto->op, r_op)) {
@@ -171,7 +171,7 @@ static void conv_exec_entry(int32 offset, Conv *c) {
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 			r_op = c_goto->opnd2; //val
 
 			if (conv_ops_cond_successful(l_op, c_goto->op, r_op)) {
@@ -325,7 +325,7 @@ static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
 			c_reply = get_c_reply(c, i);
 			decl = get_decl(c, c_reply->op_l);
 
-			l_op = conv_get_decl_val(decl);
+			l_op = conv_get_decl_val(c, decl);
 			r_op = c_reply->op_r; //val
 
 			if (is_valid && conv_ops_cond_successful(l_op, c_reply->op, r_op)) {

@@ -23,6 +23,7 @@
 #ifndef M4_ADV_R_CONV_H
 #define M4_ADV_R_CONV_H
 
+#include "common/array.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -84,14 +85,15 @@ namespace M4 {
 
 
 struct Conv {
-	int32 chunkSize;
-	char *conv;
-	int32 myCNode;
-	int32 exit_now;
-	int32 node_hash;
+	int32 chunkSize = 0;
+	char *conv = nullptr;
+	int32 myCNode = 0;
+	int32 exit_now = 0;
+	int32 node_hash = 0;
 
-	int32 mode;
-	int32 c_entry_num;
+	int32 mode = 0;
+	int32 c_entry_num = 0;
+	Common::Array<int32 *> _pointers;
 };
 
 struct ConvDisplayData {
@@ -115,7 +117,7 @@ struct decl_chunk {
 	int32 tag;
 	int32 val;
 	int32 flags;
-	int32 *addr;
+	int32 addrIndex;	// Index into Conv::_pointers array
 } PACKED_STRUCT;
 
 struct fall_chunk {

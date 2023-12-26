@@ -174,21 +174,21 @@ int conv_toggle_flags(entry_chunk *entry) {
 	return entry->status;
 }
 
-int32 conv_get_decl_val(decl_chunk *decl) {
+int32 conv_get_decl_val(Conv *c, decl_chunk *decl) {
 	switch (decl->flags) {
 	case DECL_POINTER:
-		return *decl->addr;
+		return *c->_pointers[decl->addrIndex];
 
 	default:
 		return decl->val;
 	}
 }
 
-void conv_set_decl_val(decl_chunk *decl, int32 val) {
+void conv_set_decl_val(Conv *c, decl_chunk *decl, int32 val) {
 	switch (decl->flags) {
 	case DECL_POINTER:
 		decl->val = val;
-		*decl->addr = val;
+		*c->_pointers[decl->addrIndex] = val;
 		break;
 
 	default:
@@ -217,7 +217,7 @@ void conv_export_value(Conv *c, int32 val, int index) {
 		case DECL_CHUNK:
 			if (i == index) {
 				decl = get_decl(c, ent);
-				conv_set_decl_val(decl, val);
+				conv_set_decl_val(c, decl, val);
 			}
 			i++;
 			break;
@@ -254,7 +254,9 @@ void conv_export_pointer(Conv *c, int32 *val, int index) {
 		case DECL_CHUNK:
 			if (i == index) {
 				decl = get_decl(c, ent);
-				decl->addr = val;
+
+				c->_pointers.push_back(val);
+				decl->addrIndex = c->_pointers.size() - 1;
 				decl->flags = DECL_POINTER;
 			}
 			i++;
@@ -476,15 +478,14 @@ static void conv_save_state(Conv *c) {
 	int32 val = 0;
 	entry_chunk *entry = nullptr;
 
-	while (ent < c->chunkSize)
-	{
+	while (ent < c->chunkSize) {
 		conv_ops_get_entry(ent, &next, &tag, c);
 		decl_chunk *decl; 	// declared here for the benefit of Watcom 10.0 not liking to scope things into switches
 
 		switch (tag) {
 		case DECL_CHUNK:
 			decl = get_decl(c, ent);
-			val = conv_get_decl_val(decl);
+			val = conv_get_decl_val(c, decl);
 
 			memcpy(&conv_save_buff[offset], &val, sizeof(int32));
 			offset += sizeof(int32);
@@ -617,7 +618,7 @@ static Conv *conv_restore_state(Conv *c) {
 			offset += sizeof(int32);
 			decl = get_decl(c, ent);
 
-			conv_set_decl_val(decl, val);
+			conv_set_decl_val(c, decl, val);
 			break;
 
 		default:
@@ -771,7 +772,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 		conv_unload();
 	}
 
-	convers = (Conv *)mem_alloc(sizeof(Conv), "Conv struct");
+	convers = new Conv();
 
 	if (!convers) {
 		conv_set_handle(nullptr);
@@ -857,7 +858,7 @@ void conv_unload(Conv *c) {
 	if (c) {
 		if (c->conv)
 			mem_free(c->conv);
-		mem_free(c);
+		delete c;
 	}
 
 	_GC(globConv) = c = nullptr;
