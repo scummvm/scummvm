@@ -22,6 +22,7 @@
 #ifndef M4_CORE_ERRORS_H
 #define M4_CORE_ERRORS_H
 
+#include "common/scummsys.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -29,8 +30,8 @@ namespace M4 {
 #define FL __FILE__,__LINE__
 #define ERROR_FILE "error.m4"
 
-void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...);
-void error_show(const char *filename, uint32 line, quadchar errorcode);
+void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...) NORETURN_POST;
+void NORETURN_PRE error_show(const char *filename, uint32 line, quadchar errorcode) NORETURN_POST;
 void error_look_up(quadchar errorcode, char *result_string);
 
 } // namespace M4
