@@ -23,12 +23,20 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h> // for CommandLineToArgvW()
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#include <sdkddkver.h>
+#if !defined(_WIN32_IE) || (_WIN32_IE < 0x500)
  // required for SHGetSpecialFolderPath and SHGFP_TYPE_CURRENT in shlobj.h
+#undef _WIN32_IE
 #define _WIN32_IE 0x500
 #endif
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x500)
+ // required for VER_MAJORVERSION, VER_MINORVERSION and VER_GREATER_EQUAL in winnt.h
+ // set to Windows 2000 which is the minimum needed for these constants
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x500
+#endif
+#include <windows.h>
+#include <shellapi.h> // for CommandLineToArgvW()
 #include <shlobj.h>
 #include <tchar.h>
 
