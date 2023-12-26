@@ -237,6 +237,13 @@ void Macs2Engine::readResourceFile() {
 	_cursorData = new byte[_cursorWidth * _cursorHeight];
 	file.read(_cursorData, _cursorWidth* _cursorHeight);
 
+	// Load a frame of animation from the protagonist
+	file.seek(0x000C95A8);
+	_guyWidth = file.readUint16LE();
+	_guyHeight = file.readUint16LE();
+	_guyData = new byte[_guyWidth * _guyHeight];
+	file.read(_guyData, _guyWidth * _guyHeight);
+
 	// Load the shading table
 	file.seek(0x00248ECB);
 	_shadingTable = new byte[256];
@@ -280,15 +287,18 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 	// debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
 
 	uint16 value = ScriptReadWord(stream);
+
+	// TODO: Add the "prelude" before the big switch here, since the logic is more general than what I would implement if I took it case by case
+
 	// debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
 	// TODO: There is some code required here to follow the logic exactly of going from opcode 1 to 2
 	if (opcode == 0x02) {
 		// TODO: We need to start handling opcode2 in this case
 		if (value == 0x0a) {
-			// l0037_A0C5:
-			// TODO: Confirm that nothing else is done in this case and that this code does run
-			out1 = 1;
+			// TODO: This is too verbatim, only to get me to pass the script once. In reality, we are accessing a saved variable in this and similar cases based on the second value
+			out1 = 0;
 			out2 = 0;
+			return;
 		}
 	}
 	else
@@ -427,7 +437,26 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 			}
 		}
 		else if (opcode1 == 0x05) {
-			ScriptNoEntry
+			// TODO: Implement this second opcode fetching:
+			/*
+				call	far 0037h:9F07h
+	mov	[bp-3h],al
+	;; TODO: I just now realized this one - why do we call the same function two times? And does
+	;; the result change in between?
+	call	far 0037h:9F4Dh
+	;; This is the result of the function that mapped the action to a hotspot (0037:9F4D)
+	mov	[bp-7h],ax
+	mov	[bp-5h],dx
+	;; Note: I don't think (TODO: Confirm) that the locals here are accessed in this function
+	call	far 0037h:9F4Dh
+	mov	[bp-0Bh],ax
+	mov	[bp-9h],dx
+	mov	byte ptr [bp-12h],0h
+	mov	al,[bp-3h]
+	cmp	al,1h
+	jnz	0DCA6h
+
+			*/
 		}
 		// This is where handling of the opcodes > 6 continues
 		// l0037_DD3C
