@@ -133,6 +133,9 @@ void View1::draw() {
 
 	// Draw the mouse cursor
 	DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
+
+	// Draw the animation frame
+	DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
 	
 	
 	//for (int i = 0; i < 100; ++i)

@@ -90,6 +90,11 @@ public:
 	uint16 _cursorWidth;
 	uint16 _cursorHeight;
 
+	// TODO: Need a data structure for this by now or check if a bitmap with transparent pixels for blitting exists in ScummVM
+	byte* _guyData;
+	uint16 _guyWidth;
+	uint16 _guyHeight;
+
 	byte* _borderData;
 	uint16 _borderWidth;
 	uint16 _borderHeight;
