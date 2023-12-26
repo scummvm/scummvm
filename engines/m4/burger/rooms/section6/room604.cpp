@@ -27,6 +27,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_GERBILS_ANIMATION = 6011
+};
+
 static const char *SAID[][4] = {
 	{ "WOOD SHAVINGS", nullptr,   "604w010", nullptr   },
 	{ "ASHES",         "604w015", "604w016", "604w016" },
@@ -187,7 +191,7 @@ void Room604::init() {
 	if (_G(flags)[kHampsterState] == 6006) {
 		_G(wilbur_should) = 18;
 		Section6::_gerbilState = 6004;
-		series_stream("604mg06", 4, 0xc00, 6011);
+		series_stream("604mg06", 4, 0xc00, kCHANGE_GERBILS_ANIMATION);
 		series_play("604mg06s", 4, 0xc80);
 		player_set_commands_allowed(false);
 	}
@@ -312,14 +316,14 @@ void Room604::daemon() {
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 9);
 		break;
 
-	case 6011:
+	case kCHANGE_GERBILS_ANIMATION:
 		switch (Section6::_gerbilState) {
 		case 22:
 			break;
 
 		case 23:
 			_G(flags)[kHampsterState] = 6006;
-			_sectionMachine1 = series_play("604mg04", 0xcff, 0, 6011, 8, 0, 100, 0, 0, 0, 50);
+			_sectionMachine1 = series_play("604mg04", 0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 0, 50);
 			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 0, 50);
 			Section6::_state4 = 3;
 			kernel_trigger_dispatch_now(6014);
@@ -330,7 +334,7 @@ void Room604::daemon() {
 			Section6::_gerbilState = 6003;
 			Section6::_state4 = 4;
 			kernel_trigger_dispatch_now(6014);
-			_sectionMachine1 = series_play("604mg04", 0xcff, 0, 6011, 8, 0, 100, 0, 0, 51, -1);
+			_sectionMachine1 = series_play("604mg04", 0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 51, -1);
 			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 51, -1);
 			break;
 
@@ -338,6 +342,7 @@ void Room604::daemon() {
 			Section6::_gerbilState = _G(flags)[V245] == 10030 ? 6005 : 6004;
 			_sectionMachine1 = series_show("604mg04", 0xcff, 0, -1, -1, 83, 100, 0, 0);
 			_sectionMachine2 = series_show("604mg04s", 0xd00, 0, -1, -1, 83, 100, 0, 0);
+			kernel_trigger_dispatch_now(kCHANGE_GERBILS_ANIMATION);
 			break;
 
 		case 6004:
@@ -391,7 +396,7 @@ void Room604::daemon() {
 			_G(flags)[kHampsterState] = 6006;
 			_G(flags)[V248] = 1;
 			Section6::_gerbilState = 23;
-			kernel_trigger_dispatch_now(6011);
+			kernel_trigger_dispatch_now(kCHANGE_GERBILS_ANIMATION);
 			_G(wilbur_should) = 10001;
 		}
 		break;
@@ -463,7 +468,7 @@ void Room604::daemon() {
 				Section6::_state4 = 5;
 				kernel_trigger_dispatch_now(6014);
 				Section6::_gerbilState = 6004;
-				series_stream("604mg06", 4, 0xc80, 6011);
+				series_stream("604mg06", 4, 0xc80, kCHANGE_GERBILS_ANIMATION);
 				series_play("604mg06s", 4, 0xc80, 0, -1);
 				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, kCHANGE_WILBUR_ANIMATION, 3);
 			} else {
@@ -504,7 +509,7 @@ void Room604::daemon() {
 				_G(flags)[V248] = 1;
 				term_message("The gerbils awaken");
 				Section6::_gerbilState = 23;
-				kernel_trigger_dispatch_now(6011);
+				kernel_trigger_dispatch_now(kCHANGE_GERBILS_ANIMATION);
 			}
 			break;
 
@@ -523,7 +528,7 @@ void Room604::daemon() {
 			if (_G(flags)[kHampsterState] == 6000) {
 				_G(flags)[kHampsterState] = 6006;
 				Section6::_gerbilState = 23;
-				kernel_trigger_dispatch_now(6011);
+				kernel_trigger_dispatch_now(kCHANGE_GERBILS_ANIMATION);
 			}
 
 			_G(wilbur_should) = 10001;
@@ -600,7 +605,7 @@ void Room604::daemon() {
 
 		case 20:
 			Section6::_gerbilState = 23;
-			kernel_trigger_dispatch_now(6011);
+			kernel_trigger_dispatch_now(kCHANGE_GERBILS_ANIMATION);
 			ws_unhide_walker();
 
 			if (_G(flags)[V248]) {
