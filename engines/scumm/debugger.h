@@ -26,6 +26,8 @@
 
 namespace Scumm {
 
+#define DEBUG_COLOR_COUNT 32
+
 class ScummEngine;
 
 class ScummDebugger : public GUI::Debugger {
@@ -35,7 +37,6 @@ public:
 private:
 	ScummEngine *_vm;
 
-	static const int DEBUG_COLOR_COUNT = 32;
 	int _nextColorIndex = 0;
 	int _debugColors[DEBUG_COLOR_COUNT];
 
