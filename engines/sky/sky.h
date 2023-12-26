@@ -49,6 +49,7 @@ struct SystemVars {
 	uint16 currentMusic;
 	bool pastIntro;
 	bool paused;
+	bool textDirRTL;
 };
 
 class Sound;

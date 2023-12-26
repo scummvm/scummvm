@@ -568,6 +568,11 @@ uint16 Control::handleClick(ConResource *pButton) {
 		strncpy(restart, "Hobaq irpa?", 50);
 	}
 
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR) {
+		strncpy(quitDos, "\x89\x96\x89\x80\x84 \x80\x8c SOD?", 50);
+		strncpy(restart, "\x84\x9a\x87\x8c\x84 \x8e\x87\x83\x99?", 50);
+	}
+
 	switch (pButton->_onClick) {
 	case DO_NOTHING:
 		return 0;
@@ -1624,6 +1629,9 @@ void Control::showGameQuitMsg() {
 	} else if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) { // Not translated in original
 		_skyText->displayText(_quitTexts[0], sizeof(_quitTexts[0]), textBuf1, true, 320, 255);
 		_skyText->displayText(_quitTexts[1], sizeof(_quitTexts[1]), textBuf2, true, 320, 255);
+	} else if (Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR) {
+		_skyText->displayText(_quitTexts[SKY_HEBREW * 2 + 0], sizeof(_quitTexts[SKY_HEBREW * 2 + 0]), textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[SKY_HEBREW * 2 + 1], sizeof(_quitTexts[SKY_HEBREW * 2 + 1]), textBuf2, true, 320, 255);
 	} else {
 		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 0]), textBuf1, true, 320, 255);
 		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 1]), textBuf2, true, 320, 255);
@@ -1648,7 +1656,7 @@ void Control::showGameQuitMsg() {
 	free(textBuf2);
 }
 
-char Control::_quitTexts[18][35] = {
+char Control::_quitTexts[20][45] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Das Spiel ist aus.",
@@ -1666,7 +1674,9 @@ char Control::_quitTexts[18][35] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Irpa okohseha, irpok 1",
-	"JYD\x96 JDITELEH"
+	"JYD\x96 JDITELEH",
+	"\x84\x8E\x99\x87\x97 \x90\x82\x8e\x98 \x99\x87\x97\x8F \x8E\x91\x94\x98 \x80\x87\x9A",
+	"\x84\x89\x85 \x92\x98\x90\x89\x89\x8D"
 };
 
 uint8 Control::_crossImg[594] = {

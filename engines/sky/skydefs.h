@@ -45,6 +45,7 @@ namespace Sky {
 #define SKY_PORTUGUESE	6
 #define SKY_SPANISH		7
 #define SKY_RUSSIAN		8
+#define SKY_HEBREW		9
 // Special treatment
 #define SKY_CHINESE_TRADITIONAL	0x7f
 
