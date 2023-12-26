@@ -469,193 +469,65 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
 
 	// IQ logos are PICT v2
-	if (id == 4000 || id == 4001) {
-		Image::PICTDecoder pict;
-		if (pict.loadStream(*res)) {
-			const Graphics::Surface *s1 = pict.getSurface();
-			const byte *palette = pict.getPalette();
+	Image::PICTDecoder pict;
+	if (pict.loadStream(*res)) {
+		warning("DECODED");
+		const Graphics::Surface *s1 = pict.getSurface();
+		const byte *palette = pict.getPalette();
 
-			s = new Graphics::Surface();
-			s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
+		s = new Graphics::Surface();
+		s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
 
-			// The palette doesn't match the game's palette at all, so remap
-			// the colors to the custom area of the palette. It's assumed that
-			// only one such picture will be loaded at a time.
-			//
-			// But we still match black and white to 0 and 15 to make sure they
-			// mach exactly.
+		// The palette doesn't match the game's palette at all, so remap
+		// the colors to the custom area of the palette. It's assumed that
+		// only one such picture will be loaded at a time.
+		//
+		// But we still match black and white to 0 and 15 to make sure they
+		// mach exactly.
 
-			int black = -1;
-			int white = -1;
+		int black = -1;
+		int white = -1;
 
-			for (int i = 0; i < pict.getPaletteColorCount(); i++) {
-				int r = palette[3 * i];
-				int g = palette[3 * i + 1];
-				int b = palette[3 * i + 2];
+		for (int i = 0; i < pict.getPaletteColorCount(); i++) {
+			int r = palette[3 * i];
+			int g = palette[3 * i + 1];
+			int b = palette[3 * i + 2];
 
-				if (r == 0 && g == 0 && b == 0)
-					black = i;
-				else if (r == 255 && g == 255 && b == 255)
-					white = i;
-			}
-
-			if (palette) {
-				_system->getPaletteManager()->setPalette(palette, kCustomColor, pict.getPaletteColorCount());
-
-				for (int y = 0; y < s->h; y++) {
-					for (int x = 0; x < s->w; x++) {
-						int color = s1->getPixel(x, y);
-
-						if (color == black)
-							color = kBlack;
-						else if (color == white)
-							color = kWhite;
-						else
-							color = kCustomColor + color;
-
-						s->setPixel(x, y, color);
-					}
-				}
-			} else
-				s->copyFrom(*s1);
-
+			if (r == 0 && g == 0 && b == 0)
+				black = i;
+			else if (r == 255 && g == 255 && b == 255)
+				white = i;
 		}
-	} else {
-		s = decodePictV1(res);
+
+		if (!pict.getPaletteColorCount()) {
+			black = 0xff;
+			white = 0x00;
+		}
+
+		if (palette) {
+			_system->getPaletteManager()->setPalette(palette, kCustomColor, pict.getPaletteColorCount());
+
+			for (int y = 0; y < s->h; y++) {
+				for (int x = 0; x < s->w; x++) {
+					int color = s1->getPixel(x, y);
+
+					if (color == black)
+						color = kBlack;
+					else if (color == white)
+						color = kWhite;
+					else
+						color = kCustomColor + color;
+
+					s->setPixel(x, y, color);
+				}
+			}
+		} else
+			s->copyFrom(*s1);
+
 	}
 
 	delete res;
 	resource.close();
-
-	return s;
-}
-
-Graphics::Surface *MacGuiImpl::decodePictV1(Common::SeekableReadStream *res) {
-	uint16 size = res->readUint16BE();
-
-	uint16 top = res->readUint16BE();
-	uint16 left = res->readUint16BE();
-	uint16 bottom = res->readUint16BE();
-	uint16 right = res->readUint16BE();
-
-	int width = right - left;
-	int height = bottom - top;
-
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(right - left, bottom - top, Graphics::PixelFormat::createFormatCLUT8());
-
-	bool endOfPicture = false;
-
-	while (!endOfPicture) {
-		byte opcode = res->readByte();
-		byte value;
-		int x1, x2, y1, y2;
-
-		int x = 0;
-		int y = 0;
-		bool compressed = false;
-
-		switch (opcode) {
-		case 0x01: // clipRgn
-			// The clip region is not important
-			res->skip(res->readUint16BE() - 2);
-			break;
-
-		case 0x11: // picVersion
-			value = res->readByte();
-			assert(value == 1);
-			break;
-
-		case 0x99: // PackBitsRgn
-			compressed = true;
-			// Fall through
-
-		case 0x91: // BitsRgn
-			res->skip(2);	// Skip rowBytes
-
-			y1 = res->readSint16BE();
-			x1 = res->readSint16BE();
-			y2 = res->readSint16BE();
-			x2 = res->readSint16BE();
-
-			res->skip(8);	// Skip srcRect
-			res->skip(8);	// Skip dstRect
-			res->skip(2);	// Skip mode
-			res->skip(res->readUint16BE() - 2);	// Skip maskRgn
-
-			if (!compressed) {
-				for (y = y1; y < y2 && y < height; y++) {
-					byte b = res->readByte();
-					byte bit = 0x80;
-
-					for (x = x1; x < x2 && x < width; x++) {
-						if (b & bit)
-							s->setPixel(x, y, kBlack);
-						else
-							s->setPixel(x, y, kWhite);
-
-						bit >>= 1;
-
-						if (bit == 0) {
-							b = res->readByte();
-							bit = 0x80;
-						}
-					}
-				}
-			} else {
-				for (y = y1; y < y2 && y < height; y++) {
-					x = x1;
-					size = res->readByte();
-
-					while (size > 0) {
-						byte count = res->readByte();
-						size--;
-
-						bool repeat;
-
-						if (count >= 128) {
-							// Repeat value
-							count = 256 - count;
-							repeat = true;
-							value = res->readByte();
-							size--;
-						} else {
-							// Copy values
-							repeat = false;
-							value = 0;
-						}
-
-						for (int j = 0; j <= count; j++) {
-							if (!repeat) {
-								value = res->readByte();
-								size--;
-							}
-							for (int k = 7; k >= 0 && x < x2 && x < width; k--, x++) {
-								if (value & (1 << k))
-									s->setPixel(x, y, kBlack);
-								else
-									s->setPixel(x, y, kWhite);
-							}
-						}
-					}
-				}
-			}
-
-			break;
-
-		case 0xA0: // shortComment
-			res->skip(2);
-			break;
-
-		case 0xFF: // EndOfPicture
-			endOfPicture = true;
-			break;
-
-		default:
-			warning("decodePictV1: Unknown opcode: 0x%02x", opcode);
-			break;
-		}
-	}
 
 	return s;
 }

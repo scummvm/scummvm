@@ -612,7 +612,6 @@ public:
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 
 	Graphics::Surface *loadPict(int id);
-	Graphics::Surface *decodePictV1(Common::SeekableReadStream *res);
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
