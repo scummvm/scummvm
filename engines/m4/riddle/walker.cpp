@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/walker.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"

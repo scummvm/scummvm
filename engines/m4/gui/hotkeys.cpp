@@ -264,8 +264,8 @@ void Hotkeys::changeGlobal(void *, void *) {
 		_changeGlobalDialog->addButton(60, 40, " Change Global Variable ",
 			changeGlobalChange, 1);
 		_changeGlobalDialog->addButton(10, 40, " Cancel ", changeGlobalCancel, 2);
-		_changeGlobalDialog->addTextField(50, 7, gr_font_string_width("MMMMM") + 50,
-			"-----", nullptr, 3, 5);
+		char sep[5+1] = "-----";
+		_changeGlobalDialog->addTextField(50, 7, gr_font_string_width(sep) + 50, sep, nullptr, 3, 5);
 		_changeGlobalDialog->configure(3, 1, 2);
 		_changeGlobalDialog->show();
 	}
@@ -294,8 +294,9 @@ void Hotkeys::changeGlobalChange(void *, void *) {
 		Common::String::format("Assign new value to #%d ", _globalToChange).c_str(),
 		changeGlobalDoChange, 1);
 	_changeGlobalDialog->addButton(10, 40, " Cancel ", changeGlobalCancel, 2);
+	char val[5+1] = "MMMMM";
 	_changeGlobalDialog->addTextField(50, 7,
-		gr_font_string_width("MMMMM") + 50,
+		gr_font_string_width(val) + 50,
 		Common::String::format("%5d", globalVal).c_str(),
 		nullptr, 3, 5);
 	_changeGlobalDialog->configure(3, 1, 2);
@@ -353,7 +354,8 @@ void Hotkeys::teleport(void *, void *) {
 		_teleportDialog = DialogCreateAbsolute(260, 150, 385, 200, 61);
 		_teleportDialog->addButton(60, 30, " Teleport ", teleportOk, 1);
 		_teleportDialog->addButton(10, 30, " Cancel ", teleportCancel, 2);
-		_teleportDialog->addTextField(100, 10, gr_font_string_width("MMMM") + 100,
+		char sep_placeholder[4+1] = "MMMM";
+		_teleportDialog->addTextField(100, 10, gr_font_string_width(sep_placeholder) + 100,
 			"---", nullptr, 3, 3);
 		_teleportDialog->addMessage(10, 12, "Teleport where?", 4);
 		_teleportDialog->configure(3, 1, 2);

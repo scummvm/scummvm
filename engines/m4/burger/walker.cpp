@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/walker.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/burger/vars.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"

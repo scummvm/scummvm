@@ -20,6 +20,7 @@
  */
 
 #include "m4/adv_r/conv.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/chunk_ops.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"

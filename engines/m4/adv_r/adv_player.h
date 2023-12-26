@@ -106,7 +106,6 @@ void player_inform_walker_new_scale(int32 frontY, int32 backY, int32 frontS, int
 
 bool player_load_series(const char *walkerName, const char *shadowName, bool load_palette);
 void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool enable_commands_at_destination);
-void player_set_commands_allowed(bool t_or_f);
 void player_set_defaults();
 void player_noun_becomes_verb(int32 spriteNum);
 
