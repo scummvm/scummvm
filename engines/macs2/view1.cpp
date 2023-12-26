@@ -53,9 +53,12 @@ namespace Macs2 {
 		uint16 currentY = y;
 		for (int i = 0; i < count; i++) {
 			const Macs2::GlyphData &currentData = data[i];
+			if (currentX + currentData.Width > s.w) {
+				currentY += currentData.Height;
+				currentX = x;
+			}
 			DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s);
 			currentX += currentData.Width;
-			// TODO: Maybe handle end of line
 		}
 	}
 
