@@ -438,6 +438,22 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 		}
 		else if (opcode1 == 0x05) {
 			// TODO: Implement this second opcode fetching:
+			// [bp-3h]
+			byte opcode2 = ScriptReadByte(stream);
+
+			// [bp-7h]
+			uint16 v1;
+			// [bp-5h]
+			uint16 v2;
+			Func9F4D(stream, v1, v2);
+			// [bp-0Bh]
+			uint16 v3;
+			// [bp-9h]
+			uint16 v4;
+			Func9F4D(stream, v3, v4);
+			// TODO: Not yet implemented:
+			// mov	byte ptr [bp-12h],0h
+
 			/*
 				call	far 0037h:9F07h
 	mov	[bp-3h],al
@@ -451,7 +467,7 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 	call	far 0037h:9F4Dh
 	mov	[bp-0Bh],ax
 	mov	[bp-9h],dx
-	mov	byte ptr [bp-12h],0h
+	
 	mov	al,[bp-3h]
 	cmp	al,1h
 	jnz	0DCA6h
@@ -459,6 +475,7 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 			*/
 		}
 		// This is where handling of the opcodes > 6 continues
+		// TODO: Does it really? To check if I got this right
 		// l0037_DD3C
 		else if (opcode1 == 0x06) {
 			ScriptNoEntry
