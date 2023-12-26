@@ -199,14 +199,13 @@ void Room603::init() {
 		kernel_trigger_dispatch_now(6013);
 	}
 
-	if (_G(flags)[V243] == 6000) {
+	if (_G(flags)[kHampsterState] == 6000) {
 		Section6::_state4 = 1;
 		kernel_trigger_dispatch_now(6014);
 	}
-	if (_G(flags)[V243] == 6006) {
+	if (_G(flags)[kHampsterState] == 6006) {
 		_series2 = series_load("603mg01");
-		Section6::_state3 = 6002;
-		Section6::_state3 = 6001;
+		Section6::_gerbilState = 6001;
 		kernel_timing_trigger(60, 6011);
 	}
 
@@ -232,12 +231,12 @@ void Room603::init() {
 		break;
 	}
 
-	if (_G(flags)[V243] == 6006)
+	if (_G(flags)[kHampsterState] == 6006)
 		Section6::_state4 = 5;
 
-	if (_G(flags)[V243] == 6007)
+	if (_G(flags)[kHampsterState] == 6007)
 		Section6::_state4 = 8;
-	else if (_G(flags)[V243] == 6000)
+	else if (_G(flags)[kHampsterState] == 6000)
 		Section6::_state4 = 1;
 
 	kernel_trigger_dispatch_now(6014);
@@ -333,9 +332,9 @@ void Room603::daemon() {
 		break;
 
 	case 6011:
-		switch (Section6::_state3) {
+		switch (Section6::_gerbilState) {
 		case 6001:
-			Section6::_state3 = 6002;
+			Section6::_gerbilState = 6002;
 			_sectionMachine1 = series_play("603mg01", 0xdff, 0, 6011, 8, 0, 100, 0, 0, 0, 84);
 			_sectionMachine2 = series_play("603mg01s", 0xe00, 0, -1, 8, 0, 100, 0, 0, 0, 84);
 			break;
@@ -343,14 +342,14 @@ void Room603::daemon() {
 		case 6002:
 			Section6::_state4 = 4;
 			kernel_trigger_dispatch_now(6014);
-			Section6::_state3 = 6003;
+			Section6::_gerbilState = 6003;
 
 			_sectionMachine1 = series_play("603mg01", 0xdff, 0, 6011, 8, 0, 100, 0, 0, 85, -1);
 			_sectionMachine2 = series_play("603mg01s", 0xe00, 0, -1, 8, 0, 100, 0, 0, 85, -1);
 			break;
 
 		case 6003:
-			Section6::_state3 = (_G(flags)[V245] == 10029) ? 6005 : 6004;
+			Section6::_gerbilState = (_G(flags)[V245] == 10029) ? 6005 : 6004;
 			series_play("603mg01", 0xdff, 0, -1, -1, 95);
 			_sectionMachine2 = series_play("603mg01s", 0xe00, 0, -1, -1, 95);
 			kernel_trigger_dispatch_now(6011);
@@ -404,7 +403,7 @@ void Room603::daemon() {
 			ws_hide_walker();
 			Section6::_state2 = 1;
 
-			if (_G(flags)[V243] == 6007) {
+			if (_G(flags)[kHampsterState] == 6007) {
 				series_play_with_breaks(PLAY4, "603wi01", 0xdff, 6010, 3);
 			} else {
 				series_play_with_breaks(PLAY4, "603wi01", 0xdff, 6002, 3);
@@ -426,7 +425,7 @@ void Room603::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			Section6::_state2 = 2;
-			if (_G(flags)[V243] == 6007) {
+			if (_G(flags)[kHampsterState] == 6007) {
 				series_play_with_breaks(PLAY6, "603wi05", 0xdff, 6010, 3);
 			} else {
 				series_play_with_breaks(PLAY6, "603wi05", 0xdff, 6002, 3);
@@ -503,7 +502,7 @@ void Room603::daemon() {
 			break;
 
 		case 15:
-			if (_G(flags)[V243] != 6006) {
+			if (_G(flags)[kHampsterState] != 6006) {
 				_G(wilbur_should) = 10001;
 				player_set_commands_allowed(false);
 				ws_demand_facing(2);
@@ -516,7 +515,7 @@ void Room603::daemon() {
 		case 16:
 			_G(wilbur_should) = 10001;
 
-			if (_G(flags)[V243] == 6007) {
+			if (_G(flags)[kHampsterState] == 6007) {
 				wilbur_speech(_G(flags)[V279] ? "603w016" : "603w015");
 			} else {
 				kernel_trigger_dispatch_now(0);
@@ -587,7 +586,7 @@ void Room603::daemon() {
 void Room603::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (_G(flags)[V243] == 6000 && (player_said("TUBE ") || player_said("TUBE  "))) {
+	if (_G(flags)[kHampsterState] == 6000 && (player_said("TUBE ") || player_said("TUBE  "))) {
 		term_message("Can't leave through back tube as gerbils are in the way.");
 		wilbur_speech("600w003");
 		intr_cancel_sentence();
@@ -612,7 +611,7 @@ void Room603::pre_parser() {
 		player_hotspot_walk_override(226, 301, 2, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("WATER DISH") || player_said("WATER")) {
-		if (_G(flags)[V243] == 6006) {
+		if (_G(flags)[kHampsterState] == 6006) {
 			wilbur_speech("600w003");
 			intr_cancel_sentence();
 		} else if (player_said("KIBBLE")) {

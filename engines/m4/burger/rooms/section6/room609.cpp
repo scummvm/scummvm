@@ -48,7 +48,7 @@ void Room609::preload() {
 
 void Room609::init() {
 	_G(flags)[V277] = 6001;
-	_G(flags)[V243] = 6007;
+	_G(flags)[kHampsterState] = 6007;
 	kernel_trigger_dispatch_now(1);
 }
 

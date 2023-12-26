@@ -225,7 +225,7 @@ void Flags::reset2() {
 	if ((*this)[V277] == 6003)
 		inv_give_to_player("PANTYHOSE");
 
-	(*this)[V243] = 6000;
+	(*this)[kHampsterState] = 6000;
 	(*this)[V244] = 6000;
 	(*this)[V245] = 10027;
 	(*this)[V246] = 0;

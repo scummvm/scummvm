@@ -36,7 +36,7 @@ static const seriesPlayBreak PLAY1[] = {
 
 int Section6::_state1;
 int Section6::_state2;
-int Section6::_state3;
+int Section6::_gerbilState;
 int Section6::_state4;
 int Section6::_savedX;
 int Section6::_series603;
@@ -55,7 +55,7 @@ Section6::Section6() : Rooms::Section() {
 
 	_state1 = 6000;
 	_state2 = 3;
-	_state3 = 0;
+	_gerbilState = 0;
 	_state4 = 0;
 	_savedX = 0;
 	_series603 = 0;
@@ -83,14 +83,14 @@ void Section6::daemon() {
 		break;
 
 	case 6011:
-		if (_state3 == 6005)
+		if (_gerbilState == 6005)
 			kernel_trigger_dispatch_now(6006);
 		break;
 
 	case 6013:
 		switch (_state1) {
 		case 6001:
-			if (_G(flags)[V243] == 6000) {
+			if (_G(flags)[kHampsterState] == 6000) {
 				if (_G(game).room_id == 602)
 					_state4 = 2;
 				if (_G(game).room_id == 603)
@@ -111,7 +111,7 @@ void Section6::daemon() {
 			if (_G(game).room_id == 604)
 				_G(flags)[V245] = 10030;
 
-			if (_G(flags)[V243] == 6000) {
+			if (_G(flags)[kHampsterState] == 6000) {
 				if (_G(game).room_id == 602)
 					_state4 = 2;
 				if (_G(game).room_id == 603)
@@ -158,7 +158,7 @@ void Section6::daemon() {
 			}
 			break;
 
-		case 1:
+		case 1: 
 			if (_G(flags)[V245] == 10029) {
 				term_message("** Ambience: Gerbils snoring with grasshoppers!  60 **");
 				_val1 = 6002;
@@ -270,10 +270,10 @@ void Section6::daemon() {
 			series_load("602hop_2");
 			series_load("602hop_3");
 
-			if (_G(flags)[V243] == 6006)
+			if (_G(flags)[kHampsterState] == 6006)
 				digi_preload("600_007");
 
-			if (_G(flags)[V243] == 6000) {
+			if (_G(flags)[kHampsterState] == 6000) {
 				if (_G(game).room_id == 602)
 					digi_preload("602_003");
 				if (_G(game).room_id == 603)
@@ -305,7 +305,7 @@ void Section6::daemon() {
 				break;
 
 			case 604:
-				if (_G(flags)[V243] == 6006) {
+				if (_G(flags)[kHampsterState] == 6006) {
 					_G(wilbur_should) = 10002;
 					player_set_commands_allowed(true);
 				} else {
@@ -364,7 +364,7 @@ void Section6::parser() {
 		_G(wilbur_should) = 6000;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		
-	} else if (player_said("RAY GUN", "GERBILS") && _G(flags)[V243] == 6006) {
+	} else if (player_said("RAY GUN", "GERBILS") && _G(flags)[kHampsterState] == 6006) {
 		_G(flags)[V247] = 1;
 		term_message("Taking gun out to shoot gerbils...");
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);

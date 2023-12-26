@@ -589,7 +589,7 @@ void BurgerEngine::testDone2() {
 		_G(flags)[V242]++;
 
 	_G(flags)[kSecondTestPassed] = 1;
-	_G(flags)[V243] = 6007;
+	_G(flags)[kHampsterState] = 6007;
 	_G(flags)[V244] = 6004;
 	_G(flags)[V245] = 10031;
 	_G(flags)[V246] = 0;

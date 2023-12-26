@@ -277,7 +277,7 @@ enum {
 	V240 = 240,
 	kSecondTestPassed = 241,
 	V242 = 242,
-	V243 = 243,
+	kHampsterState = 243,
 	V244 = 244,
 	V245 = 245,
 	V246 = 246,

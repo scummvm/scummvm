@@ -357,12 +357,12 @@ void Room602::init() {
 		kernel_trigger_dispatch_now(6013);
 	}
 
-	if (_G(flags)[V243] == 6006) {
+	if (_G(flags)[kHampsterState] == 6006) {
 		_series4 = series_load("602mg01");
 		_series5 = series_load("602mg01s");
 		_series6 = series_load("602mg02");
 		_series7 = series_load("602mg02s");
-		Section6::_state3 = 6001;
+		Section6::_gerbilState = 6001;
 		kernel_timing_trigger(60, 6011);
 	}
 
@@ -412,7 +412,7 @@ void Room602::init() {
 
 		if (_G(game).room_id == 612) {
 			_G(flags)[V277] = 6001;
-			_G(flags)[V243] = 6007;
+			_G(flags)[kHampsterState] = 6007;
 			_G(flags)[V244] = 6004;
 			_G(flags)[V245] = 10031;
 			_G(flags)[V248] = 1;
@@ -422,11 +422,11 @@ void Room602::init() {
 		break;
 	}
 
-	if (_G(flags)[V243] == 6006)
+	if (_G(flags)[kHampsterState] == 6006)
 		Section6::_state4 = 5;
-	if (_G(flags)[V243] == 6007)
+	if (_G(flags)[kHampsterState] == 6007)
 		Section6::_state4 = 9;
-	else if (_G(flags)[V243] == 6000)
+	else if (_G(flags)[kHampsterState] == 6000)
 		Section6::_state4 = 2;
 
 	kernel_trigger_dispatch_now(6014);
@@ -707,14 +707,14 @@ void Room602::daemon() {
 		break;
 
 	case 6011:
-		switch (Section6::_state3) {
+		switch (Section6::_gerbilState) {
 		case 49:
 			series_unload(_series4);
 			series_unload(_series5);
 			_G(flags)[V266] = 1;
 			Section6::_state4 = 6;
 			kernel_trigger_dispatch_now(6014);
-			Section6::_state3 = 50;
+			Section6::_gerbilState = 50;
 			series_play_with_breaks(PLAY12, "602mg02", 0xc00, 6011, 3, 6, 100, 0, 0);
 			break;
 
@@ -725,10 +725,10 @@ void Room602::daemon() {
 
 				if (_G(player_info).x < 511 || _G(player_info).y < 322) {
 					term_message("Wilbur is gonna die");
-					Section6::_state3 = 6005;
+					Section6::_gerbilState = 6005;
 				} else {
 					term_message("Wilbur is safe");
-					Section6::_state3 = 51;
+					Section6::_gerbilState = 51;
 				}
 
 				_G(kernel).continue_handling_trigger = true;
@@ -738,7 +738,7 @@ void Room602::daemon() {
 
 		case 51:
 			_G(flags)[V266] = 0;
-			_G(flags)[V243] = 6007;
+			_G(flags)[kHampsterState] = 6007;
 			_G(flags)[V277] = 6001;
 			_G(flags)[V244] = 6004;
 			_G(flags)[V245] = 10031;
@@ -748,7 +748,7 @@ void Room602::daemon() {
 			break;
 
 		case 6001:
-			Section6::_state3 = 6002;
+			Section6::_gerbilState = 6002;
 			_sectionMachine1 = series_play("602mg01", 0xc00, 0, 6011, 8, 0, 100, 0, 0, 0, 67);
 			_sectionMachine2 = series_play("602mg01s", 0xc01, 0, -1, 8, 0, 100, 0, 0, 0, 67);
 			break;
@@ -760,7 +760,7 @@ void Room602::daemon() {
 			_sectionMachine1 = series_play("602mg01", 0xc00, 0, 6011, 8, 0, 100, 0, 0, 68, -1);
 			_sectionMachine2 = series_play("602mg01s", 0xc01, 0, -1, 8, 0, 100, 0, 0, 68, -1);
 
-			Section6::_state3 = (_G(flags)[V245] == 10028) ? 49 : 6004;
+			Section6::_gerbilState = (_G(flags)[V245] == 10028) ? 49 : 6004;
 			break;
 
 		case 6004:
@@ -865,7 +865,7 @@ void Room602::daemon() {
 				player_set_commands_allowed(false);
 				digi_stop(1);
 
-				if (_G(flags)[V243] == 6006) {
+				if (_G(flags)[kHampsterState] == 6006) {
 					Walker::unloadSprites();
 
 				} else {
@@ -1290,7 +1290,7 @@ void Room602::pre_parser() {
 		hotspot_set_active("DOOR", true);
 		hotspot_set_active("EXIT", false);
 
-	} else if (_G(flags)[V243] == 6006 && (player_said("GEAR", "TUBE") || player_said("CLIMB IN"))) {
+	} else if (_G(flags)[kHampsterState] == 6006 && (player_said("GEAR", "TUBE") || player_said("CLIMB IN"))) {
 		wilbur_speech("600w003");
 		intr_cancel_sentence();
 

@@ -60,7 +60,7 @@ private:
 public:
 	static int _state1;
 	static int _state2;
-	static int _state3;
+	static int _gerbilState;
 	static int _state4;
 	static int _savedX;
 	static int _series603;
