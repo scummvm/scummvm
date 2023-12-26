@@ -169,7 +169,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
@@ -183,7 +183,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
@@ -197,7 +197,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
@@ -211,7 +211,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
@@ -225,7 +225,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
@@ -239,7 +239,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #3943
+{ // Supplied by SiRoCs in bug report #3943 dated 09.06.93
 	{
 		"lit",
 		"CD v1.00",
