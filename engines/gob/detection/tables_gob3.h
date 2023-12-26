@@ -68,7 +68,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{
+{ // dated March 17, 1994
 	{
 		"gob3",
 		"v1.00",

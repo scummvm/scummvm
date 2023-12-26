@@ -250,7 +250,7 @@
 {
 	{
 		"inca2",
-		"Non-Interactive Demo (v2.0)",
+		"Non-Interactive Demo (v2.0)", // dated 8/1/93
 		{
 			{"cons.imd", 0, "f896ba0c4a1ac7f7260d342655980b49", 17804},
 			{"conseil.imd", 0, "aaedd5482d5b271e233e86c5a03cf62e", 33999},
