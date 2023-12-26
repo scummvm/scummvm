@@ -45,7 +45,7 @@ struct HotSpotRec {
 	void clear();
 };
 
-extern HotSpotRec *hotspot_add_dynamic(
+HotSpotRec *hotspot_add_dynamic(
 	char *verb, char *noun,
 	int32 x1, int32 y1, int32 x2, int32 y2,
 	int32 cursor,
@@ -57,53 +57,53 @@ extern HotSpotRec *hotspot_add_dynamic(
  * else to default values.
  * @returns		The new hotspot
  */
-extern HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2);
+HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2);
 
 /**
  * Given a list and a hotspot to insert in that list, inserts the spot ordered by size,
  * unless new_head is true, in which case the hotspot is the head regardless of size.
  * @returns		The new head of the list.
  */
-extern HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head);
-extern HotSpotRec *hotspot_duplicate(HotSpotRec *dupMe);
+HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head);
+HotSpotRec *hotspot_duplicate(HotSpotRec *dupMe);
 
 /**
  * Takes the head of a list of hot spots, and a pointer to a spot to delete.
  * @returns		The new head of the list.
  */
-extern HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h);
+HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h);
 
 /**
  * Takes the head of a list of hot spots, and a pointer to a spot to unlink.
  * @returns		The new head of the list.
  */
-extern HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h);
-extern void hotspot_delete_all(HotSpotRec *head);
+HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h);
+void hotspot_delete_all(HotSpotRec *head);
 
-extern void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not);
-extern void hotspot_set_active(const char *name, bool active_or_not);
-extern void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not);
-extern void hotspot_set_active_xy(const char *name, int32 x, int32 y, bool active_or_not);
+void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not);
+void hotspot_set_active(const char *name, bool active_or_not);
+void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not);
+void hotspot_set_active_xy(const char *name, int32 x, int32 y, bool active_or_not);
 #define kernel_flip_hotspot(aa,bb) (hotspot_set_active(currentSceneDef.hotspots,aa,bb))
 #define kernel_flip_hotspot_xy(aa,bb,xx,yy) (hotspot_set_active_xy(currentSceneDef.hotspots,aa,xx,yy,bb))
 #define kernel_flip_hotspot_loc(aa,bb,xx,yy) (hotspot_set_active_xy(currentSceneDef.hotspots,aa,xx,yy,bb))
 
-extern void hotspot_new_sprite(HotSpotRec *h, const char *verb);
-extern void hotspot_newVerb(HotSpotRec *h, const char *verb);
-extern void hotspot_newVocab(HotSpotRec *h, const char *vocab);
-extern void hotspot_newPrep(HotSpotRec *h, const char *prep);
+void hotspot_new_sprite(HotSpotRec *h, const char *verb);
+void hotspot_newVerb(HotSpotRec *h, const char *verb);
+void hotspot_newVocab(HotSpotRec *h, const char *vocab);
+void hotspot_newPrep(HotSpotRec *h, const char *prep);
 
 /**
  * Given a list of spots to check, and an x,y coordinate pair,
  * @returns		A pointer to the hotspot we're inside, or nullptr if there's nothing.
  */
-extern HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y);
-extern HotSpotRec *hotspot_which(int x, int y);
-extern void kill_hotspot_node(HotSpotRec *h);
+HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y);
+HotSpotRec *hotspot_which(int x, int y);
+void kill_hotspot_node(HotSpotRec *h);
 
-extern void hotspot_restore_all();
-extern void hotspot_hide_all();
-extern void hotspot_unhide_and_dump();
+void hotspot_restore_all();
+void hotspot_hide_all();
+void hotspot_unhide_and_dump();
 
 } // End of namespace M4
 

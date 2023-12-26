@@ -27,7 +27,7 @@
 
 namespace M4 {
 
-extern void other_save_game_for_resurrection();
+void other_save_game_for_resurrection();
 
 } // namespace M4
 

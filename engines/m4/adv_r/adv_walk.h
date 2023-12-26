@@ -37,38 +37,37 @@ public:
 	virtual machine *walk_initialize_walker() = 0;
 };
 
-extern void set_walker_scaling(SceneDef *rdef);
+void set_walker_scaling(SceneDef *rdef);
 
 /**
  * Called every time s/he hits a node
  */
-extern bool walker_has_walk_finished(machine *sender);
-extern void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing = -1);
-extern void ws_demand_facing(machine *myWalker, int32 newFacing);
-extern void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger = -1);
-extern void ws_nosepick(machine *myWalker, int32 seriesHash);
-extern void ws_hide_walker(machine *myWalker);
-extern void ws_unhide_walker(machine *myWalker);
-extern void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk = true);
+bool walker_has_walk_finished(machine *sender);
+void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing = -1);
+void ws_demand_facing(machine *myWalker, int32 newFacing);
+void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger = -1);
+void ws_nosepick(machine *myWalker, int32 seriesHash);
+void ws_hide_walker(machine *myWalker);
+void ws_unhide_walker(machine *myWalker);
+void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk = true);
 
-extern void ws_demand_location(int32 x, int32 y, int facing = -1);
-extern void ws_demand_facing(int32 newFacing);
-extern void ws_turn_to_face(int32 facing, int32 trigger = -1);
-extern void ws_nosepick(int32 seriesHash);
-extern void ws_hide_walker();
-extern void ws_unhide_walker();
-extern void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing = -1, bool complete_walk = true);
+void ws_demand_location(int32 x, int32 y, int facing = -1);
+void ws_demand_facing(int32 newFacing);
+void ws_turn_to_face(int32 facing, int32 trigger = -1);
+void ws_nosepick(int32 seriesHash);
+void ws_hide_walker();
+void ws_unhide_walker();
+void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing = -1, bool complete_walk = true);
 
-extern void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing);
+void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing);
 
+bool ws_walk_init_system();
 
-extern bool ws_walk_init_system();
+bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
+bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette);
+bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
 
-extern bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
-extern bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette);
-extern bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
-
-extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
+void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define ws_walk_dump_walker_series(xx, yy) (ws_walk_dump_series (xx, yy))
 #define ws_walk_dump_shadow_series(xx, yy) (ws_walk_dump_series (xx, yy))
 
@@ -84,7 +83,7 @@ extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 
 
 // New walking stuff
-extern void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool complete_walk = true);
+void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool complete_walk = true);
 #define adv_walker_custom_walk(ww, ff, tt)      (ws_custom_walk(ww, ff, tt, true))
 #define adv_walker_custom_walk_no_finish(ww, ff, tt)     (ws_custom_walk(ww, ff, tt, FALSE))
 #define adv_walker_walk(ww, xx, yy, ff, tt)     (ws_walk(ww, xx, yy, nullptr, tt, ff, true))
@@ -94,9 +93,9 @@ extern void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, 
 #define adv_walker_move(ww, xx, yy)          (ws_demand_location(ww, xx, yy))
 #define adv_walker_hide(ww)                  (ws_hide_walker(ww))
 #define adv_walker_unhide(ww)                (ws_unhide_walker(ww))
-extern bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y);
+bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y);
 
-extern void adv_hyperwalk_to_final_destination(void *, void *);
+void adv_hyperwalk_to_final_destination(void *, void *);
 
 } // End of namespace M4
 

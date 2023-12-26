@@ -50,8 +50,8 @@ struct Triggers {
  *   |        +--- room_id (0 - 4096) (0 - 0xfff)
  *   +--- trigger_mode (0-16)
  */
-extern int32 kernel_trigger_create(int32 trigger_num);
-extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
+int32 kernel_trigger_create(int32 trigger_num);
+int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
 
 /**
  * Dispatches a trigger.
@@ -59,14 +59,14 @@ extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
  * a different room that current room_id, returns false. If no trigger_mode was
  * attached to the trigger, returns false
  */
-extern bool kernel_trigger_dispatchx(int32 trigger_num);
-extern bool kernel_trigger_dispatch_now(int32 trigger_num);
-extern void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name = nullptr);
-extern void kernel_timing_trigger_daemon(int32 ticks, int16 trigger);
+bool kernel_trigger_dispatchx(int32 trigger_num);
+bool kernel_trigger_dispatch_now(int32 trigger_num);
+void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name = nullptr);
+void kernel_timing_trigger_daemon(int32 ticks, int16 trigger);
 
-extern void cisco_dispatch_triggers();
-extern void cisco_clear_triggers();
-extern void kernel_service_timing_trigger_q();
+void cisco_dispatch_triggers();
+void cisco_clear_triggers();
+void kernel_service_timing_trigger_q();
 
 } // End of namespace M4
 

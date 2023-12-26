@@ -38,9 +38,9 @@ struct ADVScale_Globals {
 	int _myfs = -1;
 };
 
-extern void scale_editor_draw();
-extern void scale_editor_cancel();
-extern void scale_editor_toggle();
+void scale_editor_draw();
+void scale_editor_cancel();
+void scale_editor_toggle();
 
 } // End of namespace M4
 

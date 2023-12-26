@@ -71,14 +71,14 @@ public:
 	void showWaitCursor();
 };
 
-extern void interface_hide();
-extern void interface_show();
+void interface_hide();
+void interface_show();
 
-extern void track_hotspots_refresh();
-extern bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z);
+void track_hotspots_refresh();
+bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z);
 
-extern void intr_cancel_sentence();
-extern void intr_freshen_sentence();
+void intr_cancel_sentence();
+void intr_freshen_sentence();
 
 } // End of namespace M4
 

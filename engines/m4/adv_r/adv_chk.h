@@ -34,7 +34,7 @@ namespace M4 {
  * @param rdef			Output def to populate
  * @returns				Returns 0 if successful, or -1 for error
  */
-extern int db_def_chk_read(int16 room_code, SceneDef *rdef);
+int db_def_chk_read(int16 room_code, SceneDef *rdef);
 
 } // End of namespace M4
 

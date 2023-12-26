@@ -41,40 +41,40 @@ struct Scene_list {
  * Takes the number of scenes to allocate space for
  * @returns True if successfully allocated
  */
-extern bool player_been_init(int16 num_scenes);
+bool player_been_init(int16 num_scenes);
 
 /**
  * Shuts down player_been system. Deallocates some memory
  */
-extern void player_been_shutdown();
+void player_been_shutdown();
 
 /**
  * Resets the player_been system
  */
-extern void player_reset_been(void);
+void player_reset_been(void);
 
 /**
  * Saves/loads player_been information
  */
-extern void player_been_sync(Common::Serializer &s);
+void player_been_sync(Common::Serializer &s);
 
 /**
  * Called whenever player enters a scene
  * @param scene_num		Takes the scene to be entered
  * @returns				True if the player has been there before, or false otherwise
  */
-extern bool player_enters_scene(int16 scene_num);
+bool player_enters_scene(int16 scene_num);
 
 /**
  * Called if the apps programmer wants the player to forget about being in
  * a room
  */
-extern void player_forgets_scene(int16 scene_num);
+void player_forgets_scene(int16 scene_num);
 
 /**
  * Checks whether player has been in specified scene before
  */
-extern bool player_been_here(int16 scene_num);
+bool player_been_here(int16 scene_num);
 
 } // End of namespace M4
 

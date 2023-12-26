@@ -335,9 +335,9 @@ struct c_assign_chunk {
 
   The same thing should work for boxes (b), (c), and (d).
 */
-extern void set_dlg_rect();
+void set_dlg_rect();
 
-extern void conv_go(Conv *c);
+void conv_go(Conv *c);
 
 } // End of namespace M4
 

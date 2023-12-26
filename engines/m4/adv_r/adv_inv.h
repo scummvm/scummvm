@@ -52,7 +52,7 @@ struct InventoryBase {
 /**
  * Init the system, preferably in game_systems_initialize
  */
-extern bool  inv_init(int32 num_objects);
+bool inv_init(int32 num_objects);
 
 /**
  * Register things during init of the game
@@ -63,21 +63,20 @@ extern bool  inv_init(int32 num_objects);
  * @param cel		Index into the inventory sprite series for use when displaying inventory
  * @param cursor	Cel index into the cursor sprite series when the player is "holding" a thing
  */
-extern bool  inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs, int32 scene, int32 cel, int32 cursor);
+bool inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs, int32 scene, int32 cel, int32 cursor);
 
-extern int32 inv_where_is(const Common::String &itemName);
-extern bool  inv_player_has(const Common::String &itemName);
-extern bool  inv_put_thing_in(const Common::String &itemName, int32 scene);
-extern int32 inv_get_cursor(const Common::String &itemName);
-extern int32 inv_get_cel(const Common::String &itemName);
-extern const char *inv_get_verbs(const Common::String &itemName);
-extern void  inv_give_to_player(const Common::String &itemName);
-extern void  inv_move_object(const Common::String &itemName, int32 scene);
-extern bool  inv_object_is_here(const Common::String &itemName);
-extern bool  inv_object_in_scene(const Common::String &itemName, int32 scene);
+int32 inv_where_is(const Common::String &itemName);
+bool inv_player_has(const Common::String &itemName);
+bool inv_put_thing_in(const Common::String &itemName, int32 scene);
+int32 inv_get_cursor(const Common::String &itemName);
+int32 inv_get_cel(const Common::String &itemName);
+const char *inv_get_verbs(const Common::String &itemName);
+void inv_give_to_player(const Common::String &itemName);
+void inv_move_object(const Common::String &itemName, int32 scene);
+bool inv_object_is_here(const Common::String &itemName);
+bool inv_object_in_scene(const Common::String &itemName, int32 scene);
 
-
-extern void inv_sync_game(Common::Serializer &s);
+void inv_sync_game(Common::Serializer &s);
 
 } // End of namespace M4
 

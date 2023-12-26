@@ -43,14 +43,14 @@ bool read_catalog();
 /**
  * Return the catalog data
  */
-extern char *db_get_catalog();
+char *db_get_catalog();
 
 /**
  * Given an asset name, name, return "path" from the database in result.
  * if path starts or ends with a '\', the '\' characters at those places
  * are deleted.
  */
-extern char *db_rmlst_get_asset_room_path(const char *s, char *result, int32 *sceneCode);
+char *db_rmlst_get_asset_room_path(const char *s, char *result, int32 *sceneCode);
 
 } // End of namespace M4
 

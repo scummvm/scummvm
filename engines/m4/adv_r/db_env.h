@@ -27,8 +27,8 @@
 
 namespace M4 {
 
-extern char *env_find(const Common::String &descName);
-extern char *env_get_path(char *resultPath, int room_num, char *fileName);
+char *env_find(const Common::String &descName);
+char *env_get_path(char *resultPath, int room_num, char *fileName);
 
 } // End of namespace M4
 

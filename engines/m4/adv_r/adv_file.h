@@ -32,29 +32,28 @@
 
 namespace M4 {
 
-extern M4sprite *kernel_CreateThumbnail(int32 *spriteSize);
-extern bool kernel_CreateSSFromGrBuff(GrBuff *myBuff, RGB8 *myPalette, bool completePal, const char *ssName);
+M4sprite *kernel_CreateThumbnail(int32 *spriteSize);
+bool kernel_CreateSSFromGrBuff(GrBuff *myBuff, RGB8 *myPalette, bool completePal, const char *ssName);
 
-extern bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig);
-extern void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer);
+bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig);
+void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer);
 
-extern int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData);
-extern bool kernel_load_game(int slot);
-extern bool kernel_save_game_exists(int32 slot);
-extern int32 extract_room_num(const Common::String &name);
+int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData);
+bool kernel_load_game(int slot);
+bool kernel_save_game_exists(int32 slot);
+int32 extract_room_num(const Common::String &name);
 
-extern bool kernel_load_variant(char *variant);
-extern GrBuff *load_codes(SysFile *code_file);
-extern bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette);
+bool kernel_load_variant(char *variant);
+GrBuff *load_codes(SysFile *code_file);
+bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette);
 
-extern bool load_picture_and_codes(SysFile *pic_file, SysFile *code_file,
-	GrBuff **loadBuf, GrBuff **code_data, uint8 minPalEntry, uint8 maxPalEntry);
+bool load_picture_and_codes(SysFile *pic_file, SysFile *code_file, GrBuff **loadBuf, GrBuff **code_data, uint8 minPalEntry, uint8 maxPalEntry);
 
-extern bool kernel_load_code_variant(SceneDef *rdef, char *variant, GrBuff **codeData);
+bool kernel_load_code_variant(SceneDef *rdef, char *variant, GrBuff **codeData);
 
-extern void kernel_current_background_name(char *result);
-extern void kernel_current_codes_name(char *result);
-extern void screen_capture(RGB8 *masterPalette);
+void kernel_current_background_name(char *result);
+void kernel_current_codes_name(char *result);
+void screen_capture(RGB8 *masterPalette);
 
 } // End of namespace M4
 

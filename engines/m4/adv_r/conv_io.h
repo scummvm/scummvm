@@ -95,60 +95,60 @@ struct Converstation_Globals {
 	void conv_go(Conv *c);
 };
 
-extern Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
-extern void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt = false);
+Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
+void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt = false);
 
-extern void conv_unload(Conv *c);
-extern void conv_unload();
-extern void conv_shutdown();
+void conv_unload(Conv *c);
+void conv_unload();
+void conv_shutdown();
 
-extern Conv *conv_get_handle();
-extern void conv_set_handle(Conv *c);
+Conv *conv_get_handle();
+void conv_set_handle(Conv *c);
 
-extern void conv_resume(Conv *c);
-extern void conv_resume();
-extern void conv_reset(char *filename);
+void conv_resume(Conv *c);
+void conv_resume();
+void conv_reset(char *filename);
 
-extern void conv_reset_all();
-extern void conv_play(Conv *c);
+void conv_reset_all();
+void conv_play(Conv *c);
 
-extern void set_conv_name(const char *s);
-extern const char *get_conv_name();
-extern const char *conv_sound_to_play();
-extern int32 conv_whos_talking();
+void set_conv_name(const char *s);
+const char *get_conv_name();
+const char *conv_sound_to_play();
+int32 conv_whos_talking();
 
-extern int32 conv_get_decl_val(decl_chunk *decl);
-extern void conv_set_decl_val(decl_chunk *decl, int32 val);
-extern void conv_export_value(Conv *c, int32 val, int index);
-extern void conv_export_value_curr(int32 val, int index);
-extern void conv_export_pointer(Conv *c, int32 *val, int index);
-extern void conv_export_pointer_curr(int32 *val, int index);
+int32 conv_get_decl_val(decl_chunk *decl);
+void conv_set_decl_val(decl_chunk *decl, int32 val);
+void conv_export_value(Conv *c, int32 val, int index);
+void conv_export_value_curr(int32 val, int index);
+void conv_export_pointer(Conv *c, int32 *val, int index);
+void conv_export_pointer_curr(int32 *val, int index);
 
-extern void conv_set_font_spacing(int32 h, int32 v);
-extern void conv_set_text_colour(int32 norm_colour, int32 hi_colour);
+void conv_set_font_spacing(int32 h, int32 v);
+void conv_set_text_colour(int32 norm_colour, int32 hi_colour);
 
-extern void conv_set_text_colours(int32 norm_colour, int32 norm_colour_alt1, int32 norm_colour_alt2,
+void conv_set_text_colours(int32 norm_colour, int32 norm_colour_alt1, int32 norm_colour_alt2,
 	int32 hi_colour, int32 hi_colour_alt1, int32 hi_colour_alt2);
 
-extern void conv_set_shading(int32 shade);
-extern void conv_set_box_xy(int32 x, int32 y);
-extern void conv_get_dlg_coords(int32 *x1, int32 *y1, int32 *x2, int32 *y2);
-extern void conv_set_dlg_coords(int32 x1, int32 y1, int32 x2, int32 y2);
-extern void conv_set_default_text_colour(int32 norm_colour, int32 hi_colour);
-extern void conv_set_default_hv(int32 h, int32 v);
+void conv_set_shading(int32 shade);
+void conv_set_box_xy(int32 x, int32 y);
+void conv_get_dlg_coords(int32 *x1, int32 *y1, int32 *x2, int32 *y2);
+void conv_set_dlg_coords(int32 x1, int32 y1, int32 x2, int32 y2);
+void conv_set_default_text_colour(int32 norm_colour, int32 hi_colour);
+void conv_set_default_hv(int32 h, int32 v);
 
-extern int conv_get_event();
-extern void conv_set_event(int e);
-extern int conv_is_event_ready();
+int conv_get_event();
+void conv_set_event(int e);
+int conv_is_event_ready();
 
-extern void conv_swap_words(Conv *c);
-extern int32 conv_current_node();
-extern int32 conv_current_entry();
+void conv_swap_words(Conv *c);
+int32 conv_current_node();
+int32 conv_current_entry();
 
-extern int conv_toggle_flags(entry_chunk *entry);
-extern int ok_status(entry_chunk *entry);
-extern int conv_get_text(int32 offset, int32 size, Conv *c);
-extern void cdd_init();
+int conv_toggle_flags(entry_chunk *entry);
+int ok_status(entry_chunk *entry);
+int conv_get_text(int32 offset, int32 size, Conv *c);
+void cdd_init();
 
 } // End of namespace M4
 

@@ -27,10 +27,10 @@
 
 namespace M4 {
 
-extern void adv_freeCodes();
-extern void adv_freeBackground();
-extern bool adv_restoreBackground();
-extern bool adv_restoreCodes();
+void adv_freeCodes();
+void adv_freeBackground();
+bool adv_restoreBackground();
+bool adv_restoreCodes();
 
 } // End of namespace M4
 

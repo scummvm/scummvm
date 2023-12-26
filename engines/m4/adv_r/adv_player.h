@@ -97,30 +97,30 @@ struct PlayerInfo {
 	void syncGame(Common::Serializer &s);
 };
 
-extern bool player_said(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr);
-extern bool player_said_any(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr,
+bool player_said(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr);
+bool player_said_any(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr,
 	const char *w3 = nullptr, const char *w4 = nullptr, const char *w5 = nullptr, const char *w6 = nullptr,
 	const char *w7 = nullptr, const char *w8 = nullptr, const char *w9 = nullptr);
 
-extern void player_inform_walker_new_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
+void player_inform_walker_new_scale(int32 frontY, int32 backY, int32 frontS, int32 backS);
 
-extern bool player_load_series(const char *walkerName, const char *shadowName, bool load_palette);
-extern void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool enable_commands_at_destination);
-extern void player_set_commands_allowed(bool t_or_f);
-extern void player_set_defaults();
-extern void player_noun_becomes_verb(int32 spriteNum);
+bool player_load_series(const char *walkerName, const char *shadowName, bool load_palette);
+void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool enable_commands_at_destination);
+void player_set_commands_allowed(bool t_or_f);
+void player_set_defaults();
+void player_noun_becomes_verb(int32 spriteNum);
 
-extern void player_hotspot_walk_override(int32 x, int32 y, int32 facing = -1, int32 trigger = -1);
-extern void player_hotspot_walk_override_just_face(int32 facing, int32 trigger = -1);
+void player_hotspot_walk_override(int32 x, int32 y, int32 facing = -1, int32 trigger = -1);
+void player_hotspot_walk_override_just_face(int32 facing, int32 trigger = -1);
 
-extern bool player_commands_allowed();
-extern PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info);
-extern PlayerInfo *player_update_info();
-extern void adv_kill_digi_between_rooms(bool true_or_false);
+bool player_commands_allowed();
+PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info);
+PlayerInfo *player_update_info();
+void adv_kill_digi_between_rooms(bool true_or_false);
 
-extern void player_set_facing_hotspot(int trigger = -1);
-extern void player_set_facing_at(int x, int y, int trigger = -1);
-extern int calc_facing(int x, int y);
+void player_set_facing_hotspot(int trigger = -1);
+void player_set_facing_at(int x, int y, int trigger = -1);
+int calc_facing(int x, int y);
 
 } // End of namespace M4
 
