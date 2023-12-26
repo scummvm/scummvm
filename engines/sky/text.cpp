@@ -357,6 +357,8 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 	uint32 *centerTblPtr = centerTable;
 
 	do {
+		Common::String line("");
+
 		byte *lineEnd = curDest + pixelWidth;
 		if (center) {
 			uint32 width = (pixelWidth - *centerTblPtr) >> 1;
@@ -379,8 +381,18 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 				textChar = '?';
 			}
 
-			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
+			line += textChar - 0x20;
 			textChar = *curPos++;
+		}
+
+		if (_vm->_systemVars->textDirRTL) {
+			for (int i = line.size() - 1; i >= 0; --i) {
+				makeGameCharacter(line[i], _characterSet, curDest, color, pixelWidth);
+			}
+		} else {
+			for (auto it = line.begin(); it != line.end(); ++it) {
+				makeGameCharacter(*it, _characterSet, curDest, color, pixelWidth);
+			}
 		}
 
 		prevDest = curDest = prevDest + dtLineSize;	//start of last line + start of next

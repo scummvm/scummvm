@@ -192,7 +192,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, lang, Common::kPlatformDOS, extra);
 			game.setGUIOptions(sv->guioptions);
 		} else {
-			game = DetectedGame(getName(), skySetting.gameId, skySetting.description);
+			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, lang);
 		}
 
 		if (lang == Common::Language::UNK_LANG) {

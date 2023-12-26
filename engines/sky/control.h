@@ -296,7 +296,7 @@ private:
 
 	ControlStatus *_statusBar;
 
-	static char _quitTexts[18][35];
+	static char _quitTexts[20][45];
 	static uint8 _crossImg[594];
 };
 

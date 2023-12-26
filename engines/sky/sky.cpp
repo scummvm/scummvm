@@ -85,6 +85,7 @@ SkyEngine::SkyEngine(OSystem *syst)
 	_systemVars->currentMusic   = 0;
 	_systemVars->pastIntro      = false;
 	_systemVars->paused         = false;
+	_systemVars->textDirRTL     = false;
 
 	memset (_chineseTraditionalOffsets, 0, sizeof(_chineseTraditionalOffsets));
 	_chineseTraditionalBlock = nullptr;
@@ -427,6 +428,9 @@ Common::Error SkyEngine::init() {
 		break;
 	case Common::ZH_TWN:
 		_systemVars->language = SKY_CHINESE_TRADITIONAL;
+		break;
+	case Common::HE_ISR:
+		_systemVars->textDirRTL = true;
 		break;
 
 	default:
