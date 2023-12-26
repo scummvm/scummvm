@@ -110,54 +110,53 @@ struct guiMenu {
 };
 
 // GENERAL MENU FUNCTIONS
-extern bool menu_Initialize(RGB8 *myPalette);
-extern guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
-extern void menu_Destroy(guiMenu *myMenu);
-extern void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
-extern GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
-extern menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
-extern void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
+bool menu_Initialize(RGB8 *myPalette);
+guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFlags);
+void menu_Destroy(guiMenu *myMenu);
+void menu_Configure(guiMenu *myMenu, CALLBACK cb_return, CALLBACK cb_esc);
+GrBuff *menu_CopyBackground(guiMenu *myMenu, int32 x, int32 y, int32 w, int32 h);
+menuItem *menu_GetItem(int32 tag, guiMenu *myMenu);
+void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // SPECIFIC ITEM FUNCTIONS
 
 // Messages
-extern menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
-	bool transparent = false);
-extern void menu_DisableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_EnableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
+menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, bool transparent = false);
+void menu_DisableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_EnableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // Buttons
-extern bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
-extern menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
+bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
+menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
 	int32 buttonType = 0, bool ghosted = false, bool transparent = false,
 	char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
-extern void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // Horizontal sliders
-extern menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 // Vertical sliders
-extern menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
+menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h,
 	int32 initPercent = 0, CALLBACK callback = nullptr, bool transparent = false);
-extern void menu_DisableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
-extern void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_DisableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
+void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // Textfields
-extern menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
+menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
 	char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 //GAME MENU FUNCTIONS
-extern void CreateGameMenu(RGB8 *myPalette);
-extern void CreateOptionsMenu(RGB8 *myPalette);
-extern void CreateF2SaveMenu(RGB8 *myPalette);
-extern void CreateF3LoadMenu(RGB8 *myPalette);
+void CreateGameMenu(RGB8 *myPalette);
+void CreateOptionsMenu(RGB8 *myPalette);
+void CreateF2SaveMenu(RGB8 *myPalette);
+void CreateF3LoadMenu(RGB8 *myPalette);
 
 //routines used by the main menu
-extern void CreateLoadMenuFromMain(RGB8 *myPalette);
-extern void CreateGameMenuFromMain(RGB8 *myPalette);
+void CreateLoadMenuFromMain(RGB8 *myPalette);
+void CreateGameMenuFromMain(RGB8 *myPalette);
 
 
 //======================================
@@ -508,7 +507,7 @@ struct MenuGlobals {
 	int32 remember_digestability;		// For cancelling out of the options menu
 };
 
-extern void CreateGameMenuMain(RGB8 *myPalette);
+void CreateGameMenuMain(RGB8 *myPalette);
 
 } // namespace GUI
 } // namespace Burger

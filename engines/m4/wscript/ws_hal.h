@@ -44,28 +44,28 @@ struct WSHal_Globals {
 	RectList *_deadRectList = nullptr;
 };
 
-extern bool ws_InitHAL();
-extern void ws_KillHAL();
+bool ws_InitHAL();
+void ws_KillHAL();
 
-extern void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff,
+void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
-extern void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
+void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 	int16 *depth_table, Buffer *screenCodes, uint8 *myPalette, uint8 *ICT);
-extern void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs);
-extern void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal);
-extern bool InitCCB(CCB *myCCB);
-extern void HideCCB(CCB *myCCB);
-extern void ShowCCB(CCB *myCCB);
-//extern void SetLastCCB(CCB *myCCB);
-extern void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY);
-extern void KillCCB(CCB *myCCB, bool restoreFlag);
-extern void Cel_msr(Anim8 *myAnim8);
-extern void ws_OverrideCrunchTime(machine *m);
+void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs);
+void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal);
+bool InitCCB(CCB *myCCB);
+void HideCCB(CCB *myCCB);
+void ShowCCB(CCB *myCCB);
+//void SetLastCCB(CCB *myCCB);
+void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY);
+void KillCCB(CCB *myCCB, bool restoreFlag);
+void Cel_msr(Anim8 *myAnim8);
+void ws_OverrideCrunchTime(machine *m);
 
-extern bool CheckAddr();
-extern void ws_Error(machine *m, int32 errorType, quadchar errorCode, const char *errMsg);
-extern void ws_DumpMachine(machine *m);
-extern void ws_LogErrorMsg(const char *sourceFile, uint32 lineNum, const char *fmt, ...);
+bool CheckAddr();
+void ws_Error(machine *m, int32 errorType, quadchar errorCode, const char *errMsg);
+void ws_DumpMachine(machine *m);
+void ws_LogErrorMsg(const char *sourceFile, uint32 lineNum, const char *fmt, ...);
 
 } // End of namespace M4
 

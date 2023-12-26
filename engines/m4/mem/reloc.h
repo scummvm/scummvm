@@ -39,11 +39,11 @@ inline bool MakeMem(size_t FreeBlockNeeded, const char *) {
 	return true;
 }
 
-extern MemHandle MakeNewHandle(size_t size, const Common::String &);
-extern bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
-extern MemHandle NewHandle(size_t size, const Common::String &);
-extern void DisposeHandle(MemHandle handle);
-extern uint32 MaxMem(Size *growBytes);
+MemHandle MakeNewHandle(size_t size, const Common::String &);
+bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
+MemHandle NewHandle(size_t size, const Common::String &);
+void DisposeHandle(MemHandle handle);
+uint32 MaxMem(Size *growBytes);
 
 inline void PurgeMem() {}
 inline void CompactMem() {}

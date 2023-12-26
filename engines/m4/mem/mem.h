@@ -29,27 +29,27 @@ namespace M4 {
 /**
  * Initialize the memory manager.
  */
-extern void mem_stash_init(int16 num_types);
+void mem_stash_init(int16 num_types);
 
 /**
  * Purges the memory manager
  */
-extern void mem_stash_shutdown();
+void mem_stash_shutdown();
 
-extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const Common::String &name);
+bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const Common::String &name);
 
 /**
  * To free a memory block whose size has been previously registered.
  * @param myMem		The pointer to be freed
  */
-extern void mem_free_to_stash(void *myMem, int32 memType);
+void mem_free_to_stash(void *myMem, int32 memType);
 
 /**
  * Deliver a memory block whose size has been previously registered.
  */
-extern void *mem_get_from_stash(int32 memType, const Common::String &name);
+void *mem_get_from_stash(int32 memType, const Common::String &name);
 
-extern char *mem_strdup(const char *str);
+char *mem_strdup(const char *str);
 
 } // namespace M4
 

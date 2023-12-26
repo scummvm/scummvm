@@ -133,8 +133,8 @@ public:
 
 extern Events *g_events;
 
-extern MouseEvent mouse_get_event();
-extern bool util_kbd_check(int32 *parm1);
+MouseEvent mouse_get_event();
+bool util_kbd_check(int32 *parm1);
 
 } // namespace M4
 

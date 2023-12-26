@@ -58,10 +58,10 @@ public:
 	void refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2);
 };
 
-extern int32 gr_buffer_free(Buffer *buf);
-extern byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
-extern const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y);
-extern int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
+int32 gr_buffer_free(Buffer *buf);
+byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
+const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y);
+int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
 
 /**
  * Copies a "rectangular" buffer area from "from" to "unto".  Size
@@ -72,7 +72,7 @@ extern int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
  * buffers, buf_rect_copy() can be used instead).
  * @returns		Returns true if successful.
  */
-extern bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
+bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 	int32 dx, int32 dy, int32 w, int32 h);
 
 /**
@@ -83,7 +83,7 @@ extern bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int3
  * buf_rect_copy_2 ().
  * @returns		Returns true if successful.
  */
-extern bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int32 w, int32 h);
+bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int32 w, int32 h);
 
 /**
  * Fills a rectangular buffer area with the specified byte value.
@@ -91,9 +91,9 @@ extern bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int3
  * determined by "size_x, size_y."
  * @returns		Returns true if successful; false if buffer invalid.
  */
-extern int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h);
+int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h);
 
-extern void GrBuff_Show(void *s, void *r, void *b, int32 destX, int32 destY);
+void GrBuff_Show(void *s, void *r, void *b, int32 destX, int32 destY);
 
 } // namespace M4
 

@@ -26,7 +26,7 @@
 namespace M4 {
 namespace Burger {
 
-extern void other_resurrect_player();
+void other_resurrect_player();
 
 } // namespace Burger
 } // namespace M4

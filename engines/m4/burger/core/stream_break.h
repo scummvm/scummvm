@@ -52,16 +52,16 @@ struct StreamBreak_Globals {
 	machine *_my_stream_viewer = nullptr;
 };
 
-extern machine *series_stream_with_breaks(const seriesStreamBreak list[], const char *name, int32 framerate, frac16 depth, int32 trigger);
-extern void digi_preload_stream_breaks(const seriesStreamBreak list[]);
-extern void digi_unload_stream_breaks(const seriesStreamBreak list[]);
-extern void handle_series_stream_break();
+machine *series_stream_with_breaks(const seriesStreamBreak list[], const char *name, int32 framerate, frac16 depth, int32 trigger);
+void digi_preload_stream_breaks(const seriesStreamBreak list[]);
+void digi_unload_stream_breaks(const seriesStreamBreak list[]);
+void handle_series_stream_break();
 
 /**
  * Palette_prep_for_stream is called just before series_stream() for a full screen animation.
  * It clears the palette, (debug: sets ui colors) and sets up a palette fade up from 0%
  */
-extern void palette_prep_for_stream();
+void palette_prep_for_stream();
 
 } // namespace Burger
 } // namespace M4

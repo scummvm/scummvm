@@ -123,12 +123,12 @@ public:
 	void wilbur_unpoof();
 };
 
-extern void enable_player();
-extern void disable_player();
-extern void wilbur_abduct(int trigger);
-extern void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
-extern void player_walk_to(int32 x, int32 y, int trigger = -1);
-extern void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
+void enable_player();
+void disable_player();
+void wilbur_abduct(int trigger);
+void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
+void player_walk_to(int32 x, int32 y, int trigger = -1);
+void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
 	int vol = 256, int channel = 1);
 
 } // namespace Burger

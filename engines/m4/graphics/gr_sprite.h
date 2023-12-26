@@ -47,9 +47,9 @@ struct DrawRequest {
 };
 
 
-extern uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest);
-extern uint8 gr_sprite_draw(DrawRequest *DrawReq);
-extern void gr_sprite_draw_scaled(M4sprite *srcSprite, Buffer *destBuf, int32 destX, int32 destY, int32 scale);
+uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest);
+uint8 gr_sprite_draw(DrawRequest *DrawReq);
+void gr_sprite_draw_scaled(M4sprite *srcSprite, Buffer *destBuf, int32 destX, int32 destY, int32 scale);
 
 } // namespace M4
 

@@ -49,12 +49,12 @@ enum {
 
 #define PLAY_BREAK_END { -1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 }
 
-extern int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name,
+int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name,
 	frac16 depth = 0, int32 trigger = NO_TRIGGER, uint32 flags = 0, int32 framerate = 6,
 	int32 scale = 100, int32 x = 0, int32 y = 0);
-extern void digi_preload_play_breaks(const seriesPlayBreak list[], bool loadAll = false);
-extern void digi_unload_play_breaks(const seriesPlayBreak list[]);
-extern void handle_series_play_break(int32 slot);
+void digi_preload_play_breaks(const seriesPlayBreak list[], bool loadAll = false);
+void digi_unload_play_breaks(const seriesPlayBreak list[]);
+void handle_series_play_break(int32 slot);
 
 } // namespace Burger
 } // namespace M4

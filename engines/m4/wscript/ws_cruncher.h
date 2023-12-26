@@ -101,24 +101,24 @@ struct WSCruncher_Globals {
 	int32 _pcOffsetOld = 0;
 };
 
-extern int32 *ws_GetDataFormats();
-extern bool ws_InitCruncher();
-extern void ws_KillCruncher();
+int32 *ws_GetDataFormats();
+bool ws_InitCruncher();
+void ws_KillCruncher();
 
-extern Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash);
+Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash);
 
 /**
  * This procedure assumes a machine has a slot with it's own memory
  */
-extern bool ws_ChangeAnim8Program(machine *m, int32 newSequHash);
+bool ws_ChangeAnim8Program(machine *m, int32 newSequHash);
 
 /**
  * This procedure flags the anim8 slot as empty
  */
-extern void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8);
+void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8);
 
-extern bool ws_PauseAnim8(Anim8 *myAnim8);
-extern bool ws_ResumeAnim8(Anim8 *myAnim8);
+bool ws_PauseAnim8(Anim8 *myAnim8);
+bool ws_ResumeAnim8(Anim8 *myAnim8);
 
 /**
  * Pre-processes a pcode instruction parameters.
@@ -128,12 +128,12 @@ extern bool ws_ResumeAnim8(Anim8 *myAnim8);
  * Frac16 *myArg2
  * Frac16 *myArg3
  */
-extern int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8);
+int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8);
 
-extern void ws_CrunchAnim8s(int16 *depth_table);
-extern void ws_CrunchEOSreqs();
-extern bool ws_OnEndSeqRequest(Anim8 *myAnim8, int32 pcOffset, int32 pcCount);
-extern void ws_CancelOnEndSeq(Anim8 *myAnim8);
+void ws_CrunchAnim8s(int16 *depth_table);
+void ws_CrunchEOSreqs();
+bool ws_OnEndSeqRequest(Anim8 *myAnim8, int32 pcOffset, int32 pcCount);
+void ws_CancelOnEndSeq(Anim8 *myAnim8);
 
 } // End of namespace M4
 

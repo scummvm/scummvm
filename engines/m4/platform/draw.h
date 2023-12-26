@@ -29,12 +29,12 @@ namespace M4 {
 /**
  * Decode an 8BPP RLE encoded image
  */
-extern void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch);
+void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch);
 
 /**
  * Given RLE data, skips over a given number of encoded lines
  */
-extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
+uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
 
 /**
  * Returns the size of an RLE encoded image
@@ -42,7 +42,7 @@ extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
  * @param pitch		Image pitch
  * @returns			Decoded image's size in bytes
  */
-extern size_t RLE8Decode_Size(byte *src, int pitch);
+size_t RLE8Decode_Size(byte *src, int pitch);
 
 } // namespace M4
 

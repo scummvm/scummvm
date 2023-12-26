@@ -54,8 +54,8 @@ public:
 	void rtoss(const Common::String &resourceName);
 };
 
-extern MemHandle rget(const Common::String &resourceName, int32 *ResourceSize);
-extern void rtoss(const Common::String &resourceName);
+MemHandle rget(const Common::String &resourceName, int32 *ResourceSize);
+void rtoss(const Common::String &resourceName);
 
 } // namespace M4
 

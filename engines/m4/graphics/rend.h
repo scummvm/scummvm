@@ -79,8 +79,8 @@ struct Rend_Globals {
 	RGBcolor *_Palette;
 };
 
-extern void GetUpdateRectangle(int32 x, int32 y, int32 hot_x, int32 hot_y, int32 scale_x, int32 scale_y, int32 Width, int32 Height, M4Rect *UpdateRect);
-extern void render_sprite_to_8BBM(RendGrBuff *Destination, DrawRequestX *dr, RendCell *Frame, M4Rect *ClipRectangle, M4Rect *UpdateRect);
+void GetUpdateRectangle(int32 x, int32 y, int32 hot_x, int32 hot_y, int32 scale_x, int32 scale_y, int32 Width, int32 Height, M4Rect *UpdateRect);
+void render_sprite_to_8BBM(RendGrBuff *Destination, DrawRequestX *dr, RendCell *Frame, M4Rect *ClipRectangle, M4Rect *UpdateRect);
 
 } // namespace M4
 

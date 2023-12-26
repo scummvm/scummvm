@@ -46,11 +46,11 @@ public:
 	static void unloadSprites();
 };
 
-extern void enable_player();
-extern void disable_player();
-extern void wilbur_abduct(int trigger);
-extern void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
-extern void player_walk_to(int32 x, int32 y, int trigger = -1);
+void enable_player();
+void disable_player();
+void wilbur_abduct(int trigger);
+void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
+void player_walk_to(int32 x, int32 y, int trigger = -1);
 
 } // namespace Riddle
 } // namespace M4

@@ -51,32 +51,32 @@ public:
 
 #define STR_PARSE_BUFFER_SIZE 255
 
-extern bool charIsIn(char ch, char *str);
-extern int16 char_IsIn(char ch, char *str); //new
-extern int dtoi(char *string);
-extern bool stringIsInt(char *str);
-extern bool stringIsFloat(char *str);
+bool charIsIn(char ch, char *str);
+int16 char_IsIn(char ch, char *str); //new
+int dtoi(char *string);
+bool stringIsInt(char *str);
+bool stringIsFloat(char *str);
 
-extern int16 stringIsIn(char *str, char *strings[]);
+int16 stringIsIn(char *str, char *strings[]);
 
-extern int32 cstrlen(const char *s);
-extern void cstrcpy(char *dest, const char *src);
-extern void cstrncpy(char *dest, const char *src, const int16 max_len);
-extern char *cstrupr(char *src);
-extern char *cstr_lower(char *src);
-extern int xtoi(char *string);
-extern int strpos(char *key, char *target);
-extern void strdel(char *inp, int indx, int count);
-extern void strseg(char *work, char *work2, int indx, int count);
-extern void strins(char *work, char *newStr, int indx);
-extern void str_purge_trailing_spaces(char *myline);
-extern void str_purge_all_spaces(char *text);
-extern char *str_strip_final_lf(char *mystring);
-extern void str_add_final_lf(char *mystring);
-extern void str_parse_init(char *instring, char delimiter);
-extern char *str_parse(char *out);
+int32 cstrlen(const char *s);
+void cstrcpy(char *dest, const char *src);
+void cstrncpy(char *dest, const char *src, const int16 max_len);
+char *cstrupr(char *src);
+char *cstr_lower(char *src);
+int xtoi(char *string);
+int strpos(char *key, char *target);
+void strdel(char *inp, int indx, int count);
+void strseg(char *work, char *work2, int indx, int count);
+void strins(char *work, char *newStr, int indx);
+void str_purge_trailing_spaces(char *myline);
+void str_purge_all_spaces(char *text);
+char *str_strip_final_lf(char *mystring);
+void str_add_final_lf(char *mystring);
+void str_parse_init(char *instring, char delimiter);
+char *str_parse(char *out);
 
-extern bool cstr_isdigit(char c);
+bool cstr_isdigit(char c);
 
 #define strrun(a,b,c) memset(a,b,c)
 

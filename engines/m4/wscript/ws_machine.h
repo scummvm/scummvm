@@ -177,11 +177,11 @@ struct WSMachine_Globals {
 	void *_addrExists = nullptr;
 };
 
-extern bool ws_Initialize(frac16 *theGlobals);
-extern void ws_Shutdown();
-extern void pauseEngines();
-extern void unpauseEngines();
-extern void addPauseTime(int32 myTime);
+bool ws_Initialize(frac16 *theGlobals);
+void ws_Shutdown();
+void pauseEngines();
+void unpauseEngines();
+void addPauseTime(int32 myTime);
 
 void cycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
@@ -200,7 +200,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 /**
  * This proc is what allows a machine to send a message to another machine(s)
  */
-extern void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
 
 #define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, nullptr, -1, -1, callback, false, name)

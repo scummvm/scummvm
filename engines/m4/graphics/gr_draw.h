@@ -29,28 +29,28 @@ namespace M4 {
 /**
  * Given X, Y sets the value of the pixel at that position
  */
-extern void buffer_put_pixel(Buffer *buf, int32 x, int32 y, byte c);
+void buffer_put_pixel(Buffer *buf, int32 x, int32 y, byte c);
 
 /**
  * Given X, Y returns value of pixel at that address on the screen
  */
-extern byte buffer_get_pixel(Buffer *buf, int32 x, int32 y);
+byte buffer_get_pixel(Buffer *buf, int32 x, int32 y);
 
 /**
  * Draws outside edge of retangle given home and size along both axis
  */
-extern void buffer_draw_box(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2, byte color);
+void buffer_draw_box(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2, byte color);
 
 /**
  * Draws a rectangle using xor
  */
-extern void buffer_draw_box_xor(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2);
+void buffer_draw_box_xor(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2);
 
 /**
  * Fills an entire buffer with a single byte value.
  * @returns Returns True if successful, FALSE if buffer invalid.
 */
-extern int32 buffer_fill(Buffer *target, byte value);
+int32 buffer_fill(Buffer *target, byte value);
 
 } // namespace M4
 

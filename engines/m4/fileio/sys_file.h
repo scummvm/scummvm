@@ -129,8 +129,8 @@ public:
 	void close();
 };
 
-extern void sysfile_init(bool in_hag_mode);
-extern void sysfile_shutdown();
+void sysfile_init(bool in_hag_mode);
+void sysfile_shutdown();
 
 } // namespace M4
 

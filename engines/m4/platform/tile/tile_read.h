@@ -31,7 +31,7 @@ namespace M4 {
 /**
  * Gets some information about a tt file
  */
-extern void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
+void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 	int32 *num_x_tiles, int32 *num_y_tiles, int32 *tile_x, int32 *tile_y, RGB8 *pal);
 
 /**
@@ -39,7 +39,7 @@ extern void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
  * If an error occurs, out.x contains the error number while out.y is zero,
  * and out.data is nullptr.
  */
-extern Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y);
+Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y);
 
 } // End of namespace M4
 

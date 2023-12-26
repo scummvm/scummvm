@@ -27,10 +27,10 @@
 
 namespace M4 {
 
-extern uint32 timer_read();
-extern uint32 timer_read_dos();
-extern uint32 timer_read_600();
-extern uint32 timer_read_60();
+uint32 timer_read();
+uint32 timer_read_dos();
+uint32 timer_read_600();
+uint32 timer_read_60();
 
 } // End of namespace M4
 

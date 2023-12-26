@@ -46,28 +46,28 @@ constexpr int MAX_PAL_ENTRY = 255;
 #define __YELLOW	(gr_pal_get_ega_color(14))
 #define __WHITE	    (gr_pal_get_ega_color(15))
 
-extern uint8 gr_pal_get_ega_color(uint8 myColor);
+uint8 gr_pal_get_ega_color(uint8 myColor);
 
-extern void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
-extern uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors);
-extern void gr_color_set(int32 c);
-extern byte gr_color_get_current();
+void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
+uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors);
+void gr_color_set(int32 c);
+byte gr_color_get_current();
 
-extern void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors);
-extern void gr_pal_set_range(int first_color, int num_colors);
-extern void gr_pal_set(RGB8 *pal);
-extern void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b);
-extern void gr_pal_set_entry(int32 index, RGB8 *entry);
-extern void gr_pal_clear(RGB8 *palette);
-extern void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color);
-extern uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b);
-extern void gr_pal_interface(RGB8 *fixpal);
-extern void gr_pal_reset_ega_colors(RGB8 *pal);
-extern void gr_backup_palette();
-extern void gr_restore_palette();
+void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors);
+void gr_pal_set_range(int first_color, int num_colors);
+void gr_pal_set(RGB8 *pal);
+void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b);
+void gr_pal_set_entry(int32 index, RGB8 *entry);
+void gr_pal_clear(RGB8 *palette);
+void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color);
+uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b);
+void gr_pal_interface(RGB8 *fixpal);
+void gr_pal_reset_ega_colors(RGB8 *pal);
+void gr_backup_palette();
+void gr_restore_palette();
 
-extern void pal_mirror_colours(int first_color, int last_color, RGB8 *pal);
-extern void pal_mirror_colours(int first_color, int last_color);
+void pal_mirror_colours(int first_color, int last_color, RGB8 *pal);
+void pal_mirror_colours(int first_color, int last_color);
 
 } // namespace M4
 

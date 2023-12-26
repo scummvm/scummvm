@@ -29,12 +29,12 @@ namespace M4 {
 /**
  * Returns true if a given file exists
  */
-extern bool f_info_exists(const Common::Path &filename);
+bool f_info_exists(const Common::Path &filename);
 
 /**
  * Returns the size of a given file
  */
-extern size_t f_info_get_file_size(const Common::Path &filename);
+size_t f_info_get_file_size(const Common::Path &filename);
 
 } // namespace M4
 

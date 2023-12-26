@@ -32,11 +32,11 @@ struct WSTimer_Globals {
 	onTimeReq *_firstTimeReq = nullptr;
 };
 
-extern bool ws_InitWSTimer(void);
-extern void ws_KillTime(void);
-extern void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount);
-extern void ws_CancelOnTimeReqs(machine *m);
-extern void ws_CheckTimeReqs(int32 curTime);
+bool ws_InitWSTimer(void);
+void ws_KillTime(void);
+void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount);
+void ws_CancelOnTimeReqs(machine *m);
+void ws_CheckTimeReqs(int32 curTime);
 
 } // End of namespace M4
 

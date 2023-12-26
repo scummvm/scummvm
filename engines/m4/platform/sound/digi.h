@@ -104,19 +104,19 @@ public:
 
 } // namespace Sound
 
-extern bool digi_preload(const Common::String &name, int roomNum = -1);
-extern void digi_unload(const Common::String &name);
-extern int32 digi_play(const char *name, uint channel, int32 vol = 255,
+bool digi_preload(const Common::String &name, int roomNum = -1);
+void digi_unload(const Common::String &name);
+int32 digi_play(const char *name, uint channel, int32 vol = 255,
 	int32 trigger = -1, int32 room_num = -1);
-extern int32 digi_play_loop(const char *name, uint channel, int32 vol = 255,
+int32 digi_play_loop(const char *name, uint channel, int32 vol = 255,
 	int32 trigger = -1, int32 room_num = -1);
-extern void digi_read_another_chunk();
-extern void digi_stop(int channel);
-extern bool digi_play_state(int channel);
-extern void digi_change_volume(int channel, int vol);
-extern void digi_set_overall_volume(int vol);
-extern int digi_get_overall_volume();
-extern int32 digi_ticks_to_play(const char *name, int roomNum = -1);
+void digi_read_another_chunk();
+void digi_stop(int channel);
+bool digi_play_state(int channel);
+void digi_change_volume(int channel, int vol);
+void digi_set_overall_volume(int vol);
+int digi_get_overall_volume();
+int32 digi_ticks_to_play(const char *name, int roomNum = -1);
 
 } // namespace M4
 

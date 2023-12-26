@@ -38,9 +38,9 @@ public:
 
 } // namespace Sound
 
-extern void midi_loop();
-extern void midi_stop();
-extern void midi_set_overall_volume(int vol);
+void midi_loop();
+void midi_stop();
+void midi_set_overall_volume(int vol);
 
 } // namespace M4
 

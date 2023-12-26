@@ -30,16 +30,16 @@ namespace M4 {
  * Given starting and ending points on the Y axis, and the constant
  * X value, draws a line in the set color in the specified buffer 
  */
-extern void gr_hline(Buffer *buf, int32 x1, int32 x2, int32 y);
+void gr_hline(Buffer *buf, int32 x1, int32 x2, int32 y);
 
 /**
  * Given starting and ending points on the Y axis, and the constant
  * X value, draws a line in the given color on the live MCGA screen.
  */
-extern void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2);
-extern void gr_hline_xor(Buffer *buf, int32 x1, int32 x2, int32 y);
-extern void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2);
-extern void gr_line(int32 x1, int32 y1, int32 x2, int32 y2, int32 color, Buffer *screen);
+void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2);
+void gr_hline_xor(Buffer *buf, int32 x1, int32 x2, int32 y);
+void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2);
+void gr_line(int32 x1, int32 y1, int32 x2, int32 y2, int32 color, Buffer *screen);
 
 } // namespace M4
 

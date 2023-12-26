@@ -60,14 +60,14 @@ struct strmRequest {
 	bool wrapStream;
 };
 
-extern bool f_stream_Init();
-extern void f_stream_Shutdown();
+bool f_stream_Init();
+void f_stream_Shutdown();
 
-extern strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuffSize, int32 strmBuffSize,
+strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuffSize, int32 strmBuffSize,
 	int32 numBlocksToRead, int32 *blockSizeArray, int32 initialRead, bool wrapStream);
-extern int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes);
-extern void f_stream_Close(strmRequest *myStream);
-extern void f_stream_Process(int32 numToProcess);
+int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes);
+void f_stream_Close(strmRequest *myStream);
+void f_stream_Process(int32 numToProcess);
 
 } // namespace M4
 

@@ -29,17 +29,17 @@ namespace M4 {
 /**
  * Initialize params handler
  */
-extern void param_init();
+void param_init();
 
 /**
  * Shutdown params handler
  */
-extern void param_shutdown();
+void param_shutdown();
 
 /**
  * Parses any flags
  */
-extern void parse_all_flags();
+void parse_all_flags();
 
 } // namespace M4
 

@@ -83,54 +83,54 @@ struct KernelPal_Globals {
 	bool _greyVideoMode = false;
 };
 
-extern void pal_fade_set_start(RGB8 *origPalette, int32 percent);
-extern void pal_fade_set_start(int32 percent);
-extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
-extern void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
+void pal_fade_set_start(RGB8 *origPalette, int32 percent);
+void pal_fade_set_start(int32 percent);
+void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
+void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
 
-extern void disable_player_commands_and_fade_init(int trigger);
-extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks,
+void disable_player_commands_and_fade_init(int trigger);
+void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks,
 	int32 totalTicks = -1, int32 triggerNum = -1);
 
 /**
  * Returns true if color cycling is on
  */
-extern bool pal_cycle_active();
+bool pal_cycle_active();
 
 /**
  * Stops color cycling
  */
-extern void pal_cycle_stop();
+void pal_cycle_stop();
 
 /**
  * Starts color cycling
  */
-extern void pal_cycle_resume();
+void pal_cycle_resume();
 
 /**
  * Handles fading and cycling
  */
-extern void pal_fx_update();
+void pal_fx_update();
 
 /**
  * This is used to effect the screen colours (not the master palette) temporarily
  * until something else updates the DAC e.g. refresh_DAC()
  */
-extern void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
+void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
 
-extern void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay);
+void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay);
 
-extern void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2);
-extern void krn_SetGreyVideoMode(int32 grey_x1, int32 grey_y1, int32 grey_x2, int32 grey_y2, int32 color_x1, int32 color_y1, int32 color_x2, int32 color_y2);
-extern void krn_UnsetGreyVideoMode(void);
-extern bool krn_GetGreyMode(void);
-extern void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY,
+void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2);
+void krn_SetGreyVideoMode(int32 grey_x1, int32 grey_y1, int32 grey_x2, int32 grey_y2, int32 color_x1, int32 color_y1, int32 color_x2, int32 color_y2);
+void krn_UnsetGreyVideoMode(void);
+bool krn_GetGreyMode(void);
+void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY,
 	int32 greyX1, int32 greyY1, int32 greyX2, int32 greyY2);
-extern void krn_ChangeBufferLuminance(Buffer *target, int32 percent);
+void krn_ChangeBufferLuminance(Buffer *target, int32 percent);
 
-extern void krn_pal_game_task();
-extern void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType);
-extern void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay);
+void krn_pal_game_task();
+void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType);
+void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay);
 
 } // namespace M4
 
