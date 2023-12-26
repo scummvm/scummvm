@@ -68,6 +68,9 @@ void PICTDecoder::setupOpcodesCommon() {
 	OPCODE(0x0011, o_versionOp, "VersionOp");
 	OPCODE(0x001E, o_nop, "DefHilite");
 	OPCODE(0x0028, o_longText, "LongText");
+	OPCODE(0x0091, o_bitsRgn, "BitsRgn");
+	OPCODE(0x0099, o_packBitsRgn, "PackBitsRgn");
+	OPCODE(0x00A0, o_shortComment, "ShortComment");
 	OPCODE(0x00A1, o_longComment, "LongComment");
 	OPCODE(0x00FF, o_opEndPic, "OpEndPic");
 	OPCODE(0x0C00, o_headerOp, "HeaderOp");
@@ -159,6 +162,20 @@ void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
 	stream.readUint16BE();
 	stream.readUint16BE();
 	stream.skip(stream.readByte());
+}
+
+void PICTDecoder::o_bitsRgn(Common::SeekableReadStream &stream) {
+	// Copy unpacked data with clipped region (8bpp or lower)
+	unpackBitsRgn(stream, false);
+}
+
+void PICTDecoder::o_packBitsRgn(Common::SeekableReadStream &stream) {
+	unpackBitsRgn(stream, true);
+}
+
+void PICTDecoder::o_shortComment(Common::SeekableReadStream &stream) {
+	// Ignore
+	stream.readUint16BE();
 }
 
 void PICTDecoder::o_longComment(Common::SeekableReadStream &stream) {
@@ -450,6 +467,89 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	}
 
 	delete[] buffer;
+}
+
+void PICTDecoder::unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed) {
+	int x1, x2, y1, y2;
+	int size = 0;
+	stream.skip(2);	// Skip rowBytes
+
+	if (!_outputSurface) {
+		_outputSurface = new Graphics::Surface();
+		_outputSurface->create(_imageRect.width(), _imageRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	y1 = stream.readSint16BE();
+	x1 = stream.readSint16BE();
+	y2 = stream.readSint16BE();
+	x2 = stream.readSint16BE();
+
+	stream.skip(8);	// Skip srcRect
+	stream.skip(8);	// Skip dstRect
+	stream.skip(2);	// Skip mode
+	stream.skip(stream.readUint16BE() - 2);
+
+	int x = 0;
+	int y = 0;
+	byte value;
+
+	if (!compressed) {
+		for (y = y1; y < y2 && y < _imageRect.height(); y++) {
+			byte b = stream.readByte();
+			byte bit = 0x80;
+
+			for (x = x1; x < x2 && x < _imageRect.width(); x++) {
+				if (b & bit)
+					_outputSurface->setPixel(x, y, 0x0F);
+				else
+					_outputSurface->setPixel(x, y, 0x00);
+
+				bit >>= 1;
+
+				if (bit == 0) {
+					b = stream.readByte();
+					bit = 0x80;
+				}
+			}
+		}
+	} else {
+		for (y = y1; y < y2 && y < _imageRect.height(); y++) {
+			x = x1;
+			size = stream.readByte();
+
+			while (size > 0) {
+				byte count = stream.readByte();
+				size--;
+
+				bool repeat;
+
+				if (count >= 128) {
+					// Repeat value
+					count = 256 - count;
+					repeat = true;
+					value = stream.readByte();
+					size--;
+				} else {
+					// Copy values
+					repeat = false;
+					value = 0;
+				}
+
+				for (int j = 0; j <= count; j++) {
+					if (!repeat) {
+						value = stream.readByte();
+						size--;
+					}
+					for (int k = 7; k >= 0 && x < x2 && x < _imageRect.width(); k--, x++) {
+						if (value & (1 << k))
+							_outputSurface->setPixel(x, y, 0x0F);
+						else
+							_outputSurface->setPixel(x, y, 0x00);
+					}
+				}
+			}
+		}
+	}
 }
 
 void PICTDecoder::unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel) {

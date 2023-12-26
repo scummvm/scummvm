@@ -95,6 +95,7 @@ private:
 	int _version;
 
 	// Utility Functions
+	void unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed);
 	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
 	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
@@ -123,6 +124,9 @@ private:
 	DECLARE_OPCODE(o_txRatio);
 	DECLARE_OPCODE(o_versionOp);
 	DECLARE_OPCODE(o_longText);
+	DECLARE_OPCODE(o_bitsRgn);
+	DECLARE_OPCODE(o_packBitsRgn);
+	DECLARE_OPCODE(o_shortComment);
 	DECLARE_OPCODE(o_longComment);
 	DECLARE_OPCODE(o_opEndPic);
 	DECLARE_OPCODE(o_headerOp);
