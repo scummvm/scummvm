@@ -16,16 +16,18 @@ ScummVM bietet die Möglichkeit, viele klassische Point-and-Click-Adventures und
 
 Weitere Informationen hierzu sowie einige kostenfreie Spiele findest du auf unserer Website. Eine aktuelle Liste mit Bezugsquellen findest du auch in unserem Wiki unter https://wiki.scummvm.org/index.php/Where_to_get_the_games.
 
-Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/en/v2.7.0/other_platforms/android.html weitere Informationen bezüglich der Einrichtung und Nutzung einiger Android-spezifischer Optionen.
+Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/en/v2.8.0/other_platforms/android.html weitere Informationen bezüglich der Einrichtung und Nutzung einiger Android-spezifischer Optionen.
 
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.7.1
+2.8.0
 
 *** Release notes:
-- Mehrere an uns gemeldete App-Abstürze wurden behoben
-- Unterstützung für Multitouch-Gesten wurde verbessert
-- Zusätzlich beinhaltet diese Version alle Korrekturen und Verbesserungen der Desktop-Version
+- Unterstützung für Bildschirmdrehung hinzugefügt
+- Schaltfläche „Hilfesystem“ auf dem Startbildschirm hinzugefügt
+- Verbesserungen für den direkten Mausmodus
+- Neue Touch-Geste für das Scrollen mit dem Mausrad (mit zwei Fingern scrollen)
+- Gemeldete Abstürze behoben und die Gesamtstabilität verbessert
 
-Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.7.1/ReleaseNotes.html
+Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.8.0/ReleaseNotes.html
