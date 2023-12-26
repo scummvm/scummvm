@@ -113,7 +113,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			p[3] = argv[5] ? (char)strtoul(argv[5], nullptr, 0) : 0;
 			p[4] = argv[6] ? (char)strtoul(argv[6], nullptr, 0) : 0;
 
-			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", opCodes[i].name, argv[1], argv[2], argv[3]);
+			debugC(5, kDebugLevelMain, "Opcode: %s %d %d %d %d %d", opCodes[i].name, p[0], p[1], p[2], p[3], p[4]);
 
 			_vm->executeAgiCommand(i, p);
 
