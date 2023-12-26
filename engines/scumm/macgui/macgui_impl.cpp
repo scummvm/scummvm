@@ -452,12 +452,6 @@ bool MacGuiImpl::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 
 // ---------------------------------------------------------------------------
 // PICT loader
-//
-// ScummVM already has a PICT v2 loader, and we use that when necessary. But
-// for PICT v1 we have our own for now.
-//
-// TODO: Investigate if PICT v1 and v2 can be handled by the standard PICT
-//       loader.
 // ---------------------------------------------------------------------------
 
 Graphics::Surface *MacGuiImpl::loadPict(int id) {
