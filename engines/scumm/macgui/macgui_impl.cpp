@@ -471,7 +471,6 @@ Graphics::Surface *MacGuiImpl::loadPict(int id) {
 	// IQ logos are PICT v2
 	Image::PICTDecoder pict;
 	if (pict.loadStream(*res)) {
-		warning("DECODED");
 		const Graphics::Surface *s1 = pict.getSurface();
 		const byte *palette = pict.getPalette();
 
