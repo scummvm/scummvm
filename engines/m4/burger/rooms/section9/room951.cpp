@@ -85,7 +85,7 @@ enum scene_triggers {
 	START_54,
 	START_55,
 	SAVEGAME_CHECK,
-	LAST_SCENE_TRIGGER
+	LAST_SCENE_TRIGGER = 57
 };
 
 
@@ -552,6 +552,7 @@ void Room951::daemon() {
 		digi_preload_stream_breaks(break_961b);
 		pal_fade_set_start(_G(master_palette), 0);
 		series_stream_with_breaks(break_961b, "961b", 6, 1, START_39);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, NO_TRIGGER);
 		break;
 
 	case START_39:
@@ -606,7 +607,7 @@ void Room951::daemon() {
 		digi_preload_stream_breaks(break_961c);
 		digi_preload_stream_breaks(break_961d);
 		compact_mem_and_report();
-		release_trigger_on_digi_state(START_47, 1, 0);
+		release_trigger_on_digi_state(LAST_SCENE_TRIGGER, 1, 0);
 		break;
 
 	case START_47:
