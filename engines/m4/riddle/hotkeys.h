@@ -31,9 +31,6 @@ namespace M4 {
 namespace Riddle {
 
 struct Hotkeys : public M4::Hotkeys {
-private:
-	cursor_states _priorCursor = kARROW;
-
 public:
 	static void t_cb(void *, void *);
 	static void u_cb(void *, void *);

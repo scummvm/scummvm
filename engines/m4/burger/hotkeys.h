@@ -33,7 +33,6 @@ namespace Burger {
 struct Hotkeys : public M4::Hotkeys {
 private:
 	static Dialog *_versionDialog;
-	cursor_states _priorCursor = kARROW;
 
 private:
 	static void t_cb(void *, void *);

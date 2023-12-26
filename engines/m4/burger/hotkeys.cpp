@@ -74,13 +74,7 @@ void Hotkeys::toggle_through_cursors(CursorChange cursChange) {
 		break;
 
 	case CURSCHANGE_TOGGLE:
-		if (_G(cursor_state) == kARROW) {
-			newCursor = _priorCursor;
-			_priorCursor = _G(cursor_state);
-		} else {
-			newCursor = kARROW;
-			_priorCursor = _G(cursor_state);
-		}
+		newCursor = (_G(cursor_state) == kARROW) ? kUSE : kARROW;
 		break;
 
 	default:
