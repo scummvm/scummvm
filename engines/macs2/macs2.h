@@ -85,7 +85,7 @@ public:
 	uint16 _charHeight;
 
 	GlyphData _glyphs[256];
-	uint16 numGlyphs = 10;
+	uint16 numGlyphs = 30;
 
 	byte* _cursorData;
 	uint16 _cursorWidth;
