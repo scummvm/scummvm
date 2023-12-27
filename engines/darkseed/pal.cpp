@@ -29,7 +29,9 @@ namespace Darkseed {
 #define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
 bool Pal::load(const Common::String &filename) {
 	Common::File file;
-	file.open(filename);
+	if(!file.open(filename)) {
+		return false;
+	}
 	uint32 bytesRead = file.read(palData, DARKSEED_PAL_SIZE);
 	assert(bytesRead == DARKSEED_PAL_SIZE);
 
@@ -38,7 +40,7 @@ bool Pal::load(const Common::String &filename) {
 	}
 	g_system->getPaletteManager()->setPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 
-	return false;
+	return true;
 }
 
 } // namespace Darkseed

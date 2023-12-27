@@ -19,39 +19,43 @@
 *
 */
 
-#ifndef DARKSEED_NSP_H
-#define DARKSEED_NSP_H
+#ifndef DARKSEED_CURSOR_H
+#define DARKSEED_CURSOR_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
-
+#include "nsp.h"
 namespace Darkseed {
 
-class Sprite {
-public:
-	uint16 width;
-	uint16 height;
-	Common::Array<uint8> pixels;
-
-public:
-	Sprite(uint16 width, uint16 height);
-	bool loadData(Common::SeekableReadStream &readStream);
-	void draw(int x, int y) const;
+enum CursorType {
+	Pointer = 0,
+	Hand = 2,
+	Look = 3,
+	HourGlass = 91,
+	ConnectorEntrance = 92,
+	HandPointing = 93,
+	ExclamationMark = 94,
 };
 
-class Nsp {
+class Cursor {
 private:
-	Common::Array<Sprite> frames;
+	int _x = 0;
+	int _y = 0;
+	enum CursorType _currentCursorType = Pointer;
 
 public:
-	bool load(const Common::String &filename);
-	const Sprite &getSpriteAt(int index);
 
-private:
-	bool load(Common::SeekableReadStream &readStream);
+	void setCursorType(enum CursorType newType);
+
+	int getX() { return _x; }
+	int getY() { return _y; }
+
+	int getWidth();
+	int getHeight();
+	const Sprite &getSprite();
+
+	void updatePosition(int x, int y);
+	void draw();
 };
 
-} // namespace Darkseed
+} // End of namespace Darkseed
 
-#endif // DARKSEED_NSP_H
+#endif // DARKSEED_CURSOR_H

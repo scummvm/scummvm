@@ -50,6 +50,8 @@ public:
 		return height;
 	}
 
+	void draw();
+	void draw(int xOffset, int yOffset);
 private:
 	bool load(Common::SeekableReadStream &readStream);
 

@@ -19,8 +19,9 @@
 *
 */
 
-#include "common/debug.h"
 #include "nsp.h"
+#include "common/debug.h"
+#include "darkseed.h"
 
 Darkseed::Sprite::Sprite(uint16 width, uint16 height) : width(width), height(height) {
 	pixels.resize(width * height, 0);
@@ -51,6 +52,10 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 	return true;
 }
 
+void Darkseed::Sprite::draw(int x, int y) const {
+	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), width, x, y, width, height, 0xf);
+}
+
 bool Darkseed::Nsp::load(const Common::String &filename) {
 	Common::File file;
 	if(!file.open(filename)) {
@@ -65,6 +70,7 @@ bool Darkseed::Nsp::load(const Common::String &filename) {
 }
 
 bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
+	frames.clear();
 	for (int i = 0; i < 96; i++) {
 		int w = readStream.readByte();
 		int h = readStream.readByte();

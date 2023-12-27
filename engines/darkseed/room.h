@@ -19,39 +19,67 @@
 *
 */
 
-#ifndef DARKSEED_NSP_H
-#define DARKSEED_NSP_H
+#ifndef DARKSEED_ROOM_H
+#define DARKSEED_ROOM_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
+#include "pal.h"
+#include "pic.h"
 
 namespace Darkseed {
 
-class Sprite {
-public:
-	uint16 width;
-	uint16 height;
-	Common::Array<uint8> pixels;
-
-public:
-	Sprite(uint16 width, uint16 height);
-	bool loadData(Common::SeekableReadStream &readStream);
-	void draw(int x, int y) const;
+struct RoomStruct1 {
+	uint16 unk0 = 0;
+	uint16 unk2 = 0;
+	uint16 unk4 = 0;
+	uint16 unk6 = 0;
+	uint16 unk8 = 0;
+	uint8 unka = 0;
 };
 
-class Nsp {
-private:
-	Common::Array<Sprite> frames;
+struct RoomStruct2 {
+	uint8 strip[40];
+};
+
+struct RoomStruct3 {
+	uint16 unk0 = 0;
+	uint16 unk2 = 0;
+	uint16 xOffset = 0;
+	uint16 yOffset = 0;
+	uint16 width = 0;
+	uint16 height = 0;
+	uint8 unkc = 0;
+	uint8 unkd = 0;
+};
+
+struct RoomConnector {
+	uint16 x = 0;
+	uint16 y = 0;
+};
+
+class Room {
+public:
+	int roomNumber;
+	Pic pic;
+	Pal _pal;
+
+	Common::Array<RoomStruct1> room1;
+	Common::Array<RoomStruct2> room2;
+	Common::Array<RoomStruct3> room3;
+	Common::Array<RoomConnector> connectors;
 
 public:
-	bool load(const Common::String &filename);
-	const Sprite &getSpriteAt(int index);
+	explicit Room(int roomNumber);
 
+	void draw();
+
+	void update();
+
+	int getObjectAtPoint(int x, int y);
 private:
-	bool load(Common::SeekableReadStream &readStream);
+	bool load();
+	static Common::String stripSpaces(Common::String source);
 };
 
 } // namespace Darkseed
 
-#endif // DARKSEED_NSP_H
+#endif // DARKSEED_ROOM_H
