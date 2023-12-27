@@ -173,11 +173,8 @@
 	{
 		"gob3",
 		"v1.00",
-		{
-			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
-			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "16b014bf32dbd6ab4c5163c44f56fed1", 445104,
+				"musmac1.mid",	"948c546cad3a9de5bff3fe4107c82bf1", 6404),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,

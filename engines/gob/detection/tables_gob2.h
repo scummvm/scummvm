@@ -480,7 +480,7 @@
 	{
 		"gob2",
 		"v1.03",
-		AD_ENTRY1("intro.stk", "271863a3dfc27665fac4b3589a0e735f"),
+		AD_ENTRY1s("intro.stk", "271863a3dfc27665fac4b3589a0e735f", 947966),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
