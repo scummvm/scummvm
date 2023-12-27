@@ -585,7 +585,7 @@ static SQInteger threadid(HSQUIRRELVM v) {
 // If a thread is not pauseable, it won't be possible to pause this thread.
 static SQInteger threadpauseable(HSQUIRRELVM v) {
 	ThreadBase *t = sqthread(v, 2);
-	if (t)
+	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	int pauseable = 0;
 	if (SQ_FAILED(sqget(v, 3, pauseable)))

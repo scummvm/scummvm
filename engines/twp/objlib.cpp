@@ -184,9 +184,20 @@ static SQInteger findObjectAt(HSQUIRRELVM v) {
 }
 
 static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
-	// TODO: isInventoryOnScreen
-	warning("isInventoryOnScreen not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	if (!obj->_owner || (obj->_owner != g_engine->_actor)) {
+		debug("Is '%s(%s)' in inventory: no", obj->_name.c_str(), obj->_key.c_str());
+		sqpush(v, false);
+		return 1;
+	}
+	int offset = obj->_owner->_inventoryOffset;
+	int index = find(obj->_owner->_inventory, obj);
+	int res = index >= offset * 4 && index < (offset * 4 + 8);
+	debug("Is '%s(%s)' in inventory: {%d}", obj->_name.c_str(), obj->_key.c_str(), res);
+	sqpush(v, res);
+	return 1;
 }
 
 // Returns true if the object is actually an object and not something else.
@@ -706,12 +717,11 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 // Sets the object in the screen space.
 // It means that its position is relative to the screen, not to the room.
 static SQInteger objectScreenSpace(HSQUIRRELVM v) {
-	warning("TODO: objectShader not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	g_engine->_screenScene.addChild(obj->_node);
 	return 0;
-	// Object *obj = sqobj(v, 2);
-	// if (!obj)
-	// 	return sq_throwerror(v, "failed to get object");
-	// g_engine->_screen->addChild(obj->_node);
 }
 
 static SQInteger objectShader(HSQUIRRELVM v) {
@@ -866,15 +876,16 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 
 	// int verbId = verb;
 	if (!g_engine->_actor) {
-		// TODO:
-		// for (vb in gEngine.hud.actorSlot(gEngine.actor).verbs) {
-		//   if (vb.id == verbId) {
-		//     if (sqrawexists(obj.table, vb.fun)) {
-		//       sqpush(v, true);
-		//       return 1;
-		// 	}
-		//   }
-		// }
+		ActorSlot *slot = g_engine->_hud.actorSlot(g_engine->_actor);
+		for (int i = 0; i < 22; i++) {
+			Verb *vb = &slot->verbs[i];
+			if (vb->id.id == verb) {
+				if (sqrawexists(obj->_table, vb->fun)) {
+					sqpush(v, true);
+					return 1;
+				}
+			}
+		}
 	}
 	sqpush(v, false);
 	return 1;
@@ -948,9 +959,13 @@ static SQInteger popInventory(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Removes an object from the current actor's inventory.
+// If the object is not in the current actor's inventory, the command silently fails.
 static SQInteger removeInventory(HSQUIRRELVM v) {
-	// TODO: removeInventory
-	warning("removeInventory not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	obj->removeInventory();
 	return 0;
 }
 
@@ -1042,7 +1057,6 @@ void sqgame_register_objlib(HSQUIRRELVM v) {
 	regFunc(v, setDefaultObject, _SC("setDefaultObject"));
 	regFunc(v, shakeObject, _SC("shakeObject"));
 	regFunc(v, stopObjectMotors, _SC("stopObjectMotors"));
-	regFunc(v, objectAt, _SC("objectAt"));
 }
 
 } // namespace Twp

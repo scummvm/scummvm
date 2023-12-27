@@ -28,6 +28,8 @@
 #include "math/vector2d.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/font.h"
+#include "twp/motor.h"
+#include "twp/scenegraph.h"
 
 namespace Twp {
 
@@ -119,6 +121,8 @@ public:
 	Light *createLight(Color color, Math::Vector2d pos);
 	float getScaling(float yPos);
 	void objectParallaxLayer(Object *obj, int zsort);
+	void setOverlay(Color color);
+	Color getOverlay() const;
 
 public:
 	Common::String _name;              // Name of the room
@@ -138,7 +142,9 @@ public:
 	bool _pseudo = false;
 	Common::Array<Object *> _objects;
 	Scene *_scene = nullptr;
+	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect;
+	Motor* _overlayTo = nullptr;
 };
 
 } // namespace Twp

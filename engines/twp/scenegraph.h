@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "twp/gfx.h"
 #include "twp/rectf.h"
-#include "twp/room.h"
+#include "twp/font.h"
 #include "twp/spritesheet.h"
 
 namespace Twp {
@@ -37,11 +37,11 @@ namespace Twp {
 // Represents a node in a scene graph.
 class Node {
 public:
-	Node(const Common::String& name, Math::Vector2d scale = Math::Vector2d(1, 1), Color color = Color());
+	Node(const Common::String &name, Math::Vector2d scale = Math::Vector2d(1, 1), Color color = Color());
 	virtual ~Node();
 
-	void setName(const Common::String& name) { _name = name; }
-	const Common::String& getName() const { return _name; }
+	void setName(const Common::String &name) { _name = name; }
+	const Common::String &getName() const { return _name; }
 
 	void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
@@ -51,28 +51,28 @@ public:
 	// Arguments:
 	// - `child`: child node to add.
 	void addChild(Node *child);
-	void removeChild(Node* node);
+	void removeChild(Node *node);
 	void clear();
 	// Removes this node from its parent.
 	void remove();
-	const Common::Array<Node *>& getChildren() const { return _children; }
+	const Common::Array<Node *> &getChildren() const { return _children; }
 
-	Node* getParent() const { return _parent; }
-	const Node* getRoot() const;
+	Node *getParent() const { return _parent; }
+	const Node *getRoot() const;
 	// Finds a node in its children and returns its position.
-	int find(Node* other);
+	int find(Node *other);
 
 	// Gets the local position for this node (relative to its parent)
-	void setPos(const Math::Vector2d& pos) { _pos = pos; }
+	void setPos(const Math::Vector2d &pos) { _pos = pos; }
 	Math::Vector2d getPos() const { return _pos; }
 
-	void setOffset(const Math::Vector2d& offset) { _offset = offset; }
+	void setOffset(const Math::Vector2d &offset) { _offset = offset; }
 	Math::Vector2d getOffset() const { return _offset; }
 
-	void setRenderOffset(const Math::Vector2d& offset) { _renderOffset = offset; }
+	void setRenderOffset(const Math::Vector2d &offset) { _renderOffset = offset; }
 	Math::Vector2d getRenderOffset() const { return _renderOffset; }
 
-	void setScale(const Math::Vector2d& scale) { _scale = scale; }
+	void setScale(const Math::Vector2d &scale) { _scale = scale; }
 	virtual Math::Vector2d getScale() const { return _scale; }
 
 	// Gets the absolute position for this node.
@@ -127,21 +127,9 @@ protected:
 	float _rotationOffset = 0.f;
 };
 
-class OverlayNode final: public Node {
+class ParallaxNode final : public Node {
 public:
-	OverlayNode();
-	virtual ~OverlayNode();
-
-protected:
-	void drawCore(Math::Matrix4 trsf) override final;
-
-private:
-	Color _ovlColor;
-};
-
-class ParallaxNode final: public Node {
-public:
-	ParallaxNode(const Math::Vector2d& parallax, const Common::String& sheet, const Common::StringArray& frames);
+	ParallaxNode(const Math::Vector2d &parallax, const Common::String &sheet, const Common::StringArray &frames);
 	virtual ~ParallaxNode();
 
 	Math::Matrix4 getTrsf(Math::Matrix4 parentTrsf) override final;
@@ -157,45 +145,47 @@ private:
 
 struct ObjectAnimation;
 
+class Object;
 class Anim : public Node {
 public:
-	Anim(Object* obj);
+	Anim(Object *obj);
 
 	void clearFrames();
-	void setAnim(const ObjectAnimation* anim, float fps = 0.f, bool loop = false, bool instant = false);
+	void setAnim(const ObjectAnimation *anim, float fps = 0.f, bool loop = false, bool instant = false);
 	void update(float elapsed);
 	void disable() { _disabled = true; }
 	void trigSound();
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
+
 public:
-    const ObjectAnimation* _anim = nullptr;
-    bool _disabled = false;
+	const ObjectAnimation *_anim = nullptr;
+	bool _disabled = false;
 
 private:
-    Common::String _sheet;
-    Common::Array<Common::String> _frames;
-    int _frameIndex = 0;
-    float _elapsed = 0.f;
-    float _frameDuration = 0.f;
-    bool _loop = false;
+	Common::String _sheet;
+	Common::Array<Common::String> _frames;
+	int _frameIndex = 0;
+	float _elapsed = 0.f;
+	float _frameDuration = 0.f;
+	bool _loop = false;
 	bool _instant;
-    Object* _obj = nullptr;
+	Object *_obj = nullptr;
 };
 
-class ActorNode final: public Node {
+class ActorNode final : public Node {
 public:
-	ActorNode(Object* obj);
+	ActorNode(Object *obj);
 
 	int getZSort() const override final;
 	Math::Vector2d getScale() const override final;
 
 private:
-	Object* _object = nullptr;
+	Object *_object = nullptr;
 };
 
-class TextNode final: public Node {
+class TextNode final : public Node {
 public:
 	TextNode();
 	virtual ~TextNode() final;
@@ -212,19 +202,52 @@ private:
 	Text _text;
 };
 
-class Scene final: public Node {
+class Scene final : public Node {
 public:
 	Scene();
 	virtual ~Scene() final;
 };
 
-class InputState final: public Node {
+class InputState final : public Node {
 public:
 	InputState();
 	virtual ~InputState() final;
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
+};
+
+class OverlayNode final : public Node {
+public:
+	OverlayNode();
+
+	void setOverlayColor(Color color) { _ovlColor = color; }
+	Color getOverlayColor() const { return _ovlColor; }
+
+private:
+	virtual void drawCore(Math::Matrix4 trsf) override final;
+
+private:
+	Color _ovlColor;
+};
+
+class Inventory: public Node {
+public:
+	Inventory();
+	void update(float elapsed, Object* actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
+
+private:
+	virtual void drawCore(Math::Matrix4 trsf) override final;
+	void drawArrows(Math::Matrix4 trsf);
+	void drawBack(Math::Matrix4 trsf);
+	void drawItems(Math::Matrix4 trsf);
+	void drawSprite(SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
+
+private:
+	Object* _actor = nullptr;
+    Color _backColor, _verbNormal;
+    bool _down = false;
+    Object* _obj = nullptr;
 };
 
 } // End of namespace Twp

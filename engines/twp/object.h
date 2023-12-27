@@ -52,6 +52,14 @@ enum Direction {
 	dBack = 8
 };
 
+enum UseFlag {
+	ufNone,
+	ufUseWith,
+	ufUseOn,
+	ufUseIn,
+	ufGiveTo
+};
+
 struct ObjectAnimation {
 	Common::String name;
 	Common::String sheet;
@@ -77,9 +85,9 @@ struct VerbId {
 
 class Object;
 struct Sentence {
-    VerbId verb;
-    Object* noun1 = nullptr;
-	Object* noun2 = nullptr;
+	VerbId verb;
+	Object *noun1 = nullptr;
+	Object *noun2 = nullptr;
 	bool enabled = false;
 };
 
@@ -90,18 +98,18 @@ class Node;
 class Layer;
 
 struct TalkingState {
-    Object* _obj;
-    Color _color;
+	Object *_obj;
+	Color _color;
 
-	void say(const Common::StringArray& texts, Object* obj);
+	void say(const Common::StringArray &texts, Object *obj);
 };
 
 class Object {
 public:
 	Object();
-	Object(HSQOBJECT o, const Common::String& key);
+	Object(HSQOBJECT o, const Common::String &key);
 
-	static Object* createActor();
+	static Object *createActor();
 
 	int getId() const;
 
@@ -120,6 +128,8 @@ public:
 	// objectState(coin, HERE)
 	// objectTouchable(coin, YES)
 	void setState(int state, bool instant = false);
+	int getState() const { return _state; }
+
 	bool touchable();
 	void setTouchable(bool value);
 
@@ -137,6 +147,7 @@ public:
 	void setPop(int count);
 	int getPop() const { return _popCount; }
 	float popScale() const;
+	float getScale();
 
 	int defaultVerbId();
 	void setFacing(Facing facing);
@@ -144,21 +155,25 @@ public:
 	Math::Vector2d getUsePos();
 	Facing getDoorFacing();
 
-	void setIcon(int fps, const Common::StringArray& icons);
-	void setIcon(const Common::String& icon);
+	void setIcon(int fps, const Common::StringArray &icons);
+	void setIcon(const Common::String &icon);
 	Common::String getIcon();
 	bool inInventory();
+	void removeInventory(Object *obj);
+	void removeInventory();
 
 	int getFlags();
+	UseFlag useFlag();
+
 	bool contains(Math::Vector2d pos);
-	void setRoom(Room* room);
+	void setRoom(Room *room);
 	void delObject();
 	void stopObjectMotors();
-	void dependentOn(Object* dependentObj, int state);
+	void dependentOn(Object *dependentObj, int state);
 
 	Common::String getAnimName(const Common::String &key);
 	void setHeadIndex(int head);
-	void setAnimationNames(const Common::String& head, const Common::String& stand, const Common::String& walk, const Common::String& reach);
+	void setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach);
 	bool isWalking();
 	void stopWalking();
 	void blinkRate(float min, float max);
@@ -167,20 +182,20 @@ public:
 
 	void update(float elapsedSec);
 
-	void setAlphaTo(Motor* alphaTo);
-	void setRotateTo(Motor* rotateTo);
-	void setMoveTo(Motor* moveTo);
-	void setWalkTo(Motor* walkTo);
-	Motor* getWalkTo() const { return _walkTo; }
-	void setTalking(Motor* talking);
-	void setBlink(Motor* blink);
-	void setTurnTo(Motor* turnTo);
-	void setShakeTo(Motor* shakeTo);
-	void setJiggleTo(Motor* jiggleTo);
+	void setAlphaTo(Motor *alphaTo);
+	void setRotateTo(Motor *rotateTo);
+	void setMoveTo(Motor *moveTo);
+	void setWalkTo(Motor *walkTo);
+	Motor *getWalkTo() const { return _walkTo; }
+	void setTalking(Motor *talking);
+	void setBlink(Motor *blink);
+	void setTurnTo(Motor *turnTo);
+	void setShakeTo(Motor *shakeTo);
+	void setJiggleTo(Motor *jiggleTo);
 
-	Motor* getTalking() { return _talking; }
+	Motor *getTalking() { return _talking; }
 	void stopTalking();
-	void say(const Common::StringArray& texts, Color color);
+	void say(const Common::StringArray &texts, Color color);
 
 	void pickupObject(Object *obj);
 
@@ -188,16 +203,17 @@ private:
 	Common::String suffix() const;
 	// Plays an animation specified by the state
 	bool playCore(const Common::String &state, bool loop = false, bool instant = false);
+	int flags();
 
 public:
 	HSQOBJECT _table;
 	Common::String _name;
 	Common::String _parent;
-	Common::String _sheet;								// Spritesheet to use when a sprite is displayed in the room: "raw" means raw texture, empty string means use room texture
-	Common::String _key;								// key used to identify this object by script
+	Common::String _sheet; // Spritesheet to use when a sprite is displayed in the room: "raw" means raw texture, empty string means use room texture
+	Common::String _key;   // key used to identify this object by script
 	Common::String _costumeName, _costumeSheet;
 	int _state = -1;
-	Math::Vector2d _usePos;								// use position
+	Math::Vector2d _usePos; // use position
 	Direction _useDir = dNone;
 	Common::Rect _hotspot;
 	ObjectType _objType = otNone;
@@ -226,30 +242,30 @@ public:
 	Color _talkColor;
 	Common::HashMap<Common::String, Common::String> _animNames;
 	bool _lit = false;
-	Object* _owner = nullptr;
-	Common::Array<Object*> _inventory;
+	Object *_owner = nullptr;
+	Common::Array<Object *> _inventory;
 	int _inventoryOffset = 0;
 	Common::StringArray _icons;
 	int _iconFps = 0;
 	int _iconIndex = 0;
-	float _iconElapsed  = 0.f;
+	float _iconElapsed = 0.f;
 	HSQOBJECT _enter, _leave;
 	int _dependentState = 0;
-    Object* _dependentObj;
-    float _popElapsed = 0.f;
-    int _popCount = 0;
+	Object *_dependentObj = nullptr;
+	float _popElapsed = 0.f;
+	int _popCount = 0;
 	Sentence _exec;
 
 private:
-	Motor* _alphaTo = nullptr;
-	Motor* _rotateTo = nullptr;
-	Motor* _moveTo = nullptr;
-	Motor* _walkTo = nullptr;
-	Motor* _talking = nullptr;
-	Motor* _blink = nullptr;
-	Motor* _turnTo = nullptr;
-	Motor* _shakeTo = nullptr;
-	Motor* _jiggleTo = nullptr;
+	Motor *_alphaTo = nullptr;
+	Motor *_rotateTo = nullptr;
+	Motor *_moveTo = nullptr;
+	Motor *_walkTo = nullptr;
+	Motor *_talking = nullptr;
+	Motor *_blink = nullptr;
+	Motor *_turnTo = nullptr;
+	Motor *_shakeTo = nullptr;
+	Motor *_jiggleTo = nullptr;
 	TalkingState _talkingState;
 };
 

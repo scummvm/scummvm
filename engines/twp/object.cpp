@@ -138,7 +138,7 @@ void Object::showLayer(const Common::String &layer, bool visible) {
 Facing Object::getFacing() const {
 	if (_facingLockValue != 0)
 		return (Facing)_facingLockValue;
-	else if (_facingMap.contains(_facing))
+	if (_facingMap.contains(_facing))
 		return _facingMap[_facing];
 	return _facing;
 }
@@ -451,9 +451,8 @@ void Object::setShakeTo(Motor *shakeTo) { SET_MOTOR(shakeTo); }
 void Object::setJiggleTo(Motor *jiggleTo) { SET_MOTOR(jiggleTo); }
 
 void Object::update(float elapsedSec) {
-	// TODO: update
-	//   if not self.dependentObj.isNil:
-	//     self.node.visible = self.dependentObj.getState() == self.dependentState
+	if (_dependentObj)
+		_node->setVisible(_dependentObj->getState() == _dependentState);
 	if (_alphaTo)
 		_alphaTo->update(elapsedSec);
 	if (_rotateTo)
@@ -476,6 +475,7 @@ void Object::update(float elapsedSec) {
 	if (_nodeAnim)
 		_nodeAnim->update(elapsedSec);
 
+	// TODO: update
 	//   if self.icons.len > 1 and self.iconFps > 0:
 	//     self.iconElapsed += elapsedSec
 	//     if self.iconElapsed > (1f / self.iconFps.float32):
@@ -518,7 +518,7 @@ void Object::resetLockFacing() {
 }
 
 void Object::lockFacing(int facing) {
-  _facingLockValue = facing;
+	_facingLockValue = facing;
 }
 
 void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
@@ -526,6 +526,43 @@ void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
 	_facingMap[FACE_RIGHT] = right;
 	_facingMap[FACE_FRONT] = front;
 	_facingMap[FACE_BACK] = back;
+}
+
+int Object::flags() {
+	int result = 0;
+	if (sqrawexists(_table, "flags"))
+		sqgetf(_table, "flags", result);
+	return result;
+}
+
+UseFlag Object::useFlag() {
+	int flags = getFlags();
+	if (flags & USE_WITH)
+		return ufUseWith;
+	if (flags & USE_ON)
+		return ufUseOn;
+	if (flags & USE_IN)
+		return ufUseIn;
+	return ufNone;
+}
+
+float Object::getScale() {
+	if (getPop() > 0)
+		return 4.25f + popScale() * 0.25f;
+	return 4.f;
+}
+
+void Object::removeInventory(Object *obj) {
+	int i = find(_inventory, obj);
+	if (i >= 0) {
+		_inventory.remove_at(i);
+		obj->_owner = nullptr;
+	}
+}
+
+void Object::removeInventory() {
+	if (_owner)
+		_owner->removeInventory(this);
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {
