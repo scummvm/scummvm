@@ -26,6 +26,7 @@
 bool Darkseed::Pic::load(const Common::String &filename) {
 	Common::File file;
 	if(!file.open(filename)) {
+		debug("Failed to load %s", filename.c_str());
 		return false;
 	}
 	bool ret = load(file);

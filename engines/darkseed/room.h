@@ -28,11 +28,11 @@
 namespace Darkseed {
 
 struct RoomStruct1 {
-	uint16 unk0 = 0;
-	uint16 unk2 = 0;
+	uint16 x = 0;
+	uint16 y = 0;
 	uint16 unk4 = 0;
 	uint16 unk6 = 0;
-	uint16 unk8 = 0;
+	uint16 roomNumber = 0;
 	uint8 unka = 0;
 };
 
@@ -58,7 +58,7 @@ struct RoomConnector {
 
 class Room {
 public:
-	int roomNumber;
+	int _roomNumber;
 	Pic pic;
 	Pal _pal;
 
@@ -75,6 +75,9 @@ public:
 	void update();
 
 	int getObjectAtPoint(int x, int y);
+	int getExitRoomNumberAtPoint(int x, int y);
+	bool exitRoom();
+	Common::String getRoomFilenameBase(int roomNumber);
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

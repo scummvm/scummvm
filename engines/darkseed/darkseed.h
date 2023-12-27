@@ -125,6 +125,8 @@ private:
 	void updateEvents();
 	void handleInput();
 	void wait();
+	void handlePointerAction();
+	void changeToRoom(int newRoomNumber);
 };
 
 extern DarkseedEngine *g_engine;

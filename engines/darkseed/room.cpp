@@ -22,7 +22,7 @@
 #include "room.h"
 #include "darkseed.h"
 
-Darkseed::Room::Room(int roomNumber) : roomNumber(roomNumber) {
+Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	room1.resize(8);
 	room2.resize(16);
 	room3.resize(30);
@@ -33,10 +33,11 @@ Darkseed::Room::Room(int roomNumber) : roomNumber(roomNumber) {
 }
 
 bool Darkseed::Room::load() {
-	Common::String filename;
+	Common::String filenameBase = getRoomFilenameBase(_roomNumber);
+	Common::String romFilename;
 	Common::File file;
-	filename = Common::String::format("room%d.rom", roomNumber);
-	if(!file.open(filename)) {
+	romFilename = Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber);
+	if(!file.open(romFilename)) {
 		return false;
 	}
 
@@ -48,14 +49,14 @@ bool Darkseed::Room::load() {
 	file.seek(0x27);
 
 	for (int i = 0; i < 8; i++) {
-		room1[i].unk0 = file.readUint16BE();
-		room1[i].unk2 = file.readUint16BE();
-		if (room1[i].unk2 > 233) {
-			room1[i].unk2 = 233;
+		room1[i].x = file.readUint16BE();
+		room1[i].y = file.readUint16BE();
+		if (room1[i].y > 233) {
+			room1[i].y = 233;
 		}
 		room1[i].unk4 = file.readUint16BE();
 		room1[i].unk6 = file.readUint16BE();
-		room1[i].unk8 = file.readUint16BE();
+		room1[i].roomNumber = file.readUint16BE();
 		room1[i].unka = file.readByte();
 	}
 
@@ -112,7 +113,7 @@ bool Darkseed::Room::load() {
 		return false;
 	}
 
-	_pal.load(Common::String::format("room%d.pal", roomNumber));
+	_pal.load(Common::String::format("%s.pal", filenameBase.c_str()));
 
 	return true;
 }
@@ -190,4 +191,29 @@ void Darkseed::Room::update() {
 	if (g_engine->_actionMode == PointerAction) {
 		g_engine->_cursor.setCursorType(objectUnderCursor != -1 ? ConnectorEntrance : Pointer);
 	}
+}
+
+bool Darkseed::Room::exitRoom() {
+	return false;
+}
+int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
+	int obj = getObjectAtPoint(x, y);
+	for (int i = 0; i < room1.size(); i++) {
+		if (
+			room1[i].roomNumber != 0xff
+			&& room3[obj].xOffset <= room1[i].x
+			&& room1[i].x <= room3[obj].width + room3[obj].xOffset
+			&& room3[obj].yOffset <= room1[i].y
+			&& room1[i].y <= room3[obj].yOffset + room3[obj].height
+			) {
+			return room1[i].roomNumber;
+		}
+	}
+	return -1;
+}
+Common::String Darkseed::Room::getRoomFilenameBase(int roomNumber) {
+	if (roomNumber == 20 || roomNumber == 22) {
+		return "room19";
+	}
+	return Common::String::format("room%d", roomNumber);
 }
