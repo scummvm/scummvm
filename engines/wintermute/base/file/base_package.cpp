@@ -132,13 +132,13 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 	TPackageHeader hdr;
 	hdr.readFromStream(stream);
 	if (hdr._magic1 != PACKAGE_MAGIC_1 || hdr._magic2 != PACKAGE_MAGIC_2 || hdr._packageVersion > PACKAGE_VERSION) {
-		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
+		debugC(kWintermuteDebugFileAccess, "  Invalid header in package file '%s'. Ignoring.", filename.c_str());
 		delete stream;
 		return;
 	}
 
 	if (hdr._packageVersion != PACKAGE_VERSION) {
-		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
+		debugC(kWintermuteDebugFileAccess, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 	_priority = hdr._priority;
 	_version  = hdr._gameVersion;

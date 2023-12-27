@@ -97,20 +97,20 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 	Common::SeekableReadStream *file = openFile(filename);
 	if (!file) {
 		if (mustExist) {
-			debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error opening file '%s'", filename.c_str());
+			debugC(kWintermuteDebugFileAccess, "Error opening file '%s'", filename.c_str());
 		}
 		return nullptr;
 	}
 
 	buffer = new byte[file->size() + 1];
 	if (buffer == nullptr) {
-		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), (int)file->size() + 1);
+		debugC(kWintermuteDebugFileAccess, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), (int)file->size() + 1);
 		closeFile(file);
 		return nullptr;
 	}
 
 	if (file->read(buffer, (uint32)file->size()) != (uint32)file->size()) {
-		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error reading file '%s'", filename.c_str());
+		debugC(kWintermuteDebugFileAccess, "Error reading file '%s'", filename.c_str());
 		closeFile(file);
 		delete[] buffer;
 		return nullptr;
@@ -192,7 +192,7 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::registerPackages() {
-	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
+	debugC(kWintermuteDebugFileAccess, "Scanning packages");
 
 	// We need game flags to perform some game-specific hacks.
 	uint32 flags = BaseEngine::instance().getFlags();
@@ -321,7 +321,7 @@ bool BaseFileManager::registerPackages() {
 		}
 	}
 
-//	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+//	debugC(kWintermuteDebugFileAccess, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
