@@ -35,12 +35,31 @@ namespace Graphics {
 
 namespace {
 
+static void scaleVertical(byte *dst, const byte *src,
+                          const uint dstPitch, const uint srcPitch,
+                          const uint w, const uint dstH, const uint srcH,
+                          const byte flip, const uint bytesPerPixel) {
+	const bool flipy = flip & FLIP_V;
+
+	const int dstIncY = (flipy ? -static_cast<int>(dstPitch) : static_cast<int>(dstPitch));
+
+	if (flipy) {
+		dst += (dstH - 1) * dstPitch;
+	}
+
+	for (uint y = 0; y < dstH; y++) {
+		const byte *srcP = src + ((y * srcH) / dstH) * srcPitch;
+		memcpy(dst, srcP, w * bytesPerPixel);
+		dst += dstIncY;
+	}
+}
+
 template <typename Size>
-void scaleNN(byte *dst, const byte *src,
+static void scaleNN(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,
 			   const uint srcW, const uint srcH,
-			   int *scaleCacheX, const byte flip) {
+			   const byte flip) {
 	const bool flipx = flip & FLIP_H;
 	const bool flipy = flip & FLIP_V;
 
@@ -55,6 +74,11 @@ void scaleNN(byte *dst, const byte *src,
 		dst += (dstH - 1) * dstPitch;
 	}
 
+	int *scaleCacheX = new int[dstW];
+	for (uint x = 0; x < dstW; x++) {
+		scaleCacheX[x] = (x * srcW) / dstW;
+	}
+
 	for (uint y = 0; y < dstH; y++) {
 		const Size *srcP = (const Size *)(src + ((y * srcH) / dstH) * srcPitch);
 		Size *dst1 = (Size *)dst;
@@ -65,6 +89,8 @@ void scaleNN(byte *dst, const byte *src,
 		}
 		dst += dstIncY;
 	}
+
+	delete[] scaleCacheX;
 }
 
 } // End of anonymous namespace
@@ -75,30 +101,29 @@ bool scaleBlit(byte *dst, const byte *src,
 			   const uint srcW, const uint srcH,
 			   const Graphics::PixelFormat &fmt,
 						   const byte flip) {
-
-	int *scaleCacheX = new int[dstW];
-	for (uint x = 0; x < dstW; x++) {
-		scaleCacheX[x] = (x * srcW) / dstW;
+	if (dstW == srcW && !(flip & FLIP_H)) {
+		if (dstH == srcH && !(flip & FLIP_V))
+			copyBlit(dst, src, dstPitch, srcPitch, dstW, dstH, fmt.bytesPerPixel);
+		else
+			scaleVertical(dst, src, dstPitch, srcPitch, dstW, dstH, srcH, flip, fmt.bytesPerPixel);
+		return true;
 	}
 
 	switch (fmt.bytesPerPixel) {
 	case 1:
-		scaleNN<uint8>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
-		break;
+		scaleNN<uint8>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, flip);
+		return true;
 	case 2:
-		scaleNN<uint16>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
-		break;
+		scaleNN<uint16>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, flip);
+		return true;
 	case 4:
-		scaleNN<uint32>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
-		break;
+		scaleNN<uint32>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, flip);
+		return true;
 	default:
-		delete[] scaleCacheX;
-		return false;
+		break;
 	}
 
-	delete[] scaleCacheX;
-
-	return true;
+	return false;
 }
 
 /*
