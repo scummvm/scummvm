@@ -316,6 +316,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 2, verb)))
 			return sq_throwerror(v, "failed to get verb");
 		ActorSlot *actorSlot = g_engine->_hud.actorSlot(g_engine->_actor);
+		if(!actorSlot) return 0;
 		for (int i = 1; i < 22; i++) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
@@ -339,7 +340,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 
 	Math::Vector2d rPos = g_engine->roomToScreen(obj->_node->getAbsPos());
 	Math::Vector2d pos(rPos.getX() + obj->_node->getSize().getX() / 2.f, rPos.getY() + obj->_node->getSize().getY() / 2.f);
-	debug("findScreenPosition({obj.name}) => {pos}");
+	debug("findScreenPosition(%s) => (%f,%f)", obj->_name.c_str(), pos.getX(), pos.getY());
 	sqpush(v, pos);
 	return 1;
 }

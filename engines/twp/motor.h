@@ -56,7 +56,7 @@ public:
 			}
 			if (easing_f.func) {
 				f = easing_f.func(f);
-				value = frm + f * delta;
+				value = frm + delta * f;
 			}
 		} else {
 			value = to;
@@ -170,6 +170,19 @@ private:
 	float _amount = 0.f;
 	float _shakeTime = 0.f;
 	float _elapsed = 0.f;
+};
+
+class OverlayTo : public Motor {
+public:
+	virtual ~OverlayTo();
+	OverlayTo(float duration, Room* room, Color to);
+
+	virtual void update(float elapsed) override;
+
+private:
+	Room *_room = nullptr;
+	Color _to;
+	Tween<Color> _tween;
 };
 
 } // namespace Twp

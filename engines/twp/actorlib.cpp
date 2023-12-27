@@ -89,7 +89,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 			Math::Vector2d pos = spot->_node->getPos() + spot->_usePos;
 			actor->setRoom(spot->_room);
 			actor->stopWalking();
-			debug("actorAt %s at %s, room '%s'", actor->_key.c_str(), spot->_key.c_str(), spot->_room->_name.c_str());
+			debug("actorAt %s at %s (%d, %d), room '%s'", actor->_key.c_str(), spot->_key.c_str(), (int)pos.getX(), (int)pos.getY(), spot->_room->_name.c_str());
 			actor->_node->setPos(pos);
 			actor->setFacing(getFacing(spot->_useDir, actor->getFacing()));
 		} else {
@@ -343,8 +343,58 @@ static SQInteger actorShowLayer(HSQUIRRELVM v) {
 }
 
 static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
-	warning("TODO: actorSlotSelectable not implemented");
-	return 0;
+	SQInteger nArgs = sq_gettop(v);
+	switch (nArgs) {
+	case 2: {
+		int selectable;
+		if (SQ_FAILED(sqget(v, 2, selectable)))
+			return sq_throwerror(v, "failed to get selectable");
+		// TODO:
+		// switch(selectable) {
+		// case 0:
+		//   g_engine->actorSwitcher.mode.excl asOn;
+		//   break;
+		// case 1:
+		//   g_engine->actorSwitcher.mode.incl asOn;
+		//   break;
+		// case 2:
+		//   g_engine->actorSwitcher.mode.incl asTemporaryUnselectable;
+		//   break;
+		// case 3:
+		//   g_engine->actorSwitcher.mode.excl asTemporaryUnselectable;
+		//   break;
+		// default:
+		//   return sq_throwerror(v, "invalid selectable value");
+		// }
+		return 0;
+	}
+	case 3: {
+		bool selectable;
+		if (SQ_FAILED(sqget(v, 3, selectable)))
+			return sq_throwerror(v, "failed to get selectable");
+		if (sq_gettype(v, 2) == OT_INTEGER) {
+			int slot;
+			if (SQ_FAILED(sqget(v, 2, slot)))
+				return sq_throwerror(v, "failed to get slot");
+			g_engine->_hud._actorSlots[slot - 1].selectable = selectable;
+		} else {
+			Object *actor = sqactor(v, 2);
+			if (!actor)
+				return sq_throwerror(v, "failed to get actor");
+			Common::String key;
+			sqgetf(actor->_table, "_key", key);
+			debug("actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
+			ActorSlot *slot = g_engine->_hud.actorSlot(actor);
+			if (!slot)
+				warning("slot for actor %s not found", key.c_str());
+			else
+				slot->selectable = selectable;
+		}
+		return 0;
+	}
+	default:
+		return sq_throwerror(v, "invalid number of arguments");
+	}
 }
 
 // If a direction is specified: makes the actor face a given direction, which cannot be changed no matter what the player does.
@@ -568,8 +618,20 @@ static SQInteger actorWalking(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Sets the walk speed of an actor.
+//
+// The numbers are in pixel's per second.
+// The vertical movement is typically half (or more) than the horizontal movement to simulate depth in the 2D world.
 static SQInteger actorWalkSpeed(HSQUIRRELVM v) {
-	warning("TODO: actorWalkSpeed not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int x, y;
+	if (SQ_FAILED(sqget(v, 3, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 4, y)))
+		return sq_throwerror(v, "failed to get y");
+	actor->_walkSpeed = Math::Vector2d(x, y);
 	return 0;
 }
 
@@ -579,7 +641,11 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 }
 
 static SQInteger addSelectableActor(HSQUIRRELVM v) {
-	warning("TODO: addSelectableActor not implemented");
+	int slot;
+	if (SQ_FAILED(sqget(v, 2, slot)))
+		return sq_throwerror(v, "failed to get slot");
+	Object *actor = sqactor(v, 3);
+	g_engine->_hud._actorSlots[slot - 1].actor = actor;
 	return 0;
 }
 
@@ -643,7 +709,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 			}
 		}
 	}
-	debug("sayline: {obj.key}, {texts}");
+	debug("sayline: %s, {texts}", obj->_key.c_str());
 	obj->say(texts, obj->_talkColor);
 	return 0;
 }
@@ -668,8 +734,43 @@ static SQInteger sayLine(HSQUIRRELVM v) {
 	return sayOrMumbleLine(v);
 }
 
+// Say a line of dialog and play the appropriate talking animations.
+// In the first example, the actor ray will say the line.
+// In the second, the selected actor will say the line.
+// In the third example, the first line is displayed, then the second one.
+// See also:
+// - `mumbleLine method`
 static SQInteger sayLineAt(HSQUIRRELVM v) {
-	warning("TODO: sayLineAt not implemented");
+	int x, y;
+	Common::String text;
+	float duration = -1.0f;
+	if (SQ_FAILED(sqget(v, 2, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 3, y)))
+		return sq_throwerror(v, "failed to get y");
+	Color color;
+	if (sq_gettype(v, 4) == OT_INTEGER) {
+		int c;
+		if (SQ_FAILED(sqget(v, 4, c)))
+			return sq_throwerror(v, "failed to get color");
+		color = Color::rgb(c);
+		if (SQ_FAILED(sqget(v, 5, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		if (SQ_FAILED(sqget(v, 6, text)))
+			return sq_throwerror(v, "failed to get text");
+	} else {
+		Object *actor = sqactor(v, 4);
+		if (!actor)
+			return sq_throwerror(v, "failed to get actor");
+		Math::Vector2d pos = g_engine->roomToScreen(actor->_node->getAbsPos());
+		x = pos.getX();
+		y = pos.getY();
+		color = actor->_talkColor;
+		if (SQ_FAILED(sqget(v, 6, text)))
+			return sq_throwerror(v, "failed to get text");
+	}
+
+	warning("TODO: saylineAt: (%d,%d) text=%s color=%s duration=%f", x, y, text.c_str(), color.toStr().c_str(), duration);
 	return 0;
 }
 
@@ -691,8 +792,13 @@ static SQInteger isActorOnScreen(HSQUIRRELVM v) {
 }
 
 static SQInteger isActorSelectable(HSQUIRRELVM v) {
-	warning("TODO: isActorSelectable not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	ActorSlot *slot = g_engine->_hud.actorSlot(actor);
+	bool selectable = !slot ? false : slot->selectable;
+	sqpush(v, selectable);
+	return 1;
 }
 
 // If an actor is specified, returns true otherwise returns false.
@@ -801,8 +907,7 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	sqgetf(table, "inventoryBackground", inventoryBackground);
 
 	// get optional colors
-	int
-		retroNormal = verbNormal;
+	int retroNormal = verbNormal;
 	int retroHighlight = verbNormalTint;
 	int dialogNormal = verbNormal;
 	int dialogHighlight = verbHighlight;

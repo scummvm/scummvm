@@ -325,7 +325,7 @@ YLabel *YackParser::parseLabel() {
 	// label
 	pLabel.reset(new YLabel(_it->line));
 	pLabel->_name = _reader.readText(*_it++);
-	debug("label %s", pLabel->_name.c_str());
+	// debug("label %s", pLabel->_name.c_str());
 	do {
 		if (match({YackTokenId::Colon}) || match({YackTokenId::End}))
 			break;

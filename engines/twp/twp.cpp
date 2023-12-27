@@ -58,6 +58,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	sq_resetobject(&_defaultObj);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_dialog);
+	_screenScene.addChild(&_uiInv);
 }
 
 TwpEngine::~TwpEngine() {
@@ -207,6 +208,15 @@ void TwpEngine::update(float elapsed) {
 			}
 		}
 	}
+
+	 // update inventory
+  if (!_actor) {
+    _uiInv.update(elapsed);
+  } else {
+    // TODO: _hud.update(scrPos, _noun1, _cursor.isLeftClick());
+    VerbUiColors* verbUI = &_hud.actorSlot(_actor)->verbUiColors;
+    _uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
+  }
 }
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
@@ -359,22 +369,6 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// GGPackEntryReader reader;
-	// if (reader.open(_pack, "TronDialogs.byack")) {
-	// 	YackParser parser;
-	// 	YackTokenReader ytr;
-	// 	ytr.open(&reader);
-
-	// 	for (auto it=ytr.begin();it!=ytr.end();it++) {
-	// 		Common::String s = ytr.readText(*it);
-	// 		debug("%s [%d, %d] %s", it->toString().c_str(), it->start, it->end, s.c_str());
-	// 	}
-
-	// 	unique_ptr<YCompilationUnit> cu(parser.parse(&reader));
-	// 	YackDump dump;
-	// 	cu->accept(dump);
-	// }
-
 	HSQUIRRELVM v = _vm.get();
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
@@ -435,7 +429,7 @@ Common::Error TwpEngine::run() {
 		uint32 newTime = _system->getMillis();
 		uint32 delta = newTime - time;
 		time = newTime;
-		update(8.f*delta / 1000.f);
+		update(8.f * delta / 1000.f);
 		draw();
 		_cursor.update();
 
@@ -630,7 +624,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	_room = room;
 	_scene.addChild(_room->_scene);
 	_room->_lights._numLights = 0;
-	// TODO:   _room->overlay = Transparent;
+	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	//   if (_actor)
 	//     _hud.verb = _hud.actorSlot(_actor).verbs[0];
@@ -868,6 +862,118 @@ void TwpEngine::setActor(Object *actor, bool userSelected) {
 
 	if (actor)
 		follow(actor);
+}
+
+bool TwpEngine::selectable(Object *actor) {
+	for (int i = 0; i < NUMACTORS; i++) {
+		ActorSlot *slot = &_hud._actorSlots[i];
+		if (slot->actor == actor)
+			return slot->selectable;
+	}
+	return false;
+}
+
+static void giveTo(Object *actor1, Object *actor2, Object *obj) {
+	obj->_owner = actor2;
+	actor2->_inventory.push_back(obj);
+	int index = find(actor1->_inventory, obj);
+	if (index != -1)
+		actor1->_inventory.remove_at(index);
+}
+
+void TwpEngine::resetVerb() {
+	debug("reset nouns");
+	_noun1 = nullptr;
+	_noun2 = nullptr;
+	_useFlag = ufNone;
+	_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+}
+
+bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+	sqcall("onObjectClick", noun1->_table);
+
+	// Called after the actor has walked to the object.
+	Common::String name = !actor ? "currentActor" : actor->_key;
+	Common::String noun1name = !noun1 ? "null" : noun1->_key;
+	Common::String noun2name = !noun2 ? "null" : noun2->_key;
+	Common::String verbFuncName = _hud.actorSlot(actor)->verbs[verbId.id].fun;
+	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
+
+	// test if object became untouchable
+	if (!noun1->inInventory() && !noun1->_touchable)
+		return false;
+	if (noun2 && !noun2->inInventory() && !noun2->_touchable)
+		return false;
+
+	// check if verb is use and object can be used with or in or on
+	if ((verbId.id == VERB_USE) && !noun2) {
+		_useFlag = noun1->useFlag();
+		if (_useFlag != ufNone) {
+			_noun1 = noun1;
+			return false;
+		}
+	}
+
+	if (verbId.id == VERB_GIVE) {
+		if (!noun2) {
+			debug("set use flag to ufGiveTo");
+			_useFlag = ufGiveTo;
+			_noun1 = noun1;
+		} else {
+			bool handled = false;
+			if (sqrawexists(noun2->_table, verbFuncName)) {
+				debug("call {verbFuncName} on {noun2.key}");
+				sqcallfunc(handled, noun2->_table, verbFuncName.c_str(), noun1->_table);
+			}
+			// verbGive is called on object only for non selectable actors
+			if (!handled && !selectable(noun2) && sqrawexists(noun1->_table, verbFuncName)) {
+				debug("call {verbFuncName} on {noun1.key}");
+				sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
+				handled = true;
+			}
+			if (!handled) {
+				debug("call objectGive");
+				sqcall("objectGive", noun1->_table, _actor->_table, noun2->_table);
+				giveTo(_actor, noun2, noun1);
+			}
+			resetVerb();
+		}
+		return false;
+	}
+
+	if (!noun2) {
+		if (sqrawexists(noun1->_table, verbFuncName)) {
+			int count = sqparamCount(getVm(), noun1->_table, verbFuncName);
+			debug("call {noun1.key}.{verbFuncName}");
+			if (count == 1) {
+				sqcall(noun1->_table, verbFuncName.c_str());
+			} else {
+				sqcall(noun1->_table, verbFuncName.c_str(), actor->_table);
+			}
+		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
+			sqcall(noun1->_table, VERBDEFAULT);
+		} else {
+			debug("call defaultObject.{verbFuncName}");
+			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, actor->_table);
+		}
+	} else {
+		if (sqrawexists(noun1->_table, verbFuncName)) {
+			debug("call {noun1.key}.{verbFuncName}");
+			sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
+		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
+			sqcall(noun1->_table, VERBDEFAULT);
+		} else {
+			debug("call defaultObject.{verbFuncName}");
+			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, noun2->_table);
+		}
+	}
+
+	if (verbId.id == VERB_PICKUP) {
+		sqcall("onPickup", noun1->_table, actor->_table);
+	}
+
+	resetVerb();
+	return false;
 }
 
 } // End of namespace Twp

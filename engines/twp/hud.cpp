@@ -29,7 +29,6 @@ namespace Twp {
 
 HudShader::HudShader() {
 	const char *verbVtxShader = R"(#version 110
-		precision mediump float;
 	attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
@@ -60,10 +59,6 @@ HudShader::HudShader() {
 	})";
 
 const char* verbFgtShader = R"(#version 110
-#ifdef GL_ES
-precision highp float;
-#endif
-
 	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	varying vec4 v_shadowColor;

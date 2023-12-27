@@ -98,6 +98,7 @@ Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
 	setId(_table, newRoomId());
 	_name = name;
 	_scene = new Scene();
+  	_scene->addChild(&_overlayNode);
 }
 
 Room::~Room() {
@@ -124,6 +125,7 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	Common::String name = frames.size() > 0 ? frames[0] : "noname";
 	sqsetf(obj->_table, "name", name);
 	obj->_key = name;
+	obj->_node->setName(name);
 	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 
 	obj->_room = this;
@@ -165,6 +167,7 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 	setId(obj->_table, newObjId());
 	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
+	obj->_node->setName(obj->_key);
 	obj->_touchable = false;
 
 	Text txt(fontName, text, hAlign, vAlign, maxWidth);
@@ -372,11 +375,10 @@ void Room::objectParallaxLayer(Object *obj, int zsort) {
 	if (obj->_layer != l) {
 		// removes object from old layer
 		int id = obj->getId();
-		for (int i = 0; i < obj->_layer->_objects.size(); i++) {
-			if (obj->_layer->_objects[i]->getId() == id) {
-				obj->_layer->_objects.remove_at(i);
-				break;
-			}
+		if(obj->_layer) {
+			int i = find(obj->_layer->_objects, obj);
+			obj->_layer->_node->removeChild(obj->_node);
+			obj->_layer->_objects.remove_at(i);
 		}
 		// adds object to the new one
 		l->_objects.push_back(obj);
@@ -384,6 +386,14 @@ void Room::objectParallaxLayer(Object *obj, int zsort) {
 		l->_node->addChild(obj->_node);
 		obj->_layer = l;
 	}
+}
+
+void Room::setOverlay(Color color) {
+	_overlayNode.setOverlayColor(color);
+}
+
+Color Room::getOverlay() const {
+	return _overlayNode.getOverlayColor();
 }
 
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {

@@ -26,10 +26,21 @@
 #include "twp/twp.h"
 #include "twp/gfx.h"
 #include "twp/object.h"
+#include "twp/util.h"
 
 namespace Twp {
 
 #define DEFAULT_FPS 10.f
+
+#define NUMOBJECTS 8
+#define NUMOBJECTSBYROW 4
+#define MARGIN 8.f
+#define MARGINBOTTOM 10.f
+#define BACKOFFSET 7.f
+#define ARROWWIDTH 56.f
+#define ARROWHEIGHT 86.f
+#define BACKWIDTH 137.f
+#define BACKHEIGHT 75.f
 
 static float _getFps(float fps, float animFps) {
 	if (fps != 0.f)
@@ -49,11 +60,13 @@ Node::~Node() {}
 void Node::addChild(Node *child) {
 	if (child->_parent) {
 		child->_pos -= getAbsPos();
-		for (int i = 0; i < _children.size(); i++) {
-			if (_children[i] == child) {
-				child->_parent->_children.erase(child->_parent->_children.begin() + i);
+		for (auto it = _children.begin(); it != _children.end();) {
+			Node *node = *it;
+			if (node == child) {
+				it = child->_parent->_children.erase(it);
 				break;
 			}
+			it++;
 		}
 	}
 	_children.push_back(child);
@@ -163,7 +176,7 @@ void Node::setSize(Math::Vector2d size) {
 }
 
 static int cmpNodes(const Node *x, const Node *y) {
-	return y->getZSort() <= x->getZSort();
+	return y->getZSort() < x->getZSort();
 }
 
 void Node::draw(Math::Matrix4 parent) {
@@ -171,10 +184,11 @@ void Node::draw(Math::Matrix4 parent) {
 		Math::Matrix4 trsf = getTrsf(parent);
 		Math::Matrix4 myTrsf(trsf);
 		myTrsf.translate(Math::Vector3d(-_anchor.getX(), _anchor.getY(), 0.f));
-		Common::sort(_children.begin(), _children.end(), cmpNodes);
+		Common::Array<Node *> children(_children);
+		Common::sort(children.begin(), children.end(), cmpNodes);
 		drawCore(myTrsf);
-		for (int i = 0; i < _children.size(); i++) {
-			Node *child = _children[i];
+		for (int i = 0; i < children.size(); i++) {
+			Node *child = children[i];
 			child->draw(trsf);
 		}
 	}
@@ -210,18 +224,6 @@ Math::Matrix4 Node::getLocalTrsf() {
 Rectf Node::getRect() const {
 	Math::Vector2d size = _size * _scale;
 	return Rectf::fromPosAndSize(getAbsPos(), Math::Vector2d(-size.getX(), size.getY()) * _anchorNorm * _size);
-}
-
-OverlayNode::OverlayNode()
-	: Node("overlay"),
-	  _ovlColor(0, 0, 0, 0) {
-}
-
-OverlayNode::~OverlayNode() {}
-
-void OverlayNode::drawCore(Math::Matrix4 trsf) {
-	Gfx &gfx = g_engine->getGfx();
-	gfx.drawQuad(gfx.camera(), _ovlColor);
 }
 
 ParallaxNode::ParallaxNode(const Math::Vector2d &parallax, const Common::String &sheet, const Common::StringArray &frames)
@@ -299,7 +301,7 @@ void Anim::trigSound() {
 
 void Anim::update(float elapsed) {
 	if (_anim)
-		setVisible(Common::find(_obj->_hiddenLayers.begin(), _obj->_hiddenLayers.end(), _anim->name) == NULL);
+		setVisible(Twp::find(_obj->_hiddenLayers, _anim->name) == -1);
 	if (_instant)
 		disable();
 	else if (_frames.size() != 0) {
@@ -409,7 +411,7 @@ Scene::Scene() : Node("Scene") {
 }
 Scene::~Scene() {}
 
-InputState::InputState(): Node("InputState") {}
+InputState::InputState() : Node("InputState") {}
 InputState::~InputState() {}
 
 void InputState::drawCore(Math::Matrix4 trsf) {
@@ -418,11 +420,149 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
 	//   if prefs(ClassicSentence) and self.hotspot:
 	//       cursorName = "hotspot_" & self.cursorName
-	const SpriteSheetFrame& sf = gameSheet->frameTable[ "cursor"];
-	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f,  - sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
+	const SpriteSheetFrame &sf = gameSheet->frameTable["cursor"];
+	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos);
 	scale(trsf, Math::Vector2d(2.f, 2.f));
 	g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf);
+}
+
+OverlayNode::OverlayNode() : Node("overlay") {
+	_ovlColor = Color(0.f, 0.f, 0.f, 0.f); // transparent
+	_zOrder = INT_MIN;
+}
+
+void OverlayNode::drawCore(Math::Matrix4 trsf) {
+	Math::Vector2d size = g_engine->getGfx().camera();
+	g_engine->getGfx().drawQuad(size, _ovlColor);
+}
+
+static bool hasUpArrow(Object *actor) {
+	return actor->_inventoryOffset != 0;
+}
+
+static bool hasDownArrow(Object *actor) {
+	return actor->_inventory.size() > (actor->_inventoryOffset * NUMOBJECTSBYROW + NUMOBJECTS);
+}
+
+Inventory::Inventory() : Node("Inventory") {}
+
+void Inventory::drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
+	trsf.translate(pos);
+	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+}
+
+void Inventory::drawArrows(Math::Matrix4 trsf) {
+	// TODO: bool isRetro = prefs(RetroVerbs);
+	bool isRetro = false;
+	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
+	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
+	SpriteSheetFrame *arrowUp = &gameSheet->frameTable[isRetro ? "scroll_up_retro" : "scroll_up"];
+	SpriteSheetFrame *arrowDn = &gameSheet->frameTable[isRetro ? "scroll_down_retro" : "scroll_down"];
+	float alphaUp = hasUpArrow(_actor) ? 1.f : 0.f;
+	float alphaDn = hasDownArrow(_actor) ? 1.f : 0.f;
+	Math::Matrix4 tUp(trsf);
+	tUp.translate(Math::Vector3d(SCREEN_WIDTH / 2.f + ARROWWIDTH / 2.f + MARGIN, 1.5f * ARROWHEIGHT + BACKOFFSET, 0.f));
+	Math::Matrix4 tDn(trsf);
+	tDn.translate(Math::Vector3d(SCREEN_WIDTH / 2.f + ARROWWIDTH / 2.f + MARGIN, 0.5f * ARROWHEIGHT, 0.f));
+
+	drawSprite(*arrowUp, texture, Color::withAlpha(_verbNormal, alphaUp), tUp);
+	drawSprite(*arrowDn, texture, Color::withAlpha(_verbNormal, alphaDn), tDn);
+}
+
+void Inventory::drawBack(Math::Matrix4 trsf) {
+	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
+	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
+	SpriteSheetFrame *back = &gameSheet->frameTable["inventory_background"];
+
+	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + back->sourceSize.getX() / 2.f;
+	float offsetX = startOffsetX;
+	float offsetY = 3.f * back->sourceSize.getY() / 2.f + MARGINBOTTOM + BACKOFFSET;
+
+	for (int i = 0; i < 4; i++) {
+		Math::Matrix4 t(trsf);
+		t.translate(Math::Vector3d(offsetX, offsetY, 0.f));
+		drawSprite(*back, texture, _backColor, t);
+		offsetX += back->sourceSize.getX() + BACKOFFSET;
+	}
+
+	offsetX = startOffsetX;
+	offsetY = back->sourceSize.getY() / 2.f + MARGINBOTTOM;
+	for (int i = 0; i < 4; i++) {
+		Math::Matrix4 t(trsf);
+		t.translate(Math::Vector3d(offsetX, offsetY, 0.f));
+		drawSprite(*back, texture, _backColor, t);
+		offsetX += back->sourceSize.getX() + BACKOFFSET;
+	}
+}
+
+void Inventory::drawItems(Math::Matrix4 trsf) {
+	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + BACKWIDTH / 2.f;
+	float startOffsetY = MARGINBOTTOM + 1.5f * BACKHEIGHT + BACKOFFSET;
+	SpriteSheet *itemsSheet = g_engine->_resManager.spriteSheet("InventoryItems");
+	Texture *texture = g_engine->_resManager.texture(itemsSheet->meta.image);
+	int count = MIN(NUMOBJECTS, (int)_actor->_inventory.size() - _actor->_inventoryOffset * NUMOBJECTSBYROW);
+
+	for (int i = 0; i < count; i++) {
+		Object *obj = _actor->_inventory[_actor->_inventoryOffset * NUMOBJECTSBYROW + i];
+		Common::String icon = obj->getIcon();
+		if (itemsSheet->frameTable.contains(icon)) {
+			SpriteSheetFrame *itemFrame = &itemsSheet->frameTable[icon];
+			Math::Vector2d pos(startOffsetX + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET)), startOffsetY - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET)));
+			Math::Matrix4 t(trsf);
+			trsf.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
+			float s = obj->getScale();
+			Twp::scale(t, Math::Vector2d(s, s));
+			drawSprite(*itemFrame, texture, Color(), t);
+		}
+	}
+}
+
+void Inventory::drawCore(Math::Matrix4 trsf) {
+	if (_actor) {
+		drawArrows(trsf);
+		drawBack(trsf);
+		drawItems(trsf);
+	}
+}
+
+void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
+	// udate colors
+	_actor = actor;
+	_backColor = backColor;
+	_verbNormal = verbNormal;
+
+	_obj = nullptr;
+	// TODO: Inventory::update
+	//   if (_actor) {
+	//     let scrPos = winToScreen(mousePos());
+
+	//     // update mouse click
+	//     let down = mbLeft in mouseBtns();
+	//     if not self.down and down:
+	//       self.down = true;
+	//       if gArrowUpRect.contains(scrPos):
+	//         self.actor.inventoryOffset -= 1;
+	//         if self.actor.inventoryOffset < 0:
+	//           self.actor.inventoryOffset = clamp(self.actor.inventoryOffset, 0, (self.actor.inventory.len - 5) div 4)
+	//       elif gArrowDnRect.contains(scrPos):
+	//         self.actor.inventoryOffset += 1;
+	//         self.actor.inventoryOffset = clamp(self.actor.inventoryOffset, 0, (self.actor.inventory.len - 5) div 4)
+	//     elif not down:
+	//       self.down = false;
+
+	//     for i in 0..<gItemRects.len:
+	//       let item = gItemRects[i];
+	//       if item.contains(scrPos):
+	//         let index = self.actor.inventoryOffset * NumObjectsByRow + i;
+	//         if index < self.actor.inventory.len:
+	//           self.obj = self.actor.inventory[index];
+	//         break
+
+	//     for obj in self.actor.inventory:
+	//       obj.update(elapsed);;
+	//   }
 }
 
 } // namespace Twp

@@ -46,6 +46,7 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+#define VERBDEFAULT "verbDefault"
 
 namespace Twp {
 
@@ -147,6 +148,9 @@ private:
 	void clickedAt(Math::Vector2d scrPos);
 	bool clickedAtHandled(Math::Vector2d roomPos);
 	void setShaderEffect(RoomEffect effect);
+	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
+	bool selectable(Object *actor);
+	void resetVerb();
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -163,6 +167,7 @@ public:
 	float _time = 0.f; // time in seconds
 	Object *_noun1 = nullptr;
 	Object *_noun2 = nullptr;
+	UseFlag _useFlag;
 	HSQOBJECT _defaultObj;
 	bool _walkFastState = false;
 	int _frameCounter = 0;
@@ -195,6 +200,7 @@ private:
 	Preferences _prefs;
 	ShaderParams _shaderParams;
 	unique_ptr<FadeShader> _fadeShader;
+	Inventory _uiInv;
 };
 
 extern TwpEngine *g_engine;

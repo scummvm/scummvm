@@ -301,9 +301,45 @@ static SQInteger roomLayer(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Puts a color overlay on the top of the entire room.
+//
+// Transition from startColor to endColor over duration seconds.
+// The endColor remains on screen until changed.
+// Note that the actual colour is an 8 digit number, the first two digits (00-ff) represent the transparency, while the last 6 digits represent the actual colour.
+// If transparency is set to 00, the overlay is completely see through.
+// If startColor is not on the screen already, it will flash to that color before starting the transition.
+// If no endColor or duration are provided, it will change instantly to color and remain there.
+//
+// .. code-block:: Squirrel
+// // Make lights in QuickiePal flicker
+// roomOverlayColor(0x20dff2cd, 0x20dff2cd, 0.0)
+// breaktime(1/60)
+// roomOverlayColor(0x00000000, 0x00000000, 0.0)
+// breaktime(1/60)
+//
+// if (currentActor == franklin) {
+//     roomOverlayColor(0x800040AA)
+// }
 static SQInteger roomOverlayColor(HSQUIRRELVM v) {
-	warning("TODO: roomOverlayColor not implemented");
-	return 0;
+	int startColor;
+  SQInteger numArgs = sq_gettop(v);
+  if (SQ_FAILED(sqget(v, 2, startColor)))
+    return sq_throwerror(v, "failed to get startColor");
+  Room* room = g_engine->_room;
+  if (room->_overlayTo)
+      room->_overlayTo->disable();
+  room->setOverlay(Color::rgb(startColor));
+  if (numArgs == 4) {
+    int endColor;
+    if (SQ_FAILED(sqget(v, 3, endColor)))
+      return sq_throwerror(v, "failed to get endColor");
+    float duration;
+    if (SQ_FAILED(sqget(v, 4, duration)))
+      return sq_throwerror(v, "failed to get duration");
+    debug("start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
+    g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::rgb(endColor));
+  }
+  return 0;
 }
 
 static SQInteger roomRotateTo(HSQUIRRELVM v) {

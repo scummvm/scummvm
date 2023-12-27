@@ -56,11 +56,27 @@ struct Color {
 	}
 
 	static Color rgb(int c) {
-		return Color((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF));
+		return create((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF), (uint8)((c >> 24) & 0xFF));
 	}
 
 	static Color create(uint8 red, uint8 green, uint8 blue, uint8 alpha = 0xFF) {
 		return Color(red / 255.f, green / 255.f, blue / 255.f, alpha / 255.f);
+	}
+
+	Common::String toStr() {
+		return Common::String::format("rgba(%f,%f,%f,%f)", rgba.r, rgba.g, rgba.b, rgba.a);
+	}
+
+	Color operator-(const Color& c) {
+		return Color(rgba.r - c.rgba.r, rgba.g - c.rgba.g, rgba.b - c.rgba.b, rgba.a - c.rgba.a);
+	}
+
+	Color operator+(const Color& c) {
+		return Color(rgba.r + c.rgba.r, rgba.g + c.rgba.g, rgba.b + c.rgba.b, rgba.a + c.rgba.a);
+	}
+
+	Color operator*(float f) {
+  		return Color(rgba.r * f, rgba.g * f, rgba.b * f, rgba.a * f);
 	}
 };
 

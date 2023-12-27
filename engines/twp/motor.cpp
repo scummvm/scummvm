@@ -20,6 +20,7 @@
  *
  */
 
+#include "twp/twp.h"
 #include "twp/motor.h"
 #include "twp/object.h"
 #include "twp/scenegraph.h"
@@ -110,6 +111,21 @@ void Shake::update(float elapsed) {
 	_elapsed += elapsed;
 	// TODO: check if it's necessary to create a _shakeOffset in a node
 	_node->setOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
+}
+
+OverlayTo::OverlayTo(float duration, Room *room, Color to)
+	: _room(room),
+	  _to(to),
+	  _tween(g_engine->_room->getOverlay(), to, duration, InterpolationMethod()) {
+}
+
+OverlayTo::~OverlayTo() {}
+
+void OverlayTo::update(float elapsed) {
+	_tween.update(elapsed);
+	_room->setOverlay(_tween.current());
+	if (!_tween.running())
+		disable();
 }
 
 } // namespace Twp
