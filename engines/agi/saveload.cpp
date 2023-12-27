@@ -74,12 +74,12 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	Common::OutSaveFile *out;
 	int result = errOK;
 
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), descriptionString.c_str());
+	debugC(3, kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), descriptionString.c_str());
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		warning("Can't create file '%s', game not saved", fileName.c_str());
 		return errBadFileOpen;
 	} else {
-		debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for writing", fileName.c_str());
+		debugC(3, kDebugLevelSavegame, "Successfully opened %s for writing", fileName.c_str());
 	}
 
 	out->writeUint32BE(AGIflag);
@@ -102,7 +102,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->write(description, 31);
 
 	out->writeByte(SAVEGAME_CURRENT_VERSION);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
+	debugC(5, kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
 
 	// Thumbnail
 	Graphics::saveThumbnail(*out);
@@ -116,19 +116,19 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
 
 	out->writeUint32BE(saveDate);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
+	debugC(5, kDebugLevelSavegame, "Writing save date (%d)", saveDate);
 	out->writeUint16BE(saveTime);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
+	debugC(5, kDebugLevelSavegame, "Writing save time (%d)", saveTime);
 	// Version 9+: save seconds of current time as well
 	out->writeByte(curTime.tm_sec & 0xFF);
 	out->writeUint32BE(playTime);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
+	debugC(5, kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
 	out->writeByte(2); // was _game.state, 2 = STATE_RUNNING
 
 	Common::strlcpy(gameIDstring, _game.id, 8);
 	out->write(gameIDstring, 8);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
+	debugC(5, kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
 	const char *tmp = getGameMD5();
 	// As reported in bug report #4582 "AGI: Crash when saving fallback-matched game"
@@ -335,10 +335,10 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 		warning("Can't write file '%s'. (Disk full?)", fileName.c_str());
 		result = errIOError;
 	} else
-		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", descriptionString.c_str(), fileName.c_str());
+		debugC(1, kDebugLevelSavegame, "Saved game %s in file %s", descriptionString.c_str(), fileName.c_str());
 
 	delete out;
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
+	debugC(3, kDebugLevelSavegame, "Closed %s", fileName.c_str());
 
 	return result;
 }
@@ -354,18 +354,18 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	bool totalPlayTimeWasSet = false;
 	byte oldLoopFlag = 0;
 
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
+	debugC(3, kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		warning("Can't open file '%s', game not loaded", fileName.c_str());
 		return errBadFileOpen;
 	} else {
-		debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
+		debugC(3, kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
 	}
 
 	uint32 typea = in->readUint32BE();
 	if (typea == AGIflag) {
-		debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
+		debugC(6, kDebugLevelSavegame, "Has AGI flag, good start");
 	} else {
 		warning("This doesn't appear to be an AGI savegame, game not restored");
 		delete in;
@@ -382,7 +382,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		if (descriptionPos >= sizeof(description))
 			error("saved game description is corrupt");
 	}
-	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
+	debugC(6, kDebugLevelSavegame, "Description is: %s", description);
 
 	saveVersion = in->readByte();
 	if (saveVersion < 2)    // is the save game pre-ScummVM?
@@ -732,7 +732,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		_gfx->setAGIPal(in->readSint16BE());
 
 	delete in;
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
+	debugC(3, kDebugLevelSavegame, "Closed %s", fileName.c_str());
 
 	setFlag(VM_FLAG_RESTORE_JUST_RAN, true);
 
@@ -793,7 +793,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 
 int AgiEngine::doSave(int slot, const Common::String &desc) {
 	Common::String fileName = getSaveStateName(slot);
-	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
+	debugC(8, kDebugLevelResources, "file is [%s]", fileName.c_str());
 
 	// Make sure all graphics was blitted to screen. This fixes bug
 	// #4790: "AGI: Ego partly erased in Load/Save thumbnails"
@@ -805,7 +805,7 @@ int AgiEngine::doSave(int slot, const Common::String &desc) {
 
 int AgiEngine::doLoad(int slot, bool showMessages) {
 	Common::String fileName = getSaveStateName(slot);
-	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
+	debugC(8, kDebugLevelResources, "file is [%s]", fileName.c_str());
 
 	_sprites->eraseSprites();
 	_sound->stopSound();
@@ -864,14 +864,14 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 	saveTime = 0;
 	saveIsValid = false;
 
-	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
+	debugC(4, kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName.c_str());
+		debugC(4, kDebugLevelSavegame, "File %s does not exist", fileName.c_str());
 		return false;
 
 	} else {
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
+		debugC(4, kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
 
 		uint32 type = in->readUint32BE();
 
@@ -882,7 +882,7 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 			return true;
 		}
 
-		debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
+		debugC(6, kDebugLevelSavegame, "Has AGI flag, good start");
 		if (in->read(saveGameDescription, 31) != 31) {
 			warning("unexpected EOF");
 			delete in;

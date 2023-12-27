@@ -1997,7 +1997,7 @@ void cmdDistance(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdAcceptInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *textMgr = state->_vm->_text;
 
-	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
+	debugC(4, kDebugLevelInput, "input normal");
 
 	textMgr->promptEnable();
 	textMgr->promptRedraw();
@@ -2006,7 +2006,7 @@ void cmdAcceptInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdPreventInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *textMgr = state->_vm->_text;
 
-	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
+	debugC(4, kDebugLevelInput, "no input");
 
 	textMgr->promptDisable();
 

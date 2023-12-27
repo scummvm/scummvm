@@ -129,7 +129,7 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	uint16 key = vm->processAGIEvents();
 	vm->cycleInnerLoopInactive();
 	if (key) {
-		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
+		debugC(5, kDebugLevelInput, "keypress = %02x", key);
 		vm->setVar(VM_VAR_KEY, key);
 		state->testResult = 1;
 		return;
