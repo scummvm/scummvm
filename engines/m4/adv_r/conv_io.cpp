@@ -795,7 +795,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	if (!fp.read((MemHandle)&bufferHandle, cSize)) {
 		conv_set_handle(nullptr);
 		if (convers)
-			mem_free(convers);
+			delete convers;
 
 		convers = nullptr;
 		goto done;
