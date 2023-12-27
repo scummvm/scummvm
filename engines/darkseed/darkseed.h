@@ -34,23 +34,42 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
+#include "cursor.h"
 #include "darkseed/detection.h"
+#include "nsp.h"
+#include "room.h"
 #include "tostext.h"
 
 namespace Darkseed {
 
 struct DarkseedGameDescription;
 
+enum ActionMode {
+	PointerAction = 0,
+	HandAction = 2,
+	LookAction = 3
+};
+
 class DarkseedEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Pic _frame;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
+	bool _isRightMouseClicked = false;
+	bool _isLeftMouseClicked = false;
+
+	Nsp _baseSprites;
+	Cursor _cursor;
 	Graphics::Screen *_screen = nullptr;
 	TosText *_tosText = nullptr;
+	Room *_room = nullptr;
+	ActionMode _actionMode = PointerAction;
+
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -102,7 +121,10 @@ public:
 	void fadeOut();
 private:
 	void fadeInner(int startValue, int endValue, int increment);
-
+	void gameloop();
+	void updateEvents();
+	void handleInput();
+	void wait();
 };
 
 extern DarkseedEngine *g_engine;

@@ -19,8 +19,9 @@
 *
 */
 
-#include "common/debug.h"
 #include "pic.h"
+#include "common/debug.h"
+#include "darkseed.h"
 
 bool Darkseed::Pic::load(const Common::String &filename) {
 	Common::File file;
@@ -84,4 +85,12 @@ byte Darkseed::Pic::readNextNibble(Common::SeekableReadStream &readStream) {
 		hasReadByte = false;
 		return currentDataByte & 0xf;
 	}
+}
+
+void Darkseed::Pic::draw() {
+	draw(0, 0);
+}
+
+void Darkseed::Pic::draw(int xOffset, int yOffset) {
+	g_engine->_screen->copyRectToSurface(getPixels().data(), getWidth(), xOffset, yOffset, getWidth(), getHeight());
 }

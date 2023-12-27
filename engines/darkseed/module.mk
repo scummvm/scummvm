@@ -10,7 +10,9 @@ MODULE_OBJS = \
 	pal.o \
 	titlefont.o \
 	tostext.o \
-	metaengine.o
+	metaengine.o \
+	room.o \
+	cursor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)

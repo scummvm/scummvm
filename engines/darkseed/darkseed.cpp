@@ -34,6 +34,7 @@
 #include "nsp.h"
 #include "pal.h"
 #include "pic.h"
+#include "room.h"
 #include "titlefont.h"
 
 namespace Darkseed {
@@ -99,54 +100,67 @@ Common::Error DarkseedEngine::run() {
 //	_screen->copyRectToSurfaceWithKey(letterD.getPixels().data(), letterD.getWidth(), 24, 24, letterD.getWidth(), letterD.getHeight(), 0);
 //	_screen->copyRectToSurfaceWithKey(letterD1.getPixels().data(), letterD1.getWidth(), 24+1, 24, letterD1.getWidth(), letterD1.getHeight(), 0);
 
-	Pic frame;
-	frame.load("cframe.pic");
-	_screen->copyRectToSurface(frame.getPixels().data(), frame.getWidth(), 0, 0, frame.getWidth(), frame.getHeight());
+	_frame.load("cframe.pic");
+	_frame.draw();
 
-	Pic room;
-	room.load("bed1a.pic");
-	_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+	_baseSprites.load("cbase.nsp");
 
-	Pal roomPal;
-	roomPal.load("room0.pal");
+	_cursor.updatePosition(0x140,0xaf);
+	_cursor.setCursorType(Pointer);
+
+//	Pic room;
+//	room.load("bed1a.pic");
+//	_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+
+//	Pal roomPal;
+//	roomPal.load("room0.pal");
 
 	Nsp playerNsp;
-	playerNsp.load("tosfont.nsp"); //"cplayer.nsp");
+	playerNsp.load("cbase.nsp"); //"cplayer.nsp");
 //	const Sprite &s = playerNsp.getSpriteAt(11);
 //
 //	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
 
-	_screen->update();
+	_room = new Room(2);
+//	_room->draw();
+//	_cursor.draw();
+//	_screen->update();
 	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
-	Common::Event e;
+//	Common::Event e;
 	int offset = 0;
 	int sIdx = 0;
-	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if(e.type == Common::EVENT_KEYDOWN) {
-				sIdx++;
-				if (sIdx >= 96) {
-					sIdx = 0;
-				}
-				const Sprite &s = playerNsp.getSpriteAt(sIdx);
-				_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
-				_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
-				_screen->makeAllDirty();
-			}
-		}
-//		_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
-		// Cycle through a simple palette
-//		++offset;
-//		for (int i = 0; i < 256; ++i)
-//			pal[i * 3 + 1] = (i + offset) % 256;
-//		g_system->getPaletteManager()->setPalette(pal, 0, 256);
-		_screen->update();
 
-		// Delay for a bit. All events loops should have a delay
-		// to prevent the system being unduly loaded
-		g_system->delayMillis(10);
-	}
+	gameloop();
+
+//	while (!shouldQuit()) {
+//		while (g_system->getEventManager()->pollEvent(e)) {
+//			if(e.type == Common::EVENT_KEYDOWN) {
+//				sIdx++;
+//				if (sIdx >= 96) {
+//					sIdx = 0;
+//				}
+//				const Sprite &s = playerNsp.getSpriteAt(sIdx);
+//				_room->draw();
+//				_cursor.draw();
+////				_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+//				_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
+//				_screen->makeAllDirty();
+//			}
+//		}
+////		_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
+//		// Cycle through a simple palette
+////		++offset;
+////		for (int i = 0; i < 256; ++i)
+////			pal[i * 3 + 1] = (i + offset) % 256;
+////		g_system->getPaletteManager()->setPalette(pal, 0, 256);
+//		_screen->update();
+//
+//		// Delay for a bit. All events loops should have a delay
+//		// to prevent the system being unduly loaded
+//		g_system->delayMillis(10);
+//	}
+
+	delete _room;
 
 	return Common::kNoError;
 }
@@ -170,6 +184,56 @@ void DarkseedEngine::fadeIn() {
 
 void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
 
+}
+
+void DarkseedEngine::gameloop() {
+	while (!shouldQuit()) {
+		updateEvents();
+		handleInput();
+		_room->update();
+		_frame.draw();
+		_room->draw();
+		_cursor.draw();
+		_screen->makeAllDirty();
+		_screen->update();
+		wait();
+	}
+}
+
+void DarkseedEngine::updateEvents() {
+	Common::Event event;
+	_isRightMouseClicked = false;
+	_isLeftMouseClicked = false;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE: _cursor.updatePosition(event.mouse.x, event.mouse.y); break;
+		case Common::EVENT_RBUTTONDOWN: _isRightMouseClicked = true; break;
+		case Common::EVENT_RBUTTONUP: _isRightMouseClicked = false; break;
+		case Common::EVENT_LBUTTONDOWN: _isLeftMouseClicked = true; break;
+		case Common::EVENT_LBUTTONUP: _isLeftMouseClicked = false; break;
+		default: break;
+		}
+	}
+}
+
+void DarkseedEngine::wait() {
+	g_system->delayMillis(10);
+}
+
+void DarkseedEngine::handleInput() {
+	if (_isRightMouseClicked) {
+		if (_actionMode == LookAction) {
+			_actionMode = PointerAction;
+		} else if (_actionMode == PointerAction) {
+			_actionMode = HandAction;
+		} else if (_actionMode == HandAction) {
+			_actionMode = LookAction;
+		}
+		_cursor.setCursorType((CursorType)_actionMode);
+	} else if (_isLeftMouseClicked) {
+		// TODO do actions here.
+
+	}
 }
 
 } // End of namespace Darkseed
