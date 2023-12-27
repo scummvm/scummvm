@@ -105,7 +105,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		return false;
 	}
 
-	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), location.toString(Common::Path::kNativeSeparator).c_str());
+	debugC(2, kDebugLoading, "Loading video %s -> %s", path.c_str(), location.toString(Common::Path::kNativeSeparator).c_str());
 	bool result = _video->loadFile(location);
 	if (!result) {
 		delete _video;

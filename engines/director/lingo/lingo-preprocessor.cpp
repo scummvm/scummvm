@@ -68,11 +68,11 @@ static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::
 Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags) {
 	const Common::u32char_type_t *s = code.c_str();
 	Common::U32String res;
-	if (debugChannelSet(2, kDebugParse | kDebugPreprocess)) {
+	if (debugChannelSet(2, kDebugPreprocess)) {
 		Common::String movie = g_director->getCurrentPath();
 		if (archive)
 			movie += archive->cast->getMacName();
-		debugC(2, kDebugParse | kDebugPreprocess, "LingoCompiler::codePreprocessor: \"%s\", %s, %d, %d", movie.c_str(),  scriptType2str(type), id.member, id.castLib);
+		debugC(2, kDebugPreprocess, "LingoCompiler::codePreprocessor: \"%s\", %s, %d, %d", movie.c_str(),  scriptType2str(type), id.member, id.castLib);
 	}
 
 	// We start from processing the continuation symbols
@@ -202,7 +202,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 				continuationCount++;
 			}
 		}
-		debugC(2, kDebugParse | kDebugPreprocess, "line %d: '%s'", linenumber, line.encode().c_str());
+		debugC(2, kDebugPreprocess, "line %d: '%s'", linenumber, line.encode().c_str());
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
@@ -215,7 +215,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 			}
 
 			if (!defFound) {
-				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
+				debugC(2, kDebugPreprocess, "skipping line before first definition");
 				for (int i = 0; i < continuationCount; i++) {
 					res += CONTINUATION;
 				}
@@ -243,7 +243,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 
 			res1 = Common::U32String::format("%S \"%S\"", tok.c_str(), contLine);
 
-			debugC(2, kDebugParse | kDebugPreprocess, "wrapped mci command into quotes");
+			debugC(2, kDebugPreprocess, "wrapped mci command into quotes");
 		}
 
 		res1 = patchLingoCode(res1, archive, type, id, linenumber);
@@ -259,7 +259,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 	// Make the parser happier when there is no newline at the end
 	res += '\n';
 
-	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.encode().c_str());
+	debugC(2, kDebugPreprocess, "#############\n%s\n#############", res.encode().c_str());
 
 	return res;
 }
