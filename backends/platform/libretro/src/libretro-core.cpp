@@ -731,6 +731,14 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 	info->timing.sample_rate = sample_rate;
 }
 
+const char *retro_get_core_dir(void) {
+	const char *coredir = NULL;
+
+	environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir);
+
+	return coredir;
+}
+
 const char *retro_get_system_dir(void) {
 	const char *sysdir = NULL;
 
