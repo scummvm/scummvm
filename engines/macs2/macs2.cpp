@@ -169,6 +169,7 @@ void Macs2Engine::readResourceFile() {
 	_charData = new byte[_charWidth * _charHeight];
 	file.read(_charData, _charWidth * _charHeight);
 
+	file.seek(0x6FB2);
 	// Load more characters
 	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].ReadFromeFile(file);
@@ -238,7 +239,14 @@ void Macs2Engine::readResourceFile() {
 	file.read(_cursorData, _cursorWidth* _cursorHeight);
 
 	// Load a frame of animation from the protagonist
-	file.seek(0x000C95A8);
+	// Crawling towards the left
+	// file.seek(0x000C95A8);
+	// Standing towards the right
+	// file.seek(0x001CC5D9);
+	// Also standing towards the right
+	file.seek(0x000D0B26);
+	
+
 	_guyWidth = file.readUint16LE();
 	_guyHeight = file.readUint16LE();
 	_guyData = new byte[_guyWidth * _guyHeight];
@@ -536,11 +544,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 void GlyphData::ReadFromeFile(Common::File &file) {
 	// TODO: Implement
+	int64 stride = file.pos();
 	ASCII = file.readByte();
 	Width = file.readUint16LE();
 	Height = file.readUint16LE();
 	Data = new byte[Width * Height];
 	file.read(Data, Width * Height);
+	stride = file.pos() - stride;
 }
 
 } // End of namespace Macs2
