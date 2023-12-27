@@ -733,6 +733,7 @@ protected:
 	void o7_loadIFFPalette();
 	void o7_draw0xAA();
 	void o7_draw0xAC();
+	void o7_draw0xAE();
 	void o7_draw0xAF();
 	void o7_draw0xB0();
 	void o7_draw0xB1();
@@ -753,6 +754,10 @@ protected:
 	void o7_draw0xE2();
 	void o7_draw0xE3();
 	void o7_draw0xE4();
+	void o7_draw0xE6();
+	void o7_draw0xE7();
+	void o7_vmdGetSoundBuffer();
+	void o7_vmdReleaseSoundBuffer();
 
 	void o7_loadCursor(OpFuncParams &params);
 	void o7_printText(OpFuncParams &params);
