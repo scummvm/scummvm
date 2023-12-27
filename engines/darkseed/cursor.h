@@ -44,6 +44,7 @@ private:
 public:
 
 	void setCursorType(enum CursorType newType);
+	CursorType getCursorType() { return _currentCursorType; }
 
 	int getX() { return _x; }
 	int getY() { return _y; }

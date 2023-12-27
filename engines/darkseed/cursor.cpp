@@ -29,7 +29,7 @@ void Darkseed::Cursor::setCursorType(enum CursorType newType) {
 void Darkseed::Cursor::updatePosition(int x, int y) {
 	_x = x;
 	_y = y;
-	debug("mouse at (%d,%d)", _x, _y);
+//	debug("mouse at (%d,%d)", _x, _y);
 }
 
 void Darkseed::Cursor::draw() {

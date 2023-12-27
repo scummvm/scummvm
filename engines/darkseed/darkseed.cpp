@@ -232,8 +232,21 @@ void DarkseedEngine::handleInput() {
 		_cursor.setCursorType((CursorType)_actionMode);
 	} else if (_isLeftMouseClicked) {
 		// TODO do actions here.
-
+		handlePointerAction();
 	}
+}
+
+void DarkseedEngine::handlePointerAction() {
+	if (_cursor.getCursorType() == ConnectorEntrance) {
+		int newRoomNumber = _room->getExitRoomNumberAtPoint(_cursor.getX(), _cursor.getY());
+		if (newRoomNumber >= 0) {
+			changeToRoom(newRoomNumber);
+		}
+	}
+}
+void DarkseedEngine::changeToRoom(int newRoomNumber) {
+	delete _room;
+	_room = new Room(newRoomNumber);
 }
 
 } // End of namespace Darkseed
