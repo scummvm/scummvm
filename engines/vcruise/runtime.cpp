@@ -1074,7 +1074,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	_rng.reset(new Common::RandomSource("vcruise"));
 
 #ifdef USE_FREETYPE2
-	_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+	_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
 	_subtitleFont = _subtitleFontKeepalive.get();
 #endif
 
@@ -5175,7 +5175,7 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 
 	if (fontFile) {
 		// Pass as 61dpi to account for weird scaling
-		fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 61, Graphics::kTTFRenderModeLight));
+		fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 61, 61, Graphics::kTTFRenderModeLight));
 		fcItem->font = fcItem->keepAlive.get();
 	}
 #endif

@@ -1728,7 +1728,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			font = Graphics::loadTTFFont(*stream, pointsize, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight);
+			font = Graphics::loadTTFFont(*stream, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight);
 			delete stream;
 
 			if (font)
@@ -1737,7 +1737,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	}
 
 	// Try loading the font from the common fonts archive.
-	font = Graphics::loadTTFFontFromArchive(filename, pointsize, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight);
+	font = Graphics::loadTTFFontFromArchive(filename, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight);
 	if (font)
 		return font;
 #endif

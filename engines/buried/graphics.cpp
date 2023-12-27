@@ -113,7 +113,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	Graphics::Font *font;
 
 	if (stream) {
-		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
+		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
 
 		delete stream;
 	} else {
@@ -123,7 +123,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 		else
 			fname = "LiberationSans-Regular.ttf";
 
-		font = Graphics::loadTTFFontFromArchive(fname, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
+		font = Graphics::loadTTFFontFromArchive(fname, size, Graphics::kTTFSizeModeCharacter, 96, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
 	}
 
 	if (!font)
@@ -591,9 +591,9 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	// TODO: Fake a bold version
 	if (stream) {
 		// Force monochrome, since the original uses the bitmap glyphs in the font
-		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, 96, Graphics::kTTFRenderModeMonochrome);
 	} else {
-		font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+		font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, Graphics::kTTFSizeModeCharacter, 96, 96, Graphics::kTTFRenderModeMonochrome);
 	}
 
 	if (!font)
