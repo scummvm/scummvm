@@ -324,12 +324,12 @@ void initGraphicsModes(const Graphics::ModeList &modes) {
  * Inits any of the modes in "modes". "modes" is in the order of preference.
  * Return value is index in modes of resulting mode.
  */
-int initGraphicsAny(const Graphics::ModeWithFormatList &modes) {
+int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 	int candidate = -1;
 	OSystem::TransactionError gfxError = OSystem::kTransactionSizeChangeFailed;
 	int last_width = 0, last_height = 0;
 
-	for (candidate = 0; candidate < (int)modes.size(); candidate++) {
+	for (candidate = start; candidate < (int)modes.size(); candidate++) {
 		g_system->beginGFXTransaction();
 		initCommonGFX();
 #ifdef USE_RGB_COLOR

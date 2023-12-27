@@ -84,6 +84,6 @@ void initGraphics3d(int width, int height);
  * Inits any of the modes in "modes". "modes" is in the order of preference.
  * Return value is index in modes of resulting mode.
  */
-int initGraphicsAny(const Graphics::ModeWithFormatList &modes);
+int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start = 0);
 /** @} */
 #endif
