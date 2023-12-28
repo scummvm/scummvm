@@ -166,10 +166,10 @@ static SQInteger actorColor(HSQUIRRELVM v) {
 	Object *actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	SQInteger c;
-	if (SQ_FAILED(sq_getinteger(v, 3, &c)))
+	int c;
+	if (SQ_FAILED(sqget(v, 3, c)))
 		return sq_throwerror(v, "failed to get color");
-	actor->_node->setColor(Color::rgb(c));
+	actor->_node->setColor(Color::fromRgba(c));
 	return 0;
 }
 

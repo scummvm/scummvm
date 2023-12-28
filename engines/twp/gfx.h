@@ -56,6 +56,10 @@ struct Color {
 	}
 
 	static Color rgb(int c) {
+		return create((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF), 0xFF);
+	}
+
+	static Color fromRgba(int c) {
 		return create((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF), (uint8)((c >> 24) & 0xFF));
 	}
 
