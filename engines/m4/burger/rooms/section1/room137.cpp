@@ -437,7 +437,7 @@ void Room137::daemon() {
 	case 5:
 		unloadAssets();
 
-		if (_G(flags)[kPoliceState] != 2 && _G(flags)[kPoliceState] != 3 && _G(flags)[kPoliceState] == 4)
+		if (_G(flags)[kPoliceState] != 2 && _G(flags)[kPoliceState] != 3 && _G(flags)[kPoliceState] != 4)
 			_deputyShould = 30;
 
 		_sherrifMode = 5;
