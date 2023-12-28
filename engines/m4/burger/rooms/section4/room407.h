@@ -62,7 +62,7 @@ private:
 	int _val1 = 0;
 	int _drumzShould = 0;
 	int _roxyShould = 0;
-	int _val4 = 0;
+	int _roxyState = 0;
 	int _vipeShould = 0;
 	//int _digiTrigger = 0;
 

@@ -260,7 +260,7 @@ void Room407::daemon() {
 	case 5:
 		_drumzShould = 17;
 
-		if (_val4) {
+		if (_roxyState) {
 			kernel_timing_trigger(120, 7);
 		} else {
 			int rnd = imath_ranged_rand(1, 25);
@@ -367,14 +367,14 @@ void Room407::daemon() {
 	case kCHANGE_ROXY_ANIMATION:
 		switch (_roxyShould) {
 		case 22:
-			_val4 = 0;
+			_roxyState = 0;
 			_rx = series_show("407rx02", 0x901);
 			break;
 
 		case 23:
 			terminateMachineAndNull(_rx);
 
-			switch (_val4) {
+			switch (_roxyState) {
 			case 1:
 				_roxyShould = 26;
 				break;
@@ -421,7 +421,7 @@ void Room407::daemon() {
 		case 29:
 			_roxyShould = 22;
 			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
-			kernel_trigger_dispatch_now(1);
+			player_set_commands_allowed(true);
 			break;
 
 		case 30:
@@ -461,7 +461,7 @@ void Room407::daemon() {
 		switch (_vipeShould) {
 		case 35:
 			_vp02.show("407vp02", 0x300);
-			_val4 = 1;
+			_roxyState = 1;
 			_roxyShould = 23;
 			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
@@ -550,7 +550,7 @@ void Room407::daemon() {
 				kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			}
 
-			_val4 = 3;
+			_roxyState = 3;
 			_roxyShould = 20;
 			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
@@ -564,7 +564,7 @@ void Room407::daemon() {
 				kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			}
 
-			_val4 = 2;
+			_roxyState = 2;
 			_roxyShould = 23;
 			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
