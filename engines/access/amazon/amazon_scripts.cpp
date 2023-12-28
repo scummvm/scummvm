@@ -414,14 +414,15 @@ void AmazonScripts::cmdHelp_v2() {
 
 	_game->drawHelp(helpMessage);
 
+	const Common::Rect butn1 = Common::Rect(HELP1COORDS[0][0], HELP1COORDS[0][2], HELP1COORDS[0][1], HELP1COORDS[0][3]);
+	const Common::Rect butn2 = Common::Rect(HELP1COORDS[1][0], HELP1COORDS[1][2], HELP1COORDS[1][1], HELP1COORDS[1][3]);
+
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit() && !_vm->_events->_leftButton)
 			_vm->_events->pollEventsAndWait();
 
 		_vm->_events->debounceLeft();
 
-		static const Common::Rect butn1 = Common::Rect(HELP1COORDS[0][0], HELP1COORDS[0][2], HELP1COORDS[0][1], HELP1COORDS[0][3]);
-		static const Common::Rect butn2 = Common::Rect(HELP1COORDS[1][0], HELP1COORDS[1][2], HELP1COORDS[1][1], HELP1COORDS[1][3]);
 		const Common::Point pt = _vm->_events->_mousePos;
 
 		int choice = -1;
