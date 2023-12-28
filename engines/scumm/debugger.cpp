@@ -1036,9 +1036,11 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	if (argc <= 1) {
 		debugPrintf("Available debug channels:\n");
 		for (Common::DebugManager::DebugChannelList::const_iterator i = lvls.begin(); i != lvls.end(); ++i) {
-			debugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
+			bool enabled = DebugMan.isDebugChannelEnabled(i->channel);
+
+			debugPrintf("%c%s - %s (%s)\n", enabled ? '+' : ' ',
 					i->name.c_str(), i->description.c_str(),
-					i->enabled ? "enabled" : "disabled");
+					enabled ? "enabled" : "disabled");
 		}
 		return true;
 	}

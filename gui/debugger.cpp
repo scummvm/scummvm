@@ -786,9 +786,11 @@ bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
 		return true;
 	}
 	for (Common::DebugManager::DebugChannelList::const_iterator i = debugLevels.begin(); i != debugLevels.end(); ++i) {
-		debugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
+		bool enabled = DebugMan.isDebugChannelEnabled(i->channel);
+
+		debugPrintf("%c%s - %s (%s)\n", enabled ? '+' : ' ',
 				i->name.c_str(), i->description.c_str(),
-				i->enabled ? "enabled" : "disabled");
+				enabled ? "enabled" : "disabled");
 	}
 	debugPrintf("\n");
 	return true;
