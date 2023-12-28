@@ -28,7 +28,9 @@ namespace Burger {
 namespace Rooms {
 
 enum {
-	kCHANGE_VIPE_ANIMATION = 15
+	kCHANGE_VIPE_ANIMATION = 15,
+	kCHANGE_MUFFINS_ANIMATION = 16,
+	kCHANGE_VERA_ANIMATION = 17
 };
 
 const char *Room405::SAID[][4] = {
@@ -171,13 +173,13 @@ void Room405::init() {
 		hotspot_set_active("vera", false);
 		hotspot_set_active("order window", false);
 	} else {
-		_val3 = 4;
-		_val4 = 4;
-		kernel_trigger_dispatch_now(17);
+		_veraShould = 4;
+		_veraMode = 4;
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 	}
 
-	_val5 = 3;
-	kernel_trigger_dispatch_now(16);
+	_muffinsState = 3;
+	kernel_trigger_dispatch_now(kCHANGE_MUFFINS_ANIMATION);
 	_lid = series_play("405lid", 0xf00, 2, -1, 600, -1, 100, 0, 0, 0, 0);
 
 	if (_G(flags)[V168]) {
@@ -211,7 +213,7 @@ void Room405::daemon() {
 
 	case 5:
 		player_set_commands_allowed(true);
-		_val3 = 4;
+		_veraShould = 4;
 		break;
 
 	case 7:
@@ -331,8 +333,8 @@ void Room405::daemon() {
 				_G(flags)[V166] = 1;
 				digi_play("999_003", 1, 255);
 				series_play("405vpoof", 0x500, 0, kCHANGE_VIPE_ANIMATION, 7, 0, 70, 40, 40, 0, -1);
-				_val5 = 2;
-				kernel_trigger_dispatch_now(16);
+				_muffinsState = 2;
+				kernel_trigger_dispatch_now(kCHANGE_MUFFINS_ANIMATION);
 				break;
 
 			case 51:
@@ -393,18 +395,18 @@ void Room405::daemon() {
 		}
 		break;
 
-	case 16:
-		switch (_val5) {
+	case kCHANGE_MUFFINS_ANIMATION:
+		switch (_muffinsState) {
 		case 1:
 			_cat.terminate();
-			_val5 = 3;
-			series_play_with_breaks(PLAY3, "405cat", 0, 16, 3, 9, 100, 0, 0);
+			_muffinsState = 3;
+			series_play_with_breaks(PLAY3, "405cat", 0, kCHANGE_MUFFINS_ANIMATION, 3, 9, 100, 0, 0);
 			break;
 
 		case 2:
 			_cat.terminate();
-			_val5 = 3;
-			series_play_with_breaks(PLAY4, "405cat", 0, 16, 3, 6, 100, 0, 0);
+			_muffinsState = 3;
+			series_play_with_breaks(PLAY4, "405cat", 0, kCHANGE_MUFFINS_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 3:
@@ -416,42 +418,42 @@ void Room405::daemon() {
 		}
 		break;
 
-	case 17:
-		switch (_val4) {
+	case kCHANGE_VERA_ANIMATION:
+		switch (_veraMode) {
 		case 4:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 4:
 				switch (imath_ranged_rand(1, kCHANGE_VIPE_ANIMATION)) {
 				case 1:
-					series_play_with_breaks(PLAY1, "405ve02", 0xf00, 17, 2);
+					series_play_with_breaks(PLAY1, "405ve02", 0xf00, kCHANGE_VERA_ANIMATION, 2);
 					break;
 				case 2:
-					series_play("405ve03", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 3);
+					series_play("405ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 					break;
 				default:
-					series_play("405ve01", 0xf00, 0, 17, 60, 0);
+					series_play("405ve01", 0xf00, 0, kCHANGE_VERA_ANIMATION, 60, 0);
 					break;
 				}
 				break;
 
 			case 7:
-				_val4 = 6;
-				series_play("405ve03", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 3);
+				_veraMode = 6;
+				series_play("405ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 11:
-				_val4 = 9;
-				series_play("405ve14", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 8);
+				_veraMode = 9;
+				series_play("405ve14", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 8);
 				break;
 
 			case 17:
-				_val4 = 16;
-				series_play("405ve08", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 16;
+				series_play("405ve08", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 21:
-				_val4 = 22;
-				series_play("405ve04", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 5);
+				_veraMode = 22;
+				series_play("405ve04", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 				break;
 
 			default:
@@ -460,13 +462,13 @@ void Room405::daemon() {
 			break;
 
 		case 5:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 4:
 				if (imath_ranged_rand(1, 10) == 1) {
-					_val4 = 16;
-					Series::series_play("405ve10", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 3);
+					_veraMode = 16;
+					Series::series_play("405ve10", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				} else {
-					Series::series_play("405ve10", 0xf00, 0, 17, 6, 0, 100, 0, 0, 3, 3);
+					Series::series_play("405ve10", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 3, 3);
 				}
 				break;
 
@@ -474,25 +476,25 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 16;
-				Series::series_play("405ve10", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 3);
+				_veraMode = 16;
+				Series::series_play("405ve10", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 			}
 			break;
 
 		case 6:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 4:
 				if (imath_ranged_rand(1, 10) == 1) {
-					series_play("405ve03", 0xf00, 2, 17, 10, 0, 100, 0, 0, 0, 3);
+					series_play("405ve03", 0xf00, 2, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				} else {
-					series_play("405ve03", 0xf00, 0, 17, 60, 0, 100, 0, 0, 3, 3);
+					series_play("405ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 60, 0, 100, 0, 0, 3, 3);
 				}
 				break;
 
 			case 7:
 				frame = imath_ranged_rand(3, 6);
-				series_play("405ve03", 0xf00, 2, 17, 4, 0, 100, 0, 0, frame, frame);
+				series_play("405ve03", 0xf00, 2, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -500,56 +502,56 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 4;
-				series_play("405ve03", 0xf00, 2, 17, 10, 0, 100, 0, 0, 0, 3);
+				_veraMode = 4;
+				series_play("405ve03", 0xf00, 2, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				break;
 			}
 			break;
 
 		case 9:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 9:
-				Series::series_play("405ve15", 0xf00, 0, 17, 60, 0, 100, 0, 0, 4, 4);
+				Series::series_play("405ve15", 0xf00, 0, kCHANGE_VERA_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 				break;
 
 			case 10:
-				_val4 = 10;
-				Series::series_play("405ve17", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 2);
+				_veraMode = 10;
+				Series::series_play("405ve17", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
 				break;
 
 			case 11:
-				_val4 = imath_ranged_rand(1, 2) == 1 ? 12 : 13;
-				Series::series_play("405ve18", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 0);
+				_veraMode = imath_ranged_rand(1, 2) == 1 ? 12 : 13;
+				Series::series_play("405ve18", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 14:
-				_val3 = kCHANGE_VIPE_ANIMATION;
+				_veraShould = kCHANGE_VIPE_ANIMATION;
 				digi_preload("405_009");
-				series_play_with_breaks(PLAY2, "405ve16", 0x100, 17, 3);
+				series_play_with_breaks(PLAY2, "405ve16", 0x100, kCHANGE_VERA_ANIMATION, 3);
 				break;
 
-			case kCHANGE_VIPE_ANIMATION:
-				_val3 = 9;
-				kernel_trigger_dispatch_now(17);
+			case 17:
+				_veraShould = 9;
+				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				break;
 
 			case 16:
-				_val4 = 16;
-				Series::series_play("405ve15", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 16;
+				Series::series_play("405ve15", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			default:
-				_val4 = 4;
-				Series::series_play("405ve08", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 4;
+				Series::series_play("405ve08", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
 
 		case 10:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 10:
 				frame = imath_ranged_rand(3, 5);
-				Series::series_play("405ve17", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve17", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -557,34 +559,34 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 9;
-				Series::series_play("405ve17", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 2);
+				_veraMode = 9;
+				Series::series_play("405ve17", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
 				break;
 			}
 			break;
 
 		case 12:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 11:
 				frame = imath_ranged_rand(1, 4);
-				Series::series_play("405ve18", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve18", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 24:
 				break;
 
 			default:
-				_val4 = 9;
-				Series::series_play("405ve18", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 0);
+				_veraMode = 9;
+				Series::series_play("405ve18", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 			}
 			break;
 
 		case 13:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 11:
 				frame = imath_ranged_rand(5, 8);
-				Series::series_play("405ve18", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve18", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -592,35 +594,35 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 9;
-				Series::series_play("405ve18", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 0);
+				_veraMode = 9;
+				Series::series_play("405ve18", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 			}
 			break;
 
 		case 16:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 11:
-				_val4 = 9;
-				Series::series_play("405ve15", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 9;
+				Series::series_play("405ve15", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 16:
 				if (imath_ranged_rand(1, 10) == 1) {
-					_val4 = 5;
-					Series::series_play("405ve10", 0xf00, 0, 17, 10, 0, 100, 0, 0, 0, 3);
+					_veraMode = 5;
+					Series::series_play("405ve10", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				} else {
-					series_play("405ve08", 0xf00, 0, 17, 60, 0, 100, 0, 0, 4, 4);
+					series_play("405ve08", 0xf00, 0, kCHANGE_VERA_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 				}
 				break;
 
 			case 17:
 				if (imath_ranged_rand(1, 2) == 1) {
-					_val4 = 18;
-					kernel_trigger_dispatch_now(17);
+					_veraMode = 18;
+					kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				} else {
-					_val4 = 19;
-					Series::series_play("405ve11", 0xf00, 0, 17, 6, 0, 100, 0, 0, 2, 4);
+					_veraMode = 19;
+					Series::series_play("405ve11", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 4);
 				}
 				break;
 
@@ -628,17 +630,17 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 4;
-				series_play("405ve08", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 4;
+				series_play("405ve08", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
 
 		case 18:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 17:
 				frame = imath_ranged_rand(0, 1);
-				Series::series_play("405ve11", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve11", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -646,17 +648,17 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 16;
-				kernel_trigger_dispatch_now(17);
+				_veraMode = 16;
+				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				break;
 			}
 			break;
 
 		case 19:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 17:
 				frame = imath_ranged_rand(4, 6);
-				Series::series_play("405ve11", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve11", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -664,20 +666,20 @@ void Room405::daemon() {
 				break;
 
 			default:
-				Series::series_play("405ve11", 0xf00, 2, 17, 6, 0, 100, 0, 0, 2, 4);
+				Series::series_play("405ve11", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 4);
 				break;
 			}
 			break;
 
 		case 20:
-			switch (_val3) {
+			switch (_veraShould) {
 			case 20:
-				Series::series_play("405ve06", 0xf00, 0, 17, 60, 0, 100, 0, 0, 0, 0);
+				Series::series_play("405ve06", 0xf00, 0, kCHANGE_VERA_ANIMATION, 60, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 21:
 				frame = imath_ranged_rand(0, 4);
-				Series::series_play("405ve06", 0xf00, 0, 17, 5, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405ve06", 0xf00, 0, kCHANGE_VERA_ANIMATION, 5, 0, 100, 0, 0, frame, frame);
 				playDigi();
 				break;
 
@@ -685,20 +687,20 @@ void Room405::daemon() {
 				break;
 
 			default:
-				_val4 = 23;
-				Series::series_play("405ve05", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				_veraMode = 23;
+				Series::series_play("405ve05", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
 
 		case 22:
-			_val4 = 20;
-			Series::series_play("405ve05", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+			_veraMode = 20;
+			Series::series_play("405ve05", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 			break;
 
 		case 23:
-			_val4 = 4;
-			series_play("405ve04", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 5);
+			_veraMode = 4;
+			series_play("405ve04", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 			break;
 
 		default:
@@ -707,8 +709,8 @@ void Room405::daemon() {
 		break;
 
 	case 19:
-		_val5 = 1;
-		kernel_trigger_dispatch_now(16);
+		_muffinsState = 1;
+		kernel_trigger_dispatch_now(kCHANGE_MUFFINS_ANIMATION);
 		break;
 
 	case 20:
@@ -875,7 +877,7 @@ void Room405::daemon() {
 			if (_series1)
 				terminateMachineAndNull(_series1);
 
-			_val3 = 24;
+			_veraShould = 24;
 
 			digi_preload("405_007");
 			digi_preload("405w503");
@@ -955,14 +957,14 @@ void Room405::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_val3 = 7;
+			_veraShould = 7;
 			_digiName = "405V504";
 			_newMode = KT_PARSE;
 			_newTrigger = 1;
 			break;
 
 		case 1:
-			_val3 = 4;
+			_veraShould = 4;
 			_G(kernel).trigger_mode = KT_PARSE;
 			digi_play("405e502", 1, 255, 2);
 			break;
@@ -979,25 +981,26 @@ void Room405::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_val3 = 21;
+			_veraShould = 21;
 			_digiName = "405V502";
 			_newMode = KT_PARSE;
 			_newTrigger = 1;
-			_val5 = 1;
-			kernel_trigger_dispatch_now(16);
+			_muffinsState = 1;
+			kernel_trigger_dispatch_now(kCHANGE_MUFFINS_ANIMATION);
 			break;
 
 		case 1:
 			term_message("spat 1");
 			_G(kernel).trigger_mode = KT_PARSE;
 			series_play("405eu02", 0xf00, 0, 4, 4, 0, 100, 0, 0, 10, 14);
+			_veraShould = 9;
 			digi_play("405e501", 1, 255, 2);
 			break;
 
 		case 2:
 			terminateMachineAndNull(_eu02);
 			series_play("405eu02", 0xf00, 0, -1, 4, 0, 100, 0, 0, 16, 18);
-			_val3 = 10;
+			_veraShould = 10;
 			_digiName = "405V503";
 			_newMode = KT_PARSE;
 			_newTrigger = 3;
@@ -1005,12 +1008,12 @@ void Room405::parser() {
 
 		case 3:
 			player_set_commands_allowed(true);
-			_val3 = 4;
+			_veraShould = 4;
 			break;
 
 		case 4:
 			term_message("spat 4");
-			_eu02 = series_play("405eu02", 0xf00, 0, -1, 600, -1, 100, 0, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_VIPE_ANIMATION);
+			_eu02 = series_play("405eu02", 0xf00, 0, -1, 600, -1, 100, 0, 0, 15, 15);
 			break;
 
 		default:
@@ -1031,7 +1034,7 @@ void Room405::parser() {
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
-				_val3 = 17;
+				_veraShould = 17;
 				player_set_commands_allowed(false);
 				_digiName = "405v510";
 				_newMode = KT_PARSE;
@@ -1039,7 +1042,7 @@ void Room405::parser() {
 				break;
 
 			case 1:
-				_val3 = 4;
+				_veraShould = 4;
 				player_set_commands_allowed(true);
 				break;
 
@@ -1051,7 +1054,7 @@ void Room405::parser() {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
-			_val3 = 7;
+			_veraShould = 7;
 			_digiName = "405v511";
 			_newMode = KT_PARSE;
 			_newTrigger = 1;
@@ -1059,7 +1062,7 @@ void Room405::parser() {
 
 		case 1:
 			player_set_commands_allowed(true);
-			_val3 = 4;
+			_veraShould = 4;
 			break;
 
 		default:
@@ -1250,14 +1253,14 @@ void Room405::conv92() {
 	if (_G(kernel).trigger == 18) {
 		if (who <= 0) {
 			if (node == 5 && entry == 0) {
-				_val3 = 9;
+				_veraShould = 9;
 			} else if (node == 6 && entry == 1) {
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			} else if (node == 5 && entry == 1) {
 				digi_preload("92n0603");
-				_val3 = 9;
+				_veraShould = 9;
 			} else {
-				_val3 = 4;
+				_veraShould = 4;
 			}
 		} else if (who == 1) {
 			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
@@ -1274,26 +1277,26 @@ void Room405::conv92() {
 					(node == 8 && entry == 2) ||
 					(node == 9 && entry == 1) ) {
 				if (node == 2 && entry == 1)
-					_val3 = 9;
+					_veraShould = 9;
 
 				digi_play(sound, 1, 255, 18);
 			} else if (node == 5 && entry == 0) {
-				_val3 = 10;
+				_veraShould = 10;
 				_digiName = sound;
 			} else if (node == 5 && entry == 2) {
-				_val3 = 14;
+				_veraShould = 14;
 			} else if (node == 6 && entry == 1) {
 				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 				digi_play(sound, 1, 255, 18);
 			} else if ((node == 1 && entry == 1) || (node == 2 && entry == 2) ||
 					(node == 1 && entry == 4)) {
-				_val3 = 17;
+				_veraShould = 17;
 				_digiName = sound;
 			} else if (node == 4) {
-				_val3 = 10;
+				_veraShould = 10;
 				_digiName = sound;
 			} else {
-				_val3 = 7;
+				_veraShould = 7;
 				_digiName = sound;
 			}
 		} else if (who == 1) {

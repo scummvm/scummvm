@@ -52,9 +52,9 @@ private:
 	int _volume = 0;
 	int _vipeShould = 0;
 	int _vipeMode = 0;
-	int _val3 = 0;
-	int _val4 = 0;
-	int _val5 = 0;
+	int _veraShould = 0;
+	int _veraMode = 0;
+	int _muffinsState = 0;
 	int _newTrigger = 0;
 
 	void conv86();
