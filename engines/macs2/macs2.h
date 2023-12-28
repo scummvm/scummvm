@@ -85,7 +85,8 @@ public:
 	uint16 _charHeight;
 
 	GlyphData _glyphs[256];
-	uint16 numGlyphs = 30;
+	// TODO: THis count could be read from the file as well
+	uint16 numGlyphs = 79;
 
 	byte* _cursorData;
 	uint16 _cursorWidth;
