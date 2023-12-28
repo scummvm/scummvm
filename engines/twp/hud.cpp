@@ -92,11 +92,10 @@ const char* verbFgtShader = R"(#version 110
 HudShader::~HudShader() {}
 
 void HudShader::applyUniforms() {
-	float value[]={0.8f, 0.8f};
-	GL_CALL(glUniform2fv(_rangesLoc, 1, value));
-	GL_CALL(glUniform4fv(_shadowColorLoc, 1, _shadowColor.v));
-	GL_CALL(glUniform4fv(_normalColorLoc, 1, _normalColor.v));
-	GL_CALL(glUniform4fv(_highlightColorLoc, 1, _highlightColor.v));
+	GL_CALL(glUniform2f(_rangesLoc, 0.8f, 0.8f));
+	GL_CALL(glUniform4f(_shadowColorLoc, _shadowColor.rgba.r, _shadowColor.rgba.g, _shadowColor.rgba.b, _shadowColor.rgba.a));
+	GL_CALL(glUniform4f(_normalColorLoc, _normalColor.rgba.r, _normalColor.rgba.g, _normalColor.rgba.b, _normalColor.rgba.a));
+	GL_CALL(glUniform4f(_highlightColorLoc, _highlightColor.rgba.r, _highlightColor.rgba.g, _highlightColor.rgba.b, _highlightColor.rgba.a));
 }
 
 Hud::Hud() : Node("hud") {
@@ -115,6 +114,12 @@ ActorSlot *Hud::actorSlot(Object *actor) {
 		}
 	}
 	return nullptr;
+}
+
+void Hud::drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf) {
+  Math::Vector3d pos(sf.spriteSourceSize.left,  - sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY(), 0.f);
+  trsf.translate(pos);
+  g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
 void Hud::drawCore(Math::Matrix4 trsf) {
@@ -144,10 +149,10 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 
 	Shader *saveShader = g_engine->getGfx().getShader();
-	g_engine->getGfx().use(&_shader);
-	_shader._shadowColor = slot->verbUiColors.verbNormalTint;
-	_shader._normalColor = slot->verbUiColors.verbHighlight;
-	_shader._highlightColor = slot->verbUiColors.verbHighlightTint;
+	// g_engine->getGfx().use(&_shader);
+	// _shader._shadowColor = slot->verbUiColors.verbNormalTint;
+	// _shader._normalColor = slot->verbUiColors.verbHighlight;
+	// _shader._highlightColor = slot->verbUiColors.verbHighlightTint;
 
 	bool isOver = false;
 	for (int i = 1; i < 22; i++) {
@@ -161,10 +166,10 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 			if (_mouseClick && over) {
 				_verb = verb;
 			}
-			g_engine->getGfx().drawSprite(verbFrame.frame, *verbTexture, color, trsf);
+			drawSprite(verbFrame, verbTexture, color, trsf);
 		}
 	}
-	g_engine->getGfx().use(saveShader);
+	// g_engine->getGfx().use(saveShader);
 	_over = isOver;
 }
 

@@ -95,6 +95,7 @@ public:
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
+	void drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];

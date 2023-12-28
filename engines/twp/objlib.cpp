@@ -341,7 +341,7 @@ static SQInteger objectColor(HSQUIRRELVM v) {
 		int color = 0;
 		if (SQ_FAILED(sqget(v, 3, color)))
 			return sq_throwerror(v, "failed to get color");
-		obj->_node->setColor(Color::rgb(color));
+		obj->_node->setColor(Color::fromRgba(color));
 	}
 	return 0;
 }

@@ -328,7 +328,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
   Room* room = g_engine->_room;
   if (room->_overlayTo)
       room->_overlayTo->disable();
-  room->setOverlay(Color::rgb(startColor));
+  room->setOverlay(Color::fromRgba(startColor));
   if (numArgs == 4) {
     int endColor;
     if (SQ_FAILED(sqget(v, 3, endColor)))
@@ -337,7 +337,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
     if (SQ_FAILED(sqget(v, 4, duration)))
       return sq_throwerror(v, "failed to get duration");
     debug("start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
-    g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::rgb(endColor));
+    g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::fromRgba(endColor));
   }
   return 0;
 }
