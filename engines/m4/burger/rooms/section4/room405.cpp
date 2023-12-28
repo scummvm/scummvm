@@ -423,7 +423,7 @@ void Room405::daemon() {
 		case 4:
 			switch (_veraShould) {
 			case 4:
-				switch (imath_ranged_rand(1, kCHANGE_VIPE_ANIMATION)) {
+				switch (imath_ranged_rand(1, 15)) {
 				case 1:
 					series_play_with_breaks(PLAY1, "405ve02", 0xf00, kCHANGE_VERA_ANIMATION, 2);
 					break;
@@ -441,6 +441,8 @@ void Room405::daemon() {
 				series_play("405ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
+			case 9:
+			case 10:
 			case 11:
 				_veraMode = 9;
 				series_play("405ve14", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 8);
@@ -525,7 +527,7 @@ void Room405::daemon() {
 				break;
 
 			case 14:
-				_veraShould = kCHANGE_VIPE_ANIMATION;
+				_veraShould = 15;
 				digi_preload("405_009");
 				series_play_with_breaks(PLAY2, "405ve16", 0x100, kCHANGE_VERA_ANIMATION, 3);
 				break;
@@ -722,7 +724,7 @@ void Room405::daemon() {
 		break;
 
 	case 22:
-		pal_fade_init(kCHANGE_VIPE_ANIMATION, 255, 100, 0, -1);
+		pal_fade_init(15, 255, 100, 0, -1);
 		break;
 
 	case 23:
@@ -789,11 +791,11 @@ void Room405::daemon() {
 		case 25:
 			disable_player();
 			_G(wilbur_should) = 26;
-			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, kCHANGE_VIPE_ANIMATION);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
 			break;
 
 		case 26:
-			_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_VIPE_ANIMATION);
+			_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 15, 15);
 			startConv89();
 			break;
 
@@ -864,7 +866,7 @@ void Room405::daemon() {
 		case 37:
 			_G(wilbur_should) = 38;
 			gr_backup_palette();
-			pal_fade_init(_G(kernel).first_fade, 255, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_WILBUR_ANIMATION);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 15, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 38:
