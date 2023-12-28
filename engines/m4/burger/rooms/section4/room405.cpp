@@ -1264,6 +1264,9 @@ void Room405::conv92() {
 			} else {
 				_veraShould = 4;
 			}
+
+			conv_resume();
+
 		} else if (who == 1) {
 			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			conv_resume();
