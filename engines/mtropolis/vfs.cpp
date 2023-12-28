@@ -44,8 +44,7 @@ VirtualFileSystem::VirtualFileSystem(const VirtualFileSystemLayout &layout) : _p
 			TempLayoutFile tlf;
 			tlf._archiveMember = arcMember;
 			tlf._expandedPath = (prefix + arcMember->getPathInArchive().toString(_pathSeparator));
-			tlf._expandedPathCanonical = tlf._expandedPath;
-			tlf._expandedPathCanonical.toLowercase();
+			tlf._expandedPathCanonical = canonicalizePath(Common::Path(tlf._expandedPath, _pathSeparator));
 
 			Common::HashMap<Common::String, uint>::const_iterator indexIt = pathToTLF.find(tlf._expandedPath);
 
@@ -59,9 +58,7 @@ VirtualFileSystem::VirtualFileSystem(const VirtualFileSystemLayout &layout) : _p
 	}
 
 	for (const VirtualFileSystemLayout::PathJunction &pjunc : layout._pathJunctions) {
-		Common::String destPathFile = pjunc._destPath;
-		destPathFile.toLowercase();
-
+		Common::String destPathFile = canonicalizePath(Common::Path(pjunc._destPath, _pathSeparator));
 		Common::String destPathDir = destPathFile + _pathSeparator;
 
 		for (uint i = 0; i < tempLayoutFiles.size(); i++) {
@@ -194,7 +191,14 @@ bool VirtualFileSystem::sortVirtualFiles(const VirtualFile &a, const VirtualFile
 }
 
 Common::String VirtualFileSystem::canonicalizePath(const Common::Path &path) const {
-	Common::String result = path.toString(_pathSeparator);
+	Common::StringArray components = path.splitComponents();
+
+	for (Common::String &component : components) {
+		if (Common::punycode_hasprefix(component))
+			component = Common::punycode_decode(component).encode(Common::kUtf8);
+	}
+
+	Common::String result = Common::Path::joinComponents(components).toString(_pathSeparator);
 	result.toLowercase();
 
 	return result;
