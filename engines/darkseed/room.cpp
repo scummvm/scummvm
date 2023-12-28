@@ -24,7 +24,7 @@
 
 Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	room1.resize(8);
-	room2.resize(16);
+	walkableLocationsMap.resize(16);
 	room3.resize(30);
 
 	if(!load()) {
@@ -61,7 +61,7 @@ bool Darkseed::Room::load() {
 	}
 
 	for (int i = 0; i < 16; i++) {
-		file.read(room2[i].strip, 40);
+		file.read(walkableLocationsMap[i].strip, 40);
 	}
 
 	for (int i = 0; i < 30; i++) {
@@ -82,7 +82,7 @@ bool Darkseed::Room::load() {
 
 		if (room3[i].unk2 == 0 && room3[i].unk0 == 1) {
 			if (connectors.size() == 0xc) {
-				error("Too many connectors in this room, max of %", 0xc);
+				error("Too many connectors in this room, max of %d", 0xc);
 			}
 			RoomConnector connector;
 			connector.x = room3[i].xOffset;
@@ -131,8 +131,18 @@ Common::String Darkseed::Room::stripSpaces(Common::String source) {
 
 void Darkseed::Room::draw() {
 	pic.draw(0x45, 0x28);
+
+	// print walkable area map.
+	for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
+		for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
+			if (canWalkAtLocation(x, y)) {
+				g_engine->_screen->drawLine(x, y, x, y, 14);
+			}
+		}
+	}
+
 	for (int i = 0; i < connectors.size(); i++) {
-		g_engine->_screen->drawLine(connectors[i].x, connectors[i].y, connectors[i].x + 7, connectors[i].y + 13, 2);
+		g_engine->_baseSprites.getSpriteAt(0).draw(connectors[i].x, connectors[i].y);
 	}
 }
 
@@ -216,4 +226,14 @@ Common::String Darkseed::Room::getRoomFilenameBase(int roomNumber) {
 		return "room19";
 	}
 	return Common::String::format("room%d", roomNumber);
+}
+
+bool Darkseed::Room::canWalkAtLocation(int x, int y) {
+	if (x < 69 || x >= 570 || y < 40 || y >= 239) {
+		return false;
+	}
+
+	int t = (x - 69) / 5;
+
+	return (walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
 }

@@ -63,7 +63,7 @@ public:
 	Pal _pal;
 
 	Common::Array<RoomStruct1> room1;
-	Common::Array<RoomStruct2> room2;
+	Common::Array<RoomStruct2> walkableLocationsMap;
 	Common::Array<RoomStruct3> room3;
 	Common::Array<RoomConnector> connectors;
 
@@ -78,6 +78,8 @@ public:
 	int getExitRoomNumberAtPoint(int x, int y);
 	bool exitRoom();
 	Common::String getRoomFilenameBase(int roomNumber);
+	bool canWalkAtLocation(int x, int y);
+
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
