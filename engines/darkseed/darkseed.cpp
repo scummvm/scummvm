@@ -121,44 +121,9 @@ Common::Error DarkseedEngine::run() {
 //
 //	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
 
-	_room = new Room(2);
-//	_room->draw();
-//	_cursor.draw();
-//	_screen->update();
-	// Simple event handling loop
-//	Common::Event e;
-	int offset = 0;
-	int sIdx = 0;
+	_room = new Room(5);
 
 	gameloop();
-
-//	while (!shouldQuit()) {
-//		while (g_system->getEventManager()->pollEvent(e)) {
-//			if(e.type == Common::EVENT_KEYDOWN) {
-//				sIdx++;
-//				if (sIdx >= 96) {
-//					sIdx = 0;
-//				}
-//				const Sprite &s = playerNsp.getSpriteAt(sIdx);
-//				_room->draw();
-//				_cursor.draw();
-////				_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
-//				_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
-//				_screen->makeAllDirty();
-//			}
-//		}
-////		_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
-//		// Cycle through a simple palette
-////		++offset;
-////		for (int i = 0; i < 256; ++i)
-////			pal[i * 3 + 1] = (i + offset) % 256;
-////		g_system->getPaletteManager()->setPalette(pal, 0, 256);
-//		_screen->update();
-//
-//		// Delay for a bit. All events loops should have a delay
-//		// to prevent the system being unduly loaded
-//		g_system->delayMillis(10);
-//	}
 
 	delete _room;
 
