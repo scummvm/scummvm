@@ -169,7 +169,7 @@ void Macs2Engine::readResourceFile() {
 	_charData = new byte[_charWidth * _charHeight];
 	file.read(_charData, _charWidth * _charHeight);
 
-	file.seek(0x6FB2);
+	file.seek(0x00006DFE);
 	// Load more characters
 	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].ReadFromeFile(file);
