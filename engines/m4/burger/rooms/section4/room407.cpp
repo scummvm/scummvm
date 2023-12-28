@@ -267,7 +267,7 @@ void Room407::daemon() {
 			if (rnd >= 16)
 				_digiName = "407r902a";
 			else
-				_digiName = Common::String::format("407r902%c", 'a' + imath_ranged_rand(1, 25));
+				_digiName = Common::String::format("407r902%c", 'a' + rnd);
 
 			_flag1 = true;
 			digi_preload(_digiName);
