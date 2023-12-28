@@ -359,16 +359,20 @@ int Context::getGLSLVersion() const {
 		return 0;
 	}
 
-	const char *glslVersionFormat;
-	if (type == kContextGL) {
-		glslVersionFormat = "%d.%d";
-	} else {
-		glslVersionFormat = "OpenGL ES GLSL ES %d.%d";
+	// Search for the first digit in the version string and parse from there
+	const char *glslVersionStringNum;
+	for (glslVersionStringNum = glslVersionString; *glslVersionStringNum != '\0'; glslVersionStringNum++) {
+		if (*glslVersionStringNum >= '0' &&
+		    *glslVersionStringNum <= '9') {
+			break;
+		}
 	}
 
+	// Here *glslVersionStringNum is either a digit or a NUL character
+
 	int glslMajorVersion, glslMinorVersion;
-	if (sscanf(glslVersionString, glslVersionFormat, &glslMajorVersion, &glslMinorVersion) != 2) {
-		warning("Could not parse GLSL version '%s'", glslVersionString);
+	if (sscanf(glslVersionStringNum, "%d.%d", &glslMajorVersion, &glslMinorVersion) != 2) {
+		warning("Could not parse GLSL version '%s' extracted from '%s'", glslVersionStringNum, glslVersionString);
 		return 0;
 	}
 
