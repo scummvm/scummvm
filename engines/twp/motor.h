@@ -175,7 +175,7 @@ private:
 class OverlayTo : public Motor {
 public:
 	virtual ~OverlayTo();
-	OverlayTo(float duration, Room* room, Color to);
+	OverlayTo(float duration, Room *room, Color to);
 
 	virtual void update(float elapsed) override;
 
@@ -183,6 +183,40 @@ private:
 	Room *_room = nullptr;
 	Color _to;
 	Tween<Color> _tween;
+};
+
+class ReachAnim : public Motor {
+public:
+	virtual ~ReachAnim();
+	ReachAnim(Object* actor, Object* obj);
+
+	virtual void update(float elasped) override;
+
+private:
+	void playReachAnim();
+
+private:
+	Object* _actor = nullptr;
+    Object* _obj = nullptr;
+    int _state = 0;
+    float _elapsed = 0.f;
+};
+
+class WalkTo : public Motor {
+public:
+	WalkTo(Object* obj, Math::Vector2d dest, int facing = 0);
+	virtual void disable() override;
+
+private:
+	void actorArrived();
+	virtual void update(float elapsed) override;
+
+private:
+	Object* _obj = nullptr;
+    Common::Array<Math::Vector2d> _path;
+    int _facing = 0;
+    float _wsd;
+    ReachAnim* _reach = nullptr;
 };
 
 } // namespace Twp

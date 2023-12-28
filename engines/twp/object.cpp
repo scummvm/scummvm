@@ -28,6 +28,9 @@
 #include "twp/ggpack.h"
 #include "twp/motor.h"
 
+#define MIN_TALK_DIST 60
+#define MIN_USE_DIST 15
+
 namespace Twp {
 
 Object::Object()
@@ -563,6 +566,106 @@ void Object::removeInventory(Object *obj) {
 void Object::removeInventory() {
 	if (_owner)
 		_owner->removeInventory(this);
+}
+
+Common::String Object::getReachAnim() {
+	int flags = getFlags();
+	if (flags & REACH_LOW)
+		return "_low";
+	if (flags & REACH_HIGH)
+		return "_high";
+	return "_med";
+}
+
+// true of you don't have to be close to the object
+static bool verbNotClose(VerbId id) {
+	return id.id == VERB_LOOKAT;
+}
+
+static void cantReach(Object *self, Object *noun2) {
+	// TODO: check if we need to use sqrawexists or sqexists
+	if (sqrawexists(self->_table, "verbCantReach")) {
+		int nParams = sqparamCount(g_engine->getVm(), self->_table, "verbCantReach");
+		debug("verbCantReach found in obj '{self.key}' with {nParams} params");
+		if (nParams == 1) {
+			sqcall(self->_table, "verbCantReach");
+		} else {
+			HSQOBJECT table;
+			sq_resetobject(&table);
+			if (noun2)
+				table = noun2->_table;
+			sqcall(self->_table, "verbCantReach", self->_table, table);
+		}
+	} else if (!noun2) {
+		cantReach(noun2, nullptr);
+	} else {
+		HSQOBJECT nilTbl;
+		sqcall(g_engine->_defaultObj, "verbCantReach", self->_table, !noun2 ? nilTbl : noun2->_table);
+	}
+}
+
+void Object::execVerb() {
+	if (_exec.enabled) {
+		VerbId verb = _exec.verb;
+		Object *noun1 = _exec.noun1;
+		Object *noun2 = _exec.noun2;
+
+		debug("actorArrived: exec sentence");
+		if (!noun1->inInventory()) {
+			// Object became untouchable as we were walking there
+			if (!noun1->_touchable) {
+				debug("actorArrived: noun1 untouchable");
+				_exec.enabled = false;
+				return;
+			}
+			// Did we get close enough?
+			float dist = distance(getUsePos(), noun1->getUsePos());
+			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
+			debug("actorArrived: noun1 min_dist: {dist} > {min_dist} (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?");
+			if (!verbNotClose(verb) && (dist > min_dist)) {
+				cantReach(this, noun1);
+				return;
+			}
+			if (noun1->_useDir != dNone) {
+				setFacing((Facing)noun1->_useDir);
+			}
+		}
+		if (noun2 && !noun2->inInventory()) {
+			if (!noun2->_touchable) {
+				// Object became untouchable as we were walking there.
+				debug("actorArrived: noun2 untouchable");
+				_exec.enabled = false;
+				return;
+			}
+			float dist = distance(getUsePos(), noun2->getUsePos());
+			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
+			debug("actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
+			if (dist > min_dist) {
+				cantReach(this, noun2);
+				return;
+			}
+		}
+
+		debug("actorArrived: callVerb");
+		_exec.enabled = false;
+		g_engine->callVerb(this, verb, noun1, noun2);
+	}
+}
+
+// Walks an actor to the `pos` or actor `obj` and then faces `dir`.
+void Object::walk(Math::Vector2d pos, Facing *facing) {
+	debug("walk to obj %s: %f,%f, %d", _key.c_str(), pos.getX(), pos.getY(), (int)*facing);
+	if (!_walkTo || (!_walkTo->isEnabled())) {
+		play(getAnimName(WALK_ANIMNAME), true);
+	}
+	_walkTo = new WalkTo(this, pos, facing ? *facing : 0);
+}
+
+// Walks an actor to the `obj` and then faces it.
+void Object::walk(Object *obj) {
+	debug("walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
+	Facing facing = (Facing)obj->_useDir;
+	walk(obj->getUsePos(), &facing);
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {

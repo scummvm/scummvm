@@ -24,6 +24,7 @@
 #include "twp/motor.h"
 #include "twp/object.h"
 #include "twp/scenegraph.h"
+#include "twp/squtil.h"
 
 namespace Twp {
 
@@ -126,6 +127,142 @@ void OverlayTo::update(float elapsed) {
 	_room->setOverlay(_tween.current());
 	if (!_tween.running())
 		disable();
+}
+
+ReachAnim::ReachAnim(Object *actor, Object *obj)
+	: _actor(actor), _obj(obj) {
+}
+
+ReachAnim::~ReachAnim() {
+}
+
+void ReachAnim::playReachAnim() {
+	Common::String anim = _actor->getAnimName(REACH_ANIMNAME + _obj->getReachAnim());
+	_actor->play(anim);
+}
+
+void ReachAnim::update(float elapsed) {
+	switch (_state) {
+	case 0:
+		playReachAnim();
+		_state = 1;
+		break;
+	case 1:
+		_elapsed += elapsed;
+		if (_elapsed > 0.5)
+			_state = 2;
+		break;
+	case 2:
+		_actor->stand();
+		_actor->execVerb();
+		disable();
+		_state = 3;
+		break;
+	default:
+		break;
+		;
+	}
+}
+
+WalkTo::WalkTo(Object *obj, Math::Vector2d dest, int facing)
+	: _obj(obj), _facing(facing) {
+	if (obj->_useWalkboxes) {
+		_path = obj->_room->calculatePath(obj->_node->getAbsPos(), dest);
+	} else {
+		_path = {obj->_node->getAbsPos(), dest};
+	}
+	_wsd = sqrt(obj->_walkSpeed.getX() * obj->_walkSpeed.getX() + obj->_walkSpeed.getY() * obj->_walkSpeed.getY());
+	if (sqrawexists(obj->_table, "preWalking"))
+		sqcall(obj->_table, "preWalking");
+}
+
+void WalkTo::disable() {
+	Motor::disable();
+	if (_path.size() != 0) {
+		debug("actor walk cancelled");
+	}
+	_obj->play("stand");
+}
+
+static bool needsReachAnim(int verbId) {
+	return (verbId == VERB_PICKUP) || (verbId == VERB_OPEN) || (verbId == VERB_CLOSE) || (verbId == VERB_PUSH) || (verbId == VERB_PULL) || (verbId == VERB_USE);
+}
+
+void WalkTo::actorArrived() {
+	bool needsReach = _obj->_exec.enabled && needsReachAnim(_obj->_exec.verb.id);
+	if (!needsReach)
+		disable();
+
+	debug("actorArrived");
+	_obj->play("stand");
+	// the faces to the specified direction (if any)
+	if (_facing) {
+		debug("actor arrived with facing %d", _facing);
+		_obj->setFacing((Facing)_facing);
+	}
+
+	// call `actorArrived` callback
+	if (sqrawexists(_obj->_table, "actorArrived")) {
+		debug("call actorArrived callback");
+		sqcall(_obj->_table, "actorArrived");
+	}
+
+	// we need to execute a sentence when arrived ?
+	if (_obj->_exec.enabled) {
+		VerbId verb = _obj->_exec.verb;
+		Object *noun1 = _obj->_exec.noun1;
+		Object *noun2 = _obj->_exec.noun2;
+		// call `postWalk`callback
+		Common::String funcName = isActor(noun1->getId()) ? "actorPostWalk" : "objectPostWalk";
+		if (sqrawexists(_obj->_table, funcName)) {
+			debug("call %s callback", funcName.c_str());
+			HSQOBJECT n2Table;
+			if (noun2)
+				n2Table = noun2->_table;
+			else
+				sq_resetobject(&n2Table);
+			sqcall(_obj->_table, funcName.c_str(), verb.id, noun1->_table, n2Table);
+		}
+
+		if (needsReach)
+			_reach = new ReachAnim(_obj, noun1);
+		else
+			_obj->execVerb();
+	}
+}
+
+void WalkTo::update(float elapsed) {
+	if (_path.size() != 0) {
+		Math::Vector2d dest = _path[0];
+		float d = distance(dest, _obj->_node->getAbsPos());
+
+		// arrived at destination ?
+		if (d < 1.0) {
+			_obj->_node->setPos(_path[0]);
+			_path.remove_at(0);
+			if (_path.size() == 0) {
+				actorArrived();
+			}
+		} else {
+			Math::Vector2d delta = dest - _obj->_node->getAbsPos();
+			float duration = d / _wsd;
+			float factor = Twp::clamp(elapsed / duration, 0.f, 1.f);
+
+			Math::Vector2d dd = delta * factor;
+			_obj->_node->setPos(_obj->_node->getPos() + dd);
+			if (abs(delta.getX()) >= abs(delta.getY())) {
+				_obj->setFacing(delta.getX() >= 0 ? FACE_RIGHT : FACE_LEFT);
+			} else {
+				_obj->setFacing(delta.getY() > 0 ? FACE_BACK : FACE_FRONT);
+			}
+		}
+	}
+
+	if (_reach && _reach->isEnabled()) {
+		_reach->update(elapsed);
+		if (!_reach->isEnabled())
+			disable();
+	}
 }
 
 } // namespace Twp

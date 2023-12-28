@@ -635,8 +635,35 @@ static SQInteger actorWalkSpeed(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Tells the specified actor to walk to an x/y position or to an actor position or to an object position.
 static SQInteger actorWalkTo(HSQUIRRELVM v) {
-	warning("TODO: actorWalkTo not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	if (nArgs == 3) {
+		Object *obj = sqobj(v, 3);
+		if (!obj)
+			return sq_throwerror(v, "failed to get actor or object");
+		else
+			actor->walk(obj);
+	} else if ((nArgs == 4) || (nArgs == 5)) {
+		int x, y;
+		if (SQ_FAILED(sqget(v, 3, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 4, y)))
+			return sq_throwerror(v, "failed to get y");
+		Facing *facing = nullptr;
+		if (nArgs == 5) {
+			int dir;
+			if (SQ_FAILED(sqget(v, 5, dir)))
+				return sq_throwerror(v, "failed to get dir");
+			facing = (Facing*)&dir;
+		}
+		actor->walk(Math::Vector2d(x, y), facing);
+	} else {
+		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
+	}
 	return 0;
 }
 

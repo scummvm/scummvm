@@ -374,7 +374,6 @@ void Room::objectParallaxLayer(Object *obj, int zsort) {
 	Layer *l = layer(zsort);
 	if (obj->_layer != l) {
 		// removes object from old layer
-		int id = obj->getId();
 		if(obj->_layer) {
 			int i = find(obj->_layer->_objects, obj);
 			obj->_layer->_node->removeChild(obj->_node);
@@ -394,6 +393,10 @@ void Room::setOverlay(Color color) {
 
 Color Room::getOverlay() const {
 	return _overlayNode.getOverlayColor();
+}
+
+Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vector2d to) {
+	return {frm, to};
 }
 
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
