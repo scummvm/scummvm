@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-16 21:14+0000\n"
+"POT-Creation-Date: 2023-12-26 14:22+0000\n"
 "PO-Revision-Date: 2023-12-20 17:36+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1067,7 +1067,48 @@ msgid "General"
 msgstr "Общие"
 
 #: gui/helpdialog.cpp:41
+#, fuzzy
+#| msgid ""
+#| "## Where to get the games\n"
+#| "\n"
+#| "Visit [our Wiki](https://wiki.scummvm.org/index.php?"
+#| "title=Where_to_get_the_games) for a detailed list of supported games and "
+#| "where to purchase them.\n"
+#| "\n"
+#| "Alternatively, you can download a variety of [freeware games](https://"
+#| "scummvm.org/games) and [demos](https://www.scummvm.org/demos/) directly "
+#| "from our website.\n"
+#| "\n"
+#| "The ScummVM team does not endorse any specific game supplier. However, "
+#| "the project receives a commission from every purchase made on [ZOOM-"
+#| "Platform](https://www.zoom-platform.com/?"
+#| "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate "
+#| "referral links.\n"
+#| "\n"
+#| "Additionally, games not available on ZOOM-Platform can be found on other "
+#| "suppliers such as GOG.com and Steam.\n"
+#| "\n"
+#| "For other (out-of-print) games, consider checking platforms like Amazon, "
+#| "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty "
+#| "games and illegal game copies.\n"
 msgid ""
+"## ScummVM at a Glance\n"
+"\n"
+"ScummVM is a modern reimplementation of various game engines. Once you "
+"transfer the original game data to your device, it endeavors to use it to "
+"faithfully recreate the original gaming experience. \n"
+"\n"
+"ScummVM isn't your typical emulator of DOS, Windows, or some console. Rather "
+"than a one-size-fits-all approach, it takes a meticulous route, implementing "
+"the precise game logic for each specific title or engine it supports. "
+"ScummVM will not work with game engines it does not support.\n"
+"\n"
+"ScummVM is developed by a team of volunteers and is free software. We lack "
+"an extensive testing team, possess only a limited range of devices, and "
+"cannot always address every request. We also do not run advertisements or "
+"sell you anything. Please be mindful of this when you submit a complaint or "
+"a bug report.\n"
+"\n"
 "## Where to get the games\n"
 "\n"
 "Visit [our Wiki](https://wiki.scummvm.org/index.php?"
@@ -1114,11 +1155,11 @@ msgstr ""
 "платформ, как Amazon, eBay, Game Trading Zone или других сайтов аукционов. "
 "Будьте осторожны с неисправными играми и нелегальными копиями игр.\n"
 
-#: gui/helpdialog.cpp:60 gui/options.cpp:2296
+#: gui/helpdialog.cpp:68 gui/options.cpp:2296
 msgid "Cloud"
 msgstr "Облако"
 
-#: gui/helpdialog.cpp:63
+#: gui/helpdialog.cpp:71
 msgid ""
 "## Connecting a cloud service - Quick mode\n"
 "\n"
@@ -4608,11 +4649,40 @@ msgstr "Режим увеличения выключен"
 
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#: backends/platform/ios7/ios7_osys_misc.mm:324
+#, fuzzy
+#| msgid "Settings"
+msgid "Getting help"
+msgstr "Настройки"
+
+#: backends/platform/android/android.cpp:1034
+msgid ""
+"## Help, I'm lost!\n"
+"\n"
+"First, make sure you have the games and necessary game files ready. Check "
+"the **Where to Get the Games** section under the **General** tab. Once "
+"obtained, follow the steps outlined in the **Adding Games** tab to finish "
+"adding them on this device. Take a moment to review this process carefully, "
+"as some users encountered challenges here owing to recent Android changes.\n"
+"\n"
+"Need more help? Refer to our [online documentation for Android](https://docs."
+"scummvm.org/en/latest/other_platforms/android.html). Got questions? Swing by "
+"our [support forums](https://forums.scummvm.org/viewforum.php?f=17) or hop "
+"on our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an "
+"[Android support channel](https://discord.com/"
+"channels/581224060529148060/1135579923185139862).\n"
+"\n"
+"Oh, and heads up, many of our supported games are intentionally tricky, "
+"sometimes mind-bogglingly so. If you're stuck in a game, think about "
+"checking out a game walkthrough. Good luck!\n"
+msgstr ""
+
+#: backends/platform/android/android.cpp:1043
+#: backends/platform/ios7/ios7_osys_misc.mm:261
+#: backends/platform/ios7/ios7_osys_misc.mm:336
 msgid "Touch Controls"
 msgstr "Управление касанием"
 
-#: backends/platform/android/android.cpp:1034
+#: backends/platform/android/android.cpp:1046
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4750,13 +4820,13 @@ msgstr ""
 "   ![Значок клавиатуры](keyboard.png \"Значок клавиатуры\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1090
-#: backends/platform/ios7/ios7_osys_misc.mm:303
-#: backends/platform/ios7/ios7_osys_misc.mm:347
+#: backends/platform/android/android.cpp:1102
+#: backends/platform/ios7/ios7_osys_misc.mm:315
+#: backends/platform/ios7/ios7_osys_misc.mm:359
 msgid "Adding Games"
 msgstr "Добавление игр"
 
-#: backends/platform/android/android.cpp:1093
+#: backends/platform/android/android.cpp:1105
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4966,6 +5036,27 @@ msgstr "Показать функциональные кнопки клавиа�
 
 #: backends/platform/ios7/ios7_osys_misc.mm:252
 msgid ""
+"## Help, I'm lost!\n"
+"\n"
+"First, make sure you have the games and necessary game files ready. Check "
+"the **Where to Get the Games** section under the **General** tab. Once "
+"obtained, follow the steps outlined in the **Adding Games** tab to finish "
+"adding them on this device.\n"
+"\n"
+"Need more help? Refer to our [online documentation for iOS](https://docs."
+"scummvm.org/en/latest/other_platforms/ios.html). Got questions? Swing by our "
+"[support forums](https://forums.scummvm.org/viewforum.php?f=15) or hop on "
+"our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an [iOS "
+"support channel](https://discord.com/"
+"channels/581224060529148060/1149456560922316911).\n"
+"\n"
+"Oh, and heads up, many of our supported games are intentionally tricky, "
+"sometimes mind-bogglingly so. If you're stuck in a game, think about "
+"checking out a game walkthrough. Good luck!\n"
+msgstr ""
+
+#: backends/platform/ios7/ios7_osys_misc.mm:264
+msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
 "controller icon in the upper right corner, by swiping two fingers from left "
@@ -5115,7 +5206,7 @@ msgstr ""
 "   ![Значок клавиатуры](keyboard.png \"Значок клавиатуры\"){w=10em}\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:306
+#: backends/platform/ios7/ios7_osys_misc.mm:318
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5153,7 +5244,7 @@ msgstr ""
 "Дополнительную информацию см. в нашей [документации iOS](https://docs."
 "scummvm.org/en/latest/other_platforms/ios.html).\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:327
+#: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -5195,7 +5286,7 @@ msgstr ""
 "«Назад/Меню».\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:350
+#: backends/platform/ios7/ios7_osys_misc.mm:362
 msgid ""
 "## Adding Games \n"
 "\n"
