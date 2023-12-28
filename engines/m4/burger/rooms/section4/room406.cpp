@@ -1354,11 +1354,13 @@ void Room406::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (inv_player_has("HOOK")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = false;
+
 		if (player_said("HOOK", "BARRED WINDOW ")) {
 			_G(wilbur_should) = 11;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-		} else if (!player_said("HOOK") ||
-				(player_said("HOOK") && player_said_any("YARD", "YARD "))) {
+		} else if (!player_said("HOOK") || player_said_any("YARD", "YARD ")) {
 			_G(wilbur_should) = 8;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
