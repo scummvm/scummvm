@@ -48,6 +48,25 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height) {
+		Graphics::ManagedSurface s = getSurface();
+		// Draw the background
+		// Draw the border segments
+		drawDarkRectangle(x, y, width, height);
+
+		// TODO: Is this the same calculation?
+		uint16 xSegments = (width / g_engine->_borderWidth) + 1;
+		uint16 ySegments = (height / g_engine->_borderHeight) + 1;
+
+		// First the left side
+		int currentX = x;
+		int currentY = y;
+		for (int iy = 0; iy < ySegments; iy++) {
+			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			currentY += g_engine->_borderHeight;
+		}
+	}
+
 	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
 		uint16 currentX = x;
 		uint16 currentY = y;
@@ -118,8 +137,8 @@ void View1::draw() {
 	}
 
 	// Draw the border part
-	uint16 borderX = 100;
-	uint16 borderY = 50;
+	/* uint16 borderX = 100;
+	uint16 borderY = 50; 
 	for (int x = 0; x < g_engine->_borderWidth; x++) {
 		for (int y = 0; y < g_engine->_borderHeight; y++) {
 			uint8 val = g_engine->_borderData[y * g_engine->_borderWidth + x];
@@ -127,10 +146,10 @@ void View1::draw() {
 				s.setPixel(borderX + x, borderY + y, val);
 			}
 		}
-	}
+	} */
 
 	// And the highlight part
-	borderX = 150;
+	/* borderX = 150;
 	borderY = 100;
 	for (int x = 0; x < g_engine->_borderHighlightWidth; x++) {
 		for (int y = 0; y < g_engine->_borderHighlightHeight; y++) {
@@ -140,6 +159,7 @@ void View1::draw() {
 			}
 		}
 	}
+	*/
 
 	DrawSprite(200, 50, g_engine->_flagWidths[0], g_engine->_flagHeights[0], g_engine->_flagData[0], s);
 	DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
@@ -156,7 +176,8 @@ void View1::draw() {
 	//	s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
 
 	// Draw a shaded rectangle
-	drawDarkRectangle(50, 50, 100, 50);
+	// drawDarkRectangle(50, 50, 100, 50);
+	drawStringBackground(50, 50, 100, 50);
 
 	// Draw all glyphs
 	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
