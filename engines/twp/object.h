@@ -174,6 +174,8 @@ public:
 	Common::String getAnimName(const Common::String &key);
 	void setHeadIndex(int head);
 	void setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach);
+	Common::String getReachAnim();
+
 	bool isWalking();
 	void stopWalking();
 	void blinkRate(float min, float max);
@@ -187,6 +189,9 @@ public:
 	void setMoveTo(Motor *moveTo);
 	void setWalkTo(Motor *walkTo);
 	Motor *getWalkTo() const { return _walkTo; }
+	void walk(Math::Vector2d pos, Facing* facing);
+	void walk(Object* obj);
+
 	void setTalking(Motor *talking);
 	void setBlink(Motor *blink);
 	void setTurnTo(Motor *turnTo);
@@ -198,6 +203,8 @@ public:
 	void say(const Common::StringArray &texts, Color color);
 
 	void pickupObject(Object *obj);
+
+	void execVerb();
 
 private:
 	Common::String suffix() const;

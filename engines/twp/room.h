@@ -124,6 +124,8 @@ public:
 	void setOverlay(Color color);
 	Color getOverlay() const;
 
+	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d frm, Math::Vector2d to);
+
 public:
 	Common::String _name;              // Name of the room
 	Common::String _sheet;             // Name of the spritesheet to use

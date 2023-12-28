@@ -137,6 +137,7 @@ public:
 
 	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
 	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
+	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 
 private:
 	void update(float elapsedMs);
@@ -148,7 +149,6 @@ private:
 	void clickedAt(Math::Vector2d scrPos);
 	bool clickedAtHandled(Math::Vector2d roomPos);
 	void setShaderEffect(RoomEffect effect);
-	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 	bool selectable(Object *actor);
 	void resetVerb();
 
