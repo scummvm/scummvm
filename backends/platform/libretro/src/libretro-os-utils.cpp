@@ -122,7 +122,7 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 	PluginManager::instance().loadDetectionPlugin();
 
 	if (autodetect) {
-		Common::FSNode dir(data);
+		Common::FSNode dir = Common::FSNode(Common::Path(data));
 		Common::FSList files;
 		dir.getChildren(files, Common::FSNode::kListAll);
 
@@ -133,7 +133,7 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 
 	} else {
 
-		ConfMan.loadDefaultConfigFile(getDefaultConfigFileName().c_str());
+		ConfMan.loadDefaultConfigFile(getDefaultConfigFileName().toString().c_str());
 		if (ConfMan.hasGameDomain(data)) {
 			res = TEST_GAME_OK_TARGET_FOUND;
 		} else {
