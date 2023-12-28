@@ -34,6 +34,8 @@ bool gDebugChannelsOnly = false;
 const DebugChannelDef gDebugChannels[] = {
 	{ kDebugLevelEventRec,   "eventrec",  "Event recorder debug level" },
 	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
+	{ kDebugLevelGUI,        "gui",       "debug messages for GUI" },
+	{ kDebugLevelMacGUI,     "macgui",    "debug messages for MacGUI" },
 	DEBUG_CHANNEL_END
 };
 namespace Common {
