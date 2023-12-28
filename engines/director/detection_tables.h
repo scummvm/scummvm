@@ -1317,6 +1317,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Polish titles
 	{ "kontyngent99",		"Katalog Samochodów Kontyngent '99" },
+	{ "pippiprzygody",		"Przygody Pippi!" },
 
 	// Portuguese titles
 	{ "activamulti1",		"Activa Multimédia - 1. Expedição através das Grandes Civilizações" },
@@ -8669,6 +8670,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("pettson4", "", "Findus4.exe", "34a951dd3b5e4e9aad58798d3eee8a69", 2253756, Common::DE_DEU, 800),
 
 	WINDEMO1("phonicsquest", "Demo", "Phonics Quest Demo.exe", "0c81c84ca4966313ad27d47daba44537", 2202074, 851),
+
+	WINGAME2_l("pippiprzygody", "", "PIPPI.EXE",		 "t:1b09c0423bc71ace28a8519afa222ab6", 56206,
+									"AAA_MOOV/dlia.mov", "d:23c8cfcda5128d9fcd3f9dd617d008e6", 1156049, Common::PL_POL, 800),
 
 	// Original name is "Syng, lær og leg"
 	MACGAME1_l("pixeline1", "", "xn--syng, lr og leg-3lb",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),
