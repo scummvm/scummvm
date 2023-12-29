@@ -123,7 +123,7 @@ public:
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
-	Common::KeymapArray keymaps;
+	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
 	Nancy::InputManager::initKeymaps(keymaps, target);
 	return keymaps;
 }
