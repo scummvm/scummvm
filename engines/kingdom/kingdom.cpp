@@ -514,9 +514,7 @@ void KingdomGame::playMovie(int movieNum) {
 			}
 
 			if (frame) {
-				::Graphics::Surface *screen = g_system->lockScreen();
-				screen->copyRectToSurface(*frame, x, y, Common::Rect(frame->w, frame->h));
-				g_system->unlockScreen();
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
 				if (decoder->hasDirtyPalette()) {
 					PaletteManager *paletteManager = g_system->getPaletteManager();
@@ -595,15 +593,7 @@ void KingdomGame::restoreAS() {
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	::Graphics::Surface *screen = g_system->lockScreen();
-	for (uint curX = 0; curX < 224; curX++) {
-		for (uint curY = 0; curY < 146; curY++) {
-			byte *ptr = (byte *)screen->getBasePtr(curX + 4, curY + 15);
-			*ptr = _asPtr[curY * 224 + curX];
-		}
-	}
-
-	g_system->unlockScreen();
+	g_system->copyRectToScreen(_asPtr, 224, 4, 15, 224, 146);
 	g_system->updateScreen();
 	delete[] _asPtr;
 	_asPtr = nullptr;
@@ -641,14 +631,7 @@ void KingdomGame::drawHelpScreen() {
 }
 
 void KingdomGame::drawRect(uint minX, uint minY, uint maxX, uint maxY, int color) {
-	::Graphics::Surface *screen = g_system->lockScreen();
-	for (uint curX = minX; curX < maxX; curX++) {
-		for (uint curY = minY; curY < maxY; curY++) {
-			byte *dst = (byte *)screen->getBasePtr(curX, curY);
-			*dst = color;
-		}
-	}
-	g_system->unlockScreen();
+	g_system->fillScreen(Common::Rect(minX, minY, maxX, maxY), color);
 	g_system->updateScreen();
 }
 
