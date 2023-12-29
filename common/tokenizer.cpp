@@ -61,6 +61,36 @@ StringArray StringTokenizer::split() {
 	return res;
 }
 
+String StringTokenizer::delimitersAtTokenBegin() const {
+	// First token appears at beginning of the string, or no tokens have been extracted yet
+	if (_tokenBegin == 0)
+		return String();
+
+	// Iterate backwards until we hit either the previous token, or the beginning of the input string
+	int delimitersBegin;
+	for (delimitersBegin = _tokenBegin - 1; delimitersBegin >= 0 && _delimiters.contains(_str[delimitersBegin]); delimitersBegin--)
+		;
+
+	++delimitersBegin;
+	
+	// Return the delimiters
+	return String(_str.c_str() + delimitersBegin, _tokenBegin - delimitersBegin);
+}
+
+String StringTokenizer::delimitersAtTokenEnd() const {
+	// Last token appears at end of the string, or no tokens have been extracted yet
+	if (_tokenEnd == 0 || _tokenEnd == _str.size())
+		return String();
+
+	// Iterate forwards until we hit either the next token, or the end of the input string
+	uint delimitersEnd;
+	for (delimitersEnd = _tokenEnd; delimitersEnd < _str.size() && _delimiters.contains(_str[delimitersEnd]); delimitersEnd++)
+		;
+	
+	// Return the delimiters
+	return String(_str.c_str() + _tokenEnd, delimitersEnd - _tokenEnd);
+}
+
 U32StringTokenizer::U32StringTokenizer(const U32String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
 	reset();
 }
@@ -85,18 +115,15 @@ U32String U32StringTokenizer::nextToken() {
 	// Skip delimiters when present at the beginning, to point to the next token
 	// For example, the below loop will set _tokenBegin & _tokenEnd to 'H' for the string -> "!!--=Hello World"
 	// And subsequently, skip all delimiters in the beginning of the next word.
-	while (_tokenBegin != _str.end() && _delimiters.contains(*_tokenBegin)) {
+	_tokenBegin = _tokenEnd;
+	while (_tokenBegin != _str.end() && _delimiters.contains(*_tokenBegin))
 		_tokenBegin++;
-		_tokenEnd++;
-	}
+	_tokenEnd = _tokenBegin;
 
 	// Loop and advance _tokenEnd until we find a delimiter at the end of a word/string
 	while (_tokenBegin != _str.end() && _tokenEnd != _str.end()) {
 		if (_delimiters.contains(*_tokenEnd)) {
-			U32String token(_tokenBegin, _tokenEnd);
-			_tokenEnd++;
-			_tokenBegin = _tokenEnd;
-			return token;
+			return U32String(_tokenBegin, _tokenEnd);
 		}
 		_tokenEnd++;
 	}
@@ -115,6 +142,36 @@ U32StringArray U32StringTokenizer::split() {
 		res.push_back(nextToken());
 
 	return res;
+}
+
+U32String U32StringTokenizer::delimitersAtTokenBegin() const {
+	// First token appears at beginning of the string, or no tokens have been extracted yet
+	if (_tokenBegin == _str.begin())
+		return U32String();
+
+	// Iterate backwards until we hit either the previous token, or the beginning of the input string
+	U32String::const_iterator delimitersBegin;
+	for (delimitersBegin = _tokenBegin - 1; delimitersBegin >= _str.begin() && _delimiters.contains(*delimitersBegin); delimitersBegin--)
+		;
+
+	++delimitersBegin;
+	
+	// Return the delimiters
+	return U32String(delimitersBegin, _tokenBegin - delimitersBegin);
+}
+
+U32String U32StringTokenizer::delimitersAtTokenEnd() const {
+	// Last token appears at end of the string, or no tokens have been extracted yet
+	if (_tokenEnd == _str.begin() || _tokenEnd == _str.end())
+		return String();
+
+	// Iterate forwards until we hit either the next token, or the end of the input string
+	U32String::const_iterator delimitersEnd;
+	for (delimitersEnd = _tokenEnd; delimitersEnd < _str.end() && _delimiters.contains(*delimitersEnd); delimitersEnd++)
+		;
+	
+	// Return the delimiters
+	return U32String(_tokenEnd, delimitersEnd - _tokenEnd);
 }
 
 
