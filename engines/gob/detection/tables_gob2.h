@@ -344,11 +344,8 @@
 	{
 		"gob2",
 		"v1.02",
-		{
-			{"intro.stk", 0, "285d7340f98ebad65d465585da12910b", 837286},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "285d7340f98ebad65d465585da12910b", 837286,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -362,11 +359,8 @@
 	{
 		"gob2",
 		"v1.02",
-		{
-			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "25a99827cd59751a80bed9620fb677a0", 893302,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		EN_USA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -380,11 +374,8 @@
 	{
 		"gob2",
 		"v1.02",
-		{
-			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "25a99827cd59751a80bed9620fb677a0", 893302,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -398,11 +389,8 @@
 	{
 		"gob2",
 		"v1.02",
-		{
-			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "25a99827cd59751a80bed9620fb677a0", 893302,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -415,12 +403,9 @@
 {
 	{
 		"gob2",
-		"",
-		{
-			{"intro.stk", 0, "6efac0a14c0de4d57dde8592456c8acf", 845172},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		"v1.02",
+		AD_ENTRY2s("intro.stk", "6efac0a14c0de4d57dde8592456c8acf", 845172,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		EN_USA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -433,12 +418,9 @@
 {
 	{
 		"gob2",
-		"",
-		{
-			{"intro.stk", 0, "6efac0a14c0de4d57dde8592456c8acf", 845172},
-			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-			{0, 0, 0, 0}
-		},
+		"v1.02",
+		AD_ENTRY2s("intro.stk", "6efac0a14c0de4d57dde8592456c8acf", 845172,
+				"musmac1.mid",	"834e55205b710d0af5f14a6f2320dd8e", 8661),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -497,11 +479,8 @@
 	{
 		"gob2",
 		"",
-		{
-			{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
-			{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "b45b984ee8017efd6ea965b9becd4d66", 828443,
+				"musmac1.mid",	"7f96f491448c7a001b32df89cf8d2af2", 1658),
 		UNK_LANG,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
@@ -515,11 +494,8 @@
 	{
 		"gob2",
 		"",
-		{
-			{"intro.stk", 0, "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275},
-			{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275,
+				"musmac1.mid",	"7f96f491448c7a001b32df89cf8d2af2", 1658),
 		FR_FRA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
