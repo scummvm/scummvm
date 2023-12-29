@@ -263,7 +263,7 @@ void MacFontManager::loadFontsBDF() {
 		//macfont->setFont(font);
 		_fontRegistry.setVal(fontName, macfont);
 
-		debug(2, " %s", fontName.c_str());
+		debugC(5, kDebugLevelMacGUI, " %s", fontName.c_str());
 	}
 
 	_builtInFonts = false;
@@ -377,7 +377,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			bool fontFamilyUsed = false;
 
 			for (uint i = 0; i < assoc->size(); i++) {
-				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
+				debugC(5, kDebugLevelMacGUI, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
 										(*assoc)[i]._fontID);
 
 				Common::SeekableReadStream *fontstream;
@@ -423,7 +423,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				macfont->setFont(font, false);
 				_fontRegistry.setVal(fontName, macfont);
 
-				debug(2, " %s", fontName.c_str());
+				debugC(5, kDebugLevelMacGUI, " %s", fontName.c_str());
 			}
 
 			delete fond;
@@ -455,14 +455,14 @@ void MacFontManager::loadWindowsFont(const Common::Path &fileName) {
 	font->setFont(winFont, false);
 	_fontRegistry.setVal(font->getName(), font);
 
-	debug(2, "MacFontManager::loadWindowsFont(): Loaded font %s", fullName.c_str());
+	debugC(1, kDebugLevelMacGUI, "MacFontManager::loadWindowsFont(): Loaded font %s", fullName.c_str());
 }
 
 const Font *MacFontManager::getFont(MacFont *macFont) {
 	Common::String name;
 	const Font *font = 0;
 
-	debug(6, "getFont(%s), id: %d", getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), 0).c_str(), macFont->getId());
+	debugC(2, kDebugLevelMacGUI, "MacFontManager::getFont(%s), id: %d", getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), 0).c_str(), macFont->getId());
 
 	int aliasForId = getFontAliasForId(macFont->getId());
 	if (aliasForId > -1) {
@@ -494,7 +494,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		font = FontMan.getFontByName(macFont->getName());
 
 		if (!font) {
-			debug(1, "Cannot load font '%s'", macFont->getName().c_str());
+			debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
 
 			font = FontMan.getFontByName(MacFont(kMacFontChicago, 12).getName());
 		}
@@ -504,7 +504,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 	if (!font) {
 		if (_mode & kWMModeUnicode) {
 			if (macFont->getSize() <= 0) {
-				debug(1, "MacFontManager::getFont() - Font size <= 0!");
+				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
 			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont->getSize());
 
@@ -526,7 +526,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
 			if (winfont->getFontHeight() != macFont->getSize()) {
-				debug(5, "MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
+				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
 
 				Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), macFont->getSize());
 
@@ -537,7 +537,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 					// Generate a scaledFont
 					Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
 					if (scaledWinFont) {
-						debug(5, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
+						debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
 
 						// register font generated for reuse
 						_winFontRegistry.setVal(fullFontName, scaledWinFont);
@@ -613,7 +613,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	if (_fontIds.contains(name))
 		return _fontIds[name];
 
-	debug(1, "MacFontManager::registerFontName('%s', %d)", toPrintable(name).c_str(), preferredId);
+	debugC(1, kDebugLevelMacGUI, "MacFontManager::registerFontName('%s', %d)", toPrintable(name).c_str(), preferredId);
 
 	int id;
 	if (preferredId > -1 && !_fontInfo.contains(preferredId)) {
@@ -765,7 +765,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 
 	if (sizes.empty()) {
 		if (macFont.getSlant() == kMacFontRegular) {
-			debug(1, "No viable substitute found (1) for font %s", toPrintable(getFontName(macFont)).c_str());
+			debugC(1, kDebugLevelMacGUI, "No viable substitute found (1) for font %s", toPrintable(getFontName(macFont)).c_str());
 			return;
 		}
 
@@ -776,7 +776,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 		}
 
 		if (sizes.empty()) {
-			debug(1, "No viable substitute found (2) for font %s", toPrintable(getFontName(macFont)).c_str());
+			debugC(1, kDebugLevelMacGUI, "No viable substitute found (2) for font %s", toPrintable(getFontName(macFont)).c_str());
 			return;
 		}
 	}
@@ -809,7 +809,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 
 #ifdef USE_FREETYPE2
 void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream *stream) {
-	debug("Generating TTF font '%s'", toPrintable(getFontName(toFont)).c_str());
+	debugC(1, kDebugLevelMacGUI, "Generating TTF font '%s'", toPrintable(getFontName(toFont)).c_str());
 
 	// TODO: Handle getSlant() flags
 
@@ -826,7 +826,7 @@ void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream
 	FontMan.assignFontToName(getFontName(toFont), font);
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
 
-	debug("Generated font '%s'", toPrintable(getFontName(toFont)).c_str());
+	debugC(1, kDebugLevelMacGUI, "Generated font '%s'", toPrintable(getFontName(toFont)).c_str());
 }
 #endif
 
@@ -836,7 +836,7 @@ void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
 		return;
 	}
 
-	debug("Found font substitute for font '%s' as '%s'", toPrintable(getFontName(toFont)).c_str(), toPrintable(getFontName(fromFont)).c_str());
+	debugC(1, kDebugLevelMacGUI, "Found font substitute for font '%s' as '%s'", toPrintable(getFontName(toFont)).c_str(), toPrintable(getFontName(fromFont)).c_str());
 
 	int slant = kMacFontRegular;
 	if (fromFont.getSlant() == kMacFontRegular)
@@ -855,7 +855,7 @@ void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
 	FontMan.assignFontToName(getFontName(toFont), font);
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
 
-	debug("Generated font '%s'", toPrintable(getFontName(toFont)).c_str());
+	debugC(1, kDebugLevelMacGUI, "Generated font '%s'", toPrintable(getFontName(toFont)).c_str());
 }
 
 void MacFont::setFallback(const Font *font, Common::String name) {
