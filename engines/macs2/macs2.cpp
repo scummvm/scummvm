@@ -289,7 +289,15 @@ byte ScriptReadByte(Common::MemoryReadStream* stream) {
 // #define ScriptNoEntry assert(false);
 #define ScriptNoEntry debug("Unhandled case in script handling");
 
+void Func9F4DClean(Common::MemoryReadStream *stream, uint16 &out1, uint16 &out2) {
+	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
+	debug("-- Entering 9F4D");
+
+	debug("-- Leaving 94FD");
+}
+
 void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
+	debug("-- Entering 9F4D");
 	// Read an opcode (would be 0037:9F07) - [bp-1h]
 	byte opcode = ScriptReadByte(stream);
 	// debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
@@ -301,7 +309,13 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 	// debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
 	// TODO: There is some code required here to follow the logic exactly of going from opcode 1 to 2
 	if (opcode == 0x01) {
-
+		if (value == 0x0b) {
+			// TODO: Hardcoded combination, the rule is more general
+			out1 = 0x03;
+			out2 = 0x00;
+			debug("-- Leaving 94FD");
+			return;
+		}
 	} else
 	if (opcode == 0x02) {
 		// TODO: We need to start handling opcode2 in this case
@@ -309,6 +323,7 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 			// TODO: This is too verbatim, only to get me to pass the script once. In reality, we are accessing a saved variable in this and similar cases based on the second value
 			out1 = 0;
 			out2 = 0;
+			debug("-- Leaving 94FD");
 			return;
 		}
 	}
@@ -334,6 +349,7 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 			// For now just returning 0 by default
 			out1 = 0;
 			out2 = 0;
+			debug("-- Leaving 94FD");
 			return;
 		}
 	}
@@ -345,7 +361,7 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 
 
 void FuncA3D2(Common::MemoryReadStream* stream) {
-	
+	debug("-- Entering A3D2");
 	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
 	// TODO: Figure out end condition
 	for (;;) {
@@ -383,6 +399,7 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 		}
 		// TODO: Continue here
 	}
+	debug("-- Leaving A3D2");
 }
 
 

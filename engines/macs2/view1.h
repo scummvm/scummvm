@@ -22,6 +22,7 @@
 #ifndef MACS2_VIEW1_H
 #define MACS2_VIEW1_H
 
+
 #include "macs2/events.h"
 #include "macs2/macs2.h"
 
@@ -37,6 +38,8 @@ private:
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height);
+
+	void renderString(uint16 x, uint16 y, Common::String s);
 
 	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
