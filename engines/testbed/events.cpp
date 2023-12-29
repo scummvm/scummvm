@@ -112,17 +112,17 @@ char EventTests::keystrokeToChar() {
 }
 
 Common::Rect EventTests::drawFinishZone() {
-	Graphics::Surface *screen = g_system->lockScreen();
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont));
 	int width = 35;
 	int height = 20;
 	int right = g_system->getWidth();
 	Common::Rect rect(0, 0, right, height);
 	Common::Rect rect2(0, 0, right - width, height);
-	screen->fillRect(rect, kColorSpecial);
-	screen->fillRect(rect2, kColorBlack);
-	g_system->unlockScreen();
+	g_system->fillScreen(rect, kColorSpecial);
+	g_system->fillScreen(rect2, kColorBlack);
+	Graphics::Surface *screen = g_system->lockScreen();
 	font.drawString(screen, "Close", rect.left, rect.top, screen->w, kColorBlack, Graphics::kTextAlignRight);
+	g_system->unlockScreen();
 	g_system->updateScreen();
 	return Common::Rect(right - width, 0, right, height);
 }
