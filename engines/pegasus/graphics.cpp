@@ -243,12 +243,6 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 
 	Common::Point lastOffset(0, 0);
 
-	// Store the current screen for later use
-	Graphics::Surface oldScreen;
-	Graphics::Surface *curScreen = g_system->lockScreen();
-	oldScreen.copyFrom(*curScreen);
-	g_system->unlockScreen();
-
 	// Convert to millis
 	duration = duration * 1000 / scale;
 
@@ -257,39 +251,7 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 	while (g_system->getMillis() < startTime + duration) {
 		Common::Point thisOffset = _shakeOffsets[(g_system->getMillis() - startTime) * (kMaxShakeOffsets - 1) / duration];
 		if (thisOffset != lastOffset) {
-			// Fill the screen with black
-			Graphics::Surface *screen = g_system->lockScreen();
-			screen->fillRect(Common::Rect(0, 0, 640, 480), g_system->getScreenFormat().RGBToColor(0, 0, 0));
-			g_system->unlockScreen();
-
-			// Calculate the src/dst offsets and the width/height
-			int32 srcOffsetX, dstOffsetX, width;
-
-			if (thisOffset.x > 0) {
-				srcOffsetX = 0;
-				dstOffsetX = thisOffset.x;
-				width = 640 - dstOffsetX;
-			} else {
-				srcOffsetX = -thisOffset.x;
-				dstOffsetX = 0;
-				width = 640 - srcOffsetX;
-			}
-
-			int32 srcOffsetY, dstOffsetY, height;
-
-			if (thisOffset.y > 0) {
-				srcOffsetY = 0;
-				dstOffsetY = thisOffset.y;
-				height = 480 - dstOffsetY;
-			} else {
-				srcOffsetY = -thisOffset.y;
-				dstOffsetY = 0;
-				height = 480 - srcOffsetY;
-			}
-
-			// Now copy to the screen
-			g_system->copyRectToScreen((byte *)oldScreen.getBasePtr(srcOffsetX, srcOffsetY), oldScreen.pitch,
-					dstOffsetX, dstOffsetY, width, height);
+			g_system->setShakePos(thisOffset.x, thisOffset.y);
 			g_system->updateScreen();
 
 			lastOffset = thisOffset;
@@ -299,11 +261,9 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 	}
 
 	if (lastOffset.x != 0 || lastOffset.y != 0) {
-		g_system->copyRectToScreen((byte *)oldScreen.getPixels(), oldScreen.pitch, 0, 0, 640, 480);
+		g_system->setShakePos(0, 0);
 		g_system->updateScreen();
 	}
-
-	oldScreen.free();
 }
 
 void GraphicsManager::enableErase() {
