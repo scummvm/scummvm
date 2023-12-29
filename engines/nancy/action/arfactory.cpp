@@ -36,6 +36,7 @@
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
+#include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
@@ -319,6 +320,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new BBallPuzzle();
 	case 220:
 		return new TwoDialPuzzle();
+	case 221:
+		return new HamRadioPuzzle();
 	case 222:
 		return new AssemblyPuzzle();
 	case 223:
