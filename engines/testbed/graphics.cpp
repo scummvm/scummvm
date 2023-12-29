@@ -335,10 +335,8 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 			// Move estimated rect to (20, 20)
 			estimatedCursorRect.moveTo(20, 20);
 
-			Graphics::Surface *screen = g_system->lockScreen();
 			GFXTestSuite::setCustomColor(255, 0, 0);
-			screen->fillRect(estimatedCursorRect, 2);
-			g_system->unlockScreen();
+			g_system->fillScreen(estimatedCursorRect, 2);
 			g_system->updateScreen();
 		}
 
@@ -1040,11 +1038,9 @@ TestExitStatus GFXtests::mouseMovements() {
 	}
 
 	// Draw Rectangle
-	Graphics::Surface *screen = g_system->lockScreen();
 	// Ensure that 2 represents red in current palette
 	GFXTestSuite::setCustomColor(255, 0, 0);
-	screen->fillRect(Common::Rect::center(106, 106, 14, 14), 2);
-	g_system->unlockScreen();
+	g_system->fillScreen(Common::Rect::center(106, 106, 14, 14), 2);
 
 	// Testing Mouse Movements now!
 	Common::Point pt(0, 10);
@@ -1364,7 +1360,6 @@ TestExitStatus GFXtests::focusRectangle() {
 
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
-	Graphics::Surface *screen = g_system->lockScreen();
 	int screenHeight = g_system->getHeight();
 	int screenWidth = g_system->getWidth();
 
@@ -1372,11 +1367,13 @@ TestExitStatus GFXtests::focusRectangle() {
 	int width = screenWidth / 2;
 
 	Common::Rect rectLeft(0, 0, width, height * 2);
-	screen->fillRect(rectLeft, kColorWhite);
-	font.drawString(screen, "Focus 1", rectLeft.left, rectLeft.top, width, kColorBlack, Graphics::kTextAlignLeft);
+	g_system->fillScreen(rectLeft, kColorWhite);
 
 	Common::Rect rectRight(screenWidth - width, screenHeight - height * 2 , screenWidth, screenHeight);
-	screen->fillRect(rectRight, kColorWhite);
+	g_system->fillScreen(rectRight, kColorWhite);
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	font.drawString(screen, "Focus 1", rectLeft.left, rectLeft.top, width, kColorBlack, Graphics::kTextAlignLeft);
 	font.drawString(screen, "Focus 2", rectRight.left, rectRight.top, width, kColorBlack, Graphics::kTextAlignRight);
 	g_system->unlockScreen();
 	g_system->updateScreen();
@@ -1732,6 +1729,7 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::ManagedSurface dstSurface(screen->w, screen->h, screen->format);
 	dstSurface.blitFrom(*screen);
+	g_system->unlockScreen();
 
 
 	// Init palette, if we are demonstating a CLUT8 preview
@@ -1838,7 +1836,6 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 
 	g_system->copyRectToScreen(dstSurface.getPixels(), dstSurface.pitch, 0, 0,
 	                           dstSurface.w, dstSurface.h);
-	g_system->unlockScreen();
 	g_system->updateScreen();
 }
 
