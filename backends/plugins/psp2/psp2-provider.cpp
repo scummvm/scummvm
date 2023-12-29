@@ -57,9 +57,9 @@ void *forceLinkFunctions[] = {
 	(void *)vsprintf,
 	(void *)wcstombs,
 	(void *)__cxxabiv1::__cxa_finalize,
-	(void *)__cxa_guard_acquire,
-	(void *)__cxa_guard_release,
-	(void *)__cxa_guard_abort
+	(void *)__cxxabiv1::__cxa_guard_acquire,
+	(void *)__cxxabiv1::__cxa_guard_release,
+	(void *)__cxxabiv1::__cxa_guard_abort
 };
 
 class PSP2Plugin final : public Plugin {
