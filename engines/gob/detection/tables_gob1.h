@@ -176,7 +176,7 @@
 	{
 		"gob1",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+		AD_ENTRY1s("intro.stk", "8bd873137b6831c896ee8ad217a6a398", 3295368),
 		EN_USA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -190,7 +190,7 @@
 	{
 		"gob1",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+		AD_ENTRY1s("intro.stk", "8bd873137b6831c896ee8ad217a6a398", 3295368),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_CD,
@@ -204,7 +204,7 @@
 	{
 		"gob1",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+		AD_ENTRY1s("intro.stk", "8bd873137b6831c896ee8ad217a6a398", 3295368),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -218,7 +218,7 @@
 	{
 		"gob1",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+		AD_ENTRY1s("intro.stk", "8bd873137b6831c896ee8ad217a6a398", 3295368),
 		IT_ITA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -232,7 +232,7 @@
 	{
 		"gob1",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
+		AD_ENTRY1s("intro.stk", "8bd873137b6831c896ee8ad217a6a398", 3295368),
 		ES_ESP,
 		kPlatformDOS,
 		ADGF_CD,
