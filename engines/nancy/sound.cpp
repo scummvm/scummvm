@@ -259,13 +259,13 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
-void SoundManager::loadSound(const SoundDescription &description, SoundEffectDescription **effectData) {
+void SoundManager::loadSound(const SoundDescription &description, SoundEffectDescription **effectData, bool forceReload) {
 	if (description.name == "NO SOUND") {
 		return;
 	}
 
 	Channel &existing = _channels[description.channelID];
-	if (existing.stream != nullptr) {
+	if (!forceReload && existing.stream != nullptr) {
 		// There's a channel already loaded. Check if we're trying to reload the exact same sound
 		if (	description.name == existing.name &&
 				description.numLoops == existing.numLoops &&

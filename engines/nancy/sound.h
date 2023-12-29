@@ -67,7 +67,7 @@ public:
 	void initSoundChannels();
 
 	// Load a sound into a channel without starting it
-	void loadSound(const SoundDescription &description, SoundEffectDescription **effectData = nullptr);
+	void loadSound(const SoundDescription &description, SoundEffectDescription **effectData = nullptr, bool forceReload = false);
 
 	void playSound(uint16 channelID);
 	void playSound(const SoundDescription &description);
