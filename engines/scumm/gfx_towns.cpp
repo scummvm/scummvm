@@ -361,12 +361,9 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pitch(0), _pixelFormat(system->getScreenFormat()), _numDirtyRects(0) {
-	Graphics::Surface *s = _system->lockScreen();
-	_width = s->w;
-	_height = s->h;
-	_pitch = s->pitch;
-	_system->unlockScreen();
+TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pixelFormat(system->getScreenFormat()), _numDirtyRects(0) {
+	_width = _system->getWidth();
+	_height = _system->getHeight();
 
 	_semiSmoothScroll = ConfMan.getBool("semi_smooth_scroll");
 
@@ -544,10 +541,7 @@ void TownsScreen::toggleLayers(int flags) {
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
 	_numDirtyRects = kFullRedraw;
 
-	Graphics::Surface *s = _system->lockScreen();
-	assert(s);
-	memset(s->getPixels(), 0, _pitch * _height);
-	_system->unlockScreen();
+	_system->fillScreen(0);
 	update();
 
 	_system->updateScreen();
@@ -615,10 +609,10 @@ uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
 }
 #endif
 
-template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool srcCol4bit> void TownsScreen::transferRect(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h) {
-	uint8 *dst10 = dst + y * _pitch * scaleH + x * sizeof(dstPixelType) * scaleW;
-	uint8 *dst20 = (scaleH == 2) ? dst10 + _pitch : nullptr;
-	int pitch = _pitch * scaleH;
+template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool srcCol4bit> void TownsScreen::transferRect(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h) {
+	uint8 *dst10 = dst + y * pitch * scaleH + x * sizeof(dstPixelType) * scaleW;
+	uint8 *dst20 = (scaleH == 2) ? dst10 + pitch : nullptr;
+	pitch *= scaleH;
 
 	int x0 = (x + l->hScroll) % l->width;
 	const uint8 *in0 = l->pixels + y * l->pitch + x0 * sizeof(srcPixelType);
@@ -686,13 +680,13 @@ template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, b
 }
 
 #ifdef USE_RGB_COLOR
-template void TownsScreen::transferRect<uint16, uint16, 1, 1, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
-template void TownsScreen::transferRect<uint16, uint16, 2, 2, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
-template void TownsScreen::transferRect<uint16, uint8, 1, 1, true>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint16, uint16, 1, 1, false>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint16, uint16, 2, 2, false>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint16, uint8, 1, 1, true>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
 #else
-template void TownsScreen::transferRect<uint8, uint8, 2, 2, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
-template void TownsScreen::transferRect<uint8, uint8, 1, 1, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
-template void TownsScreen::transferRect<uint8, uint8, 1, 1, true>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint8, uint8, 2, 2, false>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint8, uint8, 1, 1, false>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
+template void TownsScreen::transferRect<uint8, uint8, 1, 1, true>(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
 #endif
 
 template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
@@ -700,6 +694,7 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 	if (!s)
 		error("TownsScreen::updateOutputBuffer(): Failed to allocate screen buffer");
 	uint8 *dst = (uint8*)s->getPixels();
+	int pitch = s->pitch;
 
 	for (int i = 0; i < 2; i++) {
 		TownsScreenLayer *l = &_layers[i];
@@ -709,10 +704,10 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 		if (l->bpp == 2) {
 			if (l->scaleH == 2 && l->scaleW == 2) {
 				for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-					transferRect<dstPixelType, uint16, 2, 2, false>(dst, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
+					transferRect<dstPixelType, uint16, 2, 2, false>(dst, pitch, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
 			} else if (l->scaleH == 1 && l->scaleW == 1) {
 				for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-					transferRect<dstPixelType, uint16, 1, 1, false>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
+					transferRect<dstPixelType, uint16, 1, 1, false>(dst, pitch, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
 			} else {
 				error("TownsScreen::updateOutputBuffer(): Unsupported scale mode");
 			}
@@ -722,7 +717,7 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 #endif
 				if (l->scaleH == 1 && l->scaleW == 1) {
 					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-						transferRect<dstPixelType, uint8, 1, 1, true>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
+						transferRect<dstPixelType, uint8, 1, 1, true>(dst, pitch, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
 				} else {
 					error("TownsScreen::updateOutputBuffer(): Unsupported scale mode");
 				}
@@ -730,10 +725,10 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 			} else {
 				if (l->scaleH == 2 && l->scaleW == 2) {
 					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-						transferRect<dstPixelType, uint8, 2, 2, false>(dst, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
+						transferRect<dstPixelType, uint8, 2, 2, false>(dst, pitch, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
 				} else if (l->scaleH == 1 && l->scaleW == 1) {
 					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-						transferRect<dstPixelType, uint8, 1, 1, false>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
+						transferRect<dstPixelType, uint8, 1, 1, false>(dst, pitch, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
 				}
 			}
 #else
