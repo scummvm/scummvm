@@ -50,6 +50,9 @@ namespace Macs2 {
 
 	void View1::drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height) {
 		Graphics::ManagedSurface s = getSurface();
+
+		// TODO: Look up how we determine the width of the right border
+		constexpr int borderWidth = 20;
 		// Draw the background
 		// Draw the border segments
 		drawDarkRectangle(x, y, width, height);
@@ -65,6 +68,34 @@ namespace Macs2 {
 			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
 			currentY += g_engine->_borderHeight;
 		}
+
+		// Top
+		currentX = x;
+		currentY = y;
+		for (int ix = 0; ix < xSegments; ix++) {
+			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			currentX += g_engine->_borderWidth;
+		}
+
+		// Right
+		// TODO: Need to figure out the margin here
+		currentX = x + width - borderWidth;
+		currentY = 0;
+		for (int iy = 0; iy < ySegments; iy++) {
+			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			currentY += g_engine->_borderHeight;
+		}
+
+		// Bottom
+		currentX = x;
+		currentY = y + height - borderWidth;
+		for (int ix = 0; ix < xSegments; ix++) {
+			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			currentX += g_engine->_borderWidth;
+		}
+	}
+
+	void View1::renderString(uint16 x, uint16 y, Common::String s) {
 	}
 
 	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
@@ -196,6 +227,7 @@ bool View1::tick() {
 	//if ((_offset % 256) == 0)
 	//	redraw();
 
+	
 	return true;
 }
 
