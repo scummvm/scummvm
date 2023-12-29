@@ -399,6 +399,7 @@ void LoadSaveMenu::enterFilename() {
 		_blinkingCursorOverlay.setVisible(true);
 		_nextBlink = g_nancy->getTotalPlayTime() + _loadSaveData->_blinkingTimeDelay;
 		_enteringNewState = false;
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}
 
 	// Perform cursor blinking
@@ -436,6 +437,7 @@ void LoadSaveMenu::enterFilename() {
 		_state = kRun;
 		_enteringNewState = true;
 		g_nancy->_sound->playSound("BULS");
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		return;
 	}
 
@@ -444,6 +446,7 @@ void LoadSaveMenu::enterFilename() {
 		_state = kSave;
 		_enteringNewState = true;
 		g_nancy->_sound->playSound("BULS");
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		return;
 	}
 }
