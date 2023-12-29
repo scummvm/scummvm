@@ -104,10 +104,16 @@ struct TalkingState {
 	void say(const Common::StringArray &texts, Object *obj);
 };
 
+struct LockFacing {
+	Facing key;
+	Facing value;
+};
+
 class Object {
 public:
 	Object();
 	Object(HSQOBJECT o, const Common::String &key);
+	~Object();
 
 	static Object *createActor();
 
@@ -189,7 +195,7 @@ public:
 	void setMoveTo(Motor *moveTo);
 	void setWalkTo(Motor *walkTo);
 	Motor *getWalkTo() const { return _walkTo; }
-	void walk(Math::Vector2d pos, Facing* facing);
+	void walk(Math::Vector2d pos, int facing = 0);
 	void walk(Object* obj);
 
 	void setTalking(Motor *talking);
@@ -205,6 +211,8 @@ public:
 	void pickupObject(Object *obj);
 
 	void execVerb();
+	void turn(Facing facing);
+	void turn(Object* obj);
 
 private:
 	Common::String suffix() const;
@@ -236,7 +244,7 @@ public:
 	Common::String _animName;
 	int _animFlags = 0;
 	bool _animLoop = false;
-	Common::HashMap<Facing, Facing, Common::Hash<int> > _facingMap;
+	Common::Array<LockFacing> _facingMap;
 	Facing _facing = FACE_FRONT;
 	int _facingLockValue = 0;
 	float _fps = 0.f;

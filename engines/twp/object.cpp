@@ -45,6 +45,11 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 	: _talkOffset(0, 90), _table(o), _key(key) {
 }
 
+Object::~Object() {
+	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
+	_node->getParent()->removeChild(_node);
+}
+
 Object *Object::createActor() {
 	Object *result = new Object();
 	result->_hotspot = Common::Rect(-18, 0, 37, 71);
@@ -141,8 +146,10 @@ void Object::showLayer(const Common::String &layer, bool visible) {
 Facing Object::getFacing() const {
 	if (_facingLockValue != 0)
 		return (Facing)_facingLockValue;
-	if (_facingMap.contains(_facing))
-		return _facingMap[_facing];
+	for (int i = 0; i < _facingMap.size(); i++) {
+		if (_facingMap[i].key == _facing)
+			return _facingMap[i].value;
+	}
 	return _facing;
 }
 
@@ -306,11 +313,6 @@ void Object::setRoom(Room *room) {
 		}
 		_room = room;
 	}
-}
-
-void Object::delObject() {
-	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
-	_node->getParent()->removeChild(_node);
 }
 
 static void disableMotor(Motor *motor) {
@@ -478,18 +480,21 @@ void Object::update(float elapsedSec) {
 	if (_nodeAnim)
 		_nodeAnim->update(elapsedSec);
 
-	// TODO: update
-	//   if self.icons.len > 1 and self.iconFps > 0:
-	//     self.iconElapsed += elapsedSec
-	//     if self.iconElapsed > (1f / self.iconFps.float32):
-	//       self.iconElapsed = 0f
-	//       self.iconIndex = (self.iconIndex + 1) mod self.icons.len
+	if ((_icons.size() > 1) && (_iconFps > 0)) {
+		_iconElapsed += elapsedSec;
+		if (_iconElapsed > (1.f / _iconFps)) {
+			_iconElapsed = 0.f;
+			_iconIndex = (_iconIndex + 1) % _icons.size();
+		}
+	}
 
-	//   if self.popCount > 0:
-	//       self.popElapsed += elapsedSec
-	//       if self.popElapsed > 0.5f:
-	//         dec self.popCount
-	//         self.popElapsed -= 0.5f
+	if (_popCount > 0) {
+		_popElapsed += elapsedSec;
+		if (_popElapsed > 0.5f) {
+			_popCount--;
+			_popElapsed -= 0.5f;
+		}
+	}
 }
 
 void Object::pickupObject(Object *obj) {
@@ -525,10 +530,10 @@ void Object::lockFacing(int facing) {
 }
 
 void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
-	_facingMap[FACE_LEFT] = left;
-	_facingMap[FACE_RIGHT] = right;
-	_facingMap[FACE_FRONT] = front;
-	_facingMap[FACE_BACK] = back;
+	_facingMap.push_back({FACE_LEFT, left});
+	_facingMap.push_back({FACE_RIGHT, right});
+	_facingMap.push_back({FACE_FRONT, front});
+	_facingMap.push_back({FACE_BACK, back});
 }
 
 int Object::flags() {
@@ -653,23 +658,32 @@ void Object::execVerb() {
 }
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
-void Object::walk(Math::Vector2d pos, Facing *facing) {
-	debug("walk to obj %s: %f,%f, %d", _key.c_str(), pos.getX(), pos.getY(), (int)*facing);
+void Object::walk(Math::Vector2d pos, int facing) {
+	debug("walk to obj %s: %f,%f, %d", _key.c_str(), pos.getX(), pos.getY(), facing);
 	if (!_walkTo || (!_walkTo->isEnabled())) {
 		play(getAnimName(WALK_ANIMNAME), true);
 	}
-	_walkTo = new WalkTo(this, pos, facing ? *facing : 0);
+	_walkTo = new WalkTo(this, pos, facing);
 }
 
 // Walks an actor to the `obj` and then faces it.
 void Object::walk(Object *obj) {
 	debug("walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
 	Facing facing = (Facing)obj->_useDir;
-	walk(obj->getUsePos(), &facing);
+	walk(obj->getUsePos(), facing);
+}
+
+void Object::turn(Facing facing) {
+	setFacing(facing);
+}
+
+void Object::turn(Object *obj) {
+	Facing facing = getFacingToFaceTo(this, obj);
+	setFacing(facing);
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {
-	// TODO: obj->setTalking(new Talking(obj, texts, color));
+	obj->setTalking(new Talking(obj, texts, _color));
 }
 
 } // namespace Twp

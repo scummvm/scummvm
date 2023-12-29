@@ -265,4 +265,161 @@ void WalkTo::update(float elapsed) {
 	}
 }
 
+Talking::Talking(Object *obj, const Common::StringArray &texts, Color color) {
+	_obj = obj;
+	_color = color;
+	_texts.assign(texts.begin() + 1, texts.end());
+	say(texts[0]);
+}
+
+static int letterToIndex(char c) {
+	switch (c) {
+	case 'A':
+		return 1;
+	case 'B':
+		return 2;
+	case 'C':
+		return 3;
+	case 'D':
+		return 4;
+	case 'E':
+		return 5;
+	case 'F':
+		return 6;
+	case 'G':
+		return 1;
+	case 'H':
+		return 4;
+	case 'X':
+		return 1;
+	default:
+		error("unknown letter %c", c);
+	}
+}
+
+void Talking::update(float elapsed) {
+	if (isEnabled()) {
+		_elapsed += elapsed;
+		if (_elapsed < _duration) {
+			char letter = _lip.letter(_elapsed);
+			_obj->setHeadIndex(letterToIndex(letter));
+		} else {
+			if (_texts.size() > 0) {
+				say(_texts[0]);
+				_texts.remove_at(0);
+			} else {
+				disable();
+			}
+		}
+	}
+}
+
+void Talking::say(const Common::String &text) {
+	Common::String txt(text);
+	if (text[0] == '@') {
+		int id = atoi(text.c_str() + 1);
+		txt = g_engine->_textDb.getText(id);
+
+		id = onTalkieId(id);
+		Common::String key = talkieKey();
+		key.toUppercase();
+		Common::String name = Common::String::format("%s_%d", key.c_str(), id);
+		Common::String path = name + ".lip";
+
+		debug("Load lip %s", path.c_str());
+		if (g_engine->_pack.assetExists(path.c_str())) {
+			GGPackEntryReader entry;
+			entry.open(g_engine->_pack, path);
+			_lip.load(&entry);
+			debug("Lip %s loaded: {self.lip}", path.c_str());
+		}
+
+		// TODO: call sayingLine
+		// TODO: _soundId = self.loadActorSpeech(name)
+	} else if (text[0] == '^') {
+		txt = text.substr(1);
+	}
+
+	// remove text in parenthesis
+	if (txt[0] == '(') {
+		int i = txt.find(')');
+		if (i != -1)
+			txt = txt.substr(i + 1);
+	}
+
+	debug("sayLine '%s'", txt.c_str());
+
+	// modify state ?
+	Common::String state;
+	if (txt[0] == '{') {
+		int i = txt.find('}');
+		if (i != -1) {
+			state = txt.substr(1, txt.size() - 2);
+			debug("Set state from anim '%s'", state.c_str());
+			if (state != "notalk") {
+				_obj->play(state);
+			}
+			txt = txt.substr(i + 1);
+		}
+	}
+
+	setDuration(txt);
+
+	if(_obj->_sayNode) {
+		_obj->_sayNode->remove();
+	}
+	Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
+	_obj->_sayNode = new TextNode();
+	((TextNode *)_obj->_sayNode)->setText(text2);
+	_obj->_sayNode->setColor(_color);
+	_node = _obj->_sayNode;
+	Math::Vector2d pos = g_engine->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
+
+	// clamp position to keep it on screen
+	pos.setX(Twp::clamp(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
+	pos.setY(Twp::clamp(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
+
+	_obj->_sayNode->setPos(pos);
+	_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
+	g_engine->_screenScene.addChild(_obj->_sayNode);
+}
+
+void Talking::disable() {
+	Motor::disable();
+	_texts.clear();
+	_obj->setHeadIndex(1);
+	_node->remove();
+}
+
+int Talking::onTalkieId(int id) {
+	int result = 0;
+	sqcallfunc(result, "onTalkieID", _obj->_table, id);
+	if (result == 0)
+		result = id;
+	return result;
+}
+
+void Talking::setDuration(const Common::String &text) {
+	_elapsed = 0;
+	// let sayLineBaseTime = prefs(SayLineBaseTime);
+	float sayLineBaseTime = 1.5f;
+	//   let sayLineCharTime = prefs(SayLineCharTime);
+	float sayLineCharTime = 0.025f;
+	// let sayLineMinTime = prefs(SayLineMinTime);
+	float sayLineMinTime = 0.2f;
+	//   let sayLineSpeed = prefs(SayLineSpeed);
+	float sayLineSpeed = 0.5f;
+	float duration = (sayLineBaseTime + sayLineCharTime * text.size()) / (0.2f + sayLineSpeed);
+	_duration = MAX(duration, sayLineMinTime);
+}
+
+Common::String Talking::talkieKey() {
+	Common::String result;
+	if (sqrawexists(_obj->_table, "_talkieKey"))
+		sqgetf(_obj->_table, "_talkieKey", result);
+	else
+		sqgetf(_obj->_table, "_key", result);
+	return result;
+}
+
 } // namespace Twp

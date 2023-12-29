@@ -250,6 +250,20 @@ private:
     Object* _obj = nullptr;
 };
 
+class SentenceNode: public Node {
+public:
+	SentenceNode();
+	virtual ~SentenceNode();
+
+	void setText(const Common::String& text);
+
+private:
+	void drawCore(Math::Matrix4 trsf) override final;
+
+private:
+	Common::String _text;
+};
+
 } // End of namespace Twp
 
 #endif

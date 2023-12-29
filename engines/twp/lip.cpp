@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,24 +20,29 @@
  *
  */
 
-#ifndef TWP_TSV_H
-#define TWP_TSV_H
-
-#include "common/hashmap.h"
-#include "common/stream.h"
+#include "twp/lip.h"
 
 namespace Twp {
 
-class TextDb {
-public:
-	void parseTsv(Common::SeekableReadStream& stream);
-	Common::String getText(const Common::String& text);
-	Common::String getText(int id);
-
-private:
-  Common::HashMap<int, Common::String> _texts;
-};
-
+void Lip::load(Common::SeekableReadStream *stream) {
+	_items.clear();
+	while (!stream->eos()) {
+		LipItem item;
+		Common::String line = stream->readLine();
+		sscanf(line.c_str(), "%f\t%c", &item.time, &item.letter);
+		_items.push_back(item);
+	}
 }
 
-#endif
+char Lip::letter(float time) {
+	if (_items.size() == 0)
+		return 'A';
+	for (int i = 0; i < _items.size() - 1; i++) {
+		if (time < _items[i + 1].time) {
+			return _items[i].letter;
+		}
+	}
+	return _items[_items.size() - 1].letter;
+}
+
+} // namespace Twp

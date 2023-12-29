@@ -22,6 +22,8 @@
 #ifndef TWP_IDS_H
 #define TWP_IDS_H
 
+#include "common/hashmap.h"
+
 #define START_ACTORID 1000
 #define END_ACTORID 2000
 #define START_ROOMID 2000
@@ -236,6 +238,17 @@ enum Facing {
 	FACE_FRONT = 4,
 	FACE_BACK = 8
 };
+
+}
+
+namespace Common {
+template<> struct Hash<Twp::Facing> : public UnaryFunction<Twp::Facing, uint> {
+	uint operator()(Twp::Facing val) const { return (uint)val; }
+};
+}
+
+
+namespace Twp {
 
 bool isThread(int id);
 bool isRoom(int id);

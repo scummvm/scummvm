@@ -565,4 +565,32 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 	//   }
 }
 
+SentenceNode::SentenceNode() : Node("Sentence") {
+	_zOrder = -100;
+}
+
+SentenceNode::~SentenceNode() {
+}
+
+void SentenceNode::setText(const Common::String &text) {
+	_text = text;
+}
+
+void SentenceNode::drawCore(Math::Matrix4 trsf) {
+	Text text("sayline", _text);
+	float x, y;
+	//   if prefs(ClassicSentence):
+	//     x = (ScreenWidth - text.bounds.x) / 2f;
+	//     y = 208f;
+	//   else:
+	x = MAX(_pos.getX() - text.getBounds().getX() / 2.f, MARGIN);
+	x = MIN(x, SCREEN_WIDTH - text.getBounds().getX() - MARGIN);
+	y = _pos.getY() + 2.f * 38.f;
+	if (y >= SCREEN_HEIGHT)
+		y = _pos.getY() - 38.f;
+	Math::Matrix4 t;
+	t.translate(Math::Vector3d(x, y, 0.f));
+	text.draw(g_engine->getGfx(), t);
+}
+
 } // namespace Twp

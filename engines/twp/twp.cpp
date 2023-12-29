@@ -57,6 +57,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	sq_resetobject(&_defaultObj);
 	_screenScene.addChild(&_inputState);
+	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
 	_screenScene.addChild(&_uiInv);
 }
@@ -105,35 +106,156 @@ bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
 	return result;
 }
 
+bool TwpEngine::preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+	bool result = false;
+	HSQOBJECT n2Table;
+	Common::String n2Name;
+	if (noun2) {
+		n2Table = noun2->_table;
+		n2Name = Common::String::format("%s(%s)", noun2->_name.c_str(), noun2->_key.c_str());
+	} else {
+		sq_resetobject(&n2Table);
+	}
+	if (sqrawexists(actor->_table, "actorPreWalk")) {
+		debug("actorPreWalk %d n1=%s(%s) n2=%s", verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str());
+		sqcallfunc(result, actor->_table, "actorPreWalk", verbId.id, noun1->_table, n2Table);
+	}
+	if (!result) {
+		Common::String funcName = isActor(noun1->getId()) ? "actorPreWalk" : "objectPreWalk";
+		if (sqrawexists(noun1->_table, funcName)) {
+			sqcallfunc(result, noun1->_table, funcName.c_str(), verbId.id, noun1->_table, n2Table);
+			debug("%s %d n1=%s(%s) n2=%s -> %s", funcName.c_str(), verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str(), result ? "yes" : "no");
+		}
+	}
+	return result;
+}
+
+static bool verbNoWalkTo(VerbId verbId, Object *noun1) {
+	if (verbId.id == VERB_LOOKAT)
+		return (noun1->getFlags() & FAR_LOOK) != 0;
+	return false;
+}
+
+// Called to execute a sentence and, if needed, start the actor walking.
+// If `actor` is `null` then the selectedActor is assumed.
+bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+	Common::String name = !actor ? "currentActor" : actor->_key;
+	Common::String noun1name = !noun1 ? "null" : noun1->_key;
+	Common::String noun2name = !noun2 ? "null" : noun2->_key;
+	debug("exec({name},{verbId.VerbId},{noun1name},{noun2name})");
+	actor = !actor ? g_engine->_actor : actor;
+	if ((verbId.id <= 0) || (verbId.id > 13) || (!noun1) || (!actor))
+		return false;
+	// TODO
+	// if (a?._verb_tid) stopthread(actor._verb_tid)
+
+	debug("noun1.inInventory: {noun1.inInventory} and noun1.touchable: {noun1.touchable} nowalk: {verbNoWalkTo(verbId, noun1)}");
+
+	// test if object became untouchable
+	if (!noun1->inInventory() && !noun1->_touchable)
+		return false;
+	if (noun2 && (!noun2->inInventory()) && (!noun2->_touchable))
+		return false;
+
+	if (noun1->inInventory()) {
+		if (!noun2 || noun2->inInventory()) {
+			callVerb(actor, verbId, noun1, noun2);
+			return true;
+		}
+	}
+
+	if (preWalk(actor, verbId, noun1, noun2))
+		return true;
+
+	if (verbNoWalkTo(verbId, noun1)) {
+		if (!noun1->inInventory()) { // TODO: test if verb.flags != VERB_INSTANT
+			actor->turn(noun1);
+			callVerb(actor, verbId, noun1, noun2);
+			return true;
+		}
+	}
+
+	actor->_exec.verb = verbId;
+	actor->_exec.noun1 = noun1;
+	actor->_exec.noun2 = noun2;
+	actor->_exec.enabled = true;
+	if (!noun1->inInventory())
+		actor->walk(noun1);
+	else
+		actor->walk(noun2);
+	return true;
+}
+
 void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 	// TODO: update this
 	if (_room) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
-		// Object *obj = objAt(roomPos);
+		Object *obj = objAt(roomPos);
 
 		if (_cursor.isLeftClick()) {
 			// button left: execute selected verb
-			clickedAtHandled(roomPos);
-			// if (!handled && obj) {
-			//     sqcall("onVerbClick");
-			//     handled = execSentence(nullptr, 1, _noun1, _noun2);
-			//   }
-			//   if not handled:
-			//     if (not self.actor.isNil and scrPos.y > 172) {
-			//       self.actor.walk(room_pos)
-			//       self.hud.verb = self.hud.actorSlot(self.actor).verbs[0]
-			// 	}
-			// Just clicking on the ground
+			bool handled = clickedAtHandled(roomPos);
+			if (!handled && obj) {
+				Verb vb = verb();
+				sqcall("onVerbClick");
+				handled = execSentence(nullptr, vb.id, _noun1, _noun2);
+			}
+			if (!handled) {
+				if (_actor && (scrPos.getY() > 172)) {
+					_actor->walk(roomPos);
+					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+				}
+			}
+			// TODO: Just clicking on the ground
 			//     cancelSentence(self.actor)
+		} else if (_cursor.isRightClick()) {
+			// button right: execute default verb
+			if (obj) {
+				VerbId verb;
+				verb.id = obj->defaultVerbId();
+				execSentence(nullptr, verb, _noun1, _noun2);
+			}
+		} else if (_walkFastState && _cursor.leftDown && _actor && (scrPos.getY() > 172)) {
+			_actor->walk(roomPos);
 		}
-		// else if _cursor.rightDown) {
-		//   // button right: execute default verb
-		//   if not obj.isNil:
-		//     discard self.execSentence(nil, obj.defaultVerbId, self.noun1, self.noun2)
-		// } else if (self.walkFastState and self.mouseState.pressed() and not self.actor.isNil and scrPos.y > 172) {
-		//   self.actor.walk(room_pos);
-		// }
 	}
+}
+
+Verb TwpEngine::verb() {
+	Verb result = _hud._verb;
+	if (result.id.id == VERB_WALKTO && _noun1 && _noun1->inInventory())
+		result = _hud.actorSlot(_actor)->verbs[_noun1->defaultVerbId()];
+	return result;
+}
+
+Common::String TwpEngine::cursorText() {
+	Common::String result;
+	if (_dialog.getState() == DialogState::None) {
+		if (_hud.isVisible() && _hud._over) {
+			return _hud._verb.id.id > 1 ? _textDb.getText(verb().text) : "";
+		}
+
+		// give can be used only on inventory and talkto to talkable objects (actors)
+		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->_name);
+
+		// add verb if not walk to or if noun1 is present
+		if ((_hud._verb.id.id > 1) || (result.size() > 0)) {
+			// if inventory, use default verb instead of walkto
+			Common::String verbText = verb().text;
+			result = result.size() > 0 ? Common::String::format("%s %s", _textDb.getText(verbText).c_str(), result.c_str()) : _textDb.getText(verbText);
+			if (_useFlag == ufUseWith)
+				result += " " + _textDb.getText(10000);
+			else if (_useFlag == ufUseOn)
+				result += " " + _textDb.getText(10001);
+			else if (_useFlag == ufUseIn)
+				result += " " + _textDb.getText(10002);
+			else if (_useFlag == ufGiveTo)
+				result += " " + _textDb.getText(10003);
+			if (_noun2)
+				result += " " + _textDb.getText(_noun2->_name);
+		}
+	}
+	return result;
 }
 
 void TwpEngine::update(float elapsed) {
@@ -144,12 +266,14 @@ void TwpEngine::update(float elapsed) {
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
 	//_inputState.visible = _inputState.showCursor; // TODO: || _dlg.state == WaitingForChoice;
 	_inputState.setPos(scrPos);
+	_sentence.setPos(scrPos);
 	// TODO:
-	// _sentence.pos = scrPos;
 	// _dlg.mousePos = scrPos;
 	if (_room) {
-		if (_cursor.isLeftClick())
+		if (_cursor.isLeftClick() || _cursor.isRightClick())
 			clickedAt(_cursor.pos);
+
+		_sentence.setText(cursorText());
 	}
 
 	_fadeShader->_elapsed += elapsed;
@@ -209,14 +333,14 @@ void TwpEngine::update(float elapsed) {
 		}
 	}
 
-	 // update inventory
-  if (!_actor) {
-    _uiInv.update(elapsed);
-  } else {
-    // TODO: _hud.update(scrPos, _noun1, _cursor.isLeftClick());
-    VerbUiColors* verbUI = &_hud.actorSlot(_actor)->verbUiColors;
-    _uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
-  }
+	// update inventory
+	if (!_actor) {
+		_uiInv.update(elapsed);
+	} else {
+		// TODO: _hud.update(scrPos, _noun1, _cursor.isLeftClick());
+		VerbUiColors *verbUI = &_hud.actorSlot(_actor)->verbUiColors;
+		_uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
+	}
 }
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
@@ -272,7 +396,7 @@ void TwpEngine::draw() {
 
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	bool flipY = _fadeShader->_effect == FadeEffect::Wobble;
-	Math::Vector2d camPos = _gfx.camera();
+	Math::Vector2d camPos = _gfx.cameraPos();
 	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, flipY);
 
 	Texture *screenTexture = &renderTexture2;
@@ -335,7 +459,7 @@ void TwpEngine::draw() {
 
 	g_system->updateScreen();
 
-	// _gfx.cameraPos(camPos);
+	_gfx.cameraPos(camPos);
 }
 
 Common::Error TwpEngine::run() {
@@ -708,7 +832,6 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 			for (int j = 0; j < _room->_layers.size(); j++) {
 				Object *obj = layer->_objects[i];
 				if (obj->_temporary) {
-					obj->delObject();
 					delete obj;
 				} else if (isActor(obj->getId()) && _actor != obj) {
 					obj->stopObjectMotors();
