@@ -93,6 +93,7 @@ public:
 	NancyInput getInput() const;
 	void forceCleanInput();
 	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
+	void enableSecondaryKeymaps(bool enabled);
 
 	static void initKeymaps(Common::KeymapArray &keymaps, const char *target);
 

@@ -145,6 +145,7 @@ void RiddlePuzzle::execute() {
 			if (!g_nancy->_sound->isSoundPlaying(_riddles[_riddleID].sound)) {
 				_solveState = kNotSolved;
 				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+				g_nancy->_input->enableSecondaryKeymaps(false);
 
 			}
 
@@ -257,6 +258,7 @@ void RiddlePuzzle::execute() {
 
 		sceneChange->execute();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		g_nancy->_input->enableSecondaryKeymaps(true);
 		finishExecution();
 	}
 	}
