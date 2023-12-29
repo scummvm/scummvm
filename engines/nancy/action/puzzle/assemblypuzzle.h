@@ -27,7 +27,7 @@
 
 namespace Nancy {
 
-class AssemblyPuzzleData;
+struct AssemblyPuzzleData;
 
 namespace Action {
 
