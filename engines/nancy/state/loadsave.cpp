@@ -69,6 +69,7 @@ void LoadSaveMenu::process() {
 	switch (_state) {
 	case kInit:
 		init();
+		g_nancy->_input->enableSecondaryKeymaps(false);
 		// fall through
 	case kRun:
 		run();
@@ -92,6 +93,7 @@ void LoadSaveMenu::process() {
 	// Make sure stop runs on the same frame
 	if (_state == kStop) {
 		stop();
+		g_nancy->_input->enableSecondaryKeymaps(true);
 	}
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
