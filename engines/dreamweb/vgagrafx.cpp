@@ -176,19 +176,19 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 		_mainPal[i] >>= 2;
 	}
 
-	Graphics::Surface *s = g_system->lockScreen();
-	s->fillRect(Common::Rect(s->w, s->h), 0);
 	const Graphics::Surface *pcxSurface = pcx.getSurface();
 	if (pcxSurface->format.bytesPerPixel != 1)
 		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
-	if (pcxSurface->w >= s->w * 2)
+
+	g_system->fillScreen(0);
+	if (pcxSurface->w >= g_system->getWidth() * 2) {
+		Graphics::Surface *s = g_system->lockScreen();
 		Graphics::downscaleSurfaceByHalf(s, pcxSurface, _mainPal);
-	else {
-		int limitW = MIN(pcxSurface->w, s->w);
-		for (uint16 y = 0; y < pcxSurface->h; y++)
-			memcpy((byte *)s->getBasePtr(0, y), pcxSurface->getBasePtr(0, y), limitW);
+		g_system->unlockScreen();
+	} else {
+		g_system->copyRectToScreen(pcxSurface->getPixels(), pcxSurface->pitch,
+		                           0, 0, pcxSurface->w, pcxSurface->h);
 	}
-	g_system->unlockScreen();
 }
 
 void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
