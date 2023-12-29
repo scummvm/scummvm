@@ -56,6 +56,9 @@ public:
 	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
 	StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
 
+	String delimitersAtTokenBegin() const; ///< Returns a String with all delimiters between the current and previous token
+	String delimitersAtTokenEnd() const;   ///< Returns a String with all delimiters between the current and next token
+
 private:
 	const String _str;        ///< The string to be tokenized
 	const String _delimiters; ///< String containing all the delimiter characters
@@ -83,6 +86,9 @@ public:
 	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
 	U32String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
 	U32StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
+
+	U32String delimitersAtTokenBegin() const; ///< Returns a U32String with all delimiters between the current and previous token
+	U32String delimitersAtTokenEnd() const;   ///< Returns a U32String with all delimiters between the current and next token
 
 private:
 	const U32String _str;        ///< The unicode string to be tokenized
