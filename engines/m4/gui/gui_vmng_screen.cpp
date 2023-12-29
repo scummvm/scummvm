@@ -212,10 +212,8 @@ bool ResizeScreen(void *scrnContent, int32 newW, int32 newH) {
 }
 
 static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2) {
-	Graphics::Surface *screen = g_system->lockScreen();
 	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
-	screen->fillRect(r, 0);
-	g_system->unlockScreen();
+	g_system->fillScreen(r, 0);
 }
 
 bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback) {
