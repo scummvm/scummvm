@@ -26,6 +26,7 @@
 #include "math/vector2d.h"
 #include "twp/camera.h"
 #include "twp/util.h"
+#include "twp/lip.h"
 
 namespace Twp {
 
@@ -188,7 +189,7 @@ private:
 class ReachAnim : public Motor {
 public:
 	virtual ~ReachAnim();
-	ReachAnim(Object* actor, Object* obj);
+	ReachAnim(Object *actor, Object *obj);
 
 	virtual void update(float elasped) override;
 
@@ -196,15 +197,15 @@ private:
 	void playReachAnim();
 
 private:
-	Object* _actor = nullptr;
-    Object* _obj = nullptr;
-    int _state = 0;
-    float _elapsed = 0.f;
+	Object *_actor = nullptr;
+	Object *_obj = nullptr;
+	int _state = 0;
+	float _elapsed = 0.f;
 };
 
 class WalkTo : public Motor {
 public:
-	WalkTo(Object* obj, Math::Vector2d dest, int facing = 0);
+	WalkTo(Object *obj, Math::Vector2d dest, int facing = 0);
 	virtual void disable() override;
 
 private:
@@ -212,11 +213,35 @@ private:
 	virtual void update(float elapsed) override;
 
 private:
-	Object* _obj = nullptr;
-    Common::Array<Math::Vector2d> _path;
-    int _facing = 0;
-    float _wsd;
-    ReachAnim* _reach = nullptr;
+	Object *_obj = nullptr;
+	Common::Array<Math::Vector2d> _path;
+	int _facing = 0;
+	float _wsd;
+	ReachAnim *_reach = nullptr;
+};
+
+// Creates a talking animation for a specified object.
+class Talking : public Motor {
+public:
+	Talking(Object* obj, const Common::StringArray& texts, Color color);
+
+private:
+	virtual void update(float elapsed) override;
+	virtual void disable() override;
+	int onTalkieId(int id);
+	Common::String talkieKey();
+	void setDuration(const Common::String& text);
+	void say(const Common::String& text);
+
+private:
+	Object *_obj = nullptr;
+	Node *_node = nullptr;
+	Lip _lip;
+	float _elapsed = 0.f;
+	float _duration = 0.f;
+	//   SoundId soundId;
+	Color _color;
+	Common::StringArray _texts;
 };
 
 } // namespace Twp

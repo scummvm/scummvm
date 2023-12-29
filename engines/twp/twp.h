@@ -151,6 +151,10 @@ private:
 	void setShaderEffect(RoomEffect effect);
 	bool selectable(Object *actor);
 	void resetVerb();
+	Common::String cursorText();
+	Verb verb();
+	bool execSentence(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
+	bool preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2);
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -191,6 +195,7 @@ public:
 			oldRightDown = rightDown;
 		}
 		bool isLeftClick() { return oldLeftDown && !leftDown; }
+		bool isRightClick() { return oldRightDown && !rightDown; }
 	} _cursor;
 	Hud _hud;
 
@@ -201,6 +206,7 @@ private:
 	ShaderParams _shaderParams;
 	unique_ptr<FadeShader> _fadeShader;
 	Inventory _uiInv;
+	SentenceNode _sentence;
 };
 
 extern TwpEngine *g_engine;

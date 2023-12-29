@@ -152,7 +152,6 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 static SQInteger deleteObject(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
 	if (obj) {
-		obj->delObject();
 		delete obj;
 	}
 	return 0;

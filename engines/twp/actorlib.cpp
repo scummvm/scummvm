@@ -660,7 +660,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get dir");
 			facing = (Facing*)&dir;
 		}
-		actor->walk(Math::Vector2d(x, y), facing);
+		actor->walk(Math::Vector2d(x, y), facing ? *facing : 0);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}

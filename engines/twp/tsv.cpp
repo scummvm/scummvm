@@ -27,13 +27,12 @@
 namespace Twp {
 
 void TextDb::parseTsv(Common::SeekableReadStream &stream) {
-	char s[128];
 	stream.readLine();
 	while(!stream.eos()) {
 		Common::String line = stream.readLine();
-		int id;
-		sscanf(line.c_str(), "%d\t%s", &id, s);
-		_texts[id] = s;
+		int pos = line.find(' ',0);
+		int id = atoi(line.c_str());
+		_texts[id] = line.substr(pos+1);
 	}
 }
 

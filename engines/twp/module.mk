@@ -56,6 +56,7 @@ MODULE_OBJS = \
 	dialog.o \
 	shaders.o \
 	hud.o \
+	lip.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

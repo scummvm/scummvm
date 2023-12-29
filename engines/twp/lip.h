@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,22 +20,32 @@
  *
  */
 
-#ifndef TWP_TSV_H
-#define TWP_TSV_H
+#ifndef TWP_LIP_H
+#define TWP_LIP_H
 
-#include "common/hashmap.h"
 #include "common/stream.h"
+#include "common/array.h"
 
 namespace Twp {
 
-class TextDb {
+struct LipItem {
+	float time;
+	char letter;
+};
+
+// This contains the lip animation for a specific text.
+//
+// A lip animation contains a list of moth shape at a specific time.
+// You can see https://github.com/DanielSWolf/rhubarb-lip-sync to
+// have additional information about the mouth shapes.
+class Lip {
 public:
-	void parseTsv(Common::SeekableReadStream& stream);
-	Common::String getText(const Common::String& text);
-	Common::String getText(int id);
+	void load(Common::SeekableReadStream* stream);
+	// Gets the letter corresponding to a mouth shape at a spcific time.
+	char letter(float time);
 
 private:
-  Common::HashMap<int, Common::String> _texts;
+	Common::Array<LipItem> _items;
 };
 
 }
