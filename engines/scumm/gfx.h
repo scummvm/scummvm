@@ -616,7 +616,7 @@ private:
 		uint16 *bltTmpPal= nullptr;
 	} _layers[2];
 
-	template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool col4bit> void transferRect(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
+	template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool col4bit> void transferRect(uint8 *dst, int pitch, TownsScreenLayer *l, int x, int y, int w, int h);
 	template<typename dstPixelType> void updateScreenBuffer();
 
 #ifdef USE_RGB_COLOR
@@ -626,7 +626,6 @@ private:
 
 	int _height;
 	int _width;
-	int _pitch;
 	bool _semiSmoothScroll;
 	Graphics::PixelFormat _pixelFormat;
 
