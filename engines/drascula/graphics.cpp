@@ -588,16 +588,15 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 			free(BufferSSN);
 			waitFrameSSN();
 
-			Graphics::Surface *screenSurf = _system->lockScreen();
-			byte *screenBuffer = (byte *)screenSurf->getPixels();
-			uint16 screenPitch = screenSurf->pitch;
-			if (FrameSSN)
+			if (FrameSSN) {
+				Graphics::Surface *screenSurf = _system->lockScreen();
+				byte *screenBuffer = (byte *)screenSurf->getPixels();
+				uint16 screenPitch = screenSurf->pitch;
 				mixVideo(screenBuffer, screenSurface, screenPitch);
-			else
-				for (int y = 0; y < 200; y++)
-					memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
+				_system->unlockScreen();
+			} else
+				_system->copyRectToScreen(screenSurface, 320, 0, 0, 320, 200);
 
-			_system->unlockScreen();
 			_system->updateScreen();
 			FrameSSN++;
 		} else {
@@ -607,16 +606,15 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 				decodeOffset(BufferSSN, screenSurface, length);
 				free(BufferSSN);
 				waitFrameSSN();
-				Graphics::Surface *screenSurf = _system->lockScreen();
-				byte *screenBuffer = (byte *)screenSurf->getPixels();
-				uint16 screenPitch = screenSurf->pitch;
-				if (FrameSSN)
+				if (FrameSSN) {
+					Graphics::Surface *screenSurf = _system->lockScreen();
+					byte *screenBuffer = (byte *)screenSurf->getPixels();
+					uint16 screenPitch = screenSurf->pitch;
 					mixVideo(screenBuffer, screenSurface, screenPitch);
-				else
-					for (int y = 0; y < 200; y++)
-						memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
+					_system->unlockScreen();
+				} else
+					_system->copyRectToScreen(screenSurface, 320, 0, 0, 320, 200);
 
-				_system->unlockScreen();
 				_system->updateScreen();
 				FrameSSN++;
 			}
