@@ -130,6 +130,15 @@ private:
 	Common::SeekableReadStream *_s = nullptr;
 };
 
+class GGPackSet {
+public:
+	void init();
+	bool assetExists(const char* asset);
+
+public:
+	Common::Array<GGPackDecoder> _packs;
+};
+
 class GGBnutReader: public Common::ReadStream {
 public:
 	GGBnutReader();
@@ -149,6 +158,7 @@ public:
 	GGPackEntryReader();
 
 	bool open(GGPackDecoder& pack, const Common::String& entry);
+	bool open(GGPackSet& packs, const Common::String& entry);
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 	bool eos() const override;
