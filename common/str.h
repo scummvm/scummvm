@@ -147,15 +147,6 @@ public:
 	bool matchString(const char *pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
 	bool matchString(const String &pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
 
-	using BaseString<value_type>::replace;
-
-	/**
-	 * Replace all from characters in object by to character
-	 * @param from the character to look for
-	 * @param to The replacement character
-	 */
-	void replace(char from, char to);
-
 	/**
 	 * Print formatted data into a String object. Similar to sprintf,
 	 * except that it stores the result in (variably sized) String
@@ -169,51 +160,6 @@ public:
 	 * instead of a fixed size buffer.
 	 */
 	static String vformat(const char *fmt, va_list args);
-
-	/** Does a reverse find for the passed string */
-	size_t rfind(const char *s) const;
-	size_t rfind(const String &s) const {
-		return rfind(s.c_str());
-	}
-
-	/** Does a reverse find for a passed character */
-	size_t rfind(char c, size_t pos = npos) const;
-
-	/** Find first character in the string matching the passed character */
-	size_t findFirstOf(char c, size_t pos = 0) const;
-
-	/** Find first character in the string that's any character of the passed string */
-	size_t findFirstOf(const char *chars, size_t pos = 0) const;
-	size_t findFirstOf(const String &chars, size_t pos = 0) const {
-		return findFirstOf(chars.c_str(), pos);
-	}
-
-	/** Find the last character in the string that's the specified character */
-	size_t findLastOf(char c, size_t pos = npos) const;
-
-	/** Find the last character in the string that's in any of the passed characters */
-	size_t findLastOf(const char *chars, size_t pos = npos) const;
-	size_t findLastOf(const String &chars, size_t pos = npos) const {
-		return findLastOf(chars.c_str(), pos);
-	}
-
-	/** Find first character in the string that's not the specified character */
-	size_t findFirstNotOf(char c, size_t pos = 0) const;
-
-	/** Find first character in the string that's not any character of the passed string */
-	size_t findFirstNotOf(const char *chars, size_t pos = 0) const;
-	size_t findFirstNotOf(const String &chars, size_t pos = 0) const {
-		return findFirstNotOf(chars.c_str(), pos);
-	}
-
-	/** Find the last character in the string that's not the specified character */
-	size_t findLastNotOf(char c) const;
-
-	/** Find the last character in the string that's not in any of the passed characters */
-	size_t findLastNotOf(const char *chars) const;
-	size_t findLastNotOf(const String &chars) const {
-		return findLastNotOf(chars.c_str());
-	}
 
 	/** Return a substring of this string */
 	String substr(size_t pos = 0, size_t len = npos) const;
