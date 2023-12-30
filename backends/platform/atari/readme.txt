@@ -493,15 +493,23 @@ Known issues
       them detected on TOS 8+3 file system
     - https://wiki.scummvm.org/index.php?title=Director
   - Hugo (3 games)
-    - Uses (lot of) overlay dialogs which are problematic for Atari backend
-    - Engine GUI (for save/load/etc) does not support 8-bit screens
+    - uses (lot of) overlay dialogs which are problematic for Atari backend
+    - engine GUI (for save/load/etc) does not support 8-bit screens
     - https://wiki.scummvm.org/index.php?title=Hugo
+  - Ultima (many games)
+    - the only non-hires ultima engine is ultima1; see
+      https://bugs.scummvm.org/ticket/14790
+    - this prevents adding the 15 MB ultima.dat to the release archive
+    - https://wiki.scummvm.org/index.php?title=Ultima
 
 - Indy4 (the adventure) may have a bug in the screen when you K.O. the bouncer.
   I was able to get a freeze when he fell to the ground but currently I am
   unable to reproduce it. It may be related to the intensive mouse clicking
   during that scene so feel free to use keypad for the fight and report whether
   it has improved the situation.
+
+- When using FreeMiNT, ScummVM requires a recent kernel (>= 2021), otherwise
+  keyboard handling wont work properly.
 
 Future plans
 ------------
