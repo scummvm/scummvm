@@ -134,7 +134,7 @@ public:
 	void deleteChar(uint32 p);
 
 	/** Remove the last character from the string. */
-	void deleteLastChar();
+	inline void deleteLastChar() { chop(1); }
 
 	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
 	void erase(uint32 p, uint32 len = npos);
