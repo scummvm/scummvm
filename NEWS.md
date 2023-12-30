@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.0 (XXXX-XX-XX)
 
+ General:
+  - Fixed GLSL version parsing on some OpenGL ES2 platforms
+
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
 
