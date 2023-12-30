@@ -72,7 +72,8 @@ U32String &U32String::operator=(const String &str) {
 }
 
 U32String &U32String::operator=(const value_type *str) {
-	return U32String::operator=(U32String(str));
+	assign(str);
+	return *this;
 }
 
 U32String &U32String::operator=(const char *str) {
@@ -81,27 +82,23 @@ U32String &U32String::operator=(const char *str) {
 	return *this;
 }
 
+U32String &U32String::operator=(value_type c) {
+	assign(c);
+	return *this;
+}
+
+U32String &U32String::operator+=(const value_type *str) {
+	assignAppend(str);
+	return *this;
+}
+
 U32String &U32String::operator+=(const U32String &str) {
-	if (&str == this) {
-		return operator+=(U32String(str));
-	}
-
-	int len = str._size;
-	if (len > 0) {
-		ensureCapacity(_size + len, true);
-
-		memcpy(_str + _size, str._str, (len + 1) * sizeof(value_type));
-		_size += len;
-	}
+	assignAppend(str);
 	return *this;
 }
 
 U32String &U32String::operator+=(value_type c) {
-	ensureCapacity(_size + 1, true);
-
-	_str[_size++] = c;
-	_str[_size] = 0;
-
+	assignAppend(c);
 	return *this;
 }
 

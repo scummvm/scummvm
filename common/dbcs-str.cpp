@@ -87,7 +87,8 @@ DBCSString &DBCSString::operator=(const String &str) {
 }
 
 DBCSString &DBCSString::operator=(const value_type *str) {
-	return DBCSString::operator=(DBCSString(str));
+	assign(str);
+	return *this;
 }
 
 DBCSString &DBCSString::operator=(const char *str) {
@@ -96,27 +97,18 @@ DBCSString &DBCSString::operator=(const char *str) {
 	return *this;
 }
 
+DBCSString &DBCSString::operator=(value_type c) {
+	assign(c);
+	return *this;
+}
+
 DBCSString &DBCSString::operator+=(const DBCSString &str) {
-	if (&str == this) {
-		return operator+=(DBCSString(str));
-	}
-
-	int len = str._size;
-	if (len > 0) {
-		ensureCapacity(_size + len, true);
-
-		memcpy(_str + _size, str._str, (len + 1) * sizeof(value_type));
-		_size += len;
-	}
+	assignAppend(str);
 	return *this;
 }
 
 DBCSString &DBCSString::operator+=(value_type c) {
-	ensureCapacity(_size + 1, true);
-
-	_str[_size++] = c;
-	_str[_size] = 0;
-
+	assignAppend(c);
 	return *this;
 }
 

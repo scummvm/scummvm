@@ -110,8 +110,14 @@ public:
 	/** @overload */
 	U32String &operator=(const char *str);
 
+	/** @overload */
+	U32String &operator=(value_type c);
+
 	/** Append the given string to this string. */
 	U32String &operator+=(const U32String &str);
+
+	/** @overload */
+	U32String &operator+=(const value_type *str);
 
 	/** @overload */
 	U32String &operator+=(value_type c);
