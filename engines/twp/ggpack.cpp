@@ -20,6 +20,7 @@
  */
 
 #include "twp/ggpack.h"
+#include "common/archive.h"
 #include "common/debug.h"
 
 namespace Twp {
@@ -639,6 +640,15 @@ bool GGPackEntryReader::open(GGPackDecoder &pack, const Common::String &entry) {
 	return true;
 }
 
+bool GGPackEntryReader::open(GGPackSet &packs, const Common::String &entry) {
+	for (int i = 0; i < packs._packs.size(); i++) {
+		GGPackDecoder *pack = &packs._packs[i];
+		if (open(*pack, entry))
+			return true;
+	}
+	return false;
+}
+
 uint32 GGPackEntryReader::read(void *dataPtr, uint32 dataSize) {
 	return _ms.read(dataPtr, dataSize);
 }
@@ -678,5 +688,32 @@ uint32 GGBnutReader::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool GGBnutReader::eos() const { return _s->eos(); }
+
+void GGPackSet::init() {
+	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+
+	Common::ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, "*.ggpack*");
+	for (auto it = fileList.begin(); it != fileList.end(); ++it) {
+		const Common::ArchiveMember &m = **it;
+		Common::SeekableReadStream *stream = m.createReadStream();
+		GGPackDecoder pack;
+		if (stream && pack.open(stream, key)) {
+			_packs.push_back(pack);
+		}
+	}
+}
+
+bool GGPackSet::assetExists(const char *asset) {
+	for (int i = 0; i < _packs.size(); i++) {
+		GGPackDecoder *pack = &_packs[i];
+		if (pack->assetExists(asset))
+			return true;
+	}
+	return false;
+}
 
 } // namespace Twp

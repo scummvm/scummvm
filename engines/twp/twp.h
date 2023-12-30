@@ -159,7 +159,7 @@ private:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	GGPackDecoder _pack;
+	GGPackSet _pack;
 	ResManager _resManager;
 	Common::Array<Room *> _rooms;
 	Common::Array<Object *> _actors;
