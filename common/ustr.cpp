@@ -178,75 +178,68 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 
 	value_type ch;
 	value_type *u32string_temp;
-	int length = 0;
-	int len = 0;
-	int pos = 0;
-	int tempPos = 0;
 
 	value_type buffer[512];
 
+	const value_type *start = fmt;
+
 	while (fmt != fmtEnd) {
-		ch = *fmt++;
-		if (ch == '%') {
-			switch (ch = *fmt++) {
+		if (*fmt == '%') {
+			// Copy all characters since the last argument
+			if (fmt != start)
+				output.append(start, fmt);
+
+			switch (ch = *++fmt) {
 			case 'S':
 				u32string_temp = va_arg(args, value_type *);
 
-				tempPos = output.size();
-				output.insertString(u32string_temp, pos);
-				len = output.size() - tempPos;
-				length += len;
-
-				pos += len - 1;
+				output += u32string_temp;
 				break;
 			case 's':
 				string_temp = va_arg(args, char *);
-				tempPos = output.size();
-				output.insertString(string_temp, pos);
-				len = output.size() - tempPos;
-				length += len;
-				pos += len - 1;
+
+				output += Common::U32String(string_temp, kUtf8);
 				break;
 			case 'i':
 			// fallthrough intended
 			case 'd':
 				int_temp = va_arg(args, int);
 				itoa(int_temp, buffer, 10);
-				len = cStrLen(buffer);
-				length += len;
 
-				output.insertString(buffer, pos);
-				pos += len - 1;
+				output += buffer;
 				break;
 			case 'u':
 				uint_temp = va_arg(args, uint);
 				uitoa(uint_temp, buffer, 10);
-				len = cStrLen(buffer);
-				length += len;
 
-				output.insertString(buffer, pos);
-				pos += len - 1;
+				output += buffer;
 				break;
 			case 'c':
 				//char is promoted to int when passed through '...'
 				int_temp = va_arg(args, int);
-				output.insertChar(int_temp, pos);
-				++length;
+
+				output += int_temp;
 				break;
 			case '%':
-				output.insertChar('%', pos);
-				++length;
+				output += '%';
 				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;
 			}
+
+			start = ++fmt;
 		} else {
-			output += *(fmt - 1);
+			// We attempt to copy as many characters as possible in one go.
+			++fmt;
 		}
-		pos++;
 	}
-	return length;
+
+	// Append any remaining characters
+	if (fmt != start)
+		output.append(start, fmt);
+
+	return output.size();
 }
 
 U32String::value_type* U32String::itoa(int num, value_type* str, uint base) {
