@@ -469,6 +469,8 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		macFont->setId(aliasForId);
 	}
 
+	printFontRegistry(3, kDebugLevelMacGUI);
+
 	if (!_builtInFonts) {
 		Common::Language lang = getFontLanguage(macFont->getId());
 		if (lang == Common::JA_JPN && !_japaneseFontsLoaded) {
@@ -861,6 +863,17 @@ void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
 void MacFont::setFallback(const Font *font, Common::String name) {
 	_fallback = font;
 	_fallbackName = name;
+}
+
+void MacFontManager::printFontRegistry(int debugLevel, uint32 channel) {
+		debugC(debugLevel, channel, "Font Registry: %d items", _fontRegistry.size());
+
+		for (Common::HashMap<Common::String, MacFont *>::iterator i = _fontRegistry.begin(); i != _fontRegistry.end(); ++i) {
+			MacFont *f = i->_value;
+			debugC(debugLevel, channel, "name: '%s' gen:%c ttf:%c ID: %d size: %d slant: %d fallback: '%s'",
+				toPrintable(f->getName()).c_str(), f->isGenerated() ? 'y' : 'n', f->isTrueType() ? 'y' : 'n',
+				f->getId(), f->getSize(), f->getSlant(), toPrintable(f->getFallbackName()).c_str());
+		}
 }
 
 } // End of namespace Graphics

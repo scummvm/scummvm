@@ -172,6 +172,8 @@ public:
 
 	const Common::Array<MacFontFamily *> &getFontFamilies() { return _fontFamilies; }
 
+	void printFontRegistry(int debugLevel, uint32 channel);
+
 private:
 	void loadFontsBDF();
 	void loadFonts();
