@@ -376,7 +376,7 @@ Common::String Object::getAnimName(const Common::String &key) {
 
 void Object::setHeadIndex(int head) {
 	for (int i = 0; i <= 6; i++) {
-		showLayer(Common::String::format("%s%d", getAnimName(STAND_ANIMNAME).c_str(), i), i == head);
+		showLayer(Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), i), i == head);
 	}
 }
 
