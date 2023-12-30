@@ -56,6 +56,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _randomSource("Twp") {
 	g_engine = this;
 	sq_resetobject(&_defaultObj);
+	_screenScene.setName("Screen");
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
@@ -264,12 +265,13 @@ void TwpEngine::update(float elapsed) {
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
-	//_inputState.visible = _inputState.showCursor; // TODO: || _dlg.state == WaitingForChoice;
+	// _inputState.setVisible(_inputState.getShowCursor() || _dialog.getState() == WaitingForChoice);
 	_inputState.setPos(scrPos);
 	_sentence.setPos(scrPos);
-	// TODO:
-	// _dlg.mousePos = scrPos;
+	_dialog.setMousePos(scrPos);
+
 	if (_room) {
+		// update nouns and useFlag
 		if (_cursor.isLeftClick() || _cursor.isRightClick())
 			clickedAt(_cursor.pos);
 
@@ -306,6 +308,17 @@ void TwpEngine::update(float elapsed) {
 		if (find(threadsToRemove, thread) != -1) {
 			it = _threads.erase(it);
 			delete thread;
+			continue;
+		}
+		it++;
+	}
+
+	// update callbacks
+	for (auto it = _callbacks.begin(); it != _callbacks.end();) {
+		Callback *cb = *it;
+		if (cb->update(elapsed)) {
+			it = _callbacks.erase(it);
+			delete cb;
 			continue;
 		}
 		it++;

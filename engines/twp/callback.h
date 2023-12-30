@@ -30,11 +30,16 @@ namespace Twp {
 
 class Callback {
 public:
-	int id = 0;
-	Common::String name;
-	Common::Array<HSQOBJECT> args;
-	float duration = 0.f;
-	float elapsed = 0.f;
+	Callback(int id, float duration, const Common::String& name, const Common::Array<HSQOBJECT>& args);
+	bool update(float elapsed);
+	int getId() const { return _id; }
+
+private:
+	int _id = 0;
+	Common::String _name;
+	Common::Array<HSQOBJECT> _args;
+	float _duration = 0.f;
+	float _elapsed = 0.f;
 
 public:
 	void call();

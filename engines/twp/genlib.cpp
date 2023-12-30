@@ -316,7 +316,8 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 2, verb)))
 			return sq_throwerror(v, "failed to get verb");
 		ActorSlot *actorSlot = g_engine->_hud.actorSlot(g_engine->_actor);
-		if(!actorSlot) return 0;
+		if (!actorSlot)
+			return 0;
 		for (int i = 1; i < 22; i++) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
@@ -540,9 +541,39 @@ static SQInteger ord(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Executes a verb sentence as though the player had inputted/constructed it themselves.
+// You can push several sentences one after the other.
+// They will execute in reverse order (it's a stack).
 static SQInteger pushSentence(HSQUIRRELVM v) {
-	// TODO: pushSentence
-	warning("pushSentence not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	int id;
+	if (SQ_FAILED(sqget(v, 2, id)))
+		return sq_throwerror(v, "Failed to get verb id");
+
+	if (id == VERB_DIALOG) {
+		int choice;
+		if (SQ_FAILED(sqget(v, 3, choice)))
+			return sq_throwerror(v, "Failed to get choice");
+		// TODO choose(choice)
+		warning("pushSentence with VERB_DIALOG not implemented");
+		return 0;
+	}
+
+	Object *obj1 = nullptr;
+	Object *obj2 = nullptr;
+	if (nArgs >= 3) {
+		obj1 = sqobj(v, 3);
+		if (!obj1)
+			return sq_throwerror(v, "Failed to get obj1");
+	}
+	if (nArgs == 4) {
+		obj2 = sqobj(v, 4);
+		if (!obj2)
+			return sq_throwerror(v, "Failed to get obj2");
+	}
+	VerbId verb;
+	verb.id = id;
+	g_engine->execSentence(nullptr, verb, obj1, obj2);
 	return 0;
 }
 
@@ -716,8 +747,26 @@ static SQInteger startDialog(HSQUIRRELVM v) {
 }
 
 static SQInteger stopSentence(HSQUIRRELVM v) {
-	// TODO: stopSentence
-	warning("stopSentence not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	switch (nArgs) {
+	case 1: {
+		for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+			Layer *layer = g_engine->_room->_layers[i];
+			for (int j = 0; j < layer->_objects.size(); j++) {
+				Object *obj = layer->_objects[j];
+				obj->_exec.enabled = false;
+			}
+		}
+	case 2: {
+		Object *obj = sqobj(v, 2);
+		obj->_exec.enabled = false;
+		break;
+	}
+	default:
+		warning("stopSentence not implemented with %lld arguments", nArgs);
+		break;
+	}
+	}
 	return 0;
 }
 
@@ -787,7 +836,7 @@ static SQInteger translate(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, text)))
 		return sq_throwerror(v, "Failed to get text");
 	Common::String newText = g_engine->getTextDb().getText(text);
-	// debug("translate({text}): {newText}");
+	debug("translate(%s): %s", text, newText.c_str());
 	sqpush(v, newText);
 	return 1;
 }

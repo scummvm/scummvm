@@ -412,6 +412,7 @@ Scene::Scene() : Node("Scene") {
 Scene::~Scene() {}
 
 InputState::InputState() : Node("InputState") {}
+
 InputState::~InputState() {}
 
 void InputState::drawCore(Math::Matrix4 trsf) {
@@ -425,6 +426,38 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	trsf.translate(pos);
 	scale(trsf, Math::Vector2d(2.f, 2.f));
 	g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf);
+}
+
+InputStateFlag InputState::getState() const {
+	int tmp = 0;
+	tmp |= (_inputActive ? UI_INPUT_ON : UI_INPUT_OFF);
+	tmp |= (_inputVerbsActive ? UI_VERBS_ON : UI_VERBS_OFF);
+	tmp |= (_showCursor ? UI_CURSOR_ON : UI_CURSOR_OFF);
+	tmp |= (_inputHUD ? UI_HUDOBJECTS_ON : UI_HUDOBJECTS_OFF);
+	return (InputStateFlag)tmp;
+}
+
+void InputState::setState(InputStateFlag state) {
+	if ((UI_INPUT_ON & state) == UI_INPUT_ON)
+		_inputActive = true;
+	if ((UI_INPUT_OFF & state) == UI_INPUT_OFF)
+		_inputActive = false;
+	if ((UI_VERBS_ON & state) == UI_VERBS_ON)
+		_inputVerbsActive = true;
+	if ((UI_VERBS_OFF & state) == UI_VERBS_OFF)
+		_inputVerbsActive = false;
+	if ((UI_CURSOR_ON & state) == UI_CURSOR_ON) {
+		_showCursor = true;
+		_visible = true;
+	}
+	if ((UI_CURSOR_OFF & state) == UI_CURSOR_OFF) {
+		_showCursor = false;
+		_visible = false;
+	}
+	if ((UI_HUDOBJECTS_ON & state) == UI_HUDOBJECTS_ON)
+		_inputHUD = true;
+	if ((UI_HUDOBJECTS_OFF & state) == UI_HUDOBJECTS_OFF)
+		_inputHUD = false;
 }
 
 OverlayNode::OverlayNode() : Node("overlay") {

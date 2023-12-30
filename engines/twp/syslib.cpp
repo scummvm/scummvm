@@ -25,6 +25,7 @@
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/task.h"
+#include "twp/callback.h"
 #include "twp/scenegraph.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
@@ -124,9 +125,50 @@ static SQInteger activeController(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Sets a timer of duration seconds.
+//
+// When the timer is up, method will be executed.
+// Use this method so that the callback will get saved.
+// That is, if you set a callback to call method in 30 minutes, play the game for 10 minutes, save and quit;
+// when you return to the game, it will remember that it needs to wait 20 minutes before calling method.
+// If the game is paused, all callback timers are paused.
+// Note, method cannot be code, it must be a defined script or function (otherwise, the game wouldn't be able to save what it needs to do when the timer is up).
+// .. code-block:: Squirrel
+// if (actorTalking()) {
+//   addCallback(30, doADance)    // Wait another 30 seconds
+//   return
+//}
 static SQInteger addCallback(HSQUIRRELVM v) {
-	warning("TODO: addCallback: not implemented");
-	return 0;
+	SQInteger count = sq_gettop(v);
+	float duration;
+	if (SQ_FAILED(sqget(v, 2, duration)))
+		return sq_throwerror(v, "failed to get duration");
+	HSQOBJECT meth;
+	sq_resetobject(&meth);
+	if (SQ_FAILED(sq_getstackobj(v, 3, &meth)) || !sq_isclosure(meth))
+		return sq_throwerror(v, "failed to get method");
+
+	Common::String methodName;
+	if (SQ_SUCCEEDED(sq_getclosurename(v, 3))) {
+		const SQChar *tmpMethodName;
+		sq_getstring(v, -1, &tmpMethodName);
+		methodName = tmpMethodName;
+	}
+
+	Common::Array<HSQOBJECT> args;
+	for (int i = 4; i <= count; i++) {
+		HSQOBJECT arg;
+		sq_resetobject(&arg);
+		if (SQ_FAILED(sq_getstackobj(v, i, &arg)))
+			return sq_throwerror(v, Common::String::format("failed to get argument %d", i).c_str());
+		args.push_back(arg);
+	}
+
+	Callback *callback = new Callback(newCallbackId(), duration, methodName, args);
+	g_engine->_callbacks.push_back(callback);
+
+	sqpush(v, callback->getId());
+	return 1;
 }
 
 // Registers a folder that assets can appear in.
@@ -235,14 +277,20 @@ static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 		v, [] { return g_engine->_cutscene != nullptr; }, "breakwhilecutscene()");
 }
 
+// Breaks while a dialog is running.
+// Once the thread finishes execution, the method will continue running.
+// It is an error to call breakwhiledialog in a function that was not started with startthread.
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
 	return breakwhilecond(
 		v, [] { return g_engine->_dialog.getState() != DialogState::None; }, "breakwhiledialog()");
 }
 
+// Breaks while input is not active.
+// Once the thread finishes execution, the method will continue running.
+// It is an error to call breakwhileinputoff in a function that was not started with startthread.
 static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
-	warning("TODO: breakwhileinputoff: not implemented");
-	return 0;
+	return breakwhilecond(
+		v, [] { return !g_engine->_inputState.getInputActive(); }, "breakwhileinputoff()");
 }
 
 // Breaks while the thread referenced by threadId is running.
@@ -433,38 +481,73 @@ static SQInteger inputController(HSQUIRRELVM v) {
 }
 
 static SQInteger inputHUD(HSQUIRRELVM v) {
-	warning("TODO: inputHUD: not implemented");
+	bool on;
+	if (SQ_FAILED(sqget(v, 2, on)))
+		return sq_throwerror(v, "failed to get on");
+	g_engine->_inputState.setInputHUD(on);
 	return 0;
 }
 
 static SQInteger inputOff(HSQUIRRELVM v) {
-	warning("TODO: inputOff: not implemented");
+	if (!g_engine->_cutscene || g_engine->_cutscene->isStopped()) {
+		g_engine->_inputState.setInputActive(false);
+		g_engine->_inputState.setShowCursor(false);
+	}
 	return 0;
 }
 
 static SQInteger inputOn(HSQUIRRELVM v) {
-	warning("TODO: inputOn: not implemented");
+	Cutscene *cutscene = g_engine->_cutscene;
+	if (!cutscene || cutscene->isStopped()) {
+		g_engine->_inputState.setInputActive(true);
+		g_engine->_inputState.setShowCursor(true);
+	} else {
+		int state = g_engine->_inputState.getState();
+		state |= UI_INPUT_ON;
+		state &= (~UI_INPUT_OFF);
+		state |= UI_CURSOR_ON;
+		state &= (~UI_CURSOR_OFF);
+		cutscene->setInputState((InputStateFlag)state);
+		cutscene->setShowCursor(true);
+	}
 	return 0;
 }
 
 static SQInteger inputSilentOff(HSQUIRRELVM v) {
-	warning("TODO: inputSilentOff: not implemented");
+	g_engine->_inputState.setInputActive(false);
 	return 0;
 }
 
 static SQInteger sysInputState(HSQUIRRELVM v) {
-	warning("TODO: sysInputState: not implemented");
-	return 0;
+	SQInteger numArgs = sq_gettop(v);
+	if (numArgs == 1) {
+		int state = (int)g_engine->_inputState.getState();
+		sqpush(v, state);
+		return 1;
+	}
+	if (numArgs == 2) {
+		int state;
+		if (SQ_FAILED(sqget(v, 2, state)))
+			return sq_throwerror(v, "failed to get state");
+		g_engine->_inputState.setState((InputStateFlag)state);
+		return 0;
+	}
+	return sq_throwerror(v, Common::String::format("inputState with %lld arguments not implemented", numArgs).c_str());
 }
 
 static SQInteger inputVerbs(HSQUIRRELVM v) {
-	warning("TODO: inputVerbs: not implemented");
-	return 0;
+	bool on;
+	if (SQ_FAILED(sqget(v, 2, on)))
+		return sq_throwerror(v, "failed to get isActive");
+	debug("inputVerbs: %s", on ? "yes" : "no");
+	g_engine->_inputState.setInputVerbsActive(on);
+	return 1;
 }
 
 static SQInteger isInputOn(HSQUIRRELVM v) {
-	warning("TODO: isInputOn: not implemented");
-	return 0;
+	bool isActive = g_engine->_inputState.getInputActive();
+	sqpush(v, isActive);
+	return 1;
 }
 
 static SQInteger logEvent(HSQUIRRELVM v) {
@@ -513,8 +596,19 @@ static SQInteger moveCursorTo(HSQUIRRELVM v) {
 	return 0;
 }
 
+// removeCallback(id: int) remove the given callback
 static SQInteger removeCallback(HSQUIRRELVM v) {
-	warning("TODO: removeCallback: not implemented");
+	int id = 0;
+	if (SQ_FAILED(sqget(v, 2, id)))
+		return sq_throwerror(v, "failed to get callback");
+	for (int i = 0; i < g_engine->_callbacks.size(); i++) {
+		Callback *cb = g_engine->_callbacks[i];
+		if (cb->getId() == id) {
+			g_engine->_callbacks.remove_at(i);
+			delete cb;
+			return 0;
+		}
+	}
 	return 0;
 }
 
