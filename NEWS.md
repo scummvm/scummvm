@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.8.1 (????-??-??)
 
+ General:
+  - Fixed GLSL version parsing on some OpenGL ES2 platforms
+
  SCUMM:
    - Fix screen corruption (and sometimes even crashes) in Mac Loom and
      Indiana Jones and the Last Crusade when using menu shortcut keys.
