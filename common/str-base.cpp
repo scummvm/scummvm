@@ -609,6 +609,110 @@ TEMPLATE size_t BASESTRING::find(const value_type *strP, uint32 pos) const {
 	return npos;
 }
 
+TEMPLATE size_t BASESTRING::rfind(const value_type *s) const {
+	int sLen = cStrLen(s);
+
+	for (int idx = (int)_size - sLen; idx >= 0; --idx) {
+		if (!memcmp(_str + idx, s, sLen * sizeof(value_type)))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::rfind(value_type c, size_t pos) const {
+	if (pos == npos || pos > _size)
+		pos = _size;
+	else
+		++pos;
+
+	while (pos > 0) {
+		--pos;
+		if ((*this)[pos] == c)
+			return pos;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstOf(value_type c, size_t pos) const {
+	const value_type *strP = (pos >= _size) ? nullptr : cMemChr(_str + pos, c, _size - pos);
+	return strP ? strP - _str : npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastOf(value_type c, size_t pos) const {
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if (cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstNotOf(value_type c, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstNotOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (!cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastNotOf(value_type c) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastNotOf(const value_type *chars) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if (!cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
 TEMPLATE void BASESTRING::replace(uint32 pos, uint32 count, const BaseString &str) {
 	replace(pos, count, str, 0, str._size);
 }
@@ -664,6 +768,30 @@ TEMPLATE void BASESTRING::replace(uint32 posOri, uint32 countOri, const value_ty
 
 	// Copy the replaced part of the string
 	memmove(_str + posOri, str + posDest, countDest * sizeof(value_type));
+}
+
+TEMPLATE void BASESTRING::replace(value_type from, value_type to) {
+	// Don't allow removing trailing \x00
+	if (from == '\x00') {
+		return;
+	}
+
+	value_type *next = cMemChr(_str, from, _size);
+	if (!next) {
+		// Nothing to do
+		return;
+	}
+
+	size_t off = next - _str;
+	makeUnique();
+
+	value_type *end = _str + _size;
+	next = _str + off;
+	while(next) {
+		*next = to;
+		next++;
+		next = cMemChr(next + 1, from, end - next);
+	}
 }
 
 TEMPLATE uint64 BASESTRING::asUint64() const {

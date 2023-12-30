@@ -201,6 +201,51 @@ public:
 	size_t find(const value_type *s, uint32 pos = 0) const;
 	uint32 find(const BaseString &str, uint32 pos = 0) const;
 
+	/** Does a reverse find for the passed string */
+	size_t rfind(const value_type *s) const;
+	size_t rfind(const BaseString &s) const {
+		return rfind(s.c_str());
+	}
+
+	/** Does a reverse find for a passed character */
+	size_t rfind(value_type c, size_t pos = npos) const;
+
+	/** Find first character in the string matching the passed character */
+	size_t findFirstOf(value_type c, size_t pos = 0) const;
+
+	/** Find first character in the string that's any character of the passed string */
+	size_t findFirstOf(const value_type *chars, size_t pos = 0) const;
+	size_t findFirstOf(const BaseString &chars, size_t pos = 0) const {
+		return findFirstOf(chars.c_str(), pos);
+	}
+
+	/** Find the last character in the string that's the specified character */
+	size_t findLastOf(value_type c, size_t pos = npos) const;
+
+	/** Find the last character in the string that's in any of the passed characters */
+	size_t findLastOf(const value_type *chars, size_t pos = npos) const;
+	size_t findLastOf(const BaseString &chars, size_t pos = npos) const {
+		return findLastOf(chars.c_str(), pos);
+	}
+
+	/** Find first character in the string that's not the specified character */
+	size_t findFirstNotOf(value_type c, size_t pos = 0) const;
+
+	/** Find first character in the string that's not any character of the passed string */
+	size_t findFirstNotOf(const value_type *chars, size_t pos = 0) const;
+	size_t findFirstNotOf(const BaseString &chars, size_t pos = 0) const {
+		return findFirstNotOf(chars.c_str(), pos);
+	}
+
+	/** Find the last character in the string that's not the specified character */
+	size_t findLastNotOf(value_type c) const;
+
+	/** Find the last character in the string that's not in any of the passed characters */
+	size_t findLastNotOf(const value_type *chars) const;
+	size_t findLastNotOf(const BaseString &chars) const {
+		return findLastNotOf(chars.c_str());
+	}
+
 	/**@{
 	 * Functions to replace some amount of chars with chars from some other string.
 	 *
@@ -232,6 +277,13 @@ public:
 	void replace(uint32 posOri, uint32 countOri, const value_type *str,
 					uint32 posDest, uint32 countDest);
 	/**@}*/
+
+	/**
+	 * Replace all from characters in object by to character
+	 * @param from the character to look for
+	 * @param to The replacement character
+	 */
+	void replace(value_type from, value_type to);
 
 	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
 	void append(const value_type *begin, const value_type *end);
