@@ -110,14 +110,13 @@ Cutscene::Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJ
 
 	_name = "cutscene";
 	_id = newThreadId();
-	//_inputState = g_engine->inputState.getState();
+	_inputState = g_engine->_inputState.getState();
 	_actor = g_engine->_followActor;
-	//_showCursor = g_engine->inputState.showCursor;
+	_showCursor = g_engine->_inputState.getShowCursor();
 	_state = csStart;
 	debug("Create cutscene %d with input: 0x%X", _id, _inputState);
-	// TODO:
-	//   g_engine->_inputState.inputActive = false;
-	//   g_engine->_inputState.showCursor = false;
+	g_engine->_inputState.setInputActive(false);
+	g_engine->_inputState.setShowCursor(false);
 	for (int i = 0; i < g_engine->_threads.size(); i++) {
 		ThreadBase *thread = g_engine->_threads[i];
 		if (thread->isGlobal())
@@ -155,10 +154,10 @@ void Cutscene::start() {
 void Cutscene::stop() {
 	_state = csQuit;
 	debug("End cutscene");
-	// g_engine->inputState.setState(self.inputState);
-	// g_engine->inputState.showCursor = self.showCursor;
-	// if self.showCursor:
-	// 	g_engine->inputState.inputActive = true
+	g_engine->_inputState.setState(_inputState);
+	g_engine->_inputState.setShowCursor(_showCursor);
+	if (_showCursor)
+		g_engine->_inputState.setInputActive(true);
 	debug("Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
 	for (int i = 0; i < g_engine->_threads.size(); i++) {

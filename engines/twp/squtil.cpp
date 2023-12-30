@@ -231,6 +231,20 @@ HSQOBJECT sqrootTbl(HSQUIRRELVM v) {
 	return result;
 }
 
+void sqcall(const char *name, const Common::Array<HSQOBJECT> &args) {
+	HSQUIRRELVM v = g_engine->getVm();
+	HSQOBJECT o = sqrootTbl(v);
+	SQInteger top = sq_gettop(v);
+	sqpushfunc(v, o, name);
+
+	sq_pushobject(v, o);
+	for (int i = 0; i < args.size(); i++) {
+		sq_pushobject(v, args[i]);
+	}
+	sq_call(v, 1 + args.size(), SQFalse, SQTrue);
+	sq_settop(v, top);
+}
+
 static int getId(HSQOBJECT table) {
 	SQInteger result = 0;
 	sqgetf(table, "_id", result);

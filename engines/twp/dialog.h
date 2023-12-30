@@ -168,6 +168,8 @@ public:
 
 	DialogState getState() const { return _state; }
 
+	void setMousePos(Math::Vector2d pos) { _mousePos = pos; }
+
 	void start(const Common::String &actor, const Common::String &name, const Common::String &node);
 	void selectLabel(int line, const Common::String &name);
 	bool isOnce(int line) const;

@@ -128,6 +128,7 @@ HSQOBJECT sqrootTbl(HSQUIRRELVM v);
 
 void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const char *name);
 int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name);
+void sqcall(const char *name, const Common::Array<HSQOBJECT> &args);
 
 template<typename... T>
 void sqcall(const char *name, T... args);

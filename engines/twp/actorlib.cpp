@@ -542,8 +542,22 @@ static SQInteger actorTalking(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Turn to the pos, dir, object or actor over 2 frames.
 static SQInteger actorTurnTo(HSQUIRRELVM v) {
-	warning("TODO: actorTurnTo not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	if (sq_gettype(v, 3) == OT_INTEGER) {
+		int facing = 0;
+		if (SQ_FAILED(sqget(v, 3, facing)))
+			return sq_throwerror(v, "failed to get facing");
+		actor->turn((Facing)facing);
+	} else {
+		Object *obj = sqobj(v, 3);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object to face to");
+		actor->turn(obj);
+	}
 	return 0;
 }
 
@@ -608,14 +622,65 @@ static SQInteger actorVolume(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Gets the specified actor to walk forward the distance specified.
+//
+// . code-block:: Squirrel
+// script sheriffOpening2() {
+//     cutscene(@() {
+//         actorAt(sheriff, CityHall.spot1)
+//         actorWalkForward(currentActor, 50)
+//         ...
+//     }
+// }
 static SQInteger actorWalkForward(HSQUIRRELVM v) {
-	warning("TODO: actorWalkForward not implemented");
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	int dist;
+	if (SQ_FAILED(sqget(v, 3, dist)))
+		return sq_throwerror(v, "failed to get dist");
+	Math::Vector2d dir;
+	switch (actor->getFacing()) {
+	case FACE_FRONT:
+		dir = Math::Vector2d(0, -dist);
+		break;
+	case FACE_BACK:
+		dir = Math::Vector2d(0, dist);
+		break;
+	case FACE_LEFT:
+		dir = Math::Vector2d(-dist, 0);
+		break;
+	case FACE_RIGHT:
+		dir = Math::Vector2d(dist, 0);
+		break;
+	}
+	actor->walk(actor->_node->getAbsPos() + dir);
 	return 0;
 }
 
+// Returns true if the specified actor is currently walking.
+// If no actor is specified, then returns true if the current player character is walking.
+//
+// . code-block:: Squirrel
+// script _startWriting() {
+//    if (!actorWalking(this)) {
+//        if (notebookOpen == NO) {
+//            actorPlayAnimation(reyes, "start_writing", NO)
+//            breaktime(0.30)
+//        }
+//        ...
+//    }
+//}
 static SQInteger actorWalking(HSQUIRRELVM v) {
-	warning("TODO: actorWalking not implemented");
-	return 0;
+	SQInteger nArgs = sq_gettop(v);
+	Object *actor = nullptr;
+	if (nArgs == 1) {
+		actor = g_engine->_actor;
+	} else if (nArgs == 2) {
+		actor = sqactor(v, 2);
+	}
+	sqpush(v, actor && actor->isWalking());
+	return 1;
 }
 
 // Sets the walk speed of an actor.
@@ -658,7 +723,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 			int dir;
 			if (SQ_FAILED(sqget(v, 5, dir)))
 				return sq_throwerror(v, "failed to get dir");
-			facing = (Facing*)&dir;
+			facing = (Facing *)&dir;
 		}
 		actor->walk(Math::Vector2d(x, y), facing ? *facing : 0);
 	} else {

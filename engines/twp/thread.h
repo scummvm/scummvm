@@ -102,17 +102,6 @@ enum CutsceneState {
 	csQuit
 };
 
-enum InputStateFlag {
-	II_FLAGS_UI_INPUT_ON = 1,
-	II_FLAGS_UI_INPUT_OFF = 2,
-	II_FLAGS_UI_VERBS_ON = 4,
-	II_FLAGS_UI_VERBS_OFF = 8,
-	II_FLAGS_UI_HUDOBJECTS_ON = 0x10,
-	II_FLAGS_UI_HUDOBJECTS_OFF = 0x20,
-	II_FLAGS_UI_CURSOR_ON = 0x40,
-	II_FLAGS_UI_CURSOR_OFF = 0x80
-};
-
 class Object;
 class Cutscene final : public ThreadBase {
 public:
@@ -127,12 +116,15 @@ public:
 
 	bool hasOverride() const;
 	inline void cutsceneOverride() { _state = csOverride; }
+	bool isStopped();
+
+	void setInputState(InputStateFlag state) { _inputState = state; }
+	void setShowCursor(bool state) { _showCursor = state; }
 
 private:
 	void checkEndCutscene();
 	void checkEndCutsceneOverride();
 	void doCutsceneOverride();
-	bool isStopped();
 
 private:
 	HSQUIRRELVM _v;

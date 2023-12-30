@@ -57,6 +57,7 @@ MODULE_OBJS = \
 	shaders.o \
 	hud.o \
 	lip.o \
+	callback.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

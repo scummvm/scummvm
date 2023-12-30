@@ -20,16 +20,21 @@
  */
 
 #include "twp/callback.h"
+#include "twp/squtil.h"
 
 namespace Twp {
 
+Callback::Callback(int id, float duration, const Common::String &name, const Common::Array<HSQOBJECT> &args)
+	: _id(id), _duration(duration), _name(name), _args(args) {
+}
+
 void Callback::call() {
-	sqcall(name, args);
+	sqcall(_name.c_str(), _args);
 }
 
 bool Callback::update(float elapsed) {
-	self.elapsed += elapsed;
-	bool result = self.elapsed > self.duration;
+	_elapsed += elapsed;
+	bool result = _elapsed > _duration;
 	if (result)
 		call();
 	return result;

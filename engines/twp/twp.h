@@ -43,6 +43,7 @@
 #include "twp/scenegraph.h"
 #include "twp/dialog.h"
 #include "twp/hud.h"
+#include "twp/callback.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -138,6 +139,7 @@ public:
 	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
 	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
 	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
+	bool execSentence(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 
 private:
 	void update(float elapsedMs);
@@ -153,7 +155,6 @@ private:
 	void resetVerb();
 	Common::String cursorText();
 	Verb verb();
-	bool execSentence(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 	bool preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2);
 
 public:
@@ -165,6 +166,7 @@ public:
 	Common::Array<Object *> _objects;
 	Common::Array<ThreadBase *> _threads;
 	Common::Array<Task *> _tasks;
+	Common::Array<Callback *> _callbacks;
 	Object *_actor = nullptr;
 	Object *_followActor = nullptr;
 	Room *_room = nullptr;

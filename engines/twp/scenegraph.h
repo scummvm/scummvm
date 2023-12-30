@@ -208,13 +208,61 @@ public:
 	virtual ~Scene() final;
 };
 
+enum class CursorShape {
+    Normal,
+    Front,
+    Back,
+    Left,
+    Right,
+    Pause
+};
+
+
+enum InputStateFlag {
+	II_FLAGS_UI_INPUT_ON = 1,
+	II_FLAGS_UI_INPUT_OFF = 2,
+	II_FLAGS_UI_VERBS_ON = 4,
+	II_FLAGS_UI_VERBS_OFF = 8,
+	II_FLAGS_UI_HUDOBJECTS_ON = 0x10,
+	II_FLAGS_UI_HUDOBJECTS_OFF = 0x20,
+	II_FLAGS_UI_CURSOR_ON = 0x40,
+	II_FLAGS_UI_CURSOR_OFF = 0x80
+};
+
 class InputState final : public Node {
 public:
 	InputState();
 	virtual ~InputState() final;
 
+	InputStateFlag getState() const;
+	void setState(InputStateFlag state);
+
+	void setInputHUD(bool value) { _inputHUD = value; }
+	bool getInputHUD() const { return _inputHUD; }
+
+	void setInputActive(bool value) { _inputActive = value; }
+	bool getInputActive() const { return _inputActive; }
+
+	void setShowCursor(bool value) { _showCursor = value; }
+	bool getShowCursor() const { return _showCursor; }
+
+	void setInputVerbsActive(bool value) { _inputVerbsActive = value; }
+	bool getInputVerbsActive() const { return _inputVerbsActive; }
+
+	void setHotspot(bool value) { _hotspot = value; }
+	bool getHotspot() const { return _hotspot; }
+
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
+
+private:
+	bool _inputHUD = false;
+    bool _inputActive = false;
+    bool _showCursor = false;
+    bool _inputVerbsActive = false;
+    CursorShape _cursorShape = CursorShape::Normal;
+    Common::String _cursorName;
+    bool _hotspot = false;
 };
 
 class OverlayNode final : public Node {
