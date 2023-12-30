@@ -645,9 +645,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
 
 		// Makes a deep copy when we shorten the string
-		Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
-		Common::String s4(s3);
-		s3.replace(0, 32, Common::U32String(""));
+		Common::U32String s3 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
+		Common::U32String s4(s3);
+		s3.replace(0, 32, Common::U32String());
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
 	}
