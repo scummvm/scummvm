@@ -4,7 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.9.0 (XXXX-XX-XX)
 
  TsAGE:
-   - Added support for Russian CD fan-translation.
+   - Added support for Russian CD fan-translation for Ringworld.
 
 
 #### 2.8.0 (2023-12-30)
