@@ -307,6 +307,9 @@ protected:
 	void toCase(int (*caseChangeFunc)(int));
 
 	static uint32 cStrLen(const value_type *str);
+	static const value_type *cMemChr(const value_type *ptr, value_type c, size_t count);
+	static       value_type *cMemChr(value_type *ptr,       value_type c, size_t count);
+	static int cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count);
 };
 }
 #endif
