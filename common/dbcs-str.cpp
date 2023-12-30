@@ -149,14 +149,6 @@ DBCSString DBCSString::substr(size_t pos, size_t len) const {
 		return DBCSString(_str + pos, MIN((size_t)_size - pos, len));
 }
 
-void DBCSString::insertString(const char *s, uint32 p) {
-	insertString(DBCSString(s), p);
-}
-
-void DBCSString::insertString(const String &s, uint32 p) {
-	insertString(DBCSString(s), p);
-}
-
 String DBCSString::convertToString() const {
 	Common::String r;
 	for (uint i = 0; i < size(); i++) {

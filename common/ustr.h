@@ -162,10 +162,6 @@ public:
 	 */
 	static int vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args);
 
-	using BaseString<value_type>::insertString;
-	void insertString(const char *s, uint32 p, CodePage page = kUtf8);   /*!< Insert string @p s into this string at position @p p. */
-	void insertString(const String &s, uint32 p, CodePage page = kUtf8); /*!< @overload */
-
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
 

@@ -682,6 +682,18 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(testString == "2123456");
 		testString.insertChar('0', 5);
 		TS_ASSERT(testString == "21234056");
+		testString.insertChar('7', 8);
+		TS_ASSERT(testString == "212340567");
+	}
+
+	void test_insertString() {
+		Common::String testString("123456");
+		testString.insertString("12", 0);
+		TS_ASSERT(testString == "12123456");
+		testString.insertString("01", 6);
+		TS_ASSERT(testString == "1212340156");
+		testString.insertString("78", 10);
+		TS_ASSERT(testString == "121234015678");
 	}
 
 	void test_comparison() {

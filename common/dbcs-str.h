@@ -124,10 +124,6 @@ public:
 	/** Convert the string to the standard String represantation. */
 	String convertToString() const;
 
-	using BaseString<value_type>::insertString;
-	void insertString(const char *s, uint32 p);   /*!< Insert string @p s into this string at position @p p. */
-	void insertString(const String &s, uint32 p); /*!< @overload */
-
 	/** Return a substring of this string */
 	DBCSString substr(size_t pos = 0, size_t len = npos) const;
 
