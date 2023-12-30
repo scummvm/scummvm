@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-26 14:22+0000\n"
-"PO-Revision-Date: 2023-12-28 20:41+0000\n"
+"PO-Revision-Date: 2023-12-31 03:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5075,7 +5075,7 @@ msgstr "Opacidad de mando"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
-msgstr "Botones de dirección:"
+msgstr "Botones dirección:"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
