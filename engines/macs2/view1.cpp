@@ -96,6 +96,11 @@ namespace Macs2 {
 	}
 
 	void View1::renderString(uint16 x, uint16 y, Common::String s) {
+		uint16 currentX = x;
+		uint16 currentY = y;
+		for (auto iter = s.begin(); iter != s.end(); iter++) {
+			
+		}
 	}
 
 	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
