@@ -88,6 +88,8 @@ public:
 	// TODO: THis count could be read from the file as well
 	uint16 numGlyphs = 79;
 
+	bool FindGlyph(char c, GlyphData &out) const;
+
 	byte* _cursorData;
 	uint16 _cursorWidth;
 	uint16 _cursorHeight;
