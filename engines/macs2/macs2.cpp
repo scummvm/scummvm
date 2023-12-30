@@ -269,6 +269,10 @@ Macs2Engine::~Macs2Engine() {
 
 }
 
+bool Macs2Engine::FindGlyph(char c, GlyphData& out) const {
+	return false;
+}
+
 // Does what 9F23 does
 uint16 ScriptReadWord(Common::MemoryReadStream* stream) {
 	const int64 pos = stream->pos();
