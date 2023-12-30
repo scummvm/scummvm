@@ -440,12 +440,7 @@ TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
 
 TEMPLATE void BASESTRING::insertChar(value_type c, uint32 p) {
 	assert(p <= _size);
-
-	ensureCapacity(_size + 1, true);
-	_size++;
-	for (uint32 i = _size; i > p; --i)
-		_str[i] = _str[i - 1];
-	_str[p] = c;
+	assignInsert(c, p);
 }
 
 TEMPLATE void BASESTRING::deleteChar(uint32 p) {
@@ -564,15 +559,11 @@ TEMPLATE void BASESTRING::assign(value_type c) {
 }
 
 TEMPLATE void BASESTRING::insertString(const value_type *s, uint32 p) {
-	while (*s != '\0') {
-		BaseString::insertChar(*s++, p++);
-	}
+	assignInsert(s, p);
 }
 
 TEMPLATE void BASESTRING::insertString(const BaseString &s, uint32 p) {
-	for (uint i = 0; i < s._size; i++) {
-		BaseString::insertChar(s[i], p+i);
-	}
+	assignInsert(s, p);
 }
 
 TEMPLATE uint32 BASESTRING::find(value_type x, uint32 pos) const {
@@ -864,6 +855,19 @@ TEMPLATE void BASESTRING::append(const value_type *beginP, const value_type *end
 	_str[_size] = 0;
 }
 
+TEMPLATE void BASESTRING::assignInsert(value_type c, uint32 p) {
+	if (c == 0) {
+#ifndef SCUMMVM_UTIL
+		warning("Inserting \\0 into String. This is permitted, but can have unwanted consequences. (This warning will be removed later.)");
+#endif
+	}
+	ensureCapacity(_size + 1, true);
+
+	memmove(_str + p + 1, _str + p, ((_size - p) + 1) * sizeof(value_type));
+	_str[p] = c;
+	_size++;
+}
+
 TEMPLATE void BASESTRING::assignAppend(value_type c) {
 	if (c == 0) {
 #ifndef SCUMMVM_UTIL
@@ -874,6 +878,22 @@ TEMPLATE void BASESTRING::assignAppend(value_type c) {
 
 	_str[_size++] = c;
 	_str[_size] = 0;
+}
+
+TEMPLATE void BASESTRING::assignInsert(const BaseString &str, uint32 p) {
+	if (&str == this) {
+		assignInsert(BaseString(str), p);
+		return;
+	}
+
+	int len = str._size;
+	if (len > 0) {
+		ensureCapacity(_size + len, true);
+
+		memmove(_str + p + len, _str + p, ((_size - p) + 1) * sizeof(value_type));
+		memcpy(_str + p, str._str, len * sizeof(value_type));
+		_size += len;
+	}
 }
 
 TEMPLATE void BASESTRING::assignAppend(const BaseString &str) {
@@ -899,6 +919,23 @@ TEMPLATE bool BASESTRING::pointerInOwnBuffer(const value_type *str) const {
 	uintptr ownBuffEnd = (uintptr)(_str + _size);
 	uintptr candidateAddr = (uintptr)str;
 	return ownBuffStart <= candidateAddr && candidateAddr <= ownBuffEnd;
+}
+
+TEMPLATE void BASESTRING::assignInsert(const value_type *str, uint32 p) {
+	if (pointerInOwnBuffer(str)) {
+		assignInsert(BaseString(str), p);
+		return;
+	}
+
+	uint32 len;
+	for (len = 0; str[len]; len++);
+	if (len > 0) {
+		ensureCapacity(_size + len, true);
+
+		memmove(_str + p + len, _str + p, ((_size - p) + 1) * sizeof(value_type));
+		memcpy(_str + p, str, len * sizeof(value_type));
+		_size += len;
+	}
 }
 
 TEMPLATE void BASESTRING::assignAppend(const value_type *str) {

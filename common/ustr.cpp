@@ -139,14 +139,6 @@ U32String U32String::substr(size_t pos, size_t len) const {
 		return U32String(_str + pos, MIN((size_t)_size - pos, len));
 }
 
-void U32String::insertString(const char *s, uint32 p, CodePage page) {
-	insertString(U32String(s, page), p);
-}
-
-void U32String::insertString(const String &s, uint32 p, CodePage page) {
-	insertString(U32String(s, page), p);
-}
-
 U32String U32String::formatInternal(const U32String *fmt, ...) {
 	U32String output;
 

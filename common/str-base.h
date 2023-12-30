@@ -289,6 +289,9 @@ protected:
 	void decRefCount(int *oldRefCount);
 	void initWithValueTypeStr(const value_type *str, uint32 len);
 
+	void assignInsert(const value_type *str, uint32 p);
+	void assignInsert(value_type c, uint32 p);
+	void assignInsert(const BaseString &str, uint32 p);
 	void assignAppend(const value_type *str);
 	void assignAppend(value_type c);
 	void assignAppend(const BaseString &str);
