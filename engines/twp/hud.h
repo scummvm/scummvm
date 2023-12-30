@@ -92,6 +92,8 @@ public:
 	Hud();
 
 	ActorSlot* actorSlot(Object* actor);
+	bool isOver() const { return _over; }
+	void update(Math::Vector2d pos, Object* hotspot, bool mouseClick);
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;

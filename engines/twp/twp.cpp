@@ -193,7 +193,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Object *obj = objAt(roomPos);
 
-		if (_cursor.isLeftClick()) {
+		if (_cursor.isLeftDown()) {
 			// button left: execute selected verb
 			bool handled = clickedAtHandled(roomPos);
 			if (!handled && obj) {
@@ -209,7 +209,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 			}
 			// TODO: Just clicking on the ground
 			//     cancelSentence(self.actor)
-		} else if (_cursor.isRightClick()) {
+		} else if (_cursor.isRightDown()) {
 			// button right: execute default verb
 			if (obj) {
 				VerbId verb;
@@ -259,25 +259,107 @@ Common::String TwpEngine::cursorText() {
 	return result;
 }
 
+template<typename TFunc>
+void objsAt(Math::Vector2d pos, TFunc func) {
+	if (g_engine->_uiInv.getObject() && g_engine->_room->_fullscreen == FULLSCREENROOM)
+		func(g_engine->_uiInv.getObject());
+	for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+		Layer *layer = g_engine->_room->_layers[i];
+		for (int j = 0; j < layer->_objects.size(); j++) {
+			Object *obj = layer->_objects[j];
+			if (obj != g_engine->_actor && (obj->_touchable || obj->inInventory()) && obj->_node->isVisible() && obj->_objType == otNone && obj->contains(pos))
+				if (func(obj))
+					return;
+		}
+	}
+}
+
+Object *inventoryAt(Math::Vector2d pos) {
+	Object *result = nullptr;
+	objsAt(pos, [&](Object *x) {
+		if (x->inInventory()) {
+			result = x;
+			return true;
+		}
+		return false;
+	});
+	return result;
+}
+
 void TwpEngine::update(float elapsed) {
 	_time += elapsed;
 	_frameCounter++;
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
-	// _inputState.setVisible(_inputState.getShowCursor() || _dialog.getState() == WaitingForChoice);
+	_inputState.setVisible(_inputState.getShowCursor() || _dialog.getState() == WaitingForChoice);
 	_inputState.setPos(scrPos);
 	_sentence.setPos(scrPos);
 	_dialog.setMousePos(scrPos);
 
 	if (_room) {
 		// update nouns and useFlag
-		if (_cursor.isLeftClick() || _cursor.isRightClick())
-			clickedAt(_cursor.pos);
+		Math::Vector2d roomPos = screenToRoom(scrPos);
+		if (_room->_fullscreen == FULLSCREENROOM) {
+			if ((_hud._verb.id.id == VERB_USE) && (_useFlag != ufNone)) {
+				_noun2 = objAt(roomPos);
+			} else if (_hud._verb.id.id == VERB_GIVE) {
+				if (_useFlag != ufGiveTo) {
+					_noun1 = inventoryAt(roomPos);
+					_useFlag = ufNone;
+					_noun2 = nullptr;
+				} else {
+					objsAt(roomPos, [&](Object *x) {
+						if (x != _actor && x->getFlags() & GIVEABLE) {
+							_noun2 = x;
+							return true;
+						}
+						return false;
+					});
+					if (_noun2)
+						debug("Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
+				}
+			} else {
+				_noun1 = objAt(roomPos);
+				_useFlag = ufNone;
+				_noun2 = nullptr;
+			}
 
-		_sentence.setText(cursorText());
+			_inputState.setHotspot(_noun1!=nullptr);
+			_hud.setVisible(_inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None);
+			_sentence.setVisible(_hud.isVisible());
+			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
+			//_actorSwitcher.visible = _dialog.state == DialogState.None and self.cutscene.isNil;
+			_sentence.setText(cursorText());
+
+			// call clickedAt if any button down
+			if ((_dialog.getState() == DialogState::None) && !_hud.isOver()) {
+				// TODO:
+				// if (_cursor.leftDown) {
+				// 	if mouseDnDur > initDuration(milliseconds = 500):
+				// 		walkFast();
+				// } else {
+				// 	walkFast(false);
+				// }
+				if (_cursor.isLeftDown() || _cursor.isRightDown())
+					clickedAt(scrPos);
+			}
+		} else {
+			_hud.setVisible(false);
+			_uiInv.setVisible(false);
+			_noun1 = objAt(roomPos);
+			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->_name);
+			_sentence.setText(cText);
+			// TODO: _inputState.setCursorShape(CursorShape::Normal);
+			if (_cursor.isLeftDown())
+				clickedAt(scrPos);
+		}
+
+		if (_cursor.isLeftDown() || _cursor.isRightDown())
+			clickedAt(_cursor.pos);
 	}
 
+	_dialog.update(elapsed);
 	_fadeShader->_elapsed += elapsed;
 
 	// update camera
@@ -337,20 +419,14 @@ void TwpEngine::update(float elapsed) {
 
 	// update objects
 	if (_room) {
-		for (int j = 0; j < _room->_layers.size(); j++) {
-			Layer *layer = _room->_layers[j];
-			for (int k = 0; k < layer->_objects.size(); k++) {
-				Object *obj = layer->_objects[k];
-				obj->update(elapsed);
-			}
-		}
+		_room->update(elapsed);
 	}
 
 	// update inventory
 	if (!_actor) {
 		_uiInv.update(elapsed);
 	} else {
-		// TODO: _hud.update(scrPos, _noun1, _cursor.isLeftClick());
+		_hud.update(scrPos, _noun1, _cursor.isLeftDown());
 		VerbUiColors *verbUI = &_hud.actorSlot(_actor)->verbUiColors;
 		_uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
 	}
@@ -462,12 +538,12 @@ void TwpEngine::draw() {
 	}
 
 	// draw to screen
+	_gfx.use(nullptr);
 	_gfx.setRenderTarget(nullptr);
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
-	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, flipY);
+	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect != FadeEffect::None);
 
 	// draw UI
-	_gfx.use(nullptr);
 	_screenScene.draw();
 
 	g_system->updateScreen();
@@ -539,6 +615,9 @@ Common::Error TwpEngine::run() {
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_cursor.leftDown = true;
+				if (!_cursor.oldLeftDown) {
+					_cursor.mouseDownTime = g_engine->_time;
+				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_cursor.leftDown = false;
@@ -744,7 +823,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 
 	// exit current room
 	exitRoom(_room);
-	// TODO: _fadeShader->effect = None;
+	_fadeShader->_effect = FadeEffect::None;
 
 	// sets the current room for scripts
 	sqsetf(sqrootTbl(v), "currentRoom", room->_table);
@@ -756,8 +835,8 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	_room->_lights._numLights = 0;
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
-	//   if (_actor)
-	//     _hud.verb = _hud.actorSlot(_actor).verbs[0];
+	if (_actor)
+		_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -944,21 +1023,6 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 	_fadeShader->_elapsed = 0.f;
 }
 
-template<typename TFunc>
-void objsAt(Math::Vector2d pos, TFunc func) {
-	// TODO
-	// if g_engine->_uiInv->_obj && g_engine->_room->fullscreen == FullscreenRoom)
-	// 	func(g_engine->_uiInv._obj);
-	for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
-		Layer *layer = g_engine->_room->_layers[i];
-		for (int j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
-			if (obj != g_engine->_actor && (obj->_touchable || obj->inInventory()) && obj->_node->isVisible() && obj->_objType == otNone && obj->contains(pos))
-				func(obj);
-		}
-	}
-}
-
 Object *TwpEngine::objAt(Math::Vector2d pos) {
 	int zOrder = INT_MAX;
 	Object *result = nullptr;
@@ -967,6 +1031,7 @@ Object *TwpEngine::objAt(Math::Vector2d pos) {
 			result = obj;
 			zOrder = obj->_node->getZSort();
 		}
+		return false;
 	});
 	return result;
 }

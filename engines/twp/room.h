@@ -31,6 +31,9 @@
 #include "twp/motor.h"
 #include "twp/scenegraph.h"
 
+#define FULLSCREENCLOSEUP	1
+#define FULLSCREENROOM		2
+
 namespace Twp {
 
 enum class RoomEffect {
@@ -109,6 +112,8 @@ public:
 	~Room();
 
 	void load(Common::SeekableReadStream &s);
+
+	void update(float elapsedSec);
 
 	Object *createObject(const Common::String &sheet, const Common::Array<Common::String> &frames);
 	Object *createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);

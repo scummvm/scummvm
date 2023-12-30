@@ -98,7 +98,7 @@ Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
 	setId(_table, newRoomId());
 	_name = name;
 	_scene = new Scene();
-  	_scene->addChild(&_overlayNode);
+	_scene->addChild(&_overlayNode);
 }
 
 Room::~Room() {
@@ -374,7 +374,7 @@ void Room::objectParallaxLayer(Object *obj, int zsort) {
 	Layer *l = layer(zsort);
 	if (obj->_layer != l) {
 		// removes object from old layer
-		if(obj->_layer) {
+		if (obj->_layer) {
 			int i = find(obj->_layer->_objects, obj);
 			obj->_layer->_node->removeChild(obj->_node);
 			obj->_layer->_objects.remove_at(i);
@@ -393,6 +393,20 @@ void Room::setOverlay(Color color) {
 
 Color Room::getOverlay() const {
 	return _overlayNode.getOverlayColor();
+}
+
+void Room::update(float elapsed) {
+	if (_overlayTo)
+		_overlayTo->update(elapsed);
+	// if (_rotateTo)
+	// 	_rotateTo->update(elapsedSec);
+	for (int j = 0; j < _layers.size(); j++) {
+		Layer *layer = _layers[j];
+		for (int k = 0; k < layer->_objects.size(); k++) {
+			Object *obj = layer->_objects[k];
+			obj->update(elapsed);
+		}
+	}
 }
 
 Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vector2d to) {
