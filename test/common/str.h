@@ -29,8 +29,10 @@ class StringTestSuite : public CxxTest::TestSuite
 
 	void test_chop() {
 		Common::String str("test-string");
+		Common::String str2 = str;
 		str.chop();
 		TS_ASSERT_EQUALS(str, "test-strin");
+		TS_ASSERT_EQUALS(str2, "test-string");
 
 		str = "test-string";
 		str.chop(2);
