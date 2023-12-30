@@ -115,11 +115,9 @@ public:
 	bool hasPrefixIgnoreCase(const String &x) const;
 	bool hasPrefixIgnoreCase(const char *x) const;
 
+	using BaseString<value_type>::contains;
 	bool contains(const String &x) const;
 	bool contains(const char *x) const;
-	bool contains(char x) const;
-	bool contains(uint32 x) const;
-	bool contains(char32_t x) const;
 
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
