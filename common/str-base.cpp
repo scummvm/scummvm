@@ -633,6 +633,63 @@ TEMPLATE size_t BASESTRING::find(const value_type *strP, uint32 pos) const {
 	return npos;
 }
 
+TEMPLATE void BASESTRING::replace(uint32 pos, uint32 count, const BaseString &str) {
+	replace(pos, count, str, 0, str._size);
+}
+
+TEMPLATE void BASESTRING::replace(uint32 pos, uint32 count, const value_type *str) {
+	replace(pos, count, str, 0, cStrLen(str));
+}
+
+TEMPLATE void BASESTRING::replace(iterator begin_, iterator end_, const BaseString &str) {
+	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
+}
+
+TEMPLATE void BASESTRING::replace(iterator begin_, iterator end_, const value_type *str) {
+	replace(begin_ - _str, end_ - begin_, str, 0, cStrLen(str));
+}
+
+TEMPLATE void BASESTRING::replace(uint32 posOri, uint32 countOri, const BaseString &str,
+					 uint32 posDest, uint32 countDest) {
+	replace(posOri, countOri, str._str, posDest, countDest);
+}
+
+TEMPLATE void BASESTRING::replace(uint32 posOri, uint32 countOri, const value_type *str,
+					 uint32 posDest, uint32 countDest) {
+
+	// Prepare string for the replaced text.
+	if (countOri < countDest) {
+		uint32 offset = countDest - countOri; ///< Offset to copy the characters
+		uint32 newSize = _size + offset;
+
+		ensureCapacity(newSize, true);
+
+		_size = newSize;
+
+		// Push the old characters to the end of the string
+		for (uint32 i = _size; i >= posOri + countDest; i--)
+			_str[i] = _str[i - offset];
+
+	} else if (countOri > countDest){
+		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
+
+		makeUnique();
+
+		// Pull the remainder string back
+		for (uint32 i = posOri + countDest; i + offset <= _size; i++)
+			_str[i] = _str[i + offset];
+
+		_size -= offset;
+	} else {
+		makeUnique();
+	}
+
+	// Copy the replaced part of the string
+	for (uint32 i = 0; i < countDest; i++)
+		_str[posOri + i] = str[posDest + i];
+
+}
+
 TEMPLATE uint64 BASESTRING::asUint64() const {
 	uint64 result = 0;
 	for (uint32 i = 0; i < _size; ++i) {

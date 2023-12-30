@@ -165,55 +165,6 @@ void DBCSString::insertString(const String &s, uint32 p) {
 	insertString(DBCSString(s), p);
 }
 
-void DBCSString::replace(uint32 pos, uint32 count, const DBCSString &str) {
-	replace(pos, count, str, 0, str._size);
-}
-
-void DBCSString::replace(iterator begin_, iterator end_, const DBCSString &str) {
-	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
-}
-
-void DBCSString::replace(uint32 posOri, uint32 countOri, const DBCSString &str,
-					 uint32 posDest, uint32 countDest) {
-	replace(posOri, countOri, str._str, posDest, countDest);
-}
-
-void DBCSString::replace(uint32 posOri, uint32 countOri, const uint16 *str,
-					 uint32 posDest, uint32 countDest) {
-
-	// Prepare string for the replaced text.
-	if (countOri < countDest) {
-		uint32 offset = countDest - countOri; ///< Offset to copy the characters
-		uint32 newSize = _size + offset;
-
-		ensureCapacity(newSize, true);
-
-		_size = newSize;
-
-		// Push the old characters to the end of the string
-		for (uint32 i = _size; i >= posOri + countDest; i--)
-			_str[i] = _str[i - offset];
-
-	} else if (countOri > countDest) {
-		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
-
-		makeUnique();
-
-		// Pull the remainder string back
-		for (uint32 i = posOri + countDest; i + offset <= _size; i++)
-			_str[i] = _str[i + offset];
-
-		_size -= offset;
-	} else {
-		makeUnique();
-	}
-
-	// Copy the replaced part of the string
-	for (uint32 i = 0; i < countDest; i++)
-		_str[posOri + i] = str[posDest + i];
-
-}
-
 String DBCSString::convertToString() const {
 	Common::String r;
 	for (uint i = 0; i < size(); i++) {

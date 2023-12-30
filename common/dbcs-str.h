@@ -125,34 +125,6 @@ public:
 	/** Return a substring of this string */
 	DBCSString substr(size_t pos = 0, size_t len = npos) const;
 
-	/**@{
-	 * Functions to replace some amount of chars with chars from some other string.
-	 *
-	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/
-	 *
-	 * @param pos Starting position for the replace in the original string.
-	 * @param count Number of chars to replace from the original string.
-	 * @param str Source of the new chars.
-	 * @param posOri Same as pos
-	 * @param countOri Same as count
-	 * @param posDest Initial position to read str from.
-	 * @param countDest Number of chars to read from str. npos by default.
-	 */
-	// Replace 'count' bytes, starting from 'pos' with str.
-	void replace(uint32 pos, uint32 count, const DBCSString &str);
-	// Replace the characters in [begin, end) with str._str.
-	void replace(iterator begin, iterator end, const DBCSString &str);
-	// Replace _str[posOri, posOri + countOri) with
-	// str._str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const DBCSString &str,
-					uint32 posDest, uint32 countDest);
-	// Replace _str[posOri, posOri + countOri) with
-	// str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const uint16 *str,
-					uint32 posDest, uint32 countDest);
-	/**@}*/
-
 private:
 	void decodeDBCS(const char *str, uint32 len);
 

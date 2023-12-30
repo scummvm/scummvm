@@ -149,37 +149,7 @@ public:
 	bool matchString(const char *pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
 	bool matchString(const String &pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
 
-	/**@{
-	 * Functions to replace some amount of chars with chars from some other string.
-	 *
-	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/
-	 *
-	 * @param pos Starting position for the replace in the original string.
-	 * @param count Number of chars to replace from the original string.
-	 * @param str Source of the new chars.
-	 * @param posOri Same as pos
-	 * @param countOri Same as count
-	 * @param posDest Initial position to read str from.
-	 * @param countDest Number of chars to read from str. npos by default.
-	 */
-	// Replace 'count' bytes, starting from 'pos' with str.
-	void replace(uint32 pos, uint32 count, const String &str);
-	// The same as above, but accepts a C-like array of characters.
-	void replace(uint32 pos, uint32 count, const char *str);
-	// Replace the characters in [begin, end) with str._str.
-	void replace(iterator begin, iterator end, const String &str);
-	// Replace the characters in [begin, end) with str.
-	void replace(iterator begin, iterator end, const char *str);
-	// Replace _str[posOri, posOri + countOri) with
-	// str._str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const String &str,
-					uint32 posDest, uint32 countDest);
-	// Replace _str[posOri, posOri + countOri) with
-	// str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const char *str,
-					uint32 posDest, uint32 countDest);
-	/**@}*/
+	using BaseString<value_type>::replace;
 
 	/**
 	 * Replace all from characters in object by to character
