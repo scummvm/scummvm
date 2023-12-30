@@ -59,21 +59,21 @@ public:
 	void clearRoot(const Std::string &category);
 
 	//! get value
-	bool get(const Std::string &category, const Std::string &section, const Std::string &key, Std::string &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, Std::string &ret) const;
 	//! get value
-	bool get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret) const;
 	//! get value
-	bool get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret) const;
 
 	//! list all sections
 	//! \param category The config category to list all sections in
 	//! \return the sections. They have no guaranteed order.
-	Std::vector<Std::string> listSections(const Std::string &category);
+	Std::vector<Std::string> listSections(const Std::string &category) const;
 	//! list all key-value pairs in the given section.
 	//! \param category The config category for the section to list
 	//! \param section The section to list
 	//! \return the key-value pairs. They have no guaranteed order.
-	KeyMap listKeyValues(const Std::string &category, const Std::string &section);
+	KeyMap listKeyValues(const Std::string &category, const Std::string &section) const;
 
 private:
 	Std::vector<ConfigFile *> _configFiles;

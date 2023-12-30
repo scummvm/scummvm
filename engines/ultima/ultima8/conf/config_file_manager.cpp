@@ -83,8 +83,8 @@ void ConfigFileManager::clearRoot(const Std::string &category) {
 	}
 }
 
-bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, string &ret) {
-	Std::vector<ConfigFile*>::reverse_iterator i;
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, string &ret) const {
+	Std::vector<ConfigFile*>::const_reverse_iterator i;
 	for (i = _configFiles.rbegin(); i != _configFiles.rend(); ++i) {
 		if (category.equalsIgnoreCase((*i)->_category)) {
 			if ((*i)->_iniFile.getKey(key, section, ret)) {
@@ -97,7 +97,7 @@ bool ConfigFileManager::get(const Std::string &category, const Std::string &sect
 }
 
 
-bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret) {
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret) const {
 	string stringval;
 	if (!get(category, section, key, stringval))
 		return false;
@@ -106,7 +106,7 @@ bool ConfigFileManager::get(const Std::string &category, const Std::string &sect
 	return true;
 }
 
-bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret) {
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret) const {
 	string stringval;
 	if (!get(category, section, key, stringval))
 		return false;
@@ -115,7 +115,7 @@ bool ConfigFileManager::get(const Std::string &category, const Std::string &sect
 	return true;
 }
 
-Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &category) {
+Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &category) const {
 	Std::vector<Std::string> sections;
 	Std::vector<ConfigFile*>::const_iterator i;
 
@@ -132,7 +132,7 @@ Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &cate
 	return sections;
 }
 
-KeyMap ConfigFileManager::listKeyValues(const Std::string &category, const Std::string &section) {
+KeyMap ConfigFileManager::listKeyValues(const Std::string &category, const Std::string &section) const {
 	KeyMap values;
 	Std::vector<ConfigFile*>::const_iterator i;
 
