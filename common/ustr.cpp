@@ -186,7 +186,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 	int pos = 0;
 	int tempPos = 0;
 
-	char buffer[512];
+	value_type buffer[512];
 
 	while (fmt != fmtEnd) {
 		ch = *fmt++;
@@ -215,7 +215,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 			case 'd':
 				int_temp = va_arg(args, int);
 				itoa(int_temp, buffer, 10);
-				len = strlen(buffer);
+				len = cStrLen(buffer);
 				length += len;
 
 				output.insertString(buffer, pos);
@@ -224,7 +224,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 			case 'u':
 				uint_temp = va_arg(args, uint);
 				uitoa(uint_temp, buffer, 10);
-				len = strlen(buffer);
+				len = cStrLen(buffer);
 				length += len;
 
 				output.insertString(buffer, pos);
@@ -301,7 +301,7 @@ void U32String::replace(uint32 posOri, uint32 countOri, const u32char_type_t *st
 
 }
 
-char* U32String::itoa(int num, char* str, uint base) {
+U32String::value_type* U32String::itoa(int num, value_type* str, uint base) {
 	if (num < 0) {
 		str[0] = '-';
 		uitoa(-num, str + 1, base);
@@ -312,7 +312,7 @@ char* U32String::itoa(int num, char* str, uint base) {
 	return str;
 }
 
-char* U32String::uitoa(uint num, char* str, uint base) {
+U32String::value_type* U32String::uitoa(uint num, value_type* str, uint base) {
 	int i = 0;
 
 	if (num) {
@@ -333,7 +333,7 @@ char* U32String::uitoa(uint num, char* str, uint base) {
 
 	// reverse the string
 	while (k < j) {
-		char temp = str[k];
+		value_type temp = str[k];
 		str[k] = str[j];
 		str[j] = temp;
 		k++;
