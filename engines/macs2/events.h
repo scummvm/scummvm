@@ -278,6 +278,10 @@ public:
 	Events();
 	virtual ~Events();
 
+	// TODO: Consider a better place
+	uint32 currentMillis;
+	
+
 	/**
 	 * Main game loop
 	 */

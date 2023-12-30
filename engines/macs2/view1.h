@@ -33,6 +33,11 @@ private:
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
 
+	uint32 _frameDelayFlag = 100;
+	uint32 _nextFrameFlag = _frameDelayFlag;
+	uint32 _lastMillis = 0;
+	bool _hasTicked = false;
+
 	Graphics::ManagedSurface _backgroundSurface;
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
