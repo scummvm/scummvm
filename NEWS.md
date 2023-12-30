@@ -10,7 +10,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian CD fan-translation for Ringworld.
 
 
-#### 2.8.0 (2023-12-30)
+#### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
  New games:
    - Added support for macOS versions of Syberia and Syberia II.
