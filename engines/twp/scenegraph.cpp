@@ -32,7 +32,6 @@ namespace Twp {
 
 #define DEFAULT_FPS 10.f
 
-#define NUMOBJECTS 8
 #define NUMOBJECTSBYROW 4
 #define MARGIN 8.f
 #define MARGINBOTTOM 10.f
@@ -478,7 +477,13 @@ static bool hasDownArrow(Object *actor) {
 	return actor->_inventory.size() > (actor->_inventoryOffset * NUMOBJECTSBYROW + NUMOBJECTS);
 }
 
-Inventory::Inventory() : Node("Inventory") {}
+Inventory::Inventory() : Node("Inventory") {
+	for (int i = 0; i < NUMOBJECTS; i++) {
+		float x = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET));
+		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
+		_itemRects[i] = Common::Rect(x, y, x + BACKWIDTH, y + BACKHEIGHT);
+	}
+}
 
 void Inventory::drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
@@ -542,9 +547,9 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 		Common::String icon = obj->getIcon();
 		if (itemsSheet->frameTable.contains(icon)) {
 			SpriteSheetFrame *itemFrame = &itemsSheet->frameTable[icon];
-			Math::Vector2d pos(startOffsetX + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET)), startOffsetY - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET)));
+			Math::Vector2d pos(startOffsetX + ((float)(i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET)), startOffsetY - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET)));
 			Math::Matrix4 t(trsf);
-			trsf.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
+			t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 			float s = obj->getScale();
 			Twp::scale(t, Math::Vector2d(s, s));
 			drawSprite(*itemFrame, texture, Color(), t);
@@ -561,41 +566,49 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 }
 
 void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
+	static Common::Rect gArrowUpRect(SCREEN_WIDTH / 2.f, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET, SCREEN_WIDTH / 2.f + ARROWWIDTH, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET + ARROWHEIGHT);
+	static Common::Rect gArrowDnRect(SCREEN_WIDTH / 2.f, MARGINBOTTOM, SCREEN_WIDTH / 2.f + ARROWWIDTH, MARGINBOTTOM + ARROWHEIGHT);
+
 	// udate colors
 	_actor = actor;
 	_backColor = backColor;
 	_verbNormal = verbNormal;
 
 	_obj = nullptr;
-	// TODO: Inventory::update
-	//   if (_actor) {
-	//     let scrPos = winToScreen(mousePos());
+	if (_actor) {
+		Math::Vector2d scrPos = g_engine->_cursor.pos;
 
-	//     // update mouse click
-	//     let down = mbLeft in mouseBtns();
-	//     if not self.down and down:
-	//       self.down = true;
-	//       if gArrowUpRect.contains(scrPos):
-	//         self.actor.inventoryOffset -= 1;
-	//         if self.actor.inventoryOffset < 0:
-	//           self.actor.inventoryOffset = clamp(self.actor.inventoryOffset, 0, (self.actor.inventory.len - 5) div 4)
-	//       elif gArrowDnRect.contains(scrPos):
-	//         self.actor.inventoryOffset += 1;
-	//         self.actor.inventoryOffset = clamp(self.actor.inventoryOffset, 0, (self.actor.inventory.len - 5) div 4)
-	//     elif not down:
-	//       self.down = false;
+		// update mouse click
+		bool down = g_engine->_cursor.leftDown;
+		if (_down && down) {
+			_down = true;
+			if (gArrowUpRect.contains(scrPos.getX(), scrPos.getY())) {
+				_actor->_inventoryOffset -= 1;
+				if (_actor->_inventoryOffset < 0)
+					_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
+			} else if (gArrowDnRect.contains(scrPos.getX(), scrPos.getY())) {
+				_actor->_inventoryOffset++;
+				_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
+			}
+		} else if (!down) {
+			_down = false;
+		}
 
-	//     for i in 0..<gItemRects.len:
-	//       let item = gItemRects[i];
-	//       if item.contains(scrPos):
-	//         let index = self.actor.inventoryOffset * NumObjectsByRow + i;
-	//         if index < self.actor.inventory.len:
-	//           self.obj = self.actor.inventory[index];
-	//         break
+		for (int i = 0; i < NUMOBJECTS; i++) {
+			const Common::Rect &item = _itemRects[i];
+			if (item.contains(scrPos.getX(), scrPos.getY())) {
+				int index = _actor->_inventoryOffset * NUMOBJECTSBYROW + i;
+				if (index < _actor->_inventory.size())
+					_obj = _actor->_inventory[index];
+				break;
+			}
+		}
 
-	//     for obj in self.actor.inventory:
-	//       obj.update(elapsed);;
-	//   }
+		for (int i = 0; i < _actor->_inventory.size(); i++) {
+			Object *obj = _actor->_inventory[i];
+			obj->update(elapsed);
+		}
+	}
 }
 
 SentenceNode::SentenceNode() : Node("Sentence") {

@@ -28,58 +28,58 @@ namespace Twp {
 
 void TextDb::parseTsv(Common::SeekableReadStream &stream) {
 	stream.readLine();
-	while(!stream.eos()) {
+	while (!stream.eos()) {
 		Common::String line = stream.readLine();
-		int pos = line.find(' ',0);
+		int pos = line.find('\t', 0);
 		int id = atoi(line.c_str());
-		_texts[id] = line.substr(pos+1);
+		_texts[id] = line.substr(pos + 1);
 	}
 }
 
 Common::String TextDb::getText(int id) {
-  Common::String result;
-  if (_texts.contains(id)) {
-    result = _texts[id];
-    if (result.hasSuffix("#M") || result.hasSuffix("#F"))
-      result = result.substr(0, result.size()-3);
-    // TODO: replace \" by ";
-    // result = result.replace("\\\"", "\"");
-  } else {
-    result = Common::String::format("Text %d not found", id);
-    error("Text %d not found", id);
-  }
-  return result;
+	Common::String result;
+	if (_texts.contains(id)) {
+		result = _texts[id];
+		if (result.hasSuffix("#M") || result.hasSuffix("#F"))
+			result = result.substr(0, result.size() - 3);
+		// TODO: replace \" by ";
+		// result = result.replace("\\\"", "\"");
+	} else {
+		result = Common::String::format("Text %d not found", id);
+		error("Text %d not found", id);
+	}
+	return result;
 }
 
-Common::String TextDb::getText(const Common::String& text) {
-  HSQUIRRELVM v = g_engine->getVm();
-  if (text.size() > 0) {
-    if (text[0] == '@') {
-      int id = atoi(text.c_str()+1);
-      return getText(id);
-	} else if (text[0] == '^') {
-      return text.substr(1);
-	} else if (text[0] == '$') {
-      Common::String txt;
-      SQInteger top = sq_gettop(v);
-      sq_pushroottable(v);
-      Common::String code = Common::String::format("return %s", text.substr(1, text.size()-2).c_str());
-      if (SQ_FAILED(sq_compilebuffer(v, code.c_str(), code.size(), "execCode", SQTrue))) {
-        error("Error executing code %s", code.c_str());
-	  } else {
-        sq_push(v, -2);
-        // call
-        if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
-          error("Error calling code %s", code.c_str());
-		} else {
-          sqget(v, -1, txt);
-          sq_settop(v, top);
-          return getText(txt);
+Common::String TextDb::getText(const Common::String &text) {
+	HSQUIRRELVM v = g_engine->getVm();
+	if (text.size() > 0) {
+		if (text[0] == '@') {
+			int id = atoi(text.c_str() + 1);
+			return getText(id);
+		} else if (text[0] == '^') {
+			return text.substr(1);
+		} else if (text[0] == '$') {
+			Common::String txt;
+			SQInteger top = sq_gettop(v);
+			sq_pushroottable(v);
+			Common::String code = Common::String::format("return %s", text.substr(1, text.size() - 2).c_str());
+			if (SQ_FAILED(sq_compilebuffer(v, code.c_str(), code.size(), "execCode", SQTrue))) {
+				error("Error executing code %s", code.c_str());
+			} else {
+				sq_push(v, -2);
+				// call
+				if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
+					error("Error calling code %s", code.c_str());
+				} else {
+					sqget(v, -1, txt);
+					sq_settop(v, top);
+					return getText(txt);
+				}
+			}
 		}
-	  }
 	}
-  }
-  return text;
+	return text;
 }
 
 } // namespace Twp

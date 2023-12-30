@@ -264,7 +264,7 @@ YLabel *Dialog::label(int line, const Common::String &name) const {
 }
 
 void Dialog::selectLabel(int line, const Common::String &name) {
-	debug("select label %s", name.c_str());
+	//debug("select label %s", name.c_str());
 	_lbl = label(line, name);
 	_currentStatement = 0;
 	clearSlots();

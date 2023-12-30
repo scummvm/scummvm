@@ -166,6 +166,7 @@ public:
 	Dialog();
 	virtual ~Dialog() override;
 
+	void update(float dt);
 	DialogState getState() const { return _state; }
 
 	void setMousePos(Math::Vector2d pos) { _mousePos = pos; }
@@ -192,7 +193,6 @@ private:
 	void clearSlots();
 
 	virtual void drawCore(Math::Matrix4 trsf) override final;
-	void update(float dt);
 
 public:
 	Common::Array<DialogConditionState> _states;

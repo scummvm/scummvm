@@ -29,7 +29,7 @@ namespace Twp {
 
 HudShader::HudShader() {
 	const char *verbVtxShader = R"(#version 110
-	attribute vec2 a_position;
+		attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
 
@@ -46,14 +46,14 @@ HudShader::HudShader() {
 	varying vec4 v_highlightColor;
 	varying vec2 v_ranges;
 
-	void main(void) {
+	void main() {
 		v_color = a_color;
 		v_texCoords = a_texCoords;
 		v_shadowColor = u_shadowColor;
 		v_normalColor = u_normalColor;
 		v_highlightColor = u_highlightColor;
 		v_ranges = u_ranges;
-		vec4 worldPosition = vec4(a_position, 0, 1);
+		vec4 worldPosition = vec4(a_position, 0.0, 1.0);
 		vec4 normalizedPosition = u_transform * worldPosition;
 		gl_Position = normalizedPosition;
 	})";
@@ -67,7 +67,7 @@ const char* verbFgtShader = R"(#version 110
 	varying vec2 v_ranges;
 	uniform sampler2D u_texture;
 
-	void main(void) {
+	void main() {
 		float shadows = v_ranges.x;
 		float highlights = v_ranges.y;
 		vec4 texColor = texture2D(u_texture, v_texCoords);
@@ -116,15 +116,16 @@ ActorSlot *Hud::actorSlot(Object *actor) {
 	return nullptr;
 }
 
-void Hud::drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf) {
-  Math::Vector3d pos(sf.spriteSourceSize.left,  - sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY(), 0.f);
-  trsf.translate(pos);
-  g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+void Hud::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+	Math::Vector3d pos(sf.spriteSourceSize.left, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY(), 0.f);
+	trsf.translate(pos);
+	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
 void Hud::drawCore(Math::Matrix4 trsf) {
 	ActorSlot *slot = this->actorSlot(_actor);
-	if(!slot) return;
+	if (!slot)
+		return;
 
 	// draw HUD background
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
@@ -132,7 +133,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	bool classic = true;
 	const SpriteSheetFrame &backingFrame = gameSheet->frameTable[classic ? "ui_backing_tall" : "ui_backing"];
 	Texture *gameTexture = g_engine->_resManager.texture(gameSheet->meta.image);
-	float alpha = 1.0f; // prefs(UiBackingAlpha);
+	float alpha = 0.33f; // prefs(UiBackingAlpha);
 	g_engine->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha), trsf);
 
 	// TODO; let verbHlt = prefs(InvertVerbHighlight);
@@ -171,6 +172,12 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	}
 	// g_engine->getGfx().use(saveShader);
 	_over = isOver;
+}
+
+void Hud::update(Math::Vector2d pos, Object *hotspot, bool mouseClick) {
+	_mousePos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+	_defaultVerbId = !hotspot ? 0 : hotspot->defaultVerbId();
+	_mouseClick = mouseClick;
 }
 
 } // namespace Twp

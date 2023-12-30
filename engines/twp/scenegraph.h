@@ -32,6 +32,8 @@
 #include "twp/font.h"
 #include "twp/spritesheet.h"
 
+#define NUMOBJECTS 8
+
 namespace Twp {
 
 // Represents a node in a scene graph.
@@ -284,6 +286,8 @@ public:
 	Inventory();
 	void update(float elapsed, Object* actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
 
+	Object* getObject() const { return _obj; }
+
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
 	void drawArrows(Math::Matrix4 trsf);
@@ -296,6 +300,7 @@ private:
     Color _backColor, _verbNormal;
     bool _down = false;
     Object* _obj = nullptr;
+	Common::Rect _itemRects[NUMOBJECTS];
 };
 
 class SentenceNode: public Node {

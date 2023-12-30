@@ -191,15 +191,17 @@ public:
 		bool leftDown = false;
 		bool oldRightDown = false;
 		bool rightDown = false;
+		float mouseDownTime = 0.f;
 
 		void update() {
 			oldLeftDown = leftDown;
 			oldRightDown = rightDown;
 		}
-		bool isLeftClick() { return oldLeftDown && !leftDown; }
-		bool isRightClick() { return oldRightDown && !rightDown; }
+		bool isLeftDown() { return !oldLeftDown && leftDown; }
+		bool isRightDown() { return !oldRightDown && rightDown; }
 	} _cursor;
 	Hud _hud;
+	Inventory _uiInv;
 
 private:
 	Gfx _gfx;
@@ -207,7 +209,6 @@ private:
 	Preferences _prefs;
 	ShaderParams _shaderParams;
 	unique_ptr<FadeShader> _fadeShader;
-	Inventory _uiInv;
 	SentenceNode _sentence;
 };
 
