@@ -34,7 +34,7 @@ then
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
-	--disable-engine=hugo,director,cine \
+	--disable-engine=hugo,director,cine,ultima \
 	--disable-detection-full
 fi
 
