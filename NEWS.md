@@ -12,7 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix enabling/disabling of Open and Save in Mac Indiana Jones and the Last
      Crusade.
 
-#### 2.8.0 (2023-12-30)
+#### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
  New games:
    - Added support for macOS versions of Syberia and Syberia II.
