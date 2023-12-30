@@ -94,8 +94,14 @@ public:
 	/** @overload */
 	DBCSString &operator=(const char *str);
 
+	/** @overload */
+	DBCSString &operator=(value_type c);
+
 	/** Append the given string to this string. */
 	DBCSString &operator+=(const DBCSString &str);
+
+	/** @overload */
+	DBCSString &operator+=(const value_type *str);
 
 	/** @overload */
 	DBCSString &operator+=(value_type c);
