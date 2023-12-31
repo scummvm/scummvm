@@ -130,7 +130,7 @@ _s(
 
 void HelpDialog::addTabs(const char * const *tabData) {
 	while (*tabData) {
-		Common::U32String tabName(_(*tabData++));
+		Common::U32String tabName(*tabData++);
 		const char *imagePack = nullptr;
 
 		if (*tabData && **tabData)
@@ -138,7 +138,7 @@ void HelpDialog::addTabs(const char * const *tabData) {
 
 		tabData++;
 
-		Common::U32String tabText(_(*tabData++));
+		Common::U32String tabText(*tabData++);
 
 		_tab->addTab(tabName, "HelpContentDialog", false);
 
