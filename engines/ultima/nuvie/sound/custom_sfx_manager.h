@@ -43,12 +43,12 @@ public:
 	void playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);
 
 private:
-	bool loadSfxMapFile(const Common::Path &cfg_filename, Common::HashMap<uint16, uint16> *m);
+	bool loadSfxMapFile(const Common::Path &cfg_filename);
 
 private:
 	Common::Path custom_filepath;
 
-	Common::HashMap<uint16, uint16> *sfx_map;
+	Common::HashMap<uint16, uint16> sfx_map;
 };
 
 } // End of namespace Nuvie

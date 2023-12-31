@@ -34,13 +34,11 @@ namespace Nuvie {
 CustomSfxManager::CustomSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 	Common::Path cfg_filename;
 
-	sfx_map = new Common::HashMap<uint16, uint16>();
-
 	config->pathFromValue("config/ultima6/sfxdir", "", custom_filepath);
 
 	build_path(custom_filepath, "sfx_map.cfg", cfg_filename);
 
-	loadSfxMapFile(cfg_filename, sfx_map);
+	loadSfxMapFile(cfg_filename);
 }
 
 CustomSfxManager::~CustomSfxManager() {
@@ -48,19 +46,18 @@ CustomSfxManager::~CustomSfxManager() {
 }
 
 
-bool CustomSfxManager::loadSfxMapFile(const Common::Path &cfg_filename, Common::HashMap<uint16, uint16> *m) {
-	char seps[] = ";\r\n";
-	char *token1;
-	char *token2;
+bool CustomSfxManager::loadSfxMapFile(const Common::Path &cfg_filename) {
+	const char seps[] = ";\r\n";
+	const char *token1;
+	const char *token2;
 	NuvieIOFileRead niof;
-	char *sz;
 
 	if (niof.open(cfg_filename) == false) {
 		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", cfg_filename.toString().c_str());
 		return false;
 	}
 
-	sz = (char *) niof.readAll();
+	char *sz = (char *)niof.readAll();
 
 	token1 = strtok(sz, seps);
 
@@ -69,7 +66,7 @@ bool CustomSfxManager::loadSfxMapFile(const Common::Path &cfg_filename, Common::
 		int custom_wave_id = atoi(token2);
 
 		DEBUG(0, LEVEL_DEBUGGING, "%d : %d.wav\n", sfx_id, custom_wave_id);
-		(*m)[sfx_id] = custom_wave_id;
+		sfx_map[sfx_id] = custom_wave_id;
 
 		token1 = strtok(nullptr, seps);
 	}
@@ -86,8 +83,8 @@ bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
 	Common::HashMap < uint16, uint16 >::iterator it;
 
-	it = sfx_map->find((uint16)sfx_id);
-	if (it != sfx_map->end()) {
+	it = sfx_map.find((uint16)sfx_id);
+	if (it != sfx_map.end()) {
 		playSoundSample((*it)._value, handle, volume);
 		return true;
 	}
