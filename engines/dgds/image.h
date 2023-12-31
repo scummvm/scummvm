@@ -59,8 +59,6 @@ private:
 	Graphics::Surface _bmpData;
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;
-	uint16 _tileWidth, _tileHeight;
-	uint32 _tileOffset;
 
 	byte _palette[256 * 3];
 	byte _blacks[256 * 3];

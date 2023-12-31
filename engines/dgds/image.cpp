@@ -39,7 +39,7 @@
 
 namespace Dgds {
 
-Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor), _tileWidth(0), _tileHeight(0), _tileOffset(0) {
+Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor) {
 	memset(_palette, 0, 256 * 3);
 	memset(_blacks, 0, 256 * 3);
 }
@@ -56,8 +56,6 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 		error("Couldn't get image resource %s", filename.c_str());
 	DgdsParser ctx(*fileStream, filename.c_str());
 
-	DgdsChunk chunk;
-
 	if ((dot = strrchr(filename.c_str(), '.'))) {
 		ex = MKTAG24(dot[1], dot[2], dot[3]);
 	} else {
@@ -72,8 +70,7 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 
 	surface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
-	// Currently does not handle the VQT: and OFF: chunks
-	// for the compressed pics in the DOS port.
+	DgdsChunk chunk;
 	while (chunk.readHeader(ctx)) {
 		Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, _decompressor) : chunk.readStream(ctx);
 		if (chunk.isSection(ID_BIN)) {
@@ -100,7 +97,6 @@ void Image::loadBitmap(Common::String filename, int number) {
 	DgdsParser ctx(*fileStream, filename.c_str());
 	DgdsChunk chunk;
 
-	_tileOffset = 0;
 	_bmpData.free();
 
 	if ((dot = strrchr(filename.c_str(), '.'))) {
@@ -119,6 +115,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 	int32 vqtsize = -1;
 	uint16 tileWidths[64];
 	uint16 tileHeights[64];
+	int32 tileOffset = 0;
 
 	while (chunk.readHeader(ctx)) {
 		Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, _decompressor) : chunk.readStream(ctx);
@@ -126,17 +123,12 @@ void Image::loadBitmap(Common::String filename, int number) {
 			uint16 tileCount = stream->readUint16LE();
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileWidths[k] = stream->readUint16LE();
-				if (k == number)
-					_tileWidth = tileWidths[k];
 			}
 
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileHeights[k] = stream->readUint16LE();
-				if (k == number)
-					_tileHeight = tileHeights[k];
-
 				if (k < number)
-					_tileOffset += tileWidths[k] * tileHeights[k];
+					tileOffset += tileWidths[k] * tileHeights[k];
 			}
 		} else if (chunk.isSection(ID_MTX)) {
 			// Scroll offset
@@ -155,9 +147,9 @@ void Image::loadBitmap(Common::String filename, int number) {
 			// TODO: Use these
 			delete mtx;
 		} else if (chunk.isSection(ID_BIN)) {
-			loadBitmap4(_bmpData, _tileWidth, _tileHeight, _tileOffset, stream, false);
+			loadBitmap4(_bmpData, tileWidths[number], tileHeights[number], tileOffset, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
-			loadBitmap4(_bmpData, _tileWidth, _tileHeight, _tileOffset, stream, true);
+			loadBitmap4(_bmpData, tileWidths[number], tileHeights[number], tileOffset, stream, true);
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
 			vqtpos = fileStream->pos();
@@ -178,7 +170,6 @@ void Image::loadBitmap(Common::String filename, int number) {
 						warning("Expected 0xffff in 2-byte offset list, got %04x", val);
 				}
 				
-				_tileOffset = 0;
 				uint32 nextOffset = 0;
 				for (int i = 0; i < number + 1; i++) {
 					fileStream->seek(vqtpos);
@@ -189,10 +180,10 @@ void Image::loadBitmap(Common::String filename, int number) {
 			} else {
 				if (number)
 					stream->skip(4 * number);
-				_tileOffset = stream->readUint32LE();
+				uint32 tileOffset = stream->readUint32LE();
 				// TODO: seek stream to end for tidiness?
-				fileStream->seek(vqtpos + _tileOffset);
-				loadVQT(_bmpData, _tileWidth, _tileHeight, 0, fileStream);
+				fileStream->seek(vqtpos + tileOffset);
+				loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
 			}
 		}
 		delete stream;
@@ -202,7 +193,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 }
 
 void Image::drawBitmap(int x, int y, Common::Rect &drawWin, Graphics::Surface &surface) {
-	const Common::Rect destRect(x, y, x + _tileWidth, y + _tileHeight);
+	const Common::Rect destRect(x, y, x + _bmpData.w, y + _bmpData.h);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	clippedDestRect.clip(destRect);
 	clippedDestRect.clip(drawWin);
@@ -211,7 +202,7 @@ void Image::drawBitmap(int x, int y, Common::Rect &drawWin, Graphics::Surface &s
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	byte *src = (byte *)_bmpData.getPixels() + croppedBy.y * _tileWidth + croppedBy.x;
+	byte *src = (byte *)_bmpData.getPixels() + croppedBy.y * _bmpData.pitch + croppedBy.x;
 	byte *ptr = (byte *)surface.getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
@@ -219,7 +210,7 @@ void Image::drawBitmap(int x, int y, Common::Rect &drawWin, Graphics::Surface &s
 				ptr[j] = src[j];
 		}
 		ptr += surface.pitch;
-		src += _tileWidth;
+		src += _bmpData.pitch;
 	}
 }
 

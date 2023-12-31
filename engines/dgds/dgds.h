@@ -26,6 +26,9 @@
 #include "common/error.h"
 #include "common/platform.h"
 
+#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
@@ -37,6 +40,9 @@ class Console;
 class ResourceManager;
 class Decompressor;
 class Image;
+class PFont;
+class FFont;
+class Dialogue;
 
 class DgdsMidiPlayer;
 struct DgdsADS;
@@ -55,6 +61,21 @@ private:
 	Console *_console;
 	DgdsMidiPlayer *_midiPlayer;
 
+	ResourceManager *_resource;
+	Decompressor *_decompressor;
+
+	DgdsGameId _gameId;
+	Graphics::Surface _bottomBuffer;
+	Graphics::Surface _topBuffer;
+	Dialogue *_dialogue;
+
+	PFont *_fntP;
+	FFont *_fntF;
+	Common::StringArray _BMPs;
+	uint32 _musicSize;
+	byte *_musicData;
+	Common::SeekableReadStream *_soundData;
+
 protected:
 	virtual Common::Error run();
 
@@ -67,16 +88,24 @@ public:
     void playSfx(const Common::String &fileName, byte channel, byte volume);
     void stopSfx(byte channel);
 
-	bool playPCM(byte *data, uint32 size);
+	bool playPCM(const byte *data, uint32 size);
 	void playMusic(const Common::String &fileName);
 
 	void parseFile(const Common::String &filename, int resource = 0);
 
-	ResourceManager *_resource;
-	Decompressor *_decompressor;
-	Image *_image;
+	Graphics::Surface &getTopBuffer() { return _topBuffer; }
+	Graphics::Surface &getBottomBuffer() { return _bottomBuffer; }
+	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
+	ResourceManager *getResourceManager() { return _resource; }
+	Decompressor *getDecompressor() { return _decompressor; }
+	const Dialogue *getDialogue() const { return _dialogue; }
 
-	DgdsGameId _gameId;
+	const PFont *getFntP() const { return _fntP; }
+	Image *_image;
+	Graphics::ManagedSurface _resData;
+
+private:
+	void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor);
 };
 
 //void explode(Common::Platform platform, const char *indexName, const char *fileName, int resource);

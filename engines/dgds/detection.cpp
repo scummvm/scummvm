@@ -22,7 +22,6 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-//#include "common/translation.h"
 
 static const PlainGameDescriptor dgdsGames[] = {
 	{"dgds", "Dynamix DGDS game"},

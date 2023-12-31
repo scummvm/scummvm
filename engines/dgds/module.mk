@@ -3,14 +3,15 @@ MODULE := engines/dgds
 MODULE_OBJS := \
 	console.o \
 	decompress.o \
+	dialogue.o \
 	dgds.o \
 	font.o \
 	image.o \
 	metaengine.o \
-	movies.o \
 	music.o \
 	parser.o \
 	resource.o \
+	scripts.o \
 	sound.o
 
 # This module can be built as a plugin

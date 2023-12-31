@@ -186,13 +186,9 @@ uint32 LzwDecompressor::getCode(uint32 totalBits, Common::SeekableReadStream &in
 }
 
 Decompressor::Decompressor() {
-	_rleDecompressor = new RleDecompressor();
-	_lzwDecompressor = new LzwDecompressor();
 }
 
 Decompressor::~Decompressor() {
-	delete _rleDecompressor;
-	delete _lzwDecompressor;
 }
 
 void Decompressor::decompress(byte compression, byte *data, int uncompressedSize, Common::SeekableReadStream *input, int size) {
@@ -201,10 +197,10 @@ void Decompressor::decompress(byte compression, byte *data, int uncompressedSize
 			input->read(data, size);
 			break;
 		case 0x01:
-		    _rleDecompressor->decompress(data, uncompressedSize, *input);
+		    _rleDecompressor.decompress(data, uncompressedSize, *input);
 			break;
 		case 0x02:
-		    _lzwDecompressor->decompress(data, uncompressedSize, *input);
+		    _lzwDecompressor.decompress(data, uncompressedSize, *input);
 			break;
 		default:
 			input->skip(size);

@@ -45,19 +45,23 @@ protected:
 	uint32 getCode(uint32 totalBits, Common::SeekableReadStream &input);
 
 private:
-        struct {
-            byte str[256];
-            uint8 len;
-        } _codeTable[0x4000];
+	struct {
+		byte str[256];
+		uint8 len;
+	} _codeTable[0x4000];
 
-        byte _codeCur[256];
+	byte _codeCur[256];
 
-        uint32 _bitsData, _bitsSize;
+	uint32 _bitsData;
+	uint32 _bitsSize;
 
-        uint32 _codeSize, _codeLen, _cacheBits;
+	uint32 _codeSize;
+	uint32 _codeLen;
+	uint32 _cacheBits;
 
-        uint32 _tableSize, _tableMax;
-        bool _tableFull;
+	uint32 _tableSize;
+	uint32 _tableMax;
+	bool _tableFull;
 };
 
 class Decompressor {
@@ -68,10 +72,10 @@ public:
 	void decompress(byte compression, byte *data, int uncompressedSize, Common::SeekableReadStream *input, int size);
 
 private:
-	RleDecompressor *_rleDecompressor;
-	LzwDecompressor *_lzwDecompressor;
+	RleDecompressor _rleDecompressor;
+	LzwDecompressor _lzwDecompressor;
 
-	const char *_compressionDescr[3] = {"None", "RLE", "LZW"};
+	// const char *_compressionDescr[3] = {"None", "RLE", "LZW"};
 };
 
 } // End of namespace Dgds
