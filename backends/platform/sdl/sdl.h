@@ -118,10 +118,10 @@ protected:
 	/**
 	 * The path of the currently open log file, if any.
 	 *
-	 * @note This is currently a string and not an FSNode for simplicity;
+	 * @note This is currently a Path and not an FSNode for simplicity;
 	 * e.g. we don't need to include fs.h here, and currently the
 	 * only use of this value is to use it to open the log file in an
-	 * editor; for that, we need it only as a string anyway.
+	 * editor; for that, we need it only as a path anyway.
 	 */
 	Common::Path _logFilePath;
 
