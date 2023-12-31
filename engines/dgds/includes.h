@@ -43,9 +43,11 @@ namespace Dgds {
 #define ID_SNG MKTAG24('S', 'N', 'G')
 #define ID_TAG MKTAG24('T', 'A', 'G')
 #define ID_TT3 MKTAG24('T', 'T', '3')
+#define ID_TTI MKTAG24('T', 'T', 'I')
 #define ID_VER MKTAG24('V', 'E', 'R')
 #define ID_VGA MKTAG24('V', 'G', 'A')
 #define ID_VQT MKTAG24('V', 'Q', 'T')
+#define ID_OFF MKTAG24('O', 'F', 'F')
 
 /* Heart of China */
 #define ID_MA8 MKTAG24('M', 'A', '8')

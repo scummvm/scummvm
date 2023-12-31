@@ -49,11 +49,12 @@ public:
 	void loadPalette(Common::String filename);
 	void setPalette();
 	void clearPalette();
+	bool isLoaded() const { return _bmpData.getPixels() != nullptr; }
 
 private:
 	void loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
 	void loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
-	void loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
+	uint32 loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
 
 	Graphics::Surface _bmpData;
 	ResourceManager *_resourceMan;

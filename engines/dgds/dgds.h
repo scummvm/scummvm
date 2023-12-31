@@ -64,13 +64,13 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-    void playSfx(const char* fileName, byte channel, byte volume);
+    void playSfx(const Common::String &fileName, byte channel, byte volume);
     void stopSfx(byte channel);
 
 	bool playPCM(byte *data, uint32 size);
-	void playMusic(const char* fileName);
+	void playMusic(const Common::String &fileName);
 
-	void parseFile(Common::String filename, int resource = 0);
+	void parseFile(const Common::String &filename, int resource = 0);
 
 	ResourceManager *_resource;
 	Decompressor *_decompressor;

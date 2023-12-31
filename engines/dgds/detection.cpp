@@ -42,7 +42,7 @@ public:
 		_guiOptions = GUIO1(GUIO_NONE);
 	}
 
-	const char* getEngineId() const override {
+	const char* getEngineName() const override {
 		return "dgds";
 	}
 

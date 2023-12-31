@@ -52,6 +52,8 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 	const char *dot;
 	DGDS_EX ex;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
+	if (!fileStream)
+		error("Couldn't get image resource %s", filename.c_str());
 	DgdsParser ctx(*fileStream, filename.c_str());
 
 	DgdsChunk chunk;
@@ -92,8 +94,9 @@ void Image::loadBitmap(Common::String filename, int number) {
 	const char *dot;
 	DGDS_EX ex;
 	uint16 *mtx;
-	uint16 mw, mh;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
+	if (!fileStream)
+		error("Couldn't get bitmap resource %s", filename.c_str());
 	DgdsParser ctx(*fileStream, filename.c_str());
 	DgdsChunk chunk;
 
@@ -112,15 +115,15 @@ void Image::loadBitmap(Common::String filename, int number) {
 		return;
 	}
 
-	// Currently does not handle the VQT: and OFF: chunks
-	// for the compressed pics in the DOS port.
+	int64 vqtpos = -1;
+	int32 vqtsize = -1;
+	uint16 tileWidths[64];
+	uint16 tileHeights[64];
+
 	while (chunk.readHeader(ctx)) {
 		Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, _decompressor) : chunk.readStream(ctx);
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
-			uint16 *tileWidths = new uint16[tileCount];
-			uint16 *tileHeights = new uint16[tileCount];
-
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileWidths[k] = stream->readUint16LE();
 				if (k == number)
@@ -135,11 +138,9 @@ void Image::loadBitmap(Common::String filename, int number) {
 				if (k < number)
 					_tileOffset += tileWidths[k] * tileHeights[k];
 			}
-
-			delete[] tileWidths;
-			delete[] tileHeights;
 		} else if (chunk.isSection(ID_MTX)) {
 			// Scroll offset
+			uint16 mw, mh;
 			mw = stream->readUint16LE();
 			mh = stream->readUint16LE();
 			uint32 mcount = uint32(mw) * mh;
@@ -158,8 +159,43 @@ void Image::loadBitmap(Common::String filename, int number) {
 		} else if (chunk.isSection(ID_VGA)) {
 			loadBitmap4(_bmpData, _tileWidth, _tileHeight, _tileOffset, stream, true);
 		} else if (chunk.isSection(ID_VQT)) {
-			loadVQT(_bmpData, _tileWidth, _tileHeight, _tileOffset, stream);
+			// Postpone parsing this until we have the offsets, which come after.
+			vqtpos = fileStream->pos();
+			vqtsize = chunk._size;
+			stream->skip(vqtsize);
+		} else if (chunk.isSection(ID_OFF)) {
+			if (vqtpos == -1)
+				error("Expect VQT chunk before OFF chunk in BMP resource %s", filename.c_str());
+
+			// 2 possibilities: A set of offsets (find the one which we need and use it)
+			// or a single value of 0xffff.  If it's only one tile the offset is always
+			// zero anyway.  For subsequent images, round up to the next byte to start
+			// reading.
+			if (chunk._size == 2) {
+				if (number != 0) {
+					uint16 val = stream->readUint16LE();
+					if (val != 0xffff)
+						warning("Expected 0xffff in 2-byte offset list, got %04x", val);
+				}
+				
+				_tileOffset = 0;
+				uint32 nextOffset = 0;
+				for (int i = 0; i < number + 1; i++) {
+					fileStream->seek(vqtpos);
+					_bmpData.free();
+					nextOffset = loadVQT(_bmpData, tileWidths[i], tileHeights[i], nextOffset, fileStream);
+					nextOffset = ((nextOffset + 7) / 8) * 8;
+				}
+			} else {
+				if (number)
+					stream->skip(4 * number);
+				_tileOffset = stream->readUint32LE();
+				// TODO: seek stream to end for tidiness?
+				fileStream->seek(vqtpos + _tileOffset);
+				loadVQT(_bmpData, _tileWidth, _tileHeight, 0, fileStream);
+			}
 		}
+		delete stream;
 	}
 
 	delete fileStream;
@@ -220,20 +256,145 @@ void Image::loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 to
 	stream->read(data, uint32(outPitch) * th);
 }
 
-void Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream) {
+struct VQTDecodeState {
+	uint32 offset;
+	const byte *srcPtr;
+	byte *dstPtr;
+	uint16 rowStarts[200];
+};
+
+static inline uint16 _getVqtBits(struct VQTDecodeState *state, int nbits) {
+    const uint32 offset = state->offset;
+   const uint32 index = offset >> 3;
+   const uint32 shift = offset & 7;
+   state->offset += nbits;
+   return (*(const uint16 *)(state->srcPtr + index) >> (shift)) & (byte)(0xff00 >> (16 - nbits));
+}
+
+static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const uint16 y, const uint16 w, const uint16 h) {
+    // Empty region -> nothing to do
+    if (h == 0 || w == 0)
+        return;
+
+    // 1x1 region -> put the byte directly
+    if (w == 1 && h == 1) {
+        state->dstPtr[state->rowStarts[y] + x] = _getVqtBits(state, 8);
+        return;
+    }
+
+    const uint losize = (w & 0xff) * (h & 0xff);
+    uint bitcount1 = 8;
+    if (losize < 256) {
+        bitcount1 = 0;
+        byte b = (byte)(losize - 1);
+        do {
+            bitcount1++;
+            b >>= 1;
+        } while (b != 0);
+    }
+
+    uint16 firstval = _getVqtBits(state, bitcount1);
+
+    uint16 bitcount2 = 0;
+    byte bval = (byte)firstval;
+    while (firstval != 0) {
+        bitcount2++;
+        firstval >>= 1;
+    }
+
+    bval++;
+
+    if (losize * 8 <= losize * bitcount2 + bval * 8) {
+        for (uint xx = x; xx < x + w; xx++) {
+            for (uint yy = y; yy < y + h; yy++) {
+                state->dstPtr[state->rowStarts[yy] + xx] = _getVqtBits(state, 8);
+            }
+        }
+        return;
+    }
+
+    if (bval == 1) {
+        const uint16 val = _getVqtBits(state, 8);
+        for (uint yy = y; yy < y + h; yy++) {
+            for (uint xx = x; xx < x + w; xx++) {
+                state->dstPtr[state->rowStarts[yy] + xx] = val;
+            }
+        }
+        return;
+    }
+
+    byte tmpbuf [262];
+    byte *ptmpbuf = tmpbuf;
+    for (; bval != 0; bval--) {
+        *ptmpbuf = _getVqtBits(state, 8);
+        ptmpbuf++;
+    }
+
+    for (uint xx = x; xx < x + w; xx++) {
+        for (uint yy = y; yy < y + h; yy++) {
+            state->dstPtr[state->rowStarts[yy] + xx] = tmpbuf[_getVqtBits(state, bitcount2)];
+        }
+    }
+}
+
+static void _doVqtDecode(struct VQTDecodeState *state, uint16 x, uint16 y, uint16 w, uint16 h) {
+    if (!w && !h)
+        return;
+
+    const uint16 mask = _getVqtBits(state, 4);
+
+    // Top left quadrant
+    if (mask & 8)
+        _doVqtDecode(state, x, y, w / 2, h / 2);
+    else
+        _doVqtDecode2(state, x, y, w / 2, h / 2);
+
+    // Top right quadrant
+    if (mask & 4)
+        _doVqtDecode(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+    else
+        _doVqtDecode2(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+
+    // Bottom left quadrant
+    if (mask & 2)
+        _doVqtDecode(state, x, y + (h / 2), w / 2, (h + 1) / 2);
+    else
+        _doVqtDecode2(state, x, y + (h / 2), w / 2, (h + 1) / 2);
+
+    // Bottom right quadrant
+    if (mask & 1)
+        _doVqtDecode(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
+    else
+        _doVqtDecode2(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
+}
+
+
+uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream) {
+	if (th > 200)
+		error("Max VQT height supported is 200px");
 	uint16 outPitch = tw;
 	surf.create(outPitch, th, Graphics::PixelFormat::createFormatCLUT8());
-	byte *data = (byte *)surf.getPixels();
-
-	// HACK
-	stream->skip(toffset);
-	stream->read(data, uint32(outPitch) * th);
+	VQTDecodeState state;
+	state.dstPtr = (byte *)surf.getPixels();
+	state.offset = toffset;
+	// FIXME: This sometimes reads more than it needs to..
+	uint64 nbytes = stream->size() - stream->pos();
+	byte *buf = (byte *)malloc(nbytes + 8);
+	memset(buf, 0, nbytes + 8);
+	stream->read(buf, nbytes);
+	state.srcPtr = buf;
+	for (uint i = 0; i < th; i++)
+		state.rowStarts[i] = tw * i;
+	
+	_doVqtDecode(&state, 0, 0, tw, th);
+	free(buf);
+	return state.offset;
 }
 
 void Image::loadPalette(Common::String filename) {
-	const char *dot;
-	DGDS_EX ex;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
+	if (!fileStream)
+		error("Couldn't get palette resource %s", filename.c_str());
 	DgdsParser ctx(*fileStream, filename.c_str());
 
 	DgdsChunk chunk;

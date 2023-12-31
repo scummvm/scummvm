@@ -52,13 +52,14 @@ ResourceManager::ResourceManager() {
 	indexFile.skip(4); // salt for file hash, TODO
 	int volumes = indexFile.readUint16LE();
 
-	for (int i = 0; i < volumes; i++) {
-		Common::String volumeName;
-		for (int j = 0; j < FILENAME_LENGTH; j++)
-			volumeName += indexFile.readByte();
-		volumeName.toLowercase();
+	char fnbuf[FILENAME_LENGTH + 1];
+	fnbuf[FILENAME_LENGTH] = '\0';
 
-		_volumes[i].open(volumeName);
+	for (int i = 0; i < volumes; i++) {
+		indexFile.read(fnbuf, FILENAME_LENGTH);
+		Common::String volumeName(fnbuf);
+
+		_volumes[i].open(Common::Path(volumeName));
 
 		indexFile.skip(1); // unknown
 		int entries = indexFile.readUint16LE();
@@ -73,9 +74,8 @@ ResourceManager::ResourceManager() {
 			_volumes[i].seek(res.pos, SEEK_SET);
 			res.pos += FILENAME_LENGTH + 1 + 4;
 
-			Common::String fileName;
-			for (int k = 0; k < FILENAME_LENGTH; k++)
-				fileName += _volumes[i].readByte();
+			_volumes[i].read(fnbuf, FILENAME_LENGTH);
+			Common::String fileName(fnbuf);
 			fileName.toLowercase();
 
 			_volumes[i].skip(1); // unknown
@@ -85,7 +85,7 @@ ResourceManager::ResourceManager() {
 			if (fileName == "" || res.size == 0)
 				continue;
 
-			//debug("  - %s at %d, size: %d", fileName.c_str(), res.pos, res.size);
+			debug("  - %s at %d, size: %d", fileName.c_str(), res.pos, res.size);
 		}
 	}
 
@@ -101,9 +101,9 @@ Common::SeekableReadStream *ResourceManager::getResource(Common::String name, bo
 	name.toLowercase();
 
 	// Load external patches
-	if (!ignorePatches && Common::File::exists(name)) {
+	if (!ignorePatches && Common::File::exists(Common::Path(name))) {
 		Common::File *patch = new Common::File();
-		patch->open(name);
+		patch->open(Common::Path(name));
 		return patch;
 	}
 
@@ -230,7 +230,7 @@ bool DgdsChunk::readHeader(DgdsParser &ctx) {
 	ctx._file.read(_idStr, DGDS_TYPENAME_MAX);
 
 	if (_idStr[DGDS_TYPENAME_MAX - 1] != ':') {
-		debug("bad header in: %s", ctx._filename);
+		debug("bad header in: %s", ctx._filename.c_str());
 		return false;
 	}
 	_idStr[DGDS_TYPENAME_MAX] = '\0';
@@ -260,7 +260,7 @@ Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompresso
 		byte *dest = new byte[unpackSize];
 		decompressor->decompress(compression, dest, unpackSize, &ctx._file, _size);
 		output = new Common::MemoryReadStream(dest, unpackSize, DisposeAfterUse::YES);
-		ctx.bytesRead += unpackSize;
+		ctx._bytesRead += unpackSize;
 	}
 
 	/*debug("    %s %u %s %u%c",
@@ -275,7 +275,7 @@ Common::SeekableReadStream *DgdsChunk::readStream(DgdsParser &ctx) {
 
 	if (!container) {
 		output = new Common::SeekableSubReadStream(&ctx._file, ctx._file.pos(), ctx._file.pos() + _size, DisposeAfterUse::NO);
-		ctx.bytesRead += _size;
+		ctx._bytesRead += _size;
 	}
 
 	debug("    %s %u%c", _idStr, _size, (container ? '+' : ' '));

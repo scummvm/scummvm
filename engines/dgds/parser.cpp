@@ -32,17 +32,15 @@
 
 namespace Dgds {
 
-DgdsParser::DgdsParser(Common::SeekableReadStream &file, const char *filename) : _file(file) {
-	Common::strlcpy(_filename, filename, sizeof(_filename));
-	bytesRead = 0;
+DgdsParser::DgdsParser(Common::SeekableReadStream &file, const Common::String &filename) : _file(file), _filename(filename), _bytesRead(0) {
 }
 
-void DgdsParser::parse(void *data, Decompressor *decompressor) {
-	const char *dot;
+void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
 	DGDS_EX _ex;
 
-	if ((dot = strrchr(_filename, '.'))) {
-		_ex = MKTAG24(toupper(dot[1]), toupper(dot[2]), toupper(dot[3]));
+	uint32 dot = _filename.find('.');
+	if (dot != Common::String::npos) {
+		_ex = MKTAG24(toupper(_filename[dot + 1]), toupper(_filename[dot + 2]), toupper(_filename[dot + 3]));
 	} else {
 		_ex = 0;
 	}
@@ -69,60 +67,76 @@ void DgdsParser::parse(void *data, Decompressor *decompressor) {
 	}
 }
 
-bool TTMParser::callback(DgdsChunk &chunk, void *data) {
+Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableReadStream *stream) {
+	Common::HashMap<uint16, Common::String> tags;
+	uint16 count = stream->readUint16LE();
+	debug("        %u:", count);
+
+	for (uint16 i = 0; i < count; i++) {
+		uint16 idx = stream->readUint16LE();
+		Common::String string = stream->readString();
+		debug("        %2u: %2u, \"%s\"", i, idx, string.c_str());
+
+		tags[idx] = string;
+	}
+
+	return tags;
+}
+
+
+bool TTMParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
 	TTMData *scriptData = (TTMData *)data;
 
 	switch (chunk._id) {
+	case ID_TTI: // tag container - we want the tags so don't skip
+		break;
 	case ID_TT3:
 		scriptData->scr = chunk._stream->readStream(chunk._stream->size());
 		break;
+	case ID_TAG:
+		scriptData->_tags = readTags(chunk._stream);
+		break;
 	case ID_VER:
+	case ID_PAG: // Pages - ignore?
 		chunk._stream->skip(chunk._size);
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename);
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename.c_str());
 		chunk._stream->skip(chunk._size);
 		break;
 	}
 	return false;
 }
 
-bool ADSParser::callback(DgdsChunk &chunk, void *data) {
+bool ADSParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
 	ADSData *scriptData = (ADSData *)data;
 	switch (chunk._id) {
 	case EX_ADS:
+	case ID_TTI: // tag container - we want the tags so ignore?
 		break;
 	case ID_RES: {
 		uint16 count = chunk._stream->readUint16LE();
-		char **strs = new char *[count];
-		assert(strs);
 
 		scriptData->count = count;
 		for (uint16 i = 0; i < count; i++) {
-			Common::String string;
-			byte c = 0;
-			uint16 idx;
-
-			idx = chunk._stream->readUint16LE();
+			uint16 idx = chunk._stream->readUint16LE();
 			assert(idx == (i + 1));
 
-			while ((c = chunk._stream->readByte()))
-				string += c;
-
-			strs[i] = new char[string.size() + 1];
-			strcpy(strs[i], string.c_str());
+			Common::String string = chunk._stream->readString();
+			scriptData->names.push_back(string);
 		}
-		scriptData->names = strs;
 	} break;
 	case ID_SCR:
 		scriptData->scr = chunk._stream->readStream(chunk._stream->size());
 		break;
-	case ID_VER:
-		// These exist in Willy Beamish
+	case ID_TAG:
+		scriptData->_tags = readTags(chunk._stream);
+		break;
+	case ID_VER: // Version - ignore
 		chunk._stream->skip(chunk._size);
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename);
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename.c_str());
 		chunk._stream->skip(chunk._size);
 		break;
 	}
