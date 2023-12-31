@@ -33,6 +33,11 @@ public:
 	FoolPrologue();
 	~FoolPrologue();
 
+	int32 var_i32_32; // pointer to bitmap
+	int32 var_i32_38; // pointer to rect
+	int32 var_i32_40; // pointer to bitmap
+	int32 var_i32_4e; // pointer to bitmap
+
 	void run();
 };
 
