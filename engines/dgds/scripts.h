@@ -23,6 +23,8 @@
 #ifndef DGDS_MOVIES_H
 #define DGDS_MOVIES_H
 
+#include "common/rect.h"
+
 namespace Dgds {
 
 class DgdsEngine;

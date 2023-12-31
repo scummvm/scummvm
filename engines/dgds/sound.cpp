@@ -28,7 +28,7 @@
 namespace Dgds {
 
 static inline
-void readHeader(byte* &pos, uint32 &sci_header) {
+void readHeader(const byte* &pos, uint32 &sci_header) {
 	sci_header = 0;
 	if (READ_LE_UINT16(pos) == 0x0084) sci_header = 2;
 
@@ -41,7 +41,7 @@ void readHeader(byte* &pos, uint32 &sci_header) {
 }
 
 static inline
-void readPartHeader(byte* &pos, uint16 &off, uint16 &siz) {
+void readPartHeader(const byte* &pos, uint16 &off, uint16 &siz) {
 	pos += 2;
 	off = READ_LE_UINT16(pos);
 	pos += 2;
@@ -50,14 +50,14 @@ void readPartHeader(byte* &pos, uint16 &off, uint16 &siz) {
 }
 
 static inline
-void skipPartHeader(byte* &pos) {
+void skipPartHeader(const byte* &pos) {
 	pos += 6;
 }
 
-uint32 availableSndTracks(byte *data, uint32 size) {
-	byte *pos = data;
+uint32 availableSndTracks(const byte *data, uint32 size) {
+	const byte *pos = data;
 
-        uint32 sci_header;
+	uint32 sci_header;
 	readHeader(pos, sci_header);
 
 	uint32 tracks = 0;
@@ -108,7 +108,7 @@ uint32 availableSndTracks(byte *data, uint32 size) {
 	return tracks;
 }
 
-byte loadSndTrack(uint32 track, byte** trackPtr, uint16* trackSiz, byte *data, uint32 size) {
+byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size) {
 	byte matchDrv;
 	switch (track) {
 	case DIGITAL_PCM:
@@ -118,7 +118,7 @@ byte loadSndTrack(uint32 track, byte** trackPtr, uint16* trackSiz, byte *data, u
 	default:			   return 0;
 	}
 
-	byte *pos = data;
+	const byte *pos = data;
 
 	uint32 sci_header;
 	readHeader(pos, sci_header);
@@ -127,7 +127,7 @@ byte loadSndTrack(uint32 track, byte** trackPtr, uint16* trackSiz, byte *data, u
 		byte drv = *pos++;
 
 		byte part;
-		byte *ptr;
+		const byte *ptr;
 
 		part = 0;
 		for (ptr = pos; *ptr != 0xFF; skipPartHeader(ptr))

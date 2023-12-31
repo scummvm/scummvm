@@ -58,17 +58,19 @@ public:
 
 	Common::SeekableReadStream *getResource(Common::String name, bool ignorePatches = false);
 	Resource getResourceInfo(Common::String name);
-	ResourceList _resources;
+
+	const ResourceList &getResources() const { return _resources; }
 
 private:
 	Common::File _volumes[MAX_VOLUMES];
+	ResourceList _resources;
 };
 
 class DgdsChunk {
 public:
-	bool isSection(const Common::String &section);
-	bool isSection(DGDS_ID section);
-	bool isPacked(DGDS_EX ex);
+	bool isSection(const Common::String &section) const;
+	bool isSection(DGDS_ID section) const;
+	bool isPacked(DGDS_EX ex) const;
 
 	bool readHeader(DgdsParser &ctx);
 	Common::SeekableReadStream *decodeStream(DgdsParser &ctx, Decompressor *decompressor);
@@ -77,7 +79,7 @@ public:
 	char _idStr[DGDS_TYPENAME_MAX + 1];
 	DGDS_ID _id;
 	uint32 _size;
-	bool container;
+	bool _container;
 	Common::SeekableReadStream *_stream;
 };
 

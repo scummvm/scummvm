@@ -51,43 +51,30 @@
 
 #include "dgds/console.h"
 #include "dgds/decompress.h"
+#include "dgds/dialogue.h"
 #include "dgds/detection_tables.h"
 #include "dgds/dgds.h"
 #include "dgds/font.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
-#include "dgds/movies.h"
 #include "dgds/music.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
+#include "dgds/scripts.h"
 #include "dgds/sound.h"
 
 namespace Dgds {
 
-Graphics::ManagedSurface resData;
-Graphics::Surface bottomBuffer;
-Graphics::Surface topBuffer;
+//static Common::SeekableReadStream *ttm;
+//static char ttmName[DGDS_FILENAME_MAX + 1];
 
-Common::MemoryReadStream *soundData;
-byte *musicData;
-uint32 musicSize;
-
-Common::StringArray _bubbles;
-Common::StringArray BMPs;
-
-PFont *_fntP;
-FFont *_fntF;
-
-#define DGDS_FILENAME_MAX 12
-
-Common::SeekableReadStream *ttm;
-char ttmName[DGDS_FILENAME_MAX + 1];
-
-Common::SeekableReadStream *ads;
-char adsName[DGDS_FILENAME_MAX + 1];
+//static Common::SeekableReadStream *ads;
+//static char adsName[DGDS_FILENAME_MAX + 1];
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
-    : Engine(syst) {
+    : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
+    _midiPlayer(nullptr), _decompressor(nullptr), _musicData(nullptr), _musicSize(0),
+    _soundData(nullptr), _dialogue(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -109,6 +96,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _image;
 	delete _decompressor;
 	delete _resource;
+	delete _dialogue;
 }
 
 void readStrings(Common::SeekableReadStream *stream) {
@@ -127,157 +115,8 @@ void readStrings(Common::SeekableReadStream *stream) {
 	}
 }
 
-struct Tag {
-	uint16 id;
-	Common::String tag;
-};
 
-void readSDS(Common::SeekableReadStream *stream) {
-	uint32 mark;
-
-	// Debug
-	/*uint32 pos = stream->pos();
-					byte *tmp = new byte[stream->size()];
-					stream->read(tmp, stream->size());
-					Common::hexdump(tmp, stream->size());
-					stream->seek(pos, SEEK_SET);*/
-
-	mark = stream->readUint32LE();
-	debug("    0x%X", mark);
-
-	char version[7];
-	stream->read(version, sizeof(version));
-	debug("    %s", version);
-
-	uint16 idx;
-	idx = stream->readUint16LE();
-	debug("    S%d.SDS", idx);
-
-	// gross hack to grep the strings.
-	_bubbles.clear();
-
-	bool inside = false;
-	Common::String txt;
-	while (1) {
-		char buf[4];
-		stream->read(buf, sizeof(buf));
-		if (stream->pos() >= stream->size())
-			break;
-		if (Common::isPrint(buf[0]) && Common::isPrint(buf[1]) && Common::isPrint(buf[2]) && Common::isPrint(buf[3])) {
-			inside = true;
-		}
-		stream->seek(-3, SEEK_CUR);
-
-		if (inside) {
-			if (buf[0] == '\0') {
-				// here's where we do a clever thing. we want Pascal like strings.
-				uint16 pos = txt.size() + 1;
-				stream->seek(-pos - 2, SEEK_CUR);
-				uint16 len = stream->readUint16LE();
-				stream->seek(pos, SEEK_CUR);
-
-				// gotcha!
-				if (len == pos) {
-					//if (resource == 0)
-						_bubbles.push_back(txt);
-					debug("    \"%s\"", txt.c_str());
-				}
-				// let's hope the string wasn't shorter than 4 chars...
-				txt.clear();
-				inside = false;
-			} else {
-				txt += buf[0];
-			}
-		}
-	}
-#if 0
-						idx = stream->readUint16LE();
-						debug("    %d", idx);
-
-						idx = stream->readUint16LE();
-						debug("    %d", idx);
-
-						uint16 count;
-						while (1) {
-							uint16 code;
-							code = stream->readUint16LE();
-							count = stream->readUint16LE();
-							idx = stream->readUint16LE();
-
-							debugN("\tOP: 0x%8.8x %2u %2u\n", code, count, idx);
-
-							uint16 pitch = (count+1)&(~1); // align to word.
-							if ((stream->pos()+pitch) >= stream->size()) break;
-
-							if (code == 0 && count == 0) break;
-
-							stream->skip(pitch);
-						}
-
-						Common::String sval;
-						byte ch;
-
-						do {
-							ch = stream->readByte();
-							sval += ch;
-						} while (ch != 0);
-
-						debug("\"%s\"", sval.c_str());
-#endif
-#if 0
-						// probe for the .ADS name. are these shorts?
-						uint count;
-						count = 0;
-						while (1) {
-							uint16 x;
-							x = stream->readUint16LE();
-							if ((x & 0xFF00) != 0)
-								break;
-							debug("      %u: %u|0x%4.4X", count++, x, x);
-						}
-						stream->seek(-2, SEEK_CUR);
-
-						// .ADS name.
-						Common::String ads;
-						byte ch;
-						while ((ch = stream->readByte()))
-							ads += ch;
-						debug("    %s", ads.c_str());
-
-						stream->hexdump(6);
-						stream->skip(6);
-
-						int w, h;
-
-						w = stream->readSint16LE();
-						h = stream->readSint16LE();
-						debug("    %dx%d", w, h);
-
-						// probe for the strings. are these shorts?
-						count = 0;
-						while (1) {
-							uint16 x;
-							x = stream->readUint16LE();
-							if ((x & 0xFF00) != 0)
-								break;
-							if (stream->pos() >= stream->size()) break;
-							debug("      %u: %u|0x%4.4X", count++, x, x);
-						}
-						stream->seek(-4, SEEK_CUR);
-						// here we are.
-
-						uint16 len;
-						len = stream->readSint16LE();
-						Common::String txt;
-						for (uint16 j=0; j<len; j++) {
-							ch = stream->readByte();
-							txt += ch;
-							debug("      \"%s\"", txt.c_str());
-						}
-#endif
-}
-
-void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor) {
+void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor) {
 	const char *dot;
 	DGDS_EX ex = 0;
 
@@ -388,7 +227,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 			/* AIFF sound sample (Amiga). */
 			byte *dest = new byte[file.size()];
 			file.read(dest, file.size());
-			soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
+			_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
 		} break;
 		case EX_SNG:
 			/* IFF-SMUS music (Amiga). */
@@ -420,7 +259,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 
 		DgdsChunk chunk;
 		while (chunk.readHeader(ctx)) {
-			if (chunk.container) {
+			if (chunk._container) {
 				parent = chunk._id;
 				continue;
 			}
@@ -476,7 +315,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 				break;
 			case EX_SDS:
 				if (chunk.isSection(ID_SDS)) {
-					readSDS(stream);
+					_dialogue->parseSDS(stream);
 				}
 				break;
 			case EX_TTM:
@@ -494,8 +333,8 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 						uint32 size = stream->size();
 						byte *dest = new byte[size];
 						stream->read(dest, size);
-						ttm = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
-						Common::strlcpy(ttmName, name, sizeof(ttmName));
+						//ttm = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
+						//Common::strlcpy(ttmName, name, sizeof(ttmName));
 					} else {
 						while (!stream->eos()) {
 							uint16 code;
@@ -609,8 +448,8 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 						uint32 size = stream->size();
 						byte *dest = new byte[size];
 						stream->read(dest, size);
-						ads = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
-						Common::strlcpy(adsName, name, sizeof(adsName));
+						//ads = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
+						//adsName = name;
 					} else {
 						/* this is either a script, or a property sheet, i can't decide. */
 						while (!stream->eos()) {
@@ -698,12 +537,12 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 			case EX_SNG:
 				/* DOS. */
 				if (chunk.isSection(ID_SNG)) {
-					musicSize = stream->size();
+					_musicSize = stream->size();
 
-					debug("        %2u: %u bytes", scount, musicSize);
+					debug("        %2u: %u bytes", scount, _musicSize);
 
-					musicData = (uint8 *)malloc(musicSize);
-					stream->read(musicData, musicSize);
+					_musicData = (uint8 *)malloc(_musicSize);
+					stream->read(_musicData, _musicSize);
 					scount++;
 				} else if (chunk.isSection(ID_INF)) {
 					uint32 count;
@@ -744,11 +583,11 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 					unpackSize = stream->readUint32LE();
 					//debug("        #%2u: (0x%X?) %s %u", idx, type, compressionDescr[compression], unpackSize);
 
-					musicSize = unpackSize;
-					debug("        %2u: %u bytes", scount, musicSize);
+					_musicSize = unpackSize;
+					debug("        %2u: %u bytes", scount, _musicSize);
 
-					musicData = (uint8 *)malloc(musicSize);
-					decompressor->decompress(compression, musicData, musicSize, stream, stream->size() - stream->pos());
+					_musicData = (uint8 *)malloc(_musicSize);
+					decompressor->decompress(compression, _musicData, _musicSize, stream, stream->size() - stream->pos());
 
 					scount++;
 				}
@@ -792,7 +631,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 	}
 
 	if (ex == EX_BMP) {
-		BMPs.push_back(Common::String(name));
+		_BMPs.push_back(Common::String(name));
 		debug("BMPs: %s", name);
 	}
 
@@ -819,11 +658,11 @@ struct Channel _channels[2];
 
 void DgdsEngine::playSfx(const Common::String &fileName, byte channel, byte volume) {
 	parseFile(fileName);
-	if (soundData) {
+	if (_soundData) {
 		Channel *ch = &_channels[channel];
-		Audio::AudioStream *input = Audio::makeAIFFStream(soundData, DisposeAfterUse::YES);
+		Audio::AudioStream *input = Audio::makeAIFFStream(_soundData, DisposeAfterUse::YES);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
-		soundData = 0;
+		_soundData = 0;
 	}
 }
 
@@ -834,21 +673,21 @@ void DgdsEngine::stopSfx(byte channel) {
 	}
 }
 
-bool DgdsEngine::playPCM(byte *data, uint32 size) {
+bool DgdsEngine::playPCM(const byte *data, uint32 size) {
 	_mixer->stopAll();
 
 	if (!data)
 		return false;
 
 	byte numParts;
-	byte *trackPtr[0xFF];
+	const byte *trackPtr[0xFF];
 	uint16 trackSiz[0xFF];
 	numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
 	if (numParts == 0)
 		return false;
 
 	for (byte part = 0; part < numParts; part++) {
-		byte *ptr = trackPtr[part];
+		const byte *ptr = trackPtr[part];
 
 		bool digital_pcm = false;
 		if (READ_LE_UINT16(ptr) == 0x00FE) {
@@ -886,34 +725,34 @@ void DgdsEngine::playMusic(const Common::String &fileName) {
 	//stopMusic();
 
 	parseFile(fileName);
-	if (musicData) {
+	if (_musicData) {
 		uint32 tracks;
-		tracks = availableSndTracks(musicData, musicSize);
+		tracks = availableSndTracks(_musicData, _musicSize);
 		if ((tracks & TRACK_MT32))
-			_midiPlayer->play(musicData, musicSize);
+			_midiPlayer->play(_musicData, _musicSize);
 		if ((tracks & DIGITAL_PCM))
-			playPCM(musicData, musicSize);
+			playPCM(_musicData, _musicSize);
 	}
 }
 
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	soundData = 0;
-	musicData = 0;
+	_soundData = nullptr;
+	_musicData = nullptr;
 
 	_console = new Console(this);
 	_resource = new ResourceManager();
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
 	_midiPlayer = new DgdsMidiPlayer();
-	assert(_midiPlayer);
+	_dialogue = new Dialogue();
 
 	setDebugger(_console);
 
-	bottomBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	topBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	resData.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_bottomBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_topBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_resData.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	debug("DgdsEngine::init");
 
@@ -992,6 +831,10 @@ Common::Error DgdsEngine::run() {
 		g_system->delayMillis(40);
 	}
 	return Common::kNoError;
+}
+
+Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, bool ignorePatches) {
+	return _resource->getResource(name, ignorePatches);
 }
 
 } // End of namespace Dgds

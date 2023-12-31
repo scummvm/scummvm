@@ -36,9 +36,9 @@ protected:
 	byte *_init;
 	byte *_last;
 
-	byte numParts;
-	byte *trackPtr[0xFF];
-	uint16 trackSiz[0xFF];
+	byte _numParts;
+	const byte *_trackPtr[0xFF];
+	uint16 _trackSz[0xFF];
 
 protected:
 	void parseNextEvent(EventInfo &info);
@@ -57,8 +57,8 @@ public:
 };
 
 MidiParser_DGDS::MidiParser_DGDS() : _init(0), _last(0) {
-	numParts = 0;
-	memset(trackSiz, 0, sizeof(trackSiz));
+	_numParts = 0;
+	memset(_trackSz, 0, sizeof(_trackSz));
 }
 
 void MidiParser_DGDS::sendInitCommands() {
@@ -165,12 +165,12 @@ byte MidiParser_DGDS::midiGetNextChannel(uint16 *trackPos, uint32 *trackTimer, l
 	byte curr = 0xFF;
 	uint32 closest = ticker + 1000000, next = 0;
 
-	for (byte i = 0; i < numParts; i++) {
+	for (byte i = 0; i < _numParts; i++) {
 		if (trackTimer[i] ==  0xFFFFFFFF) // channel ended
 			continue;
-		if (trackPos[i] >= trackSiz[i])
+		if (trackPos[i] >= _trackSz[i])
 			continue;
-		next = trackPtr[i][trackPos[i]]; // when the next event should occur
+		next = _trackPtr[i][trackPos[i]]; // when the next event should occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
 			next = 240;
 		next += trackTimer[i];
@@ -184,7 +184,7 @@ byte MidiParser_DGDS::midiGetNextChannel(uint16 *trackPos, uint32 *trackTimer, l
 }
 
 inline bool MidiParser_DGDS::validateNextRead(uint i, uint16 *trackPos) {
-	if (trackSiz[i] <= trackPos[i]) {
+	if (_trackSz[i] <= trackPos[i]) {
 		warning("Unexpected end. Music may sound wrong due to game resource corruption");
 		return false;
 	} else {
@@ -200,11 +200,11 @@ void MidiParser_DGDS::mixChannels() {
 	uint16 trackPos[0xFF];
 	uint32 trackTimer[0xFF];
 	byte _prev[0xFF];
-	for (byte i = 0; i < numParts; i++) {
+	for (byte i = 0; i < _numParts; i++) {
 		trackTimer[i] = 0;
 		_prev[i] = 0;
 		trackPos[i] = 0;
-		totalSize += trackSiz[i];
+		totalSize += _trackSz[i];
 	}
 
 	byte *output = (byte*)malloc(totalSize * 2);
@@ -218,7 +218,7 @@ void MidiParser_DGDS::mixChannels() {
 	while ((channel = midiGetNextChannel(trackPos, trackTimer, ticker)) != 0xFF) { // there is still an active channel
 		if (!validateNextRead(channel, trackPos))
 			goto end;
-		curDelta = trackPtr[channel][trackPos[channel]++];
+		curDelta = _trackPtr[channel][trackPos[channel]++];
 		trackTimer[channel] += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
@@ -227,7 +227,7 @@ void MidiParser_DGDS::mixChannels() {
 
 		if (!validateNextRead(channel, trackPos))
 			goto end;
-		midiCommand = trackPtr[channel][trackPos[channel]++];
+		midiCommand = _trackPtr[channel][trackPos[channel]++];
 		if (midiCommand != 0xFC) {
 			// Write delta
 			while (newDelta > 240) {
@@ -243,7 +243,7 @@ void MidiParser_DGDS::mixChannels() {
 			do {
 				if (!validateNextRead(channel, trackPos))
 					goto end;
-				midiParam = trackPtr[channel][trackPos[channel]++];
+				midiParam = _trackPtr[channel][trackPos[channel]++];
 				*output++ = midiParam;
 			} while (midiParam != 0xF7);
 			break;
@@ -254,7 +254,7 @@ void MidiParser_DGDS::mixChannels() {
 			if (midiCommand & 0x80) {
 				if (!validateNextRead(channel, trackPos))
 					goto end;
-				midiParam = trackPtr[channel][trackPos[channel]++];
+				midiParam = _trackPtr[channel][trackPos[channel]++];
 			} else {// running status
 				midiParam = midiCommand;
 				midiCommand = _prev[channel];
@@ -270,7 +270,7 @@ void MidiParser_DGDS::mixChannels() {
 			if (commandLengths[(midiCommand >> 4) - 8] == 2) {
 				if (!validateNextRead(channel, trackPos))
 					goto end;
-				*output++ = trackPtr[channel][trackPos[channel]++];
+				*output++ = _trackPtr[channel][trackPos[channel]++];
 			}
 			_prev[channel] = midiCommand;
 			globalPrev = midiCommand;
@@ -287,19 +287,19 @@ bool MidiParser_DGDS::loadMusic(byte *data, uint32 size) {
 
 	if (!data) return false;
 
-	numParts = loadSndTrack(TRACK_MT32, trackPtr, trackSiz, data, size);
-	if (numParts == 0) return false;
+	_numParts = loadSndTrack(TRACK_MT32, _trackPtr, _trackSz, data, size);
+	if (_numParts == 0) return false;
 
-	for (byte part = 0; part < numParts; part++) {
-		byte *ptr = trackPtr[part];
+	for (byte part = 0; part < _numParts; part++) {
+		const byte *ptr = _trackPtr[part];
 
 		byte number, voices;
 		number = (*ptr++);
 		voices = (*ptr++) & 0x0F;
 		debug(" - #%u: voices: %u", number, voices);
 
-		trackPtr[part] += 2;
-		trackSiz[part] -= 2;
+		_trackPtr[part] += 2;
+		_trackSz[part] -= 2;
 	}
 
 	mixChannels();

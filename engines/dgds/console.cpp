@@ -43,7 +43,7 @@ bool Console::cmdFileInfo(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource res = _vm->_resource->getResourceInfo(argv[1]);
+	const Resource &res = _vm->getResourceManager()->getResourceInfo(argv[1]);
 	debugPrintf("Resource volume: %d, position: %d, size: %d, checksum: %d\n", res.volume, res.pos, res.size, res.checksum);
 
 	return true;
@@ -55,7 +55,7 @@ bool Console::cmdFileSearch(int argc, const char **argv) {
 		return true;
 	}
 
-	ResourceList resources = _vm->_resource->_resources;
+	const ResourceList &resources = _vm->getResourceManager()->getResources();
 	for (ResourceList::const_iterator i = resources.begin(), end = resources.end(); i != end; ++i) {
 		if (i->_key.contains(argv[1])) {
 			Resource res = i->_value;
@@ -75,7 +75,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	Common::String fileName = argv[1];
 	bool ignorePatches = (argc > 2) && (!scumm_stricmp(argv[2], "true") || !strcmp(argv[2], "1"));
 	bool unpack = (argc > 3) && (!scumm_stricmp(argv[3], "true") || !strcmp(argv[3], "1"));
-	Common::SeekableReadStream *res = _vm->_resource->getResource(fileName, ignorePatches);
+	Common::SeekableReadStream *res = _vm->getResource(fileName, ignorePatches);
 	if (res == nullptr) {
 		debugPrintf("Resource not found\n");
 		return true;

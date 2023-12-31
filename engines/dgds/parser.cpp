@@ -26,9 +26,9 @@
 #include "common/stream.h"
 #include "common/platform.h"
 #include "dgds/includes.h"
-#include "dgds/movies.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"
+#include "dgds/scripts.h"
 
 namespace Dgds {
 
@@ -49,8 +49,7 @@ void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
 	while (chunk.readHeader(*this)) {
 		bool stop;
 
-		//chunk._stream = 0;
-		if (chunk.container) {
+		if (chunk._container) {
 			chunk._stream = &_file;
 			stop = callback(chunk, data);
 		} else {

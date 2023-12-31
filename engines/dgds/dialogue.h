@@ -20,24 +20,45 @@
  *
  */
 
-#ifndef DGDS_SOUND_H
-#define DGDS_SOUND_H
+#ifndef DGDS_DIALOUGE_H
+#define DGDS_DIALOUGE_H
 
-#include "common/scummsys.h"
+#include "common/stream.h"
+#include "common/array.h"
 
 namespace Dgds {
 
-enum {
-  DIGITAL_PCM	= 1 << 0,
-  TRACK_ADLIB	= 1 << 1,
-  TRACK_GM	= 1 << 2,
-  TRACK_MT32	= 1 << 3
+class DialogueLine {
+public:
+    uint16 unk[9];
+    uint16 x;
+    uint16 y;
+    uint16 w;
+    uint16 h;
+    uint16 bgcol;
+    uint16 fontcol;   // 0 = black , 0xf = white
+    uint16 unk2;
+    uint16 unk3;
+    uint16 fontsize;  // 01 = 8x8, 02 = 6x6, 03 = 4x5
+    uint16 just;      // 0x00 =t top, 0x03 = center
+    uint16 unk4;
+    uint16 frametype; // 01 =simple frame, 02 = with title (text before :), 03 = baloon, 04 = eliptical baloon
+    uint16 unk5;
+    uint16 unk6;
+    uint16 textLen;
+    Common::String text;
 };
 
-uint32 availableSndTracks(const byte *data, uint32 size);
-byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size);
+class Dialogue {
+public:
+	void parseSDS(Common::SeekableReadStream *s);
+
+	const Common::Array<DialogueLine> &getLines() const { return _dialogue; }
+private:
+	Common::Array<DialogueLine> _dialogue;
+};
 
 } // End of namespace Dgds
 
-#endif // DGDS_SOUND_H
+#endif // DGDS_DIALOUGE_H
 

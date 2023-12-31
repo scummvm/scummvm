@@ -31,34 +31,27 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "dgds/dgds.h"
+#include "dgds/dialogue.h"
 #include "dgds/font.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
-#include "dgds/movies.h"
+#include "dgds/scripts.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"
 
 namespace Dgds {
 
-// TODO: Move
-extern Graphics::ManagedSurface resData;
-extern Graphics::Surface bottomBuffer;
-extern Graphics::Surface topBuffer;
-extern Common::StringArray _bubbles;
-
-const Common::Rect rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-int bk = -1;
-int id = 0, sid = 0;
-Common::String text;
-extern PFont *_fntP;
-Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-Common::String _bmpNames[16];
+// FIXME: Move these into some state
+static int currentBmpId = 0;
+static DialogueLine _text;
+static Common::Rect _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+static Common::String _bmpNames[16];
 
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
-	Common::SeekableReadStream *stream = _vm->_resource->getResource(filename);
+	Common::SeekableReadStream *stream = _vm->getResourceManager()->getResource(filename);
+	Decompressor *decompressor = _vm->getDecompressor();
 
 	if (!stream) {
 		error("Couldn't open script file '%s'", filename.c_str());
@@ -66,7 +59,7 @@ bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
 	}
 
 	TTMParser dgds(*stream, filename);
-	dgds.parse(scriptData, _vm->_decompressor);
+	dgds.parse(scriptData, decompressor);
 
 	delete stream;
 
@@ -143,11 +136,11 @@ bool TTMInterpreter::run(TTMState *script) {
 			break;
 		case 0xf010:
 			// LOAD SCR:	filename:str
-			_vm->_image->drawScreen(sval, bottomBuffer);
+			_vm->_image->drawScreen(sval, _vm->getBottomBuffer());
 			continue;
 		case 0xf020:
 			// LOAD BMP:	filename:str
-			_bmpNames[id] = Common::String(sval);
+			_bmpNames[currentBmpId] = sval;
 			continue;
 		case 0xf050:
 			// LOAD PAL:	filename:str
@@ -165,21 +158,22 @@ bool TTMInterpreter::run(TTMState *script) {
 			}
 			continue;
 
-		case 0x1030:
+		case 0x1030: {
 			// SET BMP:	id:int [-1:n]
-			bk = ivals[0];
-
+			int bk = ivals[0];
 			if (bk != -1) {
-				_vm->_image->loadBitmap(_bmpNames[id], bk);
+				_vm->_image->loadBitmap(_bmpNames[currentBmpId], bk);
 			}
 			continue;
+		}
 		case 0x1050:
 			// SELECT BMP:	    id:int [0:n]
-			id = ivals[0];
+			currentBmpId = ivals[0];
 			continue;
 		case 0x1060:
 			// SELECT SCR|PAL:  id:int [0]
-			sid = ivals[0];
+			warning("Switching scene %d -> %d for opcode 0x1060 .. is that right?", script->scene, ivals[0]);
+			script->scene = ivals[0];
 			continue;
 		case 0x1090:
 			// SELECT SONG:	    id:int [0]
@@ -194,47 +188,48 @@ bool TTMInterpreter::run(TTMState *script) {
 			// FADE OUT:	?,?,?,?:byte
 			g_system->delayMillis(script->delay);
 			_vm->_image->clearPalette();
-			bottomBuffer.fillRect(rect, 0);
+			_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			continue;
 
 		// these 3 ops do interaction between the topBuffer (imgData) and the bottomBuffer (scrData) but... it might turn out this uses z values!
 		case 0xa050: { //GFX?	    i,j,k,l:int	[i<k,j<l] // HAPPENS IN INTRO.TTM:INTRO9
 			// it works like a bitblit, but it doesn't write if there's something already at the destination?
-			resData.blitFrom(bottomBuffer);
-			resData.transBlitFrom(topBuffer);
-			topBuffer.copyFrom(resData);
+			_vm->_resData.blitFrom(_vm->getBottomBuffer());
+			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
+			_vm->getTopBuffer().copyFrom(_vm->_resData);
 			continue;
 		}
 		case 0x0020: //SAVE BG?:    void // OR PERHAPS SWAPBUFFERS ; it makes bmpData persist in the next frames.
-			bottomBuffer.copyFrom(topBuffer);
+			_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 			continue;
 
 		case 0x4200: {
 			// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
 			const Common::Rect destRect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-			resData.blitFrom(bottomBuffer);
-			resData.transBlitFrom(topBuffer);
-			bottomBuffer.copyRectToSurface(resData, destRect.left, destRect.top, destRect);
+			_vm->_resData.blitFrom(_vm->getBottomBuffer());
+			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
+			_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
 		}
 			continue;
 
 		case 0x0ff0: {
 			// REFRESH:	void
-			resData.blitFrom(bottomBuffer);
-			Graphics::Surface bmpSub = topBuffer.getSubArea(bmpWin);
-			resData.transBlitFrom(bmpSub, Common::Point(bmpWin.left, bmpWin.top));
-			topBuffer.fillRect(bmpWin, 0);
+			_vm->_resData.blitFrom(_vm->getBottomBuffer());
+			Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpWin);
+			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpWin.left, bmpWin.top));
+			_vm->getTopBuffer().fillRect(bmpWin, 0);
 
-			if (!text.empty()) {
+			if (!_text.text.empty()) {
 				Common::StringArray lines;
-				const int h = _fntP->getFontHeight();
+				const PFont *fntP = _vm->getFntP();
+				const int h = fntP->getFontHeight();
 
-				_fntP->wordWrapText(text, SCREEN_HEIGHT, lines);
+				fntP->wordWrapText(_text.text, SCREEN_HEIGHT, lines);
 				Common::Rect r(0, 7, SCREEN_WIDTH, h * lines.size() + 13);
-				resData.fillRect(r, 15);
+				_vm->_resData.fillRect(r, 15);
 				for (uint i = 0; i < lines.size(); i++) {
-					const int w = _fntP->getStringWidth(lines[i]);
-					_fntP->drawString(&resData, lines[i], 10, 10 + 1 + i * h, w, 0);
+					const int w = fntP->getStringWidth(lines[i]);
+					fntP->drawString(&_vm->_resData, lines[i], 10, 10 + 1 + i * h, w, 0);
 				}
 			}
 		} break;
@@ -242,24 +237,25 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0xa520:
 			//DRAW BMP: x,y:int ; happens once in INTRO.TTM
 		case 0xa500:
-			debug("DRAW \"%s\"", _bmpNames[id].c_str());
+			debug("DRAW \"%s\"", _bmpNames[currentBmpId].c_str());
 
 			// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 			// This is kind of file system intensive, will likely have to change to store all the BMPs.
 			if (count == 4) {
-				bk = ivals[2];
-				id = ivals[3];
+				int bk = ivals[2];
+				currentBmpId = ivals[3];
 				if (bk != -1) {
-					_vm->_image->loadBitmap(_bmpNames[id], bk);
+					_vm->_image->loadBitmap(_bmpNames[currentBmpId], bk);
 				}
 			} else if (!_vm->_image->isLoaded()) {
 				// load on demand?
-				_vm->_image->loadBitmap(_bmpNames[id], 0);
+				warning("trying to load bmp %d (%s) on demand", currentBmpId, _bmpNames[currentBmpId].c_str());
+				_vm->_image->loadBitmap(_bmpNames[currentBmpId], 0);
 			}
 
 			// DRAW BMP: x,y:int [-n,+n] (RISE)
 			if (_vm->_image->isLoaded())
-				_vm->_image->drawBitmap(ivals[0], ivals[1], drawWin, topBuffer);
+				_vm->_image->drawBitmap(ivals[0], ivals[1], _drawWin, _vm->getTopBuffer());
 			else
 				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
@@ -268,66 +264,71 @@ bool TTMInterpreter::run(TTMState *script) {
 			// DESCRIPTION IN TTM TAGS.
 			debug("SET SCENE: %u", ivals[0]);
 			script->scene = ivals[0];
+			
+			const Common::Array<DialogueLine> bubbles = _vm->getDialogue()->getLines();
 
-			if (!_bubbles.empty()) {
+			if (!bubbles.empty()) {
 				// TODO: Are these hardcoded?
 				if (!script->dataPtr->filename.compareToIgnoreCase("INTRO.TTM")) {
 					switch (ivals[0]) {
 					case 15:
-						text = _bubbles[3];
+						_text = bubbles[3];
 						break;
 					case 16:
-						text = _bubbles[4];
+						_text = bubbles[4];
 						break;
 					case 17:
-						text = _bubbles[5];
+						_text = bubbles[5];
 						break;
 					case 19:
-						text = _bubbles[6];
+						_text = bubbles[6];
 						break;
 					case 20:
-						text = _bubbles[7];
+						_text = bubbles[7];
 						break;
 					case 22:
-						text = _bubbles[8];
+						_text = bubbles[8];
 						break;
 					case 23:
-						text = _bubbles[9];
+						_text = bubbles[9];
 						break;
 					case 25:
-						text = _bubbles[10];
+						_text = bubbles[10];
 						break;
 					case 26:
-						text = _bubbles[11];
+						_text = bubbles[11];
 						break;
 					default:
-						text.clear();
+						_text.text.clear();
 						break;
 					}
 				} else if (!script->dataPtr->filename.compareToIgnoreCase("BIGTV.TTM")) {
 					switch (ivals[0]) {
 					case 1:
-						text = _bubbles[0];
+						_text = bubbles[0];
 						break;
 					case 2:
-						text = _bubbles[1];
+						_text = bubbles[1];
 						break;
 					case 3:
-						text = _bubbles[2];
+						_text = bubbles[2];
+						break;
+					default:
+						_text.text.clear();
 						break;
 					}
 				}
-				if (!text.empty())
+				if (!_text.text.empty())
 					script->delay += 1500;
 			} else {
-				text.clear();
+				_text.text.clear();
 			}
 		}
 			continue;
 
 		case 0x4000:
 			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
-			drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+			_drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 
 		case 0xa100:
@@ -360,9 +361,8 @@ bool TTMInterpreter::run(TTMState *script) {
 		break;
 	} while (scr->pos() < scr->size());
 
-	Graphics::Surface *dst;
-	dst = g_system->lockScreen();
-	dst->copyRectToSurface(resData, 0, 0, rect);
+	Graphics::Surface *dst = g_system->lockScreen();
+	dst->copyRectToSurface(_vm->_resData, 0, 0, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	g_system->unlockScreen();
 	g_system->updateScreen();
 	g_system->delayMillis(script->delay);
@@ -372,7 +372,7 @@ bool TTMInterpreter::run(TTMState *script) {
 ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(nullptr) {}
 
 bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
-	Common::SeekableReadStream *stream = _vm->_resource->getResource(filename);
+	Common::SeekableReadStream *stream = _vm->getResource(filename, false);
 
 	if (!stream) {
 		error("Couldn't open script resource '%s'", filename.c_str());
@@ -383,7 +383,7 @@ bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
 	_filename = filename;
 
 	ADSParser dgds(*stream, _filename);
-	dgds.parse(scriptData, _vm->_decompressor);
+	dgds.parse(scriptData, _vm->getDecompressor());
 
 	delete stream;
 

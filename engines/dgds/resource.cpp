@@ -123,15 +123,15 @@ Resource ResourceManager::getResourceInfo(Common::String name) {
 	return _resources[name];
 }
 
-bool DgdsChunk::isSection(const Common::String &section) {
+bool DgdsChunk::isSection(const Common::String &section) const {
 	return section.equals(_idStr);
 }
 
-bool DgdsChunk::isSection(DGDS_ID section) {
+bool DgdsChunk::isSection(DGDS_ID section) const {
 	return (section == _id);
 }
 
-bool DgdsChunk::isPacked(DGDS_EX ex) {
+bool DgdsChunk::isPacked(DGDS_EX ex) const {
 	bool packed = false;
 
 	switch (ex) {
@@ -240,9 +240,9 @@ bool DgdsChunk::readHeader(DgdsParser &ctx) {
 	//ctx._file.skip(2);
 	if (_size & 0x80000000) {
 		_size &= ~0x80000000;
-		container = true;
+		_container = true;
 	} else {
-		container = false;
+		_container = false;
 	}
 	return true;
 }
@@ -256,7 +256,7 @@ Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompresso
 	unpackSize = ctx._file.readUint32LE();
 	_size -= (1 + 4);
 
-	if (!container) {
+	if (!_container) {
 		byte *dest = new byte[unpackSize];
 		decompressor->decompress(compression, dest, unpackSize, &ctx._file, _size);
 		output = new Common::MemoryReadStream(dest, unpackSize, DisposeAfterUse::YES);
@@ -273,12 +273,12 @@ Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompresso
 Common::SeekableReadStream *DgdsChunk::readStream(DgdsParser &ctx) {
 	Common::SeekableReadStream *output = 0;
 
-	if (!container) {
+	if (!_container) {
 		output = new Common::SeekableSubReadStream(&ctx._file, ctx._file.pos(), ctx._file.pos() + _size, DisposeAfterUse::NO);
 		ctx._bytesRead += _size;
 	}
 
-	debug("    %s %u%c", _idStr, _size, (container ? '+' : ' '));
+	debug("    %s %u%c", _idStr, _size, (_container ? '+' : ' '));
 	return output;
 }
 
