@@ -177,7 +177,11 @@ void LoadSaveMenu::init() {
 			_filenameStrings[i] = desc.getDescription();
 		} else {
 			// If no valid save, copy over the empty save string
-			_filenameStrings[i] = g_nancy->getStaticData().emptySaveText;
+			if (_loadSaveData->_emptySaveText.size()) {
+				_filenameStrings[i] = _loadSaveData->_emptySaveText;
+			} else {
+				_filenameStrings[i] = g_nancy->getStaticData().emptySaveText;
+			}
 		}
 	}
 
@@ -493,8 +497,40 @@ void LoadSaveMenu::save() {
 	// Improvement: not providing a name doesn't result in the
 	// savefile being named "--- Empty ---" or "Nothing Saved Here".
 	// Instead, we use ScummVM's built-in save name generator
-	g_nancy->saveGameState(_selectedSave + 1, _enteredString.size() ? _enteredString :
-		_filenameStrings[_selectedSave].equals(g_nancy->getStaticData().emptySaveText) ? Common::String() : _filenameStrings[_selectedSave], false);
+
+	// This does not apply to nancy7, where a default name is provided in
+	// the LOAD chunk, and has a number appended to the end
+
+	Common::String finalDesc = _enteredString;
+	if (!finalDesc.size()) {
+		if (_loadSaveData->_defaultSaveNamePrefix.size()) {
+			if (_filenameStrings[_selectedSave].equals(_loadSaveData->_emptySaveText)) {
+				uint suffixNum = 1;
+				for (int i = 1; i < g_nancy->getMetaEngine()->getMaximumSaveSlot(); ++i) {
+					if (i == _selectedSave + 1) {
+						continue;
+					}
+
+					SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), i);
+					if (desc.getDescription().substr(0, _loadSaveData->_defaultSaveNamePrefix.size()).equals(Common::U32String(_loadSaveData->_defaultSaveNamePrefix))) {
+						if (desc.getDescription().substr(_loadSaveData->_defaultSaveNamePrefix.size(), 1).asUint64() == suffixNum) {
+							++suffixNum;
+						} else {
+							break;
+						}
+					}
+				}
+				
+				finalDesc = _loadSaveData->_defaultSaveNamePrefix + ('0' + suffixNum);
+			}
+		} else {
+			if (!_filenameStrings[_selectedSave].equals(g_nancy->getStaticData().emptySaveText)) {
+				finalDesc = _filenameStrings[_selectedSave];
+			}
+		}
+	}
+
+	g_nancy->saveGameState(_selectedSave + 1, finalDesc, false);
 
 	// Feed the new name back into the list of saves
 	SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), _selectedSave + 1);

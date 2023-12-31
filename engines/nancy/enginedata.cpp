@@ -487,6 +487,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRect(s, _cancelButtonDisabledSrc);
 
 		readFilename(s, _gameSavedPopup, kGameTypeNancy3);
+		readFilename(s, _emptySaveText, kGameTypeNancy7);
+		readFilename(s, _defaultSaveNamePrefix, kGameTypeNancy7);
 		s.skip(16, kGameTypeNancy3);
 	}
 }

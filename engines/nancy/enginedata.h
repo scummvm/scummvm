@@ -292,6 +292,8 @@ struct LOAD : public EngineData {
 	Common::Rect _cancelButtonDisabledSrc;
 
 	Common::Path _gameSavedPopup;
+	Common::String _emptySaveText;
+	Common::String _defaultSaveNamePrefix;
 	// Common::Rect _gameSavedBounds
 };
 
