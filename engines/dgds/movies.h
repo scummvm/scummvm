@@ -28,43 +28,48 @@ namespace Dgds {
 class DgdsEngine;
 class DgdsChunk;
 
-struct TTMData {
-	char filename[13];
+class DgdsScriptData {
+public:
+	DgdsScriptData() : scr(nullptr) {}
+	Common::String filename;
 	Common::SeekableReadStream *scr;
+	Common::HashMap<uint16, Common::String> _tags;
+};
+
+class TTMData : public DgdsScriptData {
+public:
 };
 
 struct TTMState {
+	TTMState() : dataPtr(nullptr), scene(0), delay(0) {}
 	const TTMData *dataPtr;
 	uint16 scene;
 	int delay;
 };
 
-struct ADSData {
-	char filename[13];
-
+class ADSData : public DgdsScriptData {
+public:
+	ADSData() : count(0), scriptDatas(nullptr) {}
 	uint16 count;
-	char **names;
+	Common::Array<Common::String> names;
 	TTMData *scriptDatas;
-
-	Common::SeekableReadStream *scr;
 };
 
 struct ADSState {
+	ADSState() : dataPtr(nullptr), scene(0), subIdx(0), subMax(0) {}
 	const ADSData *dataPtr;
 	uint16 scene;
 	uint16 subIdx, subMax;
 
-	TTMState *scriptStates;
+	Common::Array<TTMState> scriptStates;
 };
 
 class ADSInterpreter {
 public:
 	ADSInterpreter(DgdsEngine *vm);
 
-	bool load(const char *filename, ADSData *data);
+	bool load(const Common::String &filename, ADSData *data);
 	void unload(ADSData *data);
-
-	bool callback(DgdsChunk &chunk);
 
 	void init(ADSState *scriptState, const ADSData *scriptData);
 	bool run(ADSState *script);
@@ -72,7 +77,7 @@ public:
 protected:
 	DgdsEngine *_vm;
 
-	const char *_filename;
+	Common::String _filename;
 	ADSData *_scriptData;
 };
 
@@ -80,10 +85,8 @@ class TTMInterpreter {
 public:
 	TTMInterpreter(DgdsEngine *vm);
 
-	bool load(const char *filename, TTMData *data);
+	bool load(const Common::String &filename, TTMData *data);
 	void unload(TTMData *data);
-
-	bool callback(DgdsChunk &chunk);
 
 	void init(TTMState *scriptState, const TTMData *scriptData);
 	bool run(TTMState *script);
@@ -91,8 +94,8 @@ public:
 protected:
 	DgdsEngine *_vm;
 
-	const char *_filename;
-	TTMData *_scriptData;
+	//Common::String _filename;
+	//TTMData *_scriptData;
 
 	//Common::String _bmpNames[16];
 };

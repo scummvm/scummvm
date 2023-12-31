@@ -33,7 +33,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -45,11 +45,11 @@ bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	       (f == kSimpleSavesNames);
 }
 
-bool DgdsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error DgdsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Dgds::DgdsEngine(syst, desc);
 
-	return desc != nullptr;
+	return (desc != nullptr) ? Common::kNoError : Common::kUnknownError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DGDS)

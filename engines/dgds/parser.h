@@ -27,32 +27,35 @@ namespace Dgds {
 
 class DgdsChunk;
 class Decompressor;
+class DgdsScriptData;
 
 class DgdsParser {
 public:
-	char _filename[13];
+	Common::String _filename;
 	Common::SeekableReadStream &_file;
-	uint32 bytesRead;
+	uint32 _bytesRead;
 
-	DgdsParser(Common::SeekableReadStream &file, const char *filename);
-	void parse(void *data, Decompressor *decompressor);
-	virtual bool callback(DgdsChunk &chunk, void *data) { return false; }
+	DgdsParser(Common::SeekableReadStream &file, const Common::String &filename);
+	void parse(DgdsScriptData *data, Decompressor *decompressor);
+	virtual bool callback(DgdsChunk &chunk, DgdsScriptData *data) { return false; }
+
+	static Common::HashMap<uint16, Common::String> readTags(Common::SeekableReadStream *stream);
 };
 
 class TTMParser : public DgdsParser {
 public:
-	TTMParser(Common::SeekableReadStream &file, const char *filename) : DgdsParser(file, filename) {}
+	TTMParser(Common::SeekableReadStream &file, const Common::String &filename) : DgdsParser(file, filename) {}
 
 private:
-	bool callback(DgdsChunk &chunk, void *data);
+	bool callback(DgdsChunk &chunk, DgdsScriptData *data);
 };
 
 class ADSParser : public DgdsParser {
 public:
-	ADSParser(Common::SeekableReadStream &file, const char *filename) : DgdsParser(file, filename) {}
+	ADSParser(Common::SeekableReadStream &file, const Common::String &filename) : DgdsParser(file, filename) {}
 
 private:
-	bool callback(DgdsChunk &chunk, void *data);
+	bool callback(DgdsChunk &chunk, DgdsScriptData *data);
 };
 
 } // End of namespace Dgds

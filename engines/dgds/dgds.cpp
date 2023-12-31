@@ -33,7 +33,7 @@
 #include "common/substream.h"
 #include "common/system.h"
 
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
@@ -99,12 +99,12 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	else if (!strcmp(gameDesc->gameId, "beamish"))
 		_gameId = GID_BEAMISH;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
 }
 
 DgdsEngine::~DgdsEngine() {
-	DebugMan.clearAllDebugChannels();
+	DebugMan.removeAllDebugChannels();
 
 	delete _image;
 	delete _decompressor;
@@ -131,25 +131,6 @@ struct Tag {
 	uint16 id;
 	Common::String tag;
 };
-
-Common::HashMap<uint16, Common::String> *readTags(Common::SeekableReadStream *stream) {
-	Common::HashMap<uint16, Common::String> *tags = new Common::HashMap<uint16, Common::String>;
-	uint16 count = stream->readUint16LE();
-	debug("        %u:", count);
-
-	for (uint16 i = 0; i < count; i++) {
-		Common::String string;
-		byte c = 0;
-		uint16 idx = stream->readUint16LE();
-		while (c = stream->readByte())
-			string += c;
-		debug("        %2u: %2u, \"%s\"", i, idx, string.c_str());
-
-		(*tags)[idx] = string;
-	}
-
-	return tags;
-}
 
 void readSDS(Common::SeekableReadStream *stream) {
 	uint32 mark;
@@ -435,15 +416,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 		file.hexdump(leftover);
 		file.skip(leftover);
 	} else {
-		uint16 tcount;
-		uint16 scount;
-		uint16 *tw = 0, *th = 0;
-		uint32 *toffset = 0;
-
-		uint16 *mtx;
-		uint16 mw, mh;
-
-		scount = 0;
+		uint16 scount = 0;
 
 		DgdsChunk chunk;
 		while (chunk.readHeader(ctx)) {
@@ -627,7 +600,7 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 				} else if (chunk.isSection(ID_RES)) {
 					debug("res0");
 					if (resource == 0) {
-						readTags(stream);
+						DgdsParser::readTags(stream);
 					} else {
 						readStrings(stream);
 					}
@@ -823,16 +796,13 @@ void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file,
 		debug("BMPs: %s", name);
 	}
 
-	debug("  [%u:%u] --", file.pos(), ctx.bytesRead);
+	debug("  [%u:%u] --", (uint)file.pos(), ctx._bytesRead);
 }
 
-void DgdsEngine::parseFile(Common::String filename, int resource) {
-	//filename.toLowercase();
-
-	if (filename.hasSuffix(".SNG") || filename.hasSuffix(".sng")) // TODO: Mac sound
-		return;
-
+void DgdsEngine::parseFile(const Common::String &filename, int resource) {
 	Common::SeekableReadStream *stream = _resource->getResource(filename);
+	if (!stream)
+		error("Couldn't get resource file %s", filename.c_str());
 	parseFileInner(_platform, *stream, filename.c_str(), resource, _decompressor);
 	delete stream;
 }
@@ -847,7 +817,7 @@ struct Channel {
 
 struct Channel _channels[2];
 
-void DgdsEngine::playSfx(const char *fileName, byte channel, byte volume) {
+void DgdsEngine::playSfx(const Common::String &fileName, byte channel, byte volume) {
 	parseFile(fileName);
 	if (soundData) {
 		Channel *ch = &_channels[channel];
@@ -912,7 +882,7 @@ bool DgdsEngine::playPCM(byte *data, uint32 size) {
 	return true;
 }
 
-void DgdsEngine::playMusic(const char *fileName) {
+void DgdsEngine::playMusic(const Common::String &fileName) {
 	//stopMusic();
 
 	parseFile(fileName);
@@ -949,6 +919,7 @@ Common::Error DgdsEngine::run() {
 
 	g_system->fillScreen(0);
 
+
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
@@ -957,10 +928,10 @@ Common::Error DgdsEngine::run() {
 
 	TTMState title1State, title2State;
 	ADSState introState;
+	TTMData title1Data, title2Data;
+	ADSData introData;
 
 	if (getGameId() == GID_DRAGON) {
-		TTMData title1Data, title2Data;
-		ADSData introData;
 		interpTTM.load("TITLE1.TTM", &title1Data);
 		interpTTM.load("TITLE2.TTM", &title2Data);
 		interpADS.load("INTRO.ADS", &introData);
@@ -972,14 +943,12 @@ Common::Error DgdsEngine::run() {
 		parseFile("DRAGON.FNT");
 		parseFile("S55.SDS");
 	} else if (getGameId() == GID_CHINA) {
-		ADSData introData;
 		interpADS.load("TITLE.ADS", &introData);
 
 		interpADS.init(&introState, &introData);
 
 		parseFile("HOC.FNT");
 	} else if (getGameId() == GID_BEAMISH) {
-		ADSData introData;
 		interpADS.load("TITLE.ADS", &introData);
 
 		interpADS.init(&introState, &introData);
@@ -987,7 +956,7 @@ Common::Error DgdsEngine::run() {
 		//parseFile("HOC.FNT");
 	}
 
-	_console->attach();
+	//_console->attach();
 
 	while (!shouldQuit()) {
 		if (eventMan->pollEvent(ev)) {

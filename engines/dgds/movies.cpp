@@ -55,28 +55,21 @@ extern PFont *_fntP;
 Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 Common::String _bmpNames[16];
 
-TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(0), _filename(0) {}
+TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
-bool TTMInterpreter::load(const char *filename, TTMData *scriptData) {
+bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
 	Common::SeekableReadStream *stream = _vm->_resource->getResource(filename);
 
 	if (!stream) {
-		error("Couldn't open script file '%s'", filename);
+		error("Couldn't open script file '%s'", filename.c_str());
 		return false;
 	}
 
-	memset(scriptData, 0, sizeof(*scriptData));
-	_scriptData = scriptData;
-	_filename = filename;
-
-	TTMParser dgds(*stream, _filename);
+	TTMParser dgds(*stream, filename);
 	dgds.parse(scriptData, _vm->_decompressor);
 
 	delete stream;
 
-	Common::strlcpy(_scriptData->filename, filename, sizeof(_scriptData->filename));
-	_scriptData = 0;
-	_filename = 0;
 	return true;
 }
 
@@ -85,7 +78,7 @@ void TTMInterpreter::unload(TTMData *data) {
 		return;
 	delete data->scr;
 
-	data->scr = 0;
+	data->scr = nullptr;
 }
 
 void TTMInterpreter::init(TTMState *state, const TTMData *data) {
@@ -125,8 +118,10 @@ bool TTMInterpreter::run(TTMState *script) {
 			do {
 				ch[0] = scr->readByte();
 				ch[1] = scr->readByte();
-				sval += ch[0];
-				sval += ch[1];
+				if (ch[0])
+					sval += ch[0];
+				if (ch[1])
+					sval += ch[1];
 			} while (ch[0] != 0 && ch[1] != 0);
 
 			debugN("\"%s\"", sval.c_str());
@@ -257,10 +252,16 @@ bool TTMInterpreter::run(TTMState *script) {
 				if (bk != -1) {
 					_vm->_image->loadBitmap(_bmpNames[id], bk);
 				}
+			} else if (!_vm->_image->isLoaded()) {
+				// load on demand?
+				_vm->_image->loadBitmap(_bmpNames[id], 0);
 			}
 
 			// DRAW BMP: x,y:int [-n,+n] (RISE)
-			_vm->_image->drawBitmap(ivals[0], ivals[1], drawWin, topBuffer);
+			if (_vm->_image->isLoaded())
+				_vm->_image->drawBitmap(ivals[0], ivals[1], drawWin, topBuffer);
+			else
+				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
 
 		case 0x1110: { //SET SCENE?:  i:int   [1..n]
@@ -270,7 +271,7 @@ bool TTMInterpreter::run(TTMState *script) {
 
 			if (!_bubbles.empty()) {
 				// TODO: Are these hardcoded?
-				if (!scumm_stricmp(script->dataPtr->filename, "INTRO.TTM")) {
+				if (!script->dataPtr->filename.compareToIgnoreCase("INTRO.TTM")) {
 					switch (ivals[0]) {
 					case 15:
 						text = _bubbles[3];
@@ -303,7 +304,7 @@ bool TTMInterpreter::run(TTMState *script) {
 						text.clear();
 						break;
 					}
-				} else if (!scumm_stricmp(script->dataPtr->filename, "BIGTV.TTM")) {
+				} else if (!script->dataPtr->filename.compareToIgnoreCase("BIGTV.TTM")) {
 					switch (ivals[0]) {
 					case 1:
 						text = _bubbles[0];
@@ -353,7 +354,7 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0x1310: //?	    i:int   [107]
 
 		default:
-			warning("Unimplemented TTM opcode: 0x%04X", op);
+			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[1], ivals[2], ivals[3], ivals[4]);
 			continue;
 		}
 		break;
@@ -368,17 +369,16 @@ bool TTMInterpreter::run(TTMState *script) {
 	return true;
 }
 
-ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(0), _filename(0) {}
+ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(nullptr) {}
 
-bool ADSInterpreter::load(const char *filename, ADSData *scriptData) {
+bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
 	Common::SeekableReadStream *stream = _vm->_resource->getResource(filename);
 
 	if (!stream) {
-		error("Couldn't open script file '%s'", filename);
+		error("Couldn't open script resource '%s'", filename.c_str());
 		return false;
 	}
 
-	memset(scriptData, 0, sizeof(*scriptData));
 	_scriptData = scriptData;
 	_filename = filename;
 
@@ -397,23 +397,19 @@ bool ADSInterpreter::load(const char *filename, ADSData *scriptData) {
 	for (uint16 i = _scriptData->count; i--;)
 		interp.load(_scriptData->names[i], &_scriptData->scriptDatas[i]);
 
-	Common::strlcpy(_scriptData->filename, filename, sizeof(_scriptData->filename));
-	_scriptData = 0;
-	_filename = 0;
+	_scriptData->filename = filename;
+	_scriptData = nullptr;
 	return true;
 }
 
 void ADSInterpreter::unload(ADSData *data) {
 	if (!data)
 		return;
-	for (uint16 i = data->count; i--;)
-		delete data->names[i];
-	delete data->names;
+	data->names.clear();
 	delete data->scriptDatas;
 	delete data->scr;
 
 	data->count = 0;
-	data->names = 0;
 	data->scriptDatas = 0;
 	data->scr = 0;
 }
@@ -427,10 +423,7 @@ void ADSInterpreter::init(ADSState *state, const ADSData *data) {
 
 	TTMInterpreter interp(_vm);
 
-	TTMState *scriptStates;
-	scriptStates = new TTMState[data->count];
-	assert(scriptStates);
-	state->scriptStates = scriptStates;
+	state->scriptStates.resize(data->count);
 
 	for (uint16 i = data->count; i--;)
 		interp.init(&state->scriptStates[i], &data->scriptDatas[i]);
@@ -504,7 +497,7 @@ bool ADSInterpreter::run(ADSState *script) {
 		case 0x1330:
 		case 0x1350:
 		default:
-			warning("Unimplemented ADS opcode: 0x%04X", code);
+			warning("Unimplemented ADS opcode: 0x%04X (count %d)", code, count);
 			continue;
 		}
 		break;
