@@ -554,7 +554,7 @@ void ScummEngine_v5::o5_actorOps() {
 			// but for the Smirk close-up we want the same colors
 			// as the floppy version.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76) {
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && enhancementEnabled(kEnhVisualChanges)) {
 				if (i == 3)
 					i = 1;
 				else if (i == 9)
