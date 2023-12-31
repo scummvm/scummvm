@@ -3,11 +3,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.9.0 (XX.XX.XXXX)
 
+ Allgemein:
+   - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+
  TsAGE:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
 
 
-#### 2.8.0 (30.12.2023)
+#### 2.8.0 "Mysteries, Mammoths, and Muppets" (30.12.2023)
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
