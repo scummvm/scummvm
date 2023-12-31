@@ -1,7 +1,19 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.0 (XXXX-XX-XX)
+#### 2.8.1 (XX.XX.XXXX)
+
+ Allgemein:
+   - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+
+ SCUMM:
+   - Grafikfehler (und teilweise auch Abstürze) in den Mac-Versionen von Loom und
+     Indiana Jones and the Last Crusade bei der Verwendung von Menü-Tastenkürzeln behoben.
+   - Die originalen Lade- und Speicher-Bildschirme in den Mac-Versionen von Indiana Jones
+     and the last Crusade können nun korrekt aktiviert und deaktiviert werden.
+
+
+#### 2.8.0 "Mysteries, Mammoths, and Muppets" (30.12.2023)
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
