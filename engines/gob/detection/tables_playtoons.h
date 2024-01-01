@@ -88,8 +88,8 @@
 },
 {
 	{
-		"playtoons1",
-		"Non-Interactive Demo",
+		"playtoonsdemo",
+		"Non-Interactive",
 		{
 			{"play123.scn", 0, "4689a31f543915e488c3bc46ea358add", 258},
 			{"archi.vmd", 0, "a410fcc8116bc173f038100f5857191c", 5617210},

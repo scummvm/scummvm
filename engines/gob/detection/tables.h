@@ -56,6 +56,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"playtnck1", "Playtoons Construction Kit 1 - Monsters"},
 	{"playtnck2", "Playtoons Construction Kit 2 - Knights"},
 	{"playtnck3", "Playtoons Construction Kit 3 - Far West"},
+	{"playtoonsdemo", "Playtoons Demo"},
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
