@@ -326,7 +326,7 @@ void TwpEngine::update(float elapsed) {
 				_noun2 = nullptr;
 			}
 
-			_inputState.setHotspot(_noun1!=nullptr);
+			_inputState.setHotspot(_noun1 != nullptr);
 			_hud.setVisible(_inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None);
 			_sentence.setVisible(_hud.isVisible());
 			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
@@ -431,6 +431,8 @@ void TwpEngine::update(float elapsed) {
 		VerbUiColors *verbUI = &_hud.actorSlot(_actor)->verbUiColors;
 		_uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
 	}
+
+	updateTriggers();
 }
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
@@ -549,7 +551,6 @@ void TwpEngine::draw() {
 	_screenScene.draw();
 
 	g_system->updateScreen();
-
 }
 
 Common::Error TwpEngine::run() {
@@ -1169,6 +1170,63 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 
 	resetVerb();
 	return false;
+}
+
+void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
+	if (trigger._type != OT_NULL) {
+		HSQUIRRELVM v = getVm();
+		// create trigger thread
+		sq_newthread(v, 1024);
+		HSQOBJECT threadObj;
+		sq_resetobject(&threadObj);
+		if (SQ_FAILED(sq_getstackobj(v, -1, &threadObj))) {
+			error("Couldn't get coroutine thread from stack");
+			return;
+		}
+		sq_addref(v, &threadObj);
+		sq_pop(v, 1);
+
+		// create args
+		SQInteger nParams, nfreevars;
+		sq_pushobject(v, trigger);
+		sq_getclosureinfo(v, -1, &nParams, &nfreevars);
+		sq_pop(v, 1);
+
+		int id = newThreadId();
+		Thread *thread = new Thread(id);
+		thread->setName("Trigger");
+		thread->_global = false;
+		thread->_threadObj = threadObj;
+		thread->_envObj = obj->_table;
+		thread->_closureObj = trigger;
+		if(nParams == 2) {
+			thread->_args.push_back(_actor->_table);
+		}
+		debug("create triggerthread id: %d}", thread->getId());
+		g_engine->_threads.push_back(thread);
+
+		// call the closure in the thread
+		if (!thread->call()) {
+			error("trigger call failed");
+		}
+	}
+}
+
+void TwpEngine::updateTriggers() {
+	if (_actor) {
+		for (int i = 0; i < _room->_triggers.size(); i++) {
+			Object *trigger = _room->_triggers[i];
+			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
+				debug("call enter trigger %s", trigger->_name.c_str());
+				trigger->_triggerActive = true;
+				callTrigger(trigger, trigger->_enter);
+			} else if (trigger->_triggerActive && !trigger->contains(_actor->_node->getAbsPos())) {
+				debug("call leave trigger %s", trigger->_name.c_str());
+				trigger->_triggerActive = false;
+				callTrigger(trigger, trigger->_leave);
+			}
+		}
+	}
 }
 
 } // End of namespace Twp

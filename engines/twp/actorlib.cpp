@@ -305,9 +305,45 @@ static SQInteger actorInTrigger(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Returns true if the specified actor is inside the specified walkbox from the wimpy file.
+//
+// . code-block:: Squirrel
+// sheriffsOfficeJailDoor =
+// {
+//     name = "jail door"
+//     actorInWalkbox(currentActor, "jail")
+//     verbOpen = function()
+//     {
+//         if (jail_door_state == OPEN) {
+//             sayLine("The door is already open.")
+//         } else {
+//             if (actorInWalkbox(currentActor, "jail")) {
+//                 sayLine("I can't open it from in here.")
+//                 return
+//             } else {
+//                startthread(openJailDoor)
+//             }
+//         }
+//     }
+// }
 static SQInteger actorInWalkbox(HSQUIRRELVM v) {
-	warning("TODO: actorInWalkbox not implemented");
-	return 0;
+	Object *actor = sqactor(v, 2);
+	if (!actor)
+		return sq_throwerror(v, "failed to get actor");
+	Common::String name;
+	if (SQ_FAILED(sqget(v, 3, name)))
+		return sq_throwerror(v, "failed to get name");
+	for (int i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
+		const Walkbox &walkbox = g_engine->_room->_walkboxes[i];
+		if (walkbox._name == name) {
+			if (walkbox.contains(actor->_node->getAbsPos())) {
+				sqpush(v, true);
+				return 1;
+			}
+		}
+	}
+	sqpush(v, false);
+	return 1;
 }
 
 static SQInteger actorRoom(HSQUIRRELVM v) {

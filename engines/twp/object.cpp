@@ -164,8 +164,14 @@ void Object::trig(const Common::String &name) {
 			// warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
 		}
 	} else {
-		error("todo: trig %s", name.c_str());
-		// TODO: gEventMgr.trig(name.substr(1));
+		int id = 0;
+		sqgetf(sqrootTbl(g_engine->getVm()), name, id);
+		debug("TODO: sound trigger");
+		// var sound = soundDef(id);
+		// if (!sound)
+		// 	warn fmt "Cannot trig sound '{name}', sound not found (id={id})";
+		// else
+		// 	gEngine.audio.play(sound, Sound);
 	}
 }
 
