@@ -22,10 +22,20 @@
 #include "common/scummsys.h"
 
 #ifdef SCUMMVM_NEON
-#include <arm_neon.h>
 
 #include "graphics/blit/blit-alpha.h"
 #include "graphics/pixelformat.h"
+
+#include <arm_neon.h>
+
+#ifdef __GNUC__
+#pragma GCC push_options
+
+#if !defined(__aarch64__)
+#pragma GCC target("fpu=neon")
+#endif // !defined(__aarch64__)
+
+#endif // __GNUC__
 
 namespace Graphics {
 
@@ -299,4 +309,9 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // end of namespace Graphics
+
+#ifdef __GNUC__
+#pragma GCC pop_options
+#endif
+
 #endif // SCUMMVM_NEON
