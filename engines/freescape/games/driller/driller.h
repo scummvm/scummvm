@@ -38,6 +38,7 @@ public:
 	Common::HashMap<uint16, uint32> _drillMaxScoreByArea;
 	Common::HashMap<uint16, uint32> _drillSuccessByArea;
 
+	void initKeymaps(Common::Keymap *engineKeyMap, const char *target) override;
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 

@@ -19,9 +19,14 @@
  *
  */
 
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/translation.h"
 #include "common/random.h"
 
 #include "freescape/freescape.h"
@@ -92,6 +97,23 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
+}
+
+void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, target);
+	Common::Action *act;
+
+	act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_d, 'd'));
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("d");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("COLLECT", _("Collect drilling rig"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_c, 'c'));
+	act->addDefaultInputMapping("c");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
 }
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {

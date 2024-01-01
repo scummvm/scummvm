@@ -29,8 +29,7 @@
 
 namespace Freescape {
 
-Common::Array<Common::Keymap *> FreescapeEngine::initKeymaps(const char *target) {
-	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "freescape", "Freescape game");
+void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
 	Common::Action *act;
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
@@ -71,27 +70,30 @@ Common::Array<Common::Keymap *> FreescapeEngine::initKeymaps(const char *target)
 
 	act = new Common::Action("LOWER", _("Lower/Fly down"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
+	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SWITCH", _("Change mode"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE));
+	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("ROTL", _("Rotate Left"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_q, 'q'));
+	act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("ROTR", _("Rotate Right"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_w, 'w'));
+	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("MENU", _("Info Menu"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
-
-	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {

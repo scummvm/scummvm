@@ -236,7 +236,7 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	bool _invertY;
-	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
+	virtual void initKeymaps(Common::Keymap *engineKeyMap, const char *target);
 	void processInput();
 	void resetInput();
 	void generateDemoInput();
