@@ -254,6 +254,8 @@ public:
 	void setHotspot(bool value) { _hotspot = value; }
 	bool getHotspot() const { return _hotspot; }
 
+	void setCursorShape(CursorShape shape);
+
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
 
@@ -263,7 +265,7 @@ private:
     bool _showCursor = false;
     bool _inputVerbsActive = false;
     CursorShape _cursorShape = CursorShape::Normal;
-    Common::String _cursorName;
+    Common::String _cursorName = "cursor";
     bool _hotspot = false;
 };
 

@@ -46,6 +46,7 @@
 #include "twp/callback.h"
 #include "twp/walkboxnode.h"
 
+#define SCREEN_MARGIN 100.f
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 #define VERBDEFAULT "verbDefault"
