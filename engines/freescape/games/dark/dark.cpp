@@ -18,8 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
@@ -154,6 +157,18 @@ bool DarkEngine::checkECD(uint16 areaID, int index) {
 	assert(obj != nullptr);
 	debugC(1, kFreescapeDebugParser, "Result: %d", !obj->isDestroyed());
 	return !obj->isDestroyed();
+}
+
+void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, target);
+	Common::Action *act;
+
+	act = new Common::Action("JETPACK", _("Enable/Disable Jetpack"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_j, 'j'));
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	act->addDefaultInputMapping("j");
+	engineKeyMap->addAction(act);
 }
 
 void DarkEngine::initGameState() {
