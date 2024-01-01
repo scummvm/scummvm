@@ -166,11 +166,11 @@ void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
 
 void PICTDecoder::o_bitsRgn(Common::SeekableReadStream &stream) {
 	// Copy unpacked data with clipped region (8bpp or lower)
-	unpackBitsRgn(stream, false);
+	unpackBitsRectOrRgn(stream, false);
 }
 
 void PICTDecoder::o_packBitsRgn(Common::SeekableReadStream &stream) {
-	unpackBitsRgn(stream, true);
+	unpackBitsRectOrRgn(stream, true);
 }
 
 void PICTDecoder::o_shortComment(Common::SeekableReadStream &stream) {
@@ -205,17 +205,30 @@ void PICTDecoder::o_headerOp(Common::SeekableReadStream &stream) {
 
 void PICTDecoder::on_bitsRect(Common::SeekableReadStream &stream) {
 	// Copy unpacked data with clipped rectangle (8bpp or lower)
-	unpackBitsRect(stream, true);
+	unpackBitsRectOrRgn(stream, false);
 }
 
 void PICTDecoder::on_packBitsRect(Common::SeekableReadStream &stream) {
 	// Unpack data (8bpp or lower)
-	unpackBitsRect(stream, true);
+	unpackBitsRectOrRgn(stream, true);
 }
 
 void PICTDecoder::on_directBitsRect(Common::SeekableReadStream &stream) {
 	// Unpack data (16bpp or higher)
-	unpackBitsRect(stream, false);
+	PixMap pixMap = readRowBytes(stream, true);
+	pixMap.rowBytes = pixMap.rowBytes & 0x7fff;
+	unpackBitsRect(stream, false, pixMap);
+}
+
+void PICTDecoder::unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits) {
+    PixMap pixMap = readRowBytes(stream, false);
+    bool hasPixMap = (pixMap.rowBytes & 0x8000);
+    pixMap.rowBytes = pixMap.rowBytes & 0x7fff;
+
+    if (hasPixMap)
+        unpackBitsRect(stream, true, pixMap);
+    else
+        unpackBitsRgn(stream, hasPackBits);
 }
 
 void PICTDecoder::on_compressedQuickTime(Common::SeekableReadStream &stream) {
@@ -314,10 +327,15 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return _outputSurface;
 }
 
-PICTDecoder::PixMap PICTDecoder::readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr) {
+PICTDecoder::PixMap PICTDecoder::readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr, bool hasRowBytes) {
 	PixMap pixMap;
-	pixMap.baseAddr = hasBaseAddr ? stream.readUint32BE() : 0;
-	pixMap.rowBytes = stream.readUint16BE() & 0x7fff;
+
+	if (hasRowBytes) {
+		pixMap.baseAddr = hasBaseAddr ? stream.readUint32BE() : 0;
+		uint16 rowBytes = stream.readUint16BE();
+		pixMap.rowBytes = rowBytes & 0x7fff;
+	}
+
 	pixMap.bounds.top = stream.readUint16BE();
 	pixMap.bounds.left = stream.readUint16BE();
 	pixMap.bounds.bottom = stream.readUint16BE();
@@ -337,6 +355,14 @@ PICTDecoder::PixMap PICTDecoder::readPixMap(Common::SeekableReadStream &stream, 
 	return pixMap;
 }
 
+PICTDecoder::PixMap PICTDecoder::readRowBytes(Common::SeekableReadStream &stream, bool hasBaseAddr) {
+	PixMap pixMap;
+	pixMap.baseAddr = hasBaseAddr ? stream.readUint32BE() : 0;
+	uint16 rowBytes = stream.readUint16BE();
+	pixMap.rowBytes = rowBytes;
+	return pixMap;
+}
+
 struct PackBitsRectData {
 	PICTDecoder::PixMap pixMap;
 	Common::Rect srcRect;
@@ -344,9 +370,12 @@ struct PackBitsRectData {
 	uint16 mode;
 };
 
-void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette) {
+void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette, PixMap pixMap) {
 	PackBitsRectData packBitsData;
-	packBitsData.pixMap = readPixMap(stream, !withPalette);
+
+	packBitsData.pixMap = readPixMap(stream, !withPalette, false);
+	packBitsData.pixMap.baseAddr = pixMap.baseAddr;
+	packBitsData.pixMap.rowBytes = pixMap.rowBytes;
 
 	// Read in the palette if there is one present
 	if (withPalette) {
@@ -472,7 +501,6 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 void PICTDecoder::unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed) {
 	int x1, x2, y1, y2;
 	int size = 0;
-	stream.skip(2);	// Skip rowBytes
 
 	if (!_outputSurface) {
 		_outputSurface = new Graphics::Surface();

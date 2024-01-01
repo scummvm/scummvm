@@ -84,7 +84,8 @@ public:
 		uint32 pmReserved;
 	};
 
-	static PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr = true);
+	static PixMap readRowBytes(Common::SeekableReadStream &stream, bool hasBaseAddr = true);
+	static PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr = true, bool hasRowBytes = true);
 
 private:
 	Common::Rect _imageRect;
@@ -95,8 +96,9 @@ private:
 	int _version;
 
 	// Utility Functions
+	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits);
 	void unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed);
-	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette);
+	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette, PixMap pixMap);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
 	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
 	void decodeCompressedQuickTime(Common::SeekableReadStream &stream);
