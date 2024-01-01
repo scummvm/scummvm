@@ -24,7 +24,7 @@
 
 namespace Graphics {
 
-class BlendBlitImpl_Default : public BlendBlitImpl_Base {
+class BlendBlitImpl_Default : public BlendBlitImpl_Base<BlendBlitImpl_Default> {
 	friend class BlendBlit;
 public:
 

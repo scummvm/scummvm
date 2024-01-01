@@ -25,11 +25,10 @@
 #include <arm_neon.h>
 
 #include "graphics/blit/blit-alpha.h"
-#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
-class BlendBlitImpl_NEON : public BlendBlitImpl_Base {
+class BlendBlitImpl_NEON : public BlendBlitImpl_Base<BlendBlitImpl_NEON> {
 	friend class BlendBlit;
 
 template<bool doscale, bool rgbmod, bool alphamod>
@@ -80,7 +79,7 @@ struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alpha
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod, alphamod> {
+struct MultiplyBlend : public BlendBlitImpl_Base<BlendBlitImpl_NEON>::MultiplyBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32x4_t ina, alphaMask;
 		if (alphamod) {
@@ -126,14 +125,14 @@ struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod,
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend<doscale, rgbmod, alphamod> {
+struct OpaqueBlend : public BlendBlitImpl_Base<BlendBlitImpl_NEON>::OpaqueBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		return vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<doscale, rgbmod, alphamod> {
+struct BinaryBlend : public BlendBlitImpl_Base<BlendBlitImpl_NEON>::BinaryBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32x4_t alphaMask = vceqq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmovq_n_u32(0));
 		dst = vandq_u32(dst, alphaMask);
@@ -143,7 +142,7 @@ struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<doscale, rgbmod, alp
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod, alphamod> {
+struct AdditiveBlend : public BlendBlitImpl_Base<BlendBlitImpl_NEON>::AdditiveBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32x4_t ina;
 		if (alphamod)
@@ -197,7 +196,7 @@ struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod,
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend<doscale, rgbmod, alphamod> {
+struct SubtractiveBlend : public BlendBlitImpl_Base<BlendBlitImpl_NEON>::SubtractiveBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32x4_t ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 		uint32x4_t srcb = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kBModMask)), BlendBlit::kBModShift);

@@ -19,10 +19,21 @@
  *
  */
 
-#include "graphics/blit.h"
+#include "graphics/blit/blit-nocode.h"
+
+// WARNING: TArch specialization is required due to C++ one-definition-rule!
+//
+// All functions here must include a TArch specialization due to being
+// compiled with different arch flags in GCC/Clang.
+//
+// If they have the same mangled name, then the linker will choose one, which
+// may be the version defined for a higher architecture, leading to
+// a lower-architecture function calling something compiled for a higher
+// architecture!
 
 namespace Graphics {
 
+template<class TArch>
 class BlendBlitImpl_Base {
 	friend class BlendBlit;
 protected:
@@ -99,13 +110,18 @@ struct AdditiveBlend {
 	}
 };
 
+template<class T>
+static T max(const T &a, const T &b) {
+	return (a > b) ? a : b;
+}
+
 template<bool doscale, bool rgbmod, bool alphamod>
 struct SubtractiveBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		out[BlendBlit::kAIndex] = 255;
-		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr *  (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kBIndex] = max<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kGIndex] = max<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kRIndex] = max<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr * (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
 	}
 };
 

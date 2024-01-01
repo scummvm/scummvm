@@ -23,54 +23,9 @@
 #define GRAPHICS_TRANSFORM_STRUCT_H
 
 #include "common/rect.h"
+#include "graphics/transform_enums.h"
 
 namespace Graphics {
-
-enum TSpriteBlendMode {
-	BLEND_UNKNOWN       = -1,
-	BLEND_NORMAL        = 0,
-	BLEND_ADDITIVE      = 1,
-	BLEND_SUBTRACTIVE   = 2,
-	BLEND_MULTIPLY		= 3,
-	NUM_BLEND_MODES
-};
-
-enum AlphaType {
-	ALPHA_OPAQUE = 0,
-	ALPHA_BINARY = 1,
-	ALPHA_FULL = 2
-};
-
-/**
- @brief The possible flipping parameters for the blit method.
- */
-enum FLIP_FLAGS {
-	/// The image will not be flipped.
-	FLIP_NONE = 0,
-	/// The image will be flipped at the horizontal axis.
-	FLIP_H = 1,
-	/// The image will be flipped at the vertical axis.
-	FLIP_V = 2,
-	/// The image will be flipped at the horizontal and vertical axis.
-	FLIP_HV = FLIP_H | FLIP_V,
-	/// The image will be flipped at the horizontal and vertical axis.
-	FLIP_VH = FLIP_H | FLIP_V
-};
-
-/**
- * Contains all the required information that define a transform.
- * Same source sprite + same TransformStruct = Same resulting sprite.
- * Has a number of overloaded constructors to accommodate various argument lists.
- */
-
-const int32 kDefaultZoomX = 100;
-const int32 kDefaultZoomY = 100;
-const uint32 kDefaultRgbaMod = 0xFFFFFFFF;
-const int32 kDefaultHotspotX = 0;
-const int32 kDefaultHotspotY = 0;
-const int32 kDefaultOffsetX = 0;
-const int32 kDefaultOffsetY = 0;
-const int32 kDefaultAngle = 0;
 
 struct TransformStruct {
 private:

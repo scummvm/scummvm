@@ -19,18 +19,9 @@
  *
  */
 
-#ifndef AGS_STD_INITIALIZER_LIST_H
-#define AGS_STD_INITIALIZER_LIST_H
+#ifndef GRAPHICS_BLIT_CODE_H
+#define GRAPHICS_BLIT_CODE_H
 
-#include "common/initializer_list.h"
+#include "graphics/blit/blit-nocode.h"
 
-namespace AGS3 {
-namespace std {
-
-template<class T>
-using initializer_list = ::std::initializer_list<T>;
-
-} // namespace std
-} // namespace AGS3
-
-#endif
+#endif // GRAPHICS_BLIT_CODE_H

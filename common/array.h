@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/initializer_list.h"
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
 

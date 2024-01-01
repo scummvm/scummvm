@@ -24,7 +24,7 @@
 
 #include "ags/lib/std/type_traits.h"
 #include "ags/lib/std/utility.h"
-#include "common/scummsys.h"
+#include "common/initializer_list.h"
 #include "common/algorithm.h"
 #include "common/memory.h"
 
