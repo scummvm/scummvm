@@ -648,7 +648,7 @@ void ScriptMove::doTrack(int32 actorIdx) {
 			debugC(3, kDebugLevels::kDebugScripts, "MOVE::EXEC(%s, %i)", _functionMap[scriptOpcode].name, actorIdx);
 			end = _functionMap[scriptOpcode].function(_engine, ctx);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
+			error("Actor %d with wrong offset/opcode in move script - Offset: %d/%d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}
 
 		if (end < 0) {
