@@ -1131,8 +1131,8 @@ const Feature s_features[] = {
 	{  "builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary" },
 	{     "detection-full",                "DETECTION_FULL", false, true,  "Include detection objects for all engines" },
 	{   "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines." },
-	{               "avx2",                  "SCUMMVM_AVX2", false, true,  "Intel AVX2 support" },
-	{               "sse2",                  "SCUMMVM_SSE2", false, true,  "Intel SSE2 support" },
+	{           "ext-avx2",                  "SCUMMVM_AVX2", false, true,  "Intel AVX2 support" },
+	{           "ext-sse2",                  "SCUMMVM_SSE2", false, true,  "Intel SSE2 support" },
 };
 
 const Tool s_tools[] = {
