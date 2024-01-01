@@ -1118,21 +1118,21 @@ const Feature s_features[] = {
 	{     "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
-	{               "enet",                       "USE_ENET", false, true,  "ENet networking support" },
+	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
-	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
-	{      "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
-	{            "updates",                   "USE_UPDATES", false, false, "Updates support"},
-	{            "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
+	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support" },
+	{      "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support" },
+	{            "updates",                   "USE_UPDATES", false, false, "Updates support" },
+	{            "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support" },
 	{         "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
-	                                                                                                           // is just no current way of properly detecting this...
-	{       "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
-	{                "tts",                       "USE_TTS", false, true,  "Text to speech support"},
-	{  "builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
+	                                                                                                              // is just no current way of properly detecting this...
+	{       "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" },  // This feature is always applied in xcode projects
+	{                "tts",                       "USE_TTS", false, true,  "Text to speech support" },
+	{  "builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary" },
 	{     "detection-full",                "DETECTION_FULL", false, true,  "Include detection objects for all engines" },
-	{   "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines."},
-	{               "avx2",                  "SCUMMVM_AVX2", false, true,  "Intel AVX2 support"},
-	{               "sse2",                  "SCUMMVM_SSE2", false, true,  "Intel SSE2 support"},
+	{   "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines." },
+	{               "avx2",                  "SCUMMVM_AVX2", false, true,  "Intel AVX2 support" },
+	{               "sse2",                  "SCUMMVM_SSE2", false, true,  "Intel SSE2 support" },
 };
 
 const Tool s_tools[] = {
