@@ -87,7 +87,7 @@ bool TTMParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
 	TTMData *scriptData = (TTMData *)data;
 
 	switch (chunk._id) {
-	case ID_TTI: // tag container - we want the tags so don't skip
+	case ID_TTI: // Ignore containers
 		break;
 	case ID_TT3:
 		scriptData->scr = chunk._stream->readStream(chunk._stream->size());
@@ -111,7 +111,7 @@ bool ADSParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
 	ADSData *scriptData = (ADSData *)data;
 	switch (chunk._id) {
 	case EX_ADS:
-	case ID_TTI: // tag container - we want the tags so ignore?
+	case ID_TTI: // Ignore containers
 		break;
 	case ID_RES: {
 		uint16 count = chunk._stream->readUint16LE();

@@ -3,7 +3,6 @@ MODULE := engines/dgds
 MODULE_OBJS := \
 	console.o \
 	decompress.o \
-	dialogue.o \
 	dgds.o \
 	font.o \
 	image.o \
@@ -12,6 +11,7 @@ MODULE_OBJS := \
 	parser.o \
 	resource.o \
 	scripts.o \
+	scene.o \
 	sound.o
 
 # This module can be built as a plugin

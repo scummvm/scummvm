@@ -116,7 +116,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	}
 
 	delete res;
-	
+
 	Common::DumpFile out;
 	out.open(Common::Path(fileName));
 	out.write(data, size);

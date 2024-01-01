@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DGDS_MOVIES_H
-#define DGDS_MOVIES_H
+#ifndef DGDS_SCRIPTS_H
+#define DGDS_SCRIPTS_H
 
 #include "common/rect.h"
 
@@ -104,4 +104,4 @@ protected:
 
 } // End of namespace Dgds
 
-#endif // DGDS_MOVIES_H
+#endif // DGDS_SCRIPTS_H
