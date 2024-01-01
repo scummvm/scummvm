@@ -238,7 +238,7 @@ Common::String TwpEngine::cursorText() {
 		}
 
 		// give can be used only on inventory and talkto to talkable objects (actors)
-		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->_name);
+		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->getname());
 
 		// add verb if not walk to or if noun1 is present
 		if ((_hud._verb.id.id > 1) || (result.size() > 0)) {
@@ -254,7 +254,7 @@ Common::String TwpEngine::cursorText() {
 			else if (_useFlag == ufGiveTo)
 				result += " " + _textDb.getText(10003);
 			if (_noun2)
-				result += " " + _textDb.getText(_noun2->_name);
+				result += " " + _textDb.getText(_noun2->getname());
 		}
 	}
 	return result;
@@ -326,6 +326,9 @@ void TwpEngine::update(float elapsed) {
 				_noun2 = nullptr;
 			}
 
+			// update cursor shape
+			// if cursor is in the margin of the screen and if camera can move again
+			// then show a left arrow or right arrow
 			Math::Vector2d screenSize = _room->getScreenSize();
 			if ((scrPos.getX() < SCREEN_MARGIN) && (cameraPos().getX() >= 1.f)) {
 				_inputState.setCursorShape(CursorShape::Left);
@@ -336,7 +339,7 @@ void TwpEngine::update(float elapsed) {
 				int flags = _noun1->getFlags();
 				if (flags & DOOR_LEFT)
 					_inputState.setCursorShape(CursorShape::Left);
-				else if (flags &DOOR_RIGHT)
+				else if (flags & DOOR_RIGHT)
 					_inputState.setCursorShape(CursorShape::Right);
 				else if (flags & DOOR_FRONT)
 					_inputState.setCursorShape(CursorShape::Front);
@@ -1214,16 +1217,13 @@ void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
 		sq_getclosureinfo(v, -1, &nParams, &nfreevars);
 		sq_pop(v, 1);
 
-		int id = newThreadId();
-		Thread *thread = new Thread(id);
-		thread->setName("Trigger");
-		thread->_global = false;
-		thread->_threadObj = threadObj;
-		thread->_envObj = obj->_table;
-		thread->_closureObj = trigger;
-		if(nParams == 2) {
-			thread->_args.push_back(_actor->_table);
+		Common::Array<HSQOBJECT> args;
+		if (nParams == 2) {
+			args.push_back(_actor->_table);
 		}
+
+		Thread *thread = new Thread("Trigger", false, threadObj, obj->_table, trigger, args);
+
 		debug("create triggerthread id: %d}", thread->getId());
 		g_engine->_threads.push_back(thread);
 

@@ -117,6 +117,7 @@ public:
 
 	static Object *createActor();
 
+	Common::String getname() const;
 	int getId() const;
 
 	// Changes the `state` of an object, although this can just be a internal state,

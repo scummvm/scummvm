@@ -68,6 +68,15 @@ int Object::getId() const {
 	return (int)result;
 }
 
+Common::String Object::getname() const {
+	if ((_table._type == OT_TABLE) && (sqrawexists(_table, "name"))) {
+		Common::String result;
+		sqgetf(_table, "name", result);
+		return result;
+	}
+	return _name;
+}
+
 void Object::setState(int state, bool instant) {
 	play(state, false, instant);
 	_state = state;
