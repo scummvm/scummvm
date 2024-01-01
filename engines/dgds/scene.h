@@ -28,17 +28,18 @@
 
 namespace Dgds {
 
-struct SceneStruct1 {
-    uint16 val1;
-    uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
-    uint16 val3;
-};
-
+// TODO: Use Common::Rect instead.
 struct Rect {
     int x;
     int y;
     int width;
     int height;
+};
+
+struct SceneStruct1 {
+    uint16 val1;
+    uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
+    uint16 val3;
 };
 
 struct SceneStruct2 {
@@ -57,17 +58,9 @@ struct SceneStruct5 {
     uint16 val;
 };
 
-struct SceneStruct2_Extended {
-    struct Rect rect;
-    uint16 field1_0x8;
-    uint16 field2_0xa;
-    Common::Array<struct SceneStruct1> struct1List;
-    Common::Array<struct SceneStruct5> struct5List1;
-    Common::Array<struct SceneStruct5> struct5List2;
-    Common::Array<struct SceneStruct5> struct5List3;
-    //struct SceneStruct2 *next;
-    Common::Array<struct SceneStruct5> field8_0x1c; /* this field on are only in Extended (GDS) version */
-    Common::Array<struct SceneStruct5> field9_0x20;
+struct SceneStruct2_Extended : public SceneStruct2 {
+    Common::Array<struct SceneStruct5> struct5List5;
+    Common::Array<struct SceneStruct5> struct5List6;
     uint16 field10_0x24;
     uint16 field11_0x26;
     uint16 field12_0x28;
@@ -95,10 +88,10 @@ struct Dialogue {
     uint16 field7_0xe;
     uint16 field8_0x10;
     uint16 fontSize;
-    uint32 flags; // includes justify 
+    uint32 flags; // includes justify
     uint16 frametype;
     uint16 field12_0x1a;
-    uint16 field13_0x1c;
+    uint16 maybeNextDialogNum;
 	Common::Array<struct DialogueSubstring> subStrings;
     uint16 field15_0x22;
     Common::String str;
@@ -129,24 +122,57 @@ class Scene {
 public:
 	Scene();
 
-	bool parseSDS(Common::SeekableReadStream *s);
-	bool isVersionOver(const char *version);
-	bool isVersionUnder(const char *version);
+	virtual bool parse(Common::SeekableReadStream *s) = 0;
+
+	bool isVersionOver(const char *version) const;
+	bool isVersionUnder(const char *version) const;
+
+protected:
+	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const;
+	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
+	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
+	bool readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<SceneStruct2_Extended> &list) const;
+	bool readStruct3List(Common::SeekableReadStream *s, Common::Array<SceneStruct3> &list) const;
+	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
+	bool readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneStruct5> &list) const;
+	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;
+	bool readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneStruct7> &list) const;
+	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueSubstring> &list) const;
+
+	uint32 _magic;
+	Common::String _version;
+};
+
+
+class GDSScene : public Scene {
+public:
+	GDSScene();
+
+	bool parse(Common::SeekableReadStream *s) override;
+	bool parseInf(Common::SeekableReadStream *s);
+
+private:
+	byte _unk[32];
+	Common::String _iconFile;
+	Common::Array<struct SceneStruct2_Extended> _struct2ExtList;
+	Common::Array<struct SceneStruct5> _struct5List1;
+	Common::Array<struct SceneStruct5> _struct5List2;
+	Common::Array<struct SceneStruct5> _struct5List3;
+	Common::Array<struct SceneStruct5> _struct5List4;
+	Common::Array<struct SceneStruct5> _struct5List5;
+	Common::Array<struct SceneStruct4> _struct4List1;
+	Common::Array<struct SceneStruct4> _struct4List2;
+};
+
+class SDSScene : public Scene {
+public:
+	SDSScene();
+
+	bool parse(Common::SeekableReadStream *s) override;
 
 	const Common::Array<struct Dialogue> &getLines() const { return _dialogues; }
 
 private:
-	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list);
-	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list);
-	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list);
-	bool readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneStruct5> &list);
-	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list);
-	bool readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneStruct7> &list);
-	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueSubstring> &list);
-
-	uint32 _magic;
-	Common::String _version;
-
 	int _num;
     Common::Array<struct SceneStruct5> _struct5List1;
     Common::Array<struct SceneStruct5> _struct5List2;

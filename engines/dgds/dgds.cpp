@@ -76,7 +76,7 @@ namespace Dgds {
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
     : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
     _midiPlayer(nullptr), _decompressor(nullptr), _musicData(nullptr), _musicSize(0),
-    _soundData(nullptr), _scene(nullptr) {
+    _soundData(nullptr), _scene(nullptr), _gdsScene(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -99,6 +99,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _decompressor;
 	delete _resource;
 	delete _scene;
+	delete _gdsScene;
 	delete _musicData;
 	delete _soundData;
 }
@@ -333,7 +334,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				break;
 			case EX_SDS:
 				if (chunk.isSection(ID_SDS)) {
-					_scene->parseSDS(stream);
+					_scene->parse(stream);
 				}
 				break;
 			case EX_TTM:
@@ -416,33 +417,9 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					// do nothing, this is the container.
 					assert(chunk._container);
 				} else if (chunk.isSection(ID_INF)) {
-					uint32 checksum = stream->readUint32LE(); // probably?
-					debug("    Checksum: 0x%X", checksum);
-
-					char gdsVersion[7];
-					stream->read(gdsVersion, sizeof(gdsVersion));
-					debug("    Scene Version: \"%s\"", gdsVersion);
-
+					_gdsScene->parseInf(stream);
 				} else if (chunk.isSection(ID_SDS)) {
-					stream->hexdump(stream->size());
-
-					uint32 x = stream->readUint32LE();
-					debug("    %u", x);
-
-					while (!stream->eos()) {
-						uint16 x2;
-						do {
-							do {
-								x2 = stream->readUint16LE();
-								debugN("        %u: %u|%u, ", x2, (x2 & 0xF), (x2 >> 4));
-								if (stream->pos() >= stream->size())
-									break;
-							} while ((x2 & 0x80) != 0x80);
-							debug("-");
-							if (stream->pos() >= stream->size())
-								break;
-						} while ((x2 & 0xF0) != 0xF0);
-					}
+					_gdsScene->parse(stream);
 				}
 				break;
 			case EX_ADS:
@@ -763,7 +740,8 @@ Common::Error DgdsEngine::run() {
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
 	_midiPlayer = new DgdsMidiPlayer();
-	_scene = new Scene();
+	_scene = new SDSScene();
+	_gdsScene = new GDSScene();
 
 	setDebugger(_console);
 
