@@ -24,7 +24,9 @@
 
 #include "graphics/opengl/context.h"
 
+#ifndef __EMSCRIPTEN__
 #define OPENGL_DEBUG
+#endif
 
 namespace OpenGL {
 void clearGLError();
