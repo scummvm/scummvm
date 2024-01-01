@@ -32,15 +32,12 @@
 #include "common/hashmap.h"
 #include "common/md5.h"
 
+namespace AGS3 {
 /**
  * When detection is compiled dynamically, detection tables end up in detection plugin and
- * engine cannot link to them so duplicate them in the engine in this case
+ * engine cannot link to them so don't include the feature instead of duplicating the data
  */
-#ifndef DETECTION_STATIC
-#include "ags/detection_tables.h"
-#endif
-
-namespace AGS3 {
+#ifdef DETECTION_STATIC
 
 extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
 extern bool engine_try_init_gamedata(AGS::Shared::String gamepak_path);
@@ -185,5 +182,6 @@ void GameScanner::detectClashes() {
 		gameNames[nameP->description] = true;
 	}
 }
+#endif
 
 } // namespace AGS3

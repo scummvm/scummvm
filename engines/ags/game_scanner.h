@@ -28,7 +28,10 @@ namespace AGS3 {
  * A support class for scanning a hierarchy of folders for AGS games,
  * and printing output suitable for posting into the detection tables.
  * Scanning starts from the current directory when ScummVM is started
+ * Only include this code when detection is static, else it forces to
+ * duplicate data
  */
+#ifdef DETECTION_STATIC
 class GameScanner {
 	struct Entry {
 		Common::String _id;
@@ -67,5 +70,6 @@ public:
 	 */
 	void scan(const Common::Path &startFolder);
 };
+#endif
 
 } // namespace AGS3

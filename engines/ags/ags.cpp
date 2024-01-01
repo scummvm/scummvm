@@ -121,12 +121,15 @@ Common::String AGSEngine::getGameId() const {
 }
 
 Common::Error AGSEngine::run() {
+#ifdef DETECTION_STATIC
+	// The game scanner is not available when detection is dynamic
 	if (debugChannelSet(-1, kDebugScan)) {
 		// Scan the given folder and subfolders for unknown games
 		AGS3::GameScanner scanner;
 		scanner.scan(ConfMan.getPath("path"));
 		return Common::kNoError;
 	}
+#endif
 
 	if (isUnsupportedPre25()) {
 		GUIErrorMessage(_("The selected game uses a pre-2.5 version of the AGS engine, which is not supported."));
