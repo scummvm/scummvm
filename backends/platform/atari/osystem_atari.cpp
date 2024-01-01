@@ -398,12 +398,12 @@ void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
 
 void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	{
-		Common::FSDirectory currentDirectory{ getFilesystemFactory()->makeCurrentDirectoryFileNode()->getPath() };
+		Common::FSDirectory currentDirectory{ Common::Path(getFilesystemFactory()->makeCurrentDirectoryFileNode()->getPath()) };
 		Common::FSDirectory *dataDirectory = currentDirectory.getSubDirectory("data");
 		if (dataDirectory) {
 			Common::FSNode dataNode = dataDirectory->getFSNode();
 			if (dataNode.exists() && dataNode.isDirectory() && dataNode.isReadable()) {
-				s.addDirectory(dataNode.getPath(), dataNode, priority);
+				s.addDirectory(dataNode.getPath(), priority);
 			}
 		}
 	}
@@ -425,7 +425,7 @@ Common::Path OSystem_Atari::getDefaultConfigFileName() {
 	const char *envVar = getenv("HOME");
 	if (envVar && *envVar) {
 		Common::Path configFile(envVar);
-		confgFile.joinInPlace(baseConfigName);
+		configFile.joinInPlace(baseConfigName);
 
 		if (configFile.toString(Common::Path::kNativeSeparator).size() < MAXPATHLEN)
 			return configFile;
