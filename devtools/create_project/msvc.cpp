@@ -46,8 +46,8 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	StringList arm64_disabled_features;
 	arm64_disabled_features.push_back("nasm");
 	arm64_disabled_features.push_back("opengl");
-	arm64_disabled_features.push_back("avx2");
-	arm64_disabled_features.push_back("sse2");
+	arm64_disabled_features.push_back("ext-avx2");
+	arm64_disabled_features.push_back("ext-sse2");
 	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }
 
