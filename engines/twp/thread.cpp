@@ -48,9 +48,23 @@ void ThreadBase::resume() {
 	}
 }
 
-Thread::Thread(int id) {
-	_id = id;
+Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQOBJECT envObj, HSQOBJECT closureObj, const Common::Array<HSQOBJECT> args) {
+	_id = newThreadId();
+	_name = name;
+	_global = global;
+	_threadObj = threadObj;
+	_envObj = envObj;
+	_closureObj = closureObj;
+	_args = args;
 	_pauseable = true;
+
+	HSQUIRRELVM v = g_engine->getVm();
+	for (int i = 0; i < _args.size(); i++) {
+		sq_addref(v, &_args[i]);
+	}
+	sq_addref(v, &_threadObj);
+	sq_addref(v, &_envObj);
+	sq_addref(v, &_closureObj);
 }
 
 Thread::~Thread() {

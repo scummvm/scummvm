@@ -46,51 +46,38 @@ namespace Twp {
 static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	HSQUIRRELVM vm = g_engine->getVm();
 	SQInteger size = sq_gettop(v);
-	int id = newThreadId();
+	HSQOBJECT envObj, threadObj, closureObj;
 
-	Thread *t = new Thread(id);
-	t->_global = global;
-
-	sq_newtable(v);
-	sq_pushstring(v, _SC("_id"), -1);
-	sq_pushinteger(v, id);
-	sq_newslot(v, -3, SQFalse);
-	sq_getstackobj(v, -1, &t->_obj);
-	sq_addref(vm, &t->_obj);
-	sq_pop(v, 1);
-
-	sq_resetobject(&t->_envObj);
-	if (SQ_FAILED(sq_getstackobj(v, 1, &t->_envObj)))
+	sq_resetobject(&envObj);
+	if (SQ_FAILED(sq_getstackobj(v, 1, &envObj)))
 		return sq_throwerror(v, "Couldn't get environment from stack");
-	sq_addref(vm, &t->_envObj);
 
 	// create thread and store it on the stack
 	sq_newthread(vm, 1024);
-	sq_resetobject(&t->_threadObj);
-	if (SQ_FAILED(sq_getstackobj(vm, -1, &t->_threadObj)))
+	sq_resetobject(&threadObj);
+	if (SQ_FAILED(sq_getstackobj(vm, -1, &threadObj)))
 		return sq_throwerror(v, "Couldn't get coroutine thread from stack");
-	sq_addref(vm, &t->_threadObj);
 
+	Common::Array<HSQOBJECT> args;
 	for (int i = 0; i < size - 2; i++) {
 		HSQOBJECT arg;
 		sq_resetobject(&arg);
 		if (SQ_FAILED(sq_getstackobj(v, 3 + i, &arg)))
 			return sq_throwerror(v, "Couldn't get coroutine args from stack");
-		t->_args.push_back(arg);
-		sq_addref(vm, &arg);
+		args.push_back(arg);
 	}
 
 	// get the closure
-	sq_resetobject(&t->_closureObj);
-	if (SQ_FAILED(sq_getstackobj(v, 2, &t->_closureObj)))
+	sq_resetobject(&closureObj);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &closureObj)))
 		return sq_throwerror(v, "Couldn't get coroutine thread from stack");
-	sq_addref(vm, &t->_closureObj);
 
 	const SQChar *name = nullptr;
 	if (SQ_SUCCEEDED(sq_getclosurename(v, 2)))
 		sq_getstring(v, -1, &name);
 
-	t->setName(Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(t->_closureObj)->_function->_sourcename), _closure(t->_closureObj)->_function->_lineinfos->_line));
+	Common::String threadName = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(closureObj)->_function->_sourcename), _closure(closureObj)->_function->_lineinfos->_line);
+	Thread *t = new Thread(threadName, global, threadObj, envObj, closureObj, args);
 	sq_pop(vm, 1);
 	if (name)
 		sq_pop(v, 1); // pop name

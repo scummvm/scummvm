@@ -77,7 +77,7 @@ protected:
 
 class Thread final : public ThreadBase {
 public:
-	Thread(int id);
+	Thread(const Common::String& name, bool global, HSQOBJECT threadObj, HSQOBJECT envObj, HSQOBJECT closureObj, const Common::Array<HSQOBJECT> args);
 	virtual ~Thread() override final;
 
 	virtual bool isGlobal() override final { return _global; }
