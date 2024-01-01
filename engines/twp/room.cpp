@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "twp/twp.h"
 #include "twp/room.h"
 #include "twp/ggpack.h"
@@ -28,6 +30,7 @@
 #include "twp/ids.h"
 #include "twp/object.h"
 #include "twp/util.h"
+#include "twp/clipper/clipper.hpp"
 #include "common/algorithm.h"
 
 namespace Twp {
@@ -90,6 +93,50 @@ static Scaling parseScaling(const Common::JSONArray &jScalings) {
 		const Common::String &v = (*it)->asString();
 		sscanf(v.c_str(), "%f@%d", &scale, &y);
 		result.values.push_back(ScalingValue{scale, y});
+	}
+	return result;
+}
+
+static ClipperLib::Path toPolygon(const Walkbox &walkbox) {
+	ClipperLib::Path path;
+	const Common::Array<Math::Vector2d> &points = walkbox.getPoints();
+	for (int i = 0; i < points.size(); i++) {
+		path.push_back(ClipperLib::IntPoint(points[i].getX(), points[i].getY()));
+	}
+	return path;
+}
+
+static Walkbox toWalkbox(const ClipperLib::Path &path) {
+	Common::Array<Math::Vector2d> pts;
+	for (int i = 0; i < path.size(); i++) {
+		const ClipperLib::IntPoint &pt = path[i];
+		pts.push_back(Math::Vector2d(pt.X, pt.Y));
+	}
+	return Walkbox(pts, ClipperLib::Orientation(path));
+}
+
+static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
+	Common::Array<Walkbox> result;
+	if (walkboxes.size() > 0) {
+		ClipperLib::Paths subjects, clips;
+		for (int i = 0; i < walkboxes.size(); i++) {
+			const Walkbox &wb = walkboxes[i];
+			if (wb.isVisible()) {
+				subjects.push_back(toPolygon(wb));
+			} else {
+				clips.push_back(toPolygon(wb));
+			}
+		}
+
+		ClipperLib::Paths solutions;
+		ClipperLib::Clipper c;
+		c.AddPaths(subjects, ClipperLib::ptSubject, true);
+		c.AddPaths(clips, ClipperLib::ptClip, true);
+		c.Execute(ClipperLib::ClipType::ctUnion, solutions, ClipperLib::pftEvenOdd);
+
+		for (int i = 0; i < solutions.size(); i++) {
+			result.push_back(toWalkbox(solutions[i]));
+		}
 	}
 	return result;
 }
@@ -321,6 +368,8 @@ void Room::load(Common::SeekableReadStream &s) {
 		_scaling = _scalings[0];
 	}
 
+	_mergedPolygon = merge(_walkboxes);
+
 	delete value;
 }
 
@@ -409,8 +458,28 @@ void Room::update(float elapsed) {
 	}
 }
 
+void Room::walkboxHidden(const Common::String &name, bool hidden) {
+	for (int i = 0; i < _walkboxes.size(); i++) {
+		Walkbox &wb = _walkboxes[i];
+		if (wb._name == name) {
+			wb.setVisible(!hidden);
+			// 1 walkbox has change so update merged polygon
+			_mergedPolygon = merge(_walkboxes);
+			_pathFinder.setDirty(true);
+			return;
+		}
+	}
+}
+
 Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vector2d to) {
-	return {frm, to};
+	if (_mergedPolygon.size() > 0) {
+		if (_pathFinder.isDirty()) {
+			_pathFinder.setWalkboxes(_mergedPolygon);
+			_pathFinder.setDirty(false);
+		}
+		return _pathFinder.calculatePath(frm, to);
+	}
+	return {};
 }
 
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
@@ -427,6 +496,56 @@ Layer::Layer(const Common::StringArray &name, Math::Vector2d parallax, int zsort
 
 Walkbox::Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible)
 	: _polygon(polygon), _visible(visible) {
+}
+
+bool Walkbox::concave(int vertex) const {
+	Math::Vector2d current = _polygon[vertex];
+	Math::Vector2d next = _polygon[(vertex + 1) % _polygon.size()];
+	Math::Vector2d previous = _polygon[vertex == 0 ? _polygon.size() - 1 : vertex - 1];
+
+	Math::Vector2d left(current.getX() - previous.getX(), current.getY() - previous.getY());
+	Math::Vector2d right(next.getX() - current.getX(), next.getY() - current.getY());
+
+	float cross = (left.getX() * right.getY()) - (left.getY() * right.getX());
+	return _visible ? cross < 0 : cross >= 0;
+}
+
+bool Walkbox::contains(Math::Vector2d position, bool toleranceOnOutside) const {
+	Math::Vector2d point = position;
+	const float epsilon = 1.0f;
+	bool result = false;
+
+	// Must have 3 or more edges
+	if (_polygon.size() < 3)
+		return false;
+
+	Math::Vector2d oldPoint(_polygon[_polygon.size() - 1]);
+	float oldSqDist = distanceSquared(oldPoint, point);
+
+	for (int i = 0; i < _polygon.size(); i++) {
+		Math::Vector2d newPoint = _polygon[i];
+		float newSqDist = distanceSquared(newPoint, point);
+
+		if (oldSqDist + newSqDist + 2.0f * sqrt(oldSqDist * newSqDist) - distanceSquared(newPoint, oldPoint) < epsilon)
+			return toleranceOnOutside;
+
+		Math::Vector2d left;
+		Math::Vector2d right;
+		if (newPoint.getX() > oldPoint.getX()) {
+			left = oldPoint;
+			right = newPoint;
+		} else {
+			left = newPoint;
+			right = oldPoint;
+		}
+
+		if ((left.getX() < point.getX()) && (point.getX() <= right.getX()) && ((point.getY() - left.getY()) * (right.getX() - left.getX())) < ((right.getY() - left.getY()) * (point.getX() - left.getX())))
+			result = !result;
+
+		oldPoint = newPoint;
+		oldSqDist = newSqDist;
+	}
+	return result;
 }
 
 float Scaling::getScaling(float yPos) {

@@ -250,6 +250,11 @@ void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
 	drawPrimitives(GL_LINE_STRIP, vertices, count, trsf);
 }
 
+void Gfx::drawLinesLoop(Vertex *vertices, int count, Math::Matrix4 trsf) {
+	noTexture();
+	drawPrimitives(GL_LINE_LOOP, vertices, count, trsf);
+}
+
 void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture *texture) {
 	if (v_size > 0) {
 		_texture = texture ? texture : &gEmptyTexture;

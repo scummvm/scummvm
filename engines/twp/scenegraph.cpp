@@ -410,7 +410,8 @@ Scene::Scene() : Node("Scene") {
 }
 Scene::~Scene() {}
 
-InputState::InputState() : Node("InputState") {}
+InputState::InputState() : Node("InputState") {
+}
 
 InputState::~InputState() {}
 
@@ -422,7 +423,7 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	//       cursorName = "hotspot_" & self.cursorName
 	const SpriteSheetFrame &sf = gameSheet->frameTable["cursor"];
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
-	trsf.translate(pos);
+	trsf.translate(pos * 2.f);
 	scale(trsf, Math::Vector2d(2.f, 2.f));
 	g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf);
 }

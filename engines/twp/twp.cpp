@@ -57,6 +57,8 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	sq_resetobject(&_defaultObj);
 	_screenScene.setName("Screen");
+	_scene.addChild(&_walkboxNode);
+	_screenScene.addChild(&_pathNode);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
@@ -73,7 +75,6 @@ static Math::Vector2d winToScreen(Math::Vector2d pos) {
 
 Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
 	Math::Vector2d screenSize = _room->getScreenSize();
-	pos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
 }
 
@@ -341,7 +342,7 @@ void TwpEngine::update(float elapsed) {
 				// } else {
 				// 	walkFast(false);
 				// }
-				if (_cursor.isLeftDown() || _cursor.isRightDown())
+				if (_cursor.leftDown || _cursor.rightDown)
 					clickedAt(scrPos);
 			}
 		} else {
@@ -351,11 +352,11 @@ void TwpEngine::update(float elapsed) {
 			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->_name);
 			_sentence.setText(cText);
 			// TODO: _inputState.setCursorShape(CursorShape::Normal);
-			if (_cursor.isLeftDown())
+			if (_cursor.leftDown)
 				clickedAt(scrPos);
 		}
 
-		if (_cursor.isLeftDown() || _cursor.isRightDown())
+		if (_cursor.leftDown || _cursor.rightDown)
 			clickedAt(_cursor.pos);
 	}
 
@@ -544,11 +545,11 @@ void TwpEngine::draw() {
 	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect != FadeEffect::None);
 
 	// draw UI
+	_gfx.cameraPos(camPos);
 	_screenScene.draw();
 
 	g_system->updateScreen();
 
-	_gfx.cameraPos(camPos);
 }
 
 Common::Error TwpEngine::run() {
@@ -1116,12 +1117,12 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 		} else {
 			bool handled = false;
 			if (sqrawexists(noun2->_table, verbFuncName)) {
-				debug("call {verbFuncName} on {noun2.key}");
+				debug("call %s on %s", verbFuncName.c_str(), noun2->_key.c_str());
 				sqcallfunc(handled, noun2->_table, verbFuncName.c_str(), noun1->_table);
 			}
 			// verbGive is called on object only for non selectable actors
 			if (!handled && !selectable(noun2) && sqrawexists(noun1->_table, verbFuncName)) {
-				debug("call {verbFuncName} on {noun1.key}");
+				debug("call %s on %s", verbFuncName.c_str(), noun1->_key.c_str());
 				sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
 				handled = true;
 			}
@@ -1138,7 +1139,7 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	if (!noun2) {
 		if (sqrawexists(noun1->_table, verbFuncName)) {
 			int count = sqparamCount(getVm(), noun1->_table, verbFuncName);
-			debug("call {noun1.key}.{verbFuncName}");
+			debug("call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
 			if (count == 1) {
 				sqcall(noun1->_table, verbFuncName.c_str());
 			} else {
@@ -1147,17 +1148,17 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
 			sqcall(noun1->_table, VERBDEFAULT);
 		} else {
-			debug("call defaultObject.{verbFuncName}");
+			debug("call defaultObject.%s", verbFuncName.c_str());
 			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, actor->_table);
 		}
 	} else {
 		if (sqrawexists(noun1->_table, verbFuncName)) {
-			debug("call {noun1.key}.{verbFuncName}");
+			debug("call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
 			sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
 		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
 			sqcall(noun1->_table, VERBDEFAULT);
 		} else {
-			debug("call defaultObject.{verbFuncName}");
+			debug("call defaultObject.%s", verbFuncName.c_str());
 			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, noun2->_table);
 		}
 	}

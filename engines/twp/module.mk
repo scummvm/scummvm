@@ -21,8 +21,11 @@ SQUIRREL_OBJS = \
 	squirrel/sqstdrex.o \
 	squirrel/sqstdaux.o
 
+CLIPPER_OBJS = clipper/clipper.o
+
 MODULE_OBJS = \
 	$(SQUIRREL_OBJS) \
+	$(CLIPPER_OBJS) \
 	twp.o \
 	console.o \
 	metaengine.o \
@@ -58,6 +61,8 @@ MODULE_OBJS = \
 	hud.o \
 	lip.o \
 	callback.o \
+	graph.o \
+	walkboxnode.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

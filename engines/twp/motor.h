@@ -208,6 +208,8 @@ public:
 	WalkTo(Object *obj, Math::Vector2d dest, int facing = 0);
 	virtual void disable() override;
 
+	const Common::Array<Math::Vector2d>& getPath() const { return _path; }
+
 private:
 	void actorArrived();
 	virtual void update(float elapsed) override;
