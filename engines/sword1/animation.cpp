@@ -529,7 +529,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
 			return new MoviePlayer(vm, textMan, resMan, sound, system, psxDecoder, kVideoDecoderPSX);
 #else
-			GUI::MessageDialog dialog(Common::U32String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));
+			GUI::MessageDialog dialog(Common::U32String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.toString().c_str()), _("OK"));
 			dialog.runModal();
 			return 0;
 #endif
