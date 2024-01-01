@@ -36,24 +36,28 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *targ
 	act->setKeyEvent(Common::KEYCODE_UP);
 	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_UP");
+	act->addDefaultInputMapping("o");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(Common::KEYCODE_DOWN);
 	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->addDefaultInputMapping("k");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
 	act->setKeyEvent(Common::KEYCODE_LEFT);
 	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_LEFT");
+	act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
 	act->setKeyEvent(Common::KEYCODE_RIGHT);
 	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_RIGHT");
+	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
@@ -61,16 +65,19 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *targ
 	act->allowKbdRepeats();
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("0");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("RISE", _("Rise/Fly up"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
 	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("LOWER", _("Lower/Fly down"));
 	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
 	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SWITCH", _("Change mode"));
