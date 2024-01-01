@@ -89,9 +89,10 @@ namespace Kingdom {
 	class KingdomGame : public Engine {
 	public:
 		KingdomGame(OSystem *syst, const ADGameDescription *gameDesc);
-		~KingdomGame();
+		~KingdomGame() override;
 
-		virtual Common::Error run();
+		bool hasFeature(EngineFeature f) const override;
+		Common::Error run() override;
 
 		// Detection related functions
 		const ADGameDescription *_gameDescription;
@@ -229,8 +230,8 @@ namespace Kingdom {
 		void cursorTypeExit();
 		void saveGame();
 		void restoreGame();
-		virtual Common::Error loadGameState(int slot);
-		virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
+		Common::Error loadGameState(int slot) override;
+		Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 		Common::String getSavegameFilename(int slot);
 		void writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header);
 		void synchronize(Common::Serializer &s);

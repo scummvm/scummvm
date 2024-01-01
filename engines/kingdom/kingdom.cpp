@@ -142,11 +142,18 @@ void KingdomGame::initVariables() {
 }
 
 KingdomGame::~KingdomGame() {
+	_mixer->stopAll();
+
 	unloadKingArt();
 
 	delete[] _asPtr;
 	delete _logic;
 	delete _rnd;
+}
+
+bool KingdomGame::hasFeature(EngineFeature f) const {
+	return
+		f == kSupportsReturnToLauncher;
 }
 
 bool KingdomGame::isDemo() const {
