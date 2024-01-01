@@ -419,9 +419,9 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	// draw cursor
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	//   if prefs(ClassicSentence) and self.hotspot:
-	//       cursorName = "hotspot_" & self.cursorName
-	const SpriteSheetFrame &sf = gameSheet->frameTable["cursor"];
+	// TODO: if prefs(ClassicSentence) and self.hotspot:
+	Common::String cursorName = _hotspot ? Common::String::format("hotspot_%s", _cursorName.c_str()): _cursorName;
+	const SpriteSheetFrame &sf = gameSheet->frameTable[cursorName];
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos * 2.f);
 	scale(trsf, Math::Vector2d(2.f, 2.f));
@@ -458,6 +458,32 @@ void InputState::setState(InputStateFlag state) {
 		_inputHUD = true;
 	if ((UI_HUDOBJECTS_OFF & state) == UI_HUDOBJECTS_OFF)
 		_inputHUD = false;
+}
+
+void InputState::setCursorShape(CursorShape shape) {
+	if (_cursorShape != shape) {
+		_cursorShape = shape;
+		switch (shape) {
+		case CursorShape::Normal:
+			_cursorName = "cursor";
+			break;
+		case CursorShape::Left:
+			_cursorName = "cursor_left";
+			break;
+		case CursorShape::Right:
+			_cursorName = "cursor_right";
+			break;
+		case CursorShape::Front:
+			_cursorName = "cursor_front";
+			break;
+		case CursorShape::Back:
+			_cursorName = "cursor_back";
+			break;
+		case CursorShape::Pause:
+			_cursorName = "cursor_pause";
+			break;
+		}
+	}
 }
 
 OverlayNode::OverlayNode() : Node("overlay") {

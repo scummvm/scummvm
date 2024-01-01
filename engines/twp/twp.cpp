@@ -326,6 +326,28 @@ void TwpEngine::update(float elapsed) {
 				_noun2 = nullptr;
 			}
 
+			Math::Vector2d screenSize = _room->getScreenSize();
+			if ((scrPos.getX() < SCREEN_MARGIN) && (cameraPos().getX() >= 1.f)) {
+				_inputState.setCursorShape(CursorShape::Left);
+			} else if ((scrPos.getX() > (SCREEN_WIDTH - SCREEN_MARGIN)) && cameraPos().getX() < (_room->_roomSize.getX() - screenSize.getX())) {
+				_inputState.setCursorShape(CursorShape::Right);
+			} else if (_room->_fullscreen == FULLSCREENROOM && _noun1) {
+				// if the object is a door, it has a flag indicating its direction: left, right, front, back
+				int flags = _noun1->getFlags();
+				if (flags & DOOR_LEFT)
+					_inputState.setCursorShape(CursorShape::Left);
+				else if (flags &DOOR_RIGHT)
+					_inputState.setCursorShape(CursorShape::Right);
+				else if (flags & DOOR_FRONT)
+					_inputState.setCursorShape(CursorShape::Front);
+				else if (flags & DOOR_BACK)
+					_inputState.setCursorShape(CursorShape::Back);
+				else
+					_inputState.setCursorShape(CursorShape::Normal);
+			} else {
+				_inputState.setCursorShape(CursorShape::Normal);
+			}
+
 			_inputState.setHotspot(_noun1 != nullptr);
 			_hud.setVisible(_inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None);
 			_sentence.setVisible(_hud.isVisible());
@@ -351,7 +373,7 @@ void TwpEngine::update(float elapsed) {
 			_noun1 = objAt(roomPos);
 			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->_name);
 			_sentence.setText(cText);
-			// TODO: _inputState.setCursorShape(CursorShape::Normal);
+			_inputState.setCursorShape(CursorShape::Normal);
 			if (_cursor.leftDown)
 				clickedAt(scrPos);
 		}
