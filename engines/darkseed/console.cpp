@@ -20,29 +20,18 @@
  */
 
 #include "darkseed/console.h"
+#include "common/debug.h"
 
 namespace Darkseed {
 
-Console::Console(TosText *tosText) : GUI::Debugger(), tosText(tosText) {
-	registerCmd("tostext",   WRAP_METHOD(Console, Cmd_tostext));
+Console::Console(TosText *tosText) : _tosText(tosText) {
+	if(!_font.load("tosfont.nsp")) {
+		error("Error loading tosfont.nsp");
+	}
 }
 
-Console::~Console() {
-}
-
-bool Console::Cmd_tostext(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Usage: tostext <index>\n");
-		return true;
-	}
-
-	uint16 textIdx = atoi(argv[1]);
-	if (textIdx < tosText->getNumEntries()) {
-		debugPrintf("%s\n", tosText->getText(textIdx).c_str());
-	} else {
-		debugPrintf("index too large!\n");
-	}
-	return true;
+void Console::printTosText(int tosIndex) {
+	debug(_tosText->getText(tosIndex).c_str());
 }
 
 } // End of namespace Darkseed

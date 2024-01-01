@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,25 +19,30 @@
  *
  */
 
-#ifndef DARKSEED_CONSOLE_H
-#define DARKSEED_CONSOLE_H
-
-#include "tostext.h"
-#include "nsp.h"
+#include "darkseed/debugconsole.h"
 
 namespace Darkseed {
 
-class Console  {
-private:
-	TosText *_tosText;
-	Nsp _font;
+DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText) {
+	registerCmd("tostext",   WRAP_METHOD(DebugConsole, Cmd_tostext));
+}
 
-public:
-	Console(TosText *tostext);
+DebugConsole::~DebugConsole() {
+}
 
-	void printTosText(int tosIndex);
-};
+bool DebugConsole::Cmd_tostext(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: tostext <index>\n");
+		return true;
+	}
+
+	uint16 textIdx = atoi(argv[1]);
+	if (textIdx < tosText->getNumEntries()) {
+		debugPrintf("%s\n", tosText->getText(textIdx).c_str());
+	} else {
+		debugPrintf("index too large!\n");
+	}
+	return true;
+}
 
 } // End of namespace Darkseed
-
-#endif // DARKSEED_CONSOLE_H

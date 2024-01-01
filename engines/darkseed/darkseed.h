@@ -34,9 +34,11 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
+#include "console.h"
 #include "cursor.h"
 #include "darkseed/detection.h"
 #include "nsp.h"
+#include "player.h"
 #include "room.h"
 #include "tostext.h"
 
@@ -67,8 +69,10 @@ public:
 	Cursor _cursor;
 	Graphics::Screen *_screen = nullptr;
 	TosText *_tosText = nullptr;
+	Console *_console = nullptr;
 	Room *_room = nullptr;
 	ActionMode _actionMode = PointerAction;
+	Player _player;
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);

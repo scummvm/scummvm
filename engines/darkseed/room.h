@@ -79,7 +79,7 @@ public:
 	bool exitRoom();
 	Common::String getRoomFilenameBase(int roomNumber);
 	bool canWalkAtLocation(int x, int y);
-
+	void printRoomDescriptionText() const;
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
