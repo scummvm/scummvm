@@ -37,6 +37,8 @@
 #include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
+#include "common/crc.h"
+#include "common/stream.h"
 
 namespace Twp {
 
@@ -65,11 +67,8 @@ static void shuffle(Common::Array<T> &array) {
 }
 
 static SQInteger activeVerb(HSQUIRRELVM v) {
-	// TODO: activeVerb
-	// push(v, gEngine.hud.verb.id);
-	// return 1;
-	warning("activeVerb not implemented");
-	return 0;
+	sqpush(v, g_engine->_hud._verb.id.id);
+	return 1;
 }
 
 static SQInteger adhocalytics(HSQUIRRELVM v) {
@@ -770,46 +769,124 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Counts the occurrences of a substring sub in the string `str`.
 static SQInteger strcount(HSQUIRRELVM v) {
-	// TODO: strcount
-	warning("strcount not implemented");
-	return 0;
+	const char* str;
+	const char* sub;
+	if (SQ_FAILED(sqget(v, 2, str)))
+		return sq_throwerror(v, "Failed to get str");
+	if (SQ_FAILED(sqget(v, 3, sub)))
+		return sq_throwerror(v, "Failed to get sub");
+	int count = 0;
+    while ((str = strstr(str, sub))) {
+      str += strlen(sub);
+      ++count;
+    }
+	sq_pushinteger(v, count);
+	return 1;
 }
 
 static SQInteger strcrc(HSQUIRRELVM v) {
-	// TODO: strcrc
-	warning("strcrc not implemented");
-	return 0;
+	Common::CRC32 crc;
+	const SQChar *str;
+    if (SQ_FAILED(sq_getstring(v, 2, &str))) {
+      return sq_throwerror(v, _SC("failed to get string"));
+    }
+    uint32 u = crc.crcFast((const byte*)str, strlen(str));
+    sq_pushinteger(v, (SQInteger)u);
+    return 1;
 }
 
 static SQInteger strfind(HSQUIRRELVM v) {
-	// TODO: strfind
-	warning("strfind not implemented");
-	return 0;
+	const SQChar *str1;
+    if (SQ_FAILED(sq_getstring(v, 2, &str1))) {
+      return sq_throwerror(v, _SC("failed to get string1"));
+    }
+    const SQChar *str2;
+    if (SQ_FAILED(sq_getstring(v, 3, &str2))) {
+      return sq_throwerror(v, _SC("failed to get string1"));
+    }
+    const char* p = strstr(str1, str2);
+    if (p == nullptr) {
+      sq_pushinteger(v, -1);
+    } else {
+      sq_pushinteger(v, p - str1);
+    }
+    return 1;
 }
 
 static SQInteger strfirst(HSQUIRRELVM v) {
-	// TODO: strfirst
-	warning("strfirst not implemented");
-	return 0;
+	const SQChar *str;
+    if (SQ_FAILED(sq_getstring(v, 2, &str))) {
+      return sq_throwerror(v, _SC("failed to get string"));
+    }
+    if (strlen(str) > 0) {
+      const SQChar s[2]{str[0], '\0'};
+      sq_pushstring(v, s, 1);
+      return 1;
+    }
+    sq_pushnull(v);
+    return 1;
 }
 
 static SQInteger strlast(HSQUIRRELVM v) {
-	// TODO: strlast
-	warning("strlast not implemented");
-	return 0;
+	const SQChar *str;
+    if (SQ_FAILED(sq_getstring(v, 2, &str))) {
+      return sq_throwerror(v, _SC("failed to get string"));
+    }
+    auto len = strlen(str);
+    if (len > 0) {
+      const SQChar s[2]{str[len - 1], '\0'};
+      sq_pushstring(v, s, 1);
+      return 1;
+    }
+    sq_pushnull(v);
+    return 1;
 }
 
 static SQInteger strlines(HSQUIRRELVM v) {
-	// TODO: strlines
-	warning("strlines not implemented");
-	return 0;
+	Common::String text;
+    if (SQ_FAILED(sqget(v, 2, text))) {
+      return sq_throwerror(v, _SC("failed to get text"));
+    }
+    Common::String line;
+	Common::MemoryReadStream ms((const byte*)text.c_str(), text.size());
+    sq_newarray(v, 0);
+    while (!ms.eos()) {
+	  line = ms.readLine();
+      sq_pushstring(v, line.c_str(), line.size());
+      sq_arrayappend(v, -2);
+    }
+    return 1;
+}
+
+static void replaceAll(Common::String &text, const Common::String &search, const Common::String &replace) {
+  auto pos = text.find(search);
+  while (pos != Common::String::npos) {
+    text.replace(pos, search.size(), replace);
+    pos = text.find(search, pos + replace.size());
+  }
 }
 
 static SQInteger strreplace(HSQUIRRELVM v) {
-	// TODO: strreplace
-	warning("strreplace not implemented");
-	return 0;
+	const SQChar *input;
+    const SQChar *search;
+    const SQChar *replace;
+    if (SQ_FAILED(sq_getstring(v, 2, &input))) {
+      return sq_throwerror(v, _SC("failed to get input"));
+    }
+    if (SQ_FAILED(sq_getstring(v, 3, &search))) {
+      return sq_throwerror(v, _SC("failed to get search"));
+    }
+    if (SQ_FAILED(sq_getstring(v, 4, &replace))) {
+      return sq_throwerror(v, _SC("failed to get replace"));
+    }
+    Common::String strInput(input);
+    Common::String strSearch(search);
+    Common::String strReplace(replace);
+    replaceAll(strInput, strSearch, strReplace);
+    sq_pushstring(v, strInput.c_str(), strInput.size());
+    return 1;
 }
 
 // Splits the string `str` into substrings using a string separator.
