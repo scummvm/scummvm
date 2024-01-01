@@ -50,6 +50,8 @@ Common::Rect parseRect(const Common::String &s);
 void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims);
 
 float distance(Math::Vector2d p1, Math::Vector2d p2);
+float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
+float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
 
 template<typename T>
 int find(Common::Array<T>& array, const T& o) {

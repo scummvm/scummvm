@@ -134,6 +134,22 @@ float distanceSquared(Math::Vector2d p1, Math::Vector2d p2) {
 	return dx * dx + dy * dy;
 }
 
+float distanceToSegmentSquared(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
+	float l2 = distanceSquared(v, w);
+	if (l2 == 0)
+		return distanceSquared(p, v);
+	float t = ((p.getX() - v.getX()) * (w.getX() - v.getX()) + (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2;
+	if (t < 0)
+		return distanceSquared(p, v);
+	if (t > 1)
+		return distanceSquared(p, w);
+	return distanceSquared(p, Math::Vector2d(v.getX() + t * (w.getX() - v.getX()), v.getY() + t * (w.getY() - v.getY())));
+}
+
+float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
+	return sqrt(distanceToSegmentSquared(p, v, w));
+}
+
 float distance(Math::Vector2d p1, Math::Vector2d p2) {
 	return sqrt(distanceSquared(p1, p2));
 }

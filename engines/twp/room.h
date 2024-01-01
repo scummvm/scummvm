@@ -30,6 +30,7 @@
 #include "twp/font.h"
 #include "twp/motor.h"
 #include "twp/scenegraph.h"
+#include "twp/graph.h"
 
 #define FULLSCREENCLOSEUP	1
 #define FULLSCREENROOM		2
@@ -59,19 +60,6 @@ public:
 	Math::Vector2d _parallax;
 	int _zsort = 0;
 	Node *_node = nullptr;
-};
-
-// Represents an area where an actor can or cannot walk
-class Walkbox {
-public:
-	Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible = true);
-
-public:
-	Common::String _name;
-
-private:
-	Common::Array<Math::Vector2d> _polygon;
-	bool _visible;
 };
 
 struct ScalingValue {
@@ -105,6 +93,7 @@ struct Lights {
 	Color _ambientLight; // Ambient light color
 };
 
+class PathFinder;
 class Scene;
 class Room {
 public:
@@ -129,6 +118,7 @@ public:
 	void setOverlay(Color color);
 	Color getOverlay() const;
 
+	void walkboxHidden(const Common::String &name, bool hidden);
 	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d frm, Math::Vector2d to);
 
 public:
@@ -139,12 +129,12 @@ public:
 	int _height = 0;                   // Height of the room (what else ?)
 	Common::Array<Layer *> _layers;    // Parallax layers of a room
 	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
+	Common::Array<Walkbox> _mergedPolygon;
 	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room
 	Scaling _scaling;                  // Defines the scaling of the actor in the room
 	HSQOBJECT _table;                  // Squirrel table representing this room
 	bool _entering = false;            // Indicates whether or not an actor is entering this room
 	Lights _lights;                    // Lights of the room
-	Common::Array<Walkbox> _mergedPolygon;
 	Common::Array<Object *> _triggers; // Triggers currently enabled in the room
 	bool _pseudo = false;
 	Common::Array<Object *> _objects;
@@ -152,6 +142,7 @@ public:
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect;
 	Motor* _overlayTo = nullptr;
+	PathFinder _pathFinder;
 };
 
 } // namespace Twp

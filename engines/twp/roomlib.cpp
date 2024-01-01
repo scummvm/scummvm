@@ -322,24 +322,24 @@ static SQInteger roomLayer(HSQUIRRELVM v) {
 // }
 static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 	int startColor;
-  SQInteger numArgs = sq_gettop(v);
-  if (SQ_FAILED(sqget(v, 2, startColor)))
-    return sq_throwerror(v, "failed to get startColor");
-  Room* room = g_engine->_room;
-  if (room->_overlayTo)
-      room->_overlayTo->disable();
-  room->setOverlay(Color::fromRgba(startColor));
-  if (numArgs == 4) {
-    int endColor;
-    if (SQ_FAILED(sqget(v, 3, endColor)))
-      return sq_throwerror(v, "failed to get endColor");
-    float duration;
-    if (SQ_FAILED(sqget(v, 4, duration)))
-      return sq_throwerror(v, "failed to get duration");
-    debug("start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
-    g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::fromRgba(endColor));
-  }
-  return 0;
+	SQInteger numArgs = sq_gettop(v);
+	if (SQ_FAILED(sqget(v, 2, startColor)))
+		return sq_throwerror(v, "failed to get startColor");
+	Room *room = g_engine->_room;
+	if (room->_overlayTo)
+		room->_overlayTo->disable();
+	room->setOverlay(Color::fromRgba(startColor));
+	if (numArgs == 4) {
+		int endColor;
+		if (SQ_FAILED(sqget(v, 3, endColor)))
+			return sq_throwerror(v, "failed to get endColor");
+		float duration;
+		if (SQ_FAILED(sqget(v, 4, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		debug("start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
+		g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::fromRgba(endColor));
+	}
+	return 0;
 }
 
 static SQInteger roomRotateTo(HSQUIRRELVM v) {
@@ -355,8 +355,17 @@ static SQInteger roomSize(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Sets walkbox to be hidden (YES) or not (NO).
+// If the walkbox is hidden, the actors cannot walk to any point within that area anymore, nor to any walkbox that's connected to it on the other side from the actor.
+// Often used on small walkboxes below a gate or door to keep the actor from crossing that boundary if the gate/door is closed.
 static SQInteger walkboxHidden(HSQUIRRELVM v) {
-	warning("TODO: walkboxHidden not implemented");
+	Common::String walkbox;
+	if (SQ_FAILED(sqget(v, 2, walkbox)))
+		return sq_throwerror(v, "failed to get object or walkbox");
+	int hidden = 0;
+	if (SQ_FAILED(sqget(v, 3, hidden)))
+		return sq_throwerror(v, "failed to get object or hidden");
+	g_engine->_room->walkboxHidden(walkbox, hidden != 0);
 	return 0;
 }
 

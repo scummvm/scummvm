@@ -44,6 +44,7 @@
 #include "twp/dialog.h"
 #include "twp/hud.h"
 #include "twp/callback.h"
+#include "twp/walkboxnode.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -210,6 +211,8 @@ private:
 	ShaderParams _shaderParams;
 	unique_ptr<FadeShader> _fadeShader;
 	SentenceNode _sentence;
+	WalkboxNode _walkboxNode;
+	PathNode _pathNode;
 };
 
 extern TwpEngine *g_engine;
