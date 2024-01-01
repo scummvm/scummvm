@@ -31,7 +31,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "dgds/dgds.h"
-#include "dgds/dialogue.h"
+#include "dgds/scene.h"
 #include "dgds/font.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
@@ -43,7 +43,7 @@ namespace Dgds {
 
 // FIXME: Move these into some state
 static int currentBmpId = 0;
-static DialogueLine _text;
+static Dialogue _text;
 static Common::Rect _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 static Common::String _bmpNames[16];
 
@@ -219,17 +219,17 @@ bool TTMInterpreter::run(TTMState *script) {
 			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpWin.left, bmpWin.top));
 			_vm->getTopBuffer().fillRect(bmpWin, 0);
 
-			if (!_text.text.empty()) {
+			if (!_text.str.empty()) {
 				Common::StringArray lines;
 				const PFont *fntP = _vm->getFntP();
 				const int h = fntP->getFontHeight();
 
-				fntP->wordWrapText(_text.text, SCREEN_HEIGHT, lines);
-				Common::Rect r(0, 7, SCREEN_WIDTH, h * lines.size() + 13);
+				fntP->wordWrapText(_text.str, SCREEN_HEIGHT, lines);
+				Common::Rect r(Common::Point(_text.rect.x, _text.rect.y), _text.rect.width, _text.rect.height);
 				_vm->_resData.fillRect(r, 15);
 				for (uint i = 0; i < lines.size(); i++) {
 					const int w = fntP->getStringWidth(lines[i]);
-					fntP->drawString(&_vm->_resData, lines[i], 10, 10 + 1 + i * h, w, 0);
+					fntP->drawString(&_vm->_resData, lines[i], _text.rect.x, _text.rect.y + 1 + i * h, w, 0);
 				}
 			}
 		} break;
@@ -264,67 +264,17 @@ bool TTMInterpreter::run(TTMState *script) {
 			// DESCRIPTION IN TTM TAGS.
 			debug("SET SCENE: %u", ivals[0]);
 			script->scene = ivals[0];
-			
-			const Common::Array<DialogueLine> bubbles = _vm->getDialogue()->getLines();
 
-			if (!bubbles.empty()) {
-				// TODO: Are these hardcoded?
-				if (!script->dataPtr->filename.compareToIgnoreCase("INTRO.TTM")) {
-					switch (ivals[0]) {
-					case 15:
-						_text = bubbles[3];
-						break;
-					case 16:
-						_text = bubbles[4];
-						break;
-					case 17:
-						_text = bubbles[5];
-						break;
-					case 19:
-						_text = bubbles[6];
-						break;
-					case 20:
-						_text = bubbles[7];
-						break;
-					case 22:
-						_text = bubbles[8];
-						break;
-					case 23:
-						_text = bubbles[9];
-						break;
-					case 25:
-						_text = bubbles[10];
-						break;
-					case 26:
-						_text = bubbles[11];
-						break;
-					default:
-						_text.text.clear();
-						break;
-					}
-				} else if (!script->dataPtr->filename.compareToIgnoreCase("BIGTV.TTM")) {
-					switch (ivals[0]) {
-					case 1:
-						_text = bubbles[0];
-						break;
-					case 2:
-						_text = bubbles[1];
-						break;
-					case 3:
-						_text = bubbles[2];
-						break;
-					default:
-						_text.text.clear();
-						break;
-					}
-				}
-				if (!_text.text.empty())
-					script->delay += 1500;
-			} else {
-				_text.text.clear();
+			const Common::Array<Dialogue> dialogues = _vm->getScene()->getLines();
+			_text.str.clear();
+			for (const Dialogue &dialogue: dialogues) {
+				if (dialogue.num == ivals[0])
+					_text = dialogue;
 			}
-		}
+			if (!_text.str.empty())
+				script->delay += 1500;
 			continue;
+		}
 
 		case 0x4000:
 			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
@@ -340,8 +290,8 @@ bool TTMInterpreter::run(TTMState *script) {
 			script->delay += ivals[0] * 10;
 			continue;
 
-		case 0x10a0:
-			// SET SCR|PAL:	    id:int [0]
+		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
+
 		case 0x2000: //SET FRAME1?: i,j:int [0..255]
 
 		case 0xa530: // CHINA
@@ -430,11 +380,11 @@ void ADSInterpreter::init(ADSState *state, const ADSData *data) {
 }
 
 bool ADSInterpreter::run(ADSState *script) {
-	TTMInterpreter interp(_vm);
 
 	if (script->subMax != 0) {
-		TTMState *state = &script->scriptStates[script->subIdx - 1];
-		if (!interp.run(state) || state->scene >= script->subMax)
+		TTMInterpreter interp(_vm);
+		TTMState *ttmState = &script->scriptStates[script->subIdx - 1];
+		if (!interp.run(ttmState) || ttmState->scene >= script->subMax)
 			script->subMax = 0;
 		return true;
 	}
@@ -467,8 +417,9 @@ bool ADSInterpreter::run(ADSState *script) {
 			uint16 unk1 = scr->readUint16LE();
 			uint16 unk2 = scr->readUint16LE();
 			debug("ADSInterpreter play scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", script->subIdx, script->subMax, unk1, unk2);
-		}
 			return true;
+		}
+
 		case 0xF010:
 		case 0xF200:
 		case 0xFDA8:
@@ -478,12 +429,15 @@ bool ADSInterpreter::run(ADSState *script) {
 		case 0xFFFF:
 		case 0x0190:
 		case 0x1070:
+		case 0x1330:
 		case 0x1340:
+		case 0x1350:
 		case 0x1360:
 		case 0x1370:
 		case 0x1420:
 		case 0x1430:
 		case 0x1500:
+		case 0x1510:
 		case 0x1520:
 		case 0x2000:
 		case 0x2010:
@@ -493,9 +447,6 @@ bool ADSInterpreter::run(ADSState *script) {
 		case 0x30FF:
 		case 0x4000:
 		case 0x4010:
-		case 0x1510:
-		case 0x1330:
-		case 0x1350:
 		default:
 			warning("Unimplemented ADS opcode: 0x%04X (count %d)", code, count);
 			continue;

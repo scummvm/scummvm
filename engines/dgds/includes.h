@@ -34,6 +34,7 @@ namespace Dgds {
 #define ID_FNT MKTAG24('F', 'N', 'T')
 #define ID_GAD MKTAG24('G', 'A', 'D')
 #define ID_INF MKTAG24('I', 'N', 'F')
+#define ID_GDS MKTAG24('G', 'D', 'S')
 #define ID_MTX MKTAG24('M', 'T', 'X')
 #define ID_PAG MKTAG24('P', 'A', 'G')
 #define ID_REQ MKTAG24('R', 'E', 'Q')
@@ -43,17 +44,18 @@ namespace Dgds {
 #define ID_SNG MKTAG24('S', 'N', 'G')
 #define ID_TAG MKTAG24('T', 'A', 'G')
 #define ID_TT3 MKTAG24('T', 'T', '3')
-#define ID_TTI MKTAG24('T', 'T', 'I')
 #define ID_VER MKTAG24('V', 'E', 'R')
 #define ID_VGA MKTAG24('V', 'G', 'A')
 #define ID_VQT MKTAG24('V', 'Q', 'T')
 #define ID_OFF MKTAG24('O', 'F', 'F')
+#define ID_TTI MKTAG24('T', 'T', 'I')
 
 /* Heart of China */
 #define ID_MA8 MKTAG24('M', 'A', '8')
 #define ID_DDS MKTAG24('D', 'D', 'S')
 #define ID_THD MKTAG24('T', 'H', 'D')
 
+/* EX_ are File extensions types */
 #define EX_ADH MKTAG24('A', 'D', 'H')
 #define EX_ADL MKTAG24('A', 'D', 'L')
 #define EX_ADS MKTAG24('A', 'D', 'S')
@@ -71,6 +73,7 @@ namespace Dgds {
 #define EX_SX MKTAG24('S', 'X', 0)
 #define EX_TTM MKTAG24('T', 'T', 'M')
 #define EX_VIN MKTAG24('V', 'I', 'N')
+
 
 /* Heart of China */
 #define EX_DAT MKTAG24('D', 'A', 'T')

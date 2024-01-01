@@ -42,7 +42,7 @@ class Decompressor;
 class Image;
 class PFont;
 class FFont;
-class Dialogue;
+class Scene;
 
 class DgdsMidiPlayer;
 struct DgdsADS;
@@ -67,7 +67,7 @@ private:
 	DgdsGameId _gameId;
 	Graphics::Surface _bottomBuffer;
 	Graphics::Surface _topBuffer;
-	Dialogue *_dialogue;
+	Scene *_scene;
 
 	PFont *_fntP;
 	FFont *_fntF;
@@ -98,7 +98,7 @@ public:
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
-	const Dialogue *getDialogue() const { return _dialogue; }
+	const Scene *getScene() const { return _scene; }
 
 	const PFont *getFntP() const { return _fntP; }
 	Image *_image;

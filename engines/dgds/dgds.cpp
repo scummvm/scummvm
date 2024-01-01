@@ -51,7 +51,7 @@
 
 #include "dgds/console.h"
 #include "dgds/decompress.h"
-#include "dgds/dialogue.h"
+#include "dgds/scene.h"
 #include "dgds/detection_tables.h"
 #include "dgds/dgds.h"
 #include "dgds/font.h"
@@ -65,6 +65,8 @@
 
 namespace Dgds {
 
+#define DUMP_ALL_CHUNKS 1
+
 //static Common::SeekableReadStream *ttm;
 //static char ttmName[DGDS_FILENAME_MAX + 1];
 
@@ -74,7 +76,7 @@ namespace Dgds {
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
     : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
     _midiPlayer(nullptr), _decompressor(nullptr), _musicData(nullptr), _musicSize(0),
-    _soundData(nullptr), _dialogue(nullptr) {
+    _soundData(nullptr), _scene(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -96,7 +98,9 @@ DgdsEngine::~DgdsEngine() {
 	delete _image;
 	delete _decompressor;
 	delete _resource;
-	delete _dialogue;
+	delete _scene;
+	delete _musicData;
+	delete _soundData;
 }
 
 void readStrings(Common::SeekableReadStream *stream) {
@@ -127,10 +131,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 	uint parent = 0;
 
 	DgdsParser ctx(file, name);
-	if (isFlatfile(platform, ex)) {
-		uint16 tcount;
-		uint16 *tw, *th;
-		uint32 *toffset;
+	if (DgdsChunk::isFlatfile(platform, ex)) {
 		Common::String line;
 
 		switch (ex) {
@@ -192,16 +193,16 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		} break;
 		case EX_BMP: {
 			/* Unknown image format (Amiga). */
-			tcount = file.readUint16BE();
-			tw = new uint16[tcount];
-			th = new uint16[tcount];
+			uint16 tcount = file.readUint16BE();
+			uint16 *tw = new uint16[tcount];
+			uint16 *th = new uint16[tcount];
 
 			uint32 packedSize, unpackedSize;
 			unpackedSize = file.readUint32BE();
 			debug("        [%u] %u =", tcount, unpackedSize);
 
 			uint32 sz = 0;
-			toffset = new uint32[tcount];
+			uint32 *toffset = new uint32[tcount];
 			for (uint16 k = 0; k < tcount; k++) {
 				tw[k] = file.readUint16BE();
 				th[k] = file.readUint16BE();
@@ -222,6 +223,9 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			packedSize = file.readUint32BE();
 			debug("        %u -> %u",
 			      packedSize, unpackedSize);
+			delete [] toffset;
+			delete [] tw;
+			delete [] th;
 		} break;
 		case EX_INS: {
 			/* AIFF sound sample (Amiga). */
@@ -255,9 +259,10 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		file.hexdump(leftover);
 		file.skip(leftover);
 	} else {
-		uint16 scount = 0;
+		uint16 scount = 0;  // song count
 
 		DgdsChunk chunk;
+		int chunkno = 0;
 		while (chunk.readHeader(ctx)) {
 			if (chunk._container) {
 				parent = chunk._id;
@@ -268,6 +273,19 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 
 			bool packed = chunk.isPacked(ex);
 			stream = packed ? chunk.decodeStream(ctx, decompressor) : chunk.readStream(ctx);
+
+#ifdef DUMP_ALL_CHUNKS
+			{
+				Common::DumpFile out;
+				int64 start = stream->pos();
+				out.open(Common::Path(Common::String::format("/tmp/dgds_%s_%02d_%.3s.dump", name, chunkno, chunk._idStr)));
+				out.writeStream(stream);
+				out.close();
+				stream->seek(start);
+			}
+
+#endif
+			chunkno++;
 
 			switch (ex) {
 			case EX_TDS:
@@ -315,7 +333,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				break;
 			case EX_SDS:
 				if (chunk.isSection(ID_SDS)) {
-					_dialogue->parseSDS(stream);
+					_scene->parseSDS(stream);
 				}
 				break;
 			case EX_TTM:
@@ -394,22 +412,21 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				}
 				break;
 			case EX_GDS:
-				if (chunk.isSection(ID_INF)) {
-					//stream->hexdump(stream->size());
-					uint32 mark;
-					char version[7];
+				if (chunk.isSection(ID_GDS)) {
+					// do nothing, this is the container.
+					assert(chunk._container);
+				} else if (chunk.isSection(ID_INF)) {
+					uint32 checksum = stream->readUint32LE(); // probably?
+					debug("    Checksum: 0x%X", checksum);
 
-					mark = stream->readUint32LE();
-					debug("    0x%X", mark);
-
-					stream->read(version, sizeof(version));
-					debug("    \"%s\"", version);
+					char gdsVersion[7];
+					stream->read(gdsVersion, sizeof(gdsVersion));
+					debug("    Scene Version: \"%s\"", gdsVersion);
 
 				} else if (chunk.isSection(ID_SDS)) {
-					//stream->hexdump(stream->size());
+					stream->hexdump(stream->size());
 
-					uint32 x;
-					x = stream->readUint32LE();
+					uint32 x = stream->readUint32LE();
 					debug("    %u", x);
 
 					while (!stream->eos()) {
@@ -746,7 +763,7 @@ Common::Error DgdsEngine::run() {
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
 	_midiPlayer = new DgdsMidiPlayer();
-	_dialogue = new Dialogue();
+	_scene = new Scene();
 
 	setDebugger(_console);
 
@@ -766,31 +783,33 @@ Common::Error DgdsEngine::run() {
 	TTMInterpreter interpTTM(this);
 
 	TTMState title1State, title2State;
-	ADSState introState;
+	ADSState adsState;
 	TTMData title1Data, title2Data;
-	ADSData introData;
+	ADSData adsData;
 
 	if (getGameId() == GID_DRAGON) {
+		parseFile("DRAGON.GDS");
+	
 		interpTTM.load("TITLE1.TTM", &title1Data);
 		interpTTM.load("TITLE2.TTM", &title2Data);
-		interpADS.load("INTRO.ADS", &introData);
+		interpADS.load("INTRO.ADS", &adsData);
 
 		interpTTM.init(&title1State, &title1Data);
 		interpTTM.init(&title2State, &title2Data);
-		interpADS.init(&introState, &introData);
+		interpADS.init(&adsState, &adsData);
 
 		parseFile("DRAGON.FNT");
 		parseFile("S55.SDS");
 	} else if (getGameId() == GID_CHINA) {
-		interpADS.load("TITLE.ADS", &introData);
+		interpADS.load("TITLE.ADS", &adsData);
 
-		interpADS.init(&introState, &introData);
+		interpADS.init(&adsState, &adsData);
 
 		parseFile("HOC.FNT");
 	} else if (getGameId() == GID_BEAMISH) {
-		interpADS.load("TITLE.ADS", &introData);
+		interpADS.load("TITLE.ADS", &adsData);
 
-		interpADS.init(&introState, &introData);
+		interpADS.init(&adsState, &adsData);
 
 		//parseFile("HOC.FNT");
 	}
@@ -819,12 +838,12 @@ Common::Error DgdsEngine::run() {
 		//		browse(_platform, _rmfName, this);
 
 		if (getGameId() == GID_DRAGON) {
-			if (!interpTTM.run(&title1State))
-				if (!interpTTM.run(&title2State))
-					if (!interpADS.run(&introState))
+			//if (!interpTTM.run(&title1State))
+				//if (!interpTTM.run(&title2State))
+					if (!interpADS.run(&adsState))
 						return Common::kNoError;
 		} else if (getGameId() == GID_CHINA || getGameId() == GID_BEAMISH) {
-			if (!interpADS.run(&introState))
+			if (!interpADS.run(&adsState))
 				return Common::kNoError;
 		}
 
