@@ -228,3 +228,8 @@ const char * const *OSystem_libretro::buildHelpDialogData() {
 Common::String OSystem_libretro::getSaveDir(void) {
 	return s_saveDir;
 }
+
+void OSystem_libretro::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	if (!s_systemDir.empty())
+		s.add("systemDir", new Common::FSDirectory(Common::FSNode(Common::Path(s_systemDir))), priority);
+}

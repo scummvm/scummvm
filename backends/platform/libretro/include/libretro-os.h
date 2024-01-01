@@ -166,7 +166,7 @@ public:
 	Common::Path getDefaultConfigFileName(void) override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	int testGame(const char *filedata, bool autodetect);
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override {}
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	const char * const *buildHelpDialogData() override;
 	Common::String getSaveDir(void);
 private:
