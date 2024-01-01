@@ -1666,6 +1666,8 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE");
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
+	REMOVE_DEFINE(_defines, "SCUMMVM_AVX2");
+	REMOVE_DEFINE(_defines, "SCUMMVM_SSE2");
 	REMOVE_DEFINE(_defines, "SCUMMVM_NEON");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
