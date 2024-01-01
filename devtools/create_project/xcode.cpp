@@ -1656,7 +1656,7 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "USE_NASM")  // Not supported on Mac
+		if (*i == "USE_NASM" || *i == "SCUMMVM_AVX2" || *i == "SCUMMVM_SSE2")
 			continue;
 
 		ADD_DEFINE(_defines, *i);
@@ -1666,8 +1666,6 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE");
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
-	REMOVE_DEFINE(_defines, "SCUMMVM_AVX2");
-	REMOVE_DEFINE(_defines, "SCUMMVM_SSE2");
 	REMOVE_DEFINE(_defines, "SCUMMVM_NEON");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
