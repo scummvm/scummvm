@@ -157,6 +157,8 @@ private:
 	Common::String cursorText();
 	Verb verb();
 	bool preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2);
+	void updateTriggers();
+	void callTrigger(Object *obj, HSQOBJECT trigger);
 
 public:
 	Graphics::Screen *_screen = nullptr;

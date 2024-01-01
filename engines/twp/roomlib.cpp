@@ -69,7 +69,19 @@ static SQInteger createLight(HSQUIRRELVM v) {
 }
 
 static SQInteger enableTrigger(HSQUIRRELVM v) {
-	warning("TODO: enableTrigger not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	bool enabled;
+	if (SQ_FAILED(sqget(v, 3, enabled)))
+		return sq_throwerror(v, "failed to get enabled");
+	if (enabled)
+		g_engine->_room->_triggers.push_back(obj);
+	else {
+		int index = find(g_engine->_room->_triggers, obj);
+		if (index != -1)
+			g_engine->_room->_triggers.remove_at(index);
+	}
 	return 0;
 }
 
@@ -211,7 +223,29 @@ static SQInteger masterRoomArray(HSQUIRRELVM v) {
 }
 
 static SQInteger removeTrigger(HSQUIRRELVM v) {
-	warning("TODO: removeTrigger not implemented");
+	if (sq_gettype(v, 2) == OT_CLOSURE) {
+		HSQOBJECT closure;
+		sq_resetobject(&closure);
+		if (SQ_FAILED(sqget(v, 3, closure)))
+			return sq_throwerror(v, "failed to get closure");
+		for (int i = 0; i < g_engine->_room->_triggers.size(); i++) {
+			Object *trigger = g_engine->_room->_triggers[i];
+			if ((trigger->_enter._unVal.pClosure == closure._unVal.pClosure) || (trigger->_leave._unVal.pClosure == closure._unVal.pClosure)) {
+				g_engine->_room->_triggers.remove_at(i);
+				return 0;
+			}
+		}
+	} else {
+		Object *obj = sqobj(v, 2);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object");
+		int i = find(g_engine->_room->_triggers, obj);
+		if (i != -1) {
+			debug("Remove room trigger: {obj.name}({obj.key})");
+			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
+		}
+		return 0;
+	}
 	return 0;
 }
 
