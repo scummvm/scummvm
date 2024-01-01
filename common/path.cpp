@@ -967,7 +967,7 @@ bool Path::compareComponents(bool (*comparator)(const String &x, const String &y
 Path Path::punycodeDecode() const {
 	Path tmp;
 	return reduceComponents<Path &>(
-		+[](Path &path, const String &in, bool last) -> Path & {
+		[](Path &path, const String &in, bool last) -> Path & {
 			// We encode the result as UTF-8
 			String out = punycode_hasprefix(in) ?
 				     punycode_decodefilename(in).encode() :
@@ -983,7 +983,7 @@ Path Path::punycodeDecode() const {
 Path Path::punycodeEncode() const {
 	Path tmp;
 	return reduceComponents<Path &>(
-		+[](Path &path, const String &in, bool last) -> Path & {
+		[](Path &path, const String &in, bool last) -> Path & {
 			// We decode the result as UTF-8
 			Common::String out = punycode_encodefilename(in.decode());
 			path.appendInPlace(out, kNoSeparator);
@@ -1023,7 +1023,7 @@ struct hasher {
 uint Path::hash() const {
 	hasher v = { 0x345678, 1000003 };
 	reduceComponents<hasher &>(
-		+[](hasher &value, const String &in, bool last) -> hasher & {
+		[](hasher &value, const String &in, bool last) -> hasher & {
 			uint hash = hashit(in.c_str());
 
 			value.result = (value.result + hash) * value.mult;
@@ -1036,7 +1036,7 @@ uint Path::hash() const {
 uint Path::hashIgnoreCase() const {
 	hasher v = { 0x345678, 1000003 };
 	reduceComponents<hasher &>(
-		+[](hasher &value, const String &in, bool last) -> hasher & {
+		[](hasher &value, const String &in, bool last) -> hasher & {
 			uint hash = hashit_lower(in);
 
 			value.result = (value.result + hash) * value.mult;
@@ -1049,7 +1049,7 @@ uint Path::hashIgnoreCase() const {
 uint Path::hashIgnoreCaseAndMac() const {
 	hasher v = { 0x345678, 1000003 };
 	reduceComponents<hasher &>(
-		+[](hasher &value, const String &in, bool last) -> hasher & {
+		[](hasher &value, const String &in, bool last) -> hasher & {
 			uint hash = hashit_lower(getIdentifierComponent(in));
 
 			value.result = (value.result + hash) * value.mult;
@@ -1061,21 +1061,21 @@ uint Path::hashIgnoreCaseAndMac() const {
 
 bool Path::matchPattern(const Path &pattern) const {
 	return compareComponents(
-		+[](const String &x, const String &y) {
+		[](const String &x, const String &y) {
 			return getIdentifierComponent(x).matchString(getIdentifierComponent(y), true);
 		}, pattern);
 }
 
 bool Path::equalsIgnoreCase(const Path &other) const {
 	return compareComponents(
-		+[](const String &x, const String &y) {
+		[](const String &x, const String &y) {
 			return x.equalsIgnoreCase(y);
 		}, other);
 }
 
 bool Path::equalsIgnoreCaseAndMac(const Path &other) const {
 	return compareComponents(
-		+[](const String &x, const String &y) {
+		[](const String &x, const String &y) {
 			return getIdentifierComponent(x).equalsIgnoreCase(getIdentifierComponent(y));
 		}, other);
 }
