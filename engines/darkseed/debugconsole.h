@@ -20,25 +20,24 @@
  *
  */
 
-#ifndef DARKSEED_CONSOLE_H
-#define DARKSEED_CONSOLE_H
+#ifndef DARKSEED_DEBUGCONSOLE_H
+#define DARKSEED_DEBUGCONSOLE_H
 
+#include "gui/debugger.h"
 #include "tostext.h"
-#include "nsp.h"
 
 namespace Darkseed {
 
-class Console  {
+class DebugConsole : public GUI::Debugger {
 private:
-	TosText *_tosText;
-	Nsp _font;
-
+	TosText *tosText;
+private:
+	bool Cmd_tostext(int argc, const char **argv);
 public:
-	Console(TosText *tostext);
-
-	void printTosText(int tosIndex);
+	DebugConsole(TosText *tostext);
+	~DebugConsole() override;
 };
 
 } // End of namespace Darkseed
 
-#endif // DARKSEED_CONSOLE_H
+#endif // DARKSEED_DEBUGCONSOLE_H

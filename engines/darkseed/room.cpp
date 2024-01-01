@@ -22,6 +22,26 @@
 #include "room.h"
 #include "darkseed.h"
 
+const static int roomDescriptionTextTbl[] = {
+	0, 138, 165, 165,
+	181, 243, 254, 292,
+	369, 397, 420, 429,
+	438, 447, 463, 473,
+	502, 520, 546, 564,
+	564, 564, 564, 0,
+	569, 574, 574, 574,
+	563, 0, 748, 739,
+	738, 723, 704, 612,
+	619, 0, 758, 0,
+	770, 777, 779, 790,
+	778, 801, 809, 0,
+	810, 811, 814, 821,
+	0, 828, 810, 810,
+	850, 860, 867, 874,
+	886, 651, 682, 701,
+	702, 701, 898, 899,
+	903};
+
 Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	room1.resize(8);
 	walkableLocationsMap.resize(16);
@@ -236,4 +256,11 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 	int t = (x - 69) / 5;
 
 	return (walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
+}
+
+void Darkseed::Room::printRoomDescriptionText() const {
+	int textId = roomDescriptionTextTbl[_roomNumber];
+	if (textId != 0) {
+		g_engine->_console->printTosText(textId);
+	}
 }

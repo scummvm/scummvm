@@ -2,6 +2,7 @@ MODULE := engines/darkseed
 
 MODULE_OBJS = \
 	darkseed.o \
+	debugconsole.o \
 	console.o \
 	anm.o \
 	img.o \
@@ -12,7 +13,8 @@ MODULE_OBJS = \
 	tostext.o \
 	metaengine.o \
 	room.o \
-	cursor.o
+	cursor.o \
+	player.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)

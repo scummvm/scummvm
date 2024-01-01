@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "darkseed/console.h"
 #include "darkseed/detection.h"
+#include "debugconsole.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "img.h"
@@ -63,6 +64,8 @@ Common::Error DarkseedEngine::run() {
 	_screen = new Graphics::Screen();
 	_tosText = new TosText();
 	_tosText->load();
+	_console = new Console(_tosText);
+
 	Img left00Img;
 	left00Img.load("art/left00.img");
 	Img left01Img;
@@ -76,7 +79,7 @@ Common::Error DarkseedEngine::run() {
 	lettersAnm.getImg(7, letterD1);
 
 	// Set the engine's debugger console
-	setDebugger(new Console(_tosText));
+	setDebugger(new DebugConsole(_tosText));
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -212,6 +215,7 @@ void DarkseedEngine::handlePointerAction() {
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
+	_room->printRoomDescriptionText();
 }
 
 } // End of namespace Darkseed
