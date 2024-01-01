@@ -236,6 +236,10 @@ bool View1::tick() {
 	// TODO: Think about all these and compare other implementations, e.g. if we should rather update anims in draw
 	// TODO: Consider wraparout
 	uint32 tick_time = g_events->currentMillis;
+	uint32 delta = tick_time - _lastMillis;
+	_nextFrameFlag -= delta;
+
+	_lastMillis = tick_time;
 	
 	return true;
 }
