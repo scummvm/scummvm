@@ -40,10 +40,11 @@ namespace TwinE {
 Collision::Collision(TwinEEngine *engine) : _engine(engine) {
 }
 
-bool Collision::checkZvOnZv(const IVec3 &processActor, int32 actorIdx1, int32 actorIdx2) const {
+bool Collision::checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const {
 	const ActorStruct *actor1 = _engine->_scene->getActor(actorIdx1);
 	const ActorStruct *actor2 = _engine->_scene->getActor(actorIdx2);
 
+	const IVec3 &processActor = actor1->_processActor;
 	const IVec3 &mins1 = processActor + actor1->_boundingBox.mins;
 	const IVec3 &maxs1 = processActor + actor1->_boundingBox.maxs;
 
@@ -182,7 +183,7 @@ void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 	}
 }
 
-void Collision::handlePushing(IVec3 &processActor, const IVec3 &oldPos, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *ptrobj, ActorStruct *ptrobjt) {
+void Collision::handlePushing(IVec3 &processActor, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *ptrobj, ActorStruct *ptrobjt) {
 	const int32 newAngle = _engine->_movements->getAngle(processActor, ptrobjt->posObj());
 
 	// protect against chain reactions
@@ -226,7 +227,7 @@ void Collision::handlePushing(IVec3 &processActor, const IVec3 &oldPos, const IV
 		}
 	} else if (!ptrobj->_dynamicFlags.bIsFalling) {
 		// refuse pos
-		processActor = oldPos;
+		processActor = ptrobj->_oldPos;
 	}
 }
 
@@ -276,9 +277,10 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 	return true;
 }
 
-int32 Collision::checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 actorIdx) {
+int32 Collision::checkObjCol(int32 actorIdx) {
 	ActorStruct *ptrobj = _engine->_scene->getActor(actorIdx);
 
+	IVec3 &processActor = ptrobj->_processActor;
 	IVec3 mins = processActor + ptrobj->_boundingBox.mins;
 	IVec3 maxs = processActor + ptrobj->_boundingBox.maxs;
 
@@ -301,7 +303,7 @@ int32 Collision::checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 act
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
 						ptrobj->_carryBy = a;
 						continue;
-					} else if (checkZvOnZv(processActor, actorIdx, a)) {
+					} else if (checkZvOnZv(actorIdx, a)) {
 						// I walk on a carrier
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
 						ptrobj->_carryBy = a;
@@ -309,11 +311,11 @@ int32 Collision::checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 act
 					}
 				} else {
 					// I step on someone
-					if (checkZvOnZv(processActor, actorIdx, a)) {
+					if (checkZvOnZv(actorIdx, a)) {
 						_engine->_actor->hitObj(actorIdx, a, 1, -1);
 					}
 				}
-				handlePushing(processActor, oldPos, minsTest, maxsTest, ptrobj, ptrobjt);
+				handlePushing(processActor, minsTest, maxsTest, ptrobj, ptrobjt);
 			}
 		}
 	}
@@ -333,7 +335,7 @@ int32 Collision::checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 act
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_body != -1 && !ptrobj->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
@@ -351,9 +353,11 @@ void Collision::setCollisionPos(const IVec3 &pos) {
 	_processCollision = pos;
 }
 
-int32 Collision::doCornerReajustTwinkel(const ActorStruct *actor, IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask) {
+uint32 Collision::doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
+	IVec3 &processActor = actor->_processActor;
+	const IVec3 &oldPos = actor->_oldPos;
 	ShapeType orgcol = _engine->_grid->worldColBrick(processActor);
-	int32 _col1 = 0;
+	uint32 _col1 = 0;
 
 	processActor.x += x;
 	processActor.y += y;
@@ -380,9 +384,11 @@ int32 Collision::doCornerReajustTwinkel(const ActorStruct *actor, IVec3 &process
 	return _col1;
 }
 
-int32 Collision::doCornerReajust(IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask) {
+uint32 Collision::doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
+	IVec3 &processActor = actor->_processActor;
+	const IVec3 &previousActor = actor->_oldPos;
 	ShapeType orgcol = _engine->_grid->worldColBrick(processActor);
-	int32 _col1 = 0;
+	uint32 _col1 = 0;
 
 	processActor.x += x;
 	processActor.y += y;
@@ -394,12 +400,12 @@ int32 Collision::doCornerReajust(IVec3 &processActor, const IVec3 &oldPos, int32
 
 		if (col == ShapeType::kSolid) {
 			_col1 |= damageMask;
-			if (_engine->_grid->worldColBrick(processActor.x, processActor.y, oldPos.z + z) == ShapeType::kSolid) {
-				if (_engine->_grid->worldColBrick(x + oldPos.x, processActor.y, processActor.z) != ShapeType::kSolid) {
-					_processCollision.x = oldPos.x;
+			if (_engine->_grid->worldColBrick(processActor.x, processActor.y, previousActor.z + z) == ShapeType::kSolid) {
+				if (_engine->_grid->worldColBrick(x + previousActor.x, processActor.y, processActor.z) != ShapeType::kSolid) {
+					_processCollision.x = previousActor.x;
 				}
 			} else {
-				_processCollision.z = oldPos.z;
+				_processCollision.z = previousActor.z;
 			}
 		}
 	}
@@ -408,9 +414,10 @@ int32 Collision::doCornerReajust(IVec3 &processActor, const IVec3 &oldPos, int32
 	return _col1;
 }
 
-void Collision::receptionObj(const IVec3 &processActor, int actorIdx) {
+void Collision::receptionObj(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (IS_HERO(actorIdx)) {
+		const IVec3 &processActor = actor->_processActor;
 		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
 
 		if (fall >= SIZE_BRICK_Y * 8) {
