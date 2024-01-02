@@ -325,9 +325,8 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Run the engine
 	Common::Error result = engine->run();
 
-	// Make sure we do not return to the launcher if this is not possible.
-	if (!engine->hasFeature(Engine::kSupportsReturnToLauncher))
-		ConfMan.setBool("gui_return_to_launcher_at_exit", false, Common::ConfigManager::kTransientDomain);
+	// Make sure we return to the launcher if this is possible.
+	ConfMan.setBool("gui_return_to_launcher_at_exit", engine->hasFeature(Engine::kSupportsReturnToLauncher), Common::ConfigManager::kTransientDomain);
 
 	// Inform backend that the engine finished
 	system.engineDone();
