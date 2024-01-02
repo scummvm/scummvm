@@ -30,6 +30,8 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 
+protected:
+	Common::Path getDefaultConfigFileName() override;
 };
 
 #endif

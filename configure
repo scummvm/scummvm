@@ -6895,6 +6895,9 @@ case $_host in
 		;;
 	ds)
 		;;
+	*-emscripten)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
 	openpandora)
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"../plugins\\\""
