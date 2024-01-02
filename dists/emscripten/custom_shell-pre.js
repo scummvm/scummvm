@@ -1,6 +1,5 @@
 /*global Module*/
 Module["arguments"] = [];
-Module["arguments"].push("--config=/local/scummvm.ini");
 
 // Add all parameters passed via the fragment identifier
 if (window.location.hash.length > 0) {

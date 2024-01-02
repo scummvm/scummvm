@@ -2,6 +2,7 @@
 # Special generic target for emscripten static file hosting bundle
 dist-emscripten: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p ./build-emscripten/data
+	mkdir -p ./build-emscripten/data/games
 	mkdir -p ./build-emscripten/doc
 	cp $(EXECUTABLE) ./build-emscripten/
 	cp $(EXECUTABLE:html=wasm) ./build-emscripten/
@@ -21,12 +22,11 @@ ifdef DIST_FILES_SHADERS
 	mkdir -p ./build-emscripten/data/shaders
 	cp $(DIST_FILES_SHADERS) ./build-emscripten/data/shaders
 endif
-	$(EMSDK_NODE) "$(srcdir)/dists/emscripten/build-make_http_index.js" ./build-emscripten/data
 ifeq ($(DYNAMIC_MODULES),1)
-	mkdir -p ./build-emscripten/plugins/
-	@for i in $(PLUGINS); do cp $$i ./build-emscripten/plugins; done
-	$(EMSDK_NODE) "$(srcdir)/dists/emscripten/build-make_http_index.js" ./build-emscripten/plugins
+	mkdir -p ./build-emscripten/data/plugins
+	@for i in $(PLUGINS); do cp $$i ./build-emscripten/data/plugins; done
 endif
+	$(EMSDK_NODE) "$(srcdir)/dists/emscripten/build-make_http_index.js" ./build-emscripten/data
 	cp "$(srcdir)/dists/emscripten/assets/"* ./build-emscripten/
 	cp "$(srcdir)/gui/themes/common-svg/logo.svg" ./build-emscripten/
 	cp "$(srcdir)/icons/scummvm.ico" ./build-emscripten/favicon.ico

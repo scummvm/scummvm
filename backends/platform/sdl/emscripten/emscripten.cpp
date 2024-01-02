@@ -23,9 +23,11 @@
 
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #include <emscripten.h>
 
 #include "backends/platform/sdl/emscripten/emscripten.h"
+#include "common/file.h"
 
 // Inline JavaScript, see https://emscripten.org/docs/api_reference/emscripten.h.html#inline-assembly-javascript for details
 EM_JS(bool, isFullscreen, (), {
@@ -66,6 +68,10 @@ void OSystem_Emscripten::setFeatureState(Feature f, bool enable) {
 	} else {
 		OSystem_POSIX::setFeatureState(f, enable);
 	}
+}
+
+Common::Path OSystem_Emscripten::getDefaultConfigFileName() {
+	return Common::Path(Common::String::format("%s/scummvm.ini", getenv("HOME")));
 }
 
 #endif
