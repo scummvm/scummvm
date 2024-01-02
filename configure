@@ -3732,8 +3732,6 @@ if test -n "$_host"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
 				#append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
-				append_var CXXFLAGS "-I$($_host_alias-gcc -print-sysroot)/opt/mintlib-dlmalloc/include"
-				append_var LDFLAGS  "-L$($_host_alias-gcc -print-sysroot)/opt/mintlib-dlmalloc/lib/$($_host_alias-gcc $LDFLAGS -print-multi-directory)"
 			fi
 
 			_seq_midi=no
