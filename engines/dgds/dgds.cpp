@@ -276,7 +276,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			{
 				Common::DumpFile out;
 				int64 start = stream->pos();
-				out.open(Common::Path(Common::String::format("/tmp/dgds_%s_%02d_%.3s.dump", name, chunkno, chunk._idStr)));
+				out.open(Common::Path(Common::String::format("tmp/dgds_%s_%02d_%.3s.dump", name, chunkno, chunk._idStr)));
 				out.writeStream(stream);
 				out.close();
 				stream->seek(start);
