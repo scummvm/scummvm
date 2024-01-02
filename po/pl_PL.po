@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-01 21:03+0000\n"
-"PO-Revision-Date: 2024-01-02 09:56+0000\n"
+"PO-Revision-Date: 2024-01-02 10:09+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -2104,7 +2104,7 @@ msgstr "Ikony:"
 #: gui/options.cpp:2454 gui/options.cpp:2464
 msgctxt "path"
 msgid "Default"
-msgstr "Domyślny"
+msgstr "Domyślna"
 
 #: gui/options.cpp:2461
 msgid "DLC Path:"
@@ -2202,7 +2202,7 @@ msgstr "Język interfejsu ScummVM"
 
 #: gui/options.cpp:2598
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Przełącza język interfejsu ScummVM na język gry"
+msgstr "Przełącz język interfejsu ScummVM na język gry"
 
 #: gui/options.cpp:2599
 msgid ""
@@ -2245,7 +2245,7 @@ msgstr "Autozapis:"
 
 #: gui/options.cpp:2640
 msgid "Random seed:"
-msgstr "Generuj liczby losowe:"
+msgstr "Ziarno generatora:"
 
 #: gui/options.cpp:2640
 msgid "Seed for initializing all random number generators"
@@ -2765,7 +2765,7 @@ msgstr "Grafika wyłączona"
 
 #: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
-msgstr "Standardowy renderer"
+msgstr "Standardowy"
 
 #: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1017
 msgid "Standard"
@@ -2773,7 +2773,7 @@ msgstr "Standardowy"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
-msgstr "Wygładzany renderer"
+msgstr "Wygładzony"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
