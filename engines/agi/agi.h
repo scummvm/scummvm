@@ -935,14 +935,8 @@ public:
 
 public:
 	void decrypt(uint8 *mem, int len);
-	void releaseSprites();
 	uint16 processAGIEvents();
-	int viewPictures();
 	int runGame();
-	int getAppDir(char *appDir, unsigned int size);
-
-	int setupV2Game(int ver);
-	int setupV3Game(int ver);
 
 	void newRoom(int16 newRoomNr);
 	void resetControllers();
@@ -957,7 +951,6 @@ public:
 
 	// Objects
 public:
-	int showObjects();
 	int loadObjects(const char *fname);
 	int loadObjects(Common::File &fp);
 	const char *objectName(uint16 objectNr);
@@ -1005,8 +998,6 @@ public:
 
 	// View
 private:
-
-	void lSetLoop(ScreenObjEntry *screenObj, int16 loopNr);
 	void updateView(ScreenObjEntry *screenObj);
 
 public:
@@ -1027,8 +1018,6 @@ private:
 	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
 
 public:
-	void addToPic(int, int, int, int, int, int, int);
-	void drawObj(int);
 	bool isEgoView(const ScreenObjEntry *screenObj);
 
 	// Motion
@@ -1058,14 +1047,12 @@ public:
 
 	// Keyboard
 	int doPollKeyboard();
-	void cleanKeyboard();
 
 	bool handleMouseClicks(uint16 &key);
 	bool handleController(uint16 key);
 
 	bool showPredictiveDialog();
 
-	uint16 agiGetKeypress();
 	int waitKey();
 	int waitAnyKey();
 

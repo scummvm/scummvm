@@ -232,8 +232,6 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			// Manhunter 2 uses such pictures
 			data = compBuffer;
 			agid->flags |= RES_PICTURE_V3_NIBBLE_PARM;
-			//data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
-			// compBuffer has been freed inside convertV3Pic()
 		} else if (agid->len == agid->clen) {
 			// do not decompress
 			data = compBuffer;
