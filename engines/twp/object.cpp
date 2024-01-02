@@ -633,7 +633,7 @@ void Object::execVerb() {
 		debug("actorArrived: exec sentence");
 		if (!noun1->inInventory()) {
 			// Object became untouchable as we were walking there
-			if (!noun1->_touchable) {
+			if (!noun1->touchable()) {
 				debug("actorArrived: noun1 untouchable");
 				_exec.enabled = false;
 				return;
@@ -651,7 +651,7 @@ void Object::execVerb() {
 			}
 		}
 		if (noun2 && !noun2->inInventory()) {
-			if (!noun2->_touchable) {
+			if (!noun2->touchable()) {
 				// Object became untouchable as we were walking there.
 				debug("actorArrived: noun2 untouchable");
 				_exec.enabled = false;

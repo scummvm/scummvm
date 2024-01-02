@@ -152,7 +152,8 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		Math::Matrix4 t;
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 		g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), yellow, t);
-		Math::Vector2d scrPos = g_engine->_cursor.pos;
+
+		Math::Vector2d scrPos = g_engine->winToScreen(g_engine->_cursor.pos);
 		Math::Vector2d roomPos = g_engine->screenToRoom(scrPos);
 		Math::Vector2d p = fixPos(roomPos);
 		t = Math::Matrix4();
@@ -164,11 +165,13 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		Common::Array<Vertex> vertices;
 		for (int i = 0; i < path.size(); i++) {
 			Vertex v;
-			v.pos = g_engine->roomToScreen(path[i]);;
+			v.pos = g_engine->roomToScreen(path[i]);
 			v.color = yellow;
 			vertices.push_back(v);
 		}
-		g_engine->getGfx().drawLines(&vertices[0], vertices.size());
+		if (vertices.size() > 0) {
+			g_engine->getGfx().drawLines(&vertices[0], vertices.size());
+		}
 	}
 }
 
