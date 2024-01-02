@@ -14,7 +14,8 @@ MODULE_OBJS = \
 	metaengine.o \
 	room.o \
 	cursor.o \
-	player.o
+	player.o \
+	sprites.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)

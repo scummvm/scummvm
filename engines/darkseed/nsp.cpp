@@ -65,6 +65,8 @@ bool Darkseed::Nsp::load(const Common::String &filename) {
 	file.close();
 	if (ret) {
 		debug("Loaded %s", filename.c_str());
+		Common::String obtFilename = filename.substr(0, filename.size() - 4) + ".obt";
+		ret = loadObt(obtFilename);
 	}
 	return ret;
 }
@@ -89,4 +91,40 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 
 const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
 	return frames[index];
+}
+
+bool Darkseed::Nsp::loadObt(const Common::String &filename) {
+	Common::File file;
+	if(!file.open(filename)) {
+		return false;
+	}
+
+	animations.resize(20);
+	for (int i = 0; i < 20; i++) {
+		animations[i].numFrames = file.readByte();
+
+		for (int j = 0; j < 20; j++) {
+			file.readByte();
+			int msb = file.readUint16BE();
+			animations[i].deltaX.push_back(msb);
+			file.readByte();
+			msb = file.readUint16BE();
+			animations[i].deltaY.push_back(msb);
+			animations[i].frameNo.push_back(file.readByte());
+			animations[i].frameDuration.push_back(file.readByte());
+		}
+	}
+
+	file.close();
+
+	debug("Loaded %s", filename.c_str());
+	return true;
+}
+
+Darkseed::Obt::Obt() {
+	numFrames = 0;
+	deltaX.reserve(20);
+	deltaY.reserve(20);
+	frameNo.reserve(20);
+	frameDuration.reserve(20);
 }

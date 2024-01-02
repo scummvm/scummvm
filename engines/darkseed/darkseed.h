@@ -40,6 +40,7 @@
 #include "nsp.h"
 #include "player.h"
 #include "room.h"
+#include "sprites.h"
 #include "tostext.h"
 
 namespace Darkseed {
@@ -72,7 +73,11 @@ public:
 	Console *_console = nullptr;
 	Room *_room = nullptr;
 	ActionMode _actionMode = PointerAction;
-	Player _player;
+	Player *_player = nullptr;
+	Sprites _sprites;
+
+	int _currentDay = 1;
+	int _currentTimeInSeconds = 0x7e8e;
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -123,6 +128,8 @@ public:
 
 	void fadeIn();
 	void fadeOut();
+
+	void updateDisplay();
 private:
 	void fadeInner(int startValue, int endValue, int increment);
 	void gameloop();

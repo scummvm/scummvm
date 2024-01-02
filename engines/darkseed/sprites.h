@@ -19,51 +19,36 @@
 *
 */
 
-#ifndef DARKSEED_NSP_H
-#define DARKSEED_NSP_H
+#ifndef DARKSEED_SPRITES_H
+#define DARKSEED_SPRITES_H
 
-#include "common/array.h"
 #include "common/scummsys.h"
-#include "common/file.h"
+#include "nsp.h"
 
 namespace Darkseed {
 
-class Sprite {
-public:
-	uint16 width;
-	uint16 height;
-	Common::Array<uint8> pixels;
-
-public:
-	Sprite(uint16 width, uint16 height);
-	bool loadData(Common::SeekableReadStream &readStream);
-	void draw(int x, int y) const;
+struct SpriteDrawInstruction {
+	uint16 destX = 0;
+	uint16 destY = 0;
+	uint16 srcW = 0;
+	uint16 srcH = 0;
+	const Sprite *sprite = nullptr;
+	uint8 order = 0;
+	uint8 destW = 0;
+	uint8 destH = 0;
+	uint8 unk10 = 0;
 };
 
-class Obt {
-public:
-	uint8 numFrames;
-	Common::Array<uint32> deltaX;
-	Common::Array<uint32> deltaY;
-	Common::Array<uint8> frameNo;
-	Common::Array<uint8> frameDuration;
-	Obt();
-};
-
-class Nsp {
+class Sprites {
 private:
-	Common::Array<Sprite> frames;
-	Common::Array<Obt> animations;
-
+	Common::Array<SpriteDrawInstruction> spriteDrawList;
 public:
-	bool load(const Common::String &filename);
-	const Sprite &getSpriteAt(int index);
+	Sprites();
+	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, uint8 unk10);
+	void clearSpriteDrawList();
 
-private:
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadObt(const Common::String &filename);
+	void drawSprites();
 };
 
 } // namespace Darkseed
-
-#endif // DARKSEED_NSP_H
+#endif // DARKSEED_SPRITES_H
