@@ -2439,15 +2439,15 @@ int AgiEngine::runLogic(int16 logicNr) {
 			_game.execStack.pop_back();
 			return 1;
 		default:
+			if (!_opCodes[op].functionPtr) {
+				error("Illegal opcode %x in logic %d, ip %d", op, state->curLogicNr, state->_curLogic->cIP);
+			}
+
 			curParameterSize = _opCodes[op].parameterSize;
 			memmove(p, state->_curLogic->data + state->_curLogic->cIP, curParameterSize);
 			memset(p + curParameterSize, 0, CMD_BSIZE - curParameterSize);
 
 			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, _opCodes[op].name, p[0], p[1], p[2]);
-
-			if (!_opCodes[op].functionPtr) {
-				error("Illegal opcode %x in logic %d, ip %d", op, state->curLogicNr, state->_curLogic->cIP);
-			}
 
 			_opCodes[op].functionPtr(&_game, this, p);
 			state->_curLogic->cIP += curParameterSize;

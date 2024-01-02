@@ -366,8 +366,6 @@ void AgiEngine::setupOpCodes(uint16 version) {
 	const AgiOpCodeDefinitionEntry *opCodesCondTable = nullptr;
 	uint16 opCodesTableSize = 0;
 	uint16 opCodesCondTableSize = 0;
-	uint16 opCodesTableMaxSize = sizeof(_opCodes) / sizeof(AgiOpCodeEntry);
-	uint16 opCodesCondTableMaxSize = sizeof(_opCodesCond) / sizeof(AgiOpCodeEntry);
 
 	debug(0, "Setting up for version 0x%04X", version);
 
@@ -443,16 +441,18 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		_opCodes[182].parameters = "vv";
 
 	// add invalid entries for every opcode, that is not defined at all
-	for (int opCodeNr = opCodesTableSize; opCodeNr < opCodesTableMaxSize; opCodeNr++) {
+	for (int opCodeNr = opCodesTableSize; opCodeNr < ARRAYSIZE(_opCodes); opCodeNr++) {
 		_opCodes[opCodeNr].name = "illegal";
 		_opCodes[opCodeNr].parameters = "";
 		_opCodes[opCodeNr].functionPtr = nullptr;
+		_opCodes[opCodeNr].parameterSize = 0;
 	}
 
-	for (int opCodeNr = opCodesCondTableSize; opCodeNr < opCodesCondTableMaxSize; opCodeNr++) {
+	for (int opCodeNr = opCodesCondTableSize; opCodeNr < ARRAYSIZE(_opCodesCond); opCodeNr++) {
 		_opCodesCond[opCodeNr].name = "illegal";
 		_opCodesCond[opCodeNr].parameters = "";
 		_opCodesCond[opCodeNr].functionPtr = nullptr;
+		_opCodesCond[opCodeNr].parameterSize = 0;
 	}
 
 	// calculate parameter size
