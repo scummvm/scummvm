@@ -910,6 +910,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE(%i)", (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
+	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
@@ -1197,6 +1198,7 @@ int32 ScriptLife::lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE_OBJ(%i, %i)", (int)otherActorIdx, (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
+	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
@@ -1227,6 +1229,8 @@ int32 ScriptLife::lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const InventoryItems item = (InventoryItems)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FOUND_OBJECT(%i)", (int)item);
 
+	ScopedEngineFreeze scopedFreeze(engine);
+	engine->testRestoreModeSVGA(true);
 	engine->_gameState->doFoundObj(item);
 	engine->_redraw->redrawEngineActions(true);
 
@@ -1400,14 +1404,14 @@ int32 ScriptLife::lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int zoomScreen = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ZOOM(%i)", zoomScreen);
 
-	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->_cfgfile.SceZoom) {
+	if (zoomScreen && !engine->_redraw->_flagMCGA && engine->_cfgfile.SceZoom) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
-		engine->initSceneryView();
+		engine->extInitMcga();
 		engine->_screens->setBackPal();
 		engine->_screens->_fadePalette = true;
-	} else if (!zoomScreen && engine->_redraw->_inSceneryView) {
+	} else if (!zoomScreen && engine->_redraw->_flagMCGA) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
-		engine->exitSceneryView();
+		engine->extInitSvga();
 		engine->_screens->setBackPal();
 		engine->_screens->_fadePalette = true;
 		engine->_redraw->_firstTime = true;
@@ -1573,6 +1577,7 @@ int32 ScriptLife::lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ASK_CHOICE(%i)", (int)choiceIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
+	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
@@ -1593,6 +1598,7 @@ int32 ScriptLife::lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BIG_MESSAGE(%i)", (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
+	engine->testRestoreModeSVGA(true);
 	engine->_text->bigWinDial();
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
@@ -1855,7 +1861,7 @@ int32 ScriptLife::lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ASK_CHOICE_OBJ(%i, %i)", (int)otherActorIdx, (int)choiceIdx);
 
 	ScopedEngineFreeze freeze(engine);
-	engine->exitSceneryView();
+	engine->testRestoreModeSVGA(true);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
@@ -1894,6 +1900,7 @@ int32 ScriptLife::lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE_SENDELL()");
 	ScopedEngineFreeze scoped(engine);
+	engine->testRestoreModeSVGA(true);
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBA);
 	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
 	engine->_text->bigWinDial();

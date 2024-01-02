@@ -429,6 +429,10 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
+		act = new Action("SCENERYZOOM", _("Scenery Zoom"));
+		act->setCustomEngineActionEvent(TwinEActionType::SceneryZoom);
+		gameKeyMap->addAction(act);
+
 		act = new Action("ESCAPE", _("Escape"));
 		act->setCustomEngineActionEvent(TwinEActionType::Escape);
 		act->addDefaultInputMapping("ESCAPE");

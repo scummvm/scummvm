@@ -324,7 +324,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
-	_engine->exitSceneryView();
+	_engine->extInitSvga();
 	// Hide hero in scene
 	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
@@ -498,7 +498,7 @@ void GameState::processGameChoices(TextId choiceIdx) {
 void GameState::processGameoverAnimation() {
 	const int32 tmpLbaTime = _engine->timerRef;
 
-	_engine->exitSceneryView();
+	_engine->testRestoreModeSVGA(false);
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);

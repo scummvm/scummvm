@@ -551,6 +551,7 @@ void Scene::changeScene() {
 	}
 
 	if (_holomapTrajectory != -1) {
+		_engine->testRestoreModeSVGA(false);
 		_engine->_holomap->drawHolomapTrajectory(_holomapTrajectory);
 		_holomapTrajectory = -1;
 	}
@@ -772,7 +773,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 			case ZoneType::kText:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
 					ScopedEngineFreeze scopedFreeze(_engine);
-					_engine->exitSceneryView();
+					_engine->testRestoreModeSVGA(true);
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive((TextId)zone->num);

@@ -606,12 +606,21 @@ void TwinEEngine::playIntro() {
 	}
 }
 
-void TwinEEngine::initSceneryView() {
-	_redraw->_inSceneryView = true;
+void TwinEEngine::extInitMcga() {
+	_redraw->_flagMCGA = true;
 }
 
-void TwinEEngine::exitSceneryView() {
-	_redraw->_inSceneryView = false;
+void TwinEEngine::extInitSvga() {
+	_redraw->_flagMCGA = false;
+}
+
+void TwinEEngine::testRestoreModeSVGA(bool redraw) {
+	if (_redraw->_flagMCGA) {
+		extInitSvga();
+		if (redraw) {
+			_redraw->redrawEngineActions(redraw);
+		}
+	}
 }
 
 void TwinEEngine::initAll() {
@@ -625,7 +634,7 @@ void TwinEEngine::initAll() {
 
 	_resources->initResources();
 
-	exitSceneryView();
+	extInitSvga();
 
 	_screens->clearScreen();
 
@@ -700,7 +709,7 @@ void TwinEEngine::processBonusList() {
 
 void TwinEEngine::processInventoryAction() {
 	ScopedEngineFreeze scoped(this);
-	exitSceneryView();
+	extInitSvga();
 	_menu->processInventoryMenu();
 
 	switch (_loopInventoryItem) {
@@ -801,7 +810,7 @@ int32 TwinEEngine::toSeconds(int x) const {
 
 void TwinEEngine::processOptionsMenu() {
 	ScopedEngineFreeze scoped(this);
-	exitSceneryView();
+	extInitSvga();
 	_sound->pauseSamples();
 	_menu->inGameOptionsMenu();
 	_scene->playSceneMusic();
@@ -848,7 +857,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
 			ScopedEngineFreeze scopedFreeze(this);
-			exitSceneryView();
+			extInitSvga();
 			const int giveUp = _menu->giveupMenu();
 			if (giveUp == kQuitEngine) {
 				return false;
@@ -899,6 +908,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
 			ScopedEngineFreeze scopedFreeze(this);
+			testRestoreModeSVGA(true);
 			_menu->processBehaviourMenu(behaviourMenu);
 			_redraw->redrawEngineActions(true);
 		}
@@ -926,6 +936,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
+			ScopedEngineFreeze freeze(this);
+			testRestoreModeSVGA(true);
 			_holomap->holoMap();
 			_screens->_fadePalette = true;
 			_redraw->redrawEngineActions(true);
@@ -936,7 +948,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			ScopedEngineFreeze scopedFreeze(this, true);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
-			if (_redraw->_inSceneryView) {
+			if (_redraw->_flagMCGA) {
 				_text->drawText(_redraw->_sceneryViewX + 5, _redraw->_sceneryViewY, PauseString);
 				_redraw->zoomScreenScale();
 			} else {
@@ -953,6 +965,15 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
 			_redraw->redrawEngineActions(true);
+		}
+
+		if (_input->toggleActionIfActive(TwinEActionType::SceneryZoom)) {
+			_redraw->_flagMCGA ^= true;
+			if (_redraw->_flagMCGA) {
+				extInitMcga();
+			} else {
+				extInitSvga();
+			}
 		}
 	}
 

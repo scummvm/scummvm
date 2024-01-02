@@ -332,7 +332,6 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		return;
 	}
 
-	_engine->exitSceneryView();
 	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
 
@@ -510,12 +509,9 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 }
 
 void Holomap::holoMap() {
-	ScopedEngineFreeze freeze(_engine);
-
 	const int32 alphaLightTmp = _engine->_scene->_alphaLight;
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
 
-	_engine->exitSceneryView();
 	_engine->_gameState->init3DGame();
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
