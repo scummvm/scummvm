@@ -813,8 +813,8 @@ Common::Error DgdsEngine::run() {
 		//		browse(_platform, _rmfName, this);
 
 		if (getGameId() == GID_DRAGON) {
-			//if (!interpTTM.run(&title1State))
-				//if (!interpTTM.run(&title2State))
+			if (!interpTTM.run(&title1State))
+				if (!interpTTM.run(&title2State))
 					if (!interpADS.run(&adsState))
 						return Common::kNoError;
 		} else if (getGameId() == GID_CHINA || getGameId() == GID_BEAMISH) {
