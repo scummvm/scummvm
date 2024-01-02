@@ -65,6 +65,7 @@ Common::Error DarkseedEngine::run() {
 	_tosText = new TosText();
 	_tosText->load();
 	_console = new Console(_tosText);
+	_player = new Player();
 
 	Img left00Img;
 	left00Img.load("art/left00.img");
@@ -111,6 +112,11 @@ Common::Error DarkseedEngine::run() {
 	_cursor.updatePosition(0x140,0xaf);
 	_cursor.setCursorType(Pointer);
 
+	_player->_position.x = 0x87;
+	_player->_position.y = 0x5b;
+	_player->_direction = 1;
+	_player->_frameIdx = 0;
+
 //	Pic room;
 //	room.load("bed1a.pic");
 //	_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
@@ -119,7 +125,7 @@ Common::Error DarkseedEngine::run() {
 //	roomPal.load("room0.pal");
 
 	Nsp playerNsp;
-	playerNsp.load("cbase.nsp"); //"cplayer.nsp");
+	playerNsp.load("bedsleep.nsp"); //"cplayer.nsp");
 //	const Sprite &s = playerNsp.getSpriteAt(11);
 //
 //	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
@@ -129,6 +135,7 @@ Common::Error DarkseedEngine::run() {
 	gameloop();
 
 	delete _room;
+	delete _player;
 
 	return Common::kNoError;
 }
@@ -158,9 +165,11 @@ void DarkseedEngine::gameloop() {
 	while (!shouldQuit()) {
 		updateEvents();
 		handleInput();
+		updateDisplay();
 		_room->update();
 		_frame.draw();
 		_room->draw();
+		_sprites.drawSprites();
 		_cursor.draw();
 		_screen->makeAllDirty();
 		_screen->update();
@@ -216,6 +225,20 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
 	_room->printRoomDescriptionText();
+}
+
+void DarkseedEngine::updateDisplay() {
+	const Sprite &playerSprite = _player->getSprite(_player->_frameIdx);
+	uint8 scaledWidth = playerSprite.width;
+	uint8 scaledHeight = playerSprite.height;
+
+	_sprites.addSpriteToDrawList(
+		_player->_position.x - (playerSprite.width / 2),
+		_player->_position.y ,//- scaledHeight,
+		&playerSprite,
+		240 - _player->_position.y,
+		scaledWidth,
+		scaledHeight, 0);
 }
 
 } // End of namespace Darkseed

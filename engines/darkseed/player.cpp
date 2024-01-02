@@ -21,3 +21,12 @@
 
 #include "player.h"
 
+Darkseed::Player::Player() {
+	_cPlayerSprites.load("cplayer.nsp");
+	_gPlayerSprites.load("gplayer.nsp");
+}
+
+const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
+	// TODO switch sprite based on over or underworld.
+	return _cPlayerSprites.getSpriteAt(frameNo);
+}

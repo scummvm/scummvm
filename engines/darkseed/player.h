@@ -23,16 +23,23 @@
 #define DARKSEED_PLAYER_H
 
 #include "common/rect.h"
+#include "nsp.h"
 
 namespace Darkseed {
 
 class Player {
+private:
+	Nsp _cPlayerSprites;
+	Nsp _gPlayerSprites;
+
 public:
 	int _frameIdx = 0;
 	int _direction = 0;
 	Common::Point _position;
 
 public:
+	Player();
+	const Sprite &getSprite(int frameNo);
 	void updateSprite();
 	void draw();
 };
