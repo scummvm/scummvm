@@ -180,9 +180,9 @@ void Image::loadBitmap(Common::String filename, int number) {
 			} else {
 				if (number)
 					stream->skip(4 * number);
-				uint32 tileOffset = stream->readUint32LE();
+				uint32 vqtOffset = stream->readUint32LE();
 				// TODO: seek stream to end for tidiness?
-				fileStream->seek(vqtpos + tileOffset);
+				fileStream->seek(vqtpos + vqtOffset);
 				loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
 			}
 		}
