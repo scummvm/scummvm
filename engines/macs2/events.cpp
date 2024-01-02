@@ -64,7 +64,10 @@ void Events::runGame() {
 		if (_views.empty())
 			break;
 
+		
 		g_system->delayMillis(10);
+		// TODO: Consider if this is the best place
+		currentMillis = g_system->getMillis();
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			tick();
@@ -100,8 +103,6 @@ void Events::processEvent(Common::Event &ev) {
 	default:
 		break;
 	}
-	// TODO: Consider if this is the best place
-	currentMillis = g_system->getMillis();
 }
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews) {

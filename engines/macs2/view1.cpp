@@ -96,10 +96,20 @@ namespace Macs2 {
 	}
 
 	void View1::renderString(uint16 x, uint16 y, Common::String s) {
+		Graphics::ManagedSurface surf = getSurface();
 		uint16 currentX = x;
 		uint16 currentY = y;
 		for (auto iter = s.begin(); iter != s.end(); iter++) {
-			
+			GlyphData data;
+			bool found = g_engine->FindGlyph(*iter, data);
+			if (found) {
+				DrawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf);
+				currentX += data.Width + 1;
+				// TODO: Add reference to where this is defined
+			} else {
+				// TODO: Different character for not found?
+				currentX += 10;
+			}
 		}
 	}
 
@@ -247,6 +257,7 @@ bool View1::tick() {
 		}
 		// TODO: Handle cleaner
 		_nextFrameFlag = _frameDelayFlag;
+		// TODO: Check if this is necessary
 		redraw();
 	}
 
