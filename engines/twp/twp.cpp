@@ -57,8 +57,8 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	sq_resetobject(&_defaultObj);
 	_screenScene.setName("Screen");
-	_scene.addChild(&_walkboxNode);
-	_screenScene.addChild(&_pathNode);
+	// _scene.addChild(&_walkboxNode);
+	// _screenScene.addChild(&_pathNode);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
@@ -69,7 +69,7 @@ TwpEngine::~TwpEngine() {
 	delete _screen;
 }
 
-static Math::Vector2d winToScreen(Math::Vector2d pos) {
+Math::Vector2d TwpEngine::winToScreen(Math::Vector2d pos) {
 	return Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 }
 
@@ -80,7 +80,6 @@ Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
 
 Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
 	Math::Vector2d screenSize = _room->getScreenSize();
-	pos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 	return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
 }
 
@@ -154,9 +153,9 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	debug("noun1.inInventory: {noun1.inInventory} and noun1.touchable: {noun1.touchable} nowalk: {verbNoWalkTo(verbId, noun1)}");
 
 	// test if object became untouchable
-	if (!noun1->inInventory() && !noun1->_touchable)
+	if (!noun1->inInventory() && !noun1->touchable())
 		return false;
-	if (noun2 && (!noun2->inInventory()) && (!noun2->_touchable))
+	if (noun2 && (!noun2->inInventory()) && (!noun2->touchable()))
 		return false;
 
 	if (noun1->inInventory()) {
@@ -268,7 +267,7 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 		Layer *layer = g_engine->_room->_layers[i];
 		for (int j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
-			if (obj != g_engine->_actor && (obj->_touchable || obj->inInventory()) && obj->_node->isVisible() && obj->_objType == otNone && obj->contains(pos))
+			if ((obj != g_engine->_actor) && (obj->touchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
 				if (func(obj))
 					return;
 		}
@@ -356,6 +355,8 @@ void TwpEngine::update(float elapsed) {
 			_sentence.setVisible(_hud.isVisible());
 			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
 			//_actorSwitcher.visible = _dialog.state == DialogState.None and self.cutscene.isNil;
+			//Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
+			//_sentence.setText(cursortxt.c_str());
 			_sentence.setText(cursorText());
 
 			// call clickedAt if any button down
@@ -382,7 +383,7 @@ void TwpEngine::update(float elapsed) {
 		}
 
 		if (_cursor.leftDown || _cursor.rightDown)
-			clickedAt(_cursor.pos);
+			clickedAt(winToScreen(_cursor.pos));
 	}
 
 	_dialog.update(elapsed);
@@ -888,7 +889,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	for (int i = 0; i < room->_layers.size(); i++) {
 		Layer *layer = room->_layers[i];
 		for (int j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[i];
+			Object *obj = layer->_objects[j];
 			if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
 		}
@@ -941,8 +942,8 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 		// delete all temporary objects
 		for (int i = 0; i < _room->_layers.size(); i++) {
 			Layer *layer = _room->_layers[i];
-			for (int j = 0; j < _room->_layers.size(); j++) {
-				Object *obj = layer->_objects[i];
+			for (int j = 0; j < layer->_objects.size(); j++) {
+				Object *obj = layer->_objects[j];
 				if (obj->_temporary) {
 					delete obj;
 				} else if (isActor(obj->getId()) && _actor != obj) {
@@ -1117,13 +1118,13 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	Common::String verbFuncName = _hud.actorSlot(actor)->verbs[verbId.id].fun;
+	Common::String verbFuncName = _hud.actorSlot(actor)->getVerb(verbId.id)->fun;
 	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
-	if (!noun1->inInventory() && !noun1->_touchable)
+	if (!noun1->inInventory() && !noun1->touchable())
 		return false;
-	if (noun2 && !noun2->inInventory() && !noun2->_touchable)
+	if (noun2 && !noun2->inInventory() && !noun2->touchable())
 		return false;
 
 	// check if verb is use and object can be used with or in or on

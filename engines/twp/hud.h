@@ -59,6 +59,15 @@ struct ActorSlot {
 	Verb verbs[22];
 	bool selectable;
 	Object *actor;
+
+	Verb *getVerb(int id) {
+		for (int i = 0; i < 22; i++) {
+			if (verbs[i].id.id == id) {
+				return &verbs[i];
+			}
+		}
+		return nullptr;
+	}
 };
 
 class Hud;
@@ -67,7 +76,7 @@ struct VerbRect {
 	int index;
 };
 
-class HudShader: public Shader {
+class HudShader : public Shader {
 public:
 	HudShader();
 	virtual ~HudShader() override;
@@ -91,13 +100,13 @@ class Hud : public Node {
 public:
 	Hud();
 
-	ActorSlot* actorSlot(Object* actor);
+	ActorSlot *actorSlot(Object *actor);
 	bool isOver() const { return _over; }
-	void update(Math::Vector2d pos, Object* hotspot, bool mouseClick);
+	void update(Math::Vector2d pos, Object *hotspot, bool mouseClick);
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
-	void drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];

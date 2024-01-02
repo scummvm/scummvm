@@ -122,6 +122,7 @@ public:
 		return syncGame(s);
 	}
 
+	Math::Vector2d winToScreen(Math::Vector2d pos);
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
 

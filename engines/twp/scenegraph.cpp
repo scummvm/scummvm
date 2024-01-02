@@ -603,7 +603,7 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 
 	_obj = nullptr;
 	if (_actor) {
-		Math::Vector2d scrPos = g_engine->_cursor.pos;
+		Math::Vector2d scrPos = g_engine->winToScreen(g_engine->_cursor.pos);
 
 		// update mouse click
 		bool down = g_engine->_cursor.leftDown;
