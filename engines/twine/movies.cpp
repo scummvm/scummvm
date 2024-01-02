@@ -356,7 +356,7 @@ void Movies::playGIFMovie(const char *flaName) {
 	}
 }
 
-bool Movies::playMovie(const char *name) {
+bool Movies::playMovie(const char *name) { // PlayAnimFla
 	if (_engine->isLBA2()) {
 		const int index = _engine->_resources->findSmkMovieIndex(name);
 		return playSmkMovie(name, index);
@@ -384,7 +384,7 @@ bool Movies::playMovie(const char *name) {
 		return true;
 	}
 
-	const uint32 version = _file.readUint32LE();
+	const uint32 version = _file.readUint32BE();
 	_file.skip(2); // version field is 5 bytes - and one padding byte
 	_flaHeaderData.numOfFrames = _file.readUint32LE();
 	_flaHeaderData.speed = _file.readByte();
@@ -400,7 +400,7 @@ bool Movies::playMovie(const char *name) {
 	_file.skip(4 * _samplesInFla);
 
 	bool finished = false;
-	if (version != MKTAG('V', '1', '.', '3')) {
+	if (version == MKTAG('V', '1', '.', '3')) {
 		int32 currentFrame = 0;
 
 		debug("Play fla: %s", name);
@@ -443,6 +443,8 @@ bool Movies::playMovie(const char *name) {
 
 			currentFrame++;
 		} while (!_engine->_input->toggleAbortAction());
+	} else {
+		warning("Unsupported fla version: %u, %s", version, fileNamePath.c_str());
 	}
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
