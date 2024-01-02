@@ -52,7 +52,6 @@
 #include "dgds/font.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
-#include "dgds/music.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
 #include "dgds/scripts.h"
@@ -62,16 +61,10 @@ namespace Dgds {
 
 #define DUMP_ALL_CHUNKS 1
 
-//static Common::SeekableReadStream *ttm;
-//static char ttmName[DGDS_FILENAME_MAX + 1];
-
-//static Common::SeekableReadStream *ads;
-//static char adsName[DGDS_FILENAME_MAX + 1];
-
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
     : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
-	_midiPlayer(nullptr), _soundPlayer(nullptr), _decompressor(nullptr),
-	_musicData(nullptr), _musicSize(0), _scene(nullptr), _gdsScene(nullptr) {
+	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
+	_resource(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -82,6 +75,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_gameId = GID_CHINA;
 	else if (!strcmp(gameDesc->gameId, "beamish"))
 		_gameId = GID_BEAMISH;
+	else
+		error("Unknown game ID");
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
@@ -95,9 +90,6 @@ DgdsEngine::~DgdsEngine() {
 	delete _resource;
 	delete _scene;
 	delete _gdsScene;
-	delete[] _musicData;
-
-	delete _midiPlayer;
 	delete _soundPlayer;
 }
 
@@ -367,15 +359,12 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 						//Common::strlcpy(ttmName, name, sizeof(ttmName));
 					} else {
 						while (!stream->eos()) {
-							uint16 code;
-							byte count;
-							uint op;
-
-							code = stream->readUint16LE();
-							count = code & 0x000F;
-							op = code & 0xFFF0;
+							uint16 code = stream->readUint16LE();
+							byte count = code & 0x000F;
+							uint op = code & 0xFFF0;
 
 							debugN("\tOP: 0x%4.4x %2u ", op, count);
+
 							if (count == 0x0F) {
 								Common::String sval;
 								byte ch[2];
@@ -404,10 +393,10 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 						}
 					}
 				} else if (chunk.isSection(ID_TAG)) {
-					uint16 count;
+					uint16 count = stream->readUint16LE();
 
-					count = stream->readUint16LE();
 					debug("        %u", count);
+
 					// something fishy here. the first two entries sometimes are an empty string or non-text junk.
 					// most of the time entries have text (sometimes with garbled characters).
 					// this parser is likely not ok. but the NUL count seems to be ok.
@@ -542,9 +531,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			case EX_SNG:
 				/* DOS. */
 				if (chunk.isSection(ID_SNG)) {
-					_musicSize = stream->size();
-					_musicData = new byte[_musicSize];
-					stream->read(_musicData, _musicSize);
+					_soundPlayer->loadMusic(*stream);
 				} else if (chunk.isSection(ID_INF)) {
 					uint32 count = stream->size() / 2;
 					debug("        [%u]", count);
@@ -573,12 +560,9 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				} else if (chunk.isSection(ID_FNM)) {
 					readStrings(stream);
 				} else if (chunk.isSection(ID_DAT)) {
-					uint16 idx, type;
-					idx = stream->readUint16LE();
-					type = stream->readUint16LE();
-					//debug("        #%2u: (0x%X?) %s %u", idx, type, compressionDescr[compression], unpackSize);
-
-					_musicData = decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
+					/*uint16 idx = */stream->readUint16LE();
+					/*uint16 type = */stream->readUint16LE();
+					_soundPlayer->loadMusic(*stream, decompressor);
 				}
 				break;
 			case EX_PAL:
@@ -632,29 +616,13 @@ void DgdsEngine::parseFile(const Common::String &filename, int resource) {
 
 int delay = 0;
 
-void DgdsEngine::playMusic(const Common::String &fileName) {
-	//stopMusic();
-
-	parseFile(fileName);
-	if (_musicData) {
-		uint32 tracks = availableSndTracks(_musicData, _musicSize);
-		if ((tracks & TRACK_MT32))
-			_midiPlayer->play(_musicData, _musicSize);
-		if ((tracks & DIGITAL_PCM))
-			_soundPlayer->playPCM(_musicData, _musicSize);
-	}
-}
-
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	_musicData = nullptr;
 
 	_console = new Console(this);
 	_resource = new ResourceManager();
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
-	_midiPlayer = new DgdsMidiPlayer();
 	_soundPlayer = new Sound(_mixer);
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
@@ -668,7 +636,6 @@ Common::Error DgdsEngine::run() {
 	debug("DgdsEngine::init");
 
 	g_system->fillScreen(0);
-
 
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;

@@ -46,7 +46,6 @@ class PFont;
 class FFont;
 class SDSScene;
 class GDSScene;
-class DgdsMidiPlayer;
 class Sound;
 
 struct DgdsADS;
@@ -64,7 +63,6 @@ public:
 
 private:
 	Console *_console;
-	DgdsMidiPlayer *_midiPlayer;
 
 	ResourceManager *_resource;
 	Decompressor *_decompressor;
@@ -77,8 +75,6 @@ private:
 
 	PFont *_fntP;
 	FFont *_fntF;
-	uint32 _musicSize;
-	byte *_musicData;
 
 protected:
 	virtual Common::Error run();
@@ -88,8 +84,6 @@ public:
 	virtual ~DgdsEngine();
 
 	DgdsGameId getGameId() { return _gameId; }
-
-	void playMusic(const Common::String &fileName);
 
 	void parseFile(const Common::String &filename, int resource = 0);
 
