@@ -752,7 +752,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 }
 
 bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) { // Dial
-	_engine->exitSceneryView();
+	_engine->extInitSvga();
 	_engine->_interface->memoClip();
 	_engine->_interface->unsetClip();
 	_engine->saveFrontBuffer();

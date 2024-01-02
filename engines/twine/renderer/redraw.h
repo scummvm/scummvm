@@ -136,7 +136,7 @@ private:
 public:
 	Redraw(TwinEEngine *engine);
 
-	bool _inSceneryView = false; // FlagMCGA
+	bool _flagMCGA = false;
 
 	/** Request background redraw */
 	bool _firstTime = false;

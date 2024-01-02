@@ -269,7 +269,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 				drawList[drawListPos].offset = 1;
 				drawListPos++;
 			}
-			if (_inSceneryView && a == _engine->_scene->_currentlyFollowedActor) {
+			if (_flagMCGA && a == _engine->_scene->_currentlyFollowedActor) {
 				_sceneryViewX = projPos.x;
 				_sceneryViewY = projPos.y;
 			}
@@ -872,7 +872,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		_engine->_screens->_fadePalette = false;
 	}
 
-	if (_inSceneryView) {
+	if (_flagMCGA) {
 		zoomScreenScale();
 	}
 }

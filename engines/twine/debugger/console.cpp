@@ -132,7 +132,7 @@ bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_redraw->_inSceneryView, "scenery view\n")
+	TOGGLE_DEBUG(_engine->_redraw->_flagMCGA, "scenery view\n")
 	return true;
 }
 
