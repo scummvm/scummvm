@@ -114,9 +114,8 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	assert(magic == 0xFF);
 
 	byte w, h;
-	byte unknown, start, count, compression;
+	byte unknown, start, count;
 	int size;
-	int uncompressedSize;
 
 	w = input.readByte();
 	h = input.readByte();
@@ -124,18 +123,15 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	start = input.readByte();
 	count = input.readByte();
 	size = input.readUint16LE();
-	compression = input.readByte();
-	uncompressedSize = input.readUint32LE();
 	debug("    magic: 0x%x, w: %u, h: %u, unknown: %u, start: 0x%x, count: %u\n"
-	      "    size: %u, compression: 0x%x, uncompressedSize: %u",
+	      "    size: %u",
 			magic, w, h, unknown, start, count,
-			size, compression, uncompressedSize);
-	assert(uncompressedSize == size);
+			size);
 
-	size = input.size()-input.pos();
+	size = input.size() - input.pos();
 
-	byte *data = new byte[uncompressedSize];
-	decompressor->decompress(compression, data, uncompressedSize, &input, size);
+	uint32 uncompressedSize;
+	byte *data = decompressor->decompress(&input, size, uncompressedSize);
 
 	PFont* fnt = new PFont;
 	fnt->_w = w;

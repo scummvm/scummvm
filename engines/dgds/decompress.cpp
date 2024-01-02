@@ -21,8 +21,8 @@
  */
 
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "dgds/decompress.h"
 
@@ -191,22 +191,28 @@ Decompressor::Decompressor() {
 Decompressor::~Decompressor() {
 }
 
-void Decompressor::decompress(byte compression, byte *data, int uncompressedSize, Common::SeekableReadStream *input, int size) {
+byte *Decompressor::decompress(Common::SeekableReadStream *input, int size, uint32 &uncompressedSize) {
+	byte compression = input->readByte();
+	uncompressedSize = input->readUint32LE();
+	byte *data = new byte[uncompressedSize];
+
 	switch (compression) {
-		case 0x00:
-			input->read(data, size);
-			break;
-		case 0x01:
-		    _rleDecompressor.decompress(data, uncompressedSize, *input);
-			break;
-		case 0x02:
-		    _lzwDecompressor.decompress(data, uncompressedSize, *input);
-			break;
-		default:
-			input->skip(size);
-			debug("Unknown chunk compression: 0x%x", compression);
-			break;
+	case 0x00:
+		input->read(data, size);
+		break;
+	case 0x01:
+		_rleDecompressor.decompress(data, uncompressedSize, *input);
+		break;
+	case 0x02:
+		_lzwDecompressor.decompress(data, uncompressedSize, *input);
+		break;
+	default:
+		input->skip(size);
+		debug("Unknown chunk compression: 0x%x", compression);
+		break;
 	}
+
+	return data;
 }
 
 } // End of namespace Dgds
