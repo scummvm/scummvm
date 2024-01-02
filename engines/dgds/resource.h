@@ -70,23 +70,22 @@ class DgdsChunk {
 public:
 	bool isSection(const Common::String &section) const;
 	bool isSection(DGDS_ID section) const;
-	bool isPacked(DGDS_EX ex) const;
 	static bool isFlatfile(Common::Platform platform, DGDS_EX ext);
 
 	bool readHeader(DgdsParser &ctx);
-	Common::SeekableReadStream *decodeStream(DgdsParser &ctx, Decompressor *decompressor);
 	Common::SeekableReadStream *readStream(DgdsParser &ctx);
+	Common::SeekableReadStream *getStream(DGDS_EX ex, DgdsParser &ctx, Decompressor *decompressor);
 
 	char _idStr[DGDS_TYPENAME_MAX + 1];
 	DGDS_ID _id;
 	uint32 _size;
 	bool _container;
 	Common::SeekableReadStream *_stream;
-};
 
-//int32 dgdsHash(const char *s, byte *idx);
-//uint32 lookupVolume(const char *rmfName, const char *filename, char *volname);
-//Common::SeekableReadStream *createReadStream(const char *rmfName, const char *filename);
+private:
+	bool isPacked(DGDS_EX ex) const;
+	Common::SeekableReadStream *decodeStream(DgdsParser &ctx, Decompressor *decompressor);
+};
 
 } // End of namespace Dgds
 

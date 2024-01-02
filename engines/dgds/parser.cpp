@@ -53,7 +53,7 @@ void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
 			chunk._stream = &_file;
 			stop = callback(chunk, data);
 		} else {
-			chunk._stream = chunk.isPacked(_ex) ? chunk.decodeStream(*this, decompressor) : chunk.readStream(*this);
+			chunk._stream = chunk.getStream(_ex, *this, decompressor);
 
 			stop = callback(chunk, data);
 

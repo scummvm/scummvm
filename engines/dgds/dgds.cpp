@@ -270,10 +270,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				continue;
 			}
 
-			Common::SeekableReadStream *stream;
-
-			bool packed = chunk.isPacked(ex);
-			stream = packed ? chunk.decodeStream(ctx, decompressor) : chunk.readStream(ctx);
+			Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, decompressor);
 
 #ifdef DUMP_ALL_CHUNKS
 			{

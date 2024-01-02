@@ -247,6 +247,10 @@ bool DgdsChunk::readHeader(DgdsParser &ctx) {
 	return true;
 }
 
+Common::SeekableReadStream* DgdsChunk::getStream(DGDS_EX ex, DgdsParser& ctx, Decompressor* decompressor) {
+	return isPacked(ex) ? decodeStream(ctx, decompressor) : readStream(ctx);
+}
+
 Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompressor *decompressor) {
 	byte compression;
 	uint32 unpackSize;
