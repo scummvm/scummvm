@@ -1746,7 +1746,11 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	// GL_PACK_ALIGNMENT is 4 so each row must be aligned to 4 bytes boundary
 	// A line of a BMP image must also have a size divisible by 4.
 	// Calculate lineSize as the next multiple of 4 after the real line size
+#ifdef EMSCRIPTEN
+	const uint lineSize        = width * 4; // RGBA (see comment below)
+#else
 	const uint lineSize        = (width * 3 + 3) & ~3;
+#endif
 
 	Common::DumpFile out;
 	if (!out.open(filename)) {
@@ -1755,12 +1759,21 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
+#ifdef EMSCRIPTEN	
+	// WebGL doesn't support GL_RGB, see https://registry.khronos.org/webgl/specs/latest/1.0/#5.14.12:
+	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE. 
+	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
+	// https://github.com/KhronosGroup/WebGL/issues/2747
+	GL_CALL(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front()));
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 #endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);

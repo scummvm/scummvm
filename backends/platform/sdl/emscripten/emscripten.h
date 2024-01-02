@@ -30,6 +30,7 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 	bool displayLogFile() override;
+	Common::Path getScreenshotsPath() override;
 	void exportFile(const Common::Path &filename);
 
 protected:

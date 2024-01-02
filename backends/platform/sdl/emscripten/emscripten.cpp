@@ -97,6 +97,10 @@ Common::Path OSystem_Emscripten::getDefaultConfigFileName() {
 	return Common::Path(Common::String::format("%s/scummvm.ini", getenv("HOME")));
 }
 
+Common::Path OSystem_Emscripten::getScreenshotsPath() {
+	return Common::Path("/tmp/");
+}
+
 bool OSystem_Emscripten::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;

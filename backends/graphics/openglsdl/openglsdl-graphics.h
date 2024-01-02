@@ -69,6 +69,21 @@ private:
 #else
 	uint32 _lastVideoModeLoad;
 #endif
+
+#ifdef EMSCRIPTEN
+	/** 
+	 * See https://registry.khronos.org/webgl/specs/latest/1.0/#2 :
+	 * " By default, after compositing the contents of the drawing buffer shall be cleared to their default values [...]
+	 *   Techniques like synchronous drawing buffer access (e.g., calling readPixels or toDataURL in the same function
+	 *   that renders to the drawing buffer) can be used to get the contents of the drawing buffer "
+	 * 
+	 * This means we need to take the screenshot at the correct time, which we do by queueing taking the screenshot
+	 * for the next frame instead of taking it right away.
+	 */
+	bool _queuedScreenshot = false;
+	void saveScreenshot() override;
+#endif
+
 	OpenGL::ContextType _glContextType;
 
 	uint _lastRequestedWidth;
