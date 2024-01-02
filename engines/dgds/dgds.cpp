@@ -35,11 +35,6 @@
 
 #include "common/formats/iff_container.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/aiff.h"
-#include "audio/decoders/raw.h"
-#include "audio/mixer.h"
-
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
@@ -75,8 +70,8 @@ namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
     : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
-    _midiPlayer(nullptr), _decompressor(nullptr), _musicData(nullptr), _musicSize(0),
-    _soundData(nullptr), _scene(nullptr), _gdsScene(nullptr) {
+	_midiPlayer(nullptr), _soundPlayer(nullptr), _decompressor(nullptr),
+	_musicData(nullptr), _musicSize(0), _scene(nullptr), _gdsScene(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -101,7 +96,9 @@ DgdsEngine::~DgdsEngine() {
 	delete _scene;
 	delete _gdsScene;
 	delete[] _musicData;
-	delete _soundData;
+
+	delete _midiPlayer;
+	delete _soundPlayer;
 }
 
 void readStrings(Common::SeekableReadStream *stream) {
@@ -215,12 +212,9 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 		delete[] tw;
 		delete[] th;
 	} break;
-	case EX_INS: {
-		/* AIFF sound sample (Amiga). */
-		byte *dest = new byte[file.size()];
-		file.read(dest, file.size());
-		_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
-	} break;
+	case EX_INS:
+		_soundPlayer->loadAmigaAiff(file);
+		break;
 	case EX_SNG:
 		/* IFF-SMUS music (Amiga). */
 		break;
@@ -635,78 +629,6 @@ void DgdsEngine::parseFile(const Common::String &filename, int resource) {
 
 int delay = 0;
 
-struct Channel {
-	Audio::AudioStream *stream;
-	Audio::SoundHandle handle;
-	byte volume;
-};
-
-struct Channel _channels[2];
-
-void DgdsEngine::playSfx(const Common::String &fileName, byte channel, byte volume) {
-	parseFile(fileName);
-	if (_soundData) {
-		Channel *ch = &_channels[channel];
-		Audio::AudioStream *input = Audio::makeAIFFStream(_soundData, DisposeAfterUse::YES);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
-		_soundData = 0;
-	}
-}
-
-void DgdsEngine::stopSfx(byte channel) {
-	if (_mixer->isSoundHandleActive(_channels[channel].handle)) {
-		_mixer->stopHandle(_channels[channel].handle);
-		_channels[channel].stream = 0;
-	}
-}
-
-bool DgdsEngine::playPCM(const byte *data, uint32 size) {
-	_mixer->stopAll();
-
-	if (!data)
-		return false;
-
-	const byte *trackPtr[0xFF];
-	uint16 trackSiz[0xFF];
-	byte numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
-	if (numParts == 0)
-		return false;
-
-	for (byte part = 0; part < numParts; part++) {
-		const byte *ptr = trackPtr[part];
-
-		bool digital_pcm = false;
-		if (READ_LE_UINT16(ptr) == 0x00FE) {
-			digital_pcm = true;
-		}
-		ptr += 2;
-
-		if (!digital_pcm)
-			continue;
-
-		uint16 rate, length, first, last;
-		rate = READ_LE_UINT16(ptr);
-
-		length = READ_LE_UINT16(ptr + 2);
-		first = READ_LE_UINT16(ptr + 4);
-		last = READ_LE_UINT16(ptr + 6);
-		ptr += 8;
-
-		ptr += first;
-		debug(" - Digital PCM: %u Hz, [%u]=%u:%u",
-		      rate, length, first, last);
-		trackPtr[part] = ptr;
-		trackSiz[part] = length;
-
-		Channel *ch = &_channels[part];
-		byte volume = 255;
-		Audio::AudioStream *input = Audio::makeRawStream(trackPtr[part], trackSiz[part],
-		                                                 rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
-	}
-	return true;
-}
-
 void DgdsEngine::playMusic(const Common::String &fileName) {
 	//stopMusic();
 
@@ -716,14 +638,13 @@ void DgdsEngine::playMusic(const Common::String &fileName) {
 		if ((tracks & TRACK_MT32))
 			_midiPlayer->play(_musicData, _musicSize);
 		if ((tracks & DIGITAL_PCM))
-			playPCM(_musicData, _musicSize);
+			_soundPlayer->playPCM(_musicData, _musicSize);
 	}
 }
 
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	_soundData = nullptr;
 	_musicData = nullptr;
 
 	_console = new Console(this);
@@ -731,6 +652,7 @@ Common::Error DgdsEngine::run() {
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
 	_midiPlayer = new DgdsMidiPlayer();
+	_soundPlayer = new Sound(_mixer);
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
 
