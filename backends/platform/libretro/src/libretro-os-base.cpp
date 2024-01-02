@@ -169,7 +169,9 @@ void OSystem_libretro::destroy() {
 }
 
 bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory) {
-	Common::String setPath(Common::Path::fromConfig(setting).toString());
+	Common::String setPath;
+	if (ConfMan.hasKey(setting))
+		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
 
 	if (setPath.empty() || ! (isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
