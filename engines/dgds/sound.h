@@ -28,10 +28,10 @@
 namespace Dgds {
 
 enum {
-  DIGITAL_PCM	= 1 << 0,
-  TRACK_ADLIB	= 1 << 1,
-  TRACK_GM	= 1 << 2,
-  TRACK_MT32	= 1 << 3
+  DIGITAL_PCM   = 1 << 0,
+  TRACK_ADLIB   = 1 << 1,
+  TRACK_GM      = 1 << 2,
+  TRACK_MT32    = 1 << 3
 };
 
 uint32 availableSndTracks(const byte *data, uint32 size);
