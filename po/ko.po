@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-26 14:22+0000\n"
+"POT-Creation-Date: 2024-01-01 21:03+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -314,7 +314,7 @@ msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3897
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "예"
@@ -327,7 +327,7 @@ msgstr "예"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3897
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "아니오"
@@ -358,8 +358,8 @@ msgstr ""
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1228
-#: engines/scumm/scumm.cpp:1596 engines/scumm/scumm.cpp:2071
-#: engines/scumm/scumm.cpp:2087 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1606 engines/scumm/scumm.cpp:2081
+#: engines/scumm/scumm.cpp:2097 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5555,7 +5555,7 @@ msgstr "불러오기"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "빠른 저장과 불러오기는 여기서는 지원되지 않습니다"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2895
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2905
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5566,7 +5566,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2882
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2892
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5577,7 +5577,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2915
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2925
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8722,7 +8722,7 @@ msgid "Your Name:"
 msgstr "제목:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3903
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3913
 msgid "Host"
 msgstr ""
 
@@ -8734,7 +8734,7 @@ msgid "Querying games..."
 msgstr "게임 저장 중..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3903
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3913
 msgid "Join"
 msgstr ""
 
@@ -9642,7 +9642,17 @@ msgstr ""
 "악기가 포함된 'Monkey Island' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
 "음악이 비활성화됩니다."
 
-#: engines/scumm/scumm.cpp:1593
+#: engines/scumm/scumm.cpp:1235
+#, c-format
+msgid "Could not open Macintosh resource file %s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:1238
+#, c-format
+msgid "Could not find resource fork in Macintosh resource file %s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:1603
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9653,7 +9663,7 @@ msgstr ""
 "압축이 더 이상 지원되지 않습니다. 오디오가 비활성화됩니다..\n"
 "게임을 압축하지 않고 원본 미디어에서 복사하십시오."
 
-#: engines/scumm/scumm.cpp:2069
+#: engines/scumm/scumm.cpp:2079
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9662,13 +9672,13 @@ msgstr ""
 "MIDI 지원은 LucasArts에서 제공하는 Roland Upgrade가 필요합니다.\n"
 "하지만 %s 파일이 없습니다. AdLib을 대신 사용합니다."
 
-#: engines/scumm/scumm.cpp:2085
+#: engines/scumm/scumm.cpp:2095
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3792
+#: engines/scumm/scumm.cpp:3802
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9678,7 +9688,7 @@ msgstr ""
 "Mansion의 게임 파일이 Tentacle 게임 디렉토리 하위의 Maniac 디렉토리에 있어야 "
 "하며, ScummVM에도 추가되어야 합니다."
 
-#: engines/scumm/scumm.cpp:3903
+#: engines/scumm/scumm.cpp:3913
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "게임을 저장하거나 불러오시겠습니까?"

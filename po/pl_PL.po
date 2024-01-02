@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-26 14:22+0000\n"
+"POT-Creation-Date: 2024-01-01 21:03+0000\n"
 "PO-Revision-Date: 2023-12-18 15:54+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -302,7 +302,7 @@ msgstr "Inna usługa jest aktywna. Czy chcesz ją przerwać?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3897
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Tak"
@@ -315,7 +315,7 @@ msgstr "Tak"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3897
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Nie"
@@ -344,8 +344,8 @@ msgstr "Zawartość kodu JSON jest nieprawidłowa."
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1228
-#: engines/scumm/scumm.cpp:1596 engines/scumm/scumm.cpp:2071
-#: engines/scumm/scumm.cpp:2087 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1606 engines/scumm/scumm.cpp:2081
+#: engines/scumm/scumm.cpp:2097 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5872,7 +5872,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "Szybkie wczytywanie i zapisywanie gry nie jest obsługiwane w tej lokalizacji"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2895
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2905
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5883,7 +5883,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2882
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2892
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5894,7 +5894,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2915
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2925
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -9024,7 +9024,7 @@ msgid "Your Name:"
 msgstr "Nazwa:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3903
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3913
 msgid "Host"
 msgstr "Hostuj"
 
@@ -9034,7 +9034,7 @@ msgid "Querying games..."
 msgstr "Uzyskiwanie listy gier..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3903
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3913
 msgid "Join"
 msgstr "Dołącz"
 
@@ -9970,7 +9970,17 @@ msgstr ""
 "Macintosh,\n"
 "z którego można odczytać instrumenty. Muzyka zostanie wyłączona."
 
-#: engines/scumm/scumm.cpp:1593
+#: engines/scumm/scumm.cpp:1235
+#, c-format
+msgid "Could not open Macintosh resource file %s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:1238
+#, c-format
+msgid "Could not find resource fork in Macintosh resource file %s"
+msgstr ""
+
+#: engines/scumm/scumm.cpp:1603
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9981,7 +9991,7 @@ msgstr ""
 "wyłączony.\n"
 "Proszę skopiować grę z oryginalnego nośnika bez kompresji."
 
-#: engines/scumm/scumm.cpp:2069
+#: engines/scumm/scumm.cpp:2079
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9990,7 +10000,7 @@ msgstr ""
 "Natywne wsparcie MIDI wymaga aktualizacji Rolanda od LucasArts,\n"
 "ale brakuje %s. Przełączam na tryb AdLib."
 
-#: engines/scumm/scumm.cpp:2085
+#: engines/scumm/scumm.cpp:2095
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9999,7 +10009,7 @@ msgstr ""
 "elementów\n"
 "zasobów dla MT-32. Zostanie użyty AdLib."
 
-#: engines/scumm/scumm.cpp:3792
+#: engines/scumm/scumm.cpp:3802
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -10009,7 +10019,7 @@ msgstr ""
 "zadziałało, pliki Maniac Mansion muszą znajdować się w podkatalogu \"Maniac"
 "\" w katalogu gry Day of the Tentacle, a gra musi być dodana do ScummVM."
 
-#: engines/scumm/scumm.cpp:3903
+#: engines/scumm/scumm.cpp:3913
 msgid "Would you like to host or join a network play session?"
 msgstr "Czy chcesz zorganizować sesję gry sieciowej lub dołączyć do niej?"
 
