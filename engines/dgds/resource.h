@@ -70,7 +70,7 @@ class DgdsChunk {
 public:
 	bool isSection(const Common::String &section) const;
 	bool isSection(DGDS_ID section) const;
-	static bool isFlatfile(Common::Platform platform, DGDS_EX ext);
+	static bool isFlatfile(DGDS_EX ext);
 
 	bool readHeader(DgdsParser &ctx);
 	Common::SeekableReadStream *readStream(DgdsParser &ctx);

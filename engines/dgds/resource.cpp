@@ -279,7 +279,7 @@ Common::SeekableReadStream *DgdsChunk::readStream(DgdsParser &ctx) {
 }
 
 /*static*/
-bool DgdsChunk::isFlatfile(Common::Platform platform, DGDS_EX ext) {
+bool DgdsChunk::isFlatfile(DGDS_EX ext) {
 	bool flat = false;
 
 	switch (ext) {
@@ -288,23 +288,6 @@ bool DgdsChunk::isFlatfile(Common::Platform platform, DGDS_EX ext) {
 	case EX_DAT:
 		flat = true;
 		break;
-	default:
-		break;
-	}
-
-	switch (platform) {
-	case Common::kPlatformAmiga:
-		switch (ext) {
-		case EX_BMP:
-		case EX_SCR:
-		case EX_INS:
-			//				case EX_SNG:
-		case EX_AMG:
-			flat = true;
-			break;
-		default:
-			break;
-		}
 	default:
 		break;
 	}

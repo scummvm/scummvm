@@ -161,6 +161,82 @@ void DgdsEngine::parseRstChunk(Common::SeekableReadStream &file) {
 	debug("-");
 }
 
+void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) {
+	Common::String line;
+
+	switch (ex) {
+	case EX_SCR: {
+		/* Unknown image format (Amiga). */
+		byte tag[5];
+		file.read(tag, 4); /* maybe */
+		tag[4] = '\0';
+
+		uint16 pitch, planes;
+		pitch = file.readUint16BE();  /* always 200 (320x200 screen). */
+		planes = file.readUint16BE(); /* always 5 (32 color). */
+
+		debug("    \"%s\" pitch:%u bpp:%u size: %u bytes",
+			  tag, pitch, planes,
+			  SCREEN_WIDTH * planes * SCREEN_HEIGHT / 8);
+	} break;
+	case EX_BMP: {
+		/* Unknown image format (Amiga). */
+		uint16 tcount = file.readUint16BE();
+		uint16 *tw = new uint16[tcount];
+		uint16 *th = new uint16[tcount];
+
+		uint32 packedSize, unpackedSize;
+		unpackedSize = file.readUint32BE();
+		debug("        [%u] %u =", tcount, unpackedSize);
+
+		uint32 sz = 0;
+		uint32 *toffset = new uint32[tcount];
+		for (uint16 k = 0; k < tcount; k++) {
+			tw[k] = file.readUint16BE();
+			th[k] = file.readUint16BE();
+			debug("        %ux%u ~@%u", tw[k], th[k], sz);
+
+			toffset[k] = sz;
+			sz += uint(tw[k] + 15) / 16 * th[k] * 5;
+		}
+		debug("    ~= [%u]", sz);
+
+		/* this is a wild guess. */
+		byte version[13];
+		file.read(version, 12);
+		version[12] = '\0';
+		debug("    %s", version);
+
+		unpackedSize = file.readUint32BE();
+		packedSize = file.readUint32BE();
+		debug("        %u -> %u",
+			  packedSize, unpackedSize);
+		delete[] toffset;
+		delete[] tw;
+		delete[] th;
+	} break;
+	case EX_INS: {
+		/* AIFF sound sample (Amiga). */
+		byte *dest = new byte[file.size()];
+		file.read(dest, file.size());
+		_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
+	} break;
+	case EX_SNG:
+		/* IFF-SMUS music (Amiga). */
+		break;
+		//		case EX_SNG:
+		// TODO
+	case EX_AMG:
+		/* (Amiga). */
+		line = file.readLine();
+		while (!file.eos() && !line.empty()) {
+			debug("    \"%s\"", line.c_str());
+			line = file.readLine();
+		}
+		break;
+	}
+}
+
 void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor) {
 	const char *dot;
 	DGDS_EX ex = 0;
@@ -172,79 +248,16 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 	uint parent = 0;
 
 	DgdsParser ctx(file, name);
-	if (DgdsChunk::isFlatfile(platform, ex)) {
+	if (platform == Common::kPlatformAmiga) {
+		parseAmigaChunks(file, ex);
+	}
+
+	if (DgdsChunk::isFlatfile(ex)) {
 		Common::String line;
 
 		switch (ex) {
 		case EX_RST:
 			parseRstChunk(file);
-			break;
-		case EX_SCR: {
-			/* Unknown image format (Amiga). */
-			byte tag[5];
-			file.read(tag, 4); /* maybe */
-			tag[4] = '\0';
-
-			uint16 pitch, planes;
-			pitch = file.readUint16BE();  /* always 200 (320x200 screen). */
-			planes = file.readUint16BE(); /* always 5 (32 color). */
-
-			debug("    \"%s\" pitch:%u bpp:%u size: %u bytes",
-			      tag, pitch, planes,
-			      SCREEN_WIDTH * planes * SCREEN_HEIGHT / 8);
-		} break;
-		case EX_BMP: {
-			/* Unknown image format (Amiga). */
-			uint16 tcount = file.readUint16BE();
-			uint16 *tw = new uint16[tcount];
-			uint16 *th = new uint16[tcount];
-
-			uint32 packedSize, unpackedSize;
-			unpackedSize = file.readUint32BE();
-			debug("        [%u] %u =", tcount, unpackedSize);
-
-			uint32 sz = 0;
-			uint32 *toffset = new uint32[tcount];
-			for (uint16 k = 0; k < tcount; k++) {
-				tw[k] = file.readUint16BE();
-				th[k] = file.readUint16BE();
-				debug("        %ux%u ~@%u", tw[k], th[k], sz);
-
-				toffset[k] = sz;
-				sz += uint(tw[k] + 15) / 16 * th[k] * 5;
-			}
-			debug("    ~= [%u]", sz);
-
-			/* this is a wild guess. */
-			byte version[13];
-			file.read(version, 12);
-			version[12] = '\0';
-			debug("    %s", version);
-
-			unpackedSize = file.readUint32BE();
-			packedSize = file.readUint32BE();
-			debug("        %u -> %u",
-			      packedSize, unpackedSize);
-			delete [] toffset;
-			delete [] tw;
-			delete [] th;
-		} break;
-		case EX_INS: {
-			/* AIFF sound sample (Amiga). */
-			byte *dest = new byte[file.size()];
-			file.read(dest, file.size());
-			_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
-		} break;
-		case EX_SNG:
-			/* IFF-SMUS music (Amiga). */
-			break;
-		case EX_AMG:
-			/* (Amiga). */
-			line = file.readLine();
-			while (!file.eos() && !line.empty()) {
-				debug("    \"%s\"", line.c_str());
-				line = file.readLine();
-			}
 			break;
 		case EX_VIN:
 			line = file.readLine();
