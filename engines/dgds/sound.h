@@ -24,8 +24,34 @@
 #define DGDS_SOUND_H
 
 #include "common/scummsys.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Dgds {
+
+struct Channel {
+	Audio::AudioStream *stream;
+	Audio::SoundHandle handle;
+	byte volume;
+};
+
+class Sound {
+public:
+	Sound(Audio::Mixer *mixer) : _mixer(mixer) {}
+	~Sound();
+
+	void playAmigaSfx(byte channel, byte volume);
+	void loadAmigaAiff(Common::SeekableReadStream &file);
+
+	void stopSfx(byte channel);
+
+	bool playPCM(const byte *data, uint32 size);
+
+private:
+	struct Channel _channels[2];
+	Common::SeekableReadStream *_soundData = nullptr;
+	Audio::Mixer *_mixer;
+};
 
 enum {
   DIGITAL_PCM   = 1 << 0,
@@ -40,4 +66,3 @@ byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const b
 } // End of namespace Dgds
 
 #endif // DGDS_SOUND_H
-

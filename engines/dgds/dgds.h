@@ -46,8 +46,9 @@ class PFont;
 class FFont;
 class SDSScene;
 class GDSScene;
-
 class DgdsMidiPlayer;
+class Sound;
+
 struct DgdsADS;
 
 enum DgdsGameId {
@@ -59,6 +60,7 @@ enum DgdsGameId {
 class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
+	Sound *_soundPlayer;
 
 private:
 	Console *_console;
@@ -78,7 +80,6 @@ private:
 	Common::StringArray _BMPs;
 	uint32 _musicSize;
 	byte *_musicData;
-	Common::SeekableReadStream *_soundData;
 
 protected:
 	virtual Common::Error run();
@@ -89,10 +90,6 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-    void playSfx(const Common::String &fileName, byte channel, byte volume);
-    void stopSfx(byte channel);
-
-	bool playPCM(const byte *data, uint32 size);
 	void playMusic(const Common::String &fileName);
 
 	void parseFile(const Common::String &filename, int resource = 0);

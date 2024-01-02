@@ -36,6 +36,7 @@
 #include "dgds/image.h"
 #include "dgds/includes.h"
 #include "dgds/scripts.h"
+#include "dgds/sound.h"
 #include "dgds/resource.h"
 #include "dgds/parser.h"
 
@@ -149,10 +150,8 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0xf060:
 			// LOAD SONG:	filename:str
 			if (_vm->_platform == Common::kPlatformAmiga) {
-				byte volume = 255;
-				byte channel = 0;
-				_vm->stopSfx(channel);
-				_vm->playSfx("DYNAMIX.INS", channel, volume);
+				_vm->parseFile("DYNAMIX.INS");	// TODO: Unwrap this out of parseFile()
+				_vm->_soundPlayer->playAmigaSfx(0, 255);
 			} else {
 				_vm->playMusic(sval.c_str());
 			}

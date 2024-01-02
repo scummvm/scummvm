@@ -22,10 +22,92 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+
+#include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
+#include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 #include "dgds/sound.h"
 
 namespace Dgds {
+
+Sound::~Sound() {
+	delete _soundData;
+}
+
+void Sound::loadAmigaAiff(Common::SeekableReadStream& file) {
+	byte *dest = new byte[file.size()];
+	file.read(dest, file.size());
+	_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
+}
+
+void Sound::playAmigaSfx(byte channel, byte volume) {
+	stopSfx(channel);
+
+	if (_soundData) {
+		Channel *ch = &_channels[channel];
+		Audio::AudioStream *input = Audio::makeAIFFStream(_soundData, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+		_soundData = 0;
+	}
+}
+
+void Sound::stopSfx(byte channel) {
+	if (_mixer->isSoundHandleActive(_channels[channel].handle)) {
+		_mixer->stopHandle(_channels[channel].handle);
+		_channels[channel].stream = 0;
+	}
+}
+
+bool Sound::playPCM(const byte *data, uint32 size) {
+	_mixer->stopAll();
+
+	if (!data)
+		return false;
+
+	const byte *trackPtr[0xFF];
+	uint16 trackSiz[0xFF];
+	byte numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
+	if (numParts == 0)
+		return false;
+
+	for (byte part = 0; part < numParts; part++) {
+		const byte *ptr = trackPtr[part];
+
+		bool digital_pcm = false;
+		if (READ_LE_UINT16(ptr) == 0x00FE) {
+			digital_pcm = true;
+		}
+		ptr += 2;
+
+		if (!digital_pcm)
+			continue;
+
+		uint16 rate, length, first, last;
+		rate = READ_LE_UINT16(ptr);
+
+		length = READ_LE_UINT16(ptr + 2);
+		first = READ_LE_UINT16(ptr + 4);
+		last = READ_LE_UINT16(ptr + 6);
+		ptr += 8;
+
+		ptr += first;
+		debug(" - Digital PCM: %u Hz, [%u]=%u:%u",
+			  rate, length, first, last);
+		trackPtr[part] = ptr;
+		trackSiz[part] = length;
+
+		Channel *ch = &_channels[part];
+		byte volume = 255;
+		Audio::AudioStream *input = Audio::makeRawStream(trackPtr[part], trackSiz[part],
+														 rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+	}
+	return true;
+}
 
 static inline
 void readHeader(const byte* &pos, uint32 &sci_header) {
