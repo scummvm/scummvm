@@ -320,7 +320,7 @@ AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "reposition.to.v",    "nvv",      &cmdRepositionToF },    // 94
 	{ "trace.on",           "",         &cmdTraceOn },          // 95
 	{ "trace.info",         "nnn",      &cmdTraceInfo },        // 96
-	{ "print.at",           "snnn",     &cmdPrintAt }, // 3 args for AGI versions before 2.440
+	{ "print.at",           "snnn",     &cmdPrintAt }, // 3 args for AGI versions before 2.089
 	{ "print.at.v",         "vnnn",     &cmdPrintAtV },         // 98
 	{ "discard.view.v",     "v",        &cmdDiscardView},       // 99
 	{ "clear.text.rect",    "nnnnn",    &cmdClearTextRect },    // 9A
@@ -404,10 +404,10 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		if (version == 0x2089)
 			_opCodes[0x86].parameters = "";
 
-		// 'print.at' and 'print.at.v' take 3 args before 2.272
-		// This is documented in the specs as only < 2.440, but it seems
-		// that KQ3 (2.272) needs a 'print.at' taking 4 args.
-		if (version < 0x2272) {
+		// 'print.at' and 'print.at.v' take 3 args before 2.089.
+		// This is documented in the specs as only < 2.440, but
+		// SQ1 1.0X (2.089) and KQ3 (2.272) take 4 args. Bug #10872
+		if (version < 0x2089) {
 			_opCodes[0x97].parameters = "vvv";
 			_opCodes[0x98].parameters = "vvv";
 		}
