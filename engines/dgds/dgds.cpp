@@ -107,8 +107,7 @@ void readStrings(Common::SeekableReadStream *stream) {
 
 	for (uint16 k = 0; k < count; k++) {
 		byte ch;
-		uint16 idx;
-		idx = stream->readUint16LE();
+		uint16 idx = stream->readUint16LE();
 
 		Common::String str;
 		while ((ch = stream->readByte()))
@@ -123,35 +122,41 @@ void DgdsEngine::parseRstChunk(Common::SeekableReadStream &file) {
 
 	// elaborate guesswork. who knows it might be true.
 	while (!file.eos()) {
-		uint16 idx;
 		uint16 vals[7];
+		uint16 idx = file.readUint16LE();
 
-		idx = file.readUint16LE();
 		debugN("  #%u:\t", idx);
+
 		if (idx == 0)
 			break;
+
 		for (int i = 0; i < ARRAYSIZE(vals); i++) {
 			vals[i] = file.readUint16LE();
 			if (i != 0)
 				debugN(", ");
 			debugN("%u", vals[i]);
 		}
+		
 		debug(".");
 	}
+
 	debug("-");
 
 	while (!file.eos()) {
-		uint16 idx;
 		uint16 vals[2];
-		idx = file.readUint16LE();
+		uint16 idx = file.readUint16LE();
+		
 		debugN("  #%u:\t", idx);
+
 		for (int i = 0; i < ARRAYSIZE(vals); i++) {
 			vals[i] = file.readUint16LE();
 			if (i != 0)
 				debugN(", ");
 			debugN("%u", vals[i]);
 		}
+
 		debug(".");
+
 		if (idx == 0)
 			break;
 	}
@@ -182,8 +187,8 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 		uint16 *tw = new uint16[tcount];
 		uint16 *th = new uint16[tcount];
 
-		uint32 packedSize, unpackedSize;
-		unpackedSize = file.readUint32BE();
+		uint32 packedSize;
+		uint32 unpackedSize = file.readUint32BE();	// TODO: this is wrong - it's re-read below
 		debug("        [%u] %u =", tcount, unpackedSize);
 
 		uint32 sz = 0;
@@ -261,12 +266,15 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				line = file.readLine();
 			}
 			break;
+		case EX_DAT: {
+			// TODO
+			int leftover = file.size() - file.pos();
+			file.hexdump(leftover);
+			file.skip(leftover);
+			} break;
 		default:
 			break;
 		}
-		int leftover = file.size() - file.pos();
-		file.hexdump(leftover);
-		file.skip(leftover);
 	} else {
 		DgdsChunk chunk;
 		int chunkno = 0;
@@ -609,11 +617,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 
 			delete stream;
 		}
-	}
-
-	if (ex == EX_BMP) {
-		_BMPs.push_back(Common::String(name));
-		debug("BMPs: %s", name);
 	}
 
 	debug("  [%u:%u] --", (uint)file.pos(), ctx._bytesRead);

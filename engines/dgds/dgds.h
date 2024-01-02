@@ -77,7 +77,6 @@ private:
 
 	PFont *_fntP;
 	FFont *_fntF;
-	Common::StringArray _BMPs;
 	uint32 _musicSize;
 	byte *_musicData;
 
