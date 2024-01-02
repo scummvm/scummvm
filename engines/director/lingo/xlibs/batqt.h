@@ -22,11 +22,21 @@
 #ifndef DIRECTOR_LINGO_XLIBS_BATQT_H
 #define DIRECTOR_LINGO_XLIBS_BATQT_H
 
+#include "common/rect.h"
+
+namespace Video {
+class QuickTimeDecoder;
+}
+
 namespace Director {
 
 class BatQTXObject : public Object<BatQTXObject> {
 public:
 	BatQTXObject(ObjectType objType);
+	~BatQTXObject();
+
+	Video::QuickTimeDecoder *_video;
+	Common::Rect _movieBox;
 };
 
 namespace BatQT {

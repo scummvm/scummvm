@@ -53,7 +53,9 @@
  * XS     mSetBatch               -- Applies a set of batch commands
  */
 
+#include "video/qt_decoder.h"
 #include "director/director.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -112,27 +114,165 @@ void BatQT::close(int type) {
 
 BatQTXObject::BatQTXObject(ObjectType ObjectType) : Object<BatQTXObject>("BatQt") {
 	_objType = ObjectType;
+	_video = nullptr;
+}
+
+BatQTXObject::~BatQTXObject() {
+	if (_video) {
+		delete _video;
+		_video = nullptr;
+	}
 }
 
 void BatQT::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUBNR(BatQT::m_dispose)
+void BatQT::m_dispose(int nargs) {
+	debug(5, "BatQT::m_dispose");
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	if (me->_video) {
+		delete me->_video;
+		me->_video = nullptr;
+	}
+}
+
 XOBJSTUB(BatQT::m_name, "")
 XOBJSTUB(BatQT::m_status, 0)
 XOBJSTUB(BatQT::m_error, "")
 XOBJSTUB(BatQT::m_lastError, "")
-XOBJSTUB(BatQT::m_open, 0)
-XOBJSTUB(BatQT::m_play, 0)
-XOBJSTUB(BatQT::m_stop, 0)
+
+void BatQT::m_open(int nargs) {
+	ARGNUMCHECK(2);
+	Datum unk = g_lingo->pop();
+	Datum path = g_lingo->pop();
+	TYPECHECK(path, STRING);
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	Common::Path normPath = findPath(path.asString());
+	if (!normPath.empty()) {
+		me->_video = new Video::QuickTimeDecoder();
+		debugC(5, kDebugXObj, "BatQT::m_open: Loading QT file %s", normPath.toString().c_str());
+		if (me->_video->loadFile(normPath)) {
+			me->_movieBox = Common::Rect(me->_video->getWidth(), me->_video->getHeight());
+			 if (g_director->_pixelformat.bytesPerPixel == 1) {
+				// Director supports playing back RGB and paletted video in 256 colour mode.
+				// In both cases they are dithered to match the Director palette.
+				byte palette[256 * 3];
+				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+				me->_video->setDitheringPalette(palette);
+			 }
+		} else {
+			warning("BatQT::m_open: Could not load QT file %s", normPath.toString().c_str());
+		}
+	} else {
+		warning("BatQT::m_open: Could not resolve path %s", path.asString().c_str());
+	}
+	g_lingo->push(0);
+}
+
+void BatQT::m_play(int nargs) {
+	ARGNUMCHECK(3);
+	Datum unk3 = g_lingo->pop();
+	Datum unk2 = g_lingo->pop();
+	Datum unk1 = g_lingo->pop();
+	TYPECHECK(unk1, INT);
+	TYPECHECK(unk2, INT);
+	TYPECHECK(unk3, STRING);
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	if (me->_video) {
+		debugC(5, kDebugXObj, "BatQT::m_play: Starting playback");
+		me->_video->start();
+	} else {
+		warning("BatQT::m_play: No video loaded");
+	}
+	g_lingo->push(0);
+}
+
+void BatQT::m_stop(int nargs) {
+	ARGNUMCHECK(0);
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	if (me->_video) {
+		debugC(5, kDebugXObj, "BatQT::m_stop: Stopping playback");
+		me->_video->stop();
+	} else {
+		warning("BatQT::m_stop: No video loaded");
+	}
+	g_lingo->push(0);
+}
+
 XOBJSTUB(BatQT::m_getTimeRange, "")
-XOBJSTUB(BatQT::m_getMovieBox, "0,0,320,240")
-XOBJSTUB(BatQT::m_getTime, 0)
+
+void BatQT::m_getMovieBox(int nargs) {
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	Common::String result = Common::String::format(
+		"%d,%d,%d,%d",
+		me->_movieBox.left,
+		me->_movieBox.top,
+		me->_movieBox.width(),
+		me->_movieBox.height()
+	);
+	debugC(5, kDebugXObj, "BatQT::m_getMovieBox: %s", result.c_str());
+	g_lingo->push(result);
+}
+
+void BatQT::m_getTime(int nargs) {
+	ARGNUMCHECK(0);
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	Datum result(0);
+	if (me->_video) {
+		// Game uses a polling loop of m_getTime to measure progress,
+		// therefore we need to render the frames in here
+		if (me->_video->needsUpdate()) {
+			const Graphics::Surface *frame = me->_video->decodeNextFrame();
+			if (frame) {
+				Graphics::Surface *temp = frame->scale(me->_movieBox.width(), me->_movieBox.height(), false);
+				g_system->copyRectToScreen(temp->getPixels(), temp->pitch, me->_movieBox.left, me->_movieBox.top, temp->w, temp->h);
+				g_system->updateScreen();
+				delete temp;
+			}
+		}
+		result = Datum(me->_video->getCurFrame() + 1);
+		debugC(5, kDebugXObj, "BatQT::m_getTime: %d", result.asInt());
+	} else {
+		warning("BatQT::m_getTime: No video loaded");
+	}
+	g_lingo->push(result);
+}
+
 XOBJSTUB(BatQT::m_setTime, "")
 XOBJSTUB(BatQT::m_setVolume, "")
-XOBJSTUB(BatQT::m_length, 0)
-XOBJSTUB(BatQT::m_setMovieBox, 0)
+
+void BatQT::m_length(int nargs) {
+	ARGNUMCHECK(0);
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	Datum result(0);
+	if (me->_video) {
+		result = Datum((int)me->_video->getFrameCount());
+		debugC(5, kDebugXObj, "BatQT::m_length: %d", result.asInt());
+	}
+	g_lingo->push(result);
+}
+
+void BatQT::m_setMovieBox(int nargs) {
+	ARGNUMCHECK(4);
+	Datum h = g_lingo->pop();
+	Datum w = g_lingo->pop();
+	Datum y = g_lingo->pop();
+	Datum x = g_lingo->pop();
+	TYPECHECK(h, INT);
+	TYPECHECK(w, INT);
+	TYPECHECK(y, INT);
+	TYPECHECK(x, INT);
+
+	BatQTXObject *me = static_cast<BatQTXObject *>(g_lingo->_state->me.u.obj);
+	me->_movieBox.left = x.asInt();
+	me->_movieBox.top = y.asInt();
+	me->_movieBox.setWidth(w.asInt());
+	me->_movieBox.setHeight(h.asInt());
+	debugC(5, kDebugXObj, "BatQT::m_setMovieBox: %d,%d,%d,%d", me->_movieBox.left, me->_movieBox.top, me->_movieBox.width(), me->_movieBox.height());
+	g_lingo->push(0);
+}
+
 XOBJSTUB(BatQT::m_setTimeRange, 0)
 XOBJSTUB(BatQT::m_addCallback, 0)
 XOBJSTUB(BatQT::m_removeCallback, 0)
