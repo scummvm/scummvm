@@ -101,7 +101,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 		DgdsParser ctx(*res, fileName.c_str());
 		DgdsChunk chunk;
 		while (chunk.readHeader(ctx)) {
-			Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, decompressor) : chunk.readStream(ctx);
+			Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, decompressor);
 
 			memcpy(ptr, chunk._idStr, 4);
 			ptr += 4;

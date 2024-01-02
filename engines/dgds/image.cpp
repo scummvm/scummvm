@@ -72,7 +72,7 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 
 	DgdsChunk chunk;
 	while (chunk.readHeader(ctx)) {
-		Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, _decompressor) : chunk.readStream(ctx);
+		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
 		if (chunk.isSection(ID_BIN)) {
 			loadBitmap4(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
@@ -118,7 +118,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 	int32 tileOffset = 0;
 
 	while (chunk.readHeader(ctx)) {
-		Common::SeekableReadStream *stream = chunk.isPacked(ex) ? chunk.decodeStream(ctx, _decompressor) : chunk.readStream(ctx);
+		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
 			for (uint16 k = 0; k < tileCount; k++) {
