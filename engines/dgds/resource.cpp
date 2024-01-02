@@ -252,25 +252,17 @@ Common::SeekableReadStream* DgdsChunk::getStream(DGDS_EX ex, DgdsParser& ctx, De
 }
 
 Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompressor *decompressor) {
-	byte compression;
-	uint32 unpackSize;
 	Common::SeekableReadStream *output = 0;
 
-	compression = ctx._file.readByte();
-	unpackSize = ctx._file.readUint32LE();
 	_size -= (1 + 4);
 
 	if (!_container) {
-		byte *dest = new byte[unpackSize];
-		decompressor->decompress(compression, dest, unpackSize, &ctx._file, _size);
-		output = new Common::MemoryReadStream(dest, unpackSize, DisposeAfterUse::YES);
-		ctx._bytesRead += unpackSize;
+		uint32 uncompressedSize;
+		byte *data = decompressor->decompress(&ctx._file, _size, uncompressedSize);
+		output = new Common::MemoryReadStream(data, uncompressedSize, DisposeAfterUse::YES);
+		ctx._bytesRead += uncompressedSize;
 	}
 
-	/*debug("    %s %u %s %u%c",
-		id, _size,
-		compressionDescr[compression],
-		unpackSize, (container ? '+' : ' '));*/
 	return output;
 }
 

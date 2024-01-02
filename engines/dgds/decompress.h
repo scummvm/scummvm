@@ -69,13 +69,11 @@ public:
 	Decompressor();
 	virtual ~Decompressor();
 
-	void decompress(byte compression, byte *data, int uncompressedSize, Common::SeekableReadStream *input, int size);
+	byte *decompress(Common::SeekableReadStream *input, int size, uint32 &uncompressedSize);
 
 private:
 	RleDecompressor _rleDecompressor;
 	LzwDecompressor _lzwDecompressor;
-
-	// const char *_compressionDescr[3] = {"None", "RLE", "LZW"};
 };
 
 } // End of namespace Dgds

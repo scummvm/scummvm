@@ -100,7 +100,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _resource;
 	delete _scene;
 	delete _gdsScene;
-	delete _musicData;
+	delete[] _musicData;
 	delete _soundData;
 }
 
@@ -532,7 +532,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 
 					debug("        %2u: %u bytes", scount, _musicSize);
 
-					_musicData = (uint8 *)malloc(_musicSize);
+					_musicData = new byte[_musicSize];
 					stream->read(_musicData, _musicSize);
 					scount++;
 				} else if (chunk.isSection(ID_INF)) {
@@ -566,19 +566,11 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					readStrings(stream);
 				} else if (chunk.isSection(ID_DAT)) {
 					uint16 idx, type;
-					byte compression;
-					uint32 unpackSize;
 					idx = stream->readUint16LE();
 					type = stream->readUint16LE();
-					compression = stream->readByte();
-					unpackSize = stream->readUint32LE();
 					//debug("        #%2u: (0x%X?) %s %u", idx, type, compressionDescr[compression], unpackSize);
 
-					_musicSize = unpackSize;
-					debug("        %2u: %u bytes", scount, _musicSize);
-
-					_musicData = (uint8 *)malloc(_musicSize);
-					decompressor->decompress(compression, _musicData, _musicSize, stream, stream->size() - stream->pos());
+					_musicData = decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
 
 					scount++;
 				}
