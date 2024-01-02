@@ -34,6 +34,9 @@
 #include "common/translation.h"
 #endif
 
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -362,6 +365,12 @@ void SdlGraphicsManager::saveScreenshot() {
 #ifdef USE_OSD
 		if (!ConfMan.getBool("disable_saved_screenshot_osd"))
 			displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+#endif
+
+#ifdef EMSCRIPTEN
+		// Users can't access the virtual emscripten filesystem in the browser, so we export the generated screenshot file via OSystem_Emscripten::exportFile.
+		OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+		emscripten_g_system->exportFile(screenshotsPath.appendComponent(filename));
 #endif
 	} else {
 		if (screenshotsPath.empty())

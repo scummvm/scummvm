@@ -654,6 +654,13 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 		drawOverlay();
 	}
 
+#ifdef EMSCRIPTEN
+	if (_queuedScreenshot) {
+		SdlGraphicsManager::saveScreenshot();
+		_queuedScreenshot = false;
+	}
+#endif 
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GL_SwapWindow(_window->getSDLWindow());
 #else
@@ -789,13 +796,23 @@ void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
+#ifdef EMSCRIPTEN
+void OpenGLSdlGraphics3dManager::saveScreenshot() {
+	_queuedScreenshot = true;
+}
+#endif
+
 bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) const {
 	// Largely based on the implementation from ScummVM
 	uint width = _overlayScreen->getWidth();
 	uint height = _overlayScreen->getHeight();
 
+#ifdef EMSCRIPTEN
+	const uint lineSize        = width * 4; // RGBA (see comment below)
+#else
 	uint linePaddingSize = width % 4;
 	uint lineSize = width * 3 + linePaddingSize;
+#endif
 
 	Common::DumpFile out;
 	if (!out.open(filename)) {
@@ -804,6 +821,14 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
+#ifdef EMSCRIPTEN	
+	// WebGL doesn't support GL_RGB, see https://registry.khronos.org/webgl/specs/latest/1.0/#5.14.12:
+	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE. 
+	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
+	// https://github.com/KhronosGroup/WebGL/issues/2747
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front());
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
 
 	if (_frameBuffer) {
 		_frameBuffer->detach();
@@ -818,6 +843,8 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 #else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
 #endif
+#endif
+
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
 	data.flipVertical(Common::Rect(width, height));
