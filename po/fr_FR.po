@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-01 21:03+0000\n"
-"PO-Revision-Date: 2023-12-29 16:50+0000\n"
+"PO-Revision-Date: 2024-01-03 05:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10142,12 +10142,14 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1235
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier de ressources Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
+"Impossible de trouver le fork de ressources dans le fichier de ressources "
+"Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1603
 msgid ""
