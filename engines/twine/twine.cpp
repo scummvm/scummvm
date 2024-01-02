@@ -973,6 +973,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				extInitMcga();
 			} else {
 				extInitSvga();
+				_redraw->_firstTime = true;
 			}
 		}
 	}
