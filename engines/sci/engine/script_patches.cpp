@@ -9030,6 +9030,8 @@ static const uint16 larry5PatchHollywoodSign[] = {
 // Applies to: All versions
 // Responsible method: Export 14 in script 0 (TPrint)
 static const uint16 larry5SignatureHTPrintUninitParameter[] = {
+	0x39, 0x04,                         // pushi 04 [ argc ]
+	SIG_ADDTOOFFSET(+5),
 	SIG_MAGICDWORD,
 	0x8f, 0x02,                         // lsp 02 [ often non-existent ]
 	0x59, 0x03,                         // &rest 03
@@ -9038,6 +9040,8 @@ static const uint16 larry5SignatureHTPrintUninitParameter[] = {
 };
 
 static const uint16 larry5PatchTPrintUninitParameter[] = {
+	0x39, 0x03,                         // pushi 03 [ argc ]
+	PATCH_ADDTOOFFSET(+5),
 	0x33, 0x00,                         // jmp 00
 	0x59, 0x02,                         // &rest 02
 	0x47, 0xff, 0x00, 0x06,             // calle proc225_0 [ Print ... &rest ]
