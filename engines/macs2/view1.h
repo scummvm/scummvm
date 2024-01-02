@@ -34,9 +34,10 @@ private:
 	int _offset = 0;
 
 	uint32 _frameDelayFlag = 100;
-	uint32 _nextFrameFlag = _frameDelayFlag;
+	int32 _nextFrameFlag = _frameDelayFlag;
 	uint32 _lastMillis = 0;
 	bool _hasTicked = false;
+	uint32 _flagFrameIndex = 0;
 
 	Graphics::ManagedSurface _backgroundSurface;
 

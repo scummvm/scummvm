@@ -197,9 +197,9 @@ void View1::draw() {
 	}
 	*/
 
-	DrawSprite(200, 50, g_engine->_flagWidths[0], g_engine->_flagHeights[0], g_engine->_flagData[0], s);
-	DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
-	DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
+	DrawSprite(200, 50, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
+	// DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
+	// DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
 
 	// Draw the mouse cursor
 	DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
@@ -238,6 +238,17 @@ bool View1::tick() {
 	uint32 tick_time = g_events->currentMillis;
 	uint32 delta = tick_time - _lastMillis;
 	_nextFrameFlag -= delta;
+
+	// TODO: Consider the case of frame skipping
+	if (_nextFrameFlag <= 0) {
+		_flagFrameIndex++;
+		if (_flagFrameIndex == 3) {
+			_flagFrameIndex = 0;
+		}
+		// TODO: Handle cleaner
+		_nextFrameFlag = _frameDelayFlag;
+		redraw();
+	}
 
 	_lastMillis = tick_time;
 	
