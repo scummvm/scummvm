@@ -137,7 +137,6 @@ public:
 	void setVolume(uint8 volume);
 
 	void unloadSound(int);
-	void playSound();
 	void startSound(int, int);
 	void stopSound();
 

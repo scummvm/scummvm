@@ -92,7 +92,6 @@ public:
 
 	void translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height);
 	void translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height);
-	void translateDisplayRectToVisualScreen(int16 &x, int16 &y, int16 &width, int16 &height);
 
 	uint32 getDisplayOffsetToGameScreenPos(int16 x, int16 y);
 	uint32 getDisplayOffsetToVisualScreenPos(int16 x, int16 y);
