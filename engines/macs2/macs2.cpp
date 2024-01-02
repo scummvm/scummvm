@@ -269,7 +269,13 @@ Macs2Engine::~Macs2Engine() {
 
 }
 
-bool Macs2Engine::FindGlyph(char c, GlyphData& out) const {
+bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
+	for (int i = 0; i < numGlyphs; i++) {
+		if (_glyphs[i].ASCII == c) {
+			out = _glyphs[i];
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -545,6 +551,12 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 		}
 		else if (opcode1 == 0x07) {
 			ScriptNoEntry
+		} else if (opcode1 == 0x10) {
+			// TODO: Confirm that this code is being hit
+		l0037_DE6E:
+			cmp al, 10h jnz 0DE7Ah
+
+				l0037_DE72 : call far 0037h : 0B843h jmp 0E3BAh
 		}
 		else {
 			ScriptNoEntry
