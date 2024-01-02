@@ -261,7 +261,7 @@ void MidiParser_DGDS::mixChannels() {
 			}
 
 			// remember which channel got used for channel remapping
-			byte midiChannel = midiCommand & 0xF;
+			//byte midiChannel = midiCommand & 0xF;
 			//_channelUsed[midiChannel] = true;
 
 			if (midiCommand != globalPrev)
