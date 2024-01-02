@@ -108,6 +108,7 @@ public:
 
 private:
 	void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor);
+	void parseRstChunk(Common::SeekableReadStream &file);
 };
 
 //void explode(Common::Platform platform, const char *indexName, const char *fileName, int resource);

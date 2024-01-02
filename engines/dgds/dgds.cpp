@@ -120,6 +120,46 @@ void readStrings(Common::SeekableReadStream *stream) {
 	}
 }
 
+void DgdsEngine::parseRstChunk(Common::SeekableReadStream &file) {
+	uint32 mark = file.readUint32LE();
+	debug("    0x%X", mark);
+
+	// elaborate guesswork. who knows it might be true.
+	while (!file.eos()) {
+		uint16 idx;
+		uint16 vals[7];
+
+		idx = file.readUint16LE();
+		debugN("  #%u:\t", idx);
+		if (idx == 0)
+			break;
+		for (int i = 0; i < ARRAYSIZE(vals); i++) {
+			vals[i] = file.readUint16LE();
+			if (i != 0)
+				debugN(", ");
+			debugN("%u", vals[i]);
+		}
+		debug(".");
+	}
+	debug("-");
+
+	while (!file.eos()) {
+		uint16 idx;
+		uint16 vals[2];
+		idx = file.readUint16LE();
+		debugN("  #%u:\t", idx);
+		for (int i = 0; i < ARRAYSIZE(vals); i++) {
+			vals[i] = file.readUint16LE();
+			if (i != 0)
+				debugN(", ");
+			debugN("%u", vals[i]);
+		}
+		debug(".");
+		if (idx == 0)
+			break;
+	}
+	debug("-");
+}
 
 void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor) {
 	const char *dot;
@@ -136,48 +176,9 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		Common::String line;
 
 		switch (ex) {
-		case EX_RST: {
-			uint32 mark;
-
-			mark = file.readUint32LE();
-			debug("    0x%X", mark);
-
-			// elaborate guesswork. who knows it might be true.
-			while (!file.eos()) {
-				uint16 idx;
-				uint16 vals[7];
-
-				idx = file.readUint16LE();
-				debugN("  #%u:\t", idx);
-				if (idx == 0)
-					break;
-				for (int i = 0; i < ARRAYSIZE(vals); i++) {
-					vals[i] = file.readUint16LE();
-					if (i != 0)
-						debugN(", ");
-					debugN("%u", vals[i]);
-				}
-				debug(".");
-			}
-			debug("-");
-
-			while (!file.eos()) {
-				uint16 idx;
-				uint16 vals[2];
-				idx = file.readUint16LE();
-				debugN("  #%u:\t", idx);
-				for (int i = 0; i < ARRAYSIZE(vals); i++) {
-					vals[i] = file.readUint16LE();
-					if (i != 0)
-						debugN(", ");
-					debugN("%u", vals[i]);
-				}
-				debug(".");
-				if (idx == 0)
-					break;
-			}
-			debug("-");
-		} break;
+		case EX_RST:
+			parseRstChunk(file);
+			break;
 		case EX_SCR: {
 			/* Unknown image format (Amiga). */
 			byte tag[5];
