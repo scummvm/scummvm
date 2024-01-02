@@ -631,7 +631,7 @@
 	{
 		"gob2",
 		"Interactive Demo (v1.02)",
-		AD_ENTRY1("intro.stk", "4b278c2678ea01383fd5ca114d947eea"),
+		AD_ENTRY1s("intro.stk", "4b278c2678ea01383fd5ca114d947eea", 575920),
 		UNK_LANG,
 		kPlatformAmiga,
 		ADGF_DEMO,
