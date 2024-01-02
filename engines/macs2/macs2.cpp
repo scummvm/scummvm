@@ -297,6 +297,29 @@ void Func9F4DClean(Common::MemoryReadStream *stream, uint16 &out1, uint16 &out2)
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
 	debug("-- Entering 9F4D");
 
+
+	/*
+		;; Make space for Ch bytes
+	;; Note: I don't think this has any inputs, but it does have some state since it returns different (hotspots?)
+	;; if called repeatedly
+	enter	0Ch,0h
+	;; This function has some internal state and iterates over some list
+	call	far 0037h:9F07h
+	;; For the analysis of the call that returns the correct active hotspot, it returns 1100h, of which only the AL part is taken
+	mov	[bp-5h],al
+	;; Note: This call will return the right hotspot value
+	call	far 0037h:9F23h
+	mov	[bp-7h],ax
+	cmp	byte ptr [bp-5h],0h
+	jnz	9F72h
+	*/
+
+
+
+
+
+
+
 	debug("-- Leaving 94FD");
 }
 
@@ -312,6 +335,14 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 
 	// debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
 	// TODO: There is some code required here to follow the logic exactly of going from opcode 1 to 2
+	if (opcode == 0x00) {
+		// l0037_9F67:
+		// TODO: Confirm that nothing else will be done in this case
+		out1 = value;
+		out2 = 0;
+		debug("-- Leaving 94FD");
+		return;
+	}
 	if (opcode == 0x01) {
 		if (value == 0x0b) {
 			// TODO: Hardcoded combination, the rule is more general

@@ -101,7 +101,7 @@ void Events::processEvent(Common::Event &ev) {
 		break;
 	}
 	// TODO: Consider if this is the best place
-	currentMillis = g_system->getMillis()
+	currentMillis = g_system->getMillis();
 }
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews) {
