@@ -109,6 +109,11 @@ bool OSystem_Emscripten::displayLogFile() {
 	return true;
 }
 
+#ifdef USE_OPENGL
+OSystem_SDL::GraphicsManagerType OSystem_Emscripten::getDefaultGraphicsManager() const {
+	return GraphicsManagerOpenGL;
+}
+#endif
 
 void OSystem_Emscripten::exportFile(const Common::Path &filename) {
 	Common::File file;
