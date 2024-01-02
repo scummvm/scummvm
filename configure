@@ -6966,6 +6966,15 @@ case $_host_cpu in
 		;;
 esac
 
+if test "$have_gcc" = yes; then
+	# Need 4.9 for pragma target
+	if (test $_cxx_major -lt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -lt 9); then
+		_ext_sse2=no
+		_ext_avx2=no
+		_ext_neon=no
+	fi
+fi
+
 define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
 echo_n "Enabling x86/amd64 SSE2... "
 echo "$_ext_sse2"
