@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-01 21:03+0000\n"
-"PO-Revision-Date: 2023-12-30 07:41+0000\n"
+"PO-Revision-Date: 2024-01-03 05:42+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -10041,12 +10041,14 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1235
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "Não foi possível abrir o arquivo de recursos do Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
+"Não foi possível encontrar a ramificação de recursos no arquivo de recursos "
+"do Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1603
 msgid ""
