@@ -274,8 +274,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		file.hexdump(leftover);
 		file.skip(leftover);
 	} else {
-		uint16 scount = 0;  // song count
-
 		DgdsChunk chunk;
 		int chunkno = 0;
 		while (chunk.readHeader(ctx)) {
@@ -543,19 +541,13 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				/* DOS. */
 				if (chunk.isSection(ID_SNG)) {
 					_musicSize = stream->size();
-
-					debug("        %2u: %u bytes", scount, _musicSize);
-
 					_musicData = new byte[_musicSize];
 					stream->read(_musicData, _musicSize);
-					scount++;
 				} else if (chunk.isSection(ID_INF)) {
-					uint32 count;
-					count = stream->size() / 2;
+					uint32 count = stream->size() / 2;
 					debug("        [%u]", count);
 					for (uint32 k = 0; k < count; k++) {
-						uint16 idx;
-						idx = stream->readUint16LE();
+						uint16 idx = stream->readUint16LE();
 						debug("        %2u: %u", k, idx);
 					}
 				}
@@ -585,8 +577,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					//debug("        #%2u: (0x%X?) %s %u", idx, type, compressionDescr[compression], unpackSize);
 
 					_musicData = decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
-
-					scount++;
 				}
 				break;
 			case EX_PAL:
@@ -676,10 +666,9 @@ bool DgdsEngine::playPCM(const byte *data, uint32 size) {
 	if (!data)
 		return false;
 
-	byte numParts;
 	const byte *trackPtr[0xFF];
 	uint16 trackSiz[0xFF];
-	numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
+	byte numParts = loadSndTrack(DIGITAL_PCM, trackPtr, trackSiz, data, size);
 	if (numParts == 0)
 		return false;
 
@@ -723,8 +712,7 @@ void DgdsEngine::playMusic(const Common::String &fileName) {
 
 	parseFile(fileName);
 	if (_musicData) {
-		uint32 tracks;
-		tracks = availableSndTracks(_musicData, _musicSize);
+		uint32 tracks = availableSndTracks(_musicData, _musicSize);
 		if ((tracks & TRACK_MT32))
 			_midiPlayer->play(_musicData, _musicSize);
 		if ((tracks & DIGITAL_PCM))
