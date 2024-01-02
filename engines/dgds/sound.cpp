@@ -31,12 +31,16 @@
 #include "audio/mixer.h"
 
 #include "dgds/decompress.h"
+#include "dgds/includes.h"
 #include "dgds/music.h"
+#include "dgds/parser.h"
+#include "dgds/resource.h"
 #include "dgds/sound.h"
 
 namespace Dgds {
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor) :
+	_mixer(mixer), _resource(resource), _decompressor(decompressor) {
 	_midiPlayer = new DgdsMidiPlayer();
 }
 
@@ -53,13 +57,7 @@ void Sound::loadAmigaAiff(Common::SeekableReadStream& file) {
 }
 
 void Sound::loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor) {
-	if (!decompressor) {
-		_musicSize = file.size();
-		_musicData = new byte[_musicSize];
-		file.read(_musicData, _musicSize);
-	} else {
-		_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
-	}
+	_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
 }
 
 void Sound::playAmigaSfx(byte channel, byte volume) {
@@ -127,7 +125,46 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 	return true;
 }
 
-void Sound::playMusic() {
+void Sound::playMusic(const Common::String &filename) {
+	if (!filename.hasSuffixIgnoreCase(".sng"))
+		error("Unhandled music file type: %s", filename.c_str());
+
+	Common::SeekableReadStream *musicStream = _resource->getResource(filename);
+	if (!musicStream) {
+		// Happens in the Mac version of Dragon
+		warning("Music file %s not found", filename.c_str());
+		return;
+	}
+
+	DgdsParser ctx(*musicStream, filename);
+	DgdsChunk chunk;
+	const DGDS_EX ex = EX_SNG;
+
+	while (chunk.readHeader(ctx)) {
+		if (chunk._container) {
+			continue;
+		}
+
+		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
+
+		if (chunk.isSection(ID_SNG)) {
+			_musicSize = stream->size();
+			_musicData = new byte[_musicSize];
+			stream->read(_musicData, _musicSize);
+		} else if (chunk.isSection(ID_INF)) {
+			uint32 count = stream->size() / 2;
+			debug("        [%u]", count);
+			for (uint32 k = 0; k < count; k++) {
+				uint16 idx = stream->readUint16LE();
+				debug("        %2u: %u", k, idx);
+			}
+		}
+
+		delete stream;
+	}
+
+	delete musicStream;
+
 	// stopMusic();
 
 	if (_musicData) {
