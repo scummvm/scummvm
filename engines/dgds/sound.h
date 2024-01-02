@@ -29,6 +29,9 @@
 
 namespace Dgds {
 
+class Decompressor;
+class DgdsMidiPlayer;
+
 struct Channel {
 	Audio::AudioStream *stream;
 	Audio::SoundHandle handle;
@@ -37,11 +40,13 @@ struct Channel {
 
 class Sound {
 public:
-	Sound(Audio::Mixer *mixer) : _mixer(mixer) {}
+	Sound(Audio::Mixer *mixer);
 	~Sound();
 
 	void playAmigaSfx(byte channel, byte volume);
 	void loadAmigaAiff(Common::SeekableReadStream &file);
+	void loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor = nullptr);
+	void playMusic();
 
 	void stopSfx(byte channel);
 
@@ -50,7 +55,10 @@ public:
 private:
 	struct Channel _channels[2];
 	Common::SeekableReadStream *_soundData = nullptr;
+	uint32 _musicSize = 0;
+	byte *_musicData = nullptr;
 	Audio::Mixer *_mixer;
+	DgdsMidiPlayer *_midiPlayer;
 };
 
 enum {

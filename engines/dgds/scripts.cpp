@@ -153,7 +153,8 @@ bool TTMInterpreter::run(TTMState *script) {
 				_vm->parseFile("DYNAMIX.INS");	// TODO: Unwrap this out of parseFile()
 				_vm->_soundPlayer->playAmigaSfx(0, 255);
 			} else {
-				_vm->playMusic(sval.c_str());
+				_vm->parseFile(sval.c_str()); // TODO: Unwrap this out of parseFile()
+				_vm->_soundPlayer->playMusic();
 			}
 			continue;
 

@@ -30,18 +30,36 @@
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
 
+#include "dgds/decompress.h"
+#include "dgds/music.h"
 #include "dgds/sound.h"
 
 namespace Dgds {
 
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+	_midiPlayer = new DgdsMidiPlayer();
+}
+
 Sound::~Sound() {
+	delete _midiPlayer;
 	delete _soundData;
+	delete[] _musicData;
 }
 
 void Sound::loadAmigaAiff(Common::SeekableReadStream& file) {
 	byte *dest = new byte[file.size()];
 	file.read(dest, file.size());
 	_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
+}
+
+void Sound::loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor) {
+	if (!decompressor) {
+		_musicSize = file.size();
+		_musicData = new byte[_musicSize];
+		file.read(_musicData, _musicSize);
+	} else {
+		_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
+	}
 }
 
 void Sound::playAmigaSfx(byte channel, byte volume) {
@@ -107,6 +125,18 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 	}
 	return true;
+}
+
+void Sound::playMusic() {
+	// stopMusic();
+
+	if (_musicData) {
+		uint32 tracks = availableSndTracks(_musicData, _musicSize);
+		if (tracks & TRACK_MT32)
+			_midiPlayer->play(_musicData, _musicSize);
+		else if (tracks & DIGITAL_PCM)
+			playPCM(_musicData, _musicSize);
+	}
 }
 
 static inline
