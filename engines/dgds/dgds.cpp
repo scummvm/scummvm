@@ -605,7 +605,7 @@ Common::Error DgdsEngine::run() {
 
 	if (getGameId() == GID_DRAGON) {
 		parseFile("DRAGON.GDS");
-	
+
 		interpTTM.load("TITLE1.TTM", &title1Data);
 		interpTTM.load("TITLE2.TTM", &title2Data);
 		interpADS.load("INTRO.ADS", &adsData);

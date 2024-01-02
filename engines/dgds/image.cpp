@@ -169,7 +169,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 					if (val != 0xffff)
 						warning("Expected 0xffff in 2-byte offset list, got %04x", val);
 				}
-				
+
 				uint32 nextOffset = 0;
 				for (int i = 0; i < number + 1; i++) {
 					fileStream->seek(vqtpos);
@@ -296,8 +296,8 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
     bval++;
 
     if (losize * 8 <= losize * bitcount2 + bval * 8) {
-        for (uint xx = x; xx < x + w; xx++) {
-            for (uint yy = y; yy < y + h; yy++) {
+        for (int xx = x; xx < x + w; xx++) {
+            for (int yy = y; yy < y + h; yy++) {
                 state->dstPtr[state->rowStarts[yy] + xx] = _getVqtBits(state, 8);
             }
         }
@@ -306,8 +306,8 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
 
     if (bval == 1) {
         const uint16 val = _getVqtBits(state, 8);
-        for (uint yy = y; yy < y + h; yy++) {
-            for (uint xx = x; xx < x + w; xx++) {
+        for (int yy = y; yy < y + h; yy++) {
+            for (int xx = x; xx < x + w; xx++) {
                 state->dstPtr[state->rowStarts[yy] + xx] = val;
             }
         }
@@ -321,8 +321,8 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
         ptmpbuf++;
     }
 
-    for (uint xx = x; xx < x + w; xx++) {
-        for (uint yy = y; yy < y + h; yy++) {
+    for (int xx = x; xx < x + w; xx++) {
+        for (int yy = y; yy < y + h; yy++) {
             state->dstPtr[state->rowStarts[yy] + xx] = tmpbuf[_getVqtBits(state, bitcount2)];
         }
     }
