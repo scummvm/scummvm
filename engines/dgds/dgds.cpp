@@ -528,31 +528,15 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					}
 				}
 				break;
-			case EX_SNG:
-				/* DOS. */
-				if (chunk.isSection(ID_SNG)) {
-					_soundPlayer->loadMusic(*stream);
-				} else if (chunk.isSection(ID_INF)) {
-					uint32 count = stream->size() / 2;
-					debug("        [%u]", count);
-					for (uint32 k = 0; k < count; k++) {
-						uint16 idx = stream->readUint16LE();
-						debug("        %2u: %u", k, idx);
-					}
-				}
-				break;
 			case EX_SX:
 				/* Macintosh. */
 				if (chunk.isSection(ID_INF)) {
-					uint16 type, count;
-
-					type = stream->readUint16LE();
-					count = stream->readUint16LE();
+					uint16 type = stream->readUint16LE();
+					uint16 count = stream->readUint16LE();
 
 					debug("        %u [%u]:", type, count);
 					for (uint16 k = 0; k < count; k++) {
-						uint16 idx;
-						idx = stream->readUint16LE();
+						uint16 idx = stream->readUint16LE();
 						debug("        %2u: %u", k, idx);
 					}
 				} else if (chunk.isSection(ID_TAG)) {
@@ -564,11 +548,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					/*uint16 type = */stream->readUint16LE();
 					_soundPlayer->loadMusic(*stream, decompressor);
 				}
-				break;
-			case EX_PAL:
-				/* DOS & Macintosh. */
-				// Handled in Image::setPalette
-				error("Should not be here");
 				break;
 			case EX_FNT:
 				if (resource == 0) {
@@ -584,14 +563,11 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					}
 				}
 				break;
-			case EX_SCR:
-				// Handled in Image::loadScreen
+			case EX_SNG:	// Handled in Sound::playMusic
+			case EX_PAL:	// Handled in Image::setPalette
+			case EX_SCR:    // Handled in Image::loadScreen
+			case EX_BMP:    // Handled in Image::loadBitmap
 				error("Should not be here");
-				break;
-			case EX_BMP:
-				// Handled in Image::loadBitmap
-				error("Should not be here");
-				break;
 			default:
 				break;
 			}
@@ -623,7 +599,7 @@ Common::Error DgdsEngine::run() {
 	_resource = new ResourceManager();
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
-	_soundPlayer = new Sound(_mixer);
+	_soundPlayer = new Sound(_mixer, _resource, _decompressor);
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
 
