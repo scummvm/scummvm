@@ -644,9 +644,9 @@
 { // Supplied by polluks in bug report #3628
 	{
 		"gob2",
-		"Interactive Demo",
+		"Interactive Demo (v1.0)",
 		AD_ENTRY1s("intro.stk", "9fa85aea959fa8c582085855fbd99346", 553063),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformAmiga,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
