@@ -164,6 +164,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Bundled with ScummVM 0.8
+	  // Reported by YetAnotherGuy via IRC
+		"sword1",
+		"SoldOut rerelease",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,
+				   "video/intro.mp2",       "c3e0ab75e8686c746899a9b6cecceac9", 8739102),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"",
