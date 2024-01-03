@@ -54,16 +54,16 @@ typedef struct Line {
 
 class TokenReader {
 public:
-	TokenReader(const Common::String &text);
-	Common::String substr(Token tok);
+	TokenReader(const Common::U32String &text);
+	Common::U32String substr(Token tok);
 	bool readToken(Token &token);
 
 private:
-	char readChar();
+	CodePoint readChar();
 	TokenId readTokenId();
 
 private:
-	Common::String _text;
+	Common::U32String _text;
 	int _off;
 };
 
@@ -93,17 +93,17 @@ static void addGlyphQuad(Texture *texture, Common::Array<Vertex> &vertices, Char
 
 // Skips all characters while one char from the set `token` is found.
 // Returns number of characters skipped.
-static int skipWhile(const char *s, const char *toSkip, int start = 0) {
+static int skipWhile(const Common::U32String& s, const char *toSkip, int start = 0) {
 	int result = 0;
-	int len = strlen(s);
+	int len = s.size();
 	while ((start + result < len) && strchr(toSkip, s[result + start]))
 		result++;
 	return result;
 }
 
-static int skipUntil(const char *s, const char *until, int start = 0) {
+static int skipUntil(const Common::U32String& s, const char *until, int start = 0) {
 	int result = 0;
-	int len = strlen(s);
+	int len = s.size();
 	while ((start + result < len) && !strchr(until, s[result + start]))
 		result++;
 	return result;
@@ -119,14 +119,14 @@ static float width(Text &text, TokenReader &reader, Token tok) {
 	return result;
 }
 
-TokenReader::TokenReader(const Common::String &text) : _text(text), _off(0) {
+TokenReader::TokenReader(const Common::U32String &text) : _text(text), _off(0) {
 }
 
-Common::String TokenReader::substr(Token tok) {
+Common::U32String TokenReader::substr(Token tok) {
 	return _text.substr(tok.startOff, tok.endOff - tok.startOff + 1);
 }
 
-char TokenReader::readChar() {
+CodePoint TokenReader::readChar() {
 	char result = _text[_off];
 	_off++;
 	return result;
@@ -142,13 +142,13 @@ TokenId TokenReader::readTokenId() {
 			return tiNewLine;
 		case '\t':
 		case ' ':
-			_off += skipWhile(_text.c_str(), Whitespace, _off);
+			_off += skipWhile(_text, Whitespace, _off);
 			return tiWhitespace;
 		case '#':
 			_off += 7;
 			return tiColor;
 		default:
-			_off += skipUntil(_text.c_str(), Whitespace2, _off);
+			_off += skipUntil(_text, Whitespace2, _off);
 			return tiString;
 		}
 	} else {
@@ -309,10 +309,11 @@ void Text::update() {
 				tok = line.tokens[j];
 				if (tok.id == tiColor) {
 					int iColor;
-					sscanf(reader.substr(tok).c_str() + 1, "%x", &iColor);
+					Common::String s = reader.substr(tok);
+					sscanf(s.c_str() + 1, "%x", &iColor);
 					color = Color::withAlpha(Color::rgb(iColor & 0x00FFFFFF), color.rgba.a);
 				} else {
-					Common::String s = reader.substr(tok);
+					Common::U32String s = reader.substr(tok);
 					for (int k = 0; k < s.size(); k++) {
 						CodePoint c = s[k];
 						Glyph glyph = _font->getGlyph(c);

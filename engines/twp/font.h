@@ -28,6 +28,12 @@
 #include "common/hashmap.h"
 #include "common/str.h"
 
+namespace Common {
+template<> struct Hash<Common::u32char_type_t> : public UnaryFunction<Common::u32char_type_t, uint> {
+	uint operator()(Common::u32char_type_t val) const { return (uint)val; }
+};
+}
+
 namespace Twp {
 
 struct KerningKey {
@@ -48,7 +54,7 @@ struct Hash<Twp::KerningKey> : public Common::UnaryFunction<Twp::KerningKey, uin
 } // namespace Common
 
 namespace Twp {
-typedef int32 CodePoint;
+typedef Common::u32char_type_t CodePoint;
 
 // represents a glyph: a part of an image for a specific font character
 struct Glyph {
