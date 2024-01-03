@@ -39,7 +39,7 @@
 #include "graphics/sjis.h"
 #include "graphics/fonts/dosfont.h"
 
-#define EXPLOSION_ANIM_DURATION 750
+#define EXPLOSION_ANIM_DURATION 500
 #define VORTEX_ANIM_DURATION 750
 
 namespace Kyra {
@@ -1293,7 +1293,7 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 		ptr8[i] = scale << 8;
 	}
 
-	uint32 playSpeedDelay = ((EXPLOSION_ANIM_DURATION << 15) / numElements) >> 7;
+	uint32 playSpeedDelay = EXPLOSION_ANIM_DURATION << 3;
 	uint32 frameDelay = (1000 << 8) / 60;
 	uint32 playSpeedTimer = 0;
 	uint32 frameTimer = frameDelay;
@@ -1313,12 +1313,16 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 						setPagePixel(0, px, py, ptr6[i]);
 				}
 
-				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				playSpeedTimer += playSpeedDelay;
+				uint32 ct = _system->getMillis();
+				if (ct >= (start + (frameTimer >> 8))) {
 					updateScreen();
+					uint32 diff = (_system->getMillis() - ct) << 8;
+					if ((int32)diff > 0 && diff > frameDelay)
+						start += ((diff - frameDelay) >> 8);
 					frameTimer += frameDelay;
 				}
-				playSpeedTimer += playSpeedDelay;
-				if (_system->getMillis() < start + (playSpeedTimer >> 15))
+				if (_system->getMillis() < (start + (playSpeedTimer >> 15)))
 					_vm->delayUntil(start + (playSpeedTimer >> 15));
 			}
 		}
@@ -1361,12 +1365,16 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				ptr7[i] = 0;
 			}
 
-			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+			playSpeedTimer += playSpeedDelay;
+			uint32 ct = _system->getMillis();
+			if (ct >= (start + (frameTimer >> 8))) {
 				updateScreen();
+				uint32 diff = (_system->getMillis() - ct) << 8;
+				if ((int32)diff > 0 && diff > frameDelay)
+					start += ((diff - frameDelay) >> 8);
 				frameTimer += frameDelay;
 			}
-			playSpeedTimer += playSpeedDelay;
-			if (_system->getMillis() < start + (playSpeedTimer >> 15))
+			if (_system->getMillis() < (start + (playSpeedTimer >> 15)))
 				_vm->delayUntil(start + (playSpeedTimer >> 15));
 		}
 	}
@@ -1395,7 +1403,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	int cy = 48;
 	radius <<= 6;
 
-	uint32 playSpeedDelay = ((VORTEX_ANIM_DURATION << 16) / numElements) >> 8;
+	uint32 playSpeedDelay = (VORTEX_ANIM_DURATION << 8) / numElements;
 	uint32 frameDelay = (1000 << 8) / 60;
 	uint32 playSpeedTimer = 0;
 	uint32 frameTimer = frameDelay;
@@ -1461,12 +1469,16 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 				else
 					setPagePixel(0, px, py, pixBackup[ii]);
 
-				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				playSpeedTimer += playSpeedDelay;
+				uint32 ct = _system->getMillis();
+				if (ct >= (start + (frameTimer >> 8))) {
 					updateScreen();
+					uint32 diff = (_system->getMillis() - ct) << 8;
+					if ((int32)diff > 0 && diff > frameDelay)
+						start += ((diff - frameDelay) >> 8);
 					frameTimer += frameDelay;
 				}
-				playSpeedTimer += playSpeedDelay;
-				if (_system->getMillis() < start + (playSpeedTimer >> 16))
+				if (_system->getMillis() < (start + (playSpeedTimer >> 16)))
 					_vm->delayUntil(start + (playSpeedTimer >> 16));
 			}
 		}
@@ -1512,12 +1524,16 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 				colTableStep[ii] = 0;
 			}
 
-			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+			playSpeedTimer += playSpeedDelay;
+			uint32 ct = _system->getMillis();
+			if (ct >= (start + (frameTimer >> 8))) {
 				updateScreen();
+				uint32 diff = (_system->getMillis() - ct) << 8;
+				if ((int32)diff > 0 && diff > frameDelay)
+					start += ((diff - frameDelay) >> 8);
 				frameTimer += frameDelay;
 			}
-			playSpeedTimer += playSpeedDelay;
-			if (_system->getMillis() < start + (playSpeedTimer >> 16))
+			if (_system->getMillis() < (start + (playSpeedTimer >> 16)))
 				_vm->delayUntil(start + (playSpeedTimer >> 16));
 		}
 		d++;
