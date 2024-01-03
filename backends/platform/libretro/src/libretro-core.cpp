@@ -805,7 +805,14 @@ void retro_init(void) {
 
 void retro_deinit(void) {
 	LIBRETRO_G_SYSTEM->destroy();
-	free(sound_buffer);
+	if (sound_buffer) {
+		free(sound_buffer);
+		sound_buffer = NULL;
+	}
+	if (sound_buffer_empty) {
+		free(sound_buffer_empty);
+		sound_buffer_empty = NULL;
+	}
 	log_scummvm_exit_code();
 }
 
