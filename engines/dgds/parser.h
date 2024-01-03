@@ -38,7 +38,10 @@ public:
 	uint32 _bytesRead;
 	Common::SeekableReadStream *_file;
 
+
+public:
 	DgdsParser(ResourceManager *resman);
+	virtual ~DgdsParser() {};
 	bool parse(ParserData *data, const Common::String &filename);
 	virtual bool handleChunk(DgdsChunk &chunk, ParserData *data) { return false; };
 

@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "dgds/parser.h"
+#include "dgds/scene.h"
 
 namespace Dgds {
 
@@ -98,6 +99,9 @@ public:
 protected:
 	DgdsEngine *_vm;
 
+	Dialogue _text;
+	Common::Rect _drawWin;
+	int _currentBmpId;
 	//Common::String _filename;
 	//TTMData *_scriptData;
 

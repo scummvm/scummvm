@@ -122,6 +122,7 @@ struct DialogueSubstring {
 class Scene {
 public:
 	Scene();
+	virtual ~Scene() {};
 
 	virtual bool parse(Common::SeekableReadStream *s) = 0;
 
@@ -153,7 +154,7 @@ public:
 	bool parseInf(Common::SeekableReadStream *s);
 
 private:
-	byte _unk[32];
+	//byte _unk[32];
 	Common::String _iconFile;
 	Common::Array<struct SceneStruct2_Extended> _struct2ExtList;
 	Common::Array<struct SceneStruct5> _struct5List1;
@@ -179,17 +180,17 @@ private:
     Common::Array<struct SceneStruct5> _struct5List2;
     Common::Array<struct SceneStruct5> _struct5List3;
     Common::Array<struct SceneStruct5> _struct5List4;
-    uint _field5_0x12;
+    //uint _field5_0x12;
     uint _field6_0x14;
     Common::String _adsFile;
-    uint _field8_0x23;
+    //uint _field8_0x23;
     Common::Array<struct SceneStruct2> _struct2List;
     Common::Array<struct SceneStruct4> _struct4List1;
     Common::Array<struct SceneStruct4> _struct4List2;
-    uint _field12_0x2b;
+    //uint _field12_0x2b;
     Common::Array<struct Dialogue> _dialogues;
     Common::Array<struct SceneStruct7> _struct7List;
-    uint _field15_0x33;
+    //uint _field15_0x33;
 };
 
 } // End of namespace Dgds

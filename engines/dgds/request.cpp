@@ -93,7 +93,8 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunk &chunk, int num) {
 				gptr->_sval2I = i;
 		}
 
-		uint16 type3 = str->readUint16LE();
+		// FIXME: Where is this used?
+		/*uint16 type3 = */str->readUint16LE();
 
 		// TODO: In each of these cases, work out the true offsets to these fields.
 		// and if they are shared between gadget types.
