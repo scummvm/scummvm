@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-01 21:03+0000\n"
+"POT-Creation-Date: 2024-01-02 13:02+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -969,8 +969,8 @@ msgstr "Använd"
 #: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:36
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:467
 #: engines/grim/grim.cpp:548 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:461
-#: engines/twine/metaengine.cpp:528 engines/wintermute/keymapper_tables.h:1290
+#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:465
+#: engines/twine/metaengine.cpp:532 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -983,8 +983,8 @@ msgstr "Upp"
 #: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:472
 #: engines/grim/grim.cpp:553 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:468
-#: engines/twine/metaengine.cpp:536 engines/wintermute/keymapper_tables.h:1296
+#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:472
+#: engines/twine/metaengine.cpp:540 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -997,7 +997,7 @@ msgstr "Ned"
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:823
-#: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
+#: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -1012,7 +1012,7 @@ msgstr "Vänster"
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:830
-#: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
+#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -6231,7 +6231,7 @@ msgstr "Attack 1"
 msgid "Block"
 msgstr "Lås upp"
 
-#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:445
+#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:449
 msgid "Accept"
 msgstr ""
 
@@ -6265,7 +6265,7 @@ msgstr ""
 msgid "Reply 6"
 msgstr ""
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
+#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:495
 #, fuzzy
 msgid "Next Page"
 msgstr "Nästa"
@@ -7440,7 +7440,7 @@ msgstr ""
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 #, fuzzy
 msgid "Escape"
 msgstr "Escape-tangenten"
@@ -10169,17 +10169,21 @@ msgstr ""
 msgid "Special Action"
 msgstr "Aktiv"
 
-#: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
-#: engines/twine/metaengine.cpp:521
+#: engines/twine/metaengine.cpp:432
+msgid "Scenery Zoom"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
+#: engines/twine/metaengine.cpp:525
 msgid "Abort"
 msgstr "Avbryt"
 
-#: engines/twine/metaengine.cpp:558
+#: engines/twine/metaengine.cpp:562
 #, fuzzy
 msgid "Previous location"
 msgstr "~F~öregående"
 
-#: engines/twine/metaengine.cpp:563
+#: engines/twine/metaengine.cpp:567
 #, fuzzy
 msgid "Next location"
 msgstr "~F~öregående"

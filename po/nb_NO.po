@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-01 21:03+0000\n"
+"POT-Creation-Date: 2024-01-02 13:02+0000\n"
 "PO-Revision-Date: 2023-12-29 23:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -952,8 +952,8 @@ msgstr "Samhandle"
 #: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:36
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:467
 #: engines/grim/grim.cpp:548 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:461
-#: engines/twine/metaengine.cpp:528 engines/wintermute/keymapper_tables.h:1290
+#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:465
+#: engines/twine/metaengine.cpp:532 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -966,8 +966,8 @@ msgstr "Opp"
 #: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:472
 #: engines/grim/grim.cpp:553 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:468
-#: engines/twine/metaengine.cpp:536 engines/wintermute/keymapper_tables.h:1296
+#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:472
+#: engines/twine/metaengine.cpp:540 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -980,7 +980,7 @@ msgstr "Ned"
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:823
-#: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
+#: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -995,7 +995,7 @@ msgstr "Venstre"
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:830
-#: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
+#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -6567,7 +6567,7 @@ msgstr "Angrip"
 msgid "Block"
 msgstr "Blokkere"
 
-#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:445
+#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:449
 msgid "Accept"
 msgstr "Godta"
 
@@ -6599,7 +6599,7 @@ msgstr "Svar 5"
 msgid "Reply 6"
 msgstr "Svar 6"
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
+#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:495
 msgid "Next Page"
 msgstr "Neste side"
 
@@ -7783,7 +7783,7 @@ msgstr "Erstatt farvet sten med stolper for treffpoeng og besvergelsespoeng."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Escape"
 
@@ -10580,16 +10580,20 @@ msgstr "Åpne holokart"
 msgid "Special Action"
 msgstr "Spesialhandling"
 
-#: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
-#: engines/twine/metaengine.cpp:521
+#: engines/twine/metaengine.cpp:432
+msgid "Scenery Zoom"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
+#: engines/twine/metaengine.cpp:525
 msgid "Abort"
 msgstr "Avbryt"
 
-#: engines/twine/metaengine.cpp:558
+#: engines/twine/metaengine.cpp:562
 msgid "Previous location"
 msgstr "Forrige sted"
 
-#: engines/twine/metaengine.cpp:563
+#: engines/twine/metaengine.cpp:567
 msgid "Next location"
 msgstr "Neste sted"
 
