@@ -44,7 +44,7 @@ public:
 	Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor);
 	~Sound();
 
-	void playAmigaSfx(byte channel, byte volume);
+	void playAmigaSfx(const Common::String &filename, byte channel, byte volume);
 	void loadAmigaAiff(Common::SeekableReadStream &file);
 	void loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor);
 	void playMusic(const Common::String &filename);

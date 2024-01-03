@@ -60,7 +60,21 @@ void Sound::loadMusic(Common::SeekableReadStream &file, Decompressor *decompress
 	_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
 }
 
-void Sound::playAmigaSfx(byte channel, byte volume) {
+void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volume) {
+	if (!filename.hasSuffixIgnoreCase(".ins"))
+		error("Unhandled SFX file type: %s", filename.c_str());
+
+	Common::SeekableReadStream *sfxStream = _resource->getResource(filename);
+	if (!sfxStream) {
+		warning("SFX file %s not found", filename.c_str());
+		return;
+	}
+
+	byte *dest = new byte[sfxStream->size()];
+	sfxStream->read(dest, sfxStream->size());
+	_soundData = new Common::MemoryReadStream(dest, sfxStream->size(), DisposeAfterUse::YES);
+	delete sfxStream;
+
 	stopSfx(channel);
 
 	if (_soundData) {

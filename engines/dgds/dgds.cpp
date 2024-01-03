@@ -209,9 +209,6 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 		delete[] tw;
 		delete[] th;
 	} break;
-	case EX_INS:
-		_soundPlayer->loadAmigaAiff(file);
-		break;
 	case EX_SNG:
 		/* IFF-SMUS music (Amiga). */
 		break;
@@ -225,6 +222,8 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 			line = file.readLine();
 		}
 		break;
+	case EX_INS: // Handled in Sound::playAmigaSfx
+		error("Should not be here");
 	}
 }
 
