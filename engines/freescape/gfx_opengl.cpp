@@ -31,6 +31,8 @@
 #include "freescape/gfx_opengl.h"
 #include "freescape/gfx_opengl_texture.h"
 
+#ifdef USE_OPENGL_GAME
+
 namespace Freescape {
 
 Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMode) {
@@ -498,3 +500,5 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 }
 
 } // End of namespace Freescape
+
+#endif
