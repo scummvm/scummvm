@@ -98,7 +98,9 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 		// Reset formatting if the text is completely empty
 		if (totalFormatting == 1 && textPart.empty()) {
-			_style = FontStyle();
+			_style.fontId = 0;
+			_style.textSlant = 0;
+			_style.fontSize = 12;
 			debugC(4, kDebugText, "Stxt init: the font formatting was reset due to empty string");
 		}
 
