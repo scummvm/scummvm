@@ -384,8 +384,12 @@ uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toff
 
 void Image::loadPalette(Common::String filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
-	if (!fileStream)
-		error("Couldn't get palette resource %s", filename.c_str());
+	if (!fileStream) {
+		// Happens in the Amiga version of Dragon
+		warning("Couldn't load palette resource %s", filename.c_str());
+		return;
+	}
+		
 	DgdsParser ctx(*fileStream, filename.c_str());
 
 	DgdsChunk chunk;

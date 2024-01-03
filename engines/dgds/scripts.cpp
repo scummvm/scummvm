@@ -150,8 +150,7 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0xf060:
 			// LOAD SONG:	filename:str
 			if (_vm->_platform == Common::kPlatformAmiga) {
-				_vm->parseFile("DYNAMIX.INS");	// TODO: Unwrap this out of parseFile()
-				_vm->_soundPlayer->playAmigaSfx(0, 255);
+				_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 			} else {
 				_vm->_soundPlayer->playMusic(sval.c_str());
 			}
