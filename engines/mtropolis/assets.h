@@ -146,6 +146,9 @@ private:
 	template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
 	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, bool isKeyFrame, uint hackFlags);
 
+	template<class TDest, class TSrc>
+	static void checkedMemCpy(Common::Array<TDest> &dest, size_t destIndex, const Common::Array<TSrc> &src, size_t srcIndex, size_t sizeBytes);
+
 	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;
 
