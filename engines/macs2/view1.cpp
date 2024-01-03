@@ -61,38 +61,43 @@ namespace Macs2 {
 		uint16 xSegments = (width / g_engine->_borderWidth) + 1;
 		uint16 ySegments = (height / g_engine->_borderHeight) + 1;
 
-		// TODO: Set up clipping
+		
 
 		// First the left side
+		Common::Rect clippingRect(x, y, x + borderWidth, y + height);
 		int currentX = x;
 		int currentY = y;
 		for (int iy = 0; iy < ySegments; iy++) {
-			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			// DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
 			currentY += g_engine->_borderHeight;
 		}
 
 		// Top
+		clippingRect = Common::Rect(x, y, x + width, y + borderWidth);
 		currentX = x;
 		currentY = y;
 		for (int ix = 0; ix < xSegments; ix++) {
-			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
 			currentX += g_engine->_borderWidth;
 		}
 
 		// Right
 		// TODO: Need to figure out the margin here
 		currentX = x + width - borderWidth;
-		currentY = 0;
+		currentY = y;
+		clippingRect = Common::Rect(currentX, y, x + width, y + height);
 		for (int iy = 0; iy < ySegments; iy++) {
-			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
 			currentY += g_engine->_borderHeight;
 		}
 
 		// Bottom
 		currentX = x;
 		currentY = y + height - borderWidth;
+		clippingRect = Common::Rect(x, currentY, x + width, y + height);
 		for (int ix = 0; ix < xSegments; ix++) {
-			DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
 			currentX += g_engine->_borderWidth;
 		}
 	}
@@ -289,7 +294,7 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
-				if (clippingRect.contains(currentX, currentY)) {
+				if (clippingRect.contains(x + currentX, y + currentY)) {
 					s.setPixel(x + currentX, y + currentY, val);
 				}
 			}
