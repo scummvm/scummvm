@@ -30,7 +30,6 @@
 #include "common/substream.h"
 #include "dgds/decompress.h"
 #include "dgds/includes.h"
-#include "dgds/parser.h"
 
 namespace Dgds {
 
@@ -219,24 +218,26 @@ bool DgdsChunk::isPacked(DGDS_EX ex) const {
 	return packed;
 }
 
-bool DgdsChunk::readHeader(DgdsParser &ctx) {
+bool DgdsChunk::readHeader(Common::SeekableReadStream *file, const Common::String &filename) {
 	memset(_idStr, 0, sizeof(_idStr));
 	_id = 0;
 
-	if (ctx._file.pos() >= ctx._file.size()) {
+	if (file->pos() >= file->size()) {
 		return false;
 	}
+	
+	_stream = file;
 
-	ctx._file.read(_idStr, DGDS_TYPENAME_MAX);
+	file->read(_idStr, DGDS_TYPENAME_MAX);
 
 	if (_idStr[DGDS_TYPENAME_MAX - 1] != ':') {
-		debug("bad header in: %s", ctx._filename.c_str());
+		debug("bad header in: %s", filename.c_str());
 		return false;
 	}
 	_idStr[DGDS_TYPENAME_MAX] = '\0';
 	_id = MKTAG24(uint32(_idStr[0]), uint32(_idStr[1]), uint32(_idStr[2]));
 
-	_size = ctx._file.readUint32LE();
+	_size = file->readUint32LE();
 	//ctx._file.skip(2);
 	if (_size & 0x80000000) {
 		_size &= ~0x80000000;
@@ -247,31 +248,29 @@ bool DgdsChunk::readHeader(DgdsParser &ctx) {
 	return true;
 }
 
-Common::SeekableReadStream* DgdsChunk::getStream(DGDS_EX ex, DgdsParser& ctx, Decompressor* decompressor) {
-	return isPacked(ex) ? decodeStream(ctx, decompressor) : readStream(ctx);
+Common::SeekableReadStream* DgdsChunk::getStream(DGDS_EX ex, Common::SeekableReadStream *file, Decompressor* decompressor) {
+	return isPacked(ex) ? decodeStream(file, decompressor) : readStream(file);
 }
 
-Common::SeekableReadStream *DgdsChunk::decodeStream(DgdsParser &ctx, Decompressor *decompressor) {
+Common::SeekableReadStream *DgdsChunk::decodeStream(Common::SeekableReadStream *file, Decompressor *decompressor) {
 	Common::SeekableReadStream *output = 0;
 
 	_size -= (1 + 4);
 
 	if (!_container) {
 		uint32 uncompressedSize;
-		byte *data = decompressor->decompress(&ctx._file, _size, uncompressedSize);
+		byte *data = decompressor->decompress(file, _size, uncompressedSize);
 		output = new Common::MemoryReadStream(data, uncompressedSize, DisposeAfterUse::YES);
-		ctx._bytesRead += uncompressedSize;
 	}
 
 	return output;
 }
 
-Common::SeekableReadStream *DgdsChunk::readStream(DgdsParser &ctx) {
+Common::SeekableReadStream *DgdsChunk::readStream(Common::SeekableReadStream *file) {
 	Common::SeekableReadStream *output = 0;
 
 	if (!_container) {
-		output = new Common::SeekableSubReadStream(&ctx._file, ctx._file.pos(), ctx._file.pos() + _size, DisposeAfterUse::NO);
-		ctx._bytesRead += _size;
+		output = new Common::SeekableSubReadStream(file, file->pos(), file->pos() + _size, DisposeAfterUse::NO);
 	}
 
 	debug("    %s %u%c", _idStr, _size, (_container ? '+' : ' '));

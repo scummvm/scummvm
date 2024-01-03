@@ -24,21 +24,23 @@
 #define DGDS_SCRIPTS_H
 
 #include "common/rect.h"
+#include "dgds/parser.h"
 
 namespace Dgds {
 
 class DgdsEngine;
 class DgdsChunk;
 
-class DgdsScriptData {
+
+class ScriptParserData : public ParserData {
 public:
-	DgdsScriptData() : scr(nullptr) {}
+	ScriptParserData() : scr(nullptr) {}
 	Common::String filename;
 	Common::SeekableReadStream *scr;
 	Common::HashMap<uint16, Common::String> _tags;
 };
 
-class TTMData : public DgdsScriptData {
+class TTMData : public ScriptParserData {
 public:
 };
 
@@ -49,7 +51,7 @@ struct TTMState {
 	int delay;
 };
 
-class ADSData : public DgdsScriptData {
+class ADSData : public ScriptParserData {
 public:
 	ADSData() : count(0), scriptDatas(nullptr) {}
 	uint16 count;

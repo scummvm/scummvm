@@ -80,6 +80,7 @@ struct SceneStruct4 {
     Common::Array<struct SceneStruct5> struct5List;
 };
 
+
 struct Dialogue {
     uint16 num;
     Rect rect;

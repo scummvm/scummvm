@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	music.o \
 	parser.o \
 	resource.o \
+	request.o \
 	scripts.o \
 	scene.o \
 	sound.o
