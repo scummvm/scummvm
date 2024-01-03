@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-02 13:02+0000\n"
-"PO-Revision-Date: 2024-01-03 05:42+0000\n"
+"PO-Revision-Date: 2024-01-04 02:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -10648,7 +10648,7 @@ msgstr "Ação Especial"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "Ampliar Cenário"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
