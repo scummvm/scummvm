@@ -161,7 +161,7 @@ Common::String *Score::getLabelList() {
 
 	for (auto &i : *_labels) {
 		*res += i->name;
-		*res += '\n';
+		*res += '\r';
 	}
 
 	return res;
