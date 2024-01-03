@@ -51,20 +51,8 @@ static Common::String _bmpNames[16];
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
-	Common::SeekableReadStream *stream = _vm->getResourceManager()->getResource(filename);
-	Decompressor *decompressor = _vm->getDecompressor();
-
-	if (!stream) {
-		error("Couldn't open script file '%s'", filename.c_str());
-		return false;
-	}
-
-	TTMParser dgds(*stream, filename);
-	dgds.parse(scriptData, decompressor);
-
-	delete stream;
-
-	return true;
+	TTMParser dgds(_vm->getResourceManager());
+	return dgds.parse(scriptData, filename);
 }
 
 void TTMInterpreter::unload(TTMData *data) {
@@ -322,20 +310,11 @@ bool TTMInterpreter::run(TTMState *script) {
 ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(nullptr) {}
 
 bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
-	Common::SeekableReadStream *stream = _vm->getResource(filename, false);
-
-	if (!stream) {
-		error("Couldn't open script resource '%s'", filename.c_str());
-		return false;
-	}
-
 	_scriptData = scriptData;
 	_filename = filename;
 
-	ADSParser dgds(*stream, _filename);
-	dgds.parse(scriptData, _vm->getDecompressor());
-
-	delete stream;
+	ADSParser dgds(_vm->getResourceManager());
+	dgds.parse(scriptData, filename);
 
 	TTMInterpreter interp(_vm);
 

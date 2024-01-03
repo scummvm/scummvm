@@ -33,7 +33,6 @@ class SeekableReadStream;
 
 namespace Dgds {
 
-class DgdsParser;
 class Decompressor;
 
 typedef uint32 DGDS_ID;
@@ -72,9 +71,9 @@ public:
 	bool isSection(DGDS_ID section) const;
 	static bool isFlatfile(DGDS_EX ext);
 
-	bool readHeader(DgdsParser &ctx);
-	Common::SeekableReadStream *readStream(DgdsParser &ctx);
-	Common::SeekableReadStream *getStream(DGDS_EX ex, DgdsParser &ctx, Decompressor *decompressor);
+	bool readHeader(Common::SeekableReadStream *file, const Common::String &filename);
+	Common::SeekableReadStream *readStream(Common::SeekableReadStream *file);
+	Common::SeekableReadStream *getStream(DGDS_EX ex, Common::SeekableReadStream *file, Decompressor *decompressor);
 
 	char _idStr[DGDS_TYPENAME_MAX + 1];
 	DGDS_ID _id;
@@ -84,7 +83,7 @@ public:
 
 private:
 	bool isPacked(DGDS_EX ex) const;
-	Common::SeekableReadStream *decodeStream(DgdsParser &ctx, Decompressor *decompressor);
+	Common::SeekableReadStream *decodeStream(Common::SeekableReadStream *file, Decompressor *decompressor);
 };
 
 } // End of namespace Dgds

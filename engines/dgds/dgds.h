@@ -77,7 +77,7 @@ private:
 	FFont *_fntF;
 
 protected:
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -85,26 +85,22 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	void parseFile(const Common::String &filename, int resource = 0);
-
 	Graphics::Surface &getTopBuffer() { return _topBuffer; }
 	Graphics::Surface &getBottomBuffer() { return _bottomBuffer; }
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
-
 	const PFont *getFntP() const { return _fntP; }
 	Image *_image;
 	Graphics::ManagedSurface _resData;
 
 private:
-	void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor);
+	void parseFile(const Common::String &filename);
+	void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name);
 	void parseRstChunk(Common::SeekableReadStream &file);
 	void parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex);
 };
-
-//void explode(Common::Platform platform, const char *indexName, const char *fileName, int resource);
 
 } // End of namespace Dgds
 

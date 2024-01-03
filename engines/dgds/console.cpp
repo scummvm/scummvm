@@ -97,11 +97,9 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 			ex = MKTAG24(dot[1], dot[2], dot[3]);
 		}
 
-		Decompressor *decompressor = new Decompressor();
-		DgdsParser ctx(*res, fileName.c_str());
 		DgdsChunk chunk;
-		while (chunk.readHeader(ctx)) {
-			Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, decompressor);
+		while (chunk.readHeader(res, fileName)) {
+			Common::SeekableReadStream *stream = chunk.getStream(ex, res, _vm->getDecompressor());
 
 			memcpy(ptr, chunk._idStr, 4);
 			ptr += 4;
@@ -112,7 +110,6 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 			size += 4 + stream->size();
 		}
 
-		delete decompressor;
 	}
 
 	delete res;

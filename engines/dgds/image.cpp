@@ -54,7 +54,6 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
 		error("Couldn't get image resource %s", filename.c_str());
-	DgdsParser ctx(*fileStream, filename.c_str());
 
 	if ((dot = strrchr(filename.c_str(), '.'))) {
 		ex = MKTAG24(dot[1], dot[2], dot[3]);
@@ -71,8 +70,8 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 	surface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	DgdsChunk chunk;
-	while (chunk.readHeader(ctx)) {
-		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
+	while (chunk.readHeader(fileStream, filename)) {
+		Common::SeekableReadStream *stream = chunk.getStream(ex, fileStream, _decompressor);
 		if (chunk.isSection(ID_BIN)) {
 			loadBitmap4(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
@@ -94,7 +93,6 @@ void Image::loadBitmap(Common::String filename, int number) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
 		error("Couldn't get bitmap resource %s", filename.c_str());
-	DgdsParser ctx(*fileStream, filename.c_str());
 	DgdsChunk chunk;
 
 	_bmpData.free();
@@ -117,8 +115,8 @@ void Image::loadBitmap(Common::String filename, int number) {
 	uint16 tileHeights[64];
 	int32 tileOffset = 0;
 
-	while (chunk.readHeader(ctx)) {
-		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
+	while (chunk.readHeader(fileStream, filename)) {
+		Common::SeekableReadStream *stream = chunk.getStream(ex, fileStream, _decompressor);
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
 			for (uint16 k = 0; k < tileCount; k++) {
@@ -389,13 +387,11 @@ void Image::loadPalette(Common::String filename) {
 		warning("Couldn't load palette resource %s", filename.c_str());
 		return;
 	}
-		
-	DgdsParser ctx(*fileStream, filename.c_str());
 
 	DgdsChunk chunk;
 
-	while (chunk.readHeader(ctx)) {
-		Common::SeekableReadStream *stream = chunk.readStream(ctx);
+	while (chunk.readHeader(fileStream, filename)) {
+		Common::SeekableReadStream *stream = chunk.readStream(fileStream);
 		if (chunk.isSection(ID_VGA)) {
 			stream->read(_palette, 256 * 3);
 

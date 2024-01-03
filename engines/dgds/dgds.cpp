@@ -53,6 +53,7 @@
 #include "dgds/image.h"
 #include "dgds/includes.h"
 #include "dgds/parser.h"
+#include "dgds/request.h"
 #include "dgds/resource.h"
 #include "dgds/scripts.h"
 #include "dgds/sound.h"
@@ -227,7 +228,16 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 	}
 }
 
-void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name, int resource, Decompressor *decompressor) {
+void DgdsEngine::parseFile(const Common::String &filename) {
+       Common::SeekableReadStream *stream = _resource->getResource(filename);
+       if (!stream)
+               error("Couldn't get resource file %s", filename.c_str());
+       parseFileInner(_platform, *stream, filename.c_str());
+       delete stream;
+}
+
+
+void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name) {
 	const char *dot;
 	DGDS_EX ex = 0;
 
@@ -237,7 +247,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 
 	uint parent = 0;
 
-	DgdsParser ctx(file, name);
 	if (platform == Common::kPlatformAmiga) {
 		parseAmigaChunks(file, ex);
 	}
@@ -269,13 +278,13 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 	} else {
 		DgdsChunk chunk;
 		int chunkno = 0;
-		while (chunk.readHeader(ctx)) {
+		while (chunk.readHeader(&file, name)) {
 			if (chunk._container) {
 				parent = chunk._id;
 				continue;
 			}
 
-			Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, decompressor);
+			Common::SeekableReadStream *stream = chunk.getStream(ex, &file, _decompressor);
 
 #ifdef DUMP_ALL_CHUNKS
 			{
@@ -350,13 +359,13 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					pages = stream->readUint16LE();
 					debug("        %u", pages);
 				} else if (chunk.isSection(ID_TT3)) {
-					if (resource == 0) {
-						uint32 size = stream->size();
-						byte *dest = new byte[size];
-						stream->read(dest, size);
-						//ttm = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
-						//Common::strlcpy(ttmName, name, sizeof(ttmName));
-					} else {
+					uint32 size = stream->size();
+					byte *dest = new byte[size];
+					stream->read(dest, size);
+					//ttm = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
+					//Common::strlcpy(ttmName, name, sizeof(ttmName));
+					delete [] dest;
+#if 0
 						while (!stream->eos()) {
 							uint16 code = stream->readUint16LE();
 							byte count = code & 0x000F;
@@ -391,6 +400,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 							debug(" ");
 						}
 					}
+#endif
 				} else if (chunk.isSection(ID_TAG)) {
 					uint16 count = stream->readUint16LE();
 
@@ -430,19 +440,15 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					stream->read(version, sizeof(version));
 					debug("        %s", version);
 				} else if (chunk.isSection(ID_RES)) {
-					debug("res0");
-					if (resource == 0) {
-						DgdsParser::readTags(stream);
-					} else {
-						readStrings(stream);
-					}
+					DgdsParser::readTags(stream);
 				} else if (chunk.isSection(ID_SCR)) {
-					if (resource == 0) {
 						uint32 size = stream->size();
 						byte *dest = new byte[size];
 						stream->read(dest, size);
 						//ads = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
 						//adsName = name;
+						delete [] dest;
+#if 0
 					} else {
 						/* this is either a script, or a property sheet, i can't decide. */
 						while (!stream->eos()) {
@@ -510,6 +516,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 						assert(stream->size() == stream->pos());
 						//stream->hexdump(stream->size());
 					}
+#endif
 				} else if (chunk.isSection(ID_TAG)) {
 					readStrings(stream);
 				}
@@ -528,17 +535,15 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				}
 				break;
 			case EX_FNT:
-				if (resource == 0) {
-					if (chunk.isSection(ID_FNT)) {
-						byte magic = stream->readByte();
-						stream->seek(-1, SEEK_CUR);
-						debug("    magic: %u", magic);
+				if (chunk.isSection(ID_FNT)) {
+					byte magic = stream->readByte();
+					stream->seek(-1, SEEK_CUR);
+					debug("    magic: %u", magic);
 
-						if (magic != 0xFF)
-							_fntF = FFont::load(*stream);
-						else
-							_fntP = PFont::load(*stream, decompressor);
-					}
+					if (magic != 0xFF)
+						_fntF = FFont::load(*stream);
+					else
+						_fntP = PFont::load(*stream, _decompressor);
 				}
 				break;
 			case EX_SNG:	// Handled in Sound::playMusic
@@ -558,18 +563,8 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		}
 	}
 
-	debug("  [%u:%u] --", (uint)file.pos(), ctx._bytesRead);
+	debug("  [%u] --", (uint)file.pos());
 }
-
-void DgdsEngine::parseFile(const Common::String &filename, int resource) {
-	Common::SeekableReadStream *stream = _resource->getResource(filename);
-	if (!stream)
-		error("Couldn't get resource file %s", filename.c_str());
-	parseFileInner(_platform, *stream, filename.c_str(), resource, _decompressor);
-	delete stream;
-}
-
-int delay = 0;
 
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -604,8 +599,20 @@ Common::Error DgdsEngine::run() {
 	ADSData adsData;
 
 	if (getGameId() == GID_DRAGON) {
+		// Test parsing some things..
 		parseFile("DRAGON.GDS");
-
+		
+		RequestData invRequestData;
+		RequestData vcrRequestData;
+		Request invRequest(_resource);
+		Request vcrRequest(_resource);
+		invRequest.parse(&invRequestData, "DINV.REQ");
+		vcrRequest.parse(&vcrRequestData, "DINV.REQ");
+		//Request vcrRequest(vcrRequestData);
+		
+		//invRequest.parse(
+		
+		// Load the intro and play it for now.
 		interpTTM.load("TITLE1.TTM", &title1Data);
 		interpTTM.load("TITLE2.TTM", &title2Data);
 		interpADS.load("INTRO.ADS", &adsData);

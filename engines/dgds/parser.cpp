@@ -32,11 +32,18 @@
 
 namespace Dgds {
 
-DgdsParser::DgdsParser(Common::SeekableReadStream &file, const Common::String &filename) : _file(file), _filename(filename), _bytesRead(0) {
+DgdsParser::DgdsParser(ResourceManager *resman) : _resman(resman), _file(nullptr), _bytesRead(0) {
 }
 
-void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
+bool DgdsParser::parse(ParserData *data, const Common::String &filename) {
 	DGDS_EX _ex;
+
+	Common::SeekableReadStream *stream = _resman->getResource(filename);
+
+	if (!stream) {
+		error("Couldn't open script file '%s'", filename.c_str());
+		return false;
+	}
 
 	uint32 dot = _filename.find('.');
 	if (dot != Common::String::npos) {
@@ -46,16 +53,16 @@ void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
 	}
 
 	DgdsChunk chunk;
-	while (chunk.readHeader(*this)) {
+	while (chunk.readHeader(_file, _filename)) {
 		bool stop;
 
 		if (chunk._container) {
-			chunk._stream = &_file;
-			stop = callback(chunk, data);
+			chunk._stream = _file;
+			stop = handleChunk(chunk, data);
 		} else {
-			chunk._stream = chunk.getStream(_ex, *this, decompressor);
+			chunk._stream = chunk.getStream(_ex, _file, &_decomp);
 
-			stop = callback(chunk, data);
+			stop = handleChunk(chunk, data);
 
 			int leftover = chunk._stream->size() - chunk._stream->pos();
 			chunk._stream->skip(leftover);
@@ -64,6 +71,9 @@ void DgdsParser::parse(DgdsScriptData *data, Decompressor *decompressor) {
 		if (stop)
 			break;
 	}
+
+	delete stream;
+	return true;
 }
 
 Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableReadStream *stream) {
@@ -83,7 +93,7 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 }
 
 
-bool TTMParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
+bool TTMParser::handleChunk(DgdsChunk &chunk, ParserData *data) {
 	TTMData *scriptData = (TTMData *)data;
 
 	switch (chunk._id) {
@@ -107,7 +117,7 @@ bool TTMParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
 	return false;
 }
 
-bool ADSParser::callback(DgdsChunk &chunk, DgdsScriptData *data) {
+bool ADSParser::handleChunk(DgdsChunk &chunk, ParserData *data) {
 	ADSData *scriptData = (ADSData *)data;
 	switch (chunk._id) {
 	case EX_ADS:
