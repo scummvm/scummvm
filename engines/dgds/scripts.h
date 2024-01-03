@@ -30,7 +30,7 @@
 namespace Dgds {
 
 class DgdsEngine;
-class DgdsChunk;
+class DgdsChunkReader;
 
 
 class ScriptParserData : public ParserData {

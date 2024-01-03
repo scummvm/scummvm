@@ -110,14 +110,14 @@ public:
  */
 class Request : public DgdsParser {
 public:
-	Request(ResourceManager *resman);
+	Request(ResourceManager *resman, Decompressor *decompressor);
 	virtual ~Request() {}
 
-	bool handleChunk(DgdsChunk &chunk, ParserData *data) override;
+	bool handleChunk(DgdsChunkReader &chunk, ParserData *data) override;
 
 protected:
-	bool parseREQChunk(RequestData &data, DgdsChunk &chunk, int num);
-	bool parseGADChunk(RequestData &data, DgdsChunk &chunk, int num);
+	bool parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num);
+	bool parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num);
 
 };
 

@@ -75,17 +75,17 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	Common::String fileName = argv[1];
 	bool ignorePatches = (argc > 2) && (!scumm_stricmp(argv[2], "true") || !strcmp(argv[2], "1"));
 	bool unpack = (argc > 3) && (!scumm_stricmp(argv[3], "true") || !strcmp(argv[3], "1"));
-	Common::SeekableReadStream *res = _vm->getResource(fileName, ignorePatches);
-	if (res == nullptr) {
+	Common::SeekableReadStream *resStream = _vm->getResource(fileName, ignorePatches);
+	if (resStream == nullptr) {
 		debugPrintf("Resource not found\n");
 		return true;
 	}
-	int32 size = res->size();
+	int32 size = resStream->size();
 	byte *data;
 
 	if (!unpack) {
 		data = new byte[size];
-		res->read(data, size);
+		resStream->read(data, size);
 	} else {
 		data = new byte[2000000]; // about 2MB, but maximum container size is around 1.5MB
 		byte *ptr = data;
@@ -97,22 +97,22 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 			ex = MKTAG24(dot[1], dot[2], dot[3]);
 		}
 
-		DgdsChunk chunk;
-		while (chunk.readHeader(res, fileName)) {
-			Common::SeekableReadStream *stream = chunk.getStream(ex, res, _vm->getDecompressor());
+		DgdsChunkReader chunk(resStream);
+		while (chunk.readNextHeader(ex, fileName)) {
+			chunk.readContent(_vm->getDecompressor());
 
-			memcpy(ptr, chunk._idStr, 4);
+			memcpy(ptr, chunk.getIdStr(), 4);
 			ptr += 4;
 
-			stream->read(ptr, stream->size());
-			ptr += stream->size();
+			chunk.getContent()->read(ptr, chunk.getContent()->size());
+			ptr += chunk.getContent()->size();
 
-			size += 4 + stream->size();
+			size += 4 + chunk.getContent()->size();
 		}
 
 	}
 
-	delete res;
+	delete resStream;
 
 	Common::DumpFile out;
 	out.open(Common::Path(fileName));

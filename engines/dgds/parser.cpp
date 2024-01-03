@@ -32,47 +32,44 @@
 
 namespace Dgds {
 
-DgdsParser::DgdsParser(ResourceManager *resman) : _resman(resman), _file(nullptr), _bytesRead(0) {
+DgdsParser::DgdsParser(ResourceManager *resman, Decompressor *decompressor) :
+_resman(resman), _decompressor(decompressor), _bytesRead(0) {
 }
 
 bool DgdsParser::parse(ParserData *data, const Common::String &filename) {
-	DGDS_EX _ex;
+	DGDS_EX ex;
 
-	Common::SeekableReadStream *stream = _resman->getResource(filename);
+	_filename = filename;
+	Common::SeekableReadStream *resStream = _resman->getResource(filename);
 
-	if (!stream) {
+	if (!resStream) {
 		error("Couldn't open script file '%s'", filename.c_str());
 		return false;
 	}
 
 	uint32 dot = _filename.find('.');
 	if (dot != Common::String::npos) {
-		_ex = MKTAG24(toupper(_filename[dot + 1]), toupper(_filename[dot + 2]), toupper(_filename[dot + 3]));
+		ex = MKTAG24(toupper(_filename[dot + 1]), toupper(_filename[dot + 2]), toupper(_filename[dot + 3]));
 	} else {
-		_ex = 0;
+		ex = 0;
 	}
 
-	DgdsChunk chunk;
-	while (chunk.readHeader(_file, _filename)) {
+	DgdsChunkReader chunk(resStream);
+	while (chunk.readNextHeader(ex, _filename)) {
 		bool stop;
 
-		if (chunk._container) {
-			chunk._stream = _file;
+		if (chunk.isContainer()) {
 			stop = handleChunk(chunk, data);
 		} else {
-			chunk._stream = chunk.getStream(_ex, _file, &_decomp);
-
+			chunk.readContent(_decompressor);
 			stop = handleChunk(chunk, data);
-
-			int leftover = chunk._stream->size() - chunk._stream->pos();
-			chunk._stream->skip(leftover);
-			delete chunk._stream;
 		}
+
 		if (stop)
 			break;
 	}
 
-	delete stream;
+	delete resStream;
 	return true;
 }
 
@@ -93,60 +90,60 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 }
 
 
-bool TTMParser::handleChunk(DgdsChunk &chunk, ParserData *data) {
+bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	TTMData *scriptData = (TTMData *)data;
 
-	switch (chunk._id) {
+	switch (chunk.getId()) {
 	case ID_TTI: // Ignore containers
 		break;
 	case ID_TT3:
-		scriptData->scr = chunk._stream->readStream(chunk._stream->size());
+		// Make a memory read stream from the chunk data
+		scriptData->scr = chunk.makeMemoryStream();
 		break;
 	case ID_TAG:
-		scriptData->_tags = readTags(chunk._stream);
+		scriptData->_tags = readTags(chunk.getContent());
 		break;
 	case ID_VER:
 	case ID_PAG: // Pages - ignore?
-		chunk._stream->skip(chunk._size);
+		//chunk._contentStream->skip(chunk._size);
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename.c_str());
-		chunk._stream->skip(chunk._size);
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
+		//chunk._contentStream->skip(chunk._size);
 		break;
 	}
 	return false;
 }
 
-bool ADSParser::handleChunk(DgdsChunk &chunk, ParserData *data) {
+bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	ADSData *scriptData = (ADSData *)data;
-	switch (chunk._id) {
+	Common::SeekableReadStream *chunkStream = chunk.getContent();
+	switch (chunk.getId()) {
 	case EX_ADS:
 	case ID_TTI: // Ignore containers
 		break;
 	case ID_RES: {
-		uint16 count = chunk._stream->readUint16LE();
+		uint16 count = chunkStream->readUint16LE();
 
 		scriptData->count = count;
 		for (uint16 i = 0; i < count; i++) {
-			uint16 idx = chunk._stream->readUint16LE();
+			uint16 idx = chunkStream->readUint16LE();
 			assert(idx == (i + 1));
 
-			Common::String string = chunk._stream->readString();
+			Common::String string = chunkStream->readString();
 			scriptData->names.push_back(string);
 		}
 	} break;
 	case ID_SCR:
-		scriptData->scr = chunk._stream->readStream(chunk._stream->size());
+		scriptData->scr = chunk.makeMemoryStream();
 		break;
 	case ID_TAG:
-		scriptData->_tags = readTags(chunk._stream);
+		scriptData->_tags = readTags(chunkStream);
 		break;
 	case ID_VER: // Version - ignore
-		chunk._stream->skip(chunk._size);
 		break;
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk._id), chunk._size, _filename.c_str());
-		chunk._stream->skip(chunk._size);
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
 		break;
 	}
 	return false;

@@ -26,10 +26,7 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/platform.h"
-
-namespace Common {
-class SeekableReadStream;
-}
+#include "common/stream.h"
 
 namespace Dgds {
 
@@ -65,25 +62,46 @@ private:
 	ResourceList _resources;
 };
 
-class DgdsChunk {
+class DgdsChunkReader {
 public:
+	DgdsChunkReader(Common::SeekableReadStream *stream) : _sourceStream(stream), _contentStream(nullptr), _size(0), _container(false), _startPos(0) {}
+
 	bool isSection(const Common::String &section) const;
 	bool isSection(DGDS_ID section) const;
 	static bool isFlatfile(DGDS_EX ext);
 
-	bool readHeader(Common::SeekableReadStream *file, const Common::String &filename);
-	Common::SeekableReadStream *readStream(Common::SeekableReadStream *file);
-	Common::SeekableReadStream *getStream(DGDS_EX ex, Common::SeekableReadStream *file, Decompressor *decompressor);
+	bool readNextHeader(DGDS_EX ex, const Common::String &filename);
 
-	char _idStr[DGDS_TYPENAME_MAX + 1];
-	DGDS_ID _id;
-	uint32 _size;
-	bool _container;
-	Common::SeekableReadStream *_stream;
+	/// Get a stream of the (decompressed if appropriate) content.
+	/// This stream is owned by this object and invalidated when
+	/// another header or content block is read. Do not delete it.
+	bool readContent(Decompressor *decompressor);
+	
+	// Duplicate the buffer in the current content stream so
+	// that it can be retained in another object.
+	Common::SeekableReadStream *makeMemoryStream();
+
+	Common::SeekableReadStream *getContent() { return _contentStream; }
+
+	bool isContainer() const { return _container; }
+	DGDS_ID getId() const { return _id; }
+	const char *getIdStr() const { return _idStr; }
+	uint32 getSize() const { return _size; }
+
+	DGDS_EX _ex;
 
 private:
-	bool isPacked(DGDS_EX ex) const;
-	Common::SeekableReadStream *decodeStream(Common::SeekableReadStream *file, Decompressor *decompressor);
+	uint32 _size;
+	uint64 _startPos;
+	char _idStr[DGDS_TYPENAME_MAX + 1];
+	DGDS_ID _id;
+	bool _container;
+	Common::SeekableReadStream *_contentStream;
+	Common::SeekableReadStream *_sourceStream;
+
+	bool isPacked() const;
+	Common::SeekableReadStream *decodeStream(Decompressor *decompressor);
+	Common::SeekableReadStream *readStream();
 };
 
 } // End of namespace Dgds

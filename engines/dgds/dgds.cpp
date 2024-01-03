@@ -251,7 +251,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 		parseAmigaChunks(file, ex);
 	}
 
-	if (DgdsChunk::isFlatfile(ex)) {
+	if (DgdsChunkReader::isFlatfile(ex)) {
 		Common::String line;
 
 		switch (ex) {
@@ -276,21 +276,22 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			break;
 		}
 	} else {
-		DgdsChunk chunk;
+		DgdsChunkReader chunk(&file);
 		int chunkno = 0;
-		while (chunk.readHeader(&file, name)) {
-			if (chunk._container) {
-				parent = chunk._id;
+		while (chunk.readNextHeader(ex, name)) {
+			if (chunk.isContainer()) {
+				parent = chunk.getId();
 				continue;
 			}
 
-			Common::SeekableReadStream *stream = chunk.getStream(ex, &file, _decompressor);
+			chunk.readContent(_decompressor);
+			Common::SeekableReadStream *stream = chunk.getContent();
 
 #ifdef DUMP_ALL_CHUNKS
 			{
 				Common::DumpFile out;
 				int64 start = stream->pos();
-				out.open(Common::Path(Common::String::format("tmp/dgds_%s_%02d_%.3s.dump", name, chunkno, chunk._idStr)));
+				out.open(Common::Path(Common::String::format("tmp/dgds_%s_%02d_%.3s.dump", name, chunkno, chunk.getIdStr())));
 				out.writeStream(stream);
 				out.close();
 				stream->seek(start);
@@ -424,7 +425,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			case EX_GDS:
 				if (chunk.isSection(ID_GDS)) {
 					// do nothing, this is the container.
-					assert(chunk._container);
+					assert(chunk.isContainer());
 				} else if (chunk.isSection(ID_INF)) {
 					_gdsScene->parseInf(stream);
 				} else if (chunk.isSection(ID_SDS)) {
@@ -558,8 +559,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			int leftover = stream->size() - stream->pos();
 			//stream->hexdump(leftover);
 			stream->skip(leftover);
-
-			delete stream;
 		}
 	}
 
@@ -601,16 +600,14 @@ Common::Error DgdsEngine::run() {
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
 		parseFile("DRAGON.GDS");
-		
+		/*
 		RequestData invRequestData;
 		RequestData vcrRequestData;
 		Request invRequest(_resource);
 		Request vcrRequest(_resource);
 		invRequest.parse(&invRequestData, "DINV.REQ");
 		vcrRequest.parse(&vcrRequestData, "DINV.REQ");
-		//Request vcrRequest(vcrRequestData);
-		
-		//invRequest.parse(
+		*/
 		
 		// Load the intro and play it for now.
 		interpTTM.load("TITLE1.TTM", &title1Data);
