@@ -61,6 +61,8 @@ namespace Macs2 {
 		uint16 xSegments = (width / g_engine->_borderWidth) + 1;
 		uint16 ySegments = (height / g_engine->_borderHeight) + 1;
 
+		// TODO: Set up clipping
+
 		// First the left side
 		int currentX = x;
 		int currentY = y;
@@ -207,7 +209,7 @@ void View1::draw() {
 	}
 	*/
 
-	DrawSprite(200, 50, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
+	
 	// DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
 	// DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
 
@@ -227,6 +229,10 @@ void View1::draw() {
 
 	// Draw all glyphs
 	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
+
+	DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
+
+	renderString(200, 100, "Hello, world!");
 }
 
 bool View1::tick() {
@@ -273,6 +279,19 @@ void View1::DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* da
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
 				s.setPixel(x + currentX, y + currentY, val);
+			}
+		}
+	}
+}
+
+void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
+	for (int currentX = 0; currentX < width; currentX++) {
+		for (int currentY = 0; currentY < height; currentY++) {
+			uint8 val = data[currentY * width + currentX];
+			if (val != 0) {
+				if (clippingRect.contains(currentX, currentY)) {
+					s.setPixel(x + currentX, y + currentY, val);
+				}
 			}
 		}
 	}
