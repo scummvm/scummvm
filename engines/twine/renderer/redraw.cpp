@@ -871,10 +871,6 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		}
 		_engine->_screens->_fadePalette = false;
 	}
-
-	if (_flagMCGA) {
-		zoomScreenScale();
-	}
 }
 
 void Redraw::drawBubble(int32 actorIdx) {
@@ -907,19 +903,6 @@ void Redraw::drawBubble(int32 actorIdx) {
 		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 		_engine->_interface->unsetClip();
 	}
-}
-
-void Redraw::zoomScreenScale() {
-	Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->_workVideoBuffer);
-	const int maxW = zoomWorkVideoBuffer.w;
-	const int maxH = zoomWorkVideoBuffer.h;
-	const int left = CLIP<int>(_sceneryViewX - maxW / 4, 0, maxW / 2);
-	const int top = CLIP<int>(_sceneryViewY - maxH / 4, 0, maxH / 2);
-	const Common::Rect srcRect(left, top, left + maxW / 2, top + maxH / 2);
-	const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
-	zoomWorkVideoBuffer.transBlitFrom(_engine->_frontVideoBuffer, srcRect, destRect);
-	g_system->copyRectToScreen(zoomWorkVideoBuffer.getPixels(), zoomWorkVideoBuffer.pitch, 0, 0, zoomWorkVideoBuffer.w, zoomWorkVideoBuffer.h);
-	g_system->updateScreen();
 }
 
 } // namespace TwinE

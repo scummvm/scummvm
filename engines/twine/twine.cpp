@@ -23,8 +23,6 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/error.h"
-#include "common/events.h"
-#include "common/keyboard.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -38,10 +36,8 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "gui/debugger.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/console.h"
@@ -123,6 +119,21 @@ void TwineScreen::update() {
 		return;
 	}
 	_lastFrame = _engine->_frameCounter;
+
+	if (_engine->_redraw->_flagMCGA) {
+		markAllDirty();
+		Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->_workVideoBuffer);
+		const int maxW = zoomWorkVideoBuffer.w;
+		const int maxH = zoomWorkVideoBuffer.h;
+		const int left = CLIP<int>(_engine->_redraw->_sceneryViewX - maxW / 4, 0, maxW / 2);
+		const int top = CLIP<int>(_engine->_redraw->_sceneryViewY - maxH / 4, 0, maxH / 2);
+		const Common::Rect srcRect(left, top, left + maxW / 2, top + maxH / 2);
+		const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
+		zoomWorkVideoBuffer.blitFrom(*this, srcRect, destRect);
+		blitFrom(zoomWorkVideoBuffer);
+		// TODO: we need to redraw everything
+		_engine->_redraw->_firstTime = true;
+	}
 	Super::update();
 }
 
@@ -950,7 +961,6 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_flagMCGA) {
 				_text->drawText(_redraw->_sceneryViewX + 5, _redraw->_sceneryViewY, PauseString);
-				_redraw->zoomScreenScale();
 			} else {
 				const int width = _text->getTextSize(PauseString);
 				const int bottom = height() - _text->lineHeight;
