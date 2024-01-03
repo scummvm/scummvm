@@ -71,6 +71,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adiboudchoubanquise", "Adiboud'chou sur la banquise"},
 	{"adiboudchoucampagne", "Adiboud'chou a la campagne"},
 	{"adiboudchoujunglesavane", "Adiboud'chou dans la jungle et la savane"},
+	{"coktelplayer", "CoktelPlayer"},
 	{0, 0}
 };
 
