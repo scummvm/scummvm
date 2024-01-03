@@ -28,6 +28,8 @@
 
 #include "freescape/gfx.h"
 
+#ifdef USE_OPENGL_GAME
+
 namespace Freescape {
 
 class OpenGLRenderer : public Renderer {
@@ -114,5 +116,7 @@ public:
 };
 
 } // End of namespace Freescape
+
+#endif
 
 #endif // FREESCAPE_GFX_OPENGL_H
