@@ -60,6 +60,8 @@ class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
 	Sound *_soundPlayer;
+	Image *_image;
+	Graphics::ManagedSurface _resData;
 
 private:
 	Console *_console;
@@ -76,12 +78,11 @@ private:
 	PFont *_fntP;
 	FFont *_fntF;
 
-protected:
-	virtual Common::Error run() override;
-
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
+
+	virtual Common::Error run() override;
 
 	DgdsGameId getGameId() { return _gameId; }
 
@@ -92,8 +93,6 @@ public:
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
 	const PFont *getFntP() const { return _fntP; }
-	Image *_image;
-	Graphics::ManagedSurface _resData;
 
 private:
 	void parseFile(const Common::String &filename);

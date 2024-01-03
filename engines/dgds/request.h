@@ -111,6 +111,7 @@ public:
 class Request : public DgdsParser {
 public:
 	Request(ResourceManager *resman);
+	virtual ~Request() {}
 
 	bool handleChunk(DgdsChunk &chunk, ParserData *data) override;
 
