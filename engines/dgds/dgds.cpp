@@ -527,27 +527,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					}
 				}
 				break;
-			case EX_SX:
-				/* Macintosh. */
-				if (chunk.isSection(ID_INF)) {
-					uint16 type = stream->readUint16LE();
-					uint16 count = stream->readUint16LE();
-
-					debug("        %u [%u]:", type, count);
-					for (uint16 k = 0; k < count; k++) {
-						uint16 idx = stream->readUint16LE();
-						debug("        %2u: %u", k, idx);
-					}
-				} else if (chunk.isSection(ID_TAG)) {
-					readStrings(stream);
-				} else if (chunk.isSection(ID_FNM)) {
-					readStrings(stream);
-				} else if (chunk.isSection(ID_DAT)) {
-					/*uint16 idx = */stream->readUint16LE();
-					/*uint16 type = */stream->readUint16LE();
-					_soundPlayer->loadMusic(*stream, decompressor);
-				}
-				break;
 			case EX_FNT:
 				if (resource == 0) {
 					if (chunk.isSection(ID_FNT)) {
@@ -563,6 +542,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 				}
 				break;
 			case EX_SNG:	// Handled in Sound::playMusic
+			case EX_SX:     // Handled in Sound::playMacMusic
 			case EX_PAL:	// Handled in Image::setPalette
 			case EX_SCR:    // Handled in Image::loadScreen
 			case EX_BMP:    // Handled in Image::loadBitmap
