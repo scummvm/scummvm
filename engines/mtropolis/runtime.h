@@ -905,6 +905,12 @@ private:
 		void construct(T &&value);
 
 		template<class T, T(ValueUnion::*TMember)>
+		void assign(const T &value);
+
+		template<class T, T(ValueUnion::*TMember)>
+		void assign(T &&value);
+
+		template<class T, T(ValueUnion::*TMember)>
 		void destruct();
 	};
 

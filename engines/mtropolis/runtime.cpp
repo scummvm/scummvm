@@ -1128,6 +1128,18 @@ void DynamicValue::ValueUnion::construct(T &&value) {
 }
 
 template<class T, T(DynamicValue::ValueUnion::*TMember)>
+void DynamicValue::ValueUnion::assign(const T &value) {
+	T *field = &(this->*TMember);
+	*field = value;
+}
+
+template<class T, T(DynamicValue::ValueUnion::*TMember)>
+void DynamicValue::ValueUnion::assign(T &&value) {
+	T *field = &(this->*TMember);
+	*field = static_cast<T &&>(value);
+}
+
+template<class T, T(DynamicValue::ValueUnion::*TMember)>
 void DynamicValue::ValueUnion::destruct() {
 	T *field = &(this->*TMember);
 	field->~T();
@@ -1311,81 +1323,114 @@ const DynamicValueWriteProxy &DynamicValue::getWriteProxy() const {
 }
 
 void DynamicValue::setInt(int32 value) {
-	if (_type != DynamicValueTypes::kInteger)
+	if (_type != DynamicValueTypes::kInteger) {
 		clear();
-	_type = DynamicValueTypes::kInteger;
-	_value.construct<int32, &ValueUnion::asInt>(value);
+		_type = DynamicValueTypes::kInteger;
+		_value.construct<int32, &ValueUnion::asInt>(value);
+	} else {
+		_value.assign<int32, &ValueUnion::asInt>(value);
+	}
 }
 
 void DynamicValue::setFloat(double value) {
-	if (_type != DynamicValueTypes::kFloat)
+	if (_type != DynamicValueTypes::kFloat) {
 		clear();
-	_type = DynamicValueTypes::kFloat;
-	_value.construct<double, &ValueUnion::asFloat>(value);
+		_type = DynamicValueTypes::kFloat;
+		_value.construct<double, &ValueUnion::asFloat>(value);
+	} else {
+		_value.assign<double, &ValueUnion::asFloat>(value);
+	}
 }
 
 void DynamicValue::setPoint(const Common::Point &value) {
-	if (_type != DynamicValueTypes::kPoint)
+	if (_type != DynamicValueTypes::kPoint) {
 		clear();
-	_type = DynamicValueTypes::kPoint;
-	_value.construct<Common::Point, &ValueUnion::asPoint>(value);
+		_type = DynamicValueTypes::kPoint;
+		_value.construct<Common::Point, &ValueUnion::asPoint>(value);
+	} else {
+		_value.assign<Common::Point, &ValueUnion::asPoint>(value);
+	}
 }
 
 void DynamicValue::setIntRange(const IntRange &value) {
-	if (_type != DynamicValueTypes::kIntegerRange)
+	if (_type != DynamicValueTypes::kIntegerRange) {
 		clear();
-	_type = DynamicValueTypes::kIntegerRange;
-	_value.construct<IntRange, &ValueUnion::asIntRange>(value);
+		_type = DynamicValueTypes::kIntegerRange;
+		_value.construct<IntRange, &ValueUnion::asIntRange>(value);
+	} else {
+		_value.assign<IntRange, &ValueUnion::asIntRange>(value);
+	}
 }
 
 void DynamicValue::setVector(const AngleMagVector &value) {
-	if (_type != DynamicValueTypes::kVector)
+	if (_type != DynamicValueTypes::kVector) {
 		clear();
-	_type = DynamicValueTypes::kVector;
-	_value.construct<AngleMagVector, &ValueUnion::asVector>(value);
+		_type = DynamicValueTypes::kVector;
+		_value.construct<AngleMagVector, &ValueUnion::asVector>(value);
+	} else {
+		_value.assign<AngleMagVector, &ValueUnion::asVector>(value);
+	}
 }
 
 void DynamicValue::setLabel(const Label &value) {
-	if (_type != DynamicValueTypes::kLabel)
+	if (_type != DynamicValueTypes::kLabel) {
 		clear();
-	_type = DynamicValueTypes::kLabel;
-	_value.construct<Label, &ValueUnion::asLabel>(value);
+		_type = DynamicValueTypes::kLabel;
+		_value.construct<Label, &ValueUnion::asLabel>(value);
+	} else {
+		_value.assign<Label, &ValueUnion::asLabel>(value);
+	}
 }
 
 void DynamicValue::setEvent(const Event &value) {
-	if (_type != DynamicValueTypes::kEvent)
+	if (_type != DynamicValueTypes::kEvent) {
 		clear();
-	_type = DynamicValueTypes::kEvent;
-	_value.construct<Event, &ValueUnion::asEvent>(value);
+		_type = DynamicValueTypes::kEvent;
+		_value.construct<Event, &ValueUnion::asEvent>(value);
+	} else {
+		_value.assign<Event, &ValueUnion::asEvent>(value);
+	}
 }
 
 void DynamicValue::setString(const Common::String &value) {
-	if (_type != DynamicValueTypes::kString)
+	if (_type != DynamicValueTypes::kString) {
 		clear();
-	_type = DynamicValueTypes::kString;
-	_value.construct<Common::String, &ValueUnion::asString>(value);
+		_type = DynamicValueTypes::kString;
+		_value.construct<Common::String, &ValueUnion::asString>(value);
+	} else {
+		_value.assign<Common::String, &ValueUnion::asString>(value);
+	}
 }
 
 void DynamicValue::setBool(bool value) {
-	if (_type != DynamicValueTypes::kBoolean)
+	if (_type != DynamicValueTypes::kBoolean) {
 		clear();
-	_type = DynamicValueTypes::kBoolean;
-	_value.construct<bool, &ValueUnion::asBool>(value);
+		_type = DynamicValueTypes::kBoolean;
+		_value.construct<bool, &ValueUnion::asBool>(value);
+	} else {
+		_value.assign<bool, &ValueUnion::asBool>(value);
+	}
 }
 
 void DynamicValue::setList(const Common::SharedPtr<DynamicList> &value) {
-	if (_type != DynamicValueTypes::kList)
+	if (_type != DynamicValueTypes::kList) {
 		clear();
-	_type = DynamicValueTypes::kList;
-	_value.construct<Common::SharedPtr<DynamicList>, &ValueUnion::asList>(value);
+		_type = DynamicValueTypes::kList;
+		_value.construct<Common::SharedPtr<DynamicList>, &ValueUnion::asList>(value);
+	} else {
+		_value.assign<Common::SharedPtr<DynamicList>, &ValueUnion::asList>(value);
+	}
 }
 
 void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
 	Common::SharedPtr<DynamicList> listRef = writeProxy.containerList; // Back up list ref in case this is a self-assign
-	if (_type != DynamicValueTypes::kWriteProxy)
+	if (_type != DynamicValueTypes::kWriteProxy) {
 		clear();
-	_type = DynamicValueTypes::kWriteProxy;
-	_value.construct<DynamicValueWriteProxy, &ValueUnion::asWriteProxy>(writeProxy);
+		_type = DynamicValueTypes::kWriteProxy;
+		_value.construct<DynamicValueWriteProxy, &ValueUnion::asWriteProxy>(writeProxy);
+	} else {
+		_value.assign<DynamicValueWriteProxy, &ValueUnion::asWriteProxy>(writeProxy);
+	}
 }
 
 bool DynamicValue::roundToInt(int32 &outInt) const {
@@ -1476,10 +1521,13 @@ bool DynamicValue::convertToTypeNoDereference(DynamicValueTypes::DynamicValueTyp
 }
 
 void DynamicValue::setObject(const ObjectReference &value) {
-	if (_type != DynamicValueTypes::kObject)
+	if (_type != DynamicValueTypes::kObject) {
 		clear();
-	_type = DynamicValueTypes::kObject;
-	_value.construct<ObjectReference, &ValueUnion::asObj>(value);
+		_type = DynamicValueTypes::kObject;
+		_value.construct<ObjectReference, &ValueUnion::asObj>(value);
+	} else {
+		_value.assign<ObjectReference, &ValueUnion::asObj>(value);
+	}
 }
 
 void DynamicValue::setObject(const Common::WeakPtr<RuntimeObject> &value) {
