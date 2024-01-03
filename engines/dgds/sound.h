@@ -45,9 +45,9 @@ public:
 	~Sound();
 
 	void playAmigaSfx(const Common::String &filename, byte channel, byte volume);
-	void loadAmigaAiff(Common::SeekableReadStream &file);
 	void loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor);
 	void playMusic(const Common::String &filename);
+	void playMacMusic(const Common::String &filename);
 
 	void stopSfx(byte channel);
 

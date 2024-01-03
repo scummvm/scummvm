@@ -50,12 +50,6 @@ Sound::~Sound() {
 	delete[] _musicData;
 }
 
-void Sound::loadAmigaAiff(Common::SeekableReadStream& file) {
-	byte *dest = new byte[file.size()];
-	file.read(dest, file.size());
-	_soundData = new Common::MemoryReadStream(dest, file.size(), DisposeAfterUse::YES);
-}
-
 void Sound::loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor) {
 	_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
 }
@@ -139,16 +133,74 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 	return true;
 }
 
+extern void readStrings(Common::SeekableReadStream *stream);
+
+void Sound::playMacMusic(const Common::String &filename) {
+	if (filename.hasSuffixIgnoreCase(".sng")) {
+		Common::String macFileName = filename.substr(0, filename.find(".")) + ".sx";
+		playMacMusic(macFileName);
+		return;
+	}
+
+	if (!filename.hasSuffixIgnoreCase(".sx"))
+		error("Unhandled music file type: %s", filename.c_str());
+
+	Common::SeekableReadStream *musicStream = _resource->getResource(filename);
+	if (!musicStream)
+		error("Music file %s not found", filename.c_str());
+
+	DgdsParser ctx(*musicStream, filename);
+	DgdsChunk chunk;
+	const DGDS_EX ex = EX_SNG;
+
+	while (chunk.readHeader(ctx)) {
+		if (chunk._container) {
+			continue;
+		}
+
+		Common::SeekableReadStream *stream = chunk.getStream(ex, ctx, _decompressor);
+
+		if (chunk.isSection(ID_INF)) {
+			uint16 type = stream->readUint16LE();
+			uint16 count = stream->readUint16LE();
+
+			debug("        %u [%u]:", type, count);
+			for (uint16 k = 0; k < count; k++) {
+				uint16 idx = stream->readUint16LE();
+				debug("        %2u: %u", k, idx);
+			}
+		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
+			readStrings(stream);
+		} else if (chunk.isSection(ID_DAT)) {
+			/*uint16 idx = */ stream->readUint16LE();
+			/*uint16 type = */ stream->readUint16LE();
+			_musicData = _decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
+		}
+
+		delete stream;
+	}
+
+	delete musicStream;
+
+	// stopMusic();
+
+	// TODO: This isn't correct
+	if (_musicData) {
+		uint32 tracks = availableSndTracks(_musicData, _musicSize);
+		if (tracks & TRACK_MT32)
+			_midiPlayer->play(_musicData, _musicSize);
+		else if (tracks & DIGITAL_PCM)
+			playPCM(_musicData, _musicSize);
+	}
+}
+
 void Sound::playMusic(const Common::String &filename) {
 	if (!filename.hasSuffixIgnoreCase(".sng"))
 		error("Unhandled music file type: %s", filename.c_str());
 
 	Common::SeekableReadStream *musicStream = _resource->getResource(filename);
-	if (!musicStream) {
-		// Happens in the Mac version of Dragon
-		warning("Music file %s not found", filename.c_str());
-		return;
-	}
+	if (!musicStream)
+		error("Music file %s not found", filename.c_str());
 
 	DgdsParser ctx(*musicStream, filename);
 	DgdsChunk chunk;
