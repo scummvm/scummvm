@@ -122,18 +122,18 @@ Resource ResourceManager::getResourceInfo(Common::String name) {
 	return _resources[name];
 }
 
-bool DgdsChunk::isSection(const Common::String &section) const {
+bool DgdsChunkReader::isSection(const Common::String &section) const {
 	return section.equals(_idStr);
 }
 
-bool DgdsChunk::isSection(DGDS_ID section) const {
+bool DgdsChunkReader::isSection(DGDS_ID section) const {
 	return (section == _id);
 }
 
-bool DgdsChunk::isPacked(DGDS_EX ex) const {
+bool DgdsChunkReader::isPacked() const {
 	bool packed = false;
 
-	switch (ex) {
+	switch (_ex) {
 	case EX_ADS:
 	case EX_ADL:
 	case EX_ADH:
@@ -162,7 +162,7 @@ bool DgdsChunk::isPacked(DGDS_EX ex) const {
 		break;
 	}
 
-	switch (ex) {
+	switch (_ex) {
 	case EX_DDS:
 		packed = !strcmp(_idStr, "DDS:");
 		break;
@@ -218,26 +218,33 @@ bool DgdsChunk::isPacked(DGDS_EX ex) const {
 	return packed;
 }
 
-bool DgdsChunk::readHeader(Common::SeekableReadStream *file, const Common::String &filename) {
+bool DgdsChunkReader::readNextHeader(DGDS_EX ex, const Common::String &filename) {
+	if (_contentStream) {
+		_sourceStream->seek(_startPos + _size);
+		delete _contentStream;
+		_contentStream = nullptr;
+	}
+	_size = 0;
+
 	memset(_idStr, 0, sizeof(_idStr));
 	_id = 0;
+	_ex = ex;
 
-	if (file->pos() >= file->size()) {
+	if (_sourceStream->pos() >= _sourceStream->size()) {
 		return false;
 	}
-	
-	_stream = file;
 
-	file->read(_idStr, DGDS_TYPENAME_MAX);
+	_sourceStream->read(_idStr, DGDS_TYPENAME_MAX);
 
 	if (_idStr[DGDS_TYPENAME_MAX - 1] != ':') {
-		debug("bad header in: %s", filename.c_str());
+		error("bad header reading chunk from %s at %d", filename.c_str(), (int)_sourceStream->pos() - 4);
 		return false;
 	}
 	_idStr[DGDS_TYPENAME_MAX] = '\0';
 	_id = MKTAG24(uint32(_idStr[0]), uint32(_idStr[1]), uint32(_idStr[2]));
 
-	_size = file->readUint32LE();
+	_size = _sourceStream->readUint32LE();
+	_startPos = _sourceStream->pos();
 	//ctx._file.skip(2);
 	if (_size & 0x80000000) {
 		_size &= ~0x80000000;
@@ -248,37 +255,50 @@ bool DgdsChunk::readHeader(Common::SeekableReadStream *file, const Common::Strin
 	return true;
 }
 
-Common::SeekableReadStream* DgdsChunk::getStream(DGDS_EX ex, Common::SeekableReadStream *file, Decompressor* decompressor) {
-	return isPacked(ex) ? decodeStream(file, decompressor) : readStream(file);
+bool DgdsChunkReader::readContent(Decompressor* decompressor) {
+	assert(!_contentStream);
+	_contentStream = isPacked() ? decodeStream(decompressor) : readStream();
+	return _contentStream != nullptr;
 }
 
-Common::SeekableReadStream *DgdsChunk::decodeStream(Common::SeekableReadStream *file, Decompressor *decompressor) {
-	Common::SeekableReadStream *output = 0;
-
-	_size -= (1 + 4);
+Common::SeekableReadStream *DgdsChunkReader::decodeStream(Decompressor *decompressor) {
+	Common::SeekableReadStream *output = nullptr;
 
 	if (!_container) {
 		uint32 uncompressedSize;
-		byte *data = decompressor->decompress(file, _size, uncompressedSize);
+		byte *data = decompressor->decompress(_sourceStream, _size - (1 + 4), uncompressedSize);
 		output = new Common::MemoryReadStream(data, uncompressedSize, DisposeAfterUse::YES);
 	}
 
 	return output;
 }
 
-Common::SeekableReadStream *DgdsChunk::readStream(Common::SeekableReadStream *file) {
-	Common::SeekableReadStream *output = 0;
+Common::SeekableReadStream *DgdsChunkReader::readStream() {
+	Common::SeekableReadStream *output = nullptr;
 
 	if (!_container) {
-		output = new Common::SeekableSubReadStream(file, file->pos(), file->pos() + _size, DisposeAfterUse::NO);
+		output = new Common::SeekableSubReadStream(_sourceStream, _startPos, _startPos + _size, DisposeAfterUse::NO);
 	}
 
 	debug("    %s %u%c", _idStr, _size, (_container ? '+' : ' '));
 	return output;
 }
 
+Common::SeekableReadStream *DgdsChunkReader::makeMemoryStream() {
+	assert(_contentStream);
+	assert(_contentStream->pos() == 0);
+	
+	int64 startPos = _contentStream->pos();
+	int16 dataSize = _contentStream->size() - startPos;
+	byte *data = (byte *)malloc(dataSize);
+	_contentStream->read(data, dataSize);
+	Common::MemoryReadStream *output = new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+	_contentStream->seek(startPos);
+	return output;
+}
+
 /*static*/
-bool DgdsChunk::isFlatfile(DGDS_EX ext) {
+bool DgdsChunkReader::isFlatfile(DGDS_EX ext) {
 	bool flat = false;
 
 	switch (ext) {

@@ -23,12 +23,11 @@
 #ifndef DGDS_PARSER_H
 #define DGDS_PARSER_H
 
-#include "dgds/decompress.h"
-
 namespace Dgds {
 
-class DgdsChunk;
+class DgdsChunkReader;
 class ResourceManager;
+class Decompressor;
 
 class ParserData {};
 
@@ -36,14 +35,13 @@ class DgdsParser {
 public:
 	// FIXME: Make these private/protected
 	uint32 _bytesRead;
-	Common::SeekableReadStream *_file;
-
+	//Common::SeekableReadStream *_file;
 
 public:
-	DgdsParser(ResourceManager *resman);
+	DgdsParser(ResourceManager *resman, Decompressor *decompressor);
 	virtual ~DgdsParser() {};
 	bool parse(ParserData *data, const Common::String &filename);
-	virtual bool handleChunk(DgdsChunk &chunk, ParserData *data) { return false; };
+	virtual bool handleChunk(DgdsChunkReader &chunk, ParserData *data) { return false; };
 
 	static Common::HashMap<uint16, Common::String> readTags(Common::SeekableReadStream *stream);
 
@@ -52,23 +50,23 @@ protected:
 
 private:
 	ResourceManager *_resman;
-	Decompressor _decomp;
+	Decompressor *_decompressor;
 };
 
 class TTMParser : public DgdsParser {
 public:
-	TTMParser(ResourceManager *resman) : DgdsParser(resman) {}
+	TTMParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {}
 
 private:
-	bool handleChunk(DgdsChunk &chunk, ParserData *data) override;
+	bool handleChunk(DgdsChunkReader &chunk, ParserData *data) override;
 };
 
 class ADSParser : public DgdsParser {
 public:
-	ADSParser(ResourceManager *resman) : DgdsParser(resman) {}
+	ADSParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {}
 
 private:
-	bool handleChunk(DgdsChunk &chunk, ParserData *data) override;
+	bool handleChunk(DgdsChunkReader &chunk, ParserData *data) override;
 };
 
 } // End of namespace Dgds

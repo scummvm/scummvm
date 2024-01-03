@@ -30,12 +30,12 @@
 
 namespace Dgds {
 
-Request::Request(ResourceManager *resman) : DgdsParser(resman) {
+Request::Request(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
 }
 
 
-bool Request::parseGADChunk(RequestData &data, DgdsChunk &chunk, int num) {
-	Common::SeekableReadStream *str = chunk._stream;
+bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
+	Common::SeekableReadStream *str = chunk.getContent();
 
 	uint16 numGadgets = str->readUint16LE();
 	data._gadgets.resize(numGadgets);
@@ -148,8 +148,8 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunk &chunk, int num) {
 }
 
 
-bool Request::parseREQChunk(RequestData &data, DgdsChunk &chunk, int num) {
-	Common::SeekableReadStream *str = chunk._stream;
+bool Request::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
+	Common::SeekableReadStream *str = chunk.getContent();
 
 	uint16 fileNum = str->readUint16LE();
 
@@ -185,16 +185,16 @@ bool Request::parseREQChunk(RequestData &data, DgdsChunk &chunk, int num) {
 }
 
 
-bool Request::handleChunk(DgdsChunk &chunk, ParserData *data) {
+bool Request::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	RequestData &rdata = *(RequestData *)data;
 	int num = -1;
 
-	if (chunk._id == ID_REQ)
+	if (chunk.getId() == ID_REQ)
 		parseREQChunk(rdata, chunk, num);
-	else if (chunk._id == ID_GAD)
+	else if (chunk.getId() == ID_GAD)
 		parseGADChunk(rdata, chunk, num);
 
-	return chunk._stream->err();
+	return chunk.getContent()->err();
 }
 
 

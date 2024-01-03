@@ -48,7 +48,7 @@ static Common::String _bmpNames[16];
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
-	TTMParser dgds(_vm->getResourceManager());
+	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	return dgds.parse(scriptData, filename);
 }
 
@@ -89,6 +89,9 @@ bool TTMInterpreter::run(TTMState *script) {
 		code = scr->readUint16LE();
 		count = code & 0x000F;
 		op = code & 0xFFF0;
+		
+		if (count > 8 && count != 0x0f)
+			error("Invalid TTM opcode %04x requires %d locals", code, count);
 
 		debugN("\tOP: 0x%4.4x %2u ", op, count);
 		if (count == 0x0F) {
@@ -310,7 +313,7 @@ bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
 	_scriptData = scriptData;
 	_filename = filename;
 
-	ADSParser dgds(_vm->getResourceManager());
+	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	dgds.parse(scriptData, filename);
 
 	TTMInterpreter interp(_vm);

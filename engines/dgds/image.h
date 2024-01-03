@@ -34,7 +34,7 @@ struct Surface;
 namespace Dgds {
 
 class Decompressor;
-class DgdsChunk;
+class DgdsChunkReader;
 class ResourceManager;
 
 class Image {

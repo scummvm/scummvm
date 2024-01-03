@@ -69,9 +69,10 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 
 	surface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
-	DgdsChunk chunk;
-	while (chunk.readHeader(fileStream, filename)) {
-		Common::SeekableReadStream *stream = chunk.getStream(ex, fileStream, _decompressor);
+	DgdsChunkReader chunk(fileStream);
+	while (chunk.readNextHeader(ex, filename)) {
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_BIN)) {
 			loadBitmap4(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
@@ -93,7 +94,6 @@ void Image::loadBitmap(Common::String filename, int number) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
 		error("Couldn't get bitmap resource %s", filename.c_str());
-	DgdsChunk chunk;
 
 	_bmpData.free();
 
@@ -115,8 +115,10 @@ void Image::loadBitmap(Common::String filename, int number) {
 	uint16 tileHeights[64];
 	int32 tileOffset = 0;
 
-	while (chunk.readHeader(fileStream, filename)) {
-		Common::SeekableReadStream *stream = chunk.getStream(ex, fileStream, _decompressor);
+	DgdsChunkReader chunk(fileStream);
+	while (chunk.readNextHeader(ex, filename)) {
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
 			for (uint16 k = 0; k < tileCount; k++) {
@@ -151,7 +153,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
 			vqtpos = fileStream->pos();
-			vqtsize = chunk._size;
+			vqtsize = chunk.getSize();
 			stream->skip(vqtsize);
 		} else if (chunk.isSection(ID_OFF)) {
 			if (vqtpos == -1)
@@ -161,7 +163,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 			// or a single value of 0xffff.  If it's only one tile the offset is always
 			// zero anyway.  For subsequent images, round up to the next byte to start
 			// reading.
-			if (chunk._size == 2) {
+			if (chunk.getSize() == 2) {
 				if (number != 0) {
 					uint16 val = stream->readUint16LE();
 					if (val != 0xffff)
@@ -184,7 +186,6 @@ void Image::loadBitmap(Common::String filename, int number) {
 				loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
 			}
 		}
-		delete stream;
 	}
 
 	delete fileStream;
@@ -388,12 +389,13 @@ void Image::loadPalette(Common::String filename) {
 		return;
 	}
 
-	DgdsChunk chunk;
 
-	while (chunk.readHeader(fileStream, filename)) {
-		Common::SeekableReadStream *stream = chunk.readStream(fileStream);
+	DgdsChunkReader chunk(fileStream);
+	while (chunk.readNextHeader(EX_PAL, filename)) {
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *chunkStream = chunk.getContent();
 		if (chunk.isSection(ID_VGA)) {
-			stream->read(_palette, 256 * 3);
+			chunkStream->read(_palette, 256 * 3);
 
 			for (uint k = 0; k < 256 * 3; k += 3) {
 				_palette[k + 0] <<= 2;

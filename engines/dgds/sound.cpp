@@ -149,15 +149,16 @@ void Sound::playMacMusic(const Common::String &filename) {
 	if (!musicStream)
 		error("Music file %s not found", filename.c_str());
 
-	DgdsChunk chunk;
+	DgdsChunkReader chunk(musicStream);
 	const DGDS_EX ex = EX_SNG;
 
-	while (chunk.readHeader(musicStream, filename)) {
-		if (chunk._container) {
+	while (chunk.readNextHeader(ex, filename)) {
+		if (chunk.isContainer()) {
 			continue;
 		}
 
-		Common::SeekableReadStream *stream = chunk.getStream(ex, musicStream, _decompressor);
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
 
 		if (chunk.isSection(ID_INF)) {
 			uint16 type = stream->readUint16LE();
@@ -175,8 +176,6 @@ void Sound::playMacMusic(const Common::String &filename) {
 			/*uint16 type = */ stream->readUint16LE();
 			_musicData = _decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
 		}
-
-		delete stream;
 	}
 
 	delete musicStream;
@@ -201,15 +200,17 @@ void Sound::playMusic(const Common::String &filename) {
 	if (!musicStream)
 		error("Music file %s not found", filename.c_str());
 
-	DgdsChunk chunk;
+	DgdsChunkReader chunk(musicStream);
 	const DGDS_EX ex = EX_SNG;
 
-	while (chunk.readHeader(musicStream, filename)) {
-		if (chunk._container) {
+	while (chunk.readNextHeader(ex, filename)) {
+		if (chunk.isContainer()) {
 			continue;
 		}
+		
+		chunk.readContent(_decompressor);
 
-		Common::SeekableReadStream *stream = chunk.getStream(ex, musicStream, _decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
 
 		if (chunk.isSection(ID_SNG)) {
 			_musicSize = stream->size();
@@ -223,8 +224,6 @@ void Sound::playMusic(const Common::String &filename) {
 				debug("        %2u: %u", k, idx);
 			}
 		}
-
-		delete stream;
 	}
 
 	delete musicStream;
