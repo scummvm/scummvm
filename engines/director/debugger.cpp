@@ -336,7 +336,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 
 	if (frameId >= 1 && frameId <= maxSize) {
 		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
-		Frame *frame = score->getFrameData(frameId-1);
+		Frame *frame = score->getFrameData(frameId);
 		debugPrintf("%s\n", frame->formatChannelInfo().c_str());
 		delete frame;
 	} else {
@@ -595,7 +595,7 @@ bool Debugger::cmdMarkers(int argc, const char **argv) {
 	if (score->_labels && score->_labels->size()) {
 		debugPrintf("Score markers:\n");
 		for (auto &it : *score->_labels) {
-			debugPrintf("\"%s\" -> %d", it->name.c_str(), it->number);
+			debugPrintf("\"%s\" -> %d\n", it->name.c_str(), it->number);
 		}
 	} else {
 		debugPrintf("No score markers found.\n");
