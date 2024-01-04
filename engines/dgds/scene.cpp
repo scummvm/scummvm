@@ -228,6 +228,8 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_magic = stream->readUint32LE();
 	_version = stream->readString();
 	if (isVersionOver(" 1.211")) {
+	//if (isVersionOver(" 1.216")) { // HoC
+	//if (isVersionOver(" 1.224")) { // Beamish
 		error("Unsupported scene version '%s'", _version.c_str());
 	}
 	_num = stream->readUint16LE();
