@@ -40,6 +40,7 @@ namespace Dgds {
 #define ID_REQ MKTAG24('R', 'E', 'Q')
 #define ID_RES MKTAG24('R', 'E', 'S')
 #define ID_SCR MKTAG24('S', 'C', 'R')
+#define ID_SCN MKTAG24('S', 'C', 'N')
 #define ID_SDS MKTAG24('S', 'D', 'S')
 #define ID_SNG MKTAG24('S', 'N', 'G')
 #define ID_TAG MKTAG24('T', 'A', 'G')
