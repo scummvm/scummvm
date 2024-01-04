@@ -131,7 +131,7 @@ void TwineScreen::update() {
 		const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
 		zoomWorkVideoBuffer.blitFrom(*this, srcRect, destRect);
 		blitFrom(zoomWorkVideoBuffer);
-		// TODO: we need to redraw everything
+		// TODO: we need to redraw everything because we just modified the screen buffer itself
 		_engine->_redraw->_firstTime = true;
 	}
 	Super::update();
@@ -315,9 +315,9 @@ Common::Error TwinEEngine::run() {
 	if (ConfMan.hasKey("boot_param")) {
 		const int sceneIndex = ConfMan.getInt("boot_param");
 		if (sceneIndex < 0 || sceneIndex >= LBA1SceneId::SceneIdMax) {
-			warning("Scene index out of bounds\n");
+			warning("Scene index out of bounds");
 		} else {
-			debug("Boot parameter: %i\n", sceneIndex);
+			debug("Boot parameter: %i", sceneIndex);
 			_gameState->initEngineVars();
 			_text->normalWinDial();
 			_text->_drawTextBoxBackground = true;
