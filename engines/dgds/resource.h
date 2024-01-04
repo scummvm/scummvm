@@ -65,6 +65,7 @@ private:
 class DgdsChunkReader {
 public:
 	DgdsChunkReader(Common::SeekableReadStream *stream) : _sourceStream(stream), _contentStream(nullptr), _size(0), _container(false), _startPos(0) {}
+	~DgdsChunkReader();
 
 	bool isSection(const Common::String &section) const;
 	bool isSection(DGDS_ID section) const;
@@ -76,9 +77,13 @@ public:
 	/// This stream is owned by this object and invalidated when
 	/// another header or content block is read. Do not delete it.
 	bool readContent(Decompressor *decompressor);
-	
-	// Duplicate the buffer in the current content stream so
-	// that it can be retained in another object.
+
+	/// Don't bother reading the current chunk, just move to the
+	/// next one. This is the alternative to readContent().
+	void skipContent();
+
+	/// Duplicate the buffer in the current content stream so
+	/// that it can be retained in another object.
 	Common::SeekableReadStream *makeMemoryStream();
 
 	Common::SeekableReadStream *getContent() { return _contentStream; }

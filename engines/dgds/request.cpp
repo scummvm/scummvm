@@ -39,6 +39,7 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 
 	uint16 numGadgets = str->readUint16LE();
 	data._gadgets.resize(numGadgets);
+
 	for (Common::SharedPtr<Gadget> &gptr : data._gadgets) {
 		uint16 vals[12];
 		for (int i = 0; i < 12; i++)
@@ -56,20 +57,22 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 				gptr.reset(new Gadget());
 		}
 
-		gptr->_gadgetNo = vals[0];
-		gptr->_x = vals[1];
-		gptr->_y = vals[2];
-		gptr->_width = vals[3];
-		gptr->_height = vals[4];
-		gptr->_gadgetType = vals[5];
-		gptr->_flags2 = vals[6];
-		gptr->_flags3 = vals[7];
-		gptr->_field14_0x20 = vals[8];
-		gptr->_field15_0x22 = vals[9];
-		gptr->_field15_0x22 = vals[10];
-		gptr->_field16_0x24 = vals[11];
-		gptr->_parentX = data._x;
-		gptr->_parentY = data._y;
+		if (gptr) {
+			gptr->_gadgetNo = vals[0];
+			gptr->_x = vals[1];
+			gptr->_y = vals[2];
+			gptr->_width = vals[3];
+			gptr->_height = vals[4];
+			gptr->_gadgetType = vals[5];
+			gptr->_flags2 = vals[6];
+			gptr->_flags3 = vals[7];
+			gptr->_field14_0x20 = vals[8];
+			gptr->_field15_0x22 = vals[9];
+			gptr->_field15_0x22 = vals[10];
+			gptr->_field16_0x24 = vals[11];
+			gptr->_parentX = data._x;
+			gptr->_parentY = data._y;
+		}
 
 		uint16 type1 = str->readUint16LE();
 		if (type1 == 1) {
@@ -127,7 +130,7 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 		case 4: {
 			Common::String s = str->readString();
 			if (gptr)
-				gptr->_sval3 = s;
+				gptr->_buttonName = s;
 			break;
 		}
 		case 8: {
@@ -188,6 +191,14 @@ bool Request::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 bool Request::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	RequestData &rdata = *(RequestData *)data;
 	int num = -1;
+
+	if (chunk.isContainer()) {
+		// TAG: contains tags for the request data, all content
+		if (chunk.getId() == ID_TAG)
+			chunk.skipContent();
+
+		return false; // continue parsing
+	}
 
 	if (chunk.getId() == ID_REQ)
 		parseREQChunk(rdata, chunk, num);

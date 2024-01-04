@@ -122,6 +122,11 @@ Resource ResourceManager::getResourceInfo(Common::String name) {
 	return _resources[name];
 }
 
+DgdsChunkReader::~DgdsChunkReader() {
+	if (_contentStream)
+		delete _contentStream;
+}
+
 bool DgdsChunkReader::isSection(const Common::String &section) const {
 	return section.equals(_idStr);
 }
@@ -255,10 +260,17 @@ bool DgdsChunkReader::readNextHeader(DGDS_EX ex, const Common::String &filename)
 	return true;
 }
 
+
+
 bool DgdsChunkReader::readContent(Decompressor* decompressor) {
-	assert(!_contentStream);
+	assert(_sourceStream && !_contentStream);
 	_contentStream = isPacked() ? decodeStream(decompressor) : readStream();
 	return _contentStream != nullptr;
+}
+
+void DgdsChunkReader::skipContent() {
+	assert(_sourceStream && !_contentStream);
+	_sourceStream->seek(_startPos + _size);
 }
 
 Common::SeekableReadStream *DgdsChunkReader::decodeStream(Decompressor *decompressor) {
