@@ -31,6 +31,7 @@ public:
 	bool getFeatureState(Feature f) override;
 	bool displayLogFile() override;
 	Common::Path getScreenshotsPath() override;
+	Common::Path getDefaultIconsPath() override;
 #ifdef USE_OPENGL
 	GraphicsManagerType getDefaultGraphicsManager() const override;
 #endif
