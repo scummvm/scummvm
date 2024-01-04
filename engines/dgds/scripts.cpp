@@ -303,6 +303,8 @@ ADSInterpreter::~ADSInterpreter() {
 }
 
 bool ADSInterpreter::load(const Common::String &filename) {
+	unload();
+
 	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	dgds.parse(&_scriptData, filename);
 

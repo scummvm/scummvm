@@ -589,9 +589,8 @@ Common::Error DgdsEngine::run() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
-	ADSInterpreter interpADS(this);
-	TTMInterpreter interpTTM1(this);
-	TTMInterpreter interpTTM2(this);
+	ADSInterpreter interpIntro(this);
+	bool creditsShown = false;
 
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
@@ -606,18 +605,16 @@ Common::Error DgdsEngine::run() {
 		*/
 		
 		// Load the intro and play it for now.
-		interpTTM1.load("TITLE1.TTM");
-		interpTTM2.load("TITLE2.TTM");
-		interpADS.load("INTRO.ADS");
+		interpIntro.load("TITLE1.ADS");
 
 		parseFile("DRAGON.FNT");
-		parseFile("S55.SDS");
+		parseFile("S55.SDS");	// FIXME: Removing this breaks the Bahumat scene dialog
 	} else if (getGameId() == GID_CHINA) {
-		interpADS.load("TITLE.ADS");
+		interpIntro.load("TITLE.ADS");
 
 		parseFile("HOC.FNT");
 	} else if (getGameId() == GID_BEAMISH) {
-		interpADS.load("TITLE.ADS");
+		interpIntro.load("TITLE.ADS");
 
 		//parseFile("HOC.FNT");
 	}
@@ -644,12 +641,16 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (getGameId() == GID_DRAGON) {
-			//if (!interpTTM1.run())
-			//	if (!interpTTM2.run())
-					if (!interpADS.run())
-						return Common::kNoError;
+			if (!interpIntro.run()) {
+				if (!creditsShown) {
+					creditsShown = true;
+					interpIntro.load("INTRO.ADS");
+				} else {
+					return Common::kNoError;
+				}
+			}
 		} else if (getGameId() == GID_CHINA || getGameId() == GID_BEAMISH) {
-			if (!interpADS.run())
+			if (!interpIntro.run())
 				return Common::kNoError;
 		}
 
