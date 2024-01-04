@@ -309,20 +309,4 @@ Common::SeekableReadStream *DgdsChunkReader::makeMemoryStream() {
 	return output;
 }
 
-/*static*/
-bool DgdsChunkReader::isFlatfile(DGDS_EX ext) {
-	bool flat = false;
-
-	switch (ext) {
-	case EX_RST:
-	case EX_VIN:
-	case EX_DAT:
-		flat = true;
-		break;
-	default:
-		break;
-	}
-	return flat;
-}
-
 } // End of namespace Dgds

@@ -69,7 +69,6 @@ public:
 
 	bool isSection(const Common::String &section) const;
 	bool isSection(DGDS_ID section) const;
-	static bool isFlatfile(DGDS_EX ext);
 
 	bool readNextHeader(DGDS_EX ex, const Common::String &filename);
 
