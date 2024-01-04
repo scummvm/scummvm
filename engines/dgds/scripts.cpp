@@ -329,14 +329,12 @@ bool ADSInterpreter::run() {
 	// TODO/FIXME: Rewrite this
 	if (_state.subMax != 0) {
 		if (!_ttmInterpreter->run()) {
-			if (_ttmInterpreter->getScene() >= _state.subMax) {
-				const uint16 id = _state.subIdx - 1;
-				if (id + 1 < _scriptData.names.size()) {
-					_state.subIdx++;
-					_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
-				} else {
-					return false;
-				}
+			const uint16 id = _state.subIdx - 1;
+			if (id + 1 < _scriptData.names.size()) {
+				_state.subIdx++;
+				_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
+			} else {
+				return false;
 			}
 		}
 			
