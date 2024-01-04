@@ -150,9 +150,8 @@ void Sound::playMacMusic(const Common::String &filename) {
 		error("Music file %s not found", filename.c_str());
 
 	DgdsChunkReader chunk(musicStream);
-	const DGDS_EX ex = EX_SNG;
 
-	while (chunk.readNextHeader(ex, filename)) {
+	while (chunk.readNextHeader(EX_SX, filename)) {
 		if (chunk.isContainer()) {
 			continue;
 		}
@@ -201,9 +200,8 @@ void Sound::playMusic(const Common::String &filename) {
 		error("Music file %s not found", filename.c_str());
 
 	DgdsChunkReader chunk(musicStream);
-	const DGDS_EX ex = EX_SNG;
 
-	while (chunk.readNextHeader(ex, filename)) {
+	while (chunk.readNextHeader(EX_SNG, filename)) {
 		if (chunk.isContainer()) {
 			continue;
 		}
