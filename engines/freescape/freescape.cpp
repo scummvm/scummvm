@@ -163,6 +163,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_maxShield = 63;
 	_maxEnergy = 63;
 	_gameStateBits = 0;
+	_eventManager = new EventManagerWrapper(g_system->getEventManager());
 
 	g_freescape = this;
 }
@@ -346,8 +347,8 @@ void FreescapeEngine::resetInput() {
 	_shootMode = false;
 	centerCrossair();
 	g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
-	g_system->getEventManager()->purgeMouseEvents();
-	g_system->getEventManager()->purgeKeyboardEvents();
+	_eventManager->purgeMouseEvents();
+	_eventManager->purgeKeyboardEvents();
 	rotate(0, 0);
 }
 
@@ -360,13 +361,13 @@ void FreescapeEngine::processInput() {
 	Common::Point mousePos;
 
 	if (_demoMode && !_demoEvents.empty()) {
-		g_system->getEventManager()->purgeMouseEvents();
-		g_system->getEventManager()->purgeKeyboardEvents();
-		g_system->getEventManager()->pushEvent(_demoEvents.front());
+		_eventManager->purgeMouseEvents();
+		_eventManager->purgeKeyboardEvents();
+		_eventManager->pushEvent(_demoEvents.front());
 		_demoEvents.remove_at(0);
 	}
 
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (_eventManager->pollEvent(event)) {
 		if (_demoMode) {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
 				; // Allow event
@@ -464,8 +465,8 @@ void FreescapeEngine::processInput() {
 				} else {
 					g_system->lockMouse(false);
 					g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
-					g_system->getEventManager()->purgeMouseEvents();
-					g_system->getEventManager()->purgeKeyboardEvents();
+					_eventManager->purgeMouseEvents();
+					_eventManager->purgeKeyboardEvents();
 				}
 				break;
 			case Common::KEYCODE_i:
@@ -509,7 +510,7 @@ void FreescapeEngine::processInput() {
 					event.relMouse.y = -event.relMouse.y;
 
 				g_system->warpMouse(mousePos.x, mousePos.y);
-				g_system->getEventManager()->purgeMouseEvents();
+				_eventManager->purgeMouseEvents();
 			}
 
 			rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);

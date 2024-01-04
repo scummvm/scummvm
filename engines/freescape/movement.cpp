@@ -34,38 +34,32 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *targ
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(Common::KEYCODE_UP);
-	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_UP");
 	act->addDefaultInputMapping("o");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(Common::KEYCODE_DOWN);
-	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_DOWN");
 	act->addDefaultInputMapping("k");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
 	act->setKeyEvent(Common::KEYCODE_LEFT);
-	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_LEFT");
 	act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
 	act->setKeyEvent(Common::KEYCODE_RIGHT);
-	act->allowKbdRepeats();
 	act->addDefaultInputMapping("JOY_RIGHT");
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_0, '0'));
-	act->allowKbdRepeats();
-	act->setLeftClickEvent();
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_KP5, '5'));
 	act->addDefaultInputMapping("JOY_A");
-	act->addDefaultInputMapping("0");
+	act->addDefaultInputMapping("5");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("RISE", _("Rise/Fly up"));

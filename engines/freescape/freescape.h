@@ -83,6 +83,28 @@ public:
 	bool endOfStream() const override { return !isPlaying(); }
 };
 
+class EventManagerWrapper {
+public:
+	EventManagerWrapper(Common::EventManager *delegate);
+	// EventManager API
+	bool pollEvent(Common::Event &event);
+	void purgeKeyboardEvents();
+	void purgeMouseEvents();
+	void pushEvent(Common::Event &event);
+
+private:
+	// for continuous events (keyDown)
+	enum {
+		kKeyRepeatInitialDelay = 400,
+		kKeyRepeatSustainDelay = 100
+	};
+
+	Common::EventManager *_delegate;
+
+	Common::KeyState _currentKeyDown;
+	uint32 _keyRepeatTime;
+};
+
 class FreescapeEngine : public Engine {
 
 public:
@@ -237,6 +259,7 @@ public:
 	bool _noClipMode;
 	bool _invertY;
 	virtual void initKeymaps(Common::Keymap *engineKeyMap, const char *target);
+	EventManagerWrapper *_eventManager;
 	void processInput();
 	void resetInput();
 	void generateDemoInput();
