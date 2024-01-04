@@ -100,11 +100,10 @@ static uint32 perf_ref_audio_buff_occupancy = 0;
 
 static float frame_rate = 0;
 static uint16 sample_rate = 0;
-static uint16 samples_per_frame = 0;               // length in samples per frame
-static size_t samples_per_frame_buffer_size = 0;
+static float audio_samples_per_frame   = 0.0f; // length in samples per frame
+static float audio_samples_accumulator = 0.0f;
 
-static int16 *sound_buffer = NULL;               // pointer to output buffer
-static int16 *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
+static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
 static bool input_bitmask_supported = false;
 static bool updating_variables = false;
@@ -121,20 +120,50 @@ static void log_scummvm_exit_code(void) {
 }
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
-	samples_per_frame = sample_rate / frame_rate;
+	audio_samples_accumulator = 0.0f;
+	audio_samples_per_frame   = (float)sample_rate / (float)frame_rate;
+	uint32 audio_sample_buffer_size  = ((uint32)audio_samples_per_frame + 1) * 2 * sizeof(int16);
+	audio_sample_buffer       = audio_sample_buffer ? (int16 *)realloc(audio_sample_buffer, audio_sample_buffer_size) : (int16 *)malloc(audio_sample_buffer_size);
 
-	samples_per_frame_buffer_size = samples_per_frame << sizeof(int16);
-
-	sound_buffer = sound_buffer ? (int16 *)realloc(sound_buffer, samples_per_frame_buffer_size) : (int16 *)malloc(samples_per_frame_buffer_size);
-	sound_buffer_empty = sound_buffer_empty ? (int16 *)realloc(sound_buffer_empty, samples_per_frame_buffer_size) : (int16 *)malloc(samples_per_frame_buffer_size);
-
-	if (sound_buffer && sound_buffer_empty) {
-		memset(sound_buffer, 0, samples_per_frame_buffer_size);
-		memset(sound_buffer_empty, 0, samples_per_frame_buffer_size);
-	} else
+	if (audio_sample_buffer)
+		memset(audio_sample_buffer, 0, audio_sample_buffer_size);
+	else
 		retro_log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
+}
 
-	audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
+static void audio_run(void) {
+	int16 *audio_buffer_ptr;
+	uint32 samples_to_read;
+	uint32 samples_produced;
+
+	/* Audio_samples_per_frame is decimal;
+	 * get integer component */
+	samples_to_read = (uint32)audio_samples_per_frame;
+
+	/* Account for fractional component */
+	audio_samples_accumulator += audio_samples_per_frame - (float)samples_to_read;
+
+	if (audio_samples_accumulator >= 1.0f) {
+		samples_to_read++;
+		audio_samples_accumulator -= 1.0f;
+	}
+
+	samples_produced = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) audio_sample_buffer, samples_to_read * 2 * sizeof(int16));
+	audio_status = samples_produced ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
+
+	/* Workaround for a RetroArch audio driver
+	 * limitation: a maximum of 1024 frames
+	 * can be written per call of audio_batch_cb(),
+	 * so we have to send samples in chunks */
+	audio_buffer_ptr = audio_sample_buffer;
+	while (samples_produced > 0) {
+		uint32 samples_to_write = (samples_produced > AUDIO_BATCH_FRAMES_MAX) ? AUDIO_BATCH_FRAMES_MAX : samples_produced;
+
+		audio_batch_cb(audio_buffer_ptr, samples_to_write);
+
+		samples_produced -= samples_to_write;
+		audio_buffer_ptr += samples_to_write << 1;
+	}
 }
 
 static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool underrun_likely) {
@@ -805,14 +834,13 @@ void retro_init(void) {
 
 void retro_deinit(void) {
 	LIBRETRO_G_SYSTEM->destroy();
-	if (sound_buffer) {
-		free(sound_buffer);
-		sound_buffer = NULL;
-	}
-	if (sound_buffer_empty) {
-		free(sound_buffer_empty);
-		sound_buffer_empty = NULL;
-	}
+
+	if (audio_sample_buffer)
+		free(audio_sample_buffer);
+
+	audio_sample_buffer       = NULL;
+	audio_samples_per_frame   = 0.0f;
+	audio_samples_accumulator = 0.0f;
 	log_scummvm_exit_code();
 }
 
@@ -1037,6 +1065,7 @@ void retro_run(void) {
 					frameskip_events = 0;
 				}
 			}
+
 			/* Switch to ScummVM thread, unless frameskipping is ongoing */
 			if (!skip_frame)
 				retro_switch_to_emu_thread();
@@ -1047,23 +1076,14 @@ void retro_run(void) {
 			}
 
 			/* Retrieve audio */
-			samples_count = 0;
 			if (audio_video_enable & 2)
-				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
-
-			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
+				audio_run();
 
 			/* Retrieve video */
 			if ((audio_video_enable & 1) && !skip_frame) {
 				const Graphics::Surface &screen = LIBRETRO_G_SYSTEM->getScreen();
 				video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
 			}
-
-			if (audio_status & AUDIO_STATUS_MUTE)
-				audio_batch_cb((int16 *) sound_buffer_empty, samples_per_frame_buffer_size >> sizeof(int16));
-			else
-				audio_batch_cb((int16 *) sound_buffer, samples_count);
-
 			current_frame++;
 
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);

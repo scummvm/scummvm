@@ -18,6 +18,11 @@
 #ifndef LIBRETRO_DEFS_H
 #define LIBRETRO_DEFS_H
 
+/* Workaround for a RetroArch audio driver
+ * limitation: a maximum of 1024 frames
+ * can be written per call of audio_batch_cb() */
+#define AUDIO_BATCH_FRAMES_MAX 1024
+
 // System analog stick range is -0x8000 to 0x8000
 #define ANALOG_RANGE 0x8000
 
