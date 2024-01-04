@@ -42,53 +42,39 @@
 
 namespace Dgds {
 
-// FIXME: Move these into some state
-static Common::String _bmpNames[16];
-
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
-bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
+bool TTMInterpreter::load(const Common::String &filename) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
-	return dgds.parse(scriptData, filename);
+	bool parseResult = dgds.parse(&_scriptData, filename);
+
+	_state.delay = 0;
+	_state.scene = 0;
+	_scriptData.scr->seek(0);
+
+	return parseResult;
 }
 
-void TTMInterpreter::unload(TTMData *data) {
-	if (!data)
-		return;
-	delete data->scr;
-
-	data->scr = nullptr;
+void TTMInterpreter::unload() {
+	delete _scriptData.scr;
+	_scriptData.scr = nullptr;
 }
 
-void TTMInterpreter::init(TTMState *state, const TTMData *data) {
-	state->dataPtr = data;
-	state->delay = 0;
-	state->scene = 0;
-	data->scr->seek(0);
-}
-
-bool TTMInterpreter::run(TTMState *script) {
-	if (!script)
-		return false;
-
-	Common::SeekableReadStream *scr = script->dataPtr->scr;
+bool TTMInterpreter::run() {
+	Common::SeekableReadStream *scr = _scriptData.scr;
 	if (!scr)
 		return false;
 	if (scr->pos() >= scr->size())
 		return false;
 
-	script->delay = 0;
+	_state.delay = 0;
+
 	do {
-		uint16 code;
-		byte count;
-		uint op;
+		uint16 code = scr->readUint16LE();
+		byte count = code & 0x000F;
+		uint op = code & 0xFFF0;
 		int16 ivals[8];
-
 		Common::String sval;
-
-		code = scr->readUint16LE();
-		count = code & 0x000F;
-		op = code & 0xFFF0;
 		
 		if (count > 8 && count != 0x0f)
 			error("Invalid TTM opcode %04x requires %d locals", code, count);
@@ -129,7 +115,7 @@ bool TTMInterpreter::run(TTMState *script) {
 			continue;
 		case 0xf020:
 			// LOAD BMP:	filename:str
-			_bmpNames[script->_currentBmpId] = sval;
+			_state.bmpNames[_state._currentBmpId] = sval;
 			continue;
 		case 0xf050:
 			// LOAD PAL:	filename:str
@@ -150,18 +136,18 @@ bool TTMInterpreter::run(TTMState *script) {
 			// SET BMP:	id:int [-1:n]
 			int bk = ivals[0];
 			if (bk != -1) {
-				_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], bk);
+				_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], bk);
 			}
 			continue;
 		}
 		case 0x1050:
 			// SELECT BMP:	    id:int [0:n]
-			script->_currentBmpId = ivals[0];
+			_state._currentBmpId = ivals[0];
 			continue;
 		case 0x1060:
 			// SELECT SCR|PAL:  id:int [0]
-			warning("Switching scene %d -> %d for opcode 0x1060 .. is that right?", script->scene, ivals[0]);
-			script->scene = ivals[0];
+			warning("Switching scene %d -> %d for opcode 0x1060 .. is that right?", _state.scene, ivals[0]);
+			_state.scene = ivals[0];
 			continue;
 		case 0x1090:
 			// SELECT SONG:	    id:int [0]
@@ -174,7 +160,7 @@ bool TTMInterpreter::run(TTMState *script) {
 
 		case 0x4110:
 			// FADE OUT:	?,?,?,?:byte
-			g_system->delayMillis(script->delay);
+			g_system->delayMillis(_state.delay);
 			_vm->_image->clearPalette();
 			_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			continue;
@@ -225,25 +211,25 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0xa520:
 			//DRAW BMP: x,y:int ; happens once in INTRO.TTM
 		case 0xa500:
-			debug("DRAW \"%s\"", _bmpNames[script->_currentBmpId].c_str());
+			debug("DRAW \"%s\"", _state.bmpNames[_state._currentBmpId].c_str());
 
 			// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 			// This is kind of file system intensive, will likely have to change to store all the BMPs.
 			if (count == 4) {
 				int bk = ivals[2];
-				script->_currentBmpId = ivals[3];
+				_state._currentBmpId = ivals[3];
 				if (bk != -1) {
-					_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], bk);
+					_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], bk);
 				}
 			} else if (!_vm->_image->isLoaded()) {
 				// load on demand?
-				warning("trying to load bmp %d (%s) on demand", script->_currentBmpId, _bmpNames[script->_currentBmpId].c_str());
-				_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], 0);
+				warning("trying to load bmp %d (%s) on demand", _state._currentBmpId, _state.bmpNames[_state._currentBmpId].c_str());
+				_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], 0);
 			}
 
 			// DRAW BMP: x,y:int [-n,+n] (RISE)
 			if (_vm->_image->isLoaded())
-				_vm->_image->drawBitmap(ivals[0], ivals[1], script->_drawWin, _vm->getTopBuffer());
+				_vm->_image->drawBitmap(ivals[0], ivals[1], _state._drawWin, _vm->getTopBuffer());
 			else
 				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
@@ -251,7 +237,7 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0x1110: { //SET SCENE?:  i:int   [1..n]
 			// DESCRIPTION IN TTM TAGS.
 			debug("SET SCENE: %u", ivals[0]);
-			script->scene = ivals[0];
+			_state.scene = ivals[0];
 
 			const Common::Array<Dialogue> dialogues = _vm->getScene()->getLines();
 			_text.str.clear();
@@ -260,13 +246,13 @@ bool TTMInterpreter::run(TTMState *script) {
 					_text = dialogue;
 			}
 			if (!_text.str.empty())
-				script->delay += 1500;
+				_state.delay += 1500;
 			continue;
 		}
 
 		case 0x4000:
 			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
-			script->_drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+			_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 
 		case 0xa100:
@@ -275,7 +261,7 @@ bool TTMInterpreter::run(TTMState *script) {
 			continue;
 
 		case 0x1020: //DELAY?:	    i:int   [0..n]
-			script->delay += ivals[0] * 10;
+			_state.delay += ivals[0] * 10;
 			continue;
 
 		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
@@ -303,74 +289,59 @@ bool TTMInterpreter::run(TTMState *script) {
 	dst->copyRectToSurface(_vm->_resData, 0, 0, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	g_system->unlockScreen();
 	g_system->updateScreen();
-	g_system->delayMillis(script->delay);
+	g_system->delayMillis(_state.delay);
 	return true;
 }
 
-ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _scriptData(nullptr) {}
+ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm) {
+	_ttmInterpreter = new TTMInterpreter(_vm);
+}
 
-bool ADSInterpreter::load(const Common::String &filename, ADSData *scriptData) {
-	_scriptData = scriptData;
-	_filename = filename;
+ADSInterpreter::~ADSInterpreter() {
+	delete _ttmInterpreter;
+	_ttmInterpreter = nullptr;
+}
 
+bool ADSInterpreter::load(const Common::String &filename) {
 	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
-	dgds.parse(scriptData, filename);
+	dgds.parse(&_scriptData, filename);
 
-	TTMInterpreter interp(_vm);
+	_state.scene = 0;
+	_state.subIdx = 0;
+	_state.subMax = 0;
+	_scriptData.scr->seek(0);
+	_scriptData.filename = filename;
 
-	TTMData *scriptDatas;
-	scriptDatas = new TTMData[_scriptData->count];
-	assert(scriptDatas);
-	_scriptData->scriptDatas = scriptDatas;
-
-	for (uint16 i = _scriptData->count; i--;)
-		interp.load(_scriptData->names[i], &_scriptData->scriptDatas[i]);
-
-	_scriptData->filename = filename;
-	_scriptData = nullptr;
 	return true;
 }
 
-void ADSInterpreter::unload(ADSData *data) {
-	if (!data)
-		return;
-	data->names.clear();
-	delete data->scriptDatas;
-	delete data->scr;
-
-	data->count = 0;
-	data->scriptDatas = 0;
-	data->scr = 0;
+void ADSInterpreter::unload() {
+	_scriptData.names.clear();
+	delete _scriptData.scr;
+	_scriptData.scr = nullptr;
 }
 
-void ADSInterpreter::init(ADSState *state, const ADSData *data) {
-	state->dataPtr = data;
-	state->scene = 0;
-	state->subIdx = 0;
-	state->subMax = 0;
-	data->scr->seek(0);
-
-	TTMInterpreter interp(_vm);
-
-	state->scriptStates.resize(data->count);
-
-	for (uint16 i = data->count; i--;)
-		interp.init(&state->scriptStates[i], &data->scriptDatas[i]);
-}
-
-bool ADSInterpreter::run(ADSState *script) {
-
-	if (script->subMax != 0) {
-		TTMInterpreter interp(_vm);
-		TTMState *ttmState = &script->scriptStates[script->subIdx - 1];
-		if (!interp.run(ttmState) || ttmState->scene >= script->subMax)
-			script->subMax = 0;
+bool ADSInterpreter::run() {
+	// This is the main scene player loop, which will run
+	// after the first time the ADS script is loaded below
+	// TODO/FIXME: Rewrite this
+	if (_state.subMax != 0) {
+		if (!_ttmInterpreter->run()) {
+			if (_ttmInterpreter->getScene() >= _state.subMax) {
+				const uint16 id = _state.subIdx - 1;
+				if (id + 1 < _scriptData.names.size()) {
+					_state.subIdx++;
+					_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
+				} else {
+					return false;
+				}
+			}
+		}
+			
 		return true;
 	}
 
-	if (!script)
-		return false;
-	Common::SeekableReadStream *scr = script->dataPtr->scr;
+	Common::SeekableReadStream *scr = _scriptData.scr;
 	if (!scr)
 		return false;
 	if (scr->pos() >= scr->size())
@@ -388,11 +359,12 @@ bool ADSInterpreter::run(ADSState *script) {
 		switch (code) {
 		case 0x2005: {
 			// play scene.
-			script->subIdx = scr->readUint16LE();
-			script->subMax = scr->readUint16LE();
+			_state.subIdx = scr->readUint16LE();
+			_state.subMax = scr->readUint16LE();
 			uint16 unk1 = scr->readUint16LE();
 			uint16 unk2 = scr->readUint16LE();
-			debug("ADSInterpreter play scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", script->subIdx, script->subMax, unk1, unk2);
+			_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
+			debug("ADSInterpreter play scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", _state.subIdx, _state.subMax, unk1, unk2);
 			return true;
 		}
 
@@ -429,6 +401,7 @@ bool ADSInterpreter::run(ADSState *script) {
 		}
 		break;
 	} while (scr->pos() < scr->size());
+
 	return false;
 }
 
