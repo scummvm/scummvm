@@ -595,15 +595,14 @@ Common::Error DgdsEngine::run() {
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
 		parseFile("DRAGON.GDS");
-		/*
+
 		RequestData invRequestData;
 		RequestData vcrRequestData;
-		Request invRequest(_resource);
-		Request vcrRequest(_resource);
+		Request invRequest(_resource, _decompressor);
+		Request vcrRequest(_resource, _decompressor);
 		invRequest.parse(&invRequestData, "DINV.REQ");
-		vcrRequest.parse(&vcrRequestData, "DINV.REQ");
-		*/
-		
+		vcrRequest.parse(&vcrRequestData, "DVCR.REQ");
+
 		// Load the intro and play it for now.
 		interpIntro.load("TITLE1.ADS");
 

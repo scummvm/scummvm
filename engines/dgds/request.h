@@ -59,7 +59,7 @@ struct Gadget {
 	Common::String _sval2S;
 	uint16 _sval2I;
 
-	Common::String _sval3;
+	Common::String _buttonName;
 
 	// some other fields..
 	uint16 _field14_0x20;
