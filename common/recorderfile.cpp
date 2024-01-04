@@ -368,7 +368,7 @@ RecorderEvent PlaybackFile::getNextEvent() {
 	return result;
 }
 
-bool PlaybackFile::isEventsBufferEmpty() {
+bool PlaybackFile::isEventsBufferEmpty() const {
 	return (uint32)_tmpPlaybackFile.pos() == _eventsSize;
 }
 
