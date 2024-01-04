@@ -161,7 +161,9 @@ void Movie::queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 	// 	entity = score->getCurrentFrameNum();
 	// } else {
 
-	assert(_score->_currentFrame != nullptr);
+	if (_score->_currentFrame == nullptr)
+		return;
+
 	CastMemberID scriptId = _score->_currentFrame->_mainChannels.actionId;
 	if (!scriptId.member)
 		return;
