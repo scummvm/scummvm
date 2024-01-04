@@ -145,11 +145,14 @@ protected:
 	Common::String _version;
 };
 
+class ResourceManager;
+class Decompressor;
 
 class GDSScene : public Scene {
 public:
 	GDSScene();
 
+	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
 	bool parseInf(Common::SeekableReadStream *s);
 
@@ -170,6 +173,7 @@ class SDSScene : public Scene {
 public:
 	SDSScene();
 
+	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
 
 	const Common::Array<struct Dialogue> &getLines() const { return _dialogues; }

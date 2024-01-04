@@ -93,12 +93,6 @@ public:
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
 	const PFont *getFntP() const { return _fntP; }
-
-private:
-	void parseFile(const Common::String &filename);
-	void parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name);
-	void parseRstChunk(Common::SeekableReadStream &file);
-	void parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex);
 };
 
 } // End of namespace Dgds

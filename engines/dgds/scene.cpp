@@ -24,6 +24,8 @@
 #include "common/endian.h"
 #include "common/file.h"
 
+#include "dgds/includes.h"
+#include "dgds/resource.h"
 #include "dgds/scene.h"
 
 namespace Dgds {
@@ -224,6 +226,33 @@ bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array
 SDSScene::SDSScene() : _num(-1) {
 }
 
+bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
+	Common::SeekableReadStream *sceneFile = resourceManager->getResource(filename);
+	if (!sceneFile)
+		error("Scene file %s not found", filename.c_str());
+
+	DgdsChunkReader chunk(sceneFile);
+
+	bool result = false;
+
+	while (chunk.readNextHeader(EX_SDS, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
+		chunk.readContent(decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+
+		if (chunk.isSection(ID_SDS)) {
+			result = parse(stream);
+		}
+	}
+
+	delete sceneFile;
+
+	return result;
+}
+
 bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_magic = stream->readUint32LE();
 	_version = stream->readString();
@@ -258,13 +287,43 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 GDSScene::GDSScene() {
 }
 
+bool GDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
+	Common::SeekableReadStream *sceneFile = resourceManager->getResource(filename);
+	if (!sceneFile)
+		error("Scene file %s not found", filename.c_str());
+
+	DgdsChunkReader chunk(sceneFile);
+
+	bool result = false;
+
+	while (chunk.readNextHeader(EX_GDS, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
+		chunk.readContent(decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+
+		if (chunk.isSection(ID_GDS)) {
+			// do nothing, this is the container.
+			assert(chunk.isContainer());
+		} else if (chunk.isSection(ID_INF)) {
+			result = parseInf(stream);
+		} else if (chunk.isSection(ID_SDS)) {
+			result = parse(stream);
+		}
+	}
+
+	delete sceneFile;
+
+	return result;
+}
 
 bool GDSScene::parseInf(Common::SeekableReadStream *s) {
 	_magic = s->readUint32LE();
 	_version = s->readString();
 	return !s->err();
 }
-
 
 bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readStruct5List(stream, _struct5List1);
