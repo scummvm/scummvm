@@ -76,7 +76,7 @@ private:
 	GDSScene *_gdsScene;
 
 	PFont *_fntP;
-	FFont *_fntF;
+	//FFont *_fntF;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
