@@ -39,8 +39,8 @@ Controls
         One finger tap, Left mouse click
         :ref:`twofinger`, Right mouse click
         :ref:`twofingerdouble`,ESC
-	One finger press & hold for >0.5s, Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island.
-	Two fingers press & hold for >0.5s, Right mouse button hold and drag, such as for selection from action wheel in Tony Tough.
+        One finger press & hold for >0.5s, Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island.
+        Two fingers press & hold for >0.5s, Right mouse button hold and drag, such as for selection from action wheel in Tony Tough.
         Two finger swipe (left to right), Toggles between touch direct mode and touchpad mode.
         Two finger swipe (right to left), Show/hide on-screen control (iOS 15 and later)
         Two finger swipe (top to bottom), Global Main Menu
@@ -107,4 +107,4 @@ Known issues
 - If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.
 - If closing the ScummVM application (background mode) and then killing the application (by swiping the application upwards) there is a risk that the ScummVM configuration file becomes corrupted. Make sure not to kill the application to soon after ptting it to background.
 - In rare cases the ScummVM folder is not created in the "Files" application after installing ScummVM. Make sure the ScummVM folder shows up after installation. If not, uninstall the ScummVM, restart the iOS device and reinstall ScummVM.
-- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow mouse pointer and the iPadOS system pointer are seen in parallell. It's usually fixed when restartarting the iPad. 
+- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow mouse pointer and the iPadOS system pointer are seen in parallell. It's usually fixed when restartarting the iPad.
