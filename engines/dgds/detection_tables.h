@@ -84,33 +84,48 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Adventures of Willy Beamish (PC)
-    {
-        "beamish",
-        0,
-        {
+	{
+		"beamish",
+		0,
+		{
 			{"volume.rmf", 0, "c2be5cd4693dfcdbe45dd0e74dd5306d", 9896},
 			{"volume.001", 0, "7e9f3b0b7a5ec9989d3149f5e1f011a9", 1263007},
 			AD_LISTEND
 		},
-        Common::EN_ANY,
-        Common::kPlatformDOS,
-        ADGF_NO_FLAGS,
-        GUIO1(GUIO_NONE)
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
 	},
 
 	// Adventures of Willy Beamish (Macintosh)
-    {
-        "beamish",
-        0,
-        {
+	{
+		"beamish",
+		0,
+		{
 			{"volume.rmf", 0, "a8cd2d95b9c972fd33bf22b6de0b50c8", 9832},
 			{"volume.001", 0, "0849203c8da5f2b7868e11a77a537ee5", 1359359},
 			AD_LISTEND
 		},
-        Common::EN_ANY,
-        Common::kPlatformMacintosh,
-        ADGF_NO_FLAGS,
-        GUIO1(GUIO_NONE)
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Adventures of Willy Beamish (GOG FDD data)
+	{
+		"beamish",
+		"FDD",
+		{
+			{"volume.rmf", 0, "d270e05a95d85dd4096a099d9471438f", 9943},
+			{"volume.001", 0, "be08868abb909dcf24808676d063cba1", 1170013},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
 	},
 
 	// Heart of China (PC) : GOG

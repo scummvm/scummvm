@@ -155,6 +155,9 @@ void Image::loadBitmap(Common::String filename, int number) {
 			vqtpos = fileStream->pos();
 			vqtsize = chunk.getSize();
 			stream->skip(vqtsize);
+		} else if (chunk.isSection(ID_SCN)) {
+			// TODO: SCN file parsing - eg, "WILLCRED.BMP" from Willy Beamish
+			error("TODO: Implement SCN type BMP file parsing for %s", filename.c_str());
 		} else if (chunk.isSection(ID_OFF)) {
 			if (vqtpos == -1)
 				error("Expect VQT chunk before OFF chunk in BMP resource %s", filename.c_str());
