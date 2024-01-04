@@ -101,6 +101,10 @@ Common::Path OSystem_Emscripten::getScreenshotsPath() {
 	return Common::Path("/tmp/");
 }
 
+Common::Path OSystem_Emscripten::getDefaultIconsPath() {
+	return Common::Path(DATA_PATH"/gui-icons/");
+}
+
 bool OSystem_Emscripten::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
