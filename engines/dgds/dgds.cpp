@@ -590,12 +590,8 @@ Common::Error DgdsEngine::run() {
 	Common::Event ev;
 
 	ADSInterpreter interpADS(this);
-	TTMInterpreter interpTTM(this);
-
-	TTMState title1State, title2State;
-	ADSState adsState;
-	TTMData title1Data, title2Data;
-	ADSData adsData;
+	TTMInterpreter interpTTM1(this);
+	TTMInterpreter interpTTM2(this);
 
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
@@ -610,26 +606,18 @@ Common::Error DgdsEngine::run() {
 		*/
 		
 		// Load the intro and play it for now.
-		interpTTM.load("TITLE1.TTM", &title1Data);
-		interpTTM.load("TITLE2.TTM", &title2Data);
-		interpADS.load("INTRO.ADS", &adsData);
-
-		interpTTM.init(&title1State, &title1Data);
-		interpTTM.init(&title2State, &title2Data);
-		interpADS.init(&adsState, &adsData);
+		interpTTM1.load("TITLE1.TTM");
+		interpTTM2.load("TITLE2.TTM");
+		interpADS.load("INTRO.ADS");
 
 		parseFile("DRAGON.FNT");
 		parseFile("S55.SDS");
 	} else if (getGameId() == GID_CHINA) {
-		interpADS.load("TITLE.ADS", &adsData);
-
-		interpADS.init(&adsState, &adsData);
+		interpADS.load("TITLE.ADS");
 
 		parseFile("HOC.FNT");
 	} else if (getGameId() == GID_BEAMISH) {
-		interpADS.load("TITLE.ADS", &adsData);
-
-		interpADS.init(&adsState, &adsData);
+		interpADS.load("TITLE.ADS");
 
 		//parseFile("HOC.FNT");
 	}
@@ -655,15 +643,13 @@ Common::Error DgdsEngine::run() {
 			}
 		}
 
-		//		browse(_platform, _rmfName, this);
-
 		if (getGameId() == GID_DRAGON) {
-			if (!interpTTM.run(&title1State))
-				if (!interpTTM.run(&title2State))
-					if (!interpADS.run(&adsState))
+			//if (!interpTTM1.run())
+			//	if (!interpTTM2.run())
+					if (!interpADS.run())
 						return Common::kNoError;
 		} else if (getGameId() == GID_CHINA || getGameId() == GID_BEAMISH) {
-			if (!interpADS.run(&adsState))
+			if (!interpADS.run())
 				return Common::kNoError;
 		}
 

@@ -46,66 +46,59 @@ public:
 };
 
 struct TTMState {
-	TTMState() : dataPtr(nullptr), scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
-	const TTMData *dataPtr;
+	TTMState() : scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
 	uint16 scene;
 	int delay;
 	Common::Rect _drawWin;
 	int _currentBmpId;
+	Common::String bmpNames[16];
 };
 
 class ADSData : public ScriptParserData {
 public:
-	ADSData() : count(0), scriptDatas(nullptr) {}
-	uint16 count;
+	ADSData() {}
 	Common::Array<Common::String> names;
-	TTMData *scriptDatas;
 };
 
 struct ADSState {
-	ADSState() : dataPtr(nullptr), scene(0), subIdx(0), subMax(0) {}
-	const ADSData *dataPtr;
+	ADSState() : scene(0), subIdx(0), subMax(0) {}
 	uint16 scene;
 	uint16 subIdx, subMax;
-
-	Common::Array<TTMState> scriptStates;
-};
-
-class ADSInterpreter {
-public:
-	ADSInterpreter(DgdsEngine *vm);
-
-	bool load(const Common::String &filename, ADSData *data);
-	void unload(ADSData *data);
-
-	void init(ADSState *scriptState, const ADSData *scriptData);
-	bool run(ADSState *script);
-
-protected:
-	DgdsEngine *_vm;
-
-	Common::String _filename;
-	ADSData *_scriptData;
 };
 
 class TTMInterpreter {
 public:
 	TTMInterpreter(DgdsEngine *vm);
 
-	bool load(const Common::String &filename, TTMData *data);
-	void unload(TTMData *data);
+	bool load(const Common::String &filename);
+	void unload();
+	bool run();
 
-	void init(TTMState *scriptState, const TTMData *scriptData);
-	bool run(TTMState *script);
+	uint16 getScene() const { return _state.scene; }
 
 protected:
 	DgdsEngine *_vm;
 
 	Dialogue _text;
-	//Common::String _filename;
-	//TTMData *_scriptData;
+	TTMData _scriptData;
+	TTMState _state;
+};
 
-	//Common::String _bmpNames[16];
+class ADSInterpreter {
+public:
+	ADSInterpreter(DgdsEngine *vm);
+	~ADSInterpreter();
+
+	bool load(const Common::String &filename);
+	void unload();
+	bool run();
+
+protected:
+	DgdsEngine *_vm;
+	TTMInterpreter *_ttmInterpreter;
+
+	ADSData _scriptData;
+	ADSState _state;
 };
 
 } // End of namespace Dgds

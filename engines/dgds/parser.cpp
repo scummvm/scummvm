@@ -125,7 +125,6 @@ bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	case ID_RES: {
 		uint16 count = chunkStream->readUint16LE();
 
-		scriptData->count = count;
 		for (uint16 i = 0; i < count; i++) {
 			uint16 idx = chunkStream->readUint16LE();
 			assert(idx == (i + 1));
