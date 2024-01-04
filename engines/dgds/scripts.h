@@ -46,10 +46,12 @@ public:
 };
 
 struct TTMState {
-	TTMState() : dataPtr(nullptr), scene(0), delay(0) {}
+	TTMState() : dataPtr(nullptr), scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
 	const TTMData *dataPtr;
 	uint16 scene;
 	int delay;
+	Common::Rect _drawWin;
+	int _currentBmpId;
 };
 
 class ADSData : public ScriptParserData {
@@ -100,8 +102,6 @@ protected:
 	DgdsEngine *_vm;
 
 	Dialogue _text;
-	Common::Rect _drawWin;
-	int _currentBmpId;
 	//Common::String _filename;
 	//TTMData *_scriptData;
 

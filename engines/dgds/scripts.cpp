@@ -45,7 +45,7 @@ namespace Dgds {
 // FIXME: Move these into some state
 static Common::String _bmpNames[16];
 
-TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
+TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMData *scriptData) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
@@ -129,7 +129,7 @@ bool TTMInterpreter::run(TTMState *script) {
 			continue;
 		case 0xf020:
 			// LOAD BMP:	filename:str
-			_bmpNames[_currentBmpId] = sval;
+			_bmpNames[script->_currentBmpId] = sval;
 			continue;
 		case 0xf050:
 			// LOAD PAL:	filename:str
@@ -150,13 +150,13 @@ bool TTMInterpreter::run(TTMState *script) {
 			// SET BMP:	id:int [-1:n]
 			int bk = ivals[0];
 			if (bk != -1) {
-				_vm->_image->loadBitmap(_bmpNames[_currentBmpId], bk);
+				_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], bk);
 			}
 			continue;
 		}
 		case 0x1050:
 			// SELECT BMP:	    id:int [0:n]
-			_currentBmpId = ivals[0];
+			script->_currentBmpId = ivals[0];
 			continue;
 		case 0x1060:
 			// SELECT SCR|PAL:  id:int [0]
@@ -225,25 +225,25 @@ bool TTMInterpreter::run(TTMState *script) {
 		case 0xa520:
 			//DRAW BMP: x,y:int ; happens once in INTRO.TTM
 		case 0xa500:
-			debug("DRAW \"%s\"", _bmpNames[_currentBmpId].c_str());
+			debug("DRAW \"%s\"", _bmpNames[script->_currentBmpId].c_str());
 
 			// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 			// This is kind of file system intensive, will likely have to change to store all the BMPs.
 			if (count == 4) {
 				int bk = ivals[2];
-				_currentBmpId = ivals[3];
+				script->_currentBmpId = ivals[3];
 				if (bk != -1) {
-					_vm->_image->loadBitmap(_bmpNames[_currentBmpId], bk);
+					_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], bk);
 				}
 			} else if (!_vm->_image->isLoaded()) {
 				// load on demand?
-				warning("trying to load bmp %d (%s) on demand", _currentBmpId, _bmpNames[_currentBmpId].c_str());
-				_vm->_image->loadBitmap(_bmpNames[_currentBmpId], 0);
+				warning("trying to load bmp %d (%s) on demand", script->_currentBmpId, _bmpNames[script->_currentBmpId].c_str());
+				_vm->_image->loadBitmap(_bmpNames[script->_currentBmpId], 0);
 			}
 
 			// DRAW BMP: x,y:int [-n,+n] (RISE)
 			if (_vm->_image->isLoaded())
-				_vm->_image->drawBitmap(ivals[0], ivals[1], _drawWin, _vm->getTopBuffer());
+				_vm->_image->drawBitmap(ivals[0], ivals[1], script->_drawWin, _vm->getTopBuffer());
 			else
 				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
@@ -266,7 +266,7 @@ bool TTMInterpreter::run(TTMState *script) {
 
 		case 0x4000:
 			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
-			_drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+			script->_drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 
 		case 0xa100:
