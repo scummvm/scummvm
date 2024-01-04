@@ -30,7 +30,7 @@ void FreescapeEngine::titleScreen() {
 	int maxWait = 60 * 6;
 	for (int i = 0; i < maxWait; i++ ) {
 		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -205,7 +205,7 @@ void FreescapeEngine::drawFullscreenMessageAndWait(Common::String message) {
 	Common::Event event;
 	bool cont = true;
 	while (!shouldQuit() && cont) {
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (_eventManager->pollEvent(event)) {
 
 			// Events
 			switch (event.type) {
@@ -248,7 +248,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 	int maxWait = 6 * 60;
 	for (int i = 0; i < maxWait; i++ ) {
 		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:

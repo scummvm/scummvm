@@ -698,7 +698,7 @@ void DarkEngine::drawInfoMenu() {
 	Common::Event event;
 	bool cont = true;
 	while (!shouldQuit() && cont) {
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (_eventManager->pollEvent(event)) {
 
 			// Events
 			switch (event.type) {
