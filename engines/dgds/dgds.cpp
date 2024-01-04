@@ -63,7 +63,7 @@ namespace Dgds {
 //#define DUMP_ALL_CHUNKS 1
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
-    : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
+	: Engine(syst), _image(nullptr), /*_fntF(nullptr),*/ _fntP(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
 	_resource(nullptr) {
 	syncSoundSettings();
@@ -357,18 +357,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					_gdsScene->parse(stream);
 				}
 				break;
-			case EX_FNT:
-				if (chunk.isSection(ID_FNT)) {
-					byte magic = stream->readByte();
-					stream->seek(-1, SEEK_CUR);
-					debug("    magic: %u", magic);
-
-					if (magic != 0xFF)
-						_fntF = FFont::load(*stream);
-					else
-						_fntP = PFont::load(*stream, _decompressor);
-				}
-				break;
 			case EX_SNG:	// Handled in Sound::playMusic
 			case EX_SX:     // Handled in Sound::playMacMusic
 			case EX_PAL:	// Handled in Image::setPalette
@@ -379,6 +367,7 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			case EX_ADS:    // Handled by ADSParser
 			case EX_ADL:    // Handled by ADSParser
 			case EX_ADH:    // Handled by ADSParser
+			case EX_FNT:	// Handled by Font::load
 				error("Should not be here");
 			default:
 				break;
@@ -409,8 +398,6 @@ Common::Error DgdsEngine::run() {
 	_topBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_resData.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
-	debug("DgdsEngine::init");
-
 	g_system->fillScreen(0);
 
 	Common::EventManager *eventMan = g_system->getEventManager();
@@ -432,16 +419,17 @@ Common::Error DgdsEngine::run() {
 
 		// Load the intro and play it for now.
 		interpIntro.load("TITLE1.ADS");
+		//interpIntro.load("INTRO.ADS");
 
-		parseFile("DRAGON.FNT");
+		_fntP = (PFont *)Font::load("DRAGON.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_CHINA) {
 		interpIntro.load("TITLE.ADS");
 
-		parseFile("HOC.FNT");
+		_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_BEAMISH) {
 		interpIntro.load("TITLE.ADS");
 
-		//parseFile("HOC.FNT");
+		//_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
 	}
 
 	//_console->attach();

@@ -37,6 +37,7 @@ class SeekableReadStream;
 
 namespace Dgds {
 
+class ResourceManager;
 class Decompressor;
 
 class Font : public Graphics::Font {
@@ -45,6 +46,7 @@ public:
 	int getMaxCharWidth() const { return _w; }
 	virtual int getCharWidth(uint32 chr) const = 0;
     void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint32 color) const;
+	static Font *load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 
 protected:
 	byte _w;
@@ -59,7 +61,7 @@ protected:
 class PFont : public Font {
 public:
 	int getCharWidth(uint32 chr) const { return _widths[chr - _start]; }
-	void drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 color) const;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static PFont *load(Common::SeekableReadStream &input, Decompressor *decompressor);
 
 protected:
@@ -69,15 +71,17 @@ protected:
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
 
+#if 0
 class FFont : public Font {
 public:
 	int getCharWidth(uint32 chr) const { return _w; }
-	void drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 color) const;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static FFont *load(Common::SeekableReadStream &input);
 
 protected:
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
+#endif
 
 } // End of namespace Dgds
 
