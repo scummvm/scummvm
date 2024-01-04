@@ -93,6 +93,8 @@ public:
 	int16 _curStatic;
 	int16 _curStaticLayer;
 
+	int16 _maxDrawOrder;
+
 	int16 _toRedrawLeft;
 	int16 _toRedrawRight;
 	int16 _toRedrawTop;
