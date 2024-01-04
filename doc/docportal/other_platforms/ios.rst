@@ -39,8 +39,8 @@ Controls
         One finger tap, Left mouse click
         :ref:`twofinger`, Right mouse click
         :ref:`twofingerdouble`, ESC
-        One finger press & hold for >0.5s, Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island
-        Two fingers press & hold for >0.5s, Right mouse button hold and drag, such as for selection from action wheel in Tony Tough
+        One finger press & hold for >0.5s, "Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island"
+        Two fingers press & hold for >0.5s, "Right mouse button hold and drag, such as for selection from action wheel in Tony Tough"
         Two finger swipe (left to right), Toggles between touch direct mode and touchpad mode
         Two finger swipe (right to left), Show/hide on-screen control (iOS 15 and later)
         Two finger swipe (top to bottom), Global Main Menu
