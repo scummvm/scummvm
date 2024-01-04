@@ -60,7 +60,7 @@
 
 namespace Dgds {
 
-#define DUMP_ALL_CHUNKS 1
+//#define DUMP_ALL_CHUNKS 1
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
     : Engine(syst), _image(nullptr), _fntF(nullptr), _fntP(nullptr), _console(nullptr),
@@ -213,8 +213,6 @@ void DgdsEngine::parseAmigaChunks(Common::SeekableReadStream &file, DGDS_EX ex) 
 	case EX_SNG:
 		/* IFF-SMUS music (Amiga). */
 		break;
-		//		case EX_SNG:
-		// TODO
 	case EX_AMG:
 		/* (Amiga). */
 		line = file.readLine();
@@ -349,79 +347,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					_scene->parse(stream);
 				}
 				break;
-			case EX_TTM:
-				if (chunk.isSection(ID_VER)) {
-					char version[5];
-
-					stream->read(version, sizeof(version));
-					debug("        %s", version);
-				} else if (chunk.isSection(ID_PAG)) {
-					uint16 pages;
-					pages = stream->readUint16LE();
-					debug("        %u", pages);
-				} else if (chunk.isSection(ID_TT3)) {
-					uint32 size = stream->size();
-					byte *dest = new byte[size];
-					stream->read(dest, size);
-					//ttm = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
-					//Common::strlcpy(ttmName, name, sizeof(ttmName));
-					delete [] dest;
-#if 0
-						while (!stream->eos()) {
-							uint16 code = stream->readUint16LE();
-							byte count = code & 0x000F;
-							uint op = code & 0xFFF0;
-
-							debugN("\tOP: 0x%4.4x %2u ", op, count);
-
-							if (count == 0x0F) {
-								Common::String sval;
-								byte ch[2];
-
-								do {
-									ch[0] = stream->readByte();
-									ch[1] = stream->readByte();
-									sval += ch[0];
-									sval += ch[1];
-								} while (ch[0] != 0 && ch[1] != 0);
-
-								debugN("\"%s\"", sval.c_str());
-							} else {
-								int ival;
-
-								for (byte k = 0; k < count; k++) {
-									ival = stream->readSint16LE();
-
-									if (k == 0)
-										debugN("%d", ival);
-									else
-										debugN(", %d", ival);
-								}
-							}
-							debug(" ");
-						}
-					}
-#endif
-				} else if (chunk.isSection(ID_TAG)) {
-					uint16 count = stream->readUint16LE();
-
-					debug("        %u", count);
-
-					// something fishy here. the first two entries sometimes are an empty string or non-text junk.
-					// most of the time entries have text (sometimes with garbled characters).
-					// this parser is likely not ok. but the NUL count seems to be ok.
-					for (uint16 k = 0; k < count; k++) {
-						byte ch;
-						uint16 idx;
-						Common::String str;
-
-						idx = stream->readUint16LE();
-						while ((ch = stream->readByte()))
-							str += ch;
-						debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
-					}
-				}
-				break;
 			case EX_GDS:
 				if (chunk.isSection(ID_GDS)) {
 					// do nothing, this is the container.
@@ -430,109 +355,6 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 					_gdsScene->parseInf(stream);
 				} else if (chunk.isSection(ID_SDS)) {
 					_gdsScene->parse(stream);
-				}
-				break;
-			case EX_ADS:
-			case EX_ADL:
-			case EX_ADH:
-				if (chunk.isSection(ID_VER)) {
-					char version[5];
-
-					stream->read(version, sizeof(version));
-					debug("        %s", version);
-				} else if (chunk.isSection(ID_RES)) {
-					DgdsParser::readTags(stream);
-				} else if (chunk.isSection(ID_SCR)) {
-						uint32 size = stream->size();
-						byte *dest = new byte[size];
-						stream->read(dest, size);
-						//ads = new Common::MemoryReadStream(dest, size, DisposeAfterUse::YES);
-						//adsName = name;
-						delete [] dest;
-#if 0
-					} else {
-						/* this is either a script, or a property sheet, i can't decide. */
-						while (!stream->eos()) {
-							uint16 code;
-							code = stream->readUint16LE();
-							if ((code & 0xFF00) == 0) {
-								uint16 tag = (code & 0xFF);
-								debug("          PUSH %d (0x%4.4X)", tag, tag); // ADS:TAG or TTM:TAG id.
-							} else {
-								const char *desc = "";
-								switch (code) {
-								case 0xF010:
-								case 0xF200:
-								case 0xFDA8:
-								case 0xFE98:
-								case 0xFF88:
-								case 0xFF10:
-									debug("          INT 0x%4.4X\t;", code);
-									continue;
-
-								case 0xFFFF:
-									debug("          INT 0x%4.4X\t; return", code);
-									debug("-");
-									continue;
-
-								case 0x0190:
-								case 0x1070:
-								case 0x1340:
-								case 0x1360:
-								case 0x1370:
-								case 0x1420:
-								case 0x1430:
-								case 0x1500:
-								case 0x1520:
-								case 0x2000:
-								case 0x2010:
-								case 0x2020:
-								case 0x3010:
-								case 0x3020:
-								case 0x30FF:
-								case 0x4000:
-								case 0x4010:
-									desc = "?";
-									break;
-
-								case 0x1330:
-									break;
-								case 0x1350:
-									desc = "? (res,rtag)";
-									break;
-
-								case 0x1510:
-									desc = "? ()";
-									break;
-								case 0x2005:
-									desc = "? (res,rtag,?,?)";
-									break;
-
-								default:
-									break;
-								}
-								debug("          OP 0x%4.4X\t;%s", code, desc);
-							}
-						}
-						assert(stream->size() == stream->pos());
-						//stream->hexdump(stream->size());
-					}
-#endif
-				} else if (chunk.isSection(ID_TAG)) {
-					readStrings(stream);
-				}
-				break;
-			case EX_REQ:
-				if (parent == ID_TAG) {
-					if (chunk.isSection(ID_REQ)) {
-						readStrings(stream);
-					} else if (chunk.isSection(ID_GAD)) {
-						readStrings(stream);
-					}
-				} else if (parent == ID_REQ) {
-					if (chunk.isSection(ID_REQ)) {
-					} else if (chunk.isSection(ID_GAD)) {
-					}
 				}
 				break;
 			case EX_FNT:
@@ -552,6 +374,11 @@ void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadS
 			case EX_PAL:	// Handled in Image::setPalette
 			case EX_SCR:    // Handled in Image::loadScreen
 			case EX_BMP:    // Handled in Image::loadBitmap
+			case EX_TTM:	// Handled by TTMParser
+			case EX_REQ:    // Handled by Request
+			case EX_ADS:    // Handled by ADSParser
+			case EX_ADL:    // Handled by ADSParser
+			case EX_ADH:    // Handled by ADSParser
 				error("Should not be here");
 			default:
 				break;
@@ -607,7 +434,6 @@ Common::Error DgdsEngine::run() {
 		interpIntro.load("TITLE1.ADS");
 
 		parseFile("DRAGON.FNT");
-		parseFile("S55.SDS");	// FIXME: Removing this breaks the Bahumat scene dialog
 	} else if (getGameId() == GID_CHINA) {
 		interpIntro.load("TITLE.ADS");
 
@@ -643,6 +469,7 @@ Common::Error DgdsEngine::run() {
 			if (!interpIntro.run()) {
 				if (!creditsShown) {
 					creditsShown = true;
+					parseFile("S55.SDS"); // FIXME: Removing this breaks the Bahumat scene dialog
 					interpIntro.load("INTRO.ADS");
 				} else {
 					return Common::kNoError;
