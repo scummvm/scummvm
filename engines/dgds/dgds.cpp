@@ -423,13 +423,15 @@ Common::Error DgdsEngine::run() {
 
 		_fntP = (PFont *)Font::load("DRAGON.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_CHINA) {
+		//parseFile("S101.SDS");
 		interpIntro.load("TITLE.ADS");
 
 		_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_BEAMISH) {
+		//parseFile("S34.SDS");
 		interpIntro.load("TITLE.ADS");
 
-		//_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
+		_fntP = (PFont *)Font::load("WILLY.FNT", _resource, _decompressor);
 	}
 
 	//_console->attach();
