@@ -353,7 +353,14 @@ void DrillerEngine::drawInfoMenu() {
 				break;
 			}
 		}
-		g_system->delayMillis(10);
+		_gfx->clear(0, 0, 0, true);
+		drawBorder();
+		drawUI();
+		if (surface)
+			drawFullscreenSurface(surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
 	}
 
 	_savedScreen->free();
