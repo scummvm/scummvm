@@ -385,23 +385,22 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 		int selectable;
 		if (SQ_FAILED(sqget(v, 2, selectable)))
 			return sq_throwerror(v, "failed to get selectable");
-		// TODO:
-		// switch(selectable) {
-		// case 0:
-		//   g_engine->actorSwitcher.mode.excl asOn;
-		//   break;
-		// case 1:
-		//   g_engine->actorSwitcher.mode.incl asOn;
-		//   break;
-		// case 2:
-		//   g_engine->actorSwitcher.mode.incl asTemporaryUnselectable;
-		//   break;
-		// case 3:
-		//   g_engine->actorSwitcher.mode.excl asTemporaryUnselectable;
-		//   break;
-		// default:
-		//   return sq_throwerror(v, "invalid selectable value");
-		// }
+		switch(selectable) {
+		case 0:
+		  g_engine->_actorSwitcher._mode &= (~asOn);
+		  break;
+		case 1:
+		  g_engine->_actorSwitcher._mode |= asOn;
+		  break;
+		case 2:
+		  g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
+		  break;
+		case 3:
+		  g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
+		  break;
+		default:
+		  return sq_throwerror(v, "invalid selectable value");
+		}
 		return 0;
 	}
 	case 3: {
@@ -806,7 +805,10 @@ static SQInteger createActor(HSQUIRRELVM v) {
 }
 
 static SQInteger flashSelectableActor(HSQUIRRELVM v) {
-	warning("TODO: flashSelectableActor not implemented");
+	int time = 0;
+	if (SQ_FAILED(sqget(v, 2, time)))
+		return sq_throwerror(v, "failed to get time");
+	g_engine->flashSelectableActor(time);
 	return 0;
 }
 
@@ -837,18 +839,9 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 			}
 		}
 	}
-	debug("sayline: %s, {texts}", obj->_key.c_str());
+	debug("sayline: %s, %s", obj->_key.c_str(), join(texts, "|").c_str());
 	obj->say(texts, obj->_talkColor);
 	return 0;
-}
-
-static void stopTalking() {
-	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
-		Layer *layer = *it;
-		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
-			(*it2)->stopTalking();
-		}
-	}
 }
 
 // Causes an actor to say a line of dialog and play the appropriate talking animations.
@@ -858,7 +851,7 @@ static void stopTalking() {
 // See also:
 // - `mumbleLine method`
 static SQInteger sayLine(HSQUIRRELVM v) {
-	stopTalking();
+	g_engine->stopTalking();
 	return sayOrMumbleLine(v);
 }
 
@@ -964,7 +957,7 @@ static SQInteger stopTalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 2) {
 		if (sq_gettype(v, 2) == OT_INTEGER) {
-			stopTalking();
+			g_engine->stopTalking();
 		} else {
 			Object *actor = sqobj(v, 2);
 			if (!actor)

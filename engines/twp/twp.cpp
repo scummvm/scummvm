@@ -45,6 +45,7 @@
 #include "twp/task.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/yack.h"
+#include "twp/enginedialogtarget.h"
 
 namespace Twp {
 
@@ -55,6 +56,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _gameDescription(gameDesc),
 	  _randomSource("Twp") {
 	g_engine = this;
+	_dialog._tgt.reset(new EngineDialogTarget());
 	sq_resetobject(&_defaultObj);
 	_screenScene.setName("Screen");
 	// _scene.addChild(&_walkboxNode);
@@ -63,6 +65,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
 	_screenScene.addChild(&_uiInv);
+	_screenScene.addChild(&_actorSwitcher);
 }
 
 TwpEngine::~TwpEngine() {
@@ -143,19 +146,19 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	debug("exec({name},{verbId.VerbId},{noun1name},{noun2name})");
+	debug("exec(%s,%d,%s,%s)", name.c_str(), verbId.id, noun1name.c_str(), noun2name.c_str());
 	actor = !actor ? g_engine->_actor : actor;
 	if ((verbId.id <= 0) || (verbId.id > 13) || (!noun1) || (!actor))
 		return false;
 	// TODO
 	// if (a?._verb_tid) stopthread(actor._verb_tid)
 
-	debug("noun1.inInventory: {noun1.inInventory} and noun1.touchable: {noun1.touchable} nowalk: {verbNoWalkTo(verbId, noun1)}");
+	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory()?"YES":"NO", noun1->isTouchable()?"YES":"NO", verbNoWalkTo(verbId, noun1)?"YES":"NO");
 
 	// test if object became untouchable
-	if (!noun1->inInventory() && !noun1->touchable())
+	if (!noun1->inInventory() && !noun1->isTouchable())
 		return false;
-	if (noun2 && (!noun2->inInventory()) && (!noun2->touchable()))
+	if (noun2 && (!noun2->inInventory()) && (!noun2->isTouchable()))
 		return false;
 
 	if (noun1->inInventory()) {
@@ -187,9 +190,12 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	return true;
 }
 
+void TwpEngine::flashSelectableActor(int flash) {
+	_actorSwitcher.setFlash(flash);
+}
+
 void TwpEngine::clickedAt(Math::Vector2d scrPos) {
-	// TODO: update this
-	if (_room) {
+	if (_room && _inputState.getInputActive() && !_actorSwitcher.isMouseOver()) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Object *obj = objAt(roomPos);
 
@@ -267,7 +273,7 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 		Layer *layer = g_engine->_room->_layers[i];
 		for (int j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
-			if ((obj != g_engine->_actor) && (obj->touchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
+			if ((obj != g_engine->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
 				if (func(obj))
 					return;
 		}
@@ -283,6 +289,44 @@ Object *inventoryAt(Math::Vector2d pos) {
 		}
 		return false;
 	});
+	return result;
+}
+
+static void selectSlotActor(int id) {
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+		if (g_engine->_actors[i]->getId() == id) {
+			g_engine->setActor(g_engine->_actors[i]);
+			break;
+		}
+	}
+}
+
+ActorSwitcherSlot TwpEngine::actorSwitcherSlot(ActorSlot *slot) {
+	return ActorSwitcherSlot(slot->actor->getIcon(),
+							 slot->verbUiColors.inventoryBackground,
+							 slot->verbUiColors.inventoryFrame, selectSlotActor, slot->actor->getId());
+}
+
+Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
+	Common::Array<ActorSwitcherSlot> result;
+	if (_actor) {
+		// add current actor first
+		{
+			ActorSlot *slot = _hud.actorSlot(_actor);
+			result.push_back(actorSwitcherSlot(slot));
+		}
+
+		// then other selectable actors
+		for (int i = 0; i < NUMACTORS; i++) {
+			ActorSlot *slot = &_hud._actorSlots[i];
+			if (slot->selectable && slot->actor && (slot->actor != _actor) && (slot->actor->_room->_name != "Void"))
+				result.push_back(actorSwitcherSlot(slot));
+		}
+
+		// add gear icon
+		// TODO: result.push_back(ActorSwitcherSlot("icon_gear", Black, Gray, showOptions));
+		result.push_back(ActorSwitcherSlot("icon_gear", Color(0.f, 0.f, 0.f), Color(0.8f, 0.8f, 0.8f), selectSlotActor));
+	}
 	return result;
 }
 
@@ -355,7 +399,7 @@ void TwpEngine::update(float elapsed) {
 			_sentence.setVisible(_hud.isVisible());
 			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
 			//_actorSwitcher.visible = _dialog.state == DialogState.None and self.cutscene.isNil;
-			//Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
+			// Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
 			//_sentence.setText(cursortxt.c_str());
 			_sentence.setText(cursorText());
 
@@ -391,6 +435,9 @@ void TwpEngine::update(float elapsed) {
 
 	// update camera
 	_camera.update(_room, _followActor, elapsed);
+
+	// update actorswitcher
+	_actorSwitcher.update(actorSwitcherSlots(), elapsed);
 
 	// update cutscene
 	if (_cutscene) {
@@ -612,28 +659,22 @@ Common::Error TwpEngine::run() {
 
 	_vm.exec(code);
 
+	static int speed = 1;
+
 	// Simple event handling loop
 	Common::Event e;
 	uint time = _system->getMillis();
 	while (!shouldQuit()) {
-		const int dx = 4;
-		const int dy = 4;
 		Math::Vector2d camPos = _gfx.cameraPos();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			switch (e.type) {
 			case Common::EVENT_KEYDOWN:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
-					camPos.setX(camPos.getX() - dx);
+					speed = MAX(speed - 1, 1);
 					break;
 				case Common::KEYCODE_RIGHT:
-					camPos.setX(camPos.getX() + dx);
-					break;
-				case Common::KEYCODE_UP:
-					camPos.setY(camPos.getY() + dy);
-					break;
-				case Common::KEYCODE_DOWN:
-					camPos.setY(camPos.getY() - dy);
+					speed = MIN(speed + 1, 8);
 					break;
 				default:
 					break;
@@ -666,7 +707,7 @@ Common::Error TwpEngine::run() {
 		uint32 newTime = _system->getMillis();
 		uint32 delta = newTime - time;
 		time = newTime;
-		update(8.f * delta / 1000.f);
+		update(speed * delta / 1000.f);
 		draw();
 		_cursor.update();
 
@@ -738,9 +779,9 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 					obj->setState(0, true);
 
 					if (obj->_objType == otNone)
-						obj->_touchable = false;
+						obj->setTouchable(false);
 				} else if (obj->_objType == otNone) {
-					obj->_touchable = true;
+					obj->setTouchable(true);
 				}
 
 				layerNode->addChild(obj->_node);
@@ -872,7 +913,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 		cancelSentence();
 		if (door) {
 			Facing facing = getOppositeFacing(door->getDoorFacing());
-			_actor->_room = room;
+			_actor->setRoom(room);
 			if (door) {
 				_actor->setFacing(facing);
 				_actor->_node->setPos(door->getUsePos());
@@ -1122,9 +1163,9 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
-	if (!noun1->inInventory() && !noun1->touchable())
+	if (!noun1->inInventory() && !noun1->isTouchable())
 		return false;
-	if (noun2 && !noun2->inInventory() && !noun2->touchable())
+	if (noun2 && !noun2->inInventory() && !noun2->isTouchable())
 		return false;
 
 	// check if verb is use and object can be used with or in or on
@@ -1248,6 +1289,15 @@ void TwpEngine::updateTriggers() {
 				trigger->_triggerActive = false;
 				callTrigger(trigger, trigger->_leave);
 			}
+		}
+	}
+}
+
+void TwpEngine::stopTalking() {
+	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
+		Layer *layer = *it;
+		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
+			(*it2)->stopTalking();
 		}
 	}
 }

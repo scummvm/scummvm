@@ -137,7 +137,7 @@ public:
 	void setState(int state, bool instant = false);
 	int getState() const { return _state; }
 
-	bool touchable();
+	bool isTouchable();
 	void setTouchable(bool value);
 
 	void play(int state, bool loop = false, bool instant = false);
@@ -236,7 +236,6 @@ public:
 	Room *_room = nullptr;
 	Common::Array<ObjectAnimation> _anims;
 	bool _temporary = false;
-	bool _touchable = false;
 	Node *_node = nullptr;
 	Node *_sayNode = nullptr;
 	Anim *_nodeAnim = nullptr;

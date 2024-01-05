@@ -770,14 +770,14 @@ static SQInteger objectTouchable(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get object");
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 2) {
-		sqpush(v, obj->_touchable);
+		sqpush(v, obj->isTouchable());
 		return 1;
 	}
 	if (nArgs == 3) {
 		bool touchable;
 		if (SQ_FAILED(sqget(v, 3, touchable)))
 			return sq_throwerror(v, "failed to get touchable");
-		obj->_touchable = touchable;
+		obj->setTouchable(touchable);
 		return 0;
 	}
 	return sq_throwerror(v, "objectTouchable: invalid argument");
@@ -917,8 +917,26 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 }
 
 static SQInteger pickupReplacementObject(HSQUIRRELVM v) {
-	// TODO: pickupReplacementObject
-	warning("pickupReplacementObject not implemented");
+	Object *obj1 = sqobj(v, 2);
+	if (!obj1)
+		return sq_throwerror(v, "failed to get object 1");
+	Object *obj2 = sqobj(v, 3);
+	if (!obj2)
+		return sq_throwerror(v, "failed to get object 2");
+
+	// remove obj1 from inventory's owner
+	if (obj1->_owner) {
+		int index = find(obj1->_owner->_inventory, obj1);
+		obj1->_owner->_inventory.remove_at(index);
+		obj1->_owner = nullptr;
+	}
+
+	// replace obj2 by obj1
+	Object *owner = obj2->_owner;
+	int index = find(obj2->_owner->_inventory, obj2);
+	owner->_inventory[index] = obj1;
+	obj1->_owner = owner;
+	obj2->_owner = nullptr;
 	return 0;
 }
 

@@ -58,12 +58,12 @@ ExpVisitor::ExpVisitor(Dialog *dialog) : _dialog(dialog) {}
 ExpVisitor::~ExpVisitor() {}
 
 void ExpVisitor::visit(const YCodeExp &node) {
-	debug("execute code {node.code}");
+	debug("execute code %s", node._code.c_str());
 	sqexec(g_engine->getVm(), node._code.c_str(), "dialog");
 }
 
 void ExpVisitor::visit(const YGoto &node) {
-	debug("execute goto {node.name}");
+	debug("execute goto %s", node._name.c_str());
 	_dialog->selectLabel(node._line, node._name);
 }
 
@@ -74,7 +74,7 @@ void ExpVisitor::visit(const YShutup &node) {
 
 void ExpVisitor::visit(const YPause &node) {
 	debug("pause %d", node._time);
-	_dialog->_action.reset(_dialog->_tgt->pause(node._time));
+	_dialog->_action = _dialog->_tgt->pause(node._time);
 }
 
 void ExpVisitor::visit(const YWaitFor &node) {
@@ -99,7 +99,7 @@ void ExpVisitor::visit(const YAllowObjects &node) {
 
 void ExpVisitor::visit(const YWaitWhile &node) {
 	debug("wait while");
-	_dialog->_action.reset(_dialog->_tgt->waitWhile(node._cond));
+	_dialog->_action = _dialog->_tgt->waitWhile(node._cond);
 }
 
 void ExpVisitor::visit(const YLimit &node) {
@@ -108,7 +108,7 @@ void ExpVisitor::visit(const YLimit &node) {
 }
 
 void ExpVisitor::visit(const YSay &node) {
-	_dialog->_action.reset(_dialog->_tgt->say(node._actor, node._text));
+	_dialog->_action = _dialog->_tgt->say(node._actor, node._text);
 }
 
 CondVisitor::CondVisitor(Dialog *dialog) : _dialog(dialog) {}
@@ -264,11 +264,11 @@ YLabel *Dialog::label(int line, const Common::String &name) const {
 }
 
 void Dialog::selectLabel(int line, const Common::String &name) {
-	//debug("select label %s", name.c_str());
+	debug("select label %s", name.c_str());
 	_lbl = label(line, name);
 	_currentStatement = 0;
 	clearSlots();
-	_state = _lbl ? None : Active;
+	_state = _lbl ? Active: None;
 }
 
 void Dialog::gotoNextLabel() {
@@ -320,7 +320,42 @@ bool Dialog::acceptConditions(YStatement *stmt) {
 	}
 	return true;
 }
-void Dialog::running(float dt) {}
+void Dialog::running(float dt) {
+  if (_action && _action->isEnabled())
+    _action->update(dt);
+  else if (!_lbl)
+    _state = None;
+  else if (_currentStatement == _lbl->_stmts.size())
+    gotoNextLabel();
+  else {
+    _state = Active;
+    while (_lbl && (_currentStatement < _lbl->_stmts.size()) && (_state == Active)) {
+      YStatement* statmt = _lbl->_stmts[_currentStatement];
+	  IsChoice isChoice;
+	  statmt->_exp->accept(isChoice);
+      if (!acceptConditions(statmt))
+        _currentStatement ++;
+      else if (isChoice._isChoice) {
+        addSlot(statmt);
+        _currentStatement++;
+	  }
+      else if (choicesReady())
+        updateChoiceStates();
+      else if (_action && _action->isEnabled()) {
+        _action->update(dt);
+        return;
+	  } else {
+        run(statmt);
+        if (_lbl && (_currentStatement == _lbl->_stmts.size()))
+          gotoNextLabel();
+	  }
+	}
+    if (choicesReady())
+        updateChoiceStates();
+    else if (!_action || !_action->isEnabled())
+      _state = None;
+  }
+}
 
 static Common::String remove(const Common::String &txt, char startC, char endC) {
 	if (txt[0] == startC) {
@@ -343,6 +378,7 @@ void Dialog::addSlot(YStatement *stmt) {
 	YChoice *choice = (YChoice *)stmt->_exp.get();
 	if ((!_slots[choice->_number - 1]._isValid) && (numSlots() < _context.limit)) {
 		DialogSlot *slot = &_slots[choice->_number - 1];
+		slot->_text.setFont("sayline");
 		slot->_text.setText(Common::String::format("● %s", text(choice->_text).c_str()));
 		slot->_stmt = stmt;
 		slot->_dlg = this;

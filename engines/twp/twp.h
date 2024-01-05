@@ -45,6 +45,7 @@
 #include "twp/hud.h"
 #include "twp/callback.h"
 #include "twp/walkboxnode.h"
+#include "twp/actorswitcher.h"
 
 #define SCREEN_MARGIN 100.f
 #define SCREEN_WIDTH 1280
@@ -128,6 +129,8 @@ public:
 
 	void setActor(Object *actor, bool userSelected = false);
 	Object *objAt(Math::Vector2d pos);
+	void flashSelectableActor(int flash);
+	void stopTalking();
 
 	Room *defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
@@ -161,6 +164,8 @@ private:
 	bool preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2);
 	void updateTriggers();
 	void callTrigger(Object *obj, HSQOBJECT trigger);
+	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
+	ActorSwitcherSlot actorSwitcherSlot(ActorSlot* slot);
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -207,6 +212,7 @@ public:
 	} _cursor;
 	Hud _hud;
 	Inventory _uiInv;
+	ActorSwitcher _actorSwitcher;
 
 private:
 	Gfx _gfx;

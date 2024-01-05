@@ -119,6 +119,15 @@ public:
 	bool _isGoto = false;
 };
 
+class IsChoice : public YackVisitor {
+public:
+	virtual ~IsChoice() override {}
+	void visit(const YChoice &node) override { _isChoice = true; }
+
+public:
+	bool _isChoice = false;
+};
+
 class ExpVisitor : public YackVisitor {
 public:
 	ExpVisitor(Dialog *dialog);
@@ -198,7 +207,7 @@ public:
 	Common::Array<DialogConditionState> _states;
 	DialogContext _context;
 	unique_ptr<DialogTarget> _tgt;
-	unique_ptr<Motor> _action;
+	Motor* _action = nullptr;
 
 private:
 	DialogState _state = DialogState::None;
