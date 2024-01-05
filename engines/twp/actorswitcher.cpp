@@ -108,7 +108,7 @@ float ActorSwitcher::height() const {
 
 int ActorSwitcher::iconIndex(Math::Vector2d pos) const {
 	float y = SCREEN_HEIGHT - pos.getY();
-	return _slots.size() - 1 - ((height() - y) / ACTOR_SEP);
+	return _slots.size() - 1 - (int)((height() - y) / ACTOR_SEP);
 }
 
 Common::Rect ActorSwitcher::rect() const {
