@@ -46,12 +46,20 @@ void AddInventoryNoHS::execute() {
 			// Currently holding another item
 			if (_forceCursor) {
 				NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
-				NancySceneState.setHeldItem(_itemID);
+				if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
+					NancySceneState.removeItemFromInventory(_itemID, true);
+				} else {
+					NancySceneState.setHeldItem(_itemID);
+				}
 			} else {
 				NancySceneState.addItemToInventory(_itemID);
 			}
 		} else {
-			NancySceneState.setHeldItem(_itemID);
+			if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
+				NancySceneState.removeItemFromInventory(_itemID, true);
+			} else {
+				NancySceneState.setHeldItem(_itemID);
+			}
 		}
 	} else {
 		if (NancySceneState.hasItem(_itemID) == g_nancy->_false) {
