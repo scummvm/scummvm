@@ -160,7 +160,6 @@ void ReachAnim::update(float elapsed) {
 		break;
 	default:
 		break;
-		;
 	}
 }
 
@@ -181,7 +180,8 @@ void WalkTo::disable() {
 	if (_path.size() != 0) {
 		debug("actor walk cancelled");
 	}
-	_obj->play("stand");
+	if(_obj->isWalking())
+		_obj->play("stand");
 }
 
 static bool needsReachAnim(int verbId) {
@@ -225,7 +225,7 @@ void WalkTo::actorArrived() {
 		}
 
 		if (needsReach)
-			_reach = new ReachAnim(_obj, noun1);
+			_obj->setReach(new ReachAnim(_obj, noun1));
 		else
 			_obj->execVerb();
 	}
@@ -258,9 +258,10 @@ void WalkTo::update(float elapsed) {
 		}
 	}
 
-	if (_reach && _reach->isEnabled()) {
-		_reach->update(elapsed);
-		if (!_reach->isEnabled())
+	Motor* reach = _obj->getReach();
+	if (reach && reach->isEnabled()) {
+		reach->update(elapsed);
+		if (!reach->isEnabled())
 			disable();
 	}
 }
@@ -365,7 +366,7 @@ void Talking::say(const Common::String &text) {
 
 	setDuration(txt);
 
-	if(_obj->_sayNode) {
+	if (_obj->_sayNode) {
 		_obj->_sayNode->remove();
 	}
 	Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
