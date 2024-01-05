@@ -398,7 +398,7 @@ void TwpEngine::update(float elapsed) {
 			_hud.setVisible(_inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None);
 			_sentence.setVisible(_hud.isVisible());
 			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
-			//_actorSwitcher.visible = _dialog.state == DialogState.None and self.cutscene.isNil;
+			_actorSwitcher.setVisible((_dialog.getState() == DialogState::None) && !_cutscene);
 			// Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
 			//_sentence.setText(cursortxt.c_str());
 			_sentence.setText(cursorText());
