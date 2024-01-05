@@ -160,29 +160,34 @@ Common::Error DgdsEngine::run() {
 		_fntP = (PFont *)Font::load("WILLY.FNT", _resource, _decompressor);
 	}
 
+	bool moveToNext = false;
+
 	while (!shouldQuit()) {
 		if (eventMan->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					return Common::kNoError;
+					moveToNext = true;
 				default:
 					break;
 				}
 			}
 		}
 
-		if (getGameId() == GID_DRAGON) {
-			if (!interpIntro.run()) {
+		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
+			if (moveToNext || !interpIntro.run()) {
+				moveToNext = false;
+
 				if (!creditsShown) {
 					creditsShown = true;
-					_scene->load("S55.SDS", _resource, _decompressor); // FIXME: Removing this breaks the Bahumat scene dialog
+					if (getGameId() == GID_DRAGON)
+						_scene->load("S55.SDS", _resource, _decompressor); // FIXME: Removing this breaks the Bahumat scene dialog
 					interpIntro.load("INTRO.ADS");
 				} else {
 					return Common::kNoError;
 				}
 			}
-		} else if (getGameId() == GID_CHINA || getGameId() == GID_BEAMISH) {
+		} else if (getGameId() == GID_BEAMISH) {
 			if (!interpIntro.run())
 				return Common::kNoError;
 		}
