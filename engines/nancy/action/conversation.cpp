@@ -157,10 +157,17 @@ void ConversationSound::execute() {
 		// Do not draw first frame since video won't be loaded yet
 		g_nancy->_graphicsManager->suppressNextDraw();
 
-		// Do not fall through to give the execution one loop for event flag changes
-		// This fixes TVD scene 750
-		break;
+		if (g_nancy->getGameType() < kGameTypeNancy6) {
+			// Do not fall through to give the execution one loop for event flag changes
+			// This fixes TVD scene 750
+			break;
+		}
+		
+		// However, nancy6 scene 1299 requires us to fall through in order to get the correct caption.
+		// By that point Conversation scenes weren't the tangled mess they were in earlier games,
+		// so hopefully this won't break anything
 	}
+		// fall through
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
