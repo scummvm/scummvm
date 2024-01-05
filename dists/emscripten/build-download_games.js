@@ -70,11 +70,14 @@ function get_freeware_games() {
                 return
             }
             parseTSV(body).forEach((downloads) => {
-                if (downloads['category'] == "games" && !(downloads['game_id'] in games)) {
-                    games[downloads['game_id']] = "/frs/extras/" + downloads['url']
+                var gameId = downloads['game_id'];
+                if (downloads['category'] == "games" && !(gameId in games)) {
+                    games[gameId] = "/frs/extras/" + downloads['url']
+                    games[gameId.substring(gameId.lastIndexOf(":") + 1)] = "/frs/extras/" + downloads['url'] // allow specifying game names without target/engine name
                 }
                 filename = downloads['url'].substring(downloads['url'].lastIndexOf("/"))
-                games[downloads['game_id'] + filename] = "/frs/extras/" + downloads['url']
+                games[gameId + filename] = "/frs/extras/" + downloads['url']
+                games[gameId.substring(gameId.lastIndexOf(":") + 1) + filename] = "/frs/extras/" + downloads['url'] // allow specifying game names without target/engine name
             })
             resolve()
         })
@@ -91,11 +94,14 @@ function get_demos() {
                 return
             }
             parseTSV(body).forEach((downloads) => {
-                if (!(downloads['id'] in games)) {
-                    games[downloads['id']] = downloads['url']
+                var gameId = downloads['id']
+                if (!(gameId in games)) {
+                    games[gameId] = downloads['url']
+                    games[gameId.substring(gameId.lastIndexOf(":") + 1)] = downloads['url'] // allow specifying game names without target/engine name
                 }
                 filename = downloads['url'].substring(downloads['url'].lastIndexOf("/"))
-                games[downloads['id'] + filename] = downloads['url']
+                games[gameId + filename] = downloads['url']
+                games[gameId.substring(gameId.lastIndexOf(":") + 1) + filename] = downloads['url'] // allow specifying game names without target/engine name
             })
             resolve()
         })
@@ -112,11 +118,14 @@ function get_director_demos() {
                 return
             }
             parseTSV(body).forEach((downloads) => {
-                if (!(downloads['id'] in games)) {
-                    games[downloads['id']] = downloads['url']
+                var gameId = downloads['id']
+                if (!(gameId in games)) {
+                    games[gameId] = downloads['url']
+                    games[gameId.substring(gameId.lastIndexOf(":") + 1)] = downloads['url'] // allow specifying game names without target/engine name
                 }
                 filename = downloads['url'].substring(downloads['url'].lastIndexOf("/"))
-                games[downloads['id'] + filename] = downloads['url']
+                games[gameId + filename] = downloads['url']
+                games[gameId.substring(gameId.lastIndexOf(":") + 1) + filename] = downloads['url'] // allow specifying game names without target/engine name
             });
             resolve()
         });
@@ -142,7 +151,7 @@ var download_file = function (uri, filename) {
 const download_all_games = async (gameIds) => {
     for (var gameId of gameIds) {
         if (gameId.startsWith("http")) {
-            var  url = gameId
+            var url = gameId
             var filename = url.substring(url.lastIndexOf("/") + 1)
             console.log(filename)
             if (!fs.existsSync(filename)) {
@@ -156,7 +165,7 @@ const download_all_games = async (gameIds) => {
             if (gameId.includes("/")) {
                 gameId = gameId.substring(0, gameId.lastIndexOf("/"))
             }
-            gameId = gameId.substring(gameId.lastIndexOf(":")+1)// remove target from target:gameId
+            gameId = gameId.substring(gameId.lastIndexOf(":") + 1)// remove target from target:gameId
             var filename = url.substring(url.lastIndexOf("/") + 1)
             if (!filename.startsWith(gameId)) { filename = gameId + "-" + filename }
             console.log(filename)
