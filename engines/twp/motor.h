@@ -219,7 +219,6 @@ private:
 	Common::Array<Math::Vector2d> _path;
 	int _facing = 0;
 	float _wsd;
-	ReachAnim *_reach = nullptr;
 };
 
 // Creates a talking animation for a specified object.

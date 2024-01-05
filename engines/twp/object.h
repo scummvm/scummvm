@@ -195,7 +195,9 @@ public:
 	void setRotateTo(Motor *rotateTo);
 	void setMoveTo(Motor *moveTo);
 	void setWalkTo(Motor *walkTo);
+	void setReach(Motor *reach);
 	Motor *getWalkTo() const { return _walkTo; }
+	Motor *getReach() const { return _reach; }
 	void walk(Math::Vector2d pos, int facing = 0);
 	void walk(Object* obj);
 
@@ -276,6 +278,7 @@ private:
 	Motor *_rotateTo = nullptr;
 	Motor *_moveTo = nullptr;
 	Motor *_walkTo = nullptr;
+	Motor *_reach = nullptr;
 	Motor *_talking = nullptr;
 	Motor *_blink = nullptr;
 	Motor *_turnTo = nullptr;

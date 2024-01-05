@@ -465,6 +465,7 @@ void Object::setAlphaTo(Motor *alphaTo) { SET_MOTOR(alphaTo); }
 void Object::setRotateTo(Motor *rotateTo) { SET_MOTOR(rotateTo); }
 void Object::setMoveTo(Motor *moveTo) { SET_MOTOR(moveTo); }
 void Object::setWalkTo(Motor *walkTo) { SET_MOTOR(walkTo); }
+void Object::setReach(Motor *reach) { SET_MOTOR(reach); }
 void Object::setTalking(Motor *talking) { SET_MOTOR(talking); }
 void Object::setBlink(Motor *blink) { SET_MOTOR(blink); }
 void Object::setTurnTo(Motor *turnTo) { SET_MOTOR(turnTo); }
