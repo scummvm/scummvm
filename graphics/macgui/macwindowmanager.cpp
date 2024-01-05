@@ -1503,13 +1503,13 @@ const Common::U32String::value_type *readHex(uint16 *res, const Common::U32Strin
 	*res = 0;
 
 	for (int i = 0; i < len; i++) {
-		char b = (char)*s++;
+		char b = tolower((char)*s++);
 
 		*res <<= 4;
-		if (tolower(b) >= 'a')
-			*res |= tolower(b) - 'a' + 10;
-		else
-			*res |= tolower(b) - '0';
+		if (b >= 'a' && b <= 'f')
+			*res |= b - 'a' + 10;
+		else if (b >= '0' && b <= '9')
+			*res |= b - '0';
 	}
 
 	return s;
