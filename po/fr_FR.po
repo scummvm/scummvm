@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-02 13:02+0000\n"
-"PO-Revision-Date: 2024-01-04 02:41+0000\n"
+"PO-Revision-Date: 2024-01-05 11:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10761,7 +10761,7 @@ msgstr "Action spéciale"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr "Zoom sur les décors"
+msgstr "Zoom scénariques"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
