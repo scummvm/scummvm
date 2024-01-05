@@ -305,11 +305,12 @@ if [[ "games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]];
   fi
 
   if [ -n "$_bundle_games" ]; then
+    echo "Fetching gmaes: $_bundle_games"
     mkdir -p "${DIST_FOLDER}/games/"
     cd "${DIST_FOLDER}/games/"
     files=$("$EMSDK_NODE" --unhandled-rejections=strict --trace-warnings "$DIST_FOLDER/build-download_games.js" ${_bundle_games})
-    for dir in "${ROOT_FOLDER}/build-emscripten/games/"*; do # cleanup games folder
-      if [ $(basename $dir) != "testbed" ]; then
+    for dir in "${ROOT_FOLDER}/build-emscripten/games/"*/; do # cleanup games folder
+      if [ "$(basename ${dir%*/})" != "testbed" ]; then
         rm -rf "$dir"
       fi
     done
