@@ -177,7 +177,6 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 
 	obj->_room = this;
 	obj->_sheet = sheet;
-	obj->_touchable = false;
 
 	// create anim if any
 	if (frames.size() > 0) {
@@ -215,7 +214,6 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
 	obj->_node->setName(obj->_key);
-	obj->_touchable = false;
 
 	Text txt(fontName, text, hAlign, vAlign, maxWidth);
 

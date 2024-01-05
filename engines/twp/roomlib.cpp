@@ -48,8 +48,46 @@ static SQInteger addTrigger(HSQUIRRELVM v) {
 }
 
 static SQInteger clampInWalkbox(HSQUIRRELVM v) {
-	warning("TODO: clampInWalkbox not implemented");
-	return 0;
+	SQInteger numArgs = sq_gettop(v);
+	Math::Vector2d pos1, pos2;
+	if (numArgs == 3) {
+		int x = 0;
+		if (SQ_FAILED(sqget(v, 2, x)))
+			return sq_throwerror(v, "failed to get x");
+		int y = 0;
+		if (SQ_FAILED(sqget(v, 3, y)))
+			return sq_throwerror(v, "failed to get y");
+		pos1 = Math::Vector2d(x, y);
+		pos2 = pos1;
+	} else if (numArgs == 5) {
+		int x1 = 0;
+		if (SQ_FAILED(sqget(v, 2, x1)))
+			return sq_throwerror(v, "failed to get x1");
+		int y1 = 0;
+		if (SQ_FAILED(sqget(v, 3, y1)))
+			return sq_throwerror(v, "failed to get y1");
+		pos1 = Math::Vector2d(x1, y1);
+		int x2 = 0;
+		if (SQ_FAILED(sqget(v, 4, x2)))
+			return sq_throwerror(v, "failed to get x2");
+		int y2 = 0;
+		if (SQ_FAILED(sqget(v, 5, y1)))
+			return sq_throwerror(v, "failed to get y2");
+		pos2 = Math::Vector2d(x2, y2);
+	} else {
+		return sq_throwerror(v, "Invalid argument number in clampInWalkbox");
+	}
+	const Common::Array<Walkbox> &walkboxes = g_engine->_room->_walkboxes;
+	for (int i = 0; i < walkboxes.size(); i++) {
+		const Walkbox &walkbox = walkboxes[i];
+		if (walkbox.contains(pos1)) {
+			sqpush(v, pos1);
+			return 1;
+		}
+	}
+	Math::Vector2d pos = walkboxes[0].getClosestPointOnEdge(pos2);
+	sqpush(v, pos);
+	return 1;
 }
 
 static SQInteger createLight(HSQUIRRELVM v) {
@@ -241,7 +279,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get object");
 		int i = find(g_engine->_room->_triggers, obj);
 		if (i != -1) {
-			debug("Remove room trigger: {obj.name}({obj.key})");
+			debug("Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
 			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
 		}
 		return 0;

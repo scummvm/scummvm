@@ -221,7 +221,7 @@ Math::Vector2d Object::getUsePos() {
 	return isActor(getId()) ? _node->getPos() + _node->getOffset() : _node->getPos() + _node->getOffset() + _usePos;
 }
 
-bool Object::touchable() {
+bool Object::isTouchable() {
 	if (_objType == otNone) {
 		if (_state == GONE) {
 			return false;
@@ -304,10 +304,12 @@ int Object::getFlags() {
 }
 
 void Object::setRoom(Room *room) {
-	if (_room != room) {
-		stopObjectMotors();
+	if ((_room != room) || !_node->getParent()) {
+		if(_room != room) {
+			stopObjectMotors();
+		}
 		Room *oldRoom = _room;
-		if (oldRoom) {
+		if (oldRoom && _node->getParent()) {
 			debug("Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
 			Layer *layer = oldRoom->layer(0);
 			if (layer) {
@@ -456,7 +458,6 @@ void Object::stand() {
 #define SET_MOTOR(motorTo)     \
 	if (_##motorTo) {          \
 		_##motorTo->disable(); \
-		delete _##motorTo;     \
 	}                          \
 	_##motorTo = motorTo;
 
@@ -633,7 +634,7 @@ void Object::execVerb() {
 		debug("actorArrived: exec sentence");
 		if (!noun1->inInventory()) {
 			// Object became untouchable as we were walking there
-			if (!noun1->touchable()) {
+			if (!noun1->isTouchable()) {
 				debug("actorArrived: noun1 untouchable");
 				_exec.enabled = false;
 				return;
@@ -641,7 +642,7 @@ void Object::execVerb() {
 			// Did we get close enough?
 			float dist = distance(getUsePos(), noun1->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
-			debug("actorArrived: noun1 min_dist: {dist} > {min_dist} (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?");
+			debug("actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
 				cantReach(this, noun1);
 				return;
@@ -651,7 +652,7 @@ void Object::execVerb() {
 			}
 		}
 		if (noun2 && !noun2->inInventory()) {
-			if (!noun2->touchable()) {
+			if (!noun2->isTouchable()) {
 				// Object became untouchable as we were walking there.
 				debug("actorArrived: noun2 untouchable");
 				_exec.enabled = false;

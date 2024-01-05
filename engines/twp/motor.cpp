@@ -331,7 +331,7 @@ void Talking::say(const Common::String &text) {
 			GGPackEntryReader entry;
 			entry.open(g_engine->_pack, path);
 			_lip.load(&entry);
-			debug("Lip %s loaded: {self.lip}", path.c_str());
+			debug("Lip %s loaded", path.c_str());
 		}
 
 		// TODO: call sayingLine

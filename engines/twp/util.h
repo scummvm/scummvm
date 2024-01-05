@@ -54,7 +54,7 @@ float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
 float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
 
 template<typename T>
-int find(Common::Array<T>& array, const T& o) {
+int find(const Common::Array<T>& array, const T& o) {
 	int index = -1;
 	for (int i = 0; i < array.size(); i++) {
 		if (array[i] == o) {
@@ -64,6 +64,10 @@ int find(Common::Array<T>& array, const T& o) {
 	}
 	return index;
 }
+
+Common::String join(const Common::Array<Common::String>& array, const Common::String& sep);
+
+void scale(Math::Matrix4 &m, const Math::Vector2d &v);
 
 } // namespace Twp
 

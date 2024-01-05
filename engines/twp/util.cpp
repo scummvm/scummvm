@@ -154,4 +154,20 @@ float distance(Math::Vector2d p1, Math::Vector2d p2) {
 	return sqrt(distanceSquared(p1, p2));
 }
 
+Common::String join(const Common::Array<Common::String> &array, const Common::String &sep) {
+	Common::String result;
+	if (array.size() > 0) {
+		result += array[0];
+		for (int i = 1; i < array.size(); i++) {
+			result += (sep + array[i]);
+		}
+	}
+	return result;
+}
+
+void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
+	m(0, 0) *= v.getX();
+	m(1, 1) *= v.getY();
+}
+
 } // namespace Twp

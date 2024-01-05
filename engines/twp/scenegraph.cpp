@@ -201,11 +201,6 @@ Math::Matrix4 Node::getTrsf(Math::Matrix4 parentTrsf) {
 	return parentTrsf * getLocalTrsf();
 }
 
-static void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
-	m(0, 0) *= v.getX();
-	m(1, 1) *= v.getY();
-}
-
 Math::Matrix4 Node::getLocalTrsf() {
 	Math::Vector2d p = _pos + _offset;
 	Math::Matrix4 m1;
@@ -411,6 +406,7 @@ Scene::Scene() : Node("Scene") {
 Scene::~Scene() {}
 
 InputState::InputState() : Node("InputState") {
+	_zOrder = -100;
 }
 
 InputState::~InputState() {}
@@ -420,7 +416,7 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
 	// TODO: if prefs(ClassicSentence) and self.hotspot:
-	Common::String cursorName = _hotspot ? Common::String::format("hotspot_%s", _cursorName.c_str()): _cursorName;
+	Common::String cursorName = _hotspot ? Common::String::format("hotspot_%s", _cursorName.c_str()) : _cursorName;
 	const SpriteSheetFrame &sf = gameSheet->frameTable[cursorName];
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos * 2.f);

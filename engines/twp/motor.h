@@ -226,6 +226,7 @@ private:
 class Talking : public Motor {
 public:
 	Talking(Object* obj, const Common::StringArray& texts, Color color);
+	virtual ~Talking() {}
 
 private:
 	virtual void update(float elapsed) override;

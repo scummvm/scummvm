@@ -63,6 +63,8 @@ MODULE_OBJS = \
 	callback.o \
 	graph.o \
 	walkboxnode.o \
+	actorswitcher.o \
+	enginedialogtarget.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

@@ -756,6 +756,7 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 				obj->_exec.enabled = false;
 			}
 		}
+		break;
 	case 2: {
 		Object *obj = sqobj(v, 2);
 		obj->_exec.enabled = false;
@@ -954,6 +955,7 @@ void sqgame_register_genlib(HSQUIRRELVM v) {
 	regFunc(v, pushSentence, _SC("pushSentence"));
 	regFunc(v, randomFrom, _SC("randomfrom"));
 	regFunc(v, randomOdds, _SC("randomOdds"));
+	regFunc(v, randomOdds, _SC("randomodds"));
 	regFunc(v, randomseed, _SC("randomseed"));
 	regFunc(v, refreshUI, _SC("refreshUI"));
 	regFunc(v, screenSize, _SC("screenSize"));
