@@ -32,6 +32,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "audio/fmopl.h"
 
 namespace Macs2 {
 
@@ -443,7 +444,12 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 	debug("-- Leaving A3D2");
 }
 
-
+void PlaySound() {
+	OPL::OPL *_opl = OPL::Config::create();
+	_opl->init();
+	// _opl->start(new Common::Functor0Mem<void, SoundDriverAdlib>(this, &SoundDriverAdlib::onTimer), CALLBACKS_PER_SECOND);
+	// initialize();
+}
 
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
@@ -523,25 +529,22 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 			// TODO: Not yet implemented:
 			// mov	byte ptr [bp-12h],0h
 
-			/*
-				call	far 0037h:9F07h
-	mov	[bp-3h],al
-	;; TODO: I just now realized this one - why do we call the same function two times? And does
-	;; the result change in between?
-	call	far 0037h:9F4Dh
-	;; This is the result of the function that mapped the action to a hotspot (0037:9F4D)
-	mov	[bp-7h],ax
-	mov	[bp-5h],dx
-	;; Note: I don't think (TODO: Confirm) that the locals here are accessed in this function
-	call	far 0037h:9F4Dh
-	mov	[bp-0Bh],ax
-	mov	[bp-9h],dx
-	
-	mov	al,[bp-3h]
-	cmp	al,1h
-	jnz	0DCA6h
+			bool bp12 = false; // [bp-12h] - TODO: Better name
 
-			*/
+			if (opcode2 == 0x01) {
+			// l0037_DC8F:;
+				// TODO Cóntinue here
+				if (v2 == v4 && v1 == v3) {
+
+				}
+				
+			} else {
+				ScriptNoEntry
+			}
+	
+
+
+			
 		}
 		// This is where handling of the opcodes > 6 continues
 		// TODO: Does it really? To check if I got this right
