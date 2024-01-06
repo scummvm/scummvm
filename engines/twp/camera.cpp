@@ -35,8 +35,7 @@ void Camera::clamp(Math::Vector2d at) {
 
 		_pos.setX(Twp::clamp(at.getX(), screenSize.getX() / 2.f + _bounds.left(), screenSize.getX() / 2 + _bounds.right()));
 		_pos.setY(Twp::clamp(at.getY(), _bounds.bottom(), _bounds.top() - screenSize.getY() / 2));
-		//_pos.setX(Twp::clamp(_pos.getX(), screenSize.getX() / 2.f, MAX(roomSize.getX() - screenSize.getX() / 2.f, 0.f)));
-		_pos.setX(Twp::clamp(_pos.getX(), screenSize.getX() / 2.f, MAX(10000.f, 0.f)));
+		_pos.setX(Twp::clamp(_pos.getX(), screenSize.getX() / 2.f, MAX(roomSize.getX() - screenSize.getX() / 2.f, 0.f)));
 		_pos.setY(Twp::clamp(_pos.getY(), screenSize.getY() / 2, MAX(roomSize.getY() - screenSize.getY() / 2, 0.f)));
 	}
 }
