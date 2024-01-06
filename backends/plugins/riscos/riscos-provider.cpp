@@ -57,8 +57,6 @@ void pluginHack() {
 	f = expf(f);
 	f = frexpf(f, NULL);
 	f = ldexpf(f, 1);
-	f = fmaxf(f, f);
-	f = fminf(f, f);
 	f = truncf(f);
 
 	d = nearbyint(d);

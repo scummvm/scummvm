@@ -138,7 +138,7 @@ void VideoPlayer::waitFrame() {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		float fMillis = _millisBetweenFrames + _frameTimeDrift;
 		// use floorf instead of roundf, because delayMillis often slightly over-sleeps
-		uint32 millisSleep = fmaxf(0.0f, floorf(fMillis) - float(millisDiff));
+		uint32 millisSleep = MAX(0.0f, floorf(fMillis) - float(millisDiff));
 
 		if (millisSleep > 0) {
 			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%.2f, _frameTimeDrift=%.2f)",
