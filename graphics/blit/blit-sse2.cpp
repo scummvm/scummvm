@@ -20,7 +20,7 @@
  */
 
 #include "common/scummsys.h"
-#include <immintrin.h>
+#include <emmintrin.h>
 
 #include "graphics/blit/blit-alpha.h"
 #include "graphics/pixelformat.h"

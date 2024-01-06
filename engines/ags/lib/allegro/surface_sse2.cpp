@@ -19,7 +19,7 @@
  *
  */
 
-#include <immintrin.h>
+#include <emmintrin.h>
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
