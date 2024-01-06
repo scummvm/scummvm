@@ -947,9 +947,12 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
-			ScopedEngineFreeze freeze(this);
 			testRestoreModeSVGA(true);
+			freezeTime(false);
 			_holomap->holoMap();
+			// unfreeze here - the redrawEngineActions is also doing a freeze
+			// see https://bugs.scummvm.org/ticket/14808
+			unfreezeTime();
 			_screens->_fadePalette = true;
 			_redraw->redrawEngineActions(true);
 		}
