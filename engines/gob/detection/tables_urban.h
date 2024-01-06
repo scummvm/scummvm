@@ -32,7 +32,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
 		EN_USA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -46,7 +46,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "6ce3d878178932053267237ec4843ce1", 1252518),
 		EN_USA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -60,7 +60,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "b991ed1d31c793e560edefdb349882ef", 1276408),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -74,7 +74,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "4ec3c0864e2b54c5b4ccf9f6ad96528d", 1253328),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -88,7 +88,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "9ea647085a16dd0fb9ecd84cd8778ec9", 1253436),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -102,7 +102,7 @@
 		"v1.01",
 		AD_ENTRY1s("intro.stk", "4e4a3c017fe5475353bf94c455fe3efd", 1253448),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -116,7 +116,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "4bd31979ea3d77a58a358c09000a85ed", 1253018),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -135,7 +135,7 @@
                     "demo.vmd", "65d04715d871c292518b56dd160b0161", 9091237,
                     "urband.vmd", "60343891868c91854dd5c82766c70ecc", 922461),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOASPECT)
 	},
