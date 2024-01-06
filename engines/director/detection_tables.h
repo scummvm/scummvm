@@ -486,6 +486,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
 	{ "willywabbit2",		"Around the World With Willy Wabbit" },
+	{ "willywabbitmandarin",	"Willy Wabbit Mandarin Adventure" },
 	{ "willywabbitmath",	"Willy Wabbit Math Adventure" },
 	{ "willywabbitmosaic",	"Mosaic Game" },
 	{ "winniewitch",		"Winnie the Witch" },
@@ -7880,6 +7881,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// CD check projector uses Win95 GUI mockup to ask your drive speed then launch game
 	WINGAME1("wiggles1", "", "WIGGLES.EXE", "d62438566e44826960fc16c5c23dbe43", 1862279, 650),
+
+	WINGAME2t("willywabbitmandarin", "Game Disk", "STARTUP.EXE", "d735e4792bbc43ae5d10b71977d4cc41",  1161525, "WWCHIN1.INI", "2941898460e56153a07e458798fd9b6c", 55, 602),
+	WINGAME2t("willywabbitmandarin", "Mission Disk", "STARTUP.EXE", "d735e4792bbc43ae5d10b71977d4cc41",  1161525, "WWCHIN2.INI", "a043f72966075bbc434acebf9e0e489d", 48, 602),
 
 	// Found on Disc Inferno from APC magazine (Australia), Dec 1999
 	MACGAME1("wonkatrivia", "v1.0", "wonkatriviaPPC.prj", "c2f8ae6c5a7b8f9aab5597f7de517443", 113731, 650),
