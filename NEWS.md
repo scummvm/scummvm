@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  TWINE:
    - Fix ladder climbing regression
    - Fix scenery zoom issue
+   - Fix animation glitches after using the holomap
 
 #### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
