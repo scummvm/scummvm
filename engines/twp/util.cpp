@@ -181,6 +181,16 @@ Common::String replace(const Common::String& s, const Common::String& what, cons
 	return result;
 }
 
+Common::String remove(const Common::String &txt, char startC, char endC) {
+	if (txt[0] == startC) {
+		uint32 i = txt.find(endC);
+		if (i != Common::String::npos) {
+			return txt.substr(i+1);
+		}
+	}
+	return txt;
+}
+
 void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
 	m(0, 0) *= v.getX();
 	m(1, 1) *= v.getY();

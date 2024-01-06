@@ -425,16 +425,6 @@ void Dialog::running(float dt) {
 	}
 }
 
-static Common::String remove(const Common::String &txt, char startC, char endC) {
-	if (txt[0] == startC) {
-		uint32 i = txt.find(endC);
-		if (i != Common::String::npos) {
-			return txt.substr(i);
-		}
-	}
-	return txt;
-}
-
 static Common::String text(const Common::String &txt) {
 	Common::String result = g_engine->getTextDb().getText(txt);
 	result = remove(result, '(', ')');
