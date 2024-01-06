@@ -880,6 +880,16 @@ Datum::Datum(const CastMemberID &val) {
 	ignoreGlobal = false;
 }
 
+Datum::Datum(const Common::Point &point) {
+	type = POINT;
+	u.farr = new FArray;
+	u.farr->arr.push_back(Datum(point.x));
+	u.farr->arr.push_back(Datum(point.y));
+	refCount = new int;
+	*refCount = 1;
+	ignoreGlobal = false;
+}
+
 Datum::Datum(const Common::Rect &rect) {
 	type = RECT;
 	u.farr = new FArray;
