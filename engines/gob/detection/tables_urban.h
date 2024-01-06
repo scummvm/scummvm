@@ -131,12 +131,9 @@
 	{
 		"urban",
 		"Non-Interactive Demo (v1.00)",
-		{
-			{"wdemo.s24", 0, "14ac9bd51db7a075d69ddb144904b271", 87},
-			{"demo.vmd", 0, "65d04715d871c292518b56dd160b0161", 9091237},
-			{"urband.vmd", 0, "60343891868c91854dd5c82766c70ecc", 922461},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY3s("wdemo.s24", "14ac9bd51db7a075d69ddb144904b271", 87,
+                    "demo.vmd", "65d04715d871c292518b56dd160b0161", 9091237,
+                    "urband.vmd", "60343891868c91854dd5c82766c70ecc", 922461),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
