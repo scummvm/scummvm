@@ -1253,7 +1253,9 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 			drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true);
 
+			// increase the timer to play the animations
 			_engine->timerRef++;
+			debugC(3, kDebugLevels::kDebugTime, "Behaviour time: %i", _engine->timerRef);
 		}
 
 		_engine->timerRef = tmpTime;

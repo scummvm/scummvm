@@ -416,6 +416,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
 		}
 		++_engine->timerRef;
+		debugC(3, kDebugLevels::kDebugTime, "Holomap time: %i", _engine->timerRef);
 	}
 
 	_engine->_screens->clearScreen();
@@ -658,6 +659,7 @@ void Holomap::holoMap() {
 		}
 
 		++_engine->timerRef;
+		debugC(3, kDebugLevels::kDebugTime, "Holomap time: %i", _engine->timerRef);
 
 		if (flagpal) {
 			flagpal = false;

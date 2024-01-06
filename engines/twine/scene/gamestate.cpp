@@ -444,7 +444,9 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry);
 
+		// advance the timer to play animations
 		_engine->timerRef++;
+		debugC(3, kDebugLevels::kDebugTime, "FoundObj time: %i", _engine->timerRef);
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
@@ -536,6 +538,7 @@ void GameState::processGameoverAnimation() {
 		_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 		_engine->timerRef++;
+		debugC(3, kDebugLevels::kDebugTime, "GameOver time: %i", _engine->timerRef);
 	}
 
 	_engine->_sound->playSample(Samples::Explode);

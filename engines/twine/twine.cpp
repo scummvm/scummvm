@@ -663,16 +663,20 @@ int TwinEEngine::getRandomNumber(uint max) {
 void TwinEEngine::freezeTime(bool pause) {
 	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = timerRef;
+		debugC(3, kDebugLevels::kDebugTime, "freezeTime: timer %i", timerRef);
 		if (pause)
 			_pauseToken = pauseEngine();
 	}
 	_isTimeFreezed++;
+	debugC(3, kDebugLevels::kDebugTime, "freezeTime: %i", _isTimeFreezed);
 }
 
 void TwinEEngine::unfreezeTime() {
 	--_isTimeFreezed;
+	debugC(3, kDebugLevels::kDebugTime, "unfreezeTime: %i", _isTimeFreezed);
 	if (_isTimeFreezed == 0) {
 		timerRef = _saveFreezedTime;
+		debugC(3, kDebugLevels::kDebugTime, "unfreezeTime: time %i", timerRef);
 		if (_pauseToken.isActive()) {
 			_pauseToken.clear();
 		}
