@@ -130,7 +130,7 @@
 {
 	{
 		"urban",
-		"Non-Interactive Demo",
+		"Non-Interactive Demo (v1.00)",
 		{
 			{"wdemo.s24", 0, "14ac9bd51db7a075d69ddb144904b271", 87},
 			{"demo.vmd", 0, "65d04715d871c292518b56dd160b0161", 9091237},
