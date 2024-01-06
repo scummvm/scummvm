@@ -56,7 +56,7 @@ public:
 	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 
-	Object *shootRay(const Math::Ray &ray);
+	Object *checkCollisionRay(const Math::Ray &ray, int raySize);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
 	Math::Vector3d resolveCollisions(Math::Vector3d const &lastPosition, Math::Vector3d const &newPosition, int playerHeight);

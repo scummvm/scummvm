@@ -169,7 +169,7 @@ void FreescapeEngine::activate() {
 
 	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
 	Math::Ray ray(_position, direction);
-	Object *interacted = _currentArea->shootRay(ray);
+	Object *interacted = _currentArea->checkCollisionRay(ray, 8192);
 	if (interacted) {
 		GeometricObject *gobj = (GeometricObject *)interacted;
 		debugC(1, kFreescapeDebugMove, "Interact with object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
@@ -196,7 +196,7 @@ void FreescapeEngine::shoot() {
 
 	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
 	Math::Ray ray(_position, direction);
-	Object *shot = _currentArea->shootRay(ray);
+	Object *shot = _currentArea->checkCollisionRay(ray, 8192);
 	if (shot) {
 		GeometricObject *gobj = (GeometricObject *)shot;
 		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
@@ -399,43 +399,31 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
 	bool executed = false;
-	// We need to make sure the bounding box touches the floor so we will expand it and run the collision checking
-	uint tolerance = isCastle() ? 1 : 3;
-
-	int yDifference = _flyMode ? tolerance : -_playerHeight - tolerance;
-	Math::Vector3d v(newPosition.x() - 1, newPosition.y() + yDifference, newPosition.z() - 1);
-	Math::AABB boundingBox(lastPosition, lastPosition);
-	boundingBox.expand(v);
-
-	ObjectArray objs = _currentArea->checkCollisions(boundingBox);
-
-	// sort so the condition from those objects that are larger are executed last
-	struct {
-		bool operator()(Object *object1, Object *object2) {
-			return object1->getSize().length() < object2->getSize().length();
-		};
-	} compareObjectsSizes;
-
-	Common::sort(objs.begin(), objs.end(), compareObjectsSizes);
 	uint16 areaID = _currentArea->getAreaID();
+	GeometricObject *gobj = nullptr;
+	Object *collided = nullptr;
 
-	bool largeObjectWasBlocking = false;
-	for (auto &obj : objs) {
-		GeometricObject *gobj = (GeometricObject *)obj;
-		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		// The following check stops the player from going through big solid objects such as walls
-		// FIXME: find a better workaround of this
-		if (gobj->getSize().length() > 3000) {
-			if (largeObjectWasBlocking && !(isDriller() && _currentArea->getAreaID() == 14))
-				continue;
-			largeObjectWasBlocking = true;
-		}
-
+	Math::Ray ray(newPosition, -_upVector);
+	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);
+	if (collided) {
+		gobj = (GeometricObject *)collided;
+		debugC(1, kFreescapeDebugMove, "Collided down with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
 		executed |= executeObjectConditions(gobj, false, true, false);
-
-		if (areaID != _currentArea->getAreaID())
-			break;
 	}
+
+	if (areaID != _currentArea->getAreaID())
+		return collided;
+
+	Math::Vector3d direction = newPosition - lastPosition;
+	direction.normalize();
+	ray = Math::Ray(newPosition, direction);
+	collided = _currentArea->checkCollisionRay(ray, 45);
+	if (collided) {
+		gobj = (GeometricObject *)collided;
+		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+		executed |= executeObjectConditions(gobj, false, true, false);
+	}
+
 	return executed;
 }
 

@@ -248,7 +248,7 @@ void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) 
 		group->draw(gfx);
 }
 
-Object *Area::shootRay(const Math::Ray &ray) {
+Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 	float distance = 1.0;
 	float size = 16.0 * 8192.0; // TODO: check if this is the max size
 	Math::AABB boundingBox(ray.getOrigin(), ray.getOrigin());
@@ -257,7 +257,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			Math::Vector3d collidedNormal;
-			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, 8192 * ray.getDirection(), collidedNormal);
+			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, raySize * ray.getDirection(), collidedNormal);
 			debugC(1, kFreescapeDebugMove, "shot obj id: %d with distance %f", obj->getObjectID(), collidedDistance);
 			if (collidedDistance >= 1.0)
 				continue;
