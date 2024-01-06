@@ -1768,9 +1768,11 @@ namespace Director {
 #define WINDEMO1t_l(t,e,f,m,s,l,v) GENGAME1t_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
 
 #define MACGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
+#define MACGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
 #define PIPGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define WINGAME2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define WINGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
 #define FMTGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
@@ -2084,8 +2086,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version has 68k, PowerPC, and a fat binary (default) as options in the installer
 	// Mac installer is a Stuffit installer
 	// Windows version in SETUP/DATA.Z
-	MACGAME1tf("darkeye", "", "The Dark Eye (Universal)", "67f572196550aedb1f9523d782022be0", 486078, 404, GF_32BPP),
-	WINGAME1tf("darkeye", "", "DARKEYE.EXE", "67ba8428573dba0c8e12e7f02e4ef1bc", 742326, 404, GF_32BPP),
+
+	// US release (v1.0, latest movie file dated 1995-10-22)
+	// Same as Expert Software re-release (8629.txt dated 1997-09-15)
+	MACGAME2tf("darkeye", "v1.0", "The Dark Eye (Universal)", "tr:44f401cffc52cdbc8300797fa7ac6136", 486078,
+								  "DKYData/DirFiles/Shared.Dir", "t:cbf56f8c65958653e886c3a4a1bea482", 2548860, 404, GF_32BPP),
+	WINGAME2tf("darkeye", "v1.0", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
+								  "DKYDATA/DIRFILES/SHARED.DIR", "t:cbf56f8c65958653e886c3a4a1bea482", 2548860, 404, GF_32BPP),
+	// US release (v1.0.3, 1995-11-22 in setup/version.txt, latest movie file dated 1995-12-07)
+	MACGAME2tf("darkeye", "v1.0.3", "The Dark Eye (Universal)", "tr:44f401cffc52cdbc8300797fa7ac6136", 486078,
+									"DKYData/DirFiles/Shared.Dir", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
+	WINGAME2tf("darkeye", "v1.0.3", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
+									"DKYDATA/DIRFILES/SHARED.DIR", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
+
 	// Standalone from CD dated 1995-08-30
 	MACGAME1f("darkeye", "", "DKY FAT", "r:01be45e7241194dad07938e7059b88e3", 483518, 404, GF_32BPP),
 	WINGAME1f("darkeye", "", "DARK_EYE.EXE", "t:8b319643334fc9f7dfee7acdd9d83812", 698353, 400, GF_32BPP),
