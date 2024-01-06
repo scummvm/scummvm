@@ -32,7 +32,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		EN_GRB,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -46,7 +46,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -60,7 +60,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -74,7 +74,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -88,7 +88,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -102,7 +102,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		RU_RUS,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -116,7 +116,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		EN_GRB,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -130,7 +130,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -144,7 +144,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -158,7 +158,7 @@
 		"v1.01",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -172,7 +172,7 @@
 		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -186,7 +186,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "5f5f4e0a72c33391e67a47674b120cc6", 20296422),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -200,7 +200,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -214,7 +214,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		EN_GRB,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -228,7 +228,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -242,7 +242,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -256,7 +256,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -270,7 +270,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 		EN_GRB,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -284,7 +284,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -298,7 +298,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -312,7 +312,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -326,7 +326,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -340,7 +340,7 @@
 		"",
 		AD_ENTRY1s("intro.stk", "08a96bf061af1fa4f75c6a7cc56b60a4", 20734979),
 		PL_POL,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -354,7 +354,7 @@
 		"Fanmade",
 		AD_ENTRY1s("intro.stk", "3767f779996d64e8413fc1e2300ba032", 20651219),
 		RU_RUS,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -372,7 +372,7 @@
 		AD_ENTRY2s("demo.scn",		"16bb85fc5f8e519147b60475dbf33962", 89,
 				   "wooddem3.vmd",	"a1700596172c2d4e264760030c3a3d47", 8994250),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
