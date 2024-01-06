@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "director/types.h"
 #include "graphics/macgui/macbutton.h"
 
 #include "director/director.h"
@@ -1979,15 +1980,64 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		CastMemberID id = *obj.u.cast;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
-			if (propName.equalsIgnoreCase("loaded")) {
-				d = 0;
-			} else if (propName.equalsIgnoreCase("filename")) {
-				d = Datum(Common::String());
-			} else if (id.member <= getMembersNum()) {
-				warning("Lingo::getObjectProp(): %s not found", id.asString().c_str());
-			} else {
-				g_lingo->lingoError("Lingo::getObjectProp(): %s not found and out of range", id.asString().c_str());
+			// No matching cast member. Many of the fields are accessible
+			// to indicate the cast member is empty, however the
+			// rest will throw a Lingo error.
+			Common::String key = Common::String::format("%d%s", kTheCast, propName.c_str());
+			bool emptyAllowed = false;
+			if (_theEntityFields.contains(key)) {
+				emptyAllowed = true;
+				switch (_theEntityFields[key]->field) {
+				case kTheCastType:
+					d = Datum("empty");
+					d.type = SYMBOL;
+					break;
+				case kTheFileName:
+				case kTheScriptText:
+					d = Datum("");
+					break;
+				case kTheHeight:
+				case kTheLoaded:
+				case kTheModified:
+				case kThePurgePriority:
+				case kTheWidth:
+				case kTheCenter:
+				case kTheFrameRate:
+				case kThePausedAtStart:
+				case kThePreLoad:
+				case kTheDepth:
+				case kThePalette:
+					d = Datum(0);
+					break;
+				case kTheCrop:
+				case kTheVideo:
+					d = Datum(1);
+					break;
+				case kTheRect:
+					d = Datum(Common::Rect(0, 0, 0, 0));
+					break;
+				case kTheRegPoint:
+					d = Datum(Common::Point(0, 0));
+					break;
+				case kTheNumber:
+					d = Datum(id.member);
+					break;
+				default:
+					emptyAllowed = false;
+					break;
+				}
 			}
+
+			if (id.member <= getMembersNum()) {
+				// Cast member ID is within range (i.e. less than max)
+				// In real Director, accessing -any- of the properties will
+				// be allowed, but return garbage.
+				warning("Lingo::getObjectProp(): %s not found, but within cast ID range", id.asString().c_str());
+			} else if (!emptyAllowed) {
+				// Cast member ID is out of range, throw a Lingo error
+				g_lingo->lingoError("Lingo::getObjectProp(): %s not found and out of cast ID range", id.asString().c_str());
+			}
+
 			g_lingo->push(d);
 			return;
 		}
