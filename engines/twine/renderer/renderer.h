@@ -147,6 +147,7 @@ private:
 		int16 normalTable[500]{0};
 	};
 
+	// this is a member var, because 10k on the stack is not supported by every platform
 	ModelData _modelData;
 
 	// AnimNuage
