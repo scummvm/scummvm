@@ -7815,8 +7815,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
-	WINGAME2_l("tivolasummer2000", "Sampler", "START32.EXE",  "t:6e942f3ee581d326d0a5bd41bc29e220", 1675134,
-											  "INTRO.DXR",    "a9c22c2247353e17cc6385eb9cbcb014",   1169358, Common::DE_DEU, 650),
+	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,
+											  "Intro.dxr",   "d:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
+	WINGAME2_l("tivolasummer2000", "Sampler", "START32.EXE", "t:6e942f3ee581d326d0a5bd41bc29e220", 1675134,
+											  "INTRO.DXR",   "d:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
 
 	// ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
 	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
