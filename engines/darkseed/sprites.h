@@ -36,7 +36,7 @@ struct SpriteDrawInstruction {
 	uint8 order = 0;
 	uint8 destW = 0;
 	uint8 destH = 0;
-	uint8 unk10 = 0;
+	bool unk10 = false;
 };
 
 class Sprites {
@@ -44,7 +44,7 @@ private:
 	Common::Array<SpriteDrawInstruction> spriteDrawList;
 public:
 	Sprites();
-	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, uint8 unk10);
+	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool unk10);
 	void clearSpriteDrawList();
 
 	void drawSprites();

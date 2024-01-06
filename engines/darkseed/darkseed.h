@@ -79,6 +79,30 @@ public:
 	int _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
 
+	bool isPlayingAnimation_maybe = false;
+	uint16 otherNspAnimationType_maybe = 0;
+	bool isWearingHeadBand = false;
+	uint16 headAcheMessageCounter = 0;
+	uint16 trunkPushCounter = 0;
+	int sprite_y_scaling_threshold_maybe = 0xf0;
+	int nsp_sprite_scaling_y_position = 0;
+	bool BoolEnum_2c85_985 = false;
+	bool player_sprite_related_2c85_82f3 = false;
+	int DAT_2c85_8326_blit_related = 0;
+	bool isAnimFinished_maybe = false;
+	bool animFrameChanged = false;
+	char prefsCutsceneId = 'I';
+	int animIndexTbl[20];
+	int spriteAnimCountdownTimer[20];
+
+	// Unknown variables
+	uint16 DAT_2c85_825c = 0;
+	uint16 DAT_2c85_819c = 0;
+	bool BoolEnum_2c85_985a = false;
+	bool BoolEnum_2c85_811c = false;
+	uint16 DAT_2c85_81e0 = 0;
+	uint16 DAT_2c85_7dd7 = 0;
+
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -130,7 +154,10 @@ public:
 	void fadeOut();
 
 	void updateDisplay();
+	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 private:
+	void updateAnimation();
+	void advanceAnimationFrame(int nspAminIdx);
 	void fadeInner(int startValue, int endValue, int increment);
 	void gameloop();
 	void updateEvents();
