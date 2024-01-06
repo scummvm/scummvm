@@ -491,7 +491,7 @@ static SQInteger objectLit(HSQUIRRELVM v) {
 // - `objectOffsetTo method <#objectOffsetTo.e>`_
 static SQInteger objectMoveTo(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
-	if (!obj) {
+	if (obj) {
 		int x = 0;
 		int y = 0;
 		if (SQ_FAILED(sqget(v, 3, x)))
