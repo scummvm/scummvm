@@ -27,6 +27,10 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "cge/cge.h"
 #include "cge/detection.h"
 
@@ -80,6 +84,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -186,6 +191,109 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 Common::Error CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new CGE::CGEEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Soltys", _("Game Keymappings"));
+
+	Action *act;
+
+	// I18N: 3-4 dialogs of game version info, (translation) credits, etc.
+	act = new Action("Game Info", _("Game Info"));
+	act->setKeyEvent(KEYCODE_F1);
+	act->addDefaultInputMapping("F1");
+	keymap->addAction(act);
+
+	// I18N: This opens a Quit Prompt where you have to choose
+	// [Confirm] or [Continue Playing] lines with Left Click.
+	act = new Action("Quit Prompt", _("Quit Prompt"));
+	act->setKeyEvent(KeyState(KEYCODE_x, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+x");
+	keymap->addAction(act);
+
+	// I18N: Here ALTered Item refers to the dice that has been altered/changed.
+	// In order to escape the dice game loop press Right/Left Alt
+	act = new Action("ALTered Item", _("ALTered Item"));
+	act->setKeyEvent(KEYCODE_LALT);
+	act->addDefaultInputMapping("LALT");
+	act->addDefaultInputMapping("RALT");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 1 (Select/Deselect)", _("Inventory Item 1 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_1);
+	act->addDefaultInputMapping("1");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 2 (Select/Deselect)", _("Inventory Item 2 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_2);
+	act->addDefaultInputMapping("2");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 3 (Select/Deselect)", _("Inventory Item 3 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_3);
+	act->addDefaultInputMapping("3");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 4 (Select/Deselect)", _("Inventory Item 4 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_4);
+	act->addDefaultInputMapping("4");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 5 (Select/Deselect)", _("Inventory Item 5 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_5);
+	act->addDefaultInputMapping("5");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 6 (Select/Deselect)", _("Inventory Item 6 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_6);
+	act->addDefaultInputMapping("6");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 7 (Select/Deselect)", _("Inventory Item 7 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_7);
+	act->addDefaultInputMapping("7");
+	keymap->addAction(act);
+
+	act = new Action("Inventory Item 8 (Select/Deselect)", _("Inventory Item 8 (Select/Deselect)"));
+	act->setKeyEvent(KEYCODE_8);
+	act->addDefaultInputMapping("8");
+	keymap->addAction(act);
+
+	// I18N: There are 24 single-room/screen locations in the game.
+	// You switch between them from numbered buttons on interface.
+	// Sets the current access to only the first Location
+	act = new Action("DEBUG: Access to Location 1", _("DEBUG: Access to Location 1"));
+	act->setKeyEvent(KeyState(KEYCODE_0, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+0");
+	keymap->addAction(act);
+
+	// I18N: Sets the current access to Locations 1 to 8.
+	act = new Action("DEBUG: Access to Locations 1-8", _("DEBUG: Access to Locations 1-8"));
+	act->setKeyEvent(KeyState(KEYCODE_1, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+1");
+	keymap->addAction(act);
+
+	// I18N: Sets the current access to Locations 1 to 16.
+	act = new Action("DEBUG: Access to Locations 1-16", _("DEBUG: Access to Locations 1-16"));
+	act->setKeyEvent(KeyState(KEYCODE_2, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+2");
+	keymap->addAction(act);
+
+	// I18N: Sets the current access to Locations 1 to 23.
+	act = new Action("DEBUG: Access to Locations 1-23", _("DEBUG: Access to Locations 1-23"));
+	act->setKeyEvent(KeyState(KEYCODE_3, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+3");
+	keymap->addAction(act);
+
+	// I18N: Sets the current access to Locations 1 to 24.
+	act = new Action("DEBUG: Access to Locations 1-24", _("DEBUG: Access to Locations 1-24"));
+	act->setKeyEvent(KeyState(KEYCODE_4, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+4");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
 }
 
 } // End of namespace CGE
