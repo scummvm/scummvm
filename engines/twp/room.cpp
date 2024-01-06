@@ -368,6 +368,14 @@ void Room::load(Common::SeekableReadStream &s) {
 
 	_mergedPolygon = merge(_walkboxes);
 
+	// Fix room size (why ?)
+	int width = 0;
+	for (int i = 0; i < backNames.size(); i++) {
+		Common::String name = backNames[i];
+		width += g_engine->_resManager.spriteSheet(_sheet)->frameTable[name].sourceSize.getX();
+	}
+	_roomSize.setX(width);
+
 	delete value;
 }
 

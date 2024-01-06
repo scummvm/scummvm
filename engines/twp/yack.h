@@ -26,11 +26,9 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/debug.h"
+#include "twp/util.h"
 
 namespace Twp {
-
-template<typename T, class DL = Common::DefaultDeleter<T> >
-using unique_ptr = Common::ScopedPtr<T, DL>;
 
 enum class YackTokenId {
 	None,

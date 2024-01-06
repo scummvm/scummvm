@@ -460,10 +460,6 @@ static SQInteger is_table(HSQUIRRELVM v) {
 	return is_oftype(v, [](SQObjectType type) { return type == OT_TABLE; });
 }
 
-static float randf() {
-	return g_engine->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
-}
-
 // Returns a random number from from to to inclusively.
 // The number is a pseudo-random number and the game will produce the same sequence of numbers unless primed using randomSeed(seed).
 //
@@ -476,8 +472,7 @@ static SQInteger sqrandom(HSQUIRRELVM v) {
 		sq_getfloat(v, 3, &max);
 		if (min > max)
 			SWAP(min, max);
-		float scale = randf();
-		SQFloat value = min + scale * (max - min);
+		SQFloat value = g_engine->getRandom(min, max);
 		sq_pushfloat(v, value);
 	} else {
 		SQInteger min, max;
@@ -625,7 +620,7 @@ static SQInteger randomOdds(HSQUIRRELVM v) {
 	float value = 0.0f;
 	if (SQ_FAILED(sqget(v, 2, value)))
 		return sq_throwerror(v, "failed to get value");
-	float rnd = randf();
+	float rnd = g_engine->getRandom();
 	bool res = rnd <= value;
 	sq_pushbool(v, res);
 	return 1;

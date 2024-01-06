@@ -33,6 +33,49 @@
 
 namespace Twp {
 
+enum class BlinkState {
+	Closed,
+	Open
+};
+
+class Blink : public Motor {
+public:
+	Blink(Object *obj, float min, float max) : _obj(obj), _min(min), _max(max) {
+		_obj->showLayer("blink", false);
+		_state = BlinkState::Closed;
+		_duration = g_engine->getRandom(min, max);
+	}
+
+	virtual void update(float elapsed) override {
+		if (_state == BlinkState::Closed) {
+			// wait to blink
+			_elapsed += elapsed;
+			if (_elapsed > _duration) {
+				_state = BlinkState::Open;
+				_obj->showLayer("blink", true);
+				_elapsed = 0;
+			}
+		} else if (_state == BlinkState::Open) {
+			// wait time the eyes are closed
+			_elapsed += elapsed;
+			if (_elapsed > 0.25) {
+				_obj->showLayer("blink", false);
+				_duration = g_engine->getRandom(_min, _max);
+				_elapsed = 0;
+				_state = BlinkState::Closed;
+			}
+		}
+	}
+
+private:
+	Object *_obj = nullptr;
+	BlinkState _state = BlinkState::Closed;
+	float _min = 0.f;
+	float _max = 0.f;
+	float _elapsed = 0.f;
+	float _duration = 0.f;
+};
+
 Object::Object()
 	: _talkOffset(0, 90) {
 	_node = new Node("newObj");
@@ -47,7 +90,8 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 
 Object::~Object() {
 	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
-	_node->getParent()->removeChild(_node);
+	_nodeAnim->remove();
+	_node->remove();
 }
 
 Object *Object::createActor() {
@@ -343,7 +387,7 @@ void Object::stopObjectMotors() {
 	disableMotor(_moveTo);
 	disableMotor(_walkTo);
 	disableMotor(_talking);
-	disableMotor(_blink);
+	disableMotor(_blink.get());
 	disableMotor(_turnTo);
 	disableMotor(_shakeTo);
 	disableMotor(_jiggleTo);
@@ -423,11 +467,11 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 }
 
 void Object::blinkRate(float min, float max) {
-	// TODO:
-	//   if (min == 0.0 && max == 0.0)
-	//     _blink = nil;
-	//   else:
-	//     _blink = new Blink(this, min, max);
+	  if (min == 0.0 && max == 0.0) {
+	    _blink.reset();
+	  } else {
+	    _blink.reset(new Blink(this, min, max));
+	  }
 }
 
 void Object::setCostume(const Common::String &name, const Common::String &sheet) {
@@ -467,7 +511,6 @@ void Object::setMoveTo(Motor *moveTo) { SET_MOTOR(moveTo); }
 void Object::setWalkTo(Motor *walkTo) { SET_MOTOR(walkTo); }
 void Object::setReach(Motor *reach) { SET_MOTOR(reach); }
 void Object::setTalking(Motor *talking) { SET_MOTOR(talking); }
-void Object::setBlink(Motor *blink) { SET_MOTOR(blink); }
 void Object::setTurnTo(Motor *turnTo) { SET_MOTOR(turnTo); }
 void Object::setShakeTo(Motor *shakeTo) { SET_MOTOR(shakeTo); }
 void Object::setJiggleTo(Motor *jiggleTo) { SET_MOTOR(jiggleTo); }

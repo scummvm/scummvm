@@ -29,6 +29,8 @@
 #include "twp/squirrel/squirrel.h"
 #include "twp/ids.h"
 #include "twp/gfx.h"
+#include "twp/util.h"
+#include "twp/objectanimation.h"
 
 #define STAND_ANIMNAME "stand"
 #define HEAD_ANIMNAME "head"
@@ -58,19 +60,6 @@ enum UseFlag {
 	ufUseOn,
 	ufUseIn,
 	ufGiveTo
-};
-
-struct ObjectAnimation {
-	Common::String name;
-	Common::String sheet;
-	Common::StringArray frames;
-	Common::Array<ObjectAnimation> layers;
-	Common::StringArray triggers;
-	Common::Array<Math::Vector2d> offsets;
-	bool loop;
-	float fps;
-	int flags;
-	int frameIndex;
 };
 
 class Trigger {
@@ -280,7 +269,7 @@ private:
 	Motor *_walkTo = nullptr;
 	Motor *_reach = nullptr;
 	Motor *_talking = nullptr;
-	Motor *_blink = nullptr;
+	unique_ptr<Motor> _blink;
 	Motor *_turnTo = nullptr;
 	Motor *_shakeTo = nullptr;
 	Motor *_jiggleTo = nullptr;
