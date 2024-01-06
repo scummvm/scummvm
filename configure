@@ -270,6 +270,7 @@ _posix=no
 _has_posix_spawn=no
 _has_fseeko_offt_64=no
 _has_fseeko64=no
+_has_fopen64=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
@@ -4711,6 +4712,18 @@ EOF
 				if test "$_has_fseeko64" = yes ; then
 					append_var DEFINES "-DHAS_FSEEKO64"
 					append_var CXXFLAGS "-D_LARGEFILE64_SOURCE"
+
+					# On some platforms, fopen64 is required in addition to fseeko64/ftello64
+					echo_n "Checking if fopen64 is supported... "
+					cat > $TMPC << EOF
+#include <stdio.h>
+int main() { FILE *f = fopen64("file", "rb"); return (f != NULL); }
+EOF
+					cc_check_no_clean && _has_fopen64=yes
+					echo $_has_fopen64
+					if test "$_has_fopen64" = yes ; then
+						append_var DEFINES "-DHAS_FOPEN64"
+					fi
 				fi
 			fi
 		fi
