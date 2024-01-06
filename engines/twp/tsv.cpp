@@ -42,8 +42,8 @@ Common::String TextDb::getText(int id) {
 		result = _texts[id];
 		if (result.hasSuffix("#M") || result.hasSuffix("#F"))
 			result = result.substr(0, result.size() - 3);
-		// TODO: replace \" by ";
-		// result = result.replace("\\\"", "\"");
+		// replace \" by ";
+		result = Twp::replace(result, "\\\"", "\"");
 	} else {
 		result = Common::String::format("Text %d not found", id);
 		error("Text %d not found", id);

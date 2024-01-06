@@ -19,6 +19,7 @@
  *
  */
 
+#include "twp/object.h"
 #include "twp/util.h"
 #include "twp/scenegraph.h"
 
@@ -162,6 +163,21 @@ Common::String join(const Common::Array<Common::String> &array, const Common::St
 			result += (sep + array[i]);
 		}
 	}
+	return result;
+}
+
+Common::String replace(const Common::String& s, const Common::String& what, const Common::String& by) {
+	Common::String result;
+	uint i = 0;
+	size_t whatSize = what.size();
+	while (true) {
+      uint j = s.find(what, i);
+      if (j == Common::String::npos) break;
+      result += s.substr(i, j - i);
+      result += by;
+      i = j + whatSize;
+	}
+    result += s.substr(i);
 	return result;
 }
 

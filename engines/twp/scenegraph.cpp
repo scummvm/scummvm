@@ -209,14 +209,14 @@ Math::Matrix4 Node::getLocalTrsf() {
 	mRot.buildAroundZ(Math::Angle(-_rotation + _rotationOffset));
 	Math::Matrix4 m2;
 	m2.setRotation(mRot);
-	scale(m2, _scale);
+	scale(m2, getScale());
 	Math::Matrix4 m3;
 	m3.translate(Math::Vector3d(_renderOffset.getX(), _renderOffset.getY(), 0.f));
 	return m1 * m2 * m3;
 }
 
 Rectf Node::getRect() const {
-	Math::Vector2d size = _size * _scale;
+	Math::Vector2d size = _size * getScale();
 	return Rectf::fromPosAndSize(getAbsPos(), Math::Vector2d(-size.getX(), size.getY()) * _anchorNorm * _size);
 }
 
@@ -388,7 +388,7 @@ void TextNode::updateBounds() {
 }
 
 Rectf TextNode::getRect() const {
-	Math::Vector2d size = _size * _scale;
+	Math::Vector2d size = _size * getScale();
 	return Rectf::fromPosAndSize(getAbsPos() + Math::Vector2d(0, -size.getY()) + Math::Vector2d(-size.getX(), size.getY()) * _anchorNorm, size);
 }
 

@@ -147,6 +147,9 @@ public:
 	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 	bool execSentence(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
 
+	float getRandom() const;
+	float getRandom(float min, float max) const;
+
 private:
 	void update(float elapsedMs);
 	void draw();

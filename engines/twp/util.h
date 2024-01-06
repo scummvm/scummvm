@@ -23,11 +23,19 @@
 #define TWP_UTIL_H
 
 #include "twp/ids.h"
-#include "twp/object.h"
+#include "twp/objectanimation.h"
 #include "math/vector2d.h"
+#include "math/matrix4.h"
 #include "common/formats/json.h"
+#include "common/rect.h"
 
 namespace Twp {
+
+class Object;
+
+// general util
+template<typename T, class DL = Common::DefaultDeleter<T> >
+using unique_ptr = Common::ScopedPtr<T, DL>;
 
 template<typename T>
 T clamp(T x, T a, T b) {
@@ -38,21 +46,18 @@ T clamp(T x, T a, T b) {
 	return x;
 }
 
-Math::Vector2d operator*(Math::Vector2d v, float f);
-
+// game util
 Facing getFacing(int dir, Facing facing);
 Facing flip(Facing facing);
 Facing getFacingToFaceTo(Object *actor, Object *obj);
 
+// parsing util
 bool toBool(const Common::JSONObject &jNode, const Common::String &key);
 Math::Vector2d parseVec2(const Common::String &s);
 Common::Rect parseRect(const Common::String &s);
 void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims);
 
-float distance(Math::Vector2d p1, Math::Vector2d p2);
-float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
-float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
-
+// array util
 template<typename T>
 int find(const Common::Array<T>& array, const T& o) {
 	int index = -1;
@@ -65,9 +70,16 @@ int find(const Common::Array<T>& array, const T& o) {
 	return index;
 }
 
+// string util
 Common::String join(const Common::Array<Common::String>& array, const Common::String& sep);
+Common::String replace(const Common::String& s, const Common::String& what, const Common::String& by);
 
+// math util
 void scale(Math::Matrix4 &m, const Math::Vector2d &v);
+Math::Vector2d operator*(Math::Vector2d v, float f);
+float distance(Math::Vector2d p1, Math::Vector2d p2);
+float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
+float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
 
 } // namespace Twp
 

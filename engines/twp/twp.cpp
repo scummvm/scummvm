@@ -425,9 +425,6 @@ void TwpEngine::update(float elapsed) {
 			if (_cursor.leftDown)
 				clickedAt(scrPos);
 		}
-
-		if (_cursor.leftDown || _cursor.rightDown)
-			clickedAt(winToScreen(_cursor.pos));
 	}
 
 	_dialog.update(elapsed);
@@ -1300,6 +1297,15 @@ void TwpEngine::stopTalking() {
 			(*it2)->stopTalking();
 		}
 	}
+}
+
+float TwpEngine::getRandom() const {
+	return g_engine->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
+}
+
+float TwpEngine::getRandom(float min, float max) const {
+	float scale = getRandom();
+	return min + scale * (max - min);
 }
 
 } // End of namespace Twp
