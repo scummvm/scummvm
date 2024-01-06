@@ -124,13 +124,24 @@ Common::Error DarkseedEngine::run() {
 //	Pal roomPal;
 //	roomPal.load("room0.pal");
 
-	Nsp playerNsp;
-	playerNsp.load("bedsleep.nsp"); //"cplayer.nsp");
+//	Nsp playerNsp;
+//	playerNsp.load("bedsleep.nsp"); //"cplayer.nsp");
 //	const Sprite &s = playerNsp.getSpriteAt(11);
 //
 //	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
 
-	_room = new Room(5);
+	_room = new Room(0);
+
+	if (prefsCutsceneId == 'I' || ((prefsCutsceneId == 'S' || prefsCutsceneId == 'B' || prefsCutsceneId == 'C') &&
+		  _room->_roomNumber == 0)) {
+		_player->loadAnimations("bedsleep.nsp");
+		_player->_position.x = 0x87;
+		_player->_position.y = 0x5b;
+		_player->_frameIdx = 0;
+		_player->_direction = 1;
+		setupOtherNspAnimation(0, 1);
+//		bVar1 = true;
+	}
 
 	gameloop();
 
@@ -198,18 +209,29 @@ void DarkseedEngine::wait() {
 }
 
 void DarkseedEngine::handleInput() {
-	if (_isRightMouseClicked) {
-		if (_actionMode == LookAction) {
-			_actionMode = PointerAction;
-		} else if (_actionMode == PointerAction) {
-			_actionMode = HandAction;
-		} else if (_actionMode == HandAction) {
-			_actionMode = LookAction;
+	if (!isPlayingAnimation_maybe) {
+		if (_isRightMouseClicked) {
+			if (_actionMode == LookAction) {
+				_actionMode = PointerAction;
+			} else if (_actionMode == PointerAction) {
+				_actionMode = HandAction;
+			} else if (_actionMode == HandAction) {
+				_actionMode = LookAction;
+			}
+			_cursor.setCursorType((CursorType)_actionMode);
+		} else if (_isLeftMouseClicked) {
+			// TODO do actions here.
+			handlePointerAction();
 		}
-		_cursor.setCursorType((CursorType)_actionMode);
-	} else if (_isLeftMouseClicked) {
-		// TODO do actions here.
-		handlePointerAction();
+	} else {
+		updateAnimation();
+//		uVar7 = playerSpriteX_maybe;
+//		uVar5 = playerSpriteY_maybe;
+//		if ((isPlayingAnimation_maybe == False) && (DAT_2c85_6b17 != '\0')) {
+//			FUN_2022_7508();
+//			uVar7 = playerSpriteX_maybe;
+//			uVar5 = playerSpriteY_maybe;
+//		}
 	}
 }
 
@@ -228,17 +250,236 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 }
 
 void DarkseedEngine::updateDisplay() {
-	const Sprite &playerSprite = _player->getSprite(_player->_frameIdx);
-	uint8 scaledWidth = playerSprite.width;
-	uint8 scaledHeight = playerSprite.height;
+	int currentRoomNumber = _room->_roomNumber;
+	_sprites.clearSpriteDrawList();
+//	FUN_2022_2ca7();
+//	FUN_2022_413a();
+	if (isPlayingAnimation_maybe == 0 ||
+		(otherNspAnimationType_maybe != 6 && otherNspAnimationType_maybe != 7) || currentRoomNumber != 5) {
+		DAT_2c85_8326_blit_related = 0xf0;
+	}
+	else {
+		DAT_2c85_8326_blit_related = 0xd0;
+	}
 
-	_sprites.addSpriteToDrawList(
-		_player->_position.x - (playerSprite.width / 2),
-		_player->_position.y ,//- scaledHeight,
-		&playerSprite,
-		240 - _player->_position.y,
-		scaledWidth,
-		scaledHeight, 0);
+	if (currentRoomNumber != 0x22 && currentRoomNumber != 0x13 &&
+		  currentRoomNumber != 0x14 && currentRoomNumber != 0x15 && currentRoomNumber != 0x16 &&
+		 DAT_2c85_825c != 9 && (currentRoomNumber != 0x35 || DAT_2c85_819c != 2)) {
+		if (((otherNspAnimationType_maybe == 0x3c) || (otherNspAnimationType_maybe == 0x3d)) &&
+			isPlayingAnimation_maybe) {
+//			uVar7 = *(undefined2 *)((int)nspWidthTbl + _player->_frameIdx * 2);
+//			uVar1 = *(uint *)((int)nspHeightTbl + _player->_frameIdx * 2);
+//			addSpriteToDraw(0x1af,0x42,uVar7,uVar1,*(undefined2 *)((int)nspPixelPtrTbl + _player->_frameIdx * 4),
+//							*(undefined2 *)((int)&nspPixelPtrTbl[0].Offset + _player->_frameIdx * 4),0xff,uVar7,uVar1,
+//							uVar1 & 0xff00);
+		}
+		if (!isWearingHeadBand || (headAcheMessageCounter & 1) != 0) {
+			if (!isPlayingAnimation_maybe || otherNspAnimationType_maybe == 0x13
+				|| otherNspAnimationType_maybe == 0x17) {
+//				calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
+				if ((currentRoomNumber != 0x35) || (DAT_2c85_81e0 != 2)) {
+					const Sprite &playerSprite = _player->getSprite(_player->_frameIdx);
+					uint8 scaledWidth = playerSprite.width;
+					uint8 scaledHeight = playerSprite.height;
+					_sprites.addSpriteToDrawList(
+						_player->_position.x - (scaledWidth / 2),
+						_player->_position.y - scaledHeight,
+						&playerSprite,
+						240 - _player->_position.y,
+						scaledWidth,
+						scaledHeight, player_sprite_related_2c85_82f3);
+				}
+			} else {
+				if (otherNspAnimationType_maybe == 0x25) {
+//					uVar1 = (uint)BYTE_ARRAY_2c85_41e7[1];
+//					uVar7 = *(undefined2 *)((int)CPlayerSpriteWidthTbl + uVar1 * 2);
+//					uVar4 = *(undefined2 *)((int)CPlayerSpriteHeightTbl + uVar1 * 2);
+//					calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
+//					addSpriteToDraw(playerSpriteX_maybe - (_curPlayerSpriteWidth & 0xff) / 2,
+//									playerSpriteY_maybe - (_curPlayerSpriteHeight_maybe & 0xff),uVar7,uVar4,
+//									*(undefined2 *)((int)CPlayerSpritePtrTbl + uVar1 * 4),
+//									*(undefined2 *)((int)&CPlayerSpritePtrTbl[0].Offset + uVar1 * 4),0xf0 - playerSpriteY_maybe ,
+//									_curPlayerSpriteWidth,_curPlayerSpriteHeight_maybe,_player_sprite_related_2c85_82f3);
+				}
+				if (otherNspAnimationType_maybe == 0x27 || otherNspAnimationType_maybe == 0x3b ||
+					 otherNspAnimationType_maybe == 0x3c || otherNspAnimationType_maybe == 0x3d) {
+//					uVar1 = (uint)BYTE_ARRAY_2c85_41e7[1];
+//					uVar7 = *(undefined2 *)((int)CPlayerSpriteWidthTbl + uVar1 * 2);
+//					uVar4 = *(undefined2 *)((int)CPlayerSpriteHeightTbl + uVar1 * 2);
+//					calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
+//					addSpriteToDraw(playerSpriteX_maybe - (_curPlayerSpriteWidth & 0xff) / 2,
+//									playerSpriteY_maybe - (_curPlayerSpriteHeight_maybe & 0xff),uVar7,uVar4,
+//									*(undefined2 *)((int)CPlayerSpritePtrTbl + uVar1 * 4),
+//									*(undefined2 *)((int)&CPlayerSpritePtrTbl[0].Offset + uVar1 * 4),0xf0 - playerSpriteY_maybe ,
+//									_curPlayerSpriteWidth,_curPlayerSpriteHeight_maybe,_player_sprite_related_2c85_82f3);
+//					if ((otherNspAnimationType_maybe == 0x3c) || (otherNspAnimationType_maybe == 0x3d)) {
+//						sprite_y_scaling_threshold_maybe = 0xf0;
+//						drawInventory();
+//						updateScreen();
+//						DAT_2c85_985d = cursorYPosition;
+//						return;
+//					}
+				}
+//				iVar9 = *(int *)((int)otherNspWidthTbl + _player->_frameIdx * 2);
+//				iVar8 = *(int *)((int)&otherNspHeightTbl + _player->_frameIdx * 2);
+				if (otherNspAnimationType_maybe == 0x12) {
+					if (trunkPushCounter == 0) {
+						sprite_y_scaling_threshold_maybe = 0xcb;
+					}
+					else if (trunkPushCounter == 1) {
+						sprite_y_scaling_threshold_maybe = 0xcb;
+					}
+					else if (trunkPushCounter == 2) {
+						sprite_y_scaling_threshold_maybe = 0xc4;
+					}
+					else {
+						sprite_y_scaling_threshold_maybe = 0xaf;
+					}
+				}
+
+				if (nsp_sprite_scaling_y_position == 0) {
+//					calculateScaledPlayerSpriteDimensions(iVar9,iVar8,playerSpriteY_maybe);
+//					bVar6 = extraout_AH_00;
+				}
+				else {
+//					calculateScaledPlayerSpriteDimensions(iVar9,iVar8,nsp_sprite_scaling_y_position);
+//					bVar6 = extraout_AH;
+				}
+
+				if (otherNspAnimationType_maybe == 3) {
+//					uVar1 = _curPlayerSpriteWidth & 0xff;
+//					uVar2 = _curPlayerSpriteHeight_maybe & 0xff;
+//					calculateScaledPlayerSpriteDimensions
+//						(*(undefined2 *)((int)otherNspWidthTbl + (_player->_frameIdx + 1) * 2),
+//						 *(undefined2 *)((int)&otherNspHeightTbl + (_player->_frameIdx + 1) * 2),playerSpriteY_maybe);
+//					if (otherNspAnimationType_maybe == 3) {
+//						uVar3 = ((_curPlayerSpriteWidth & 0xff) + uVar1) / 2;
+//						iVar5 = playerSpriteX_maybe - uVar3;
+//					}
+//					else {
+//						uVar11 = 0;
+//						uVar10 = 1000;
+//						uVar7 = LONG_2c85_8116._2_2_;
+//						uVar4 = LXMUL@(CONCAT22((undefined2)LONG_2c85_8116,LONG_2c85_8116._2_2_),0x2d0000);
+//						uVar3 = LUMOD@(uVar4,uVar7,uVar10,uVar11);
+//						iVar5 = playerSpriteX_maybe - uVar3;
+//					}
+//					addSpriteToDraw(iVar5,playerSpriteY_maybe - uVar2,iVar9,iVar8,
+//									*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
+//									*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
+//									0xf0 - playerSpriteY_maybe,uVar1,uVar2,uVar3 & 0xff00);
+//					bVar6 = extraout_AH_01;
+				} else if (!BoolEnum_2c85_985) {
+					if (otherNspAnimationType_maybe == 0x11) {
+//						addSpriteToDraw(playerSpriteX_maybe - (int)otherNspWidthTbl[0] / 2,playerSpriteY_maybe - iVar8,iVar9,iVa r8,
+//										*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
+//										*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
+//										0xf0 - playerSpriteY_maybe,iVar9,iVar8,_player_sprite_related_2c85_82f3);
+//						bVar6 = extraout_AH_02;
+					} else if (otherNspAnimationType_maybe == 5 || otherNspAnimationType_maybe == 1) {
+						int x = 0xa6;
+						int y = 0x69;
+						if (_player->_frameIdx < 4) {
+							x = 0x75;
+							y = 0x71;
+						}
+						else if (_player->_frameIdx == 4) {
+							x = 0x75;
+							y = 0x69;
+						}
+						else if (_player->_frameIdx == 7) {
+							x = 0xa6;
+							y = 0x5b;
+						}
+
+						/* bed wake sequence is played here. */
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(x, y, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+//						addSpriteToDraw(x,y,iVar9,iVar8,*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx *  4),
+//										*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
+//										0xf0 - playerSpriteY_maybe,iVar9,iVar8,_player_sprite_related_2c85_82f3);
+//						bVar6 = extraout_AH_03;
+					} // TODO continue adding logic here. else if (....
+				}
+			}
+		}
+	}
+}
+
+void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
+	assert(nspAnimIdx < 20);
+	_player->_playerIsMoving_maybe = false;
+	nsp_sprite_scaling_y_position = 0;
+	BoolEnum_2c85_985a = false;
+
+	animIndexTbl[nspAnimIdx] = 0;
+	spriteAnimCountdownTimer[nspAnimIdx] = _player->_animations.getAnimAt(nspAnimIdx).frameDuration[0];
+	isPlayingAnimation_maybe = true;
+	otherNspAnimationType_maybe = animId;
+	_player->_frameIdx = _player->_animations.getAnimAt(nspAnimIdx).frameNo[0];
+
+	player_sprite_related_2c85_82f3 = 0;
+	isAnimFinished_maybe = false;
+
+	if (otherNspAnimationType_maybe < 2) {
+		return;
+	}
+
+	// TODO big switch here to init the different animation types.
+	switch (otherNspAnimationType_maybe - 2) {
+	default:
+		break;
+	}
+}
+
+void DarkseedEngine::updateAnimation() {
+	switch (otherNspAnimationType_maybe) {
+	case 0: break;
+	case 1 : // sleep wake anim
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		}
+		else {
+			_player->_position.x = 0xdf;
+			_player->_position.y = 0xbe;
+			_player->_walkTarget.x = 0xdf;
+			_player->_walkTarget.y = 0xbe;
+			_player->updateSprite();
+		}
+		break;
+	default:
+		error("Unhandled animation type! %d", otherNspAnimationType_maybe);
+	}
+}
+
+void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
+	if (!BoolEnum_2c85_985a) {
+//		LONG_2c85_8116._2_2_ = 0;
+//		LONG_2c85_8116._0_2_ = 1000;
+	}
+	else {
+//		calculateScaledPlayerSpriteDimensions(10,10,playerSpriteY_maybe);
+	}
+	isAnimFinished_maybe = false;
+	animFrameChanged = false;
+	const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
+	spriteAnimCountdownTimer[nspAminIdx] = spriteAnimCountdownTimer[nspAminIdx] - 1;
+	if (spriteAnimCountdownTimer[nspAminIdx] < 1) {
+		animFrameChanged = true;
+		animIndexTbl[nspAminIdx] = animIndexTbl[nspAminIdx] + 1;
+		_player->_position.x += (int16)anim.deltaX[animIndexTbl[nspAminIdx]];
+		_player->_position.y += (int16)anim.deltaY[animIndexTbl[nspAminIdx]];
+		if (animIndexTbl[nspAminIdx] == anim.numFrames) {
+			animIndexTbl[nspAminIdx] = 0;
+			isAnimFinished_maybe = true;
+			isPlayingAnimation_maybe = false;
+			_player->_walkTarget.x = _player->_position.x;
+			_player->_walkTarget.y = _player->_position.y;
+			_player->updateSprite();
+		}
+		spriteAnimCountdownTimer[nspAminIdx] = anim.frameDuration[animIndexTbl[nspAminIdx]];
+	}
 }
 
 } // End of namespace Darkseed

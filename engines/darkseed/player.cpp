@@ -20,6 +20,7 @@
 */
 
 #include "player.h"
+#include "darkseed.h"
 
 Darkseed::Player::Player() {
 	_cPlayerSprites.load("cplayer.nsp");
@@ -29,4 +30,50 @@ Darkseed::Player::Player() {
 const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
 	// TODO switch sprite based on over or underworld.
 	return _cPlayerSprites.getSpriteAt(frameNo);
+}
+
+bool Darkseed::Player::loadAnimations(const Common::String &filename) {
+	return _animations.load(filename);
+}
+
+uint8 playerSpriteIndexDirectionTbl[] = { 24,  26,  28,  26 };
+bool BYTE_ARRAY_2c85_41eb[] = { false, false, false, true };
+uint16 BYTE_ARRAY_2c85_41e3[] = { 0,   8,  16,   8 };
+
+void Darkseed::Player::updateSprite() {
+	if (!_playerIsMoving_maybe) {
+		if ((_direction == 3) || (_direction == 1)) {
+			g_engine->player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
+		}
+		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !g_engine->BoolEnum_2c85_811c) {
+			_frameIdx = playerSpriteIndexDirectionTbl[_direction];
+		} else {
+			_frameIdx = g_engine->DAT_2c85_7dd7 + BYTE_ARRAY_2c85_41e3[_direction];
+		}
+		if (_direction == 2) {
+			if (_position.x < _walkTarget.x) {
+				g_engine->player_sprite_related_2c85_82f3 = true;
+			}
+			else if (_walkTarget.x < _position.x) {
+				g_engine->player_sprite_related_2c85_82f3 = false;
+			}
+		}
+		if (_direction == 0) {
+			if (_walkTarget.x < _position.x) {
+				g_engine->player_sprite_related_2c85_82f3 = true;
+			}
+			else if (_position.x < _walkTarget.x) {
+				g_engine->player_sprite_related_2c85_82f3 = false;
+			}
+		}
+	}
+	else {
+		g_engine->player_sprite_related_2c85_82f3 = 4 < playerSpriteWalkIndex_maybe;
+		if (g_engine->player_sprite_related_2c85_82f3) {
+			_frameIdx = 0x20 - playerSpriteWalkIndex_maybe;
+		}
+		else {
+			_frameIdx = playerSpriteWalkIndex_maybe + 0x18;
+		}
+	}
 }

@@ -33,12 +33,17 @@ private:
 	Nsp _gPlayerSprites;
 
 public:
+	Nsp _animations;
 	int _frameIdx = 0;
 	int _direction = 0;
 	Common::Point _position;
+	Common::Point _walkTarget;
+	uint16 playerSpriteWalkIndex_maybe = 0;
+	bool _playerIsMoving_maybe;
 
 public:
 	Player();
+	bool loadAnimations(const Common::String &filename);
 	const Sprite &getSprite(int frameNo);
 	void updateSprite();
 	void draw();

@@ -26,7 +26,7 @@ Darkseed::Sprites::Sprites() {
 	spriteDrawList.reserve(DARKSEED_MAX_SPRITES_ON_SCREEN);
 }
 
-void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint8 destW, uint8 destH, uint8 unk10) {
+void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Darkseed::Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool unk10) {
 	if (spriteDrawList.size() == DARKSEED_MAX_SPRITES_ON_SCREEN || destX >= 570) {
 		return;
 	}

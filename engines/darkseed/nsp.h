@@ -43,8 +43,8 @@ public:
 class Obt {
 public:
 	uint8 numFrames;
-	Common::Array<uint32> deltaX;
-	Common::Array<uint32> deltaY;
+	Common::Array<int32> deltaX;
+	Common::Array<int32> deltaY;
 	Common::Array<uint8> frameNo;
 	Common::Array<uint8> frameDuration;
 	Obt();
@@ -58,6 +58,7 @@ private:
 public:
 	bool load(const Common::String &filename);
 	const Sprite &getSpriteAt(int index);
+	const Obt &getAnimAt(int index);
 
 private:
 	bool load(Common::SeekableReadStream &readStream);
