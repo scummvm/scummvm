@@ -175,6 +175,7 @@ public:
 	Dialog();
 	virtual ~Dialog() override;
 
+	void choose(int choice);
 	void update(float dt);
 	DialogState getState() const { return _state; }
 
@@ -189,6 +190,7 @@ public:
 	bool isCond(const Common::String &cond) const;
 
 private:
+	void choose(DialogSlot* slot);
 	YLabel *label(int line, const Common::String &name) const;
 	void gotoNextLabel();
 	bool choicesReady() const { return numSlots() > 0; }

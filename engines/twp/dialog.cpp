@@ -27,6 +27,45 @@
 
 namespace Twp {
 
+class SerialMotors : public Motor {
+public:
+	SerialMotors(const std::initializer_list<Motor *> &motors) : _motors(motors) {}
+	SerialMotors(const Common::Array<Motor *> &motors) : _motors(motors) {}
+
+	virtual void update(float elapsed) override {
+		if (_motors.size() > 0) {
+			_motors[0]->update(elapsed);
+			if (!_motors[0]->isEnabled()) {
+				debug("SerialMotors next");
+				_motors.remove_at(0);
+			}
+		} else {
+			debug("SerialMotors is over");
+			disable();
+		}
+	}
+
+private:
+	Common::Array<Motor *> _motors;
+};
+
+class SelectLabelMotor : public Motor {
+public:
+	SelectLabelMotor(Dialog *dlg, int line, const Common::String &name)
+		: _dlg(dlg), _line(line), _name(name) {
+	}
+
+	virtual void update(float elapsed) override {
+		_dlg->selectLabel(_line, _name);
+		disable();
+	}
+
+private:
+	Dialog *_dlg;
+	int _line;
+	Common::String _name;
+};
+
 CondStateVisitor::CondStateVisitor(Dialog *dlg, DialogSelMode mode) : _dlg(dlg), _mode(mode) {
 }
 
@@ -139,6 +178,37 @@ DialogSlot::DialogSlot() : Node("DialogSlot") {}
 Dialog::Dialog() : Node("Dialog") {}
 Dialog::~Dialog() {}
 
+static YChoice *getChoice(DialogSlot *slot) {
+	return (YChoice *)(slot->_stmt->_exp.get());
+}
+
+void Dialog::choose(int choice) {
+	if (_state == WaitingForChoice) {
+		choose(&_slots[choice]);
+	}
+}
+
+void Dialog::choose(DialogSlot *slot) {
+	if (slot) {
+		sqcall("onChoiceClick");
+		for (int i = 0; i < slot->_stmt->_conds.size(); i++) {
+			YCond *cond = slot->_stmt->_conds[i];
+			CondStateVisitor v(slot->_dlg, DialogSelMode::Choose);
+			cond->accept(v);
+		}
+		YChoice *choice = getChoice(slot);
+		if (slot->_dlg->_context.parrot) {
+			slot->_dlg->_state = DialogState::Active;
+			slot->_dlg->_action = new SerialMotors(
+				{slot->_dlg->_tgt->say(slot->_dlg->_context.actor, choice->_text),
+				 new SelectLabelMotor(slot->_dlg, choice->_goto->_line, choice->_goto->_name)});
+			slot->_dlg->clearSlots();
+		} else {
+			slot->_dlg->selectLabel(choice->_goto->_line, choice->_goto->_name);
+		}
+	}
+}
+
 void Dialog::start(const Common::String &actor, const Common::String &name, const Common::String &node) {
 	_context = DialogContext{.actor = actor, .dialogName = name, .parrot = true, .limit = MAXCHOICES};
 	// keepIf(self.states, proc(x: DialogConditionState): bool = x.mode != TempOnce);
@@ -162,9 +232,9 @@ void Dialog::update(float dt) {
 	case DialogState::WaitingForChoice: {
 		Color color = _tgt->actorColor(_context.actor);
 		Color colorHover = _tgt->actorColorHover(_context.actor);
-		for (size_t j = 0; j < MAXDIALOGSLOTS; j++) {
-			DialogSlot *slot = &_slots[j];
-			if (slot) {
+		for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
+			DialogSlot *slot = &_slots[i];
+			if (slot->_isValid) {
 				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, slot->_text.getBounds().getY()), slot->_text.getBounds());
 				bool over = slot && rect.contains(_mousePos);
 				if (rect.r.w > (SCREEN_WIDTH - SLOTMARGIN)) {
@@ -183,12 +253,11 @@ void Dialog::update(float dt) {
 					}
 				}
 				slot->_text.setColor(over ? colorHover : color);
-				// if (over && mbLeft in mouseBtns())
-				//   choose(i);
+				if (over && g_engine->_cursor.isLeftDown())
+					choose(i);
 			}
-			break;
 		}
-	}
+	} break;
 	}
 }
 
@@ -268,7 +337,7 @@ void Dialog::selectLabel(int line, const Common::String &name) {
 	_lbl = label(line, name);
 	_currentStatement = 0;
 	clearSlots();
-	_state = _lbl ? Active: None;
+	_state = _lbl ? Active : None;
 }
 
 void Dialog::gotoNextLabel() {
@@ -289,7 +358,7 @@ void Dialog::updateChoiceStates() {
 		DialogSlot *slot = &_slots[i];
 		if (slot->_isValid) {
 			for (size_t j = 0; j < slot->_stmt->_conds.size(); j++) {
-				YCond *cond = slot->_stmt->_conds[i];
+				YCond *cond = slot->_stmt->_conds[j];
 				CondStateVisitor v(this, DialogSelMode::Show);
 				cond->accept(v);
 			}
@@ -321,40 +390,39 @@ bool Dialog::acceptConditions(YStatement *stmt) {
 	return true;
 }
 void Dialog::running(float dt) {
-  if (_action && _action->isEnabled())
-    _action->update(dt);
-  else if (!_lbl)
-    _state = None;
-  else if (_currentStatement == _lbl->_stmts.size())
-    gotoNextLabel();
-  else {
-    _state = Active;
-    while (_lbl && (_currentStatement < _lbl->_stmts.size()) && (_state == Active)) {
-      YStatement* statmt = _lbl->_stmts[_currentStatement];
-	  IsChoice isChoice;
-	  statmt->_exp->accept(isChoice);
-      if (!acceptConditions(statmt))
-        _currentStatement ++;
-      else if (isChoice._isChoice) {
-        addSlot(statmt);
-        _currentStatement++;
-	  }
-      else if (choicesReady())
-        updateChoiceStates();
-      else if (_action && _action->isEnabled()) {
-        _action->update(dt);
-        return;
-	  } else {
-        run(statmt);
-        if (_lbl && (_currentStatement == _lbl->_stmts.size()))
-          gotoNextLabel();
-	  }
+	if (_action && _action->isEnabled())
+		_action->update(dt);
+	else if (!_lbl)
+		_state = None;
+	else if (_currentStatement == _lbl->_stmts.size())
+		gotoNextLabel();
+	else {
+		_state = Active;
+		while (_lbl && (_currentStatement < _lbl->_stmts.size()) && (_state == Active)) {
+			YStatement *statmt = _lbl->_stmts[_currentStatement];
+			IsChoice isChoice;
+			statmt->_exp->accept(isChoice);
+			if (!acceptConditions(statmt))
+				_currentStatement++;
+			else if (isChoice._isChoice) {
+				addSlot(statmt);
+				_currentStatement++;
+			} else if (choicesReady())
+				updateChoiceStates();
+			else if (_action && _action->isEnabled()) {
+				_action->update(dt);
+				return;
+			} else {
+				run(statmt);
+				if (_lbl && (_currentStatement == _lbl->_stmts.size()))
+					gotoNextLabel();
+			}
+		}
+		if (choicesReady())
+			updateChoiceStates();
+		else if (!_action || !_action->isEnabled())
+			_state = None;
 	}
-    if (choicesReady())
-        updateChoiceStates();
-    else if (!_action || !_action->isEnabled())
-      _state = None;
-  }
 }
 
 static Common::String remove(const Common::String &txt, char startC, char endC) {
@@ -383,6 +451,7 @@ void Dialog::addSlot(YStatement *stmt) {
 		slot->_stmt = stmt;
 		slot->_dlg = this;
 		slot->setPos(Math::Vector2d(SLOTMARGIN, SLOTMARGIN + slot->_text.getBounds().getY() * (MAXCHOICES - numSlots())));
+		slot->_isValid = true;
 	}
 }
 
@@ -402,6 +471,14 @@ void Dialog::clearSlots() {
 }
 
 void Dialog::drawCore(Math::Matrix4 trsf) {
+	for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
+		DialogSlot *slot = &_slots[i];
+		if (slot->_isValid) {
+			Math::Matrix4 t(trsf);
+			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY(), 0.f));
+			slot->_text.draw(g_engine->getGfx(), t);
+		}
+	}
 }
 
 } // namespace Twp

@@ -305,7 +305,7 @@ int Object::getFlags() {
 
 void Object::setRoom(Room *room) {
 	if ((_room != room) || !_node->getParent()) {
-		if(_room != room) {
+		if (_room != room) {
 			stopObjectMotors();
 		}
 		Room *oldRoom = _room;
@@ -533,6 +533,8 @@ void Object::stopTalking() {
 }
 
 void Object::say(const Common::StringArray &texts, Color color) {
+	if (texts.size() == 0)
+		return;
 	_talkingState._obj = this;
 	_talkingState._color = color;
 	_talkingState.say(texts, this);
