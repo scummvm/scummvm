@@ -54,70 +54,70 @@ void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dst
 
 		while (x--) {
 			//
-			// PA PB PC
-			// PD PE PF
-			// PG PH PI
+			// pA pB pC
+			// pD pE pF
+			// pG pH pI
 			//
-			Pixel PB = startAddr1[0];
-			Pixel PE = startAddr2[0];
-			Pixel PH = startAddr3[0];
+			Pixel pB = startAddr1[0];
+			Pixel pE = startAddr2[0];
+			Pixel pH = startAddr3[0];
 
-			Pixel PA = startAddr1[-1];
-			Pixel PD = startAddr2[-1];
-			Pixel PG = startAddr3[-1];
+			Pixel pA = startAddr1[-1];
+			Pixel pD = startAddr2[-1];
+			Pixel pG = startAddr3[-1];
 
-			Pixel PC = startAddr1[1];
-			Pixel PF = startAddr2[1];
-			Pixel PI = startAddr3[1];
+			Pixel pC = startAddr1[1];
+			Pixel pF = startAddr2[1];
+			Pixel pI = startAddr3[1];
 
 			bool doNotReblit = false;
-			E[0] = E[1] = E[2] = E[3] = PE;
+			E[0] = E[1] = E[2] = E[3] = pE;
 
 			if (!doNotReblit) {
-				if (PD != PF) {
-					if ((PE != PD) && (PD == PH) && (PD == PI) && (PE != PG)
-						&& ((PD != PG) || (PE != PF) || (PA != PD))
-						&& (!((PD == PA) && (PD == PG) && (PE == PB) && (PE == PF)))) {
-						E[2] = PH;
-						E[3] = interpolate_1_1(E[3], PH);
+				if (pD != pF) {
+					if ((pE != pD) && (pD == pH) && (pD == pI) && (pE != pG)
+						&& ((pD != pG) || (pE != pF) || (pA != pD))
+						&& (!((pD == pA) && (pD == pG) && (pE == pB) && (pE == pF)))) {
+						E[2] = pH;
+						E[3] = interpolate_1_1(E[3], pH);
 						doNotReblit = true;
-					} else if ((PE != PF) && (PF == PH) && (PF == PG) && (PE != PI)
-						&& ((PF != PI) || (PE != PD) || (PC != PF))
-						&& (!((PF == PC) && (PF == PI) && (PE == PB) && (PE == PD)))) {
-						E[2] = interpolate_1_1(E[2], PH);
-						E[3] = PH;
+					} else if ((pE != pF) && (pF == pH) && (pF == pG) && (pE != pI)
+						&& ((pF != pI) || (pE != pD) || (pC != pF))
+						&& (!((pF == pC) && (pF == pI) && (pE == pB) && (pE == pD)))) {
+						E[2] = interpolate_1_1(E[2], pH);
+						E[3] = pH;
 						doNotReblit = true;
 					}
 				}
 
-				if (PB != PH) {
-					if (PE != PB) {
-						if ((PA != PB) || (PB != PC) || (PE != PH)) {
-							if ((PB == PD) && (PB == PG) && (PE != PA)
-								&& (!((PD == PA) && (PD == PC) && (PE == PH) && (PE == PF)))) {
-								E[0] = interpolate_3_1( PB,E[0]);
-								E[2] = interpolate_3_1(E[2], PB);
+				if (pB != pH) {
+					if (pE != pB) {
+						if ((pA != pB) || (pB != pC) || (pE != pH)) {
+							if ((pB == pD) && (pB == pG) && (pE != pA)
+								&& (!((pD == pA) && (pD == pC) && (pE == pH) && (pE == pF)))) {
+								E[0] = interpolate_3_1( pB,E[0]);
+								E[2] = interpolate_3_1(E[2], pB);
 								doNotReblit = true;
-							} else if ((PB == PF) && (PB == PI) && (PE != PC)
-								&& (!((PF == PC) && (PF == PA) && (PE == PH) && (PE == PD)))) {
-								E[1] = interpolate_3_1(PB, E[1]);
-								E[3] = interpolate_3_1(E[3], PB);
+							} else if ((pB == pF) && (pB == pI) && (pE != pC)
+								&& (!((pF == pC) && (pF == pA) && (pE == pH) && (pE == pD)))) {
+								E[1] = interpolate_3_1(pB, E[1]);
+								E[3] = interpolate_3_1(E[3], pB);
 								doNotReblit = true;
 							}
 						}
 					}
 
-					if (PE != PH) {
-						if ((PG != PH) || (PE != PB) || (PH != PI)) {
-							if ((PH == PD) && (PH == PA) && (PE != PG)
-								&& (!((PD == PG) && (PD == PI) && (PE == PB) && (PE == PF)))) {
-								E[2] = interpolate_3_1( PH,E[2]);
-								E[0] = interpolate_3_1(E[0], PH);
+					if (pE != pH) {
+						if ((pG != pH) || (pE != pB) || (pH != pI)) {
+							if ((pH == pD) && (pH == pA) && (pE != pG)
+								&& (!((pD == pG) && (pD == pI) && (pE == pB) && (pE == pF)))) {
+								E[2] = interpolate_3_1( pH,E[2]);
+								E[0] = interpolate_3_1(E[0], pH);
 								doNotReblit = true;
-							} else if ((PH == PF) && (PH == PC) && (PE != PI)
-								&& (!((PF == PI) && (PF == PG) && (PE == PB) && (PE == PD)))) {
-								E[3] = interpolate_3_1( PH,E[3]);
-								E[1] = interpolate_3_1(E[1], PH);
+							} else if ((pH == pF) && (pH == pC) && (pE != pI)
+								&& (!((pF == pI) && (pF == pG) && (pE == pB) && (pE == pD)))) {
+								E[3] = interpolate_3_1( pH,E[3]);
+								E[1] = interpolate_3_1(E[1], pH);
 								doNotReblit = true;
 							}
 						}
@@ -126,40 +126,40 @@ void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dst
 			}
 
 			if (!doNotReblit) {
-				if ((PB != PH) && (PD != PF)) {
+				if ((pB != pH) && (pD != pF)) {
 
-					if ((PB == PD) && (PE != PD)
-						&& (!((PE == PA) && (PB == PC) && (PE == PF))) // Block
-						&& (!((PB == PA) && (PB == PG)))
-						&& (!((PD == PA) && (PD == PC) && (PE == PF) && (PG != PD) && (PG != PE))))
-						E[0] = interpolate_1_1(E[0], PB);
+					if ((pB == pD) && (pE != pD)
+						&& (!((pE == pA) && (pB == pC) && (pE == pF))) // Block
+						&& (!((pB == pA) && (pB == pG)))
+						&& (!((pD == pA) && (pD == pC) && (pE == pF) && (pG != pD) && (pG != pE))))
+						E[0] = interpolate_1_1(E[0], pB);
 
-					if ((PB == PF) && (PE != PF)
-						&& (!((PE == PC) && (PB == PA) && (PE == PD))) // Block
-						&& (!((PB == PC) && (PB == PI)))
-						&& (!((PF == PA) && (PF == PC) && (PE == PD) && (PI != PF) && (PI != PE))))
-						E[1] = interpolate_1_1(E[1], PB);
+					if ((pB == pF) && (pE != pF)
+						&& (!((pE == pC) && (pB == pA) && (pE == pD))) // Block
+						&& (!((pB == pC) && (pB == pI)))
+						&& (!((pF == pA) && (pF == pC) && (pE == pD) && (pI != pF) && (pI != pE))))
+						E[1] = interpolate_1_1(E[1], pB);
 
-					if ((PH == PD) && ((PE != PG) || (PE != PD))
-						&& (!((PE == PG) && (PH == PI) && (PE == PF))) // Block
-						&& (!((PH == PG) && (PH == PA)))
-						&& (!((PD == PG) && (PD == PI) && (PE == PF) && (PA != PD) && (PA != PE))))
-						E[2] = interpolate_1_1(E[2], PH);
+					if ((pH == pD) && ((pE != pG) || (pE != pD))
+						&& (!((pE == pG) && (pH == pI) && (pE == pF))) // Block
+						&& (!((pH == pG) && (pH == pA)))
+						&& (!((pD == pG) && (pD == pI) && (pE == pF) && (pA != pD) && (pA != pE))))
+						E[2] = interpolate_1_1(E[2], pH);
 
-					if ((PH == PF) && ((PE != PI) || (PE != PF))
-						&& (!((PE == PI) && (PH == PG) && (PE == PD))) // Block
-						&& (!((PH == PI) && (PH == PC)))
-						&& (!((PF == PG) && (PF == PI) && (PE == PD) && (PC != PF) && (PI != PE))))
-						E[3] = interpolate_1_1(E[3], PH);
+					if ((pH == pF) && ((pE != pI) || (pE != pF))
+						&& (!((pE == pI) && (pH == pG) && (pE == pD))) // Block
+						&& (!((pH == pI) && (pH == pC)))
+						&& (!((pF == pG) && (pF == pI) && (pE == pD) && (pC != pF) && (pI != pE))))
+						E[3] = interpolate_1_1(E[3], pH);
 
-				} else if ((PD == PB) && (PD == PF) && (PD == PH) && (PD != PE)) {
-					if ((PD == PG) || (PD == PC)) {
-						E[1] = interpolate_1_1(E[1], PD);
+				} else if ((pD == pB) && (pD == pF) && (pD == pH) && (pD != pE)) {
+					if ((pD == pG) || (pD == pC)) {
+						E[1] = interpolate_1_1(E[1], pD);
 						E[2] = E[1];
 					}
 
-					if ((PD == PA) || (PD == PI)) {
-						E[0] = interpolate_1_1(E[0], PD);
+					if ((pD == pA) || (pD == pI)) {
+						E[0] = interpolate_1_1(E[0], pD);
 						E[3] = E[0];
 					}
 				}
