@@ -2193,13 +2193,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Korean Windows version is named 'Time Girl'
 	WINGAME1_l("timegal", "", "TIMEGIRL.EXE", "0e5a7734bdc74198a62171ea4d51a364", 687457, Common::KO_KOR, 400),
 
-	// Tivola demo/sampler disc, Spring 1999, released in Germany
-	// Director 4 version
-	MACGAME2f_l("tivolaspring1999", "Sampler/D4", "Start4",       "r:55b351ff9e11799b4e71f75cb246302c", 484752,
-												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 401, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler/D4", "START416.EXE", "t:0499c4f00a3b0c061ff883f8222e091d", 698543,
-												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 401, GF_32BPP),
-
 	// Found on
 	// 1995-08-16 Mac/Win hybrid v1.2 release of SimTower
 	// 1995-10-28 Mac/Win hybrid release of Marty
@@ -6995,13 +6988,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 500),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
 
-	// Tivola demo/sampler disc, Spring 1999, released in Germany
-	// Director 5 version
-	MACGAME2f_l("tivolaspring1999", "Sampler/D5", "Start5",       "r:2d2ac01320f4c2dce8e156cda5c73fe8", 716741,
-												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler/D5", "START516.EXE", "t:c41376e07342bc08880efbe3bf417e10", 938281,
-												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
-
 	// ein Fall für TKKG: Katjas Geheimnis (bilingual DE/EN)
 	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
 						  "SCORE.DXR",  "9ffb87ff9d3110435da99a052279fb4c", 10434, 501),
@@ -7837,18 +7823,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
-	// Director 6 version
-	MACGAME2f_l("tivolaspring1999", "Sampler/D6", "Start",       "r:34be958e28922244011f9f0be46c5b57", 1030506,
+	MACGAME2f_l("tivolaspring1999", "Sampler",	  "Start",       "r:34be958e28922244011f9f0be46c5b57", 1030506,
 												  "Intro.dxr",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler/D6", "START16.EXE", "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+	WINGAME2f_l("tivolaspring1999", "Sampler",	  "START16.EXE", "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
 												  "INTRO.DXR",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
-
-	// Tivola demo/sampler disc, Spring 1999, released in Germany
-	// Director 6 version, alternative executable
-	MACGAME2f_l("tivolaspring1999", "Sampler/D6", "Start6",       "r:55d01cca925752c170ac1e9c01d1f87e", 1029126,
-												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler/D6", "START616.EXE", "t:c7199189543f4d55e536e62d21bec032", 1247283,
-												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
 	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,
