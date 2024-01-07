@@ -303,14 +303,11 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 
 	ThreadBase *t = sqthread(id);
 	if (!t) {
-		// TODO: sound
-		// let sound = sound(id);
-		// if (!sound) {
-		// 	warning("thread and sound not found: %d", id);
-		// 	return 0;
-		// }
-		// return breakwhilecond(v, [&] { return sound(id); }, "breakwhilerunning(%d)", id);
-		return 0;
+		if(!isSound(id)) {
+			warning("thread and sound not found: %d", id);
+			return 0;
+		}
+		return breakwhilecond(v, [id] { return g_engine->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
 	}
 	return breakwhilecond(
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
@@ -381,9 +378,13 @@ static SQInteger breakwhilewalking(HSQUIRRELVM v) {
 		v, [obj]() { return obj->getWalkTo() && obj->getWalkTo()->isEnabled(); }, "breakwhilewalking(%s)", obj->_name.c_str());
 }
 
+// Breaks until specified sound has finished playing.
+// Once sound finishes, the method will continue running.
 static SQInteger breakwhilesound(HSQUIRRELVM v) {
-	warning("TODO: breakwhilesound: not implemented");
-	return 0;
+  int soundId = 0;
+  if (SQ_FAILED(sqget(v, 2, soundId)))
+		return sq_throwerror(v, "failed to get sound");
+  return breakwhilecond(v, [soundId](){ return g_engine->_audio.playing(soundId); }, "breakwhilesound(%d)", soundId);
 }
 
 static SQInteger cutscene(HSQUIRRELVM v) {

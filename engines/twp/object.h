@@ -261,6 +261,7 @@ public:
 	float _popElapsed = 0.f;
 	int _popCount = 0;
 	Sentence _exec;
+	int _sound = 0;
 
 private:
 	Motor *_alphaTo = nullptr;

@@ -45,6 +45,7 @@
 #include "twp/hud.h"
 #include "twp/callback.h"
 #include "twp/walkboxnode.h"
+#include "twp/audio.h"
 #include "twp/actorswitcher.h"
 
 #define SCREEN_MARGIN 100.f
@@ -216,6 +217,7 @@ public:
 	Hud _hud;
 	Inventory _uiInv;
 	ActorSwitcher _actorSwitcher;
+	AudioSystem _audio;
 
 private:
 	Gfx _gfx;

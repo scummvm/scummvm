@@ -174,8 +174,9 @@ void Cutscene::stop() {
 		g_engine->_inputState.setInputActive(true);
 	debug("Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
-	for (int i = 0; i < g_engine->_threads.size(); i++) {
-		ThreadBase *thread = g_engine->_threads[i];
+	Common::Array<ThreadBase *> threads(g_engine->_threads);
+	for (int i = 0; i < threads.size(); i++) {
+		ThreadBase *thread = threads[i];
 		if (thread->isGlobal())
 			thread->unpause();
 	}
