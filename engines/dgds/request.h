@@ -40,7 +40,8 @@ struct RequestStruct2 {
 };
 
 // basic gadget is 52 (0x34) bytes
-struct Gadget {
+class Gadget {
+public:
 	// NOTE: Most of these names are still guesses
 	uint16 _gadgetNo;
 	uint16 _x;
@@ -67,28 +68,42 @@ struct Gadget {
 	uint16 _field16_0x24;
 	uint16 _field17_0x26;
 
+	uint16 _field20_0x28;
+	uint16 _field21_0x2a;
+
 	uint16 _parentX;
 	uint16 _parentY;
+
+	virtual Common::String dump() const;
 };
 
 // extended gadget type 1 is 62 (0x3e) bytes
-struct Gadget1 : public Gadget {
+class Gadget1 : public Gadget {
+public:
 	uint16 _gadget1_i1;
 	uint16 _gadget1_i2;
+
+	Common::String dump() const override;
 };
 
 // extended gadget type 2 is 74 (0x4a) bytes
-struct Gadget2 : public Gadget {
+class Gadget2 : public Gadget {
+public:
 	uint16 _gadget2_i1;
 	uint16 _gadget2_i2;
 	uint16 _gadget2_i3;
 	uint16 _gadget2_i4;
+
+	Common::String dump() const override;
 };
 
 // extended gadget type 8 is 68 (0x44) bytes
-struct Gadget8 : public Gadget {
+class Gadget8 : public Gadget {
+public:
 	uint16 _gadget8_i1;
 	uint16 _gadget8_i2;
+
+	Common::String dump() const override;
 };
 
 class RequestData : public ParserData {
@@ -96,10 +111,12 @@ public:
 	uint16 _fileNum;
 	uint16 _x;
 	uint16 _y;
-	uint16 _vals[7];
+	uint16 _vals[5];
 	Common::Array<RequestStruct1> _struct1List;
 	Common::Array<RequestStruct2> _struct2List;
 	Common::Array<Common::SharedPtr<Gadget>> _gadgets;
+
+	Common::String dump() const;
 };
 
 /**
@@ -108,17 +125,16 @@ public:
  *
  * Request files include REQ and GAD (Gadget) chunks.
  */
-class Request : public DgdsParser {
+class RequestParser : public DgdsParser {
 public:
-	Request(ResourceManager *resman, Decompressor *decompressor);
-	virtual ~Request() {}
+	RequestParser(ResourceManager *resman, Decompressor *decompressor);
+	virtual ~RequestParser() {}
 
 	bool handleChunk(DgdsChunkReader &chunk, ParserData *data) override;
 
 protected:
 	bool parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num);
 	bool parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num);
-
 };
 
 
