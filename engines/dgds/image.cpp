@@ -110,7 +110,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 	}
 
 	int64 vqtpos = -1;
-	int32 vqtsize = -1;
+	int64 scnpos = -1;
 	uint16 tileWidths[64];
 	uint16 tileHeights[64];
 	int32 tileOffset = 0;
@@ -121,6 +121,8 @@ void Image::loadBitmap(Common::String filename, int number) {
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
+			if (tileCount > 64)
+				error("Image::loadBitmap: Unexpectedly large number of tiles in image (%d)", tileCount);
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileWidths[k] = stream->readUint16LE();
 			}
@@ -153,20 +155,19 @@ void Image::loadBitmap(Common::String filename, int number) {
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
 			vqtpos = fileStream->pos();
-			vqtsize = chunk.getSize();
-			stream->skip(vqtsize);
 		} else if (chunk.isSection(ID_SCN)) {
-			// TODO: SCN file parsing - eg, "WILLCRED.BMP" from Willy Beamish
-			error("TODO: Implement SCN type BMP file parsing for %s", filename.c_str());
+			// Postpone parsing this until we have the offsets, which come after.
+			scnpos = fileStream->pos();
 		} else if (chunk.isSection(ID_OFF)) {
-			if (vqtpos == -1)
-				error("Expect VQT chunk before OFF chunk in BMP resource %s", filename.c_str());
+			if (vqtpos == -1 && scnpos == -1)
+				error("Expect VQT or SCN chunk before OFF chunk in BMP resource %s", filename.c_str());
 
 			// 2 possibilities: A set of offsets (find the one which we need and use it)
 			// or a single value of 0xffff.  If it's only one tile the offset is always
 			// zero anyway.  For subsequent images, round up to the next byte to start
 			// reading.
 			if (chunk.getSize() == 2) {
+				assert(scnpos == -1);  // don't support this mode for SCN?
 				if (number != 0) {
 					uint16 val = stream->readUint16LE();
 					if (val != 0xffff)
@@ -183,11 +184,20 @@ void Image::loadBitmap(Common::String filename, int number) {
 			} else {
 				if (number)
 					stream->skip(4 * number);
-				uint32 vqtOffset = stream->readUint32LE();
-				// TODO: seek stream to end for tidiness?
-				fileStream->seek(vqtpos + vqtOffset);
-				loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
+
+				uint32 subImgOffset = stream->readUint32LE();
+				if (vqtpos != -1) {
+					fileStream->seek(vqtpos + subImgOffset);
+					loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
+				} else {
+					fileStream->seek(scnpos + subImgOffset);
+					loadSCN(_bmpData, tileWidths[number], tileHeights[number], fileStream);
+				}
 			}
+			// NOTE: This was proably the last chunk, but we don't check - should have
+			// the image data now. If we need to read another chunk we should fix up the
+			// offset of fileStream because we just broke it.
+			break;
 		}
 	}
 
@@ -382,6 +392,65 @@ uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toff
 	_doVqtDecode(&state, 0, 0, tw, th);
 	free(buf);
 	return state.offset;
+}
+
+//
+// SCN file parsing - eg, "WILLCRED.BMP" from Willy Beamish
+// Ref: https://moddingwiki.shikadi.net/wiki/The_Incredible_Machine_Image_Format
+//
+bool Image::loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::SeekableReadStream *stream) {
+	surf.create(tw, th, Graphics::PixelFormat::createFormatCLUT8());
+	byte *dst = (byte *)surf.getPixels();
+
+	int32 y = 0;
+	int32 x = 0;
+
+	const byte addVal = stream->readByte();
+
+	byte lastcmd = 0xff;
+	while (y < th && !stream->eos()) {
+		byte val = stream->readByte();
+		byte cmd = val & 0xc0; // top 2 bits are the command
+		val &= 0x3f;		   // bottom 6 bits are the value
+		switch (cmd) {
+		case 0x00: // CMD 00 - move cursor down and back
+			if (lastcmd == 0x00 && val) {
+				x -= (val << 6);
+			} else {
+				y++;
+				x -= val;
+			}
+			if (x < 0)
+				error("Image::loadSCN: Moved x too far back on line %d", y);
+			break;
+		case 0x40: // CMD 01 - skip
+			if (!val)
+				y = th; // end of image.
+			else
+				x += val;
+			break;
+		case 0x80: { // CMD 10 - repeat val
+			byte color = stream->readByte();
+			for (uint16 i = 0; i < val; i++)
+				dst[y * tw + x + i] = color + addVal;
+			x += val;
+			break;
+		}
+		case 0xc0: { // CMD 11 - direct read of 4-bit values
+			for (uint16 i = 0; i < (val + 1) / 2; i++) {
+				byte color = stream->readByte();
+				dst[y * tw + x + i * 2] = (color >> 4) + addVal;
+				dst[y * tw + x + i * 2 + 1] = (color & 0xf) + addVal;
+			}
+			x += val;
+			break;
+		}
+		}
+		lastcmd = cmd;
+		if (x > tw)
+			error("Image::loadSCN: Invalid data, x went off the end of the row");
+	}
+	return !stream->err();
 }
 
 void Image::loadPalette(Common::String filename) {
