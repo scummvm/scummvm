@@ -154,6 +154,7 @@ public:
 
 	void getVolumes();
 	void setVolumes();
+	byte clampVolume(int32 volume);
 
 	Common::Mutex _soundMutex;
 	Audio::Mixer *_mixer;
