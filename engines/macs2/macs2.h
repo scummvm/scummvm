@@ -56,6 +56,8 @@ struct AnimFrame {
 	byte *Data;
 	uint16 Width;
 	uint16 Height;
+
+	void ReadFromeFile(Common::File &file);
 };
 
 class Macs2Engine : public Engine, public Events {
