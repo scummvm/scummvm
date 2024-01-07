@@ -205,7 +205,7 @@
 		},
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -225,7 +225,7 @@
 		},
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -244,7 +244,7 @@
 	  	},
 		FR_FRA,
 	  	kPlatformDOS,
-	  	ADGF_NO_FLAGS,
+	  	ADGF_DEMO,
 	  	GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
