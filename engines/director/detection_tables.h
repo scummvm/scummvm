@@ -6990,10 +6990,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
 	// Director 5 version
-	MACGAME2f_l("tivolaspring1999", "Sampler", "Start5",       "r:2d2ac01320f4c2dce8e156cda5c73fe8", 716741,
-											   "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler", "START516.EXE", "t:c41376e07342bc08880efbe3bf417e10", 938281,
-											   "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
+	MACGAME2f_l("tivolaspring1999", "Sampler/D5", "Start5",       "r:2d2ac01320f4c2dce8e156cda5c73fe8", 716741,
+												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler/D5", "START516.EXE", "t:c41376e07342bc08880efbe3bf417e10", 938281,
+												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
 
 	// ein Fall für TKKG: Katjas Geheimnis (bilingual DE/EN)
 	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
