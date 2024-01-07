@@ -98,7 +98,18 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 135, back, front, surface);
-	drawStringInSurface(Common::String::format("%08d", score), 136, 6, back, other, surface);
+
+	Common::String scoreStr = Common::String::format("%07d", score);
+	drawStringInSurface(scoreStr, 136, 6, back, other, surface, 'Z' - '0' + 1);
+
+	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 135, back, front, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, back, front, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 135, back, front, surface, 'Z' - '$' + 1);
+
+	if (_shootingFrames > 0) {
+		drawStringInSurface("4", 232, 135, back, front, surface, 'Z' - '$' + 1);
+		drawStringInSurface("<", 240, 135, back, front, surface, 'Z' - '$' + 1);
+	}
 }
 
 } // End of namespace Freescape
