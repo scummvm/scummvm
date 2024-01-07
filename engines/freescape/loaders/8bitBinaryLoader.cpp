@@ -858,7 +858,7 @@ void FreescapeEngine::loadFonts(byte *font, int charNumber) {
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
-	int charNumber = 60;
+	int charNumber = 85;
 	byte *font = nullptr;
 	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
 		font = (byte *)malloc(6 * charNumber);

@@ -81,6 +81,11 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerSteps.push_back(1);
 	_playerSteps.push_back(10);
 	_playerSteps.push_back(25);
+
+	_angleRotationIndex = 1;
+	_angleRotations.push_back(5);
+	_angleRotations.push_back(10);
+	_angleRotations.push_back(15);
 }
 
 void EclipseEngine::initGameState() {
