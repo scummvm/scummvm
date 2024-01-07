@@ -4,7 +4,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.8.1 (????-??-??)
 
  General:
-  - Fixed GLSL version parsing on some OpenGL ES2 platforms
+   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
+
+ MM:
+   - Enabled engine, allowing MM1 and Xeen to be compiled.
 
  SCUMM:
    - Fix screen corruption (and sometimes even crashes) in Mac Loom and
@@ -13,9 +16,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      Crusade.
 
  TWINE:
-   - Fix ladder climbing regression
-   - Fix scenery zoom issue
-   - Fix animation glitches after using the holomap
+   - Fix ladder climbing regression.
+   - Fix scenery zoom issue.
+   - Fix animation glitches after using the holomap.
+
+ Android port:
+   - Fixed crash in built-in help with German language.
 
 #### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
@@ -69,7 +75,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented localizations for the copyright screen and main menu.
 
  Freescape:
-   - Improved collision and projectile detection using sweepAABB
+   - Improved collision and projectile detection using sweepAABB.
 
  GrimE:
    - Added support for Chinese Grim Fandango.
