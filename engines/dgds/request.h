@@ -30,9 +30,11 @@
 
 namespace Dgds {
 
-struct RequestStruct1 {
-	uint16 _vals[4];
-	Common::String _str;
+struct TextItem {
+	uint16 _x;
+	uint16 _y;
+	uint16 _vals[2];
+	Common::String _txt;
 };
 
 struct RequestStruct2 {
@@ -106,15 +108,23 @@ public:
 	Common::String dump() const override;
 };
 
-class RequestData : public ParserData {
+class RequestData {
 public:
 	uint16 _fileNum;
 	uint16 _x;
 	uint16 _y;
 	uint16 _vals[5];
-	Common::Array<RequestStruct1> _struct1List;
+	Common::Array<TextItem> _textItemList;
 	Common::Array<RequestStruct2> _struct2List;
 	Common::Array<Common::SharedPtr<Gadget>> _gadgets;
+
+	Common::String dump() const;
+};
+
+// A REQ file contains a sequence of REQ and GAD block pairs.
+class REQFileData : public ParserData {
+public:
+	Common::Array<RequestData> _requests;
 
 	Common::String dump() const;
 };
