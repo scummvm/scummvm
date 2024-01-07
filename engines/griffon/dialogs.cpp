@@ -45,7 +45,6 @@ namespace Griffon {
 #define MINCURSEL 7
 #define MAXCURSEL 16
 #define SY 25
-#define PI 3.141593
 
 void GriffonEngine::title(int mode) {
 	const char *optionTitles[4] = {
@@ -128,7 +127,7 @@ void GriffonEngine::title(int mode) {
 		else
 			drawString(_videoBuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
-		rc.left = (int16)(x - 16 - 4 * cos(2 * PI * _itemyloc / 16));
+		rc.left = (int16)(x - 16 - 4 * cos(2 * M_PI * _itemyloc / 16));
 		rc.top = (int16)(y - 4 + 16 * cursel);
 
 		_itemImg[15]->blendBlitTo(*_videoBuffer, rc.left, rc.top);
@@ -311,8 +310,8 @@ void GriffonEngine::configMenu() {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 		_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 
-		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
-		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
+		rcDest.left = 256 + 256 * cos(M_PI / 180 * _cloudAngle * 40);
+		rcDest.top = 192 + 192 * sin(M_PI / 180 * _cloudAngle * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
@@ -374,7 +373,7 @@ void GriffonEngine::configMenu() {
 			curselt += 1;
 
 		Common::Rect rc;
-		rc.left = 148 + 3 * cos(2 * PI * _itemyloc / 16.0);
+		rc.left = 148 + 3 * cos(2 * M_PI * _itemyloc / 16.0);
 		rc.top = sy + 8 * curselt - 4;
 
 		_itemImg[15]->blendBlitTo(*_videoBuffer, rc.left, rc.top);
@@ -656,8 +655,8 @@ void GriffonEngine::saveLoadNew() {
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
 
-		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
-		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
+		rcDest.left = 256 + 256 * cos(M_PI / 180 * _cloudAngle * 40);
+		rcDest.top = 192 + 192 * sin(M_PI / 180 * _cloudAngle * 40);
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
@@ -812,11 +811,11 @@ void GriffonEngine::saveLoadNew() {
 					break;
 			}
 
-			rcDest.left += (int16)(2 + 2 * sin(2 * PI * _itemyloc / 16));
+			rcDest.left += (int16)(2 + 2 * sin(2 * M_PI * _itemyloc / 16));
 		}
 
 		if (curRow > 0) {
-			rcDest.left = (int16)(0 + 2 * sin(2 * PI * _itemyloc / 16));
+			rcDest.left = (int16)(0 + 2 * sin(2 * M_PI * _itemyloc / 16));
 			rcDest.top = (int16)(53 + (curRow - 1) * 48);
 		}
 
