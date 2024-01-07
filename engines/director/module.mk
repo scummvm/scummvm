@@ -79,6 +79,7 @@ MODULE_OBJS = \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/findfolder.o \
 	lingo/xlibs/findsys.o \
+	lingo/xlibs/findwin.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
