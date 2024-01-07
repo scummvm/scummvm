@@ -172,6 +172,8 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 4:
 			_mainChannels.tempo = stream.readByte();
+			if (_mainChannels.tempo && _mainChannels.tempo <= 120)
+				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
 			break;
 		case 5:
 			_mainChannels.transType = static_cast<TransitionType>(stream.readByte());
@@ -418,6 +420,8 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 4:
 			_mainChannels.tempo = stream.readByte();
+			if (_mainChannels.tempo && _mainChannels.tempo <= 120)
+				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
 			break;
 		case 5:
 			_mainChannels.transType = static_cast<TransitionType>(stream.readByte());
@@ -727,6 +731,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 21:
 			_mainChannels.tempo = stream.readByte();
+			if (_mainChannels.tempo && _mainChannels.tempo <= 120)
+				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
 			break;
 		case 22:
 			stream.read(unk, 2);

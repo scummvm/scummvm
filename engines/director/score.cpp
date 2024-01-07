@@ -61,6 +61,7 @@ Score::Score(Movie *movie) {
 
 	_soundManager = _window->getSoundManager();
 
+	_puppetTempo = 0;
 	_puppetPalette = false;
 	_paletteTransitionIndex = 0;
 	memset(_paletteSnapshotBuffer, 0, 768);
@@ -107,7 +108,7 @@ Score::~Score() {
 }
 
 void Score::setPuppetTempo(int16 puppetTempo) {
-	_currentFrame->_mainChannels.tempo = puppetTempo;
+	_puppetTempo = puppetTempo;
 }
 
 CastMemberID Score::getCurrentPalette() {
@@ -446,7 +447,13 @@ void Score::update() {
 
 	loadFrame(_curFrameNumber, true);
 
-	byte tempo = _currentFrame->_mainChannels.tempo;
+	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
+	// puppetTempo is overridden by changes in score tempo
+	if (_currentFrame->_mainChannels.tempo || tempo != _lastTempo) {
+		_puppetTempo = 0;
+	} else if (_puppetTempo) {
+		tempo = _puppetTempo;
+	}
 
 	if (tempo) {
 		const bool waitForClickOnly = _vm->getVersion() < 300;
