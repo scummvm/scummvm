@@ -444,15 +444,28 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 	debug("-- Leaving A3D2");
 }
 
-void PlaySound() {
+
+void Macs2Engine::PlaySound() {
 	OPL::OPL *_opl = OPL::Config::create();
-	_opl->init();
-	// _opl->start(new Common::Functor0Mem<void, SoundDriverAdlib>(this, &SoundDriverAdlib::onTimer), CALLBACKS_PER_SECOND);
+	int status = _opl->init();
+	
+	#define CALLBACKS_PER_SECOND 10
+	_opl->start(new Common::Functor0Mem<void, Macs2Engine>(this, &Macs2Engine::OnTimer), CALLBACKS_PER_SECOND);
+	// _opl->write(0x388, 0x00);
+	_opl->writeReg(0x388, 0xA0);
+	_opl->writeReg(0x389, 0x36);
+	_opl->writeReg(0x388, 0x20);
+	_opl->writeReg(0x389, 0x20);
 	// initialize();
+}
+
+void Macs2Engine::OnTimer() {
 }
 
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
+	PlaySound();
+
 	// Implements roughly 01E7:DB56 and friends
 	// TODO: Change to a proper end condition
 	// TODO: Do some bookkeeping on the pointers into the script
@@ -535,14 +548,18 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 			// l0037_DC8F:;
 				// TODO Cóntinue here
 				if (v2 == v4 && v1 == v3) {
-
+					bp12 = true;
 				}
-				
 			} else {
 				ScriptNoEntry
 			}
-	
 
+			// TODO: Check if we can reach this label also from the other opcodes
+			// l0037_DD2E:
+			if (!bp12) {
+				// Skip ahead
+				FuncA3D2(stream);
+			}
 
 			
 		}
