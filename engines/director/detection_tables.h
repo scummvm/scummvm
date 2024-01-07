@@ -1787,6 +1787,7 @@ namespace Director {
 #define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define MACGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh, (fl|ADGF_MACRESFORK), v)
 #define WINGAME2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
@@ -6989,6 +6990,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
 	// Director 5 version
+	MACGAME2f_l("tivolaspring1999", "Sampler", "Start5",       "r:2d2ac01320f4c2dce8e156cda5c73fe8", 716741,
+											   "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
 	WINGAME2f_l("tivolaspring1999", "Sampler", "START516.EXE", "t:c41376e07342bc08880efbe3bf417e10", 938281,
 											   "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 501, GF_32BPP),
 
