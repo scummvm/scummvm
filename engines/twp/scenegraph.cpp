@@ -287,7 +287,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 void Anim::trigSound() {
 	if ((_anim->triggers.size() > 0) && _frameIndex < _anim->triggers.size()) {
 		const Common::String &trigger = _anim->triggers[_frameIndex];
-		if (trigger.size() > 0) {
+		if ((trigger.size() > 0) && trigger!= "null") {
 			_obj->trig(trigger);
 		}
 	}

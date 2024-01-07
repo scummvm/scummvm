@@ -314,7 +314,7 @@ Object *sqactor(HSQUIRRELVM v, int i) {
 	return nullptr;
 }
 
-static SoundDefinition *sqsounddef(int id) {
+SoundDefinition *sqsounddef(int id) {
 	for (int i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
 		SoundDefinition *sound = g_engine->_audio._soundDefs[i];
 		if (sound->getId() == id)
@@ -327,22 +327,6 @@ SoundDefinition *sqsounddef(HSQUIRRELVM v, int i) {
 	int id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqsounddef(id);
-	return nullptr;
-}
-
-// Audio::SoundHandle sqsound(int id) {
-//   for (int i=0;i<sound in g_engine->_mixer->_channels.size;i++) {
-// 	chan = g_engine->_mixer->_channels[i];
-//     if not sound.isNil and sound.id == id:
-//       return sound;
-//   }
-//   return {};
-// }
-
-SoundDefinition *sqsound(HSQUIRRELVM v, int i) {
-	// int id;
-	// if (SQ_SUCCEEDED(sqget(v, i, id)))
-	// 	return sqsound(id);
 	return nullptr;
 }
 
