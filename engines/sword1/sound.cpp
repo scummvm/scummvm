@@ -725,7 +725,8 @@ void Sound::playSpeech() {
 		(byte *)_speechSample, _speechSize, 11025, SPEECH_FLAGS, DisposeAfterUse::NO);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_hSampleSpeech, stream);
 
-	_mixer->setChannelVolume(_hSampleSpeech, 2 * (4 * (_volSpeech[0] + _volSpeech[1])));
+	byte speechVolume = clampVolume(2 * (4 * (_volSpeech[0] + _volSpeech[1])));
+	_mixer->setChannelVolume(_hSampleSpeech, speechVolume);
 
 	int pan = 64 + (4 * ((int32)_volSpeech[1] - (int32)_volSpeech[0]));
 	_mixer->setChannelBalance(_hSampleSpeech, scalePan(pan));
@@ -772,7 +773,7 @@ static void soundCallback(void *refCon) {
 					int32 targetVolume = (snd->_fxFadeVolume[0] + snd->_fxFadeVolume[1]) / 2;
 
 					// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-					snd->setFXVolume((byte)(targetVolume * 2), i);
+					snd->setFXVolume(snd->clampVolume(targetVolume * 2), i);
 				}
 			}
 		}
@@ -900,7 +901,7 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_hSampleMusic[newHandleId], _musicOutputStream[newHandleId]);
 
 	_mixer->setChannelRate(_hSampleMusic[newHandleId], sampleRate);
-	_mixer->setChannelVolume(_hSampleMusic[newHandleId], volume);
+	_mixer->setChannelVolume(_hSampleMusic[newHandleId], clampVolume((int32)volume));
 	_mixer->setChannelBalance(_hSampleMusic[newHandleId], pan);
 
 	_musicStreamPlaying[newHandleId] = true;
@@ -1008,7 +1009,7 @@ void Sound::updateMusicStreaming() {
 						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
 							2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16));
 						_mixer->setChannelVolume(_hSampleMusic[i],
-							2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16));
+							clampVolume(2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
 
 						_musicStreamFading[i] += 1;
 						if (_musicStreamFading[i] == 0) {
@@ -1025,7 +1026,7 @@ void Sound::updateMusicStreaming() {
 						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
 							2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16));
 						_mixer->setChannelVolume(_hSampleMusic[i],
-							2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16));
+							clampVolume(2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
 
 						_musicStreamFading[i] += 1;
 						if (_musicStreamFading[i] == 17) {
@@ -1145,7 +1146,7 @@ void Sound::playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]) {
 				v1 = _volFX[1] * vol[1];
 
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_hSampleFX[i], stream, -1, 0);
-				_mixer->setChannelVolume(_hSampleFX[i], 2 * ((v0 + v1) / 8));
+				_mixer->setChannelVolume(_hSampleFX[i], clampVolume(2 * ((v0 + v1) / 8)));
 				_mixer->setChannelBalance(_hSampleFX[i], scalePan(64 + ((v1 - v0) / 4)));
 			}
 
@@ -1246,14 +1247,14 @@ void Sound::reduceMusicVolume() {
 	_musicFadeVolume[1] = _volMusic[0] * MUSIC_UNDERSCORE / 100; // We are explicitly accessing _volMusic[0] again
 
 	// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-	_mixer->setChannelVolume(_hSampleMusic[0], 2 * ((_musicFadeVolume[0] + _musicFadeVolume[1]) * 3));
+	_mixer->setChannelVolume(_hSampleMusic[0], clampVolume(2 * ((_musicFadeVolume[0] + _musicFadeVolume[1]) * 3)));
 }
 
 void Sound::restoreMusicVolume() {
 	Common::StackLock lock(_soundMutex);
 
 	// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-	_mixer->setChannelVolume(_hSampleMusic[0], 2 * ((_volMusic[0] + _volMusic[1]) * 3));
+	_mixer->setChannelVolume(_hSampleMusic[0], clampVolume(2 * ((_volMusic[0] + _volMusic[1]) * 3)));
 }
 
 void Sound::setCrossFadeIncrement() {
@@ -1413,6 +1414,10 @@ void Sound::setVolumes() {
 	} else {
 		SwordEngine::_systemVars.playSpeech = true;
 	}
+}
+
+byte Sound::clampVolume(int32 volume) {
+	return (byte)CLIP<int32>(volume, 0, 255);
 }
 
 int8 Sound::scalePan(int pan) {
