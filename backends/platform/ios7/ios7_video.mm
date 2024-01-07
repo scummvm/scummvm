@@ -389,7 +389,14 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 #if TARGET_OS_IOS
 - (void)triggerTouchModeChanged {
-	if ([self isKeyboardShown]) {
+	BOOL hwKeyboardConnected = NO;
+	if (@available(iOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			hwKeyboardConnected = YES;
+		}
+	}
+
+	if ([self isKeyboardShown] && !hwKeyboardConnected) {
 		[self hideKeyboard];
 	} else {
 		[self addEvent:InternalEvent(kInputTouchModeChanged, 0, 0)];
