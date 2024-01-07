@@ -29,7 +29,7 @@ namespace Twp {
 
 HudShader::HudShader() {
 	const char *verbVtxShader = R"(#version 110
-		attribute vec2 a_position;
+	attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
 

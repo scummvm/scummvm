@@ -314,6 +314,38 @@ Object *sqactor(HSQUIRRELVM v, int i) {
 	return nullptr;
 }
 
+static SoundDefinition *sqsounddef(int id) {
+	for (int i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
+		SoundDefinition *sound = g_engine->_audio._soundDefs[i];
+		if (sound->getId() == id)
+			return sound;
+	}
+	return nullptr;
+}
+
+SoundDefinition *sqsounddef(HSQUIRRELVM v, int i) {
+	int id;
+	if (SQ_SUCCEEDED(sqget(v, i, id)))
+		return sqsounddef(id);
+	return nullptr;
+}
+
+// Audio::SoundHandle sqsound(int id) {
+//   for (int i=0;i<sound in g_engine->_mixer->_channels.size;i++) {
+// 	chan = g_engine->_mixer->_channels[i];
+//     if not sound.isNil and sound.id == id:
+//       return sound;
+//   }
+//   return {};
+// }
+
+SoundDefinition *sqsound(HSQUIRRELVM v, int i) {
+	// int id;
+	// if (SQ_SUCCEEDED(sqget(v, i, id)))
+	// 	return sqsound(id);
+	return nullptr;
+}
+
 int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {
 	SQInteger top = sq_gettop(v);
 	sqpush(v, obj);
@@ -384,6 +416,23 @@ ThreadBase *sqthread(HSQUIRRELVM v) {
 	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](ThreadBase *t) {
 		return t->getThread() == v;
 	});
+}
+
+static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<SoundDefinition *> &arr) {
+	sq_pushobject(v, o);
+	sq_pushnull(v);
+	while (SQ_SUCCEEDED(sq_next(v, -2))) {
+		arr.push_back(sqsounddef(v, -1));
+		sq_pop(v, 2);
+	}
+	sq_pop(v, 1);
+}
+
+SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<SoundDefinition *> &arr) {
+	HSQOBJECT obj;
+	SQRESULT result = sq_getstackobj(v, i, &obj);
+	sqgetarray(v, obj, arr);
+	return result;
 }
 
 } // namespace Twp

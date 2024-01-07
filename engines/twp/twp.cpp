@@ -334,6 +334,8 @@ void TwpEngine::update(float elapsed) {
 	_time += elapsed;
 	_frameCounter++;
 
+	_audio.update(elapsed);
+
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
 	_inputState.setVisible(_inputState.getShowCursor() || _dialog.getState() == WaitingForChoice);
@@ -963,7 +965,7 @@ void TwpEngine::actorEnter() {
 
 void TwpEngine::exitRoom(Room *nextRoom) {
 	HSQUIRRELVM v = getVm();
-	// TODO: _audio.stopAll()
+	_mixer->stopAll();
 	if (_room) {
 		_room->_triggers.clear();
 

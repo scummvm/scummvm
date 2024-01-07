@@ -180,7 +180,7 @@ void WalkTo::disable() {
 	if (_path.size() != 0) {
 		debug("actor walk cancelled");
 	}
-	if(_obj->isWalking())
+	if (_obj->isWalking())
 		_obj->play("stand");
 }
 
@@ -258,7 +258,7 @@ void WalkTo::update(float elapsed) {
 		}
 	}
 
-	Motor* reach = _obj->getReach();
+	Motor *reach = _obj->getReach();
 	if (reach && reach->isEnabled()) {
 		reach->update(elapsed);
 		if (!reach->isEnabled())
@@ -315,6 +315,23 @@ void Talking::update(float elapsed) {
 	}
 }
 
+int Talking::loadActorSpeech(const Common::String &name) {
+	debug("loadActorSpeech %s.ogg", name.c_str());
+	Common::String filename(name);
+	filename.toUppercase();
+	filename += ".ogg";
+	if (g_engine->_pack.assetExists(filename.c_str())) {
+		SoundDefinition *soundDefinition = new SoundDefinition(filename);
+		if (!soundDefinition) {
+			debug("File %s.ogg not found", name.c_str());
+		} else {
+			g_engine->_audio._soundDefs.push_back(soundDefinition);
+			return g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f, _obj->getId());
+		}
+	}
+	return 0;
+}
+
 void Talking::say(const Common::String &text) {
 	Common::String txt(text);
 	if (text[0] == '@') {
@@ -336,7 +353,10 @@ void Talking::say(const Common::String &text) {
 		}
 
 		// TODO: call sayingLine
-		// TODO: _soundId = self.loadActorSpeech(name)
+		if(_obj->_sound) {
+			g_engine->_audio.stop(_obj->_sound);
+		}
+		_obj->_sound = loadActorSpeech(name);
 	} else if (text[0] == '^') {
 		txt = text.substr(1);
 	}

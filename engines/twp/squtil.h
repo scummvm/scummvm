@@ -80,6 +80,7 @@ void setId(HSQOBJECT &o, int id);
 
 void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<Common::String> &arr);
 SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::String> &arr);
+SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<SoundDefinition*>&  arr);
 
 template<typename TFunc>
 void sqgetitems(HSQOBJECT o, TFunc func) {
@@ -153,6 +154,7 @@ Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
 Object *sqactor(HSQOBJECT table);
 Object *sqactor(HSQUIRRELVM v, int i);
+SoundDefinition* sqsounddef(HSQUIRRELVM v, int i);
 ThreadBase *sqthread(HSQUIRRELVM v);
 ThreadBase *sqthread(HSQUIRRELVM v, int id);
 ThreadBase *sqthread(int id);

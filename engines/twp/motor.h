@@ -234,6 +234,7 @@ private:
 	Common::String talkieKey();
 	void setDuration(const Common::String& text);
 	void say(const Common::String& text);
+	int loadActorSpeech(const Common::String& name);
 
 private:
 	Object *_obj = nullptr;

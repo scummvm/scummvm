@@ -65,6 +65,7 @@ MODULE_OBJS = \
 	walkboxnode.o \
 	actorswitcher.o \
 	enginedialogtarget.o \
+	audio.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
