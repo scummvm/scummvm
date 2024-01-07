@@ -221,7 +221,7 @@
 		"Non-Interactive Demo",
 		AD_ENTRY4s("demo.scn", "16331b4db31b153f241ebcee49b7383d", 170,
 				"demadi2d.vmd",	"658b5502bf0aeb46a39788f6a07e3d97", 7552841,
-                "demoarchd.vmd", "a93184f0e297bb2e1ebfd64c1038e1ae", 5946788,
+                "demarchd.vmd", "a93184f0e297bb2e1ebfd64c1038e1ae", 5946788,
                 "demoboud.vmd", "37f3a61852c4485f2cc86b9880b98a6c", 3552135),
 		DE_DEU,
 		kPlatformDOS,
