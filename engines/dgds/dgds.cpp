@@ -136,12 +136,14 @@ Common::Error DgdsEngine::run() {
 		// Test parsing some things..
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
-		RequestData invRequestData;
-		RequestData vcrRequestData;
-		Request invRequest(_resource, _decompressor);
-		Request vcrRequest(_resource, _decompressor);
+		REQFileData invRequestData;
+		REQFileData vcrRequestData;
+		RequestParser invRequest(_resource, _decompressor);
+		RequestParser vcrRequest(_resource, _decompressor);
 		invRequest.parse(&invRequestData, "DINV.REQ");
 		vcrRequest.parse(&vcrRequestData, "DVCR.REQ");
+		debug("Parsed DINV.REQ:\n%s", invRequestData.dump().c_str());
+		debug("Parsed DVCR.REQ:\n%s", vcrRequestData.dump().c_str());
 
 		// Load the intro and play it for now.
 		interpIntro.load("TITLE1.ADS");

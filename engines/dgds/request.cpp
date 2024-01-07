@@ -163,25 +163,30 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
 	Common::SeekableReadStream *str = chunk.getContent();
 
-	uint16 fileNum = str->readUint16LE();
+	uint16 chunkNum = str->readUint16LE();
 
-	if (num != 0 && num != fileNum)
-		return true;
+	// Note: The original has some logic about loading single request blocks
+	// here, is only ever called with "num" of -1 (load all),
+	// so maybe just skip it?
+	if (num != -1)
+		error("Request::parseGADChunk: Implement handling of num other than -1");
 
-	data._fileNum = fileNum;
+	data._fileNum = chunkNum;
 	data._x = str->readUint16LE();
 	data._y = str->readUint16LE();
 	for (int i = 0; i < 5; i++)
 		data._vals[i] = str->readUint16LE();
 
-	uint16 numStruct1 = str->readUint16LE();
-	data._struct1List.resize(numStruct1);
-	for (int i = 0; i < numStruct1; i++) {
-		RequestStruct1 &dst = data._struct1List[i];
-		for (int j = 0; j < 4; j++) {
+	uint16 numTextItems = str->readUint16LE();
+	data._textItemList.resize(numTextItems);
+	for (int i = 0; i < numTextItems; i++) {
+		TextItem &dst = data._textItemList[i];
+		dst._x = str->readUint16LE();
+		dst._y = str->readUint16LE();
+		for (int j = 0; j < 2; j++) {
 			dst._vals[j] = str->readUint16LE();
 		}
-		dst._str = str->readString();
+		dst._txt = str->readString();
 	}
 
 	uint16 numStruct2 = str->readUint16LE();
@@ -198,7 +203,9 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 
 
 bool RequestParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
-	RequestData &rdata = *(RequestData *)data;
+	REQFileData &rfdata = *static_cast<REQFileData *>(data);
+
+	// The game supports loading a particular item, but always passes -1?
 	int num = -1;
 
 	if (chunk.isContainer()) {
@@ -209,10 +216,14 @@ bool RequestParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 		return false; // continue parsing
 	}
 
-	if (chunk.getId() == ID_REQ)
-		parseREQChunk(rdata, chunk, num);
-	else if (chunk.getId() == ID_GAD)
-		parseGADChunk(rdata, chunk, num);
+	if (chunk.getId() == ID_REQ) {
+		rfdata._requests.resize(rfdata._requests.size() + 1);
+		parseREQChunk(rfdata._requests.back(), chunk, num);
+	} else if (chunk.getId() == ID_GAD) {
+		if (rfdata._requests.empty())
+			error("GAD chunk before any REQ chunks in Reqeust file %s", _filename.c_str());
+		parseGADChunk(rfdata._requests.back(), chunk, num);
+	}
 
 	return chunk.getContent()->err();
 }
@@ -232,7 +243,7 @@ Common::String Gadget::dump() const {
 	}
 
 	return Common::String::format(
-		"Gadget<num %d (%d,%d)-(%d,%d), typ %d, flgs %04x %04x svals %s, %s, '%s', parent (%d,%d)>",
+		"Gadget<num %d pos (%d,%d) sz (%d,%d), typ %d, flgs %04x %04x svals %s, %s, '%s', parent (%d,%d)>",
 		_gadgetNo, _x, _y, _width, _height, _gadgetType, _flags2, _flags3, sval1, sval2,
 		_buttonName.c_str(), _parentX, _parentY);
 }
@@ -253,16 +264,27 @@ Common::String Gadget8::dump() const {
 }
 
 Common::String RequestData::dump() const {
-	Common::String ret = Common::String::format("RequestData<file %d (%d,%d) %d %d %d %d %d\n",
+	Common::String ret = Common::String::format("RequestData<file %d pos (%d,%d) size (%d, %d) %d %d %d\n",
 								_fileNum, _x, _y, _vals[0], _vals[1], _vals[2], _vals[3], _vals[4]);
-	for (const auto &s1 : _struct1List)
-		ret += Common::String::format("    RequestStruct1<'%s' %d %d %d %d>\n", s1._str.c_str(),
-								s1._vals[0], s1._vals[1], s1._vals[2], s1._vals[3]);
+	for (const auto &s1 : _textItemList)
+		ret += Common::String::format("    TextItem<'%s' pos (%d,%d) %d %d>\n", s1._txt.c_str(),
+								s1._x, s1._y, s1._vals[0], s1._vals[1]);
 	for (const auto &s2 : _struct2List)
 		ret += Common::String::format("    RequestStruct2<%d %d %d %d %d %d>\n", s2._vals[0], s2._vals[1],
 								s2._vals[2], s2._vals[3], s2._vals[4], s2._vals[5]);
 	for (const auto &g : _gadgets)
 		ret += Common::String::format("    %s\n", g->dump().c_str());
+	ret += ">";
+
+	return ret;
+}
+
+Common::String REQFileData::dump() const {
+	Common::String ret("REQFileData<\n");
+	for (const auto &req : _requests) {
+		ret += req.dump().c_str();
+		ret += "\n";
+	}
 	ret += ">";
 
 	return ret;
