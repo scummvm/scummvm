@@ -209,19 +209,68 @@ void DarkseedEngine::wait() {
 }
 
 void DarkseedEngine::handleInput() {
+	int currentRoomNumber = _room->_roomNumber;
+	if (_player->_isAutoWalkingToBed && currentRoomNumber == 0 && _player->isAtPosition(0xdf, 0xbe)) {
+		_player->_isAutoWalkingToBed = false;
+		_currentTimeInSeconds = 0x7e90;
+		_player->loadAnimations("bedsleep.nsp");
+		setupOtherNspAnimation(1,5);
+	}
+
 	if (!isPlayingAnimation_maybe) {
-		if (_isRightMouseClicked) {
-			if (_actionMode == LookAction) {
-				_actionMode = PointerAction;
-			} else if (_actionMode == PointerAction) {
-				_actionMode = HandAction;
-			} else if (_actionMode == HandAction) {
-				_actionMode = LookAction;
+		if (!_player->_playerIsChangingDirection) {
+			if (currentRoomNumber == 0x39 &&_previousRoomNumber == 6) {
+				_player->updateSprite();
+			} else {
+				if (_player->isAtWalkTarget() && !BoolEnum_2c85_811c) {
+					_player->updateSprite();
+				} else {
+					if (counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
+						counter_2c85_888b = 0;
+						//						uVar7 = CONCAT11((char)(uVar7 >> 8),DAT_2c85_7dd7 + '\x01') & 0xff07;
+						//						DAT_2c85_7dd7 = (char)uVar7;
+						//						if (((DAT_2c85_7dd7 == '\0') || (DAT_2c85_7dd7 == '\x04')) &&
+						//							((((currentRoomNumber != 0x22 && (currentRoomNumber != 0x13)) && (currentRoomNumber != 0x14)) &&
+						//							  ((currentRoomNumber != 0x15 && (currentRoomNumber != 0x16)))))) {
+						//							FUN_1208_0dac_sound_related(0x5c,CONCAT11((char)(uVar7 >> 8),5));
+						//						}
+					}
+					_player->updateSprite();
+				}
+				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && ~_player->isPlayerWalking_maybe) { // prevLeftMouseButtonState == 0 &&
+					if (_actionMode == PointerAction) {
+						_player->playerFaceWalkTarget();
+
+					} else {
+						int objNum = getObjectUnderCursor();
+						if (objNum != -1) {
+
+						}
+					}
+				}
+
+				if (_isRightMouseClicked) {
+					if (_actionMode == LookAction) {
+						_actionMode = PointerAction;
+					} else if (_actionMode == PointerAction) {
+						_actionMode = HandAction;
+					} else if (_actionMode == HandAction) {
+						_actionMode = LookAction;
+					}
+					_cursor.setCursorType((CursorType)_actionMode);
+				} else if (_isLeftMouseClicked) {
+					// TODO do actions here.
+					handlePointerAction();
+				}
 			}
-			_cursor.setCursorType((CursorType)_actionMode);
-		} else if (_isLeftMouseClicked) {
-			// TODO do actions here.
-			handlePointerAction();
+		} else {
+			// turn player around.
+			_player->playerSpriteWalkIndex_maybe = (int16)((_player->playerSpriteWalkIndex_maybe + _player->playerWalkFrameDeltaOffset) & 7);
+			if (_player->playerSpriteWalkIndex_maybe == _player->playerNewFacingDirection_maybe) {
+				_player->_playerIsChangingDirection = false;
+				_player->_direction = _player->playerNewFacingDirection_maybe / 2;
+			}
+			_player->updateSprite();
 		}
 	} else {
 		updateAnimation();
@@ -408,7 +457,7 @@ void DarkseedEngine::updateDisplay() {
 
 void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	assert(nspAnimIdx < 20);
-	_player->_playerIsMoving_maybe = false;
+	_player->_playerIsChangingDirection = false;
 	nsp_sprite_scaling_y_position = 0;
 	BoolEnum_2c85_985a = false;
 
@@ -480,6 +529,11 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 		}
 		spriteAnimCountdownTimer[nspAminIdx] = anim.frameDuration[animIndexTbl[nspAminIdx]];
 	}
+}
+
+int DarkseedEngine::getObjectUnderCursor() {
+	// TODO
+	return -1;
 }
 
 } // End of namespace Darkseed

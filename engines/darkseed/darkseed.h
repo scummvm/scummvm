@@ -79,6 +79,8 @@ public:
 	int _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
 
+	uint16 _previousRoomNumber = 0;
+
 	bool isPlayingAnimation_maybe = false;
 	uint16 otherNspAnimationType_maybe = 0;
 	bool isWearingHeadBand = false;
@@ -102,6 +104,7 @@ public:
 	bool BoolEnum_2c85_811c = false;
 	uint16 DAT_2c85_81e0 = 0;
 	uint16 DAT_2c85_7dd7 = 0;
+	int16 counter_2c85_888b = 0;
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -155,6 +158,9 @@ public:
 
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
+
+	int getObjectUnderCursor();
+
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);

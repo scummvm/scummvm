@@ -41,7 +41,7 @@ bool BYTE_ARRAY_2c85_41eb[] = { false, false, false, true };
 uint16 BYTE_ARRAY_2c85_41e3[] = { 0,   8,  16,   8 };
 
 void Darkseed::Player::updateSprite() {
-	if (!_playerIsMoving_maybe) {
+	if (!_playerIsChangingDirection) {
 		if ((_direction == 3) || (_direction == 1)) {
 			g_engine->player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
 		}
@@ -76,4 +76,81 @@ void Darkseed::Player::updateSprite() {
 			_frameIdx = playerSpriteWalkIndex_maybe + 0x18;
 		}
 	}
+}
+bool Darkseed::Player::isAtPosition(int x, int y) const {
+	return _position.x == x && _position.y == y;
+}
+
+bool Darkseed::Player::isAtWalkTarget() const {
+	return _position ==_walkTarget;
+}
+
+void Darkseed::Player::changeDirection(int16 oldDir, int16 newDir) {
+	if (oldDir != newDir) {
+		_playerIsChangingDirection = true;
+		playerSpriteWalkIndex_maybe = (int16)(oldDir * 2);
+		playerNewFacingDirection_maybe = (int16)(newDir * 2);
+		playerWalkFrameDeltaOffset = 1;
+		if (oldDir < 4) {
+			switch (oldDir) {
+			case 0 :
+				if (newDir == 3) {
+					playerWalkFrameDeltaOffset = -1;
+				}
+				break;
+			case 1 :
+				if (newDir == 0) {
+					playerWalkFrameDeltaOffset = -1;
+				}
+				break;
+			case 2 :
+				if (newDir == 1) {
+					playerWalkFrameDeltaOffset = -1;
+				}
+				break;
+			case 3 :
+				if (newDir == 2) {
+					playerWalkFrameDeltaOffset = -1;
+				}
+				break;
+			}
+		}
+	}
+}
+
+void Darkseed::Player::playerFaceWalkTarget() {
+	int previousDirection;
+	int xDelta;
+	int yDelta;
+  
+	previousDirection = _direction;
+	if (_position.x < _walkTarget.x) {
+		xDelta = _walkTarget.x - _position.x;
+	}
+	else {
+		xDelta = _position.x - _walkTarget.x;
+	}
+	if (_position.y < _walkTarget.y) {
+		yDelta = _walkTarget.y - _position.y;
+	}
+	else {
+		yDelta = _position.y - _walkTarget.y;
+	}
+	if (yDelta * 2 <= xDelta) {
+		if (_position.x < _walkTarget.x) {
+			_direction = 1;
+		}
+		else if (_walkTarget.x < _position.x) {
+			_direction = 3;
+		}
+	}
+	else if (_position.y < _walkTarget.y) {
+		_direction = 2;
+	}
+	else {
+		_direction = 0;
+	}
+	changeDirection(previousDirection,_direction);
+	updateSprite();
+	_positionLong = _position;
 }
