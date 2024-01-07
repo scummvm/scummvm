@@ -155,6 +155,7 @@ Object *sqobj(HSQUIRRELVM v, int i);
 Object *sqactor(HSQOBJECT table);
 Object *sqactor(HSQUIRRELVM v, int i);
 SoundDefinition* sqsounddef(HSQUIRRELVM v, int i);
+SoundDefinition *sqsounddef(int id);
 ThreadBase *sqthread(HSQUIRRELVM v);
 ThreadBase *sqthread(HSQUIRRELVM v, int id);
 ThreadBase *sqthread(int id);

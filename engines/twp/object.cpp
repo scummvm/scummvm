@@ -210,21 +210,20 @@ void Object::trig(const Common::String &name) {
 	// debug fmt"Trigger object #{self.id} ({self.name}) sound '{name}'"
 	int trigNum;
 	sscanf(name.c_str(), "@%d", &trigNum);
-	if (trigNum != 0) {
+	if ((name.size() > 1) && Common::isDigit(name[1])) {
 		if (_triggers.contains(trigNum)) {
 			_triggers[trigNum]->trig();
 		} else {
-			// warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
+			warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
 		}
 	} else {
 		int id = 0;
-		sqgetf(sqrootTbl(g_engine->getVm()), name, id);
-		debug("TODO: sound trigger");
-		// var sound = soundDef(id);
-		// if (!sound)
-		// 	warn fmt "Cannot trig sound '{name}', sound not found (id={id})";
-		// else
-		// 	gEngine.audio.play(sound, Sound);
+		sqgetf(sqrootTbl(g_engine->getVm()), name.substr(1), id);
+		SoundDefinition *sound = sqsounddef(id);
+		if (!sound)
+			warning("Cannot trig sound '%s', sound not found (id=%d)", name.c_str(), id);
+		else
+			g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	}
 }
 
@@ -467,11 +466,11 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 }
 
 void Object::blinkRate(float min, float max) {
-	  if (min == 0.0 && max == 0.0) {
-	    _blink.reset();
-	  } else {
-	    _blink.reset(new Blink(this, min, max));
-	  }
+	if (min == 0.0 && max == 0.0) {
+		_blink.reset();
+	} else {
+		_blink.reset(new Blink(this, min, max));
+	}
 }
 
 void Object::setCostume(const Common::String &name, const Common::String &sheet) {
