@@ -178,8 +178,9 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the animation frames
 	// TODO: Figure out how the game knows how many there are
+	// TODO: Figure out why the frames are not saved sequentially
 	file.seek(0x0009619E);
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 1; i++) {
 		_animFrames[i].ReadFromeFile(file);
 	}
 
@@ -459,11 +460,21 @@ void Macs2Engine::PlaySound() {
 	#define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Macs2Engine>(this, &Macs2Engine::OnTimer), CALLBACKS_PER_SECOND);
 	// _opl->write(0x388, 0x00);
-	_opl->writeReg(0x388, 0xA0);
+	/*  _opl->writeReg(0x388, 0xA0);
 	_opl->writeReg(0x389, 0x36);
 	_opl->writeReg(0x388, 0x20);
-	_opl->writeReg(0x389, 0x20);
+	_opl->writeReg(0x389, 0x20); */
 	// initialize();
+	_opl->writeReg(0x20, 0x01);
+	_opl->writeReg(0x40, 0x10);
+	_opl->writeReg(0x60, 0xF0);
+	_opl->writeReg(0x80, 0x77);
+	_opl->writeReg(0xA0, 0x98);
+	_opl->writeReg(0x23, 0x01);
+	_opl->writeReg(0x43, 0x00);
+	_opl->writeReg(0x63, 0xF0);
+	_opl->writeReg(0x83, 0x77);
+	_opl->writeReg(0xB0, 0x31);
 
 	/*
 	    REGISTER     VALUE     DESCRIPTION

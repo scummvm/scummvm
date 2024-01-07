@@ -178,16 +178,19 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 
 	// Draw the character
+
 	uint16 charX = 50;
-	uint16 charY = 50;
-	for (int x = 0; x < g_engine->_charWidth; x++) {
+	uint16 charY = 100;
+	AnimFrame &f = g_engine->_animFrames[0];
+	DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
+	/* for (int x = 0; x < g_engine->_charWidth; x++) {
 		for (int y = 0; y < g_engine->_charHeight; y++) {
 			uint8 val = g_engine->_charData[y * g_engine->_charWidth + x];
 			if (val != 0) {
 				s.setPixel(charX + x, charY + y, val);
 			}
 		}
-	}
+	} */
 
 	// Draw the border part
 	/* uint16 borderX = 100;
