@@ -7836,6 +7836,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
+	// Tivola demo/sampler disc, Spring 1999, released in Germany
+	// Director 6 version
+	MACGAME2f_l("tivolaspring1999", "Sampler/D6", "Start",       "r:34be958e28922244011f9f0be46c5b57", 1030506,
+												  "Intro.dxr",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler/D6", "START16.EXE", "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+												  "INTRO.DXR",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
+
+	// Tivola demo/sampler disc, Spring 1999, released in Germany
+	// Director 6 version, alternative executable
+	MACGAME2f_l("tivolaspring1999", "Sampler/D6", "Start6",       "r:55d01cca925752c170ac1e9c01d1f87e", 1029126,
+												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler/D6", "START616.EXE", "t:c7199189543f4d55e536e62d21bec032", 1247283,
+												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
+
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
 	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,
 											  "Intro.dxr",   "d:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
