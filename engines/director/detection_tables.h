@@ -2193,6 +2193,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Korean Windows version is named 'Time Girl'
 	WINGAME1_l("timegal", "", "TIMEGIRL.EXE", "0e5a7734bdc74198a62171ea4d51a364", 687457, Common::KO_KOR, 400),
 
+	// Tivola demo/sampler disc, Spring 1999, released in Germany
+	// Director 4 version
+	MACGAME2f_l("tivolaspring1999", "Sampler/D4", "Start4",       "r:55b351ff9e11799b4e71f75cb246302c", 484752,
+												  "Intro.dxr",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 401, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler/D4", "START416.EXE", "t:0499c4f00a3b0c061ff883f8222e091d", 698543,
+												  "INTRO.DXR",    "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 401, GF_32BPP),
+
 	// Found on
 	// 1995-08-16 Mac/Win hybrid v1.2 release of SimTower
 	// 1995-10-28 Mac/Win hybrid release of Marty
