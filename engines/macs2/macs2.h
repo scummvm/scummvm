@@ -52,6 +52,12 @@ struct GlyphData {
 	void ReadFromeFile(Common::File &file);
 };
 
+struct AnimFrame {
+	byte *Data;
+	uint16 Width;
+	uint16 Height;
+};
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -88,6 +94,9 @@ public:
 	// TODO: THis count could be read from the file as well
 	uint16 numGlyphs = 79;
 
+	AnimFrame _animFrames[6];
+	// TODO: Figure out how the game knows that there are 6 frames - and confirm that there are only 6 frames
+
 	bool FindGlyph(char c, GlyphData &out) const;
 
 	byte* _cursorData;
@@ -113,6 +122,8 @@ public:
 	uint16* _flagWidths;
 	uint16* _flagHeights;
 
+	
+
 	byte* mapData;
 
 	Common::MemoryReadStream* _scriptStream;
@@ -120,6 +131,9 @@ public:
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
+	void PlaySound();
+
+	void OnTimer();
 
 	uint32 getFeatures() const;
 
