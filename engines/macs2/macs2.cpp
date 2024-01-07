@@ -176,6 +176,13 @@ void Macs2Engine::readResourceFile() {
 		_glyphs[i].ReadFromeFile(file);
 	}
 
+	// Load the animation frames
+	// TODO: Figure out how the game knows how many there are
+	file.seek(0x0009619E);
+	for (int i = 0; i < 6; i++) {
+		_animFrames[i].ReadFromeFile(file);
+	}
+
 	// Load the data for a border part
 	file.seek(0x64C6);
 
@@ -457,6 +464,24 @@ void Macs2Engine::PlaySound() {
 	_opl->writeReg(0x388, 0x20);
 	_opl->writeReg(0x389, 0x20);
 	// initialize();
+
+	/*
+	    REGISTER     VALUE     DESCRIPTION
+ |        20          01      Set the modulator's multiple to 1
+ |        40          10      Set the modulator's level to about 40 dB
+ |        60          F0      Modulator attack:  quick;   decay:   long
+ |        80          77      Modulator sustain: medium;  release: medium
+ |        A0          98      Set voice frequency's LSB (it'll be a D#)
+ |        23          01      Set the carrier's multiple to 1
+ |        43          00      Set the carrier to maximum volume (about 47 dB)
+ |        63          F0      Carrier attack:  quick;   decay:   long
+ |        83          77      Carrier sustain: medium;  release: medium
+ |        B0          31      Turn the voice on; set the octave and freq MSB
+ |
+ |   To turn the voice off, set register B0h to 11h (or, in fact, any value 
+ |   which leaves bit 5 clear).  It's generally preferable, of course, to
+ |   induce a delay before doing so.
+ |*/
 }
 
 void Macs2Engine::OnTimer() {
@@ -635,6 +660,13 @@ void GlyphData::ReadFromeFile(Common::File &file) {
 	Data = new byte[Width * Height];
 	file.read(Data, Width * Height);
 	stride = file.pos() - stride;
+}
+
+void AnimFrame::ReadFromeFile(Common::File &file) {
+	Width = file.readUint16LE();
+	Height = file.readUint16LE();
+	Data = new byte[Width * Height];
+	file.read(Data, Width * Height);
 }
 
 } // End of namespace Macs2
