@@ -167,6 +167,7 @@ public:
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
+	byte _puppetTempo;
 
 	bool _puppetPalette;
 	int _paletteTransitionIndex;
