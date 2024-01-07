@@ -1364,6 +1364,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Swedish titles
 	{ "alfons",				"Alfons Åberg ”Bara Överallt!”" },
 	{ "acneattack",			"Acne-Attack!" },
+	{ "backpacker",			"BackPacker" },
 	{ "backpacker2",		"Backpacker 2" },							// Other games listed under English
 	{ "backpackerjrdiy",	"BackPacker Junior - Do-It-Yourself" },
 	{ "balticmission",		"Baltic Mission" },
@@ -2075,6 +2076,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Macromedia Director v4
 //
 //////////////////////////////////////////////////
+
+	// BackPacker (Windows, Swedish)
+	// Reported via TRAC #14819
+	WINGAME1_l("backpacker", "", "BACKPACK.EXE", "t:8e6fb18a41a9baff740aecd4ce68e100", 698999, Common::SE_SWE, 404),
 
 	// Original filename is 'BD-J/Demo'
 	// Developed by ART Sector ONE / Richard M. Coombs
