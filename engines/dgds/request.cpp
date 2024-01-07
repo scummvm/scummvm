@@ -30,15 +30,21 @@
 
 namespace Dgds {
 
-Request::Request(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
+RequestParser::RequestParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
 }
 
 
-bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
+bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
 	Common::SeekableReadStream *str = chunk.getContent();
 
 	uint16 numGadgets = str->readUint16LE();
 	data._gadgets.resize(numGadgets);
+
+	// Note: The original has some logic about loading single gadgets
+	// here, is only ever called with "num" of -1 (load all gadgets),
+	// so maybe just skip it?
+	if (num != -1)
+		error("Request::parseGADChunk: Implement handling of num other than -1");
 
 	for (Common::SharedPtr<Gadget> &gptr : data._gadgets) {
 		uint16 vals[12];
@@ -46,7 +52,7 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 			vals[i] = str->readUint16LE();
 
 		uint16 gadgetTypeFlag = vals[5];
-		if (num == 0 || num == vals[0]) {
+		if (num == -1 || num == vals[0]) {
 			if (gadgetTypeFlag == 1)
 				gptr.reset(new Gadget1());
 			else if (gadgetTypeFlag == 2)
@@ -96,8 +102,11 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 				gptr->_sval2I = i;
 		}
 
-		// FIXME: Where is this used?
-		/*uint16 type3 = */str->readUint16LE();
+		uint16 val = str->readUint16LE();
+		if (gptr) {
+			gptr->_field20_0x28 = val;
+			gptr->_field21_0x2a = val >> 0xf;
+		}
 
 		// TODO: In each of these cases, work out the true offsets to these fields.
 		// and if they are shared between gadget types.
@@ -151,7 +160,7 @@ bool Request::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 }
 
 
-bool Request::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
+bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) {
 	Common::SeekableReadStream *str = chunk.getContent();
 
 	uint16 fileNum = str->readUint16LE();
@@ -188,7 +197,7 @@ bool Request::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int num) 
 }
 
 
-bool Request::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
+bool RequestParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	RequestData &rdata = *(RequestData *)data;
 	int num = -1;
 
@@ -209,5 +218,54 @@ bool Request::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 }
 
 
-} // End of namespace Dgds
+Common::String Gadget::dump() const {
+	char buf1[6], buf2[6];
+	const char *sval1 = _sval1S.c_str();
+	const char *sval2 = _sval2S.c_str();
+	if (_sval1Type == 1) {
+		sval1 = buf1;
+		snprintf(buf1, 6, "%d", _sval1I);
+	}
+	if (_sval2Type == 1) {
+		sval2 = buf2;
+		snprintf(buf2, 6, "%d", _sval2I);
+	}
 
+	return Common::String::format(
+		"Gadget<num %d (%d,%d)-(%d,%d), typ %d, flgs %04x %04x svals %s, %s, '%s', parent (%d,%d)>",
+		_gadgetNo, _x, _y, _width, _height, _gadgetType, _flags2, _flags3, sval1, sval2,
+		_buttonName.c_str(), _parentX, _parentY);
+}
+
+Common::String Gadget1::dump() const {
+	const Common::String base = Gadget::dump();
+	return Common::String::format("Gadget1<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);
+}
+
+Common::String Gadget2::dump() const {
+	const Common::String base = Gadget::dump();
+	return Common::String::format("Gadget2<%s, %d %d %d %d>", base.c_str(), _gadget2_i1, _gadget2_i2, _gadget2_i3, _gadget2_i4);
+}
+
+Common::String Gadget8::dump() const {
+	const Common::String base = Gadget::dump();
+	return Common::String::format("Gadget8<%s, %d %d>", base.c_str(), _gadget8_i1, _gadget8_i2);
+}
+
+Common::String RequestData::dump() const {
+	Common::String ret = Common::String::format("RequestData<file %d (%d,%d) %d %d %d %d %d\n",
+								_fileNum, _x, _y, _vals[0], _vals[1], _vals[2], _vals[3], _vals[4]);
+	for (const auto &s1 : _struct1List)
+		ret += Common::String::format("    RequestStruct1<'%s' %d %d %d %d>\n", s1._str.c_str(),
+								s1._vals[0], s1._vals[1], s1._vals[2], s1._vals[3]);
+	for (const auto &s2 : _struct2List)
+		ret += Common::String::format("    RequestStruct2<%d %d %d %d %d %d>\n", s2._vals[0], s2._vals[1],
+								s2._vals[2], s2._vals[3], s2._vals[4], s2._vals[5]);
+	for (const auto &g : _gadgets)
+		ret += Common::String::format("    %s\n", g->dump().c_str());
+	ret += ">";
+
+	return ret;
+}
+
+} // End of namespace Dgds
