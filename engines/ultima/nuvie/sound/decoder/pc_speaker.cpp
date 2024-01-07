@@ -28,11 +28,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
-
 #define SPKR_VOLUME 5000
 //#define SPKR_SHIFT 8
 #define SPKR_SPEED (float)((SPKR_VOLUME*2)/0.070f)

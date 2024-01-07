@@ -502,7 +502,7 @@ void Renderer3D::calcCharacterPoints() {
 	actor->_area[4] = 32000;
 	actor->_area[5] = -32000;
 
-	float t = (actor->_theta * PI2) / 360.0;
+	float t = (actor->_theta * M_PI * 2) / 360.0;
 	float cost = cos(t);
 	float sint = sin(t);
 
@@ -561,7 +561,7 @@ void Renderer3D::calcCharacterPoints() {
 				pa1 /= t;
 				pa2 /= t;
 
-				tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / PI2;
+				tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / (M_PI * 2);
 				tz = CLIP(tz, 0.f, 180.f);
 
 				// tx falloff
@@ -613,7 +613,7 @@ void Renderer3D::calcCharacterPoints() {
 				pa1 = curVertex->_ny;
 				pa2 = curVertex->_nz;
 
-				lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
+				lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / M_PI);
 				lint = CLIP(lint, 0, 180);
 
 				_vVertex[j]._angle -= (180 - lint);

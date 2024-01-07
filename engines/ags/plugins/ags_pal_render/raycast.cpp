@@ -27,7 +27,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-#define PI         (3.1415926535f)
 #define S_WIDTH 320
 #define S_HEIGHT 160
 
@@ -333,7 +332,7 @@ void AGSPalRender::Ray_GetPlayerY(ScriptMethodParams &params) {
 
 void AGSPalRender::Ray_GetPlayerAngle(ScriptMethodParams &params) {
 	double bgrad = atan2(dirY, dirX);
-	int bgdeg = (int)(bgrad / PI * 180.0) + 180;
+	int bgdeg = (int)(bgrad / M_PI * 180.0) + 180;
 	params._result = bgdeg % 360;
 }
 
@@ -747,7 +746,7 @@ void AGSPalRender::Raycast_Render(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	ambientweight = 0;
 	raycastOn = true;
-	double playerrad = atan2(dirY, dirX) + (2.0 * PI);
+	double playerrad = atan2(dirY, dirX) + (2.0 * M_PI);
 	rendering = true;
 	int32 w = S_WIDTH, h = S_HEIGHT;
 	BITMAP *screen = engine->GetSpriteGraphic(slot);
@@ -756,7 +755,7 @@ void AGSPalRender::Raycast_Render(ScriptMethodParams &params) {
 	BITMAP *sbBm = engine->GetSpriteGraphic(skybox);
 	if (!sbBm) engine->AbortGame("Raycast_Render: No valid skybox sprite.");
 	if (skybox > 0) {
-		//int bgdeg = (int)((playerrad / PI) * 180.0) + 180;
+		//int bgdeg = (int)((playerrad / M_PI) * 180.0) + 180;
 		int xoffset = (int)(playerrad * 320.0);
 		BITMAP *virtsc = engine->GetVirtualScreen();
 		engine->SetVirtualScreen(screen);

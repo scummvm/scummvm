@@ -699,7 +699,7 @@ void PathFinding3D::setPosition(int num) {
 		ox /= t;
 		oz /= t;
 
-		float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
+		float theta = _vm->sinCosAngle(ox, oz) * 180.0f / M_PI;
 		if (_vm->floatComp(theta, 360.0f) >= 0) // theta >= 360.0f
 			theta -= 360.0f;
 		if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
@@ -764,7 +764,7 @@ void PathFinding3D::lookAt(float x, float z) {
 	ox /= t;
 	oz /= t;
 
-	float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
+	float theta = _vm->sinCosAngle(ox, oz) * 180.0f / M_PI;
 	if (_vm->floatComp(theta, 360.0f) >= 0) //theta >= 360.0f
 		theta -= 360.0f;
 	if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
@@ -1004,7 +1004,7 @@ void PathFinding3D::buildFramelist() {
 		ox /= approx;
 		oz /= approx;
 
-		theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI + 180.0f;
+		theta = _vm->sinCosAngle(ox, oz) * 180.0f / M_PI + 180.0f;
 		if (_vm->floatComp(theta, 360.0f) >= 0)
 			theta -= 360.0f;
 		if (_vm->floatComp(theta, 0.0f) == -1)
@@ -1055,7 +1055,7 @@ void PathFinding3D::buildFramelist() {
 
 			curLen = sqrt(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
 
-			theta = ((270.0f - theta) * PI) / 180.0f;
+			theta = ((270.0f - theta) * M_PI) / 180.0f;
 			ox = cos(theta) * curLen;
 			oz = sin(theta) * curLen;
 
@@ -1094,7 +1094,7 @@ void PathFinding3D::buildFramelist() {
 
 			curLen = sqrt(_step[index - 1]._dx * _step[index - 1]._dx + _step[index - 1]._dz * _step[index - 1]._dz);
 
-			oldTheta = ((270.0f - oldTheta) * PI) / 180.0f;
+			oldTheta = ((270.0f - oldTheta) * M_PI) / 180.0f;
 			ox = cos(oldTheta) * curLen;
 			oz = sin(oldTheta) * curLen;
 
@@ -1116,7 +1116,7 @@ void PathFinding3D::buildFramelist() {
 
 			curLen = sqrt(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
 
-			theta = ((270.0f - theta) * PI) / 180.0f;
+			theta = ((270.0f - theta) * M_PI) / 180.0f;
 			ox = cos(theta) * curLen;
 			oz = sin(theta) * curLen;
 

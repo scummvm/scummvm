@@ -33,16 +33,16 @@ namespace AGSPalRender {
 #define MAX_STARS 1024
 #define MAX_DEPTH 64
 
-#define PI         (3.1415926535f)
-#define HALF_PI    (0.5f * PI)
-#define TWO_PI     (2.0f * PI)
+#define ONE_PI     ((float)M_PI)
+#define HALF_PI    (0.5f * ONE_PI)
+#define TWO_PI     (2.0f * ONE_PI)
 #define TWO_PI_INV (1.0f / TWO_PI)
 
-const float halfpi = (0.5f * PI);
-const float twopi  = (2.0f * PI);
+const float halfpi = (0.5f * ONE_PI);
+const float twopi  = (2.0f * ONE_PI);
 const float twopi_inv = (1.0f / TWO_PI);
-const float pisquared = PI * PI;
-const float picubed = PI * PI * PI;
+const float pisquared = ONE_PI * ONE_PI;
+const float picubed = ONE_PI * ONE_PI * ONE_PI;
 
 IAGSEngine *engine;
 //unsigned char clut[256][256];
@@ -171,7 +171,7 @@ float  q3sqrt(const float x) {
 
 void Make_Sin_Lut() {
 	for (int angle = 0; angle < 360; angle++) {
-		double rad = (angle * PI) / 180.0;
+		double rad = (angle * ONE_PI) / 180.0;
 		rot_sine_LUT [angle] = static_cast<float>(sin(rad));
 		rot_cos_LUT [angle]  = static_cast<float>(cos(rad));
 	}
@@ -206,7 +206,7 @@ unsigned short root(unsigned short x) {
 
 float Hill(float x) {
 	const float a0 = 1.0f;
-	const float a2 = 2.0f / PI - 12.0f / (pisquared);
+	const float a2 = 2.0f / ONE_PI - 12.0f / (pisquared);
 	const float a3 = 16.0f / (picubed) - 4.0f / (pisquared);
 	const float xx = x * x;
 	const float xxx = xx * x;
@@ -224,7 +224,7 @@ float FastSin(float x) {
 	// 4 pieces of hills
 	if (x < halfpi)
 		return Hill(halfpi - x);
-	else if (x < PI)
+	else if (x < ONE_PI)
 		return Hill(x - halfpi);
 	else if (x < 3.0f * halfpi)
 		return -Hill(3.0f * halfpi - x);
