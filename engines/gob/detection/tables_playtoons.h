@@ -108,7 +108,7 @@
 		},
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -123,7 +123,7 @@
 				   "demarchg.vmd",	"d14a95da7d8792faf5503f649ffcbc12", 5619415),
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -142,7 +142,7 @@
                     "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -160,7 +160,7 @@
                     "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
