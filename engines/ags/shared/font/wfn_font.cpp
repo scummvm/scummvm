@@ -49,10 +49,24 @@ const WFNChar &WFNFont::GetChar(uint8_t code) const {
 	return code < _refs.size() ? *_refs[code] : _G(emptyChar);
 }
 
+// for Wide Character
+const WFNChar &WFNFont::GetWChar(uint8_t hi, uint8_t lo) const {
+	// Korean font set
+	if (_refs_ext.size() == 2350 && hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE) {
+		return *_refs_ext[(hi - 0xB0) * 94 + lo - 0xA1];
+	}
+	return GetChar(hi);
+}
+
 void WFNFont::Clear() {
 	_refs.clear();
 	_items.clear();
 	_pixelData.clear();
+
+	// Extended Bitmap Font
+	_refs_ext.clear();
+	_items_ext.clear();
+	_pixelData_ext.clear();
 }
 
 WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
@@ -183,6 +197,141 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 				assert(at != offs.end() && *at == off && // should not normally fail
 				       at - offs.begin() >= 0 && static_cast<size_t>(at - offs.begin()) < _items.size());
 				_refs[i] = &_items[at - offs.begin()]; // set up reference to item
+			}
+		}
+	}
+
+	delete[] raw_data;
+	delete[] offset_table;
+	return err;
+}
+
+WFNError WFNFont::ReadExtFntFromFile(Stream *in, const soff_t data_size) {
+	const soff_t used_data_size = data_size > 0 ? data_size : in->GetLength();
+
+	// Read font header
+	char sig[WFN_FILE_SIG_LENGTH];
+	in->Read(sig, WFN_FILE_SIG_LENGTH);
+	if (strncmp(sig, WFN_FILE_SIGNATURE, WFN_FILE_SIG_LENGTH) != 0) {
+		Debug::Printf(kDbgMsg_Error, "\tWFN: bad format signature");
+		return kWFNErr_BadSignature; // bad format
+	}
+
+	const soff_t table_addr = static_cast<uint32_t>(in->ReadInt32()); // offset table relative address
+	if (table_addr < (soff_t)(WFN_FILE_SIG_LENGTH + sizeof(uint32_t)) || table_addr >= used_data_size) {
+		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %llu (%llu - %llu)", static_cast<int64>(table_addr),
+			static_cast<int64>(WFN_FILE_SIG_LENGTH + sizeof(uint32_t)), static_cast<int64>(used_data_size));
+		return kWFNErr_BadTableAddress; // bad table address
+	}
+
+	const soff_t offset_table_size = used_data_size - table_addr;
+	const soff_t raw_data_offset = WFN_FILE_SIG_LENGTH + sizeof(uint32_t);
+	const size_t total_char_data = static_cast<size_t>(table_addr - raw_data_offset);
+	const size_t char_count = static_cast<size_t>(offset_table_size / sizeof(uint32_t));
+
+	// We process character data in three steps:
+	// 1. For every character store offset of character item, excluding
+	//    duplicates.
+	// 2. Allocate memory for character items and pixel array and copy
+	//    appropriate data; test for possible format corruption.
+	// 3. Create array of references from characters to items; same item may be
+	//    referenced by many characters.
+	WFNError err = kWFNErr_NoError;
+
+	// Read character data array
+	uint8_t *raw_data = new uint8_t[total_char_data];
+	in->Read(raw_data, total_char_data);
+
+	// Read offset table
+	uint32_t *offset_table = new uint32_t[char_count];
+	in->ReadArrayOfInt32((int32_t *)offset_table, char_count);
+
+	// Read all referenced offsets in an unsorted vector
+	std::vector<uint32_t> offs;
+	offs.reserve(char_count); // reserve max possible offsets
+	for (size_t i = 0; i < char_count; ++i) {
+		const uint32_t off = offset_table[i];
+		if (off < raw_data_offset || (soff_t)(off + MinCharDataSize) > table_addr) {
+			Debug::Printf("\tWFN: character %d -- bad item offset: %d (%d - %d, +%d)",
+			              i, off, raw_data_offset, table_addr, MinCharDataSize);
+			err = kWFNErr_HasBadCharacters; // warn about potentially corrupt format
+			continue; // bad character offset
+		}
+		offs.push_back(off);
+	}
+	// sort offsets vector and remove any duplicates
+	std::sort(offs.begin(), offs.end());
+#if AGS_PLATFORM_SCUMMVM
+	// TODO: See if this works correctly
+	std::unique(offs.begin(), offs.end());
+#else
+	std::vector<uint32_t>(offs.begin(), std::unique(offs.begin(), offs.end())).swap(offs);
+#endif
+
+	// Now that we know number of valid character items, parse and store character data
+	WFNChar init_ch;
+	_items_ext.resize(offs.size());
+	size_t total_pixel_size = 0;
+	for (size_t i = 0; i < _items_ext.size(); ++i) {
+		const uint8_t *p_data = raw_data + offs[i] - raw_data_offset;
+		init_ch.Width = Memory::ReadInt16LE(p_data);
+		init_ch.Height = Memory::ReadInt16LE(p_data + sizeof(uint16_t));
+		total_pixel_size += init_ch.GetRequiredPixelSize();
+		_items_ext[i] = init_ch;
+	}
+
+	// Now that we know actual size of pixels in use, create pixel data array;
+	// since the items are sorted, the pixel data will be stored sequentially as well.
+	// At this point offs and _items_ext have related elements in the same order.
+	_pixelData_ext.resize(total_pixel_size);
+	std::vector<uint8_t>::iterator pixel_it = _pixelData_ext.begin(); // write ptr
+	for (size_t i = 0; i < _items_ext.size(); ++i) {
+		const size_t pixel_data_size = _items_ext[i].GetRequiredPixelSize();
+		if (pixel_data_size == 0) {
+			Debug::Printf("\tWFN: item at off %d -- null size", offs[i]);
+			err = kWFNErr_HasBadCharacters;
+			continue; // just an empty character
+		}
+		const uint32_t raw_off = offs[i] - raw_data_offset + MinCharDataSize; // offset in raw array
+		size_t src_size = pixel_data_size;
+		if (i + 1 != _items_ext.size() && (soff_t)(raw_off + src_size) > offs[i + 1] - raw_data_offset) {   // character pixel data overlaps next character
+			Debug::Printf("\tWFN: item at off %d -- pixel data overlaps next known item (at %d, +%d)",
+			              offs[i], offs[i + 1], MinCharDataSize + src_size);
+			err = kWFNErr_HasBadCharacters; // warn about potentially corrupt format
+			src_size = offs[i + 1] - offs[i] - MinCharDataSize;
+		}
+
+		if (raw_off + src_size > total_char_data) {   // character pixel data overflow buffer
+			Debug::Printf("\tWFN: item at off %d -- pixel data exceeds available data (at %d, +%d)",
+			              offs[i], table_addr, MinCharDataSize + src_size);
+			err = kWFNErr_HasBadCharacters; // warn about potentially corrupt format
+			src_size = total_char_data - raw_off;
+		}
+		_items_ext[i].RestrictToBytes(src_size);
+
+		assert(pixel_it + pixel_data_size <= _pixelData_ext.end()); // should not normally fail
+		Common::copy(raw_data + raw_off, raw_data + raw_off + src_size, pixel_it);
+		_items_ext[i].Data = &(*pixel_it);
+		pixel_it += pixel_data_size;
+	}
+
+	// Create final reference array
+	_refs_ext.resize(char_count);
+	for (size_t i = 0; i < char_count; ++i) {
+		const uint32_t off = offset_table[i];
+		// if bad character offset - reference empty character
+		if (off < raw_data_offset || (soff_t)(off + MinCharDataSize) > table_addr) {
+			_refs_ext[i] = &_G(emptyChar);
+		} else {
+			// in usual case the offset table references items in strict order
+			if (i < _items_ext.size() && offs[i] == off)
+				_refs_ext[i] = &_items_ext[i];
+			else {
+				// we know beforehand that such item must exist
+				std::vector<uint32_t>::const_iterator at = std::lower_bound(offs.begin(), offs.end(), off);
+				assert(at != offs.end() && *at == off && // should not normally fail
+				       at - offs.begin() >= 0 && static_cast<size_t>(at - offs.begin()) < _items_ext.size());
+				_refs_ext[i] = &_items_ext[at - offs.begin()]; // set up reference to item
 			}
 		}
 	}

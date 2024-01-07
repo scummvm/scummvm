@@ -343,6 +343,9 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 	char *scan_ptr = theline;
 	char *prev_ptr = theline;
 	char *last_whitespace = nullptr;
+	bool isKorean = !_G(trans_name).CompareNoCase("korean");
+	bool isKSX1001 = isKorean && get_uformat() == U_ASCII;
+	bool wideChar = false;
 	while (1) {
 		char *split_at = nullptr;
 
@@ -358,19 +361,25 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 			last_whitespace = scan_ptr;
 
 		// force end of line with the \n character
+		wideChar = false;
 		if (*scan_ptr == '\n') {
 			split_at = scan_ptr;
 			// otherwise, see if we are too wide
 		} else {
 			// temporarily terminate the line in the *next* char and test its width
 			char *next_ptr = scan_ptr;
+			if (isKSX1001 && is_korean_code(*next_ptr, *(next_ptr + 1))) {
+				// Korean 2byte character
+				wideChar = true;
+				ugetx(&next_ptr);
+			}
 			ugetx(&next_ptr);
 			const int next_chwas = ugetc(next_ptr);
 			*next_ptr = 0;
 
 			if (get_text_width_outlined(theline, fonnt) > wii) {
 				// line is too wide, order the split
-				if (last_whitespace)
+				if (!wideChar && last_whitespace)
 					// revert to the last whitespace
 					split_at = last_whitespace;
 				else
@@ -384,6 +393,8 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 
 		if (split_at == nullptr) {
 			prev_ptr = scan_ptr;
+			if (wideChar)
+				ugetx(&scan_ptr);
 			ugetx(&scan_ptr);
 		} else {
 			// check if even one char cannot fit...

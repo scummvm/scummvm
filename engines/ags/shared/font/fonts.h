@@ -182,6 +182,11 @@ private:
 // returns number of lines, or 0 if text cannot be split well to fit in this width
 size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumber, size_t max_lines = -1);
 
+// Korean KS X1001 Code
+inline bool is_korean_code(const unsigned char hi, const unsigned char lo) {
+	return (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE);
+}
+
 } // namespace AGS3
 
 #endif

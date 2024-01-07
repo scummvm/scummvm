@@ -44,6 +44,10 @@ void WFNFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
 	const WFNFont *font = _fontData[fontNumber].Font;
 	// replace any extended characters with question marks
 	for (; *text; ++text) {
+		if (font->GetWCharCount() == KoreanCharCount && IsKoreanCode(*text, *(text + 1))) {
+			text++;
+			continue;
+		}
 		if ((unsigned char)*text >= font->GetCharCount()) {
 			*text = '?';
 		}
@@ -56,8 +60,14 @@ int WFNFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	int text_width = 0;
 
 	for (; *text; ++text) {
-		const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
-		text_width += wfn_char.Width;
+		if (font->GetWCharCount() == KoreanCharCount && IsKoreanCode(*text, *(text + 1))) {
+		 	const WFNChar &wfn_char = font->GetWChar(*text, *(text + 1));
+			text_width += wfn_char.Width;
+			text++;
+		} else {
+			const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
+			text_width += wfn_char.Width;
+		}
 	}
 	return text_width * params.SizeMultiplier;
 }
@@ -68,10 +78,18 @@ int WFNFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	int max_height = 0;
 
 	for (; *text; ++text) {
-		const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
-		const uint16_t height = wfn_char.Height;
-		if (height > max_height)
-			max_height = height;
+		if (font->GetWCharCount() == KoreanCharCount && IsKoreanCode(*text, *(text + 1))) {
+		 	const WFNChar &wfn_char = font->GetWChar(*text, *(text + 1));
+			const uint16_t height = wfn_char.Height;
+			if (height > max_height)
+				max_height = height;
+			text++;
+		} else {
+		 	const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
+			const uint16_t height = wfn_char.Height;
+			if (height > max_height)
+				max_height = height;
+		}
 	}
 	return max_height * params.SizeMultiplier;
 }
@@ -90,8 +108,14 @@ void WFNFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	// NOTE: allegro's putpixel ignores clipping (optimization),
 	// so we'll have to accommodate for that ourselves
 	Rect clip = ds.GetClip();
-	for (; *text; ++text)
-		x += RenderChar(&ds, x, y, clip, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
+	for (; *text; ++text) {
+		if (font->GetWCharCount() == KoreanCharCount && IsKoreanCode(*text, *(text + 1))) {
+			x += RenderChar(&ds, x, y, clip, font->GetWChar(*text, *(text + 1)), params.SizeMultiplier, colour);
+			text++;
+		} else {
+			x += RenderChar(&ds, x, y, clip, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
+		}
+	}
 
 	set_our_eip(oldeip);
 }
@@ -125,6 +149,14 @@ bool WFNFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
 	return LoadFromDiskEx(fontNumber, fontSize, nullptr, nullptr);
 }
 
+int WFNFontRenderer::GetFontHeight(int fontNumber) {
+	const WFNFont *font = _fontData[fontNumber].Font;
+	if (font->GetWCharCount() == KoreanCharCount) {
+		return font->GetWChar(0xB0, 0xA1).Height;	// Height of First Korean character
+	}
+	return 0;
+}
+
 bool WFNFontRenderer::IsBitmapFont() {
 	return true;
 }
@@ -153,6 +185,14 @@ bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 		delete font;
 		return false;
 	}
+
+	// Load Extended Bitmap Font
+	file_name.Format("extfnt%d.wfn", fontNumber);
+	ffi = _GP(AssetMgr)->OpenAsset(file_name);
+	if (ffi != nullptr) {
+		font->ReadExtFntFromFile(ffi);
+	}
+
 	_fontData[fontNumber].Font = font;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
 	if (metrics)
@@ -166,7 +206,7 @@ void WFNFontRenderer::FreeMemory(int fontNumber) {
 }
 
 bool WFNFontRenderer::SupportsExtendedCharacters(int fontNumber) {
-	return _fontData[fontNumber].Font->GetCharCount() > 128;
+	return _fontData[fontNumber].Font->GetCharCount() + _fontData[fontNumber].Font->GetWCharCount() > 128;
 }
 
 } // namespace AGS3

@@ -38,7 +38,8 @@ String get_translation_name();
 String get_translation_path();
 // Returns translation map for reading only
 const StringMap &get_translation_tree();
-
+// Returns game uid
+char *get_gameguid();
 } // namespace AGS3
 
 #endif

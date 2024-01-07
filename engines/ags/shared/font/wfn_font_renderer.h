@@ -47,7 +47,7 @@ public:
 	int GetVersion() override { return 26; /* first compatible engine API version */ }
 	const char *GetRendererName() override { return "WFNFontRenderer"; }
 	const char *GetFontName(int /*fontNumber*/) override { return ""; }
-	int GetFontHeight(int fontNumber) override { return 0; /* TODO? */ }
+	int GetFontHeight(int fontNumber) override;
 	int GetLineSpacing(int fontNumber) override { return 0; /* no specific spacing */ }
 
 	// IAGSFontRendererInternal implementation
@@ -63,6 +63,12 @@ private:
 		FontRenderParams Params;
 	};
 	std::map<int, FontData> _fontData;
+
+	// Korean font
+	const int KoreanCharCount = 2350;
+	bool IsKoreanCode(const unsigned char hi, const unsigned char lo) const {
+		return (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE);
+	}
 };
 
 } // namespace AGS3

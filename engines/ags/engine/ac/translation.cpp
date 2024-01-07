@@ -156,4 +156,7 @@ const StringMap &get_translation_tree() {
 	return _GP(trans).Dict;
 }
 
+char *get_gameguid() {
+	return _GP(game).guid;
+}
 } // namespace AGS3

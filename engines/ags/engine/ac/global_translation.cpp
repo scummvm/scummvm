@@ -22,6 +22,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/game_state.h"
+#include "ags/shared/ac/game_struct_defines.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/translation.h"
@@ -61,6 +62,19 @@ const char *get_translation(const char *text) {
 }
 
 int IsTranslationAvailable() {
+	// Some games don't support foreign language packs.
+	// If that's the case, make them think they don't have them.
+	const char guid[][MAX_GUID_LENGTH] = {
+		"{cf1b8753-2ad1-4d79-b5c7-f6aff4fdc729}",	/* King's Quest I v4.1c */
+		"{b85ea0b0-35c5-4e53-bfc7-2281bf481001}", 	/* King's Quest II v3.1c */
+		"{19454ab9-e6dd-4f20-a2ad-24da47d91a20}",	/* King's Quest III Redux v1.1 */
+	};
+	char *gameguid = get_gameguid();
+	for (size_t i = 0; i < sizeof(guid) / MAX_GUID_LENGTH; i++) {
+		if (strcmp(gameguid, guid[i]) == 0) {
+			return 0;
+		}
+	}
 	if (get_translation_tree().size() > 0)
 		return 1;
 	return 0;
