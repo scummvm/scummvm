@@ -55,6 +55,7 @@ private:
 	void loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
 	void loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
 	uint32 loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
+	bool loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::SeekableReadStream *stream);
 
 	Graphics::Surface _bmpData;
 	ResourceManager *_resourceMan;
