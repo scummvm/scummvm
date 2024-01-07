@@ -37,9 +37,14 @@ public:
 	int _frameIdx = 0;
 	int _direction = 0;
 	Common::Point _position;
+	Common::Point _positionLong; // the original sometimes seems to use a long (4 byte) version of the location
 	Common::Point _walkTarget;
-	uint16 playerSpriteWalkIndex_maybe = 0;
-	bool _playerIsMoving_maybe;
+	int16 playerSpriteWalkIndex_maybe = 0;
+	int16 playerWalkFrameDeltaOffset = 0;
+	int16 playerNewFacingDirection_maybe = 0;
+	bool isPlayerWalking_maybe = false;
+	bool _playerIsChangingDirection = false;
+	bool _isAutoWalkingToBed = false;
 
 public:
 	Player();
@@ -47,6 +52,12 @@ public:
 	const Sprite &getSprite(int frameNo);
 	void updateSprite();
 	void draw();
+
+	bool isAtPosition(int x, int y) const;
+	bool isAtWalkTarget() const;
+
+	void changeDirection(int16 oldDir, int16 newDir);
+	void playerFaceWalkTarget();
 };
 
 } // namespace Darkseed
