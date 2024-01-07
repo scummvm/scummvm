@@ -43,6 +43,7 @@ public:
 
 class TTMData : public ScriptParserData {
 public:
+	uint16 _pages;
 };
 
 struct TTMState {

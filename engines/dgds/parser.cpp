@@ -103,9 +103,14 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	case ID_TAG:
 		scriptData->_tags = readTags(chunk.getContent());
 		break;
-	case ID_VER:
-	case ID_PAG: // Pages - ignore?
-		//chunk._contentStream->skip(chunk._size);
+	case ID_VER: // Version - ignore
+		break;
+	case ID_PAG:
+		if (chunk.getSize() != 2) {
+			warning("unspected PAG chunk size %d in %s", chunk.getSize(), _filename.c_str());
+			break;
+		}
+		scriptData->_pages = chunk.getContent()->readUint16LE();
 		break;
 	default:
 		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());
