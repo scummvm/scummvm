@@ -241,11 +241,19 @@ void Macs2Engine::readResourceFile() {
 
 	// TODO: Figure out which is the correct one
 	// file.seek(0x00003C74);
-	file.seek(0x0000524A);
-	_cursorWidth = file.readUint16LE();
-	_cursorHeight = file.readUint16LE();
-	_cursorData = new byte[_cursorWidth * _cursorHeight];
-	file.read(_cursorData, _cursorWidth* _cursorHeight);
+	// file.seek(0x0000524A);
+	file.seek(0x000050EC);
+	constexpr int numCursors = 5;
+	_cursorData = new byte *[numCursors];
+	_cursorWidths = new uint16[numCursors];
+	_cursorHeights = new uint16[numCursors];
+	for (int i = 0; i < numCursors; i++) {
+		_cursorWidths[i] = file.readUint16LE();
+		_cursorHeights[i] = file.readUint16LE();
+		_cursorData[i] = new byte[_cursorWidths[i] * _cursorHeights[i]];
+		file.read(_cursorData[i], _cursorWidths[i] * _cursorHeights[i]);
+	}
+
 
 	// Load a frame of animation from the protagonist
 	// Crawling towards the left
@@ -474,7 +482,7 @@ void Macs2Engine::PlaySound() {
 	_opl->writeReg(0x43, 0x00);
 	_opl->writeReg(0x63, 0xF0);
 	_opl->writeReg(0x83, 0x77);
-	_opl->writeReg(0xB0, 0x31);
+	// _opl->writeReg(0xB0, 0x31);
 
 	/*
 	    REGISTER     VALUE     DESCRIPTION

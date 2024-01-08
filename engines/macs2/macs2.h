@@ -101,9 +101,9 @@ public:
 
 	bool FindGlyph(char c, GlyphData &out) const;
 
-	byte* _cursorData;
-	uint16 _cursorWidth;
-	uint16 _cursorHeight;
+	byte** _cursorData;
+	uint16* _cursorWidths;
+	uint16* _cursorHeights;
 
 	// TODO: Need a data structure for this by now or check if a bitmap with transparent pixels for blitting exists in ScummVM
 	byte* _guyData;
