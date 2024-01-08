@@ -259,11 +259,11 @@ void engine_setup_scsystem_screen(const DisplayMode &dm) {
 	_GP(scsystem).vsync = dm.Vsync;
 }
 
-void engine_post_gfxmode_setup(const Size &init_desktop) {
+void engine_post_gfxmode_setup(const Size &init_desktop, const DisplayMode &old_dm) {
 	DisplayMode dm = _G(gfxDriver)->GetDisplayMode();
 	// If color depth has changed (or graphics mode was inited for the
 	// very first time), we also need to recreate bitmaps
-	bool has_driver_changed = _GP(scsystem).coldepth != dm.ColorDepth;
+	bool has_driver_changed = old_dm.ColorDepth != dm.ColorDepth;
 
 	engine_setup_scsystem_screen(dm);
 	engine_post_gfxmode_driver_setup();
