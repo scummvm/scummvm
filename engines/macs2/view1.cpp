@@ -30,7 +30,7 @@ namespace Macs2 {
 	View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 
-		CursorMan.replaceCursor(g_engine->_cursorData, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorWidth >> 1, g_engine->_cursorHeight >>1, 0);
+		CursorMan.replaceCursor(g_engine->_cursorData[0], g_engine->_cursorWidths[0], g_engine->_cursorHeights[0], g_engine->_cursorWidths[0] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 		CursorMan.showMouse(true);
 	}
 
@@ -222,7 +222,7 @@ void View1::draw() {
 	// DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
 
 	// Draw the mouse cursor
-	DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
+	// DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
 
 	// Draw the animation frame
 	DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
