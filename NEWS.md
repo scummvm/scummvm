@@ -8,6 +8,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Enabled engine, allowing MM1 and Xeen to be compiled.
+   
+ MTROPOLIS:
+   - Fixed crash in Muppet Treasure Island on some platforms.
 
  NANCY:
    - Fixed the telephone hints in Secrets Can Kill.
