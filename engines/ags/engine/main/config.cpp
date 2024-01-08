@@ -189,10 +189,10 @@ void config_defaults() {
 
 static void read_legacy_graphics_config(const ConfigTree &cfg) {
 	// Pre-3.* game resolution setup
-	int default_res = CfgReadInt(cfg, "misc", "defaultres", 0);
+	int default_res = CfgReadInt(cfg, "misc", "defaultres", kGameResolution_Default);
 	int screen_res = CfgReadInt(cfg, "misc", "screenres", 0);
-	if ((default_res == kGameResolution_320x200 ||
-		default_res == kGameResolution_320x240) && screen_res > 0) {
+	if (screen_res > 0 &&
+		(default_res >= kGameResolution_Default && default_res <= kGameResolution_320x240)) {
 		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
 	}
 
