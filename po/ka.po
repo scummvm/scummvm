@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-02 13:02+0000\n"
+"POT-Creation-Date: 2024-01-07 20:58+0000\n"
 "PO-Revision-Date: 2023-12-08 21:24+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -6486,19 +6486,19 @@ msgstr "თაღლითობის რეჟიმის ჩართვა"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
 msgid "Move up"
 msgstr "აწევა"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
 msgid "Move down"
 msgstr "ქვემოთ ჩამოწევა"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
 msgid "Move left"
 msgstr "მარცხნივ გაწევა"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
 msgid "Move right"
 msgstr "მარჯვნივ გაწევა"
 
@@ -7300,7 +7300,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "თამაში შეჩერებულია. გასაგრძელებლად დააწექით ნებისმიერ ღილაკს."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:220
 msgid "Open main menu"
 msgstr "მთავარი მენიუს გახსნა"
 
@@ -7581,19 +7581,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:165
+#: engines/nancy/input.cpp:176
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:172
+#: engines/nancy/input.cpp:183
 msgid "Right Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:214
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:231
 msgid "Show/hide maze map"
 msgstr "რუკის ჩვენება/დამალვა"
 

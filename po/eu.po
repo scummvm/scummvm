@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-02 13:02+0000\n"
+"POT-Creation-Date: 2024-01-07 20:58+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -6916,22 +6916,22 @@ msgstr "Gaitu helio modua"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
 #, fuzzy
 msgid "Move up"
 msgstr "Atzera mugitu"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
 #, fuzzy
 msgid "Move down"
 msgstr "Eskuinera irristatu"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
 #, fuzzy
 msgid "Move left"
 msgstr "Ezkerrera irristatu"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
 #, fuzzy
 msgid "Move right"
 msgstr "Eskuinera irristatu"
@@ -7809,7 +7809,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Joko pausatua. Sakatu ZURIUNEA jarraitzeko."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:220
 #, fuzzy
 msgid "Open main menu"
 msgstr "It~z~uli abiarazlera"
@@ -8119,22 +8119,22 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Sartu gordetzeko fitxategi-izena"
 
-#: engines/nancy/input.cpp:165
+#: engines/nancy/input.cpp:176
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Ezker-klika"
 
-#: engines/nancy/input.cpp:172
+#: engines/nancy/input.cpp:183
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Eskuin-klika behin"
 
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:214
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Modu bizkorra"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:231
 #, fuzzy
 msgid "Show/hide maze map"
 msgstr "Teklatua erakutsi"

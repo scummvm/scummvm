@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-02 13:02+0000\n"
+"POT-Creation-Date: 2024-01-07 20:58+0000\n"
 "PO-Revision-Date: 2023-12-26 14:05+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7177,19 +7177,19 @@ msgstr "Cheat-Modus aktivieren"
 msgid "Debug info and level selection becomes available"
 msgstr "Aktiviert Debug-Informationen und erlaubt die direkte Level-Auswahl"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
 msgid "Move up"
 msgstr "Nach oben bewegen"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
 msgid "Move down"
 msgstr "Nach unten bewegen"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
 msgid "Move left"
 msgstr "Nach links bewegen"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
 msgid "Move right"
 msgstr "Nach rechts bewegen"
 
@@ -8086,7 +8086,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:220
 msgid "Open main menu"
 msgstr "Hauptmenü öffnen"
 
@@ -8420,19 +8420,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Dateiname zum Speichern eingeben"
 
-#: engines/nancy/input.cpp:165
+#: engines/nancy/input.cpp:176
 msgid "Left Click Interact"
 msgstr "Linksklick"
 
-#: engines/nancy/input.cpp:172
+#: engines/nancy/input.cpp:183
 msgid "Right Click Interact"
 msgstr "Rechtsklick"
 
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:214
 msgid "Fast move modifier"
 msgstr "Modifikator für schnelle Bewegung"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:231
 msgid "Show/hide maze map"
 msgstr "Labyrinth-Karte anzeigen/verbergen"
 
