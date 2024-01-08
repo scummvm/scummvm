@@ -29,8 +29,8 @@ namespace Macs2 {
 
 	View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
-
-		CursorMan.replaceCursor(g_engine->_cursorData[0], g_engine->_cursorWidths[0], g_engine->_cursorHeights[0], g_engine->_cursorWidths[0] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+		int mode = (int)g_engine->_cursorMode;
+		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 		CursorMan.showMouse(true);
 	}
 
@@ -142,9 +142,16 @@ namespace Macs2 {
 
 	bool View1::msgMouseDown(const MouseDownMessage& msg)
 	{
-		uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
-		g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
-		return true;
+		if (msg._button == MouseMessage::MB_LEFT) {
+			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
+			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
+			return true;
+		} else {
+			g_engine->NextCursorMode();
+			int mode = (int)g_engine->_cursorMode;
+			CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+			return true;
+		}
 	}
 
 bool View1::msgKeypress(const KeypressMessage &msg) {
