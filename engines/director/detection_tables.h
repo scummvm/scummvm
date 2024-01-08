@@ -7832,10 +7832,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 											 "SELECTOR.DXR", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
-	MACGAME2f_l("tivolaspring1999", "Sampler",	  "Start",       "r:34be958e28922244011f9f0be46c5b57", 1030506,
-												  "Intro.dxr",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
-	WINGAME2f_l("tivolaspring1999", "Sampler",	  "START16.EXE", "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
-												  "INTRO.DXR",   "d:fc34f90b4cf6e2b205414d6165dae050", 1302996, Common::DE_DEU, 601, GF_32BPP),
+	MACGAME2f_l("tivolaspring1999", "Sampler", "Start",        "r:34be958e28922244011f9f0be46c5b57", 1030506,
+											   "Selector.dxr", "d:85d85c2e1c2d74166548f222cc77918f", 10601412, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+											   "SELECTOR.DXR", "d:89408b76c6835b4e813f375371ebfd1b", 10979868, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
 	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,
