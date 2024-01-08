@@ -37,12 +37,18 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 	if (gotEvent) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd == Common::KEYCODE_ESCAPE || event.kbd == Common::KEYCODE_F5)
+				break;
+
 			// init continuous event stream
 			_currentKeyDown = event.kbd;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 			break;
 
 		case Common::EVENT_KEYUP:
+			if (event.kbd == Common::KEYCODE_ESCAPE || event.kbd == Common::KEYCODE_F5)
+				break;
+
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
 				// Only stop firing events if it's the current key
 				_currentKeyDown.keycode = Common::KEYCODE_INVALID;
