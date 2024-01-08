@@ -25,7 +25,7 @@
 // dirty rectangles technique.
 //
 // TODO: do research/profiling to find out if this dirty rectangles thing
-// is still giving ANY notable perfomance boost at all.
+// is still giving ANY notable performance boost at all.
 //
 // TODO: would that give any benefit to reorganize the code and move dirty
 // rectangles into SoftwareGraphicDriver?
