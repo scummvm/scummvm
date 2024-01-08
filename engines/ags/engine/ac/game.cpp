@@ -598,6 +598,7 @@ void Game_SetName(const char *newName) {
 	strncpy(_GP(play).game_name, newName, 99);
 	_GP(play).game_name[99] = 0;
 	sys_window_set_title(_GP(play).game_name);
+	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Gamename);
 }
 
 int Game_GetSkippingCutscene() {
