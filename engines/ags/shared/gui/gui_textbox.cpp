@@ -62,7 +62,7 @@ Rect GUITextBox::CalcGraphicRect(bool clipped) {
 	if (IsGUIEnabled(this)) {
 		// add a cursor
 		Rect cur_rc = RectWH(
-			get_text_width(Text.GetCStr(), Font) + 3,
+			text_rc.Right + 3,
 			1 + get_font_height(Font),
 			get_fixed_pixel_size(5),
 			get_fixed_pixel_size(1) - 1);
