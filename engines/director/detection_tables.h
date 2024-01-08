@@ -2112,10 +2112,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"DKYData/DirFiles/Shared.Dir", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
 	WINGAME2tf("darkeye", "v1.0.3", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
 									"DKYDATA/DIRFILES/SHARED.DIR", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
-
-	// Standalone from CD dated 1995-08-30
-	MACGAME1f("darkeye", "", "DKY FAT", "r:01be45e7241194dad07938e7059b88e3", 483518, 404, GF_32BPP),
-	WINGAME1f("darkeye", "", "DARK_EYE.EXE", "t:8b319643334fc9f7dfee7acdd9d83812", 698353, 400, GF_32BPP),
+	// French release (v1.0.3, 1995-11-22 in setup/version.txt, latest movie file dated 1995-12-07)
+	WINGAME2f_l("darkeye", "v1.0.3", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
+									"DKYDATA/DIRFILES/SHARED.DIR", "t:1553a4110dfd1cd51fc5ba1ac1fb61de", 2558150, Common::FR_FRA, 404, GF_32BPP),
+	// Beta version from CD dated 1995-08-30, incomplete
+	MACGAME1f("darkeye", "Beta", "DKY FAT", "r:01be45e7241194dad07938e7059b88e3", 483518, 404, GF_32BPP),
+	WINGAME1f("darkeye", "Beta", "DARK_EYE.EXE", "t:8b319643334fc9f7dfee7acdd9d83812", 698353, 400, GF_32BPP),
 
 	WINGAME1t_l("easternmind", "", "TONG_NOU.EXE", "5d8fe6160e5cde5a9fd0cfa6a8ed7901", 741471, Common::JA_JPN, 404),
 	MACGAME1("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483490, 404),
