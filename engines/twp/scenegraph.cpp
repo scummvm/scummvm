@@ -353,8 +353,8 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
 			const SpriteSheetFrame &sf = sheet->frameTable[frame];
 			Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
-			float x = flipX ? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left : 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
-			float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
+			float x = flipX ? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left : 0.5f * (sf.sourceSize.getX()) - sf.spriteSourceSize.left;
+			float y = 0.5f * (sf.sourceSize.getY()) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
 			Math::Vector3d pos(int(-x), int(y), 0.f);
 			trsf.translate(pos);
 			g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
