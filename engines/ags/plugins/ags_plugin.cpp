@@ -177,12 +177,12 @@ void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, const char 
 }
 
 void IAGSEngine::GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth) {
-	if (width != nullptr)
-		width[0] = _GP(play).GetMainViewport().GetWidth();
-	if (height != nullptr)
-		height[0] = _GP(play).GetMainViewport().GetHeight();
-	if (coldepth != nullptr)
-		coldepth[0] = _GP(scsystem).coldepth;
+	if (width)
+		*width = _GP(play).GetMainViewport().GetWidth();
+	if (height)
+		*height = _GP(play).GetMainViewport().GetHeight();
+	if (coldepth)
+		*coldepth = _GP(scsystem).coldepth;
 }
 
 int IAGSEngine::GetBitmapPitch(BITMAP *bmp) {

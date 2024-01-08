@@ -119,6 +119,7 @@ void convert_objects_to_data_resolution(GameDataVersion filever) {
 void engine_setup_system_gamesize() {
 	_GP(scsystem).width = _GP(game).GetGameRes().Width;
 	_GP(scsystem).height = _GP(game).GetGameRes().Height;
+	_GP(scsystem).coldepth = _GP(game).GetColorDepth();
 	_GP(scsystem).viewport_width = game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
 	_GP(scsystem).viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
 }
@@ -254,7 +255,6 @@ void engine_pre_gfxmode_mouse_cleanup() {
 
 // Fill in _GP(scsystem) struct with display mode parameters
 void engine_setup_scsystem_screen(const DisplayMode &dm) {
-	_GP(scsystem).coldepth = dm.ColorDepth;
 	_GP(scsystem).windowed = dm.IsWindowed();
 	_GP(scsystem).vsync = dm.Vsync;
 }
