@@ -236,7 +236,7 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		_gameFlow.prevState = _gameFlow.curState;
 	}
 
-	_gameFlow.curState = state;
+	_gameFlow.nextState = state;
 	_gameFlow.changingState = true;
 }
 
@@ -285,6 +285,9 @@ Common::Error NancyEngine::run() {
 		State::State *s;
 
 		if (_gameFlow.changingState) {
+			_gameFlow.curState = _gameFlow.nextState;
+			_gameFlow.nextState = NancyState::kNone;
+
 			s = getStateObject(_gameFlow.curState);
 			if (s) {
 				s->onStateEnter(_gameFlow.curState);
@@ -305,10 +308,10 @@ Common::Error NancyEngine::run() {
 		if (_gameFlow.changingState) {
 			_graphicsManager->clearObjects();
 
-			s = getStateObject(_gameFlow.prevState);
+			s = getStateObject(_gameFlow.curState);
 			if (s) {
-				if (s->onStateExit(_gameFlow.prevState)) {
-					destroyState(_gameFlow.prevState);
+				if (s->onStateExit(_gameFlow.nextState)) {
+					destroyState(_gameFlow.curState);
 				}
 			}
 		}

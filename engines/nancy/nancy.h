@@ -132,6 +132,7 @@ private:
 	struct GameFlow {
 		NancyState::NancyState curState = NancyState::kNone;
 		NancyState::NancyState prevState = NancyState::kNone;
+		NancyState::NancyState nextState = NancyState::kNone;
 		bool changingState = true;
 	};
 
