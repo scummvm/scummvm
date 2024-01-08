@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-02 13:02+0000\n"
-"PO-Revision-Date: 2023-12-29 17:22+0000\n"
+"PO-Revision-Date: 2024-01-08 01:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -9957,12 +9957,12 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1235
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "Не вдалося відкрити файл ресурсів Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
-msgstr ""
+msgstr "Не вдалося знайти гілку ресурсів у файлі ресурсів Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1603
 msgid ""
@@ -10545,7 +10545,7 @@ msgstr "Спеціальна дія"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "Збільшити сцену"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
