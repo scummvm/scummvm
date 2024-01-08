@@ -39,13 +39,15 @@ using namespace AGS; // FIXME later
 #define MCF_STANDARD 4
 #define MCF_HOTSPOT  8  // only animate when over hotspot
 
+#define MAX_CURSOR_NAME_LENGTH 10
+
 // IMPORTANT: exposed to plugin API as AGSCursor!
 // do not change topmost fields, unless planning breaking compatibility.
 struct MouseCursor {
 	int   pic = 0;
 	short hotx = 0, hoty = 0;
 	short view = -1;
-	char  name[10]{};
+	char  name[MAX_CURSOR_NAME_LENGTH]{};
 	char  flags = 0;
 
 	// up to here is a part of plugin API

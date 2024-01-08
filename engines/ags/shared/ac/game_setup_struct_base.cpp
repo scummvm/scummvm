@@ -26,10 +26,11 @@
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
 
 GameSetupStructBase::GameSetupStructBase()
 	: numviews(0)
@@ -143,7 +144,7 @@ void GameSetupStructBase::OnResolutionSet() {
 }
 
 void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
-	in->Read(&gamename[0], GAME_NAME_LENGTH);
+	StrUtil::ReadCStrCount(gamename, in, GAME_NAME_LENGTH);
 	in->ReadArrayOfInt32(options, MAX_OPTIONS);
 	if (game_ver < kGameVersion_340_4) { // TODO: this should probably be possible to deduce script API level
 		// using game data version and other options like OPT_STRICTSCRIPTING
@@ -192,7 +193,7 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
 }
 
 void GameSetupStructBase::WriteToFile(Stream *out) const {
-	out->Write(&gamename[0], GAME_NAME_LENGTH);
+	out->Write(gamename, GAME_NAME_LENGTH);
 	out->WriteArrayOfInt32(options, MAX_OPTIONS);
 	out->Write(&paluses[0], sizeof(paluses));
 	// colors are an array of chars

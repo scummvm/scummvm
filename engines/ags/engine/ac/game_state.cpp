@@ -603,6 +603,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 	in->Read(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	in->Read(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	in->Read(lastParserEntry, MAX_MAXSTRLEN);
+	StrUtil::ReadCStrCount(game_name, in, MAX_GAME_STATE_NAME_LENGTH);
 	in->Read(game_name, 100);
 	ground_level_areas_disabled = in->ReadInt32();
 	next_screen_transition = in->ReadInt32();
@@ -795,6 +796,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->Write(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	out->Write(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	out->Write(lastParserEntry, MAX_MAXSTRLEN);
+	out->Write(game_name, MAX_GAME_STATE_NAME_LENGTH);
 	out->Write(game_name, 100);
 	out->WriteInt32(ground_level_areas_disabled);
 	out->WriteInt32(next_screen_transition);

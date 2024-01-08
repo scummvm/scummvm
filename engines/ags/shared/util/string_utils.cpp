@@ -200,6 +200,11 @@ void StrUtil::ReadCStr(char *buf, Stream *in, size_t buf_limit) {
 	}
 }
 
+void StrUtil::ReadCStrCount(char *buf, Stream *in, size_t count) {
+	in->Read(buf, count);
+	buf[count - 1] = 0; // for safety
+}
+
 char *StrUtil::ReadMallocCStrOrNull(Stream *in) {
 	char buf[1024];
 	for (auto ptr = buf; (ptr < buf + sizeof(buf)); ++ptr) {

@@ -55,7 +55,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// font parameters are then put and queried in the fonts module
 	// TODO: split into installation params (used only when reading) and runtime params
 	std::vector<FontInfo> fonts;
-	InventoryItemInfo invinfo[MAX_INV];
+	InventoryItemInfo invinfo[MAX_INV]{};
 	std::vector<MouseCursor> mcurs;
 	std::vector<PInteraction> intrChar;
 	PInteraction intrInv[MAX_INV];
