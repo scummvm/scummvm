@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Android port:
    - Fixed crash in built-in help with German language.
 
+ macOS port:
+   - Fixed a problem where some Mac games would not load resources correctly.
+
 #### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
  New games:
