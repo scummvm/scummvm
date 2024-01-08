@@ -507,7 +507,15 @@ void Macs2Engine::OnTimer() {
 }
 
 
-void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
+void Macs2Engine::NextCursorMode() {
+	if (_cursorMode == CursorMode::Walk) {
+		_cursorMode = CursorMode::Talk;
+	} else {
+		_cursorMode = static_cast<CursorMode>(static_cast<int>(_cursorMode) + 1);
+	}
+}
+
+void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 	PlaySound();
 
 	// Implements roughly 01E7:DB56 and friends
