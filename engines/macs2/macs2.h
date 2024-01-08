@@ -43,6 +43,10 @@ namespace Macs2 {
 
 struct Macs2GameDescription;
 
+enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
+
+
+
 struct GlyphData {
 	byte* Data;
 	char ASCII;
@@ -127,6 +131,12 @@ public:
 	
 
 	byte* mapData;
+
+	CursorMode _cursorMode = CursorMode::Walk;
+
+	void NextCursorMode();
+
+
 
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
