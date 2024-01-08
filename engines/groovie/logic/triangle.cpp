@@ -19,7 +19,7 @@
  *
  *
  * This file is dual-licensed.
- * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * In addition to the GPLv3 license mentioned above, MojoTouch has exclusively licensed
  * this code on November 10th, 2021, to be use in closed-source products.
  * Therefore, any contributions (commits) to it will also be dual-licensed.
  *
@@ -396,7 +396,7 @@ void TriangleGame::sub07(int8 *tempMoves, int8 *triangleCells, int8 *tempTriangl
 
 int8 TriangleGame::sub09(int8 player, int8 *tempTriangle2, int8 *tempTriangle1, int8 *a4, int8 *triangleCells) {
 	int8 movesTable[280];
-	
+
 	int numDir1 = 0;
 	int numDir2 = 0;
 	int numDir3 = 0;
