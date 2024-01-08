@@ -117,7 +117,7 @@ void ExpVisitor::visit(const YPause &node) {
 }
 
 void ExpVisitor::visit(const YWaitFor &node) {
-	debug("TODO: waitFor {node.actor}");
+	debug("TODO: waitFor {%s}", node._actor.c_str());
 }
 
 void ExpVisitor::visit(const YParrot &node) {

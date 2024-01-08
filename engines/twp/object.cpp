@@ -214,14 +214,14 @@ void Object::trig(const Common::String &name) {
 		if (_triggers.contains(trigNum)) {
 			_triggers[trigNum]->trig();
 		} else {
-			warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _name.c_str());
+			warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _key.c_str());
 		}
 	} else {
 		int id = 0;
 		sqgetf(sqrootTbl(g_engine->getVm()), name.substr(1), id);
 		SoundDefinition *sound = sqsounddef(id);
 		if (!sound)
-			warning("Cannot trig sound '%s', sound not found (id=%d)", name.c_str(), id);
+			warning("Cannot trig sound '%s', sound not found (id=%d, %s)", name.c_str(), id, _key.c_str());
 		else
 			g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	}

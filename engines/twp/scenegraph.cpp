@@ -287,7 +287,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 void Anim::trigSound() {
 	if ((_anim->triggers.size() > 0) && _frameIndex < _anim->triggers.size()) {
 		const Common::String &trigger = _anim->triggers[_frameIndex];
-		if ((trigger.size() > 0) && trigger!= "null") {
+		if ((trigger.size() > 0) && trigger != "null") {
 			_obj->trig(trigger);
 		}
 	}
@@ -506,6 +506,14 @@ Inventory::Inventory() : Node("Inventory") {
 		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
 		_itemRects[i] = Common::Rect(x, y, x + BACKWIDTH, y + BACKHEIGHT);
 	}
+}
+
+Math::Vector2d Inventory::getPos(Object *inv) const {
+	if (_actor) {
+		int i = Twp::find(_actor->_inventory, inv) - _actor->_inventoryOffset * NUMOBJECTSBYROW;
+		return Math::Vector2d(_itemRects[i].left + _itemRects[i].width() / 2.f, _itemRects[i].bottom + _itemRects[i].height() / 2.f);
+	}
+	return {};
 }
 
 void Inventory::drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
