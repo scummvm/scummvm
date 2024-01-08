@@ -1518,6 +1518,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sfk",				"Science for Kids Product Demos" },
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
+	{ "tivolafall1998",		"Tivola Demo - Herbst 1998" },   // Contains D4, D5 and D6 executables
 	{ "tivolaspring1999",	"Tivola Demo - Frühling 1999" }, // Contains D4, D5 and D6 executables
 	{ "tivolasummer2000",	"Tivola Demo - Sommer 2000" },
 	{ "tlc",				"The Learning Company Sampler" },
@@ -7823,6 +7824,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("technik", "", "Techni00.exe", "1b8d78ddca650041b8997cac7af3184b", 1615559, 650),
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
+
+	// Tivola demo/sampler disc, Fall 1998, released in Germany
+	MACGAME2f_l("tivolafall1998", "Sampler", "Start",        "r:d549c6d331cf1c6354f1f2b93b34c0f4", 1026645,
+											 "Selector.dxr", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolafall1998", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+											 "SELECTOR.DXR", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
 	MACGAME2f_l("tivolaspring1999", "Sampler",	  "Start",       "r:34be958e28922244011f9f0be46c5b57", 1030506,
