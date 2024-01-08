@@ -289,6 +289,7 @@ public:
 	void update(float elapsed, Object* actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
 
 	Object* getObject() const { return _obj; }
+	Math::Vector2d getPos(Object* inv) const;
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;

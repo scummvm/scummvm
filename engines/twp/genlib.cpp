@@ -334,7 +334,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	if (obj->inInventory()) {
-		// TODO: sqpush(v, g_engine->_uiInv.getPos(obj));
+		sqpush(v, g_engine->_uiInv.getPos(obj));
 		return 1;
 	}
 
