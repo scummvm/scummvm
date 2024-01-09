@@ -311,10 +311,9 @@ Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, cons
 			}
 		}
 		position = lastPosition + distance * direction + epsilon * normal;
-		if (distance >= 1.0)
+		if (i > 1 || distance >= 1.0)
 			break;
 		i++;
-		assert(i <= 5);
 	}
 	return position;
 }

@@ -416,7 +416,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
-	ray = Math::Ray(newPosition, direction);
+	ray = Math::Ray(lastPosition, direction);
 	collided = _currentArea->checkCollisionRay(ray, 45);
 	if (collided) {
 		gobj = (GeometricObject *)collided;

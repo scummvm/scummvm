@@ -57,7 +57,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		initZX();
 
 	_playerHeightNumber = 1;
-	_playerHeights.push_back(16);
+	_playerHeights.push_back(32);
 	_playerHeights.push_back(48);
 	_playerHeight = _playerHeights[_playerHeightNumber];
 
