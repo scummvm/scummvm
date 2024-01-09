@@ -1165,6 +1165,10 @@ void GfxTinyGL::destroyTexture(Texture *texture) {
 	}
 }
 
+const Graphics::PixelFormat GfxTinyGL::getMovieFormat() const {
+	return g_system->getScreenFormat();
+}
+
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
 	if (_smushImage == nullptr)
 		_smushImage = tglGenBlitImage();

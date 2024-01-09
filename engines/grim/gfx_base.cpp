@@ -241,4 +241,16 @@ Texture *GfxBase::getSpecialtyTexturePtr(Common::String name) {
 	return &_specialtyTextures[id];
 }
 
+void GfxBase::prepareMovieFrame(Graphics::Surface *frame, const byte *palette) {
+	if (!palette)
+		return prepareMovieFrame(frame);
+
+	Graphics::Surface *converted = frame->convertTo(getMovieFormat(), palette);
+	if (converted) {
+		prepareMovieFrame(converted);
+		converted->free();
+		delete converted;
+	}
+}
+
 }
