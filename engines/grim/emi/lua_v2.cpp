@@ -503,7 +503,11 @@ void Lua_V2::ThumbnailFromFile() {
 		return;
 	}
 
+#ifdef SCUMM_BIG_ENDIAN
+	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 	g_driver->createSpecialtyTexture(index, (const uint8 *)screenshot->getData(0).getPixels(), width, height);
 	delete screenshot;
 	delete[] data;
