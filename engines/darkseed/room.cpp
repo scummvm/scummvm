@@ -264,3 +264,41 @@ void Darkseed::Room::printRoomDescriptionText() const {
 		g_engine->_console->printTosText(textId);
 	}
 }
+
+int Darkseed::Room::getObjectNumUnder6AtCursor() {
+	Common::Rect cursorRect(g_engine->_cursor.getPosition(), g_engine->_cursor.getWidth(), g_engine->_cursor.getHeight());
+	for (int i = 0; i < room3.size(); i++) {
+		if (room3[i].unk0 == 0 && room3[i].unk2 < 6 && cursorRect.contains(room3[i].xOffset, room3[i].yOffset)) {
+			selectedObjIndex = i;
+			return room3[i].unk2;
+		}
+	}
+	return 0;
+}
+
+void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
+	for (int i = 0; i < room3.size(); i++) {
+		if (room3[i].unk2 == objId && room3[i].unk0 == 4) {
+			g_engine->_player->_walkTarget.x = room3[i].xOffset;
+			g_engine->_player->_walkTarget.y = room3[i].yOffset;
+			for (int j = 0; j < room1.size(); j++) {
+				if (room1[j].roomNumber != 0xff
+					&& room3[selectedObjIndex].xOffset < room1[j].x
+					&& room1[j].x < room3[selectedObjIndex].xOffset + room3[selectedObjIndex].width
+					&& room3[selectedObjIndex].yOffset < room1[j].y
+					&& room1[j].y < room3[selectedObjIndex].yOffset + room3[selectedObjIndex].height
+					) {
+					if (_roomNumber != 0x3d || room1[j].roomNumber == 5 || g_engine->trunkPushCounter > 2) {
+						g_engine->BoolByteEnum_2c85_9e67 = 1;
+					}
+					g_engine->targetRoomNumber = room1[j].roomNumber;
+					g_engine->DAT_2c85_6b0e = room1[j].unka; // TODO what is this?
+					break;
+				}
+			}
+			return;
+		}
+	}
+	g_engine->_player->_walkTarget.x = g_engine->_cursor.getX();
+	g_engine->_player->_walkTarget.y = g_engine->_cursor.getY();
+}

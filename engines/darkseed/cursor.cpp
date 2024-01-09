@@ -26,15 +26,15 @@ void Darkseed::Cursor::setCursorType(enum CursorType newType) {
 	_currentCursorType = newType;
 }
 
-void Darkseed::Cursor::updatePosition(int x, int y) {
-	_x = x;
-	_y = y;
+void Darkseed::Cursor::updatePosition(int16 x, int16 y) {
+	_position.x = x;
+	_position.y = y;
 //	debug("mouse at (%d,%d)", _x, _y);
 }
 
 void Darkseed::Cursor::draw() {
 	const Sprite cursorSprite = g_engine->_baseSprites.getSpriteAt(_currentCursorType);
-	int drawX = _x;
+	int drawX = _position.x;
 	if (drawX + cursorSprite.width > 640) {
 		drawX = 640 - cursorSprite.width;
 	}
@@ -42,7 +42,7 @@ void Darkseed::Cursor::draw() {
 		drawX = 0;
 	}
 
-	int drawY = _y;
+	int drawY = _position.y;
 	if (drawY + cursorSprite.height > 350) {
 		drawY = 350 - cursorSprite.height;
 	}

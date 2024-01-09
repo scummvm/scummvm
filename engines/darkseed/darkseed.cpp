@@ -222,7 +222,7 @@ void DarkseedEngine::handleInput() {
 			if (currentRoomNumber == 0x39 &&_previousRoomNumber == 6) {
 				_player->updateSprite();
 			} else {
-				if (_player->isAtWalkTarget() && !BoolEnum_2c85_811c) {
+				if (_player->isAtWalkTarget() && !_player->BoolEnum_2c85_811c) {
 					_player->updateSprite();
 				} else {
 					if (counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
@@ -237,10 +237,10 @@ void DarkseedEngine::handleInput() {
 					}
 					_player->updateSprite();
 				}
-				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && ~_player->isPlayerWalking_maybe) { // prevLeftMouseButtonState == 0 &&
+				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->isPlayerWalking_maybe) { // prevLeftMouseButtonState == 0 &&
 					if (_actionMode == PointerAction) {
+						_player->calculateWalkTarget();
 						_player->playerFaceWalkTarget();
-
 					} else {
 						int objNum = getObjectUnderCursor();
 						if (objNum != -1) {
@@ -248,8 +248,19 @@ void DarkseedEngine::handleInput() {
 						}
 					}
 				}
-
-				if (_isRightMouseClicked) {
+//				if ((int)playerSpriteX_maybe < (int)walkTargetX) {
+//					local_22 = walkTargetX - playerSpriteX_maybe;
+//				}
+//				else {
+//					local_22 = playerSpriteX_maybe - walkTargetX;
+//				}
+//				if ((int)playerSpriteY_maybe < (int)walkTargetY) {
+//					local_20 = walkTargetY - playerSpriteY_maybe;
+//				}
+//				else {
+//					local_20 = playerSpriteY_maybe - walkTargetY;
+//				}
+				if (_isRightMouseClicked && !_player->isPlayerWalking_maybe) {
 					if (_actionMode == LookAction) {
 						_actionMode = PointerAction;
 					} else if (_actionMode == PointerAction) {
@@ -258,10 +269,26 @@ void DarkseedEngine::handleInput() {
 						_actionMode = LookAction;
 					}
 					_cursor.setCursorType((CursorType)_actionMode);
-				} else if (_isLeftMouseClicked) {
-					// TODO do actions here.
-					handlePointerAction();
 				}
+				if (_player->isAtWalkTarget() && _player->BoolEnum_2c85_811c && _player->walkPathIndex != 0xff) {
+//					if (walkPathIndex + 1 < numConnectorsInWalkPath) {
+//						walkPathIndex = walkPathIndex + 1;
+//						walkTargetX = *(uint *)((int)roomConnectorXPositionTbl +
+//												*(int *)((int)walkPathConnectorList + walkPathIndex * 2) * 2);
+//						walkTargetY = *(uint *)((int)roomConnectorYPositionTbl +
+//												*(int *)((int)walkPathConnectorList + walkPathIndex * 2) * 2);
+//					}
+//					else {
+//						walkTargetX = DAT_2c85_6dd7;
+//						walkTargetY = DAT_2c85_6df1;
+//						walkPathIndex = 0xff;
+//					}
+//					playerFaceWalkTarget();
+				}
+//				else if (_isLeftMouseClicked) {
+//					// TODO do actions here.
+//					handlePointerAction();
+//				}
 			}
 		} else {
 			// turn player around.

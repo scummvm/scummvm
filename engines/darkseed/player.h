@@ -42,9 +42,13 @@ public:
 	int16 playerSpriteWalkIndex_maybe = 0;
 	int16 playerWalkFrameDeltaOffset = 0;
 	int16 playerNewFacingDirection_maybe = 0;
-	bool isPlayerWalking_maybe = false;
+	uint16 playerWalkFrameIdx = 0;
+	bool isPlayerWalking_maybe = false; // player is pathfinding to some destination?
 	bool _playerIsChangingDirection = false;
 	bool _isAutoWalkingToBed = false;
+	bool BoolEnum_2c85_811c = false; // maybe set to true while player is walking around the room.
+	int walkPathIndex = -1;
+	uint16 numConnectorsInWalkPath = 0;
 
 public:
 	Player();
@@ -55,6 +59,7 @@ public:
 
 	bool isAtPosition(int x, int y) const;
 	bool isAtWalkTarget() const;
+	void calculateWalkTarget();
 
 	void changeDirection(int16 oldDir, int16 newDir);
 	void playerFaceWalkTarget();

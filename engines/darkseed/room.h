@@ -24,6 +24,7 @@
 
 #include "pal.h"
 #include "pic.h"
+#include "common/rect.h"
 
 namespace Darkseed {
 
@@ -67,6 +68,7 @@ public:
 	Common::Array<RoomStruct3> room3;
 	Common::Array<RoomConnector> connectors;
 
+	uint16 selectedObjIndex = 0;
 public:
 	explicit Room(int roomNumber);
 
@@ -75,6 +77,8 @@ public:
 	void update();
 
 	int getObjectAtPoint(int x, int y);
+	int getObjectNumUnder6AtCursor();
+	void getWalkTargetForObjectType_maybe(int objId);
 	int getExitRoomNumberAtPoint(int x, int y);
 	bool exitRoom();
 	Common::String getRoomFilenameBase(int roomNumber);
