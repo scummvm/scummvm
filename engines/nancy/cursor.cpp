@@ -35,7 +35,7 @@ CursorManager::CursorManager() :
 	_curItemID(-1),
 	_curCursorType(kNormal),
 	_curCursorID(0),
-	_lastCursorID(0),
+	_lastCursorID(10000), // nonsense default value to ensure cursor is drawn the first time
 	_hasItem(false),
 	_numCursorTypes(0),
 	_puzzleExitCursor((g_nancy->getGameType() >= kGameTypeNancy4) ? kMoveBackward : kExit),
