@@ -522,6 +522,8 @@ void LoadSaveMenu::save() {
 				}
 				
 				finalDesc = _loadSaveData->_defaultSaveNamePrefix + ('0' + suffixNum);
+			} else {
+				finalDesc = _filenameStrings[_selectedSave];
 			}
 		} else {
 			if (!_filenameStrings[_selectedSave].equals(g_nancy->getStaticData().emptySaveText)) {
