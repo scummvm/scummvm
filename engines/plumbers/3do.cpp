@@ -483,7 +483,7 @@ void PlumbersGame3DO::startGraphics() {
 	initGraphics(_screenW, _screenH, &pf);
 }
 
-void PlumbersGame3DO::blitImage(Graphics::Surface *screen) {
+void PlumbersGame3DO::blitImage() {
 	const Graphics::Surface *surface;
 	bool ctrlHelp = false;
 	if (_leftShoulderPressed && _leftButtonDownFl && _ctrlHelpImage) {
@@ -522,7 +522,7 @@ void PlumbersGame3DO::blitImage(Graphics::Surface *screen) {
 		modded = true;
 	}
 
-	blitImageSurface(screen, modded ? &modSurf : surface);
+	blitImageSurface(modded ? &modSurf : surface);
 }
 
 void PlumbersGame3DO::skipVideo() {

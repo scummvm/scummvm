@@ -62,8 +62,6 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 		stream.read(buf, fieldSize);
 		buf[fieldSize - 1] = '\0';
 		_names[i] = buf;
-
-		_maxNameLength = MAX(_maxNameLength, _names[i].size());
 	}
 	s.skip((5 - numNames) * fieldSize, kGameTypeNancy4);
 
@@ -73,10 +71,10 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 		stream.read(buf, fieldSize);
 		buf[19] = '\0';
 		_passwords[i] = buf;
-
-		_maxPasswordLength = MAX(_maxPasswordLength, _passwords[i].size());
 	}
 	s.skip((5 - numPasswords) * fieldSize, kGameTypeNancy4);
+
+	_maxStringLength = g_nancy->getGameType() < kGameTypeNancy6 ? 12 : 31;
 
 	_solveExitScene.readData(stream);
 	_solveSound.readNormal(stream);
@@ -202,11 +200,10 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
 		Common::KeyState &key = input.otherKbdInput[i];
 		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
-		uint &maxLength = _passwordFieldIsActive ? _maxPasswordLength : _maxNameLength;
 		if (key.keycode == Common::KEYCODE_BACKSPACE) {
 			if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
 				if (activeField.lastChar() == '-') {
-					activeField.deleteChar(activeField.size() -2);
+					activeField.deleteChar(activeField.size() - 2);
 				} else {
 					activeField.deleteLastChar();
 				}
@@ -217,13 +214,13 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 			_playerHasHitReturn = true;
 		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
 			if (activeField.size() && activeField.lastChar() == '-') {
-				if (activeField.size() <= maxLength + 2) {
+				if (activeField.size() <= _maxStringLength + 1) {
 					activeField.deleteLastChar();
 					activeField += key.ascii;
 					activeField += '-';
 				}
 			} else {
-				if (activeField.size() <= maxLength + 1) {
+				if (activeField.size() <= _maxStringLength) {
 					activeField += key.ascii;
 				}
 			}

@@ -509,7 +509,7 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 }
 
 void GUIErrorMessageFormatU32StringPtr(const Common::U32String *fmt, ...) {
-	Common::U32String msg("");
+	Common::U32String msg;
 
 	va_list va;
 	va_start(va, fmt);

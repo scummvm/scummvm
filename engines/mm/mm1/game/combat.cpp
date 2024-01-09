@@ -982,8 +982,6 @@ void Combat::iterateMonsters1Inner() {
 			monsterName.c_str(), effect.c_str()
 	));
 
-	updateMonsterStatus();
-
 	msg._delaySeconds = 3;
 
 	bool isEnd = !--g_globals->_spellsState._resistanceTypeOrTargetCount;

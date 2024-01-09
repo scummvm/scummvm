@@ -65,12 +65,9 @@ void Renderer::popSavedBackBuffer(BackBufferSource source) {
 void Renderer::restoreSavedBackBuffer(BackBufferSource source) {
 	if (source >= 0 && source < kMaxBackBufferSources) {
 		if (_savedBackBuffers[source]) {
-			Graphics::Surface *surf = g_system->lockScreen();
-			int size = surf->w * surf->h;
-
-			memcpy(surf->getBasePtr(0, 0), _savedBackBuffers[source], size);
-
-			g_system->unlockScreen();
+			uint w = g_system->getWidth();
+			uint h = g_system->getHeight();
+			g_system->copyRectToScreen(_savedBackBuffers[source], w, 0, 0, w, h);
 		}
 	}
 }

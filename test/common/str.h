@@ -29,8 +29,10 @@ class StringTestSuite : public CxxTest::TestSuite
 
 	void test_chop() {
 		Common::String str("test-string");
+		Common::String str2 = str;
 		str.chop();
 		TS_ASSERT_EQUALS(str, "test-strin");
+		TS_ASSERT_EQUALS(str2, "test-string");
 
 		str = "test-string";
 		str.chop(2);
@@ -645,9 +647,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
 
 		// Makes a deep copy when we shorten the string
-		Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
-		Common::String s4(s3);
-		s3.replace(0, 32, Common::U32String(""));
+		Common::U32String s3 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
+		Common::U32String s4(s3);
+		s3.replace(0, 32, Common::U32String());
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
 	}
@@ -682,6 +684,18 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(testString == "2123456");
 		testString.insertChar('0', 5);
 		TS_ASSERT(testString == "21234056");
+		testString.insertChar('7', 8);
+		TS_ASSERT(testString == "212340567");
+	}
+
+	void test_insertString() {
+		Common::String testString("123456");
+		testString.insertString("12", 0);
+		TS_ASSERT(testString == "12123456");
+		testString.insertString("01", 6);
+		TS_ASSERT(testString == "1212340156");
+		testString.insertString("78", 10);
+		TS_ASSERT(testString == "121234015678");
 	}
 
 	void test_comparison() {

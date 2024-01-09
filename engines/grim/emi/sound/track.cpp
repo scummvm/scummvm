@@ -89,7 +89,7 @@ void SoundTrack::updatePosition() {
 	if (_volume == 0) {
 		_attenuation = 0.0f;
 	} else {
-		_attenuation = fmaxf(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
+		_attenuation = MAX(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
 	}
 
 	Math::Matrix4 worldRot = setup->_rot;

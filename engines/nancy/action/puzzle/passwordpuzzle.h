@@ -60,8 +60,7 @@ public:
 	bool _playerHasHitReturn = false;
 	SolveState _solveState = kNotSolved;
 
-	uint _maxNameLength = 0;
-	uint _maxPasswordLength = 0;
+	uint _maxStringLength = 0;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }

@@ -20,10 +20,16 @@
  */
 
 #include "common/scummsys.h"
-#include <immintrin.h>
 
 #include "graphics/blit/blit-alpha.h"
 #include "graphics/pixelformat.h"
+
+#include <immintrin.h>
+
+#ifdef __GNUC__
+#pragma GCC push_options
+#pragma GCC target("avx2")
+#endif
 
 namespace Graphics {
 
@@ -300,3 +306,7 @@ void BlendBlit::blitAVX2(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // End of namespace Graphics
+
+#ifdef __GNUC__
+#pragma GCC pop_options
+#endif

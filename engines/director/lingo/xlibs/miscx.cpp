@@ -19,12 +19,21 @@
  *
  */
 
-/*************************************
+#include "common/system.h"
+
+#include "director/director.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
+#include "director/lingo/xlibs/miscx.h"
+
+/**************************************************
  *
  * USED IN:
  * Pippi
  * AMBER: Journeys Beyond
  * Total Distortion
+ * Backpacker
  *
  *************************************/
 
@@ -61,34 +70,46 @@
  * ----
  */
 
-#include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
-#include "director/lingo/xlibs/miscx.h"
-
-
 namespace Director {
 
 const char *MiscX::xlibName = "Misc_X";
 const char *MiscX::fileNames[] = {
 	"MISC_X",
 	"sharCOPY", // TD loads this up using openXLib("@:sharCOPY.DLL")
+	"BPXLIB",   // Backpacker
 	0
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",					MiscX::m_new,			0,	0,	400 },	// D4
-	{ "BootName",				MiscX::m_bootName,		0,	0,	400 },	// D4
-	{ "InsureFolder",			MiscX::m_insureFolder,	1,	1,	400 },	// D4
-	{ "PrefsFolder",			MiscX::m_prefsFolder,	0,	0,	400 },	// D4
+	{ "new",					MiscX::m_new,				0,	0,	400 },	// D4
+	{ "dispose",				MiscX::m_dispose,			0,	0,	400 },	// D4
+	{ "bootName",				MiscX::m_bootName,			0,	0,	400 },	// D4
+	{ "windowsDirectory",		MiscX::m_windowsDirectory,	0,	0,	400 },	// D4
+	{ "fileExists",				MiscX::m_fileExists,		1,	1,	400 },	// D4
+	{ "copyFile",				MiscX::m_copyFile,			2,	2,	400 },	// D4
+	{ "folderExists",			MiscX::m_folderExists,		1,	1,	400 },	// D4
+	{ "insureFolder",			MiscX::m_insureFolder,		1,	1,	400 },	// D4
+	{ "prefsFolder",			MiscX::m_prefsFolder,		0,	0,	400 },	// D4
+	{ "deleteFolder",			MiscX::m_deleteFolder,		1,	1,	400 },	// D4
+	{ "fileList",				MiscX::m_fileList,			1,	1,	400 },	// D4
+	{ "ask",					MiscX::m_ask,				4,	4,	400 },	// D4
+	{ "answer",					MiscX::m_answer,			4,	4,	400 },	// D4
+	{ "spaceOnVol",				MiscX::m_spaceOnVol,		1,	1,	400 },	// D4
+	{ "deleteGroup",			MiscX::m_deleteGroup,		1,	1,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
+
+MiscXObject::MiscXObject(ObjectType ObjectType) :Object<MiscXObject>("MiscX") {
+	_objType = ObjectType;
+}
 
 void MiscX::open(int type) {
 	if (type == kXObj) {
 		MiscXObject::initMethods(xlibMethods);
 		MiscXObject *xobj = new MiscXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
 }
 
@@ -96,27 +117,32 @@ void MiscX::close(int type) {
 	if (type == kXObj) {
 		MiscXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
 }
 
-
-MiscXObject::MiscXObject(ObjectType ObjectType) :Object<MiscXObject>("MiscX") {
-	_objType = ObjectType;
-}
-
 void MiscX::m_new(int nargs) {
+	if (nargs != 0) {
+		warning("MiscX::m_new: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+	}
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void MiscX::m_bootName(int nargs) {
-	g_lingo->push(Datum(""));
-}
+XOBJSTUBNR(MiscX::m_dispose)
+XOBJSTUB(MiscX::m_bootName, "")
+XOBJSTUB(MiscX::m_windowsDirectory, "")
+XOBJSTUB(MiscX::m_fileExists, 0)
+XOBJSTUB(MiscX::m_copyFile, 0)
+XOBJSTUB(MiscX::m_folderExists, 0)
+XOBJSTUB(MiscX::m_insureFolder, 0)
+XOBJSTUB(MiscX::m_prefsFolder, "")
+XOBJSTUBNR(MiscX::m_deleteFolder)
+XOBJSTUB(MiscX::m_fileList, "")
+XOBJSTUB(MiscX::m_ask, "")
+XOBJSTUB(MiscX::m_answer, "")
+XOBJSTUB(MiscX::m_spaceOnVol, 0)
+XOBJSTUB(MiscX::m_deleteGroup, 0)
 
-void MiscX::m_insureFolder(int nargs) {
 }
-
-void MiscX::m_prefsFolder(int nargs) {
-	g_lingo->push(Datum(""));
-}
-
-} // End of namespace Director

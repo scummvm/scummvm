@@ -233,20 +233,26 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 	Common::String res = Common::String::format("\001" "\016i%02x" "%02x%s",
 			80, (uint)link->size, Common::String((const char *)link->data, link->size).c_str());
 
-	if (alt)
-		res += Common::String::format("%02x%s", (uint)alt->size, Common::String((const char *)alt->data, alt->size).c_str());
-	else
+	if (alt) {
+		uint32 len = Common::U32String((const char *)alt->data, alt->size).size();
+		res += Common::String::format("%02x%s", len, Common::String((const char *)alt->data, alt->size).c_str());
+	} else {
 		res += "00";
+	}
 
-	if (title)
-		res += Common::String::format("%02x%s", (uint)title->size, Common::String((const char *)title->data, title->size).c_str());
-	else
+	if (title) {
+		uint32 len = Common::U32String((const char *)title->data, title->size).size();
+		res += Common::String::format("%02x%s", len, Common::String((const char *)title->data, title->size).c_str());
+	} else {
 		res += "00";
+	}
 
-	if (ext)
-		res += Common::String::format("%02x%s", (uint)ext->size, Common::String((const char *)ext->data, ext->size).c_str());
-	else
+	if (ext) {
+		uint32 len = Common::U32String((const char *)ext->data, ext->size).size();
+		res += Common::String::format("%02x%s", len, Common::String((const char *)ext->data, ext->size).c_str());
+	} else {
 		res += "00";
+	}
 
 	res += "\n";
 
@@ -270,10 +276,12 @@ int render_link(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, cons
 	MDState *mdstate = (MDState *)opaque;
 	const Common::SDDataBuffer *text = content ? content : link;
 
+	uint32 linklen = Common::U32String((const char *)link->data, link->size).size();
+
 	Common::String res = Common::String::format("\001" "\016+%02x00" "\001\016[%04x%04x%04x"
 		"\001\016l%02x%s" "%s" "\001\016l00" "\001\016]" "\001\016-%02x00", kMacFontUnderline,
 		mdstate->linkr, mdstate->linkg, mdstate->linkb,
-		(uint)link->size, Common::String((const char *)link->data , link->size).c_str(),
+		linklen, Common::String((const char *)link->data , link->size).c_str(),
 		Common::String((const char *)text->data , text->size).c_str(), kMacFontUnderline);
 
 	sd_bufput(ob, res.c_str(), res.size());

@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #ifndef GOB_DETECTION_TABLES_FALLBACK_H
@@ -143,7 +149,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformDOS,
+			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -199,7 +205,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformDOS,
+			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},

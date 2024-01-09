@@ -33,7 +33,6 @@ namespace AGSSnowRain {
 const unsigned int Magic = 0xCAFE0000;
 const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
-const float PI = 3.14159265f;
 
 
 void View::syncGame(Serializer &s) {
@@ -99,7 +98,7 @@ void Weather::UpdateWithDrift() {
 	for (i = 0; i < _mAmount * 2; i++) {
 		_mParticles[i].y += _mParticles[i].speed;
 		drift = _mParticles[i].drift * sin((float)(_mParticles[i].y +
-		                                   _mParticles[i].drift_offset) * _mParticles[i].drift_speed * 2.0f * PI / 360.0f);
+		                                   _mParticles[i].drift_offset) * _mParticles[i].drift_speed * 2.0f * M_PI / 360.0f);
 
 		if (signum(_mWindSpeed) == signum(drift))
 			_mParticles[i].x += _mWindSpeed;

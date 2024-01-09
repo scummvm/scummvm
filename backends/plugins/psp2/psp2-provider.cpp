@@ -41,8 +41,6 @@ void *forceLinkFunctions[] = {
 	(void *)(void *(*)(std::size_t, std::nothrow_t const&))operator new [],
 	(void *)coshf,
 	(void *)fgetc,
-	(void *)fmaxf,
-	(void *)fminf,
 	(void *)frexpf,
 	(void *)getc,
 	(void *)log2f,

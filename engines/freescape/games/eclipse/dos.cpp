@@ -72,9 +72,27 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
-	if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentAreaMessages[0], 102, 135, black, yellow, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 102, 135, black, yellow, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
+	} else if (!_currentAreaMessages.empty())
+		drawStringInSurface(_currentArea->_name, 102, 135, black, yellow, surface);
+
+	Common::String scoreStr = Common::String::format("%07d", score);
+	drawStringInSurface(scoreStr, 136, 6, black, white, surface, 'Z' - '0' + 1);
+
+	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, black, yellow, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 135, black, yellow, surface, 'Z' - '$' + 1);
+
+	if (_shootingFrames > 0) {
+		drawStringInSurface("4", 232, 135, black, yellow, surface, 'Z' - '$' + 1);
+		drawStringInSurface("<", 240, 135, black, yellow, surface, 'Z' - '$' + 1);
+	}
 }
 
 } // End of namespace Freescape

@@ -2514,7 +2514,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 
 	Common::U32String browserPath = _("<default>");
 	if (ConfMan.hasKey("browser_lastpath"))
-		browserPath = ConfMan.get("browser_lastpath");
+		browserPath = ConfMan.getPath("browser_lastpath").toString(Common::Path::kNativeSeparator);
 
 	// I18N: Referring to the last path memorized when adding a game
 	_browserPath = new StaticTextWidget(boss, prefix + "BrowserPath", _("Last browser path: ") + browserPath, browserPath);

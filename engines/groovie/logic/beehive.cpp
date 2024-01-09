@@ -19,7 +19,7 @@
  *
  *
  * This file is dual-licensed.
- * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * In addition to the GPLv3 license mentioned above, MojoTouch has exclusively licensed
  * this code on November 10th, 2021, to be use in closed-source products.
  * Therefore, any contributions (commits) to it will also be dual-licensed.
  *
@@ -813,7 +813,7 @@ void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
 void BeehiveGame::tests() {
 	warning("starting BeehiveGame::tests()");
 	// 8 moves per line, in from and to pairs
-	
+
 	// speedrun strat
 	testGame({
 		/**/ 34, 42, /**/ 56, 50, /**/ 50, 35, /**/ 42, 55, /**/ 34, 42, /**/ 42, 49, /**/ 35, 43, /**/ 43, 50,

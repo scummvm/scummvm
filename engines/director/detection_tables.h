@@ -1364,6 +1364,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Swedish titles
 	{ "alfons",				"Alfons Åberg ”Bara Överallt!”" },
 	{ "acneattack",			"Acne-Attack!" },
+	{ "backpacker",			"BackPacker" },
 	{ "backpacker2",		"Backpacker 2" },							// Other games listed under English
 	{ "backpackerjrdiy",	"BackPacker Junior - Do-It-Yourself" },
 	{ "balticmission",		"Baltic Mission" },
@@ -1517,6 +1518,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sfk",				"Science for Kids Product Demos" },
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
+	{ "tivolaspring1997",	"Tivola Demo - Frühjahr '97" },
+	{ "tivolafall1998",		"Tivola Demo - Herbst 1998" },   // Contains D4, D5 and D6 executables
+	{ "tivolaspring1999",	"Tivola Demo - Frühling 1999" }, // Contains D4, D5 and D6 executables
 	{ "tivolasummer2000",	"Tivola Demo - Sommer 2000" },
 	{ "tlc",				"The Learning Company Sampler" },
 	{ "ubt",				"Under the Big Top" },
@@ -1775,6 +1779,7 @@ namespace Director {
 #define MACGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
 #define PIPGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define WINGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
 #define WINGAME2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define WINGAME2tf(t,e,f1,m1,s1,f2,m2,s2,v,fl)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
 #define FMTGAME2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
@@ -1784,6 +1789,7 @@ namespace Director {
 #define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define MACGAME2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh, (fl|ADGF_MACRESFORK), v)
 #define WINGAME2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
 #define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
@@ -2076,6 +2082,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
+	// BackPacker (Windows, Swedish)
+	// Reported via TRAC #14819
+	WINGAME1_l("backpacker", "", "BACKPACK.EXE", "t:8e6fb18a41a9baff740aecd4ce68e100", 698999, Common::SE_SWE, 404),
+
 	// Original filename is 'BD-J/Demo'
 	// Developed by ART Sector ONE / Richard M. Coombs
 	// ベターデッド ーラティフィケーションー published by NEC Interchannel, Minato, Tokyo (1995)
@@ -2104,10 +2114,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"DKYData/DirFiles/Shared.Dir", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
 	WINGAME2tf("darkeye", "v1.0.3", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
 									"DKYDATA/DIRFILES/SHARED.DIR", "t:d143a91bb2ab7f8553c472564f229d7e", 2539576, 404, GF_32BPP),
-
-	// Standalone from CD dated 1995-08-30
-	MACGAME1f("darkeye", "", "DKY FAT", "r:01be45e7241194dad07938e7059b88e3", 483518, 404, GF_32BPP),
-	WINGAME1f("darkeye", "", "DARK_EYE.EXE", "t:8b319643334fc9f7dfee7acdd9d83812", 698353, 400, GF_32BPP),
+	// French release (v1.0.3, 1995-11-22 in setup/version.txt, latest movie file dated 1995-12-07)
+	WINGAME2f_l("darkeye", "v1.0.3", "DARKEYE.EXE", "t:67ba8428573dba0c8e12e7f02e4ef1bc", 742326,
+									"DKYDATA/DIRFILES/SHARED.DIR", "t:1553a4110dfd1cd51fc5ba1ac1fb61de", 2558150, Common::FR_FRA, 404, GF_32BPP),
+	// Beta version from CD dated 1995-08-30, incomplete
+	MACGAME1f("darkeye", "Beta", "DKY FAT", "r:01be45e7241194dad07938e7059b88e3", 483518, 404, GF_32BPP),
+	WINGAME1f("darkeye", "Beta", "DARK_EYE.EXE", "t:8b319643334fc9f7dfee7acdd9d83812", 698353, 400, GF_32BPP),
 
 	WINGAME1t_l("easternmind", "", "TONG_NOU.EXE", "5d8fe6160e5cde5a9fd0cfa6a8ed7901", 741471, Common::JA_JPN, 404),
 	MACGAME1("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483490, 404),
@@ -2184,6 +2196,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Korean Windows version is named 'Time Girl'
 	WINGAME1_l("timegal", "", "TIMEGIRL.EXE", "0e5a7734bdc74198a62171ea4d51a364", 687457, Common::KO_KOR, 400),
+
+	// Tivola demo/sampler disc, Spring 1997, released in Germany
+	MACGAME2_l("tivolaspring1997", "Sampler", "Tivola Demos",      "r:5debd53e3dd84431c9ca1e47f5e10c1b", 503636,
+											  "Demo/SAMPLECD.Dxr", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
+	WINGAME2_l("tivolaspring1997", "Sampler", "START.EXE",         "t:e38cb9f5acb91b498a7a6718385c82e2", 740011,
+											  "DEMO/SAMPLECD.DXR", "d:81c08d08680a7e8649b67a6a0314776d", 5667390, Common::DE_DEU, 404),
 
 	// Found on
 	// 1995-08-16 Mac/Win hybrid v1.2 release of SimTower
@@ -7813,6 +7831,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("technik", "", "Techni00.exe", "1b8d78ddca650041b8997cac7af3184b", 1615559, 650),
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
+
+	// Tivola demo/sampler disc, Fall 1998, released in Germany
+	MACGAME2f_l("tivolafall1998", "Sampler", "Start",        "r:d549c6d331cf1c6354f1f2b93b34c0f4", 1026645,
+											 "Selector.dxr", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolafall1998", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+											 "SELECTOR.DXR", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
+
+	// Tivola demo/sampler disc, Spring 1999, released in Germany
+	MACGAME2f_l("tivolaspring1999", "Sampler", "Start",        "r:34be958e28922244011f9f0be46c5b57", 1030506,
+											   "Selector.dxr", "d:85d85c2e1c2d74166548f222cc77918f", 10601412, Common::DE_DEU, 601, GF_32BPP),
+	WINGAME2f_l("tivolaspring1999", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+											   "SELECTOR.DXR", "d:89408b76c6835b4e813f375371ebfd1b", 10979868, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
 	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,

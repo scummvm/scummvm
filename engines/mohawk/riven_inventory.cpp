@@ -84,13 +84,8 @@ void RivenInventory::clearArea() {
 	// Clear the inventory area
 	static const Common::Rect inventoryRect = Common::Rect(0, 392, 608, 436);
 
-	// Lock the screen
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-
 	// Fill the inventory area with black
-	screen->fillRect(inventoryRect, screen->format.RGBToColor(0, 0, 0));
-
-	_vm->_system->unlockScreen();
+	_vm->_system->fillScreen(inventoryRect, g_system->getScreenFormat().RGBToColor(0, 0, 0));
 }
 
 void RivenInventory::checkClick(const Common::Point &mousePos) {

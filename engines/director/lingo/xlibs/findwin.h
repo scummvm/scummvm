@@ -17,30 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * This file is dual-licensed.
- * In addition to the GPLv3 license mentioned above, this code is also
- * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
- * full text of the license.
- *
  */
 
-#include "gob/gob.h"
-#include "gob/draw.h"
-#include "gob/global.h"
-#include "gob/video.h"
+#ifndef DIRECTOR_LINGO_XLIBS_FINDWIN_H
+#define DIRECTOR_LINGO_XLIBS_FINDWIN_H
 
-namespace Gob {
+namespace Director {
 
-Draw_Bargon::Draw_Bargon(GobEngine *vm) : Draw_v2(vm) {
-}
+class FindWinXObject : public Object<FindWinXObject> {
+public:
+	FindWinXObject(ObjectType objType);
+};
 
-void Draw_Bargon::initScreen() {
-	_vm->_global->_videoMode = 0x14;
-	_vm->_video->_surfWidth = 640;
-	_vm->_video->initPrimary(_vm->_global->_videoMode);
+namespace FindWin {
 
-	Draw_v2::initScreen();
-}
+extern const char *xlibName;
+extern const char *fileNames[];
 
-} // End of namespace Gob
+void open(int type);
+void close(int type);
+
+void m_new(int nargs);
+void m_do(int nargs);
+
+} // End of namespace FindWin
+
+} // End of namespace Director
+
+#endif

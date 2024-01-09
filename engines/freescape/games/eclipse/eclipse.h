@@ -41,6 +41,8 @@ public:
 	void initZX();
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
+
+	void initGameState() override;
 	void executePrint(FCLInstruction &instruction) override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;

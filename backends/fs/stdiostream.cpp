@@ -129,7 +129,7 @@ StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMod
 	wchar_t *wPath = Win32::stringToTchar(path);
 	FILE *handle = _wfopen(wPath, writeMode ? L"wb" : L"rb");
 	free(wPath);
-#elif defined(HAS_FSEEKO64)
+#elif defined(HAS_FOPEN64)
 	FILE *handle = fopen64(path.c_str(), writeMode ? "wb" : "rb");
 #else
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");

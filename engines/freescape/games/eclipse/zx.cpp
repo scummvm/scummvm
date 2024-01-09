@@ -98,16 +98,25 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	color = _currentArea->_inkColor;
+	_gfx->readFromPalette(7, r, g, b);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	_gfx->readFromPalette(color, r, g, b);
-	//uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	//int score = _gameStateVars[k8bitVariableScore];
+	int score = _gameStateVars[k8bitVariableScore];
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 141, back, front, surface);
-	//drawStringInSurface(Common::String::format("%08d", score), 136, 6, back, other, surface);
+
+	Common::String scoreStr = Common::String::format("%07d", score);
+	drawStringInSurface(scoreStr, 133, 11, back, gray, surface, 'Z' - '0' + 1);
+
+	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 141, back, front, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 141, back, front, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 141, back, front, surface, 'Z' - '$' + 1);
+
+	if (_shootingFrames > 0) {
+		drawStringInSurface("4", 232, 141, back, front, surface, 'Z' - '$' + 1);
+		drawStringInSurface("<", 240, 141, back, front, surface, 'Z' - '$' + 1);
+	}
 }
 
 } // End of namespace Freescape

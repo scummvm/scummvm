@@ -23,6 +23,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 #include "saga2/saga2.h"
@@ -395,11 +396,8 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 }
 
 void vDisplayPage::fillRect(Rect16 r, uint8 color) {
-	Graphics::Surface *surf = g_system->lockScreen();
-
-	_FillRect((byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height, color);
-
-	g_system->unlockScreen();
+	Common::Rect rect(r.x, r.y, r.x + r.width, r.y + r.height);
+	g_system->fillScreen(rect, color);
 }
 
 void vDisplayPage::invertRect(Rect16 r, uint8 color) {

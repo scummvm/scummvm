@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 /* Detection tables for Urban Runner. */
@@ -136,7 +142,7 @@
                     "urband.vmd", "60343891868c91854dd5c82766c70ecc", 922461),
 		EN_ANY,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeUrban,

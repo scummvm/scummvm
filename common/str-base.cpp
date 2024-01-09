@@ -324,14 +324,10 @@ TEMPLATE bool BASESTRING::operator!=(const value_type *x) const {
 }
 
 TEMPLATE int BASESTRING::compareTo(const BaseString &x) const {
-	for (uint32 i = 0, n = x.size(); i < _size && i < n; ++i) {
-		uint32 sc = _str[i];
-		uint32 xc = x[i];
-		if (sc < xc)
-			return -1;
-		else if (sc > xc)
-			return +1;
-	}
+	int n = cMemCmp(_str, x._str, MIN(_size, x.size()));
+	if (n != 0)
+		return n;
+
 	if (_size < x.size())
 		return -1;
 	if (_size == x.size())
@@ -406,13 +402,7 @@ TEMPLATE bool BASESTRING::operator>=(const value_type *x) const {
 }
 
 TEMPLATE bool BASESTRING::contains(value_type x) const {
-	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] == x) {
-			return true;
-		}
-	}
-
-	return false;
+	return cMemChr(_str, x, _size) != nullptr;
 }
 
 TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
@@ -440,33 +430,24 @@ TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
 
 TEMPLATE void BASESTRING::insertChar(value_type c, uint32 p) {
 	assert(p <= _size);
-
-	ensureCapacity(_size + 1, true);
-	_size++;
-	for (uint32 i = _size; i > p; --i)
-		_str[i] = _str[i - 1];
-	_str[p] = c;
+	assignInsert(c, p);
 }
 
 TEMPLATE void BASESTRING::deleteChar(uint32 p) {
 	assert(p < _size);
-
-	makeUnique();
-	while (p++ < _size)
-		_str[p - 1] = _str[p];
-	_size--;
-}
-
-TEMPLATE void BASESTRING::deleteLastChar() {
-	if (_size > 0)
-		deleteChar(_size - 1);
+	erase(p, 1);
 }
 
 TEMPLATE void BASESTRING::chop(uint32 len) {
-	uint32 newSize = _size - MIN(_size, len);
+	if (_size > len) {
+		uint32 newSize = _size - len;
 
-	_str[newSize] = 0;
-	_size = newSize;
+		makeUnique();
+		_str[newSize] = 0;
+		_size = newSize;
+	} else if (_size > 0) {
+		clear();
+	}
 }
 
 TEMPLATE void BASESTRING::erase(uint32 p, uint32 len) {
@@ -475,20 +456,24 @@ TEMPLATE void BASESTRING::erase(uint32 p, uint32 len) {
 
 	assert(p < _size);
 
-	makeUnique();
 	// If len == npos or p + len is over the end, remove all the way to the end
 	if (len == npos || p + len >= _size) {
-		// Delete char at p as well. So _size = (p - 1) + 1
-		_size = p;
-		// Null terminate
-		_str[_size] = 0;
+		// If p == 0, remove the entire string
+		if (p == 0) {
+			clear();
+		} else {
+			makeUnique();
+			// Delete char at p as well. So _size = (p - 1) + 1
+			_size = p;
+			// Null terminate
+			_str[_size] = 0;
+		}
 		return;
 	}
 
-	for ( ; p + len <= _size; p++) {
-		_str[p] = _str[p + len];
-	}
+	makeUnique();
 	_size -= len;
+	memmove(_str + p, _str + p + len, ((_size - p) + 1) * sizeof(value_type));
 }
 
 TEMPLATE typename BASESTRING::iterator BASESTRING::erase(iterator it) {
@@ -564,25 +549,16 @@ TEMPLATE void BASESTRING::assign(value_type c) {
 }
 
 TEMPLATE void BASESTRING::insertString(const value_type *s, uint32 p) {
-	while (*s != '\0') {
-		BaseString::insertChar(*s++, p++);
-	}
+	assignInsert(s, p);
 }
 
 TEMPLATE void BASESTRING::insertString(const BaseString &s, uint32 p) {
-	for (uint i = 0; i < s._size; i++) {
-		BaseString::insertChar(s[i], p+i);
-	}
+	assignInsert(s, p);
 }
 
 TEMPLATE uint32 BASESTRING::find(value_type x, uint32 pos) const {
-	for (uint32 i = pos; i < _size; ++i) {
-		if (_str[i] == x) {
-			return i;
-		}
-	}
-
-	return npos;
+	const value_type *p = (pos >= _size) ? nullptr : cMemChr(_str + pos, x, _size - pos);
+	return p ? p - _str : npos;
 }
 
 TEMPLATE uint32 BASESTRING::find(const BaseString &str, uint32 pos) const {
@@ -631,6 +607,191 @@ TEMPLATE size_t BASESTRING::find(const value_type *strP, uint32 pos) const {
 	}
 
 	return npos;
+}
+
+TEMPLATE size_t BASESTRING::rfind(const value_type *s) const {
+	int sLen = cStrLen(s);
+
+	for (int idx = (int)_size - sLen; idx >= 0; --idx) {
+		if (!memcmp(_str + idx, s, sLen * sizeof(value_type)))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::rfind(value_type c, size_t pos) const {
+	if (pos == npos || pos > _size)
+		pos = _size;
+	else
+		++pos;
+
+	while (pos > 0) {
+		--pos;
+		if ((*this)[pos] == c)
+			return pos;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstOf(value_type c, size_t pos) const {
+	const value_type *strP = (pos >= _size) ? nullptr : cMemChr(_str + pos, c, _size - pos);
+	return strP ? strP - _str : npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastOf(value_type c, size_t pos) const {
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
+	for (int idx = start; idx >= 0; --idx) {
+		if (cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstNotOf(value_type c, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findFirstNotOf(const value_type *chars, size_t pos) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (!cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastNotOf(value_type c) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE size_t BASESTRING::findLastNotOf(const value_type *chars) const {
+	uint32 charsLen = cStrLen(chars);
+
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if (!cMemChr(chars, (*this)[idx], charsLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+TEMPLATE void BASESTRING::replace(uint32 pos, uint32 count, const BaseString &str) {
+	replace(pos, count, str, 0, str._size);
+}
+
+TEMPLATE void BASESTRING::replace(uint32 pos, uint32 count, const value_type *str) {
+	replace(pos, count, str, 0, cStrLen(str));
+}
+
+TEMPLATE void BASESTRING::replace(iterator begin_, iterator end_, const BaseString &str) {
+	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
+}
+
+TEMPLATE void BASESTRING::replace(iterator begin_, iterator end_, const value_type *str) {
+	replace(begin_ - _str, end_ - begin_, str, 0, cStrLen(str));
+}
+
+TEMPLATE void BASESTRING::replace(uint32 posOri, uint32 countOri, const BaseString &str,
+					 uint32 posDest, uint32 countDest) {
+	replace(posOri, countOri, str._str, posDest, countDest);
+}
+
+TEMPLATE void BASESTRING::replace(uint32 posOri, uint32 countOri, const value_type *str,
+					 uint32 posDest, uint32 countDest) {
+
+	// Prepare string for the replaced text.
+	if (countOri < countDest) {
+		uint32 offset = countDest - countOri; ///< Offset to copy the characters
+		uint32 newSize = _size + offset;
+		uint32 len = _size - posOri;
+
+		ensureCapacity(newSize, true);
+
+		_size = newSize;
+
+		// Push the old characters to the end of the string
+		memmove(_str + posOri + offset, _str + posOri,
+		        (len + 1) * sizeof(value_type));
+
+	} else if (countOri > countDest){
+		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
+		uint32 len = _size - (posOri + countDest + offset);
+
+		makeUnique();
+
+		// Pull the remainder string back
+		memmove(_str + posOri + countDest, _str + posOri + countDest + offset,
+			 (len + 1) * sizeof(value_type));
+
+		_size -= offset;
+	} else {
+		makeUnique();
+	}
+
+	// Copy the replaced part of the string
+	memmove(_str + posOri, str + posDest, countDest * sizeof(value_type));
+}
+
+TEMPLATE void BASESTRING::replace(value_type from, value_type to) {
+	// Don't allow removing trailing \x00
+	if (from == '\x00') {
+		return;
+	}
+
+	value_type *next = cMemChr(_str, from, _size);
+	if (!next) {
+		// Nothing to do
+		return;
+	}
+
+	size_t off = next - _str;
+	makeUnique();
+
+	value_type *end = _str + _size;
+	next = _str + off;
+	while(next) {
+		*next = to;
+		next++;
+		next = cMemChr(next + 1, from, end - next);
+	}
 }
 
 TEMPLATE uint64 BASESTRING::asUint64() const {
@@ -807,6 +968,19 @@ TEMPLATE void BASESTRING::append(const value_type *beginP, const value_type *end
 	_str[_size] = 0;
 }
 
+TEMPLATE void BASESTRING::assignInsert(value_type c, uint32 p) {
+	if (c == 0) {
+#ifndef SCUMMVM_UTIL
+		warning("Inserting \\0 into String. This is permitted, but can have unwanted consequences. (This warning will be removed later.)");
+#endif
+	}
+	ensureCapacity(_size + 1, true);
+
+	memmove(_str + p + 1, _str + p, ((_size - p) + 1) * sizeof(value_type));
+	_str[p] = c;
+	_size++;
+}
+
 TEMPLATE void BASESTRING::assignAppend(value_type c) {
 	if (c == 0) {
 #ifndef SCUMMVM_UTIL
@@ -817,6 +991,22 @@ TEMPLATE void BASESTRING::assignAppend(value_type c) {
 
 	_str[_size++] = c;
 	_str[_size] = 0;
+}
+
+TEMPLATE void BASESTRING::assignInsert(const BaseString &str, uint32 p) {
+	if (&str == this) {
+		assignInsert(BaseString(str), p);
+		return;
+	}
+
+	int len = str._size;
+	if (len > 0) {
+		ensureCapacity(_size + len, true);
+
+		memmove(_str + p + len, _str + p, ((_size - p) + 1) * sizeof(value_type));
+		memcpy(_str + p, str._str, len * sizeof(value_type));
+		_size += len;
+	}
 }
 
 TEMPLATE void BASESTRING::assignAppend(const BaseString &str) {
@@ -844,14 +1034,29 @@ TEMPLATE bool BASESTRING::pointerInOwnBuffer(const value_type *str) const {
 	return ownBuffStart <= candidateAddr && candidateAddr <= ownBuffEnd;
 }
 
+TEMPLATE void BASESTRING::assignInsert(const value_type *str, uint32 p) {
+	if (pointerInOwnBuffer(str)) {
+		assignInsert(BaseString(str), p);
+		return;
+	}
+
+	uint32 len = cStrLen(str);
+	if (len > 0) {
+		ensureCapacity(_size + len, true);
+
+		memmove(_str + p + len, _str + p, ((_size - p) + 1) * sizeof(value_type));
+		memcpy(_str + p, str, len * sizeof(value_type));
+		_size += len;
+	}
+}
+
 TEMPLATE void BASESTRING::assignAppend(const value_type *str) {
 	if (pointerInOwnBuffer(str)) {
 		assignAppend(BaseString(str));
 		return;
 	}
 
-	uint32 len;
-	for (len = 0; str[len]; len++);
+	uint32 len = cStrLen(str);
 	if (len > 0) {
 		ensureCapacity(_size + len, true);
 
@@ -861,8 +1066,7 @@ TEMPLATE void BASESTRING::assignAppend(const value_type *str) {
 }
 
 TEMPLATE void BASESTRING::assign(const value_type *str) {
-	uint32 len;
-	for (len = 0; str[len]; len++);
+	uint32 len = cStrLen(str);
 	ensureCapacity(len, false);
 	_size = len;
 	memmove(_str, str, (len + 1) * sizeof(value_type));
@@ -881,6 +1085,40 @@ TEMPLATE uint32 BASESTRING::cStrLen(const value_type *str) {
 	return len;
 }
 
+TEMPLATE const T *BASESTRING::cMemChr(const value_type *str, value_type c, size_t count) {
+	for (size_t i = 0; i < count; ++i) {
+		if (str[i] == c) {
+			return str + i;
+		}
+	}
+	return nullptr;
+}
+
+TEMPLATE T *BASESTRING::cMemChr(value_type *str, value_type c, size_t count) {
+	for (size_t i = 0; i < count; ++i) {
+		if (str[i] == c) {
+			return str + i;
+		}
+	}
+	return nullptr;
+}
+
+TEMPLATE int BASESTRING::cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count) {
+	assert(ptr1);
+	assert(ptr2);
+	assert(count);
+
+	for (size_t i = 0; i < count; ++i) {
+		value_type sc = ptr1[i];
+		value_type xc = ptr2[i];
+		if (sc < xc)
+			return -1;
+		else if (sc > xc)
+			return +1;
+	}
+	return 0;
+}
+
 // Hash function for strings, taken from CPython.
 TEMPLATE uint BASESTRING::hash() const {
 	uint hashResult = getUnsignedValue(0) << 7;
@@ -893,6 +1131,21 @@ TEMPLATE uint BASESTRING::hash() const {
 template<>
 uint32 BaseString<char>::cStrLen(const value_type *str) {
 	return static_cast<uint32>(strlen(str));
+}
+
+template<>
+const char *BaseString<char>::cMemChr(const value_type *ptr, value_type c, size_t count) {
+	return static_cast<const char *>(memchr(ptr, c, count));
+}
+
+template<>
+char *BaseString<char>::cMemChr(value_type *ptr, value_type c, size_t count) {
+	return static_cast<char *>(memchr(ptr, c, count));
+}
+
+template<>
+int BaseString<char>::cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count) {
+	return memcmp(ptr1, ptr2, count);
 }
 
 template class BaseString<char>;

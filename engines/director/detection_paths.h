@@ -57,6 +57,7 @@ const char *const directoryGlobs[] = {
 	"flugzeuge bauen",
 	"willyhau",
 	"willyraumschiff",				// Willy Werkel (Mulle Meck) series
+	"demo"							// Tivola Demo - Frühjahr '97 sampler
 	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",

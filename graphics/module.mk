@@ -144,17 +144,14 @@ endif
 ifdef SCUMMVM_NEON
 MODULE_OBJS += \
 	blit/blit-neon.o
-$(MODULE)/blit/blit-neon.o: CXXFLAGS += $(NEON_CXXFLAGS)
 endif
 ifdef SCUMMVM_SSE2
 MODULE_OBJS += \
 	blit/blit-sse2.o
-$(MODULE)/blit/blit-sse2.o: CXXFLAGS += -msse2
 endif
 ifdef SCUMMVM_AVX2
 MODULE_OBJS += \
 	blit/blit-avx2.o
-$(MODULE)/blit/blit-avx2.o: CXXFLAGS += -mavx2
 endif
 
 # Include common rules

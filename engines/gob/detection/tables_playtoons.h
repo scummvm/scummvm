@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 /* Detection tables for the Playtoons series. */
@@ -102,7 +108,7 @@
 		},
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -117,7 +123,7 @@
 				   "demarchg.vmd",	"d14a95da7d8792faf5503f649ffcbc12", 5619415),
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -128,18 +134,15 @@
 	{
 		"playtoons1",
 		"Non-Interactive Demo",
-		{
-			{"i.scn", 0, "8b3294474d39970463663edd22341730", 285},
-			{"demarita.vmd", 0, "84c8672b91c7312462603446e224bfec", 5742533},
-			{"dembouit.vmd", 0, "7a5fdf0a4dbdfe72e31dd489ea0f8aa2", 3536786},
-			{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
-			{"demoita.vmd", 0, "b4c0622d14c8749965cd0f5dfca4cf4b", 1183566},
-			{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY6s("i.scn",	"8b3294474d39970463663edd22341730", 285,
+				   "demarita.vmd", "84c8672b91c7312462603446e224bfec", 5742533,
+                    "dembouit.vmd", "7a5fdf0a4dbdfe72e31dd489ea0f8aa2", 3536786,
+                    "demo5.vmd", "2abb7b6a26406c984f389f0b24b5e28e", 13290970,
+                    "demoita.vmd", "b4c0622d14c8749965cd0f5dfca4cf4b", 1183566,
+                    "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,
@@ -150,17 +153,14 @@
 	{
 		"playtoons1",
 		"Non-Interactive Demo",
-		{
-			{"s.scn", 0, "1f527010626b5490761f16ba7a6f639a", 251},
-			{"demaresp.vmd", 0, "3f860f944056842b35a5fd05416f208e", 5720619},
-			{"demboues.vmd", 0, "3a0caa10c98ef92a15942f8274075b43", 3535838},
-			{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
-			{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY5s("s.scn",	"1f527010626b5490761f16ba7a6f639a", 251,
+				   "demaresp.vmd", "3f860f944056842b35a5fd05416f208e", 5720619,
+                    "demboues.vmd", "3a0caa10c98ef92a15942f8274075b43", 3535838,
+                    "demo5.vmd", "2abb7b6a26406c984f389f0b24b5e28e", 13290970,
+                    "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypePlaytoons,

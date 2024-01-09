@@ -257,8 +257,8 @@ void Interface::refresh_right_arrow() {
 		_btnScrollRight->set_sprite_over(65);
 		_btnScrollRight->unhide();
 	} else {
-		_btnScrollRight->hide();
-		_btnScrollLeft->hide();
+//		_btnScrollRight->hide();
+//		_btnScrollLeft->hide();
 	}
 }
 
@@ -270,8 +270,8 @@ void Interface::refresh_left_arrow() {
 		_btnScrollLeft->set_sprite_over(61);
 		_btnScrollLeft->unhide();
 	} else {
-		_btnScrollRight->hide();
-		_btnScrollLeft->hide();
+//		_btnScrollRight->hide();
+//		_btnScrollLeft->hide();
 	}
 }
 

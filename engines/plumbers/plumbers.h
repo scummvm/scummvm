@@ -93,8 +93,8 @@ protected:
 	virtual bool handlePlatformKeyDown(int button) { return false; }
 	virtual void loadImage(const Common::String &name);
 	virtual void startGraphics() = 0;
-	void blitImageSurface(Graphics::Surface *screen, const Graphics::Surface *surface);
-	virtual void blitImage(Graphics::Surface *screen);
+	void blitImageSurface(const Graphics::Surface *surface);
+	virtual void blitImage();
 	virtual void handleEvent(const Common::Event &event);
 	virtual int getSceneNumb(const Common::String &sName);
 	virtual void preActions() {}
@@ -164,7 +164,7 @@ protected:
 	void postSceneBitmaps() override;
 	void startGraphics() override;
 	void handleEvent(const Common::Event &event) override;
-	void blitImage(Graphics::Surface *screen) override;
+	void blitImage() override;
 	int getSceneNumb(const Common::String &sName) override;
 	void preActions() override;
 

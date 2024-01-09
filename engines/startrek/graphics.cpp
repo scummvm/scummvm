@@ -120,9 +120,7 @@ void Graphics::unlockScreenPixels() {
 void Graphics::clearScreenAndPriBuffer() {
 	Common::fill(_priData, _priData + sizeof(_priData), 0);
 
-	::Graphics::Surface *surface = _vm->_system->lockScreen();
-	surface->fillRect(_screenRect, 0);
-	_vm->_system->unlockScreen();
+	_vm->_system->fillScreen(_screenRect, 0);
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(10);
 }

@@ -208,7 +208,12 @@ void TurningPuzzle::execute() {
 
 		if (_currentOrder == _correctOrder) {
 			_state = kActionTrigger;
-			_solveState = _solveAnimate ? kWaitForAnimation : kWaitForSound;
+			if (_solveAnimate) {
+				_solveState = kWaitForAnimation;
+			} else {
+				_solveState = kWaitForSound;
+				NancySceneState.setEventFlag(_solveScene._flag);
+			}
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
 			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
