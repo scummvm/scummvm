@@ -34,7 +34,7 @@
 
 #include <AvailabilityMacros.h>
 
-SUUpdater *sparkleUpdater;
+SPUStandardUpdaterController *sparkleUpdaterController;
 
 /**
  * Sparkle is a software update framework for macOS which uses appcasts for
@@ -54,7 +54,7 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	if (!version || [version isEqualToString:@""]) {
 		warning("Running not in bundle, skipping Sparkle initialization");
 
-		sparkleUpdater = nullptr;
+		sparkleUpdaterController = nullptr;
 		return;
 	}
 
@@ -62,12 +62,7 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	NSMenu *applicationMenu = [menuItem submenu];
 
 	// Init Sparkle
-	sparkleUpdater = [SUUpdater sharedUpdater];
-
-	NSString* feedbackURL = [mainBundle objectForInfoDictionaryKey:@"SUFeedURL"];
-
-	// Set appcast URL
-	[sparkleUpdater setFeedURL:[NSURL URLWithString:feedbackURL]];
+	sparkleUpdaterController = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate:nil userDriverDelegate:nil];
 
 	// Add "Check for Updates..." menu item
 	CFStringRef title = CFStringCreateWithCString(NULL, _("Check for Updates...").encode().c_str(), kCFStringEncodingUTF8);
@@ -75,7 +70,7 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	CFRelease(title);
 
 	// Set the target of the new menu item
-	[updateMenuItem setTarget:sparkleUpdater];
+	[updateMenuItem setTarget:sparkleUpdaterController];
 
 	if (!ConfMan.hasKey("updates_check")
 			|| ConfMan.getInt("updates_check") == Common::UpdateManager::kUpdateIntervalNotSupported) {
@@ -87,38 +82,38 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 }
 
 MacOSXUpdateManager::~MacOSXUpdateManager() {
-	[sparkleUpdater release];
+	[sparkleUpdaterController release];
 }
 
 void MacOSXUpdateManager::checkForUpdates() {
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return;
 
-	[sparkleUpdater checkForUpdates:nil];
+	[sparkleUpdaterController checkForUpdates:nil];
 }
 
 void MacOSXUpdateManager::setAutomaticallyChecksForUpdates(UpdateManager::UpdateState state) {
 	if (state == kUpdateStateNotSupported)
 		return;
 
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return;
 
-	[sparkleUpdater setAutomaticallyChecksForUpdates:(state == kUpdateStateEnabled ? YES : NO)];
+	[[sparkleUpdaterController updater] setAutomaticallyChecksForUpdates:(state == kUpdateStateEnabled ? YES : NO)];
 }
 
 Common::UpdateManager::UpdateState MacOSXUpdateManager::getAutomaticallyChecksForUpdates() {
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return kUpdateStateDisabled;
 
-	if ([sparkleUpdater automaticallyChecksForUpdates])
+	if ([[sparkleUpdaterController updater] automaticallyChecksForUpdates])
 		return kUpdateStateEnabled;
 	else
 		return kUpdateStateDisabled;
 }
 
 void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return;
 
 	if (interval == kUpdateIntervalNotSupported)
@@ -126,18 +121,18 @@ void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
 
 	interval = normalizeInterval(interval);
 
-	[sparkleUpdater setUpdateCheckInterval:(NSTimeInterval)interval];
+	[[sparkleUpdaterController updater] setUpdateCheckInterval:(NSTimeInterval)interval];
 }
 
 int MacOSXUpdateManager::getUpdateCheckInterval() {
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return kUpdateIntervalOneDay;
 
 	// This is kind of a hack but necessary, as the value stored by Sparkle
 	// might have been changed outside of ScummVM (in which case we return the
 	// default interval of one day)
 
-	UpdateInterval updateInterval = (UpdateInterval)[sparkleUpdater updateCheckInterval];
+	UpdateInterval updateInterval = (UpdateInterval)[[sparkleUpdaterController updater] updateCheckInterval];
 	switch (updateInterval) {
 	case kUpdateIntervalOneDay:
 	case kUpdateIntervalOneWeek:
@@ -151,10 +146,10 @@ int MacOSXUpdateManager::getUpdateCheckInterval() {
 }
 
 bool MacOSXUpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
-	if (sparkleUpdater == nullptr)
+	if (sparkleUpdaterController == nullptr)
 		return false;
 
-	NSDate *date = [sparkleUpdater lastUpdateCheckDate];
+	NSDate *date = [[sparkleUpdaterController updater] lastUpdateCheckDate];
 #ifdef MAC_OS_X_VERSION_10_10
 	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 	NSDateComponents *components = [gregorian components:(NSCalendarUnitDay | NSCalendarUnitWeekday) fromDate:date];
