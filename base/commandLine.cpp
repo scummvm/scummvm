@@ -678,6 +678,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent game path '%s'", option);
 				} else if (!path.isWritable()) {
 					usage("Non-writable screenshot path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isWritable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["screenshotpath"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
 				}
 			END_OPTION
 #endif
@@ -778,6 +784,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent game path '%s'", option);
 				} else if (!path.isReadable()) {
 					usage("Non-readable game path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isReadable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["path"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
 				}
 			END_OPTION
 
@@ -874,6 +886,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent saved games path '%s'", option);
 				} else if (!path.isWritable()) {
 					usage("Non-writable saved games path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isWritable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["savepath"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
 				}
 			END_OPTION
 
@@ -883,16 +901,28 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent extra path '%s'", option);
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isReadable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["extrapath"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
 				}
 			END_OPTION
 
 			DO_LONG_OPTION("iconspath")
-			Common::FSNode path(option);
-			if (!path.exists()) {
-				usage("Non-existent icons path '%s'", option);
-			} else if (!path.isReadable()) {
-				usage("Non-readable icons path '%s'", option);
-			}
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent icons path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable icons path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isReadable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["iconspath"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION("md5-path")
@@ -933,6 +963,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent theme path '%s'", option);
 				} else if (!path.isReadable()) {
 					usage("Non-readable theme path '%s'", option);
+				} else if (!path.isDirectory()
+				           && path.getParent().isDirectory()
+				           && path.getParent().isReadable()) {
+					// The path.getParent().isDirectory() check is redundant but included for clarifying
+					// the purpose of this case, which is to get the folder path part from a file path
+					settings["themepath"] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
 				}
 			END_OPTION
 
