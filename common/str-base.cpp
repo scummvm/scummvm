@@ -324,7 +324,7 @@ TEMPLATE bool BASESTRING::operator!=(const value_type *x) const {
 }
 
 TEMPLATE int BASESTRING::compareTo(const BaseString &x) const {
-	int n = cMemCmp(_str, x._str, MIN(_size, x.size()));
+	int n = cMemCmp(_str, x._str, MIN<uint32>(_size, x.size()));
 	if (n != 0)
 		return n;
 
