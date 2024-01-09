@@ -158,7 +158,7 @@ bool AGDSEngine::load() {
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
 	for (Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
 		if (i->key == "path")
-			if (!_resourceManager.addPath(i->value))
+			if (!_resourceManager.addPath(Common::Path{i->value}))
 				return false;
 	}
 

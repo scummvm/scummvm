@@ -47,15 +47,15 @@ void ResourceManager::decrypt(uint8 *data, unsigned size) {
 	}
 }
 
-bool ResourceManager::GrpFile::load(const Common::String &grpFilename) {
+bool ResourceManager::GrpFile::load(const Common::Path &grpPath) {
 	static const char *kSignature = "AGDS group file\x1a";
 	static const uint32 kMagic = 0x1a03c9e6;
 	static const uint32 kVersion1 = 44;
 	static const uint32 kVersion2 = 2;
 
-	debug("adding path %s", grpFilename.c_str());
-	if (!_file.open(grpFilename)) {
-		warning("failing opening grp file %s", grpFilename.c_str());
+	debug("adding path %s", grpPath.toString().c_str());
+	if (!_file.open(grpPath)) {
+		warning("failing opening grp file %s", grpPath.toString().c_str());
 		return false;
 	}
 	uint8 header[0x2c];
@@ -122,7 +122,7 @@ bool ResourceManager::GrpFile::load(const Common::String &grpFilename) {
 		_members.setVal(name, resource);
 	}
 
-	debug("%s: %u files in index", grpFilename.c_str(), _members.size());
+	debug("%s: %u files in index", grpPath.toString().c_str(), _members.size());
 	return true;
 }
 
@@ -146,18 +146,18 @@ const Common::ArchiveMemberPtr ResourceManager::GrpFile::getMember(const Common:
 }
 
 Common::SeekableReadStream *ResourceManager::GrpFile::createReadStreamForMember(const Common::Path &name) const {
-	Common::ArchiveMemberPtr member = getMember(name.toString());
+	Common::ArchiveMemberPtr member = getMember(name);
 	return member ? member->createReadStream() : NULL;
 }
 
-bool ResourceManager::addPath(const Common::String &grpFilename) {
+bool ResourceManager::addPath(const Common::Path &grpFilename) {
 	GrpFile *grpFile = new GrpFile();
 	if (!grpFile->load(grpFilename)) {
 		delete grpFile;
 		return false;
 	}
 
-	SearchMan.add(grpFilename, grpFile, 0, true);
+	SearchMan.add(grpFilename.toString(), grpFile, 0, true);
 	return true;
 }
 
@@ -169,7 +169,7 @@ Common::SeekableReadStream *ResourceManager::ArchiveMember::createReadStream() c
 
 Common::SeekableReadStream *ResourceManager::getResource(const Common::String &name) const {
 	Common::File file;
-	return (file.open(name)) ? file.readStream(file.size()) : NULL;
+	return (file.open(Common::Path{name})) ? file.readStream(file.size()) : NULL;
 }
 
 Graphics::Surface *ResourceManager::loadPicture(const Common::String &name, const Graphics::PixelFormat &format) {

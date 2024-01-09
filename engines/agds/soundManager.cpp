@@ -126,7 +126,7 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 		}
 	}
 	Common::File *file = new Common::File();
-	if (!file->open(filename)) {
+	if (!file->open(Common::Path{filename})) {
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 1);
 		warning("no sound %s", filename.c_str());
