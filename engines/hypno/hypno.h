@@ -426,6 +426,10 @@ public:
 	void initSegment(ArcadeShooting *arc) override;
 	byte *getTargetColor(Common::String name, int levelId) override;
 
+	bool hasFeature(EngineFeature f) const override {
+		return (f == kSupportsReturnToLauncher);
+	}
+
 private:
 	Common::String getLocalizedString(const Common::String name);
 	uint16 getNextChar(const Common::String &str, uint32 &c);
@@ -652,6 +656,10 @@ public:
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
+
+	bool hasFeature(EngineFeature f) const override {
+		return (f == kSupportsReturnToLauncher);
+	}
 };
 
 } // End of namespace Hypno
