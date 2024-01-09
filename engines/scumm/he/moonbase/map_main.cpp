@@ -58,7 +58,6 @@ bool Map::generateNewMap() {
 
 	// Don't randomly pick nonstandard map sizes.
 	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
-	mapSize = 4 * 8;
 
 	int tileSet = _rnd.getRandomNumberRngSigned(1, 7);
 
