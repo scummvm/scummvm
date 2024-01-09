@@ -45,8 +45,20 @@ SQInteger sqpush(HSQUIRRELVM v, int value) {
 }
 
 template<>
+SQInteger sqpush(HSQUIRRELVM v, long long value) {
+	sq_pushinteger(v, (SQInteger)value);
+	return 1;
+}
+
+template<>
 SQInteger sqpush(HSQUIRRELVM v, float value) {
 	sq_pushfloat(v, value);
+	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, double value) {
+	sq_pushfloat(v, (SQFloat)value);
 	return 1;
 }
 

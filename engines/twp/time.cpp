@@ -19,30 +19,30 @@
  *
  */
 
-#ifndef TWP_METAENGINE_H
-#define TWP_METAENGINE_H
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <time.h>
+#include "twp/time.h"
 
-#include "engines/advancedDetector.h"
+namespace Twp {
 
-class TwpMetaEngine : public AdvancedMetaEngine {
-public:
-	const char *getName() const override;
+Common::String formatTime(int64_t t, const char *format) {
+	time_t time = (time_t)t;
+	struct tm *tm = localtime(&time);
+	char buf[64];
+	strftime(buf, 64, format, tm);
+	return Common::String(buf);
+}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+DateTime toDateTime(int64_t t) {
+	time_t time = (time_t)t;
+	struct tm *tm = localtime(&time);
+	DateTime dateTime;
+	dateTime.year = 1900 + tm->tm_year;
+	dateTime.month = 1 + tm->tm_mon;
+	dateTime.day = tm->tm_mday;
+	dateTime.hour = tm->tm_hour;
+	dateTime.min = tm->tm_min;
+	return dateTime;
+}
 
-	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * Used by e.g. the launcher to determine whether to enable the Load button.
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
-
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-};
-
-#endif // TWP_METAENGINE_H
+} // namespace Twp

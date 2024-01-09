@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/opengl/system_headers.h"
@@ -153,7 +154,7 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	// TODO
 	// if (a?._verb_tid) stopthread(actor._verb_tid)
 
-	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory()?"YES":"NO", noun1->isTouchable()?"YES":"NO", verbNoWalkTo(verbId, noun1)?"YES":"NO");
+	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory() ? "YES" : "NO", noun1->isTouchable() ? "YES" : "NO", verbNoWalkTo(verbId, noun1) ? "YES" : "NO");
 
 	// test if object became untouchable
 	if (!noun1->inInventory() && !noun1->isTouchable())
@@ -644,19 +645,19 @@ Common::Error TwpEngine::run() {
 	entry.open(_pack, "ThimbleweedText_en.tsv");
 	_textDb.parseTsv(entry);
 
-	// If a savegame was selected from the launcher, load it
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-
 	HSQUIRRELVM v = _vm.get();
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
 
-	// const SQChar *code = "cameraInRoom(StartScreen)";
-	const SQChar *code = "start(1)";
-
-	_vm.exec(code);
+	// If a savegame was selected from the launcher, load it
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot != -1)
+		(void)loadGameState(saveSlot);
+	else {
+		// const SQChar *code = "cameraInRoom(StartScreen)";
+		const SQChar *code = "start(1)";
+		_vm.exec(code);
+	}
 
 	static int speed = 1;
 
@@ -718,14 +719,27 @@ Common::Error TwpEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error TwpEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+Common::Error TwpEngine::loadGameState(int slot) {
+	Common::InSaveFile *file = getSaveFileManager()->openRawFile(getSaveStateName(slot));
+	if (file) {
+		return loadGameStream(file);
+	}
+	return Common::kPathDoesNotExist;
+}
 
+Common::Error TwpEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	SaveGame savegame;
+	if (_saveGameManager.getSaveGame(stream, savegame)) {
+		_saveGameManager.loadGame(savegame);
+	}
+	return Common::kNoError;
+}
+
+Common::String TwpEngine::getSaveStateName(int slot) const {
+	return Common::String::format("twp%02d.save", slot);
+}
+
+Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;
 }
 

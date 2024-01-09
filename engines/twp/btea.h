@@ -19,30 +19,22 @@
  *
  */
 
-#ifndef TWP_METAENGINE_H
-#define TWP_METAENGINE_H
+#ifndef TWP_BTEA_H
+#define TWP_BTEA_H
 
-#include "engines/advancedDetector.h"
+#include "common/system.h"
 
-class TwpMetaEngine : public AdvancedMetaEngine {
+namespace Twp {
+
+class BTEACrypto {
 public:
-	const char *getName() const override;
+  static void encrypt(uint32_t *v, int n, const uint32_t *k);
+  static void decrypt(uint32_t *v, int n, const uint32_t *k);
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * Used by e.g. the launcher to determine whether to enable the Load button.
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
-
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+private:
+  static void btea(uint32_t *v, int n, const uint32_t *k);
 };
 
-#endif // TWP_METAENGINE_H
+} // End of namespace Twp
+
+#endif // TWP_H

@@ -20,27 +20,28 @@
  */
 
 #include "common/translation.h"
-
+#include "common/savefile.h"
+#include "graphics/scaler.h"
+#include "image/png.h"
 #include "twp/metaengine.h"
 #include "twp/detection.h"
 #include "twp/twp.h"
+#include "twp/savegame.h"
+#include "twp/time.h"
+
+#define MAX_SAVES 99
 
 namespace Twp {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+	{GAMEOPTION_ORIGINAL_SAVELOAD,
+	 {_s("Use original save/load screens"),
+	  _s("Use the original save/load screens instead of the ScummVM ones"),
+	  "original_menus",
+	  false,
+	  0,
+	  0}},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 } // End of namespace Twp
 
@@ -59,7 +60,77 @@ Common::Error TwpMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 
 bool TwpMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+		   (f == kSupportsLoadingDuringStartup);
+}
+
+int TwpMetaEngine::getMaximumSaveSlot() const {
+	return MAX_SAVES;
+}
+
+SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s%02d.save", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+
+		Common::InSaveFile *thumbnailFile = g_system->getSavefileManager()->openForLoading(Common::String::format("%s%02d.png", target, slot));
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(this, slot, "?");
+
+		desc.setAutosave(slot == 1);
+		if (thumbnailFile) {
+			Image::PNGDecoder png;
+			if (png.loadStream(*thumbnailFile)) {
+				Graphics::ManagedSurface *thumbnail = new Graphics::ManagedSurface();
+				thumbnail->copyFrom(*png.getSurface());
+				Graphics::Surface *thumbnailSmall = new Graphics::Surface();
+				createThumbnail(thumbnailSmall, thumbnail);
+				desc.setThumbnail(thumbnailSmall);
+			}
+		}
+		Twp::SaveGame savegame;
+		Twp::SaveGameManager::getSaveGame(f, savegame);
+		Common::String time = Twp::formatTime(savegame.time, "%b %d at %H:%M");
+		if (savegame.easyMode)
+			time += " (casual)";
+		desc.setDescription(time);
+		desc.setPlayTime(savegame.gameTime * 1000);
+		Twp::DateTime dt = Twp::toDateTime(savegame.time);
+		desc.setSaveDate(dt.year, dt.month, dt.day);
+		desc.setSaveTime(dt.hour, dt.min);
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
+}
+
+SaveStateList TwpMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s##.save", target);
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext - 2) : -1;
+
+		if (slot >= 0 && slot <= MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				saveList.push_back(SaveStateDescriptor(this, slot, "?"));
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TWP)

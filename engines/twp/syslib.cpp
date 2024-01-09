@@ -303,11 +303,12 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 
 	ThreadBase *t = sqthread(id);
 	if (!t) {
-		if(!isSound(id)) {
+		if (!isSound(id)) {
 			warning("thread and sound not found: %d", id);
 			return 0;
 		}
-		return breakwhilecond(v, [id] { return g_engine->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
+		return breakwhilecond(
+			v, [id] { return g_engine->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
 	}
 	return breakwhilecond(
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
@@ -381,10 +382,11 @@ static SQInteger breakwhilewalking(HSQUIRRELVM v) {
 // Breaks until specified sound has finished playing.
 // Once sound finishes, the method will continue running.
 static SQInteger breakwhilesound(HSQUIRRELVM v) {
-  int soundId = 0;
-  if (SQ_FAILED(sqget(v, 2, soundId)))
+	int soundId = 0;
+	if (SQ_FAILED(sqget(v, 2, soundId)))
 		return sq_throwerror(v, "failed to get sound");
-  return breakwhilecond(v, [soundId](){ return g_engine->_audio.playing(soundId); }, "breakwhilesound(%d)", soundId);
+	return breakwhilecond(
+		v, [soundId]() { return g_engine->_audio.playing(soundId); }, "breakwhilesound(%d)", soundId);
 }
 
 static SQInteger cutscene(HSQUIRRELVM v) {
@@ -437,7 +439,39 @@ static SQInteger dumpvar(HSQUIRRELVM v) {
 }
 
 static SQInteger exCommand(HSQUIRRELVM v) {
-	warning("TODO: exCommand: not implemented");
+	int cmd;
+	if (SQ_FAILED(sqget(v, 2, cmd)))
+		return sq_throwerror(v, "Failed to get command");
+	switch (cmd) {
+	case EX_ALLOW_SAVEGAMES: {
+		int enabled;
+		if (SQ_FAILED(sqget(v, 3, enabled)))
+			return sq_throwerror(v, "Failed to get enabled");
+		g_engine->_saveGameManager._allowSaveGame = enabled != 0;
+	} break;
+	case EX_POP_CHARACTER_SELECTION:
+		// seems not to be used
+		warning("TODO: exCommand EX_POP_CHARACTER_SELECTION: not implemented");
+		break;
+	case EX_CAMERA_TRACKING:
+		warning("TODO: exCommand EX_CAMERA_TRACKING: not implemented");
+		break;
+	case EX_RESTART:
+		warning("TODO: exCommand EX_RESTART: not implemented");
+		break;
+	case EX_IDLE_TIME:
+		warning("TODO: exCommand EX_IDLE_TIME: not implemented");
+		break;
+	case EX_DISABLE_SAVESYSTEM:
+		warning("TODO: exCommand EX_DISABLE_SAVESYSTEM: not implemented");
+		break;
+	case EX_OPTIONS_MUSIC:
+		warning("TODO: exCommand EX_OPTIONS_MUSIC: not implemented");
+		break;
+	default:
+		warning("exCommand(%dd) not implemented", cmd);
+		break;
+	}
 	return 0;
 }
 

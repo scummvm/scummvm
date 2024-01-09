@@ -47,6 +47,7 @@
 #include "twp/walkboxnode.h"
 #include "twp/audio.h"
 #include "twp/actorswitcher.h"
+#include "twp/savegame.h"
 
 #define SCREEN_MARGIN 100.f
 #define SCREEN_WIDTH 1280
@@ -109,20 +110,11 @@ public:
 		return true;
 	}
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
+	virtual Common::String getSaveStateName(int slot) const override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
+	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	Math::Vector2d winToScreen(Math::Vector2d pos);
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
@@ -145,8 +137,8 @@ public:
 
 	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
 	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
-	bool callVerb(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
-	bool execSentence(Object* actor, VerbId verbId, Object* noun1, Object* noun2 = nullptr);
+	bool callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2 = nullptr);
+	bool execSentence(Object *actor, VerbId verbId, Object *noun1, Object *noun2 = nullptr);
 
 	float getRandom() const;
 	float getRandom(float min, float max) const;
@@ -169,7 +161,7 @@ private:
 	void updateTriggers();
 	void callTrigger(Object *obj, HSQOBJECT trigger);
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
-	ActorSwitcherSlot actorSwitcherSlot(ActorSlot* slot);
+	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -218,6 +210,7 @@ public:
 	Inventory _uiInv;
 	ActorSwitcher _actorSwitcher;
 	AudioSystem _audio;
+	SaveGameManager _saveGameManager;
 
 private:
 	Gfx _gfx;
