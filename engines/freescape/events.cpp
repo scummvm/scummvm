@@ -78,6 +78,7 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 
 void EventManagerWrapper::purgeKeyboardEvents() {
 	_delegate->purgeKeyboardEvents();
+	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
 }
 
 void EventManagerWrapper::purgeMouseEvents() {
