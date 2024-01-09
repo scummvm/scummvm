@@ -89,9 +89,11 @@ void Events::processEvent(Common::Event &ev) {
 		msgAction(ActionMessage(ev.customType));
 		break;
 	case Common::EVENT_LBUTTONDOWN:
+		msgMouseDown(MouseDownMessage(MouseDownMessage::MB_LEFT, ev.mouse));
+		break;
 	case Common::EVENT_RBUTTONDOWN:
 		//case Common::EVENT_MBUTTONDOWN:
-		msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
+		msgMouseDown(MouseDownMessage(MouseDownMessage::MB_RIGHT, ev.mouse));
 		break;
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:

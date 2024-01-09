@@ -146,7 +146,7 @@ namespace Macs2 {
 			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			return true;
-		} else {
+		} else if (msg._button == MouseMessage::MB_RIGHT) {
 			g_engine->NextCursorMode();
 			int mode = (int)g_engine->_cursorMode;
 			CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
