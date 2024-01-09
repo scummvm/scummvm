@@ -24,6 +24,7 @@
 #include "image/tga.h"
 #include "image/png.h"
 
+#include "graphics/blit.h"
 #include "graphics/surface.h"
 
 #include "engines/grim/grim.h"
@@ -48,33 +49,64 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 	}
 }
 
-void loadPNG(Common::SeekableReadStream *data, Texture *t) {
-	Image::PNGDecoder *pngDecoder = new Image::PNGDecoder();
-	pngDecoder->loadStream(*data);
+static void loadImage(Image::ImageDecoder *decoder, Texture *t) {
+#ifdef SCUMM_BIG_ENDIAN
+	const Graphics::PixelFormat format_3bpp(3, 8, 8, 8, 0, 16, 8,  0, 0);
+	const Graphics::PixelFormat format_4bpp(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	const Graphics::PixelFormat format_3bpp(3, 8, 8, 8, 0, 0, 8, 16, 0);
+	const Graphics::PixelFormat format_4bpp(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 
-	Graphics::Surface *pngSurface =pngDecoder->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), pngDecoder->getPalette());
+	const Graphics::Surface *surface = decoder->getSurface();
 
-	t->_width = pngSurface->w;
-	t->_height = pngSurface->h;
+	t->_width = surface->w;
+	t->_height = surface->h;
 	t->_texture = nullptr;
 
-	int bpp = pngSurface->format.bytesPerPixel;
-	assert(bpp == 4); // Assure we have 32 bpp
-
-	t->_colorFormat = BM_RGBA;
-	t->_bpp = 4;
-	t->_hasAlpha = true;
-
+	int bpp = surface->format.bytesPerPixel;
+	assert(decoder->hasPalette() || bpp == 3 || bpp == 4); // Assure we have 8/24/32 bpp
 
 	// Allocate room for the texture.
-	t->_data = new uint8[t->_width * t->_height * (bpp)];
+	if (bpp == 4) {
+		t->_bpp = bpp;
+		t->_hasAlpha = true;
+	} else {
+		t->_bpp = 3;
+		t->_hasAlpha = false;
+	}
+	t->_data = new uint8[t->_width * t->_height * t->_bpp];
 
 	// Copy the texture data, as the decoder owns the current copy.
-	memcpy(t->_data, pngSurface->getPixels(), t->_width * t->_height * (bpp));
+	if (decoder->hasPalette()) {
+		uint32 map[256];
+		Graphics::convertPaletteToMap(map,
+		                              decoder->getPalette(),
+		                              decoder->getPaletteColorCount(),
+		                              format_3bpp);
+		Graphics::crossBlitMap(t->_data, (const byte *)surface->getPixels(),
+		                       t->_width * t->_bpp, surface->pitch,
+		                       t->_width, t->_height, t->_bpp, map);
+	} else {
+		Graphics::crossBlit(t->_data, (const byte *)surface->getPixels(),
+		                    t->_width * t->_bpp, surface->pitch,
+		                    t->_width, t->_height,
+		                   (t->_bpp == 4) ? format_4bpp : format_3bpp, surface->format);
+	}
+}
 
-	pngSurface->free();
-	delete pngSurface;
+static void loadPNG(Common::SeekableReadStream *data, Texture *t) {
+	Image::PNGDecoder *pngDecoder = new Image::PNGDecoder();
+	pngDecoder->loadStream(*data);
+	loadImage(pngDecoder, t);
 	delete pngDecoder;
+}
+
+static void loadTGA(Common::SeekableReadStream *data, Texture *t) {
+	Image::TGADecoder *tgaDecoder = new Image::TGADecoder();
+	tgaDecoder->loadStream(*data);
+	loadImage(tgaDecoder, t);
+	delete tgaDecoder;
 }
 
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
@@ -111,49 +143,17 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 		t->_height = data->readUint32LE();
 		t->_hasAlpha = data->readUint32LE();
 		t->_texture = nullptr;
-		t->_colorFormat = BM_RGBA;
 		t->_data = nullptr;
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
 						   t->_width, t->_height, i, _fname.c_str());
 			break;
 		}
+		t->_bpp = 1;
 		t->_data = new uint8[t->_width * t->_height];
 		data->seek(12, SEEK_CUR);
 		data->read(t->_data, t->_width * t->_height);
 	}
-}
-
-static void loadTGA(Common::SeekableReadStream *data, Texture *t) {
-	Image::TGADecoder *tgaDecoder = new Image::TGADecoder();
-	tgaDecoder->loadStream(*data);
-	const Graphics::Surface *tgaSurface = tgaDecoder->getSurface();
-
-	t->_width = tgaSurface->w;
-	t->_height = tgaSurface->h;
-	t->_texture = nullptr;
-
-	int bpp = tgaSurface->format.bytesPerPixel;
-	assert(bpp == 3 || bpp == 4); // Assure we have 24/32 bpp
-
-	// Allocate room for the texture.
-	t->_data = new uint8[t->_width * t->_height * 4];
-	t->_colorFormat = BM_RGBA;
-	t->_bpp = 4;
-	if (bpp == 4) {
-		t->_hasAlpha = true;
-	} else {
-		t->_hasAlpha = false;
-	}
-#ifdef SCUMM_BIG_ENDIAN
-	auto newSurface = tgaSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	auto newSurface = tgaSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
-	memcpy(t->_data, newSurface->getPixels(), t->_width * t->_height * (t->_bpp));
-	newSurface->free();
-	delete newSurface;
-	delete tgaDecoder;
 }
 
 void MaterialData::initEMI(Common::SeekableReadStream *data) {

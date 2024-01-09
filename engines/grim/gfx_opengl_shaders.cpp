@@ -1260,11 +1260,28 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
-	char *texdata = new char[texture->_width * texture->_height * 4];
-	char *texdatapos = texdata;
+
+	GLuint *textures = (GLuint *)texture->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	// Remove darkened lines in EMI intro
+	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		int bytes = 4;
+
+		char *texdata = new char[texture->_width * texture->_height * bytes];
+		char *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
@@ -1281,26 +1298,13 @@ void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *
 				data++;
 			}
 		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		GLint format = (texture->_bpp == 4) ? GL_RGBA : GL_RGB;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
-
-	GLuint *textures = (GLuint *)texture->_texture;
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-	// Remove darkened lines in EMI intro
-	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxOpenGLS::selectTexture(const Texture *texture) {

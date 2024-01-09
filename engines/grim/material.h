@@ -31,10 +31,9 @@ class CMap;
 class Texture {
 public:
 	Texture() :
-		_width(0), _height(0), _colorFormat(0), _bpp(0), _hasAlpha(false), _texture(nullptr), _data(nullptr), _isShared(false) {};
+		_width(0), _height(0), _bpp(0), _hasAlpha(false), _texture(nullptr), _data(nullptr), _isShared(false) {};
 	int _width;
 	int _height;
-	int _colorFormat;
 	int _bpp;
 	bool _hasAlpha;
 	void *_texture;
