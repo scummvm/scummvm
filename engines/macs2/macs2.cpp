@@ -252,6 +252,9 @@ void Macs2Engine::readResourceFile() {
 		_cursorHeights[i] = file.readUint16LE();
 		_cursorData[i] = new byte[_cursorWidths[i] * _cursorHeights[i]];
 		file.read(_cursorData[i], _cursorWidths[i] * _cursorHeights[i]);
+		// Seek forward to skip an entry
+		// TODO: Figure out what is skipped there
+		file.seek(0x6, SEEK_CUR);
 	}
 
 
