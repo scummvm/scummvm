@@ -1685,19 +1685,6 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
-
-Graphics::Surface *loadPNG(const Common::Path &filename) {
-	Image::PNGDecoder d;
-	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
-	if (!s)
-		return nullptr;
-	d.loadStream(*s);
-	delete s;
-
-	Graphics::Surface *srf = d.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	return srf;
-}
-
 void GrimEngine::debugLua(const Common::String &str) {
 	lua_dostring(str.c_str());
 }

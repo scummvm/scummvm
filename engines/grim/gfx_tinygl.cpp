@@ -912,7 +912,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			uint32 *buf = (uint32 *)buffer.getPixels();
 			const uint16 *bufPtr = (const uint16 *)(bitmap->getImageData(pic).getPixels());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bufPtr + i);
+				uint16 val = bufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -928,34 +928,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = tglGenBlitImage();
 			const Graphics::Surface &imageBuffer = bitmap->getImageData(i);
-#ifdef SCUMM_BIG_ENDIAN
-			if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 2) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint16 *bufSrc = (uint16 *)const_cast<void *>(imageBuffer.getPixels());
-				uint16 *bufDst = (uint16 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint16 val = SWAP_BYTES_16(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 4) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint32 *bufSrc = (uint32 *)const_cast<void *>(imageBuffer.getPixels());
-				uint32 *bufDst = (uint32 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint32 val = SWAP_BYTES_32(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else
-#endif
-			{
-				tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
-			}
+			tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
 		}
 	}
 }

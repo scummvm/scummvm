@@ -1042,7 +1042,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(const_cast<void  *>(bitmap->getImageData(pic).getPixels()));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(zbufPtr + i);
+				uint16 val = zbufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -1087,13 +1087,21 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
+		const Graphics::PixelFormat format_16bpp(2, 5, 6, 5, 0, 11, 5, 0, 0);
+#ifdef SCUMM_BIG_ENDIAN
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+		const Graphics::PixelFormat format_32bpp(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
+			const Graphics::Surface &imageData = bitmap->getImageData(pic);
+			if (bitmap->_format == 1 && imageData.format == format_16bpp) {
 				if (texData == nullptr)
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = (uint16 *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+				uint16 *bitmapData = (uint16 *)const_cast<void *>(imageData.getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1110,11 +1118,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
-			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
-				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+			} else if (bitmap->_format == 1 && imageData.format != format_32bpp) {
+				bitmap->convertToColorFormat(pic, format_32bpp);
+				texOut = (byte *)const_cast<void *>(imageData.getPixels());
 			} else {
-				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
+				texOut = (byte *)const_cast<void *>(imageData.getPixels());
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -1863,7 +1871,11 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 	Graphics::Surface src;
+#ifdef SCUMM_BIG_ENDIAN
+	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	src.create(_screenWidth, _screenHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 	if (useStored) {
 		memcpy(src.getPixels(), _storedDisplay, _screenWidth * _screenHeight * 4);
 	} else {
