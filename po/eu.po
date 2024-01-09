@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2021-01-02 18:37+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2024-01-09 13:42+0000\n"
+"Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
 "Language: eu\n"
@@ -22,34 +22,30 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(%s-(e)an konpilatua)"
+msgstr "(%s-(e)an konpilatua %s-rekin)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "Ezaugarri erantsiak:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Jokoaren ID ez-onartua"
+msgstr "ez onartua"
 
 #: gui/about.cpp:118
-#, fuzzy
 msgid "disabled"
-msgstr "GFX desgaituta"
+msgstr "desgaituta"
 
 #: gui/about.cpp:118
-#, fuzzy
 msgid "enabled"
-msgstr "GFX desgaituta"
+msgstr "gaituta"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Onartutako CPU gehigarriak:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -119,68 +115,63 @@ msgstr "Aukeratu"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Laino Konexio Laguntzailea"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
 msgid "Quick mode"
-msgstr "Klikatzeko modua"
+msgstr "Modu azkarra"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Modu bizkorra"
+msgstr "Eskuzko modua"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Webserver Lokala martxan jartzeko eskatuko dizu"
 
 #: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
-msgstr ""
+msgstr "Webserver Lokala beharrezkoa"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Modu azkarra: 1. pausua"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"Modu honetan, Webserver Lokalak martxan egon behar du,\n"
+"zure nabigatzaileak ScummVMri datuak bidali ahal izateko"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3704
-#, fuzzy
 msgid "Stop server"
-msgstr "Zerbitzaria:"
+msgstr "Gelditu zerbitzaria"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2744
-#, fuzzy
 msgid "Run server"
-msgstr "Zerbitzaria:"
+msgstr "Hasi zerbitzaria"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3705
-#, fuzzy
 msgid "Stop local webserver"
-msgstr "Zerbitzaria:"
+msgstr "Gelditu lokaleko webserver-a"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2744
 msgid "Run local webserver"
-msgstr ""
+msgstr "Hasi webserver lokala"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2745 gui/options.cpp:3712
-#, fuzzy
 msgid "Not running"
-msgstr "Jokoa exekutatzean errorea:"
+msgstr "Ez dago martxan"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Modu azkarra: 2. pausua"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Orain, ireki lotura hau nabigatzailean:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -192,30 +183,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Automatikoki pasatuko ditu datuak ScummVM-ra\n"
+"eta errorerik bada, abisatuko dizu."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Webserver Lokalaren helbidea: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Modu azkarra: Arrakasta"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr ""
+msgstr "Zure lainoko biltegiratzera konektatuta!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Bukatu da"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Eskuzko modua: 1. pausua"
 
 #: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
-msgstr ""
+msgstr "Ireki lotura hau zure nabigatzailean:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -223,24 +216,26 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"JSON kodea ScummVM-ra pasatzeak huts egiten badu,\n"
+"bila ezazu orriko Arazoen atalean\n"
+"eta jarraitu hango pausuak."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Eskuzko modua: 2. pausua"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Kopiatu hemen nabigatzaileko JSON kodea eta sakatu Hurrengoa:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
-#, fuzzy
 msgid "Paste"
-msgstr "Modu bizkorra"
+msgstr "Itsatsi"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Kodea arbeletik itsatsi"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
 #: engines/dialogs.cpp:93 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
@@ -252,41 +247,37 @@ msgid "Load"
 msgstr "Kargatu"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Kargatu fitxategia"
+msgstr "Kargatu kodea fitxategitik"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Eskuzko Modua: Zerbaitek huts egin du"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
-msgstr ""
+msgstr "Lainoko biltegira ezin konektatu."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "JSON kodea ongi kopiatu dela ziurtatu eta berriro saiatu."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Ez badu funtzionatzen, hasi berriz hasieartik."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Errore mezua: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Eskuzko Modua: Arrakasta"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Motorra"
+msgstr "Atzera"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -295,7 +286,7 @@ msgstr "Aurr."
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -326,12 +317,12 @@ msgstr "Ez"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
-msgstr ""
+msgstr "Uneko biltegiratzeak bukatzea itxaron eta berriz saiatu."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON kodearen edukia ez dago ongi osatuta."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -361,49 +352,46 @@ msgstr "Ados"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "JSON akastuna."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Elkarreragin"
+msgstr "Geldituta."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"URL irekitzean huts egin da!\n"
+"Joan orri horretara eskuz, mesedez."
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Aukeratu scummvm.org gunetik kopiatutako JSON fitxategia"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
 msgid "Failed to load JSON file"
-msgstr "Ezin izan da fitxategia ezabatu."
+msgstr "JSON fitxategia kargatzean huts egin da"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Deskargatu Freeware Joko eta Demoak"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLCak bilatzen..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
 msgid "All Downloads"
-msgstr "Behera"
+msgstr "Deskarga guztiak"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
-#, fuzzy
 msgid "Download"
-msgstr "Behera"
+msgstr "Deskargatu"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -425,15 +413,13 @@ msgstr "Nori: "
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
 #: gui/downloadpacksdialog.cpp:246 gui/downloadpacksdialog.cpp:256
 #: gui/downloadpacksdialog.cpp:278 gui/downloadpacksdialog.cpp:293
-#, fuzzy
 msgid "Cancel download"
-msgstr "Utzi"
+msgstr "Utzi deskarga"
 
 #: gui/downloaddialog.cpp:65
-#, fuzzy
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Utzi"
+msgstr "Ezeztatu deskarga"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
 #: gui/downloadpacksdialog.cpp:282
@@ -476,50 +462,47 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Jaitsita %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:374
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Jaitsiera abiadura: %s %S"
+msgstr "Deskarga abiadura: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
 msgid "Currently Downloading Games"
-msgstr "Kargatu fitxategia:"
+msgstr "Orain deskargatzen ari diren Jokoak"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
 msgid "Pending Downloads"
-msgstr "Behera"
+msgstr "Deskargatzeke"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "%d ERROREA: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Jokoa kargatzen..."
+msgstr "%S zerrenda deskargatzen..."
 
 #: gui/downloadpacksdialog.cpp:203
-#, fuzzy
 msgid "Clear Cache"
-msgstr "Balioa kendu"
+msgstr "Cachea garbitu"
 
 #: gui/downloadpacksdialog.cpp:255
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Jokoa kargatzen..."
+msgstr "%S zerrenda deskargatzen... %d eduki"
 
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%d pack berri detektatuta, %s-%S"
 
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
+msgstr "Deskarga osatuta, %d pack deskargatuta, %s-%S"
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
@@ -533,13 +516,13 @@ msgstr "Itxi"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "ERROREA: Ez dago ikono biderik"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
 #, c-format
 msgid "No new %S available"
-msgstr ""
+msgstr "Ez dago %S berririk eskuragarri"
 
 #: gui/downloadpacksdialog.cpp:464
 #, c-format
