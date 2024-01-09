@@ -156,6 +156,11 @@ void Viewport::handleInput(NancyInput &input) {
 			direction = 0;
 		}
 
+		// Just pressed RMB down, cancel the timer (removes jank when auto move is on)
+		if (input.input & NancyInput::kRightMouseButtonDown) {
+			_nextMovementTime = 0;
+		}
+
 		// If we hover over an edge we don't want to click an element in the viewport underneath
 		// or to change the cursor, so we make the mouse input invalid
 		input.eatMouseInput();
