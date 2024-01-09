@@ -261,6 +261,7 @@ static SQInteger masterRoomArray(HSQUIRRELVM v) {
 }
 
 static SQInteger removeTrigger(HSQUIRRELVM v) {
+	if(!g_engine->_room) return 0;
 	if (sq_gettype(v, 2) == OT_CLOSURE) {
 		HSQOBJECT closure;
 		sq_resetobject(&closure);

@@ -66,6 +66,9 @@ MODULE_OBJS = \
 	actorswitcher.o \
 	enginedialogtarget.o \
 	audio.o \
+	savegame.o \
+	btea.o \
+	time.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

@@ -29,6 +29,8 @@
 
 namespace Twp {
 
+HSQOBJECT sqrootTbl(HSQUIRRELVM v);
+
 template<typename T>
 HSQOBJECT sqtoobj(HSQUIRRELVM v, T value);
 
@@ -74,6 +76,12 @@ template<typename T>
 void sqgetf(HSQOBJECT o, const Common::String &name, T &value) {
 	HSQUIRRELVM v = g_engine->getVm();
 	sqgetf(v, o, name, value);
+}
+
+template<typename T>
+void sqgetf(const Common::String &name, T &value) {
+	HSQUIRRELVM v = g_engine->getVm();
+	sqgetf(v, sqrootTbl(v), name, value);
 }
 
 void setId(HSQOBJECT &o, int id);
@@ -125,7 +133,6 @@ void sqnewf(HSQOBJECT o, const Common::String &key, T obj) {
 
 bool sqrawexists(HSQOBJECT obj, const Common::String &name);
 void sqsetdelegate(HSQOBJECT obj, HSQOBJECT del);
-HSQOBJECT sqrootTbl(HSQUIRRELVM v);
 
 void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const char *name);
 int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name);
