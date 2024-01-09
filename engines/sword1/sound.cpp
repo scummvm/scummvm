@@ -1204,7 +1204,7 @@ int32 Sound::getSpeechSize(byte *compData, uint32 compSize) {
 	if ((_cowMode == CowWave) || (_cowMode == CowDemo)) {
 		WaveHeader *waveHeader = (WaveHeader *)compData;
 
-		return (waveHeader->riffSize + 8) - sizeof(WaveHeader);
+		return (FROM_LE_32(waveHeader->riffSize) + 8) - sizeof(WaveHeader);
 	} else {
 		Common::MemoryReadStream memStream(compData, compSize);
 		Audio::RewindableAudioStream *stream = nullptr;
