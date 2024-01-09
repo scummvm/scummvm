@@ -132,7 +132,7 @@ public:
 
 	byte* mapData;
 
-	CursorMode _cursorMode = CursorMode::Walk;
+	CursorMode _cursorMode = CursorMode::Touch;
 
 	void NextCursorMode();
 
