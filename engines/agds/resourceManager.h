@@ -55,7 +55,7 @@ private:
 			return getFileName();
 		}
 		Common::Path getPathInArchive() const override {
-			return _name;
+			return Common::Path{_name};
 		}
 		Common::String getFileName() const override {
 			return _name;
@@ -74,7 +74,7 @@ private:
 		MembersType _members;
 
 	public:
-		bool load(const Common::String &fname);
+		bool load(const Common::Path &path);
 
 		Common::SeekableReadStream &getArchiveStream() {
 			return _file;
@@ -92,7 +92,7 @@ public:
 
 	static void decrypt(uint8 * data, unsigned size);
 
-	bool addPath(const Common::String &grpFilename);
+	bool addPath(const Common::Path &grpFilename);
 
 	Common::SeekableReadStream * getResource(const Common::String &name) const;
 	Graphics::Surface * loadPicture(const Common::String & name, const Graphics::PixelFormat &format);

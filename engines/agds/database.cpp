@@ -29,7 +29,7 @@ namespace AGDS {
 
 bool Database::open(const Common::String &filename) {
 	Common::File file;
-	if (!file.open(filename))
+	if (!file.open(Common::Path{filename}))
 		return false;
 
 	return open(filename, &file);
@@ -117,7 +117,7 @@ Common::Array<Common::String> Database::getEntries() const {
 
 Common::SeekableReadStream *Database::getEntry(const Common::String &name) const {
 	Common::File file;
-	if (!file.open(_filename)) {
+	if (!file.open(Common::Path{_filename})) {
 		error("could not open database file %s", _filename.c_str()); //previously available, but now disappeared or no fd, error
 		return NULL;
 	}
