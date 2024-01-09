@@ -1666,6 +1666,14 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, const char *data) {
 	glDepthFunc(_depthFunc);
 }
 
+const Graphics::PixelFormat GfxOpenGL::getMovieFormat() const {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+}
+
 void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int height = frame->h;
 	int width = frame->w;
@@ -1683,29 +1691,11 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	GLenum dataType;
 	int bytesPerPixel = frame->format.bytesPerPixel;
 
-	// Aspyr Logo format
-	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0)) {
-#if !defined(__amigaos4__)
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8;
-#else
-		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
-		format = GL_BGRA;
+	// Used by Bink, QuickTime, MPEG, Theora and paletted SMUSH
+	if (frame->format == getMovieFormat()) {
+		format = GL_RGBA;
 		dataType = GL_UNSIGNED_BYTE;
-#endif
-	// Used by Grim Fandango Remastered
-	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) {
-#if !defined(__amigaos4__)
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8;
-#else
-		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_BYTE;
-#endif
-	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0)) {
-		format = GL_BGRA;
-		dataType = GL_UNSIGNED_INT_8_8_8_8_REV;
+	// Used by 16-bit SMUSH
 	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 		format = GL_RGB;
 		dataType = GL_UNSIGNED_SHORT_5_6_5;

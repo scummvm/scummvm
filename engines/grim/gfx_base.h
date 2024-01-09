@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 
+#include "graphics/pixelformat.h"
 #include "graphics/renderer.h"
 
 #include "engines/grim/material.h"
@@ -230,6 +231,8 @@ public:
 	virtual void drawPolygon(const PrimitiveObject *primitive) = 0;
 	virtual void drawDimPlane() {};
 
+	virtual const Graphics::PixelFormat getMovieFormat() const = 0;
+
 	/**
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
@@ -241,6 +244,7 @@ public:
 	 * @see releaseMovieFrame
 	 */
 	virtual void prepareMovieFrame(Graphics::Surface *frame) = 0;
+	virtual void prepareMovieFrame(Graphics::Surface *frame, const byte *palette);
 	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**

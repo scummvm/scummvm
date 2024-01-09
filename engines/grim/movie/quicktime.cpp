@@ -44,7 +44,6 @@ bool QuickTimePlayer::loadFile(const Common::String &filename) {
 		return false;
 
 	_videoDecoder->loadStream(stream);
-	_videoDecoder->start();
 
 	return true;
 }
