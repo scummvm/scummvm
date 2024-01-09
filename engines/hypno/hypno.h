@@ -167,9 +167,9 @@ public:
 	uint32 _defaultCursorIdx;
 	void disableCursor();
 	void defaultCursor();
-	void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
-	void changeCursor(const Common::String &cursor);
-	void changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor = false);
+	virtual void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
+	virtual void changeCursor(const Common::String &cursor);
+	virtual void changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor = false);
 
 	// Actions
 	virtual void runMenu(Hotspots *hs, bool only_menu = false);
@@ -392,6 +392,7 @@ public:
 
 	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
+	void changeCursor(const Common::String &cursor) override;
 
 	void showCredits() override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
