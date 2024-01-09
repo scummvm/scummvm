@@ -28,6 +28,10 @@
 
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "graphics/surface.h"
 
 #include "cge2/cge2.h"
@@ -93,6 +97,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -201,6 +206,49 @@ void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
+Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Sfinx", _("Game Keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action("Game Info", _("Game Info"));
+	act->setKeyEvent(KEYCODE_F1);
+	act->addDefaultInputMapping("F1");
+	keymap->addAction(act);
+
+	act = new Common::Action("Save Game", _("Save Game"));
+	act->setKeyEvent(KEYCODE_F5);
+	act->addDefaultInputMapping("F5");
+	keymap->addAction(act);
+
+	act = new Common::Action("Load Game", _("Load Game"));
+	act->setKeyEvent(KEYCODE_F7);
+	act->addDefaultInputMapping("F7");
+	keymap->addAction(act);
+
+	// I18N: This opens a Quit Prompt where you have to choose
+	// [Confirm] or [Continue Playing] lines with Left Click.
+	act = new Common::Action("Quit Prompt", _("Quit Prompt"));
+	act->setKeyEvent(KeyState(KEYCODE_x, 0, KBD_ALT));
+	act->addDefaultInputMapping("A+x");
+	keymap->addAction(act);
+
+	// I18N: This directly quits the game.
+	act = new Common::Action("Quit", _("Quit"));
+	act->setKeyEvent(KEYCODE_F10);
+	act->addDefaultInputMapping("F10");
+	keymap->addAction(act);
+
+	// I18N: This closes the Dialogue/text box.
+	act = new Common::Action("Close the box", _("Close the Dialogue box"));
+	act->setKeyEvent(KEYCODE_ESCAPE);
+	act->addDefaultInputMapping("ESCAPE");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
+}
 } // End of namespace CGE2
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE2)
