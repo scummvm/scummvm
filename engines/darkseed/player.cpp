@@ -38,17 +38,17 @@ bool Darkseed::Player::loadAnimations(const Common::String &filename) {
 
 uint8 playerSpriteIndexDirectionTbl[] = { 24,  26,  28,  26 };
 bool BYTE_ARRAY_2c85_41eb[] = { false, false, false, true };
-uint16 BYTE_ARRAY_2c85_41e3[] = { 0,   8,  16,   8 };
+uint16 walkFrameOffsetTbl[] = { 0,   8,  16,   8 };
 
 void Darkseed::Player::updateSprite() {
 	if (!_playerIsChangingDirection) {
 		if ((_direction == 3) || (_direction == 1)) {
 			g_engine->player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
 		}
-		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !g_engine->BoolEnum_2c85_811c) {
+		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !BoolEnum_2c85_811c) {
 			_frameIdx = playerSpriteIndexDirectionTbl[_direction];
 		} else {
-			_frameIdx = g_engine->DAT_2c85_7dd7 + BYTE_ARRAY_2c85_41e3[_direction];
+			_frameIdx = playerWalkFrameIdx + walkFrameOffsetTbl[_direction];
 		}
 		if (_direction == 2) {
 			if (_position.x < _walkTarget.x) {
@@ -153,4 +153,38 @@ void Darkseed::Player::playerFaceWalkTarget() {
 	changeDirection(previousDirection,_direction);
 	updateSprite();
 	_positionLong = _position;
+}
+
+void Darkseed::Player::calculateWalkTarget() {
+	BoolEnum_2c85_811c = true;
+	playerWalkFrameIdx = 0;
+	walkPathIndex = -1;
+	numConnectorsInWalkPath = 0;
+	int selectedObjNum = 0;
+	if(g_engine->_actionMode == PointerAction) {
+		selectedObjNum = g_engine->_room->getObjectNumUnder6AtCursor();
+	}
+
+	if (selectedObjNum == 0) {
+		_walkTarget.x = g_engine->_cursor.getX();
+		_walkTarget.y = g_engine->_cursor.getY();
+	} else {
+		int currentRoomNumber = g_engine->_room->_roomNumber;
+		if (currentRoomNumber == 0x22 || (currentRoomNumber > 0x12 && currentRoomNumber < 0x18)) {
+			g_engine->_previousRoomNumber = currentRoomNumber;
+			if (currentRoomNumber == 0x22) {
+				// TODO FUN_171d_88f4_change_rooms_maybe(0); // also set current room to 0x21
+			} else {
+				// TODO FUN_171d_88f4_change_rooms_maybe(0); // also set current room to 0x1c
+			}
+			return;
+		}
+		g_engine->_room->getWalkTargetForObjectType_maybe(selectedObjNum);
+	}
+
+	if (_walkTarget.y > 0xed) {
+		_walkTarget.y = 0xee;
+	}
+
+	// TODO more logic here.
 }

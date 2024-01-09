@@ -22,7 +22,9 @@
 #ifndef DARKSEED_CURSOR_H
 #define DARKSEED_CURSOR_H
 
+#include "common/rect.h"
 #include "nsp.h"
+
 namespace Darkseed {
 
 enum CursorType {
@@ -37,8 +39,7 @@ enum CursorType {
 
 class Cursor {
 private:
-	int _x = 0;
-	int _y = 0;
+	Common::Point _position;
 	enum CursorType _currentCursorType = Pointer;
 
 public:
@@ -46,14 +47,15 @@ public:
 	void setCursorType(enum CursorType newType);
 	CursorType getCursorType() { return _currentCursorType; }
 
-	int getX() { return _x; }
-	int getY() { return _y; }
+	Common::Point &getPosition() { return _position; }
+	int16 getX() const { return _position.x; }
+	int16 getY() const { return _position.y; }
 
 	int getWidth();
 	int getHeight();
 	const Sprite &getSprite();
 
-	void updatePosition(int x, int y);
+	void updatePosition(int16 x, int16 y);
 	void draw();
 };
 

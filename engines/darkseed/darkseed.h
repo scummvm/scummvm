@@ -80,6 +80,7 @@ public:
 	int _currentTimeInSeconds = 0x7e8e;
 
 	uint16 _previousRoomNumber = 0;
+	uint16 targetRoomNumber = 0;
 
 	bool isPlayingAnimation_maybe = false;
 	uint16 otherNspAnimationType_maybe = 0;
@@ -101,10 +102,13 @@ public:
 	uint16 DAT_2c85_825c = 0;
 	uint16 DAT_2c85_819c = 0;
 	bool BoolEnum_2c85_985a = false;
-	bool BoolEnum_2c85_811c = false;
+	bool BoolByteEnum_2c85_9e67 = false;
+
 	uint16 DAT_2c85_81e0 = 0;
-	uint16 DAT_2c85_7dd7 = 0;
+
 	int16 counter_2c85_888b = 0;
+
+	uint8 DAT_2c85_6b0e = 0; // related to changing rooms.
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
