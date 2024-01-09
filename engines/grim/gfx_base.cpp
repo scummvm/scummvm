@@ -164,7 +164,6 @@ void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int 
 	_specialtyTextures[id]._width = width;
 	_specialtyTextures[id]._height = height;
 	_specialtyTextures[id]._bpp = 4;
-	_specialtyTextures[id]._colorFormat = BM_RGBA;
 	createTexture(&_specialtyTextures[id], data, nullptr, true);
 }
 

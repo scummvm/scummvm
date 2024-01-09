@@ -1109,10 +1109,21 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)texture->_texture);
-	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
-	uint8 *texdatapos = texdata;
+
+	TGLuint *textures = (TGLuint *)texture->_texture;
+	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
+
+	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
+		uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
+		uint8 *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *data;
@@ -1129,21 +1140,14 @@ void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 				data++;
 			}
 		}
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		TGLint format = (texture->_bpp == 4) ? TGL_RGBA : TGL_RGB;
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, TGL_UNSIGNED_BYTE, data);
 	}
-
-	TGLuint *textures = (TGLuint *)texture->_texture;
-	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-
-	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxTinyGL::selectTexture(const Texture *texture) {
