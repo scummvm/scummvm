@@ -25,6 +25,7 @@
 #include "common/timer.h"
 
 #include "engines/grim/movie/movie.h"
+#include "engines/grim/gfx_base.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/savegame.h"
@@ -47,7 +48,9 @@ MoviePlayer::MoviePlayer() {
 	_y = 0;
 	_videoDecoder = nullptr;
 	_internalSurface = nullptr;
+	_internalPalette = nullptr;
 	_externalSurface = new Graphics::Surface();
+	_externalPalette = nullptr;
 	_timerStarted = false;
 }
 
@@ -60,6 +63,7 @@ MoviePlayer::~MoviePlayer() {
 	deinit();
 	delete _videoDecoder;
 	delete _externalSurface;
+	delete[] _externalPalette;
 }
 
 void MoviePlayer::pause(bool p) {
@@ -103,6 +107,7 @@ bool MoviePlayer::prepareFrame() {
 
 	handleFrame();
 	_internalSurface = _videoDecoder->decodeNextFrame();
+	_internalPalette = _videoDecoder->getPalette();
 	if (_frame != _videoDecoder->getCurFrame()) {
 		_updateNeeded = true;
 	}
@@ -120,6 +125,17 @@ Graphics::Surface *MoviePlayer::getDstSurface() {
 	}
 
 	return _externalSurface;
+}
+
+const byte *MoviePlayer::getDstPalette() {
+	Common::StackLock lock(_frameMutex);
+	if (_updateNeeded && _internalPalette) {
+		if (!_externalPalette)
+			_externalPalette = new byte[0x300];
+		memcpy(_externalPalette, _internalPalette, 0x300);
+	}
+
+	return _externalPalette;
 }
 
 void MoviePlayer::drawMovieSubtitle() {
@@ -146,9 +162,12 @@ void MoviePlayer::deinit() {
 		_videoDecoder->close();
 
 	_internalSurface = nullptr;
+	_internalPalette = nullptr;
 
 	if (_externalSurface)
 		_externalSurface->free();
+	delete[] _externalPalette;
+	_externalPalette = nullptr;
 
 	_videoPause = false;
 	_videoFinished = true;
@@ -166,10 +185,13 @@ bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int 
 	if (!loadFile(_fname))
 		return false;
 
+	_videoDecoder->setOutputPixelFormat(g_driver->getMovieFormat());
+
 	Debug::debug(Debug::Movie, "Playing video '%s'.\n", filename.c_str());
 
 	init();
 	_internalSurface = nullptr;
+	_internalPalette = nullptr;
 
 	if (start) {
 		_videoDecoder->start();

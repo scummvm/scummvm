@@ -177,6 +177,8 @@ public:
 	void drawLine(const PrimitiveObject *primitive) override;
 	void drawPolygon(const PrimitiveObject *primitive) override;
 
+	const Graphics::PixelFormat getMovieFormat() const override;
+
 	/**
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
@@ -241,8 +243,6 @@ private:
 	int _smushWidth;
 	int _smushHeight;
 	GLuint _smushTexId;
-	bool _smushSwizzle;
-	bool _smushSwap;
 	void setupTexturedQuad();
 	void setupQuadEBO();
 

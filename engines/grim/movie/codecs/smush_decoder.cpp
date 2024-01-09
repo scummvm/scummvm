@@ -445,15 +445,13 @@ bool SmushDecoder::seekIntern(const Audio::Timestamp &time) {
 }
 
 SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, int numFrames, bool is16Bit) {
-	// Set color-format statically here for SMUSH (5650), to allow for differing
-	// PixelFormat in engine and renderer (and conversion from Surface there)
-	// Which means 16 bpp, 565, shift of 11, 5, 0, 0 for RGBA
-	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	if (!is16Bit) { // Demo
+		_format = Graphics::PixelFormat::createFormatCLUT8();
 		_codec48 = new Codec48Decoder();
 		_blocky8 = new Blocky8();
 		_blocky16 = nullptr;
 	} else {
+		_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		_codec48 = nullptr;
 		_blocky8 = nullptr;
 		_blocky16 = new Blocky16();
@@ -468,8 +466,9 @@ SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, i
 	setMsPerFrame(fps);
 	_curFrame = 0;
 	for (int i = 0; i < 0x300; i++) {
-		_pal[i] = 0;
+		_palette[i] = 0;
 		_deltaPal[i] = 0;
+		_dirtyPalette = false;
 	}
 	_frameStart = 0;
 }
@@ -490,27 +489,11 @@ void SmushDecoder::SmushVideoTrack::init() {
 }
 
 void SmushDecoder::SmushVideoTrack::finishFrame() {
-	if (!_is16Bit) {
-		convertDemoFrame();
-	}
 	_curFrame++;
 }
 
 void SmushDecoder::SmushVideoTrack::setFrameStart(int frame) {
 	_frameStart = frame - 1;
-}
-
-void SmushDecoder::SmushVideoTrack::convertDemoFrame() {
-	Graphics::Surface conversion;
-	conversion.create(0, 0, _format); // Avoid issues with copyFrom, by creating an empty surface.
-	conversion.copyFrom(_surface);
-
-	uint16 *d = (uint16 *)_surface.getPixels();
-	for (int l = 0; l < _width * _height; l++) {
-		int index = ((byte *)conversion.getPixels())[l];
-		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
-	}
-	conversion.free();
 }
 
 void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *stream, uint32 size) {
@@ -573,11 +556,13 @@ void SmushDecoder::SmushVideoTrack::handleDeltaPalette(Common::SeekableReadStrea
 		for (int i = 0; i < 0x300; i++) {
 			_deltaPal[i] = stream->readUint16LE();
 		}
-		stream->read(_pal, 0x300);
+		stream->read(_palette, 0x300);
+		_dirtyPalette = true;
 	} else if (size == 6) {
 		for (int i = 0; i < 0x300; i++) {
-			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
+			_palette[i] = delta_color(_palette[i], _deltaPal[i]);
 		}
+		_dirtyPalette = true;
 	} else {
 		error("SmushDecoder::handleDeltaPalette() Wrong size for DeltaPalette");
 	}
