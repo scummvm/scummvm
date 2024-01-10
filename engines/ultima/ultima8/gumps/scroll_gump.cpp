@@ -52,7 +52,7 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	// Create the TextWidget
-	Gump *widget = new TextWidget(22, 29, _text, true, 9, 204, 115); //!! constants
+	Gump *widget = new TextWidget(22, 29, _text, true, 9, 204, 115, Font::TEXT_LEFT, true); //!! constants
 	widget->InitGump(this);
 	_textWidget = widget->getObjId();
 

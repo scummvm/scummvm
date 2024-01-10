@@ -78,22 +78,22 @@ void JPFont::getTextSize(const Std::string &text,
 						 int32 &resultwidth, int32 &resultheight,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
-						 bool u8specials) {
+						 bool u8specials, bool pagebreaks) {
 	Std::list<PositionedText> tmp;
 	tmp = typesetText<SJISTraits>(this, text, remaining,
-	                              width, height, align, u8specials,
+	                              width, height, align, u8specials, pagebreaks,
 	                              resultwidth, resultheight);
 }
 
 RenderedText *JPFont::renderText(const Std::string &text,
 								 unsigned int &remaining,
 								 int32 width, int32 height, TextAlign align,
-								 bool u8specials,
+								 bool u8specials, bool pagebreaks,
 								 Std::string::size_type cursor) {
 	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<SJISTraits>(this, text, remaining,
-	                                width, height, align, u8specials,
+	                                width, height, align, u8specials, pagebreaks,
 	                                resultwidth, resultheight,
 	                                cursor);
 
