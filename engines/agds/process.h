@@ -130,6 +130,7 @@ private:
 	void setupAnimation(const AnimationPtr & animation);
 	void attachInventoryObjectToMouse(bool flag);
 	void leaveCharacter(const Common::String &name, const Common::String &regionName, int dir);
+	void removeScreenObject(const Common::String &name);
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
