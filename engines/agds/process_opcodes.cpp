@@ -281,6 +281,10 @@ void Process::cloneObject() {
 
 void Process::removeScreenObject() {
 	Common::String name = popString();
+	removeScreenObject(name);
+}
+
+void Process::removeScreenObject(const Common::String &name) {
 	debug("removeScreenObject: %s", name.c_str());
 	auto screen = _engine->getCurrentScreen();
 	if (!screen) {
@@ -806,8 +810,8 @@ void Process::screenObjectPatchIncRef() {
 void Process::screenObjectPatchDecRef() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
+	debug("screenObjectPatchDecRef %s %s", screenName.c_str(), objectName.c_str());
 	if (!screenName.empty() && screenName != _engine->getCurrentScreenName()) {
-		debug("screenObjectPatchDecRef %s %s", screenName.c_str(), objectName.c_str());
 		if (_engine->getCurrentScreen()->applyingPatch()) {
 			warning("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
 		} else {
@@ -820,13 +824,8 @@ void Process::screenObjectPatchDecRef() {
 				debug("decrement refcount for object %s, no patch for screen %s", objectName.c_str(), screenName.c_str());
 		}
 	} else {
-		Screen *screen = _engine->getCurrentScreen();
-		if (screen) {
-			_object->lock();
-			if (!screen->remove(objectName))
-				warning("screenRemoveObjectSavePatch: object %s not found", objectName.c_str());
-			_object->unlock();
-		}
+		debug("screenObjectPatchDecRef: current screen, removing object");
+		removeScreenObject(objectName);
 	}
 }
 
