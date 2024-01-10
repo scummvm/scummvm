@@ -71,6 +71,9 @@ public:
 	void setOffset(const Math::Vector2d &offset) { _offset = offset; }
 	Math::Vector2d getOffset() const { return _offset; }
 
+	void setShakeOffset(const Math::Vector2d &offset) { _shakeOffset = offset; }
+	Math::Vector2d getShakeOffset() const { return _shakeOffset; }
+
 	void setRenderOffset(const Math::Vector2d &offset) { _renderOffset = offset; }
 	Math::Vector2d getRenderOffset() const { return _renderOffset; }
 
@@ -122,7 +125,7 @@ protected:
 	int _zOrder = 0;
 	Node *_parent = nullptr;
 	Common::Array<Node *> _children;
-	Math::Vector2d _offset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
+	Math::Vector2d _offset, _shakeOffset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
 	Color _color, _computedColor;
 	bool _visible = true;
 	float _rotation = 0.f;

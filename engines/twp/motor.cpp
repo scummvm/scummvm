@@ -110,8 +110,7 @@ Shake::Shake(Node *node, float amount)
 void Shake::update(float elapsed) {
 	_shakeTime += 40.f * elapsed;
 	_elapsed += elapsed;
-	// TODO: check if it's necessary to create a _shakeOffset in a node
-	_node->setOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
+	_node->setShakeOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
 }
 
 OverlayTo::OverlayTo(float duration, Room *room, Color to)

@@ -202,7 +202,7 @@ Math::Matrix4 Node::getTrsf(Math::Matrix4 parentTrsf) {
 }
 
 Math::Matrix4 Node::getLocalTrsf() {
-	Math::Vector2d p = _pos + _offset;
+	Math::Vector2d p = _pos + _offset + _shakeOffset;
 	Math::Matrix4 m1;
 	m1.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
 	Math::Matrix3 mRot;
