@@ -68,13 +68,15 @@ bool Console::cmdFileSearch(int argc, const char **argv) {
 
 bool Console::cmdFileDump(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: %s <file> <ignore patches> <unpack>\n", argv[0]);
+		debugPrintf("Usage: %s <file> [ignore patches] [unpack] [outputpath] [chunktype]\n", argv[0]);
 		return true;
 	}
 
 	Common::String fileName = argv[1];
 	bool ignorePatches = (argc > 2) && (!scumm_stricmp(argv[2], "true") || !strcmp(argv[2], "1"));
 	bool unpack = (argc > 3) && (!scumm_stricmp(argv[3], "true") || !strcmp(argv[3], "1"));
+	Common::String dstPath = (argc > 4) ? argv[4] : "";
+	Common::String chunkType = (argc > 5) ? argv[5] : "";
 	Common::SeekableReadStream *resStream = _vm->getResource(fileName, ignorePatches);
 	if (resStream == nullptr) {
 		debugPrintf("Resource not found\n");
@@ -99,6 +101,9 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 
 		DgdsChunkReader chunk(resStream);
 		while (chunk.readNextHeader(ex, fileName)) {
+			if (!chunkType.empty() && !chunkType.equals(chunk.getIdStr()))
+				continue;
+
 			chunk.readContent(_vm->getDecompressor());
 
 			memcpy(ptr, chunk.getIdStr(), 4);
@@ -115,7 +120,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	delete resStream;
 
 	Common::DumpFile out;
-	out.open(Common::Path(fileName));
+	out.open(Common::Path(dstPath + fileName));
 	out.write(data, size);
 	out.flush();
 	out.close();
