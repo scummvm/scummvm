@@ -20,18 +20,28 @@
  */
 
 #include "twp/console.h"
+#include "twp/twp.h"
+#include "twp/squtil.h"
 
 namespace Twp {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("!",   WRAP_METHOD(Console, Cmd_exec));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::Cmd_exec(int argc, const char **argv) {
+	Common::String s;
+	if (argc > 0) {
+		s += argv[0];
+		for (int i = 1; i < argc; i++) {
+			s += ' ';
+			s += argv[i];
+		}
+	}
+	sqexec(g_engine->getVm(), s.c_str(), "console");
 	return true;
 }
 
