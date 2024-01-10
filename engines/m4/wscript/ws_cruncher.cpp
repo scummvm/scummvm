@@ -390,7 +390,7 @@ bool ws_ResumeAnim8(Anim8 *myAnim8) {
 static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **argPtr, frac16 *argValue) {
 	int32 myIndex;
 	Anim8 *parentAnim8;
-	frac16 *dataArray;
+	uint32 *dataArray;
 
 	// If the format indicates the argument is a local source (parent, register, or data)
 	if (myFormat == FMT_LOCAL_SRC) {
@@ -443,10 +443,10 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			}
 
 			// Dereferrence the dataHandle, add the offset to find the array of data for this anim8
-			dataArray = (frac16 *)((intptr)*(myAnim8->dataHandle) + myAnim8->dataOffset);
+			dataArray = (uint32 *)((intptr)*(myAnim8->dataHandle) + myAnim8->dataOffset);
 
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
-			*argValue = dataArray[myIndex];
+			*argValue = FROM_LE_32(dataArray[myIndex]);
 			*argPtr = argValue;
 			break;
 		}
