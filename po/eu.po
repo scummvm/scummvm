@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-09 13:42+0000\n"
+"PO-Revision-Date: 2024-01-10 16:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -530,18 +530,20 @@ msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
+"%s-%S datu ezabatzekotan zaude, aurreko deskargatutako %S ezabatuz. Aurrera "
+"jarraitu nahi duzu?"
 
 #: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "Jarraitu"
 
 #: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3242
 msgid "icon packs"
-msgstr ""
+msgstr "ikono multzoak"
 
 #: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3253
 msgid "shader packs"
-msgstr ""
+msgstr "shader multzoak"
 
 #: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:708
 msgid "Pick the game:"
@@ -651,15 +653,13 @@ msgid "Backend"
 msgstr "Motorra"
 
 #: gui/editgamedialog.cpp:222
-#, fuzzy
 msgid "Override global backend settings"
-msgstr "Soinu ezarpen globalak baliogabetu"
+msgstr "Backend ezarpen orokorrak gainidatzi"
 
 #: gui/editgamedialog.cpp:224
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Soinu ezarpen globalak baliogabetu"
+msgstr "Backend ezarpen orokorrak gainidatzi"
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2239 engines/dialogs.cpp:316
 msgid "Audio"
@@ -770,7 +770,7 @@ msgstr "Lorpenak"
 
 #: gui/editgamedialog.cpp:342 engines/dialogs.cpp:367
 msgid "Statistics"
-msgstr ""
+msgstr "Estatistikak"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
 #: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1183
@@ -1004,10 +1004,8 @@ msgid "Right"
 msgstr "Eskuin"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Motorra"
+msgstr "Ezabatu"
 
 #: gui/gui-manager.cpp:200
 #, fuzzy
@@ -1017,31 +1015,27 @@ msgstr "Ezabatu karakterea"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Lerro bukaerara joan"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "SoundFont-a aukeratu"
+msgstr "Lerro bukaerara aukeratu"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Pluginen direktorioa aukeratu"
+msgstr "Lerro hasierara aukeratu"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Lerro hasierara joan"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Moztu"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Kopiatu"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1066,13 +1060,14 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1944
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: gui/helpdialog.cpp:38
 msgid "General"
-msgstr ""
+msgstr "Orokorra"
 
 #: gui/helpdialog.cpp:41
+#, fuzzy
 msgid ""
 "## ScummVM at a Glance\n"
 "\n"
@@ -1114,12 +1109,51 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM at a Glance\n"
+"\n"
+"ScummVM is a modern reimplementation of various game engines. Once you "
+"transfer the original game data to your device, it endeavors to use it to "
+"faithfully recreate the original gaming experience. \n"
+"\n"
+"ScummVM isn't your typical emulator of DOS, Windows, or some console. Rather "
+"than a one-size-fits-all approach, it takes a meticulous route, implementing "
+"the precise game logic for each specific title or engine it supports. "
+"ScummVM will not work with game engines it does not support.\n"
+"\n"
+"ScummVM is developed by a team of volunteers and is free software. We lack "
+"an extensive testing team, possess only a limited range of devices, and "
+"cannot always address every request. We also do not run advertisements or "
+"sell you anything. Please be mindful of this when you submit a complaint or "
+"a bug report.\n"
+"\n"
+"## Where to get the games\n"
+"\n"
+"Visit [our Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) for a detailed list of supported games and "
+"where to purchase them.\n"
+"\n"
+"Alternatively, you can download a variety of [freeware games](https://scummvm"
+".org/games) and [demos](https://www.scummvm.org/demos/) directly from our "
+"website.\n"
+"\n"
+"The ScummVM team does not endorse any specific game supplier. However, the "
+"project receives a commission from every purchase made on [ZOOM-"
+"Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) through affiliate referral links.\n"
+"\n"
+"Additionally, games not available on ZOOM-Platform can be found on other "
+"suppliers such as GOG.com and Steam.\n"
+"\n"
+"For other (out-of-print) games, consider checking platforms like Amazon, "
+"eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
+"and illegal game copies.\n"
 
 #: gui/helpdialog.cpp:68 gui/options.cpp:2296
 msgid "Cloud"
-msgstr ""
+msgstr "Lainoa"
 
 #: gui/helpdialog.cpp:71
+#, fuzzy
 msgid ""
 "## Connecting a cloud service - Quick mode\n"
 "\n"
@@ -1170,49 +1204,91 @@ msgid ""
 "see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
 "connect_cloud.html) "
 msgstr ""
+"## Connecting a cloud service - Quick mode\n"
+"\n"
+"1. From the Launcher, select **Global Options** and then select the **Cloud**"
+" tab.\n"
+"\n"
+"2. Select your preferred cloud storage service from the **Active storage** "
+"dropdown, then select **Connect**.\n"
+"\n"
+"\t  ![Select cloud service](choose_storage.png \"Select cloud service\""
+"){w=70%}\n"
+"\n"
+"3. Select **Quick mode**.\n"
+"\n"
+"\t  ![Quick mode](quick_mode.png \"Quick mode\"){w=70%}\n"
+"\n"
+"4. Select **Run server** and then select **Next** \n"
+"\n"
+"\t  ![Run server](run_server.png \"Run server\"){w=70%}\n"
+"\n"
+"  ![Next step](server_next.png \"Next step\"){w=70%}\n"
+"\n"
+"5. Open the link.\n"
+"\n"
+"\t  ![Open the link](open_link.png \"Open the link\"){w=70%}\n"
+"\n"
+"6. In the browser window that opens, select the cloud service to connect. \n"
+"\n"
+"\t  ![Choose the cloud service](cloud_browser.png \"Choose the cloud "
+"service\"){w=70%}\n"
+"\n"
+"7. Sign in to the chosen cloud service. Once completed, return to ScummVM.\n"
+"\n"
+"8. On the success screen, select **Finish** to exit. \n"
+"\n"
+"\t  ![Success](cloud_success.png \"Success\"){w=70%}\n"
+"9. Back on the main Cloud tab, select **Enable storage**.\n"
+"\n"
+"\t  ![Enable storage](enable_storage.png \"Enable storage\"){w=70%}\n"
+"\n"
+"10. You're ready to go! Use the cloud functionality to sync saved games or "
+"game files between your devices.\n"
+"\n"
+"\t  ![Cloud functionality](cloud_functions.png \"Cloud functionality\""
+"){w=70%}\n"
+"\n"
+"   For more information, including how to use the manual connection wizard, "
+"see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
+"connect_cloud.html) "
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
 msgstr "Hurr."
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Jokoa gordetzen..."
+msgstr "Gorde Irudia..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u %u-tik"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
 msgid "Save Image"
-msgstr "Gorde jokoa:"
+msgstr "Gorde Irudia"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
-#, fuzzy
 msgctxt "group"
 msgid "None"
 msgstr "Bat ere ez"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:107
-#, fuzzy
 msgctxt "group"
 msgid "First letter"
-msgstr "Sorginkeria aukeratu"
+msgstr "Lehenengo letra"
 
 #: gui/launcher.cpp:107
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Hasierakoa"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Engine"
 msgstr "Motorea"
@@ -1221,46 +1297,43 @@ msgstr "Motorea"
 #: gui/launcher.cpp:111
 msgctxt "group"
 msgid "Series"
-msgstr ""
+msgstr "Saila"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:113
-#, fuzzy
 msgctxt "group"
 msgid "Publisher"
-msgstr "Egile ezezaguna"
+msgstr "Argitaratzailea"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:115
-#, fuzzy
 msgctxt "group"
 msgid "Language"
-msgstr "Hizkuntza:"
+msgstr "Hizkuntza"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:117
-#, fuzzy
 msgctxt "group"
 msgid "Platform"
-msgstr "Plataforma:"
+msgstr "Plataforma"
 
 #. I18N: Group name for the game list, grouped by year
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Urtea"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
-msgstr ""
+msgstr "Aukeratu Taldea honen bidez"
 
 #: gui/launcher.cpp:233 gui/launcher.cpp:893
 msgid "Group:"
-msgstr ""
+msgstr "Taldea:"
 
 #: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Aukeratu sarrerak taldekatzeko irizpidea"
 
 #. I18N: This keymap opens KIA's HELP tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -1269,7 +1342,7 @@ msgstr ""
 #: gui/launcher.cpp:262 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
-msgstr ""
+msgstr "Laguntza"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:90
@@ -1282,9 +1355,8 @@ msgstr "Irten ScummVM-tik"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:270
-#, fuzzy
 msgid "A~b~out"
-msgstr "Ho~n~i buruz..."
+msgstr "Honi ~b~uruz"
 
 #: gui/launcher.cpp:270 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
@@ -1292,28 +1364,25 @@ msgstr "ScummVM-i buruz"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:272
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "~A~ukerak..."
+msgstr "Ezarpen ~O~rokorrak..."
 
 #: gui/launcher.cpp:272
 msgid "Change global ScummVM options"
 msgstr "ScummVM-ren aukera globalak aldatu"
 
 #: gui/launcher.cpp:272
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~A~ukerak..."
+msgstr "Aukerak ~O~rokorrak..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
 msgid "Download Games"
-msgstr "Kargatu fitxategia:"
+msgstr "Deskargatu Jokoak"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Deskargatu ScummVMrentzat freeware jokoak"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1408,6 +1477,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Zuk gehitu duzu direktorio hau SAFen? Sakatu goiko laguntza botoia [?] "
+"argibide gehiagorako"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1464,46 +1535,41 @@ msgstr "~A~ukerak..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1199 gui/launcher.cpp:1395
-#, fuzzy
 msgid "Unknown Engine"
-msgstr "Aldaera ezezaguna"
+msgstr "Motore Ezezaguna"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1216 gui/launcher.cpp:1412
-#, fuzzy
 msgid "Unknown Publisher"
-msgstr "Egile ezezaguna"
+msgstr "Argitaratzaile ezezaguna"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1233 gui/launcher.cpp:1429
 msgid "No Series"
-msgstr ""
+msgstr "Sailik ez"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1247 gui/launcher.cpp:1443
 msgid "Language not detected"
-msgstr ""
+msgstr "Hizkuntza ez da detektatu"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1261 gui/launcher.cpp:1457
 msgid "Platform not detected"
-msgstr ""
+msgstr "Plataforma ez da detektatu"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1278 gui/launcher.cpp:1474
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Errore ezezaguna"
+msgstr "Urte ezezaguna"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
-#, fuzzy
 msgid "All"
-msgstr "Alt"
+msgstr "Guztiak"
 
 #: gui/launcher.cpp:1630
 msgid "Icons per row:"
