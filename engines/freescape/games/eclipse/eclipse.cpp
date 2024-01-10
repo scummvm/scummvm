@@ -185,10 +185,10 @@ void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, ui
 	drawAnalogClockHand(surface, x, y, seconds * 6 - 90, 11, colorHand2);
 }
 
-void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y, float degrees, float magnitude, uint32 color) {
-	const float degtorad = (M_PI * 2) / 360;
-	float w = magnitude * cos(degrees * degtorad);
-	float h = magnitude * sin(degrees * degtorad);
+void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
+	const double degtorad = (M_PI * 2) / 360;
+	double w = magnitude * cos(degrees * degtorad);
+	double h = magnitude * sin(degrees * degtorad);
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
 }
 
