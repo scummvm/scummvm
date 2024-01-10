@@ -147,7 +147,8 @@ void EditWidget::renderText() {
 		_cachedText = font->renderText(_text, remaining,
 		                               max_width, max_height,
 		                               Font::TEXT_LEFT,
-		                               false, cv ? _cursor : Std::string::npos);
+		                               false, false,
+		                               cv ? _cursor : Std::string::npos);
 
 		// Trim text to fit
 		if (remaining < _text.length()) {
