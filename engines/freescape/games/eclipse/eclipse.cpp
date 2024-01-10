@@ -167,6 +167,31 @@ void EclipseEngine::borderScreen() {
 	}
 }
 
+void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack) {
+	// These calls will cover the pixels of the hardcoded clock image
+	drawAnalogClockHand(surface, x, y, 6 * 6 - 90, 12, colorBack);
+	drawAnalogClockHand(surface, x, y, 7 * 6 - 90, 12, colorBack);
+	drawAnalogClockHand(surface, x, y, 41 * 6 - 90, 11, colorBack);
+	drawAnalogClockHand(surface, x, y, 42 * 6 - 90, 11, colorBack);
+	drawAnalogClockHand(surface, x, y, 0 * 6 - 90, 11, colorBack);
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	hours = 7 + 2 - hours; // It's 7 o-clock when the game starts
+	minutes = 59 - minutes;
+	seconds = 59 - seconds;
+	drawAnalogClockHand(surface, x, y, hours * 30 - 90, 11, colorHand1);
+	drawAnalogClockHand(surface, x, y, minutes * 6 - 90, 11, colorHand1);
+	drawAnalogClockHand(surface, x, y, seconds * 6 - 90, 11, colorHand2);
+}
+
+void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y, float degrees, float magnitude, uint32 color) {
+	const float degtorad = (M_PI * 2) / 360;
+	float w = magnitude * cos(degrees * degtorad);
+	float h = magnitude * sin(degrees * degtorad);
+	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+}
+
 void EclipseEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source - 1;
 	debugC(1, kFreescapeDebugCode, "Printing message %d", index);

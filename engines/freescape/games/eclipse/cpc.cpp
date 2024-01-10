@@ -110,6 +110,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 		drawStringInSurface("4", 232, 135, back, front, surface, 'Z' - '$' + 1);
 		drawStringInSurface("<", 240, 135, back, front, surface, 'Z' - '$' + 1);
 	}
+	drawAnalogClock(surface, 90, 172, back, other, front);
 }
 
 } // End of namespace Freescape
