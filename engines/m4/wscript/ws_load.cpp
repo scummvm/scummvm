@@ -488,7 +488,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
-	numCels = celsPtr[CELS_COUNT];
+	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= (int)numCels) {
 		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
@@ -499,11 +499,11 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
 	// Set the stream boolean
 	if (streamSeries) {
-		if (myCelSource[CELS_STREAM])
+		if (FROM_LE_32(myCelSource[CELS_STREAM]))
 			*streamSeries = true;
 		else
 			*streamSeries = false;
@@ -512,10 +512,10 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	// Initialize the sprite struct and return it
 	mySprite->next = mySprite->prev = nullptr;
 	mySprite->sourceHandle = resourceHandle;
-	mySprite->xOffset = (int32)myCelSource[CELS_X];
-	mySprite->yOffset = (int32)myCelSource[CELS_Y];
-	mySprite->w = (int32)myCelSource[CELS_W];
-	mySprite->h = (int32)myCelSource[CELS_H];
+	mySprite->xOffset = FROM_LE_32(myCelSource[CELS_X]);
+	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
+	mySprite->w = FROM_LE_32(myCelSource[CELS_W]);
+	mySprite->h = FROM_LE_32(myCelSource[CELS_H]);
 	mySprite->encoding = (uint8)myCelSource[CELS_COMP];
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
@@ -631,11 +631,11 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Return the values
 	if (maxW) {
-		*maxW = celsPtr[CELS_SS_MAX_W];
+		*maxW = FROM_LE_32(celsPtr[CELS_SS_MAX_W]);
 	}
 
 	if (maxH) {
-		*maxH = celsPtr[CELS_SS_MAX_H];
+		*maxH = FROM_LE_32(celsPtr[CELS_SS_MAX_H]);
 	}
 
 	// unlock the handle
@@ -979,11 +979,11 @@ static void RestoreSSPaletteInfo(RGB8 *myPalette, int32 *palPtr) {
 	// Set up a pointer that can step through the pal info for the SS, and restore each color
 	if (myPalette) {
 		tempPtr = (uint32 *)(&palPtr[1]);
-		for (i = 0; i < (uint32)palPtr[0]; i++) {
+		for (i = 0; i < FROM_LE_32(palPtr[0]); i++) {
 			j = (*tempPtr & 0xff000000) >> 24;
-			myPalette[j].r = (*tempPtr & 0x00ff0000) >> 14;
-			myPalette[j].g = (*tempPtr & 0x0000ff00) >> 6;
-			myPalette[j].b = (*tempPtr & 0x000000ff) << 2;
+			myPalette[j].r = (FROM_LE_32(*tempPtr) & 0x00ff0000) >> 14;
+			myPalette[j].g = (FROM_LE_32(*tempPtr) & 0x0000ff00) >> 6;
+			myPalette[j].b = (FROM_LE_32(*tempPtr) & 0x000000ff) << 2;
 			tempPtr++;
 		}
 	}
@@ -1200,7 +1200,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 	// Find and return the number of sprites in the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return celsPtr[CELS_COUNT];
+	return FROM_LE_32(celsPtr[CELS_COUNT]);
 }
 
 
@@ -1227,7 +1227,7 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 
 	// Find and return the frame rate for the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return celsPtr[CELS_FRAME_RATE];
+	return FROM_LE_32(celsPtr[CELS_FRAME_RATE]);
 }
 
 
@@ -1254,7 +1254,7 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 
 	// Find and return the pix speed for the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return celsPtr[CELS_PIX_SPEED];
+	return FROM_LE_32(celsPtr[CELS_PIX_SPEED]);
 }
 
 int32 ws_get_sprite_width(uint32 hash, int32 index) {
@@ -1283,7 +1283,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = celsPtr[CELS_COUNT];
+	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return -1;
@@ -1296,9 +1296,9 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
-	return (int32)myCelSource[CELS_W];
+	return FROM_LE_32(myCelSource[CELS_W]);
 }
 
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
@@ -1327,7 +1327,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = celsPtr[CELS_COUNT];
+	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return -1;
@@ -1340,9 +1340,9 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
-	return (int32)myCelSource[CELS_H];
+	return FROM_LE_32(myCelSource[CELS_H]);
 }
 
 MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
@@ -1371,7 +1371,7 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 
 	// Return the offset into the resource chunk, and the number of local vars used by the sequence
 	*offset = (intptr)(&sequPtr[SEQU_SEQU_START]) - (intptr)*(_GWS(globalSEQUHandles)[hash]);
-	*numLocalVars = sequPtr[SEQU_NUM_VARS];
+	*numLocalVars = FROM_LE_32(sequPtr[SEQU_NUM_VARS]);
 
 	// Return the resource handle
 	return _GWS(globalSEQUHandles)[hash];
@@ -1405,7 +1405,7 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 	machPtr = (uint32 *)((intptr)*(_GWS(globalMACHHandles)[hash]) + (uint32)(_GWS(globalMACHoffsets)[hash]));
 
 	// Set the number of states, the state offset table, the start of the mach instructions
-	*numStates = (int32)machPtr[MACH_NUM_STATES];
+	*numStates = FROM_LE_32(machPtr[MACH_NUM_STATES]);
 	*stateTableOffset = (intptr)(&machPtr[MACH_OFFSETS]) - (intptr)(*_GWS(globalMACHHandles)[hash]);
 	*machInstrOffset = ((intptr)machPtr + ((*numStates + 1) << 2)) - (intptr)(*_GWS(globalMACHHandles)[hash]);
 
@@ -1439,14 +1439,16 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Verify the row index of the data block is valid
-	if (index > dataPtr[DATA_REC_COUNT]) {
+	if (index > FROM_LE_32(dataPtr[DATA_REC_COUNT])) {
 		term_message("File: %s, line: %d, ws_GetDATA() failed:", FL);
 		term_message("Data block num: %d", hash);
-		term_message("Data row out of range - max row index: %d, requested row index: %d", dataPtr[DATA_REC_COUNT], index);
+		term_message("Data row out of range - max row index: %d, requested row index: %d",
+			FROM_LE_32(dataPtr[DATA_REC_COUNT]), index);
 		return nullptr;
 	}
 
-	*rowOffset = (int32)((intptr)(&dataPtr[DATA_REC_START]) + ((index * dataPtr[DATA_REC_SIZE]) << 2)
+	*rowOffset = (int32)((intptr)(&dataPtr[DATA_REC_START]) +
+		((index * FROM_LE_32(dataPtr[DATA_REC_SIZE])) << 2)
 		- (intptr)(*_GWS(globalDATAHandles)[hash]));
 	// Return the data handle
 	return _GWS(globalDATAHandles)[hash];
@@ -1477,7 +1479,7 @@ int32 ws_GetDATACount(uint32 hash) {
 	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Return the number of rows in the data block
-	return dataPtr[DATA_REC_COUNT];
+	return FROM_LE_32(dataPtr[DATA_REC_COUNT]);
 }
 
 static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {

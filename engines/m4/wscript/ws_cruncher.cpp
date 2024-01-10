@@ -493,7 +493,7 @@ int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
 	myPC = *PC;
 
 	// Get the opCode
-	opCode = *myPC++;
+	opCode = FROM_LE_32(*myPC++);
 
 	// Get the instruction number
 	myInstruction = (opCode & OP_INSTR) >> 25;
