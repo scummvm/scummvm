@@ -54,7 +54,7 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 	if (n < 1) {
 		n = 1;
 	}
-	numPoolsG = _rnd->getRandomNumberRngSigned((int)(energyAmountG / 4000) + 1, n);
+	numPoolsG = spiffRand((int)(energyAmountG / 4000) + 1, n);
 	if (numPoolsG > 12) {
 		numPoolsG = 12;
 	}
@@ -77,8 +77,8 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 	int y;
 	int x;
 	char t;
-	int XOffset = _rnd->getRandomNumberRngSigned(0, totalMapSizeG-1);
-	int YOffset = _rnd->getRandomNumberRngSigned(0, totalMapSizeG-1);
+	int XOffset = spiffRand(0, totalMapSizeG-1);
+	int YOffset = spiffRand(0, totalMapSizeG-1);
 	int newX;
 	int newY;
 
@@ -123,10 +123,21 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 	return map;
 }
 
+float SpiffGenerator::getRandomFloat() {
+	// On Windows, RAND_MAX is 32767.  So we're
+	// doing this to match.
+	return (float)_rnd->getRandomNumber(32767) / 32767;
+}
+
+int SpiffGenerator::spiffRand(int min, int max) {
+	// returns a random integer min to max inclusive
+	return ((int)(getRandomFloat() * (max + 1 - min))) + min;
+}
+
 int SpiffGenerator::pickFrom2(int a, int probA, int b, int probB) {
 	debug(3, "SpiffGenerator::pickFrom2(%d, %d, %d, %d)", a, probA, b, probB);
-	int r = _rnd->getRandomNumber(probA + probB);
-	debug(3, "  r = %d", r);
+	float r = getRandomFloat() * (probA + probB);
+	debug(3, "  r = %f", r);
 	if (r < probA)
 		return a;
 	else
@@ -135,8 +146,8 @@ int SpiffGenerator::pickFrom2(int a, int probA, int b, int probB) {
 
 int SpiffGenerator::pickFrom3(int a, int probA, int b, int probB, int c, int probC) {
 	debug(3, "SpiffGenerator::pickFrom3(%d, %d, %d, %d, %d, %d)", a, probA, b, probB, c, probC);
-	int r = _rnd->getRandomNumber(probA + probB + probC);
-	debug(3, "  r = %d", r);
+	float r = getRandomFloat() * (probA + probB + probC);
+	debug(3, "  r = %f", r);
 	if (r < probA)
 		return a;
 	else if (r < probA + probB)
@@ -147,8 +158,8 @@ int SpiffGenerator::pickFrom3(int a, int probA, int b, int probB, int c, int pro
 
 int SpiffGenerator::pickFrom4(int a, int probA, int b, int probB, int c, int probC, int d, int probD) {
 	debug(3, "SpiffGenerator::pickFrom4(%d, %d, %d, %d, %d, %d, %d, %d)", a, probA, b, probB, c, probC, d, probD);
-	int r = _rnd->getRandomNumber(probA + probB + probC + probD);
-	debug(3, "  r = %d", r);
+	float r = getRandomFloat() * (probA + probB + probC + probD);
+	debug(3, "  r = %f", r);
 	if (r < probA)
 		return a;
 	else if (r < probA + probB)
@@ -175,8 +186,8 @@ void SpiffGenerator::getSpecials() {
 	mapMiddle[x][y] = HUB; // hub start position
 
 	for (p = 1; p <= numPoolsG; ++p) {
-		x = _rnd->getRandomNumberRngSigned(edgeWaterA, mapMiddleMaxG - edgeWaterB);
-		y = _rnd->getRandomNumberRngSigned(edgeWaterA, mapMiddleMaxG - edgeWaterB);
+		x = spiffRand(edgeWaterA, mapMiddleMaxG - edgeWaterB);
+		y = spiffRand(edgeWaterA, mapMiddleMaxG - edgeWaterB);
 		if (mapMiddle[x][y] != UNASSIGNED)
 			--p; // repick this pool
 		else {
@@ -575,19 +586,19 @@ void SpiffGenerator::generate() {
 			int j;
 			for (int i = 0; i < totalMapSizeG / 16; ++i) {
 				x = (int)(totalMapSizeG / 16 - .5);
-				y = _rnd->getRandomNumberRngSigned(x, totalMapSizeG / 2 - 1 - x);
-				if (_rnd->getRandomBit()) {
+				y = spiffRand(x, totalMapSizeG / 2 - 1 - x);
+				if (spiffRand(0, 1)) {
 					x = totalMapSizeG / 2 - 1 - x;
 				}
-				if (_rnd->getRandomBit()) {
+				if (spiffRand(0, 1)) {
 					mapMiddle[x][y] = UNASSIGNED;
 					for (j = 0; j < 4; ++j) {
-						mapMiddle[x + _rnd->getRandomNumberRngSigned(-1, 1)][y + _rnd->getRandomNumberRngSigned(-1, 1)] = UNASSIGNED;
+						mapMiddle[x + spiffRand(-1, 1)][y + spiffRand(-1, 1)] = UNASSIGNED;
 					}
 				} else {
 					mapMiddle[y][x] = UNASSIGNED;
 					for (j = 0; j < 4; ++j) {
-						mapMiddle[y + _rnd->getRandomNumberRngSigned(-1, 1)][x + _rnd->getRandomNumberRngSigned(-1, 1)] = UNASSIGNED;
+						mapMiddle[y + spiffRand(-1, 1)][x + spiffRand(-1, 1)] = UNASSIGNED;
 					}
 				}
 			}

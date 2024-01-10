@@ -77,6 +77,8 @@ private:
 	int mapCorner[MAXSIZE+1][MAXSIZE+1];
 	int mapMiddle[MAXSIZE][MAXSIZE];
 
+	float getRandomFloat();
+	int spiffRand(int min, int max);
 	int pickFrom2(int a, int probA, int b, int probB);
 	int pickFrom3(int a, int probA, int b, int probB, int c, int probC);
 	int pickFrom4(int a, int probA, int b, int probB, int c, int probC, int d, int probD);
