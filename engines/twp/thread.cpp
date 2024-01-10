@@ -181,7 +181,10 @@ void Cutscene::stop() {
 			thread->unpause();
 	}
 	sqcall("onCutsceneEnded");
-	sq_wakeupvm(_v, SQFalse, SQFalse, SQTrue, SQFalse);
+
+	ThreadBase *t = sqthread(_v);
+	if (t)
+		t->resume();
 	sq_suspendvm(getThread());
 }
 
