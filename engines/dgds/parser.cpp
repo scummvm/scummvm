@@ -91,7 +91,7 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 
 
 bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
-	TTMData *scriptData = (TTMData *)data;
+	TTMData *scriptData = static_cast<TTMData *>(data);
 
 	switch (chunk.getId()) {
 	case ID_TTI: // Ignore containers
@@ -121,7 +121,7 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 }
 
 bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
-	ADSData *scriptData = (ADSData *)data;
+	ADSData *scriptData = static_cast<ADSData *>(data);
 	Common::SeekableReadStream *chunkStream = chunk.getContent();
 	switch (chunk.getId()) {
 	case EX_ADS:

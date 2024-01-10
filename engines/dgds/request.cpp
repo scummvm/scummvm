@@ -233,11 +233,11 @@ Common::String Gadget::dump() const {
 	char buf1[6], buf2[6];
 	const char *sval1 = _sval1S.c_str();
 	const char *sval2 = _sval2S.c_str();
-	if (_sval1Type == 1) {
+	if (_sval1Type != 1) {
 		sval1 = buf1;
 		snprintf(buf1, 6, "%d", _sval1I);
 	}
-	if (_sval2Type == 1) {
+	if (_sval2Type != 1) {
 		sval2 = buf2;
 		snprintf(buf2, 6, "%d", _sval2I);
 	}

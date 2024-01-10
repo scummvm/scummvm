@@ -131,19 +131,16 @@ Common::Error DgdsEngine::run() {
 
 	ADSInterpreter interpIntro(this);
 	bool creditsShown = false;
+	REQFileData invRequestData;
+	REQFileData vcrRequestData;
+	RequestParser reqParser(_resource, _decompressor);
 
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
-		REQFileData invRequestData;
-		REQFileData vcrRequestData;
-		RequestParser invRequest(_resource, _decompressor);
-		RequestParser vcrRequest(_resource, _decompressor);
-		invRequest.parse(&invRequestData, "DINV.REQ");
-		vcrRequest.parse(&vcrRequestData, "DVCR.REQ");
-		debug("Parsed DINV.REQ:\n%s", invRequestData.dump().c_str());
-		debug("Parsed DVCR.REQ:\n%s", vcrRequestData.dump().c_str());
+		reqParser.parse(&invRequestData, "DINV.REQ");
+		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 
 		// Load the intro and play it for now.
 		interpIntro.load("TITLE1.ADS");
@@ -151,16 +148,30 @@ Common::Error DgdsEngine::run() {
 
 		_fntP = (PFont *)Font::load("DRAGON.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_CHINA) {
+		_gdsScene->load("HOC.GDS", _resource, _decompressor);
+
+		reqParser.parse(&invRequestData, "HINV.REQ");
+		reqParser.parse(&vcrRequestData, "HVCR.REQ");
+
 		//_scene->load("S101.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
 
 		_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_BEAMISH) {
+		// TODO: This doesn't parse correctly yet.
+		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
+
+		reqParser.parse(&invRequestData, "WINV.REQ");
+		reqParser.parse(&vcrRequestData, "WVCR.REQ");
+
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
 
 		_fntP = (PFont *)Font::load("WILLY.FNT", _resource, _decompressor);
 	}
+
+	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
 
