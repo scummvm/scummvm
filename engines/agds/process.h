@@ -201,6 +201,10 @@ public:
 	const Common::String & phaseVar() const {
 		return _phaseVar;
 	}
+
+	const AnimationPtr &processAnimation() const {
+		return _processAnimation;
+	}
 };
 
 
