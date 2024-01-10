@@ -708,7 +708,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("screenshotpath")
 				Common::FSNode path(option);
 				if (!path.exists()) {
-					usage("Non-existent game path '%s'", option);
+					usage("Non-existent screenshot path '%s'", option);
 				} else if (!ensureAccessibleDirectoryForPathOption(settings, "screenshotpath", path, true)) {
 					usage("Non-writable screenshot path '%s'", option);
 				}
