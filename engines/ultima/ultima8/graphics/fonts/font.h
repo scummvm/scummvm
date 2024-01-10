@@ -72,10 +72,12 @@ public:
 	//! \param height The height of the target rectangle, or 0 for unlimited
 	//! \param align Alignment of the text (left, right, center)
 	//! \param u8specials If true, interpret the special characters U8 uses
+	//! \param pagebreaks If true (and u8specials too), stop at U8 pagebreaks
 	//! \return the rendered text in a RenderedText object
 	virtual RenderedText *renderText(const Std::string &text,
 	    unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
+		bool pagebreaks = false,
 		Std::string::size_type cursor = Std::string::npos) = 0;
 
 	//! get the dimensions of a rendered string
@@ -85,12 +87,13 @@ public:
 	//! \param remaining Returns index of the first character not printed
 	//! \param width The width of the target rectangle, or 0 for unlimited
 	//! \param height The height of the target rectangle, or 0 for unlimited
-	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \param align Alignment of the text (left, right, center)
+	//! \param u8specials If true, interpret the special characters U8 uses
+	//! \param pagebreaks If true (and u8specials too), stop at U8 pagebreaks
 	virtual void getTextSize(const Std::string &text,
 		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
 		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
-		bool u8specials = false);
+		bool u8specials = false, bool pagebreaks = false);
 
 	void setHighRes(bool hr) {
 		_highRes = hr;
@@ -119,6 +122,10 @@ protected:
 			char c = *i;
 			return (c == '\n' ||
 			        (u8specials && (c == '\n' || c == '~' || c == '*')));
+		}
+		static bool isPageBreak(Std::string::const_iterator &i, bool u8specials) {
+			char c = *i;
+			return (u8specials && c == '*');
 		}
 		static bool canBreakAfter(Std::string::const_iterator &i);
 		static void advance(Std::string::const_iterator &i) {
@@ -164,7 +171,8 @@ template<class T>
 Std::list<PositionedText> typesetText(Font *font,
 	const Std::string &text, unsigned int &remaining,
 	int32 width, int32 height, Font::TextAlign align,
-	bool u8specials, int32 &resultwidth, int32 &resultheight,
+	bool u8specials, bool pagebreaks,
+	int32 &resultwidth, int32 &resultheight,
 	Std::string::size_type cursor = Std::string::npos);
 
 } // End of namespace Ultima8

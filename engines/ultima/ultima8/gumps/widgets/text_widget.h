@@ -42,6 +42,7 @@ protected:
 	int             _fontNum;
 	uint32          _blendColour;
 	int32           _tx, _ty;
+	bool            _doPaging;
 
 	unsigned int    _currentStart; //!< start of currently displaying text
 	unsigned int    _currentEnd;   //!< start of remaining text
@@ -56,7 +57,8 @@ public:
 	TextWidget();
 	TextWidget(int x, int y, const Std::string &txt, bool gamefont, int fontnum,
 	           int width = 0, int height = 0,
-	           Font::TextAlign align = Font::TEXT_LEFT);
+	           Font::TextAlign align = Font::TEXT_LEFT,
+	           bool dopaging = false);
 	~TextWidget() override;
 
 	// Init the gump, call after construction

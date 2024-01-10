@@ -67,6 +67,7 @@ public:
 	RenderedText *renderText(const Std::string &text,
 		unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
+		bool pagebreaks = false,
 		Std::string::size_type cursor = Std::string::npos) override;
 };
 

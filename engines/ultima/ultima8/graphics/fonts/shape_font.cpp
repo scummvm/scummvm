@@ -121,12 +121,12 @@ int ShapeFont::charToFrameNum(char c) const {
 RenderedText *ShapeFont::renderText(const Std::string &text,
 									unsigned int &remaining,
 									int32 width, int32 height, TextAlign align,
-									bool u8specials,
+									bool u8specials, bool pagebreaks,
 									Std::string::size_type cursor) {
 	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
-	                            width, height, align, u8specials,
+	                            width, height, align, u8specials, pagebreaks,
 	                            resultwidth, resultheight, cursor);
 
 	return new ShapeRenderedText(lines, resultwidth, resultheight,
