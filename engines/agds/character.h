@@ -72,6 +72,8 @@ class Character {
 	Common::HashMap<int, AnimationDescription> _animations;
 	const AnimationDescription * _description;
 
+	void notifyProcess(const Common::String & name);
+
 public:
 	Character(AGDSEngine * engine, const Common::String & name);
 	~Character();
@@ -108,7 +110,7 @@ public:
 		return _enabled && _visible && !_stopped;
 	}
 
-	bool animate(const Common::String &processName, Common::Point pos, int direction, int speed);
+	bool animate(Common::Point pos, int direction, int speed);
 	bool animate(int direction, int speed, bool jokes);
 
 	void stop(const Common::String &processName);
@@ -128,6 +130,7 @@ public:
 	}
 
 	bool moveTo(const Common::String &processName, Common::Point dst, int direction);
+	void pointTo(const Common::String &processName, Common::Point dst);
 
 	bool direction(int dir);
 
