@@ -459,14 +459,13 @@ void TwpEngine::update(float elapsed) {
 	}
 
 	// remove threads that are terminated
-	for (auto it = _threads.begin(); it != _threads.end();) {
+	for (auto it = threadsToRemove.begin(); it != threadsToRemove.end(); it++) {
 		ThreadBase *thread = *it;
-		if (find(threadsToRemove, thread) != -1) {
-			it = _threads.erase(it);
+		int i = find(_threads, *it);
+		if (i != -1) {
+			_threads.remove_at(i);
 			delete thread;
-			continue;
 		}
-		it++;
 	}
 
 	// update callbacks
