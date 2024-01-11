@@ -325,6 +325,34 @@ private:
 	Common::String _text;
 };
 
+class SpriteNode: public Node {
+public:
+	SpriteNode();
+	virtual ~SpriteNode();
+
+	void setSprite(const Common::String& sheet, const Common::String& frame);
+
+private:
+	void drawCore(Math::Matrix4 trsf) override final;
+
+private:
+	Common::String _sheet;
+	Common::String _frame;
+};
+
+class NoOverrideNode: public Node {
+public:
+	NoOverrideNode();
+	virtual ~NoOverrideNode();
+
+	void reset();
+	bool update(float elapsed);
+
+private:
+	SpriteNode _icon;
+	float _elapsed = 0.f;
+};
+
 } // End of namespace Twp
 
 #endif

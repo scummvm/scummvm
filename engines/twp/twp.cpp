@@ -47,6 +47,7 @@
 #include "twp/squirrel/squirrel.h"
 #include "twp/yack.h"
 #include "twp/enginedialogtarget.h"
+#include "twp/actions.h"
 
 namespace Twp {
 
@@ -67,6 +68,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenScene.addChild(&_dialog);
 	_screenScene.addChild(&_uiInv);
 	_screenScene.addChild(&_actorSwitcher);
+	_screenScene.addChild(&_noOverride);
 }
 
 TwpEngine::~TwpEngine() {
@@ -214,8 +216,8 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 				}
 			}
-			// TODO: Just clicking on the ground
-			//     cancelSentence(self.actor)
+			// Just clicking on the ground
+			cancelSentence(_actor);
 		} else if (_cursor.isRightDown()) {
 			// button right: execute default verb
 			if (obj) {
@@ -324,8 +326,8 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 				result.push_back(actorSwitcherSlot(slot));
 		}
 
+		// TODO: showOptions
 		// add gear icon
-		// TODO: result.push_back(ActorSwitcherSlot("icon_gear", Black, Gray, showOptions));
 		result.push_back(ActorSwitcherSlot("icon_gear", Color(0.f, 0.f, 0.f), Color(0.8f, 0.8f, 0.8f), selectSlotActor));
 	}
 	return result;
@@ -336,6 +338,7 @@ void TwpEngine::update(float elapsed) {
 	_frameCounter++;
 
 	_audio.update(elapsed);
+	_noOverride.update(elapsed);
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
@@ -667,6 +670,14 @@ Common::Error TwpEngine::run() {
 		Math::Vector2d camPos = _gfx.cameraPos();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			switch (e.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
+				switch ((TwpAction)e.customType) {
+				case TwpAction::kSkipCutscene:
+					skipCutscene();
+					break;
+				}
+				break;
+			} break;
 			case Common::EVENT_KEYDOWN:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
@@ -1348,6 +1359,16 @@ float TwpEngine::getRandom() const {
 float TwpEngine::getRandom(float min, float max) const {
 	float scale = getRandom();
 	return min + scale * (max - min);
+}
+
+void TwpEngine::skipCutscene() {
+	if (!_cutscene)
+		return;
+	if (_cutscene->hasOverride()) {
+		_cutscene->cutsceneOverride();
+		return;
+	}
+	_noOverride.reset();
 }
 
 Scaling *TwpEngine::getScaling(const Common::String &name) {
