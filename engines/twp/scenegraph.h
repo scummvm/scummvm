@@ -307,6 +307,8 @@ private:
     bool _down = false;
     Object* _obj = nullptr;
 	Common::Rect _itemRects[NUMOBJECTS];
+	Common::Rect _arrowUpRect;
+	Common::Rect _arrowDnRect;
 };
 
 class SentenceNode: public Node {
