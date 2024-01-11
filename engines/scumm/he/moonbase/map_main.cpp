@@ -66,26 +66,25 @@ bool Map::generateNewMap() {
 	int terrain = _rnd.getRandomNumberRngSigned(2, 4);
 	int water = _rnd.getRandomNumberRngSigned(2, 4);
 
-	return generateMapWithInfo(SPIFF_GEN, 0, mapSize, tileSet, energy, terrain, water);
+	// 32767 is RAND_MAX on Windows
+	int seed = _rnd.getRandomNumber(32767);
+
+	return generateMapWithInfo(SPIFF_GEN, seed, mapSize, tileSet, energy, terrain, water);
 }
 
-bool Map::generateMapWithInfo(uint8 generator, uint32 seed, int mapSize, int tileset, int energy, int terrain, int water) {
+bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
 	if (_generatedMap) {
 		// Delete old map.
 		delete _generatedMap;
 	}
 
-	if (seed) {
-		_rnd.setSeed(seed);
-	} else {
-		_rnd.generateNewSeed();
-	}
+	_seed = seed;
 
 	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, getSeed(), mapSize, tileset, energy, terrain, water);
 	switch (generator) {
 	case SPIFF_GEN:
 	{
-		SpiffGenerator spiff = SpiffGenerator(&_rnd);
+		SpiffGenerator spiff = SpiffGenerator(seed);
 		_generatedMap = spiff.generateMap(water, mapSize, energy, terrain);
 		break;
 	}

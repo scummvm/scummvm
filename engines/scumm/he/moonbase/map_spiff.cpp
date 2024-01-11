@@ -25,8 +25,8 @@
 
 namespace Scumm {
 
-SpiffGenerator::SpiffGenerator(Common::RandomSource *rnd) {
-	_rnd = rnd;
+SpiffGenerator::SpiffGenerator(int seed) {
+	_seed = seed;
 }
 
 SpiffGenerator::~SpiffGenerator() {
@@ -70,7 +70,7 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 	levelMap[LOW] = 0;
 
 	mif.mapType = terrain;
-	Common::sprintf_s(mif.name, "Spiff %d", _rnd->getSeed());
+	Common::sprintf_s(mif.name, "Spiff %04X", _seed);
 
 	mif.dimension = totalMapSizeG;
 
@@ -124,9 +124,16 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 }
 
 float SpiffGenerator::getRandomFloat() {
-	// On Windows, RAND_MAX is 32767.  So we're
-	// doing this to match.
-	return (float)_rnd->getRandomNumber(32767) / 32767;
+	// This is the exact linear congruential generator
+	// algorithm used on MSVCRT (Windows Visual C++ Runtime), with
+	// RAND_MAX being 0x7fff (32767).  This is implemented here
+	// to match the RNG between the original Moonbase Console
+	// program and ScummVM.
+	//
+	// (Common::RandomSource uses Xorshift and uses unsigned
+	// integers compared to MSVCRT's rand)
+	_seed = _seed * 214013 + 2531011;
+	return (float)((_seed >> 16) & 0x7fff) / 32767;
 }
 
 int SpiffGenerator::spiffRand(int min, int max) {

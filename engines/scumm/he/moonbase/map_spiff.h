@@ -53,13 +53,13 @@ namespace Scumm {
 
 class SpiffGenerator {
 public:
-	SpiffGenerator(Common::RandomSource *rnd);
+	SpiffGenerator(int seed);
 	~SpiffGenerator();
 
 	MapFile *generateMap(int water, int mapSize, int energy, int terrain);
 
 private:
-	Common::RandomSource *_rnd;
+	int _seed;
 
 	int numPoolsG; // per quadrant
 	int energyAmountG; // 2048 = min energy on small map, 51200 = max energy on max map, etc.
