@@ -776,9 +776,9 @@ void Scene::init() {
 
 	initStaticData();
 
-	if (ConfMan.hasKey("save_slot")) {
+	if (!_isRunningAd && ConfMan.hasKey("save_slot", Common::ConfigManager::kTransientDomain)) {
 		// Load savefile directly from the launcher
-		int saveSlot = ConfMan.getInt("save_slot");
+		int saveSlot = ConfMan.getInt("save_slot", Common::ConfigManager::kTransientDomain);
 		if (saveSlot >= 0 && saveSlot <= g_nancy->getMetaEngine()->getMaximumSaveSlot()) {
 			g_nancy->loadGameState(saveSlot);
 		}
