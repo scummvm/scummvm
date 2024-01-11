@@ -82,10 +82,8 @@ void ManiacBgXObj::close(int type) {
 }
 
 void ManiacBgXObj::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("ManiacBgXObj::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("ManiacBgXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 

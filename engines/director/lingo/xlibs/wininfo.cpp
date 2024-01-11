@@ -83,10 +83,8 @@ void WinInfoXObj::close(int type) {
 }
 
 void WinInfoXObj::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("WinInfoXObj::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("WinInfoXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 
