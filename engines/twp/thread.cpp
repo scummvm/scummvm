@@ -167,7 +167,7 @@ void Cutscene::start() {
 
 void Cutscene::stop() {
 	_state = csQuit;
-	debug("End cutscene");
+	debug("End cutscene: %d", getId());
 	g_engine->_inputState.setState(_inputState);
 	g_engine->_inputState.setShowCursor(_showCursor);
 	if (_showCursor)
@@ -183,8 +183,8 @@ void Cutscene::stop() {
 	sqcall("onCutsceneEnded");
 
 	ThreadBase *t = sqthread(_v);
-	if (t)
-		t->resume();
+	if (t && t->getId())
+		t->unpause();
 	sq_suspendvm(getThread());
 }
 
@@ -225,7 +225,6 @@ bool Cutscene::update(float elapsed) {
 		checkEndCutsceneOverride();
 		return false;
 	case csEnd:
-		debug("endCutscene");
 		stop();
 		return false;
 	case csQuit:
@@ -253,7 +252,6 @@ void Cutscene::doCutsceneOverride() {
 void Cutscene::checkEndCutscene() {
 	if (isStopped()) {
 		_state = csEnd;
-		debug("end cutscene: %d", getId());
 	}
 }
 
