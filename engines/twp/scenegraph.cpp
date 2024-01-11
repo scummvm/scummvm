@@ -505,6 +505,8 @@ Inventory::Inventory() : Node("Inventory") {
 		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
 		_itemRects[i] = Common::Rect(x, y, x + BACKWIDTH, y + BACKHEIGHT);
 	}
+	_arrowUpRect = Common::Rect(SCREEN_WIDTH / 2.f, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET, SCREEN_WIDTH / 2.f + ARROWWIDTH, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET + ARROWHEIGHT);
+	_arrowDnRect = Common::Rect(SCREEN_WIDTH / 2.f, MARGINBOTTOM, SCREEN_WIDTH / 2.f + ARROWWIDTH, MARGINBOTTOM + ARROWHEIGHT);
 }
 
 Math::Vector2d Inventory::getPos(Object *inv) const {
@@ -596,9 +598,6 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 }
 
 void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
-	static Common::Rect gArrowUpRect(SCREEN_WIDTH / 2.f, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET, SCREEN_WIDTH / 2.f + ARROWWIDTH, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET + ARROWHEIGHT);
-	static Common::Rect gArrowDnRect(SCREEN_WIDTH / 2.f, MARGINBOTTOM, SCREEN_WIDTH / 2.f + ARROWWIDTH, MARGINBOTTOM + ARROWHEIGHT);
-
 	// udate colors
 	_actor = actor;
 	_backColor = backColor;
@@ -610,13 +609,13 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 
 		// update mouse click
 		bool down = g_engine->_cursor.leftDown;
-		if (_down && down) {
+		if (!_down && down) {
 			_down = true;
-			if (gArrowUpRect.contains(scrPos.getX(), scrPos.getY())) {
+			if (_arrowUpRect.contains(scrPos.getX(), scrPos.getY())) {
 				_actor->_inventoryOffset -= 1;
 				if (_actor->_inventoryOffset < 0)
 					_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
-			} else if (gArrowDnRect.contains(scrPos.getX(), scrPos.getY())) {
+			} else if (_arrowDnRect.contains(scrPos.getX(), scrPos.getY())) {
 				_actor->_inventoryOffset++;
 				_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
 			}
