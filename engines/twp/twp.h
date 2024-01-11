@@ -162,6 +162,7 @@ private:
 	void callTrigger(Object *obj, HSQOBJECT trigger);
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
+	Scaling* getScaling(const Common::String& name);
 
 public:
 	Graphics::Screen *_screen = nullptr;
