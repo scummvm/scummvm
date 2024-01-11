@@ -106,7 +106,7 @@ void Camera::update(Room *room, Object *follow, float elapsed) {
 		else if (sameActor && (pos.getY() < (cameraPos.getY() - margin.getY())))
 			y = pos.getY() + margin.getY();
 		else
-			y = cameraPos.getY() + d.getY() > 0 ? MIN(delta.getY(), d.getY()) : MAX(delta.getY(), d.getY());
+			y = cameraPos.getY() + (d.getY() > 0 ? MIN(delta.getY(), d.getY()) : MAX(delta.getY(), d.getY()));
 		setAtCore(Math::Vector2d(x, y));
 		if (!sameActor && (fabs(pos.getX() - x) < 1.f) && (fabs(pos.getY() - y) < 1.f))
 			_follow = follow;
