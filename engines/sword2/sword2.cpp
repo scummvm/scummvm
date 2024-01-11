@@ -89,6 +89,11 @@ Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 Sword2Engine::~Sword2Engine() {
+	// Unpause the game now, or it will be done automatically when the
+	// game engine is half-deleted, causing it to crash.
+	if (isPaused())
+		_gamePauseToken.clear();
+
 	//_debugger is deleted by Engine
 	delete _sound;
 	delete _fontRenderer;
