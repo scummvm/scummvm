@@ -943,6 +943,13 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 		Layer *layer = room->_layers[i];
 		for (int j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
+			// add all scaling triggers
+			if (obj->_objType == ObjectType::otTrigger) {
+				Scaling *scaling = getScaling(obj->_key);
+				if (scaling) {
+					_room->_scalingTriggers.push_back(ScalingTrigger(obj, scaling));
+				}
+			}
 			if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
 		}
@@ -981,6 +988,7 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 	_mixer->stopAll();
 	if (_room) {
 		_room->_triggers.clear();
+		_room->_scalingTriggers.clear();
 
 		actorExit();
 
@@ -1290,6 +1298,7 @@ void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
 
 void TwpEngine::updateTriggers() {
 	if (_actor) {
+		// check if actor enters or leaves an object trigger
 		for (int i = 0; i < _room->_triggers.size(); i++) {
 			Object *trigger = _room->_triggers[i];
 			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
@@ -1300,6 +1309,24 @@ void TwpEngine::updateTriggers() {
 				debug("call leave trigger %s", trigger->_name.c_str());
 				trigger->_triggerActive = false;
 				callTrigger(trigger, trigger->_leave);
+			}
+		}
+
+		// check if actor enters or leaves a scaling trigger
+		for (int i = 0; i < _room->_scalingTriggers.size(); i++) {
+			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
+			if (trigger->_obj->_triggerActive && !trigger->_obj->contains(_actor->_node->getAbsPos())) {
+				debug("leave scaling trigger %s", trigger->_obj->_key.c_str());
+				trigger->_obj->_triggerActive = false;
+				_room->_scaling = _room->_scalings[0];
+			}
+		}
+		for (int i = 0; i < _room->_scalingTriggers.size(); i++) {
+			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
+			if (!trigger->_obj->_triggerActive && trigger->_obj->contains(_actor->_node->getAbsPos())) {
+				debug("enter scaling trigger %s", trigger->_obj->_key.c_str());
+				trigger->_obj->_triggerActive = true;
+				_room->_scaling = *trigger->_scaling;
 			}
 		}
 	}
@@ -1322,5 +1349,17 @@ float TwpEngine::getRandom(float min, float max) const {
 	float scale = getRandom();
 	return min + scale * (max - min);
 }
+
+Scaling *TwpEngine::getScaling(const Common::String &name) {
+	for (int i = 0; i < _room->_scalings.size(); i++) {
+		Scaling *scaling = &_room->_scalings[i];
+		if (scaling->trigger == name) {
+			return scaling;
+		}
+	}
+	return nullptr;
+}
+
+ScalingTrigger::ScalingTrigger(Object *obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
 
 } // End of namespace Twp

@@ -93,6 +93,13 @@ struct Lights {
 	Color _ambientLight; // Ambient light color
 };
 
+struct ScalingTrigger {
+	ScalingTrigger(Object * obj, Scaling* scaling);
+
+	Object * _obj = nullptr;
+	Scaling* _scaling = nullptr;
+};
+
 class PathFinder;
 class Scene;
 class Room {
@@ -136,6 +143,7 @@ public:
 	bool _entering = false;            // Indicates whether or not an actor is entering this room
 	Lights _lights;                    // Lights of the room
 	Common::Array<Object *> _triggers; // Triggers currently enabled in the room
+	Common::Array<ScalingTrigger> _scalingTriggers; // Scaling Triggers of the room
 	bool _pseudo = false;
 	Common::Array<Object *> _objects;
 	Scene *_scene = nullptr;
