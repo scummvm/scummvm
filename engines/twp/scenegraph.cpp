@@ -57,16 +57,10 @@ Node::Node(const Common::String &name, Math::Vector2d scale, Color color)
 Node::~Node() {}
 
 void Node::addChild(Node *child) {
+	if(child->_parent == this) return;
 	if (child->_parent) {
 		child->_pos -= getAbsPos();
-		for (auto it = _children.begin(); it != _children.end();) {
-			Node *node = *it;
-			if (node == child) {
-				it = child->_parent->_children.erase(it);
-				break;
-			}
-			it++;
-		}
+		child->remove();
 	}
 	_children.push_back(child);
 	child->_parent = this;
@@ -91,14 +85,19 @@ int Node::find(Node *other) {
 	return -1;
 }
 
-void Node::removeChild(Node *node) {
-	int i = find(node);
-	if (i != -1) {
-		_children.remove_at(i);
-	}
+void Node::removeChild(Node *child) {
+	int i = find(child);
+	_children.remove_at(i);
+	child->_parent = nullptr;
 }
 
 void Node::clear() {
+	if (_children.size() > 0) {
+		Common::Array<Node *> children(_children);
+		for (int i = 0; i < children.size(); i++) {
+			children[i]->remove();
+		}
+	}
 	_children.clear();
 }
 

@@ -60,14 +60,12 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 // array util
 template<typename T>
 int find(const Common::Array<T>& array, const T& o) {
-	int index = -1;
 	for (int i = 0; i < array.size(); i++) {
 		if (array[i] == o) {
-			index = i;
-			break;
+			return i;
 		}
 	}
-	return index;
+	return -1;
 }
 
 // string util

@@ -322,14 +322,14 @@ void Room::load(Common::SeekableReadStream &s) {
 		for (auto it = jobjects.begin(); it != jobjects.end(); it++) {
 			const Common::JSONObject &jObject = (*it)->asObject();
 			Object *obj = new Object();
-			obj->_state = -1;
+			Twp::setId(obj->_table, newObjId());
+			obj->_key = jObject["name"]->asString();
 			Node *objNode = new Node(obj->_key);
 			objNode->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
 			objNode->setZSort(jObject["zsort"]->asIntegerNumber());
 			obj->_node = objNode;
 			obj->_nodeAnim = new Anim(obj);
 			obj->_node->addChild(obj->_nodeAnim);
-			obj->_key = jObject["name"]->asString();
 			obj->_usePos = parseVec2(jObject["usepos"]->asString());
 			if (jObject.contains("usedir")) {
 				obj->_useDir = parseUseDir(jObject["usedir"]->asString());
@@ -339,7 +339,7 @@ void Room::load(Common::SeekableReadStream &s) {
 			obj->_hotspot = parseRect(jObject["hotspot"]->asString());
 			obj->_objType = toObjectType(jObject);
 			if (jObject.contains("parent"))
-				jObject["parent"]->asString();
+				obj->_parent = jObject["parent"]->asString();
 			obj->_room = this;
 			if (jObject.contains("animations")) {
 				parseObjectAnimations(jObject["animations"]->asArray(), obj->_anims);

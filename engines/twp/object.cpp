@@ -367,7 +367,9 @@ void Object::setRoom(Room *room) {
 			debug("Add %s in room %s", _key.c_str(), room->_name.c_str());
 			Layer *layer = room->layer(0);
 			if (layer) {
-				layer->_objects.push_back(this);
+				int index = find(layer->_objects, this);
+				if (index == -1)
+					layer->_objects.push_back(this);
 				layer->_node->addChild(_node);
 			}
 		}
