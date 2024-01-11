@@ -40,11 +40,11 @@ public:
 	~Map();
 
 	bool generateNewMap();
-	bool generateMapWithInfo(uint8 generator, uint32 seed, int mapSize, int tileset, int energy, int terrain, int water);
+	bool generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water);
 	Common::SeekableReadStream *substituteFile(const byte *fileName);
 
 	uint32 getSeed() const {
-		return _rnd.getSeed();
+		return _seed;
 	}
 
 private:
@@ -54,6 +54,8 @@ private:
 	// so we can send and set seeds from online players to ensure
 	// they're playing on the same generated map.
 	Common::RandomSource _rnd;
+
+	int _seed;
 
 	bool _mapGenerated;
 	MapFile *_generatedMap;
