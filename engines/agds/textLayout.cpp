@@ -109,7 +109,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 					case 15:
 						break;
 					default:
-						character->animate(_process, Common::Point(), character->direction(), 100);
+						character->animate(Common::Point(), character->direction(), 100);
 				}
 			}
 		} else

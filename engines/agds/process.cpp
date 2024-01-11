@@ -184,7 +184,7 @@ void Process::activate() {
 		break;
 	case kStatusDone:
 	case kStatusError:
-		debug("process %s finished", getName().c_str());
+		debug("finished");
 		break;
 	default:
 		break;
@@ -194,6 +194,7 @@ void Process::activate() {
 void Process::deactivate() {
 	switch(status()) {
 	case kStatusActive:
+		debug("deactivated");
 		_status = Process::kStatusPassive;
 		break;
 	case kStatusDone:

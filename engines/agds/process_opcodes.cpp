@@ -1562,9 +1562,9 @@ void Process::animateCharacter() {
 	debug("animateCharacter: %s %d %d", name.c_str(), direction, _animationSpeed);
 
 	Character *character = _engine->getCharacter(name);
-	if (character)
-		character->animate(_object->getName(), _animationPosition, direction, _animationSpeed);
-	else
+	if (character) {
+		character->animate(_animationPosition, direction, _animationSpeed);
+	} else
 		warning("character %s could not be found", name.c_str());
 }
 
@@ -1595,7 +1595,8 @@ void Process::leaveCharacter(const Common::String &name, const Common::String &r
 	if (character) {
 		RegionPtr region = _engine->loadRegion(regionName);
 		debug("region: %s", region->toString().c_str());
-		character->moveTo(getName(), region->center, dir);
+		if (character->moveTo(getName(), region->center, dir))
+			deactivate();
 	} else
 		warning("character %s could not be found", name.c_str());
 	suspendIfPassive();
@@ -1645,9 +1646,18 @@ void Process::setCharacterDirection() {
 }
 
 void Process::pointCharacter() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("pointCharacter stub %s %s", arg1.c_str(), arg2.c_str());
+	Common::String regionName = popString();
+	Common::String id = popString();
+	debug("pointCharacter %s, region: %s", id.c_str(), regionName.c_str());
+	Character *character = _engine->getCharacter(id);
+	if (character) {
+		auto region = _engine->loadRegion(regionName);
+		if (region) {
+			character->pointTo(getName(), region->center);
+			deactivate();
+		}
+	} else
+		warning("character %s could not be found", id.c_str());
 	suspendIfPassive();
 }
 

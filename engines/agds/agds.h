@@ -278,6 +278,9 @@ public:
 	int getRandomNumber(int max);
 
 	void curtain(const Common::String &process, int screen, int sound, int music, bool updateGlobals);
+	bool activeCurtain() const {
+		return _curtainTimer >= 0;
+	}
 
 private:
 	void stopAmbientSound();

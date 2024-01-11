@@ -153,9 +153,16 @@ bool Character::direction(int dir) {
 	return animate(dir, 100, false);
 }
 
+void Character::notifyProcess(const Common::String & name) {
+	if (!_processName.empty())
+		_engine->reactivate(name, "Character::notifyProcess", false);
+
+	_processName = name;
+}
+
 bool Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
-	_processName = processName;
+	notifyProcess(processName);
 	_pos = dst;
 	_visible = true;
 	bool r = direction(dir);
@@ -172,6 +179,11 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 		}
 	}
 	return r;
+}
+
+void Character::pointTo(const Common::String & processName, Common::Point dst) {
+	debug("character point to stub %d,%d, process: %s", dst.x, dst.y, processName.c_str());
+	notifyProcess(processName);
 }
 
 bool Character::animate(int direction, int speed, bool jokes) {
@@ -205,17 +217,20 @@ bool Character::animate(int direction, int speed, bool jokes) {
 	return true;
 }
 
-bool Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
+bool Character::animate(Common::Point pos, int direction, int speed) {
 	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
-	_processName = processName;
+	auto ok = animate(direction, speed, true);
+	if (!ok)
+		return false;
+
 	_animationPos = pos;
 
-	return animate(direction, speed, true);
+	return true;
 }
 
 void Character::stop(const Common::String &processName) {
 	debug("character %s: stop, process: %s", _object->getName().c_str(), processName.c_str());
-	_processName = processName;
+	notifyProcess(processName);
 	stop();
 }
 
@@ -225,11 +240,13 @@ void Character::stop() {
 
 void Character::leave(const Common::String &processName) {
 	debug("character %s: leave, process: %s", _object->getName().c_str(), processName.c_str());
-	_processName = processName;
+	notifyProcess(processName);
 }
 
 void Character::tick(bool reactivate) {
-	if (active() && _animation) {
+	if (!active())
+		return;
+	if (_animation) {
 		auto screen = _engine->getCurrentScreen();
 		auto scale = screen? screen->getZScale(_pos.y): 1;
 		_animation->scale(scale);
@@ -244,10 +261,14 @@ void Character::tick(bool reactivate) {
 				_frames = 0;
 				if (wasJokes)
 					direction(_direction);
-				if (reactivate && !_processName.empty())
-					_engine->reactivate(_processName, "Character::tick");
 			}
+			return;
 		}
+	}
+
+	if (reactivate && !_processName.empty() && !_engine->activeCurtain()) {
+		_engine->reactivate(_processName, "Character::tick");
+		_processName.clear();
 	}
 }
 
