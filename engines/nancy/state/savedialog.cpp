@@ -92,8 +92,8 @@ void SaveDialog::init() {
 	auto *sdlg = GetEngineData(SDLG);
 	assert(sdlg);
 
-	_dialogData = &sdlg->dialogs[ConfMan.getInt("sdlg_id", ConfMan.kTransientDomain)];
-	ConfMan.removeKey("sdlg_id", ConfMan.kTransientDomain);
+	_dialogData = &sdlg->dialogs[ConfMan.getInt("sdlg_id", Common::ConfigManager::kTransientDomain)];
+	ConfMan.removeKey("sdlg_id", Common::ConfigManager::kTransientDomain);
 
 	_background.init(_dialogData->imageName);
 
@@ -132,7 +132,7 @@ void SaveDialog::run() {
 }
 
 void SaveDialog::stop() {
-	ConfMan.setInt("sdlg_return", _selected, ConfMan.kTransientDomain);
+	ConfMan.setInt("sdlg_return", _selected, Common::ConfigManager::kTransientDomain);
 	g_nancy->setToPreviousState();
 }
 

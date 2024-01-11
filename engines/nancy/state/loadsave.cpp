@@ -465,9 +465,9 @@ void LoadSaveMenu::save() {
 		// First, check if we are actually overwriting
 		SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), _selectedSave + 1);
 		if (desc.isValid()) {
-			if (!ConfMan.hasKey("sdlg_return", ConfMan.kTransientDomain)) {
+			if (!ConfMan.hasKey("sdlg_return", Common::ConfigManager::kTransientDomain)) {
 				// Request the dialog
-				ConfMan.setInt("sdlg_id", 1, ConfMan.kTransientDomain);
+				ConfMan.setInt("sdlg_id", 1, Common::ConfigManager::kTransientDomain);
 				_destroyOnExit = false;
 				g_nancy->setState(NancyState::kSaveDialog);
 				return;
@@ -475,8 +475,8 @@ void LoadSaveMenu::save() {
 				// Dialog has returned
 				g_nancy->_graphicsManager->suppressNextDraw();
 				_destroyOnExit = true;
-				uint ret = ConfMan.getInt("sdlg_return", ConfMan.kTransientDomain);
-				ConfMan.removeKey("sdlg_return", ConfMan.kTransientDomain);
+				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
+				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
 				switch (ret) {
 				case 1 :
 					// "No" keeps us in the LoadSave state but doesn't save
@@ -557,9 +557,9 @@ void LoadSaveMenu::load() {
 
 	if (sdlg && sdlg->dialogs.size() > 1 && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
 		// nancy6 added a "Do you want load without saving" dialog.
-		if (!ConfMan.hasKey("sdlg_return", ConfMan.kTransientDomain)) {
+		if (!ConfMan.hasKey("sdlg_return", Common::ConfigManager::kTransientDomain)) {
 			// Request the dialog
-			ConfMan.setInt("sdlg_id", 2, ConfMan.kTransientDomain);
+			ConfMan.setInt("sdlg_id", 2, Common::ConfigManager::kTransientDomain);
 			_destroyOnExit = false;
 			g_nancy->setState(NancyState::kSaveDialog);
 			return;
@@ -567,8 +567,8 @@ void LoadSaveMenu::load() {
 			// Dialog has returned
 			_destroyOnExit = true;
 			g_nancy->_graphicsManager->suppressNextDraw();
-			uint ret = ConfMan.getInt("sdlg_return", ConfMan.kTransientDomain);
-			ConfMan.removeKey("sdlg_return", ConfMan.kTransientDomain);
+			uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
+			ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
 			switch (ret) {
 			case 1 :
 				// "No" keeps us in the LoadSave state but doesn't load

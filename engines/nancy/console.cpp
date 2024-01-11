@@ -1034,7 +1034,7 @@ bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_showHotspots(int argc, const char **argv) {
-	ConfMan.setBool("debug_hotspots", !ConfMan.getBool("debug_hotspots", ConfMan.kTransientDomain), ConfMan.kTransientDomain);
+	ConfMan.setBool("debug_hotspots", !ConfMan.getBool("debug_hotspots", Common::ConfigManager::kTransientDomain), Common::ConfigManager::kTransientDomain);
 
 	return cmdExit(0, nullptr);
 }

@@ -674,7 +674,7 @@ void ActionManager::debugDrawHotspots() {
 	// and type of the owning ActionRecord. Hardcoded to font 0 since that's
 	// the smallest one available in the engine.
 	RenderObject &obj = NancySceneState._hotspotDebug;
-	if (ConfMan.getBool("debug_hotspots", ConfMan.kTransientDomain)) {
+	if (ConfMan.getBool("debug_hotspots", Common::ConfigManager::kTransientDomain)) {
 		const Font *font = g_nancy->_graphicsManager->getFont(0);
 		assert(font);
 		uint16 yOffset = NancySceneState.getViewport().getCurVerticalScroll();

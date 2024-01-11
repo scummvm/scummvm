@@ -730,7 +730,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	_isRunningAd = false;
-	ConfMan.removeKey("restore_after_ad", ConfMan.kTransientDomain);
+	ConfMan.removeKey("restore_after_ad", Common::ConfigManager::kTransientDomain);
 
 	g_nancy->_graphicsManager->suppressNextDraw();
 }
@@ -759,9 +759,9 @@ void Scene::init() {
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
 
-	if (ConfMan.hasKey("load_ad", ConfMan.kTransientDomain)) {
+	if (ConfMan.hasKey("load_ad", Common::ConfigManager::kTransientDomain)) {
 		changeScene(bootSummary->adScene);
-		ConfMan.removeKey("load_ad", ConfMan.kTransientDomain);
+		ConfMan.removeKey("load_ad", Common::ConfigManager::kTransientDomain);
 		_isRunningAd = true;
 	} else {
 		changeScene(bootSummary->firstScene);
