@@ -99,6 +99,7 @@
 #include "director/lingo/xlibs/widgetxobj.h"
 #include "director/lingo/xlibs/wininfo.h"
 #include "director/lingo/xlibs/winxobj.h"
+#include "director/lingo/xlibs/xcmdglue.h"
 #include "director/lingo/xlibs/xio.h"
 #include "director/lingo/xlibs/xplayanim.h"
 #include "director/lingo/xlibs/yasix.h"
@@ -242,6 +243,7 @@ static struct XLibProto {
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
 	{ WinInfoXObj::fileNames,			WinInfoXObj::open,			WinInfoXObj::close,			kXObj,					400 },  // D4
 	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
+	{ XCMDGlueXObj::fileNames,			XCMDGlueXObj::open,			XCMDGlueXObj::close,		kXObj,					200 },	// D2
 	{ XioXObj::fileNames,				XioXObj::open,				XioXObj::close,				kXObj,					400 },	// D3
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ Yasix::fileNames,					Yasix::open,				Yasix::close,				kXObj,					300 },	// D3

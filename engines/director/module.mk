@@ -122,6 +122,7 @@ MODULE_OBJS = \
 	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \
 	lingo/xlibs/wininfo.o \
+	lingo/xlibs/xcmdglue.o \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
 	lingo/xlibs/yasix.o
