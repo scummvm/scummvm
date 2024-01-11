@@ -265,7 +265,8 @@ Std::list<PositionedText> typesetText(Font *font,
 					spaces.append(" ");
 				}
 			}
-			if (foundLF) continue;
+			// no next word?
+			if (foundLF || nextword == text.end()) continue;
 
 			// process word
 			Std::string::const_iterator endofnextword = iter;
