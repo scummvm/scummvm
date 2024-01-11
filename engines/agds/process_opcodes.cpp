@@ -165,6 +165,7 @@ void Process::loadAnimation() {
 		_processAnimation = animation;
 		_engine->getCurrentScreen()->add(animation);
 	}
+	suspendIfPassive();
 }
 
 void Process::loadSample() {
@@ -177,8 +178,8 @@ void Process::loadSample() {
 	// original engine sets timer to 24 * bitrate / 44100 / 4
 	if (playNow && _phaseVar.empty()) {
 		deactivate();
-		suspend();
 	}
+	suspendIfPassive();
 }
 
 void Process::getSampleVolume() {
@@ -895,6 +896,7 @@ void Process::getSaveGameName() {
 	int saveSlot = pop();
 	debug("getSaveGameName stub %d %d", saveSlot, flag);
 	push(1);
+	suspendIfPassive();
 }
 
 void Process::loadSaveSlotNamePicture() {
@@ -1321,8 +1323,8 @@ void Process::playFilm() {
 	Common::String subtitles = _engine->loadText(getString(_filmSubtitlesResource));
 
 	debug("playFilm %s %s %s", video.c_str(), audio.c_str(), subtitles.c_str());
-	suspend();
 	_engine->playFilm(*this, video, audio, subtitles);
+	suspendIfPassive();
 }
 
 void Process::inventoryClear() {
@@ -1539,11 +1541,11 @@ void Process::moveCharacter(bool usermove) {
 		if (region) {
 			if (character->moveTo(_object->getName(), region->center, direction)) {
 				deactivate();
-				suspend();
 			}
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
+	suspendIfPassive();
 }
 
 void Process::moveCharacterUserMove() {
@@ -1596,6 +1598,7 @@ void Process::leaveCharacter(const Common::String &name, const Common::String &r
 		character->moveTo(getName(), region->center, dir);
 	} else
 		warning("character %s could not be found", name.c_str());
+	suspendIfPassive();
 }
 
 void Process::leaveCharacter() {
@@ -1638,13 +1641,14 @@ void Process::setCharacterDirection() {
 		character->direction(dir);
 	} else
 		warning("no character %s", name.c_str());
+	suspendIfPassive();
 }
 
 void Process::pointCharacter() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("pointCharacter stub %s %s", arg1.c_str(), arg2.c_str());
-	suspend();
+	suspendIfPassive();
 }
 
 void Process::getCharacterAnimationPhase() {
@@ -1686,12 +1690,12 @@ void Process::stopCharacter() {
 			character->direction(direction);
 			character->stop(getName());
 			deactivate();
-			suspend();
 		} else {
 			character->stop();
 		}
 	} else
 		warning("could not find character %s", name.c_str());
+	suspendIfPassive();
 }
 
 void Process::fogOnCharacter() {
@@ -1781,8 +1785,7 @@ void Process::fadeScreen() {
 	debug("fadeScreen screen: %d, sound: %d music: %d", fadeScreen, fadeSound, fadeMusic);
 	_engine->curtain(getName(), fadeScreen, fadeSound, fadeMusic, true);
 	deactivate();
-	if (passive())
-		suspend();
+	suspendIfPassive();
 }
 
 void Process::setCharacterNotifyVars() {

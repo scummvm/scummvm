@@ -123,10 +123,11 @@ private:
 	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
 
 	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String());
-
 	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0);
 
 	ProcessExitCode resume();
+	void suspendIfPassive();
+
 	void setupAnimation(const AnimationPtr & animation);
 	void attachInventoryObjectToMouse(bool flag);
 	void leaveCharacter(const Common::String &name, const Common::String &regionName, int dir);

@@ -122,6 +122,11 @@ void Process::suspend() {
 	suspend(kExitCodeSuspend);
 }
 
+void Process::suspendIfPassive() {
+	if (passive())
+		suspend();
+}
+
 int32 Process::pop() {
 	if (_stack.empty()) {
 		error("stack underflow at %s:%04x", _object->getName().c_str(), _lastIp + 7);
