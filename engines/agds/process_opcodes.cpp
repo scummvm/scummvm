@@ -642,7 +642,7 @@ void Process::onObjectUse(uint16 size) {
 }
 
 void Process::onObjectUserUse(uint16 size) {
-	debug("register user use handler -> 0x%04x", _ip);
+	debug("user use [handler], %u instructions -> 0x%04x", size, _ip);
 	_object->setUserUseHandler(_ip);
 	_ip += size;
 }
@@ -1448,37 +1448,37 @@ void Process::initialise(uint16 addr) {
 
 void Process::onKey(uint16 size) {
 	Common::String key = popString();
-	debug("onKey %s [handler], %u instructions", key.c_str(), size);
+	debug("onKey %s [handler], %u instructions, ip: 0x%04x", key.c_str(), size, _ip);
 	_object->setKeyHandler(key, _ip);
 	_ip += size;
 }
 
 void Process::onUse(uint16 size) {
-	debug("lclick [handler], %u instructions", size);
+	debug("lclick [handler], %u instructions, ip: 0x%04x", size, _ip);
 	_object->setClickHandler(_ip);
 	_ip += size;
 }
 
 void Process::onObjectC1(uint16 size) {
-	debug("unknown (0xc1) [handler] stub, %u instructions", size);
+	debug("unknown (0xc1) [handler] stub, %u instructions, ip: 0x%04x", size, _ip);
 	_ip += size;
 }
 
 void Process::onLook(uint16 size) {
-	debug("look [handler], %u instructions", size);
+	debug("look [handler], %u instructions, ip: 0x%04x", size, _ip);
 	_object->setExamineHandler(_ip);
 	_ip += size;
 }
 
 void Process::onCharacterTrap(uint16 size) {
 	auto regionName = popString();
-	debug("setCharacterTrap %s [handler], %u instructions", regionName.c_str(), size);
+	debug("setCharacterTrap %s [handler], %u instructions, ip: 0x%04x", regionName.c_str(), size, _ip);
 	_object->setTrapHandler(_ip, _engine->loadRegion(regionName));
 	_ip += size;
 }
 
 void Process::onObjectBD(uint16 size) {
-	debug("onObject(+BD) [handler] stub, %u instructions", size);
+	debug("onObject(+BD) [handler] stub, %u instructions, ip: 0x%04x", size, _ip);
 	_ip += size;
 }
 
