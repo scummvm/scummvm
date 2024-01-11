@@ -260,7 +260,9 @@ Std::list<PositionedText> typesetText(Font *font,
 					foundLF = true;
 					break;
 				} else if (T::isTab(iter, u8specials)) {
-					spaces.append("    ");
+					// ignore tabs at beginning of line when centered
+					if (!(curline.empty() && align == Font::TEXT_CENTER))
+						spaces.append("    ");
 				} else if (!curline.empty()) {
 					spaces.append(" ");
 				}
