@@ -344,20 +344,24 @@ void SpiffGenerator::errorCorrection() {
 			if (mapCorner[x][y] == HIGH) {
 				for (dy = -1; dy <= 1; ++dy) {
 					tempY = y + dy;
-					if (tempY == totalMapSizeG)
+					if (tempY == totalMapSizeG) {
 						tempY = 0;
-					else if (tempY == -1)
+					} else if (tempY == -1) {
 						tempY = totalMapSizeG - 1;
-				}
+					}
 
-				for (dx = -1; dx <= 1; ++dx) {
-					tempX = x + dx;
-					if (tempX == totalMapSizeG)
-						tempX = 0;
-					else if (tempX == -1)
-						tempX = totalMapSizeG - 1;
-					if (mapCorner[tempX][tempY] == LOW)
-						mapCorner[x][y] = MEDIUM;
+					for (dx = -1; dx <= 1; ++dx) {
+						tempX = x + dx;
+						if (tempX == totalMapSizeG) {
+							tempX = 0;
+						} else if (tempX == -1) {
+							tempX = totalMapSizeG - 1;
+						}
+
+						if (mapCorner[tempX][tempY] == LOW) {
+							mapCorner[x][y] = MEDIUM;
+						}
+					}
 				}
 			} else if ((mapCorner[x][y] != LOW) && (mapCorner[x][y] != MEDIUM)) {
 				mapCorner[x][y] = MEDIUM; // should not happen anymore
