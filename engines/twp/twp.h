@@ -163,6 +163,7 @@ private:
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
 	Scaling* getScaling(const Common::String& name);
+	void skipCutscene();
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -188,6 +189,7 @@ public:
 	Cutscene *_cutscene = nullptr;
 	Scene _scene;
 	Scene _screenScene;
+	NoOverrideNode _noOverride;
 	InputState _inputState;
 	Camera _camera;
 	TextDb _textDb;

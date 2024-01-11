@@ -43,6 +43,8 @@ public:
 	int getMaximumSaveSlot() const override;
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };
 
 #endif // TWP_METAENGINE_H

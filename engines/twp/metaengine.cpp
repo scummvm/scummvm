@@ -21,6 +21,8 @@
 
 #include "common/translation.h"
 #include "common/savefile.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
 #include "graphics/scaler.h"
 #include "image/png.h"
 #include "twp/metaengine.h"
@@ -28,6 +30,7 @@
 #include "twp/twp.h"
 #include "twp/savegame.h"
 #include "twp/time.h"
+#include "twp/actions.h"
 
 #define MAX_SAVES 99
 
@@ -131,6 +134,19 @@ SaveStateList TwpMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) const {
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, target, "Thimbleweed Park keymap");
+
+	Common::Action *act;
+
+	act = new Common::Action("SKIPCUTSCENE", _("Skip cutscene"));
+	act->setCustomEngineActionEvent(Twp::kSkipCutscene);
+	act->addDefaultInputMapping("ESCAPE");
+	engineKeyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TWP)

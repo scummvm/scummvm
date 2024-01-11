@@ -57,7 +57,8 @@ Node::Node(const Common::String &name, Math::Vector2d scale, Color color)
 Node::~Node() {}
 
 void Node::addChild(Node *child) {
-	if(child->_parent == this) return;
+	if (child->_parent == this)
+		return;
 	if (child->_parent) {
 		child->_pos -= getAbsPos();
 		child->remove();
@@ -666,6 +667,58 @@ void SentenceNode::drawCore(Math::Matrix4 trsf) {
 	Math::Matrix4 t;
 	t.translate(Math::Vector3d(x, y, 0.f));
 	text.draw(g_engine->getGfx(), t);
+}
+
+SpriteNode::SpriteNode() : Node("Sprite") {}
+SpriteNode::~SpriteNode() {}
+
+void SpriteNode::setSprite(const Common::String &sheet, const Common::String &frame) {
+	_sheet = sheet;
+	_frame = frame;
+}
+
+void SpriteNode::drawCore(Math::Matrix4 trsf) {
+	SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
+	SpriteSheetFrame *frame = &sheet->frameTable[_frame];
+
+	Common::Rect rect = frame->frame;
+	setSize(Math::Vector2d(frame->frame.width(), frame->frame.height()));
+	float x = frame->sourceSize.getX() / 2.f - frame->spriteSourceSize.left;
+	float y = (frame->sourceSize.getY() + 1.f) / 2.f - frame->spriteSourceSize.height() - frame->spriteSourceSize.top;
+	Math::Vector2d anchor((int)(x), (int)(y));
+	setAnchor(anchor);
+
+	Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
+	g_engine->getGfx().drawSprite(rect, *texture, this->getComputedColor(), trsf);
+}
+
+NoOverrideNode::NoOverrideNode() : Node("NoOverride") {
+	_zOrder = -1000;
+	_elapsed = 42.f;
+
+	_icon.setSprite("GameSheet", "icon_no");
+	_icon.setScale(Math::Vector2d(2.f, 2.f));
+	_icon.setPos(Math::Vector2d(32.f, SCREEN_HEIGHT - 32.f));
+	addChild(&_icon);
+}
+
+NoOverrideNode::~NoOverrideNode() {
+}
+
+void NoOverrideNode::reset() {
+	_elapsed = 0.f;
+	setVisible(true);
+}
+
+bool NoOverrideNode::update(float elapsed) {
+	if (_elapsed > 2.f) {
+		setVisible(false);
+		return false;
+	}
+	_elapsed += elapsed;
+	setAlpha(clamp((2.f - _elapsed) / 2.f, 0.f, 1.f));
+	debug("no override: %.2f, %.2f", _elapsed, getAlpha());
+	return true;
 }
 
 } // namespace Twp
