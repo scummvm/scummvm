@@ -140,10 +140,8 @@ void {xobj_class}::close(int type) {{
 }}
 
 void {xobj_class}::m_new(int nargs) {{
-	if (nargs != 0) {{
-		warning("{xobj_class}::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}}
+	g_lingo->printSTUBWithArglist("{xobj_class}::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }}
 
@@ -177,6 +175,88 @@ def read_uint32_le(data: bytes) -> int:
 
 def read_uint32_be(data: bytes) -> int:
     return struct.unpack(">L", data)[0]
+
+
+def inject_makefile(slug: str) -> None:
+    make_contents = open(MAKEFILE_PATH, "r").readlines()
+    expr = re.compile("^\tlingo/xlibs/([a-zA-Z0-9\\-]+).o( \\\\|)")
+    for i in range(len(make_contents)):
+        m = expr.match(make_contents[i])
+        if m:
+            if slug == m.group(1):
+                # file already in makefile
+                print(f"lingo/xlibs/{slug}.o already in {MAKEFILE_PATH}, skipping")
+                return
+            elif slug < m.group(1):
+                make_contents.insert(i, f"\tlingo/xlibs/{slug}.o \\\n")
+                with open(MAKEFILE_PATH, "w") as f:
+                    f.writelines(make_contents)
+                return
+            elif m.group(2) == "":
+                # final entry in the list
+                make_contents[i] += " \\"
+                make_contents.insert(i + 1, f"\tlingo/xlibs/{slug}.o\n")
+                with open(MAKEFILE_PATH, "w") as f:
+                    f.writelines(make_contents)
+                return
+
+
+def inject_lingo_object(slug: str, xobj_class: str, director_version: int) -> None:
+    # write include statement for the object header
+    lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
+    expr = re.compile('^#include "director/lingo/xlibs/([a-zA-Z0-9\\-]+)\\.h"')
+    in_xlibs = False
+    for i in range(len(lo_contents)):
+        m = expr.match(lo_contents[i])
+        if m:
+            in_xlibs = True
+            if slug == m.group(1):
+                print(
+                    f"lingo/xlibs/{slug}.h import already in {LINGO_OBJECT_PATH}, skipping"
+                )
+                break
+            elif slug < m.group(1):
+                lo_contents.insert(i, f'#include "director/lingo/xlibs/{slug}.h"\n')
+                with open(LINGO_OBJECT_PATH, "w") as f:
+                    f.writelines(lo_contents)
+                break
+        elif in_xlibs:
+            # final entry in the list
+            lo_contents.insert(i, f'#include "director/lingo/xlibs/{slug}.h"\n')
+            with open(LINGO_OBJECT_PATH, "w") as f:
+                f.writelines(lo_contents)
+                break
+
+    # write entry in the XLibProto table
+    lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
+    expr = re.compile("^\t\\{ ([a-zA-Z0-9_]+)::fileNames")
+    in_xlibs = False
+    for i in range(len(lo_contents)):
+        m = expr.match(lo_contents[i])
+        if m:
+            in_xlibs = True
+            if xobj_class == m.group(1):
+                print(
+                    f"{xobj_class} proto import already in {LINGO_OBJECT_PATH}, skipping"
+                )
+                break
+            elif xobj_class < m.group(1):
+                lo_contents.insert(
+                    i,
+                    f"	{{ {xobj_class}::fileNames,			{xobj_class}::open,			{xobj_class}::close,		kXObj,					{director_version} }},	// D{director_version // 100}\n",
+                )
+                with open(LINGO_OBJECT_PATH, "w") as f:
+                    f.writelines(lo_contents)
+                break
+        elif in_xlibs:
+            # final entry in the list
+            lo_contents.insert(
+                i,
+                f"	{{ {xobj_class}::fileNames,			{xobj_class}::open,			{xobj_class}::close,		kXObj,					{director_version} }},	// D{director_version // 100}\n",
+            )
+            with open(LINGO_OBJECT_PATH, "w") as f:
+                f.writelines(lo_contents)
+                break
 
 
 def extract_xcode_macbinary(
@@ -467,6 +547,10 @@ def generate_xobject_stubs(
         with open(os.path.join(LINGO_XLIBS_PATH, f"{slug}.h"), "w") as header:
             header.write(header_text)
 
+    if not dry_run:
+        inject_makefile(slug)
+        inject_lingo_object(slug, xobj_class, director_version)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -486,10 +570,14 @@ def main() -> None:
         "--version",
         metavar="VER",
         help="Minimum Director version (default: 400)",
-        default="400",
+		type=int,
+        default=400,
     )
     parser.add_argument(
-        "--dry-run", help="Test only, don't write files", action="store_true"
+        "--write",
+        help="Write generated stubs to the source tree",
+        dest="dry_run",
+        action="store_false",
     )
     args = parser.parse_args()
 
