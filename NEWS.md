@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
 
+ Broken Sword 2:
+   - Fixed crash when quitting the game while it was paused.
+
  MM:
    - Enabled engine, allowing MM1 and Xeen to be compiled.
    
