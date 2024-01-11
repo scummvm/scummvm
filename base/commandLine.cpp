@@ -482,29 +482,36 @@ static Common::String createTemporaryTarget(const Common::String &engineId, cons
  * If the path given on command line is a file path, the method will use the parent folder path instead,
  * updating the "settings" table and checking the readability / writeability requirements for that one.
  * This method is to be used from within parseCommandLine() method.
- * Note: The method assumes that path.exists() check was already done and is true.
+ * Note 1: The method assumes that path.exists() check was already done and is true.
+ * Note 2: The method will work with paths that are symbolic links to folders (isDirectory() returns true),
+ * but for symbolic links to files it will not deduce a valid folder path and will just return false.
  *
- * @param settings A reference to the settings map used by parseCommandLine() 
+ * @param settings A reference to the settings map used by parseCommandLine()
  * @param optionKeyStr The key string for updating the value for this path option on the settings map, if needed
  * @param path The path node that was created from the command line value for this path option
  * @param ensureWriteable A boolean flag that is set true if the path should be writeable, false otherwise
+ * @param ensureReadable A boolean flag that is set true if the path should be readable, false otherwise
+ * @param acceptFile true if the command line option allows (tolerates) a file path to deduce the folder path from
  * @return true if given path was already a folder path or, if it was a file path, then a parent folder path
  * was deduced from it, and the path (original or deduced respectively) meets the specified
  * readability / writeability requirements.
  */
-bool ensureAccessibleDirectoryForPathOption(Common::StringMap &settings, const Common::String optionKeyStr, const Common::FSNode &path, bool ensureWriteable) {
+bool ensureAccessibleDirectoryForPathOption(Common::StringMap &settings,
+                                            const Common::String optionKeyStr,
+                                            const Common::FSNode &path,
+                                            bool ensureWriteable,
+                                            bool ensureReadable,
+                                            bool acceptFile) {
 	if (path.isDirectory()) {
-		if ((ensureWriteable && path.isWritable())
-		    || (!ensureWriteable && path.isReadable()))  {
+		if ((!ensureWriteable || path.isWritable())
+		    && (!ensureReadable || path.isReadable())
+		    && (ensureWriteable || ensureReadable)) {
 			return true;
 		}
-	} else if (path.getParent().isDirectory()
-	           && ((ensureWriteable && path.getParent().isWritable()) 
-	                || (!ensureWriteable && path.getParent().isReadable())) ) {
-		// The path.getParent().isDirectory() check is redundant but included for clarifying
-		// the purpose of this case, which is to get the folder path part from a file path
-		settings[optionKeyStr] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
-		return true;
+	} else if (acceptFile
+		    && ensureAccessibleDirectoryForPathOption(settings, optionKeyStr, path.getParent(), ensureWriteable, ensureReadable, false)) {
+			settings[optionKeyStr] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
+			return true;
 	}
 	return false;
 }
@@ -709,7 +716,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent screenshot path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "screenshotpath", path, true)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "screenshotpath", path, true, false, true)) {
 					usage("Non-writable screenshot path '%s'", option);
 				}
 			END_OPTION
@@ -809,7 +816,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent game path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "path", path, false)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "path", path, false, true, true)) {
 					usage("Non-readable game path '%s'", option);
 				}
 			END_OPTION
@@ -905,7 +912,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent saved games path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "savepath", path, true)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "savepath", path, true, true, true)) {
 					usage("Non-writable saved games path '%s'", option);
 				}
 			END_OPTION
@@ -914,7 +921,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent extra path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "extrapath", path, false)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "extrapath", path, false, true, true)) {
 					usage("Non-readable extra path '%s'", option);
 				}
 			END_OPTION
@@ -923,7 +930,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent icons path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "iconspath", path, false)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "iconspath", path, true, true, true)) {
 					usage("Non-readable icons path '%s'", option);
 				}
 			END_OPTION
@@ -964,7 +971,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent theme path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "themepath", path, false)) {
+				} else if (!ensureAccessibleDirectoryForPathOption(settings, "themepath", path, false, true, true)) {
 					usage("Non-readable theme path '%s'", option);
 				}
 			END_OPTION
