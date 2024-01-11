@@ -81,6 +81,8 @@ protected:
 
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::File& file);
 
+	void readBackgroundAnimations(int64 offs, Common::File& file);
+
 	void readResourceFile();
 
 public:
