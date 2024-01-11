@@ -289,8 +289,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "WinGame"; }
 };
 
-
-
 // Sets the difficulty level for the current save. Only appears at the start of the game.
 // First appears in nancy1. Nancy1 and nancy2 have three difficulty values, while later games
 // only have two: 0 and 2.

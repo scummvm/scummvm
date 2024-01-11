@@ -1039,5 +1039,4 @@ bool NancyConsole::Cmd_showHotspots(int argc, const char **argv) {
 	return cmdExit(0, nullptr);
 }
 
-
 } // End of namespace Nancy

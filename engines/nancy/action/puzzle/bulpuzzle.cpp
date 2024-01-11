@@ -312,7 +312,6 @@ void BulPuzzle::execute() {
 			g_nancy->_sound->playSound(sound);
 		}
 
-
 		if (_nextMoveTime == 0 && !g_nancy->_sound->isSoundPlaying(sound)) {
 			if (_playerWon) {
 				_solveScene.execute();

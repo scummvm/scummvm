@@ -187,7 +187,6 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
 		}
 
-
 		if (prevState == NancyState::kPause) {
 			g_nancy->_sound->pauseAllSounds(false);
 		} else {

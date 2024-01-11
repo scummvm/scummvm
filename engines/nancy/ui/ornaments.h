@@ -54,5 +54,4 @@ public:
 } // End of namespace UI
 } // End of namespace Nancy
 
-
 #endif // NANCY_UI_ORNAMENTS_H

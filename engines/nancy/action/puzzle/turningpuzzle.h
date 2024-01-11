@@ -43,7 +43,6 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-
 protected:
 	Common::String getRecordTypeName() const override { return "TurningPuzzle"; }
 	bool isViewportRelative() const override { return true; }

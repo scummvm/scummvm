@@ -352,7 +352,6 @@ void TangramPuzzle::rotateTile(uint id) {
 	tileToRotate.moveTo(newPos);
 	_needsRedraw = true;
 
-
 	tileToRotate.drawMask();
 	tileToRotate._needsRedraw = true;
 

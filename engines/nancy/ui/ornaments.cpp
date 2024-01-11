@@ -69,7 +69,6 @@ void ViewportOrnaments::init() {
 	// Middle right
 	_drawSurface.blitFrom(object0, src[5], Common::Point(viewportBounds.right - src[5].width(), 205));
 
-
 	RenderObject::init();
 }
 

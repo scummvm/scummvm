@@ -57,7 +57,6 @@ public:
 	Common::Array<byte> _currentSequence;
 	Time _solveSoundPlayTime;
 
-
 protected:
 	Common::String getRecordTypeName() const override { return "RotatingLockPuzzle"; }
 	bool isViewportRelative() const override { return true; }
