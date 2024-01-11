@@ -623,8 +623,7 @@ Common::Error AGDSEngine::run() {
 									}
 									if (ip)
 										debug("found use handler");
-								}
-								if (!ip) {
+								} else if (!ip) {
 									ip = object->getClickHandler();
 									if (ip) {
 										debug("found click handler");
