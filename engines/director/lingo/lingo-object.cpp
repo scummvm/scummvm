@@ -49,11 +49,15 @@
 #include "director/lingo/xlibs/draw.h"
 #include "director/lingo/xlibs/ednox.h"
 #include "director/lingo/xlibs/eventq.h"
+#include "director/lingo/xlibs/fadegammadownxcmd.h"
+#include "director/lingo/xlibs/fadegammaupxcmd.h"
+#include "director/lingo/xlibs/fadegammaxcmd.h"
 #include "director/lingo/xlibs/fedracul.h"
 #include "director/lingo/xlibs/feimasks.h"
 #include "director/lingo/xlibs/feiprefs.h"
 #include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/findereventsxcmd.h"
 #include "director/lingo/xlibs/findfolder.h"
 #include "director/lingo/xlibs/findsys.h"
 #include "director/lingo/xlibs/findwin.h"
@@ -95,6 +99,7 @@
 #include "director/lingo/xlibs/unittest.h"
 #include "director/lingo/xlibs/valkyrie.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
+#include "director/lingo/xlibs/vmisonxfcn.h"
 #include "director/lingo/xlibs/volumelist.h"
 #include "director/lingo/xlibs/widgetxobj.h"
 #include "director/lingo/xlibs/wininfo.h"
@@ -102,6 +107,7 @@
 #include "director/lingo/xlibs/xcmdglue.h"
 #include "director/lingo/xlibs/xio.h"
 #include "director/lingo/xlibs/xplayanim.h"
+#include "director/lingo/xlibs/xsoundxfcn.h"
 #include "director/lingo/xlibs/yasix.h"
 
 namespace Director {
@@ -196,11 +202,15 @@ static struct XLibProto {
 	{ FEDraculXObj::fileNames,			FEDraculXObj::open,			FEDraculXObj::close,		kXObj,					400 },	// D4
 	{ FEIMasksXObj::fileNames,			FEIMasksXObj::open,			FEIMasksXObj::close,		kXObj,					400 },	// D4
 	{ FEIPrefsXObj::fileNames,			FEIPrefsXObj::open,			FEIPrefsXObj::close,		kXObj,					400 },	// D4
+	{ FadeGammaDownXCMD::fileNames,			FadeGammaDownXCMD::open,			FadeGammaDownXCMD::close,		kXObj,					400 },	// D4
+	{ FadeGammaUpXCMD::fileNames,			FadeGammaUpXCMD::open,			FadeGammaUpXCMD::close,		kXObj,					400 },	// D4
+	{ FadeGammaXCMD::fileNames,			FadeGammaXCMD::open,			FadeGammaXCMD::close,		kXObj,					400 },	// D4
 	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
 	{ FindSys::fileNames,				FindSys::open,				FindSys::close,				kXObj,					400 },	// D4
 	{ FindWin::fileNames,				FindWin::open,				FindWin::close,				kXObj,					400 },	// D4
+	{ FinderEventsXCMD::fileNames,			FinderEventsXCMD::open,			FinderEventsXCMD::close,		kXObj,					400 },	// D4
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
@@ -238,12 +248,14 @@ static struct XLibProto {
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
 	{ StageTCXObj::fileNames,			StageTCXObj::open,			StageTCXObj::close,			kXObj,					400 },	// D4
 	{ UnitTest::fileNames,				UnitTest::open,				UnitTest::close,			kXObj,					400 },	// D4
+	{ VMisOnXFCN::fileNames,			VMisOnXFCN::open,			VMisOnXFCN::close,		kXObj,					400 },	// D4
 	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
 	{ WinInfoXObj::fileNames,			WinInfoXObj::open,			WinInfoXObj::close,			kXObj,					400 },  // D4
 	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
 	{ XCMDGlueXObj::fileNames,			XCMDGlueXObj::open,			XCMDGlueXObj::close,		kXObj,					200 },	// D2
+	{ XSoundXFCN::fileNames,			XSoundXFCN::open,			XSoundXFCN::close,		kXObj,					400 },	// D4
 	{ XioXObj::fileNames,				XioXObj::open,				XioXObj::close,				kXObj,					400 },	// D3
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ Yasix::fileNames,					Yasix::open,				Yasix::close,				kXObj,					300 },	// D3
