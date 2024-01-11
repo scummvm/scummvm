@@ -79,10 +79,8 @@ void MMaskXObj::close(int type) {
 }
 
 void MMaskXObj::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("MMaskXObj::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("MMaskXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 

@@ -81,10 +81,8 @@ void CursorXObj::close(int type) {
 }
 
 void CursorXObj::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("CursorXObj::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("CursorXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 
