@@ -167,7 +167,7 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 		if (finalFacing > 0 && finalFacing < 13) {
 			_G(globals)[GLB_TEMP_4] = directions[finalFacing] << 16;
 		} else {
-			_G(globals)[GLB_TEMP_4] = (uint)-1 << 16;
+			_G(globals)[GLB_TEMP_4] = (frac16)-1 << 16;
 		}
 
 		// Set the trigger to be returned when the walk is finished
