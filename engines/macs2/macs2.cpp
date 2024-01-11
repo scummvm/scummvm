@@ -477,6 +477,12 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 	}
 	else
 	if (opcode == 0xFF) {
+		if (value == 0x02) {
+			// TODO: Look up clicked hotspot instead
+			out1 = 0x0801;
+			out2 = 0x0000;
+			return;
+		} else
 		// TODO: Long list of opcode handling here
 		if (value == 0x26) {
 			// TODO: Implement this part:
