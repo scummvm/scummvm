@@ -60,10 +60,11 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 	s.skip(3); // Number of object, frame, and logo images
-	if (g_nancy->getGameFlags() & GF_PLG_BYTE_IN_BSUM) {
-		// There's a weird version of nancy3 with an extra byte counting the number of partner logos.
-		// On first glance this seems to be the only difference, but it'll need to be checked more thoroughly
-		// TODO
+	if (g_nancy->getEngineData("PLG0")) {
+		// Parner logos were introduced with nancy4, but at least one nancy3 release
+		// had one as well. For some reason they didn't port over the code from the
+		// later games, but implemented it the same way the other BSUM images work.
+		// Hence, we skip an extra byte indicating the number of partner logos. 
 		s.skip(1);
 	}
 

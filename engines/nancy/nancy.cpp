@@ -420,7 +420,19 @@ void NancyEngine::bootGameEngine() {
 							}
 	#define LOAD_BOOT(t) LOAD_BOOT_L(t, #t)
 
-	LOAD_BOOT(BSUM)
+	LOAD_BOOT_L(ImageChunk, "OB0")
+	LOAD_BOOT_L(ImageChunk, "FR0")
+	LOAD_BOOT_L(ImageChunk, "LG0")
+
+	// One weird version of nancy3 has a partner logo implemented the same way as the other image chunks
+	LOAD_BOOT_L(ImageChunk, "PLG0")
+
+	// For all other games (starting with nancy4) the partner logo is a larger struct,
+	// containing video and sound data as well. Those go unused, however, so we still
+	// treat is as a simple image. Note the O instead of the 0 above.
+	LOAD_BOOT_L(ImageChunk, "PLGO")
+
+	LOAD_BOOT(BSUM) // This checks for PLG0, do NOT reorder
 	LOAD_BOOT(VIEW)
 	LOAD_BOOT(PCAL)
 	LOAD_BOOT(INV)
@@ -439,19 +451,6 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(RCPR)
 	LOAD_BOOT(RCLB)
 	LOAD_BOOT(TABL)
-
-	LOAD_BOOT_L(ImageChunk, "OB0")
-	LOAD_BOOT_L(ImageChunk, "FR0")
-	LOAD_BOOT_L(ImageChunk, "LG0")
-
-	chunkStream = iff->getChunkStream("PLG0");
-	if (!chunkStream) {
-		chunkStream = iff->getChunkStream("PLGO"); // nancy4 and above use an O instead of a zero
-	}	
-
-	if (chunkStream) {
-		_engineData.setVal("PLG0", new ImageChunk(chunkStream));
-	}
 
 	_cursorManager->init(iff->getChunkStream("CURS"));
 
