@@ -16,6 +16,7 @@ class XCode(TypedDict):
     type: XCodeType
     name: str
     slug: str
+    filename: str
     method_table: list[str]
 
 
@@ -105,9 +106,9 @@ TEMPLATE = (
 
 namespace Director {{
 
-const char *{xobj_class}::xlibName = "{slug}";
+const char *{xobj_class}::xlibName = "{name}";
 const char *{xobj_class}::fileNames[] = {{
-	"{slug}",
+	"{filename}",
 	nullptr
 }};
 
@@ -151,6 +152,79 @@ void {xobj_class}::m_new(int nargs) {{
 """
 )
 XLIB_METHOD_TEMPLATE = """	{{ "{methname}",				{xobj_class}::m_{methname},		 {arg_count}, {arg_count},	{director_version} }},"""
+
+XCMD_TEMPLATE_H = (
+    LEGAL
+    + """
+#ifndef DIRECTOR_LINGO_XLIBS_{slug_upper}_H
+#define DIRECTOR_LINGO_XLIBS_{slug_upper}_H
+
+namespace Director {{
+
+namespace {xobj_class} {{
+
+extern const char *xlibName;
+extern const char *fileNames[];
+
+void open(int type);
+void close(int type);
+
+{methlist}
+
+}} // End of namespace {xobj_class}
+
+}} // End of namespace Director
+
+#endif
+"""
+)
+
+XCMD_TEMPLATE = (
+    LEGAL
+    + """
+#include "common/system.h"
+
+#include "director/director.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
+#include "director/lingo/xlibs/{slug}.h"
+
+/**************************************************
+ *
+ * USED IN:
+ * [insert game here]
+ *
+ **************************************************/
+
+namespace Director {{
+
+const char *{xobj_class}::xlibName = "{name}";
+const char *{xobj_class}::fileNames[] = {{
+	"{filename}",
+	nullptr
+}};
+
+static BuiltinProto builtins[] = {{
+{xlib_builtins}
+	{{ nullptr, nullptr, 0, 0, 0, VOIDSYM }}
+}};
+
+void {xobj_class}::open(int type) {{
+	g_lingo->initBuiltIns(builtins);
+}}
+
+void {xobj_class}::close(int type) {{
+	g_lingo->cleanupBuiltIns(builtins);
+}}
+
+{xobj_stubs}
+
+}}
+"""
+)
+
+XCMD_BUILTIN_TEMPLATE = """	{{ "{name}", {xobj_class}::m_{name}, -1, 0, {director_version}, {methtype} }},"""
 
 XOBJ_STUB_TEMPLATE = """XOBJSTUB({xobj_class}::m_{methname}, {default})"""
 
@@ -331,10 +405,21 @@ def extract_xcode_macbinary(
         raise ValueError("Need to specify resource ID")
     for entry in xobj[xobj_id]["xmethtable"]:
         print(entry)
+    type: XCodeType = (
+        "XFCN"
+        if xobj_id.startswith("XFCN_")
+        else "XCMD"
+        if xobj_id.startswith("XCMD_")
+        else "XObject"
+    )
+    slug = xobj[xobj_id]["name"].lower()
+    if type in ["XFCN", "XCMD"]:
+        slug += type.lower()
     return {
-        "type": "XObject",
+        "type": type,
         "name": xobj[xobj_id]["name"],
-        "slug": xobj[xobj_id]["name"].lower(),
+        "slug": slug,
+        "filename": xobj[xobj_id]["name"],
         "method_table": xobj[xobj_id]["xmethtable"],
     }
 
@@ -413,7 +498,8 @@ def extract_xcode_win16(file: BinaryIO, ne_offset: int) -> XCode:
     return {
         "type": "XObject",
         "name": library_name,
-        "slug": file_name,
+        "slug": file_name.lower(),
+        "filename": file_name,
         "method_table": xmethtable,
     }
 
@@ -427,7 +513,7 @@ def extract_xcode_win32(file: BinaryIO, pe_offset: int) -> XCode:
     # lookup addr2 in .data
     # get c string, split by \x0a
 
-    return {"type": "Xtra", "name": "", "slug": "", "method_table": []}
+    return {"type": "Xtra", "name": "", "slug": "", "filename": "", "method_table": []}
 
 
 def extract_xcode(path: str, resid: str) -> XCode:
@@ -472,6 +558,7 @@ def generate_xobject_stubs(
     xmethtable: list[str],
     slug: str,
     name: str,
+    filename: str,
     director_version: int = 400,
     dry_run: bool = False,
 ) -> None:
@@ -504,6 +591,8 @@ def generate_xobject_stubs(
 
     cpp_text = TEMPLATE.format(
         slug=slug,
+        name=name,
+        filename=filename,
         xmethtable="\n".join(xmethtable),
         xobject_class=xobject_class,
         xobj_class=xobj_class,
@@ -535,9 +624,60 @@ def generate_xobject_stubs(
 
     header_text = TEMPLATE_H.format(
         slug_upper=slug.upper(),
-        xobject_class=f"{name}XObject",
-        xobj_class=f"{name}XObj",
+        xobject_class=xobject_class,
+        xobj_class=xobj_class,
         methlist="\n".join([TEMPLATE_HEADER_METH.format(**x) for x in meths]),
+    )
+    if dry_run:
+        print("Header output:")
+        print(header_text)
+        print()
+    else:
+        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug}.h"), "w") as header:
+            header.write(header_text)
+
+    if not dry_run:
+        inject_makefile(slug)
+        inject_lingo_object(slug, xobj_class, director_version)
+
+
+def generate_xcmd_stubs(
+    type: Literal["XCMD", "XFCN"],
+    slug: str,
+    name: str,
+    filename: str,
+    director_version: int = 400,
+    dry_run: bool = False,
+) -> None:
+    xobj_class = f"{name}{type}"
+    methtype = "CBLTIN" if type == "XCMD" else "HBLTIN"
+    cpp_text = XCMD_TEMPLATE.format(
+        slug=slug,
+        name=name,
+        filename=filename,
+        xobj_class=xobj_class,
+        xlib_builtins=XCMD_BUILTIN_TEMPLATE.format(
+            name=name,
+            xobj_class=xobj_class,
+            director_version=director_version,
+            methtype=methtype,
+        ),
+        xobj_stubs=XOBJ_STUB_TEMPLATE.format(
+            xobj_class=xobj_class, methname=name, default=0
+        ),
+    )
+    if dry_run:
+        print("C++ output:")
+        print(cpp_text)
+        print()
+    else:
+        with open(os.path.join(LINGO_XLIBS_PATH, f"{slug}.cpp"), "w") as cpp:
+            cpp.write(cpp_text)
+
+    header_text = XCMD_TEMPLATE_H.format(
+        slug_upper=slug.upper(),
+        xobj_class=xobj_class,
+        methlist=TEMPLATE_HEADER_METH.format(methname=name),
     )
     if dry_run:
         print("Header output:")
@@ -570,7 +710,7 @@ def main() -> None:
         "--version",
         metavar="VER",
         help="Minimum Director version (default: 400)",
-		type=int,
+        type=int,
         default=400,
     )
     parser.add_argument(
@@ -586,7 +726,16 @@ def main() -> None:
     name = args.name or xcode["name"]
     if xcode["type"] == "XObject":
         generate_xobject_stubs(
-            xcode["method_table"], slug, name, args.version, args.dry_run
+            xcode["method_table"],
+            slug,
+            name,
+            xcode["filename"],
+            args.version,
+            args.dry_run,
+        )
+    elif xcode["type"] == "XFCN" or xcode["type"] == "XCMD":
+        generate_xcmd_stubs(
+            xcode["type"], slug, name, xcode["filename"], args.version, args.dry_run
         )
 
 
