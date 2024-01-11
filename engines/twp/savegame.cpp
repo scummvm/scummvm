@@ -272,7 +272,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 	if (obj->_node)
 		obj->setState(state, true);
 	else
-		warning("obj '{obj.key}' has no node !");
+		warning("obj '%s' has no node !", obj->_key.c_str());
 	bool touchable = true;
 	if (json.contains("_touchable"))
 		touchable = json["_touchable"]->asIntegerNumber() == 1;
@@ -283,7 +283,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 	obj->_node->setVisible(!hidden);
 
 	for (auto it = json.begin(); it != json.end(); it++) {
-		if ((it->_key == "_state") || (it->_key == "_state") || (it->_key == "_state")) {
+		if ((it->_key == "_state") || (it->_key == "_touchable") || (it->_key == "_hidden")) {
 			// discard
 		} else if (it->_key == "_pos") {
 			obj->_node->setPos(parseVec2(it->_value->asString()));
@@ -309,7 +309,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 			else
 				sqnewf(obj->_table, it->_key, tmp);
 		} else {
-			warning("load object: key '{%s}' is unknown", it->_key.c_str());
+			warning("load object (%s): key '%s' is unknown", obj->_key.c_str(), it->_key.c_str());
 		}
 	}
 
