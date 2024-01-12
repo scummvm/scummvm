@@ -332,6 +332,14 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	debug("loadScreen %s [type: %d, save patch: %d, previous: %s]", name.c_str(), static_cast<int>(loadingType), savePatch, _currentScreenName.c_str());
 	if (savePatch)
 		saveScreenPatch();
+
+	if (_currentCharacter && _currentCharacter->visible()) {
+		_currentCharacter->reset();
+		if (loadingType != ScreenLoadingType::Normal) {
+			_currentCharacter->visible(false);
+		}
+	}
+
 	resetCurrentInventoryObject();
 	{
 		bool userEnabled = _userEnabled;
@@ -351,10 +359,6 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	auto patch = getPatch(name);
 	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
 	bool hasScreenPatch = doPatch && patch->screenSaved;
-
-	if (_currentCharacter) {
-		_currentCharacter->reset();
-	}
 
 	_currentScreenName = name;
 	_currentScreen = nullptr;

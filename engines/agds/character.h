@@ -52,6 +52,7 @@ class Character {
 	Common::Point	_animationPos;
 	bool _enabled;
 	bool _visible;
+	bool _shown;
 	bool _stopped;
 	int _phase;
 	int _frames;
@@ -103,7 +104,7 @@ public:
 
 	void visible(bool visible);
 	bool visible() const {
-		return _visible;
+		return _visible && _shown;
 	}
 
 	bool active() const {

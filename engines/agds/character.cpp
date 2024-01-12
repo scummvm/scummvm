@@ -41,7 +41,7 @@ namespace AGDS {
 
 Character::Character(AGDSEngine * engine, const Common::String & name):
 	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
-	_enabled(true), _visible(false), _stopped(false),
+	_enabled(true), _visible(false), _shown(false), _stopped(false),
 	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
 
@@ -115,6 +115,9 @@ void Character::associate(const Common::String &name) {
 }
 
 void Character::visible(bool visible) {
+	if (visible) {
+		_shown = true;
+	}
 	_visible = visible;
 }
 
@@ -164,7 +167,7 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
 	notifyProcess(processName);
 	_pos = dst;
-	_visible = true;
+	_shown = true;
 	bool r = direction(dir);
 
 	auto *screen = _engine->getCurrentScreen();
@@ -184,6 +187,7 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 void Character::pointTo(const Common::String & processName, Common::Point dst) {
 	debug("character point to stub %d,%d, process: %s", dst.x, dst.y, processName.c_str());
 	notifyProcess(processName);
+	_shown = true;
 }
 
 bool Character::animate(int direction, int speed, bool jokes) {
@@ -194,7 +198,7 @@ bool Character::animate(int direction, int speed, bool jokes) {
 		return false;
 
 	_description = nullptr;
-	_visible = true;
+	_shown = true;
 	_stopped = false;
 	auto character = jokes? _engine->jokes(): this;
 	_description = character->animationDescription(direction);
@@ -274,7 +278,7 @@ void Character::tick(bool reactivate) {
 
 
 void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
-	if (!_enabled || !_visible || !_animation)
+	if (!_enabled || !visible()|| !_animation)
 		return;
 
 	pos += _pos + _animationPos;
@@ -312,7 +316,7 @@ int Character::z() const {
 
 void Character::reset() {
 	_fog.reset();
-	_visible = false;
+	_shown = false;
 }
 
 void Character::setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ) {
