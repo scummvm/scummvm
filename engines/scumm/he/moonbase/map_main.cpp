@@ -59,7 +59,7 @@ bool Map::generateNewMap() {
 	// Don't randomly pick nonstandard map sizes.
 	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
 
-	int tileSet = _rnd.getRandomNumberRngSigned(1, 7);
+	int tileSet = _rnd.getRandomNumberRngSigned(1, 6);
 
 	// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
 	int energy = _rnd.getRandomNumberRngSigned(2, 4);
