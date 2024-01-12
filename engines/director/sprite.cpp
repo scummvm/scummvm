@@ -472,10 +472,12 @@ void Sprite::setCast(CastMemberID memberID) {
 				}
 			}
 			break;
+		case kCastFilmLoop:
 		case kCastShape:
 		case kCastText: 	// fall-through
 			break;
 		default:
+			debugC(3, kDebugImages, "Sprite::setCast(): Setting bbox of castId %s , type: %s to 0", memberID.asString().c_str(), castType2str(_cast->_type));
 			_width = dims.width();
 			_height = dims.height();
 			break;
