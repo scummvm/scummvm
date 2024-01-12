@@ -213,7 +213,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 			if (!handled) {
 				if (_actor && (scrPos.getY() > 172)) {
 					_actor->walk(roomPos);
-					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+					_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
 				}
 			}
 			// TODO: Just clicking on the ground
@@ -234,7 +234,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 Verb TwpEngine::verb() {
 	Verb result = _hud._verb;
 	if (result.id.id == VERB_WALKTO && _noun1 && _noun1->inInventory())
-		result = _hud.actorSlot(_actor)->verbs[_noun1->defaultVerbId()];
+		result = *_hud.actorSlot(_actor)->getVerb(_noun1->defaultVerbId());
 	return result;
 }
 
@@ -931,7 +931,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	if (_actor)
-		_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+		_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -1183,7 +1183,7 @@ void TwpEngine::resetVerb() {
 	_noun1 = nullptr;
 	_noun2 = nullptr;
 	_useFlag = ufNone;
-	_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+	_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
 }
 
 bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
