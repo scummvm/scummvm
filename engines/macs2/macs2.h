@@ -64,6 +64,13 @@ struct AnimFrame {
 	void ReadFromeFile(Common::File &file);
 };
 
+struct BackgroundAnimation {
+	uint16 numFrames;
+	uint16 X;
+	uint16 Y;
+	AnimFrame *Frames;
+};
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -129,6 +136,9 @@ public:
 	byte** _flagData;
 	uint16* _flagWidths;
 	uint16* _flagHeights;
+
+	uint16 _numBackgroundAnimations;
+	BackgroundAnimation *_backgroundAnimations;
 
 	byte* mapData;
 
