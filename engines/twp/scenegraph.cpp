@@ -22,6 +22,7 @@
 #include "math/matrix3.h"
 #include "math/vector3d.h"
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "twp/scenegraph.h"
 #include "twp/twp.h"
 #include "twp/gfx.h"
@@ -411,12 +412,30 @@ InputState::InputState() : Node("InputState") {
 
 InputState::~InputState() {}
 
+Common::String InputState::getCursorName() const {
+	switch (_cursorShape) {
+	case CursorShape::Left:
+		return "cursor_left";
+	case CursorShape::Right:
+		return "cursor_right";
+	case CursorShape::Front:
+		return "cursor_front";
+	case CursorShape::Back:
+		return "cursor_back";
+	case CursorShape::Pause:
+		return "cursor_pause";
+	}
+	return "cursor";
+}
+
 void InputState::drawCore(Math::Matrix4 trsf) {
+	Common::String cursorName = getCursorName();
 	// draw cursor
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	// TODO: if prefs(ClassicSentence) and self.hotspot:
-	Common::String cursorName = _hotspot ? Common::String::format("hotspot_%s", _cursorName.c_str()) : _cursorName;
+	if (ConfMan.getBool("hudSentence") && _hotspot) {
+		cursorName = "hotspot_" + cursorName;
+	}
 	const SpriteSheetFrame &sf = gameSheet->frameTable[cursorName];
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos * 2.f);
@@ -457,29 +476,7 @@ void InputState::setState(InputStateFlag state) {
 }
 
 void InputState::setCursorShape(CursorShape shape) {
-	if (_cursorShape != shape) {
-		_cursorShape = shape;
-		switch (shape) {
-		case CursorShape::Normal:
-			_cursorName = "cursor";
-			break;
-		case CursorShape::Left:
-			_cursorName = "cursor_left";
-			break;
-		case CursorShape::Right:
-			_cursorName = "cursor_right";
-			break;
-		case CursorShape::Front:
-			_cursorName = "cursor_front";
-			break;
-		case CursorShape::Back:
-			_cursorName = "cursor_back";
-			break;
-		case CursorShape::Pause:
-			_cursorName = "cursor_pause";
-			break;
-		}
-	}
+	_cursorShape = shape;
 }
 
 OverlayNode::OverlayNode() : Node("overlay") {
@@ -525,8 +522,7 @@ void Inventory::drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, 
 }
 
 void Inventory::drawArrows(Math::Matrix4 trsf) {
-	// TODO: bool isRetro = prefs(RetroVerbs);
-	bool isRetro = false;
+	bool isRetro = ConfMan.getBool("retroVerbs");
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
 	SpriteSheetFrame *arrowUp = &gameSheet->frameTable[isRetro ? "scroll_up_retro" : "scroll_up"];
@@ -655,15 +651,16 @@ void SentenceNode::setText(const Common::String &text) {
 void SentenceNode::drawCore(Math::Matrix4 trsf) {
 	Text text("sayline", _text);
 	float x, y;
-	//   if prefs(ClassicSentence):
-	//     x = (ScreenWidth - text.bounds.x) / 2f;
-	//     y = 208f;
-	//   else:
-	x = MAX(_pos.getX() - text.getBounds().getX() / 2.f, MARGIN);
-	x = MIN(x, SCREEN_WIDTH - text.getBounds().getX() - MARGIN);
-	y = _pos.getY() + 2.f * 38.f;
-	if (y >= SCREEN_HEIGHT)
-		y = _pos.getY() - 38.f;
+	if (ConfMan.getBool("hudSentence")) {
+		x = (SCREEN_WIDTH - text.getBounds().getX()) / 2.f;
+		y = 208.f;
+	} else {
+		x = MAX(_pos.getX() - text.getBounds().getX() / 2.f, MARGIN);
+		x = MIN(x, SCREEN_WIDTH - text.getBounds().getX() - MARGIN);
+		y = _pos.getY() + 2.f * 38.f;
+		if (y >= SCREEN_HEIGHT)
+			y = _pos.getY() - 38.f;
+	}
 	Math::Matrix4 t;
 	t.translate(Math::Vector3d(x, y, 0.f));
 	text.draw(g_engine->getGfx(), t);

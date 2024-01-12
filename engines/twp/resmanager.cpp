@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/str.h"
 #include "image/png.h"
 #include "twp/resmanager.h"
@@ -78,8 +79,8 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 void ResManager::loadFont(const Common::String &name) {
 	if (name == "sayline") {
 		debug("Load font %s", name.c_str());
-		// TODO: Common::String resName = prefs(RetroFonts)? "FontRetroSheet.json": "FontModernSheet.json";
-		_fontModernSheet.load("FontModernSheet");
+		Common::String resName = ConfMan.getBool("retroFonts") ? "FontRetroSheet": "FontModernSheet";
+		_fontModernSheet.load(resName);
 		_fonts[name] = &_fontModernSheet;
 	} else if (name == "C64Font") {
 		debug("Load font %s", name.c_str());

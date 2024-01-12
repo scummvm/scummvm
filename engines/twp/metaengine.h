@@ -43,6 +43,9 @@ public:
 	int getMaximumSaveSlot() const override;
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void registerDefaultSettings(const Common::String &) const override;
+
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };

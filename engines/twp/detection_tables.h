@@ -22,7 +22,7 @@
 namespace Twp {
 
 const PlainGameDescriptor twpGames[] = {
-	{ "twp", "Twp" },
+	{ "twp", "Thimbleweed Park" },
 	{ 0, 0 }
 };
 
