@@ -83,6 +83,7 @@
 #include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
+#include "director/lingo/xlibs/panel.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/porta.h"
 #include "director/lingo/xlibs/prefpath.h"
@@ -102,6 +103,7 @@
 #include "director/lingo/xlibs/vmisonxfcn.h"
 #include "director/lingo/xlibs/volumelist.h"
 #include "director/lingo/xlibs/widgetxobj.h"
+#include "director/lingo/xlibs/window.h"
 #include "director/lingo/xlibs/wininfo.h"
 #include "director/lingo/xlibs/winxobj.h"
 #include "director/lingo/xlibs/xcmdglue.h"
@@ -202,15 +204,15 @@ static struct XLibProto {
 	{ FEDraculXObj::fileNames,			FEDraculXObj::open,			FEDraculXObj::close,		kXObj,					400 },	// D4
 	{ FEIMasksXObj::fileNames,			FEIMasksXObj::open,			FEIMasksXObj::close,		kXObj,					400 },	// D4
 	{ FEIPrefsXObj::fileNames,			FEIPrefsXObj::open,			FEIPrefsXObj::close,		kXObj,					400 },	// D4
-	{ FadeGammaDownXCMD::fileNames,			FadeGammaDownXCMD::open,			FadeGammaDownXCMD::close,		kXObj,					400 },	// D4
-	{ FadeGammaUpXCMD::fileNames,			FadeGammaUpXCMD::open,			FadeGammaUpXCMD::close,		kXObj,					400 },	// D4
-	{ FadeGammaXCMD::fileNames,			FadeGammaXCMD::open,			FadeGammaXCMD::close,		kXObj,					400 },	// D4
+	{ FadeGammaDownXCMD::fileNames,		FadeGammaDownXCMD::open,	FadeGammaDownXCMD::close,	kXObj,					400 },	// D4
+	{ FadeGammaUpXCMD::fileNames,		FadeGammaUpXCMD::open,		FadeGammaUpXCMD::close,		kXObj,					400 },	// D4
+	{ FadeGammaXCMD::fileNames,			FadeGammaXCMD::open,		FadeGammaXCMD::close,		kXObj,					400 },	// D4
 	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
 	{ FindSys::fileNames,				FindSys::open,				FindSys::close,				kXObj,					400 },	// D4
 	{ FindWin::fileNames,				FindWin::open,				FindWin::close,				kXObj,					400 },	// D4
-	{ FinderEventsXCMD::fileNames,			FinderEventsXCMD::open,			FinderEventsXCMD::close,		kXObj,					400 },	// D4
+	{ FinderEventsXCMD::fileNames,		FinderEventsXCMD::open,		FinderEventsXCMD::close,	kXObj,					400 },	// D4
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
@@ -233,6 +235,7 @@ static struct XLibProto {
 	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
 	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
 	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
+	{ PanelXObj::fileNames,				PanelXObj::open,			PanelXObj::close,			kXObj,					200 },	// D2
 	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
 	{ Porta::fileNames,					Porta::open,				Porta::close,				kXObj,					300 },	// D3
 	{ PrefPath::fileNames,				PrefPath::open,				PrefPath::close,			kXObj,					400 },	// D4
@@ -248,14 +251,15 @@ static struct XLibProto {
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
 	{ StageTCXObj::fileNames,			StageTCXObj::open,			StageTCXObj::close,			kXObj,					400 },	// D4
 	{ UnitTest::fileNames,				UnitTest::open,				UnitTest::close,			kXObj,					400 },	// D4
-	{ VMisOnXFCN::fileNames,			VMisOnXFCN::open,			VMisOnXFCN::close,		kXObj,					400 },	// D4
+	{ VMisOnXFCN::fileNames,			VMisOnXFCN::open,			VMisOnXFCN::close,			kXObj,					400 },	// D4
 	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
 	{ WinInfoXObj::fileNames,			WinInfoXObj::open,			WinInfoXObj::close,			kXObj,					400 },  // D4
 	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
+	{ WindowXObj::fileNames,			WindowXObj::open,			WindowXObj::close,			kXObj,					200 },	// D2
 	{ XCMDGlueXObj::fileNames,			XCMDGlueXObj::open,			XCMDGlueXObj::close,		kXObj,					200 },	// D2
-	{ XSoundXFCN::fileNames,			XSoundXFCN::open,			XSoundXFCN::close,		kXObj,					400 },	// D4
+	{ XSoundXFCN::fileNames,			XSoundXFCN::open,			XSoundXFCN::close,			kXObj,					400 },	// D4
 	{ XioXObj::fileNames,				XioXObj::open,				XioXObj::close,				kXObj,					400 },	// D3
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ Yasix::fileNames,					Yasix::open,				Yasix::close,				kXObj,					300 },	// D3
