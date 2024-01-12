@@ -24,8 +24,6 @@
 
 #ifdef ENABLE_HE
 
-#include "common/random.h"
-
 #include "engines/scumm/he/moonbase/map_mif.h"
 
 #define MAXELEVVAL 4 // for array size
