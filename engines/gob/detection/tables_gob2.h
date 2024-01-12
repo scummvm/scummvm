@@ -638,7 +638,7 @@
 		"gob2",
 		"Interactive Demo (v1.02)",
 		AD_ENTRY1s("intro.stk", "4b278c2678ea01383fd5ca114d947eea", 575920),
-		UNK_LANG,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
