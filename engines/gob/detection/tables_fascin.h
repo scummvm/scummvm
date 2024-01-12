@@ -228,7 +228,7 @@
 		"fascination",
 		"",
 		AD_ENTRY1s("disk0.stk", "7062117e9c5adfb6bfb2dac3ff74df9e", 189951),
-		EN_ANY,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
