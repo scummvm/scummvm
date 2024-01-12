@@ -85,7 +85,7 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 	case SPIFF_GEN:
 	{
 		SpiffGenerator spiff = SpiffGenerator(seed);
-		_generatedMap = spiff.generateMap(water, mapSize, energy, terrain);
+		_generatedMap = spiff.generateMap(water, tileset, mapSize, energy, terrain);
 		break;
 	}
 	default:
