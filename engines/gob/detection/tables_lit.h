@@ -450,7 +450,7 @@
 		"lit",
 		"Non-interactive Demo",
 		AD_ENTRY1s("demo.stk", "2eba8abd9e3878c57307576012dd2fec", 3031494),
-		UNK_LANG,
+		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
@@ -464,7 +464,7 @@
 		"lit",
 		"Non-interactive Demo",
 		AD_ENTRY1s("demo.stk", "895359c918a145adc048f779b3cdacc3", 645068),
-		UNK_LANG,
+		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
