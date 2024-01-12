@@ -73,34 +73,87 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 
 	// get the list of sprite IDs for this frame
 	Common::Array<int> spriteIds;
-	for (auto &iter : _frames[channel->_filmLoopFrame].sprites) {
-		spriteIds.push_back(iter._key);
+	Common::Array<Sprite> subfilmloopsprites;
+	bool subFilmLoops = false;
+	// checking for filmloop at depth
+	for (auto &frameiter : ((FilmLoopCastMember *)channel->_sprite->_cast)->_frames) {
+		for (auto &spriteiter : frameiter.sprites) {
+			if (spriteiter._value._cast) {
+				if (spriteiter._value._cast->_type == kCastFilmLoop) {
+					subfilmloopsprites.push_back(spriteiter._value);
+				}
+			}
+		}
 	}
-	Common::sort(spriteIds.begin(), spriteIds.end());
 
-	// copy the sprites in order to the list
-	for (auto &iter : spriteIds) {
-		Sprite src = _frames[channel->_filmLoopFrame].sprites[iter];
-		if (!src._cast)
-			continue;
-		// translate sprite relative to the global bounding box
-		int16 relX = (src._startPoint.x - _initialRect.left) * widgetRect.width() / _initialRect.width();
-		int16 relY = (src._startPoint.y - _initialRect.top) * widgetRect.height() / _initialRect.height();
-		int16 absX = relX + bbox.left;
-		int16 absY = relY + bbox.top;
-		int16 width = src._width * widgetRect.width() / _initialRect.width();
-		int16 height = src._height * widgetRect.height() / _initialRect.height();
+	if (!subfilmloopsprites.empty()) {
+		subFilmLoops = true;
+	}
+	// if a filmloop is composed of filmloops
+	if (subFilmLoops) {
+		for (uint i = 0; i < subfilmloopsprites.size(); i++) {
+			*channel->_sprite = subfilmloopsprites[i];
+			_frames = ((FilmLoopCastMember *)subfilmloopsprites[i]._cast)->_frames;
+			for (uint j = 0; j < _frames.size(); j++) {
+				for (auto &iter : _frames[j].sprites) {
+					spriteIds.push_back(iter._key);
+				}
+				// copy the sprites in order to the list
+				for (auto &iter : spriteIds) {
+					Sprite src = _frames[j].sprites[iter];
+					if (!src._cast)
+						continue;
+					// translate sprite relative to the global bounding box
+					int16 relX = (src._startPoint.x - _initialRect.left) * widgetRect.width() / _initialRect.width();
+					int16 relY = (src._startPoint.y - _initialRect.top) * widgetRect.height() / _initialRect.height();
+					int16 absX = relX + bbox.left;
+					int16 absY = relY + bbox.top;
+					int16 width = src._width * widgetRect.width() / _initialRect.width();
+					int16 height = src._height * widgetRect.height() / _initialRect.height();
 
-		// Film loop frames are constructed as a series of Channels, much like how a normal frame
-		// is rendered by the Score. We don't include a pointer to the current Score here,
-		// that's only for querying the constraint channel which is not used.
-		Channel chan(nullptr, &src);
-		chan._currentPoint = Common::Point(absX, absY);
-		chan._width = width;
-		chan._height = height;
+					// Film loop frames are constructed as a series of Channels, much like how a normal frame
+					// is rendered by the Score. We don't include a pointer to the current Score here,
+					// that's only for querying the constraint channel which is not used.
+					Channel chan(nullptr, &src);
+					chan._currentPoint = Common::Point(absX, absY);
+					chan._width = width;
+					chan._height = height;
 
-		_subchannels.push_back(chan);
+					_subchannels.push_back(chan);
+				}
+			}
+			subFilmLoops = false;
+		}
+	} else {
 
+		for (auto &iter : _frames[channel->_filmLoopFrame].sprites) {
+			spriteIds.push_back(iter._key);
+		}
+		Common::sort(spriteIds.begin(), spriteIds.end());
+
+		// copy the sprites in order to the list
+		for (auto &iter : spriteIds) {
+			Sprite src = _frames[channel->_filmLoopFrame].sprites[iter];
+			if (!src._cast)
+				continue;
+			// translate sprite relative to the global bounding box
+			int16 relX = (src._startPoint.x - _initialRect.left) * widgetRect.width() / _initialRect.width();
+			int16 relY = (src._startPoint.y - _initialRect.top) * widgetRect.height() / _initialRect.height();
+			int16 absX = relX + bbox.left;
+			int16 absY = relY + bbox.top;
+			int16 width = src._width * widgetRect.width() / _initialRect.width();
+			int16 height = src._height * widgetRect.height() / _initialRect.height();
+
+			// Film loop frames are constructed as a series of Channels, much like how a normal frame
+			// is rendered by the Score. We don't include a pointer to the current Score here,
+			// that's only for querying the constraint channel which is not used.
+			Channel chan(nullptr, &src);
+			chan._currentPoint = Common::Point(absX, absY);
+			chan._width = width;
+			chan._height = height;
+
+			_subchannels.push_back(chan);
+		}
 	}
 	// Initialise the widgets on all of the subchannels.
 	// This has to be done once the list has been constructed, otherwise
