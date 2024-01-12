@@ -124,7 +124,7 @@
 		"bargon",
 		"",
 		AD_ENTRY1s("intro.stk", "569d679fe41d49972d34c9fce5930dda", 269825),
-		EN_ANY,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)

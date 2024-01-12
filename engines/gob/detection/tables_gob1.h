@@ -651,7 +651,7 @@
 		"gob1",
 		"Demo",
 		AD_ENTRY1("intro.stk", "972f22c6ff8144a6636423f0354ca549"),
-		UNK_LANG,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
