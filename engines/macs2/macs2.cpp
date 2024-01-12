@@ -624,6 +624,18 @@ void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
 	// TODO: Labels above not handled yet
 	// TODO: Lots of details not handled
 	// l0037_A94E:
+
+	uint16 v1;
+	uint16 v2;
+	Func9F4D(stream, v1, v2);
+	uint16 v3;
+	uint16 v4;
+	Func9F4D(stream, v3, v4);
+	// TODO: Several globals writes around this code
+	uint16 bp2 = ScriptReadWord(stream);
+	uint16 bp4 = ScriptReadWord(stream);
+
+	// TODO: Implement naive string printing here, refine later
 }
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
