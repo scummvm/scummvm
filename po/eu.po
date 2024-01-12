@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-10 16:42+0000\n"
+"PO-Revision-Date: 2024-01-12 20:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -1715,36 +1715,35 @@ msgstr "Erakusle Abiadura:"
 
 #: gui/options.cpp:1401 gui/options.cpp:1403 gui/options.cpp:1404
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Teklatua/joystick abiadura xagua kontrolatzerakoan"
 
 #: gui/options.cpp:1403
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Abiadura:"
 
 #: gui/options.cpp:1414
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy Deadzone:"
 
 #: gui/options.cpp:1414 gui/options.cpp:1416 gui/options.cpp:1417
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Joystick analogikoaren Deadzone-a"
 
 #: gui/options.cpp:1416
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy Deadzone:"
 
 #: gui/options.cpp:1512
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Ezkutuko %d lorpen faltan"
 
 #: gui/options.cpp:1517
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Lorpena desblokeatuta: %d/%d"
 
 #: gui/options.cpp:1563
 msgid "Graphics mode:"
@@ -1764,33 +1763,28 @@ msgstr "Tiratze modua:"
 
 #: gui/options.cpp:1611
 msgid "Scaler:"
-msgstr ""
+msgstr "Eskalatzea:"
 
 #: gui/options.cpp:1625
-#, fuzzy
 msgid "Shader:"
-msgstr "Itzaldura"
+msgstr "Shader-a:"
 
 #: gui/options.cpp:1625 gui/options.cpp:1627 gui/options.cpp:1628
-#, fuzzy
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Jokoak erabiltzen duen datu gehigarrien bide-izena"
+msgstr "Jokoaren pantaila eskalatzeko erabiltzen den shader-aren bidea"
 
 #: gui/options.cpp:1627
-#, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Partida gordeak:"
+msgstr "Shader Bidea:"
 
 #: gui/options.cpp:1634
-#, fuzzy
 msgid "Download Shaders"
-msgstr "Kargatu fitxategia:"
+msgstr "Shader-ak deskargatu"
 
 #: gui/options.cpp:1634
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Eguneraketak bilatzen..."
+msgstr "Shader multzoen eguneraketa bilatu scummvm.org webgunean"
 
 #: gui/options.cpp:1641 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1798,7 +1792,7 @@ msgstr "Pantaila osoa"
 
 #: gui/options.cpp:1644
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1644
 msgid ""
@@ -1807,51 +1801,43 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:1649
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Interfazea:"
+msgstr "3D Jokoen Render-a:"
 
 #: gui/options.cpp:1651
-#, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Interfazea:"
+msgstr "3D Jokoen Render-a:"
 
 #: gui/options.cpp:1668
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Lausotua"
+msgstr "3D Anti-aliasinga:"
 
 #: gui/options.cpp:1672 engines/mohawk/dialogs.cpp:364
-#, fuzzy
 msgid "Disabled"
-msgstr "GFX desgaituta"
+msgstr "Desgaituta"
 
 #: gui/options.cpp:1680
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Grafikoak"
+msgstr "Grafikoak filtratu"
 
 #: gui/options.cpp:1680
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Erabili filtratze linearra grafikoak eskalatzean"
 
 #: gui/options.cpp:1684
 msgid "Aspect ratio correction"
 msgstr "Formatu-ratioaren zuzenketa"
 
 #: gui/options.cpp:1684
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "320x200 jokoentzako formatu-ratioa zuzendu"
+msgstr "Zuzendu jokoen formatu-ratioa"
 
 #: gui/options.cpp:1701
-#, fuzzy
 msgid "Preferred device:"
 msgstr "Gogoko gailua:"
 
 #: gui/options.cpp:1701
-#, fuzzy
 msgid "Music device:"
 msgstr "Musika gailua:"
 
@@ -1864,13 +1850,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Irteerako soinu txartel edo emuladorea ezartzen du"
 
 #: gui/options.cpp:1703
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Gail. gogokoa:"
+msgstr "Gailratz. gogokoa:"
 
 #: gui/options.cpp:1703
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Musika gailua:"
@@ -1884,7 +1868,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib musikarako hainbat jokotan erabiltzen da"
 
 #: gui/options.cpp:1746
-#, fuzzy
 msgid "GM device:"
 msgstr "GM gailua:"
 
@@ -1955,7 +1938,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
 
 #: gui/options.cpp:1811
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS Gailua (gaitu MT-32 bihurketak)"
 
@@ -1972,7 +1954,6 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Ez erabili Roland MT-32 musika"
 
 #: gui/options.cpp:1847
-#, fuzzy
 msgid "Text and speech:"
 msgstr "Testu eta ahotsa:"
 
@@ -1993,7 +1974,6 @@ msgid "Subtitle speed:"
 msgstr "Azpitit. abiadura:"
 
 #: gui/options.cpp:1857
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Testu eta ahotsa:"
@@ -2030,7 +2010,6 @@ msgid "Music volume:"
 msgstr "Musika:"
 
 #: gui/options.cpp:1898
-#, fuzzy
 msgid "Mute all"
 msgstr "Mututu dena"
 
@@ -2057,48 +2036,47 @@ msgid "Speech volume:"
 msgstr "Ahotsak:"
 
 #: gui/options.cpp:2196
-#, fuzzy
 msgid "Control"
-msgstr "Saguaren kontrola"
+msgstr "Kontrola"
 
 #: gui/options.cpp:2298
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Lainoa"
 
 #: gui/options.cpp:2312
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2314
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2324
 msgid "Accessibility"
-msgstr ""
+msgstr "Irisgarritasuna"
 
 #: gui/options.cpp:2326
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Irisgarritasuna"
 
 #: gui/options.cpp:2335
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Baztertu aldaketak eta leihoa itxi"
 
 #: gui/options.cpp:2336
 msgid "Apply"
-msgstr ""
+msgstr "Aplikatu"
 
 #: gui/options.cpp:2336
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Aplikatu aldaketak leihoa itxi gabe"
 
 #: gui/options.cpp:2337
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Aplikatu aldaketak eta leihoa itxi"
 
 #: gui/options.cpp:2424
 msgid "FluidSynth Settings"
