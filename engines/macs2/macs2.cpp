@@ -845,3 +845,32 @@ void AnimFrame::ReadFromeFile(Common::File &file) {
 }
 
 } // End of namespace Macs2
+
+/*
+private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			string[] hexValuesSplit = InputTextBox.Text.Split(' ');
+			string result = String.Empty;
+			byte index = 1;
+			foreach (string hex in hexValuesSplit)
+			{
+				byte value;
+				// Convert the number expressed in base-16 to an integer.
+				try
+				{
+					value = Convert.ToByte(hex, 16);
+				}
+				catch
+				{
+					return;
+				}
+				byte x = (byte)(index * index * 0x0c);
+				byte y = (byte)(value ^ index);
+				byte r = (byte)(x ^ y);
+				result += (char)r;
+				index++;
+			}
+			OutputTextBlock.Text = result;
+		}
+
+*/
