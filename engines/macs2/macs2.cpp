@@ -351,7 +351,9 @@ void Macs2Engine::readResourceFile() {
 	// Standing towards the right
 	// file.seek(0x001CC5D9);
 	// Also standing towards the right
-	file.seek(0x000D0B26);
+	// file.seek(0x000D0B26);
+
+	file.seek(0x006AB0FD);
 	
 
 	_guyWidth = file.readUint16LE();
@@ -363,6 +365,12 @@ void Macs2Engine::readResourceFile() {
 	file.seek(0x00248ECB);
 	_shadingTable = new byte[256];
 	file.read(_shadingTable, 256);
+
+	// Load the strings for the scene
+	file.seek(0x000D2F22);
+	numBytesStrings = file.readUint16LE();
+	stringsData = new byte[numBytesStrings];
+	file.read(stringsData, numBytesStrings);
 
 }
 
@@ -611,6 +619,13 @@ void Macs2Engine::NextCursorMode() {
 	}
 }
 
+void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
+
+	// TODO: Labels above not handled yet
+	// TODO: Lots of details not handled
+	// l0037_A94E:
+}
+
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 	PlaySound();
 
@@ -725,6 +740,9 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 			cmp al, 10h jnz 0DE7Ah
 
 				l0037_DE72 : call far 0037h : 0B843h jmp 0E3BAh */
+		} else if (opcode1 == 0x0a) {
+			// TODO: Push 0
+			ScriptPrintString();
 		}
 		else {
 			ScriptNoEntry

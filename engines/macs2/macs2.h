@@ -130,9 +130,10 @@ public:
 	uint16* _flagWidths;
 	uint16* _flagHeights;
 
-	
-
 	byte* mapData;
+
+	uint16 numBytesStrings;
+	byte *stringsData;
 
 	CursorMode _cursorMode = CursorMode::Touch;
 
@@ -142,6 +143,8 @@ public:
 
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
+
+	void ScriptPrintString(Common::MemoryReadStream *stream);
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
