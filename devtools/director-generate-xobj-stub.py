@@ -569,8 +569,12 @@ def generate_xobject_stubs(
         elems = e.split()
         if not elems or elems[0].startswith("--"):
             continue
-        returnval = elems[0][0]
-        args = elems[0][1:]
+
+        first = elems[0]
+        if first.startswith("/"):
+            first = first[1:]
+        returnval = first[0]
+        args = first[1:]
         methname = elems[1].split(",")[0]
         if methname.startswith("+"):
             methname = methname[1:]
@@ -585,7 +589,6 @@ def generate_xobject_stubs(
                 default='""' if returnval == "S" else "0",
             )
         )
-
     xobject_class = f"{name}XObject"
     xobj_class = f"{name}XObj"
 
