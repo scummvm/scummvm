@@ -56,7 +56,7 @@ public:
 	SpiffGenerator(int seed);
 	~SpiffGenerator();
 
-	MapFile *generateMap(int water, int mapSize, int energy, int terrain);
+	MapFile *generateMap(int water, int tileset, int mapSize, int energy, int terrain);
 
 private:
 	int _seed;

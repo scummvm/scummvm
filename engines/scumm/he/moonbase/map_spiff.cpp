@@ -32,7 +32,7 @@ SpiffGenerator::SpiffGenerator(int seed) {
 SpiffGenerator::~SpiffGenerator() {
 }
 
-MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int terrain) {
+MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int energy, int terrain) {
 	totalMapSizeG = mapSize;
 	energyAmountG = (2 + energy) * totalMapSizeG * totalMapSizeG;
 
@@ -69,7 +69,7 @@ MapFile *SpiffGenerator::generateMap(int water, int mapSize, int energy, int ter
 	levelMap[MEDIUM] = 1;
 	levelMap[LOW] = 0;
 
-	mif.mapType = terrain;
+	mif.mapType = tileset;
 	Common::sprintf_s(mif.name, "Spiff %04X", _seed);
 
 	mif.dimension = totalMapSizeG;
