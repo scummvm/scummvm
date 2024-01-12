@@ -95,14 +95,24 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& fil
 void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 {
 	file.seek(offs);
-	uint16 numObjects = file.readUint16LE();
-	for (int i = 0; i < numObjects; i++) {
-		uint16 x = file.readUint16LE();
-		uint16 y = file.readUint16LE();
+	_numBackgroundAnimations = file.readUint16LE();
+	_backgroundAnimations = new BackgroundAnimation[_numBackgroundAnimations];
+	for (int i = 0; i < _numBackgroundAnimations; i++) {
+		BackgroundAnimation &current = _backgroundAnimations[i];
+		current.X = file.readUint16LE();
+		current.Y = file.readUint16LE();
 		uint32 numBytes = file.readUint32LE();
-		byte* data = new byte[numBytes];
-		file.read(data, numBytes);
+		// byte* data = new byte[numBytes];
+		// file.read(data, numBytes);
 		// TODO: Extract the frames
+		// Skip ahead to the number of frames
+		file.seek(0x18, SEEK_CUR);
+		current.numFrames = file.readUint16LE();
+		current.Frames = new AnimFrame[current.numFrames];
+		for (int j = 0; j < current.numFrames; j++) {
+			current.Frames[j].ReadFromeFile(file);
+		}
+		// TODO: Figure out the trailing values?
 		uint16 unknown1 = file.readUint16LE();
 		uint16 unknown2 = file.readByte();
 		uint16 unknown3 = file.readByte();
@@ -170,6 +180,7 @@ DOS file read from file 5 (RESOURCE.MCS) bytes read 2 to address: 029f:5169, cal
 DOS file read from file 5 (RESOURCE.MCS) bytes read 4 to address: 029f:516b, caller 01e7:2797, values: 34060000
 # This here seems to be the flag
 # Introducing line breaks below to see the different animation frames - The 000000000100 part seems to belong to each frame
+# Guessing that at local offset 0x18 there is the amount of frames
 DOS file read from file 5 (RESOURCE.MCS) bytes read 1588 to address: 045f:0000, caller 01e7:2800, values: 0100010000000000000005000b0c0d03010300
 0000000001001b0013002d117a872d2d03112d1111031103036868686868555555555502554b5492af11686855685555555555024b4b4b6868684b4b554b554b55549292a092383835927a54554b4b4b4b4b024b4b4b6868681168114b05ac35b835323535929238927a54554b4b4b4b4b6842032d03114b05b654a735323535323232a19292353838927a54552d2d111111547eac6865353235353232a13535353532a1359292353592362d555e05ac115eb835353532a13235353532a1323535353538a14b11115405b6115eb8353535a13232353535a1323235353532a135112d117aa7ac1165b83535a13532323235a1353232353535a1383511366897a76e11a7b8359c3535323232a1353532323535a132383511111197a76e5492b89c35353532329c353535323235a1353238354b111197a7ac35b8a43535353232a1353535323232a13535323835112d1197af9235b832353535329c3535353532329c353535323835114b689d92afa0a338383535a43235353535329c323535353238354b116897a7ab2d11547a92a3383835353532a432323235353238354b2d4b97a7b64268024b4b4b68547a9292a392389235353532353511114b97a1ac4b4b4b4b4b4b68024b4b4b4b547a929292353535352d684b9724694b4b686855114b4b4b4b4b4b4b4b4b686868111155684b687a532768555555555511114b4b4b4b4b1111111168554b55684b
 0000000001001b0013002d117a872d2d03112d1111031103036868686868555555555502554b5492af11686855685555555555024b4b4b6868684b4b554b554b55549292a092383835927a54554b4b4b4b4b024b4b4b6868681168114b05ac35b83532353592929238927a544b4b4b4b4b6842032d03114b05b654a73532353532323232a1929238387a54554b2d2d111111547eac6865353235353232329c35353532a192923535924b362d555e05ac115eb8353535329ca132353535a13235353538a14b4b11115405b6115eb8353535a1a132323535359c32353532a1354b112d117aa7ac1165b83535a1353532323235a132323535a135354b11366897a76e11a7b8359c353535323232a135323235a13235354b11111197a76e5492b89c3535353532329c35353232a1353235354b4b111197a7ac35b8a4353535323232a135353532359c353235354b112d1197af9235b83235353532329c35353535329c9c353235354b114b689d92afa0a33838353535a4323535353535a435353235354b4b116897a7ab2d4b547a9235a4383835353532a43235353535354b4b2d4b97a7b6424b024b4b4b4b4b547a9292a3389235353535356811114b97a1ac4b4b4b4b4b4b6868024b4b4b547a9292353535354b2d684b9724694b4b686855114b4b4b4b4b4b4b4b4b4b4b4b111168684b687a532768555555555511114b4b4b4b4b1111111168554b55684b
@@ -309,6 +320,9 @@ void Macs2Engine::readResourceFile() {
 	_flagData[2] = new byte[_flagWidths[2] * _flagHeights[2]];
 	file.read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
 
+	
+	readBackgroundAnimations(0x0024C034, file);
+
 	// Load the script
 	file.seek(0x000A3B98);
 	uint16 scriptLength = file.readUint16LE();
@@ -371,6 +385,10 @@ void Macs2Engine::readResourceFile() {
 	numBytesStrings = file.readUint16LE();
 	stringsData = new byte[numBytesStrings];
 	file.read(stringsData, numBytesStrings);
+
+	// Load the objects data
+	file.seek(0x6a5913);
+
 
 }
 
@@ -754,7 +772,7 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 				l0037_DE72 : call far 0037h : 0B843h jmp 0E3BAh */
 		} else if (opcode1 == 0x0a) {
 			// TODO: Push 0
-			ScriptPrintString();
+			ScriptPrintString(stream);
 		}
 		else {
 			ScriptNoEntry
