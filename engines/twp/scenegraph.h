@@ -261,6 +261,7 @@ public:
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
+	Common::String getCursorName() const;
 
 private:
 	bool _inputHUD = false;
@@ -268,7 +269,6 @@ private:
     bool _showCursor = false;
     bool _inputVerbsActive = false;
     CursorShape _cursorShape = CursorShape::Normal;
-    Common::String _cursorName = "cursor";
     bool _hotspot = false;
 };
 

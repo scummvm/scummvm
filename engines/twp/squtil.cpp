@@ -75,6 +75,12 @@ SQInteger sqpush(HSQUIRRELVM v, Common::String value) {
 }
 
 template<>
+SQInteger sqpush(HSQUIRRELVM v, const char* value) {
+	sq_pushstring(v, value, -1);
+	return 1;
+}
+
+template<>
 SQInteger sqpush(HSQUIRRELVM v, HSQOBJECT value) {
 	sq_pushobject(v, value);
 	return 1;

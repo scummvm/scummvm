@@ -69,6 +69,7 @@ MODULE_OBJS = \
 	savegame.o \
 	btea.o \
 	time.o \
+	dialogs.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

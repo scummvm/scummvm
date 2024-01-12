@@ -24,6 +24,7 @@
 #include "math/vector2d.h"
 #include "graphics/opengl/debug.h"
 #include "graphics/opengl/system_headers.h"
+#include "common/config-manager.h"
 
 namespace Twp {
 
@@ -129,15 +130,13 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 
 	// draw HUD background
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
-	// TODO: let classic = prefs(ClassicSentence);
-	bool classic = true;
+	bool classic = ConfMan.getBool("hudSentence");
 	const SpriteSheetFrame &backingFrame = gameSheet->frameTable[classic ? "ui_backing_tall" : "ui_backing"];
 	Texture *gameTexture = g_engine->_resManager.texture(gameSheet->meta.image);
 	float alpha = 0.33f; // prefs(UiBackingAlpha);
 	g_engine->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha), trsf);
 
-	// TODO; let verbHlt = prefs(InvertVerbHighlight);
-	bool verbHlt = true;
+	bool verbHlt = ConfMan.getBool("invertVerbHighlight");
 	Color verbHighlight = verbHlt ? Color() : slot->verbUiColors.verbHighlight;
 	Color verbColor = verbHlt ? slot->verbUiColors.verbHighlight : Color();
 
@@ -146,7 +145,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	Texture *verbTexture = g_engine->_resManager.texture(verbSheet->meta.image);
 	// let lang = prefs(Lang);
 	Common::String lang = "en";
-	bool retroVerbs = false; // prefs(RetroVerbs);
+	bool retroVerbs = ConfMan.getBool("retroVerbs");
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 
 	Shader *saveShader = g_engine->getGfx().getShader();

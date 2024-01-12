@@ -216,8 +216,8 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 				}
 			}
-			// Just clicking on the ground
-			cancelSentence(_actor);
+			// TODO: Just clicking on the ground
+			//     cancelSentence(self.actor)
 		} else if (_cursor.isRightDown()) {
 			// button right: execute default verb
 			if (obj) {
@@ -660,6 +660,9 @@ Common::Error TwpEngine::run() {
 		const SQChar *code = "start(1)";
 		_vm.exec(code);
 	}
+
+	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
+	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
 
 	static int speed = 1;
 

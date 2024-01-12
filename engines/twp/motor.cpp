@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "twp/twp.h"
 #include "twp/motor.h"
 #include "twp/object.h"
@@ -315,6 +317,8 @@ void Talking::update(float elapsed) {
 }
 
 int Talking::loadActorSpeech(const Common::String &name) {
+	if(!ConfMan.getBool("talkiesHearVoice")) return 0;
+
 	debug("loadActorSpeech %s.ogg", name.c_str());
 	Common::String filename(name);
 	filename.toUppercase();

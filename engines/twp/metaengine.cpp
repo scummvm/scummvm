@@ -19,6 +19,13 @@
  *
  */
 
+
+#include "gui/gui-manager.h"
+#include "gui/widget.h"
+#include "gui/widgets/edittext.h"
+#include "gui/widgets/popup.h"
+#include "gui/ThemeEval.h"
+
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "backends/keymapper/keymapper.h"
@@ -31,6 +38,7 @@
 #include "twp/savegame.h"
 #include "twp/time.h"
 #include "twp/actions.h"
+#include "twp/dialogs.h"
 
 #define MAX_SAVES 99
 
@@ -68,6 +76,17 @@ bool TwpMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 int TwpMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
+}
+
+void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
+	ConfMan.registerDefault("toiletPaperOver", false);
+	ConfMan.registerDefault("annoyingInJokes", false);
+	ConfMan.registerDefault("invertVerbHighlight", false);
+	ConfMan.registerDefault("retroFonts", false);
+	ConfMan.registerDefault("retroVerbs", false);
+	ConfMan.registerDefault("hudSentence", false);
+	ConfMan.registerDefault("talkiesShowText", true);
+	ConfMan.registerDefault("talkiesHearVoice", true);
 }
 
 SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -134,6 +153,11 @@ SaveStateList TwpMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+GUI::OptionsContainerWidget *TwpMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	GUI::OptionsContainerWidget *widget = new Twp::TwpOptionsContainerWidget(boss, name, target);
+	return widget;
 }
 
 Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) const {
