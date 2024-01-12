@@ -446,7 +446,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			dataArray = (uint32 *)((intptr)*(myAnim8->dataHandle) + myAnim8->dataOffset);
 
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
-			*argValue = FROM_LE_32(dataArray[myIndex]);
+			*argValue = (int32)FROM_LE_32(dataArray[myIndex]);
 			*argPtr = argValue;
 			break;
 		}
