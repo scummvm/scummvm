@@ -434,7 +434,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0unhandled) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_STEP)) {
+	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0unhandled) && hasMovementFlags(MOVE_MOUSE_DIRECTION | MOVE_STEP)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		// We got a left mouse down while already moving in any direction or holding the step button.
 		// CHECKME: check what needs to happen when keeping left pressed

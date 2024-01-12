@@ -199,6 +199,8 @@ void Ultima8Engine::pauseEngineIntern(bool pause) {
 		if (midiPlayer)
 			midiPlayer->pause(pause);
 	}
+
+	_avatarMoverProcess->resetMovementFlags();
 }
 
 bool Ultima8Engine::hasFeature(EngineFeature f) const {
