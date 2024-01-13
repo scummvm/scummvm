@@ -527,14 +527,6 @@ void OSystem_Android::initBackend() {
 		ConfMan.setPath("browser_lastpath", "/");
 	}
 
-	if (!ConfMan.hasKey("gui_scale")) {
-		// Until a proper scale detection is done (especially post PR https://github.com/scummvm/scummvm/pull/3264/commits/8646dfca329b6fbfdba65e0dc0802feb1382dab2),
-		// set scale by default to large, if not set, and then let the user set it manually from the launcher -> Options -> Misc tab
-		// Otherwise the screen may default to very tiny and indiscernible text and be barely usable.
-		// TODO We need a proper scale detection for Android, see: (float) AndroidGraphicsManager::getHiDPIScreenFactor() in android/graphics.cpp
-		ConfMan.setInt("gui_scale", 125); // "Large" (see gui/options.cpp and guiBaseValues[])
-	}
-
 	Common::String basePath = JNI::getScummVMBasePath();
 
 	_savefileManager = new AndroidSaveFileManager(Common::Path(basePath, Common::Path::kNativeSeparator).joinInPlace("saves"));

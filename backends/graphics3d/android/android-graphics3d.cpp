@@ -980,7 +980,7 @@ void AndroidGraphics3dManager::updateScreenRect() {
 
 	if (w && h && _ar_correction) {
 
-		float dpi[2];
+		JNI::DPIValues dpi;
 		JNI::getDPI(dpi);
 
 		float screen_ar;
@@ -1069,14 +1069,11 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 }
 
 float AndroidGraphics3dManager::getHiDPIScreenFactor() const {
-	// TODO: Use JNI to get DisplayMetrics.density, which according to the documentation
-	// seems to be what we want.
-	// "On a medium-density screen, DisplayMetrics.density equals 1.0; on a high-density
-	//  screen it equals 1.5; on an extra-high-density screen, it equals 2.0; and on a
-	//  low-density screen, it equals 0.75. This figure is the factor by which you should
-	//  multiply the dp units in order to get the actual pixel count for the current screen."
-
-	return 2.f;
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	// Scale down the Android factor else the GUI is too big and
+	// there is not much options to go smaller
+	return dpi[2] / 1.2;
 }
 
 AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {

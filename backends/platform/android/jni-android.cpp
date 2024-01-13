@@ -251,13 +251,15 @@ void JNI::throwRuntimeException(JNIEnv *env, const char *msg) {
 
 // calls to the dark side
 
-void JNI::getDPI(float *values) {
-	values[0] = 0.0;
-	values[1] = 0.0;
+void JNI::getDPI(DPIValues &values) {
+	// Use sane defaults in case something goes wrong
+	values[0] = 160.0;
+	values[1] = 160.0;
+	values[2] = 1.0;
 
 	JNIEnv *env = JNI::getEnv();
 
-	jfloatArray array = env->NewFloatArray(2);
+	jfloatArray array = env->NewFloatArray(3);
 
 	env->CallVoidMethod(_jobj, _MID_getDPI, array);
 
@@ -267,16 +269,15 @@ void JNI::getDPI(float *values) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	} else {
-		jfloat *res = env->GetFloatArrayElements(array, 0);
+		env->GetFloatArrayRegion(array, 0, 3, values);
+		if (env->ExceptionCheck()) {
+			LOGE("Failed to get DPIs");
 
-		if (res) {
-			values[0] = res[0];
-			values[1] = res[1];
-
-			env->ReleaseFloatArrayElements(array, res, 0);
+			env->ExceptionDescribe();
+			env->ExceptionClear();
 		}
 	}
-	LOGD("JNI::getDPI() xdpi: %f, ydpi: %f", values[0], values[1]);
+	LOGD("JNI::getDPI() xdpi: %f, ydpi: %f, density: %f", values[0], values[1], values[2]);
 	env->DeleteLocalRef(array);
 }
 
