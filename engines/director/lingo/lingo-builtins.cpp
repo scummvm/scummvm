@@ -1890,6 +1890,10 @@ void LB::b_alert(int nargs) {
 void LB::b_clearGlobals(int nargs) {
 	for (auto &it : g_lingo->_globalvars) {
 		if (!it._value.ignoreGlobal) {
+			// For some reason, factory objects are not removed
+			// by this command.
+			if (it._value.type == OBJECT && it._value.u.obj->getObjType() & (kFactoryObj | kScriptObj))
+				continue;
 			g_lingo->_globalvars.erase(it._key);
 		}
 	}
