@@ -3970,7 +3970,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 428902430),
 	GAME_ENTRY_PLATFORM("atotk", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719, "Steam/Deluxe"),
 	GAME_ENTRY_PLATFORM("atotk", "atotk.ags", "68d4f3488a9dcec74584651c0e29e439", 5078866, "Steam/Deluxe"), // 2.04 Eng-Hun
-	GAME_ENTRY("atotk", "ATOTK.ags", "e6964f210afb6a6e967434707e63f12c", 62648678), // 2.0.6 Eng-Hun-Ger
+	GAME_ENTRY_PLATFORM("atotk", "ATOTK.ags", "e6964f210afb6a6e967434707e63f12c", 62648678, "Deluxe"), // 2.0.6 Eng-Hun-Ger (Steam/Zoom)
+	GAME_ENTRY_PLATFORM("atotk", "ATOTK.ags", "427e0c98848d2afd7bc8534b481927e9", 62648886, "GOG.com/Deluxe"), // 2.0.6 Eng-Hun-Ger
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),  // Eng-Ita
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
