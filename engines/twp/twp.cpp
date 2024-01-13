@@ -386,13 +386,13 @@ void TwpEngine::update(float elapsed) {
 			} else if (_room->_fullscreen == FULLSCREENROOM && _noun1) {
 				// if the object is a door, it has a flag indicating its direction: left, right, front, back
 				int flags = _noun1->getFlags();
-				if (flags & DOOR_LEFT)
+				if ((flags & DOOR_LEFT)==DOOR_LEFT)
 					_inputState.setCursorShape(CursorShape::Left);
-				else if (flags & DOOR_RIGHT)
+				else if ((flags & DOOR_RIGHT)==DOOR_RIGHT)
 					_inputState.setCursorShape(CursorShape::Right);
-				else if (flags & DOOR_FRONT)
+				else if ((flags & DOOR_FRONT)==DOOR_FRONT)
 					_inputState.setCursorShape(CursorShape::Front);
-				else if (flags & DOOR_BACK)
+				else if ((flags & DOOR_BACK)==DOOR_BACK)
 					_inputState.setCursorShape(CursorShape::Back);
 				else
 					_inputState.setCursorShape(CursorShape::Normal);
