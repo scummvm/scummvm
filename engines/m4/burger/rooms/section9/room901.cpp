@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section9/room901.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
@@ -95,8 +96,13 @@ void Room901::daemon() {
 		break;
 
 	case MENU_3:
-		player_set_commands_allowed(false);
-		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9005);
+		if (g_engine->isDemo()) {
+			warning("This option is not available under ScummVM");
+			_G(game).setRoom(601);
+		} else {
+			player_set_commands_allowed(false);
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9005);
+		}
 		break;
 
 	case MENU_4:
@@ -106,9 +112,14 @@ void Room901::daemon() {
 
 	case MENU_5:
 	case MENU_8:
-		_G(room902Flag) = _G(kernel).trigger == 8;
-		player_set_commands_allowed(false);
-		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9002);
+		if (g_engine->isDemo()) {
+			warning("This option is not available under ScummVM");
+			_G(game).setRoom(601);
+		} else {
+			_G(room902Flag) = _G(kernel).trigger == 8;
+			player_set_commands_allowed(false);
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9002);
+		}
 		break;
 
 	case MENU_RESTARTING:
