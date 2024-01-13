@@ -334,7 +334,7 @@ void Room104::daemon() {
 			else if (_stolieSleepCtr < 14)
 				frame = 18;
 			else {
-				switch (getRandom()) {
+				switch (imath_ranged_rand(1, 3)) {
 				case 1:
 					frame = 15;
 					break;
