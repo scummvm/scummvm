@@ -133,8 +133,8 @@
 {
 	{
 		"gob3",
-		"",
-		AD_ENTRY1("intro.stk", "4e3af248a48a2321364736afab868527"),
+		"v0.50",
+		AD_ENTRY1s("intro.stk", "4e3af248a48a2321364736afab868527", 204265),
 		RU_RUS,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
