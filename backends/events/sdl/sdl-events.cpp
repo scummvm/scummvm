@@ -129,6 +129,10 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 				// We allow Hebrew characters
 				if (unicode >= 0x05D0 && unicode <= 0x05EA)
 					return unicode;
+				
+				// Cyrillic
+				if (unicode >= 0x0400 && unicode <= 0x045F)
+					return unicode;
 
 				// We must not restrict as much as when Ctrl/Alt-modifiers are active, otherwise
 				// we wouldn't let umlauts through for SDL1. For SDL1 umlauts may set for example KEYCODE_QUOTE, KEYCODE_MINUS, etc.
