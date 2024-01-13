@@ -95,16 +95,19 @@ void Vars::main_cold_data_init() {
 	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_executing]);
 
 	// Set up game mode and starting room
-	_executing = WHOLE_GAME;
+	_executing = !g_engine->isDemo() ? WHOLE_GAME : INTERACTIVE_DEMO;
 
 	switch (_executing) {
 	case JUST_OVERVIEW:
 		_game.setRoom(971);		// Burger overview starts right in at 971
 		break;
+
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
-		_game.setRoom(901);		// Burger Demo starts at the demo menu screen
+		// Burger Demo starts at the demo menu screen
+		_game.setRoom(901);
 		break;
+
 	case WHOLE_GAME:
 		_game.setRoom(g_engine->autosaveExists() ? 903 : 951);
 		break;

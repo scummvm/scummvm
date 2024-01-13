@@ -74,6 +74,9 @@ Common::Language M4Engine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+bool M4Engine::isDemo() const {
+	return (getFeatures() & ADGF_DEMO) != 0;
+}
 
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode

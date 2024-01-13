@@ -102,6 +102,11 @@ public:
 	Common::Language getLanguage() const;
 
 	/**
+	 * Return if it's a demo
+	 */
+	bool isDemo() const;
+
+	/**
 	 * Gets a random number
 	 */
 	uint32 getRandomNumber(uint maxNum) {
