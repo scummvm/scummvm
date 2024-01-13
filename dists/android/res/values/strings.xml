@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">ScummVM</string>
+	<string name="app_name_debug">ScummVM (debug)</string>
 	<string name="app_desc">Graphic adventure game engine</string>
 	<string name="ok">OK</string>
 	<string name="quit">Quit</string>

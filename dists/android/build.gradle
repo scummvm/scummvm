@@ -83,9 +83,12 @@ android {
     }
     buildTypes {
         debug{
+            applicationIdSuffix "debug"
+            manifestPlaceholders = [nameSuffix:"_debug"]
             debuggable true
         }
         release {
+            manifestPlaceholders = [nameSuffix:""]
             debuggable false
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
