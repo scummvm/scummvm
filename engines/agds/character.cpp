@@ -194,15 +194,19 @@ bool Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1 || !_enabled)
 		return false;
 
-	_description = nullptr;
-	_shown = true;
 	auto character = jokes? _engine->jokes(): this;
-	_description = character->animationDescription(direction);
-	auto animation = _description? _engine->loadAnimation(_description->filename): nullptr;
-	if (!animation) {
+	auto description = character->animationDescription(direction);
+	if (!description) {
 		warning("no %s animation %d", jokes? "jokes": "character", direction);
 		return false;
 	}
+	auto animation = _engine->loadAnimation(description->filename);
+	if (!animation) {
+		warning("no %s animation file %s", jokes? "jokes": "character", description->filename.c_str());
+		return false;
+	}
+	_description = description;
+	_shown = true;
 	_animation = animation;
 	_animation->speed(speed);
 	_animation->rewind();
