@@ -78,7 +78,12 @@ public:
 	static void wakeupForQuit();
 
 	static void setWindowCaption(const Common::U32String &caption);
-	static void getDPI(float *values);
+
+	/**
+	 * Array members of DPIValues are xdpi, ydpi, density
+	 **/
+	typedef float DPIValues[3];
+	static void getDPI(DPIValues &values);
 	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();

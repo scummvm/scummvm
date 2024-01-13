@@ -211,14 +211,11 @@ void AndroidGraphicsManager::hideOverlay() {
 }
 
 float AndroidGraphicsManager::getHiDPIScreenFactor() const {
-	// TODO: Use JNI to get DisplayMetrics.density, which according to the documentation
-	// seems to be what we want.
-	// "On a medium-density screen, DisplayMetrics.density equals 1.0; on a high-density
-	//  screen it equals 1.5; on an extra-high-density screen, it equals 2.0; and on a
-	//  low-density screen, it equals 0.75. This figure is the factor by which you should
-	//  multiply the dp units in order to get the actual pixel count for the current screen."
-
-	return 2.f;
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	// Scale down the Android factor else the GUI is too big and
+	// there is not much options to go smaller
+	return dpi[2] / 1.2;
 }
 
 bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
@@ -226,7 +223,6 @@ bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHe
 
 	// We get this whenever a new resolution is requested. Since Android is
 	// using a fixed output size we do nothing like that here.
-	// TODO: Support screen rotation
 	return true;
 }
 
