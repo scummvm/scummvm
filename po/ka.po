@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2023-12-08 21:24+0000\n"
+"PO-Revision-Date: 2024-01-14 03:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -4358,10 +4358,8 @@ msgstr ""
 
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting help"
-msgstr "&პარამეტრები"
+msgstr "დახმარების მიღება"
 
 #: backends/platform/android/android.cpp:1034
 msgid ""
