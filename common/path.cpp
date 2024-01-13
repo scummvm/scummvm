@@ -1122,7 +1122,7 @@ Path Path::fromConfig(const String &value) {
 		// As / is forbidden in paths under WIN32, this will never be a collision
 		value_.replace(Path::kNativeSeparator, '/');
 		// As we have \, we are sure we didn't punyencode this path
-		return Path(value, '/');
+		return Path(value_, '/');
 	}
 #endif
 
