@@ -48,6 +48,10 @@ M4Engine *g_engine;
 M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("M4") {
 	g_engine = this;
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 }
 
 M4Engine::~M4Engine() {

@@ -39,9 +39,15 @@ const DebugChannelDef M4MetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
+static const char *const DIRECTORY_GLOBS[] = {
+	"goodstuf", "resource", nullptr
+};
+
 M4MetaEngineDetection::M4MetaEngineDetection() : AdvancedMetaEngineDetection(M4::gameDescriptions,
 		sizeof(M4::M4GameDescription), M4::m4Games) {
 	_guiOptions = GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD);
+	_maxScanDepth = 2;
+	_directoryGlobs = DIRECTORY_GLOBS;
 }
 
 REGISTER_PLUGIN_STATIC(M4_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, M4MetaEngineDetection);
