@@ -226,6 +226,7 @@ private:
 	PathNode _pathNode;
 	Shader _bwShader;
 	Shader _ghostShader;
+	Shader _sepiaShader;
 };
 
 extern TwpEngine *g_engine;
