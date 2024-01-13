@@ -92,9 +92,38 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& fil
 	return result;
 }
 
+int previewNumFrames(int64 offs, Common::File& file) {
+	file.seek(offs);
+	int64 numBytes = file.readUint32LE();
+	// byte* data = new byte[numBytes];
+	// file.read(data, numBytes);
+	// TODO: Extract the frames
+	// Skip ahead to the start of the first frame
+	file.seek(20, SEEK_CUR);
+	numBytes -= 20;
+	int numFrames = 0;
+	while (numBytes > 0) {
+		file.seek(6, SEEK_CUR);
+		numBytes -= 6;
+		uint16 x = file.readUint16LE();
+		uint16 y = file.readUint16LE();
+		file.seek(x * y, SEEK_CUR);
+		numBytes -= 4 + 4 + x * y;
+		numFrames++;
+	}
+	file.seek(offs);
+	return numFrames;
+}
+
 void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 {
-	return;
+	// Load number of frames
+	// Skip to width and height, skip data
+	// Do until we hit the amount of bytes to load
+	// TODO: Later on figure out the actual amount of data
+
+
+
 	// TODO: Figure out the skipped data
 	file.seek(offs);
 	_numBackgroundAnimations = file.readUint16LE();
@@ -103,12 +132,20 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 		BackgroundAnimation &current = _backgroundAnimations[i];
 		current.X = file.readUint16LE();
 		current.Y = file.readUint16LE();
+		// current.numFrames = previewNumFrames(file.pos(), file);
 		uint32 numBytes = file.readUint32LE();
+		// Skip to the intermediary data
+		file.seek(10, SEEK_CUR);
+		uint16 nextNumBytes = file.readUint16LE();
+		file.seek(nextNumBytes, SEEK_CUR);
+
+
+		// int64 endPos = file.pos() + numBytes;
 		// byte* data = new byte[numBytes];
 		// file.read(data, numBytes);
 		// TODO: Extract the frames
-		// Skip ahead to the number of frames
-		file.seek(18, SEEK_CUR);
+		// Skip ahead to the number of frames (?)
+		// file.seek(20, SEEK_CUR);
 		current.numFrames = file.readUint16LE();
 		current.Frames = new AnimFrame[current.numFrames];
 		for (int j = 0; j < current.numFrames; j++) {
@@ -116,6 +153,9 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 			file.seek(6, SEEK_CUR);
 			current.Frames[j].ReadFromeFile(file);
 		}
+		// TODO: This allows us to skip over a faulty implementation, but
+		// probably missing some valid data or loading wrong data
+		// file.seek(endPos);
 		// TODO: Figure out the trailing values?
 		uint16 unknown1 = file.readUint16LE();
 		uint16 unknown2 = file.readByte();
@@ -287,7 +327,8 @@ void Macs2Engine::readResourceFile() {
 	}
 
 	// Load the data for a border part
-	file.seek(0x64C6);
+	// file.seek(0x64C6);
+	file.seek(0x0000602A);
 
 	_borderWidth = file.readUint16LE();
 	_borderHeight = file.readUint16LE();
@@ -296,6 +337,7 @@ void Macs2Engine::readResourceFile() {
 
 	// And the highlight part
 	file.seek(0x6962);
+	
 
 	_borderHighlightWidth = file.readUint16LE();
 	_borderHighlightHeight = file.readUint16LE();
@@ -340,7 +382,9 @@ void Macs2Engine::readResourceFile() {
 	// Load the background map
 	// _map = readRLEImage(0x0024BD9B, file);
 	// _map = readRLEImage(0x00248FCE, file);
-	_map = readRLEImage(0x0024B0DF, file);
+	// Next on is the actual map
+	// _map = readRLEImage(0x0024B0DF, file);
+	_map = readRLEImage(0x0023BE09, file);
 
 	// Load the data for the mouse cursor
 
