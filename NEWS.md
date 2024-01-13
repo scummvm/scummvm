@@ -11,7 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Enabled engine, allowing MM1 and Xeen to be compiled.
-   
+
  MTROPOLIS:
    - Fixed crash in Muppet Treasure Island on some platforms.
 
@@ -31,6 +31,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix ladder climbing regression.
    - Fix scenery zoom issue.
    - Fix animation glitches after using the holomap.
+
+ Ultima:
+   - Fix Ultima VIII hidden minimap blocking keyring use
+   - Fix Ultima VIII page breaks in books
+   - Fix Ultima VIII text centering for plaques
+   - Fix Ultima VIII crash on dragging items to screen edge
+   - Fix Ultima VIII unexpected jumping on left click
 
  Android port:
    - Fixed crash in built-in help with German language.
