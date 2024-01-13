@@ -206,6 +206,8 @@ public:
 	const AnimationPtr &processAnimation() const {
 		return _processAnimation;
 	}
+
+	void removeProcessAnimation();
 };
 
 

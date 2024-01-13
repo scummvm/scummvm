@@ -126,8 +126,7 @@ public:
 	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
 	void runObject(const ObjectPtr &object);
 	void runProcess(const ObjectPtr &object, uint ip = 0);
-	void stopProcess(const Common::String & name);
-	void stopProcessForObject(const Common::String & name);
+	ProcessPtr findProcess(const Common::String & name) const;
 	void reactivate(const Common::String &name, const Common::String &where, bool runNow = false);
 	bool hasActiveProcesses(const Common::String &name) const;
 	void runPendingReactivatedProcesses();

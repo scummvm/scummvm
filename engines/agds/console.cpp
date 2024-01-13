@@ -81,7 +81,12 @@ bool Console::stop(int argc, const char **argv) {
 		return true;
 	}
 	_engine->getCurrentScreen()->remove(object);
-	_engine->stopProcess(argv[1]);
+	auto process = _engine->findProcess(argv[1]);
+	if (!process) {
+		debugPrintf("no process %s\n", argv[1]);
+		return true;
+	}
+	process->done();
 	detach();
 	return false;
 }

@@ -1391,17 +1391,13 @@ void AGDSEngine::runPendingReactivatedProcesses() {
 	}
 }
 
-void AGDSEngine::stopProcess(const Common::String & name) {
-	auto *screen = getCurrentScreen();
+ProcessPtr AGDSEngine::findProcess(const Common::String & name) const {
 	for(uint i = 0; i < _processes.size(); ++i) {
-		ProcessPtr &process = _processes[i];
-		if (process && process->getName() == name) {
-			debug("stopping %s...", name.c_str());
-			process->done();
-			// Original engine removes global animations only from object reinitialisation.
-			screen->remove(process->processAnimation());
-		}
+		const ProcessPtr &process = _processes[i];
+		if (process && !process->finished() && process->getName() == name)
+			return process;
 	}
+	return {};
 }
 
 void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
