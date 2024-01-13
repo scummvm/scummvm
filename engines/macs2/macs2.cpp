@@ -94,6 +94,8 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& fil
 
 void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 {
+	return;
+	// TODO: Figure out the skipped data
 	file.seek(offs);
 	_numBackgroundAnimations = file.readUint16LE();
 	_backgroundAnimations = new BackgroundAnimation[_numBackgroundAnimations];
@@ -106,10 +108,12 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 		// file.read(data, numBytes);
 		// TODO: Extract the frames
 		// Skip ahead to the number of frames
-		file.seek(0x18, SEEK_CUR);
+		file.seek(18, SEEK_CUR);
 		current.numFrames = file.readUint16LE();
 		current.Frames = new AnimFrame[current.numFrames];
 		for (int j = 0; j < current.numFrames; j++) {
+			// Skip to width and height
+			file.seek(6, SEEK_CUR);
 			current.Frames[j].ReadFromeFile(file);
 		}
 		// TODO: Figure out the trailing values?
