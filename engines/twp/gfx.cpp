@@ -216,8 +216,8 @@ void Gfx::init() {
 	GL_CALL(_posLoc = glGetAttribLocation(_defaultShader.program, "a_position"));
 	GL_CALL(_colLoc = glGetAttribLocation(_defaultShader.program, "a_color"));
 	GL_CALL(_texCoordsLoc = glGetAttribLocation(_defaultShader.program, "a_texCoords"));
-	GL_CALL(_texLoc = glGetUniformLocation(_defaultShader.program, "u_texture"));
-	GL_CALL(_trsfLoc = glGetUniformLocation(_defaultShader.program, "u_transform"));
+	GL_CALL(glGetUniformLocation(_defaultShader.program, "u_texture"));
+	GL_CALL(glGetUniformLocation(_defaultShader.program, "u_transform"));
 	GL_CALL(glVertexAttribPointer(_posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
 	GL_CALL(glEnableVertexAttribArray(_posLoc));
 	GL_CALL(glVertexAttribPointer(_colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
@@ -267,13 +267,16 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 
 		GL_CALL(glUseProgram(_shader->program));
 
+		int posLoc = glGetAttribLocation(_defaultShader.program, "a_position");
+		int colLoc = glGetAttribLocation(_defaultShader.program, "a_color");
+		int texCoordsLoc = glGetAttribLocation(_defaultShader.program, "a_texCoords");
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-		GL_CALL(glEnableVertexAttribArray(_posLoc));
-		GL_CALL(glVertexAttribPointer(_posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-		GL_CALL(glEnableVertexAttribArray(_colLoc));
-		GL_CALL(glVertexAttribPointer(_colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-		GL_CALL(glEnableVertexAttribArray(_texCoordsLoc));
-		GL_CALL(glVertexAttribPointer(_texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
+		GL_CALL(glEnableVertexAttribArray(posLoc));
+		GL_CALL(glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
+		GL_CALL(glEnableVertexAttribArray(colLoc));
+		GL_CALL(glVertexAttribPointer(colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
+		GL_CALL(glEnableVertexAttribArray(texCoordsLoc));
+		GL_CALL(glVertexAttribPointer(texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
 
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
@@ -333,7 +336,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		if (num == 0) {
 			GL_CALL(glActiveTexture(GL_TEXTURE0));
 			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
-			GL_CALL(glUniform1i(0, 0));
+			GL_CALL(glUniform1i(_shader->getUniformLocation("u_texture"), 0));
 		} else {
 			for (int i = 0; i < num; i++) {
 				GL_CALL(glActiveTexture(GL_TEXTURE0 + i));
