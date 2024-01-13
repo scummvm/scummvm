@@ -111,6 +111,7 @@ MODULE_OBJS = \
 	lingo/xlibs/porta.o \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
+	lingo/xlibs/processxobj.o \
 	lingo/xlibs/qtcatmovieplayerxobj.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/qtvr.o \

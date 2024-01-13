@@ -88,6 +88,7 @@
 #include "director/lingo/xlibs/porta.h"
 #include "director/lingo/xlibs/prefpath.h"
 #include "director/lingo/xlibs/printomatic.h"
+#include "director/lingo/xlibs/processxobj.h"
 #include "director/lingo/xlibs/qtmovie.h"
 #include "director/lingo/xlibs/qtcatmovieplayerxobj.h"
 #include "director/lingo/xlibs/qtvr.h"
@@ -240,6 +241,7 @@ static struct XLibProto {
 	{ Porta::fileNames,					Porta::open,				Porta::close,				kXObj,					300 },	// D3
 	{ PrefPath::fileNames,				PrefPath::open,				PrefPath::close,			kXObj,					400 },	// D4
 	{ PrintOMaticXObj::fileNames,		PrintOMaticXObj::open,		PrintOMaticXObj::close,		kXObj,					400 },	// D4
+	{ ProcessXObj::fileNames,			ProcessXObj::open,			ProcessXObj::close,		kXObj,					400 },	// D4
 	{ QTCatMoviePlayerXObj::fileNames,	QTCatMoviePlayerXObj::open,	QTCatMoviePlayerXObj::close,kXObj,					400 },	// D4
 	{ QTMovie::fileNames,				QTMovie::open,				QTMovie::close,				kXObj,					400 },	// D4
 	{ QTVR::fileNames,					QTVR::open,					QTVR::close,				kXObj,					400 },	// D4
