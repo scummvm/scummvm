@@ -283,8 +283,10 @@ uint16 CameraProcess::findRoof(int32 factor) {
 	_earthquake = 0;
 	GetLerped(x, y, z, factor);
 	_earthquake = earthquake_old;
- 
-	Box target(x, y, z, 32, 32, 0);
+
+	// Default camera box based on 1x1x1 footpad,
+	// which is the minimal size to avoid floor detected as roof
+	Box target(x, y, z, 32, 32, 8);
 
 	// Should _itemNum be used when not focused on main actor?
 	Item *item = getItem(1);
