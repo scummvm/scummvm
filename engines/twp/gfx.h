@@ -124,6 +124,10 @@ public:
 	void init(const char *vertex, const char *fragment);
 
 	void setUniform(const char *name, Math::Matrix4 value);
+	void setUniform(const char * name, float value);
+	void setUniform(const char * name, Math::Vector3d value);
+	void setUniform(const char * name, Color value);
+
 	virtual void applyUniforms() {}
 	virtual int getNumTextures() { return 0;};
 	virtual int getTexture(int index) { return 0;};

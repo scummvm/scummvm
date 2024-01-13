@@ -214,16 +214,18 @@ public:
 	ActorSwitcher _actorSwitcher;
 	AudioSystem _audio;
 	SaveGameManager _saveGameManager;
+	ShaderParams _shaderParams;
 
 private:
 	Gfx _gfx;
 	Vm _vm;
 	Preferences _prefs;
-	ShaderParams _shaderParams;
 	unique_ptr<FadeShader> _fadeShader;
 	SentenceNode _sentence;
 	WalkboxNode _walkboxNode;
 	PathNode _pathNode;
+	Shader _bwShader;
+	Shader _ghostShader;
 };
 
 extern TwpEngine *g_engine;

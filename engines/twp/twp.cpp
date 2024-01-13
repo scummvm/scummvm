@@ -213,7 +213,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 			if (!handled) {
 				if (_actor && (scrPos.getY() > 172)) {
 					_actor->walk(roomPos);
-					_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
+					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 				}
 			}
 			// TODO: Just clicking on the ground
@@ -512,29 +512,28 @@ void TwpEngine::update(float elapsed) {
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
 	_shaderParams.effect = effect;
-	//   switch (effect) {
-	//   case RoomEffect::None:
-	//     _gfx.use(nullptr);
-	// 	break;
+	  switch (effect) {
+	  case RoomEffect::None:
+	    _gfx.use(nullptr);
+		break;
 	//   case RoomEffect::Sepia:
 	//     let shader = newShader(vertexShader, sepiaShader);
 	//     gfxShader(shader);
 	//     shader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
 	// 	break;
-	//   case RoomEffect::BlackAndWhite:
-	//     gfxShader(newShader(vertexShader, bwShader));
-	// 	break;
+	  case RoomEffect::BlackAndWhite:
+	  	_gfx.use(&_bwShader);
+		break;
 	//   case RoomEffect::Ega:
 	//     gfxShader(newShader(vertexShader, egaShader));
 	// 	break;
 	//   case RoomEffect::Vhs:
 	//     gfxShader(newShader(vertexShader, vhsShader));
 	// 	break;
-	//   case RoomEffect::Ghost:
-	//     let shader = newShader(vertexShader, ghostShader);
-	//     gfxShader(shader);
-	// 	break;
-	//   }
+	  case RoomEffect::Ghost:
+	    _gfx.use(&_ghostShader);
+		break;
+	  }
 }
 
 void TwpEngine::draw() {
@@ -555,11 +554,11 @@ void TwpEngine::draw() {
 
 	// then render this texture with room effect to another texture
 	_gfx.setRenderTarget(&renderTexture2);
-	// setShaderEffect(_room->_effect);
-	// _shaderParams.randomValue[0] = g_engine.rand.rand(0f..1f);
-	// _shaderParams.timeLapse = fmodf(_time, 1000.f);
-	// _shaderParams.iGlobalTime = _shaderParams.timeLapse;
-	// _shaderParams.updateShader();
+	setShaderEffect(_room->_effect);
+	_shaderParams.randomValue[0] = g_engine->getRandom();
+	_shaderParams.timeLapse = fmodf(_time, 1000.f);
+	_shaderParams.iGlobalTime = _shaderParams.timeLapse;
+	_shaderParams.updateShader();
 
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	bool flipY = _fadeShader->_effect == FadeEffect::Wobble;
@@ -637,6 +636,8 @@ Common::Error TwpEngine::run() {
 
 	_gfx.init();
 	_hud.init();
+	_bwShader.init(vsrc, bwShader);
+	_ghostShader.init(vsrc, ghostShader);
 	_fadeShader.reset(new FadeShader());
 
 	_lighting = new Lighting();
@@ -932,7 +933,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	if (_actor)
-		_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
+		_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -1184,7 +1185,7 @@ void TwpEngine::resetVerb() {
 	_noun1 = nullptr;
 	_noun2 = nullptr;
 	_useFlag = ufNone;
-	_hud._verb = *_hud.actorSlot(_actor)->getVerb(VERB_WALKTO);
+	_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 }
 
 bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
@@ -1194,7 +1195,9 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	Common::String verbFuncName = _hud.actorSlot(actor)->getVerb(verbId.id)->fun;
+	ActorSlot* slot = _hud.actorSlot(actor);
+	Verb* verb = slot->getVerb(verbId.id);
+	Common::String verbFuncName = verb ? verb->fun: slot->getVerb(0)->fun;
 	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
