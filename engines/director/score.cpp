@@ -400,6 +400,8 @@ void Score::update() {
 	for (uint ch = 0; ch < _channels.size(); ch++)
 		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
 
+	bool frameChanged = false;
+
 	if (!_vm->_playbackPaused) {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
@@ -408,6 +410,7 @@ void Score::update() {
 		}
 		else if (!_window->_newMovieStarted)
 			_curFrameNumber++;
+		frameChanged = true;
 	}
 
 	_nextFrame = 0;
@@ -435,6 +438,7 @@ void Score::update() {
 
 			_curFrameNumber = 1;
 		}
+		frameChanged = true;
 	}
 
 	if (_labels != nullptr) {
@@ -445,7 +449,9 @@ void Score::update() {
 		}
 	}
 
-	loadFrame(_curFrameNumber, true);
+	if (frameChanged) {
+		loadFrame(_curFrameNumber, true);
+	}
 
 	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
 	// puppetTempo is overridden by changes in score tempo
@@ -1541,8 +1547,8 @@ bool Score::readOneFrame() {
 			_currentFrame->readChannel(*_framesStream, channelOffset, channelSize, _version);
 		}
 
-		if (debugChannelSet(4, kDebugLoading)) {
-			debugC(4, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
+		if (debugChannelSet(9, kDebugLoading)) {
+			debugC(9, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
 		}
 
 		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, _currentFrame->_mainChannels.actionId.asString().c_str());
