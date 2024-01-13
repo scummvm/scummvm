@@ -52,6 +52,7 @@ class Character {
 	Common::Point	_animationPos;
 	bool _enabled;
 	bool _visible;
+	bool _stopped;
 	bool _shown;
 	int _phase;
 	int _frames;

@@ -41,7 +41,7 @@ namespace AGDS {
 
 Character::Character(AGDSEngine * engine, const Common::String & name):
 	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
-	_enabled(true), _visible(false), _shown(false),
+	_enabled(true), _visible(false), _stopped(false), _shown(false),
 	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
 
@@ -219,6 +219,11 @@ bool Character::animate(int direction, int speed, bool jokes) {
 
 bool Character::animate(Common::Point pos, int direction, int speed) {
 	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
+	if (_stopped) {
+		debug("character stopped, skipping");
+		_stopped = false;
+		return true;
+	}
 	auto ok = animate(direction, speed, true);
 	if (!ok)
 		return false;
@@ -235,6 +240,7 @@ void Character::stop(const Common::String &processName) {
 }
 
 void Character::stop() {
+	_stopped = true;
 }
 
 void Character::leave(const Common::String &processName) {
@@ -250,7 +256,7 @@ void Character::tick(bool reactivate) {
 		auto scale = screen? screen->getZScale(_pos.y): 1;
 		_animation->scale(scale);
 
-		if (_phase >= 0 && _phase < _frames) {
+		if (!_stopped && _phase >= 0 && _phase < _frames) {
 			_animation->tick();
 			_phase = _animation->phase();
 			if (_phase >= _frames) {
