@@ -167,7 +167,7 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 		if (finalFacing > 0 && finalFacing < 13) {
 			_G(globals)[GLB_TEMP_4] = directions[finalFacing] << 16;
 		} else {
-			_G(globals)[GLB_TEMP_4] = (frac16)-1 << 16;
+			_G(globals)[GLB_TEMP_4] = (frac16)-1 & ~0xffff;
 		}
 
 		// Set the trigger to be returned when the walk is finished
@@ -237,7 +237,7 @@ void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool co
 	if (finalFacing > 0 && finalFacing < 13) {
 		_G(globals)[GLB_TEMP_4] = directions[finalFacing] << 16;
 	} else {
-		_G(globals)[GLB_TEMP_4] = (frac16)-1 << 16;
+		_G(globals)[GLB_TEMP_4] = (frac16)-1 & ~0xffff;
 	}
 
 	// Set the trigger to be returned when the walk is finished
@@ -318,7 +318,7 @@ void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {
 	if (facing > 0 && facing < 13) {
 		_G(globals)[GLB_TEMP_4] = directions[facing] << 16;
 	} else {
-		_G(globals)[GLB_TEMP_4] = (frac16)-1 << 16;
+		_G(globals)[GLB_TEMP_4] = (frac16)-1 & ~0xffff;
 	}
 
 	// Set the trigger to be returned when the walk is finished
