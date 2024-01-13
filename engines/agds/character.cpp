@@ -41,7 +41,7 @@ namespace AGDS {
 
 Character::Character(AGDSEngine * engine, const Common::String & name):
 	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
-	_enabled(true), _visible(false), _shown(false), _stopped(false),
+	_enabled(true), _visible(false), _shown(false),
 	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
 
@@ -191,15 +191,11 @@ void Character::pointTo(const Common::String & processName, Common::Point dst) {
 }
 
 bool Character::animate(int direction, int speed, bool jokes) {
-	if (_stopped)
-		_stopped = false;
-
 	if (direction == -1 || !_enabled)
 		return false;
 
 	_description = nullptr;
 	_shown = true;
-	_stopped = false;
 	auto character = jokes? _engine->jokes(): this;
 	_description = character->animationDescription(direction);
 	auto animation = _description? _engine->loadAnimation(_description->filename): nullptr;
@@ -239,7 +235,6 @@ void Character::stop(const Common::String &processName) {
 }
 
 void Character::stop() {
-	_stopped = true;
 }
 
 void Character::leave(const Common::String &processName) {
