@@ -84,6 +84,8 @@ private:
 	uint							_throwHandler;
 	uint							_useOnHandler;
 	uint							_trapHandler;
+	uint							_handlerBD;
+	uint							_handlerC1;
 	int								_alpha;
 	int								_scale;
 	uint							_locked;
@@ -237,6 +239,22 @@ public:
 
 	uint getUserUseHandler() const {
 		return _userUseHandler;
+	}
+
+	void setHandlerBD(uint ip) {
+		_handlerBD = ip;
+	}
+
+	uint getHandlerBD() const {
+		return _handlerBD;
+	}
+
+	void setHandlerC1(uint ip) {
+		_handlerC1 = ip;
+	}
+
+	uint getHandlerC1() const {
+		return _handlerC1;
 	}
 
 	void setTrapHandler(uint ip, RegionPtr region) {
