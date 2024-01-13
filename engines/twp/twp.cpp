@@ -516,11 +516,10 @@ void TwpEngine::setShaderEffect(RoomEffect effect) {
 	  case RoomEffect::None:
 	    _gfx.use(nullptr);
 		break;
-	//   case RoomEffect::Sepia:
-	//     let shader = newShader(vertexShader, sepiaShader);
-	//     gfxShader(shader);
-	//     shader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
-	// 	break;
+	  case RoomEffect::Sepia: {
+	    _gfx.use(&_sepiaShader);
+	    _sepiaShader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
+	  } break;
 	  case RoomEffect::BlackAndWhite:
 	  	_gfx.use(&_bwShader);
 		break;
@@ -638,6 +637,7 @@ Common::Error TwpEngine::run() {
 	_hud.init();
 	_bwShader.init(vsrc, bwShader);
 	_ghostShader.init(vsrc, ghostShader);
+	_sepiaShader.init(vsrc, sepiaShader);
 	_fadeShader.reset(new FadeShader());
 
 	_lighting = new Lighting();

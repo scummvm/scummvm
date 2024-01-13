@@ -30,6 +30,7 @@ namespace Twp {
 extern const char* vsrc;
 extern const char* bwShader;
 extern const char* ghostShader;
+extern const char* sepiaShader;
 
 struct ShaderParams {
     RoomEffect effect;
