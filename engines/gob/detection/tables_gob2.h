@@ -484,10 +484,10 @@
 { // Supplied by fac76 in bug report #3108
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY2s("intro.stk", "b45b984ee8017efd6ea965b9becd4d66", 828443,
 				"musmac1.mid",	"7f96f491448c7a001b32df89cf8d2af2", 1658),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
