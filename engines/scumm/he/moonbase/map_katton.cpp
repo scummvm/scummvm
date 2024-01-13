@@ -269,7 +269,7 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 	//****************************************Do that saving thing that you do, BABY!
 	MIF mif = MIF();
-	Common::sprintf_s(mif.name, "Katton %04X", _seed);
+	Common::sprintf_s(mif.name, "Katton %04X", (uint16)_seed);
 	mif.dimension = size;
 	mif.mapType = tileset;
 	for (j = 0; j < size; j++) {

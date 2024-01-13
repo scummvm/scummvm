@@ -70,7 +70,7 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 	levelMap[LOW] = 0;
 
 	mif.mapType = tileset;
-	Common::sprintf_s(mif.name, "Spiff %04X", _seed);
+	Common::sprintf_s(mif.name, "Spiff %04X", (uint16)_seed);
 
 	mif.dimension = totalMapSizeG;
 
