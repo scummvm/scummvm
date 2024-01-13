@@ -340,6 +340,9 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 	if (g_sci->getLanguage() == Common::HE_ISR) {
 		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
 		nameString = nameU32String.encode(Common::kWindows1255);
+	} else if (g_sci->getLanguage() == Common::RU_RUS) {
+		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
+		nameString = nameU32String.encode(Common::kDos866);
 	}
 
 	Common::strlcpy(desc.name, nameString.c_str(), sizeof(desc.name));

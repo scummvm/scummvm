@@ -1099,6 +1099,9 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getLanguage() == Common::HE_ISR) {
 			Common::U32String u32string = game_description.decode(Common::kWindows1255);
 			game_description = u32string.encode(Common::kUtf8);
+		} else if (g_sci->getLanguage() == Common::RU_RUS) {
+			Common::U32String u32string = game_description.decode(Common::kDos866);
+			game_description = u32string.encode(Common::kUtf8);
 		};
 
 
