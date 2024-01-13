@@ -77,7 +77,7 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 	int numwaterplaces = 0, numwatersplotches, multiplier;
 	short int goodwater[1600][2];
 	// used in making energy
-	int maxnumclose, maxnumfar, maxnumrand, smallmed, goodplaceClose[300][2], goodplaceFar[300][2], numplaceClose, numplaceFar, placeFar[3], placeClose[2], counter, counterpools;
+	int maxnumclose = 0, maxnumfar = 0, maxnumrand = 0, smallmed = 0, goodplaceClose[300][2], goodplaceFar[300][2], numplaceClose, numplaceFar, placeFar[3], placeClose[2], counter, counterpools;
 
 	//****************************************Make the basic landmass shapes.
 
@@ -375,7 +375,7 @@ int KattonGenerator::randomplace(int numberofplaces, int placer) {
 }
 
 int KattonGenerator::randomsplotch(int length, int stringiness, int placer, int x, int y) {
-	int currx, curry, direction = 10, prevdirection, movex, movey, i = 0;
+	int currx, curry, direction = 10, prevdirection, movex = 0, movey = 0, i = 0;
 	currx = x;
 	curry = y;
 	while (i <= length) {
