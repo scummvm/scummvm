@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.9.0 (XXXX-XX-XX)
 
+ New games:
+  - Added support for Orion Burger.
+
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms
 
