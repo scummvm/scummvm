@@ -29,7 +29,10 @@
 namespace Twp {
 
 HudShader::HudShader() {
-	const char *verbVtxShader = R"(#version 110
+}
+
+void HudShader::init() {
+	const char *vsrc = R"(#version 110
 	attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
@@ -48,18 +51,17 @@ HudShader::HudShader() {
 	varying vec2 v_ranges;
 
 	void main() {
+		gl_Position = u_transform * vec4(a_position, 0.0, 1.0);
+
 		v_color = a_color;
 		v_texCoords = a_texCoords;
 		v_shadowColor = u_shadowColor;
 		v_normalColor = u_normalColor;
 		v_highlightColor = u_highlightColor;
 		v_ranges = u_ranges;
-		vec4 worldPosition = vec4(a_position, 0.0, 1.0);
-		vec4 normalizedPosition = u_transform * worldPosition;
-		gl_Position = normalizedPosition;
 	})";
 
-const char* verbFgtShader = R"(#version 110
+	const char* fsrc = R"(#version 110
 	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	varying vec4 v_shadowColor;
@@ -82,7 +84,7 @@ const char* verbFgtShader = R"(#version 110
 		texColor *= v_color;
 		gl_FragColor = texColor;
 	})";
-	init(verbVtxShader, verbFgtShader);
+	Shader::init(vsrc, fsrc);
 
 	GL_CALL(_rangesLoc = glGetUniformLocation(program, "u_ranges"));
 	GL_CALL(_shadowColorLoc = glGetUniformLocation(program, "u_shadowColor"));
@@ -105,6 +107,10 @@ Hud::Hud() : Node("hud") {
 		ActorSlot *slot = &_actorSlots[i];
 		slot->actor = nullptr;
 	}
+}
+
+void Hud::init() {
+	_shader.init();
 }
 
 ActorSlot *Hud::actorSlot(Object *actor) {
@@ -149,10 +155,10 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 
 	Shader *saveShader = g_engine->getGfx().getShader();
-	// g_engine->getGfx().use(&_shader);
-	// _shader._shadowColor = slot->verbUiColors.verbNormalTint;
-	// _shader._normalColor = slot->verbUiColors.verbHighlight;
-	// _shader._highlightColor = slot->verbUiColors.verbHighlightTint;
+	g_engine->getGfx().use(&_shader);
+	_shader._shadowColor = slot->verbUiColors.verbNormalTint;
+	_shader._normalColor = slot->verbUiColors.verbHighlight;
+	_shader._highlightColor = slot->verbUiColors.verbHighlightTint;
 
 	bool isOver = false;
 	for (int i = 1; i < 22; i++) {
@@ -169,7 +175,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 			drawSprite(verbFrame, verbTexture, color, trsf);
 		}
 	}
-	// g_engine->getGfx().use(saveShader);
+	g_engine->getGfx().use(saveShader);
 	_over = isOver;
 }
 

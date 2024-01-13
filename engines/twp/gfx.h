@@ -129,10 +129,11 @@ public:
 	virtual int getTexture(int index) { return 0;};
 	virtual int getTextureLoc(int index) { return 0;};
 
+	int getUniformLocation(const char *name);
+
 private:
 	uint32 loadShader(const char *code, uint32 shaderType);
 	void statusShader(uint32 shader);
-	int getUniformLocation(const char *name);
 
 public:
 	uint32 program;
@@ -181,8 +182,8 @@ private:
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture *_texture = nullptr;
-	int32 _posLoc = 0, _colLoc = 0, _texCoordsLoc = 0, _texLoc = 0, _trsfLoc = 0;
-	int32 _oldFbo;
+	int32 _posLoc = 0, _colLoc = 0, _texCoordsLoc = 0;
+	int32 _oldFbo = 0;
 };
 } // namespace Twp
 

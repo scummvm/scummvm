@@ -81,6 +81,8 @@ public:
 	HudShader();
 	virtual ~HudShader() override;
 
+	void init();
+
 private:
 	virtual void applyUniforms() final;
 
@@ -100,6 +102,7 @@ class Hud : public Node {
 public:
 	Hud();
 
+	void init();
 	ActorSlot *actorSlot(Object *actor);
 	bool isOver() const { return _over; }
 	void update(Math::Vector2d pos, Object *hotspot, bool mouseClick);

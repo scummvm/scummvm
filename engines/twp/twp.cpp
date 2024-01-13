@@ -636,6 +636,7 @@ Common::Error TwpEngine::run() {
 	setDebugger(new Console());
 
 	_gfx.init();
+	_hud.init();
 	_fadeShader.reset(new FadeShader());
 
 	_lighting = new Lighting();
