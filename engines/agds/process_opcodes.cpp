@@ -1460,7 +1460,8 @@ void Process::onUse(uint16 size) {
 }
 
 void Process::onObjectC1(uint16 size) {
-	debug("unknown (0xc1) [handler] stub, %u instructions, ip: 0x%04x", size, _ip);
+	debug("lclick [fallback for attached inventory object] [handler] stub, %u instructions, ip: 0x%04x", size, _ip);
+	_object->setHandlerC1(_ip);
 	_ip += size;
 }
 
@@ -1479,6 +1480,7 @@ void Process::onCharacterTrap(uint16 size) {
 
 void Process::onObjectBD(uint16 size) {
 	debug("onObject(+BD) [handler] stub, %u instructions, ip: 0x%04x", size, _ip);
+	_object->setHandlerBD(_ip);
 	_ip += size;
 }
 
