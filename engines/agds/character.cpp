@@ -317,6 +317,9 @@ int Character::z() const {
 void Character::reset() {
 	_fog.reset();
 	_shown = false;
+	_animation.reset();
+	_phase = -1;
+	_frames = 0;
 }
 
 void Character::setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ) {
