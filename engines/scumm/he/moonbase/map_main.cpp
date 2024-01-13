@@ -28,7 +28,9 @@
 
 #include "scumm/he/moonbase/map_data.h"
 #include "scumm/he/moonbase/map_main.h"
+
 #include "scumm/he/moonbase/map_spiff.h"
+#include "scumm/he/moonbase/map_katton.h"
 
 namespace Scumm {
 
@@ -59,6 +61,8 @@ bool Map::generateNewMap() {
 	// Don't randomly pick nonstandard map sizes.
 	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
 
+	uint8 generator = _rnd.getRandomNumberRng(1, 2);
+
 	int tileSet = _rnd.getRandomNumberRngSigned(1, 6);
 
 	// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
@@ -69,7 +73,7 @@ bool Map::generateNewMap() {
 	// 32767 is RAND_MAX on Windows
 	int seed = _rnd.getRandomNumber(32767);
 
-	return generateMapWithInfo(SPIFF_GEN, seed, mapSize, tileSet, energy, terrain, water);
+	return generateMapWithInfo(generator, seed, mapSize, tileSet, energy, terrain, water);
 }
 
 bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
@@ -86,6 +90,12 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 	{
 		SpiffGenerator spiff = SpiffGenerator(seed);
 		_generatedMap = spiff.generateMap(water, tileset, mapSize, energy, terrain);
+		break;
+	}
+	case KATTON_GEN:
+	{
+		KattonGenerator katton = KattonGenerator(seed);
+		_generatedMap = katton.generateMap(water, tileset, mapSize, energy, terrain);
 		break;
 	}
 	default:
