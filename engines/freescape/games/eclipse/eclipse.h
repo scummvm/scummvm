@@ -45,6 +45,8 @@ public:
 	void initGameState() override;
 	void executePrint(FCLInstruction &instruction) override;
 
+
+	void drawBackground() override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;

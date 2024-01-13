@@ -278,6 +278,101 @@ void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point positi
 	glDepthMask(GL_TRUE);
 }
 
+void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
+	uint8 r1, g1, b1, r2, g2, b2;
+	byte *stipple = nullptr;
+	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	glColor3ub(r1, g1, b1);
+
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, position);
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		copyToVertexArray(i + 1,
+			Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
+						position.z() + (radius * sin(i * twicePi / triangleAmount)))
+		);
+	}
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	/*uint8 r, g, b;
+
+	GLfloat m[16];
+	GLfloat p[16];
+
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	glGetFloatv(GL_PROJECTION_MATRIX, p);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+
+	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+	glMultMatrixf(lookMatrix.getData());
+	//glLoadIdentity();
+	//glOrtho(0, _screenW, _screenH, 0, 0, 1);
+
+
+	r = 0xff;
+	g = 0xff;
+	b = 0x55;
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor3ub(r, g, b);
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+	float radius = 10.0;
+
+	Common::Point ball_position(320 / 2, 200 / 2);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		copyToVertexArray(i + 1,
+			Math::Vector3d(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)),
+						ball_position.y + (radius * sin(i * twicePi / triangleAmount)), 0)
+		);
+	}
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(m);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(p);*/
+}
+
+void OpenGLRenderer::drawEclipse(byte color1, byte color2) {
+	Math::Vector3d sunPosition(-5000, 2000, 500);
+	float radius = 750.0;
+	drawCelestialBody(sunPosition, radius, color1);
+
+	Math::Vector3d moonPosition(-5000, 2000, 1500);
+	drawCelestialBody(moonPosition, radius, color2);
+}
+
 void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
 	uint8 r, g, b;
 

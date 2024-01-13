@@ -139,12 +139,19 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 
 	swapPalette(areaID);
-	if (isDemo())
-		_currentArea->_skyColor = 27;
 	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
 
 	resetInput();
 }
+
+void EclipseEngine::drawBackground() {
+	clearBackground();
+	_gfx->drawBackground(_currentArea->_skyColor);
+	if (_currentArea && _currentArea->getAreaID() == 1) {
+		_gfx->drawEclipse(15, 10);
+	}
+}
+
 
 void EclipseEngine::borderScreen() {
 	if (_border) {

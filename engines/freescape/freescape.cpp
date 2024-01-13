@@ -294,11 +294,15 @@ void FreescapeEngine::takeDamageFromSensor() {
 	_gameStateVars[k8bitVariableShield]--;
 }
 
-void FreescapeEngine::drawBackground() {
+void FreescapeEngine::clearBackground() {
 	_gfx->clear(0, 0, 0, true);
 	_gfx->setViewport(_fullscreenViewArea);
 	_gfx->drawBackground(_currentArea->_usualBackgroundColor);
 	_gfx->setViewport(_viewArea);
+}
+
+void FreescapeEngine::drawBackground() {
+	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 }
 

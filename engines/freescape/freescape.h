@@ -144,7 +144,8 @@ public:
 	virtual void processBorder();
 	void drawBorder();
 	void drawTitle();
-	void drawBackground();
+	virtual void drawBackground();
+	void clearBackground();
 	virtual void drawUI();
 	virtual void drawInfoMenu();
 	void drawBorderScreenAndWait(Graphics::Surface *surface);

@@ -982,9 +982,18 @@ void Renderer::drawBackground(uint8 color) {
 	if (_colorRemaps && _colorRemaps->contains(color)) {
 		color = (*_colorRemaps)[color];
 	}
-	uint8 r, g, b;
-	readFromPalette(color, r, g, b);
-	clear(r, g, b);
+
+	if (color == 0) {
+		clear(0, 0, 0);
+		return;
+	}
+
+	uint8 r1, g1, b1;
+	uint8 r2, g2, b2;
+	byte *stipple = nullptr;
+
+	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	clear(r1, g1, b1);
 }
 
 Graphics::RendererType determinateRenderType() {
