@@ -75,6 +75,8 @@ class Character {
 
 	void notifyProcess(const Common::String & name);
 
+	bool animate(int direction, int speed, bool jokes);
+
 public:
 	Character(AGDSEngine * engine, const Common::String & name);
 	~Character();
@@ -112,7 +114,6 @@ public:
 	}
 
 	bool animate(Common::Point pos, int direction, int speed);
-	bool animate(int direction, int speed, bool jokes);
 
 	void stop(const Common::String &processName);
 	void stop();
