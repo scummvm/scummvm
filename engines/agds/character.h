@@ -53,7 +53,6 @@ class Character {
 	bool _enabled;
 	bool _visible;
 	bool _shown;
-	bool _stopped;
 	int _phase;
 	int _frames;
 	int _direction;
@@ -108,7 +107,7 @@ public:
 	}
 
 	bool active() const {
-		return _enabled && _visible && !_stopped;
+		return _enabled && _visible;
 	}
 
 	bool animate(Common::Point pos, int direction, int speed);
