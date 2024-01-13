@@ -302,7 +302,14 @@ void Process::removeScreenObject(const Common::String &name) {
 	_object->lock();
 	screen->remove(object);
 	if (!object->locked()) {
-		_engine->stopProcess(name);
+		ProcessPtr process;
+		do {
+			process = _engine->findProcess(name);
+			if (process) {
+				process->removeProcessAnimation();
+				process->done();
+			}
+		} while(process);
 		_engine->soundManager().stopAllFrom(name);
 	}
 	_object->unlock();

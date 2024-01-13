@@ -177,6 +177,15 @@ void Process::setupAnimation(const AnimationPtr & animation) {
 			_engine->setGlobal(_phaseVar, 0);
 }
 
+void Process::removeProcessAnimation() {
+	if (_processAnimation) {
+		auto * screen = _engine->getCurrentScreen();
+		if (screen)
+			screen->remove(_processAnimation);
+		_processAnimation = nullptr;
+	}
+}
+
 void Process::activate() {
 	switch(status()) {
 	case kStatusPassive:
@@ -206,14 +215,17 @@ void Process::deactivate() {
 }
 
 void Process::done() {
-	_status = kStatusDone;
-	if (!_stack.empty())
-		warning("process %s finished with non-empty stack", getName().c_str());
+	if (_status != kStatusDone) {
+		debug("done");
+		_status = kStatusDone;
+		if (!_stack.empty())
+			warning("process %s finished with non-empty stack", getName().c_str());
+	}
 }
+
 void Process::fail() {
 	_status = kStatusError;
 }
-
 
 void Process::run() {
 	bool restart = true;
@@ -224,16 +236,8 @@ void Process::run() {
 		case kExitCodeDestroy:
 			debug("process %s returned destroy exit code", getName().c_str());
 			done();
-			if (_processAnimation) {
-				auto * screen = _engine->getCurrentScreen();
-				if (screen)
-					screen->remove(_processAnimation);
-				_processAnimation = nullptr;
-			}
 			if (!getObject()->alive() && !_engine->hasActiveProcesses(getName())) {
-				auto * screen = _engine->getCurrentScreen();
-				if (screen)
-					screen->remove(getName());
+				removeScreenObject(getName());
 			}
 			break;
 		case kExitCodeLoadScreenObjectAs:
