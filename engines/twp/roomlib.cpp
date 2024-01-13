@@ -261,7 +261,8 @@ static SQInteger masterRoomArray(HSQUIRRELVM v) {
 }
 
 static SQInteger removeTrigger(HSQUIRRELVM v) {
-	if(!g_engine->_room) return 0;
+	if (!g_engine->_room)
+		return 0;
 	if (sq_gettype(v, 2) == OT_CLOSURE) {
 		HSQOBJECT closure;
 		sq_resetobject(&closure);
@@ -313,7 +314,33 @@ static SQInteger roomActors(HSQUIRRELVM v) {
 }
 
 static SQInteger roomEffect(HSQUIRRELVM v) {
-	warning("TODO: roomEffect not implemented");
+	int effect = 0;
+	if (SQ_FAILED(sqget(v, 2, effect)))
+		return sq_throwerror(v, "failed to get effect");
+	RoomEffect roomEffect = (RoomEffect)effect;
+	SQInteger nArgs = sq_gettop(v);
+	if (roomEffect == RoomEffect::Ghost) {
+		if (nArgs == 14) {
+			sqget(v, 3, g_engine->_shaderParams.iFade);
+			sqget(v, 4, g_engine->_shaderParams.wobbleIntensity);
+			sqget(v, 6, g_engine->_shaderParams.shadows.rgba.r);
+			sqget(v, 7, g_engine->_shaderParams.shadows.rgba.g);
+			sqget(v, 8, g_engine->_shaderParams.shadows.rgba.b);
+			sqget(v, 9, g_engine->_shaderParams.midtones.rgba.r);
+			sqget(v, 10, g_engine->_shaderParams.midtones.rgba.g);
+			sqget(v, 11, g_engine->_shaderParams.midtones.rgba.b);
+			sqget(v, 12, g_engine->_shaderParams.highlights.rgba.r);
+			sqget(v, 13, g_engine->_shaderParams.highlights.rgba.g);
+			sqget(v, 14, g_engine->_shaderParams.highlights.rgba.b);
+		} else {
+			g_engine->_shaderParams.iFade = 1.f;
+			g_engine->_shaderParams.wobbleIntensity = 1.f;
+			g_engine->_shaderParams.shadows = Color(-0.3f, 0.f, 0.f);
+			g_engine->_shaderParams.midtones = Color(-0.2f, 0.f, 0.1f);
+			g_engine->_shaderParams.highlights = Color(0.f, 0.f, 0.2f);
+		}
+	}
+	g_engine->_room->_effect = (RoomEffect)effect;
 	return 0;
 }
 

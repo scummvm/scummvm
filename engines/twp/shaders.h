@@ -27,18 +27,22 @@
 
 namespace Twp {
 
+extern const char* vsrc;
+extern const char* bwShader;
+extern const char* ghostShader;
+
 struct ShaderParams {
     RoomEffect effect;
-    float sepiaFlicker;
+    float sepiaFlicker = 1.f;
     float randomValue[5];
     float timeLapse;
     float iGlobalTime;
-    float iNoiseThreshold;
-    float iFade;
-    float wobbleIntensity;
-    Math::Vector3d shadows;
-    Math::Vector3d midtones;
-    Math::Vector3d highlights;
+    float iNoiseThreshold = 1.f;
+    float iFade = 1.f;
+    float wobbleIntensity = 1.f;
+    Color shadows = Color(-0.3f, 0.f, 0.f);
+    Color midtones = Color(-0.2f, 0.f, 0.1f);
+    Color highlights = Color(0.f, 0.f, 0.2f);
 
 	void updateShader();
 };

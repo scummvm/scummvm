@@ -176,6 +176,33 @@ void Shader::setUniform(const char *name, Math::Matrix4 value) {
 	glUseProgram(prev);
 }
 
+void Shader::setUniform(const char * name, float value) {
+  	GLint prev;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
+	glUseProgram(program);
+    int loc = getUniformLocation(name);
+    GL_CALL(glUniform1f(loc, value));
+	glUseProgram(prev);
+}
+
+void Shader::setUniform(const char * name, Math::Vector3d value) {
+    GLint prev;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
+	glUseProgram(program);
+    int loc = getUniformLocation(name);
+    GL_CALL(glUniform3fv(loc, 1, value.getData()));
+	glUseProgram(prev);
+}
+
+void Shader::setUniform(const char * name, Color value) {
+    GLint prev;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
+	glUseProgram(program);
+    int loc = getUniformLocation(name);
+    GL_CALL(glUniform3fv(loc, 1, value.v));
+	glUseProgram(prev);
+}
+
 void Gfx::init() {
 	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	byte pixels[] = {0xFF, 0xFF, 0xFF, 0xFF};
@@ -185,19 +212,8 @@ void Gfx::init() {
 	empty.format = fmt;
 	empty.setPixels(pixels);
 	gEmptyTexture.load(empty);
-	const char *vsrc = R"(#version 110
-		uniform mat4 u_transform;
-	attribute vec2 a_position;
-	attribute vec4 a_color;
-	attribute vec2 a_texCoords;
-	varying vec4 v_color;
-	varying vec2 v_texCoords;
-	void main() {
-		gl_Position = u_transform * vec4(a_position, 0.0, 1.0);
-		v_color = a_color;
-		v_texCoords = a_texCoords;
-	})";
-	const char* fsrc = R"(#version 110
+
+	const char* fragmentSrc = R"(#version 110
 	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	uniform sampler2D u_texture;
@@ -205,7 +221,7 @@ void Gfx::init() {
 		vec4 tex_color = texture2D(u_texture, v_texCoords);
 		gl_FragColor = v_color * tex_color;
 	})";
-	_defaultShader.init(vsrc, fsrc);
+	_defaultShader.init(vsrc, fragmentSrc);
 	_shader = &_defaultShader;
 	_mvp = ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 
