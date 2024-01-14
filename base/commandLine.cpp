@@ -586,7 +586,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// to pass the process serial number. We need to ignore it to avoid an error.
 			// When using XCode it also adds -NSDocumentRevisionsDebugMode YES argument if XCode option
 			// "Allow debugging when using document Versions Browser" is on (which is the default).
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 			if (strncmp(s, "-psn_", 5) == 0)
 				continue;
 			if (strcmp(s, "-NSDocumentRevisionsDebugMode") == 0) {
