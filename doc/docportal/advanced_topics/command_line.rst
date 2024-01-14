@@ -61,15 +61,13 @@ Use the ``game id`` or ``--auto-detect`` to start games with default settings fo
 
 The full ``game id`` contains both an engine name and a game name. For example, the game id for Full Throttle is ``scumm:ft``, where ``scumm`` is the engine name. In many cases where there is no ambiguity, you can omit the engine name when specifying a ``game id`` on the command line. For example, both ``scumm:ft`` and ``ft`` can be used. However, if there is an ambiguity with the game name, the full ``game id`` must be used. For example, for Indiana Jones and the Fate of Atlantis only ``scumm:atlantis`` can be used as there would otherwise be an ambiguity with ``cryomni3d:atlantis``.
 
+.. tab-set::
 
-.. tabbed:: Windows
+    .. tab-item:: Windows
 
-    .. panels::
-        :column: col-lg-12
+        .. card::
 
-        The following examples assume that the path to ScummVM is ``C:\Program Files\ScummVM\scummvm.exe``.
-
-        ^^^^
+            The following examples assume that the path to ScummVM is ``C:\Program Files\ScummVM\scummvm.exe``.
 
         To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
@@ -85,18 +83,15 @@ The full ``game id`` contains both an engine name and a game name. For example, 
 
             C:\Program Files\ScummVM\scummvm.exe -f -n -p "D:\resource" scumm:ft
 
-.. tabbed:: macOS
+    .. tab-item:: macOS
 
-    .. panels::
-        :column: col-lg-12
+        .. card::
 
-        The following examples assume the path to the ScummVM app is ``Applications/ScummVM.app``.
+            The following examples assume the path to the ScummVM app is ``Applications/ScummVM.app``.
 
         If you are unsure of the path to the app, drag the ScummVM app icon into the Terminal window. This prints the path to the ScummVM app.
 
         To run ScummVM from the command line, add ``/Contents/MacOS/scummvm`` to that path.
-
-        ^^^^
 
         To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
@@ -111,14 +106,11 @@ The full ``game id`` contains both an engine name and a game name. For example, 
 
             /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p "/Volumes/Full Throttle/resource" scumm:ft
 
-.. tabbed:: Linux
+    .. tab-item:: Linux
 
-    .. panels::
-        :column: col-lg-12
+        .. card::
 
-        The following examples assume the path to ScummVM is ``/usr/games/scummvm``.
-
-        ^^^^^^
+            The following examples assume the path to ScummVM is ``/usr/games/scummvm``.
 
         To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 

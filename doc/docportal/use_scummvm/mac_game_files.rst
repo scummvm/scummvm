@@ -58,17 +58,13 @@ Creating the ISO image
 
     If you are accessing HFS+ media in macOS, or HFS media on a macOS 10.14 Mojave system or older, this step is not required when using the Python dumper in MAC mode.
 
-.. tabbed:: Windows
+.. tab-set::
 
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: Windows
 
         Use an application such as `IsoBuster <https://www.isobuster.com>`_ to create an ISO image of the CD.
 
-.. tabbed:: macOS
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: macOS
 
         Use the following commands in the Terminal to find the identifier of the media, and then create an ISO image of that media.
 
@@ -139,10 +135,7 @@ Creating the ISO image
                 681574400 bytes transferred in 396.380454 secs (1719495 bytes/sec)
                 iMac:~ ego$ drutil tray eject
 
-.. tabbed:: Linux
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: Linux
 
         Use the following commands to create an ISO image from an inserted HFS or HFS+ medium.
 
@@ -204,19 +197,15 @@ Installation
 *************
 Install machfs, and xattr if using macOS:
 
-.. tabbed:: macOS
+.. tab-set::
 
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: macOS
 
         .. code-block::
 
             pip3 install machfs xattr
 
-.. tabbed:: Others
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: Others
 
         .. code-block::
 
@@ -286,19 +275,15 @@ Other methods
 
 There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. These methods require you to copy the files manually.
 
-.. tabbed:: Windows
+.. tab-set::
 
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: Windows
 
         For Windows, `HFS Explorer <http://www.catacombae.org/hfsexplorer/>`_  is a basic and free option, which gives you read-only access to both HFS and HFS+ drives. Use the installer rather than the zip file, to ensure it is installed correctly. For files with a resource fork you will need to use the option to extract as MacBinary. Extract files that only have a data fork as a "raw copy, data fork".
 
         Alternatively, `HFVExplorer <https://www.emaculation.com/doku.php/hfvexplorer>`_ can also be used for HFS drives. There is no option to extract as MacBinary, but you can extract files with a resource fork as AppleDouble using the "extract data and resource fork(s)" option.
 
-.. tabbed:: macOS
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: macOS
 
         On macOS you can read HFS+ volumes, and in some cases HFS volumes, and copy the files in the usual way in the Finder. Some discs shipped with hidden files that need to be copied. To view hidden files in macOS, press :kbd:`Cmd+Shift+.` in a Finder window.
 
@@ -314,11 +299,7 @@ There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. 
            * If files contain invalid characters.
            * If you plan to transfer those files to a different system.
 
-.. tabbed:: Linux
-
-    .. panels::
-        :column: col-lg-12
-
+    .. tab-item:: Linux
 
         Access HFS+ drives using ``hfsplus``. To use hfsplus, use the command line:
 

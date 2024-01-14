@@ -28,15 +28,12 @@ author = 'CadiH'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-import sphinx_rtd_theme
-
 extensions = [
 
     "sphinx_rtd_theme",
-    "sphinx_panels",
-    "sphinx_mdinclude"
+    "sphinx_design",
+    "sphinx_mdinclude",
 ]
-extensions.append('sphinx_tabs.tabs')
 souce_suffix = ['.rst','.md']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,8 +78,6 @@ def setup(app):
 
 master_doc = 'index'
 html_sidebars = {'**': ['localtoc.html']}
-
-panels_add_fontawesome_latex = True
 
 #Options for LaTex Output
 

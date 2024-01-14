@@ -41,11 +41,6 @@
       settings/lan
       settings/misc
       settings/paths
-      
-      
-      
-    
-
 
 .. toctree::
       :caption: Advanced topics
@@ -58,7 +53,6 @@
       advanced_topics/understand_audio
       advanced_topics/understand_graphics
       advanced_topics/understand_search_box
-      
 
 .. toctree::
       :caption: Help
@@ -93,95 +87,106 @@ Start here!
 
 We have a user manual section covering **THE BASICS**:
 
-.. panels::
-      :container: text-center mb-4
+.. grid:: 2
+    :class-container: sd-text-center
+    :gutter: 3
 
-      Installation
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`Installing ScummVM on a computer <use_scummvm/install_computer>`
+    .. grid-item-card::
 
-      :doc:`use_scummvm/the_launcher`
+        Installation
+        ^^^^^^^^^^^^
 
-      ---
+        :doc:`Installing ScummVM on a computer <use_scummvm/install_computer>`
 
-      Playing games
-      ^^^^^^^^^^^^^^^
-      :doc:`use_scummvm/game_files`
+        :doc:`use_scummvm/the_launcher`
 
-      :doc:`use_scummvm/mac_game_files`
+    .. grid-item-card::
 
-      :doc:`use_scummvm/add_play_games`
+        Playing games
+        ^^^^^^^^^^^^^
 
-      :doc:`use_scummvm/save_load_games`
+        :doc:`use_scummvm/game_files`
 
-      ---
+        :doc:`use_scummvm/mac_game_files`
 
+        :doc:`use_scummvm/add_play_games`
 
-      Controls and settings
-      ^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`use_scummvm/keyboard_shortcuts`
+        :doc:`use_scummvm/save_load_games`
 
-      :doc:`use_scummvm/how_to_settings`
+    .. grid-item-card::
 
-      ---
+        Controls and settings
+        ^^^^^^^^^^^^^^^^^^^^^
 
-      Useful features
-      ^^^^^^^^^^^^^^^^
+        :doc:`use_scummvm/keyboard_shortcuts`
 
-      :doc:`use_scummvm/connect_cloud`
+        :doc:`use_scummvm/how_to_settings`
 
-      :doc:`use_scummvm/LAN`
+    .. grid-item-card::
+
+        Useful features
+        ^^^^^^^^^^^^^^^
+
+        :doc:`use_scummvm/connect_cloud`
+
+        :doc:`use_scummvm/LAN`
 
 .. _platformspecific:
 
 We also have guides on how to get ScummVM running on a wide range of other platforms:
 
 
-.. panels::
-      :container: text-center mb-4
+.. grid:: 2
+    :class-container: sd-text-center
+    :gutter: 3
 
-      Handheld consoles
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`other_platforms/nintendo_3ds`
+    .. grid-item-card::
 
-      :doc:`other_platforms/nintendo_ds`
+        Handheld consoles
+        ^^^^^^^^^^^^^^^^^
 
-      :doc:`other_platforms/nintendo_switch`
+        :doc:`other_platforms/nintendo_3ds`
 
-      :doc:`other_platforms/playstation_portable`
+        :doc:`other_platforms/nintendo_ds`
 
-      :doc:`other_platforms/playstation_vita`
+        :doc:`other_platforms/nintendo_switch`
 
-      ---
+        :doc:`other_platforms/playstation_portable`
 
-      Other consoles
-      ^^^^^^^^^^^^^^^^
+        :doc:`other_platforms/playstation_vita`
 
-      :doc:`other_platforms/playstation_3`
+    .. grid-item-card::
 
-      :doc:`other_platforms/sega_dreamcast`
+        Other consoles
+        ^^^^^^^^^^^^^^
 
-      ---
+        :doc:`other_platforms/playstation_3`
 
-      Phones and tablets
-      ^^^^^^^^^^^^^^^
-      :doc:`other_platforms/ios`
+        :doc:`other_platforms/sega_dreamcast`
 
-      :doc:`other_platforms/tvos`
+    .. grid-item-card::
 
-      :doc:`other_platforms/android`
+        Phones and tablets
+        ^^^^^^^^^^^^^^^^^^
 
-      ---
+        :doc:`other_platforms/ios`
 
-      Other operating systems
-      ^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`other_platforms/amigaos_4`
+        :doc:`other_platforms/tvos`
 
-      :doc:`other_platforms/atari`
+        :doc:`other_platforms/android`
 
-      :doc:`other_platforms/morphos`
+    .. grid-item-card::
 
-      :doc:`other_platforms/risc_os`
+        Other operating systems
+        ^^^^^^^^^^^^^^^^^^^^^^^
+
+        :doc:`other_platforms/amigaos_4`
+
+        :doc:`other_platforms/atari`
+
+        :doc:`other_platforms/morphos`
+
+        :doc:`other_platforms/risc_os`
 
 
 
@@ -197,28 +202,31 @@ For our more experienced users, ScummVM features a command line interface, as we
 In this section, we also take a deep dive into understanding the graphics and audio settings.
 
 
-.. panels::
-      :container: text-center mb-4
+.. grid:: 2
+    :class-container: sd-text-center
+    :gutter: 3
 
-      Advanced features
-      ^^^^^^^^^^^^^^^^^^^^
-      
-      :doc:`advanced_topics/autostart`
-      
-      :doc:`advanced_topics/configuration_file`
+    .. grid-item-card::
 
-      :doc:`advanced_topics/command_line`
+        Advanced features
+        ^^^^^^^^^^^^^^^^^
 
-      ---
+        :doc:`advanced_topics/autostart`
 
-      Understanding the settings
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        :doc:`advanced_topics/configuration_file`
 
-      :doc:`The audio settings <advanced_topics/understand_audio>`
+        :doc:`advanced_topics/command_line`
 
-      :doc:`The graphics settings <advanced_topics/understand_graphics>`
+    .. grid-item-card::
 
-      :doc:`The search box <advanced_topics/understand_search_box>`
+        Understanding the settings
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+        :doc:`The audio settings <advanced_topics/understand_audio>`
+
+        :doc:`The graphics settings <advanced_topics/understand_graphics>`
+
+        :doc:`The search box <advanced_topics/understand_search_box>`
 
 
 
@@ -229,9 +237,10 @@ ScummVM is still under development. While we do our best to make sure that as ma
 
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
-.. panels::
-      :container: text-center mb-4
-      :column: col-lg-12
+.. grid:: 1
+    :class-container: sd-text-center
+
+    .. grid-item-card::
 
       :doc:`help/faq`
 
