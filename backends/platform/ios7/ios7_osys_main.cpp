@@ -114,7 +114,7 @@ OSystem_iOS7::~OSystem_iOS7() {
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_iOS7::getOpenGLProcAddress(const char *name) const {
-	return dlsym(RTLD_SELF, name);
+	return dlsym(RTLD_DEFAULT, name);
 }
 #endif
 
