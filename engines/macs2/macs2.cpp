@@ -844,7 +844,7 @@ Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int o
 	int index = 1;
 	Common::String result;
 	
-	for (byte currentByte = stream->readByte(); currentByte != 0; index++) {
+	for (byte currentByte = stream->readByte(); currentByte != 0; currentByte = stream->readByte(), index++) {
 		byte x = (byte)(index * index * 0x0c);
 		byte y = (byte)(currentByte ^ index);
 		byte r = (byte)(x ^ y);
