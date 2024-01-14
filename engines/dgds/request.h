@@ -41,6 +41,14 @@ struct RequestStruct2 {
 	uint16 _vals[6];
 };
 
+enum GadgetType {
+	kGadgetNone = 0,
+	kGadgetText = 1,
+	kGadgetSlider = 2,
+	kGadgetButton = 4,
+	kGadgetImage = 8,
+};
+
 // basic gadget is 52 (0x34) bytes
 class Gadget {
 public:
@@ -50,7 +58,7 @@ public:
 	uint16 _y;
 	uint16 _width;
 	uint16 _height;
-	uint16 _gadgetType;
+	GadgetType _gadgetType;
 	uint16 _flags2;
 	uint16 _flags3;
 
@@ -80,7 +88,7 @@ public:
 };
 
 // extended gadget type 1 is 62 (0x3e) bytes
-class Gadget1 : public Gadget {
+class TextAreaGadget : public Gadget {
 public:
 	uint16 _gadget1_i1;
 	uint16 _gadget1_i2;
@@ -89,7 +97,7 @@ public:
 };
 
 // extended gadget type 2 is 74 (0x4a) bytes
-class Gadget2 : public Gadget {
+class SliderGadget : public Gadget {
 public:
 	uint16 _gadget2_i1;
 	uint16 _gadget2_i2;
@@ -100,7 +108,7 @@ public:
 };
 
 // extended gadget type 8 is 68 (0x44) bytes
-class Gadget8 : public Gadget {
+class ImageGadget : public Gadget {
 public:
 	uint16 _gadget8_i1;
 	uint16 _gadget8_i2;

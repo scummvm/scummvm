@@ -51,14 +51,14 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 		for (int i = 0; i < 12; i++)
 			vals[i] = str->readUint16LE();
 
-		uint16 gadgetTypeFlag = vals[5];
+		GadgetType gadgetType = static_cast<GadgetType>(vals[5]);
 		if (num == -1 || num == vals[0]) {
-			if (gadgetTypeFlag == 1)
-				gptr.reset(new Gadget1());
-			else if (gadgetTypeFlag == 2)
-				gptr.reset(new Gadget2());
-			else if (gadgetTypeFlag == 8)
-				gptr.reset(new Gadget8());
+			if (gadgetType == kGadgetText)
+				gptr.reset(new TextAreaGadget());
+			else if (gadgetType == kGadgetSlider)
+				gptr.reset(new SliderGadget());
+			else if (gadgetType == kGadgetImage)
+				gptr.reset(new ImageGadget());
 			else
 				gptr.reset(new Gadget());
 		}
@@ -69,7 +69,7 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			gptr->_y = vals[2];
 			gptr->_width = vals[3];
 			gptr->_height = vals[4];
-			gptr->_gadgetType = vals[5];
+			gptr->_gadgetType = gadgetType;
 			gptr->_flags2 = vals[6];
 			gptr->_flags3 = vals[7];
 			gptr->_field14_0x20 = vals[8];
@@ -110,25 +110,25 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 
 		// TODO: In each of these cases, work out the true offsets to these fields.
 		// and if they are shared between gadget types.
-		switch (gadgetTypeFlag) {
-		case 1: {
+		switch (gadgetType) {
+		case kGadgetText: {
 			uint16 i1 = str->readUint16LE();
 			uint16 i2 = str->readUint16LE();
 			if (gptr) {
-				Gadget1 *g1 = static_cast<Gadget1 *>(gptr.get());
-				// TODO: These fields might are actually shared with other gadget types?
+				TextAreaGadget *g1 = static_cast<TextAreaGadget *>(gptr.get());
+				// TODO: These fields might actually be shared with other gadget types?
 				g1->_gadget1_i1 = i1;
 				g1->_gadget1_i2 = i2;
 			}
 			break;
 		}
-		case 2: {
+		case kGadgetSlider: {
 			uint16 i1 = str->readUint16LE();
 			uint16 i2 = str->readUint16LE();
 			uint16 i3 = str->readUint16LE();
 			uint16 i4 = str->readUint16LE();
 			if (gptr) {
-				Gadget2 *g2 = static_cast<Gadget2 *>(gptr.get());
+				SliderGadget *g2 = static_cast<SliderGadget *>(gptr.get());
 				g2->_gadget2_i1 = i1;
 				g2->_gadget2_i2 = i2;
 				g2->_gadget2_i3 = i3;
@@ -136,17 +136,17 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			}
 			break;
 		}
-		case 4: {
+		case kGadgetButton: {
 			Common::String s = str->readString();
 			if (gptr)
 				gptr->_buttonName = s;
 			break;
 		}
-		case 8: {
+		case kGadgetImage: {
 			uint16 i1 = str->readUint16LE();
 			uint16 i2 = str->readUint16LE();
 			if (gptr) {
-				Gadget8 *g8 = static_cast<Gadget8 *>(gptr.get());
+				ImageGadget *g8 = static_cast<ImageGadget *>(gptr.get());
 				g8->_gadget8_i1 = i1;
 				g8->_gadget8_i2 = i2;
 			}
@@ -243,24 +243,25 @@ Common::String Gadget::dump() const {
 	}
 
 	return Common::String::format(
-		"Gadget<num %d pos (%d,%d) sz (%d,%d), typ %d, flgs %04x %04x svals %s, %s, '%s', parent (%d,%d)>",
+		"%s<num %d pos (%d,%d) sz (%d,%d), typ %d, flgs %04x %04x svals %s, %s, '%s', parent (%d,%d)>",
+		_gadgetType == kGadgetButton ? "ButtonGadget" : "Gadget",
 		_gadgetNo, _x, _y, _width, _height, _gadgetType, _flags2, _flags3, sval1, sval2,
 		_buttonName.c_str(), _parentX, _parentY);
 }
 
-Common::String Gadget1::dump() const {
+Common::String TextAreaGadget::dump() const {
 	const Common::String base = Gadget::dump();
-	return Common::String::format("Gadget1<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);
+	return Common::String::format("TextArea<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);
 }
 
-Common::String Gadget2::dump() const {
+Common::String SliderGadget::dump() const {
 	const Common::String base = Gadget::dump();
-	return Common::String::format("Gadget2<%s, %d %d %d %d>", base.c_str(), _gadget2_i1, _gadget2_i2, _gadget2_i3, _gadget2_i4);
+	return Common::String::format("Slider<%s, %d %d %d %d>", base.c_str(), _gadget2_i1, _gadget2_i2, _gadget2_i3, _gadget2_i4);
 }
 
-Common::String Gadget8::dump() const {
+Common::String ImageGadget::dump() const {
 	const Common::String base = Gadget::dump();
-	return Common::String::format("Gadget8<%s, %d %d>", base.c_str(), _gadget8_i1, _gadget8_i2);
+	return Common::String::format("Image<%s, %d %d>", base.c_str(), _gadget8_i1, _gadget8_i2);
 }
 
 Common::String RequestData::dump() const {
