@@ -35,9 +35,7 @@ Common::String getKey(const char *path) {
 	size_t i = p.findLastOf(".");
 	p = p.substr(0, i);
 	if ((len > 4) && scumm_strnicmp(p.c_str() + 4, "_en", 3) == 0) {
-		// TODO
-		// Common::String lang = prefs(Lang);
-		Common::String lang = "en";
+		Common::String lang = ConfMan.get("language");
 		Common::String filename(path, len - 3);
 		const char *ext = path + i;
 		return Common::String::format("%s_%s%s", filename.c_str(), lang.c_str(), ext);

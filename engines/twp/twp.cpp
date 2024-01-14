@@ -644,9 +644,9 @@ Common::Error TwpEngine::run() {
 
 	_pack.init();
 
-	// TODO: load with selected lang
+	Common::String lang = Common::String::format("ThimbleweedText_%s.tsv", ConfMan.get("language").c_str());
 	GGPackEntryReader entry;
-	entry.open(_pack, "ThimbleweedText_en.tsv");
+	entry.open(_pack, lang);
 	_textDb.parseTsv(entry);
 
 	HSQUIRRELVM v = _vm.get();

@@ -31,6 +31,8 @@
 
 namespace Twp {
 
+static const char *lang_items[] = {"en", "fr", "it", "de", "es"};
+
 TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "TwpGameOptionsDialog", false, domain) {
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoLabel", _("Video:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
@@ -54,7 +56,14 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	_enableDisplayTextGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Display Text"), _(""));
-	_enableHearVoiceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck2", _("Hear Vocie"), _(""));
+	_enableHearVoiceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck2", _("Hear Voice"), _(""));
+
+	_langGUIDropdown = new GUI::PopUpWidget(widgetsBoss(), "TwpGameOptionsDialog.LangDropDown");
+	_langGUIDropdown->appendEntry(_("English"));
+	_langGUIDropdown->appendEntry(_("French"));
+	_langGUIDropdown->appendEntry(_("Italian"));
+	_langGUIDropdown->appendEntry(_("German"));
+	_langGUIDropdown->appendEntry(_("Spanish"));
 }
 
 void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
@@ -72,6 +81,7 @@ void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Comm
 		.addWidget("ControlsCheck3", "Checkbox")
 		.addWidget("ControlsCheck4", "Checkbox")
 		.addWidget("TextAndSpeechLabel", "OptionsLabel")
+		.addWidget("LangDropDown", "PopUp")
 		.addWidget("TextCheck1", "Checkbox")
 		.addWidget("TextCheck2", "Checkbox");
 
@@ -87,6 +97,15 @@ void TwpOptionsContainerWidget::load() {
 	_enableClassicSentenceGUICheckbox->setState(ConfMan.getBool("hudSentence", _domain));
 	_enableDisplayTextGUICheckbox->setState(ConfMan.getBool("talkiesShowText", _domain));
 	_enableHearVoiceGUICheckbox->setState(ConfMan.getBool("talkiesHearVoice", _domain));
+	Common::String lang = ConfMan.get("language", _domain);
+	int index = 0;
+	for (int i = 0; i < ARRAYSIZE(lang_items); i++) {
+		if (lang == lang_items[i]) {
+			index = i;
+			break;
+		}
+	}
+	_langGUIDropdown->setSelected(index);
 }
 
 bool TwpOptionsContainerWidget::save() {
@@ -98,6 +117,8 @@ bool TwpOptionsContainerWidget::save() {
 	ConfMan.setBool("hudSentence", _enableClassicSentenceGUICheckbox->getState(), _domain);
 	ConfMan.setBool("talkiesShowText", _enableDisplayTextGUICheckbox->getState(), _domain);
 	ConfMan.setBool("talkiesHearVoice", _enableHearVoiceGUICheckbox->getState(), _domain);
+	ConfMan.setBool("talkiesHearVoice", _enableHearVoiceGUICheckbox->getState(), _domain);
+	ConfMan.set("language", lang_items[_langGUIDropdown->getSelected()], _domain);
 	return true;
 }
 
