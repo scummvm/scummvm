@@ -46,7 +46,7 @@ class Decompressor;
 
 class Font : public Graphics::Font {
 public:
-	Font(byte w, byte h, byte start, byte count, byte *data);
+	Font(byte w, byte h, byte start, byte count, const byte *glyphs);
 	virtual ~Font();
 	int getFontHeight() const { return _h; }
 	int getMaxCharWidth() const { return _w; }
@@ -59,7 +59,7 @@ protected:
 	byte _h;
 	byte _start;
 	byte _count;
-	byte *_data;
+	const byte *_glyphs;
 
 	bool hasChar(byte chr) const;
 };
@@ -67,7 +67,8 @@ protected:
 /* Proportional font (each char has its own width and so data is a different size) */
 class PFont : public Font {
 public:
-	PFont(byte w, byte h, byte start, byte count, byte *data, const uint16 *offsets, const byte *widths);
+	PFont(byte w, byte h, byte start, byte count, byte *data);
+	~PFont();
 	int getCharWidth(uint32 chr) const { return _widths[chr - _start]; }
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static PFont *load(Common::SeekableReadStream &input, Decompressor *decompressor);
@@ -75,6 +76,7 @@ public:
 protected:
 	const uint16 *_offsets;
 	const byte *_widths;
+	byte *_rawData;
 
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
@@ -83,11 +85,14 @@ protected:
 class FFont : public Font {
 public:
 	FFont(byte w, byte h, byte start, byte count, byte *data);
+	~FFont();
 	int getCharWidth(uint32 chr) const { return _w; }
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static FFont *load(Common::SeekableReadStream &input);
 
 protected:
+	byte *_rawData;
+
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
 

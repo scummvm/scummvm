@@ -65,17 +65,16 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 	return font;
 }
 
-Font::Font(byte w, byte h, byte start, byte count, byte *data) : _w(w), _h(h), _start(start), _count(count), _data(data) { }
+Font::Font(byte w, byte h, byte start, byte count, const byte *glyphs) : _w(w), _h(h), _start(start), _count(count), _glyphs(glyphs) { }
 
 Font::~Font() {
-	delete [] _data;
 }
 
 bool Font::hasChar(byte chr) const {
 	return (chr >= _start && chr <= (_start + _count));
 }
 
-static inline uint isSet(byte *set, uint bit) {
+static inline uint isSet(const byte *set, uint bit) {
 	return (set[bit >> 3] & (1 << (bit & 7)));
 }
 
@@ -90,7 +89,7 @@ void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint
 	const int columns = clippedDestRect.width();
 
 	int idx = bit + croppedBy.x;
-	byte *src = _data + pos + croppedBy.y;
+	const byte *src = _glyphs + pos + croppedBy.y;
 	byte *ptr = (byte *)dst->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 
 	for (int i = 0; i < rows; ++i) {
@@ -103,9 +102,12 @@ void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint
 	}
 }
 
-FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : Font(w, h, start, count, data) {
+FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : Font(w, h, start, count, data), _rawData(data) {
 }
 
+FFont::~FFont() {
+	delete [] _rawData;
+}
 void FFont::mapChar(byte chr, int &pos, int &bit) const {
 	pos = (chr - _start) * _h;
 	bit = 8 - _w;
@@ -137,9 +139,13 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 	return new FFont(w, h, start, count, data);
 }
 
-PFont::PFont(byte w, byte h, byte start, byte count, byte *data, const uint16 *offsets, const byte *widths)
-: Font(w, h, start, count, data), _offsets(offsets), _widths(widths)
+PFont::PFont(byte w, byte h, byte start, byte count, byte *data)
+: Font(w, h, start, count, data + 3 * count), _offsets(reinterpret_cast<const uint16 *>(data)), _widths(data + 2 * count), _rawData(data)
 {
+}
+
+PFont::~PFont() {
+	delete [] _rawData;
 }
 
 void PFont::mapChar(byte chr, int& pos, int& bit) const {
@@ -177,9 +183,7 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	uint32 uncompressedSize;
 	byte *data = decompressor->decompress(&input, size, uncompressedSize);
 
-	return new PFont(w, h, start, count, data,
-		reinterpret_cast<const uint16 *>(data + 2 * count),
-		data + 3 * count);
+	return new PFont(w, h, start, count, data);
 }
 
 FontManager::~FontManager() {
