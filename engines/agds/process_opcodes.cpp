@@ -1631,6 +1631,8 @@ void Process::setCharacter() {
 	debug("setCharacter %s %s %d", id.c_str(), regionName.c_str(), dir);
 	auto character = _engine->getCharacter(id);
 	if (character) {
+		if (dir == -1)
+			dir = character->direction();
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
 			debug("setting character position to %d,%d", region->center.x, region->center.y);
