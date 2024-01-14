@@ -37,6 +37,8 @@ struct TextItem {
 	Common::String _txt;
 };
 
+// This struct is defined in the code, but seems
+// to not be used in any of the games?
 struct RequestStruct2 {
 	uint16 _vals[6];
 };
@@ -85,6 +87,13 @@ public:
 	uint16 _parentY;
 
 	virtual Common::String dump() const;
+	virtual void draw(Graphics::Surface *dst) const;
+};
+
+// Button gadget has no additional fields, but some behavior differences.
+class ButtonGadget : public Gadget {
+public:
+	void draw(Graphics::Surface *dst) const override;
 };
 
 // extended gadget type 1 is 62 (0x3e) bytes
@@ -94,6 +103,7 @@ public:
 	uint16 _gadget1_i2;
 
 	Common::String dump() const override;
+	void draw(Graphics::Surface *dst) const override;
 };
 
 // extended gadget type 2 is 74 (0x4a) bytes
@@ -105,6 +115,7 @@ public:
 	uint16 _gadget2_i4;
 
 	Common::String dump() const override;
+	void draw(Graphics::Surface *dst) const override;
 };
 
 // extended gadget type 8 is 68 (0x44) bytes
@@ -114,6 +125,7 @@ public:
 	uint16 _gadget8_i2;
 
 	Common::String dump() const override;
+	void draw(Graphics::Surface *dst) const override;
 };
 
 class RequestData {
