@@ -208,7 +208,7 @@ public:
 	WalkTo(Object *obj, Math::Vector2d dest, int facing = 0);
 	virtual void disable() override;
 
-	const Common::Array<Math::Vector2d>& getPath() const { return _path; }
+	const Common::Array<Math::Vector2d> &getPath() const { return _path; }
 
 private:
 	void actorArrived();
@@ -224,7 +224,7 @@ private:
 // Creates a talking animation for a specified object.
 class Talking : public Motor {
 public:
-	Talking(Object* obj, const Common::StringArray& texts, Color color);
+	Talking(Object *obj, const Common::StringArray &texts, Color color);
 	virtual ~Talking() {}
 
 private:
@@ -232,9 +232,9 @@ private:
 	virtual void disable() override;
 	int onTalkieId(int id);
 	Common::String talkieKey();
-	void setDuration(const Common::String& text);
-	void say(const Common::String& text);
-	int loadActorSpeech(const Common::String& name);
+	void setDuration(const Common::String &text);
+	void say(const Common::String &text);
+	int loadActorSpeech(const Common::String &name);
 
 private:
 	Object *_obj = nullptr;
@@ -242,9 +242,22 @@ private:
 	Lip _lip;
 	float _elapsed = 0.f;
 	float _duration = 0.f;
-	//   SoundId soundId;
 	Color _color;
 	Common::StringArray _texts;
+};
+
+class Jiggle : public Motor {
+public:
+	Jiggle(Node *node, float amount);
+	virtual ~Jiggle();
+
+private:
+	virtual void update(float elapsed) override;
+
+private:
+	Node *_node = nullptr;
+	float _amount = 0.f;
+	float _jiggleTime = 0.f;
 };
 
 } // namespace Twp

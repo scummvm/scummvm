@@ -514,7 +514,6 @@ void Object::setReach(Motor *reach) { SET_MOTOR(reach); }
 void Object::setTalking(Motor *talking) { SET_MOTOR(talking); }
 void Object::setTurnTo(Motor *turnTo) { SET_MOTOR(turnTo); }
 void Object::setShakeTo(Motor *shakeTo) { SET_MOTOR(shakeTo); }
-void Object::setJiggleTo(Motor *jiggleTo) { SET_MOTOR(jiggleTo); }
 
 void Object::update(float elapsedSec) {
 	if (_dependentObj)
@@ -743,6 +742,10 @@ void Object::turn(Facing facing) {
 void Object::turn(Object *obj) {
 	Facing facing = getFacingToFaceTo(this, obj);
 	setFacing(facing);
+}
+
+void Object::jiggle(float amount) {
+  _jiggleTo = new Jiggle(_node, amount);
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {

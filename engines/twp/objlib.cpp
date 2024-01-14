@@ -215,9 +215,21 @@ static SQInteger jiggleInventory(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Rotate the object around its origin back and forth by the specified amount of pixels.
+// See also:
+// - `shakeObject`
+// - `stopObjectMotors`
+//
+// .. code-block:: Squirrel
+// jiggleObject(pigeonVan, 0.25)
 static SQInteger jiggleObject(HSQUIRRELVM v) {
-	// TODO: jiggleObject
-	warning("jiggleObject not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	float amount;
+	if (SQ_FAILED(sqget(v, 3, amount)))
+		return sq_throwerror(v, "failed to get amount");
+	obj->jiggle(amount);
 	return 0;
 }
 

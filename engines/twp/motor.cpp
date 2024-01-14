@@ -317,7 +317,8 @@ void Talking::update(float elapsed) {
 }
 
 int Talking::loadActorSpeech(const Common::String &name) {
-	if(!ConfMan.getBool("talkiesHearVoice")) return 0;
+	if (!ConfMan.getBool("talkiesHearVoice"))
+		return 0;
 
 	debug("loadActorSpeech %s.ogg", name.c_str());
 	Common::String filename(name);
@@ -356,7 +357,7 @@ void Talking::say(const Common::String &text) {
 		}
 
 		// TODO: call sayingLine
-		if(_obj->_sound) {
+		if (_obj->_sound) {
 			g_engine->_audio.stop(_obj->_sound);
 		}
 		_obj->_sound = loadActorSpeech(name);
@@ -444,6 +445,16 @@ Common::String Talking::talkieKey() {
 	else
 		sqgetf(_obj->_table, "_key", result);
 	return result;
+}
+
+Jiggle::Jiggle(Node *node, float amount) : _amount(amount), _node(node) {
+}
+
+Jiggle::~Jiggle() {}
+
+void Jiggle::update(float elapsed) {
+	_jiggleTime += 20.f * elapsed;
+	_node->setRotationOffset(_amount * sin(_jiggleTime));
 }
 
 } // namespace Twp
