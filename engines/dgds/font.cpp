@@ -54,12 +54,7 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 			debug("    magic: %u", magic);
 
 			if (magic != 0xFF)
-				// Fixed-width font.  Do these get used in any game?
-#if DGDS_SUPPORT_FIXED_WIDTH
 				font = FFont::load(*stream);
-#else
-				error("Font::load(): Attempted to load FFont (fixed-width font)");
-#endif
 			else
 				font = PFont::load(*stream, decompressor);
 		}
@@ -108,7 +103,6 @@ void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint
 	}
 }
 
-#if DGDS_SUPPORT_FIXED_WIDTH
 FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : Font(w, h, start, count, data) {
 }
 
@@ -138,11 +132,10 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 	debug("    w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
 
 	byte *data = new byte[size];
-	input.read(fnt->_data, size);
+	input.read(data, size);
 
 	return new FFont(w, h, start, count, data);
 }
-#endif
 
 PFont::PFont(byte w, byte h, byte start, byte count, byte *data, const uint16 *offsets, const byte *widths)
 : Font(w, h, start, count, data), _offsets(offsets), _widths(widths)
@@ -187,6 +180,46 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	return new PFont(w, h, start, count, data,
 		reinterpret_cast<const uint16 *>(data + 2 * count),
 		data + 3 * count);
+}
+
+FontManager::~FontManager() {
+	for (auto &entry : _fonts)
+		if (entry._key != kDefaultFont)
+			delete entry._value;
+}
+
+const Font *FontManager::getFont(FontType type) const {
+	return _fonts.getVal(type);
+}
+
+void FontManager::tryLoadFont(FontType ftype, const char *fname, ResourceManager *resMgr, Decompressor *decomp) {
+	Font *font = Font::load(fname, resMgr, decomp);
+	if (font)
+		_fonts.setVal(ftype, font);
+	else
+		error("Failed to load font %s", fname);
+}
+
+
+void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompressor *decomp) {
+	tryLoadFont(k8x8Font, "8X8.FNT", resMgr, decomp);
+	tryLoadFont(k6x6Font, "6X6.FNT", resMgr, decomp);
+	tryLoadFont(k4x5Font, "4x5.FNT", resMgr, decomp);
+	if (gameId == GID_DRAGON) {
+		tryLoadFont(kGameFont, "DRAGON.FNT", resMgr, decomp);
+		tryLoadFont(k7x8Font, "7X8.FNT", resMgr, decomp);
+		tryLoadFont(kP6x6Font, "P6X6.FNT", resMgr, decomp);
+	} else if (gameId == GID_CHINA) {
+		tryLoadFont(kGameFont, "HOC.FNT", resMgr, decomp);
+		tryLoadFont(kChinaFont, "CHINA.FNT", resMgr, decomp);
+		tryLoadFont(kChineseFont, "CHINESE.FNT", resMgr, decomp);
+	} else if (gameId == GID_BEAMISH) {
+		tryLoadFont(kGameFont, "WILLY.FNT", resMgr, decomp);
+		tryLoadFont(kWVCRFont, "WVCR.FNT", resMgr, decomp);
+		tryLoadFont(kComix16Font, "COMIX_16.FNT", resMgr, decomp);
+	}
+
+	_fonts.setVal(kDefaultFont, _fonts.getVal(kGameFont));
 }
 
 } // End of namespace Dgds

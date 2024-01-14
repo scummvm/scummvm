@@ -24,7 +24,11 @@
 #define DGDS_FONT_H
 
 #include "common/scummsys.h"
+#include "common/hashmap.h"
+#include "common/func.h"
 #include "graphics/font.h"
+
+#include "dgds/dgds.h"
 
 namespace Graphics {
 class Font;
@@ -75,7 +79,6 @@ protected:
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
 
-#if DGDS_SUPPORT_FIXED_WIDTH
 /* Fixed-width font */
 class FFont : public Font {
 public:
@@ -87,8 +90,44 @@ public:
 protected:
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
-#endif
+
+class FontManager {
+public:
+	enum FontType {
+		kDefaultFont = 0,
+		k8x8Font,
+		k6x6Font,
+		k4x5Font,
+		kGameFont, 		// DRAGON for Rise of the Dragon, WILLY for Willy Beamish, HOC for Heart of China.
+		k7x8Font,	  	// Rise of the Dragon only
+		kP6x6Font,	  	// Rise of the Dragon only
+		kWVCRFont,    	// Willy Beamish only
+		kComix16Font, 	// Willy Beamish only
+		kChinaFont,   	// Heart of China only
+		kChineseFont, 	// Heart of China only
+	};
+
+	FontManager() {}
+	~FontManager();
+
+	const Font *getFont(FontType) const;
+	void loadFonts(DgdsGameId gameId, ResourceManager *resourceManager, Decompressor *decompressor);
+private:
+
+	void tryLoadFont(FontType type, const char *filename, ResourceManager *resourceManager, Decompressor *decompressor);
+
+	struct FontTypeHash {
+		Common::Hash<const char *> hash;
+
+		uint operator()(FontType val) const {
+			return (uint)val;
+		}
+	};
+
+	Common::HashMap<FontType, Font*, FontTypeHash> _fonts;
+};
 
 } // End of namespace Dgds
+
 
 #endif // DGDS_FONT_H
