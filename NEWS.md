@@ -38,6 +38,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VIII text centering for plaques.
    - Fix Ultima VIII crash on dragging items to screen edge.
    - Fix Ultima VIII unexpected jumping on left click.
+   - Fix Ultima VIII camera during cutscenes for Shrine of the Ancient Ones.
+   - Fix Ultima VIII invalid placement of items within containers.
 
  Android port:
    - Fixed crash in built-in help with German language.
