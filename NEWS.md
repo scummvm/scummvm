@@ -2140,7 +2140,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Windows port:
    - Changed default savegames location for Windows NT4/2000/XP/Vista/7.
      (The migration batch file can be used to copy savegames from the old
-      default location, to the new default location).
+     default location, to the new default location).
 
 
 #### 1.4.1 "Subwoofer Release" (2012-01-27)
