@@ -23,12 +23,29 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/rect.h"
 
+#include "graphics/surface.h"
+
+#include "dgds/dgds.h"
+#include "dgds/font.h"
 #include "dgds/includes.h"
 #include "dgds/request.h"
 #include "dgds/resource.h"
 
 namespace Dgds {
+
+// TODO: The following colors are from Rise of the Dragon.  Will need to check
+// if the same ones are hard-coded in the other games.
+static const byte ButtonColors[] = {
+	0x73, 0xF0, 0x7B, 0xDF, 0x5F, 0x5F, 0x7E, 0x27, 0x16, 0x73, 0x27, 0x16, 0xDF
+};
+
+static const byte SliderColors[] = {
+	0x7B, 0x4D, 0xF4, 0x54, 0xDF, 0x74, 0x58
+	// TOOD: are these part of the list too?
+	// 0x7, 0x7, 0x8, 0x7, 0, 0xF, 0x7, 0xC, 0x4
+};
 
 RequestParser::RequestParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
 }
@@ -59,6 +76,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 				gptr.reset(new SliderGadget());
 			else if (gadgetType == kGadgetImage)
 				gptr.reset(new ImageGadget());
+			else if (gadgetType == kGadgetButton)
+				gptr.reset(new ButtonGadget());
 			else
 				gptr.reset(new Gadget());
 		}
@@ -90,6 +109,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			if (gptr)
 				gptr->_sval1I = i;
 		}
+		if (gptr)
+			gptr->_sval1Type = type1;
 
 		uint16 type2 = str->readUint16LE();
 		if (type2 == 1) {
@@ -101,6 +122,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			if (gptr)
 				gptr->_sval2I = i;
 		}
+		if (gptr)
+			gptr->_sval2Type = type2;
 
 		uint16 val = str->readUint16LE();
 		if (gptr) {
@@ -249,9 +272,108 @@ Common::String Gadget::dump() const {
 		_buttonName.c_str(), _parentX, _parentY);
 }
 
+void Gadget::draw(Graphics::Surface *dst) const {}
+
+/**
+ * A function to fill a rect from left to right *inclusive* of bottom/right coords,
+ * as that's how DGDS code specifies the rect and it's very confusing to try and
+ * RE it otherwise.
+ **/
+static void fillRectInc(Graphics::Surface *dst, uint16 left, uint16 top, uint16 right, uint16 bottom, byte fill) {
+	dst->fillRect(Common::Rect(left, top, right + 1, bottom + 1), fill);
+}
+
+void ButtonGadget::draw(Graphics::Surface *dst) const {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const FontManager *fontman = engine->getFontMan();
+
+	int16 x = _x + _parentX;
+	int16 y = _y + _parentY;
+
+	int16 right = x + _width;
+	int16 x2 = right - 1;
+	int16 bottom = (y + _height) - 1;
+
+	byte fill = ButtonColors[0];
+	fillRectInc(dst, x, y, x2, y, fill);
+	fillRectInc(dst, x + 2, y + 2, right - 3, y + 2, fill);
+	fillRectInc(dst, x + 1, bottom - 2, x + 1, bottom - 2, fill);
+	fillRectInc(dst, right - 2, bottom - 2, right - 2, bottom - 2, fill);
+	fillRectInc(dst, x + 1, bottom - 1, right - 2, bottom - 1, fill);
+
+	fill = ButtonColors[1];
+	fillRectInc(dst, x, y + 1, x, bottom, fill);
+	fillRectInc(dst, x2, y + 1, x2, bottom, fill);
+	fillRectInc(dst, x + 2, y + 3, x + 2, bottom - 2, fill);
+	fillRectInc(dst, right - 3, y + 3, right - 3, bottom - 2, fill);
+	fillRectInc(dst, x + 3,bottom - 2, right - 4, bottom - 2, fill);
+
+	fill = ButtonColors[2];
+	fillRectInc(dst, x + 1, y + 2, x + 1, bottom - 3, fill);
+	fillRectInc(dst, right - 2, y + 2, right - 2, bottom - 3, fill);
+	fillRectInc(dst, x + 1, bottom, right - 2, bottom, ButtonColors[3]);
+	fillRectInc(dst, x + 1, y + 1, right - 2, y + 1, ButtonColors[4]);
+
+	bool enabled = !(_flags3 & 9);
+	int colOffset;
+	if (!enabled) {
+		colOffset = 9;
+	}  else {
+		colOffset = 5;
+	}
+
+	fillRectInc(dst, x + 3, y + 3, right - 4, y + 3, ButtonColors[colOffset + 1]);
+
+	// TODO: This is done with a different call in the game.. is there some reason for that?
+	dst->fillRect(Common::Rect(x + 3, y + 4, x + 3 + _width - 6, y + 4 + _height - 8), ButtonColors[colOffset + 2]);
+
+	fillRectInc(dst, x + 3, bottom - 3, right - 4, bottom - 3, ButtonColors[colOffset + 3]);
+
+	if (!_buttonName.empty()) {
+		const Font *font = fontman->getFont(FontManager::k6x6Font);
+
+		Common::String name = _buttonName;
+
+		int fontHeight = font->getFontHeight();
+
+		bool twoline;
+		int yoffset;
+		uint32 linebreak = name.find('&');
+
+		Common::String line1, line2;
+		if (linebreak != Common::String::npos) {
+			twoline = true;
+			name.setChar(' ', linebreak);
+			yoffset = _height + 1 - fontHeight * 2;
+			line1 = _buttonName.substr(0, linebreak);
+			line2 = _buttonName.substr(linebreak + 1);
+		} else {
+			twoline = false;
+			yoffset = _height - fontHeight;
+			line1 = _buttonName;
+		}
+
+		// TODO: Check me: had to subtract 1 here to get the right y offset.
+		// Some difference from drawing code of original?
+		yoffset = y + yoffset / 2 - 1;
+		int lineWidth = font->getStringWidth(line1);
+		font->drawString(dst, line1, x + (_width - lineWidth) / 2 + 1, yoffset + 2, lineWidth, ButtonColors[colOffset]);
+
+		if (linebreak != Common::String::npos) {
+			lineWidth = font->getStringWidth(line2);
+			font->drawString(dst, line2, x + (_width - lineWidth) / 2 + 1, yoffset + fontHeight, lineWidth, ButtonColors[colOffset]);
+		}
+	}
+
+}
+
 Common::String TextAreaGadget::dump() const {
 	const Common::String base = Gadget::dump();
 	return Common::String::format("TextArea<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);
+}
+
+void TextAreaGadget::draw(Graphics::Surface *dst) const {
+	error("TODO: Implement TextAreaGadget::draw");
 }
 
 Common::String SliderGadget::dump() const {
@@ -259,9 +381,17 @@ Common::String SliderGadget::dump() const {
 	return Common::String::format("Slider<%s, %d %d %d %d>", base.c_str(), _gadget2_i1, _gadget2_i2, _gadget2_i3, _gadget2_i4);
 }
 
+void SliderGadget::draw(Graphics::Surface *dst) const {
+	error("TODO: Implement SliderGadget::draw");
+}
+
 Common::String ImageGadget::dump() const {
 	const Common::String base = Gadget::dump();
 	return Common::String::format("Image<%s, %d %d>", base.c_str(), _gadget8_i1, _gadget8_i2);
+}
+
+void ImageGadget::draw(Graphics::Surface *dst) const {
+	error("TODO: Implement ImageGadget::draw");
 }
 
 Common::String RequestData::dump() const {
