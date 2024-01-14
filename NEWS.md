@@ -33,11 +33,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix animation glitches after using the holomap.
 
  Ultima:
-   - Fix Ultima VIII hidden minimap blocking keyring use
-   - Fix Ultima VIII page breaks in books
-   - Fix Ultima VIII text centering for plaques
-   - Fix Ultima VIII crash on dragging items to screen edge
-   - Fix Ultima VIII unexpected jumping on left click
+   - Fix Ultima VIII hidden minimap blocking keyring use.
+   - Fix Ultima VIII page breaks in books.
+   - Fix Ultima VIII text centering for plaques.
+   - Fix Ultima VIII crash on dragging items to screen edge.
+   - Fix Ultima VIII unexpected jumping on left click.
 
  Android port:
    - Fixed crash in built-in help with German language.
