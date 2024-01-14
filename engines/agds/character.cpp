@@ -194,6 +194,12 @@ bool Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1 || !_enabled)
 		return false;
 
+	if (_stopped) {
+		debug("character stopped, skipping");
+		_stopped = false;
+		return false;
+	}
+
 	auto character = jokes? _engine->jokes(): this;
 	auto description = character->animationDescription(direction);
 	if (!description) {
@@ -223,11 +229,6 @@ bool Character::animate(int direction, int speed, bool jokes) {
 
 bool Character::animate(Common::Point pos, int direction, int speed) {
 	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
-	if (_stopped) {
-		debug("character stopped, skipping");
-		_stopped = false;
-		return true;
-	}
 	auto ok = animate(direction, speed, true);
 	if (!ok)
 		return false;
