@@ -162,6 +162,10 @@ public:
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
+	int MeasureString(Common::String &s);
+
+	int MeasureStrings(Common::StringArray sa);
+
 	Common::String DecodeString(Common::MemoryReadStream* stream, int offset, int numLines);
 
 	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
