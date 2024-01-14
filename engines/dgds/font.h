@@ -42,6 +42,8 @@ class Decompressor;
 
 class Font : public Graphics::Font {
 public:
+	Font(byte w, byte h, byte start, byte count, byte *data);
+	virtual ~Font();
 	int getFontHeight() const { return _h; }
 	int getMaxCharWidth() const { return _w; }
 	virtual int getCharWidth(uint32 chr) const = 0;
@@ -58,22 +60,26 @@ protected:
 	bool hasChar(byte chr) const;
 };
 
+/* Proportional font (each char has its own width and so data is a different size) */
 class PFont : public Font {
 public:
+	PFont(byte w, byte h, byte start, byte count, byte *data, const uint16 *offsets, const byte *widths);
 	int getCharWidth(uint32 chr) const { return _widths[chr - _start]; }
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static PFont *load(Common::SeekableReadStream &input, Decompressor *decompressor);
 
 protected:
-	uint16 *_offsets;
-	byte *_widths;
+	const uint16 *_offsets;
+	const byte *_widths;
 
 	void mapChar(byte chr, int &pos, int &bit) const;
 };
 
-#if 0
+#if DGDS_SUPPORT_FIXED_WIDTH
+/* Fixed-width font */
 class FFont : public Font {
 public:
+	FFont(byte w, byte h, byte start, byte count, byte *data);
 	int getCharWidth(uint32 chr) const { return _w; }
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static FFont *load(Common::SeekableReadStream &input);
