@@ -69,6 +69,7 @@ struct BackgroundAnimation {
 	uint16 X;
 	uint16 Y;
 	AnimFrame *Frames;
+	uint32 FrameIndex;
 };
 
 class Macs2Engine : public Engine, public Events {
