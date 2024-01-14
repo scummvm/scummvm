@@ -647,8 +647,13 @@ void sysfile_init(bool in_hag_mode) {
 	_G(hag).hag_flag = in_hag_mode;
 
 	if (in_hag_mode) {
-		_G(hag).hash_file = Common::Path(Common::String::format("%s.has",
-			g_engine->getGameType() == GType_Riddle ? "ripley" : "burger"));
+		const char *name = "burger";
+		if (g_engine->getGameType() == GType_Riddle)
+			name = "ripley";
+		else if (g_engine->isDemo() == GStyle_NonInteractiveDemo)
+			name = "overview";
+
+		_G(hag).hash_file = Common::Path(Common::String::format("%s.has", name));
 		term_message("Initialized in hag mode");
 	} else {
 		term_message("Initialized in file mode");

@@ -74,8 +74,13 @@ Common::Language M4Engine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool M4Engine::isDemo() const {
-	return (getFeatures() & ADGF_DEMO) != 0;
+int M4Engine::isDemo() const {
+	if ((getFeatures() & ADGF_DEMO) == 0)
+		return GStyle_Game;
+	else if (_gameDescription->features & kFeaturesNonInteractiveDemo)
+		return GStyle_NonInteractiveDemo;
+	else
+		return GStyle_Demo;
 }
 
 Common::Error M4Engine::run() {

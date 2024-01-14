@@ -41,10 +41,17 @@ enum M4GameType {
 	GType_Burger = 2
 };
 
+enum M4GameStyle {
+	GStyle_Game = 0,
+	GStyle_Demo = 1,
+	GStyle_NonInteractiveDemo = 2
+};
+
 enum Features {
 	kFeaturesNone = 0,
 	kFeaturesCD = 1 << 0,
-	kFeaturesDemo = 1 << 1
+	kFeaturesDemo = 1 << 1,
+	kFeaturesNonInteractiveDemo = 1 << 2
 };
 
 struct M4GameDescription {

@@ -82,6 +82,7 @@ public:
 	~M4Engine() override;
 
 	uint32 getFeatures() const;
+
 	bool useOriginalSaveLoad() const {
 		return _useOriginalSaveLoad;
 	}
@@ -104,7 +105,7 @@ public:
 	/**
 	 * Return if it's a demo
 	 */
-	bool isDemo() const;
+	int isDemo() const;
 
 	/**
 	 * Gets a random number
