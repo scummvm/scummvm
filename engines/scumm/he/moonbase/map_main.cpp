@@ -20,6 +20,7 @@
  */
 
 #include "common/compression/deflate.h"
+#include "common/config-manager.h"
 
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
@@ -48,6 +49,8 @@ Map::~Map() {
 }
 
 bool Map::generateNewMap() {
+	if (!ConfMan.getBool("generate_random_maps"))
+		return false;
 
 	// TODO: Show a dialog allowing the user to customize options.
 
