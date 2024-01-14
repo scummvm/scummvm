@@ -53,7 +53,7 @@ Global
 Global Main Menu
 	*keymap_global_MENU*
 
-.. _mute:
+.. _keymap_mute:
 
 Toggle mute
 	*keymap_global_MUTE*
@@ -63,7 +63,7 @@ Toggle mute
 Quit
 	*keymap_global_QUIT*
 
-.. _debug:
+.. _keymap_debug:
 
 Open Debugger
 	*keymap_global_DEBUGGER*

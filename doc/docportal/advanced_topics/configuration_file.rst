@@ -12,45 +12,37 @@ Location
 
 The configuration file saves to different default locations, depending on the platform. The configuration file path is also displayed on the :doc:`../settings/paths` tab.
 
+.. tab-set::
 
-.. tabbed:: Windows
+    .. tab-item:: Windows
 
-	.. panels::
-		:column: col-lg-12 mb-2
+        ``%APPDATA%\ScummVM\scummvm.ini``
 
-		``%APPDATA%\ScummVM\scummvm.ini``
-
-		For Windows 95/98/ME, the file is at ``C:\WINDOWS\scummvm.ini``
+        For Windows 95/98/ME, the file is at ``C:\WINDOWS\scummvm.ini``
 
 
-.. tabbed:: macOS
+    .. tab-item:: macOS
 
-	.. panels::
-		:column: col-lg-12 mb-2
+        ``~/Library/Preferences/ScummVM Preferences``
 
-		``~/Library/Preferences/ScummVM Preferences``
+        .. note::
 
-		.. note::
+            If an earlier version of ScummVM was installed on your system, the configuration file remains in the previous default location of ``~/.scummvmrc``.
 
-			If an earlier version of ScummVM was installed on your system, the configuration file remains in the previous default location of ``~/.scummvmrc``.
+        .. tip::
 
-		.. tip::
-
-			To see the Library folder, press :kbd:`Option` when clicking **Go** in the Finder menu.
+            To see the Library folder, press :kbd:`Option` when clicking **Go** in the Finder menu.
 
 
-.. tabbed:: Linux
+    .. tab-item:: Linux
 
-	.. panels::
-		:column: col-lg-12 mb-2
+        ScummVM follows the XDG Base Directory Specification, so by default the configuration file is found at ``~/.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 
-		ScummVM follows the XDG Base Directory Specification, so by default the configuration file is found at ``~/.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
+        If ScummVM was installed using Snap, the configuration file is found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
-		If ScummVM was installed using Snap, the configuration file is found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
+        .. note::
 
-		.. note::
-
-			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line.
+            ``.config`` is a hidden directory. To view it use ``ls -a`` on the command line.
 
 
 
@@ -510,37 +502,26 @@ There are many recognized configuration keys. In the table below, each key is ei
 .. _screenshotpath:
 
 Screenshot path
-====================
-	The default location for the screenshotpath depends on your system.
+===============
+
+The default location for the screenshotpath depends on your system.
 
 
-	.. tabbed:: Windows
+.. tab-set::
 
-		.. panels::
-			:column: col-lg-12 mb-2
+    .. tab-item:: Windows
 
-			In ``%USERPROFILE%\Pictures\ScummVM Screenshots``
+        In ``%USERPROFILE%\Pictures\ScummVM Screenshots``
 
-	.. tabbed:: macOS
+    .. tab-item:: macOS
 
-		.. panels::
-			:column: col-lg-12 mb-2
-
-			On the Desktop.
+        On the Desktop.
 
 
-	.. tabbed:: Linux
+    .. tab-item:: Linux
 
-		.. panels::
-			:column: col-lg-12 mb-2
+        In the XDG Pictures user directory, for example ``~/Pictures/ScummVM Screenshots``
 
-			In the XDG Pictures user directory, for example ``~/Pictures/ScummVM Screenshots``
+    .. tab-item:: Any other OS
 
-	.. tabbed:: Any other OS
-
-		.. panels::
-			:column: col-lg-12 mb-2
-
-			In the current directory.
-
-
+        In the current directory.
