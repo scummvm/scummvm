@@ -376,6 +376,14 @@ void Macs2Engine::readResourceFile() {
 	file.read(_scriptData, scriptLength);
 	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
 
+	// Load the strings for the scene
+	file.seek(0x000D2F22);
+	numBytesStrings = file.readUint16LE();
+	stringsData = new byte[numBytesStrings];
+	file.read(stringsData, numBytesStrings);
+	_stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
+
+
 	// Try executing the script
 	ExecuteScript(_scriptStream);
 
@@ -428,12 +436,7 @@ void Macs2Engine::readResourceFile() {
 	_shadingTable = new byte[256];
 	file.read(_shadingTable, 256);
 
-	// Load the strings for the scene
-	file.seek(0x000D2F22);
-	numBytesStrings = file.readUint16LE();
-	stringsData = new byte[numBytesStrings];
-	file.read(stringsData, numBytesStrings);
-
+	
 	// Load the objects data
 	file.seek(0x6a5913);
 
@@ -702,6 +705,7 @@ void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
 	uint16 bp4 = ScriptReadWord(stream);
 
 	// TODO: Implement naive string printing here, refine later
+	Common::String s = DecodeString(_stringsStream, bp2);
 }
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
@@ -832,6 +836,21 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 
 		
 	}
+}
+
+Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int offset)
+{
+	stream->seek(offset);
+	int index = 1;
+	Common::String result;
+	
+	for (byte currentByte = stream->readByte(); currentByte != 0; index++) {
+		byte x = (byte)(index * index * 0x0c);
+		byte y = (byte)(currentByte ^ index);
+		byte r = (byte)(x ^ y);
+		result += (char)r;
+	}
+	return result;
 }
 
 uint32 Macs2Engine::getFeatures() const {

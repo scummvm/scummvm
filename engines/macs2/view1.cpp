@@ -53,6 +53,7 @@ namespace Macs2 {
 
 		// TODO: Look up how we determine the width of the right border
 		constexpr int borderWidth = 20;
+		constexpr int highlightWidth = 2;
 		// Draw the background
 		// Draw the border segments
 		drawDarkRectangle(x, y, width, height);
@@ -98,6 +99,28 @@ namespace Macs2 {
 		clippingRect = Common::Rect(x, currentY, x + width, y + height);
 		for (int ix = 0; ix < xSegments; ix++) {
 			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			currentX += g_engine->_borderWidth;
+		}
+
+		// Highlight on the top and left
+		// TODO: Check if it's also done to the inside of the frame
+		// TODO: Refactor code to have less copy paste
+		// First the left side
+		clippingRect = Common::Rect(x, y, x + highlightWidth, y + height);
+		currentX = x;
+		currentY = y;
+		for (int iy = 0; iy < ySegments; iy++) {
+			// DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderHighlightData, s);
+			currentY += g_engine->_borderHeight;
+		}
+
+		// Top
+		clippingRect = Common::Rect(x, y, x + width, y + highlightWidth);
+		currentX = x;
+		currentY = y;
+		for (int ix = 0; ix < xSegments; ix++) {
+			DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderHighlightData, s);
 			currentX += g_engine->_borderWidth;
 		}
 	}

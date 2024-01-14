@@ -142,6 +142,7 @@ public:
 
 	byte* mapData;
 
+	Common::MemoryReadStream* _stringsStream;
 	uint16 numBytesStrings;
 	byte *stringsData;
 
@@ -154,9 +155,13 @@ public:
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
 
+	
+
 	void ScriptPrintString(Common::MemoryReadStream *stream);
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
+
+	Common::String DecodeString(Common::MemoryReadStream* stream, int offset);
 
 	void PlaySound();
 
