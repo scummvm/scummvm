@@ -227,6 +227,10 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	return _destroyOnExit;
 }
 
+bool Scene::isRunningSpecialEffect() const {
+	return _specialEffects.size() && _specialEffects.front().isHalfInitialized() && !_specialEffects.front().isDone();
+}
+
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 	if (sceneDescription.sceneID == kNoScene || _state == kLoad) {
 		return;
@@ -982,13 +986,20 @@ void Scene::run() {
 		return;
 	}
 
-	_actionManager.processActionRecords();
+	// Run action records. From nancy7 onward want to skip this if we're in the
+	// middle of a special effect. This way, the nancy7 dog scare sequence 
+	// (scene 2090 and onwards) gets the fades to black present in the original.
+	// We don't do the same for earlier games, since we _want_ records to execute
+	// there; an example is the text in the nancy3 intro.
+	// Note: if this causes any issues, move the check inside SecondaryMovie.
+	if (!isRunningSpecialEffect() || g_nancy->getGameType() <= kGameTypeNancy6) {
+		_actionManager.processActionRecords();
+	}
 
 	if (_lightning) {
 		_lightning->run();
 	}
 
-	// Do this after the first records are processed to fix the text in nancy3 intro
 	if (_specialEffects.size()) {
 		if (_specialEffects.front().isInitialized()) {
 			if (_specialEffects.front().isDone()) {
