@@ -157,6 +157,7 @@ public:
 
 	bool isConnectionLimited() override;
 	void virtualController(bool connect);
+	bool isiOSAppOnMac() const;
 
 	virtual Common::String getDefaultLogFileName() override { return Common::String("/scummvm.log"); }
 
