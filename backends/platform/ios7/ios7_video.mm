@@ -471,7 +471,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	if ( @available(iOS 11, tvOS 11, *) ) {
 		CGRect newFrame = self.frame;
 #if TARGET_OS_IOS
-		CGRect screenSize = [[UIScreen mainScreen] bounds];
+		CGRect screenSize = self.window.bounds;
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
 		UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
 
