@@ -843,6 +843,7 @@ Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int o
 	stream->seek(offset);
 	int index = 1;
 	Common::String result;
+	uint16 length = stream->readUint16LE();
 	
 	for (byte currentByte = stream->readByte(); currentByte != 0; currentByte = stream->readByte(), index++) {
 		byte x = (byte)(index * index * 0x0c);
