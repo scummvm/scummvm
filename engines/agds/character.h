@@ -73,8 +73,6 @@ class Character {
 	Common::HashMap<int, AnimationDescription> _animations;
 	const AnimationDescription * _description;
 
-	void notifyProcess(const Common::String & name);
-
 	bool animate(int direction, int speed, bool jokes);
 
 public:
@@ -115,7 +113,6 @@ public:
 
 	bool animate(Common::Point pos, int direction, int speed);
 
-	void stop(const Common::String &processName);
 	void stop();
 	void leave(const Common::String &processName);
 
@@ -131,6 +128,7 @@ public:
 		return _pos;
 	}
 
+	void notifyProcess(const Common::String & processName);
 	bool moveTo(const Common::String &processName, Common::Point dst, int direction);
 	void pointTo(const Common::String &processName, Common::Point dst);
 

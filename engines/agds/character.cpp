@@ -157,6 +157,7 @@ bool Character::direction(int dir) {
 }
 
 void Character::notifyProcess(const Common::String & name) {
+	debug("%s:notifyProcess %s", _name.c_str(), name.c_str());
 	if (!_processName.empty())
 		_engine->reactivate(name, "Character::notifyProcess", false);
 
@@ -235,12 +236,6 @@ bool Character::animate(Common::Point pos, int direction, int speed) {
 	_animationPos = pos;
 
 	return true;
-}
-
-void Character::stop(const Common::String &processName) {
-	debug("character %s: stop, process: %s", _object->getName().c_str(), processName.c_str());
-	notifyProcess(processName);
-	stop();
 }
 
 void Character::stop() {

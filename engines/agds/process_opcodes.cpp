@@ -1707,7 +1707,7 @@ void Process::stopCharacter() {
 	if (character) {
 		if (direction != -1) {
 			character->direction(direction);
-			character->stop(getName());
+			character->notifyProcess(getName());
 			deactivate();
 		} else {
 			character->stop();
