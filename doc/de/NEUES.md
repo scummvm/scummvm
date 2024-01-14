@@ -6,12 +6,44 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
 
+ SWORD2:
+   - Absturz behoben, der dann auftritt, wenn das Spiel beendet wird, während es pausiert ist.
+
+ MM:
+   - Engine ist jetzt aktiviert, sodass MM1 und Xeen kompiliert werden kann.
+
+ MTROPOLIS:
+   - Absturz in Muppet Treasure Island auf einigen Plattformen behoben.
+
+ NANCY:
+   - Telefon-Hinweise in Secrets Can Kill korrigiert.
+   - Die "M"-Taste auf der Tastatur funktioniert in Message in a Haunted Mansion jetzt korrekt.
+   - Allgemeine Tastenkürzel werden jetzt im Engine-Tastenkürzel-Menü angezeigt.
+   - Das virtuelle Keyboard wird im Lade-/Speicher-Menü korrekt ausgelöst.
+
  SCUMM:
    - Grafikfehler (und teilweise auch Abstürze) in den Mac-Versionen von Loom und
      Indiana Jones and the Last Crusade bei der Verwendung von Menü-Tastenkürzeln behoben.
    - Die originalen Lade- und Speicher-Bildschirme in den Mac-Versionen von Indiana Jones
      and the last Crusade können nun korrekt aktiviert und deaktiviert werden.
 
+ TWINE:
+   - Leitern können nun wieder korrekt genutzt werden.
+   - Fehler beim Zoomen in Szenen korrigiert.
+   - Animationsfehler nach der Nutzung der Holomap korrigiert.
+
+ Ultima:
+   - Die Minimap funktioniert in Ultima VIII jetzt korrekt.
+   - Fehler bei der Nutzung von Büchern in Ultima VIII behoben.
+   - Fehler bei der Text-Darstellung von Plaketten in Ultima VIII behoben.
+   - Ultima VIII stürzt nicht mehr ab, wenn Items an den Rand des Bildschirms gezogen werden.
+   - In Ultima VIII springt der Charakter nicht mehr unerwartet, wenn die linke Maustaste geklickt wird.
+
+ Android-Portierung:
+   - Absturz in der eingebauten Hilfe korrigiert, der bei der Nutzung des deutschen Sprachpaketes auftritt.
+
+ macOS-Portierung:
+   - Fehler behoben, der dazu geführt hat, dass in einigen Mac-Spielen die Ressourcen nicht korrekt geladen werden.
 
 #### 2.8.0 "Mysteries, Mammoths, and Muppets" (30.12.2023)
 
