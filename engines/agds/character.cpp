@@ -148,10 +148,6 @@ bool Character::direction(int dir) {
 	if (dir < 0)
 		return false;
 
-	if (_jokes && _phase < _frames) {
-		debug("direction(%d) set during active animation, ignored", dir);
-		return false;
-	}
 	_animationPos = Common::Point();
 	return animate(dir, 100, false);
 }
