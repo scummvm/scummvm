@@ -54,8 +54,12 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 			debug("    magic: %u", magic);
 
 			if (magic != 0xFF)
-				// font = FFont::load(*stream);	// TODO: Where is this used?
-				error("Font::load(): Attempted to load a font of type FFont");
+				// Fixed-width font.  Do these get used in any game?
+#if DGDS_SUPPORT_FIXED_WIDTH
+				font = FFont::load(*stream);
+#else
+				error("Font::load(): Attempted to load FFont (fixed-width font)");
+#endif
 			else
 				font = PFont::load(*stream, decompressor);
 		}
@@ -64,6 +68,12 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 	delete fontFile;
 
 	return font;
+}
+
+Font::Font(byte w, byte h, byte start, byte count, byte *data) : _w(w), _h(h), _start(start), _count(count), _data(data) { }
+
+Font::~Font() {
+	delete [] _data;
 }
 
 bool Font::hasChar(byte chr) const {
@@ -98,7 +108,10 @@ void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint
 	}
 }
 
-#if 0
+#if DGDS_SUPPORT_FIXED_WIDTH
+FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : Font(w, h, start, count, data) {
+}
+
 void FFont::mapChar(byte chr, int &pos, int &bit) const {
 	pos = (chr - _start) * _h;
 	bit = 8 - _w;
@@ -124,17 +137,17 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 
 	debug("    w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
 
-	FFont *fnt = new FFont;
-	fnt->_w = w;
-	fnt->_h = h;
-	fnt->_start = start;
-	fnt->_count = count;
-	fnt->_data = new byte[size];
+	byte *data = new byte[size];
 	input.read(fnt->_data, size);
 
-	return fnt;
+	return new FFont(w, h, start, count, data);
 }
 #endif
+
+PFont::PFont(byte w, byte h, byte start, byte count, byte *data, const uint16 *offsets, const byte *widths)
+: Font(w, h, start, count, data), _offsets(offsets), _widths(widths)
+{
+}
 
 void PFont::mapChar(byte chr, int& pos, int& bit) const {
 	pos = READ_LE_UINT16(&_offsets[chr - _start]);
@@ -171,17 +184,9 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	uint32 uncompressedSize;
 	byte *data = decompressor->decompress(&input, size, uncompressedSize);
 
-	PFont *fnt = new PFont;
-	fnt->_w = w;
-	fnt->_h = h;
-	fnt->_start = start;
-	fnt->_count = count;
-
-	fnt->_offsets = (uint16*)data;
-	fnt->_widths = data + 2 * count;
-	fnt->_data = data + 3 * count;
-
-	return fnt;
+	return new PFont(w, h, start, count, data,
+		reinterpret_cast<const uint16 *>(data + 2 * count),
+		data + 3 * count);
 }
 
 } // End of namespace Dgds
