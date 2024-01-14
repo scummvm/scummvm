@@ -165,6 +165,9 @@ void Character::notifyProcess(const Common::String & name) {
 }
 
 bool Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
+	if (!_visible)
+		return false;
+
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
 	notifyProcess(processName);
 	_pos = dst;
