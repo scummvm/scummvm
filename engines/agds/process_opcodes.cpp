@@ -1676,7 +1676,7 @@ void Process::getCharacterAnimationPhase() {
 	Character *character = _engine->getCharacter(name);
 	if (!character)
 		warning("no character %s", name.c_str());
-	int phase = character ? character->getPhase() : -1;
+	int phase = character ? character->phase() : -1;
 	debug("animation phase = %d", phase);
 	push(phase);
 }
