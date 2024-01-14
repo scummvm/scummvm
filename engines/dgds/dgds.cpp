@@ -61,7 +61,7 @@
 namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _image(nullptr), /*_fntF(nullptr),*/ _fntP(nullptr), _console(nullptr),
+	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
 	_resource(nullptr) {
 	syncSoundSettings();
@@ -90,6 +90,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _scene;
 	delete _gdsScene;
 	delete _soundPlayer;
+	delete _fontManager;
 }
 
 void readStrings(Common::SeekableReadStream *stream) {
@@ -117,6 +118,7 @@ Common::Error DgdsEngine::run() {
 	_soundPlayer = new Sound(_mixer, _resource, _decompressor);
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
+	_fontManager = new FontManager();
 
 	setDebugger(_console);
 
@@ -135,6 +137,8 @@ Common::Error DgdsEngine::run() {
 	REQFileData vcrRequestData;
 	RequestParser reqParser(_resource, _decompressor);
 
+	_fontManager->loadFonts(getGameId(), _resource, _decompressor);
+
 	if (getGameId() == GID_DRAGON) {
 		// Test parsing some things..
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
@@ -146,7 +150,6 @@ Common::Error DgdsEngine::run() {
 		interpIntro.load("TITLE1.ADS");
 		//interpIntro.load("INTRO.ADS");
 
-		_fntP = (PFont *)Font::load("DRAGON.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_CHINA) {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 
@@ -155,8 +158,6 @@ Common::Error DgdsEngine::run() {
 
 		//_scene->load("S101.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
-
-		_fntP = (PFont *)Font::load("HOC.FNT", _resource, _decompressor);
 	} else if (getGameId() == GID_BEAMISH) {
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
@@ -166,8 +167,6 @@ Common::Error DgdsEngine::run() {
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
-
-		_fntP = (PFont *)Font::load("WILLY.FNT", _resource, _decompressor);
 	}
 
 	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());

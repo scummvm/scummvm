@@ -195,15 +195,15 @@ bool TTMInterpreter::run() {
 
 			if (!_text.str.empty()) {
 				Common::StringArray lines;
-				const PFont *fntP = _vm->getFntP();
-				const int h = fntP->getFontHeight();
+				const Font *fnt = _vm->getFontMan()->getFont(FontManager::kGameFont);
+				const int h = fnt->getFontHeight();
 
-				fntP->wordWrapText(_text.str, SCREEN_HEIGHT, lines);
+				fnt->wordWrapText(_text.str, SCREEN_HEIGHT, lines);
 				Common::Rect r(Common::Point(_text.rect.x, _text.rect.y), _text.rect.width, _text.rect.height);
 				_vm->_resData.fillRect(r, 15);
 				for (uint i = 0; i < lines.size(); i++) {
-					const int w = fntP->getStringWidth(lines[i]);
-					fntP->drawString(&_vm->_resData, lines[i], _text.rect.x, _text.rect.y + 1 + i * h, w, 0);
+					const int w = fnt->getStringWidth(lines[i]);
+					fnt->drawString(&_vm->_resData, lines[i], _text.rect.x, _text.rect.y + 1 + i * h, w, 0);
 				}
 			}
 		} break;

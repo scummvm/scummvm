@@ -42,8 +42,7 @@ class Console;
 class ResourceManager;
 class Decompressor;
 class Image;
-class PFont;
-class FFont;
+class FontManager;
 class SDSScene;
 class GDSScene;
 class Sound;
@@ -75,8 +74,7 @@ private:
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 
-	PFont *_fntP;
-	//FFont *_fntF;
+	FontManager *_fontManager;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -92,7 +90,7 @@ public:
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
-	const PFont *getFntP() const { return _fntP; }
+	const FontManager *getFontMan() const { return _fontManager; }
 };
 
 } // End of namespace Dgds
