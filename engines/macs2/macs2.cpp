@@ -707,7 +707,7 @@ void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
 	uint16 bp4 = ScriptReadWord(stream);
 
 	// TODO: Implement naive string printing here, refine later
-	Common::String s = DecodeString(_stringsStream, bp2);
+	Common::StringArray strings = DecodeStrings(_stringsStream, bp2, bp4);
 }
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
@@ -840,19 +840,38 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 	}
 }
 
-Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int offset)
+Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int offset, int numLines)
 {
 	stream->seek(offset);
-	int index = 1;
-	Common::String result;
-	uint16 length = stream->readUint16LE();
 	
-	for (byte currentByte = stream->readByte(); currentByte != 0; currentByte = stream->readByte(), index++) {
-		byte x = (byte)(index * index * 0x0c);
-		byte y = (byte)(currentByte ^ index);
-		byte r = (byte)(x ^ y);
-		result += (char)r;
+	byte x;
+	byte y;
+	byte r;
+	Common::String result;
+	for (int i = 0; i != numLines; i++) {
+		uint16 length = stream->readUint16LE();
+		int index = 1;
+		for (byte currentByte = stream->readByte(); index != length; currentByte = stream->readByte(), index++) {
+			x = (byte)(index * index * 0x0c);
+			y = (byte)(currentByte ^ index);
+			r = (byte)(x ^ y);
+			result += (char)r;
+		}
 	}
+	
+	return result;
+}
+
+Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
+	// TODO: Adjust to a non-seeking variant
+	Common::StringArray result(numStrings);
+	int64 pos = offset;
+	/* for (int i = 0; i < numStrings; i++) {
+		Common::String current = DecodeString(stream, pos);
+		pos = stream->pos();
+		result[i] = current;
+	} */
+	Common::String current = DecodeString(stream, pos, numStrings);
 	return result;
 }
 

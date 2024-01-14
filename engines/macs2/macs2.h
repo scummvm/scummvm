@@ -162,7 +162,9 @@ public:
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
-	Common::String DecodeString(Common::MemoryReadStream* stream, int offset);
+	Common::String DecodeString(Common::MemoryReadStream* stream, int offset, int numLines);
+
+	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
 
 	void PlaySound();
 
