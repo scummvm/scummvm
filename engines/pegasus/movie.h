@@ -29,6 +29,7 @@
 
 #include "pegasus/elements.h"
 #include "pegasus/surface.h"
+#include "video/qt_decoder.h"
 
 namespace Video {
 class VideoDecoder;
@@ -72,7 +73,7 @@ public:
 protected:
 	void updateTime() override;
 
-	Video::VideoDecoder *_video;
+	Video::QuickTimeDecoder *_video;
 	Common::Rect _movieBox;
 };
 
