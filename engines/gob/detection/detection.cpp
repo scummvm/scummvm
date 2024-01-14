@@ -93,7 +93,7 @@ ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 	const Gob::GOBGameDescription *game = (const Gob::GOBGameDescription *)detectedGame.desc;
 
-	if (game->gameType == Gob::kGameTypeOnceUponATime) {
+	if (!strcmp(game->desc.gameId, "onceupon")) {
 		game = detectOnceUponATime(fslist);
 		if (game) {
 			detectedGame.desc = &game->desc;

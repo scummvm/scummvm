@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -57,7 +56,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib | kFeatures16Colors,
 	0, "base.tot", 0
 },
@@ -72,7 +70,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -90,7 +87,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib | kFeatures640x400,
 	0, 0, 0
 },
@@ -105,7 +101,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	 kGameTypeAdibou1,
 	 kFeaturesAdLib | kFeatures640x400,
 	 0, 0, 0
 },
@@ -122,7 +117,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -138,7 +132,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -156,7 +149,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAdibou1,
 	kFeaturesNone,
 	0, 0, 0
 },

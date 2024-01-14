@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -84,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -98,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -112,7 +107,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -126,7 +120,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -143,7 +136,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -157,7 +149,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -171,7 +162,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	"lda1.stk", 0, 0
 },
@@ -185,7 +175,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	"lda1.stk", 0, 0
 },
@@ -200,7 +189,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	"demo.scn", 0, 1
 },
@@ -216,7 +204,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)	
 	},
-	kGameTypeDynastyWood,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	"demo.scn", 0, 1
 },

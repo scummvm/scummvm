@@ -42,7 +42,6 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kGameTypeAdi2,
 	kFeaturesNone,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -56,7 +55,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -70,7 +68,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -84,7 +81,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -98,7 +94,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -112,7 +107,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -129,7 +123,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -143,7 +136,6 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -157,7 +149,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -174,7 +165,6 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -191,7 +181,6 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kGameTypeAdi2,
 	kFeaturesNone,
 	"adi2.stk", "ediintro.tot", 0
 },
@@ -211,7 +200,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 1
 },
@@ -228,7 +216,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 1
 },
@@ -244,7 +231,6 @@
 	  	ADGF_DEMO,
 	  	GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeAdi2,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 1
 },

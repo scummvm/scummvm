@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -84,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -98,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -112,7 +107,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -126,7 +120,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -140,7 +133,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
@@ -157,7 +149,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA,
 	"disk1.stk", "intro.tot", 0
 },
@@ -172,7 +163,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA,
 	"disk1.stk", "intro.tot", 0
 },
@@ -187,7 +177,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA,
 	"disk1.stk", "intro.tot", 0
 },
@@ -202,7 +191,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeGeisha,
 	kFeaturesEGA,
 	"disk1.stk", "intro.tot", 0
 },
