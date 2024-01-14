@@ -521,13 +521,13 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
 
-	ConfMan.registerDefault("keyboard_fn_bar", true);
+	ConfMan.registerDefault("keyboard_fn_bar", isiOSAppOnMac() ? false : true);
 
 #if TARGET_OS_IOS
 	ConfMan.registerDefault("orientation_menus", "auto");
 	ConfMan.registerDefault("orientation_games", "auto");
 
-	ConfMan.registerDefault("onscreen_control", true);
+	ConfMan.registerDefault("onscreen_control", isiOSAppOnMac() ? false : true);
 #endif
 }
 
