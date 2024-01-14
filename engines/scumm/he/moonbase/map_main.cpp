@@ -44,9 +44,7 @@ Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 }
 
 Map::~Map() {
-	if (_generatedMap) {
-		delete _generatedMap;
-	}
+	deleteMap();
 }
 
 bool Map::generateNewMap() {
@@ -77,10 +75,7 @@ bool Map::generateNewMap() {
 }
 
 bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
-	if (_generatedMap) {
-		// Delete old map.
-		delete _generatedMap;
-	}
+	deleteMap();
 
 	_seed = seed;
 
@@ -110,6 +105,16 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 
 	_mapGenerated = true;
 	return true;
+}
+
+void Map::deleteMap() {
+	if (_mapGenerated) {
+		// Delete old map.
+		delete _generatedMap;
+
+		_mapGenerated = false;
+		debug(1, "Map: Deleted.");
+	}
 }
 
 Common::SeekableReadStream *Map::makeWiz() {
@@ -190,7 +195,10 @@ Common::SeekableReadStream *Map::substituteFile(const byte *fileName) {
 			return makeWiz();
 		}
 
-		if (!strcmp((const char *)fileName, "map\\moon001.map")) {
+		if (!strcmp((const char *)fileName, "map\\moon001.map") ||
+		    !strcmp((const char *)fileName, "user\\Temp.map")) {
+			// (The Temp.map name is used when the game saves the map alongside
+			// replay data)
 			// Return new ReadStream but do not dispose it.  We'll handle
 			// that ourselves.
 			return new Common::MemoryReadStream((byte *)_generatedMap, sizeof(MapFile));

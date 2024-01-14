@@ -43,8 +43,14 @@ public:
 	bool generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water);
 	Common::SeekableReadStream *substituteFile(const byte *fileName);
 
+	void deleteMap();
+
 	uint32 getSeed() const {
 		return _seed;
+	}
+
+	bool mapGenerated() const {
+		return _mapGenerated;
 	}
 
 private:
