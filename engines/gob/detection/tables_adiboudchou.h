@@ -44,7 +44,6 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kGameTypeNone,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -60,7 +59,6 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kGameTypeNone,
 	kFeatures640x480,
 	0,0,0
 },
@@ -74,7 +72,6 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kGameTypeNone,
 	kFeatures640x480,
 	0,0,0
 },
@@ -88,7 +85,6 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kGameTypeNone,
 	kFeatures640x480,
 	0,0,0
 },

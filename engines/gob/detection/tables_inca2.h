@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -86,7 +83,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -103,7 +99,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -117,7 +112,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -131,7 +125,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -145,7 +138,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -159,7 +151,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -173,7 +164,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -190,7 +180,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -204,7 +193,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -218,7 +206,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -232,7 +219,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -246,7 +232,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -276,7 +261,6 @@
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib | kFeaturesBATDemo,
 	0, 0, 7
 },

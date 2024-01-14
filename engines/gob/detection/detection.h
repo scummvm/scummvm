@@ -85,7 +85,6 @@ enum AdditionalGameFlags {
 struct GOBGameDescription {
 	ADGameDescription desc;
 
-	GameType gameType;
 	int32 features;
 	const char *startStkBase;
 	const char *startTotBase;

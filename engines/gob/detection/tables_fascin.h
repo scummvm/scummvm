@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"disk0.stk", 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"disk0.stk", 0, 0
 },
@@ -73,7 +71,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"disk0.stk", 0, 0
 },
@@ -87,7 +84,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"disk0.stk", 0, 0
 },
@@ -101,7 +97,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"intro.stk", 0, 0
 },
@@ -115,7 +110,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesAdLib,
 	"disk0.stk", 0, 0
 },
@@ -132,7 +126,6 @@
 		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
-	kGameTypeFascination,
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
@@ -146,7 +139,6 @@
 		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
-	kGameTypeFascination,
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
@@ -160,7 +152,6 @@
 		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
-	kGameTypeFascination,
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
@@ -174,7 +165,6 @@
 		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
-	kGameTypeFascination,
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
@@ -188,7 +178,6 @@
 		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
-	kGameTypeFascination,
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
@@ -202,7 +191,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -219,7 +207,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -233,7 +220,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -247,7 +233,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -261,7 +246,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -276,7 +260,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
@@ -293,7 +276,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeFascination,
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },

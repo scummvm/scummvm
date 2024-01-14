@@ -235,6 +235,7 @@ public:
 	~GobEngine() override;
 
 	void initGame(const GOBGameDescription *gd);
+	GameType getGameType(const char *gameId) const;
 };
 
 } // End of namespace Gob

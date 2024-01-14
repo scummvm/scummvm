@@ -43,7 +43,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -58,7 +57,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -73,7 +71,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -88,7 +85,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -111,7 +107,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 3
 },
@@ -126,7 +121,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 4
 },
@@ -145,7 +139,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 5
 },
@@ -163,7 +156,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 6
 },
@@ -181,7 +173,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -196,7 +187,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -211,7 +201,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -226,7 +215,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -241,7 +229,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -256,7 +243,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -274,7 +260,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -289,7 +274,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -304,7 +288,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -319,7 +302,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -334,7 +316,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -352,7 +333,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -367,7 +347,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -382,7 +361,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -400,7 +378,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -415,7 +392,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -433,7 +409,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -451,7 +426,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -469,7 +443,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypePlaytoons,
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
@@ -487,7 +460,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeBambou,
 	kFeatures640x480,
 	"intro.stk", "intro.tot", 0
 },

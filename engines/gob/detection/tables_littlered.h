@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -84,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -98,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -115,7 +110,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -129,7 +123,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -143,7 +136,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -157,7 +149,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -171,7 +162,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -185,7 +175,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -199,7 +188,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -213,7 +201,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -227,7 +214,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -241,7 +227,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -255,7 +240,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
@@ -273,7 +257,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLittleRed,
 	kFeaturesNone,
 	0, 0, 0
 },
