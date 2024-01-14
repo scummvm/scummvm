@@ -392,7 +392,9 @@ void Macs2Engine::readResourceFile() {
 	// _map = readRLEImage(0x00248FCE, file);
 	// Next on is the actual map
 	// _map = readRLEImage(0x0024B0DF, file);
-	_map = readRLEImage(0x0023BE09, file);
+	// TODO: This is the depth map - TBC that it's actually it
+	_map = readRLEImage(0x00248FCE, file);
+	
 
 	// Load the data for the mouse cursor
 
