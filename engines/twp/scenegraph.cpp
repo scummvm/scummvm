@@ -718,4 +718,36 @@ bool NoOverrideNode::update(float elapsed) {
 	return true;
 }
 
+HotspotMarkerNode::HotspotMarkerNode() : Node("HotspotMarker") {
+	_zOrder = -1000;
+	_visible = false;
+}
+
+HotspotMarkerNode::~HotspotMarkerNode() {}
+
+void HotspotMarkerNode::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
+	trsf.translate(pos);
+	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+}
+
+void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
+	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
+	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
+	SpriteSheetFrame *frame = &gameSheet->frameTable["hotspot_marker"];
+	Color color = Color::create(255, 165, 0);
+	for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+		Layer *layer = g_engine->_room->_layers[i];
+		for (int j = 0; j < layer->_objects.size(); j++) {
+			Object *obj = layer->_objects[j];
+			if (isObject(obj->getId()) && (obj->_objType == otNone) && obj->isTouchable()) {
+				Math::Vector2d pos = g_engine->roomToScreen(obj->_node->getAbsPos());
+				Math::Matrix4 t;
+				t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
+				drawSprite(*frame, texture, color, t);
+			}
+		}
+	}
+}
+
 } // namespace Twp

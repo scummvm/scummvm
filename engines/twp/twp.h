@@ -215,6 +215,7 @@ public:
 	AudioSystem _audio;
 	SaveGameManager _saveGameManager;
 	ShaderParams _shaderParams;
+	HotspotMarkerNode _hotspotMarker;
 
 private:
 	Gfx _gfx;

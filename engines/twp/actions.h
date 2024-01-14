@@ -40,7 +40,8 @@ enum TwpAction {
 	kSelectChoice6,
 	kSelectPreviousActor,
 	kSelectNextActor,
-	kSkipText
+	kSkipText,
+	kShowHotspots
 };
 
 }
