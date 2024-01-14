@@ -543,10 +543,13 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
 
-	if (_vm->_game.version >= 7)
+	if (_vm->_game.version >= 7) {
 		_walkdata.nextDir = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
-	else
+		startWalkAnim((_moving & MF_IN_LEG) ? 2 : 1, _walkdata.nextDir);
+		_moving |= MF_IN_LEG;
+	} else {
 		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
+	}
 
 	return actorWalkStep();
 }
@@ -597,12 +600,13 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 int Actor::actorWalkStep() {
 	_needRedraw = true;
 
-	int nextFacing = (_vm->_game.version < 7) ? updateActorDirection(true) : _walkdata.nextDir;
-	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
-		if (_walkFrame != _frame || _facing != nextFacing) {
-			startWalkAnim(_vm->_game.version >= 7 && (_moving & MF_IN_LEG) ? 2 : 1, nextFacing);
+	if (_vm->_game.version < 7) {
+		int nextFacing = updateActorDirection(true);
+		if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
+			if (_walkFrame != _frame || _facing != nextFacing)
+				startWalkAnim(1, nextFacing);
+			_moving |= MF_IN_LEG;
 		}
-		_moving |= MF_IN_LEG;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
