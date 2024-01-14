@@ -16,16 +16,16 @@ const args_games = process.argv.slice(2);
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQamumX0p-DYQa5Umi3RxX-pHM6RZhAj1qvUP0jTmaqutN9FwzyriRSXlO9rq6kR60pGIuPvCDzZL3s/pub?output=tsv';
 const SHEET_IDS = {
     'platforms': '1061029686',
-    'compatibility': '854570757',
-    'games': '1946612063',
+    'compatibility': '1989596967',
+    'games': '1775285192',
     'engines': '0',
     'companies': '226191984',
     'versions': '1225902887',
-    'game_demos': '713475305',
+    'game_demos': '1303420306',
     'series': '1095671818',
-    'screenshots': '1985243204',
+    'screenshots': '168506355',
     'scummvm_downloads': '1057392663',
-    'game_downloads': '1287892109',
+    'game_downloads': '810295288',
     'director_demos': '1256563740',
 }
 
@@ -144,7 +144,6 @@ const download_all_games = async (gameIds) => {
         if (gameId.startsWith("http")) {
             var  url = gameId
             var filename = url.substring(url.lastIndexOf("/") + 1)
-
             console.log(filename)
             if (!fs.existsSync(filename)) {
                 await download_file(url, filename)
@@ -157,6 +156,7 @@ const download_all_games = async (gameIds) => {
             if (gameId.includes("/")) {
                 gameId = gameId.substring(0, gameId.lastIndexOf("/"))
             }
+            gameId = gameId.substring(gameId.lastIndexOf(":")+1)// remove target from target:gameId
             var filename = url.substring(url.lastIndexOf("/") + 1)
             if (!filename.startsWith(gameId)) { filename = gameId + "-" + filename }
             console.log(filename)

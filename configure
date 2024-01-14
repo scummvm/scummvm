@@ -3160,11 +3160,12 @@ EOF
 		append_var LIBS "-lnds9"
 		;;
 	emscripten)
-		# mandatory emscripten flags
-		append_var LDFLAGS "-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1"
-
 		append_var DEFINES "-DEMSCRIPTEN"
 		add_line_to_config_mk 'EMSCRIPTEN = 1'
+		_port_mk="backends/platform/sdl/emscripten/emscripten.mk"
+		append_var LDFLAGS "-s FORCE_FILESYSTEM"
+		append_var LDFLAGS "-s INITIAL_MEMORY=128MB -s TOTAL_STACK=32MB -s ALLOW_MEMORY_GROWTH=1"
+		append_var LDFLAGS "-s ASYNCIFY=1 -s ASYNCIFY_STACK_SIZE=1048576"
 
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O2
@@ -3175,32 +3176,50 @@ EOF
 		fi
 
 		# activate emscripten-ports
-		if test "$_freetype2" != no; then
-			append_var LDFLAGS "-s USE_FREETYPE=1 -s SUPPORT_LONGJMP=1" # freetype requires setjmp
-			# neither pkg-config nor freetype-config work, so we setup freetype manually
-			_freetypepath="$EMSCRIPTEN/cache/ports-builds/freetype/"
-			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
-			_freetype_found="true"
-		else
-			#use link time optimization to further reduce exe size (this can't be used with setjmp which freetype requires)
-			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
-			append_var CXXFLAGS "-flto"
-			append_var LDFLAGS "-flto"
-		fi
-		if test "$_jpeg" != no; then
-			append_var LDFLAGS "-s USE_LIBJPEG=1"
-		fi
-		if test "$_png" != no; then
-			append_var LDFLAGS "-s USE_LIBPNG=1"
-		fi
-		if test "$_sdl" != no; then
+		if test "$_sdl" != no; then # we enable SDL2 by default 
 			append_var LDFLAGS "-s USE_SDL=2 "
 		fi
-		if test "$_vorbis" != no; then
-			append_var LDFLAGS "-s USE_OGG=1" # vorbis needs to be linked against OGG (even if we use an external vorbis lib)
+
+		# We explicitly disable optional libraries if not enabled. "auto" would depend
+		# on whether the port has been used before (and is detected) which is unpredictable.
+		if test "$_freetype2" = yes; then
+			# neither pkg-config nor freetype-config work, so we setup freetype manually
+			append_var LDFLAGS "-s USE_FREETYPE=1"
+			_freetype_found="true"
+			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
+			FREETYPE2_CFLAGS="-I$_freetypepath"
+		else
+			_freetype2=no 
 		fi
-		if test "$_zlib" != no; then
+		if test "$_gif" = yes; then
+		 	append_var LDFLAGS "-s USE_GIFLIB=1"
+		else
+			_gif=no 
+		fi
+		if test "$_jpeg" = yes; then
+			append_var LDFLAGS "-s USE_LIBJPEG=1"
+		else
+			_jpeg=no 
+		fi
+		if test "$_ogg" = yes; then
+			append_var LDFLAGS "-s USE_OGG=1" 
+		else
+			_ogg=no 
+		fi
+		if test "$_png" = yes; then
+			append_var LDFLAGS "-s USE_LIBPNG=1"
+		else
+			_png=no 
+		fi
+		if test "$_vorbis" = yes; then
+			append_var LDFLAGS "-s USE_VORBIS=1" 
+		else
+			_vorbis=no 
+		fi
+		if test "$_zlib" = yes; then
 			append_var LDFLAGS "-s USE_ZLIB=1"
+		else
+			_zlib=no 
 		fi
 	;;
 	freebsd* | dragonfly*)
@@ -3541,6 +3560,7 @@ if test -n "$_host"; then
 			_sdlnet=no
 			_libcurl=no
 			_curl=no
+			_enet=no
 			_ar="emar cr"
 			_ranlib="emranlib"
 			;;
@@ -4850,7 +4870,7 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb -mthumb
 		append_var LIBS ""
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += $(LDFLAGS) -s SIDE_MODULE=1 -s ASYNCIFY_IMPORTS=["*"] -s EXPORT_ALL=1
+PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s ASYNCIFY=1 -s ASYNCIFY_IMPORTS=["*"] -s EXPORT_ALL=1
 PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
 POST_OBJS_FLAGS :=
 '
@@ -6292,7 +6312,7 @@ if test "$_opengl_mode" != none ; then
 						emscripten)
 							_opengl_mode=gles2
 							_opengl_glad=no
-							append_var LDFLAGS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
+							append_var OPENGL_LIBS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
 							;;
 						*)
 							# As SDL2 supports everything, let the user choose if he wants to
@@ -7182,14 +7202,21 @@ case $_host_os in
 	emscripten)
 		append_var LDFLAGS "--pre-js ./dists/emscripten/custom_shell-pre.js --post-js ./dists/emscripten/custom_shell-post.js --shell-file ./dists/emscripten/custom_shell.html"
 		# we remove some linker flags for libs which will be added by emscripten from emscripten-ports to avoid duplicate symbols
+		if test "${LDFLAGS#*-s USE_GIFLIB=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lgif//g'`
+		fi
 		if test "${LDFLAGS#*-s USE_LIBJPEG=1}" != "$LDFLAGS"; then
     		LIBS=`echo ${LIBS} | sed 's/-ljpeg//g'`
+		fi
+		if test "${LDFLAGS#*-s USE_OGG=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-logg//g'`
 		fi
 		if test "${LDFLAGS#*-s USE_LIBPNG=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lpng -lz//g'`
 		fi
-		if test "${LDFLAGS#*-s USE_OGG=1}" != "$LDFLAGS"; then
-			LIBS=`echo ${LIBS} | sed 's/-logg//g'`
+		if test "${LDFLAGS#*-s USE_VORBIS=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lvorbisfile//g;'`
+			LIBS=`echo ${LIBS} | sed 's/-lvorbis//g'`
 		fi
 		if test "${LDFLAGS#*-s USE_ZLIB=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lz//g'`
