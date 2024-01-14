@@ -97,7 +97,10 @@ public:
 	virtual int getZSort() const { return _zOrder; }
 
 	void setRotation(float rotation) { _rotation = rotation; }
-	virtual float getRotation() const { return _rotation; }
+	float getRotation() const { return _rotation; }
+
+	void setRotationOffset(float rotationOffset) { _rotationOffset = rotationOffset; }
+	float getRotationOffset() const { return _rotationOffset; }
 
 	void setAnchor(Math::Vector2d anchor);
 	void setAnchorNorm(Math::Vector2d anchorNorm);

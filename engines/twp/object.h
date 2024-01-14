@@ -194,7 +194,6 @@ public:
 	void setBlink(Motor *blink);
 	void setTurnTo(Motor *turnTo);
 	void setShakeTo(Motor *shakeTo);
-	void setJiggleTo(Motor *jiggleTo);
 
 	Motor *getTalking() { return _talking; }
 	void stopTalking();
@@ -205,6 +204,7 @@ public:
 	void execVerb();
 	void turn(Facing facing);
 	void turn(Object* obj);
+	void jiggle(float amount);
 
 private:
 	Common::String suffix() const;
