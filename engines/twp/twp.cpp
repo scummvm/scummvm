@@ -63,6 +63,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenScene.setName("Screen");
 	// _scene.addChild(&_walkboxNode);
 	// _screenScene.addChild(&_pathNode);
+	_screenScene.addChild(&_hotspotMarker);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
 	_screenScene.addChild(&_dialog);
@@ -735,8 +736,11 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectChoice6:
 					if (_dialog.getState() == DialogState::None) {
 						int index = (TwpAction)e.customType - kSelectChoice1;
-						g_engine->_dialog.choose(index);
+						_dialog.choose(index);
 					}
+					break;
+				case TwpAction::kShowHotspots:
+					_hotspotMarker.setVisible(!_hotspotMarker.isVisible());
 					break;
 				}
 				break;

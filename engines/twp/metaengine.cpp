@@ -187,6 +187,7 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SELECTNEXTACTOR", _("Select Next Actor"), Twp::kSelectNextActor, "0"},
 		{"SELECTPREVACTOR", _("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
 		{"SKIPTEXT", _("Skip Text"), Twp::kSkipText, "."},
+		{"SHOWHOTSPOTS", _("Show hotspots"), Twp::kShowHotspots, "TAB"},
 	};
 
 	for (int i = 0; i < ARRAYSIZE(actions); i++) {

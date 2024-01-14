@@ -353,6 +353,16 @@ private:
 	float _elapsed = 0.f;
 };
 
+class HotspotMarkerNode: public Node {
+public:
+	HotspotMarkerNode();
+	virtual ~HotspotMarkerNode();
+
+private:
+	void drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
+	void drawCore(Math::Matrix4 trsf) override final;
+};
+
 } // End of namespace Twp
 
 #endif
