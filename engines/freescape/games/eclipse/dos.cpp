@@ -72,6 +72,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0xFF);
 
 	Common::String message;
 	int deadline;
@@ -95,6 +96,13 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface("<", 240, 135, black, yellow, surface, 'Z' - '$' + 1);
 	}
 	drawAnalogClock(surface, 90, 172, black, red, white);
+
+	Common::Rect jarBackground(124, 165, 148, 192);
+	surface->fillRect(jarBackground, black);
+
+	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
+	surface->fillRect(jarWater, blue);
+
 }
 
 } // End of namespace Freescape

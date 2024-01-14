@@ -36,6 +36,9 @@ public:
 
 	void loadAssetsDOSFullGame() override;
 
+	uint32 _initialEnergy;
+	uint32 _initialShield;
+
 	void initDOS();
 	void initCPC();
 	void initZX();
