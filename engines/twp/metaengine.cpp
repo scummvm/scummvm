@@ -87,6 +87,7 @@ void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("hudSentence", false);
 	ConfMan.registerDefault("talkiesShowText", true);
 	ConfMan.registerDefault("talkiesHearVoice", true);
+	ConfMan.registerDefault("language", "en");
 }
 
 SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

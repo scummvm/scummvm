@@ -149,8 +149,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	// draw actor's verbs
 	SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
 	Texture *verbTexture = g_engine->_resManager.texture(verbSheet->meta.image);
-	// let lang = prefs(Lang);
-	Common::String lang = "en";
+	Common::String lang = ConfMan.get("language");
 	bool retroVerbs = ConfMan.getBool("retroVerbs");
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 

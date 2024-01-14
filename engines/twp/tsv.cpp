@@ -32,7 +32,9 @@ void TextDb::parseTsv(Common::SeekableReadStream &stream) {
 		Common::String line = stream.readLine();
 		int pos = line.find('\t', 0);
 		int id = atoi(line.c_str());
-		_texts[id] = line.substr(pos + 1);
+		Common::String s = line.substr(pos + 1);
+		_texts[id] = s;
+		debug("%d: %s", id, _texts[id].c_str());
 	}
 }
 
@@ -41,7 +43,7 @@ Common::String TextDb::getText(int id) {
 	if (_texts.contains(id)) {
 		result = _texts[id];
 		if (result.hasSuffix("#M") || result.hasSuffix("#F"))
-			result = result.substr(0, result.size() - 3);
+			result = result.substr(0, result.size() - 2);
 		// replace \" by ";
 		result = Twp::replace(result, "\\\"", "\"");
 	} else {

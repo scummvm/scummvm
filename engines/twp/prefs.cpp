@@ -20,6 +20,8 @@
  */
 
 #include "twp/prefs.h"
+#include "twp/util.h"
+#include "common/config-manager.h"
 
 namespace Twp {
 
@@ -79,28 +81,21 @@ void Preferences::setPrefs(const Common::String &name, bool value) {
 	savePrefs();
 }
 
-bool Preferences::hasPrefs(const Common::String& name) {
-  return _node->asObject().contains(name);
+bool Preferences::hasPrefs(const Common::String &name) {
+	return _node->asObject().contains(name);
 }
 
-Common::JSONValue* Preferences::prefsAsJson(const Common::String& name) {
-  return _node->asObject()[name];
+Common::JSONValue *Preferences::prefsAsJson(const Common::String &name) {
+	return _node->asObject()[name];
 }
 
 void Preferences::savePrefs() {
 	// TODO: savePrefs()
 }
 
-Common::String Preferences::getKey(const Common::String& path){
-  size_t i = path.findLastOf(".");
-  Common::String name = path.substr(0, i);
-  Common::String ext = path.substr(i+1);
-  if (name.hasSuffix("_en")) {
-    // TODO: const Common::String& lang = prefs(Lang);
-	Common::String lang = "en";
-    return Common::String::format("%s_%s%s", name.substr(0, name.size()-4).c_str(), lang.c_str(), ext.c_str());
-  }
-  return path;
+Common::String Preferences::getKey(const Common::String &path) {
+	Common::String t = Twp::replace(path, "_en", "_" + ConfMan.get("language"));
+	return t;
 }
 
 } // namespace Twp

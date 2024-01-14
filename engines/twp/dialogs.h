@@ -47,6 +47,7 @@ private:
 	GUI::CheckboxWidget *_enableClassicSentenceGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableDisplayTextGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableHearVoiceGUICheckbox = nullptr;
+	GUI::PopUpWidget *_langGUIDropdown = nullptr;
 };
 
 }
