@@ -386,13 +386,13 @@ void TwpEngine::update(float elapsed) {
 			} else if (_room->_fullscreen == FULLSCREENROOM && _noun1) {
 				// if the object is a door, it has a flag indicating its direction: left, right, front, back
 				int flags = _noun1->getFlags();
-				if ((flags & DOOR_LEFT)==DOOR_LEFT)
+				if ((flags & DOOR_LEFT) == DOOR_LEFT)
 					_inputState.setCursorShape(CursorShape::Left);
-				else if ((flags & DOOR_RIGHT)==DOOR_RIGHT)
+				else if ((flags & DOOR_RIGHT) == DOOR_RIGHT)
 					_inputState.setCursorShape(CursorShape::Right);
-				else if ((flags & DOOR_FRONT)==DOOR_FRONT)
+				else if ((flags & DOOR_FRONT) == DOOR_FRONT)
 					_inputState.setCursorShape(CursorShape::Front);
-				else if ((flags & DOOR_BACK)==DOOR_BACK)
+				else if ((flags & DOOR_BACK) == DOOR_BACK)
 					_inputState.setCursorShape(CursorShape::Back);
 				else
 					_inputState.setCursorShape(CursorShape::Normal);
@@ -512,27 +512,27 @@ void TwpEngine::update(float elapsed) {
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
 	_shaderParams.effect = effect;
-	  switch (effect) {
-	  case RoomEffect::None:
-	    _gfx.use(nullptr);
+	switch (effect) {
+	case RoomEffect::None:
+		_gfx.use(nullptr);
 		break;
-	  case RoomEffect::Sepia: {
-	    _gfx.use(&_sepiaShader);
-	    _sepiaShader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
-	  } break;
-	  case RoomEffect::BlackAndWhite:
-	  	_gfx.use(&_bwShader);
+	case RoomEffect::Sepia: {
+		_gfx.use(&_sepiaShader);
+		_sepiaShader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
+	} break;
+	case RoomEffect::BlackAndWhite:
+		_gfx.use(&_bwShader);
 		break;
-	//   case RoomEffect::Ega:
-	//     gfxShader(newShader(vertexShader, egaShader));
-	// 	break;
-	//   case RoomEffect::Vhs:
-	//     gfxShader(newShader(vertexShader, vhsShader));
-	// 	break;
-	  case RoomEffect::Ghost:
-	    _gfx.use(&_ghostShader);
+		//   case RoomEffect::Ega:
+		//     gfxShader(newShader(vertexShader, egaShader));
+		// 	break;
+		//   case RoomEffect::Vhs:
+		//     gfxShader(newShader(vertexShader, vhsShader));
+		// 	break;
+	case RoomEffect::Ghost:
+		_gfx.use(&_ghostShader);
 		break;
-	  }
+	}
 }
 
 void TwpEngine::draw() {
@@ -679,6 +679,64 @@ Common::Error TwpEngine::run() {
 				switch ((TwpAction)e.customType) {
 				case TwpAction::kSkipCutscene:
 					skipCutscene();
+					break;
+				case TwpAction::kSelectActor1:
+				case TwpAction::kSelectActor2:
+				case TwpAction::kSelectActor3:
+				case TwpAction::kSelectActor4:
+				case TwpAction::kSelectActor5:
+				case TwpAction::kSelectActor6:
+					if (_dialog.getState() == DialogState::None) {
+						int index = (TwpAction)e.customType - kSelectActor1;
+						ActorSlot *slot = &_hud._actorSlots[index];
+						if (slot->selectable && slot->actor && (slot->actor->_room->_name != "Void")) {
+							setActor(slot->actor, true);
+						}
+					}
+					break;
+				case TwpAction::kSelectPreviousActor:
+					if (_actor) {
+						Common::Array<Object *> actors;
+						for (int i = 0; i < NUMACTORS; i++) {
+							ActorSlot *slot = &_hud._actorSlots[i];
+							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
+								actors.push_back(slot->actor);
+							}
+						}
+						int index = find(actors, _actor) - 1;
+						if (index < 0)
+							index += actors.size();
+						setActor(actors[index], true);
+					}
+					break;
+				case TwpAction::kSelectNextActor:
+					if (_actor) {
+						Common::Array<Object *> actors;
+						for (int i = 0; i < NUMACTORS; i++) {
+							ActorSlot *slot = &_hud._actorSlots[i];
+							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
+								actors.push_back(slot->actor);
+							}
+						}
+						int index = find(actors, _actor) + 1;
+						if (index >= actors.size())
+							index -= actors.size();
+						setActor(actors[index], true);
+					}
+					break;
+				case TwpAction::kSkipText:
+					stopTalking();
+					break;
+				case TwpAction::kSelectChoice1:
+				case TwpAction::kSelectChoice2:
+				case TwpAction::kSelectChoice3:
+				case TwpAction::kSelectChoice4:
+				case TwpAction::kSelectChoice5:
+				case TwpAction::kSelectChoice6:
+					if (_dialog.getState() == DialogState::None) {
+						int index = (TwpAction)e.customType - kSelectChoice1;
+						g_engine->_dialog.choose(index);
+					}
 					break;
 				}
 				break;
@@ -1195,9 +1253,9 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	ActorSlot* slot = _hud.actorSlot(actor);
-	Verb* verb = slot->getVerb(verbId.id);
-	Common::String verbFuncName = verb ? verb->fun: slot->getVerb(0)->fun;
+	ActorSlot *slot = _hud.actorSlot(actor);
+	Verb *verb = slot->getVerb(verbId.id);
+	Common::String verbFuncName = verb ? verb->fun : slot->getVerb(0)->fun;
 	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
