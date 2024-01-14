@@ -165,6 +165,14 @@ void OSystem_iOS7::virtualController(bool connect) {
 	});
 }
 
+bool OSystem_iOS7::isiOSAppOnMac() const {
+	__block bool isiOSAppOnMac = false;
+	execute_on_main_thread(^ {
+		isiOSAppOnMac = [[iOS7AppDelegate iPhoneView] isiOSAppOnMac];
+	});
+	return isiOSAppOnMac;
+}
+
 void OSystem_iOS7::setShowKeyboard(bool show) {
 	if (show) {
 #if TARGET_OS_IOS

@@ -423,6 +423,13 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[_menuButton setEnabled:isEnabled];
 	[_menuButton setHidden:!isEnabled];
 }
+
+- (BOOL)isiOSAppOnMac {
+	if (@available(iOS 14.0, *)) {
+		return [NSProcessInfo processInfo].isiOSAppOnMac;
+	}
+	return NO;
+}
 #endif
 
 - (void)dealloc {
