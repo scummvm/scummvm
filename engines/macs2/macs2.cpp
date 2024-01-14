@@ -840,6 +840,32 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 	}
 }
 
+int Macs2Engine::MeasureString(Common::String& s) {
+	int sum = 0;
+	GlyphData currentGlyph;
+	bool found = false;
+	for (auto current = s.begin(); current != s.end(); current++) {
+		if (*current == ' ') {
+			// TODO: Check if we hit this one
+			sum += 8 + 1;
+		} else {
+			found = FindGlyph(*current, currentGlyph);
+			// TODO: Check if found
+			sum += currentGlyph.Width + 1;
+			// TODO: Check the rules for adding a 1
+		}
+	}
+	return sum;
+}
+
+int Macs2Engine::MeasureStrings(Common::StringArray sa) {
+	int max = -1;
+	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
+		max = MAX(MeasureString(*iter), max);
+	}
+	return max;
+}
+
 Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int offset, int numLines)
 {
 	stream->seek(offset);
