@@ -722,7 +722,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_ustr_comparison() {
-		Common::U32String a("abc"), b("abd");
+		Common::U32String a("abc"), b("abd"), c, d("");
 
 		TS_ASSERT_EQUALS(a, a);
 		TS_ASSERT_EQUALS(b, b);
@@ -740,5 +740,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(b > a);
 		TS_ASSERT(b >= b);
 		TS_ASSERT(b >= a);
+
+		TS_ASSERT(c == d);
+		TS_ASSERT(a > c);
+		TS_ASSERT(c < a);
 	}
 };
