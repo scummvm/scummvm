@@ -116,8 +116,11 @@ public:
 	void stop();
 	void leave(const Common::String &processName);
 
-	int getPhase() const {
+	int phase() const {
 		return _jokes? _phase: -1;
+	}
+	void phase(int phase) {
+		_phase = phase;
 	}
 
 	void position(Common::Point pos) {
