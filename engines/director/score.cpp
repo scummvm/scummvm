@@ -1325,11 +1325,22 @@ bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 }
 
 Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
-	Common::List<Channel *>intersections;
+	Common::List<Channel *> intersections;
+	Common::List<Channel *> appendix;
 
 	for (uint i = 0; i < _channels.size(); i++) {
-		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty())
-			intersections.push_back(_channels[i]);
+		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty()) {
+			// Editable text sprites will (more or less) always be rendered in front of other sprites,
+			// regardless of their order in the channel list.
+			if (_channels[i]->getEditable()) {
+				appendix.push_back(_channels[i]);
+			} else {
+				intersections.push_back(_channels[i]);
+			}
+		}
+	}
+	for (auto &ch : appendix) {
+		intersections.push_back(ch);
 	}
 
 	return intersections;

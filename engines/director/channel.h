@@ -63,6 +63,7 @@ public:
 	void setPosition(int x, int y, bool force = false);
 	void setCast(CastMemberID memberID);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	bool getEditable();
 	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
 	void replaceWidget(CastMemberID previousCastId = CastMemberID(0, 0), bool force = false);
