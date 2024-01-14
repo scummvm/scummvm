@@ -125,6 +125,14 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
+		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
+			AnimFrame &currentFrame = current.Frames[current.FrameIndex];
+			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s);
+		}
+	}
+
 	void View1::renderString(uint16 x, uint16 y, Common::String s) {
 		Graphics::ManagedSurface surf = getSurface();
 		uint16 currentX = x;
@@ -269,7 +277,7 @@ void View1::draw() {
 	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
 
 	DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
-
+	drawBackgroundAnimations(s);
 	renderString(200, 100, "Hello, world!");
 }
 
@@ -302,6 +310,13 @@ bool View1::tick() {
 		// TODO: Handle cleaner
 		_nextFrameFlag = _frameDelayFlag;
 		// TODO: Check if this is necessary
+
+		// Proper update of the background anims
+		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+			BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
+			current.FrameIndex++;
+			current.FrameIndex = current.FrameIndex % current.numFrames;
+		}
 		redraw();
 	}
 
