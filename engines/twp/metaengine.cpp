@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
@@ -166,10 +165,36 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 
 	Common::Action *act;
 
-	act = new Common::Action("SKIPCUTSCENE", _("Skip cutscene"));
-	act->setCustomEngineActionEvent(Twp::kSkipCutscene);
-	act->addDefaultInputMapping("ESCAPE");
-	engineKeyMap->addAction(act);
+	struct {
+		Common::String name;
+		const Common::U32String desc;
+		Twp::TwpAction action;
+		Common::String input;
+	} actions[] = {
+		{"SKIPCUTSCENE", _("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE"},
+		{"SELECTACTOR1", _("Select Actor 1"), Twp::kSelectActor1, "1"},
+		{"SELECTACTOR2", _("Select Actor 2"), Twp::kSelectActor2, "2"},
+		{"SELECTACTOR3", _("Select Actor 3"), Twp::kSelectActor3, "3"},
+		{"SELECTACTOR4", _("Select Actor 4"), Twp::kSelectActor4, "4"},
+		{"SELECTACTOR5", _("Select Actor 5"), Twp::kSelectActor5, "5"},
+		{"SELECTACTOR6", _("Select Actor 6"), Twp::kSelectActor6, "6"},
+		{"SELECTCHOICE1", _("Select Choice 1"), Twp::kSelectChoice1, "1"},
+		{"SELECTCHOICE2", _("Select Choice 2"), Twp::kSelectChoice2, "2"},
+		{"SELECTCHOICE3", _("Select Choice 3"), Twp::kSelectChoice3, "3"},
+		{"SELECTCHOICE4", _("Select Choice 4"), Twp::kSelectChoice4, "4"},
+		{"SELECTCHOICE5", _("Select Choice 5"), Twp::kSelectChoice5, "5"},
+		{"SELECTCHOICE6", _("Select Choice 6"), Twp::kSelectChoice6, "6"},
+		{"SELECTNEXTACTOR", _("Select Next Actor"), Twp::kSelectNextActor, "0"},
+		{"SELECTPREVACTOR", _("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
+		{"SKIPTEXT", _("Skip Text"), Twp::kSkipText, "."},
+	};
+
+	for (int i = 0; i < ARRAYSIZE(actions); i++) {
+		act = new Common::Action(actions[i].name.c_str(), actions[i].desc);
+		act->setCustomEngineActionEvent(actions[i].action);
+		act->addDefaultInputMapping(actions[i].input);
+		engineKeyMap->addAction(act);
+	}
 
 	return Common::Keymap::arrayOf(engineKeyMap);
 }

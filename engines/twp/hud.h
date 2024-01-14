@@ -57,8 +57,8 @@ struct Verb {
 struct ActorSlot {
 	VerbUiColors verbUiColors;
 	Verb verbs[22];
-	bool selectable;
-	Object *actor;
+	bool selectable = false;
+	Object *actor = nullptr;
 
 	Verb *getVerb(int id) {
 		for (int i = 0; i < 22; i++) {

@@ -26,6 +26,21 @@ namespace Twp {
 
 enum TwpAction {
 	kSkipCutscene,
+	kSelectActor1,
+	kSelectActor2,
+	kSelectActor3,
+	kSelectActor4,
+	kSelectActor5,
+	kSelectActor6,
+	kSelectChoice1,
+	kSelectChoice2,
+	kSelectChoice3,
+	kSelectChoice4,
+	kSelectChoice5,
+	kSelectChoice6,
+	kSelectPreviousActor,
+	kSelectNextActor,
+	kSkipText
 };
 
 }
