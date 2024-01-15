@@ -99,21 +99,21 @@ bool Darkseed::Nsp::loadObt(const Common::String &filename) {
 		return false;
 	}
 
+	animations.clear();
 	animations.resize(20);
 	for (int i = 0; i < 20; i++) {
 		animations[i].numFrames = file.readByte();
 
 		for (int j = 0; j < 20; j++) {
-			// TODO verify this is the correct way to load negative delta values.
 			if (file.readByte()) {
-				animations[i].deltaX.push_back(file.readSint16BE());
+				animations[i].deltaX.push_back(-(file.readUint16LE()/100));
 			} else {
-				animations[i].deltaX.push_back(file.readUint16BE());
+				animations[i].deltaX.push_back(file.readUint16LE()/100);
 			}
 			if (file.readByte()) {
-				animations[i].deltaY.push_back(file.readSint16BE());
+				animations[i].deltaY.push_back(-(file.readUint16LE()/100));
 			} else {
-				animations[i].deltaY.push_back(file.readUint16BE());
+				animations[i].deltaY.push_back(file.readUint16LE()/100);
 			}
 			animations[i].frameNo.push_back(file.readByte());
 			animations[i].frameDuration.push_back(file.readByte());
@@ -136,4 +136,11 @@ Darkseed::Obt::Obt() {
 	deltaY.reserve(20);
 	frameNo.reserve(20);
 	frameDuration.reserve(20);
+}
+
+Darkseed::Obt::~Obt() {
+	deltaX.clear();
+	deltaY.clear();
+	frameNo.clear();
+	frameDuration.clear();
 }

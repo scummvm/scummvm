@@ -94,7 +94,7 @@ public:
 	uint8 scaledSpriteHeight = 0;
 
 	int nsp_sprite_scaling_y_position = 0;
-	bool BoolEnum_2c85_985 = false;
+
 	bool player_sprite_related_2c85_82f3 = false;
 	int DAT_2c85_8326_blit_related = 0;
 	bool isAnimFinished_maybe = false;

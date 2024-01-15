@@ -292,7 +292,7 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 						g_engine->BoolByteEnum_2c85_9e67 = true;
 					}
 					g_engine->targetRoomNumber = room1[j].roomNumber;
-					g_engine->targetPlayerDirection = room1[j].direction; // TODO what is this?
+					g_engine->targetPlayerDirection = room1[j].direction;
 					break;
 				}
 			}
