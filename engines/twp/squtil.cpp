@@ -287,8 +287,7 @@ Room *sqroom(HSQUIRRELVM v, int i) {
 	return nullptr;
 }
 
-Object *sqobj(HSQOBJECT table) {
-	int id = getId(table);
+Object *sqobj(int id) {
 	for (int i = 0; i < g_engine->_actors.size(); i++) {
 		Object *actor = g_engine->_actors[i];
 		if (getId(actor->_table) == id)
@@ -307,6 +306,11 @@ Object *sqobj(HSQOBJECT table) {
 		}
 	}
 	return nullptr;
+}
+
+Object *sqobj(HSQOBJECT table) {
+	int id = getId(table);
+	return sqobj(id);
 }
 
 Object *sqobj(HSQUIRRELVM v, int i) {
