@@ -393,6 +393,17 @@ void DarkseedEngine::handlePointerAction() {
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
+	if (newRoomNumber == 5 && _previousRoomNumber == 6) {
+		_player->loadAnimations("stairs.nsp");
+		_player->_position.x = 0x174;
+		_player->_position.y = 0x100;
+		setupOtherNspAnimation(2,6);
+	} else if (newRoomNumber == 6 && _previousRoomNumber == 5) {
+		_player->loadAnimations("stairs.nsp");
+		_player->_position.x = 0x19f;
+		_player->_position.y = 0x8c;
+		setupOtherNspAnimation(0,7);
+	}
 	_room->printRoomDescriptionText();
 }
 
@@ -484,14 +495,10 @@ void DarkseedEngine::updateDisplay() {
 					}
 				}
 
-				if (nsp_sprite_scaling_y_position == 0) {
-//					calculateScaledPlayerSpriteDimensions(iVar9,iVar8,playerSpriteY_maybe);
-//					bVar6 = extraout_AH_00;
-				}
-				else {
-//					calculateScaledPlayerSpriteDimensions(iVar9,iVar8,nsp_sprite_scaling_y_position);
-//					bVar6 = extraout_AH;
-				}
+				_room->calculateScaledSpriteDimensions(
+					_player->_animations.getSpriteAt(_player->_frameIdx).width,
+					_player->_animations.getSpriteAt(_player->_frameIdx).height,
+					nsp_sprite_scaling_y_position != 0 ? nsp_sprite_scaling_y_position : _player->_position.y);
 
 				if (otherNspAnimationType_maybe == 3) {
 //					uVar1 = _curPlayerSpriteWidth & 0xff;
@@ -516,7 +523,7 @@ void DarkseedEngine::updateDisplay() {
 //									*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
 //									0xf0 - playerSpriteY_maybe,uVar1,uVar2,uVar3 & 0xff00);
 //					bVar6 = extraout_AH_01;
-				} else if (!BoolEnum_2c85_985) {
+				} else if (!BoolEnum_2c85_985a) {
 					if (otherNspAnimationType_maybe == 0x11) {
 //						addSpriteToDraw(playerSpriteX_maybe - (int)otherNspWidthTbl[0] / 2,playerSpriteY_maybe - iVar8,iVar9,iVa r8,
 //										*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
@@ -547,6 +554,33 @@ void DarkseedEngine::updateDisplay() {
 //										0xf0 - playerSpriteY_maybe,iVar9,iVar8,_player_sprite_related_2c85_82f3);
 //						bVar6 = extraout_AH_03;
 					} // TODO continue adding logic here. else if (....
+				} else if (otherNspAnimationType_maybe == 6) {
+					// stairs up
+					_sprites.addSpriteToDrawList(
+						_player->_position.x - scaledSpriteWidth / 2,
+						_player->_position.y - scaledSpriteHeight,
+						&_player->_animations.getSpriteAt(_player->_frameIdx),
+						0xff,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
+				} else if (otherNspAnimationType_maybe == 0x16) {
+					// TODO
+				} else if (otherNspAnimationType_maybe == 4 || otherNspAnimationType_maybe == 0x15) {
+					// TODO
+				} else if (otherNspAnimationType_maybe == 0x27) {
+					// TODO
+				} else if (otherNspAnimationType_maybe == 0x2f) {
+					// TODO
+				} else {
+					_sprites.addSpriteToDrawList(
+						_player->_position.x - scaledSpriteWidth / 2,
+						_player->_position.y - scaledSpriteHeight,
+						&_player->_animations.getSpriteAt(_player->_frameIdx),
+						0xf0 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
 				}
 			}
 		}
@@ -573,13 +607,22 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	}
 
 	// TODO big switch here to init the different animation types.
-	switch (otherNspAnimationType_maybe - 2) {
+	switch (otherNspAnimationType_maybe) {
+	case 6 : // stairs
+		nsp_sprite_scaling_y_position = 0xbe;
+		BoolEnum_2c85_985a = true;
+		break;
+	case 7 : // stairs down
+		nsp_sprite_scaling_y_position = 0xbe;
+		BoolEnum_2c85_985a = true;
+		break;
 	default:
 		break;
 	}
 }
 
 void DarkseedEngine::updateAnimation() {
+	int currentRoomNumber = _room->_roomNumber;
 	switch (otherNspAnimationType_maybe) {
 	case 0: break;
 	case 1 : // sleep wake anim
@@ -595,6 +638,53 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 6: // stairs up
+		if (currentRoomNumber == 6) {
+			advanceAnimationFrame(1);
+		} else {
+			advanceAnimationFrame(2);
+		}
+		if (animFrameChanged && ((currentRoomNumber == 6 && animIndexTbl[1] == 1) || (currentRoomNumber == 5 && animIndexTbl[2] == 1))) {
+//			FUN_1208_0dac_sound_related(0xd,CONCAT11(uVar4,5));
+		}
+		if (!isAnimFinished_maybe) {
+			if (currentRoomNumber == 6) {
+				_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
+			} else {
+				_player->_frameIdx = _player->_animations.getAnimAt(2).frameNo[_player->_animations.getAnimAt(2).frameNo[animIndexTbl[2]]];
+			}
+		} else {
+			if (currentRoomNumber == 6) {
+				_previousRoomNumber = 6;
+				changeToRoom(5);
+			}
+//			if (isAutoWalkingToBed != False) {
+//				FUN_2022_7508();
+//			}
+		}
+		break;
+	case 7: // stairs down
+		if (currentRoomNumber == 5) {
+			advanceAnimationFrame(3);
+			if (animFrameChanged && animIndexTbl[3] == 1) {
+				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
+			}
+			if (!isAnimFinished_maybe) {
+				_player->_frameIdx = _player->_animations.getAnimAt(3).frameNo[_player->_animations.getAnimAt(3).frameNo[animIndexTbl[3]]];
+			} else {
+				_previousRoomNumber = 5;
+				changeToRoom(6);
+			}
+		} else {
+			advanceAnimationFrame(0);
+			if (animFrameChanged && animIndexTbl[0] == 1) {
+				// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
+			}
+			if (!isAnimFinished_maybe) {
+				_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			}
+		}
+		break;
 	default:
 		error("Unhandled animation type! %d", otherNspAnimationType_maybe);
 	}
@@ -602,11 +692,10 @@ void DarkseedEngine::updateAnimation() {
 
 void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 	if (!BoolEnum_2c85_985a) {
-//		scaledWalkSpeed_maybe._2_2_ = 0;
-//		scaledWalkSpeed_maybe._0_2_ = 1000;
+		scaledWalkSpeed_maybe = 1000;
 	}
 	else {
-//		calculateScaledPlayerSpriteDimensions(10,10,playerSpriteY_maybe);
+		_room->calculateScaledSpriteDimensions(10, 10, _player->_position.y);
 	}
 	isAnimFinished_maybe = false;
 	animFrameChanged = false;
@@ -615,8 +704,8 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 	if (spriteAnimCountdownTimer[nspAminIdx] < 1) {
 		animFrameChanged = true;
 		animIndexTbl[nspAminIdx] = animIndexTbl[nspAminIdx] + 1;
-		_player->_position.x += (int16)anim.deltaX[animIndexTbl[nspAminIdx]];
-		_player->_position.y += (int16)anim.deltaY[animIndexTbl[nspAminIdx]];
+		_player->_position.x += ((int16)anim.deltaX[animIndexTbl[nspAminIdx]] * scaledWalkSpeed_maybe) / 1000;
+		_player->_position.y += ((int16)anim.deltaY[animIndexTbl[nspAminIdx]] * scaledWalkSpeed_maybe) / 1000;
 		if (animIndexTbl[nspAminIdx] == anim.numFrames) {
 			animIndexTbl[nspAminIdx] = 0;
 			isAnimFinished_maybe = true;

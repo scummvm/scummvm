@@ -48,6 +48,7 @@ public:
 	Common::Array<uint8> frameNo;
 	Common::Array<uint8> frameDuration;
 	Obt();
+	virtual ~Obt();
 };
 
 class Nsp {
