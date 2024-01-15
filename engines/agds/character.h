@@ -74,6 +74,7 @@ class Character {
 	const AnimationDescription * _description;
 
 	bool animate(int direction, int speed, bool jokes);
+	Common::Point animationPosition() const;
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name);
@@ -130,6 +131,7 @@ public:
 	Common::Point position() const {
 		return _pos;
 	}
+	bool pointIn(Common::Point pos) const;
 
 	void notifyProcess(const Common::String & processName);
 	bool moveTo(const Common::String &processName, Common::Point dst, int direction);
