@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-12 20:42+0000\n"
+"PO-Revision-Date: 2024-01-15 13:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2087,6 +2087,8 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
+"Adierazi non daude zure gordetako jokoak. Kolore gorriak balio tenporala "
+"dela eta ez dela gordeko esan nahi du"
 
 #: gui/options.cpp:2443
 msgid "Theme Path:"
@@ -2098,34 +2100,27 @@ msgid "Theme Path:"
 msgstr "Gaiak:"
 
 #: gui/options.cpp:2451
-#, fuzzy
 msgid "Icon Path:"
-msgstr "Gehigarriak:"
+msgstr "Ikono bidea:"
 
 #: gui/options.cpp:2453
-#, fuzzy
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "Gehigarriak:"
+msgstr "Ikono bidea:"
 
 #: gui/options.cpp:2454 gui/options.cpp:2464
-#, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "Lehenetsia"
 
 #: gui/options.cpp:2461
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Jokoa:"
+msgstr "DLC bidea:"
 
 #: gui/options.cpp:2463
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Jokoa:"
+msgstr "DLC bidea:"
 
 #: gui/options.cpp:2471 gui/options.cpp:2473 gui/options.cpp:2474
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2143,68 +2138,68 @@ msgstr "Pluginak:"
 
 #: gui/options.cpp:2492
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVM konfig bidea: "
 
 #: gui/options.cpp:2505
 msgid "ScummVM log path: "
-msgstr ""
+msgstr "ScummVM log bidea: "
 
 #: gui/options.cpp:2510
 msgid "View"
-msgstr ""
+msgstr "Ikuspegia"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2520 gui/options.cpp:3285
 msgid "Last browser path: "
-msgstr ""
+msgstr "Bilatutako azken bidea: "
 
 #: gui/options.cpp:2525
 msgid "Theme:"
 msgstr "Gaia:"
 
 #: gui/options.cpp:2530
-#, fuzzy
 msgid "GUI scale:"
-msgstr "Hizkuntza:"
+msgstr "GUI eskala:"
 
 #: gui/options.cpp:2537
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Interfazea:"
+msgstr "GUI renderer:"
 
 #: gui/options.cpp:2550
 msgid "Return to the launcher when leaving a game"
-msgstr ""
+msgstr "Itzuli abiarazlera jokotik irtetean"
 
 #: gui/options.cpp:2551
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
+"Itzuli abiarazlera jokotik irtetean, ScummVM itxi beharrean\n"
+"(hau ezin da joko guztietan egin)."
 
 #: gui/options.cpp:2558
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Eskatu baieztapena irtetean"
 
 #: gui/options.cpp:2559
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Eskatu baimena ScummVM ixtean edo jokotik irtetean."
 
 #: gui/options.cpp:2565
-#, fuzzy
 msgid "Disable fixed font scaling"
-msgstr "Ezin izan da jokoa gorde"
+msgstr "Desgaitu letra eskalatze finkoa"
 
 #: gui/options.cpp:2566
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Ez egin letren gorako eskalatze finkorik GUIn. Bereizmen txikiko pantailetan "
+"artefaktuak gutxituko dira"
 
 #: gui/options.cpp:2572
-#, fuzzy
 msgid "GUI language:"
-msgstr "Hizkuntza:"
+msgstr "GUI hizkuntza:"
 
 #: gui/options.cpp:2572
 msgid "Language of ScummVM GUI"
@@ -2212,7 +2207,7 @@ msgstr "ScummVM interfazearen hizkuntza"
 
 #: gui/options.cpp:2598
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr ""
+msgstr "Aldatu ScummVMren GUIko hizkuntza jokoaren hizkuntzara"
 
 #: gui/options.cpp:2599
 msgid ""
@@ -2220,26 +2215,29 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
+"Joko bat abiaraztean, aldatu ScummVMren GUIko hizkuntza jokoaren "
+"hizkuntzara. Modu horretan, jokoak ScummVMren gordetze eta kargatze "
+"elkarrizketak erabiltzen baditu, jokoaren hizkuntzan egongo dira."
 
 #: gui/options.cpp:2611
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Erabili sistemako fitxategi bilatzailea"
 
 #: gui/options.cpp:2612
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Erabili sistemako fitxategi bilatzailea fitxategi edo direktorioak "
+"aukeratzeko, ScummVMkoaren ordez."
 
 #: gui/options.cpp:2620
-#, fuzzy
 msgid "Download Icons"
-msgstr "Behera"
+msgstr "Deskargatu Ikonoak"
 
 #: gui/options.cpp:2620
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Eguneraketak bilatzen..."
+msgstr "Egiaztatu scummvm.org webgunean ikono multzoen eguneraketak"
 
 #: gui/options.cpp:2627
 msgid "Autosave:"
@@ -2252,32 +2250,29 @@ msgstr "Autogordetzea:"
 
 #: gui/options.cpp:2640
 msgid "Random seed:"
-msgstr ""
+msgstr "Ausazkoen hazia:"
 
 #: gui/options.cpp:2640
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Ausazko zenbaki sortzaile guztiak hasieratzeko hazia"
 
 #: gui/options.cpp:2648
-#, fuzzy
 msgid "Debug level:"
-msgstr "Araztailea"
+msgstr "Araztaile maila:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2652 gui/options.cpp:2791
-#, fuzzy
 msgid "None"
 msgstr "Bat ere ez"
 
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2658
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (guztiak)"
 
 #: gui/options.cpp:2662
-#, fuzzy
 msgid "Enable Discord integration"
-msgstr "Gaitu kurtsore flotatzaileak"
+msgstr "Gaitu Discord integrazioa"
 
 #: gui/options.cpp:2663
 msgid ""
