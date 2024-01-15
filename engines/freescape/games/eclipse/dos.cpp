@@ -28,6 +28,12 @@
 namespace Freescape {
 
 extern byte kEGADefaultPalette[16][3];
+byte kEclipseCGAPaletteRedGreen[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0xff, 0xff, 0x55},
+};
 
 void EclipseEngine::initDOS() {
 	_viewArea = Common::Rect(40, 32, 280, 132);
@@ -57,11 +63,26 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
+		file.open("SCN1C.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte *)&kEclipseCGAPaletteRedGreen, 0, 4);
+		}
+		file.close();
 		file.open("TOTEC.EXE");
 
 		if (!file.isOpen())
 			error("Failed to open TOTEC.EXE");
-		load8bitBinary(&file, 0x7bb0, 4); // TODO
+
+		loadFonts(&file, 0xd403);
+		load8bitBinary(&file, 0x2530, 4);
+		for (auto &it : _areaMap) {
+			it._value->addStructure(_areaMap[255]);
+			for (int16 id = 183; id < 207; id++)
+				it._value->addObjectFromArea(id, _areaMap[255]);
+		}
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte *)&kEclipseCGAPaletteRedGreen, 0, 4);
 	} else
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 }
