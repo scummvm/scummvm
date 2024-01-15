@@ -125,7 +125,11 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 		byte r, g, b;
-		_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
+		if (_wm->_pixelformat.bytesPerPixel == 4) {
+			_wm->decomposeColor<uint32>(fgcolor, r, g, b);
+		} else {
+			_wm->decomposeColor<byte>(fgcolor, r, g, b);
+		}
 		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
 		_defaultFormatting.font = NULL;
