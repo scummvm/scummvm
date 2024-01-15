@@ -36,7 +36,8 @@ enum {
 	MENU_5 = 5,
 	MENU_RESTARTING = 6,
 	MENU_RESTART = 7,
-	MENU_8 = 8
+	MENU_8 = 8,
+	MENU_EXIT = 9
 };
 
 static const MenuButtonDef DEMO_BUTTONS[4] = {
@@ -133,6 +134,10 @@ void Room901::daemon() {
 
 	case MENU_RESTART:
 		_G(game).setRoom(601);
+		break;
+
+	case MENU_EXIT:
+		_G(kernel).going = false;
 		break;
 
 	default:
