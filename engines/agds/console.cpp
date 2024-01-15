@@ -24,6 +24,7 @@
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/object.h"
+#include "agds/patch.h"
 #include "agds/process.h"
 #include "agds/screen.h"
 
@@ -37,6 +38,7 @@ Console::Console(AGDSEngine *engine) : _engine(engine) {
 	registerCmd("stop",			WRAP_METHOD(Console, stop));
 	registerCmd("set",			WRAP_METHOD(Console, setGlobal));
 	registerCmd("invadd",		WRAP_METHOD(Console, inventoryAdd));
+	registerCmd("patch", WRAP_METHOD(Console, patch));
 }
 
 bool Console::load(int argc, const char **argv) {
@@ -147,6 +149,38 @@ bool Console::inventoryAdd(int argc, const char **argv) {
 	}
 	int idx = _engine->inventory().add(argv[1]);
 	debugPrintf("add = %d\n", idx);
+
+	detach();
+	return true;
+}
+
+bool Console::patch(int argc, const char **argv) {
+	if (argc != 2 && argc != 4) {
+		debugPrintf("usage: %s screen [object flag]\n", argv[0]);
+		return true;
+	}
+	if (argc == 2) {
+		auto patch = _engine->getPatch(argv[1]);
+		if (!patch) {
+			debugPrintf("no patch for %s found.", argv[1]);
+			return true;
+		}
+		debugPrintf("screen saved: %d\n", patch->screenSaved);
+		debugPrintf("screen region: %s\n", patch->screenRegionName.c_str());
+		debugPrintf("previous screen: %s\n", patch->prevScreenName.c_str());
+		debugPrintf("screen loading type: %d\n", static_cast<int>(patch->loadingType));
+		debugPrintf("character pos: %d,%d, direction: %d, present: %d\n", patch->characterPosition.x, patch->characterPosition.y, patch->characterDirection, patch->characterPresent);
+		debugPrintf("mouse cursor: %s\n", patch->defaultMouseCursor.c_str());
+		for(auto & object: patch->objects) {
+			debugPrintf(" - object %s: present: %d\n", object.name.c_str(), object.flag);
+		}
+	} else if (argc == 4) {
+		auto patch = _engine->getPatch(argv[1]);
+		if (!patch)
+			debugPrintf("no patch found, creating...\n");
+		patch = _engine->createPatch(argv[1]);
+		patch->setFlag(argv[2], atoi(argv[3]));
+	}
 
 	detach();
 	return true;

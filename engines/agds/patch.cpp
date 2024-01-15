@@ -70,6 +70,16 @@ void Patch::save(Common::WriteStream *stream) {
 	}
 }
 
+void Patch::setFlag(const Common::String & name, int flag) {
+	for(auto & object : objects) {
+		if (object.name == name) {
+			object.flag = flag;
+			return;
+		}
+	}
+	objects.push_back({name, flag});
+}
+
 int Patch::getFlag(const Common::String & name) const {
 	for(auto & object : objects) {
 		if (object.name == name)
