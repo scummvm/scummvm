@@ -824,12 +824,9 @@ void Process::screenObjectPatchDecRef() {
 			warning("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
 		} else {
 			//fixme: add non-existent screen check?
-			auto patch = _engine->getPatch(screenName);
-			if (patch) {
-				int refs = patch->decRef(objectName);
-				debug("decrement refcount for object %s, result: %d", objectName.c_str(), refs);
-			} else
-				debug("decrement refcount for object %s, no patch for screen %s", objectName.c_str(), screenName.c_str());
+			auto patch = _engine->createPatch(screenName);
+			int refs = patch->decRef(objectName);
+			debug("decrement refcount for object %s, result: %d", objectName.c_str(), refs);
 		}
 	} else {
 		debug("screenObjectPatchDecRef: current screen, removing object");
