@@ -1072,7 +1072,7 @@ void Process::restartAnimation() {
 
 void Process::animationNextFrame() {
 	Common::String phaseVar = popString();
-	debug("animationGetCurrentFrame %s", phaseVar.c_str());
+	debug("animationNextFrame %s", phaseVar.c_str());
 	if (phaseVar.empty()) {
 		warning("no phaseVar");
 		return;
@@ -1083,7 +1083,7 @@ void Process::animationNextFrame() {
 		if (value >= -1) {
 			if (!animation->ended() || value == -1) {
 				animation->decodeNextFrame();
-				_engine->setGlobal(phaseVar, animation->ended()? -1: animation->phase());
+				_engine->setGlobal(phaseVar, animation->phase() - 1);
 			} else {
 				_engine->setGlobal(phaseVar, -1);
 			}

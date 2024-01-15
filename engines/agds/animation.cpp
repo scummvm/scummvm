@@ -156,6 +156,11 @@ void Animation::rescaleCurrentFrame() {
 }
 
 void Animation::decodeNextFrame() {
+	if (ended()) {
+		_phase = 0;
+		_flic->rewind();
+	}
+
 	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
 		debug("frame of %s couldn't be decoded, process: %s, phase var: %s, at end: %d", _name.c_str(), _process.c_str(), _phaseVar.c_str(), _flic->endOfVideo());
