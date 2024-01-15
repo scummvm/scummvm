@@ -186,5 +186,23 @@ void Darkseed::Player::calculateWalkTarget() {
 		_walkTarget.y = 0xee;
 	}
 
+	if (!g_engine->_room->canWalkAtLocation(_walkTarget.x, _walkTarget.y)) {
+		int ty = _walkTarget.y;
+		for (; !g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 0xe9;) {
+			ty += 4;
+		}
+		if (ty < 0xeb) {
+			_walkTarget.y = ty;
+		}
+	}
+
 	// TODO more logic here.
+}
+
+int Darkseed::Player::getWidth() {
+	return getSprite(_frameIdx).width;
+}
+
+int Darkseed::Player::getHeight() {
+	return getSprite(_frameIdx).height;
 }

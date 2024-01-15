@@ -175,6 +175,7 @@ void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
 void DarkseedEngine::gameloop() {
 	while (!shouldQuit()) {
 		updateEvents();
+		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		handleInput();
 		updateDisplay();
 		_room->update();
@@ -205,7 +206,7 @@ void DarkseedEngine::updateEvents() {
 }
 
 void DarkseedEngine::wait() {
-	g_system->delayMillis(10);
+	g_system->delayMillis(15);
 }
 
 void DarkseedEngine::handleInput() {
@@ -219,7 +220,7 @@ void DarkseedEngine::handleInput() {
 
 	if (!isPlayingAnimation_maybe) {
 		if (!_player->_playerIsChangingDirection) {
-			if (currentRoomNumber == 0x39 &&_previousRoomNumber == 6) {
+			if (currentRoomNumber == 0x39 &&_previousRoomNumber == 0x36) {
 				_player->updateSprite();
 			} else {
 				if (_player->isAtWalkTarget() && !_player->BoolEnum_2c85_811c) {
@@ -227,13 +228,14 @@ void DarkseedEngine::handleInput() {
 				} else {
 					if (counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
 						counter_2c85_888b = 0;
-						//						uVar7 = CONCAT11((char)(uVar7 >> 8),DAT_2c85_7dd7 + '\x01') & 0xff07;
-						//						DAT_2c85_7dd7 = (char)uVar7;
-						//						if (((DAT_2c85_7dd7 == '\0') || (DAT_2c85_7dd7 == '\x04')) &&
-						//							((((currentRoomNumber != 0x22 && (currentRoomNumber != 0x13)) && (currentRoomNumber != 0x14)) &&
-						//							  ((currentRoomNumber != 0x15 && (currentRoomNumber != 0x16)))))) {
+						_player->playerWalkFrameIdx = (_player->playerWalkFrameIdx + 1) % 8;
+						if ((_player->playerWalkFrameIdx == 0 || _player->playerWalkFrameIdx == 4)
+							&& currentRoomNumber != 0x22 && currentRoomNumber != 0x13
+							&& currentRoomNumber != 0x14 && currentRoomNumber != 0x15
+							&& currentRoomNumber != 16) {
+							//TODO
 						//							FUN_1208_0dac_sound_related(0x5c,CONCAT11((char)(uVar7 >> 8),5));
-						//						}
+						}
 					}
 					_player->updateSprite();
 				}
@@ -248,18 +250,9 @@ void DarkseedEngine::handleInput() {
 						}
 					}
 				}
-//				if ((int)playerSpriteX_maybe < (int)walkTargetX) {
-//					local_22 = walkTargetX - playerSpriteX_maybe;
-//				}
-//				else {
-//					local_22 = playerSpriteX_maybe - walkTargetX;
-//				}
-//				if ((int)playerSpriteY_maybe < (int)walkTargetY) {
-//					local_20 = walkTargetY - playerSpriteY_maybe;
-//				}
-//				else {
-//					local_20 = playerSpriteY_maybe - walkTargetY;
-//				}
+				int xDistToTarget = ABS(_player->_walkTarget.x - _player->_position.x);
+				int yDistToTarget = ABS(_player->_walkTarget.y - _player->_position.y);
+
 				if (_isRightMouseClicked && !_player->isPlayerWalking_maybe) {
 					if (_actionMode == LookAction) {
 						_actionMode = PointerAction;
@@ -284,6 +277,84 @@ void DarkseedEngine::handleInput() {
 //						walkPathIndex = 0xff;
 //					}
 //					playerFaceWalkTarget();
+				}
+				if (_isLeftMouseClicked && _cursor.getY() < 0x29) {
+					// TODO handle inventory click.
+				}
+				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
+
+				if (_player->isAtWalkTarget() && _player->BoolEnum_2c85_811c && !_player->isPlayerWalking_maybe) {
+					if (BoolByteEnum_2c85_9e67) {
+						_player->changeDirection(_player->_direction, targetPlayerDirection);
+						BoolByteEnum_2c85_9e67 = false;
+						BoolByteEnum_2c85_8324 = true;
+						return;
+					}
+					_player->BoolEnum_2c85_811c = false;
+					if (BoolByteEnum_2c85_9e67 || BoolByteEnum_2c85_8324) {
+						for (int i = 0; i < _room->room1.size(); i++) {
+							RoomExit &roomExit = _room->room1[i];
+							if (roomExit.roomNumber != 0xff
+								&& roomExit.x < scaledSpriteWidth / 2 + _player->_position.x
+								&& _player->_position.x - scaledSpriteWidth / 2 < roomExit.x + roomExit.width
+								&& roomExit.y < _player->_position.y
+								&& _player->_position.y - scaledSpriteHeight < roomExit.y + roomExit.height
+								&& roomExit.direction == _player->_direction) {
+								bool bVar = true;
+								if (currentRoomNumber == 0x40 && roomExit.roomNumber == 0x40) {
+									bVar = false;
+									_console->printTosText(0x2bf);
+								}
+								if (currentRoomNumber == 0x43 && roomExit.roomNumber == 0) {
+									bVar = false;
+									_console->printTosText(0x386);
+								}
+								// 2022:808a TODO
+//								if (currentRoomNumber == 0x3b)
+								if (bVar) {
+									if (currentRoomNumber != 0x22 && (currentRoomNumber < 0x13 || currentRoomNumber > 0x17)) {
+										_player->_playerIsChangingDirection = false;
+										_player->BoolEnum_2c85_811c = false;
+										_player->updateSprite();
+										updateDisplay();
+										_previousRoomNumber = currentRoomNumber;
+//										currentRoomNumber = *(byte *)((int)&roomExitTbl[0].roomNumber + iVar7 * 0xb);
+//										if (((isAutoWalkingToBed != False) && (DAT_2c85_8254 == 2)) && (currentRoomNumber == 10)) {
+//											FUN_171d_0c6e();
+//										}
+										changeToRoom(roomExit.roomNumber);
+//										if ((isAutoWalkingToBed != False) &&
+//											((currentRoomNumber != 5 ||
+//											  (lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long),
+//											   lVar10 = CONCAT22(playerSpriteY_long._2_2_,(uint)playerSpriteY_long), previousRoomNumber != 0x3d ))))
+//										{
+//											FUN_2022_7508();
+//											uVar4 = playerSpriteX_maybe;
+//											uVar3 = playerSpriteY_maybe;
+//											lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long);
+//											lVar10 = CONCAT22(playerSpriteY_long._2_2_,(uint)playerSpriteY_long);
+//										}
+										return;
+									}
+								}
+							}
+						}
+					}
+				}
+				if (_player->isAtWalkTarget() && _player->isPlayerWalking_maybe) {
+					if (_player->playerNewFacingDirection_maybe != -1) {
+						_player->changeDirection(_player->_direction, _player->playerNewFacingDirection_maybe);
+						_player->updateSprite();
+						_player->playerNewFacingDirection_maybe = -1;
+						return;
+					}
+					_player->BoolEnum_2c85_811c = false;
+					_player->isPlayerWalking_maybe = false;
+					// TODO complete at final destination logic. 2022:879d
+				}
+				if (!isPlayingAnimation_maybe) {
+					_player->_position = _player->_walkTarget;
+					// TODO handle walking movement here. 2022:88ca
 				}
 //				else if (_isLeftMouseClicked) {
 //					// TODO do actions here.
@@ -435,8 +506,8 @@ void DarkseedEngine::updateDisplay() {
 //					else {
 //						uVar11 = 0;
 //						uVar10 = 1000;
-//						uVar7 = LONG_2c85_8116._2_2_;
-//						uVar4 = LXMUL@(CONCAT22((undefined2)LONG_2c85_8116,LONG_2c85_8116._2_2_),0x2d0000);
+//						uVar7 = scaledWalkSpeed_maybe._2_2_;
+//						uVar4 = LXMUL@(CONCAT22((undefined2)scaledWalkSpeed_maybe,scaledWalkSpeed_maybe._2_2_),0x2d0000);
 //						uVar3 = LUMOD@(uVar4,uVar7,uVar10,uVar11);
 //						iVar5 = playerSpriteX_maybe - uVar3;
 //					}
@@ -531,8 +602,8 @@ void DarkseedEngine::updateAnimation() {
 
 void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 	if (!BoolEnum_2c85_985a) {
-//		LONG_2c85_8116._2_2_ = 0;
-//		LONG_2c85_8116._0_2_ = 1000;
+//		scaledWalkSpeed_maybe._2_2_ = 0;
+//		scaledWalkSpeed_maybe._0_2_ = 1000;
 	}
 	else {
 //		calculateScaledPlayerSpriteDimensions(10,10,playerSpriteY_maybe);

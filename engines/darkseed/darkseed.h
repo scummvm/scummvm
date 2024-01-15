@@ -87,7 +87,12 @@ public:
 	bool isWearingHeadBand = false;
 	uint16 headAcheMessageCounter = 0;
 	uint16 trunkPushCounter = 0;
+
 	int sprite_y_scaling_threshold_maybe = 0xf0;
+	int scaledWalkSpeed_maybe = 0;
+	uint8 scaledSpriteWidth = 0;
+	uint8 scaledSpriteHeight = 0;
+
 	int nsp_sprite_scaling_y_position = 0;
 	bool BoolEnum_2c85_985 = false;
 	bool player_sprite_related_2c85_82f3 = false;
@@ -99,6 +104,7 @@ public:
 	int spriteAnimCountdownTimer[20];
 
 	// Unknown variables
+	bool BoolByteEnum_2c85_8324 = false;
 	uint16 DAT_2c85_825c = 0;
 	uint16 DAT_2c85_819c = 0;
 	bool BoolEnum_2c85_985a = false;
@@ -108,7 +114,7 @@ public:
 
 	int16 counter_2c85_888b = 0;
 
-	uint8 DAT_2c85_6b0e = 0; // related to changing rooms.
+	uint8 targetPlayerDirection = 0; // related to changing rooms.
 
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
