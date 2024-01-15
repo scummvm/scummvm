@@ -70,7 +70,13 @@ CondStateVisitor::CondStateVisitor(Dialog *dlg, DialogSelMode mode) : _dlg(dlg),
 }
 
 DialogConditionState CondStateVisitor::createState(int line, DialogConditionMode mode) {
-	return DialogConditionState{.mode = mode, .line = line, .dialog = _dlg->_context.dialogName, .actorKey = _dlg->_context.actor};
+	return DialogConditionState(mode, _dlg->_context.actor, _dlg->_context.dialogName, line);
+}
+
+DialogConditionState::DialogConditionState() {}
+
+DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String& k, const Common::String& dlg, int ln) 
+: mode(m), actorKey(k), dialog(dlg), line(ln) {
 }
 
 void CondStateVisitor::visit(const YOnce &node) {

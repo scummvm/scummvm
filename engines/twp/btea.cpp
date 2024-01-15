@@ -26,17 +26,17 @@ namespace Twp {
 #define DELTA 0x9e3779b9
 #define MX (((z >> 5 ^ y << 2) + (y >> 3 ^ z << 4)) ^ ((sum ^ y) + (key[(p & 3) ^ e] ^ z)))
 
-void BTEACrypto::encrypt(uint32_t *v, int n, const uint32_t *key) {
+void BTEACrypto::encrypt(uint32 *v, int n, const uint32 *key) {
 	btea(v, n, key);
 }
 
-void BTEACrypto::decrypt(uint32_t *v, int n, const uint32_t *key) {
+void BTEACrypto::decrypt(uint32 *v, int n, const uint32 *key) {
 	btea(v, -n, key);
 }
 
 // This method comes from https://en.wikipedia.org/wiki/XXTEA
-void BTEACrypto::btea(uint32_t *v, int n, const uint32_t *key) {
-	uint32_t y, z, sum;
+void BTEACrypto::btea(uint32 *v, int n, const uint32 *key) {
+	uint32 y, z, sum;
 	unsigned p, rounds, e;
 	if (n > 1) { /* Coding Part */
 		rounds = 6 + 52 / n;
@@ -45,7 +45,7 @@ void BTEACrypto::btea(uint32_t *v, int n, const uint32_t *key) {
 		do {
 			sum += DELTA;
 			e = (sum >> 2) & 3;
-			for (p = 0; p < static_cast<uint32_t>(n - 1); p++) {
+			for (p = 0; p < static_cast<uint32>(n - 1); p++) {
 				y = v[p + 1];
 				z = v[p] += MX;
 			}

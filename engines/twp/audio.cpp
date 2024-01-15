@@ -206,8 +206,12 @@ int AudioSystem::play(SoundDefinition *sndDef, Audio::Mixer::SoundType cat, int 
 	const Common::String &name = sndDef->getName();
 	Audio::SeekableAudioStream *audioStream;
 	if (name.hasSuffixIgnoreCase(".ogg")) {
+#ifdef USE_VORBIS
 		slot->stream.open(sndDef);
 		audioStream = Audio::makeVorbisStream(&slot->stream, DisposeAfterUse::NO);
+#else
+		audioStream = nullptr;
+#endif
 	} else if (name.hasSuffixIgnoreCase(".wav")) {
 		slot->stream.open(sndDef);
 		audioStream = Audio::makeWAVStream(&slot->stream, DisposeAfterUse::NO);

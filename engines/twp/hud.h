@@ -43,6 +43,9 @@ struct VerbUiColors {
 	Color inventoryBackground;
 	Color retroNormal;
 	Color retroHighlight;
+
+	VerbUiColors();
+	VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt);
 };
 
 struct Verb {
@@ -52,13 +55,20 @@ struct Verb {
 	Common::String text;
 	Common::String key;
 	int flags;
+
+	Verb();
+	Verb(VerbId id, const Common::String& image, const Common::String& fun, const Common::String& text, const Common::String& key, int flags = 0);
 };
 
 struct ActorSlot {
+public:
 	VerbUiColors verbUiColors;
 	Verb verbs[22];
 	bool selectable = false;
 	Object *actor = nullptr;
+
+public:
+	ActorSlot();
 
 	Verb *getVerb(int id) {
 		for (int i = 0; i < 22; i++) {

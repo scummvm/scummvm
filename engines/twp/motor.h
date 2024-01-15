@@ -33,8 +33,8 @@ namespace Twp {
 template<typename T>
 struct Tween {
 public:
-	Tween(T f, T t, float duration, InterpolationMethod im)
-		: frm(f), to(t), delta(t - f), duration(duration), value(f), easing_f(easing(im.kind)), swing(im.swing), loop(im.loop) {
+	Tween(T f, T t, float d, InterpolationMethod im)
+		: frm(f), to(t), delta(t - f), duration(d), value(f), easing_f(easing(im.kind)), swing(im.swing), loop(im.loop) {
 	}
 
 	bool running() {

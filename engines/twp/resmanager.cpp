@@ -46,10 +46,15 @@ Common::String getKey(const char *path) {
 void ResManager::loadTexture(const Common::String &name) {
 	debug("Load texture %s", name.c_str());
 	GGPackEntryReader r;
-	r.open(g_engine->_pack, name);
+	if(!r.open(g_engine->_pack, name)) {
+		error("Texture %s not found", name.c_str());
+	}
 	Image::PNGDecoder d;
 	d.loadStream(r);
 	const Graphics::Surface *surface = d.getSurface();
+	if(!surface) {
+		error("PNG %s not loaded, please check USE_PNG flag", name.c_str());
+	}
 
 	_textures[name].load(*surface);
 }

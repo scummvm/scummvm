@@ -28,6 +28,20 @@
 
 namespace Twp {
 
+Verb::Verb() {}
+
+Verb::Verb(VerbId verbId, const Common::String& img, const Common::String& f, const Common::String& t, const Common::String& k, int fl)
+: id(verbId), image(img), fun(f), text(t), key(k), flags(fl) {
+}
+
+VerbUiColors::VerbUiColors() {}
+
+VerbUiColors::VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt)
+: sentence(s), verbNormal(vbNormal), verbNormalTint(vbNormalTint), verbHighlight(vbHiglight), verbHighlightTint(vbHiglightTint), dialogNormal(dlgNormal), dialogHighlight(dlgHighlt), inventoryFrame(invFrame), inventoryBackground(inventoryBack), retroNormal(retroNml), retroHighlight(retroHighlt) {
+}
+
+ActorSlot::ActorSlot() {}
+
 HudShader::HudShader() {
 }
 

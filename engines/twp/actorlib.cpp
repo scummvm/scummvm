@@ -1038,7 +1038,18 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	sqgetf(table, "dialogHighlight", dialogHighlight);
 
 	g_engine->_hud._actorSlots[actorSlot - 1].verbUiColors =
-		VerbUiColors{.sentence = Color::rgb(sentence), .verbNormal = Color::rgb(verbNormal), .verbNormalTint = Color::rgb(verbNormalTint), .verbHighlight = Color::rgb(verbHighlight), .verbHighlightTint = Color::rgb(verbHighlightTint), .inventoryFrame = Color::rgb(inventoryFrame), .inventoryBackground = Color::rgb(inventoryBackground), .retroNormal = Color::rgb(retroNormal), .retroHighlight = Color::rgb(retroHighlight), .dialogNormal = Color::rgb(dialogNormal), .dialogHighlight = Color::rgb(dialogHighlight)};
+		VerbUiColors(
+			Color::rgb(sentence),
+			Color::rgb(verbNormal), 
+			Color::rgb(verbNormalTint), 
+			Color::rgb(verbHighlight), 
+			Color::rgb(verbHighlightTint),
+			Color::rgb(dialogNormal),
+			Color::rgb(dialogHighlight),
+			Color::rgb(inventoryFrame), 
+			Color::rgb(inventoryBackground), 
+			Color::rgb(retroNormal), 
+			Color::rgb(retroHighlight));
 	return 0;
 }
 
