@@ -146,6 +146,8 @@ ifdef USE_SPARKLE
 	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
 	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
 	cp -RP $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+	rm -f $(bundle_name)/Contents/Frameworks/Sparkle.framework/XPCServices
+	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework/Versions/Current/XPCServices/
 endif
 ifdef MACOSX_LEOPARD_OR_BELOW
 	cp $(srcdir)/icons/scummvm_legacy.icns $(bundle_name)/Contents/Resources/scummvm.icns
