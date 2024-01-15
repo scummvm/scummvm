@@ -679,11 +679,11 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"L said scraper",
 	"L said screen",
 	"L said sellout",
-	"L said thump"
+	"L said thump",
 	"L said Valdez",
 	"Louis available",
 	"met Abby",
-	"met BG"
+	"met BG",
 	"met Charlie",
 	"met Emily",
 	"met Louis",
@@ -850,7 +850,7 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"empty",
 	"empty",
 	"empty",
-	"empty",
+	"empty"
 };
 
 const Common::Array<const char *> nancy3PatchSrcFiles {
