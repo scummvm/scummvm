@@ -453,13 +453,12 @@ GGHashMapDecoder::GGHashMapDecoder()
 Common::JSONValue *GGHashMapDecoder::open(Common::SeekableReadStream *s) {
 	uint32 signature = s->readUint32LE();
 	if (signature != 0x04030201) {
-		error("This version of package is not supported (yet?)");
-		return new Common::JSONValue();
+		return nullptr;
 	}
 	_stream = s;
-	uint32 numEntries = s->readUint32LE();
+	(void)s->readUint32LE();
 	if (!_readPlo(s, _offsets))
-		error("This version of package is not supported (yet?)");
+		return nullptr;
 	return readHash();
 }
 
@@ -605,6 +604,8 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 	ms.open(buffer.data(), entriesSize);
 	GGHashMapDecoder tblDecoder;
 	Common::JSONValue *value = tblDecoder.open(&ms);
+	if(!value) return false;
+
 	const Common::JSONObject &obj = value->asObject();
 	const Common::JSONArray &files = obj["files"]->asArray();
 	for (size_t i = 0; i < files.size(); i++) {
@@ -690,21 +691,37 @@ uint32 GGBnutReader::read(void *dataPtr, uint32 dataSize) {
 bool GGBnutReader::eos() const { return _s->eos(); }
 
 void GGPackSet::init() {
-	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
-	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
-	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
-	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+	// try to auto-detect which XOR key to use to decrypt the resources of the game
+	const XorKey key1{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+	const XorKey key2{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	const XorKey key3{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	const XorKey key4{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+
+	const XorKey keys[]{key1, key2, key3, key4};
+	const char *key_names[]{"56ad", "566d", "5b6d", "5bad"};
 
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "*.ggpack*");
-	for (auto it = fileList.begin(); it != fileList.end(); ++it) {
-		const Common::ArchiveMember &m = **it;
-		Common::SeekableReadStream *stream = m.createReadStream();
-		GGPackDecoder pack;
-		if (stream && pack.open(stream, key)) {
-			_packs.push_back(pack);
+
+	for (int i = 0; i < ARRAYSIZE(keys); i++) {
+		const XorKey *key = &keys[i];
+		for (auto it = fileList.begin(); it != fileList.end(); ++it) {
+			const Common::ArchiveMember &m = **it;
+			Common::SeekableReadStream *stream = m.createReadStream();
+			GGPackDecoder pack;
+			if (stream && pack.open(stream, *key)) {
+				_packs.push_back(pack);
+			}
+		}
+
+		if (_packs.size() > 0) {
+			// the game has been detected because we have at least 1 ggpack file.
+			debug("Thimbleweed Park detected with key %s", key_names[i]);
+			return;
 		}
 	}
+
+	error("This version of the game is invalid or not supported (yet?)");
 }
 
 bool GGPackSet::assetExists(const char *asset) {

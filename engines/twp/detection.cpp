@@ -30,16 +30,24 @@
 #include "twp/detection_tables.h"
 
 const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
-	{ Twp::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Twp::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Twp::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Twp::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Twp::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
-};
+	{Twp::kDebugGraphics, "Graphics", "Graphics debug level"},
+	{Twp::kDebugPath, "Path", "Pathfinding debug level"},
+	{Twp::kDebugFilePath, "FilePath", "File path debug level"},
+	{Twp::kDebugScan, "Scan", "Scan for unrecognised games"},
+	{Twp::kDebugScript, "Script", "Enable debug script dump"},
+	DEBUG_CHANNEL_END};
 
 TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(Twp::gameDescriptions,
-	sizeof(ADGameDescription), Twp::twpGames) {
+																			   sizeof(ADGameDescription), Twp::twpGames) {
+}
+
+ADDetectedGame TwpMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
+	for (auto it = allFiles.begin(); it != allFiles.end(); it++) {
+		if (it->_key.hasSuffix(".ggpack1")) {
+			return ADDetectedGame(Twp::gameDescriptions);
+		}
+	}
+	return ADDetectedGame();
 }
 
 REGISTER_PLUGIN_STATIC(TWP_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwpMetaEngineDetection);
