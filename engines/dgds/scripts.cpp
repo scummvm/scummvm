@@ -103,7 +103,7 @@ bool TTMInterpreter::run() {
 		}
 		debug(" ");
 
-		Common::Rect bmpWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		switch (op) {
 		case 0x0000:
@@ -152,19 +152,16 @@ bool TTMInterpreter::run() {
 		case 0x1090:
 			// SELECT SONG:	    id:int [0]
 			continue;
-
 		case 0x4120:
 			// FADE IN:	?,?,?,?:byte
 			_vm->_image->setPalette();
 			continue;
-
 		case 0x4110:
 			// FADE OUT:	?,?,?,?:byte
 			g_system->delayMillis(_state.delay);
 			_vm->_image->clearPalette();
 			_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			continue;
-
 		// these 3 ops do interaction between the topBuffer (imgData) and the bottomBuffer (scrData) but... it might turn out this uses z values!
 		case 0xa050: { //GFX?	    i,j,k,l:int	[i<k,j<l] // HAPPENS IN INTRO.TTM:INTRO9
 			// it works like a bitblit, but it doesn't write if there's something already at the destination?
@@ -176,22 +173,20 @@ bool TTMInterpreter::run() {
 		case 0x0020: //SAVE BG?:    void // OR PERHAPS SWAPBUFFERS ; it makes bmpData persist in the next frames.
 			_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 			continue;
-
 		case 0x4200: {
 			// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
 			const Common::Rect destRect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
 			_vm->_resData.blitFrom(_vm->getBottomBuffer());
 			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
 			_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
-		}
 			continue;
-
+		}
 		case 0x0ff0: {
 			// REFRESH:	void
 			_vm->_resData.blitFrom(_vm->getBottomBuffer());
-			Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpWin);
-			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpWin.left, bmpWin.top));
-			_vm->getTopBuffer().fillRect(bmpWin, 0);
+			Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
+			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
+			_vm->getTopBuffer().fillRect(bmpArea, 0);
 
 			if (!_text.str.empty()) {
 				Common::StringArray lines;
@@ -210,16 +205,20 @@ bool TTMInterpreter::run() {
 
 		case 0xa520:
 			//DRAW BMP: x,y:int ; happens once in INTRO.TTM
+		case 0xa530:
+			// CHINA
+			// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
+			// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		case 0xa500:
 			debug("DRAW \"%s\"", _state.bmpNames[_state._currentBmpId].c_str());
 
 			// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 			// This is kind of file system intensive, will likely have to change to store all the BMPs.
 			if (count == 4) {
-				int bk = ivals[2];
+				int tileId = ivals[2];
 				_state._currentBmpId = ivals[3];
-				if (bk != -1) {
-					_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], bk);
+				if (tileId != -1) {
+					_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], tileId);
 				}
 			} else if (!_vm->_image->isLoaded()) {
 				// load on demand?
@@ -234,15 +233,18 @@ bool TTMInterpreter::run() {
 				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
 
-		case 0x1110: { //SET SCENE?:  i:int   [1..n]
+		case 0x1110: { //SHOW SCENE TEXT?:  i:int   [1..n]
 			// DESCRIPTION IN TTM TAGS.
-			debug("SET SCENE: %u", ivals[0]);
+			debug("SHOW SCENE TEXT: %u", ivals[0]);
 			_state.scene = ivals[0];
 
 			const Common::Array<Dialogue> dialogues = _vm->getScene()->getLines();
 			_text.str.clear();
 			for (const Dialogue &dialogue: dialogues) {
-				if (dialogue.num == ivals[0])
+				if (dialogue.num == _state.scene)
+					_text = dialogue;
+				// HACK to get Dragon intro working
+				if (_text.str.empty() && dialogue.num == _state.scene + 14)
 					_text = dialogue;
 			}
 			if (!_text.str.empty())
@@ -251,13 +253,13 @@ bool TTMInterpreter::run() {
 		}
 
 		case 0x4000:
-			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
+			//SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
 			_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 
 		case 0xa100:
-			//SET WINDOW? x,y,w,h:int	[0..320,0..200]
-			bmpWin = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+			//SET BMP AREA? x,y,w,h:int	[0..320,0..200]
+			bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
 			continue;
 
 		case 0x1020: //DELAY?:	    i:int   [0..n]
@@ -265,12 +267,11 @@ bool TTMInterpreter::run() {
 			continue;
 
 		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
+			debug("SET SCENE: %u", ivals[0]);
+			break;
 
 		case 0x2000: //SET FRAME1?: i,j:int [0..255]
 
-		case 0xa530: // CHINA
-		             // DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
-		             // arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		case 0x0110: //PURGE IMGS?  void
 		case 0x0080: //DRAW BG:	    void
 		case 0x1100: //?	    i:int   [9]
