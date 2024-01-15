@@ -205,7 +205,7 @@ bool Animation::tick() {
 	}
 
 	bool eov = _phase >= _frames;
-	if (_phaseVarControlled && eov) {
+	if (!_phaseVar.empty() && eov) {
 		_engine->setGlobal(_phaseVar, -1);
 		onScreen(false);
 		return true;
