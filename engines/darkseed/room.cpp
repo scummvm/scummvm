@@ -74,10 +74,10 @@ bool Darkseed::Room::load() {
 		if (room1[i].y > 233) {
 			room1[i].y = 233;
 		}
-		room1[i].unk4 = file.readUint16BE();
-		room1[i].unk6 = file.readUint16BE();
+		room1[i].width = file.readUint16BE();
+		room1[i].height = file.readUint16BE();
 		room1[i].roomNumber = file.readUint16BE();
-		room1[i].unka = file.readByte();
+		room1[i].direction = file.readByte();
 	}
 
 	for (int i = 0; i < 16; i++) {
@@ -266,9 +266,9 @@ void Darkseed::Room::printRoomDescriptionText() const {
 }
 
 int Darkseed::Room::getObjectNumUnder6AtCursor() {
-	Common::Rect cursorRect(g_engine->_cursor.getPosition(), g_engine->_cursor.getWidth(), g_engine->_cursor.getHeight());
 	for (int i = 0; i < room3.size(); i++) {
-		if (room3[i].unk0 == 0 && room3[i].unk2 < 6 && cursorRect.contains(room3[i].xOffset, room3[i].yOffset)) {
+		Common::Rect roomRect(room3[i].xOffset, room3[i].yOffset, room3[i].xOffset + room3[i].width, room3[i].yOffset + room3[i].height);
+		if (room3[i].unk0 == 0 && room3[i].unk2 < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
 			selectedObjIndex = i;
 			return room3[i].unk2;
 		}
@@ -289,10 +289,10 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 					&& room1[j].y < room3[selectedObjIndex].yOffset + room3[selectedObjIndex].height
 					) {
 					if (_roomNumber != 0x3d || room1[j].roomNumber == 5 || g_engine->trunkPushCounter > 2) {
-						g_engine->BoolByteEnum_2c85_9e67 = 1;
+						g_engine->BoolByteEnum_2c85_9e67 = true;
 					}
 					g_engine->targetRoomNumber = room1[j].roomNumber;
-					g_engine->DAT_2c85_6b0e = room1[j].unka; // TODO what is this?
+					g_engine->targetPlayerDirection = room1[j].direction; // TODO what is this?
 					break;
 				}
 			}
@@ -301,4 +301,56 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 	}
 	g_engine->_player->_walkTarget.x = g_engine->_cursor.getX();
 	g_engine->_player->_walkTarget.y = g_engine->_cursor.getY();
+}
+
+static const int room_sprite_related_2c85_41e[] = {
+	 1000,          1000,          1000,          1000,
+	 1000,          1000,          1000,          1000,
+	 1000,          1000,           400,           750,
+	  800,          1000,          1000,          1000,
+	 1000,          1000,          1000,          1000,
+	 1000,          1000,          1000,          1000,
+	  750,           850,          1000,          1000,
+	 1000,          1000,          1000,           800,
+	 1000,          1000,          1000,           900,
+	 1000,          1000,          1000,          1000,
+	 1000,          1000,          1000,           830,
+	 1000,           750,           550,           500,
+	  650,          1000,           950,          1000,
+	  500,           750,           700,           800,
+	  800,          1000,          1000,          1000,
+	 1000,          1000,          1000,           245,
+	  750,           800,           500,           700,
+	  800
+};
+
+static const uint8 room_sprite_related_2c85_4303[] = {
+	 13,            13,            25,            25,
+	28,            15,            22,            18,
+	18,            13,            15,            15,
+	35,            18,            40,            45,
+	25,            22,            20,            10,
+	10,            10,            10,            10,
+	40,            20,            50,            30,
+	25,            10,            10,            35,
+	55,            35,            10,            45,
+	15,            20,            13,            20,
+	20,            15,            25,            30,
+	20,            20,            30,            40,
+	40,            60,            20,            15,
+	5,            20,            10,            35,
+	40,            15,            45,            10,
+	34,            20,            25,             5,
+	15,            25,            10,            10,
+	15
+};
+
+void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int curYPosition) {
+	int local_6 = (g_engine->sprite_y_scaling_threshold_maybe - 2) - curYPosition;
+	if (local_6 <= 0) {
+		local_6 = 0;
+	}
+	g_engine->scaledWalkSpeed_maybe = room_sprite_related_2c85_41e[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
+	g_engine->scaledSpriteWidth = (width * g_engine->scaledWalkSpeed_maybe) / 1000;
+	g_engine->scaledSpriteHeight = (height * g_engine->scaledWalkSpeed_maybe) / 1000;
 }

@@ -63,6 +63,8 @@ public:
 
 	void changeDirection(int16 oldDir, int16 newDir);
 	void playerFaceWalkTarget();
+	int getWidth();
+	int getHeight();
 };
 
 } // namespace Darkseed

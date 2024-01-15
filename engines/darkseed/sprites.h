@@ -36,7 +36,7 @@ struct SpriteDrawInstruction {
 	uint8 order = 0;
 	uint8 destW = 0;
 	uint8 destH = 0;
-	bool unk10 = false;
+	bool flip = false;
 };
 
 class Sprites {

@@ -38,7 +38,7 @@ void Darkseed::Sprites::addSpriteToDrawList(uint16 destX, uint16 destY, const Da
 	drawInstruction.order = order;
 	drawInstruction.destW = destW;
 	drawInstruction.destH = destH;
-	drawInstruction.unk10 = unk10;
+	drawInstruction.flip = unk10;
 
 	if (!spriteDrawList.empty()) {
 		int insertLocation = 0;

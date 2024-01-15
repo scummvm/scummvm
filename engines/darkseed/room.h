@@ -28,13 +28,13 @@
 
 namespace Darkseed {
 
-struct RoomStruct1 {
+struct RoomExit {
 	uint16 x = 0;
 	uint16 y = 0;
-	uint16 unk4 = 0;
-	uint16 unk6 = 0;
+	uint16 width = 0;
+	uint16 height = 0;
 	uint16 roomNumber = 0;
-	uint8 unka = 0;
+	uint8 direction = 0;
 };
 
 struct RoomStruct2 {
@@ -63,7 +63,7 @@ public:
 	Pic pic;
 	Pal _pal;
 
-	Common::Array<RoomStruct1> room1;
+	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
 	Common::Array<RoomStruct3> room3;
 	Common::Array<RoomConnector> connectors;
@@ -84,6 +84,7 @@ public:
 	Common::String getRoomFilenameBase(int roomNumber);
 	bool canWalkAtLocation(int x, int y);
 	void printRoomDescriptionText() const;
+	void calculateScaledSpriteDimensions(int width, int height, int curYPosition);
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
