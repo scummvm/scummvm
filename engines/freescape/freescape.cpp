@@ -167,11 +167,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	// Workaround to make the game playable on iOS: remove when there
 	// is a better way to hint the best controls
-#ifdef TARGET_OS_IOS
+#ifdef IPHONE
 	const Common::String &gameDomain = ConfMan.getActiveDomainName();
 	ConfMan.setBool("gamepad_controller", true, gameDomain);
 	ConfMan.setBool("gamepad_controller_minimal_layout", true, gameDomain);
-	ConfMan.set("gamepad_controller_directional_input", "dpad", gameDomain);
+	ConfMan.setInt("gamepad_controller_directional_input", 1 /* kDirectionalInputDpad */, gameDomain);
 #endif
 
 	g_freescape = this;
