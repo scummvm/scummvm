@@ -241,6 +241,10 @@ machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 t
 	return m;
 }
 
+machine *series_show_sprite(const char *seriesName, int32 index, int32 layer) {
+	return series_show(seriesName, layer, 0x40, -1, -1, index);
+}
+
 machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 		int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
 		int32 firstFrame, int32 lastFrame) {

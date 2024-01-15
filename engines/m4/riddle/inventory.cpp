@@ -26,23 +26,161 @@
 namespace M4 {
 namespace Riddle {
 
-struct InvObject {
-	const char *_name;
-	const char *_verbs;
-	int32 _scene, _cel, _cursor;
+
+#define INVENTORY_COUNT 123
+
+const char *const INVENTORY_NAMES[123] = {
+	"SOLDIER'S HELMET",
+	"BUCKET",
+	"RIPLEY PHOTO",
+	"LEAD PIPE",
+	"SEVEN SPOKES",
+	"MALLET",
+	"GONG",
+	"WHEELED TOY",
+	"CHARCOAL",
+	"POST MARKED ENVELOPE",
+	"TURTLE",
+	"TURTLE TREATS",
+	"PLANK",
+	"PASS",
+	"KEY",
+	"ACE OF SPADES CARD",
+	"STEP LADDER",
+	"BILLIARD BALL",
+	"CIGAR",
+	"GLASS JAR",
+	"ROMANOV EMERALD",
+	"CORK",
+	"LEVER KEY",
+	"EDGER",
+	"SURGICAL TUBE",
+	"PUMP ROD",
+	"FAUCET PIPE",
+	"FAUCET HANDLE",
+	"RUBBER PLUG",
+	"GARDEN HOSE",
+	"MENENDEZ'S LETTER",
+	"KEYS",
+	"BROKEN WHEEL",
+	"PUMP GRIPS",
+	"CLOCK FACING",
+	"SHOVEL",
+	"WOODEN LADDER",
+	"ROPE",
+	"GREEN VINE",
+	"CRYSTAL SKULL",
+	"BROWN VINE",
+	"PULL CORD",
+	"SPARK PLUG TOOL",
+	"RONGORONGO TABLET",
+	"SLEEVE",
+	"LIGHTER",
+	"STICK AND SHELL MAP",
+	"DRIFTWOOD STUMP",
+	"OBSIDIAN DISK",
+	"SOLDIER'S SHIELD",
+	"TWELVETREES' NOTE",
+	"TWO SOLDIERS' SHIELDS",
+	"WOODEN POST",
+	"CRANK",
+	"WOODEN BEAM",
+	"EMPEROR'S SEAL",
+	"POLE",
+	"REBUS AMULET",
+	"DRIFTWOOD PUFFIN",
+	"SHRUNKEN HEAD",
+	"METAL RIM",
+	"CHINESE YUAN",
+	"JOURNAL",
+	"SILVER BUTTERFLY",
+	"POSTAGE STAMP",
+	"GERMAN BANKNOTE",
+	"WHALE BONE HORN",
+	"CHISEL",
+	"INCENSE BURNER",
+	"POMERANIAN MARKS",
+	"PERUVIAN INTI",
+	"SIKKIMESE RUPEE",
+	"SERENITY WHEEL",
+	"PEACE WHEEL",
+	"INSIGHT WHEEL",
+	"TRUTH WHEEL",
+	"WISDOM WHEEL",
+	"CIGAR WITHOUT BAND",
+	"CIGAR BAND",
+	"FARMER'S SHOVEL",
+	"MATCH",
+	"LIT LIGHTER",
+	"VON SELTSAM'S NOTE",
+	"PRAYER WHEEL BROCHURE",
+	"ENVELOPE",
+	"VON SELTSAM'S LETTER",
+	"HORN/PULL CORD",
+	"FAUCET PIPE/HOSE",
+	"FAUCET PIPE/HOSE/TUBE",
+	"JAR/CORK",
+	"JAR/RUBBER PLUG",
+	"JAR/GRIPS",
+	"JAR/PLUG/GRIPS",
+	"JAR/PLUG/CORK/GRIPS",
+	"JAR/CORK/PLUG",
+	"JAR/CORK/GRIPS",
+	"VINES",
+	"TUBE/HOSE",
+	"US DOLLARS",
+	"JAR/FAUCET PIPE",
+	"EMERALD/CORK",
+	"TWELVETREES' MAP",
+	"PERIODIC TABLE",
+	"LEVER KEY/PUMP ROD",
+	"JAR/LEVER KEY",
+	"PUMP ROD/GRIPS",
+	"JAR/PERIODIC TABLE",
+	"ROPE/GREEN VINE",
+	"ROPE/VINES",
+	"HORN/PULL CORD/WATER",
+	"LADDER/ROPE",
+	"LADDER/GREEN VINE",
+	"LADDER/VINES",
+	"WITHERED GREEN VINE",
+	"WITHERED VINES",
+	"VINE DUST",
+	"JAR/PIPE/HOSE",
+	"LADDER/BROWN VINE",
+	"ROPE/BROWN VINE",
+	"MESSAGE LOG",
+	"WITHERED BROWN VINE",
+	"TOMB MESSAGE",
+	"FAUCET PIPE/TUBE"
 };
 
-static const InvObject INVENTORY_ITEMS[] = {
-//	{ "mirror", "SPIEGEL", 999, 48, 48 },
-	{ nullptr, nullptr, 0, 0, 0 }
+static const uint16 INVENTORY_SCENES[123] = {
+	203, 203, 998, 207, 207, 204, 204, 504,
+	205, 304, 999, 305, 408, 204, 409, 406,
+	403, 406, 456, 407, 407, 407, 407, 408,
+	407, 407, 407, 407, 407, 407, 407, 406,
+	207, 407, 501, 504, 504, 504, 504, 510,
+	504, 604, 604, 607, 603, 608, 608, 600,
+	605, 805, 603, 805, 805, 806, 844, 810,
+	603, 207, 608, 504, 207, 999, 998, 204,
+	999, 405, 608, 709, 709, 401, 501, 701,
+	703, 704, 705, 705, 706, 406, 406, 801,
+	801, 999, 999, 999, 406, 999, 999, 999,
+	999, 999, 999, 999, 999, 999, 999, 999,
+	999, 407, 998, 407, 407, 603, 407, 407,
+	407, 407, 407, 999, 999, 999, 999, 999,
+	999, 999, 999, 999, 999, 999, 999, 999,
+	999, 409, 999
 };
 
 void Inventory::init() {
-	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item) {
-		inv_register_thing(item->_name, item->_verbs, item->_scene, item->_cel, item->_cursor);
-
-		_items.push_back(InventoryItem(item->_name, item->_scene));
+	for (int i = 0; i < INVENTORY_COUNT; ++i) {
+		_G(inv_suppress_click_sound) = true;
+		inv_move_object(INVENTORY_NAMES[i], INVENTORY_SCENES[i]);
 	}
+
+	_G(inv_suppress_click_sound) = false;
 }
 
 void Inventory::add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) {
@@ -63,11 +201,6 @@ void Inventory::remove(const Common::String &name) {
 	_GI(inventory)->remove(name);
 	_GI(inventory)->_must_redraw_all = true;
 #endif
-}
-
-void Inventory::reset() {
-	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item)
-		inv_move_object(item->_name, item->_scene);
 }
 
 } // namespace Riddle

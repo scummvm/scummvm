@@ -95,7 +95,7 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 
 bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
 //machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer); // was series_show_sprite
-//machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);	// was simple_show_sprite
+machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);
 
 machine *series_play(const char *seriesName, frac16 layer, uint32 flags = 0,
 	int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = 0, int32 s = 100,

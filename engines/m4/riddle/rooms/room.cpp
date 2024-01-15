@@ -21,10 +21,23 @@
 
 #include "m4/riddle/rooms/room.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
+
+void Room::restoreAutosave() {
+	if (g_engine->autosaveExists()) {
+		_G(kernel).restore_slot = 0;
+		auto oldMode = _G(kernel).trigger_mode;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		disable_player_commands_and_fade_init(255);
+
+		_G(kernel).trigger_mode = oldMode;
+		player_set_commands_allowed(false);
+	}
+}
 
 } // namespace Rooms
 } // namespace Riddle

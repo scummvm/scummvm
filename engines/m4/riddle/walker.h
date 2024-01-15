@@ -29,6 +29,18 @@
 namespace M4 {
 namespace Riddle {
 
+// These are the walker types
+enum {
+	WALKER_PLAYER = 0,
+	WALKER_ALT    = 1
+};
+
+// These are the shadow types
+enum {
+	SHADOW_PLAYER = 0,
+	SHADOW_ALT    = 1
+};
+
 class Walker : public M4::Walker {
 private:
 	/**

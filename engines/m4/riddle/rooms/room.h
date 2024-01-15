@@ -33,6 +33,9 @@ namespace Riddle {
 namespace Rooms {
 
 class Room : public M4::Room {
+protected:
+	void restoreAutosave();
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
