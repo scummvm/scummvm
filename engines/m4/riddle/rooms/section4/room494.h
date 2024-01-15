@@ -40,12 +40,7 @@ private:
 	int _selectedBtn1 = -1;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
-	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
-	machine *_series3 = nullptr;
-	machine *_series4 = nullptr;
-	machine *_series5 = nullptr;
-	machine *_series6 = nullptr;
+	machine *_buttons[6];
 	HotkeyCB _hotkey27 = nullptr;
 	HotkeyCB _hotkey316 = nullptr;
 	HotkeyCB _hotkey317 = nullptr;

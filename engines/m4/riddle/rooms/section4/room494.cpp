@@ -56,15 +56,16 @@ void Room494::init() {
 
 	digi_preload("gallery", 950);
 	digi_play_loop("gallery", 1, 255, -1, 950);
+	interface_hide();
 	_G(kernel).call_daemon_every_loop = true;
 
 	_menuButtons = series_load("494 MENU BUTTONS");
-	_series1 = series_show_sprite("494 MENU BUTTONS", 0, 0xf00);
-	_series2 = series_show_sprite("494 MENU BUTTONS", 3, 0xf00);
-	_series3 = series_show_sprite("494 MENU BUTTONS", 6, 0xf00);
-	_series4 = series_show_sprite("494 MENU BUTTONS", 9, 0xf00);
-	_series5 = series_show_sprite("494 MENU BUTTONS", 12, 0xf00);
-	_series6 = series_show_sprite("494 MENU BUTTONS", 15, 0xf00);
+	_buttons[0] = series_show_sprite("494 MENU BUTTONS", 0, 0xf00);
+	_buttons[1] = series_show_sprite("494 MENU BUTTONS", 3, 0xf00);
+	_buttons[2] = series_show_sprite("494 MENU BUTTONS", 6, 0xf00);
+	_buttons[3] = series_show_sprite("494 MENU BUTTONS", 9, 0xf00);
+	_buttons[4] = series_show_sprite("494 MENU BUTTONS", 12, 0xf00);
+	_buttons[5] = series_show_sprite("494 MENU BUTTONS", 15, 0xf00);
 }
 
 void Room494::daemon() {
