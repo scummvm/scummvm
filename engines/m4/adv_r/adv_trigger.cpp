@@ -44,7 +44,10 @@ int32 kernel_trigger_create(int32 trigger_num) {
 }
 
 bool kernel_trigger_dispatch_now(int32 trigger_num) {
-	return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
+	if (g_engine->getGameType() == GType_Riddle)
+		return kernel_trigger_dispatchx(trigger_num);
+	else
+		return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
 }
 
 void cisco_dispatch_triggers() {
