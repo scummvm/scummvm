@@ -280,24 +280,40 @@ void Character::tick(bool reactivate) {
 	}
 }
 
+bool Character::pointIn(Common::Point pos) const {
+	if (!_animation)
+		return false;
+
+	Common::Rect rect(_animation->width(), _animation->height());
+	rect.moveTo(animationPosition());
+	return rect.contains(pos);
+}
+
+Common::Point Character::animationPosition() const {
+	Common::Point pos = _pos + _animationPos;
+
+	if (_animation) {
+		pos.y -= _animation->visibleHeight();
+		pos.x -= _animation->visibleCenter();
+
+		if (_description) {
+			auto &frames = _description->frames;
+			if (_phase >= 0 && _phase < static_cast<int>(frames.size())) {
+				auto &frame = frames[_phase];
+				pos.x += frame.x * _animation->scale();
+				pos.y += frame.y * _animation->scale();
+			}
+		}
+	}
+	return pos;
+}
+
 
 void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 	if (!_enabled || !visible()|| !_animation)
 		return;
 
-	pos += _pos + _animationPos;
-
-	pos.y -= _animation->visibleHeight();
-	pos.x -= _animation->visibleCenter();
-
-	if (_description) {
-		auto &frames = _description->frames;
-		if (_phase >= 0 && _phase < static_cast<int>(frames.size())) {
-			auto &frame = frames[_phase];
-			pos.x += frame.x * _animation->scale();
-			pos.y += frame.y * _animation->scale();
-		}
-	}
+	pos += animationPosition();
 
 	int fogAlpha = 0;
 	if (_fog) {

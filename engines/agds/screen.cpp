@@ -292,6 +292,12 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 			objects.insert_at(0, object);
 		}
 	}
+	Character * character = _engine->currentCharacter();
+	if (character) {
+		if (character->pointIn(pos - _scroll)) {
+			objects.insert_at(0, character->object());
+		}
+	}
 	return objects;
 }
 
