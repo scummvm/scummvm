@@ -46,7 +46,7 @@ class FontManager;
 class SDSScene;
 class GDSScene;
 class Sound;
-
+class REQFileData;
 struct DgdsADS;
 
 enum DgdsGameId {
@@ -91,6 +91,7 @@ public:
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
 	const FontManager *getFontMan() const { return _fontManager; }
+	void drawVCR(REQFileData &vcrRequestData);
 };
 
 } // End of namespace Dgds
