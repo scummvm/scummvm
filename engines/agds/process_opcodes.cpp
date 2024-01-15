@@ -1661,8 +1661,9 @@ void Process::pointCharacter() {
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
-			character->pointTo(getName(), region->center);
 			deactivate();
+			// Point to is stub, and it reactivates process based on internal state.
+			character->pointTo(getName(), region->center);
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
