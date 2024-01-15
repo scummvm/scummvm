@@ -316,7 +316,7 @@ void Process::run() {
 }
 
 #define UNARY_OP(NAME, OP) void Process:: NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
-#define BINARY_OP(NAME, OP) void Process:: NAME () { int arg2 = pop(); int arg1 = pop(); debug(#NAME " %d " #OP " %d", arg1, arg2); push(arg1 OP arg2); }
+#define BINARY_OP(NAME, OP) void Process:: NAME () { int arg2 = pop(); int arg1 = pop(); debug(" %d " #NAME " %d", arg1, arg2); push(arg1 OP arg2); }
 
 	UNARY_OP(boolNot, !)
 	UNARY_OP(bitNot, ~)
