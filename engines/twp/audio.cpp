@@ -28,6 +28,7 @@
 #include "twp/audio.h"
 #include "twp/twp.h"
 #include "twp/ids.h"
+#include "twp/squtil.h"
 
 namespace Twp {
 
@@ -154,6 +155,28 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 			return;
 		}
 	}
+	if (slot->objId) {
+		Object *obj = sqobj(slot->objId);
+		if (obj) {
+			float volObj = 0.f;
+			if (obj->_room == g_engine->_room) {
+				float width = g_engine->_room->getScreenSize().getX();
+				float x = g_engine->cameraPos().getX();
+				float diff = abs(x - obj->_node->getAbsPos().getX());
+				if (diff > (1.5f * width)) {
+					volObj = 0.f;
+				} else if (diff < (0.25f * width)) {
+					volObj = 1.f;
+				} else {
+					volObj = (width - (diff - (0.25f * width))) / width;
+				}
+
+				float pan = clamp((obj->_node->getAbsPos().getX() - x) / (width / 2), -1.0f, 1.0f);
+				g_engine->_mixer->setChannelBalance(slot->handle, (int8)(pan * 127));
+			}
+			vol *= volObj;
+		}
+	}
 	g_engine->_mixer->setChannelVolume(slot->handle, vol * Audio::Mixer::kMaxChannelVolume);
 }
 
@@ -225,6 +248,7 @@ int AudioSystem::play(SoundDefinition *sndDef, Audio::Mixer::SoundType cat, int 
 	}
 	g_engine->_mixer->playStream(cat, &slot->handle, audioStream, id, vol * _masterVolume);
 	slot->id = id;
+	slot->objId = objId;
 	slot->sndDef = sndDef;
 	slot->busy = true;
 	slot->volume = volume;

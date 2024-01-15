@@ -159,6 +159,7 @@ Room *sqroom(HSQOBJECT table);
 Room *sqroom(HSQUIRRELVM v, int i);
 Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
+Object *sqobj(int i);
 Object *sqactor(HSQOBJECT table);
 Object *sqactor(HSQUIRRELVM v, int i);
 SoundDefinition* sqsounddef(HSQUIRRELVM v, int i);

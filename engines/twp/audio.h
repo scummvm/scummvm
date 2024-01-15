@@ -77,15 +77,16 @@ private:
 };
 
 struct AudioSlot {
-	Audio::SoundHandle handle;
-	SoundDefinition *sndDef = nullptr;
-	SoundStream stream;
-	bool busy = false;
-	float volume = 1.f;
-	float fadeInTimeMs = 0.f;
-	float fadeOutTimeMs = 0.f;
+	Audio::SoundHandle handle;			// handle returned when this sound has been played
+	SoundDefinition *sndDef = nullptr;	// sound definition associated to this slot
+	SoundStream stream;					// audio stream
+	bool busy = false;					// is sound active
+	float volume = 1.f;					// actual volume for this slot
+	float fadeInTimeMs = 0.f;			// fade-in time in milliseconds
+	float fadeOutTimeMs = 0.f;			// fade-out time in milliseconds
 	int total = 0;
-	int id = 0;
+	int id = 0;							// unique sound ID
+	int objId = 0;						// object ID or 0 if none
 };
 
 class AudioSystem {

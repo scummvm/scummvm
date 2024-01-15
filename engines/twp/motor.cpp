@@ -330,7 +330,7 @@ int Talking::loadActorSpeech(const Common::String &name) {
 			debug("File %s.ogg not found", name.c_str());
 		} else {
 			g_engine->_audio._soundDefs.push_back(soundDefinition);
-			return g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f, _obj->getId());
+			return g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
 		}
 	}
 	return 0;

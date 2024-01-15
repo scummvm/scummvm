@@ -32,16 +32,17 @@ namespace Twp {
 
 class SoundTrigger : public Trigger {
 public:
-	SoundTrigger(const Common::Array<SoundDefinition *> sounds) : _sounds(sounds) {}
+	SoundTrigger(const Common::Array<SoundDefinition *> sounds, int objId) : _sounds(sounds), _objId(objId) {}
 	virtual ~SoundTrigger() {}
 
 	virtual void trig() override {
 		int i = g_engine->getRandomSource().getRandomNumber(_sounds.size() - 1);
-		g_engine->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType);
+		g_engine->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType, 0, 0.f, 0.f, _objId);
 	}
 
 private:
 	const Common::Array<SoundDefinition *> _sounds;
+	int _objId;
 };
 
 // Plays a sound at the specified actor's location.
@@ -72,7 +73,7 @@ static SQInteger actorSound(HSQUIRRELVM v) {
 				}
 			}
 
-			Trigger *trigger = new SoundTrigger(sounds);
+			Trigger *trigger = new SoundTrigger(sounds, obj->getId());
 			obj->_triggers[trigNum] = trigger;
 		}
 	}
@@ -141,7 +142,7 @@ static SQInteger playObjectSound(HSQUIRRELVM v) {
 		g_engine->_audio.stop(obj->_sound);
 	}
 
-	int soundId = g_engine->_audio.play(soundDef, Audio::Mixer::SoundType::kPlainSoundType, loopTimes, fadeInTime, obj->getId());
+	int soundId = g_engine->_audio.play(soundDef, Audio::Mixer::SoundType::kPlainSoundType, loopTimes, fadeInTime, 1.f, obj->getId());
 	obj->_sound = soundId;
 	sqpush(v, soundId);
 	return 1;
