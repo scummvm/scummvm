@@ -403,7 +403,25 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 		_player->_position.x = 0x19f;
 		_player->_position.y = 0x8c;
 		setupOtherNspAnimation(0,7);
+	} // TODO a bunch of other room codes here.
+	else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
+		for (int i = 0; i < _room->room1.size(); i++) {
+			const RoomExit &roomExit = _room->room1[i];
+			if (roomExit.roomNumber == _previousRoomNumber) {
+				_player->_position.x = roomExit.x + roomExit.width / 2;
+				_player->_position.y = roomExit.y;
+				_player->_direction = roomExit.direction ^ 2;
+				_player->updatePlayerPositionAfterRoomChange();
+				_player->_walkTarget = _player->_position;
+			}
+		}
+		if (_previousRoomNumber == 10 && newRoomNumber == 6) {
+//			if (DAT_2c85_81a0 == 0 && _currentDay == 1) {
+//				DAT_2c85_6750 = 2;
+//			}
+		}
 	}
+
 	_room->printRoomDescriptionText();
 }
 
@@ -434,18 +452,16 @@ void DarkseedEngine::updateDisplay() {
 		if (!isWearingHeadBand || (headAcheMessageCounter & 1) != 0) {
 			if (!isPlayingAnimation_maybe || otherNspAnimationType_maybe == 0x13
 				|| otherNspAnimationType_maybe == 0x17) {
-//				calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
+				const Sprite &playerSprite = _player->getSprite(_player->_frameIdx);
+				_room->calculateScaledSpriteDimensions(playerSprite.width, playerSprite.height, _player->_position.y);
 				if ((currentRoomNumber != 0x35) || (DAT_2c85_81e0 != 2)) {
-					const Sprite &playerSprite = _player->getSprite(_player->_frameIdx);
-					uint8 scaledWidth = playerSprite.width;
-					uint8 scaledHeight = playerSprite.height;
 					_sprites.addSpriteToDrawList(
-						_player->_position.x - (scaledWidth / 2),
-						_player->_position.y - scaledHeight,
+						_player->_position.x - (scaledSpriteWidth / 2),
+						_player->_position.y - scaledSpriteHeight,
 						&playerSprite,
 						240 - _player->_position.y,
-						scaledWidth,
-						scaledHeight, player_sprite_related_2c85_82f3);
+						scaledSpriteWidth,
+						scaledSpriteHeight, player_sprite_related_2c85_82f3);
 				}
 			} else {
 				if (otherNspAnimationType_maybe == 0x25) {

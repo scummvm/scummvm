@@ -20,6 +20,7 @@
 */
 
 #include "sprites.h"
+#include "darkseed.h"
 #define DARKSEED_MAX_SPRITES_ON_SCREEN 30
 
 Darkseed::Sprites::Sprites() {
@@ -63,7 +64,7 @@ void Darkseed::Sprites::clearSpriteDrawList() {
 void Darkseed::Sprites::drawSprites() {
 	while (!spriteDrawList.empty()) {
 		SpriteDrawInstruction &drawInstruction = spriteDrawList.back();
-		drawInstruction.sprite->draw(drawInstruction.destX, drawInstruction.destY); // TODO apply scaling!
+		drawInstruction.sprite->drawScaled(drawInstruction.destX, drawInstruction.destY, drawInstruction.destW, drawInstruction.destH, drawInstruction.flip);
 		spriteDrawList.pop_back();
 	}
 }

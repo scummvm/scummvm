@@ -206,3 +206,70 @@ int Darkseed::Player::getWidth() {
 int Darkseed::Player::getHeight() {
 	return getSprite(_frameIdx).height;
 }
+
+void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
+	int currentRoomNumber = g_engine->_room->_roomNumber;
+	g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y);
+	if (currentRoomNumber == 0x29 && g_engine->_previousRoomNumber == 0x2c) {
+		_position = Common::Point(0x13d, 0xa9);
+	} else if (currentRoomNumber == 0x2c && g_engine->_previousRoomNumber == 0x29) {
+		_position = Common::Point(0x16e, 0xb8);
+	} else if (_direction == 0 || ((currentRoomNumber == 0x29 || currentRoomNumber == 0x2c) && _direction == 2)) {
+		_position.y = 0xec;
+		g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y);
+		while (!g_engine->_room->canWalkAtLocation(_position.x, _position.y + 3) && _position.y > 100) {
+			_position.y--;
+		}
+	} else if (_direction == 2) {
+		while (!g_engine->_room->canWalkAtLocation(_position.x, _position.y - 5) && _position.y < 0xee && currentRoomNumber != 0x29 && currentRoomNumber != 0x2c) {
+			_position.y++;
+		}
+	} else if (_direction == 3) {
+		if (currentRoomNumber == 0x20 || currentRoomNumber == 0x1a) {
+			g_engine->scaledSpriteHeight = 5;
+		} else {
+			g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->scaledSpriteHeight);
+		}
+		_position.y += g_engine->scaledSpriteHeight;
+		if (_position.y > 0xee) {
+			_position.y = 0xee;
+		}
+		if (_position.x > 0x27b) {
+			_position.x = 0x27b;
+		}
+
+		int yUp = _position.y;
+		int yDown = _position.y;
+		while(!g_engine->_room->canWalkAtLocation(_position.x, yUp) && yUp < 0xee) {
+			yUp++;
+		}
+		while(!g_engine->_room->canWalkAtLocation(_position.x, yDown) && yDown > 0x28) {
+			yDown--;
+		}
+		if (yUp - _position.y < _position.y - yDown) {
+			_position.y = yUp;
+		} else {
+			_position.y = yDown;
+		}
+	} else {
+		g_engine->_room->calculateScaledSpriteDimensions(getWidth(), getHeight(), _position.y + g_engine->scaledSpriteHeight);
+		_position.y += g_engine->scaledSpriteHeight;
+		if (_position.y > 0xee) {
+			_position.y = 0xee;
+		}
+
+		int yUp = _position.y;
+		int yDown = _position.y;
+		while(!g_engine->_room->canWalkAtLocation(_position.x, yUp) && yUp < 0xee) {
+			yUp++;
+		}
+		while(!g_engine->_room->canWalkAtLocation(_position.x, yDown) && yDown > 0x28) {
+			yDown--;
+		}
+		if (yUp - _position.y < _position.y - yDown) {
+			_position.y = yUp;
+		} else {
+			_position.y = yDown;
+		}
+	}
+}
