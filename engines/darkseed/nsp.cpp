@@ -23,8 +23,8 @@
 #include "common/debug.h"
 #include "darkseed.h"
 
-Darkseed::Sprite::Sprite(uint16 width, uint16 height) : width(width), height(height) {
-	pixels.resize(width * height, 0);
+Darkseed::Sprite::Sprite(uint16 width, uint16 height, uint16 pitch) : width(width), height(height), pitch(pitch) {
+	pixels.resize(pitch * height, 0);
 }
 
 bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
@@ -34,7 +34,7 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 	} else {
 		bool hasReadByte = false;
 		int currentDataByte = 0;
-		for (int i = 0; i < width * height; i++) {
+		for (int i = 0; i < pitch * height; i++) {
 			if (!hasReadByte) {
 				currentDataByte = readStream.readByte();
 				if (readStream.eos()) {
@@ -53,7 +53,69 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 }
 
 void Darkseed::Sprite::draw(int x, int y) const {
-	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), width, x, y, width, height, 0xf);
+	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, width, height, 0xf);
+}
+
+void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
+	//TODO this logic is pretty messy. It should probably be re-written. It is trying to scale, clip and flip at once.
+	Graphics::ManagedSurface * destSurface = g_engine->_screen;
+	// Based on the GNAP engine scaling code
+	if (destWidth == 0 || destHeight == 0) {
+		return;
+	}
+	const byte *source = pixels.data();
+	const int xs = ((width - 1) << 16) / destWidth;
+	const int ys = ((height -1) << 16) / destHeight;
+	int clipX = 0, clipY = 0;
+	const int destPitch = destSurface->pitch;
+	if (destX < 0) {
+		clipX = -destX;
+		destX = 0;
+		destWidth -= clipX;
+	}
+
+	if (destY < 0) {
+		clipY = -destY;
+		destY = 0;
+		destHeight -= clipY;
+	}
+	if (destY + destHeight >= destSurface->h) {
+		destHeight = destSurface->h - destY;
+	}
+	if (destWidth < 0 || destHeight < 0)
+		return;
+	byte *dst = (byte *)destSurface->getBasePtr(destX, destY);
+	int yi = ys * clipY;
+	const byte *hsrc = source + pitch * ((yi + 0x8000) >> 16);
+	for (int yc = 0; yc < destHeight; ++yc) {
+		byte *wdst = flipX ? dst + (destWidth - 1) : dst;
+		int16 currX = flipX ? destX + (destWidth - 1) : destX;
+		int xi = flipX ? xs : xs * clipX;
+		const byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
+		for (int xc = 0; xc < destWidth; ++xc) {
+			if (currX >= 0 && currX < destSurface->w) {
+				byte colorIndex = *wsrc;
+				//				uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
+				if (colorIndex != 0xf) {
+					*wdst = colorIndex;
+					//					if (!(c & 0x8000u) || alpha == NONE) {
+					//						// only copy opaque pixels
+					//						WRITE_SCREEN(wdst, c & ~0x8000);
+					//					} else {
+					//						WRITE_SCREEN(wdst, alphaBlendRGB555(c & 0x7fffu, READ_SCREEN(wdst) & 0x7fffu, 128));
+					//						// semi-transparent pixels.
+					//					}
+				}
+			}
+			currX += (flipX ? -1 : 1);
+			wdst += (flipX ? -1 : 1);
+			xi += xs;
+			wsrc = hsrc + ((xi + 0x8000) >> 16);
+		}
+		dst += destPitch;
+		yi += ys;
+		hsrc = source + pitch * ((yi + 0x8000) >> 16);
+	}
 }
 
 bool Darkseed::Nsp::load(const Common::String &filename) {
@@ -76,8 +138,8 @@ bool Darkseed::Nsp::load(Common::SeekableReadStream &readStream) {
 	for (int i = 0; i < 96; i++) {
 		int w = readStream.readByte();
 		int h = readStream.readByte();
-		w = w + (w & 1);
-		frames.push_back(Sprite(w, h));
+		int p = w + (w & 1);
+		frames.push_back(Sprite(w, h, p));
 	}
 
 	for (int i = 0; i < 96; i++) {

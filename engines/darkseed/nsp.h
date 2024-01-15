@@ -32,12 +32,14 @@ class Sprite {
 public:
 	uint16 width;
 	uint16 height;
+	uint16 pitch;
 	Common::Array<uint8> pixels;
 
 public:
-	Sprite(uint16 width, uint16 height);
+	Sprite(uint16 width, uint16 height, uint16 pitch);
 	bool loadData(Common::SeekableReadStream &readStream);
 	void draw(int x, int y) const;
+	void drawScaled(int x, int y, int destWidth, int destHeight, bool flipX) const;
 };
 
 class Obt {

@@ -65,6 +65,7 @@ public:
 	void playerFaceWalkTarget();
 	int getWidth();
 	int getHeight();
+	void updatePlayerPositionAfterRoomChange();
 };
 
 } // namespace Darkseed
