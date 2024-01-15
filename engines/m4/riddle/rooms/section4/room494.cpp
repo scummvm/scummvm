@@ -70,7 +70,7 @@ void Room494::init() {
 
 void Room494::daemon() {
 	int selectedBtn = getSelectedButton();
-	bool flag = false;
+	bool btnClicked = false;
 
 	switch (_G(kernel).trigger) {
 	case 111:
@@ -131,8 +131,8 @@ void Room494::daemon() {
 			}
 
 			if (!_machine2) {
-				_machine2 = series_show_sprite("494 menu buttons", 0x100,
-					selectedBtn * 3 + 2);
+				_machine2 = series_show_sprite("494 menu buttons",
+					selectedBtn * 3 + 2, 0x100);
 				_selectedBtn2 = selectedBtn;
 				digi_play("950_s51", 2);
 			}
@@ -143,8 +143,8 @@ void Room494::daemon() {
 			}
 
 			if (selectedBtn != -1) {
-				_machine2 = series_show_sprite("494 menu buttons", 0x100,
-					selectedBtn * 3 + 2);
+				_machine2 = series_show_sprite("494 menu buttons",
+					selectedBtn * 3 + 2, 0x100);
 				_selectedBtn2 = selectedBtn;
 				digi_play("950_s51", 2);
 			}
@@ -159,7 +159,7 @@ void Room494::daemon() {
 		}
 
 		_selectState = 0;
-		flag = true;
+		btnClicked = true;
 	}
 
 	if (selectedBtn != -1) {
@@ -168,9 +168,11 @@ void Room494::daemon() {
 			_selectedBtn1 = -1;
 		}
 
-		if (_selectedBtn1 == -1 && !_machine2)
-			_machine1 = series_show_sprite("494 menu buttons", 0x100,
-				selectedBtn * 3 + 1);
+		if (_selectedBtn1 == -1 && !_machine2) {
+			_selectedBtn1 = selectedBtn;
+			_machine1 = series_show_sprite("494 menu buttons",
+				selectedBtn * 3 + 1, 0x100);
+		}
 	} else {
 		if (selectedBtn != _selectedBtn1) {
 			terminateMachineAndNull(_machine1);
@@ -178,7 +180,7 @@ void Room494::daemon() {
 		}
 	}
 
-	if (flag) {
+	if (btnClicked) {
 		switch (selectedBtn) {
 		case 0:
 			player_set_commands_allowed(false);
