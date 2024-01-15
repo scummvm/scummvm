@@ -187,6 +187,10 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 void Character::pointTo(const Common::String & processName, Common::Point dst) {
 	debug("character point to stub %d,%d, process: %s", dst.x, dst.y, processName.c_str());
 	notifyProcess(processName);
+	if (!_processName.empty() && !_engine->activeCurtain()) {
+		_engine->reactivate(_processName, "Character::pointTo");
+		_processName.clear();
+	}
 	_shown = true;
 }
 
