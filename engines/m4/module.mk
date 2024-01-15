@@ -304,6 +304,7 @@ MODULE_OBJS = \
 	riddle/rooms/section9/room918.o \
 	riddle/rooms/section9/room996.o \
 	riddle/riddle.o \
+	riddle/console.o \
 	riddle/flags.o \
 	riddle/hotkeys.o \
 	riddle/inventory.o \

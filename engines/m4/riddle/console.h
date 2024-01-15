@@ -20,26 +20,24 @@
  *
  */
 
-#ifndef M4_CONSOLE_H
-#define M4_CONSOLE_H
+#ifndef M4_RIDDLE_CONSOLE_H
+#define M4_RIDDLE_CONSOLE_H
 
-#include "gui/debugger.h"
+#include "m4/console.h"
 
 namespace M4 {
+namespace Riddle {
 
-class Console : public GUI::Debugger {
+class Console : public M4::Console {
 private:
-	bool cmdTeleport(int argc, const char **argv);
-	bool cmdItem(int argc, const char **argv);
-	bool cmdHyperwalk(int argc, const char **argv);
-	bool cmdDigi(int argc, const char **argv);
-	bool cmdTrigger(int argc, const char **argv);
+	bool cmdGlobal(int argc, const char **argv);
 
 public:
 	Console();
 	~Console() override {}
 };
 
+} // End of namespace Riddle
 } // End of namespace M4
 
-#endif // M4_CONSOLE_H
+#endif

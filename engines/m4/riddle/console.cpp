@@ -19,16 +19,15 @@
  *
  */
 
-#include "m4/burger/console.h"
-#include "m4/burger/vars.h"
-#include "m4/burger/burger.h"
+#include "m4/riddle/console.h"
+#include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
-namespace Burger {
+namespace Riddle {
 
 Console::Console() : M4::Console() {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
-	registerCmd("test", WRAP_METHOD(Console, cmdTest));
 }
 
 bool Console::cmdGlobal(int argc, const char **argv) {
@@ -47,16 +46,5 @@ bool Console::cmdGlobal(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdTest(int argc, const char **argv) {
-	int tests = _G(flags)[kFirstTestPassed] ? 1 : 0 +
-		_G(flags)[kSecondTestPassed] ? 1 : 0 +
-		_G(flags)[kThirdTestPassed] ? 1 : 0 +
-		_G(flags)[kFourthTestPassed] ? 1 : 0 +
-		_G(flags)[kFifthTestPassed] ? 1 : 0;
-
-	debugPrintf("Tests passed = %d\n", tests);
-	return true;
-}
-
-} // End of namespace Burger
+} // End of namespace Riddle
 } // End of namespace M4
