@@ -43,8 +43,30 @@ static const byte ButtonColors[] = {
 
 static const byte SliderColors[] = {
 	0x7B, 0x4D, 0xF4, 0x54, 0xDF, 0x74, 0x58
-	// TOOD: are these part of the list too?
-	// 0x7, 0x7, 0x8, 0x7, 0, 0xF, 0x7, 0xC, 0x4
+};
+
+static const byte FallbackColors[] = {
+	0x7, 0x7, 0x8, 0x7, 0x0, 0xF, 0x7, 0xC,
+	0x4, 0x0, 0xF, 0xF, 0xC, 0x4, 0x7, 0xF,
+	0x8, 0x7, 0x0, 0x7, 0x7
+};
+
+static const byte MenuBackgroundColors[] {
+	0x71, 0x71, 0x71, 0x71, 0x71, 0x7B, 0x71, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
+	0x7B, 0x7B, 0x7B, 0x7B, 0x7A, 0x7B, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+	0x7A, 0x7A, 0x7A, 0x46, 0x7A, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46,
+	0x46, 0x46, 0x58, 0x46, 0x58, 0x58, 0x58, 0x58, 0x58, 0x58, 0x58, 0x58,
+	0x58, 0x52, 0x58, 0x52, 0x52, 0x52, 0x52, 0x52, 0x52, 0x52, 0x52, 0x52,
+	0x59, 0x52, 0x59, 0x59, 0x59, 0x59, 0x59, 0x59, 0x59, 0x59, 0x59, 0x5C,
+	0x59, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x0F, 0x5C,
+	0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x5C, 0x0F, 0x5C, 0x5C, 0x5C,
+	0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x5C, 0x59, 0x5C, 0x59, 0x59, 0x59, 0x59,
+	0x59, 0x59, 0x59, 0x59, 0x59, 0x52, 0x59, 0x52, 0x52, 0x52, 0x52, 0x52,
+	0x52, 0x52, 0x52, 0x52, 0x58, 0x52, 0x58, 0x58, 0x58, 0x58, 0x58, 0x58,
+	0x58, 0x58, 0x58, 0x46, 0x58, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46, 0x46,
+	0x46, 0x46, 0x7A, 0x46, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+	0x7A, 0x7B, 0x7A, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
+	0x71, 0x7B, 0x71, 0x71, 0x71, 0x71, 0x71, 0x71
 };
 
 RequestParser::RequestParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
@@ -197,7 +219,9 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 	data._fileNum = chunkNum;
 	data._x = str->readUint16LE();
 	data._y = str->readUint16LE();
-	for (int i = 0; i < 5; i++)
+	data._width = str->readUint16LE();
+	data._height = str->readUint16LE();
+	for (int i = 0; i < 3; i++)
 		data._vals[i] = str->readUint16LE();
 
 	uint16 numTextItems = str->readUint16LE();
@@ -274,18 +298,11 @@ Common::String Gadget::dump() const {
 
 void Gadget::draw(Graphics::Surface *dst) const {}
 
-/**
- * A function to fill a rect from left to right *inclusive* of bottom/right coords,
- * as that's how DGDS code specifies the rect and it's very confusing to try and
- * RE it otherwise.
- **/
-static void fillRectInc(Graphics::Surface *dst, uint16 left, uint16 top, uint16 right, uint16 bottom, byte fill) {
-	dst->fillRect(Common::Rect(left, top, right + 1, bottom + 1), fill);
-}
-
 void ButtonGadget::draw(Graphics::Surface *dst) const {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();
+
+	// TODO: Bounds calculation here might depend on parent.
 
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
@@ -295,24 +312,24 @@ void ButtonGadget::draw(Graphics::Surface *dst) const {
 	int16 bottom = (y + _height) - 1;
 
 	byte fill = ButtonColors[0];
-	fillRectInc(dst, x, y, x2, y, fill);
-	fillRectInc(dst, x + 2, y + 2, right - 3, y + 2, fill);
-	fillRectInc(dst, x + 1, bottom - 2, x + 1, bottom - 2, fill);
-	fillRectInc(dst, right - 2, bottom - 2, right - 2, bottom - 2, fill);
-	fillRectInc(dst, x + 1, bottom - 1, right - 2, bottom - 1, fill);
+	dst->drawLine(x, y, x2, y, fill);
+	dst->drawLine(x + 2, y + 2, right - 3, y + 2, fill);
+	dst->drawLine(x + 1, bottom - 2, x + 1, bottom - 2, fill);
+	dst->drawLine(right - 2, bottom - 2, right - 2, bottom - 2, fill);
+	dst->drawLine(x + 1, bottom - 1, right - 2, bottom - 1, fill);
 
 	fill = ButtonColors[1];
-	fillRectInc(dst, x, y + 1, x, bottom, fill);
-	fillRectInc(dst, x2, y + 1, x2, bottom, fill);
-	fillRectInc(dst, x + 2, y + 3, x + 2, bottom - 2, fill);
-	fillRectInc(dst, right - 3, y + 3, right - 3, bottom - 2, fill);
-	fillRectInc(dst, x + 3,bottom - 2, right - 4, bottom - 2, fill);
+	dst->drawLine(x, y + 1, x, bottom, fill);
+	dst->drawLine(x2, y + 1, x2, bottom, fill);
+	dst->drawLine(x + 2, y + 3, x + 2, bottom - 2, fill);
+	dst->drawLine(right - 3, y + 3, right - 3, bottom - 2, fill);
+	dst->drawLine(x + 3,bottom - 2, right - 4, bottom - 2, fill);
 
 	fill = ButtonColors[2];
-	fillRectInc(dst, x + 1, y + 2, x + 1, bottom - 3, fill);
-	fillRectInc(dst, right - 2, y + 2, right - 2, bottom - 3, fill);
-	fillRectInc(dst, x + 1, bottom, right - 2, bottom, ButtonColors[3]);
-	fillRectInc(dst, x + 1, y + 1, right - 2, y + 1, ButtonColors[4]);
+	dst->drawLine(x + 1, y + 2, x + 1, bottom - 3, fill);
+	dst->drawLine(right - 2, y + 2, right - 2, bottom - 3, fill);
+	dst->drawLine(x + 1, bottom, right - 2, bottom, ButtonColors[3]);
+	dst->drawLine(x + 1, y + 1, right - 2, y + 1, ButtonColors[4]);
 
 	bool enabled = !(_flags3 & 9);
 	int colOffset;
@@ -322,16 +339,18 @@ void ButtonGadget::draw(Graphics::Surface *dst) const {
 		colOffset = 5;
 	}
 
-	fillRectInc(dst, x + 3, y + 3, right - 4, y + 3, ButtonColors[colOffset + 1]);
+	dst->drawLine(x + 3, y + 3, right - 4, y + 3, ButtonColors[colOffset + 1]);
 
 	// TODO: This is done with a different call in the game.. is there some reason for that?
 	dst->fillRect(Common::Rect(x + 3, y + 4, x + 3 + _width - 6, y + 4 + _height - 8), ButtonColors[colOffset + 2]);
 
-	fillRectInc(dst, x + 3, bottom - 3, right - 4, bottom - 3, ButtonColors[colOffset + 3]);
+	dst->drawLine(x + 3, bottom - 3, right - 4, bottom - 3, ButtonColors[colOffset + 3]);
 
 	if (!_buttonName.empty()) {
 		const Font *font = fontman->getFont(FontManager::k6x6Font);
 
+		// TODO: Depending on some flags, the game toggles " ON " to " OFF" at the
+		// end of the string.
 		Common::String name = _buttonName;
 
 		int fontHeight = font->getFontHeight();
@@ -373,7 +392,10 @@ Common::String TextAreaGadget::dump() const {
 }
 
 void TextAreaGadget::draw(Graphics::Surface *dst) const {
-	error("TODO: Implement TextAreaGadget::draw");
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const FontManager *fontman = engine->getFontMan();
+	const Font *font = fontman->getFont(FontManager::k6x6Font);
+	font->drawString(dst, _buttonName, _x + _parentX, _y + _parentY, 0, 0);
 }
 
 Common::String SliderGadget::dump() const {
@@ -381,8 +403,58 @@ Common::String SliderGadget::dump() const {
 	return Common::String::format("Slider<%s, %d %d %d %d>", base.c_str(), _gadget2_i1, _gadget2_i2, _gadget2_i3, _gadget2_i4);
 }
 
+// Slider labels and title are hard-coded in game, not part of data files.
+static const char *_sliderTitleForGadget(uint16 num) {
+	switch (num) {
+	case 0x7B:	return "DIFFICULTY";
+	case 0x7D:	return "TEXT SPEED";
+	case 0x83:	return "DETAIL LEVEL";
+	case 0x98:	return "MOUSE SPEED";
+	case 0x9C:	return "BUTTON THRESHOLD";
+	default:	return "SLIDER";
+	}
+}
+
+static const char *_sliderLabelsForGadget(uint16 num) {
+	switch (num) {
+	case 0x7B:	return "EASY         HARD";
+	case 0x7D:	return "SLOW         FAST";
+	case 0x83:	return "LOW        HIGH";
+	case 0x98:	return "SLOW         FAST";
+	case 0x9C:	return "LONG         SHORT";
+	default:	return "MIN         MAX";
+	}
+}
+
 void SliderGadget::draw(Graphics::Surface *dst) const {
-	error("TODO: Implement SliderGadget::draw");
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const FontManager *fontman = engine->getFontMan();
+	const Font *font = fontman->getFont(FontManager::k6x6Font);
+
+	int16 x = _x + _parentX;
+	int16 y = _y + _parentY;
+	int16 x2 = x + _width;
+	int16 y2 = (y + _height) - 1;
+
+	int16 titley = (y - font->getFontHeight()) + 1;
+	const char *title = _sliderTitleForGadget(_gadgetNo);
+	const char *labels = _sliderLabelsForGadget(_gadgetNo);
+	int16 titleWidth = font->getStringWidth(title);
+
+	// TODO: Get the right color for this text?
+	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, 0);
+	int16 labelWidth = font->getStringWidth(labels);
+	font->drawString(dst, labels, x + (_width - labelWidth) / 2, y + 7, labelWidth, 0);
+	int16 y1 = y - 1;
+	dst->drawLine(x - 2, y - 1, x - 2, y2, SliderColors[0]);
+	dst->drawLine(x - 1, y1, x - 1, y2, SliderColors[1]);
+	dst->drawLine(x, y2, x2 - 1, y2, SliderColors[1]);
+	dst->drawLine(x, y1, x2, y1, SliderColors[2]);
+	dst->drawLine(x2, y1, x2, y2, SliderColors[2]);
+	dst->drawLine(x2 + 1, y1, x2 + 1, y2, SliderColors[3]);
+	dst->drawLine(x, y, x2 - 1, y, SliderColors[4]);
+	dst->drawLine(x2 - 1, y + 1, x2 - 1, (y + _height) - 2, SliderColors[4]);
+	dst->fillRect(Common::Rect(x, y + 1, x + _width - 1, y + _height - 2), SliderColors[5]);
 }
 
 Common::String ImageGadget::dump() const {
@@ -396,7 +468,7 @@ void ImageGadget::draw(Graphics::Surface *dst) const {
 
 Common::String RequestData::dump() const {
 	Common::String ret = Common::String::format("RequestData<file %d pos (%d,%d) size (%d, %d) %d %d %d\n",
-								_fileNum, _x, _y, _vals[0], _vals[1], _vals[2], _vals[3], _vals[4]);
+								_fileNum, _x, _y, _width, _height, _vals[0], _vals[1], _vals[2]);
 	for (const auto &s1 : _textItemList)
 		ret += Common::String::format("    TextItem<'%s' pos (%d,%d) %d %d>\n", s1._txt.c_str(),
 								s1._x, s1._y, s1._vals[0], s1._vals[1]);
@@ -409,6 +481,44 @@ Common::String RequestData::dump() const {
 
 	return ret;
 }
+
+void RequestData::draw(Graphics::Surface *dst) const {
+	drawBackground(dst);
+}
+
+void RequestData::drawBackground(Graphics::Surface *dst) const {
+	bool detailHigh = true;
+	int startoffset = 0;
+	if (detailHigh) {
+		//g_videoMaskEnabled = true;
+		//g_vidMaskXMax = (x + width) - 1;
+		//g_vidMaskYMax = (y + height) - 1;
+		while (startoffset < 0)
+			startoffset += ARRAYSIZE(MenuBackgroundColors);
+		startoffset = startoffset % ARRAYSIZE(MenuBackgroundColors);
+
+		int coloffset = startoffset;
+		for (int yoff = _x; yoff < (_x + _width); yoff++) {
+			dst->drawLine(yoff, _y, yoff + _height, _y + _height, MenuBackgroundColors[coloffset]);
+			coloffset++;
+			if (coloffset >= ARRAYSIZE(MenuBackgroundColors))
+				coloffset = 0;
+		}
+		// TODO: Game positions mouse in middle of menu here?
+		coloffset = startoffset;
+		for (int yoff = _y; yoff < (_y + _height); yoff++) {
+			dst->drawLine(_x, yoff, _x + _height, yoff + _height, MenuBackgroundColors[coloffset]);
+			coloffset--;
+			if (coloffset < 0)
+				coloffset = ARRAYSIZE(MenuBackgroundColors) - 1;
+		}
+		//g_vidMaskYMax = g_screenHeight - 1;
+		//g_vidMaskXMax = g_screenWidth - 1;
+	} else {
+		dst->fillRect(Common::Rect(_x, _y, _width, _height), FallbackColors[0]);
+	}
+}
+
 
 Common::String REQFileData::dump() const {
 	Common::String ret("REQFileData<\n");

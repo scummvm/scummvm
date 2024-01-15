@@ -133,12 +133,18 @@ public:
 	uint16 _fileNum;
 	uint16 _x;
 	uint16 _y;
-	uint16 _vals[5];
+	uint16 _width;
+	uint16 _height;
+	uint16 _vals[3];
 	Common::Array<TextItem> _textItemList;
 	Common::Array<RequestStruct2> _struct2List;
 	Common::Array<Common::SharedPtr<Gadget>> _gadgets;
 
 	Common::String dump() const;
+	void draw(Graphics::Surface *dst) const;
+private:
+
+	void drawBackground(Graphics::Surface *dst) const;
 };
 
 // A REQ file contains a sequence of REQ and GAD block pairs.
