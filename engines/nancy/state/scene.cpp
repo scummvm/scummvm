@@ -613,6 +613,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint16LE(_sceneState.pushedInvScene.frameID);
 		ser.syncAsUint16LE(_sceneState.pushedInvScene.verticalOffset);
 		ser.syncAsByte(_sceneState.isInvScenePushed);
+		ser.syncAsUint16LE(_sceneState.pushedInvItemID);		
 	}
 
 	// hardcoded number of logic conditions, check if there can ever be more/less
