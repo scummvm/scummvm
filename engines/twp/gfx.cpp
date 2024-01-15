@@ -385,10 +385,10 @@ void Gfx::drawQuad(Math::Vector2d size, Color color, Math::Matrix4 trsf) {
 	float x = 0;
 	float y = 0;
 	Vertex vertices[] = {
-		Vertex{.pos = {x + w, y + h}, .texCoords = {1, 0}, .color = color},
-		Vertex{.pos = {x + w, y}, .texCoords = {1, 1}, .color = color},
-		Vertex{.pos = {x, y}, .texCoords = {0, 1}, .color = color},
-		Vertex{.pos = {x, y + h}, .texCoords = {0, 0}, .color = color}};
+		Vertex{{x + w, y + h}, color, {1, 0}},
+		Vertex{{x + w, y}, color, {1, 1}},
+		Vertex{{x, y}, color, {0, 1}},
+		Vertex{{x, y + h}, color, {0, 0}}};
 	noTexture();
 	uint32 quadIndices[] = {
 		0, 1, 3,
@@ -408,10 +408,10 @@ void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math:
 
 	Math::Vector2d pos;
 	Vertex vertices[] = {
-		{.pos = {pos.getX() + textRect.width(), pos.getY() + textRect.height()}, .texCoords = {r, t}, .color = color},
-		{.pos = {pos.getX() + textRect.width(), pos.getY()}, .texCoords = {r, b}, .color = color},
-		{.pos = {pos.getX(), pos.getY()}, .texCoords = {l, b}, .color = color},
-		{.pos = {pos.getX(), pos.getY() + textRect.height()}, .texCoords = {l, t}, .color = color}};
+		{{pos.getX() + textRect.width(), pos.getY() + textRect.height()}, color, {r, t}},
+		{{pos.getX() + textRect.width(), pos.getY()}, color, {r, b}},
+		{{pos.getX(), pos.getY()}, color, {l, b}},
+		{{pos.getX(), pos.getY() + textRect.height()}, color, {l, t}}};
 	uint32 quadIndices[] = {
 		0, 1, 3,
 		1, 2, 3};

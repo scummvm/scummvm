@@ -28,13 +28,13 @@ namespace Twp {
 
 class BTEACrypto {
 public:
-  static void encrypt(uint32_t *v, int n, const uint32_t *k);
-  static void decrypt(uint32_t *v, int n, const uint32_t *k);
+  static void encrypt(uint32 *v, int n, const uint32 *k);
+  static void decrypt(uint32 *v, int n, const uint32 *k);
 
 private:
-  static void btea(uint32_t *v, int n, const uint32_t *k);
+  static void btea(uint32 *v, int n, const uint32 *k);
 };
 
 } // End of namespace Twp
 
-#endif // TWP_H
+#endif // TWP_BTEA_H

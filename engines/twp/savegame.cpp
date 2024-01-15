@@ -407,10 +407,10 @@ bool SaveGameManager::loadGame(const SaveGame& savegame) {
 }
 
 bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame& savegame) {
-	static uint32_t savegameKey[] = {0xAEA4EDF3, 0xAFF8332A, 0xB5A2DBB4, 0x9B4BA022};
+	static uint32 savegameKey[] = {0xAEA4EDF3, 0xAFF8332A, 0xB5A2DBB4, 0x9B4BA022};
 	Common::Array<byte> data(stream->size());
 	stream->read(&data[0], data.size());
-	BTEACrypto::decrypt((uint32_t *)&data[0], data.size() / 4, savegameKey);
+	BTEACrypto::decrypt((uint32 *)&data[0], data.size() / 4, savegameKey);
 	savegame.hashData = *(int32_t *)(&data[data.size() - 16]);
 	savegame.time = *(int32_t *)&data[data.size() - 12];
 	int32_t hashCheck = computeHash(&data[0], data.size() - 16);

@@ -719,7 +719,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 	debug("setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
-	g_engine->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb{.id = verbId, .image = image, .fun = fun, .text = text, .key = key, .flags = flags};
+	g_engine->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
 	return 0;
 }
 
