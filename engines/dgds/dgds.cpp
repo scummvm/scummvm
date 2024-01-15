@@ -107,6 +107,20 @@ void readStrings(Common::SeekableReadStream *stream) {
 		debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
 	}
 }
+void DgdsEngine::drawVCR(REQFileData &vcrRequestData) {
+	// TODO: Hardcoded
+	Common::Array<Common::SharedPtr<Gadget>> gadgets = vcrRequestData._requests[0]._gadgets;
+	Graphics::Surface *dst = g_system->lockScreen();
+
+	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
+		Gadget *gadget = gptr.get();
+		if (gadget->_gadgetType == kGadgetButton)
+			gadget->draw(dst);
+	}
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
+}
 
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -173,6 +187,7 @@ Common::Error DgdsEngine::run() {
 	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
+	bool vcrShown = false;
 
 	while (!shouldQuit()) {
 		if (eventMan->pollEvent(ev)) {
@@ -180,10 +195,20 @@ Common::Error DgdsEngine::run() {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
 					moveToNext = true;
+					break;
+				case Common::KEYCODE_F5:
+					drawVCR(vcrRequestData);
+					vcrShown = !vcrShown;
+					break;
 				default:
 					break;
 				}
 			}
+		}
+
+		if (vcrShown) {
+			g_system->delayMillis(10);
+			continue;
 		}
 
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
