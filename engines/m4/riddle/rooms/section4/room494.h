@@ -41,9 +41,9 @@ private:
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_buttons[6];
-	HotkeyCB _hotkey27 = nullptr;
-	HotkeyCB _hotkey316 = nullptr;
-	HotkeyCB _hotkey317 = nullptr;
+	HotkeyCB _hotkeyEscape = nullptr;
+	HotkeyCB _hotkeySave = nullptr;
+	HotkeyCB _hotkeyLoad = nullptr;
 	bool _selectState = false;
 
 public:

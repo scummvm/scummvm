@@ -34,7 +34,10 @@ namespace Rooms {
 
 class Room : public M4::Room {
 protected:
+	static void intrMsgNull(frac16 myMessage, struct machine *sender) {}
+
 	void restoreAutosave();
+	int _roomVal1 = 0;
 
 public:
 	Room() : M4::Room() {}

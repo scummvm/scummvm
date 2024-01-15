@@ -21,6 +21,7 @@
 
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_sys.h"
+#include "m4/platform/keys.h"
 #include "m4/riddle/rooms/section4/room494.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/walker.h"
@@ -43,13 +44,13 @@ void Room494::init() {
 	midi_stop();
 	mouse_show();
 
-	_hotkey27 = GetSystemHotkey(27);
-	_hotkey316 = GetSystemHotkey(316);
-	_hotkey317 = GetSystemHotkey(317);
+	_hotkeyEscape = GetSystemHotkey(KEY_ESCAPE);
+	_hotkeySave = GetSystemHotkey(KEY_F2);
+	_hotkeyLoad = GetSystemHotkey(KEY_F3);
 
-	RemoveSystemHotkey(316);
-	AddSystemHotkey(27, escapeFn);
-	AddSystemHotkey(317, escapeFn);
+	RemoveSystemHotkey(KEY_F2);
+	AddSystemHotkey(KEY_ESCAPE, escapeFn);
+	AddSystemHotkey(KEY_F3, escapeFn);
 	_machine1 = _machine2 = 0;
 	_selectedBtn1 = _selectedBtn2 = -1;
 	midi_stop();
@@ -243,9 +244,9 @@ int Room494::getSelectedButton() const {
 }
 
 void Room494::restoreHotkeys() {
-	AddSystemHotkey(27, _hotkey27);
-	AddSystemHotkey(316, _hotkey316);
-	AddSystemHotkey(317, _hotkey317);
+	AddSystemHotkey(KEY_ESCAPE, _hotkeyEscape);
+	AddSystemHotkey(KEY_F2, _hotkeySave);
+	AddSystemHotkey(KEY_F3, _hotkeyLoad);
 }
 
 } // namespace Rooms

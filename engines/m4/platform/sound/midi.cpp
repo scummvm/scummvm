@@ -25,6 +25,10 @@
 namespace M4 {
 namespace Sound {
 
+void Midi::midi_play(const char *name, int volume, int loop, int trigger, int roomNum) {
+	warning("TODO: midi_play");
+}
+
 void Midi::task() {
 	// No implementation
 }
@@ -42,6 +46,10 @@ void Midi::set_overall_volume(int vol) {
 }
 
 } // namespace Sound
+
+void midi_play(const char *name, int volume, int loop, int trigger, int roomNum) {
+	_G(midi).midi_play(name, volume, loop, trigger, roomNum);
+}
 
 void midi_loop() {
 	_G(midi).loop();
