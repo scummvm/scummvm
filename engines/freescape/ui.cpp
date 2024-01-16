@@ -172,7 +172,7 @@ void FreescapeEngine::drawFullscreenMessage(Common::String message, uint32 front
 
 	for (int i = 0; i < numberOfLines; i++) {
 		Common::String line = message.substr(letterPerLine * i, letterPerLine);
-		debug("'%s' %d", line.c_str(), line.size());
+		//debug("'%s' %d", line.c_str(), line.size());
 		drawStringInSurface(line, x, y, front, black, surface);
 		y = y + 8;
 	}
