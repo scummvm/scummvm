@@ -194,7 +194,7 @@ int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
  * If further decoding is required, it must be done by another
  * routine.
  *
- * NULL is returned if unsucsessful.
+ * NULL is returned if unsuccessful.
  */
 uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	char x[8];
