@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-15 13:42+0000\n"
+"PO-Revision-Date: 2024-01-16 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2279,48 +2279,51 @@ msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Erakutsi Discord-en jolasten ari zaren jokoen informazioa, Discord bezeroa "
+"martxan badago."
 
 #: gui/options.cpp:2673 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr ""
+msgstr "Eguneratze egiaztatzea:"
 
 #: gui/options.cpp:2673
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Zenbatero egiaztatu ScummVM eguneratzeak"
 
 #: gui/options.cpp:2684
 msgid "Check now"
-msgstr ""
+msgstr "Egiaztatu orain"
 
 #: gui/options.cpp:2692
-#, fuzzy
 msgid "Active storage:"
-msgstr "Gaitu estudio ingurunea"
+msgstr "Biltegiratze aktiboa:"
 
 #: gui/options.cpp:2692
-#, fuzzy
 msgid "Active cloud storage"
-msgstr "Ezin izan da jokoa gorde"
+msgstr "Laino biltegiratze aktiboa"
 
 #: gui/options.cpp:2701
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"Biltegiratzea ez dago oraindik gaituta. Egiaztatu erabiltzaile izena zuzena "
+"dela eta gaitu:"
 
 #: gui/options.cpp:2703
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"Biltegiratzea ez dago oraindik gaituta. Egiaztatu erabiltzaile izena zuzena "
+"dela eta gaitu:"
 
 #: gui/options.cpp:2704
-#, fuzzy
 msgid "Enable storage"
-msgstr "Gaitu estudio ingurunea"
+msgstr "Gaitu biltegiratzea"
 
 #: gui/options.cpp:2704
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Baieztatu kontu hau erabili nahi duzula biltegiratzeko"
 
 #: gui/options.cpp:2706 backends/platform/wii/options.cpp:113
 msgid "Username:"
@@ -2328,105 +2331,103 @@ msgstr "Erabiltzaile-izena:"
 
 #: gui/options.cpp:2706
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Biltegiratzeak darabilen erabiltzaile izena"
 
 #: gui/options.cpp:2707
 msgid "<none>"
-msgstr ""
+msgstr "<hutsik>"
 
 #: gui/options.cpp:2709
 msgid "Used space:"
-msgstr ""
+msgstr "Erabilitako espazioa:"
 
 #: gui/options.cpp:2709
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Biltegiratze honetan ScummVM jokoek darabilten espazioa"
 
 #: gui/options.cpp:2712
 msgid "Last sync:"
-msgstr ""
+msgstr "Azken sink:"
 
 #: gui/options.cpp:2712
 msgid "When was the last time saved games were synced with this storage"
-msgstr ""
+msgstr "Noiz sinkronizatu ziren azkenekoz gordetako jokoak"
 
 #: gui/options.cpp:2713 gui/options.cpp:3621
-#, fuzzy
 msgid "<never>"
-msgstr "Inoiz ez"
+msgstr "<inoiz ez>"
 
 #: gui/options.cpp:2715
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Gordetako jokoak automatikoki sinkronizatzen dira hasieratzean, gorde "
+"ondoren eta kargatzean."
 
 #: gui/options.cpp:2717
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Gordetako jokoak automatikoki sinkronizatzen dira hasieratzean, gorde "
+"ondoren eta kargatzean."
 
 #: gui/options.cpp:2718
 msgid "Sync now"
-msgstr ""
+msgstr "Orain sinkronizatu"
 
 #: gui/options.cpp:2718
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Aukeraturiko jokora jolastu"
+msgstr "Hasi gordetako jokoen sink"
 
 #: gui/options.cpp:2721
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Zure ScummVM lainoko direktorioko joko fitxategiak deskarga ditzakezu:"
 
 #: gui/options.cpp:2723
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Zure ScummVM lainoko direktorioko joko fitxategiak deskarga ditzakezu:"
 
 #: gui/options.cpp:2724
-#, fuzzy
 msgid "Download game files"
-msgstr "Kargatu fitxategia:"
+msgstr "Deskargatu jokoen fitxategiak"
 
 #: gui/options.cpp:2724
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Ireki deskarga kudeatzaile leihoa"
 
 #: gui/options.cpp:2727
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Biltegiratze kontua aldatzeko, deskonektatu eta berriz konektatu:"
 
 #: gui/options.cpp:2729
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Biltegiratze kontua aldatzeko, deskonektatu eta berriz konektatu:"
 
 #: gui/options.cpp:2730
 msgid "Disconnect"
-msgstr ""
+msgstr "Deskonektatu"
 
 #: gui/options.cpp:2730
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Utzi gailu honetan biltegiratze hau erabiltzeari"
 
 #: gui/options.cpp:2733
-#, fuzzy
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Jokoaren ID ez-onartua"
+msgstr "Bitegiratze hau oraindik ez dago konektatuta!"
 
 #: gui/options.cpp:2735
-#, fuzzy
 msgid "This storage is not connected yet!"
-msgstr "Jokoaren ID ez-onartua"
+msgstr "Bitegiratze hau oraindik ez dago konektatuta!"
 
 #: gui/options.cpp:2736
-#, fuzzy
 msgid "Connect"
-msgstr "Jokoa kargatzen..."
+msgstr "Konektatu"
 
 #: gui/options.cpp:2736
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "Konektatu zure laino biltegiratze kontua"
 
 #: gui/options.cpp:2749
 #, fuzzy
