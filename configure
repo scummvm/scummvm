@@ -3724,7 +3724,7 @@ if test -n "$_host"; then
 				# --enable-release, --enable-optimizations
 				append_var CXXFLAGS "-fomit-frame-pointer"
 				append_var CXXFLAGS "-fno-exceptions"
-				append_var CXXFLAGS "-ffast-math"
+				append_var CXXFLAGS "-ffast-math -fno-unsafe-math-optimizations"
 			fi
 
 			# auto -> no
