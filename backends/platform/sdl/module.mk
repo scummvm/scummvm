@@ -7,8 +7,7 @@ MODULE_OBJS := \
 ifdef KOLIBRIOS
 MODULE_OBJS += \
 	kolibrios/kolibrios-main.o \
-	kolibrios/kolibrios.o \
-	kolibrios/sdl-stubs.o
+	kolibrios/kolibrios.o
 endif
 
 ifdef POSIX
