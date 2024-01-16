@@ -385,21 +385,21 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 		int selectable;
 		if (SQ_FAILED(sqget(v, 2, selectable)))
 			return sq_throwerror(v, "failed to get selectable");
-		switch(selectable) {
+		switch (selectable) {
 		case 0:
-		  g_engine->_actorSwitcher._mode &= (~asOn);
-		  break;
+			g_engine->_actorSwitcher._mode &= (~asOn);
+			break;
 		case 1:
-		  g_engine->_actorSwitcher._mode |= asOn;
-		  break;
+			g_engine->_actorSwitcher._mode |= asOn;
+			break;
 		case 2:
-		  g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
-		  break;
+			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
+			break;
 		case 3:
-		  g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
-		  break;
+			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
+			break;
 		default:
-		  return sq_throwerror(v, "invalid selectable value");
+			return sq_throwerror(v, "invalid selectable value");
 		}
 		return 0;
 	}
@@ -1040,15 +1040,15 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	g_engine->_hud._actorSlots[actorSlot - 1].verbUiColors =
 		VerbUiColors(
 			Color::rgb(sentence),
-			Color::rgb(verbNormal), 
-			Color::rgb(verbNormalTint), 
-			Color::rgb(verbHighlight), 
+			Color::rgb(verbNormal),
+			Color::rgb(verbNormalTint),
+			Color::rgb(verbHighlight),
 			Color::rgb(verbHighlightTint),
 			Color::rgb(dialogNormal),
 			Color::rgb(dialogHighlight),
-			Color::rgb(inventoryFrame), 
-			Color::rgb(inventoryBackground), 
-			Color::rgb(retroNormal), 
+			Color::rgb(inventoryFrame),
+			Color::rgb(inventoryBackground),
+			Color::rgb(retroNormal),
 			Color::rgb(retroHighlight));
 	return 0;
 }

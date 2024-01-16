@@ -481,6 +481,10 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 
 	GGHashMapDecoder dec;
 	Common::JSONValue *json = dec.open(&entry);
+	if(!json) {
+		warning("Costume %s(%s) for actor %s not found", name.c_str(), sheet.c_str(), _key.c_str());
+		return;
+	}
 	const Common::JSONObject &jCostume = json->asObject();
 
 	parseObjectAnimations(jCostume["animations"]->asArray(), _anims);

@@ -1093,11 +1093,12 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 }
 
 void TwpEngine::actorEnter() {
-	if (_actor)
+	if (_actor) {
 		sqcall(_actor->_table, "actorEnter");
-	if (_room) {
-		if (sqrawexists(_room->_table, "actorEnter")) {
-			sqcall(_room->_table, "actorEnter", _actor->_table);
+		if (_room) {
+			if (sqrawexists(_room->_table, "actorEnter")) {
+				sqcall(_room->_table, "actorEnter", _actor->_table);
+			}
 		}
 	}
 }
@@ -1154,7 +1155,7 @@ void TwpEngine::setRoom(Room *room) {
 }
 
 void TwpEngine::actorExit() {
-	if (!_actor && _room) {
+	if (_actor && _room) {
 		if (sqrawexists(_room->_table, "actorExit")) {
 			sqcall(_room->_table, "actorExit", _actor->_table);
 		}
