@@ -321,6 +321,11 @@ static void selectSlotActor(int id) {
 	}
 }
 
+static void showOptions(int id) {
+	if (g_engine && !g_engine->isPaused())
+		g_engine->openMainMenuDialog();
+}
+
 ActorSwitcherSlot TwpEngine::actorSwitcherSlot(ActorSlot *slot) {
 	return ActorSwitcherSlot(slot->actor->getIcon(),
 							 slot->verbUiColors.inventoryBackground,
@@ -345,7 +350,7 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 
 		// TODO: showOptions
 		// add gear icon
-		result.push_back(ActorSwitcherSlot("icon_gear", Color(0.f, 0.f, 0.f), Color(0.8f, 0.8f, 0.8f), selectSlotActor));
+		result.push_back(ActorSwitcherSlot("icon_gear", Color(0.f, 0.f, 0.f), Color(0.8f, 0.8f, 0.8f), showOptions));
 	}
 	return result;
 }
@@ -439,7 +444,7 @@ void TwpEngine::update(float elapsed) {
 						}
 						_nextHoldToMoveTime = _time + 0.250f;
 					}
-				} else if(!_cursor.doubleClick) {
+				} else if (!_cursor.doubleClick) {
 					_holdToMove = false;
 					walkFast(false);
 				}
