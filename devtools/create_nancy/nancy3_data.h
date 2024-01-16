@@ -25,15 +25,14 @@
 #include "types.h"
 
 const GameConstants _nancy3Constants = {
-	18,
-	336,
-	{ }, // No Map state
-	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	18,												// numItems
+	336,											// numEventFlags
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,			// genericEventFlags
 		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
-	24,
-	7,
-	4000
+	8,												// numCursorTypes
+	4000,											// logoEndAfter
+	32												// wonGameSceneID
 };
 
 const SoundChannelInfo _nancy3to7SoundChannelInfo = {
