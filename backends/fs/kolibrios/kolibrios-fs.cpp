@@ -33,25 +33,17 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/kos_io.h>
 #include <sys/ksys.h>
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-struct kol_readdir_result_header {
-	uint32 version;
-	uint32 number_of_placed_blocks;
-	uint32 total_number_of_blocks;
-	byte reserved[20];
-} PACKED_STRUCT;
-
 struct kol_readdir_result_entry {
-	ksys_bdfe_t bdfe;
+	ksys_file_info_t bdfe;
 	char fileName[520];
 } PACKED_STRUCT;
 
 struct kol_readdir_result {
-	kol_readdir_result_header header;
+	ksys_dir_entry_header_t header;
 	kol_readdir_result_entry entries[0];
 } PACKED_STRUCT;
 
@@ -61,26 +53,18 @@ namespace {
 
 // opendir/readdir are buggy. And they encourage using syscalls. Whatever
 kol_readdir_result *kol_readdir(const char *path, uint32 max_blocks) {
-	ksys70_status_t ret_result;
-	int result_buffer_size = sizeof (kol_readdir_result_header)
+	ksys_file_status_t ret_result;
+	int result_buffer_size = sizeof (ksys_dir_entry_header_t)
 		+ max_blocks * sizeof (kol_readdir_result_entry);
 	kol_readdir_result *result_buffer = (kol_readdir_result *) malloc (result_buffer_size);
 	if (!result_buffer)
 		return nullptr;
 	memset(result_buffer, 0, result_buffer_size);
-	ksys70_t request;
-	request.p00 = 1; // Read directory
-	request.p04dw = 0;
-	request.p08dw = 3; // UTF-8
-	request.p12 = max_blocks;
-	request.buf16 = result_buffer;
-	request.p20 = 0; // Don't use inline path
-	request.p21 = path;
 
-	ret_result = _ksys70(&request);
+	ret_result = _ksys_file_read_dir(path, 0, KSYS_FILE_UTF8, max_blocks, result_buffer);
 
-	// 0 is returned for normal dirs, 6 for virtual directories
-	if (ret_result.status != 0 && ret_result.status != 6) {
+	// KSYS_FS_ERR_SUCCESS (0) is returned for normal dirs, KSYS_FS_ERR_EOF (6) for virtual directories
+	if (ret_result.status != 0 && ret_result.status != KSYS_FS_ERR_EOF) {
 		free (result_buffer);
 		return nullptr;
 	}
@@ -94,18 +78,19 @@ kol_readdir_result *kol_readdir(const char *path) {
 	if (!res)
 		return nullptr;
 
-	uint32 tot_blocks = res->header.total_number_of_blocks;
+	uint32 tot_blocks = res->header.files;
 	free(res);
 
 	return kol_readdir(path, tot_blocks);
 }
 
 bool getFileAttrs(Common::String path, uint32& attrs) {
-	fileinfo_t info;
+	ksys_file_info_t info;
 
 	memset(&info, 0, sizeof(info));
-	info.attr = 0x10;
-	if(get_fileinfo(path.c_str(), &info)) {
+	info.attr = KSYS_FILE_ATTR_DIR;
+
+	if(_ksys_file_info(path.c_str(), &info)) {
 		attrs = 0;
 		return false;
 	}
@@ -170,7 +155,7 @@ bool KolibriOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode,
 	if (!res)
 		return false;
 
-	for (int i = 0; i < (int) res->header.number_of_placed_blocks; i++)
+	for (int i = 0; i < (int) res->header.blocks; i++)
 	{
 		// Skip 'invisible' files if necessary
 		if (res->entries[i].fileName[0] == '.' && !hidden) {
@@ -190,7 +175,7 @@ bool KolibriOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode,
 		entry._path += entry._displayName;
 
 		entry._isValid = true;
-		entry._attributes = res->entries[i].bdfe.attributes;
+		entry._attributes = res->entries[i].bdfe.attr;
 
 		// Honor the chosen mode
 		if ((mode == Common::FSNode::kListFilesOnly && entry.isDirectory()) ||
