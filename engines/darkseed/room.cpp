@@ -153,17 +153,17 @@ void Darkseed::Room::draw() {
 	pic.draw(0x45, 0x28);
 
 	// print walkable area map.
-	for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
-		for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
-			if (canWalkAtLocation(x, y)) {
-				g_engine->_screen->drawLine(x, y, x, y, 14);
-			}
-		}
-	}
-
-	for (int i = 0; i < connectors.size(); i++) {
-		g_engine->_baseSprites.getSpriteAt(0).draw(connectors[i].x, connectors[i].y);
-	}
+//	for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
+//		for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
+//			if (canWalkAtLocation(x, y)) {
+//				g_engine->_screen->drawLine(x, y, x, y, 14);
+//			}
+//		}
+//	}
+//
+//	for (int i = 0; i < connectors.size(); i++) {
+//		g_engine->_baseSprites.getSpriteAt(0).draw(connectors[i].x, connectors[i].y);
+//	}
 }
 
 int Darkseed::Room::getObjectAtPoint(int x, int y) {
