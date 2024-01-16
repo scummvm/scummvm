@@ -376,6 +376,11 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void WinGame::execute() {
+	// Set ConfMan value that will stay persistent across future playthroughs.
+	// Default value in original is StillWorkingOnIt, but we just don't set it instead.
+	ConfMan.set("PlayerWonTheGame", "AcedTheGame", ConfMan.getActiveDomainName());
+	ConfMan.flushToDisk();
+
 	g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 	NancySceneState.setDestroyOnExit();
 	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
