@@ -275,6 +275,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	_frameDuration = 1.0 / _getFps(fps, anim->fps);
 	_loop = loop || anim->loop;
 	_instant = instant;
+	if(_obj) setVisible(Twp::find(_obj->_hiddenLayers, _anim->name) == -1);
 
 	clear();
 	for (int i = 0; i < _anim->layers.size(); i++) {
