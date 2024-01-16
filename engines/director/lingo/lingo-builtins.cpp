@@ -2716,7 +2716,8 @@ void LB::b_spriteBox(int nargs) {
 
 	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 	channel->setBbox(l, t, r, b);
-	channel->_sprite->_cast->setModified(true);
+	if (channel->_sprite->_cast)
+		channel->_sprite->_cast->setModified(true);
 	channel->_dirty = true;
 }
 
