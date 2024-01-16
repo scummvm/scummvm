@@ -124,6 +124,7 @@ Common::Rect parseRect(const Common::String &s) {
 }
 
 void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<ObjectAnimation> &anims) {
+	anims.clear();
 	for (auto it = jAnims.begin(); it != jAnims.end(); it++) {
 		anims.push_back(parseObjectAnimation((*it)->asObject()));
 	}
