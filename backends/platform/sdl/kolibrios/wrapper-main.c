@@ -19,8 +19,11 @@
  *
  */
 
-#include <kos32sys.h>
 #include <stdio.h>
+#include <string.h>
+
+void* get_proc_address(void *handle, const char *proc_name);
+void* load_library(const char *name);
 
 /* This is just a small wrapper so that the main scummvm is loaded as dll.  */
 int kolibrios_main(int argc, char *argv[]);
