@@ -71,7 +71,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		while(!tokenizer.empty()) {
 			curToken = tokenizer.nextToken();
 
-			if (curToken.size() <= 2) {
+			if (tokenizer.delimitersAtTokenBegin().lastChar() == '<' && tokenizer.delimitersAtTokenEnd().firstChar() == '>') {
 				switch (curToken.firstChar()) {
 				case 'i' :
 					// CC begin
@@ -80,23 +80,40 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					// CC end
 					// fall through
 				case 'e' :
-					// Telephone end
-					// Do nothing and just skip
+					// End conversation. Originally used for quickly ending dialogue when debugging
+					// We do nothing and just skip
+					if (curToken.size() != 1) {
+						break;
+					}
+
 					continue;
 				case 'h' :
 					// Hotspot
+					if (curToken.size() != 1) {
+						break;
+					}
+
 					if (hasHotspot) {
 						// Replace duplicate hotspot token with a newline to copy the original behavior
 						currentLine += '\n';
 					}
+
 					hasHotspot = true;
 					continue;
 				case 'n' :
 					// Newline
+					if (curToken.size() != 1) {
+						break;
+					}
+
 					currentLine += '\n';
 					continue;
 				case 't' :
 					// Tab
+					if (curToken.size() != 1) {
+						break;
+					}
+
 					currentLine += '\t';
 					continue;
 				case 'c' :
@@ -117,7 +134,14 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 
 					colorTextChanges.push({true, numNonSpaceChars, (byte)(curToken[1] - 48)});
 					continue;
+				default:
+					break;
 				}
+
+				// Ignore non-tokens when they're between braces. This fixes nancy6 scenes 1953 & 1954,
+				// where some sound names slipped through into the text data.
+				debugC(Nancy::kDebugHypertext, "Unrecognized hypertext tag <%s>", curToken.c_str());
+				continue;
 			}
 
 			// Count the number of non-space characters. We use this to keep track

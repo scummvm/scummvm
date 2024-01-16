@@ -54,7 +54,8 @@ enum NancyDebugChannels {
 	kDebugActionRecord	= 1 << 1,
 	kDebugScene			= 1 << 2,
 	kDebugSound			= 1 << 3,
-	kDebugVideo			= 1 << 4
+	kDebugVideo			= 1 << 4,
+	kDebugHypertext		= 1 << 5
 };
 
 // Settings found in the original engine
