@@ -544,8 +544,8 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaYFactor = deltaYFactor;
 
 	if (_vm->_game.version >= 7) {
-		_walkdata.nextDir = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
-		startWalkAnim((_moving & MF_IN_LEG) ? 2 : 1, _walkdata.nextDir);
+		_walkdata.facing = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
+		startWalkAnim((_moving & MF_IN_LEG) ? 2 : 1, _walkdata.facing);
 		_moving |= MF_IN_LEG;
 	} else {
 		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
@@ -602,11 +602,9 @@ int Actor::actorWalkStep() {
 
 	if (_vm->_game.version < 7) {
 		int nextFacing = updateActorDirection(true);
-		if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
-			if (_walkFrame != _frame || _facing != nextFacing)
-				startWalkAnim(1, nextFacing);
-			_moving |= MF_IN_LEG;
-		}
+		if ((_walkFrame != _frame && !(_moving & MF_IN_LEG)) || _facing != nextFacing)
+			startWalkAnim(1, nextFacing);
+		_moving |= MF_IN_LEG;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
@@ -875,7 +873,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 
 void Actor::startWalkAnim(int cmd, int angle) {
 	if (_vm->_game.version >= 7)
-		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle == -1 ? _walkdata.nextDir : angle), false);
+		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle == -1 ? _walkdata.facing : angle), false);
 	else if (angle == -1)
 		angle = _facing;
 
@@ -3873,7 +3871,7 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_walkdata.deltaYFactor, VER(8));
 	s.syncAsUint16LE(_walkdata.xfrac, VER(8));
 	s.syncAsUint16LE(_walkdata.yfrac, VER(8));
-	s.syncAsSint16LE(_walkdata.nextDir, VER(111));
+	s.syncAsSint16LE(_walkdata.facing, VER(111));
 
 	s.syncAsUint16LE(_walkdata.point3.x, VER(42));
 	s.syncAsUint16LE(_walkdata.point3.y, VER(42));

@@ -151,7 +151,7 @@ protected:
 		int32 deltaXFactor, deltaYFactor;
 		uint16 xfrac, yfrac;
 		uint16 xAdd, yAdd;
-		int16 nextDir;
+		int16 facing;
 
 		void reset() {
 			dest.x = dest.y = 0;
@@ -167,7 +167,7 @@ protected:
 			yfrac = 0;
 			xAdd = 0;
 			yAdd = 0;
-			nextDir = 0;
+			facing = 0;
 		}
 	};
 
