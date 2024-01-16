@@ -49,6 +49,8 @@ private:
 
 	void renderString(uint16 x, uint16 y, Common::String s);
 
+	void showStringBox(const Common::StringArray &sa);
+
 	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
 public:

@@ -62,6 +62,7 @@ struct AnimFrame {
 	uint16 Height;
 
 	void ReadFromeFile(Common::File &file);
+	bool PixelHit(const Common::Point &point) const;
 };
 
 struct BackgroundAnimation {
@@ -156,6 +157,7 @@ public:
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
 
+	AnimFrame _stick;
 	
 
 	void ScriptPrintString(Common::MemoryReadStream *stream);

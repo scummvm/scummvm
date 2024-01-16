@@ -442,7 +442,9 @@ void Macs2Engine::readResourceFile() {
 	// Load the objects data
 	file.seek(0x6a5913);
 
-
+	// Load the stick
+	file.seek(0x00708410);
+	_stick.ReadFromeFile(file);
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -953,6 +955,14 @@ void AnimFrame::ReadFromeFile(Common::File &file) {
 	Height = file.readUint16LE();
 	Data = new byte[Width * Height];
 	file.read(Data, Width * Height);
+}
+
+bool AnimFrame::PixelHit(const Common::Point& point) const {
+	// TODO: We are ignoring z painting for now
+	if (point.x < 0 || point.x >= Width || point.y < 0 || point.y >= Height) {
+		return false;
+	}
+	return Data[point.y * Width + point.x] != 0;
 }
 
 } // End of namespace Macs2
