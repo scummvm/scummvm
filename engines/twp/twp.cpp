@@ -198,12 +198,27 @@ void TwpEngine::flashSelectableActor(int flash) {
 	_actorSwitcher.setFlash(flash);
 }
 
+void TwpEngine::walkFast(bool state) {
+	if (_walkFastState != state) {
+		debug("walk fast: %s", state ? "yes" : "no");
+		_walkFastState = state;
+		if (_actor)
+			sqcall(_actor->_table, "run", state);
+	}
+}
+
 void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 	if (_room && _inputState.getInputActive() && !_actorSwitcher.isMouseOver()) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Object *obj = objAt(roomPos);
 
-		if (_cursor.isLeftDown()) {
+		if (_cursor.doubleClick) {
+			walkFast(true);
+			_holdToMove = true;
+			return;
+		}
+
+		if (_cursor.leftDown) {
 			// button left: execute selected verb
 			bool handled = clickedAtHandled(roomPos);
 			if (!handled && obj) {
@@ -213,21 +228,22 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 			}
 			if (!handled) {
 				if (_actor && (scrPos.getY() > 172)) {
-					_actor->walk(roomPos);
+					// Just clicking on the ground
+					cancelSentence(_actor);
+					if (_actor->_room == _room)
+						_actor->walk(roomPos);
 					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+					_holdToMove = true;
 				}
 			}
-			// TODO: Just clicking on the ground
-			//     cancelSentence(self.actor)
-		} else if (_cursor.isRightDown()) {
+
+		} else if (_cursor.rightDown) {
 			// button right: execute default verb
 			if (obj) {
 				VerbId verb;
 				verb.id = obj->defaultVerbId();
 				execSentence(nullptr, verb, _noun1, _noun2);
 			}
-		} else if (_walkFastState && _cursor.leftDown && _actor && (scrPos.getY() > 172)) {
-			_actor->walk(roomPos);
 		}
 	}
 }
@@ -412,15 +428,21 @@ void TwpEngine::update(float elapsed) {
 
 			// call clickedAt if any button down
 			if ((_dialog.getState() == DialogState::None) && !_hud.isOver()) {
-				// TODO:
-				// if (_cursor.leftDown) {
-				// 	if mouseDnDur > initDuration(milliseconds = 500):
-				// 		walkFast();
-				// } else {
-				// 	walkFast(false);
-				// }
-				if (_cursor.leftDown || _cursor.rightDown)
+				if (_cursor.isLeftDown() || _cursor.isRightDown()) {
 					clickedAt(scrPos);
+				} else if (_cursor.leftDown || _cursor.rightDown) {
+					if (_holdToMove && (_time > _nextHoldToMoveTime)) {
+						walkFast();
+						cancelSentence(_actor);
+						if (_actor->_room == _room && (distance(_actor->_node->getAbsPos(), roomPos) > 5)) {
+							_actor->walk(roomPos);
+						}
+						_nextHoldToMoveTime = _time + 0.250f;
+					}
+				} else if(!_cursor.doubleClick) {
+					_holdToMove = false;
+					walkFast(false);
+				}
 			}
 		} else {
 			_hud.setVisible(false);
@@ -524,12 +546,12 @@ void TwpEngine::setShaderEffect(RoomEffect effect) {
 	case RoomEffect::BlackAndWhite:
 		_gfx.use(&_bwShader);
 		break;
-		//   case RoomEffect::Ega:
-		//     gfxShader(newShader(vertexShader, egaShader));
-		// 	break;
-		//   case RoomEffect::Vhs:
-		//     gfxShader(newShader(vertexShader, vhsShader));
-		// 	break;
+	case RoomEffect::Ega:
+		// TODO: _gfx.use(&_egaShader);
+		break;
+	case RoomEffect::Vhs:
+		// TODO:_gfx.use(&_vhsShader);
+		break;
 	case RoomEffect::Ghost:
 		_gfx.use(&_ghostShader);
 		break;
@@ -761,14 +783,18 @@ Common::Error TwpEngine::run() {
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_cursor.leftDown = true;
-				if (!_cursor.oldLeftDown) {
-					_cursor.mouseDownTime = g_engine->_time;
+				if ((_time - _cursor.leftDownTime) < 1.0f) {
+					_cursor.doubleClick = true;
+				} else {
+					_cursor.doubleClick = false;
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_cursor.leftDown = false;
+				_cursor.leftDownTime = _time;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
+				_cursor.doubleClick = false;
 				_cursor.rightDown = true;
 				break;
 			case Common::EVENT_RBUTTONUP:
