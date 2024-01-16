@@ -204,7 +204,7 @@ void Image::loadBitmap(Common::String filename, int number) {
 	delete fileStream;
 }
 
-void Image::drawBitmap(int x, int y, Common::Rect &drawWin, Graphics::Surface &surface) {
+void Image::drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface) {
 	const Common::Rect destRect(x, y, x + _bmpData.w, y + _bmpData.h);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	clippedDestRect.clip(destRect);
@@ -487,6 +487,15 @@ void Image::setPalette() {
 void Image::clearPalette() {
 	g_system->getPaletteManager()->setPalette(_blacks, 0, 256);
 }
+
+int16 Image::width() const {
+	return _bmpData.w;
+}
+
+int16 Image::height() const {
+	return _bmpData.h;
+}
+
 
 	// grayscale palette.
 /*

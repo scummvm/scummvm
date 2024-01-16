@@ -142,9 +142,19 @@ public:
 
 	Common::String dump() const;
 	void draw(Graphics::Surface *dst) const;
+
+	static const Font *getMenuFont();
+	static const Image *getCorner(int cornerNum);
+
 private:
 
-	void drawBackground(Graphics::Surface *dst) const;
+	void drawBackgroundNoSliders(Graphics::Surface *dst, const Common::String &header) const;
+	void drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sliderHeight, const Common::String &header) const;
+
+	void drawHeader(Graphics::Surface *dst, int16 yoffset, const Common::String &header) const;
+
+	static void fillBackground(Graphics::Surface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
+	static void drawCorners(Graphics::Surface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);
 };
 
 // A REQ file contains a sequence of REQ and GAD block pairs.
