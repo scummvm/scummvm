@@ -30,8 +30,12 @@
 
 #include "common/debug.h"
 
-#include <kos32sys.h>
 #include <errno.h>
+
+extern "C" {
+void* get_proc_address(void *handle, const char *proc_name);
+void* load_library(const char *name);
+}
 
 class KolibriOSPlugin final : public DynamicPlugin {
 protected:
