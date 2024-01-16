@@ -206,6 +206,9 @@ public:
 	void turn(Object* obj);
 	void jiggle(float amount);
 
+	void inventoryScrollUp();
+	void inventoryScrollDown();
+
 private:
 	Common::String suffix() const;
 	// Plays an animation specified by the state

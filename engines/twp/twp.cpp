@@ -774,6 +774,16 @@ Common::Error TwpEngine::run() {
 			case Common::EVENT_RBUTTONUP:
 				_cursor.rightDown = false;
 				break;
+			case Common::EVENT_WHEELDOWN:
+				if (_actor) {
+					_actor->inventoryScrollDown();
+				}
+				break;
+			case Common::EVENT_WHEELUP:
+				if (_actor) {
+					_actor->inventoryScrollUp();
+				}
+				break;
 			default:
 				break;
 			}
