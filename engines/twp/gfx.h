@@ -90,10 +90,14 @@ public:
 	Math::Vector2d pos;
 	Color color;
 	Math::Vector2d texCoords;
+
+	Vertex();
+	Vertex(Math::Vector2d p, Color c = Color(), Math::Vector2d t = Math::Vector2d());
 };
 
 class Texture {
 public:
+	Texture() {}
 	virtual ~Texture() {}
 	void load(const Graphics::Surface &surface);
 	static void bind(const Texture *texture);

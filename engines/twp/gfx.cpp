@@ -30,6 +30,12 @@ namespace Twp {
 
 static Texture gEmptyTexture;
 
+Vertex::Vertex() {}
+
+Vertex::Vertex(Math::Vector2d p, Color c, Math::Vector2d t)
+	: pos(p), color(c), texCoords(t) {
+}
+
 Math::Matrix4 ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
 	Math::Matrix4 result;
 	float *m = result.getData();
@@ -176,30 +182,30 @@ void Shader::setUniform(const char *name, Math::Matrix4 value) {
 	glUseProgram(prev);
 }
 
-void Shader::setUniform(const char * name, float value) {
-  	GLint prev;
+void Shader::setUniform(const char *name, float value) {
+	GLint prev;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
 	glUseProgram(program);
-    int loc = getUniformLocation(name);
-    GL_CALL(glUniform1f(loc, value));
+	int loc = getUniformLocation(name);
+	GL_CALL(glUniform1f(loc, value));
 	glUseProgram(prev);
 }
 
-void Shader::setUniform(const char * name, Math::Vector3d value) {
-    GLint prev;
+void Shader::setUniform(const char *name, Math::Vector3d value) {
+	GLint prev;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
 	glUseProgram(program);
-    int loc = getUniformLocation(name);
-    GL_CALL(glUniform3fv(loc, 1, value.getData()));
+	int loc = getUniformLocation(name);
+	GL_CALL(glUniform3fv(loc, 1, value.getData()));
 	glUseProgram(prev);
 }
 
-void Shader::setUniform(const char * name, Color value) {
-    GLint prev;
+void Shader::setUniform(const char *name, Color value) {
+	GLint prev;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
 	glUseProgram(program);
-    int loc = getUniformLocation(name);
-    GL_CALL(glUniform3fv(loc, 1, value.v));
+	int loc = getUniformLocation(name);
+	GL_CALL(glUniform3fv(loc, 1, value.v));
 	glUseProgram(prev);
 }
 
@@ -213,8 +219,8 @@ void Gfx::init() {
 	empty.setPixels(pixels);
 	gEmptyTexture.load(empty);
 
-	const char* fragmentSrc = R"(#version 110
-	varying vec4 v_color;
+	const char *fragmentSrc = R"(#version 110
+		varying vec4 v_color;
 	varying vec2 v_texCoords;
 	uniform sampler2D u_texture;
 	void main() {

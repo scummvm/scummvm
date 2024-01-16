@@ -224,6 +224,7 @@ Common::Array<int> Graph::getPath(int source, int target) {
 
 void PathFinder::setWalkboxes(const Common::Array<Walkbox> &walkboxes) {
 	_walkboxes = walkboxes;
+	_graph = nullptr;
 }
 
 // Indicates whether or not the specified position is inside this walkbox.
