@@ -31,22 +31,29 @@ WalkboxNode::WalkboxNode() : Node("Walkbox") {
 
 void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 	if (g_engine->_room) {
+		Color white;
+		Color red(1.f, 0.f, 0.f);
+		Color green(0.f, 1.f, 0.f);
+		Color yellow(1.f, 1.f, 0.f);
 		switch (_mode) {
 		case WalkboxMode::All: {
 			Math::Matrix4 transf;
 			// cancel camera pos
 			Math::Vector2d pos = g_engine->getGfx().cameraPos();
 			transf.translate(Math::Vector3d(-pos.getX(), pos.getY(), 0.f));
-			for (int i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
+			for (uint i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
 				Walkbox &wb = g_engine->_room->_walkboxes[i];
-				Color color = wb.isVisible() ? Color(0.f, 1.f, 0.f) : Color(1.f, 0.f, 0.f);
+				Color color = wb.isVisible() ? green : red;
 				Common::Array<Vertex> vertices;
-				for (int j = 0; j < wb.getPoints().size(); j++) {
+				for (uint j = 0; j < wb.getPoints().size(); j++) {
 					Math::Vector2d p = wb.getPoints()[j];
-					Vertex v;
-					v.pos = p;
-					v.color = color;
-					vertices.push_back(v);
+					vertices.push_back(Vertex(p, color));
+
+					Color vertexColor = wb.concave(j) ? white : yellow;
+					Math::Matrix4 t(transf);
+					p -= Math::Vector2d(2.f, 2.f);
+					t.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
+					g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), vertexColor, t);
 				}
 				g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
 			}
@@ -56,16 +63,19 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 			Math::Vector2d pos = g_engine->getGfx().cameraPos();
 			// cancel camera pos
 			transf.translate(Math::Vector3d(-pos.getX(), pos.getY(), 0.f));
-			for (int i = 0; i < g_engine->_room->_mergedPolygon.size(); i++) {
+			for (uint i = 0; i < g_engine->_room->_mergedPolygon.size(); i++) {
 				Walkbox &wb = g_engine->_room->_mergedPolygon[i];
-				Color color = wb.isVisible() ? Color(0.f, 1.f, 0.f) : Color(1.f, 0.f, 0.f);
+				Color color = wb.isVisible() ? green : red;
 				Common::Array<Vertex> vertices;
-				for (int j = 0; j < wb.getPoints().size(); j++) {
+				for (uint j = 0; j < wb.getPoints().size(); j++) {
 					Math::Vector2d p = wb.getPoints()[j];
-					Vertex v;
-					v.pos = p;
-					v.color = color;
-					vertices.push_back(v);
+					vertices.push_back(Vertex(p, color));
+
+					Color vertexColor = wb.concave(j) ? white : yellow;
+					Math::Matrix4 t(transf);
+					p -= Math::Vector2d(2.f, 2.f);
+					t.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
+					g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), vertexColor, t);
 				}
 				g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
 			}
@@ -94,7 +104,9 @@ Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
 }
 
 void PathNode::drawCore(Math::Matrix4 trsf) {
+	Color red(1.f, 0.f, 0.f);
 	Color yellow(1.f, 1.f, 0.f);
+	Color blue(0.f, 0.f, 1.f);
 	Object *actor = g_engine->_actor;
 	// draw actor path
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor && actor->getWalkTo()) {
@@ -102,15 +114,10 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		const Common::Array<Math::Vector2d> &path = walkTo->getPath();
 		if (path.size() > 0) {
 			Common::Array<Vertex> vertices;
-			Vertex v;
-			v.pos = g_engine->roomToScreen(actor->_node->getPos());
-			v.color = yellow;
-			vertices.push_back(v);
-			for (int i = 0; i < path.size(); i++) {
+			vertices.push_back(Vertex(g_engine->roomToScreen(actor->_node->getPos()), yellow));
+			for (uint i = 0; i < path.size(); i++) {
 				Math::Vector2d p = g_engine->roomToScreen(path[i]);
-				v.pos = p;
-				v.color = yellow;
-				vertices.push_back(v);
+				vertices.push_back(Vertex(p, yellow));
 
 				Math::Matrix4 t;
 				p -= Math::Vector2d(2.f, 2.f);
@@ -124,7 +131,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	// draw graph nodes
 	const Twp::Graph *graph = g_engine->_room->_pathFinder.getGraph();
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && graph) {
-		for (int i = 0; i < graph->_concaveVertices.size(); i++) {
+		for (uint i = 0; i < graph->_concaveVertices.size(); i++) {
 			Math::Vector2d v = graph->_concaveVertices[i];
 			Math::Matrix4 t;
 			Math::Vector2d p = g_engine->roomToScreen(v) - Math::Vector2d(2.f, 2.f);
@@ -132,14 +139,14 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 			g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), yellow);
 		}
 
-		if ((_mode == PathMode::All)) {
-			for (int i = 0; i < graph->_edges.size(); i++) {
+		if (_mode == PathMode::All) {
+			for (uint i = 0; i < graph->_edges.size(); i++) {
 				const Common::Array<GraphEdge> &edges = graph->_edges[i];
-				for (int j = 0; j < edges.size(); j++) {
+				for (uint j = 0; j < edges.size(); j++) {
 					const GraphEdge &edge = edges[j];
 					Math::Vector2d p1 = g_engine->roomToScreen(graph->_nodes[edge.start]);
 					Math::Vector2d p2 = g_engine->roomToScreen(graph->_nodes[edge.to]);
-					Vertex vertices[] = {Vertex{.pos = p1, .color = Color()}, Vertex{.pos = p2, .color = Color()}};
+					Vertex vertices[] = {Vertex(p1), Vertex(p2)};
 					g_engine->getGfx().drawLines(&vertices[0], 2);
 				}
 			}
@@ -161,13 +168,18 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 		g_engine->getGfx().drawQuad(Math::Vector2d(8.f, 8.f), yellow, t);
 
+		Object* obj = g_engine->objAt(roomPos);
+		if(obj) {
+			t = Math::Matrix4();
+			pos = g_engine->roomToScreen(obj->getUsePos()) - Math::Vector2d(4.f, 4.f);
+			t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
+			g_engine->getGfx().drawQuad(Math::Vector2d(8.f, 8.f), red, t);
+		}
+
 		Common::Array<Math::Vector2d> path = g_engine->_room->calculatePath(fixPos(actor->_node->getPos()), p);
 		Common::Array<Vertex> vertices;
-		for (int i = 0; i < path.size(); i++) {
-			Vertex v;
-			v.pos = g_engine->roomToScreen(path[i]);
-			v.color = yellow;
-			vertices.push_back(v);
+		for (uint i = 0; i < path.size(); i++) {
+			vertices.push_back(Vertex(g_engine->roomToScreen(path[i]), yellow));
 		}
 		if (vertices.size() > 0) {
 			g_engine->getGfx().drawLines(&vertices[0], vertices.size());
