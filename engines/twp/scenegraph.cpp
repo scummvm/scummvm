@@ -609,12 +609,9 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 		if (!_down && down) {
 			_down = true;
 			if (_arrowUpRect.contains(scrPos.getX(), scrPos.getY())) {
-				_actor->_inventoryOffset -= 1;
-				if (_actor->_inventoryOffset < 0)
-					_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
+				_actor->inventoryScrollUp();
 			} else if (_arrowDnRect.contains(scrPos.getX(), scrPos.getY())) {
-				_actor->_inventoryOffset++;
-				_actor->_inventoryOffset = clamp(_actor->_inventoryOffset, 0, ((int)_actor->_inventory.size() - 5) / 4);
+				_actor->inventoryScrollDown();
 			}
 		} else if (!down) {
 			_down = false;
