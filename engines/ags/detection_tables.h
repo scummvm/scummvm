@@ -981,6 +981,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "corneliuschristmas", "Cornelius Cat in: How the Cat Saved Christmas" },
 	{ "corneliuspest", "Cornelius Cat in: The Uncontrollable Pest" },
 	{ "cornersshiny", "Corner's Shiny (2013 edition)" },
+	{ "corpoconnections", "Corpo Connections" },
 	{ "cosmodyssey", "Cosmodyssey: Jammy Edition" },
 	{ "cosmospuzzle", "Cosmos Puzzle" },
 	{ "cosmosquest1", "Cosmos Quest I" },
@@ -1533,6 +1534,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "howtheyfoundsilence", "How They Found Silence" },
 	{ "hpunk", "H_PUNK_//" },
 	{ "hubris", "Hubris - A Popular Pub Pastime" },
+	{ "hueshaunt", "Hues of the Haunt" },
 	{ "hugglestrip", "Huggles Goes On A Trip!" },
 	{ "hungry", "Hungry" },
 	{ "hungryworm", "Hungry Worm" },
@@ -1754,6 +1756,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lastlightpost", "The Last Light Post" },
 	{ "lastnfurious", "Last'n'Furious" },
 	{ "lastnovax", "The Last No-Vax" },
+	{ "latarta1", "La Tarta - Una Aventura en Casa de Kelly" },
+	{ "latarta2", "La Tarta II - La Ciudad y el Cielo" },
+	{ "latarta3", "La Tarta III - El Circo de la Alegria" },
 	{ "latelastnite", "Late Last Nite" },
 	{ "laundryday", "Laundry Day" },
 	{ "lavablava", "Lava Blava" },
@@ -1810,6 +1815,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lonecase3", "Lone Case 3: Showdown" },
 	{ "lonecase4", "Lone Case 4: Epitaph" },
 	{ "lonelynight", "Lonely Night" },
+	{ "lonelyspaces", "Lonely Spaces" },
 	{ "longdistancecoughing", "Long Distance Coughing" },
 	{ "longestwinter", "The Longest Winter" },
 	{ "longevitygene", "The Longevity Gene" },
@@ -1951,6 +1957,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mickeymauserpart1", "Mickey Mauser - Part 1: The Wrath of the Rat" },
 	{ "micv", "Monkey Island - Carnaval Vudú - Parte 1: La Busqueda" },
 	{ "midasheist", "The Midas Heist" },
+	{ "midnightmadness", "Midnight Madness at Moon Forest" },
 	{ "midnightsquadron", "Midnight Squadron" },
 	{ "miguybrushson", "Monkey Island - Guybrush's Son" },
 	{ "miillusion", "Monkey Island Illusion" },
@@ -2279,6 +2286,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "notetoself", "Note to Self" },
 	{ "notexplainable", "not the explainable" },
 	{ "notfine", "Not Fine" },
+	{ "notmyron", "Not My Ron" },
 	{ "notravellerreturns", "No Traveller Returns" },
 	{ "noughtscrosses", "Noughts & Crosses" },
 	{ "nsfware", "NSFWare" },
@@ -2417,6 +2425,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pharmacistjones", "Pharmacist Jones" },
 	{ "philococoa", "Philosophers Like Hot Cocoa" },
 	{ "phoenix1", "Phoenix1" },
+	{ "phonoi", "Phonoi" },
 	{ "pickpocketrpg", "Pickpocket RPG" },
 	{ "pie", "Pie!" },
 	{ "piginapoke", "Pig in a poke" },
@@ -2725,6 +2734,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shailaofthesith", "Shai-la of the Sith / Shai-la du Sith" },
 	{ "shailaofthesithv2ep1", "Shai-la of the Sith V2 (Remake) - Episode 1" },
 	{ "shailaofthesithv2ep2", "Shai-la of the Sith V2 (Remake) - Episode 2" },
+	{ "shailaofthesithv2ep3", "Shai-la of the Sith V2 (Remake) - Episode 3" },
 	{ "shamrockhg", "Shamrock High Graduation" },
 	{ "shapeshift", "Shapeshift for Cheese" },
 	{ "shapevillage", "Shape Village" },
@@ -3937,6 +3947,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
 	// AGS 3.6.1 games
+	UNSUPPORTED_GAME_ENTRY("lonelyspaces", "LonelySpaces.ags", "0639cde13b999293a1b90d99e17ca49e", 17823673),  // v1
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61286148), // Win
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.ags", "ca1710839f34ef715bc61d883f4df47c", 58034416), // Linux
 
@@ -4965,6 +4976,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 430357136),
 	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 505116629),
 	DEMO_ENTRY_EN("phantomfellows", "TPF.ags", "9e8ca56e0a85a5d75ae4f6fd1f6e3e21", 502058945),  // Linux
+	DEMO_ENTRY_EN("phonoi", "phonee.ags", "111794f6fe829a478dc9a7d4cea239c8", 237652019),  // v0.2
 	DEMO_ENTRY_EN("platformerius", "platformerius.exe", "a3ad5fa6463c0116a2ac8986841860e0", 1512479),
 	DEMO_ENTRY("politicalenemy", "Political Enemy.exe", "387ff720e746ae46e93f463fd58d77a4", 205108968),  // Eng-Ita
 	DEMO_ENTRY_EN("pq4sciish", "PQ4 Remake Demo.exe", "0564de07d3fd5c16e6947a647061913c", 6203078),
@@ -5810,6 +5822,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("corneliuspest", "CorneliusCat.exe", "b5c41e08919834b549ca350a28f18f87", 26410221),
 	GAME_ENTRY_EN_PLATFORM("corneliuspest", "CorneliusCat.exe", "b5c41e08919834b549ca350a28f18f87", 26410225, "OROW"),
 	GAME_ENTRY_EN("cornersshiny", "Corner's Shiny.exe", "74dc062c5f68f3d70da911f2db5737b6", 2245296),
+	GAME_ENTRY_EN("corpoconnections", "CorpoConnections.ags", "3aaa9b607682b173dc73811ee86fa135", 1655403),
 	GAME_ENTRY_EN("cosmodyssey", "KosmoGameJam.exe", "495d45fb8adfd49690ae3b97921feec6", 663963764),
 	GAME_ENTRY_EN("cosmospuzzle", "space.exe", "0500aacb6c176d47ac0f8158f055db83", 3591766),
 	GAME_ENTRY_EN("cosmosquest1", "tfas1.exe", "ff3d6e4edfca8b4f4f1c6cbf8e2781a6", 16653211),
@@ -6478,6 +6491,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("hpunk", "H_punk.exe", "7971a7c02d414dc8cb33b6ec36080b91", 69631273),
 	GAME_ENTRY_EN("hpunk", "H_punk.ags", "afcf0b3a3a9f7c6904a10ce1d9992fad", 67134233),
 	GAME_ENTRY_EN("hubris", "Hubris.exe", "3b2f2a03ab0ae3ce1d2248843b9c2395", 6772869),
+	GAME_ENTRY_EN("hueshaunt", "hothsv122023.exe", "328a715c0a826cad7d6824c6e76b52d5", 35765557),  // Windows
+	GAME_ENTRY_EN("hueshaunt", "hothsv122023.ags", "84b788c6c0cb73070a819f453a7674d3", 32610593),  // Linux
 	GAME_ENTRY_EN("hugglestrip", "HugglesGoesOnATrip.exe", "506a1ba4dbcf04ca9fd8b62e4fea0e05", 4287650),  // Windows
 	GAME_ENTRY_EN("hugglestrip", "HugglesGoesOnATrip.ags", "112e1e4e8ea08e4fb60199cfbd307b89", 1095822),  // Linux
 	GAME_ENTRY_EN("hungry", "Hungry!.exe", "0710e2ec71042617f565c01824f0cf3c", 15619749),
@@ -6728,18 +6743,21 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("lagrandeplaine", "La Grande Plaine.exe", "7a3096ac0237cb6aa8e1718e28caf039", 63873569, Common::FR_FRA),
 	GAME_ENTRY_LANG("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527, Common::ES_ESP),
 	GAME_ENTRY("lamaleta", "La Maleta.ags", "144566549a27ad1b41346627ec82f586", 43741777),  // Eng-Esp
-	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.ags", "37b6847ce6000a0a51391e8c1013bf2b", 25212295),  // Linux
-	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.exe", "8aff96231ca059cd61fe5ce68b83f50f", 27699095),  // Windows
-	GAME_ENTRY_LANG("lastnovax", "THE LAST NO VAX.exe", "63f8a60cc094996bd070e68cb3c4722c", 26323807, Common::IT_ITA),
 	GAME_ENTRY_EN("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
 	GAME_ENTRY_LANG("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3387147, "MAGS"),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3481314, "MAGS"),
 	GAME_ENTRY("lasol", "LaSol.exe", "615e73fc1874e92d60a1996c2330ea36", 19677458),  // Multilang
 	GAME_ENTRY_EN("lastclown", "ZOM.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 867344),
+	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.ags", "37b6847ce6000a0a51391e8c1013bf2b", 25212295),  // Linux
+	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.exe", "8aff96231ca059cd61fe5ce68b83f50f", 27699095),  // Windows
 	GAME_ENTRY_EN("lastlightpost", "LastLightPost.exe", "981e60a9be515bb56c634856462abbc7", 65705119),
 	GAME_ENTRY_EN("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17696093),
 	GAME_ENTRY_EN("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17697035),  //v1.0.4
+	GAME_ENTRY_LANG("lastnovax", "THE LAST NO VAX.exe", "63f8a60cc094996bd070e68cb3c4722c", 26323807, Common::IT_ITA),
+	GAME_ENTRY_LANG("latarta1", "BAGADV.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 10344924, Common::ES_ESP),
+	GAME_ENTRY_LANG("latarta2", "BAGADV2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 311509933, Common::ES_ESP),
+	GAME_ENTRY_LANG("latarta3", "BAGADVIII.exe", "615e73fc1874e92d60a1996c2330ea36", 103114105, Common::ES_ESP),
 	GAME_ENTRY_EN("latelastnite", "late_last_nite v1.2.exe", "c12e28ec3233b26320026cfea4015e6b", 291463873),  //v1.2
 	GAME_ENTRY_EN_PLATFORM("latelastnite", "late-last-nite.exe", "46aa841ae28db17994aa1045736627ed", 341530019, "Speakeasy Edition"),
 	GAME_ENTRY_EN("laundryday", "Laundry Day.exe", "06a03fe35791b0578068ab1873455463", 2456888),
@@ -6983,6 +7001,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mickeymauserpart1", "MM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12076323),  // En-It
 	GAME_ENTRY("mickeymauserpart1", "MM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12075852),  // En-It
 	GAME_ENTRY_EN("midasheist", "midastouch.exe", "6e861b1f476ff7cdf036082abb271329", 10810464),
+	GAME_ENTRY_EN("midnightmadness", "MidnightMadnessAtMoonForest.ags", "b27c3773f4a1b115194b9db48bf3cec0", 168846422),
 	GAME_ENTRY_EN("midnightsquadron", "MidnightSquadronMAGS.exe", "f6a5f0a2f617b84174b5ab48147ae9f7", 29963579),
 	GAME_ENTRY("miillusion", "Illusion.exe", "0500aacb6c176d47ac0f8158f055db83", 3245163),  // En-Fr
 	GAME_ENTRY_EN("mikasdream2", "MSD.exe", "02094e217c23e1d40a84891ee95010cb", 9951843),
@@ -7355,6 +7374,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("notetoself", "elandra_nts.exe", "7e706ca442dd1277f09480b9ba08a1ec", 7176224),
 	GAME_ENTRY_EN("notexplainable", "not the explanable.exe", "82da2565c456dcfb265ded6fe3189c0b", 125719833),
 	GAME_ENTRY_EN("notfine", "NotFine.exe", "615e73fc1874e92d60a1996c2330ea36", 4974090),
+	GAME_ENTRY_EN("notmyron", "NotMyRON.ags", "bccd5c0a82d1c61d9adc57089277a83a", 2593335),
 	GAME_ENTRY_EN("noughtscrosses", "Noughts.exe", "615e73fc1874e92d60a1996c2330ea36", 2159904),
 	GAME_ENTRY_EN("nsfware", "NSFWare.exe", "495d45fb8adfd49690ae3b97921feec6", 300944576),  // Windows
 	GAME_ENTRY_EN("nsfware", "NSFWare Arcade Version.exe", "495d45fb8adfd49690ae3b97921feec6", 300939605),  // Windows
@@ -7885,6 +7905,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("shailaofthesith", "Shai-la du Sith.ags", "409edb13aaf4eaa5389e94b350ba51f0", 62229433, Common::FR_FRA),  // itch.io updated
 	GAME_ENTRY("shailaofthesithv2ep1", "Shai-la du Sith - episode 1.ags", "f42ea5c0c261ee01db77f1a280b45644", 208736461),  // En-Fr
 	GAME_ENTRY("shailaofthesithv2ep2", "Shai-la du Sith - episode 2.ags", "f54ca7fae98c250948bf20cf8eb5c583", 235022927),  // En-Fr
+	GAME_ENTRY("shailaofthesithv2ep3", "Shai-la du Sith - episode 3.ags", "2a34aef50c30b9b6ffe9544fdd02fe37", 271142298),  // En-Fr
 	GAME_ENTRY_EN("shamrockhg", "Shamrock  Graduation.exe", "7ddb9e776648faed5a51170d087074e9", 7255712),
 	GAME_ENTRY_EN("shapeshift", "Shafeshift for cheese by Adipson.exe", "0241777c2537fc5d077c05cde10bfa9f", 211164349),
 	GAME_ENTRY_EN("shapevillage", "Shape Village.exe", "7825fa980fcd058caadaf6d3377b1f78", 13575497),
@@ -8081,6 +8102,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("stairquest", "stair-quest.exe", "75494269745a5282be12278166cf662c", 33778514, "Special Edition"), // v2.0 itch.io Windows
 	GAME_ENTRY_EN_PLATFORM("stairquest", "ac2game.dat", "75494269745a5282be12278166cf662c", 33778514, "Special Edition"), // v2.0 itch.io Mac
 	GAME_ENTRY_EN_PLATFORM("stairquest", "stair-quest.ags", "535320876f2ef9ef066dfabc925f4e51", 31300418, "Special Edition"), // v2.0 itch.io Linux
+	GAME_ENTRY_EN_PLATFORM("stairquest", "stair-quest-2023-winter.ags", "b7ef8a1689fe2fa8bf52e21ce0d8670d", 9912782, "Winter 2023 Edition"), // v2.1.23 itch.io Windows
+	GAME_ENTRY_EN_PLATFORM("stairquest", "game.ags", "b7ef8a1689fe2fa8bf52e21ce0d8670d", 9912782, "Winter 2023 Edition"), // v2.1.23 itch.io Mac
 	GAME_ENTRY_EN("stanamespiepisode1", "NEW.exe", "f120690b506dd63cd7d1112ea6af2f77", 19194728),
 	GAME_ENTRY_EN("stansrevenge", "Gameisle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 915036),
 	GAME_ENTRY_LANG("starfreakers", "StarFreakers.exe", "f120690b506dd63cd7d1112ea6af2f77", 28073577, Common::FR_FRA),
