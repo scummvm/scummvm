@@ -124,6 +124,7 @@ public:
 	Object *objAt(Math::Vector2d pos);
 	void flashSelectableActor(int flash);
 	void stopTalking();
+	void walkFast(bool state = true);
 
 	Room *defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
@@ -178,12 +179,14 @@ public:
 	Object *_actor = nullptr;
 	Object *_followActor = nullptr;
 	Room *_room = nullptr;
-	float _time = 0.f; // time in seconds
+	float _time = 0.f;
 	Object *_noun1 = nullptr;
 	Object *_noun2 = nullptr;
 	UseFlag _useFlag;
 	HSQOBJECT _defaultObj;
 	bool _walkFastState = false;
+	bool _holdToMove = false;
+	float _nextHoldToMoveTime = 0.f;
 	int _frameCounter = 0;
 	Lighting *_lighting = nullptr;
 	Cutscene *_cutscene = nullptr;
@@ -198,9 +201,10 @@ public:
 		Math::Vector2d pos;
 		bool oldLeftDown = false;
 		bool leftDown = false;
+		int leftDownTime = 0;
 		bool oldRightDown = false;
 		bool rightDown = false;
-		float mouseDownTime = 0.f;
+		int doubleClick = false;
 
 		void update() {
 			oldLeftDown = leftDown;
