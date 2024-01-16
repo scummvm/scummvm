@@ -151,6 +151,26 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::showStringBox(const Common::StringArray &sa) {
+		// TODO: Naive and hardcoded implementation
+		int contentHeight = sa.size() * 10;
+		int contentWidth = g_engine->MeasureStrings(sa);
+		int borderWidth = 10;
+		int padding = 3;
+		int totalWidth = contentWidth + (borderWidth * padding) * 2;
+		int totalHeight = contentHeight + (borderWidth * padding) * 2;
+
+		drawStringBackground(50, 50, totalWidth, totalHeight);
+		// TODO range based
+		int lineOffset = borderWidth + padding;
+		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
+			renderString(50 + borderWidth + padding, lineOffset, *iter);
+			lineOffset += 10;
+		}
+
+		// TODO: Change cursor, stop animations, hide again
+	}
+
 	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
 		uint16 currentX = x;
 		uint16 currentY = y;
@@ -279,6 +299,8 @@ void View1::draw() {
 	DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
 	drawBackgroundAnimations(s);
 	renderString(200, 100, "Hello, world!");
+
+	DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 }
 
 bool View1::tick() {
