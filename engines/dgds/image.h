@@ -44,12 +44,14 @@ public:
 
 	void drawScreen(Common::String filename, Graphics::Surface &surface);
 	void loadBitmap(Common::String filename, int number);
-	void drawBitmap(int x, int y, Common::Rect &drawWin, Graphics::Surface &surface);
+	void drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface);
 
 	void loadPalette(Common::String filename);
 	void setPalette();
 	void clearPalette();
 	bool isLoaded() const { return _bmpData.getPixels() != nullptr; }
+	int16 width() const;
+	int16 height() const;
 
 private:
 	void loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);

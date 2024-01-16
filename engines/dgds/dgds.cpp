@@ -109,17 +109,29 @@ void readStrings(Common::SeekableReadStream *stream) {
 }
 void DgdsEngine::drawVCR(REQFileData &vcrRequestData) {
 	// TODO: Hardcoded
-	Common::Array<Common::SharedPtr<Gadget>> gadgets = vcrRequestData._requests[0]._gadgets;
+
+	Common::Array<Common::SharedPtr<Gadget>> gadgets = vcrRequestData._requests[1]._gadgets;
 	Graphics::Surface *dst = g_system->lockScreen();
+
+	vcrRequestData._requests[1].draw(dst);
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
-		if (gadget->_gadgetType == kGadgetButton)
+		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider)
 			gadget->draw(dst);
 	}
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
+}
+
+void DgdsEngine::loadCorners(const Common::String &filename, int numImgs) {
+	_corners.resize(numImgs);
+	for (int i = 0; i < numImgs; i++) {
+		Image *img = new Image(_resource, _decompressor);
+		img->loadBitmap(filename, i);
+		_corners[i].reset(img);
+	}
 }
 
 Common::Error DgdsEngine::run() {
@@ -163,6 +175,7 @@ Common::Error DgdsEngine::run() {
 		// Load the intro and play it for now.
 		interpIntro.load("TITLE1.ADS");
 		//interpIntro.load("INTRO.ADS");
+		loadCorners("DCORNERS.BMP", 29);
 
 	} else if (getGameId() == GID_CHINA) {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);

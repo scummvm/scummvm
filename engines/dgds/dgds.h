@@ -75,6 +75,7 @@ private:
 	GDSScene *_gdsScene;
 
 	FontManager *_fontManager;
+	Common::Array<Common::SharedPtr<Image>> _corners;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -92,6 +93,10 @@ public:
 	const SDSScene *getScene() const { return _scene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	void drawVCR(REQFileData &vcrRequestData);
+	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
+
+private:
+	void loadCorners(const Common::String &filename, int numImgs);
 };
 
 } // End of namespace Dgds

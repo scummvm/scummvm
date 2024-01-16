@@ -29,6 +29,7 @@
 
 #include "dgds/dgds.h"
 #include "dgds/font.h"
+#include "dgds/image.h"
 #include "dgds/includes.h"
 #include "dgds/request.h"
 #include "dgds/resource.h"
@@ -68,6 +69,7 @@ static const byte MenuBackgroundColors[] {
 	0x7A, 0x7B, 0x7A, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
 	0x71, 0x7B, 0x71, 0x71, 0x71, 0x71, 0x71, 0x71
 };
+
 
 RequestParser::RequestParser(ResourceManager *resman, Decompressor *decompressor) : DgdsParser(resman, decompressor) {
 }
@@ -299,9 +301,6 @@ Common::String Gadget::dump() const {
 void Gadget::draw(Graphics::Surface *dst) const {}
 
 void ButtonGadget::draw(Graphics::Surface *dst) const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const FontManager *fontman = engine->getFontMan();
-
 	// TODO: Bounds calculation here might depend on parent.
 
 	int16 x = _x + _parentX;
@@ -347,7 +346,7 @@ void ButtonGadget::draw(Graphics::Surface *dst) const {
 	dst->drawLine(x + 3, bottom - 3, right - 4, bottom - 3, ButtonColors[colOffset + 3]);
 
 	if (!_buttonName.empty()) {
-		const Font *font = fontman->getFont(FontManager::k6x6Font);
+		const Font *font = RequestData::getMenuFont();
 
 		// TODO: Depending on some flags, the game toggles " ON " to " OFF" at the
 		// end of the string.
@@ -372,9 +371,7 @@ void ButtonGadget::draw(Graphics::Surface *dst) const {
 			line1 = _buttonName;
 		}
 
-		// TODO: Check me: had to subtract 1 here to get the right y offset.
-		// Some difference from drawing code of original?
-		yoffset = y + yoffset / 2 - 1;
+		yoffset = y + yoffset / 2;
 		int lineWidth = font->getStringWidth(line1);
 		font->drawString(dst, line1, x + (_width - lineWidth) / 2 + 1, yoffset + 2, lineWidth, ButtonColors[colOffset]);
 
@@ -392,9 +389,7 @@ Common::String TextAreaGadget::dump() const {
 }
 
 void TextAreaGadget::draw(Graphics::Surface *dst) const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const FontManager *fontman = engine->getFontMan();
-	const Font *font = fontman->getFont(FontManager::k6x6Font);
+	const Font *font = RequestData::getMenuFont();
 	font->drawString(dst, _buttonName, _x + _parentX, _y + _parentY, 0, 0);
 }
 
@@ -427,9 +422,7 @@ static const char *_sliderLabelsForGadget(uint16 num) {
 }
 
 void SliderGadget::draw(Graphics::Surface *dst) const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const FontManager *fontman = engine->getFontMan();
-	const Font *font = fontman->getFont(FontManager::k6x6Font);
+	const Font *font = RequestData::getMenuFont();
 
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
@@ -441,7 +434,6 @@ void SliderGadget::draw(Graphics::Surface *dst) const {
 	const char *labels = _sliderLabelsForGadget(_gadgetNo);
 	int16 titleWidth = font->getStringWidth(title);
 
-	// TODO: Get the right color for this text?
 	font->drawString(dst, title, x + (_width - titleWidth) / 2, titley, titleWidth, 0);
 	int16 labelWidth = font->getStringWidth(labels);
 	font->drawString(dst, labels, x + (_width - labelWidth) / 2, y + 7, labelWidth, 0);
@@ -454,7 +446,11 @@ void SliderGadget::draw(Graphics::Surface *dst) const {
 	dst->drawLine(x2 + 1, y1, x2 + 1, y2, SliderColors[3]);
 	dst->drawLine(x, y, x2 - 1, y, SliderColors[4]);
 	dst->drawLine(x2 - 1, y + 1, x2 - 1, (y + _height) - 2, SliderColors[4]);
-	dst->fillRect(Common::Rect(x, y + 1, x + _width - 1, y + _height - 2), SliderColors[5]);
+	// This is not exactly what happens in the original, but gets the same result
+	Common::Rect fillrect = Common::Rect(x, y + 1, x + _width - 1, y + _height - 1);
+	dst->fillRect(fillrect, SliderColors[5]);
+	fillrect.grow(-1);
+	dst->fillRect(fillrect, SliderColors[6]);
 }
 
 Common::String ImageGadget::dump() const {
@@ -483,39 +479,156 @@ Common::String RequestData::dump() const {
 }
 
 void RequestData::draw(Graphics::Surface *dst) const {
-	drawBackground(dst);
+	int slidery = 0;
+	for (const auto &gadget : _gadgets) {
+		const SliderGadget *slider = dynamic_cast<const SliderGadget *>(gadget.get());
+		if (slider) {
+			slidery = MAX(slidery, slider->_y + slider->_height);
+		}
+	}
+
+	Common::String header;
+	if (!_textItemList.empty())
+		header = _textItemList[0]._txt.substr(1);
+
+	if (slidery)
+		drawBackgroundWithSliderArea(dst, slidery, header);
+	else
+		drawBackgroundNoSliders(dst, header);
 }
 
-void RequestData::drawBackground(Graphics::Surface *dst) const {
+/*static*/
+const Font *RequestData::getMenuFont() {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	return engine->getFontMan()->getFont(FontManager::kGameFont);
+}
+
+/*static*/
+const Image *RequestData::getCorner(int cornerNum) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	return engine->getUICorners()[cornerNum].get();
+}
+
+/*static*/
+void RequestData::drawCorners(Graphics::Surface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::Array<Common::SharedPtr<Image>> &allCorners = engine->getUICorners();
+
+	assert(allCorners.size() > startNum + 7);
+
+	const Common::SharedPtr<Image> *corners = allCorners.data() + startNum;
+	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	for (int xoff = x + corners[0]->width(); xoff < (x + width) - corners[2]->width(); xoff += corners[1]->width())
+		corners[1]->drawBitmap(xoff, y, screenRect, *dst);
+
+	for (int xoff = x + corners[6]->width(); xoff < (x + width) - corners[7]->width(); xoff += corners[6]->width())
+		corners[6]->drawBitmap(xoff, (y + height) - corners[6]->height(), screenRect, *dst);
+
+	for (int yoff = y + corners[0]->height(); yoff < (y + height) - corners[5]->height(); yoff += corners[3]->height()) {
+		corners[3]->drawBitmap(x, yoff, screenRect, *dst);
+	}
+
+	for (int yoff = y + corners[2]->height(); yoff < (y + height) - corners[7]->height(); yoff += corners[4]->height()) {
+		corners[4]->drawBitmap((x + width) - corners[4]->width(), yoff, screenRect, *dst);
+	}
+
+	corners[0]->drawBitmap(x, y, screenRect, *dst);
+	corners[2]->drawBitmap((x + width) - corners[2]->width(), y, screenRect, *dst);
+	corners[5]->drawBitmap(x, (y + height) - corners[5]->height(), screenRect, *dst);
+	corners[7]->drawBitmap((x + width) - corners[7]->width(), (y + height) - corners[7]->height(), screenRect, *dst);
+}
+
+void RequestData::drawHeader(Graphics::Surface *dst, int16 yoffset, const Common::String &header) const {
+	if (!header.empty()) {
+		const Font *font = getMenuFont();
+		int hwidth = font->getStringWidth(header);
+		int hheight = font->getFontHeight();
+		int hleft = _x + (_width - hwidth) / 2;
+		int hright = hleft + hwidth + 3;
+		int htop = _y + yoffset;
+		int hbottom = htop + hheight;
+
+		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, 0);
+		dst->drawLine(hleft - 3, htop, hright, htop, 0);
+		dst->drawLine(hright, htop + 1, hright, hbottom, 0);
+		dst->drawLine(hleft - 3, htop + 1, hleft - 3, hbottom, 15);
+		dst->drawLine(hleft - 2, hbottom, hleft + hwidth, hbottom, 15);
+	}
+}
+
+void RequestData::drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sliderHeight, const Common::String &header) const {
+	uint16 sliderBgHeight = sliderHeight + 18;
+	fillBackground(dst, _x, _y, _width, sliderBgHeight, 0);
+	fillBackground(dst, _x + 8, _y + sliderBgHeight, _width - 16, _height - sliderBgHeight, 8 - sliderBgHeight);
+	fillBackground(dst, _x + 9, _y + 8, _width - 18, sliderHeight + 2, 8);
+	fillBackground(dst, _x + 17, _y + 8 + sliderHeight + 2, _width - 34, _height - sliderBgHeight, 32 - sliderBgHeight);
+
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::Array<Common::SharedPtr<Image>> &corners = engine->getUICorners();
+	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	for (int xoff = _x + corners[0]->width(); xoff < (_x + _width) - corners[3]->width(); xoff += corners[2]->width()) {
+		corners[2]->drawBitmap(xoff, _y, screenRect, *dst);
+	}
+	for (int xoff = _x + 8 + corners[6]->width(); xoff < (_x + 8 + _width - 16) - corners[8]->width(); xoff += corners[7]->width()) {
+		corners[7]->drawBitmap(xoff, (_y + _height) - corners[7]->height(), screenRect, *dst);
+	}
+	for (int yoff = _y + corners[3]->height(); yoff < (_y + sliderBgHeight) - corners[10]->height(); yoff += corners[5]->height()) {
+		corners[5]->drawBitmap((_x + _width) - corners[5]->width(), yoff, screenRect, *dst);
+	}
+	for (int yoff = _y + corners[1]->height(); yoff < (_y + sliderBgHeight) - corners[9]->height(); yoff += corners[4]->height()) {
+		corners[4]->drawBitmap(_x, yoff, screenRect, *dst);
+	}
+	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[6]->height(); yoff += corners[4]->height()) {
+		corners[4]->drawBitmap(_x + 8, yoff, screenRect, *dst);
+	}
+	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[8]->height(); yoff += corners[5]->height()) {
+		corners[5]->drawBitmap((_x + 8 + _width - 16) - corners[5]->width(), yoff, screenRect, *dst);
+	}
+	corners[1]->drawBitmap(_x, _y, screenRect, *dst);
+	corners[3]->drawBitmap((_x + _width) - corners[3]->width(), _y, screenRect, *dst);
+	corners[6]->drawBitmap(_x + 8, (_y + _height) - corners[6]->height(), screenRect, *dst);
+	corners[8]->drawBitmap((_x + _width - 8) - corners[8]->width(), (_y + _height) - corners[8]->height(), screenRect, *dst);
+	corners[9]->drawBitmap(_x, (_y + sliderBgHeight) - corners[9]->height(), screenRect, *dst);
+	corners[10]->drawBitmap((_x + _width) - corners[10]->width(), (_y + sliderBgHeight) - corners[10]->height(), screenRect, *dst);
+
+	drawHeader(dst, 9, header);
+}
+
+
+void RequestData::drawBackgroundNoSliders(Graphics::Surface *dst, const Common::String &header) const {
+	fillBackground(dst, _x, _y, _width, _height, 0);
+	drawCorners(dst, 11, _x, _y, _width, _height);
+	drawHeader(dst, 4, header);
+}
+
+/*static*/
+void RequestData::fillBackground(Graphics::Surface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
 	bool detailHigh = true;
-	int startoffset = 0;
 	if (detailHigh) {
-		//g_videoMaskEnabled = true;
-		//g_vidMaskXMax = (x + width) - 1;
-		//g_vidMaskYMax = (y + height) - 1;
+		Graphics::Surface area = dst->getSubArea(Common::Rect(x, y, x + width, y + height));
 		while (startoffset < 0)
 			startoffset += ARRAYSIZE(MenuBackgroundColors);
 		startoffset = startoffset % ARRAYSIZE(MenuBackgroundColors);
 
 		int coloffset = startoffset;
-		for (int yoff = _x; yoff < (_x + _width); yoff++) {
-			dst->drawLine(yoff, _y, yoff + _height, _y + _height, MenuBackgroundColors[coloffset]);
+		for (int xoff = 0; xoff < width; xoff++) {
+			area.drawLine(xoff, 0, xoff + height, height, MenuBackgroundColors[coloffset]);
 			coloffset++;
 			if (coloffset >= ARRAYSIZE(MenuBackgroundColors))
 				coloffset = 0;
 		}
 		// TODO: Game positions mouse in middle of menu here?
 		coloffset = startoffset;
-		for (int yoff = _y; yoff < (_y + _height); yoff++) {
-			dst->drawLine(_x, yoff, _x + _height, yoff + _height, MenuBackgroundColors[coloffset]);
+		for (int yoff = 0; yoff < height; yoff++) {
+			area.drawLine(0, yoff, height, yoff + height, MenuBackgroundColors[coloffset]);
 			coloffset--;
 			if (coloffset < 0)
 				coloffset = ARRAYSIZE(MenuBackgroundColors) - 1;
 		}
-		//g_vidMaskYMax = g_screenHeight - 1;
-		//g_vidMaskXMax = g_screenWidth - 1;
 	} else {
-		dst->fillRect(Common::Rect(_x, _y, _width, _height), FallbackColors[0]);
+		dst->fillRect(Common::Rect(x, y, width, height), FallbackColors[0]);
 	}
 }
 
