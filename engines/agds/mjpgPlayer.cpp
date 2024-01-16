@@ -96,13 +96,25 @@ const Graphics::Surface *MJPGPlayer::decodeFrame() {
 void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	auto *surface = decodeFrame();
 	if (surface) {
-		Graphics::Surface *converted = surface->convertTo(engine.pixelFormat());
-		Common::Point dst((backbuffer.w - converted->w) / 2, (backbuffer.h - converted->h) / 2);
-		Common::Rect srcRect(converted->getRect());
+		Graphics::Surface *scaled;
+		{
+			Graphics::Surface *converted = surface->convertTo(engine.pixelFormat());
+			auto scaleW = 1.0f * backbuffer.w / converted->w;
+			auto scaleH = 1.0f * backbuffer.h / converted->h;
+			auto scale = MIN(scaleW, scaleH);
+
+			scaled = converted->scale(converted->w * scale, converted->h * scale);
+			converted->free();
+			delete converted;
+		}
+
+		Common::Point dst((backbuffer.w - scaled->w) / 2, (backbuffer.h - scaled->h) / 2);
+		Common::Rect srcRect(scaled->getRect());
+		debug("scaled %u %d", scaled->w, scaled->h);
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
-			backbuffer.copyRectToSurface(*converted, dst.x, dst.y, srcRect);
-		converted->free();
-		delete converted;
+			backbuffer.copyRectToSurface(*scaled, dst.x, dst.y, srcRect);
+		scaled->free();
+		delete scaled;
 	}
 
 	if (_subtitles.empty())
