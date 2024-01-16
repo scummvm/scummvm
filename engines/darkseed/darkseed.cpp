@@ -353,8 +353,62 @@ void DarkseedEngine::handleInput() {
 					// TODO complete at final destination logic. 2022:879d
 				}
 				if (!isPlayingAnimation_maybe) {
-					_player->_position = _player->_walkTarget;
-					// TODO handle walking movement here. 2022:88ca
+					int walkXDelta = 0;
+					int walkYDelta = 0;
+					int local_a = scaledWalkSpeed_maybe * 16;
+					if ( _player->_direction == 0 || _player->_direction == 2) {
+						local_a = local_a / 3;
+					}
+					if (local_a < 1000) {
+						local_a = 1000;
+					}
+					if (yDistToTarget < xDistToTarget) {
+						walkXDelta = local_a;
+						if (yDistToTarget == 0) {
+							walkYDelta = 0;
+						} else {
+							walkYDelta = (local_a * yDistToTarget) / xDistToTarget;
+						}
+					} else {
+						walkYDelta = local_a;
+						if (xDistToTarget == 0) {
+							walkXDelta = 0;
+						} else {
+							walkXDelta = (local_a * xDistToTarget) / yDistToTarget;
+						}
+					}
+					if (walkXDelta != 0) {
+						walkXDelta = walkXDelta / 1000;
+					}
+					if (walkYDelta != 0) {
+						walkYDelta = walkYDelta / 1000;
+					}
+					if (!_room->canWalkAtLocation(_player->_walkTarget.x, _player->_walkTarget.y) || _player->isAtWalkTarget()) {
+						// TODO 2022:8b62
+					} else {
+						if (_player->_walkTarget.x < _player->_position.x) {
+							if (_player->_position.x - _player->_walkTarget.x < walkXDelta) {
+								walkXDelta = _player->_position.x - _player->_walkTarget.x;
+							}
+							_player->_position.x -= walkXDelta;
+						} else if (_player->_position.x < _player->_walkTarget.x) {
+							if (_player->_walkTarget.x - _player->_position.x < walkXDelta) {
+								walkXDelta = _player->_walkTarget.x - _player->_position.x;
+							}
+							_player->_position.x += walkXDelta;
+						}
+						if (_player->_walkTarget.y < _player->_position.y) {
+							if (_player->_position.y - _player->_walkTarget.y < walkYDelta) {
+								walkYDelta = _player->_position.y - _player->_walkTarget.y;
+							}
+							_player->_position.y -= walkYDelta;
+						} else if (_player->_position.y < _player->_walkTarget.y) {
+							if (_player->_walkTarget.y - _player->_position.y < walkYDelta) {
+								walkYDelta = _player->_walkTarget.y - _player->_position.y;
+							}
+							_player->_position.y += walkYDelta;
+						}
+					}
 				}
 //				else if (_isLeftMouseClicked) {
 //					// TODO do actions here.
@@ -390,6 +444,7 @@ void DarkseedEngine::handlePointerAction() {
 		}
 	}
 }
+
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
