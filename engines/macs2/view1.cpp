@@ -130,6 +130,7 @@ namespace Macs2 {
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
 			AnimFrame &currentFrame = current.Frames[current.FrameIndex];
 			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s);
+			renderString(current.X, current.Y, Common::String::format("%u", i));
 		}
 	}
 
