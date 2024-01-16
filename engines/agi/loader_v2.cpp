@@ -281,11 +281,12 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
 
-		if (data != nullptr) {
-			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
-			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+		// "data" is freed by objects created by createFromRawResource on success
+		_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+		if (_vm->_game.sounds[resourceNr] != nullptr) {
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
 		} else {
+			free(data);
 			ec = errBadResource;
 		}
 		break;
