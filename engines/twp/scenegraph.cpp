@@ -425,6 +425,8 @@ Common::String InputState::getCursorName() const {
 		return "cursor_back";
 	case CursorShape::Pause:
 		return "cursor_pause";
+	case CursorShape::Normal:
+		return "cursor";
 	}
 	return "cursor";
 }

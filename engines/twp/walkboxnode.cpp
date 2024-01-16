@@ -26,7 +26,7 @@ namespace Twp {
 
 WalkboxNode::WalkboxNode() : Node("Walkbox") {
 	_zOrder = -1000;
-	_mode = WalkboxMode::Merged;
+	_mode = WalkboxMode::None;
 }
 
 void WalkboxNode::drawCore(Math::Matrix4 trsf) {
@@ -39,18 +39,16 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 			transf.translate(Math::Vector3d(-pos.getX(), pos.getY(), 0.f));
 			for (int i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
 				Walkbox &wb = g_engine->_room->_walkboxes[i];
-				if (wb.isVisible()) {
-					Color color = wb.isVisible() ? Color(0.f, 1.f, 0.f) : Color(1.f, 0.f, 0.f);
-					Common::Array<Vertex> vertices;
-					for (int j = 0; j < wb.getPoints().size(); j++) {
-						Math::Vector2d p = wb.getPoints()[j];
-						Vertex v;
-						v.pos = p;
-						v.color = color;
-						vertices.push_back(v);
-					}
-					g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
+				Color color = wb.isVisible() ? Color(0.f, 1.f, 0.f) : Color(1.f, 0.f, 0.f);
+				Common::Array<Vertex> vertices;
+				for (int j = 0; j < wb.getPoints().size(); j++) {
+					Math::Vector2d p = wb.getPoints()[j];
+					Vertex v;
+					v.pos = p;
+					v.color = color;
+					vertices.push_back(v);
 				}
+				g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
 			}
 		} break;
 		case WalkboxMode::Merged: {
@@ -99,7 +97,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	Color yellow(1.f, 1.f, 0.f);
 	Object *actor = g_engine->_actor;
 	// draw actor path
-	if (actor && actor->getWalkTo()) {
+	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor && actor->getWalkTo()) {
 		WalkTo *walkTo = (WalkTo *)actor->getWalkTo();
 		const Common::Array<Math::Vector2d> &path = walkTo->getPath();
 		if (path.size() > 0) {
@@ -124,8 +122,8 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	}
 
 	// draw graph nodes
-	const Graph *graph = g_engine->_room->_pathFinder.getGraph();
-	if (graph) {
+	const Twp::Graph *graph = g_engine->_room->_pathFinder.getGraph();
+	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && graph) {
 		for (int i = 0; i < graph->_concaveVertices.size(); i++) {
 			Math::Vector2d v = graph->_concaveVertices[i];
 			Math::Matrix4 t;
@@ -134,20 +132,22 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 			g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), yellow);
 		}
 
-		// for (int i = 0; i < graph->_edges.size(); i++) {
-		// 	const Common::Array<GraphEdge> &edges = graph->_edges[i];
-		// 	for (int j = 0; j < edges.size(); j++) {
-		// 		const GraphEdge &edge = edges[j];
-		// 		Math::Vector2d p1 = g_engine->roomToScreen(graph->_nodes[edge.start]);
-		// 		Math::Vector2d p2 = g_engine->roomToScreen(graph->_nodes[edge.to]);
-		// 		Vertex vertices[] = {Vertex{.pos = p1, .color = Color()}, Vertex{.pos = p2, .color = Color()}};
-		// 		g_engine->getGfx().drawLines(&vertices[0], 2);
-		// 	}
-		// }
+		if ((_mode == PathMode::All)) {
+			for (int i = 0; i < graph->_edges.size(); i++) {
+				const Common::Array<GraphEdge> &edges = graph->_edges[i];
+				for (int j = 0; j < edges.size(); j++) {
+					const GraphEdge &edge = edges[j];
+					Math::Vector2d p1 = g_engine->roomToScreen(graph->_nodes[edge.start]);
+					Math::Vector2d p2 = g_engine->roomToScreen(graph->_nodes[edge.to]);
+					Vertex vertices[] = {Vertex{.pos = p1, .color = Color()}, Vertex{.pos = p2, .color = Color()}};
+					g_engine->getGfx().drawLines(&vertices[0], 2);
+				}
+			}
+		}
 	}
 
 	// draw path from actor to mouse position
-	if (actor) {
+	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor) {
 		Math::Vector2d pos = g_engine->roomToScreen(actor->_node->getPos()) - Math::Vector2d(2.f, 2.f);
 		Math::Matrix4 t;
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
