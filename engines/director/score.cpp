@@ -400,22 +400,21 @@ void Score::update() {
 	for (uint ch = 0; ch < _channels.size(); ch++)
 		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
 
-	bool frameChanged = false;
+	uint32 nextFrameNumberToLoad = _curFrameNumber;
 
 	if (!_vm->_playbackPaused) {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
-			_curFrameNumber = _nextFrame;
+			nextFrameNumberToLoad = _nextFrame;
 		}
 		else if (!_window->_newMovieStarted)
-			_curFrameNumber++;
-		frameChanged = true;
+			nextFrameNumberToLoad = (_curFrameNumber+1);
 	}
 
 	_nextFrame = 0;
 
-	if (_curFrameNumber >= getFramesNum()) {
+	if (nextFrameNumberToLoad >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
 		if (!window->_movieStack.empty()) {
 			MovieReference ref = window->_movieStack.back();
@@ -427,8 +426,7 @@ void Score::update() {
 				processFrozenScripts();
 				return;
 			}
-
-			_curFrameNumber = ref.frameI;
+			nextFrameNumberToLoad = ref.frameI;
 		} else {
 			if (debugChannelSet(-1, kDebugNoLoop)) {
 				_playState = kPlayStopped;
@@ -436,21 +434,21 @@ void Score::update() {
 				return;
 			}
 
-			_curFrameNumber = 1;
+			nextFrameNumberToLoad = 1;
 		}
-		frameChanged = true;
 	}
 
 	if (_labels != nullptr) {
 		for (auto &i : *_labels) {
-			if (i->number == _curFrameNumber) {
-				_currentLabel = _curFrameNumber;
+			if (i->number == nextFrameNumberToLoad) {
+				_currentLabel = nextFrameNumberToLoad;
 			}
 		}
 	}
 
-	if (frameChanged) {
-		loadFrame(_curFrameNumber, true);
+	if (_curFrameNumber != nextFrameNumberToLoad) {
+		// this updates _curFrameNumber
+		loadFrame(nextFrameNumberToLoad, true);
 	}
 
 	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
@@ -1489,7 +1487,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 }
 
 bool Score::loadFrame(int frameNum, bool loadCast) {
-	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld", frameNum, _framesStream->pos());
+	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld, current frame number: %d", frameNum, _framesStream->pos(), _curFrameNumber);
 
 	int sourceFrame = _curFrameNumber;
 	int targetFrame = frameNum;
