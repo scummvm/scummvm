@@ -649,6 +649,7 @@ Common::Error FreescapeEngine::run() {
 		endGame = checkIfGameEnded();
 	}
 
+	_eventManager->clearExitEvents();
 	return Common::kNoError;
 }
 
