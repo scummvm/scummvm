@@ -61,8 +61,8 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_dialog._tgt.reset(new EngineDialogTarget());
 	sq_resetobject(&_defaultObj);
 	_screenScene.setName("Screen");
-	// _scene.addChild(&_walkboxNode);
-	// _screenScene.addChild(&_pathNode);
+	_scene.addChild(&_walkboxNode);
+	_screenScene.addChild(&_pathNode);
 	_screenScene.addChild(&_hotspotMarker);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
@@ -695,6 +695,7 @@ Common::Error TwpEngine::run() {
 	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
 
 	static int speed = 1;
+	static bool control = false;
 
 	// Simple event handling loop
 	Common::Event e;
@@ -780,9 +781,38 @@ Common::Error TwpEngine::run() {
 				case Common::KEYCODE_RIGHT:
 					speed = MIN(speed + 1, 8);
 					break;
+				case Common::KEYCODE_LCTRL:
+					control = true;
+					break;
 				default:
 					break;
 				}
+				break;
+			case Common::EVENT_KEYUP:
+				switch (e.kbd.keycode) {
+				case Common::KEYCODE_LCTRL:
+					control = false;
+					break;
+				case Common::KEYCODE_w:
+					if (control) {
+						WalkboxMode mode = (WalkboxMode)(((int)_walkboxNode.getMode() + 1) % 3);
+						debug("set walkbox mode to: %s", (mode == WalkboxMode::Merged ? "merged" : mode == WalkboxMode::All ? "all"
+																															: "none"));
+						_walkboxNode.setMode(mode);
+					}
+					break;
+				case Common::KEYCODE_g:
+					if (control) {
+						PathMode mode = (PathMode)(((int)_pathNode.getMode() + 1) % 3);
+						debug("set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
+																													 : "none"));
+						_pathNode.setMode(mode);
+					}
+					break;
+				default:
+					break;
+				}
+				break;
 			case Common::EVENT_MOUSEMOVE:
 				_cursor.pos = Math::Vector2d(e.mouse.x, e.mouse.y);
 				break;

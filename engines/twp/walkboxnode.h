@@ -27,14 +27,17 @@
 namespace Twp {
 
 enum class WalkboxMode {
-    None,
-    Merged,
-    All
+	None,
+	Merged,
+	All
 };
 
 class WalkboxNode : public Node {
 public:
 	WalkboxNode();
+
+	void setMode(WalkboxMode mode) { _mode = mode; }
+	WalkboxMode getMode() const { return _mode; }
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override;
@@ -43,13 +46,25 @@ private:
 	WalkboxMode _mode;
 };
 
+enum class PathMode {
+	None,
+	GraphMode,
+	All
+};
+
 class PathNode : public Node {
 public:
 	PathNode();
 
+	void setMode(PathMode mode) { _mode = mode; }
+	PathMode getMode() const { return _mode; }
+
 private:
 	Math::Vector2d fixPos(Math::Vector2d pos);
 	virtual void drawCore(Math::Matrix4 trsf) override;
+
+private:
+	PathMode _mode;
 };
 
 } // namespace Twp

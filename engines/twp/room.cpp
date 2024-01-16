@@ -132,7 +132,7 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 		ClipperLib::Clipper c;
 		c.AddPaths(subjects, ClipperLib::ptSubject, true);
 		c.AddPaths(clips, ClipperLib::ptClip, true);
-		c.Execute(ClipperLib::ClipType::ctUnion, solutions, ClipperLib::pftEvenOdd);
+		c.Execute(ClipperLib::ClipType::ctDifference, solutions, ClipperLib::pftEvenOdd);
 
 		for (int i = 0; i < solutions.size(); i++) {
 			result.push_back(toWalkbox(solutions[i]));
