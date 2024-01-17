@@ -2,7 +2,7 @@
 
 set -e
 
-export KOS32_SDK_DIR=$HOME/sdk
+export KOS32_SDK_DIR=$HOME/kolibrios/contrib/sdk
 export KOS32_AUTOBUILD=$HOME/autobuild
 
 # Use plugins for both engines and detection as KolibriOS has a limit per executable module
