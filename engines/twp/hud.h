@@ -24,6 +24,7 @@
 #include "twp/scenegraph.h"
 
 #define NUMVERBS 9
+#define MAX_VERBS 22
 #define NUMACTORS 6
 
 #ifndef TWP_HUD_H
@@ -63,7 +64,7 @@ struct Verb {
 struct ActorSlot {
 public:
 	VerbUiColors verbUiColors;
-	Verb verbs[22];
+	Verb verbs[MAX_VERBS];
 	bool selectable = false;
 	Object *actor = nullptr;
 
@@ -71,7 +72,7 @@ public:
 	ActorSlot();
 
 	Verb *getVerb(int id) {
-		for (int i = 0; i < 22; i++) {
+		for (int i = 0; i < MAX_VERBS; i++) {
 			if (verbs[i].id.id == id) {
 				return &verbs[i];
 			}

@@ -75,7 +75,7 @@ DialogConditionState CondStateVisitor::createState(int line, DialogConditionMode
 
 DialogConditionState::DialogConditionState() {}
 
-DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String& k, const Common::String& dlg, int ln) 
+DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String& k, const Common::String& dlg, int ln)
 : mode(m), actorKey(k), dialog(dlg), line(ln) {
 }
 
@@ -195,7 +195,7 @@ void Dialog::choose(int choice) {
 }
 
 void Dialog::choose(DialogSlot *slot) {
-	if (slot) {
+	if (slot && slot->_isValid) {
 		sqcall("onChoiceClick");
 		for (int i = 0; i < slot->_stmt->_conds.size(); i++) {
 			YCond *cond = slot->_stmt->_conds[i];

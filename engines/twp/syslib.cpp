@@ -614,7 +614,17 @@ static SQInteger microTime(HSQUIRRELVM v) {
 }
 
 static SQInteger moveCursorTo(HSQUIRRELVM v) {
-	warning("TODO: moveCursorTo: not implemented");
+	int x, y;
+	if (SQ_FAILED(sqget(v, 2, x)))
+		return sq_throwerror(v, "Failed to get x");
+	if (SQ_FAILED(sqget(v, 3, y)))
+		return sq_throwerror(v, "Failed to get y");
+	float t;
+	if (SQ_FAILED(sqget(v, 4, t)))
+		return sq_throwerror(v, "Failed to get time");
+
+	g_engine->_cursor.pos = Math::Vector2d(x, y);
+	// TODO: use time
 	return 0;
 }
 
@@ -952,6 +962,7 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "BUTTON_BACK", BUTTON_BACK);
 	regConst(v, "BUTTON_MOUSE_LEFT", BUTTON_MOUSE_LEFT);
 	regConst(v, "BUTTON_MOUSE_RIGHT", BUTTON_MOUSE_RIGHT);
+	regConst(v, "WAITING_FOR_CHOICE", 2);
 	regConst(v, "PLATFORM", 1); // TODO: choose the right platform
 }
 
