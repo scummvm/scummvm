@@ -5157,14 +5157,16 @@ if test "$_vorbis" = auto ; then
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	if test "$_ogg" = yes ; then
-		cc_check `pkg-config --cflags --libs ogg vorbis vorbisfile` && _vorbis=yes
+		cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis -logg && _vorbis=yes
 	else
-		cc_check `pkg-config --cflags --libs vorbis vorbisfile` && _vorbis=yes
+		cc_check $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis && _vorbis=yes
 	fi
 fi
 if test "$_vorbis" = yes ; then
-	append_var LIBS "`pkg-config --libs vorbis vorbisfile`"
-	append_var LIBS "`pkg-config --cflags vorbis vorbisfile`"
+	append_var LIBS "$VORBIS_LIBS -lvorbisfile -lvorbis"
+	append_var INCLUDES "$VORBIS_CFLAGS"
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
@@ -5268,14 +5270,16 @@ int main(void) {
 }
 EOF
 	if test "$_ogg" = yes ; then
-		cc_check `pkg-config --cflags --libs flac ogg` && _flac=yes
+		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lFLAC -logg && _flac=yes
 	else
-		cc_check `pkg-config --cflags --libs flac` && _flac=yes
+		cc_check $FLAC_CFLAGS $FLAC_LIBS \
+			-lFLAC && _flac=yes
 	fi
 fi
 if test "$_flac" = yes ; then
-	append_var LIBS "`pkg-config --libs flac`"
-	append_var INCLUDES "`pkg-config --cflags flac`"
+	append_var LIBS "$FLAC_LIBS -lFLAC"
+	append_var INCLUDES "$FLAC_CFLAGS"
 fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
