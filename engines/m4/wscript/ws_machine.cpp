@@ -1254,7 +1254,7 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 }
 
 void sendWSMessage(int32 val1, machine *recv, int32 val2, int32 val3, int32 val4,
-		int32 trigger, int val5, int32 val6, int32 val7, int32 val8) {
+	int32 trigger, int32 val5, int32 val6, int32 val7, int32 val8) {
 	if (!trigger)
 		trigger = -1;
 
