@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-16 18:42+0000\n"
+"PO-Revision-Date: 2024-01-17 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2430,39 +2430,36 @@ msgid "Connect your cloud storage account"
 msgstr "Konektatu zure laino biltegiratze kontua"
 
 #: gui/options.cpp:2749
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Gehigarriak:"
+msgstr "/root/ bidea:"
 
 #: gui/options.cpp:2749 gui/options.cpp:2751 gui/options.cpp:2752
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Zure gordetako partidak non gordeko diren zehazten du"
+msgstr ""
+"Aukeratu zein direktorio agertuko den Fitxategi Kudeatzailean /root/ gisa"
 
 #: gui/options.cpp:2751
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Gehigarriak:"
+msgstr "/root/ bidea:"
 
 #: gui/options.cpp:2757
-#, fuzzy
 msgid "Server's port:"
-msgstr "Zerbitzaria:"
+msgstr "Zerbitzari portua:"
 
 #: gui/options.cpp:2757
 msgid "Port for server to use"
-msgstr ""
+msgstr "Zerbitzariak darabilen portua"
 
 #: gui/options.cpp:2762
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Jarri martxan fitxategiak kudeatzeko zerbitzaria (sare berdinean)."
 
 #: gui/options.cpp:2763
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Ezarpen leihoa itxita zerbitzaria geldituko da."
 
 #: gui/options.cpp:2765
 msgid "Run server to manage files with browser (in the same network)."
