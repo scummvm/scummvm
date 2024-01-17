@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "m4/burger/vars.h"
@@ -119,7 +120,7 @@ void Vars::main_cold_data_init() {
 		break;
 
 	case WHOLE_GAME:
-		_game.setRoom(g_engine->autosaveExists() ? 903 : 951);
+		_game.setRoom(ConfMan.getBool("seen_intro") || g_engine->savesExist() ? 903 : 951);
 		break;
 	}
 
