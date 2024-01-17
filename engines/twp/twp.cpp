@@ -154,8 +154,6 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	actor = !actor ? g_engine->_actor : actor;
 	if ((verbId.id <= 0) || (verbId.id > 13) || (!noun1) || (!actor))
 		return false;
-	// TODO
-	// if (a?._verb_tid) stopthread(actor._verb_tid)
 
 	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory() ? "YES" : "NO", noun1->isTouchable() ? "YES" : "NO", verbNoWalkTo(verbId, noun1) ? "YES" : "NO");
 
@@ -348,7 +346,6 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 				result.push_back(actorSwitcherSlot(slot));
 		}
 
-		// TODO: showOptions
 		// add gear icon
 		result.push_back(ActorSwitcherSlot("icon_gear", Color(0.f, 0.f, 0.f), Color(0.8f, 0.8f, 0.8f), showOptions));
 	}

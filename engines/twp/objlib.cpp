@@ -885,10 +885,9 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, verb)))
 		return sq_throwerror(v, "failed to get verb");
 
-	// int verbId = verb;
-	if (!g_engine->_actor) {
+	if (g_engine->_actor) {
 		ActorSlot *slot = g_engine->_hud.actorSlot(g_engine->_actor);
-		for (int i = 0; i < 22; i++) {
+		for (int i = 0; i < MAX_VERBS; i++) {
 			Verb *vb = &slot->verbs[i];
 			if (vb->id.id == verb) {
 				if (sqrawexists(obj->_table, vb->fun)) {

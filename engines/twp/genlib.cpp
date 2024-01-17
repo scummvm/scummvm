@@ -317,7 +317,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		ActorSlot *actorSlot = g_engine->_hud.actorSlot(g_engine->_actor);
 		if (!actorSlot)
 			return 0;
-		for (int i = 1; i < 22; i++) {
+		for (int i = 1; i < MAX_VERBS; i++) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
 				SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
@@ -391,7 +391,7 @@ static SQInteger incutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger indialog(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_dialog.getState() != DialogState::None);
+	sqpush(v, (int)g_engine->_dialog.getState());
 	return 1;
 }
 
@@ -548,8 +548,8 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 		int choice;
 		if (SQ_FAILED(sqget(v, 3, choice)))
 			return sq_throwerror(v, "Failed to get choice");
-		// TODO choose(choice)
-		warning("pushSentence with VERB_DIALOG not implemented");
+		// use pushSentence with VERB_DIALOG
+		g_engine->_dialog.choose(choice);
 		return 0;
 	}
 
