@@ -80,7 +80,7 @@ public:
 protected:
 	DgdsEngine *_vm;
 
-	Dialogue _text;
+	Dialogue *_text;
 	TTMData _scriptData;
 	TTMState _state;
 };

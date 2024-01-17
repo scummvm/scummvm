@@ -91,6 +91,7 @@ public:
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
+	SDSScene *getScene() { return _scene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	void drawVCR(REQFileData &vcrRequestData);
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
