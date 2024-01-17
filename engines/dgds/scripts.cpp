@@ -42,7 +42,7 @@
 
 namespace Dgds {
 
-TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
+TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _text(nullptr) {}
 
 bool TTMInterpreter::load(const Common::String &filename) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
@@ -188,18 +188,9 @@ bool TTMInterpreter::run() {
 			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
 			_vm->getTopBuffer().fillRect(bmpArea, 0);
 
-			if (!_text.str.empty()) {
-				Common::StringArray lines;
-				const Font *fnt = _vm->getFontMan()->getFont(FontManager::kGameFont);
-				const int h = fnt->getFontHeight();
-
-				fnt->wordWrapText(_text.str, SCREEN_HEIGHT, lines);
-				Common::Rect r(Common::Point(_text.rect.x, _text.rect.y), _text.rect.width, _text.rect.height);
-				_vm->_resData.fillRect(r, 15);
-				for (uint i = 0; i < lines.size(); i++) {
-					const int w = fnt->getStringWidth(lines[i]);
-					fnt->drawString(&_vm->_resData, lines[i], _text.rect.x, _text.rect.y + 1 + i * h, w, 0);
-				}
+			if (_text) {
+				_text->draw(_vm->_resData.surfacePtr(), 1);
+				_text->draw(_vm->_resData.surfacePtr(), 4);
 			}
 		} break;
 
@@ -238,16 +229,16 @@ bool TTMInterpreter::run() {
 			debug("SHOW SCENE TEXT: %u", ivals[0]);
 			_state.scene = ivals[0];
 
-			const Common::Array<Dialogue> dialogues = _vm->getScene()->getLines();
-			_text.str.clear();
-			for (const Dialogue &dialogue: dialogues) {
-				if (dialogue.num == _state.scene)
-					_text = dialogue;
+			Common::Array<Dialogue> &dialogues = _vm->getScene()->getLines();
+			_text = nullptr;
+			for (Dialogue &dialogue: dialogues) {
+				if (dialogue._num == _state.scene)
+					_text = &dialogue;
 				// HACK to get Dragon intro working
-				if (_text.str.empty() && dialogue.num == _state.scene + 14)
-					_text = dialogue;
+				if (!_text && dialogue._num == _state.scene + 14)
+					_text = &dialogue;
 			}
-			if (!_text.str.empty())
+			if (_text && !_text->_str.empty())
 				_state.delay += 1500;
 			continue;
 		}

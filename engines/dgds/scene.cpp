@@ -23,12 +23,149 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/rect.h"
 
+#include "graphics/surface.h"
+#include "graphics/primitives.h"
+
+#include "dgds/dgds.h"
 #include "dgds/includes.h"
 #include "dgds/resource.h"
 #include "dgds/scene.h"
+#include "dgds/font.h"
 
 namespace Dgds {
+
+
+void Dialogue::draw(Graphics::Surface *dst, int mode) {
+	switch (_frameType) {
+	case 1: return drawType1(dst, mode);
+	case 2: return drawType2(dst, mode);
+	case 3: return drawType3(dst, mode);
+	case 4: return drawType4(dst, mode);
+	default: error("unexpected frame type %d for dialog %d", _frameType, _num);
+	}
+}
+
+static void _drawPixel(int x, int y, int color, void *data) {
+	Graphics::Surface *surface = (Graphics::Surface *)data;
+
+	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
+}
+
+
+//  box with simple frame
+void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
+	//if (!_field15_0x22)
+	//	return;
+	if (stage == 1) {
+		int x = _rect.x;
+		int y = _rect.y;
+		int w = _rect.width;
+		int h = _rect.height;
+
+		// TODO: Is this right?
+		dst->fillRect(Common::Rect(x, y, x + w, y + h), _bgColor);
+		dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
+		/*
+		int uVar1 = _field15_0x22;
+		*(int *)(uVar1 + 2) = x + 3;
+		*(int *)(uVar1 + 4) = y + 3;
+		*(int *)(uVar1 + 6) = width + -6;
+		*(int *)(uVar1 + 8) = height + -6; */
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else {
+		drawStage4(dst);
+	}
+}
+
+// box with fancy frame and optional title (everything before ":")
+void Dialogue::drawType2(Graphics::Surface *dst, int stage) {
+	// TODO: Implement me properly.
+	Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
+	dst->fillRect(drawRect, _bgColor);
+}
+
+// comic baloon style box
+void Dialogue::drawType3(Graphics::Surface *dst, int stage) {
+	// TODO: Implement me properly.
+	Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
+	dst->fillRect(drawRect, _bgColor);
+}
+
+// ellipse
+void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
+	if (stage == 1) {
+		int x = _rect.x;
+		int y = _rect.y;
+		int w = _rect.width;
+		int h = _rect.height;
+
+		int midy = (h - 1) / 2;
+		//int radius = (midy * 5) / 4;
+
+		byte fillcolor;
+		byte fillbgcolor;
+		if (!(_flags & 1)) {
+			fillcolor = 0;
+			fillbgcolor = 15;
+		} else {
+			fillcolor = _fontColor;
+			fillbgcolor = _bgColor;
+		}
+
+		// This is not exactly the same as the original - might need some work to get pixel-perfect
+		Common::Rect drawRect(x, y, x + w, y + h);
+		Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, _drawPixel, dst);
+		Graphics::drawRoundRect(drawRect, midy, fillcolor, false, _drawPixel, dst);
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else {
+		drawStage4(dst);
+	}
+}
+
+void Dialogue::drawStage2(Graphics::Surface *dst) {
+	// TODO: various text wrapping and alignment calculations happen here.
+}
+
+void Dialogue::drawStage3(Graphics::Surface *dst) {
+	// TODO: various text wrapping and alignment calculations happen here.
+}
+
+void Dialogue::drawStage4(Graphics::Surface *dst) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const FontManager *fontman = engine->getFontMan();
+	FontManager::FontType fontType = FontManager::k6x6Font;
+	if (_fontSize == 1)
+		fontType = FontManager::k8x8Font;
+	else if (_fontSize == 3)
+		fontType = FontManager::k4x5Font;
+	const Font *font = fontman->getFont(fontType);
+
+	// TODO: some more text calcuations happen here.
+	// This is where we actually draw the text.
+	// For now do the simplest wrapping.
+	Common::StringArray lines;
+	const int h = font->getFontHeight();
+	font->wordWrapText(_str, _rect.width, lines);
+
+	int ystart = _rect.y + (_rect.height - lines.size() * h) / 2;
+	for (uint i = 0; i < lines.size(); i++) {
+		//const int w = font->getStringWidth(lines[i]);
+		font->drawString(dst, lines[i], _rect.x, ystart + i * h, _rect.width, _fontColor, Graphics::kTextAlignCenter);
+	}
+
+}
+
+
+// //////////////////////////////////// //
 
 Scene::Scene() : _magic(0) {
 }
@@ -142,52 +279,54 @@ bool Scene::readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneSt
 
 
 bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const {
+	// Some data on this format here https://www.oldgamesitalia.net/forum/index.php?showtopic=24055&st=25&p=359214&#entry359214
+
 	list.resize(s->readUint16LE());
 	for (Dialogue &dst : list) {
-		dst.num = s->readUint16LE();
-		dst.rect.x = s->readUint16LE();
-		dst.rect.y = s->readUint16LE();
-		dst.rect.width = s->readUint16LE();
-		dst.rect.height = s->readUint16LE();
-		dst.bgColor = s->readUint16LE();
-		dst.fontColor = s->readUint16LE(); // 0 = black, 0xf = white
+		dst._num = s->readUint16LE();
+		dst._rect.x = s->readUint16LE();
+		dst._rect.y = s->readUint16LE();
+		dst._rect.width = s->readUint16LE();
+		dst._rect.height = s->readUint16LE();
+		dst._bgColor = s->readUint16LE();
+		dst._fontColor = s->readUint16LE(); // 0 = black, 0xf = white
 		if (isVersionUnder(" 1.209")) {
-			dst.field7_0xe = dst.bgColor;
-			dst.field8_0x10 = dst.fontColor;
+			dst._field7_0xe = dst._bgColor;
+			dst._field8_0x10 = dst._fontColor;
 		} else {
-			dst.field7_0xe = s->readUint16LE();
-			dst.field8_0x10 = s->readUint16LE();
+			dst._field7_0xe = s->readUint16LE();
+			dst._field8_0x10 = s->readUint16LE();
 		}
-		dst.fontSize = s->readUint16LE(); // 01 = 8x8, 02 = 6x6, 03 = 4x5
+		dst._fontSize = s->readUint16LE(); // 01 = 8x8, 02 = 6x6, 03 = 4x5
 		if (isVersionUnder(" 1.210")) {
-			dst.flags = s->readUint16LE();
+			dst._flags = s->readUint16LE();
 		} else {
 			// Game reads a 32 bit int but then truncates anyway..
 			// probably never used the full thing.
-			dst.flags = (s->readUint32LE() & 0xffff);
+			dst._flags = (s->readUint32LE() & 0xffff);
 		}
-		
-		dst.frametype = s->readUint16LE(); // 01 =simple frame, 02 = with title w/ text before :, 03 = baloon, 04 = eliptical
-		dst.field12_0x1a = s->readUint16LE();
+
+		dst._frameType = s->readUint16LE(); // 01 =simple frame, 02 = with title w/ text before :, 03 = baloon, 04 = eliptical
+		dst._field12_0x1a = s->readUint16LE();
 		if (isVersionOver(" 1.207")) {
-			dst.maybeNextDialogNum = s->readUint16LE();
+			dst._maybeNextDialogNum = s->readUint16LE();
 		}
-		
+
 		uint16 nbytes = s->readUint16LE();
 		if (nbytes > 0) {
-			dst.str = s->readString('\0', nbytes);
+			dst._str = s->readString('\0', nbytes);
 		} else {
-			dst.str.clear();
+			dst._str.clear();
 		}
-		readDialogSubstringList(s, dst.subStrings);
-		
-		if (isVersionUnder(" 1.209") && !dst.subStrings.empty()) {
-			if (dst.fontColor == 0)
-				dst.field8_0x10 = 4;
-			else if (dst.fontColor == 0xff)
-				dst.fontColor = 7;
+		readDialogSubstringList(s, dst._subStrings);
+
+		if (isVersionUnder(" 1.209") && !dst._subStrings.empty()) {
+			if (dst._fontColor == 0)
+				dst._field8_0x10 = 4;
+			else if (dst._fontColor == 0xff)
+				dst._fontColor = 7;
 			else
-				dst.fontColor = dst.fontColor ^ 8;
+				dst._fontColor = dst._fontColor ^ 8;
 		}
 	}
 
@@ -209,10 +348,10 @@ bool Scene::readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneSt
 
 bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueSubstring> &list) const {
 	list.resize(s->readUint16LE());
-	
+
 	if (!list.empty())
 		list[0].val = 1;
-	
+
 	for (DialogueSubstring &dst : list) {
 		dst.strOff1 = s->readUint16LE();
 		dst.strOff2 = s->readUint16LE();
@@ -342,7 +481,7 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))
 		readStruct4List(stream, _struct4List1);
-	
+
 	return !stream->err();
 }
 

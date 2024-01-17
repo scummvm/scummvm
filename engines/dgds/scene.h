@@ -30,88 +30,100 @@ namespace Dgds {
 
 // TODO: Use Common::Rect instead.
 struct Rect {
-    int x;
-    int y;
-    int width;
-    int height;
+	int x;
+	int y;
+	int width;
+	int height;
 };
 
 struct SceneStruct1 {
-    uint16 val1;
-    uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
-    uint16 val3;
+	uint16 val1;
+	uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
+	uint16 val3;
 };
 
 struct SceneStruct2 {
-    struct Rect rect;
-    uint16 field1_0x8;
-    uint16 field2_0xa;
-    Common::Array<struct SceneStruct1> struct1List;
-    Common::Array<struct SceneStruct5> struct5List1;
-    Common::Array<struct SceneStruct5> struct5List2;
-    Common::Array<struct SceneStruct5> struct5List3;
+	struct Rect rect;
+	uint16 field1_0x8;
+	uint16 field2_0xa;
+	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<struct SceneStruct5> struct5List1;
+	Common::Array<struct SceneStruct5> struct5List2;
+	Common::Array<struct SceneStruct5> struct5List3;
 };
 
 struct SceneStruct5 {
-    Common::Array<struct SceneStruct1> struct1List;
-    Common::Array<uint16> uintList;
-    uint16 val;
+	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<uint16> uintList;
+	uint16 val;
 };
 
 struct SceneStruct2_Extended : public SceneStruct2 {
-    Common::Array<struct SceneStruct5> struct5List5;
-    Common::Array<struct SceneStruct5> struct5List6;
-    uint16 field10_0x24;
-    uint16 field11_0x26;
-    uint16 field12_0x28;
-    uint16 field13_0x2a;
-    uint16 field14_0x2c;
+	Common::Array<struct SceneStruct5> struct5List5;
+	Common::Array<struct SceneStruct5> struct5List6;
+	uint16 field10_0x24;
+	uint16 field11_0x26;
+	uint16 field12_0x28;
+	uint16 field13_0x2a;
+	uint16 field14_0x2c;
 };
 
 struct SceneStruct3 {
-    uint16 val1;
-    uint16 val2;
-    uint16 val3; /* Not set in loader? */
+	uint16 val1;
+	uint16 val2;
+	uint16 val3; /* Not set in loader? */
 };
 
 struct SceneStruct4 {
-    uint16 val1;
-    uint16 val2;
-    Common::Array<struct SceneStruct5> struct5List;
+	uint16 val1;
+	uint16 val2;
+	Common::Array<struct SceneStruct5> struct5List;
 };
 
 
-struct Dialogue {
-    uint16 num;
-    Rect rect;
-    uint16 bgColor;
-    uint16 fontColor;
-    uint16 field7_0xe;
-    uint16 field8_0x10;
-    uint16 fontSize;
-    uint32 flags; // includes justify
-    uint16 frametype;
-    uint16 field12_0x1a;
-    uint16 maybeNextDialogNum;
-	Common::Array<struct DialogueSubstring> subStrings;
-    uint16 field15_0x22;
-    Common::String str;
-    uint16  field18_0x28;
+class Dialogue {
+public:
+	uint16 _num;
+	Rect _rect;
+	uint16 _bgColor;
+	uint16 _fontColor;
+	uint16 _field7_0xe;
+	uint16 _field8_0x10;
+	uint16 _fontSize;
+	uint32 _flags; // includes justify
+	uint16 _frameType;
+	uint16 _field12_0x1a;
+	uint16 _maybeNextDialogNum;
+	Common::Array<struct DialogueSubstring> _subStrings;
+	uint16 _field15_0x22;
+	Common::String _str;
+	uint16 _field18_0x28;
+
+ 	void draw(Graphics::Surface *dst, int mode);
+private:
+	void drawType1(Graphics::Surface *dst, int mode);
+	void drawType2(Graphics::Surface *dst, int mode);
+	void drawType3(Graphics::Surface *dst, int mode);
+	void drawType4(Graphics::Surface *dst, int mode);
+
+	void drawStage2(Graphics::Surface *dst);
+	void drawStage3(Graphics::Surface *dst);
+	void drawStage4(Graphics::Surface *dst);
 };
 
 struct SceneStruct7 {
-    uint16 val;
-    int16 field1_0x2;
-    Common::Array<struct SceneStruct1> struct1List;
-    Common::Array<struct SceneStruct5> struct5List;
+	uint16 val;
+	int16 field1_0x2;
+	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<struct SceneStruct5> struct5List;
 };
 
 struct DialogueSubstring {
-    uint16 strOff1;  // The game initializes these to pointers, but let's be a bit nicer.
-    uint16 strOff2;
-    byte unk[8]; /* Not initialized in loader */
-    Common::Array<struct SceneStruct5> struct5List;
-    uint val; /* First entry initialized to 1 in loader */
+	uint16 strOff1;  // The game initializes these to pointers, but let's be a bit nicer.
+	uint16 strOff2;
+	byte unk[8]; /* Not initialized in loader */
+	Common::Array<struct SceneStruct5> struct5List;
+	uint val; /* First entry initialized to 1 in loader */
 };
 
 
@@ -176,25 +188,25 @@ public:
 	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
 
-	const Common::Array<struct Dialogue> &getLines() const { return _dialogues; }
+	Common::Array<struct Dialogue> &getLines() { return _dialogues; }
 
 private:
 	int _num;
-    Common::Array<struct SceneStruct5> _struct5List1;
-    Common::Array<struct SceneStruct5> _struct5List2;
-    Common::Array<struct SceneStruct5> _struct5List3;
-    Common::Array<struct SceneStruct5> _struct5List4;
-    //uint _field5_0x12;
-    uint _field6_0x14;
-    Common::String _adsFile;
-    //uint _field8_0x23;
-    Common::Array<struct SceneStruct2> _struct2List;
-    Common::Array<struct SceneStruct4> _struct4List1;
-    Common::Array<struct SceneStruct4> _struct4List2;
-    //uint _field12_0x2b;
-    Common::Array<struct Dialogue> _dialogues;
-    Common::Array<struct SceneStruct7> _struct7List;
-    //uint _field15_0x33;
+	Common::Array<struct SceneStruct5> _struct5List1;
+	Common::Array<struct SceneStruct5> _struct5List2;
+	Common::Array<struct SceneStruct5> _struct5List3;
+	Common::Array<struct SceneStruct5> _struct5List4;
+	//uint _field5_0x12;
+	uint _field6_0x14;
+	Common::String _adsFile;
+	//uint _field8_0x23;
+	Common::Array<struct SceneStruct2> _struct2List;
+	Common::Array<struct SceneStruct4> _struct4List1;
+	Common::Array<struct SceneStruct4> _struct4List2;
+	//uint _field12_0x2b;
+	Common::Array<struct Dialogue> _dialogues;
+	Common::Array<struct SceneStruct7> _struct7List;
+	//uint _field15_0x33;
 };
 
 } // End of namespace Dgds
