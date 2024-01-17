@@ -5150,6 +5150,10 @@ echo "$_tts"
 # Check for Vorbis
 #
 echocheck "Vorbis"
+VORBISFILE=-lvorbisfile
+if test "$_host_os" = kolibrios ; then
+    VORBISFILE=
+fi
 if test "$_vorbis" = auto ; then
 	_vorbis=no
 	cat > $TMPC << EOF
@@ -5158,14 +5162,14 @@ int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	if test "$_ogg" = yes ; then
 		cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-			-lvorbisfile -lvorbis -logg && _vorbis=yes
+			$VORBISFILE -lvorbis -logg && _vorbis=yes
 	else
 		cc_check $VORBIS_CFLAGS $VORBIS_LIBS \
-			-lvorbisfile -lvorbis && _vorbis=yes
+			$VORBISFILE -lvorbis && _vorbis=yes
 	fi
 fi
 if test "$_vorbis" = yes ; then
-	append_var LIBS "$VORBIS_LIBS -lvorbisfile -lvorbis"
+	append_var LIBS "$VORBIS_LIBS $VORBISFILE -lvorbis"
 	append_var INCLUDES "$VORBIS_CFLAGS"
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
