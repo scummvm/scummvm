@@ -89,6 +89,13 @@ void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("language", "en");
 }
 
+static Common::String getDesc(const Twp::SaveGame& savegame) {
+	Common::String desc = Twp::formatTime(savegame.time, "%b %d at %H:%M");
+	if (savegame.easyMode)
+		desc += " (casual)";
+	return desc;
+}
+
 SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s%02d.save", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
@@ -100,7 +107,6 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 		// Create the return descriptor
 		SaveStateDescriptor desc(this, slot, "?");
 
-		desc.setAutosave(slot == 1);
 		if (thumbnailFile) {
 			Image::PNGDecoder png;
 			if (png.loadStream(*thumbnailFile)) {
@@ -113,9 +119,8 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 		}
 		Twp::SaveGame savegame;
 		Twp::SaveGameManager::getSaveGame(f, savegame);
-		Common::String time = Twp::formatTime(savegame.time, "%b %d at %H:%M");
-		if (savegame.easyMode)
-			time += " (casual)";
+		Common::String time = getDesc(savegame);
+
 		desc.setDescription(time);
 		desc.setPlayTime(savegame.gameTime * 1000);
 		Twp::DateTime dt = Twp::toDateTime(savegame.time);
@@ -145,7 +150,10 @@ SaveStateList TwpMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				saveList.push_back(SaveStateDescriptor(this, slot, "?"));
+				Twp::SaveGame savegame;
+				Twp::SaveGameManager::getSaveGame(in, savegame);
+				Common::String time = getDesc(savegame);
+				saveList.push_back(SaveStateDescriptor(this, slot, time));
 			}
 		}
 	}
