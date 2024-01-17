@@ -423,7 +423,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
-	// Conquests of Camelot - Russian fan translation
+	// Conquests of Camelot - Russian fan translation by https://github.com/deadman2000/RuSCI
 	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
 	// SCI interpreter version 0.000.685
 	{"camelot", "", {
@@ -432,7 +432,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
 		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
 		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -2624,7 +2624,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 		
-	// Laura Bow - Russian fan translation
+	// Laura Bow - Russian fan translation by https://github.com/deadman2000/RuSCI
 	// SCI interpreter version 0.000.631
 	{"laurabow", "", {
 		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
@@ -2638,7 +2638,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
 		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
 		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4295,14 +4295,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
-	// Police Quest 2 - Russian DOS (from the Police Quest Collection)
+	// Police Quest 2 - fan translate by https://github.com/deadman2000/RuSCI
 	// Executable scanning reports "0.000.490"
 	{"pq2", "", {
 		{"resource.map", 0, "28a6f471c7900c2c92da40eecb615d9d", 4584},
 		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 509525},
 		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 546000},
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 

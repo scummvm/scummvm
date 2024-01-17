@@ -364,7 +364,7 @@ SciEvent EventManager::getScummVMEvent() {
 		if (g_sci->getLanguage() == Common::RU_RUS) {
 			// Convert UTF16 to CP866
 			if (input.character >= 0x400 && input.character <= 0x4ff) {
-				if (input.character == 0x401)
+				if (input.character == 0x401) // Cyrillic Ё (401h UTF-16) is 0xf0 in CP866
 					input.character = 0xf0;
 				else if (input.character >= 0x440)
 					input.character = input.character - 0x410 + 0xb0;
