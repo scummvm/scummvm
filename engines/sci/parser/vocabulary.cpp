@@ -188,46 +188,56 @@ bool Vocabulary::loadParserWords() {
 		seeker += 3;
 	}
 
-	// Additional translated words
-	{
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_LOC_VOCAB), 0);
-		if (!resource) return true;
-
-		seeker = 0;
-		while (seeker < resource->size()) {
-			byte c;
-
-			currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
-
-			do {
-				if (seeker == resource->size()) {
-					return true;
-				}
-				c = resource->getUint8At(seeker++);
-				assert(currentWordPos < ARRAYSIZE(currentWord) - 1);
-				currentWord[currentWordPos++] = (c & 0x7f) | 0x80; // add 0x80 for upper character table
-			} while (c < 0x80);
-
-			if (seeker == resource->size()) {
-				return true;
-			}
-
-			currentWord[currentWordPos] = 0;
-
-			// Now decode class and group:
-			c = resource->getUint8At(seeker + 1);
-			ResultWord newWord;
-			newWord._class = ((resource->getUint8At(seeker)) << 4) | ((c & 0xf0) >> 4);
-			newWord._group = (resource->getUint8At(seeker + 2)) | ((c & 0x0f) << 8);
-
-			// Add this to the list of possible class,group pairs for this word
-			_parserWords[currentWord].push_back(newWord);
-
-			seeker += 3;
-		}
-	}
+	// Russian translation can contain translated vocab in special format
+	if (g_sci->getLanguage() == Common::RU_RUS)
+		loadTranslatedWords();
 
 	return true;
+}
+
+void Vocabulary::loadTranslatedWords()
+{
+	// This is special fanmade format similar to VOCAB.000 (see https://wiki.scummvm.org/index.php?title=SCI/Specifications/SCI_in_action/Parser#Vocabulary_file_formats)
+	// but all characters is from upper character table (80h..FFh)
+
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCUMM_LOC_VOCAB), 0);
+	if (!resource) return;
+	
+	char currentWord[VOCAB_MAX_WORDLENGTH] = "";
+	int currentWordPos = 0;
+
+	uint32 seeker = 0;
+	while (seeker < resource->size()) {
+		byte c;
+
+		currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
+
+		do {
+			if (seeker == resource->size()) {
+				return;
+			}
+			c = resource->getUint8At(seeker++);
+			assert(currentWordPos < ARRAYSIZE(currentWord) - 1);
+			currentWord[currentWordPos++] = (c & 0x7f) | 0x80; // add 0x80 for upper character table
+		} while (c < 0x80);
+
+		if (seeker == resource->size()) {
+			return;
+		}
+
+		currentWord[currentWordPos] = 0;
+
+		// Now decode class and group:
+		c = resource->getUint8At(seeker + 1);
+		ResultWord newWord;
+		newWord._class = ((resource->getUint8At(seeker)) << 4) | ((c & 0xf0) >> 4);
+		newWord._group = (resource->getUint8At(seeker + 2)) | ((c & 0x0f) << 8);
+
+		// Add this to the list of possible class,group pairs for this word
+		_parserWords[currentWord].push_back(newWord);
+
+		seeker += 3;
+	}
 }
 
 const char *Vocabulary::getAnyWordFromGroup(int group) {
