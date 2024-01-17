@@ -188,7 +188,7 @@ public:
 	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
 
-	Common::Array<struct Dialogue> &getLines() { return _dialogues; }
+	Common::Array<class Dialogue> &getLines() { return _dialogues; }
 
 private:
 	int _num;
@@ -204,7 +204,7 @@ private:
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
-	Common::Array<struct Dialogue> _dialogues;
+	Common::Array<class Dialogue> _dialogues;
 	Common::Array<struct SceneStruct7> _struct7List;
 	//uint _field15_0x33;
 };
