@@ -2006,6 +2006,18 @@ void ScummEngine_v5::o5_putActorAtObject() {
 	else {
 		x = 240;
 		y = 120;
+
+		// WORKAROUND: When Guybrush dives down to the Mad Monkey, he
+		// is positioned near the anchor (though since it can't be
+		// found yet, it uses this default position). He's then lowered
+		// to the ocean floor by adjusting his elevation. But he will
+		// be drawn for a split second at the unelevated position. This
+		// is a bug in the original game, and we work around it by
+		// adjusting the elevation immediately.
+
+		if (_game.id == GID_MONKEY2 && a->_number == 1 && vm.slot[_currentScript].number == 58 && enhancementEnabled(kEnhMinorBugFixes)) {
+			a->setElevation(99);
+		}
 	}
 	a->putActor(x, y);
 }
