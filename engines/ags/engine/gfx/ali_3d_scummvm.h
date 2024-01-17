@@ -164,7 +164,7 @@ public:
 		return "Software";
 	}
 	const char *GetDriverName() override {
-		return "SDL 2D Software renderer";
+		return "ScummVM 2D renderer";
 	}
 
 	void SetTintMethod(TintMethod /*method*/) override;
