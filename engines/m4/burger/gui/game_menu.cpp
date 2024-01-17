@@ -792,7 +792,7 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 
 
 menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
-	bool greyed, bool transparent, char *prompt, ItemHandlerFunction i_handler) {
+	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
 	menuItem *newItem;
 	menuItemButton *buttonInfo;
 	ScreenContext *myScreen;
@@ -1911,7 +1911,7 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 
 menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
-	char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
+		const char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
 	menuItem *newItem;
 	menuItemTextField *textInfo;
 	ScreenContext *myScreen;

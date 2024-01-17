@@ -66,7 +66,7 @@ struct menuItemMsg {
 struct menuItemButton {
 	int32 itemFlags;
 	int32 buttonType;
-	char *prompt;
+	const char *prompt;
 	menuItem *assocItem;
 	int32 specialTag;
 };
@@ -130,7 +130,7 @@ void menu_EnableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
 bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
 	int32 buttonType = 0, bool ghosted = false, bool transparent = false,
-	char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
+	const char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
 void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
 void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
@@ -146,7 +146,7 @@ void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // Textfields
 menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
-	char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
+	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 //GAME MENU FUNCTIONS
 void CreateGameMenu(RGB8 *myPalette);
