@@ -152,7 +152,7 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
 	debug("exec(%s,%d,%s,%s)", name.c_str(), verbId.id, noun1name.c_str(), noun2name.c_str());
 	actor = !actor ? g_engine->_actor : actor;
-	if ((verbId.id <= 0) || (verbId.id > 13) || (!noun1) || (!actor))
+	if ((verbId.id <= 0) || (verbId.id > MAX_VERBS) || (!noun1) || (!actor))
 		return false;
 
 	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory() ? "YES" : "NO", noun1->isTouchable() ? "YES" : "NO", verbNoWalkTo(verbId, noun1) ? "YES" : "NO");
