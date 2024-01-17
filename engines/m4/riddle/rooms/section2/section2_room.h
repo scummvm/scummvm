@@ -19,30 +19,22 @@
  *
  */
 
-#ifndef M4_RIDDLE_ROOMS_ROOM_H
-#define M4_RIDDLE_ROOMS_ROOM_H
+#ifndef M4_RIDDLE_ROOMS_SECTION2_ROOM_H
+#define M4_RIDDLE_ROOMS_SECTION2_ROOM_H
 
-#include "m4/core/rooms.h"
-#include "m4/adv_r/conv_io.h"
-#include "m4/core/imath.h"
-#include "m4/graphics/gr_series.h"
-#include "m4/adv_r/adv_hotspot.h"
+#include "m4/riddle/rooms/room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room : public M4::Room {
+class Section2Room : public Room {
 protected:
-	static void intrMsgNull(frac16 myMessage, machine *sender) {}
-	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender);
-
-	void restoreAutosave();
-	int _roomVal1 = 0;
+	bool keyCheck() const;
 
 public:
-	Room() : M4::Room() {}
-	~Room() override {}
+	Section2Room() : Room() {}
+	~Section2Room() override {}
 };
 
 } // namespace Rooms

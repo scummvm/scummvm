@@ -94,7 +94,7 @@ void series_unload(int32 assetIndex);
 bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
 
 bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
-//machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer); // was series_show_sprite
+machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer);
 machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);
 
 machine *series_play(const char *seriesName, frac16 layer, uint32 flags = 0,

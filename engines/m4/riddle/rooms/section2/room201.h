@@ -22,15 +22,45 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION2_ROOM201_H
 #define M4_RIDDLE_ROOMS_SECTION2_ROOM201_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section2/section2_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room201 : public Room {
+class Room201 : public Section2Room {
+private:
+	bool _flag1 = false;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _nod = -1;
+	int _guyWriting = -1;
+	int _guyParcel = -1;
+	int _series1 = -1;
+	int _series2 = -2;
+	int _series3 = -1;
+	int _series4 = -1;
+	int _series5 = -1;
+	int _series6 = -2;
+	int _series7 = -1;
+	int _series8 = -1;
+	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
+	machine *_machine3 = nullptr;
+	machine *_machine4 = nullptr;
+	int _mei1 = -1;
+	int _mei2 = -1;
+	int _mei3 = -1;
+
 public:
-	Room201() : Room() {}
+	Room201() : Section2Room() {}
 	~Room201() override {}
 
 	void init() override;

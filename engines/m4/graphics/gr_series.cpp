@@ -241,6 +241,10 @@ machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 t
 	return m;
 }
 
+machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer) {
+	return series_show(seriesName, layer, 0x40, -1, -1, index, s, x, y);
+}
+
 machine *series_show_sprite(const char *seriesName, int32 index, int32 layer) {
 	return series_show(seriesName, layer, 0x40, -1, -1, index);
 }

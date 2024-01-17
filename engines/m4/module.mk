@@ -184,6 +184,7 @@ MODULE_OBJS = \
 	riddle/rooms/room.o \
 	riddle/rooms/section.o \
 	riddle/rooms/section2/section2.o \
+	riddle/rooms/section2/section2_room.o \
 	riddle/rooms/section2/room201.o \
 	riddle/rooms/section2/room202.o \
 	riddle/rooms/section2/room203.o \

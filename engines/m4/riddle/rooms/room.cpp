@@ -39,6 +39,13 @@ void Room::restoreAutosave() {
 	}
 }
 
+void Room::triggerMachineByHashCallback(frac16 myMessage, machine *sender) {
+	int32 hi = myMessage >> 16;
+
+	if (hi >= 0)
+		kernel_trigger_dispatch_now(hi);
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

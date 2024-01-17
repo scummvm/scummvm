@@ -19,34 +19,18 @@
  *
  */
 
-#ifndef M4_RIDDLE_ROOMS_ROOM_H
-#define M4_RIDDLE_ROOMS_ROOM_H
-
-#include "m4/core/rooms.h"
-#include "m4/adv_r/conv_io.h"
-#include "m4/core/imath.h"
-#include "m4/graphics/gr_series.h"
-#include "m4/adv_r/adv_hotspot.h"
+#include "m4/riddle/rooms/section2/section2.h"
+#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room : public M4::Room {
-protected:
-	static void intrMsgNull(frac16 myMessage, machine *sender) {}
-	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender);
-
-	void restoreAutosave();
-	int _roomVal1 = 0;
-
-public:
-	Room() : M4::Room() {}
-	~Room() override {}
-};
+bool Section2Room::keyCheck() const {
+	return _G(flags)[V286] && _G(flags)[V288] && _G(flags)[V287] &&
+		inv_player_has("KEY");
+}
 
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
-
-#endif
