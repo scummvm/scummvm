@@ -52,10 +52,13 @@ public:
 
 	void setScreenBuffer();
 	void drawMenu(REQFileData &vcrRequestData, int16 menu = 0);
-	int16 getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick);
 	void handleMenu(REQFileData &vcrRequestData, Common::Point &mouse);
 	bool menuShown() const { return _curMenu >= 0; }
 	void hideMenu() { _curMenu = -1; }
+
+private:
+	int16 getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick);
+	void drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst);
 };
 
 } // End of namespace Dgds
