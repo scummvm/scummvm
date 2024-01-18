@@ -169,10 +169,6 @@ void Context::initialize(ContextType contextType) {
 		extString = "";
 	}
 
-	bool ARBShaderObjects = false;
-	bool ARBShadingLanguage100 = false;
-	bool ARBVertexShader = false;
-	bool ARBFragmentShader = false;
 	bool EXTFramebufferMultisample = false;
 	bool EXTFramebufferBlit = false;
 
@@ -182,14 +178,6 @@ void Context::initialize(ContextType contextType) {
 
 		if (token == "GL_ARB_texture_non_power_of_two" || token == "GL_OES_texture_npot") {
 			NPOTSupported = true;
-		} else if (token == "GL_ARB_shader_objects") {
-			ARBShaderObjects = true;
-		} else if (token == "GL_ARB_shading_language_100") {
-			ARBShadingLanguage100 = true;
-		} else if (token == "GL_ARB_vertex_shader") {
-			ARBVertexShader = true;
-		} else if (token == "GL_ARB_fragment_shader") {
-			ARBFragmentShader = true;
 		} else if (token == "GL_ARB_multitexture") {
 			multitextureSupported = true;
 		} else if (token == "GL_ARB_framebuffer_object") {
@@ -251,13 +239,6 @@ void Context::initialize(ContextType contextType) {
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
-		// We don't do any aliasing in our code and expect standard OpenGL functions but GLAD does it
-		// So if we use GLAD we can check for ARB extensions and expect a GLSL of 1.00
-#ifdef USE_GLAD
-		shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader;
-		glslVersion = 100;
-#endif
-		// We don't expect GLES to support shaders recent enough for engines
 
 		// ScummVM does not support multisample FBOs with GLES for now
 		framebufferObjectMultisampleSupported = false;
@@ -271,16 +252,6 @@ void Context::initialize(ContextType contextType) {
 	} else if (type == kContextGL) {
 		shadersSupported = glslVersion >= 100;
 
-		// We don't do any aliasing in our code and expect standard OpenGL functions but GLAD does it
-		// So if we use GLAD we can check for ARB extensions and expect a GLSL of 1.00
-#ifdef USE_GLAD
-		if (!shadersSupported) {
-			shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader;
-			if (shadersSupported) {
-				glslVersion = 100;
-			}
-		}
-#endif
 		// In GL mode engines need GLSL 1.20
 		enginesShadersSupported = glslVersion >= 120;
 

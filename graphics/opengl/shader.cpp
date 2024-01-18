@@ -155,7 +155,6 @@ GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, c
 	GLchar versionSource[20];
 	if (OpenGLContext.type == kContextGLES2) {
 		switch(compatGLSLVersion) {
-			case 100:
 			case 110:
 			case 120:
 				// GLSL ES 1.00 is a subset of GLSL 1.20
@@ -168,7 +167,6 @@ GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, c
 		}
 	} else {
 		switch(compatGLSLVersion) {
-			case 100:
 			case 110:
 			case 120:
 				break;

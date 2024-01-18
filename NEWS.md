@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
+   - Don't try to use shaders on old OpenGL implementations.
 
  Broken Sword 2:
    - Fixed crash when quitting the game while it was paused.
