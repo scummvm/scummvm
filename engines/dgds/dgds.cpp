@@ -321,8 +321,8 @@ void DgdsEngine::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 }
 
 void DgdsEngine::loadCorners(const Common::String &filename) {
-	Image i(_resource, _decompressor);
-	int numImgs = i.frameCount(filename);
+	Image imgRes(_resource, _decompressor);
+	int numImgs = imgRes.frameCount(filename);
 	if (numImgs <= 0)
 		error("Corner file %s didn't have any frames?", filename.c_str());
 	_corners.resize(numImgs);
@@ -339,8 +339,8 @@ void DgdsEngine::loadIcons() {
 	if (iconFileName.empty())
 		return;
 
-	Image i(_resource, _decompressor);
-	int numImgs = i.frameCount(iconFileName);
+	Image imgRes(_resource, _decompressor);
+	int numImgs = imgRes.frameCount(iconFileName);
 	if (numImgs <= 0)
 		error("Icon file %s didn't have any frames?", iconFileName.c_str());
 	_icons.resize(numImgs);
