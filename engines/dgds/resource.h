@@ -54,6 +54,7 @@ public:
 
 	Common::SeekableReadStream *getResource(Common::String name, bool ignorePatches = false);
 	Resource getResourceInfo(Common::String name);
+	bool hasResource(Common::String name) const;
 
 	const ResourceList &getResources() const { return _resources; }
 

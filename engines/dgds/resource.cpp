@@ -122,6 +122,11 @@ Resource ResourceManager::getResourceInfo(Common::String name) {
 	return _resources[name];
 }
 
+bool ResourceManager::hasResource(Common::String name) const {
+	name.toLowercase();
+	return _resources.contains(name);
+}
+
 DgdsChunkReader::~DgdsChunkReader() {
 	if (_contentStream)
 		delete _contentStream;

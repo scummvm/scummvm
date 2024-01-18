@@ -21,10 +21,17 @@
  */
 
 #include "common/memstream.h"
+#include "common/system.h"
+
+#include "graphics/palette.h"
+
+#include "image/png.h"
+
 #include "dgds/console.h"
 #include "dgds/decompress.h"
 #include "dgds/dgds.h"
 #include "dgds/includes.h"
+#include "dgds/image.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
 #include "gui/debugger.h"
@@ -35,6 +42,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("fileinfo", WRAP_METHOD(Console, cmdFileInfo));
 	registerCmd("filesearch", WRAP_METHOD(Console, cmdFileSearch));
 	registerCmd("filedump", WRAP_METHOD(Console, cmdFileDump));
+	registerCmd("imagedump", WRAP_METHOD(Console, cmdImageDump));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -101,8 +109,11 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 
 		DgdsChunkReader chunk(resStream);
 		while (chunk.readNextHeader(ex, fileName)) {
-			if (!chunkType.empty() && !chunkType.equals(chunk.getIdStr()))
+			if (!chunkType.empty() && !chunkType.equals(chunk.getIdStr())) {
+				if (!chunk.isContainer())
+					chunk.skipContent();
 				continue;
+			}
 
 			chunk.readContent(_vm->getDecompressor());
 
@@ -127,6 +138,70 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	delete[] data;
 
     return true;
+}
+
+bool Console::cmdImageDump(int argc, const char **argv) {
+#if USE_PNG
+	if (argc < 3) {
+		debugPrintf("Usage: %s <imagefilename> <frameno> [outputpath]\n", argv[0]);
+		return true;
+	}
+
+	const char *fname = argv[1];
+	int frameno = atoi(argv[2]);
+
+	if (!_vm->getResourceManager()->hasResource(fname))  {
+		debugPrintf("Resource %s not found\n", fname);
+		return true;
+	}
+
+	Image img(_vm->getResourceManager(), _vm->getDecompressor());
+
+	int maxframe = img.frameCount(fname);
+	if (frameno > maxframe) {
+		debugPrintf("Image only has %d frames\n", maxframe);
+		return true;
+	}
+	img.loadPalette("DYNAMIX.PAL");
+	img.setPalette();
+	img.loadBitmap(fname, frameno);
+	int width = img.width();
+	int height = img.height();
+	if (!width || !height) {
+		debugPrintf("Image %s:%d not valid\n", fname, frameno);
+		return true;
+	}
+
+	Graphics::Surface surf;
+	surf.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	img.drawBitmap(0, 0, Common::Rect(0, 0, width, height), surf);
+
+	Common::DumpFile outf;
+	Common::String outfname = Common::String::format("%s-%d.png", fname, frameno);
+
+	if (argc == 4) {
+		Common::Path path(argv[3]);
+		path.joinInPlace(outfname);
+		outf.open(path);
+	} else {
+		outf.open(Common::Path(outfname));
+	}
+	if (!outf.isOpen()) {
+		debugPrintf("Couldn't open %s\n", outfname.c_str());
+		return true;
+	}
+
+	byte palbuf[768];
+	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+	::Image::writePNG(outf, surf, palbuf);
+	outf.close();
+	surf.free();
+	debugPrintf("wrote %dx%d png to %s\n", width, height, outfname.c_str());
+
+#else
+	warning("dumpimage needs png support");
+#endif
+	return true;
 }
 
 } // End of namespace Dgds

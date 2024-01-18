@@ -87,7 +87,23 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 	delete fileStream;
 }
 
-void Image::loadBitmap(Common::String filename, int number) {
+int Image::frameCount(const Common::String &filename) {
+	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
+	if (!fileStream)
+		error("Couldn't get bitmap resource %s", filename.c_str());
+
+	int tileCount = -1;
+	DgdsChunkReader chunk(fileStream);
+	while (chunk.readNextHeader(EX_BMP, filename)) {
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+		if (chunk.isSection(ID_INF)) {
+			tileCount = stream->readUint16LE();
+		}
+	}
+}
+
+void Image::loadBitmap(const Common::String &filename, int number) {
 	const char *dot;
 	DGDS_EX ex;
 	uint16 *mtx;
@@ -111,8 +127,8 @@ void Image::loadBitmap(Common::String filename, int number) {
 
 	int64 vqtpos = -1;
 	int64 scnpos = -1;
-	uint16 tileWidths[64];
-	uint16 tileHeights[64];
+	uint16 tileWidths[128];
+	uint16 tileHeights[128];
 	int32 tileOffset = 0;
 
 	DgdsChunkReader chunk(fileStream);
@@ -121,8 +137,12 @@ void Image::loadBitmap(Common::String filename, int number) {
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
-			if (tileCount > 64)
+			if (tileCount > ARRAYSIZE(tileWidths))
 				error("Image::loadBitmap: Unexpectedly large number of tiles in image (%d)", tileCount);
+			if (tileCount < number) {
+				warning("Request for frame %d from %s that only has %d frames", number, filename.c_str(), tileCount);
+				return;
+			}
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileWidths[k] = stream->readUint16LE();
 			}
@@ -388,7 +408,7 @@ uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toff
 	state.srcPtr = buf;
 	for (uint i = 0; i < th; i++)
 		state.rowStarts[i] = tw * i;
-	
+
 	_doVqtDecode(&state, 0, 0, tw, th);
 	free(buf);
 	return state.offset;
