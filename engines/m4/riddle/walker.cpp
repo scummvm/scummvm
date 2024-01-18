@@ -69,10 +69,8 @@ static const int16 SAFARI_SHADOWS_DIRS[6] = {
 };
 
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-	int32 triggerType, subVal;
-
-	triggerType = _G(globals)[GLB_TEMP_1] >> 16;
-	subVal = _G(globals)[GLB_TEMP_3] >> 16;
+	int32 triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	//int32 subVal = _G(globals)[GLB_TEMP_3] >> 16;
 
 	switch (triggerType) {
 	case 0:
