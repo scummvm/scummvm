@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 
 #include "dgds/includes.h"
+#include "dgds/font.h"
 #include "dgds/menu.h"
 #include "dgds/request.h"
 
@@ -128,6 +129,7 @@ void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 	_curMenu = menu;
 
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+
 	// Restore background when drawing submenus
 	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
 
@@ -141,8 +143,33 @@ void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 			gadget->draw(dst);
 	}
 
+	drawMenuText(vcrRequestData, dst);
+
 	g_system->unlockScreen();
 	g_system->updateScreen();
+}
+
+void Menu::drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst) {
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+	Common::Array<TextItem> textItems = vcrRequestData._requests[_curMenu]._textItemList;
+
+	// TODO: Get the parent coordinates properly
+	uint16 parentX = gadgets[0].get()->_parentX;
+	uint16 parentY = gadgets[0].get()->_parentY;
+	uint16 pos = 0;
+
+	for (TextItem &textItem : textItems) {
+		// HACK: Skip the first entry, which corresponds to the header
+		if (pos == 0) {
+			pos++;
+			continue;
+		}
+
+		const Font *font = RequestData::getMenuFont();
+		int w = font->getStringWidth(textItem._txt);
+		font->drawString(dst, textItem._txt, parentX + textItem._x, parentY + textItem._y, w, 0);
+		pos++;
+	}
 }
 
 int16 Menu::getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick) {
