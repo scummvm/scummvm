@@ -78,6 +78,7 @@ private:
 
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
+	Common::Array<Common::SharedPtr<Image>> _icons;
 	int16 _curMenu = -1;
 
 public:
@@ -102,7 +103,8 @@ public:
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
 
 private:
-	void loadCorners(const Common::String &filename, int numImgs);
+	void loadCorners(const Common::String &filename);
+	void loadIcons();
 };
 
 } // End of namespace Dgds

@@ -54,6 +54,8 @@ public:
 	int16 width() const;
 	int16 height() const;
 
+	const Graphics::Surface &getSurface() { return _bmpData; }
+
 private:
 	void loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
 	void loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);

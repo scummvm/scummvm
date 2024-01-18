@@ -211,6 +211,9 @@ void DgdsEngine::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 }
 
 int16 DgdsEngine::getClickedMenuItem(REQFileData& vcrRequestData, Common::Point mouseClick) {
+	if (_curMenu < 0)
+		return -1;
+
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
@@ -317,7 +320,9 @@ void DgdsEngine::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	}
 }
 
-void DgdsEngine::loadCorners(const Common::String &filename, int numImgs) {
+void DgdsEngine::loadCorners(const Common::String &filename) {
+	Image i(_resource, _decompressor);
+	int numImgs = i.frameCount(filename);
 	_corners.resize(numImgs);
 	for (int i = 0; i < numImgs; i++) {
 		Image *img = new Image(_resource, _decompressor);
@@ -344,6 +349,22 @@ static const byte mouseData[] = {
 	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
 	0, 0, 0, 0, 0, 0, 1, 1, 0, 0
 };
+
+void DgdsEngine::loadIcons() {
+	const Common::String &iconFileName = _gdsScene->getIconFile();
+
+	if (iconFileName.empty())
+		return;
+
+	Image i(_resource, _decompressor);
+	int numImgs = i.frameCount(iconFileName);
+	_icons.resize(numImgs);
+	for (int i = 0; i < numImgs; i++) {
+		Image *img = new Image(_resource, _decompressor);
+		img->loadBitmap(iconFileName, i);
+		_icons[i].reset(img);
+	}
+}
 
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -386,7 +407,7 @@ Common::Error DgdsEngine::run() {
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 
 		interpIntro.load("TITLE1.ADS");
-		loadCorners("DCORNERS.BMP", 29);
+		loadCorners("DCORNERS.BMP");
 	} else if (getGameId() == GID_CHINA) {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 
@@ -395,7 +416,7 @@ Common::Error DgdsEngine::run() {
 
 		//_scene->load("S101.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
-		loadCorners("HCORNERS.BMP", 29);
+		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
@@ -405,8 +426,12 @@ Common::Error DgdsEngine::run() {
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		interpIntro.load("TITLE.ADS");
-		//loadCorners("WCORNERS.BMP", 29);	// TODO: Currently crashes
+		loadCorners("WCORNERS.BMP");
 	}
+
+	loadIcons();
+
+	//getDebugger()->attach();
 
 	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
