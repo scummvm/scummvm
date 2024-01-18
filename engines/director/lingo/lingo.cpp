@@ -186,7 +186,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_itemDelimiter = ',';
 	_exitLock = false;
 	_preLoadEventAbort = false;
-	_romanLingo = (_vm->getLanguage() != Common::JA_JPN); // Japanrdr gamrs typically require 3-byte encodings
+	_romanLingo = (_vm->getLanguage() != Common::JA_JPN); // Japanese games typically require double-byte encoding
 
 	_searchPath.type = ARRAY;
 	_searchPath.u.farr = new FArray;
