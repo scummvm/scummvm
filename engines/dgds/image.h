@@ -43,7 +43,8 @@ public:
 	virtual ~Image();
 
 	void drawScreen(Common::String filename, Graphics::Surface &surface);
-	void loadBitmap(Common::String filename, int number);
+	void loadBitmap(const Common::String &filename, int number);
+	int frameCount(const Common::String &filename);
 	void drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface);
 
 	void loadPalette(Common::String filename);
