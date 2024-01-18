@@ -101,6 +101,7 @@ int Image::frameCount(const Common::String &filename) {
 			tileCount = stream->readUint16LE();
 		}
 	}
+	return tileCount;
 }
 
 void Image::loadBitmap(const Common::String &filename, int number) {
