@@ -78,7 +78,7 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 		// The 2 CD version uses Ogg Vorbis
 		Common::Path filename = _filename;
 		Common::String baseName(filename.baseName());
-		if (baseName.hasSuffix(".iss") || baseName.hasSuffix(".isn")) {
+		if (baseName.hasSuffix(".iss") || baseName.hasSuffix(".isn") || baseName.hasSuffix(".ssn")) {
 			baseName = Common::String(baseName.c_str(), baseName.size() - 4) + ".ovs";
 			filename = _filename.getParent().appendComponent(baseName);
 		}
