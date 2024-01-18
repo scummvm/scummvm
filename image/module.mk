@@ -1,9 +1,11 @@
 MODULE := image
 
 MODULE_OBJS := \
+	ani.o \
 	bmp.o \
 	cel_3do.o \
 	gif.o \
+	icocur.o \
 	iff.o \
 	jpeg.o \
 	neo.o \
