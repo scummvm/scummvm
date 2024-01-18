@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-17 18:42+0000\n"
+"PO-Revision-Date: 2024-01-18 17:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2454,7 +2454,9 @@ msgstr "Zerbitzariak darabilen portua"
 #: gui/options.cpp:2762
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "Jarri martxan fitxategiak kudeatzeko zerbitzaria (sare berdinean)."
+msgstr ""
+"Jarri martxan fitxategiak nabigatzailetik kudeatzeko zerbitzaria (sare "
+"berdinean)."
 
 #: gui/options.cpp:2763
 msgctxt "lowres"
@@ -2464,28 +2466,28 @@ msgstr "Ezarpen leihoa itxita zerbitzaria geldituko da."
 #: gui/options.cpp:2765
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Jarri martxan fitxategiak nabigatzailetik kudeatzeko zerbitzaria (sare "
+"berdinean)."
 
 #: gui/options.cpp:2766
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Aukeren leihoa itxita zerbitzaria geldituko da."
 
 #: gui/options.cpp:2778
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Testu eta ahotsa:"
+msgstr "Erabili \"Testua ahotsera\""
 
 #: gui/options.cpp:2778
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "GUIko testua irakurriko du xagua gainetik pasatzean."
 
 #: gui/options.cpp:2852
 msgid "Ignore"
-msgstr ""
+msgstr "Baztertu"
 
 #: gui/options.cpp:2853
-#, fuzzy
 msgid "Disable autosave"
-msgstr "Ezin izan da jokoa gorde"
+msgstr "Desgaitu autogordetzea"
 
 #: gui/options.cpp:2854
 msgid ""
