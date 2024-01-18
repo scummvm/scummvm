@@ -197,8 +197,9 @@ bool Vocabulary::loadParserWords() {
 
 void Vocabulary::loadTranslatedWords()
 {
-	// This is special fanmade format similar to VOCAB.000 (see https://wiki.scummvm.org/index.php?title=SCI/Specifications/SCI_in_action/Parser#Vocabulary_file_formats)
-	// but all characters is from upper character table (80h..FFh)
+	// This is special fan made format similar to VOCAB.000 (see
+	// https://wiki.scummvm.org/index.php?title=SCI/Specifications/SCI_in_action/Parser#Vocabulary_file_formats)
+	// but all characters used are in the upper character range (80h..FFh)
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCUMM_LOC_VOCAB), 0);
 	if (!resource) return;
@@ -728,7 +729,7 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 	int pos_in_sentence = 0;
 	unsigned char c;
 	int wordLen = 0;
-	const byte * lcMap = lowerCaseMap;
+	const byte *lcMap = lowerCaseMap;
 
 	*error = nullptr;
 
