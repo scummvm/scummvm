@@ -59,6 +59,7 @@ public:
 private:
 	int16 getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick);
 	void drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst);
+	void toggleGadget(REQFileData &vcrRequestData, int16 gadgetId, bool enable);
 };
 
 } // End of namespace Dgds

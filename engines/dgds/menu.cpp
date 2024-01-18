@@ -196,6 +196,16 @@ int16 Menu::getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseC
 
 void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	const int16 clickedMenuItem = getClickedMenuItem(vcrRequestData, mouse);
+
+	// Click animation
+	// TODO: Handle on/off buttons
+	if (clickedMenuItem >= 0) {
+		toggleGadget(vcrRequestData, clickedMenuItem, false);
+		drawMenu(vcrRequestData, _curMenu);
+		g_system->delayMillis(500);
+		toggleGadget(vcrRequestData, clickedMenuItem, true);
+	}
+
 	switch (clickedMenuItem) {
 	case kMenuMainPlay:
 	case kMenuControlsPlay:
@@ -279,6 +289,18 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	default:
 		debug("Clicked ID %d", clickedMenuItem);
 		break;
+	}
+}
+
+void Menu::toggleGadget(REQFileData &vcrRequestData, int16 gadgetId, bool enable) {
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+
+	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
+		Gadget *gadget = gptr.get();
+		if (gadget->_gadgetNo == gadgetId) {
+			gadget->toggle(enable);
+			return;
+		}
 	}
 }
 
