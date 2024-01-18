@@ -30,6 +30,9 @@
 
 namespace Dgds {
 
+class Font;
+class Image;
+
 struct TextItem {
 	uint16 _x;
 	uint16 _y;

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	dgds.o \
 	font.o \
 	image.o \
+	menu.o \
 	metaengine.o \
 	music.o \
 	parser.o \

@@ -48,6 +48,7 @@ class SDSScene;
 class GDSScene;
 class Sound;
 class REQFileData;
+class Menu;
 struct DgdsADS;
 
 enum DgdsGameId {
@@ -72,14 +73,13 @@ private:
 	DgdsGameId _gameId;
 	Graphics::Surface _bottomBuffer;
 	Graphics::Surface _topBuffer;
-	Graphics::Surface _screenBuffer;
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
+	Menu *_menu;
 
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
 	Common::Array<Common::SharedPtr<Image>> _icons;
-	int16 _curMenu = -1;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -97,9 +97,6 @@ public:
 	const SDSScene *getScene() const { return _scene; }
 	SDSScene *getScene() { return _scene; }
 	const FontManager *getFontMan() const { return _fontManager; }
-	void drawMenu(REQFileData &vcrRequestData, int16 menu);
-	int16 getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick);
-	void handleMenu(REQFileData &vcrRequestData, Common::Point &mouse);
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
 
 private:

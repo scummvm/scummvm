@@ -53,6 +53,7 @@
 #include "dgds/font.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
+#include "dgds/menu.h"
 #include "dgds/parser.h"
 #include "dgds/request.h"
 #include "dgds/resource.h"
@@ -60,81 +61,6 @@
 #include "dgds/sound.h"
 
 namespace Dgds {
-
-enum MenuIds {
-	kMenuNone = -1,
-	kMenuMain = 0,
-	kMenuControls = 1,
-	kMenuOptions = 2,
-	kMenuCalibrate = 3,
-	kMenuRestart = 4,
-	// 5: you cannot save your game right now
-	// 6: game over
-	kMenuFiles = 7,
-	// 8: save game not saved because disk is full
-	// 9: all game entries are full
-	kMenuSave = 10,
-	// 11: change directory - create directory
-	// 12: change directory - invalid directory specified
-	kMenuChangeDirectory = 13,
-	kMenuJoystick = 14,
-	kMenuMouse = 15,
-	kMenuQuit = 16
-	// 17: I'm frustrated - keep trying / win arcade
-	// 18: skip introduction / play introduction
-	// 19: save game before arcade
-	// 20: replay arcade
-};
-
-enum MenuButtonIds {
-	kMenuMainPlay = 120,
-	kMenuMainControls = 20,
-	kMenuMainOptions = 121,
-	kMenuMainCalibrate = 118,
-	kMenuMainFiles = 119,
-	kMenuMainQuit = 122,
-
-	kMenuControlsVCR = 127,
-	kMenuControlsPlay = 128,
-
-	kMenuOptionsJoystickOnOff = 139,
-	kMenuOptionsMouseOnOff = 138,
-	kMenuOptionsSoundsOnOff = 137,
-	kMenuOptionsMusicOnOff = 140,
-	kMenuOptionsVCR = 135,
-	kMenuOptionsPlay = 136,
-
-	kMenuCalibrateJoystick = 145,
-	kMenuCalibrateMouse = 146,
-	kMenuCalibrateVCR = 144,
-	kMenuCalibratePlay = 147,
-
-	kMenuFilesSave = 107,
-	kMenuFilesRestore = 106,
-	kMenuFilesRestart = 105,
-	kMenuFilesVCR = 103,
-	kMenuFilesPlay = 130,
-
-	kMenuSavePrevious = 58,
-	kMenuSaveNext = 59,
-	kMenuSaveSave = 53,
-	kMenuSaveCancel = 54,
-	kMenuSaveChangeDirectory = 55,
-
-	kMenuChangeDirectoryOK = 95,
-	kMenuChangeDirectoryCancel = 96,
-
-	kMenuMouseCalibrationCalibrate = 157,
-	kMenuMouseCalibrationPlay = 155,
-
-	kMenuJoystickCalibrationOK = 132,
-
-	kMenuQuitYes = 134,
-	kMenuQuitNo = 133,
-
-	kMenuRestartYes = 163,
-	kMenuRestartNo = 164
-};
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
@@ -167,8 +93,8 @@ DgdsEngine::~DgdsEngine() {
 	delete _gdsScene;
 	delete _soundPlayer;
 	delete _fontManager;
+	delete _menu;
 
-	_screenBuffer.free();
 	_resData.free();
 	_topBuffer.free();
 	_bottomBuffer.free();
@@ -186,137 +112,6 @@ void readStrings(Common::SeekableReadStream *stream) {
 		while ((ch = stream->readByte()))
 			str += ch;
 		debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
-	}
-}
-
-void DgdsEngine::drawMenu(REQFileData &vcrRequestData, int16 menu) {
-	_curMenu = menu;
-
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
-	// Restore background when drawing submenus
-	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
-
-	Graphics::Surface *dst = g_system->lockScreen();
-
-	vcrRequestData._requests[_curMenu].draw(dst);
-
-	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
-		Gadget *gadget = gptr.get();
-		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider)
-			gadget->draw(dst);
-	}
-
-	g_system->unlockScreen();
-	g_system->updateScreen();
-}
-
-int16 DgdsEngine::getClickedMenuItem(REQFileData& vcrRequestData, Common::Point mouseClick) {
-	if (_curMenu < 0)
-		return -1;
-
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
-
-	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
-		Gadget *gadget = gptr.get();
-		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
-			int16 x = gadget->_x + gadget->_parentX;
-			int16 y = gadget->_y + gadget->_parentY;
-			int16 right = x + gadget->_width;
-			int16 bottom = (y + gadget->_height) - 1;
-			Common::Rect gadgetRect(x, y, right, bottom);
-			if (gadgetRect.contains(mouseClick))
-				return (int16)gadget->_gadgetNo;
-		}
-	}
-
-	return -1;
-}
-
-void DgdsEngine::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
-	const int16 clickedMenuItem = getClickedMenuItem(vcrRequestData, mouse);
-	switch (clickedMenuItem) {
-	case kMenuMainPlay:
-	case kMenuControlsPlay:
-	case kMenuOptionsPlay:
-	case kMenuCalibratePlay:
-	case kMenuFilesPlay:
-	case kMenuMouseCalibrationPlay:
-		_curMenu = kMenuNone;
-		CursorMan.showMouse(false);
-		break;
-	case kMenuMainControls:
-		drawMenu(vcrRequestData, kMenuControls);
-		break;
-	case kMenuMainOptions:
-		drawMenu(vcrRequestData, kMenuOptions);
-		break;
-	case kMenuMainCalibrate:
-	case kMenuJoystickCalibrationOK:
-	case kMenuMouseCalibrationCalibrate:
-		drawMenu(vcrRequestData, kMenuCalibrate);
-		break;
-	case kMenuMainFiles:
-	case kMenuSaveCancel:
-		drawMenu(vcrRequestData, kMenuFiles);
-		break;
-	case kMenuMainQuit:
-		drawMenu(vcrRequestData, kMenuQuit);
-		break;
-	case kMenuControlsVCR:
-	case kMenuOptionsVCR:
-	case kMenuCalibrateVCR:
-	case kMenuFilesVCR:
-	case kMenuQuitNo:
-	case kMenuRestartNo:
-		drawMenu(vcrRequestData, kMenuMain);
-		break;
-	case kMenuOptionsJoystickOnOff:
-	case kMenuOptionsMouseOnOff:
-	case kMenuOptionsSoundsOnOff:
-	case kMenuOptionsMusicOnOff:
-		// TODO
-		debug("Clicked option with ID %d", clickedMenuItem);
-		break;
-	case kMenuCalibrateJoystick:
-		drawMenu(vcrRequestData, kMenuJoystick);
-		break;
-	case kMenuCalibrateMouse:
-		drawMenu(vcrRequestData, kMenuMouse);
-		break;
-	case kMenuFilesSave:
-	case kMenuChangeDirectoryCancel:
-		drawMenu(vcrRequestData, kMenuSave);
-		break;
-	case kMenuFilesRestore:
-		// TODO
-		debug("Clicked Files - Restore %d", clickedMenuItem);
-		break;
-	case kMenuFilesRestart:
-		drawMenu(vcrRequestData, kMenuRestart);
-		break;
-	case kMenuSavePrevious:
-	case kMenuSaveNext:
-	case kMenuSaveSave:
-		// TODO
-		debug("Clicked Save - %d", clickedMenuItem);
-		break;
-	case kMenuSaveChangeDirectory:
-		drawMenu(vcrRequestData, kMenuChangeDirectory);
-		break;
-	case kMenuChangeDirectoryOK:
-		// TODO
-		debug("Clicked change directory - %d", clickedMenuItem);
-		break;
-	case kMenuQuitYes:
-		g_engine->quitGame();
-		break;
-	case kMenuRestartYes:
-		// TODO
-		debug("Clicked Restart - Yes %d", clickedMenuItem);
-		break;
-	default:
-		debug("Clicked ID %d", clickedMenuItem);
-		break;
 	}
 }
 
@@ -362,13 +157,13 @@ Common::Error DgdsEngine::run() {
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
 	_fontManager = new FontManager();
+	_menu = new Menu();
 
 	setDebugger(_console);
 
 	_bottomBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_topBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_resData.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	g_system->fillScreen(0);
 
@@ -431,7 +226,7 @@ Common::Error DgdsEngine::run() {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					if (_curMenu >= 0)
+					if (_menu->menuShown())
 						triggerMenu = true;
 					else
 						moveToNext = true;
@@ -448,15 +243,13 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (triggerMenu) {
-			if (_curMenu == kMenuNone) {
-				Graphics::Surface *dst = g_system->lockScreen();
-				_screenBuffer.copyFrom(*dst);
-				g_system->unlockScreen();
+			if (!_menu->menuShown()) {
+				_menu->setScreenBuffer();
 
 				CursorMan.showMouse(true);
-				drawMenu(vcrRequestData, 0);
+				_menu->drawMenu(vcrRequestData);
 			} else {
-				_curMenu = kMenuNone;
+				_menu->hideMenu();
 				CursorMan.showMouse(false);
 			}
 
@@ -464,11 +257,11 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (mouseEvent) {
-			handleMenu(vcrRequestData, ev.mouse);
+			_menu->handleMenu(vcrRequestData, ev.mouse);
 			mouseEvent = false;
 		}
 
-		if (_curMenu != kMenuNone) {
+		if (_menu->menuShown()) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 			continue;
