@@ -47,6 +47,10 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace M4
 
+M4MetaEngine::~M4MetaEngine() {
+	_thumbnail.free();
+}
+
 const char *M4MetaEngine::getName() const {
 	return "m4";
 }
@@ -114,6 +118,13 @@ Common::InSaveFile *M4MetaEngine::getOriginalSave(const Common::String &saveName
 	}
 
 	return nullptr;
+}
+
+void M4MetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	if (!_thumbnail.h)
+		return AdvancedMetaEngine::getSavegameThumbnail(thumb);
+
+	thumb.copyFrom(_thumbnail);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(M4)

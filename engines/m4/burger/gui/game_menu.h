@@ -23,6 +23,7 @@
 #ifndef M4_BURGER_GUI_GAME_MENU_H
 #define M4_BURGER_GUI_GAME_MENU_H
 
+#include "graphics/surface.h"
 #include "m4/m4_types.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/gui/gui_univ.h"
@@ -495,7 +496,8 @@ struct MenuGlobals {
 	bool deleteSaveDesc = false;
 
 	Sprite **thumbNails = nullptr;
-	Sprite *saveLoadThumbNail = nullptr;
+	Sprite *saveLoadThumbNail = nullptr;	// Original used for menu display
+	Graphics::Surface _thumbnail;			// ScummVM version used for savegame
 	int32 sizeofThumbData = -1;
 	int32 thumbIndex = 0;
 
@@ -505,6 +507,10 @@ struct MenuGlobals {
 
 	int32 remember_digi_volume;			// For cancelling out of the options menu
 	int32 remember_digestability;		// For cancelling out of the options menu
+
+	~MenuGlobals() {
+		_thumbnail.free();
+	}
 };
 
 void CreateGameMenuMain(RGB8 *myPalette);

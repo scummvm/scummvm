@@ -22,6 +22,7 @@
 #ifndef M4_METAENGINE_H
 #define M4_METAENGINE_H
 
+#include "graphics/surface.h"
 #include "engines/advancedDetector.h"
 
 class M4MetaEngine : public AdvancedMetaEngine {
@@ -29,6 +30,11 @@ private:
 	Common::InSaveFile *getOriginalSave(const Common::String &saveName) const;
 
 public:
+	Graphics::Surface _thumbnail;
+
+public:
+	~M4MetaEngine() override;
+
 	const char *getName() const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -43,6 +49,13 @@ public:
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	/**
+	 * Convert the current screen contents to a thumbnail. Can be overriden by individual
+	 * engine meta engines to provide their own thumb, such as hiding any on-screen save
+	 * dialog so that it won't appear in the thumbnail.
+	 */
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // M4_METAENGINE_H

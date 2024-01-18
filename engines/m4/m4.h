@@ -155,6 +155,11 @@ public:
 	SaveStateList listSaves() const;
 
 	/**
+	 * Returns the savegame thumbnail for a save
+	 */
+	bool loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const;
+
+	/**
 	 * Show save game dialog
 	 */
 	virtual void showSaveScreen();

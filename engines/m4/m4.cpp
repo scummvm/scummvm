@@ -26,11 +26,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/conv_io.h"
+#include "m4/graphics/gr_sprite.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/platform/sound/midi.h"
@@ -297,6 +299,37 @@ SaveStateList M4Engine::listSaves() const {
 
 bool M4Engine::savesExist() const {
 	return !listSaves().empty();
+}
+
+bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
+	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
+	if (!desc.isValid())
+		return false;
+
+	// Gert the thumbnail
+	const Graphics::Surface *surf = desc.getThumbnail();
+
+	// Set up output sprite
+	thumbnail->w = surf->w;
+	thumbnail->h = surf->h;
+	thumbnail->encoding = NO_COMPRESS;
+	thumbnail->sourceOffset = 0;
+	thumbnail->data = (byte *)malloc(surf->w * surf->h);
+
+	// Create a surface wrapper for the destination so that we can use
+	// ScummVM's blitting code to down-convert the thumbnail to paletted
+	Graphics::ManagedSurface dest;
+	dest.w = dest.pitch = surf->w;
+	dest.h = surf->h;
+	dest.format = Graphics::PixelFormat::createFormatCLUT8();
+	dest.setPixels(thumbnail->data);
+
+	byte pal[PALETTE_SIZE];
+	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
+	dest.setPalette(pal, 0, PALETTE_COUNT);
+	dest.blitFrom(*surf);
+
+	return true;
 }
 
 } // End of namespace M4
