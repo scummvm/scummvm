@@ -70,6 +70,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bananasfun",			"Bananas in Pyjamas: It's Fun Time" },
 	{ "bananaspack",		"Bananas in Pyjamas: Fun Pack" },
 	{ "bananasparty",		"Bananas in Pyjamas: It's Party Time" },
+	{ "barbmagichouse",     "Barbie and her Magical House"},
 	{ "barbnail",			"Barbie Nail Designer" },
 	{ "barbpauper",			"Barbie as the Princess and the Pauper" },
 	{ "barbrapunzel",		"Barbie as Rapunzel: A Creative Adventure" },
@@ -2086,6 +2087,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// BackPacker (Windows, Swedish)
 	// Reported via TRAC #14819
 	WINGAME1_l("backpacker", "", "BACKPACK.EXE", "t:8e6fb18a41a9baff740aecd4ce68e100", 698999, Common::SE_SWE, 404),
+
+	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
+			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
 
 	// Original filename is 'BD-J/Demo'
 	// Developed by ART Sector ONE / Richard M. Coombs
@@ -9002,6 +9006,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("barbswanlake", "", "SwanLake.exe", "310659620631c126edb6943af1f83e38", 4096651, Common::FR_FRA, 900),
 	WINDEMO1("barbswanlake", "Demo", "SwanLake.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2385166, 900),
+
 
 	WINGAME1_l("bpapao", "", "bpapao.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 4829907, Common::PT_BRA, 900),
 
