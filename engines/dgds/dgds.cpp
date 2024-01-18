@@ -323,6 +323,8 @@ void DgdsEngine::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 void DgdsEngine::loadCorners(const Common::String &filename) {
 	Image i(_resource, _decompressor);
 	int numImgs = i.frameCount(filename);
+	if (numImgs <= 0)
+		error("Corner file %s didn't have any frames?", filename.c_str());
 	_corners.resize(numImgs);
 	for (int i = 0; i < numImgs; i++) {
 		Image *img = new Image(_resource, _decompressor);
@@ -330,25 +332,6 @@ void DgdsEngine::loadCorners(const Common::String &filename) {
 		_corners[i].reset(img);
 	}
 }
-
-// TODO: Temporary placeholder cursor - replace!
-static const byte mouseData[] = {
-	1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
-	1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
-	1, 7, 7, 7, 1, 0, 0, 0, 0, 0,
-	1, 7, 7, 7, 7, 1, 0, 0, 0, 0,
-	1, 7, 7, 7, 7, 7, 1, 0, 0, 0,
-	1, 7, 7, 7, 7, 7, 7, 1, 0, 0,
-	1, 7, 7, 7, 7, 7, 7, 7, 1, 0,
-	1, 7, 7, 7, 7, 7, 1, 1, 1, 1,
-	1, 7, 7, 1, 7, 7, 1, 0, 0, 0,
-	1, 7, 1, 0, 1, 7, 7, 1, 0, 0,
-	1, 1, 0, 0, 1, 7, 7, 1, 0, 0,
-	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
-	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
-	0, 0, 0, 0, 0, 0, 1, 1, 0, 0
-};
 
 void DgdsEngine::loadIcons() {
 	const Common::String &iconFileName = _gdsScene->getIconFile();
@@ -358,6 +341,8 @@ void DgdsEngine::loadIcons() {
 
 	Image i(_resource, _decompressor);
 	int numImgs = i.frameCount(iconFileName);
+	if (numImgs <= 0)
+		error("Icon file %s didn't have any frames?", iconFileName.c_str());
 	_icons.resize(numImgs);
 	for (int i = 0; i < numImgs; i++) {
 		Image *img = new Image(_resource, _decompressor);
@@ -377,8 +362,6 @@ Common::Error DgdsEngine::run() {
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
 	_fontManager = new FontManager();
-
-	CursorMan.pushCursor(mouseData, 10, 15, 0, 0, 0);
 
 	setDebugger(_console);
 
@@ -430,6 +413,9 @@ Common::Error DgdsEngine::run() {
 	}
 
 	loadIcons();
+	if (!_icons.empty()) {
+		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
+	}
 
 	//getDebugger()->attach();
 

@@ -172,10 +172,6 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 		return true;
 	}
 
-	Graphics::Surface surf;
-	surf.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	img.drawBitmap(0, 0, Common::Rect(0, 0, width, height), surf);
-
 	Common::DumpFile outf;
 	Common::String outfname = Common::String::format("%s-%d.png", fname, frameno);
 
@@ -193,9 +189,8 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 
 	byte palbuf[768];
 	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
-	::Image::writePNG(outf, surf, palbuf);
+	::Image::writePNG(outf, img.getSurface(), palbuf);
 	outf.close();
-	surf.free();
 	debugPrintf("wrote %dx%d png to %s\n", width, height, outfname.c_str());
 
 #else
