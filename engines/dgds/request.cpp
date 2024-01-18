@@ -383,6 +383,13 @@ void ButtonGadget::draw(Graphics::Surface *dst) const {
 
 }
 
+void ButtonGadget::toggle(bool enable) {
+	if (!enable)
+		_flags3 |= 9; // 0x1001
+	else
+		_flags3 &= 6; // 0x0110
+}
+
 Common::String TextAreaGadget::dump() const {
 	const Common::String base = Gadget::dump();
 	return Common::String::format("TextArea<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);

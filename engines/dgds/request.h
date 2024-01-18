@@ -91,12 +91,14 @@ public:
 
 	virtual Common::String dump() const;
 	virtual void draw(Graphics::Surface *dst) const;
+	virtual void toggle(bool enable) {}
 };
 
 // Button gadget has no additional fields, but some behavior differences.
 class ButtonGadget : public Gadget {
 public:
 	void draw(Graphics::Surface *dst) const override;
+	void toggle(bool enable) override;
 };
 
 // extended gadget type 1 is 62 (0x3e) bytes
