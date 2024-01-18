@@ -53,6 +53,7 @@ struct PixelFormat;
 struct WinCursorGroup;
 class ManagedSurface;
 class Font;
+class Cursor;
 
 } // End of namespace Graphics
 
@@ -61,6 +62,12 @@ namespace Video {
 class AVIDecoder;
 
 } // End of namespace Video
+
+namespace Image {
+
+class AniDecoder;
+
+} // End of namespace Image
 
 namespace VCruise {
 
@@ -143,14 +150,16 @@ struct MapScreenDirectionDef {
 	Common::Array<InteractionDef> interactions;
 };
 
-struct MapDef {
-	static const uint kNumScreens = 96;
-	static const uint kFirstScreen = 0xa0;
+class MapLoader {
+public:
+	virtual ~MapLoader();
 
-	Common::SharedPtr<MapScreenDirectionDef> screenDirections[kNumScreens][kNumDirections];
+	virtual void setRoomNumber(uint roomNumber) = 0;
+	virtual const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction) = 0;
+	virtual void unload() = 0;
 
-	void clear();
-	const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction);
+protected:
+	static Common::SharedPtr<MapScreenDirectionDef> loadScreenDirectionDef(Common::ReadStream &stream);
 };
 
 struct ScriptEnvironmentVars {
@@ -560,6 +569,19 @@ struct FontCacheItem {
 typedef Common::HashMap<Common::String, uint> ScreenNameToRoomMap_t;
 typedef Common::HashMap<uint, ScreenNameToRoomMap_t> RoomToScreenNameToRoomMap_t;
 
+struct AnimatedCursor {
+	struct FrameDef {
+		uint imageIndex;
+		uint delay;
+	};
+
+	Common::Array<FrameDef> frames;
+	Common::Array<Graphics::Cursor *> images;
+
+	Common::Array<Common::SharedPtr<Graphics::Cursor> > cursorKeepAlive;
+	Common::SharedPtr<Graphics::WinCursorGroup> cursorGroupKeepAlive;
+};
+
 class Runtime {
 public:
 	friend class RuntimeMenuInterface;
@@ -581,6 +603,7 @@ public:
 	void loadCursors(const char *exeName);
 	void setDebugMode(bool debugMode);
 	void setFastAnimationMode(bool fastAnimationMode);
+	void setLowQualityGraphicsMode(bool lowQualityGraphicsMode);
 
 	bool runFrame();
 	void drawFrame();
@@ -839,11 +862,11 @@ private:
 	void changeHero();
 	bool triggerPreIdleActions();
 	void returnToIdleState();
-	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
+	void changeToCursor(const Common::SharedPtr<AnimatedCursor> &cursor);
+	void refreshCursor(uint32 currentTime);
 	bool dischargeIdleMouseMove();
 	bool dischargeIdleMouseDown();
 	bool dischargeIdleClick();
-	void loadMap(Common::SeekableReadStream *stream);
 	void loadFrameData(Common::SeekableReadStream *stream);
 	void loadFrameData2(Common::SeekableReadStream *stream);
 
@@ -924,6 +947,10 @@ private:
 	void clearCircuitHighlightRect(const Common::Rect &rect);
 	void drawCircuitHighlightRect(const Common::Rect &rect);
 	static Common::Rect padCircuitInteractionRect(const Common::Rect &rect);
+
+	static Common::SharedPtr<AnimatedCursor> winCursorGroupToAnimatedCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup);
+	static Common::SharedPtr<AnimatedCursor> aniFileToAnimatedCursor(Image::AniDecoder &aniDecoder);
+	static Common::SharedPtr<AnimatedCursor> staticCursorToAnimatedCursor(const Common::SharedPtr<Graphics::Cursor> &cursor);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -1109,8 +1136,31 @@ private:
 	void scriptOpFn(ScriptArg_t arg);
 	void scriptOpItemHighlightSetTrue(ScriptArg_t arg);
 
-	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
-	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
+	// AD2044 ops
+	void scriptOpAnimT(ScriptArg_t arg);
+	void scriptOpAnimForward(ScriptArg_t arg);
+	void scriptOpAnimReverse(ScriptArg_t arg);
+	void scriptOpAnimKForward(ScriptArg_t arg);
+	void scriptOpNoUpdate(ScriptArg_t arg);
+	void scriptOpNoClear(ScriptArg_t arg);
+	void scriptOpSay1_AD2044(ScriptArg_t arg);
+	void scriptOpSay2_AD2044(ScriptArg_t arg);
+	void scriptOpSay1Rnd(ScriptArg_t arg);
+	void scriptOpM(ScriptArg_t arg);
+	void scriptOpEM(ScriptArg_t arg);
+	void scriptOpSE(ScriptArg_t arg);
+	void scriptOpSDot(ScriptArg_t arg);
+	void scriptOpE(ScriptArg_t arg);
+	void scriptOpDot(ScriptArg_t arg);
+	void scriptOpSound(ScriptArg_t arg);
+	void scriptOpISound(ScriptArg_t arg);
+	void scriptOpUSound(ScriptArg_t arg);
+	void scriptOpSay2K(ScriptArg_t arg);
+	void scriptOpSay3K(ScriptArg_t arg);
+	void scriptOpRGet(ScriptArg_t arg);
+
+	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursors;      // Cursors indexed as CURSOR_CUR_##
+	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursorsShort;      // Cursors indexed as CURSOR_#
 
 	InventoryItem _inventory[kNumInventorySlots];
 
@@ -1192,6 +1242,7 @@ private:
 	bool _escOn;
 	bool _debugMode;
 	bool _fastAnimationMode;
+	bool _lowQualityGraphicsMode;
 
 	VCruiseGameID _gameID;
 
@@ -1271,7 +1322,7 @@ private:
 
 	Audio::Mixer *_mixer;
 
-	MapDef _map;
+	Common::SharedPtr<MapLoader> _mapLoader;
 
 	RenderSection _gameSection;
 	RenderSection _gameDebugBackBuffer;
@@ -1356,6 +1407,11 @@ private:
 	Common::HashMap<Common::String, UILabelDef> _locUILabels;
 
 	Common::Array<Common::SharedPtr<FontCacheItem> > _fontCache;
+
+	AnimatedCursor *_currentAnimatedCursor;
+	Graphics::Cursor *_currentCursor;
+	uint32 _cursorTimeBase;
+	uint32 _cursorCycleLength;
 
 	int32 _dbToVolume[49];
 };

@@ -2041,6 +2041,30 @@ void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
 	_circuitPuzzle.reset();
 }
 
+// AD2044 ops
+OPCODE_STUB(AnimT)
+OPCODE_STUB(AnimForward)
+OPCODE_STUB(AnimReverse)
+OPCODE_STUB(AnimKForward)
+OPCODE_STUB(Say2K)
+OPCODE_STUB(Say3K)
+OPCODE_STUB(NoUpdate)
+OPCODE_STUB(NoClear)
+
+OPCODE_STUB(Say1_AD2044)
+OPCODE_STUB(Say2_AD2044)
+OPCODE_STUB(Say1Rnd)
+OPCODE_STUB(M)
+OPCODE_STUB(EM)
+OPCODE_STUB(SE)
+OPCODE_STUB(SDot)
+OPCODE_STUB(E)
+OPCODE_STUB(Dot)
+OPCODE_STUB(Sound)
+OPCODE_STUB(ISound)
+OPCODE_STUB(USound)
+OPCODE_STUB(RGet)
+
 // Only used in fnRandomBirds and fnRandomMachines in Room 60, both of which are unused
 OPCODE_STUB(SndAddRandom)
 OPCODE_STUB(SndClearRandom)
@@ -2109,6 +2133,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(AnimN);
 			DISPATCH_OP(AnimG);
 			DISPATCH_OP(AnimS);
+			DISPATCH_OP(AnimT);
 			DISPATCH_OP(Anim);
 
 			DISPATCH_OP(Static);
@@ -2273,6 +2298,12 @@ bool Runtime::runScript() {
 			DISPATCH_OP(PuzzleWhoWon);
 			DISPATCH_OP(Fn);
 			DISPATCH_OP(ItemHighlightSetTrue);
+
+			DISPATCH_OP(AnimForward);
+			DISPATCH_OP(AnimReverse);
+			DISPATCH_OP(AnimKForward);
+			DISPATCH_OP(NoUpdate);
+			DISPATCH_OP(NoClear);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));

@@ -31,6 +31,7 @@ enum VCruiseGameID {
 
 	GID_REAH	= 1,
 	GID_SCHIZM	= 2,
+	GID_AD2044	= 3,
 };
 
 enum VCruiseGameFlag {
@@ -41,6 +42,8 @@ enum VCruiseGameFlag {
 	
 	VCRUISE_GF_STEAM_LANGUAGES	= (1 << 4),
 	VCRUISE_GF_FORCE_LANGUAGE	= (1 << 5),
+	
+	VCRUISE_GF_WANT_MIDI		= (1 << 6),
 };
 
 struct VCruiseGameDescription {
@@ -58,6 +61,7 @@ struct VCruiseGameDescription {
 #define GAMEOPTION_FAST_ANIMATIONS				GUIO_GAMEOPTIONS2
 #define GAMEOPTION_SKIP_MENU					GUIO_GAMEOPTIONS3
 #define GAMEOPTION_INCREASE_DRAG_DISTANCE		GUIO_GAMEOPTIONS4
+#define GAMEOPTION_USE_4BIT_GRAPHICS			GUIO_GAMEOPTIONS5
 
 
 } // End of namespace VCruise

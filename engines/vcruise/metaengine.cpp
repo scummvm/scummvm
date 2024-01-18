@@ -80,6 +80,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_USE_4BIT_GRAPHICS,
+		{
+			_s("Use 16-color graphics"),
+			_s("Uses 16-color graphics."),
+			"vcruise_use_4bit",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

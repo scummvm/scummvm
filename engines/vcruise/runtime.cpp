@@ -39,7 +39,9 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 
+#include "image/ani.h"
 #include "image/bmp.h"
+#include "image/icocur.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
@@ -198,13 +200,70 @@ AnimationDef::AnimationDef() : animNum(0), firstFrame(0), lastFrame(0) {
 InteractionDef::InteractionDef() : objectType(0), interactionID(0) {
 }
 
-void MapDef::clear() {
-	for (uint screen = 0; screen < kNumScreens; screen++)
-		for (uint direction = 0; direction < kNumDirections; direction++)
-			screenDirections[screen][direction].reset();
+MapLoader::~MapLoader() {
 }
 
-const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direction) {
+Common::SharedPtr<MapScreenDirectionDef> MapLoader::loadScreenDirectionDef(Common::ReadStream &stream) {
+	byte screenDefHeader[16];
+
+	if (stream.read(screenDefHeader, 16) != 16)
+		error("Error reading screen def header");
+
+	uint16 numInteractions = READ_LE_UINT16(screenDefHeader + 0);
+
+	if (numInteractions > 0) {
+		Common::SharedPtr<MapScreenDirectionDef> screenDirectionDef(new MapScreenDirectionDef());
+		screenDirectionDef->interactions.resize(numInteractions);
+
+		for (uint i = 0; i < numInteractions; i++) {
+			InteractionDef &idef = screenDirectionDef->interactions[i];
+
+			byte interactionData[12];
+			if (stream.read(interactionData, 12) != 12)
+				error("Error reading interaction data");
+
+			idef.rect = Common::Rect(READ_LE_INT16(interactionData + 0), READ_LE_INT16(interactionData + 2), READ_LE_INT16(interactionData + 4), READ_LE_INT16(interactionData + 6));
+			idef.interactionID = READ_LE_UINT16(interactionData + 8);
+			idef.objectType = READ_LE_UINT16(interactionData + 10);
+		}
+
+		return screenDirectionDef;
+	}
+
+	return nullptr;
+}
+
+class ReahSchizmMapLoader : public MapLoader {
+public:
+	ReahSchizmMapLoader();
+
+	void setRoomNumber(uint roomNumber) override;
+	const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction) override;
+	void unload() override;
+
+private:
+	void load();
+
+	static const uint kNumScreens = 96;
+	static const uint kFirstScreen = 0xa0;
+
+	uint _roomNumber;
+	bool _isLoaded;
+
+	Common::SharedPtr<MapScreenDirectionDef> _screenDirections[kNumScreens][kNumDirections];
+};
+
+ReahSchizmMapLoader::ReahSchizmMapLoader() : _roomNumber(0), _isLoaded(false) {
+}
+
+void ReahSchizmMapLoader::setRoomNumber(uint roomNumber) {
+	if (_roomNumber != roomNumber)
+		unload();
+
+	_roomNumber = roomNumber;
+}
+
+const MapScreenDirectionDef *ReahSchizmMapLoader::getScreenDirection(uint screen, uint direction) {
 	if (screen < kFirstScreen)
 		return nullptr;
 
@@ -213,8 +272,114 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	if (screen >= kNumScreens)
 		return nullptr;
 
-	return screenDirections[screen][direction].get();
+	if (!_isLoaded)
+		load();
+
+	return _screenDirections[screen][direction].get();
 }
+
+void ReahSchizmMapLoader::load() {
+	// This is loaded even if the open fails
+	_isLoaded = true;
+
+	Common::Path mapFileName(Common::String::format("Map/Room%02i.map", static_cast<int>(_roomNumber)));
+	Common::File mapFile;
+
+	if (!mapFile.open(mapFileName))
+		return;
+
+	byte screenDefOffsets[kNumScreens * kNumDirections * 4];
+
+	if (!mapFile.seek(16))
+		error("Error skipping map file header");
+
+	if (mapFile.read(screenDefOffsets, sizeof(screenDefOffsets)) != sizeof(screenDefOffsets))
+		error("Error reading map offset table");
+
+	for (uint screen = 0; screen < kNumScreens; screen++) {
+		for (uint direction = 0; direction < kNumDirections; direction++) {
+			uint32 offset = READ_LE_UINT32(screenDefOffsets + (kNumDirections * screen + direction) * 4);
+			if (!offset)
+				continue;
+
+			// QUIRK: The stone game in the tower in Reah (Room 06) has two 0cb screens and the second one is damaged,
+			// so it must be ignored.
+			if (!_screenDirections[screen][direction]) {
+				if (!mapFile.seek(offset))
+					error("Error seeking to screen data");
+
+				_screenDirections[screen][direction] = loadScreenDirectionDef(mapFile);
+			}
+		}
+	}
+}
+
+void ReahSchizmMapLoader::unload() {
+	for (uint screen = 0; screen < kNumScreens; screen++)
+		for (uint direction = 0; direction < kNumDirections; direction++)
+			_screenDirections[screen][direction].reset();
+}
+
+class AD2044MapLoader : public MapLoader {
+public:
+	AD2044MapLoader();
+
+	void setRoomNumber(uint roomNumber) override;
+	const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction) override;
+	void unload() override;
+
+private:
+	void load();
+
+	static const uint kNumScreens = 96;
+	static const uint kFirstScreen = 0xa0;
+
+	uint _roomNumber;
+	uint _screenNumber;
+	bool _isLoaded;
+
+	Common::SharedPtr<MapScreenDirectionDef> _currentMap;
+};
+
+AD2044MapLoader::AD2044MapLoader() : _roomNumber(0), _screenNumber(0), _isLoaded(false) {
+}
+
+void AD2044MapLoader::setRoomNumber(uint roomNumber) {
+	if (_roomNumber != roomNumber)
+		unload();
+
+	_roomNumber = roomNumber;
+}
+
+const MapScreenDirectionDef *AD2044MapLoader::getScreenDirection(uint screen, uint direction) {
+	if (screen != _screenNumber)
+		unload();
+
+	_screenNumber = screen;
+
+	if (!_isLoaded)
+		load();
+
+	return _currentMap.get();
+}
+
+void AD2044MapLoader::load() {
+	// This is loaded even if the open fails
+	_isLoaded = true;
+
+	Common::Path mapFileName(Common::String::format("map/SCR%i.MAP", static_cast<int>(_roomNumber * 100u + _screenNumber)));
+	Common::File mapFile;
+
+	if (!mapFile.open(mapFileName))
+		return;
+
+	_currentMap = loadScreenDirectionDef(mapFile);
+}
+
+void AD2044MapLoader::unload() {
+	_currentMap.reset();
+}
+
 
 ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false), isEntryScript(false), puzzleWasSet(false),
 	panInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
@@ -1043,7 +1208,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
-	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
+	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _lowQualityGraphicsMode(false),
 	  _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
 	  _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
@@ -1061,7 +1226,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _isInGame(false),
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false),
 	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _charSet(kCharSetLatin),
-	  _isCDVariant(false) {
+	  _isCDVariant(false), _currentAnimatedCursor(nullptr), _currentCursor(nullptr), _cursorTimeBase(0), _cursorCycleLength(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -1102,34 +1267,72 @@ void Runtime::initSections(const Common::Rect &gameRect, const Common::Rect &men
 }
 
 void Runtime::loadCursors(const char *exeName) {
-	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(exeName));
-	if (!winRes)
-		error("Couldn't open executable file %s", exeName);
+	if (_gameID == GID_AD2044) {
+		const int staticCursorIDs[] = {0, 29, 30, 31, 32, 33, 34, 35, 36, 39, 40, 41, 50, 96, 97, 99};
+		const int animatedCursorIDs[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
-	Common::Array<Common::WinResourceID> cursorGroupIDs = winRes->getIDList(Common::kWinGroupCursor);
-	for (const Common::WinResourceID &id : cursorGroupIDs) {
-		Common::SharedPtr<Graphics::WinCursorGroup> cursorGroup(Graphics::WinCursorGroup::createCursorGroup(winRes.get(), id));
-		if (!winRes) {
-			warning("Couldn't load cursor group");
-			continue;
+		_cursors.resize(100);
+
+		for (int cid : staticCursorIDs) {
+			Common::String cursorPath = Common::String::format("gfx/CURSOR%02i.CUR", static_cast<int>(cid));
+
+			Common::File f;
+			Image::IcoCurDecoder decoder;
+			if (!f.open(Common::Path(cursorPath)) || !decoder.open(f))
+				error("Couldn't load cursor %s", cursorPath.c_str());
+
+			uint numItems = decoder.numItems();
+
+			if (numItems < 1)
+				error("Cursor %s had no items", cursorPath.c_str());
+
+			Graphics::Cursor *cursor = decoder.loadItemAsCursor(0);
+			if (!cursor)
+				error("Couldn't load cursor %s", cursorPath.c_str());
+
+			_cursors[cid] = staticCursorToAnimatedCursor(Common::SharedPtr<Graphics::Cursor>(cursor));
 		}
 
-		Common::String nameStr = id.getString();
-		if (nameStr.matchString("CURSOR_#")) {
-			char c = nameStr[7];
+		for (int cid : animatedCursorIDs) {
+			Common::String cursorPath = Common::String::format("gfx/CURSOR%i.ani", static_cast<int>(cid));
 
-			uint shortID = c - '0';
-			if (shortID >= _cursorsShort.size())
-				_cursorsShort.resize(shortID + 1);
-			_cursorsShort[shortID] = cursorGroup;
-		} else if (nameStr.matchString("CURSOR_CUR_##")) {
-			char c1 = nameStr[11];
-			char c2 = nameStr[12];
+			Common::File f;
+			Image::AniDecoder decoder;
+			if (!f.open(Common::Path(cursorPath)) || !decoder.open(f))
+				error("Couldn't load cursor %s", cursorPath.c_str());
 
-			uint longID = (c1 - '0') * 10 + (c2 - '0');
-			if (longID >= _cursors.size())
-				_cursors.resize(longID + 1);
-			_cursors[longID] = cursorGroup;
+			_cursors[cid] = aniFileToAnimatedCursor(decoder);
+		}
+	} else {
+		Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(exeName));
+		if (!winRes)
+			error("Couldn't open executable file %s", exeName);
+
+		Common::Array<Common::WinResourceID> cursorGroupIDs = winRes->getIDList(Common::kWinGroupCursor);
+		for (const Common::WinResourceID &id : cursorGroupIDs) {
+			Common::SharedPtr<Graphics::WinCursorGroup> cursorGroup(Graphics::WinCursorGroup::createCursorGroup(winRes.get(), id));
+			if (!winRes) {
+				warning("Couldn't load cursor group");
+				continue;
+			}
+
+			Common::String nameStr = id.getString();
+			if (nameStr.matchString("CURSOR_#")) {
+				char c = nameStr[7];
+
+				uint shortID = c - '0';
+				if (shortID >= _cursorsShort.size())
+					_cursorsShort.resize(shortID + 1);
+				_cursorsShort[shortID] = winCursorGroupToAnimatedCursor(cursorGroup);
+			} else if (nameStr.matchString("CURSOR_CUR_##")) {
+				char c1 = nameStr[11];
+				char c2 = nameStr[12];
+
+				uint longID = (c1 - '0') * 10 + (c2 - '0');
+				if (longID >= _cursors.size())
+					_cursors.resize(longID + 1);
+				_cursors[longID] = winCursorGroupToAnimatedCursor(cursorGroup);
+			}
 		}
 	}
 
@@ -1180,6 +1383,10 @@ void Runtime::setDebugMode(bool debugMode) {
 
 void Runtime::setFastAnimationMode(bool fastAnimationMode) {
 	_fastAnimationMode = fastAnimationMode;
+}
+
+void Runtime::setLowQualityGraphicsMode(bool lowQualityGraphicsMode) {
+	_lowQualityGraphicsMode = lowQualityGraphicsMode;
 }
 
 bool Runtime::runFrame() {
@@ -1253,6 +1460,8 @@ bool Runtime::runFrame() {
 	updateSounds(timestamp);
 	updateSubtitles();
 
+	refreshCursor(timestamp);
+
 	return true;
 }
 
@@ -1291,18 +1500,27 @@ bool Runtime::bootGame(bool newGame) {
 
 		loadAllSchizmScreenNames();
 		debug(1, "Screen names resolved OK");
-	} else {
+	} else if (_gameID == GID_REAH) {
 		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
 		startConfig.disc = 1;
 		startConfig.room = 1;
 		startConfig.screen = 0xb0;
 		startConfig.direction = 0;
-	}
+	} else if (_gameID == GID_AD2044) {
+		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
+		startConfig.disc = 1;
+		startConfig.room = 1;
+		startConfig.screen = 5;
+		startConfig.direction = 0;
+	} else
+		error("Don't have a start config for this game");
 
-	_trayBackgroundGraphic = loadGraphic("Pocket", true);
-	_trayHighlightGraphic = loadGraphic("Select", true);
-	_trayCompassGraphic = loadGraphic("Select_1", true);
-	_trayCornerGraphic = loadGraphic("Select_2", true);
+	if (_gameID != GID_AD2044) {
+		_trayBackgroundGraphic = loadGraphic("Pocket", true);
+		_trayHighlightGraphic = loadGraphic("Select", true);
+		_trayCompassGraphic = loadGraphic("Select_1", true);
+		_trayCornerGraphic = loadGraphic("Select_2", true);
+	}
 
 	Common::Language lang = _defaultLanguage;
 
@@ -1394,26 +1612,33 @@ bool Runtime::bootGame(bool newGame) {
 	Common::CodePage codePage = Common::CodePage::kASCII;
 	resolveCodePageForLanguage(lang, codePage, _charSet);
 
-	bool subtitlesLoadedOK = loadSubtitles(codePage, false);
+	bool subtitlesLoadedOK = false;
 
-	if (!subtitlesLoadedOK) {
-		lang = _defaultLanguage;
-		_languageIndex = _defaultLanguageIndex;
-
-		warning("Localization data failed to load, retrying with default language");
-
-		resolveCodePageForLanguage(lang, codePage, _charSet);
+	if (_gameID == GID_AD2044) {
+		subtitlesLoadedOK = true;
+	} else {
 		subtitlesLoadedOK = loadSubtitles(codePage, false);
 
 		if (!subtitlesLoadedOK) {
-			if (_languageIndex != 0) {
-				codePage = Common::CodePage::kWindows1250;
-				_languageIndex = 0;
-				_defaultLanguageIndex = 0;
+			lang = _defaultLanguage;
+			_languageIndex = _defaultLanguageIndex;
 
-				warning("Localization data failed to load again, trying one more time and guessing the encoding");
+			warning("Localization data failed to load, retrying with default language");
 
-				subtitlesLoadedOK = loadSubtitles(codePage, true);
+			resolveCodePageForLanguage(lang, codePage, _charSet);
+
+			subtitlesLoadedOK = loadSubtitles(codePage, false);
+
+			if (!subtitlesLoadedOK) {
+				if (_languageIndex != 0) {
+					codePage = Common::CodePage::kWindows1250;
+					_languageIndex = 0;
+					_defaultLanguageIndex = 0;
+
+					warning("Localization data failed to load again, trying one more time and guessing the encoding");
+
+					subtitlesLoadedOK = loadSubtitles(codePage, true);
+				}
 			}
 		}
 	}
@@ -1425,16 +1650,23 @@ bool Runtime::bootGame(bool newGame) {
 	else
 		warning("Localization data failed to load!  Text and subtitles will be disabled.");
 
-	_uiGraphics.resize(24);
-	for (uint i = 0; i < _uiGraphics.size(); i++) {
-		if (_gameID == GID_REAH) {
-			_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
-			if (_languageIndex != 0 && !_uiGraphics[i])
-				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
-		} else if (_gameID == GID_SCHIZM) {
-			_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
+	if (_gameID != GID_AD2044) {
+		_uiGraphics.resize(24);
+		for (uint i = 0; i < _uiGraphics.size(); i++) {
+			if (_gameID == GID_REAH) {
+				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
+				if (_languageIndex != 0 && !_uiGraphics[i])
+					_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
+			} else if (_gameID == GID_SCHIZM) {
+				_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
+			}
 		}
 	}
+
+	if (_gameID == GID_AD2044)
+		_mapLoader.reset(new AD2044MapLoader());
+	else
+		_mapLoader.reset(new ReahSchizmMapLoader());
 
 	_gameState = kGameStateIdle;
 
@@ -1443,7 +1675,9 @@ bool Runtime::bootGame(bool newGame) {
 			_mostRecentValidSaveState = generateNewGameSnapshot();
 			restoreSaveGameSnapshot();
 		} else {
-			changeToScreen(1, 0xb1);
+			uint initialScreen = (_gameID == GID_AD2044) ? 5 : 0xb1;
+
+			changeToScreen(1, initialScreen);
 		}
 	}
 
@@ -2489,6 +2723,11 @@ void Runtime::queueOSEvent(const OSEvent &evt) {
 }
 
 void Runtime::loadIndex() {
+	if (_gameID == GID_AD2044) {
+		// No index
+		return;
+	}
+
 	const char *indexPath = "Log/Index.txt";
 
 	Common::INIFile iniFile;
@@ -2543,19 +2782,47 @@ void Runtime::loadIndex() {
 }
 
 void Runtime::findWaves() {
-	Common::ArchiveMemberList waves;
-	SearchMan.listMatchingMembers(waves, "Sfx/Waves-##/####*.wav", true);
+	if (_gameID == GID_AD2044) {
+		for (int disc = 0; disc < 2; disc++) {
+			for (int cat = 0; cat < 3; cat++) {
+				if (disc == 1 && cat == 0)
+					continue;
 
-	for (const Common::ArchiveMemberPtr &wave : waves) {
-		Common::String name = wave->getName();
+				char subdir[3] = {static_cast<char>('0' + disc), static_cast<char>('0' + cat), 0};
 
-		// Strip .wav extension
-		name = name.substr(0, name.size() - 4);
+				Common::String searchPattern = Common::String("sfx/WAVE-") + subdir + "/########.WAV";
 
-		// Make case-insensitive
-		name.toLowercase();
+				Common::ArchiveMemberList waves;
+				SearchMan.listMatchingMembers(waves, Common::Path(searchPattern, '/'), true);
 
-		_waves[name] = wave;
+				for (const Common::ArchiveMemberPtr &wave : waves) {
+					Common::String name = wave->getFileName();
+
+					// Strip .wav extension
+					name = name.substr(0, name.size() - 4);
+
+					// Make case-insensitive
+					name.toLowercase();
+
+					_waves[Common::String(subdir) + "-" + name] = wave;
+				}
+			}
+		}
+	} else {
+		Common::ArchiveMemberList waves;
+		SearchMan.listMatchingMembers(waves, "Sfx/Waves-##/####*.wav", true);
+
+		for (const Common::ArchiveMemberPtr &wave : waves) {
+			Common::String name = wave->getFileName();
+
+			// Strip .wav extension
+			name = name.substr(0, name.size() - 4);
+
+			// Make case-insensitive
+			name.toLowercase();
+
+			_waves[name] = wave;
+		}
 	}
 }
 
@@ -2884,18 +3151,22 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 				logicFile.close();
 			}
+		} else if (_gameID == GID_AD2044) {
+			_scriptSet.reset();
+
+			Common::Path logicFileName(Common::String::format("log/kom%i.log", static_cast<int>(roomNumber)));
+			Common::File logicFile;
+			if (logicFile.open(logicFileName)) {
+				_scriptSet = compileAD2044LogicFile(logicFile, static_cast<uint>(logicFile.size()), logicFileName);
+
+				logicFile.close();
+			}
 		} else
 			error("Don't know how to compile scripts for this game");
 
-		_map.clear();
+		_mapLoader->unload();
 
-		Common::Path mapFileName(Common::String::format("Map/Room%02i.map", static_cast<int>(roomNumber)));
-		Common::File mapFile;
-
-		if (mapFile.open(mapFileName)) {
-			loadMap(&mapFile);
-			mapFile.close();
-		}
+		_mapLoader->setRoomNumber(roomNumber);
 	}
 
 	if (changedScreen) {
@@ -3050,17 +3321,65 @@ void Runtime::returnToIdleState() {
 	(void) dischargeIdleMouseMove();
 }
 
-void Runtime::changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor) {
+void Runtime::changeToCursor(const Common::SharedPtr<AnimatedCursor> &cursor) {
 	if (!cursor)
 		CursorMan.showMouse(false);
 	else {
-		CursorMan.replaceCursor(cursor->cursors[0].cursor);
+		_currentAnimatedCursor = cursor.get();
+
+		_cursorCycleLength = 0;
+		for (const AnimatedCursor::FrameDef &frame : cursor->frames)
+			_cursorCycleLength += frame.delay;
+
+		_cursorTimeBase = g_system->getMillis(true);
+
+		refreshCursor(_cursorTimeBase);
 		CursorMan.showMouse(true);
 	}
 }
 
+void Runtime::refreshCursor(uint32 currentTime) {
+	if (!_currentAnimatedCursor)
+		return;
+
+	uint32 timeSinceTimeBase = currentTime - _cursorTimeBase;
+
+	uint stepTime = 0;
+
+	if (_cursorCycleLength > 0) {
+		// 3 ticks at 60Hz is 50ms, so this will reduce the precision of the math that we have to do
+		timeSinceTimeBase %= _cursorCycleLength * 50u;
+		_cursorTimeBase = currentTime - timeSinceTimeBase;
+
+		stepTime = timeSinceTimeBase * 60u / 1000u;
+	}
+
+	uint imageIndex = 0;
+
+	if (_currentAnimatedCursor) {
+		uint frameStartTime = 0;
+		for (const AnimatedCursor::FrameDef &frame : _currentAnimatedCursor->frames) {
+			if (frameStartTime > stepTime)
+				break;
+
+			imageIndex = frame.imageIndex;
+			frameStartTime += frame.delay;
+		}
+	}
+
+	if (imageIndex >= _currentAnimatedCursor->images.size())
+		error("Out-of-bounds animated cursor image index");
+
+	Graphics::Cursor *cursor = _currentAnimatedCursor->images[imageIndex];
+
+	if (!cursor)
+		error("Missing cursor");
+
+	CursorMan.replaceCursor(cursor);
+}
+
 bool Runtime::dischargeIdleMouseMove() {
-	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+	const MapScreenDirectionDef *sdDef = _mapLoader->getScreenDirection(_screenNumber, _direction);
 
 	if (_inGameMenuState != kInGameMenuStateInvisible) {
 		checkInGameMenuHover();
@@ -3252,55 +3571,6 @@ bool Runtime::dischargeIdleClick() {
 
 	// Didn't do anything
 	return false;
-}
-
-void Runtime::loadMap(Common::SeekableReadStream *stream) {
-	byte screenDefOffsets[MapDef::kNumScreens * kNumDirections * 4];
-
-	if (!stream->seek(16))
-		error("Error skipping map file header");
-
-	if (stream->read(screenDefOffsets, sizeof(screenDefOffsets)) != sizeof(screenDefOffsets))
-		error("Error reading map offset table");
-
-	for (uint screen = 0; screen < MapDef::kNumScreens; screen++) {
-		for (uint direction = 0; direction < kNumDirections; direction++) {
-			uint32 offset = READ_LE_UINT32(screenDefOffsets + (kNumDirections * screen + direction) * 4);
-			if (!offset)
-				continue;
-
-			if (!stream->seek(offset))
-				error("Error seeking to screen data");
-
-			byte screenDefHeader[16];
-			if (stream->read(screenDefHeader, 16) != 16)
-				error("Error reading screen def header");
-
-			uint16 numInteractions = READ_LE_UINT16(screenDefHeader + 0);
-
-			if (numInteractions > 0) {
-				Common::SharedPtr<MapScreenDirectionDef> screenDirectionDef(new MapScreenDirectionDef());
-				screenDirectionDef->interactions.resize(numInteractions);
-
-				for (uint i = 0; i < numInteractions; i++) {
-					InteractionDef &idef = screenDirectionDef->interactions[i];
-
-					byte interactionData[12];
-					if (stream->read(interactionData, 12) != 12)
-						error("Error reading interaction data");
-
-					idef.rect = Common::Rect(READ_LE_INT16(interactionData + 0), READ_LE_INT16(interactionData + 2), READ_LE_INT16(interactionData + 4), READ_LE_INT16(interactionData + 6));
-					idef.interactionID = READ_LE_UINT16(interactionData + 8);
-					idef.objectType = READ_LE_UINT16(interactionData + 10);
-				}
-
-				// QUIRK: The stone game in the tower in Reah (Room 06) has two 0cb screens and the second one is damaged,
-				// so it must be ignored.
-				if (!_map.screenDirections[screen][direction])
-					_map.screenDirections[screen][direction] = screenDirectionDef;
-			}
-		}
-	}
 }
 
 void Runtime::loadFrameData(Common::SeekableReadStream *stream) {
@@ -4373,7 +4643,7 @@ void Runtime::drawDebugOverlay() {
 	uint32 whiteColor = pixFmt.ARGBToColor(255, 255, 255, 255);
 	uint32 blackColor = pixFmt.ARGBToColor(255, 0, 0, 0);
 
-	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+	const MapScreenDirectionDef *sdDef = _mapLoader->getScreenDirection(_screenNumber, _direction);
 	if (sdDef) {
 		for (const InteractionDef &idef : sdDef->interactions) {
 			Common::Rect rect = idef.rect;
@@ -5301,6 +5571,75 @@ Common::Rect Runtime::padCircuitInteractionRect(const Common::Rect &rect) {
 	result.bottom += 4;
 	result.top -= 3;
 	result.left -= 3;
+
+	return result;
+}
+
+Common::SharedPtr<AnimatedCursor> Runtime::winCursorGroupToAnimatedCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup) {
+	Common::SharedPtr<AnimatedCursor> result(new AnimatedCursor());
+
+	result->cursorGroupKeepAlive = cursorGroup;
+	result->images.push_back(cursorGroup->cursors[0].cursor);
+
+	AnimatedCursor::FrameDef frameDef;
+	frameDef.delay = 1;
+	frameDef.imageIndex = 0;
+
+	result->frames.push_back(frameDef);
+
+	return result;
+}
+
+Common::SharedPtr<AnimatedCursor> Runtime::aniFileToAnimatedCursor(Image::AniDecoder &aniDecoder) {
+	Common::SharedPtr<AnimatedCursor> result(new AnimatedCursor());
+
+	const Image::AniDecoder::Metadata &metadata = aniDecoder.getMetadata();
+
+	if (!metadata.isCURFormat)
+		error("ANI file isn't CUR format");
+
+	for (uint step = 0; step < metadata.numSteps; step++) {
+		const Image::AniDecoder::FrameDef frame = aniDecoder.getSequenceFrame(step);
+
+		AnimatedCursor::FrameDef outFrameDef;
+		outFrameDef.delay = frame.delay;
+		outFrameDef.imageIndex = frame.imageIndex;
+
+		result->frames.push_back(outFrameDef);
+	}
+
+	for (uint frame = 0; frame < metadata.numFrames; frame++) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(aniDecoder.openImageStream(frame));
+
+		if (!stream)
+			error("Couldn't open animated cursor frame");
+
+		Image::IcoCurDecoder icoCurDecoder;
+		icoCurDecoder.open(*stream);
+
+		Graphics::Cursor *cursor = icoCurDecoder.loadItemAsCursor(0);
+
+		if (!cursor)
+			error("Couldn't load cursor frame");
+
+		result->cursorKeepAlive.push_back(Common::SharedPtr<Graphics::Cursor>(cursor));
+		result->images.push_back(cursor);
+	}
+
+	return result;
+}
+
+Common::SharedPtr<AnimatedCursor> Runtime::staticCursorToAnimatedCursor(const Common::SharedPtr<Graphics::Cursor> &cursor) {
+	Common::SharedPtr<AnimatedCursor> result(new AnimatedCursor());
+
+	result->cursorKeepAlive.push_back(cursor);
+	result->images.push_back(cursor.get());
+
+	AnimatedCursor::FrameDef frameDef;
+	frameDef.delay = 1;
+	frameDef.imageIndex = 0;
+
+	result->frames.push_back(frameDef);
 
 	return result;
 }

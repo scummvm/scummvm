@@ -29,6 +29,7 @@
 #include "vcruise/detection.h"
 
 static const PlainGameDescriptor g_vcruiseGames[] = {
+	{"ad2044", "A.D. 2044"},
 	{"reah", "Reah: Face the Unknown"},
 	{"schizm", "Schizm: Mysterious Journey"},
 	{nullptr, nullptr}
@@ -39,6 +40,7 @@ static const char *const g_vcruiseDirectoryGlobs[] = {
 	"Log",
 	"Waves-12",
 	"Waves-22",
+	"WAVE-01",
 	nullptr
 };
 
@@ -71,7 +73,10 @@ public:
 		VCruise::VCruiseGameID gameID = reinterpret_cast<const VCruise::VCruiseGameDescription *>(adGame.desc)->gameID;
 
 		if ((adGame.desc->flags & VCruise::VCRUISE_GF_FORCE_LANGUAGE) == 0) {
-			if (gameID == VCruise::GID_REAH) {
+			if (gameID == VCruise::GID_AD2044) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
+			} else if (gameID == VCruise::GID_REAH) {
 				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
 				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
