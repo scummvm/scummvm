@@ -68,10 +68,11 @@ struct SceneStruct2_Extended : public SceneStruct2 {
 	uint16 field14_0x2c;
 };
 
-struct SceneStruct3 {
-	uint16 val1;
-	uint16 val2;
-	uint16 val3; /* Not set in loader? */
+struct MouseCursor {
+	uint16 _hotX;
+	uint16 _hotY;
+	// pointer to cursor image
+	//Common::SharedPtr<Image> _img;
 };
 
 struct SceneStruct4 {
@@ -146,7 +147,7 @@ protected:
 	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
 	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
 	bool readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<SceneStruct2_Extended> &list) const;
-	bool readStruct3List(Common::SeekableReadStream *s, Common::Array<SceneStruct3> &list) const;
+	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
 	bool readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneStruct5> &list) const;
 	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;

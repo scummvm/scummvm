@@ -196,7 +196,7 @@ void DgdsEngine::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 	Graphics::Surface *dst = g_system->lockScreen();
 
 	// Restore background when drawing submenus
-	dst->copyFrom(_screenBuffer);
+	//dst->copyFrom(_screenBuffer);
 
 	vcrRequestData._requests[_curMenu].draw(dst);
 

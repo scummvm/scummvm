@@ -236,11 +236,11 @@ bool Scene::readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array
 }
 
 
-bool Scene::readStruct3List(Common::SeekableReadStream *s, Common::Array<SceneStruct3> &list) const {
+bool Scene::readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct3 &dst : list) {
-		dst.val1 = s->readUint16LE();
-		dst.val2 = s->readUint16LE();
+	for (MouseCursor &dst : list) {
+		dst._hotX = s->readUint16LE();
+		dst._hotY = s->readUint16LE();
 	}
 	return !s->err();
 }
@@ -474,9 +474,9 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 		readStruct5List(stream, _struct5List5);
 	Common::Array<struct SceneStruct1> struct1List;
 	readStruct1List(stream, struct1List);
-	Common::Array<struct SceneStruct3> struct3List;
+	Common::Array<struct MouseCursor> struct3List;
 	_iconFile = stream->readString();
-	readStruct3List(stream, struct3List);
+	readMouseHotspotList(stream, struct3List);
 	readStruct2ExtendedList(stream, _struct2ExtList);
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))
