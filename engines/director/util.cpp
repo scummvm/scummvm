@@ -1202,6 +1202,12 @@ Common::CodePage getEncoding(Common::Platform platform, Common::Language languag
 	default:
 		break;
 	}
+	// If there's no language override, but there is a Lingo
+	// request for a double-byte interpreter, assume this means
+	// the text cast members contain Shift-JIS.
+	if (!g_lingo->_romanLingo)
+		return Common::kWindows932; // Shift JIS
+
 	return (platform == Common::kPlatformWindows)
 				? Common::kWindows1252
 				: Common::kMacRoman;
