@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GFX_ICOCUR_H
-#define GFX_ICOCUR_H
+#ifndef IMAGE_ICOCUR_H
+#define IMAGE_ICOCUR_H
 
 #include "common/array.h"
 #include "common/types.h"

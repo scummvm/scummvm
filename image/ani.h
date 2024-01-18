@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GFX_ANI_H
-#define GFX_ANI_H
+#ifndef IMAGE_ANI_H
+#define IMAGE_ANI_H
 
 #include "common/array.h"
 #include "common/types.h"
