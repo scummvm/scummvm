@@ -307,26 +307,46 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 
 	// Gert the thumbnail
 	const Graphics::Surface *surf = desc.getThumbnail();
+	assert(surf->format.bytesPerPixel == 2);
 
 	// Set up output sprite
 	thumbnail->w = surf->w;
 	thumbnail->h = surf->h;
 	thumbnail->encoding = NO_COMPRESS;
-	thumbnail->sourceOffset = 0;
-	thumbnail->data = (byte *)malloc(surf->w * surf->h);
 
-	// Create a surface wrapper for the destination so that we can use
-	// ScummVM's blitting code to down-convert the thumbnail to paletted
-	Graphics::ManagedSurface dest;
-	dest.w = dest.pitch = surf->w;
-	dest.h = surf->h;
-	dest.format = Graphics::PixelFormat::createFormatCLUT8();
-	dest.setPixels(thumbnail->data);
+	byte *data = (byte *)malloc(surf->w * surf->h);
+	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(MemHandle));
+	*thumbnail->sourceHandle = data;
+	thumbnail->sourceOffset = 0;
+	thumbnail->data = data;
 
 	byte pal[PALETTE_SIZE];
+	byte r, g, b;
+	int proximity, minProximity;
 	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
-	dest.setPalette(pal, 0, PALETTE_COUNT);
-	dest.blitFrom(*surf);
+
+	// Translate the 16-bit thumbnail to paletted
+	for (int y = 0; y < surf->h; ++y) {
+		const uint16 *srcLine = (const uint16 *)surf->getBasePtr(0, y);
+		byte *destLine = data + surf->w * y;
+
+		for (int x = 0; x < surf->w; ++x, ++srcLine, ++destLine) {
+			proximity = minProximity = 0xffff;
+			surf->format.colorToRGB(*srcLine, r, g, b);
+
+			const byte *palP = pal;
+			for (int palIdx = 0; palIdx < PALETTE_COUNT; ++palIdx, palP += 3) {
+				proximity = ABS((int)r - (int)palP[0]) +
+					ABS((int)g - (int)palP[1]) +
+					ABS((int)b - (int)palP[2]);
+
+				if (proximity < minProximity) {
+					minProximity = proximity;
+					*destLine = (byte)palIdx;
+				}
+			}
+		}
+	}
 
 	return true;
 }

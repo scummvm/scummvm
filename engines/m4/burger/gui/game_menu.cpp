@@ -342,6 +342,15 @@ void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) 
 	if (backgroundBuff) {
 		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
 		myItem->background->release();
+	} else if (myItem->tag == SL_TAG_THUMBNAIL && mySprite->w == 160) {
+		// Hack for handling smaller ScummVM thumbnails
+		for (int yp = y; yp < (y + SL_THUMBNAIL_H); ++yp) {
+			byte *line = myBuff->data + myBuff->stride * yp + x;
+			Common::fill(line, line + SL_THUMBNAIL_W, 0);
+		}
+
+		x += 25;
+		y += 25;
 	}
 
 	// Draw the sprite in
@@ -2928,27 +2937,7 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 
 bool LoadThumbNail(int32 slotNum) {
 	Sprite *&thumbNailSprite = _GM(thumbNails)[slotNum];
-	if (!g_engine->loadSaveThumbnail(slotNum, thumbNailSprite))
-		return false;
-/*
-	const Graphics::Surface *thumbnail = g_engine->loadSaveThumbnail(slotNum);
-	if (!thumbnail)
-		return false;
-
-
-	// Create a sprite based on the thumbnail data
-	if ((thumbNailSprite = (Sprite *)mem_alloc(sizeof(Sprite), "sprite")) == nullptr) {
-		delete thumbnail;
-		return false;
-	}
-
-	thumbNailSprite->w = thumbnail->w;
-	thumbNailSprite->h = thumbnail->h;
-	thumbNailSprite->encoding = NO_COMPRESS;
-	thumbNailSprite->data = (byte *)thumbnail->getPixels();
- 	thumbNailSprite->sourceOffset = 0;
-	*/
-	return true;
+	return g_engine->loadSaveThumbnail(slotNum + 1, thumbNailSprite);
 }
 
 
@@ -3424,10 +3413,8 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 
 		// This determines that we are over the button
 		if ((myButton->itemFlags == BTN_STATE_OVER) || (myButton->itemFlags == BTN_STATE_PRESS)) {
-
 			// See if the current _GM(saveLoadThumbNail) is pointing to the correct sprite
 			if (_GM(saveLoadThumbNail) != _GM(thumbNails)[myButton->specialTag - 1]) {
-
 				_GM(saveLoadThumbNail) = _GM(thumbNails)[myButton->specialTag - 1];
 				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 			}
