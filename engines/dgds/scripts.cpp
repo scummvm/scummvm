@@ -271,7 +271,7 @@ bool TTMInterpreter::run() {
 		case 0x1310: //?	    i:int   [107]
 
 		default:
-			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[1], ivals[2], ivals[3], ivals[4]);
+			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 		}
 		break;
