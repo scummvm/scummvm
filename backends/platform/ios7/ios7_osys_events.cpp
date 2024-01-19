@@ -100,7 +100,7 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			return false;
 
 		case kInputKeyPressed:
-			handleEvent_keyPressed(event, internalEvent.value1);
+			handleEvent_keyPressed(event, internalEvent.value1, internalEvent.value2);
 			break;
 
 		case kInputSwipe:
@@ -268,7 +268,7 @@ void OSystem_iOS7::handleEvent_applicationResumed() {
 	rebuildSurface();
 }
 
-void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
+void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed, int modifierFlags) {
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 
@@ -281,7 +281,7 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
 
-	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+	event.kbd.flags = _queuedInputEvent.kbd.flags = modifierFlags;
 	event.kbd.keycode = _queuedInputEvent.kbd.keycode = (Common::KeyCode)keyPressed;
 	event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
 	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
