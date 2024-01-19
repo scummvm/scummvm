@@ -300,6 +300,16 @@
 	return [self overloadKeys:arrowKeys withSelector:@selector(handleArrowKey:)];
 }
 
+- (NSArray *)overloadRomanLetters {
+	NSString *romanLetters = @"abcdefghijklmnopqrstuvwxyz";
+	NSMutableArray<NSString *> *letters = [[NSMutableArray alloc] init];
+	for (NSUInteger x = 0; x < romanLetters.length; x++) {
+		unichar c = [romanLetters characterAtIndex:x];
+		[letters addObject:[NSString stringWithCharacters:&c length:1]];
+	}
+	return [self overloadKeys:letters withSelector:@selector(handleLetterKey:)];;
+}
+
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
 	return (((flags & UIKeyModifierShift) ? Common::KBD_SHIFT : 0) |
 		((flags & UIKeyModifierControl) ? Common::KBD_CTRL : 0) |
@@ -319,6 +329,16 @@
 	} else {
 		[self rightArrow:keyCommand];
 	}
+}
+
+- (void)handleLetterKey:(UIKeyCommand *)keyCommand {
+	UniChar c = [[keyCommand input] characterAtIndex:0];
+	if ((keyCommand.modifierFlags & UIKeyModifierShift) ||
+		(keyCommand.modifierFlags & UIKeyModifierAlphaShift)) {
+		// Convert to capital letter
+		c -= 32;
+	}
+	[softKeyboard handleKeyPress: c withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
 }
 
 - (NSArray *)keyCommands {
