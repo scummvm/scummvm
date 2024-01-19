@@ -75,9 +75,6 @@ protected:
 	virtual void setupConsole() = 0;
 
 public:
-	Graphics::Screen *_screen = nullptr;
-
-public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	~M4Engine() override;
 

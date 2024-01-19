@@ -57,7 +57,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(sy
 }
 
 M4Engine::~M4Engine() {
-	delete _screen;
 }
 
 uint32 M4Engine::getFeatures() const {
