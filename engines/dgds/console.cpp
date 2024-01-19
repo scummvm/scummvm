@@ -141,7 +141,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 }
 
 bool Console::cmdImageDump(int argc, const char **argv) {
-#if USE_PNG
+#ifdef USE_PNG
 	if (argc < 3) {
 		debugPrintf("Usage: %s <imagefilename> <frameno> [outputpath]\n", argv[0]);
 		return true;
@@ -195,7 +195,7 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 
 #else
 	warning("dumpimage needs png support");
-#endif
+#endif // USE_PNG
 	return true;
 }
 

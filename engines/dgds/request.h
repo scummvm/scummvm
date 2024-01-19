@@ -57,6 +57,8 @@ enum GadgetType {
 // basic gadget is 52 (0x34) bytes
 class Gadget {
 public:
+	virtual ~Gadget() {}
+
 	// NOTE: Most of these names are still guesses
 	uint16 _gadgetNo;
 	uint16 _x;

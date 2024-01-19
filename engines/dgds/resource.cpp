@@ -62,7 +62,6 @@ ResourceManager::ResourceManager() {
 
 		indexFile.skip(1); // unknown
 		int entries = indexFile.readUint16LE();
-		//debug("File %s has %d entries", volumeName.c_str(), entries);
 
 		for (int j = 0; j < entries; j++) {
 			Resource res;
@@ -84,7 +83,6 @@ ResourceManager::ResourceManager() {
 			if (fileName == "" || res.size == 0)
 				continue;
 
-			debug("  - %s at %d, size: %d", fileName.c_str(), res.pos, res.size);
 		}
 	}
 
@@ -266,7 +264,6 @@ bool DgdsChunkReader::readNextHeader(DGDS_EX ex, const Common::String &filename)
 }
 
 
-
 bool DgdsChunkReader::readContent(Decompressor* decompressor) {
 	assert(_sourceStream && !_contentStream);
 	_contentStream = isPacked() ? decodeStream(decompressor) : readStream();
@@ -304,7 +301,7 @@ Common::SeekableReadStream *DgdsChunkReader::readStream() {
 Common::SeekableReadStream *DgdsChunkReader::makeMemoryStream() {
 	assert(_contentStream);
 	assert(_contentStream->pos() == 0);
-	
+
 	int64 startPos = _contentStream->pos();
 	int16 dataSize = _contentStream->size() - startPos;
 	byte *data = (byte *)malloc(dataSize);
