@@ -41,9 +41,9 @@ namespace Director {
 uint32 DirectorEngine::getMacTicks() { return (g_system->getMillis() * 60 / 1000.) - _tickBaseline; }
 
 bool DirectorEngine::processEvents(bool captureClick) {
-	debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debugC(3, kDebugEvents, "@@@@   Processing events");
-	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+	debugC(5, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debugC(5, kDebugEvents, "@@@@   Processing events");
+	debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -214,7 +214,7 @@ bool Movie::processEvent(Common::Event &event) {
 			if (_timeOutMouse)
 				_lastTimeOut = _lastEventTime;
 
-			debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
+			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
 			queueUserEvent(kEventMouseDown, spriteId);
 
 			if (sc->_channels[spriteId]->_sprite->_moveable) {
@@ -241,7 +241,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 		g_director->_wm->_hilitingWidget = false;
 
-		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
+		debugC(3, kDebugEvents, "Movie::processEvent(): Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
 
 		_currentDraggedChannel = nullptr;
 
@@ -268,7 +268,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_key = (unsigned char)(event.kbd.ascii & 0xff);
 		_keyFlags = event.kbd.flags;
 
-		debugC(1, kDebugEvents, "processEvents(): movie '%s', keycode: %d", _macName.c_str(), _keyCode);
+		debugC(1, kDebugEvents, "Movie::processEvent(): movie '%s', keycode: %d", _macName.c_str(), _keyCode);
 
 		_lastEventTime = g_director->getMacTicks();
 		_lastKeyTime = _lastEventTime;
