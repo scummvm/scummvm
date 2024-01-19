@@ -36,7 +36,7 @@
 - (void)dealloc;
 - (UITextField *)inputView;
 - (void)setInputDelegate:(id)delegate;
-- (void)handleKeyPress:(unichar)c;
+- (void)handleKeyPress:(unichar)c withModifierFlags:(int)f;
 - (void)handleMainMenuKey;
 
 - (void)showKeyboard;
