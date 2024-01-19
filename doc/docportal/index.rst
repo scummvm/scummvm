@@ -87,7 +87,7 @@ Start here!
 
 We have a user manual section covering **THE BASICS**:
 
-.. grid:: 2
+.. grid:: 1 1 2 2
     :class-container: sd-text-center
     :gutter: 3
 
@@ -136,7 +136,7 @@ We have a user manual section covering **THE BASICS**:
 We also have guides on how to get ScummVM running on a wide range of other platforms:
 
 
-.. grid:: 2
+.. grid:: 1 1 2 2
     :class-container: sd-text-center
     :gutter: 3
 
@@ -202,7 +202,7 @@ For our more experienced users, ScummVM features a command line interface, as we
 In this section, we also take a deep dive into understanding the graphics and audio settings.
 
 
-.. grid:: 2
+.. grid:: 1 1 2 2
     :class-container: sd-text-center
     :gutter: 3
 
