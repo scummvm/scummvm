@@ -669,7 +669,9 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 }
 
 const char *SmushPlayer::getString(int id) {
-	return _strings->get(id);
+	if (_strings != nullptr) {
+		return _strings->get(id);
+	} else return nullptr;
 }
 
 bool SmushPlayer::readString(const char *file) {
