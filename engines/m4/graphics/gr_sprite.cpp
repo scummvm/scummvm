@@ -108,6 +108,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 
 	// Copy DrawReq->Src to source buffer
 	source = *drawReq->Src;
+	assert(source.data);
 
 	// if it's RLE encoded, ensure the sprite will decode to match the expected size
 	if (source.encoding & RLE8) {
@@ -174,6 +175,85 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		mem_free(afterScaled.data);
 
 	return 0;
+}
+
+//----------------------------------------------------------------------------------------
+//RLE8 COMPRESSION CODE...
+
+#define ESC     ((uint8)0)
+#define EOL	((uint8)0)
+#define EOB	((uint8)1)
+#define DELTA	((uint8)2)
+
+#define OutBuffSize(x)	((x) + (((x) + 254) / 255 + 1) * 2 + 2)
+
+static uint16 EncodeScan(uint8 *pi, uint8 *po, uint16 scanlen, uint8 EndByte) {
+	uint8 *ps = pi + 1;
+	uint16 outlen = 0, limit, run;
+
+	while (scanlen) {
+		limit = (scanlen < 255) ? scanlen : 255;
+		//imath_min(scanlen, 255);
+		for (run = 1; run < limit && *pi == *ps; ++run, ++ps) {}
+
+		if (run > 1) {
+			scanlen -= run;
+			*po++ = run;
+			*po++ = *pi;
+			outlen += 2;
+			pi = ps++;
+		} else if (scanlen < 3) {
+			for (; scanlen; --scanlen) {
+				*po++ = 1;
+				*po++ = *pi++;
+				outlen += 2;
+			}
+		} else {
+			--ps;
+			do {
+				++ps;
+				while ((*ps != *(ps + 1) || *ps != *(ps + 2) || *ps != *(ps + 3)) && (ps - pi) < limit)
+					++ps;
+			} while ((run = ps - pi) < 3);
+
+			scanlen -= run;
+			*po++ = ESC;
+			*po++ = run;
+			outlen += (run + 2);
+
+			for (limit = 0; limit < run; ++limit)
+				*po++ = *pi++;
+			++ps;
+		}
+	}
+
+	*po++ = ESC;
+	*po = EndByte;
+	outlen += 2;
+	return outlen;
+}
+
+uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest) {
+	int i;
+	uint32 Offset = 0;
+
+	Dest->w = Source->w;
+	Dest->h = Source->h;
+	Dest->encoding = RLE8;
+	Dest->stride = Source->stride;
+
+	if (!(Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data"))) {
+		return 0;
+	}
+
+	for (i = 0; i < Source->h - 1; ++i)
+		Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->w, EOL);
+
+	Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->w, EOB);
+
+	Dest->data = (uint8 *)mem_realloc(Dest->data, Offset, "rle8 sprite data");
+
+	return Offset;
 }
 
 } // namespace M4

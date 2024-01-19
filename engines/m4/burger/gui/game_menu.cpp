@@ -56,7 +56,7 @@ void CreateLoadMenu(RGB8 *myPalette);
 Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 	Sprite *thumbNailSprite;
 	GrBuff *thumbNail;
-	Buffer *scrnBuff, *intrBuff, *destBuff;
+	Buffer *scrnBuff, *intrBuff, *destBuff, RLE8Buff;
 	uint8 *srcPtr, *srcPtr2, *srcPtr3, *srcRowPtr, *destPtr;
 	ScreenContext *gameScreen;
 	int32 i, status;
@@ -204,15 +204,26 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 		memset(destPtr, 21, (destBuff->h - (currRow / 3)) * destBuff->stride);
 	}
 
+	// Compress the thumbNail data into the RLE8Buff
+	if ((*spriteSize = (int32)gr_sprite_RLE8_encode(destBuff, &RLE8Buff)) <= 0) {
+		return nullptr;
+	}
+
 	// Fill in the Sprite structure
 	thumbNailSprite->w = destBuff->w;
 	thumbNailSprite->h = destBuff->h;
-	thumbNailSprite->encoding = NO_COMPRESS;
-	thumbNailSprite->data = destBuff->data;
+	thumbNailSprite->encoding = RLE8;
+	thumbNailSprite->data = nullptr;
 	if ((thumbNailSprite->sourceHandle = NewHandle(*spriteSize, "thumbNail source")) == nullptr) {
 		return nullptr;
 	}
 	thumbNailSprite->sourceOffset = 0;
+
+	// Now copy the RLE8Buff into the thumbNail source handle
+	HLock(thumbNailSprite->sourceHandle);
+	thumbNailSprite->data = (uint8 *)(*(thumbNailSprite->sourceHandle));
+	memcpy(thumbNailSprite->data, RLE8Buff.data, *spriteSize);
+	HUnLock(thumbNailSprite->sourceHandle);
 
 	// Release all buffers
 	_G(gameDrawBuff)->release();
@@ -221,8 +232,9 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 	}
 	thumbNail->release();
 
-	// Free up the thumbNail
+	// Free up both the thumbNail and the RLE8Buff
 	delete thumbNail;
+	mem_free((void *)RLE8Buff.data);
 
 	return thumbNailSprite;
 }
@@ -2390,7 +2402,8 @@ bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2,
 
 	// Initialize the vars
 	handled = false;
-	*currScreen = false;
+	if (currScreen)
+		*currScreen = false;
 
 	// Make sure the screen exists and is active
 	myScreen = vmng_screen_find(theMenu, &status);
