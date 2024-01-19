@@ -1866,7 +1866,7 @@ void MacText::deletePreviousCharInternal(int *row, int *col) {
 			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].firstChunk()));
 			_canvas._text[*row].firstChunk().text.clear();
 		}
-		_canvas._text[*row].paragraphEnd = false;
+		_canvas._text[*row].paragraphEnd = _canvas._text[*row + 1].paragraphEnd;
 
 		for (uint i = 1; i < _canvas._text[*row + 1].chunks.size(); i++)
 			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].chunks[i]));
