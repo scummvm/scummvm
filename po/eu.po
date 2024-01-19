@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-07 20:58+0000\n"
-"PO-Revision-Date: 2024-01-18 17:42+0000\n"
+"PO-Revision-Date: 2024-01-19 21:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2499,16 +2499,16 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2863
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "~G~ehitu..."
+msgstr ""
+"\n"
+"gehitu..."
 
 #: gui/options.cpp:2864 engines/engine.cpp:602
-#, fuzzy
 msgid "Move"
-msgstr "Atzera mugitu"
+msgstr "Mugitu"
 
 #: gui/options.cpp:2877
 msgid "ERROR: Failed to move the following saved games:\n"
