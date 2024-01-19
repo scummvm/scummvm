@@ -1850,6 +1850,13 @@ void MacText::deletePreviousCharInternal(int *row, int *col) {
 		*col = _canvas.getLineCharWidth(*row - 1);
 		(*row)--;
 
+#if DEBUG
+		D(9, "MacText::deletePreviousCharInternal: Chunks: ");
+		for (auto &ch : _canvas._text[*row].chunks)
+			ch.debugPrint();
+
+		D(9, "");
+#endif
 		// formatting matches, glue texts as normal
 		if (_canvas._text[*row].lastChunk().equals(_canvas._text[*row + 1].firstChunk())) {
 			_canvas._text[*row].lastChunk().text += _canvas._text[*row + 1].firstChunk().text;
@@ -1911,6 +1918,15 @@ void MacText::addNewLine(int *row, int *col) {
 	MacTextLine *line = &_canvas._text[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
+
+#if DEBUG
+	D(9, "MacText::addNewLine: Chunks: ");
+	for (auto &c : line->chunks)
+		c.debugPrint();
+
+	D(9, "");
+#endif
+
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 
