@@ -310,6 +310,16 @@
 	return [self overloadKeys:letters withSelector:@selector(handleLetterKey:)];;
 }
 
+- (NSArray *)overloadNumbers {
+	NSString *numbers = @"0123456789";
+	NSMutableArray<NSString *> *numArray = [[NSMutableArray alloc] init];
+	for (NSUInteger x = 0; x < numbers.length; x++) {
+		unichar c = [numbers characterAtIndex:x];
+		[numArray addObject:[NSString stringWithCharacters:&c length:1]];
+	}
+	return [self overloadKeys:numArray withSelector:@selector(handleNumberKey:)];
+}
+
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
 	return (((flags & UIKeyModifierShift) ? Common::KBD_SHIFT : 0) |
 		((flags & UIKeyModifierControl) ? Common::KBD_CTRL : 0) |
@@ -340,6 +350,59 @@
 	}
 	[softKeyboard handleKeyPress: c withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
 }
+
+- (void)handleNumberKey:(UIKeyCommand *)keyCommand {
+	if (keyCommand.modifierFlags == UIKeyModifierCommand) {
+		switch ([[keyCommand input] characterAtIndex:0]) {
+		case '1':
+			[self fn1Key];
+			break;
+		case '2':
+			[self fn2Key];
+			break;
+		case '3':
+			[self fn3Key];
+			break;
+		case '4':
+			[self fn4Key];
+			break;
+		case '5':
+			[self fn5Key];
+			break;
+		case '6':
+			[self fn6Key];
+			break;
+		case '7':
+			[self fn7Key];
+			break;
+		case '8':
+			[self fn8Key];
+			break;
+		case '9':
+			[self fn9Key];
+			break;
+		case '0':
+			[self fn10Key];
+			break;
+		default:
+			break;
+		}
+	} else if (keyCommand.modifierFlags == (UIKeyModifierCommand | UIKeyModifierShift)) {
+		switch ([[keyCommand input] characterAtIndex:0]) {
+		case '1':
+			[self fn11Key];
+			break;
+		case '2':
+			[self fn12Key];
+			break;
+		default:
+			break;
+		}
+	} else {
+		[softKeyboard handleKeyPress: [[keyCommand input] characterAtIndex:0] withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
+}
+
 
 - (NSArray *)keyCommands {
 	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
