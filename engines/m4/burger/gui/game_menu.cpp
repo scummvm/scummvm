@@ -3212,17 +3212,12 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 
 
 void cb_SaveLoad_Load(void *, void *theMenu) {
-//	guiMenu *myMenu = (guiMenu *)theMenu;
 	KernelTriggerType oldMode;
 
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
 		return;
 	}
-
-	// Load the game
-	// Copy the string so the kernel_load_game will find a saved game of the format: "RIPxxx.SAV"
-//	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
 
 	// Kill the menu
 	DestroySaveLoadMenu(false);
@@ -3240,8 +3235,9 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 	// Start the restore process
 	_G(kernel).restore_slot = _GM(slotSelected);
 	oldMode = _G(kernel).trigger_mode;
+
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatchx(kernel_trigger_create(TRIG_RESTORE_GAME));
+	kernel_trigger_dispatch_now(TRIG_RESTORE_GAME);
 	_G(kernel).trigger_mode = oldMode;
 }
 
@@ -3395,9 +3391,11 @@ void InitializeSlotTables(void) {
 	}
 
 	for (const auto &save : saves) {
-		Common::String desc = save.getDescription();
-		Common::strcpy_s(_GM(slotTitles)[save.getSaveSlot()], 80, desc.c_str());
-		_GM(slotInUse)[save.getSaveSlot()] = true;
+		if (save.getSaveSlot() != 0) {
+			Common::String desc = save.getDescription();
+			Common::strcpy_s(_GM(slotTitles)[save.getSaveSlot() - 1], 80, desc.c_str());
+			_GM(slotInUse)[save.getSaveSlot() - 1] = true;
+		}
 	}
 }
 
