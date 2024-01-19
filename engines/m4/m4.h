@@ -157,6 +157,12 @@ public:
 	bool loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const;
 
 	/**
+	 * Save game from in-game save menu
+	 */
+	bool saveGameFromMenu(int slotNum, const Common::String &desc,
+		Graphics::Surface &thumbnail);
+
+	/**
 	 * Show save game dialog
 	 */
 	virtual void showSaveScreen();

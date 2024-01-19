@@ -1743,7 +1743,6 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 	handled = true;
 
 	if (eventType == EVENT_MOUSE) {
-
 		switch (event) {
 		case _ME_L_click:
 		case _ME_doubleclick:
@@ -1791,7 +1790,6 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 		}
 	} else if ((eventType == EVENT_KEY) && (myText->itemFlags == TF_OVER)) {
 		switch (event) {
-
 		case KEY_RETURN:
 			_GM(deleteSaveDesc) = false;
 			execCallback = true;
@@ -1869,15 +1867,11 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 			}
 			break;
 		}
-	}
-
-	// The only events a NORM textfield can respond to are doubleclick_release and <return> keypress
-	else if ((eventType == EVENT_KEY) && (event == KEY_RETURN)) {
+	} else if ((eventType == EVENT_KEY) && (event == KEY_RETURN)) {
+		// The only events a NORM textfield can respond to are doubleclick_release and <return> keypress
 		execCallback = true;
-	}
-
-	//otherwise the event will not be handled
-	else {
+	} else {
+		// Otherwise the event will not be handled
 		return false;
 	}
 
@@ -1893,9 +1887,9 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
-		//		  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
 		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
 		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		}
@@ -3122,14 +3116,10 @@ void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
 
 
 void cb_SaveLoad_Save(void *, void *theMenu) {
-#ifdef TODO
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myTextItem;
 	menuItemTextField *myText;
-	FILE *handle;
-	char saveFN[80], dummy;
-	bool fileExists, saveGameFailed;
-	int32 i;
+	bool saveGameFailed;
 
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
@@ -3149,13 +3139,11 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 	Common::strcpy_s(_GM(slotTitles)[_GM(slotSelected) - 1], 80, myText->prompt);
 
 	// Save the game
-	// Copy the string so the save games will all be "RIPxxx.SAV"
-	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
-	saveGameFailed = (bool)kernel_save_game(_GM(slotSelected), myText->prompt, 80, _GM(saveLoadThumbNail), _GM(sizeofThumbData));
+	saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
+		myText->prompt, _GM(_thumbnail));
 
 	// If the save game failed, bring up the err menu
 	if (saveGameFailed) {
-
 		// Kill the save menu
 		DestroySaveLoadMenu(true);
 
@@ -3166,50 +3154,11 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 		return;
 	}
 
-	// Now update the saves.dir file
-	// First open the file
-	fileExists = true;
-	Common::sprintf_s(saveFN, "%s\\saves.dir", homeDir);
-	handle = fopen(saveFN, "rb+");
-
-	// If it does not, open it, and create
-	if (!handle) {
-		handle = fopen(saveFN, "wb+");
-		fileExists = false;
-	}
-
-	// It should either be open and empty, open and readable
-	if (handle) {
-		// If the file doesn't exists, dump out all the slot titles
-		if (!fileExists) {
-			dummy = 0;
-			for (i = 0; i < MAX_SLOTS; i++) {
-				if (!fwrite(&dummy, 1, 1, handle)) {
-					break;
-				}
-				if (!fwrite(_GM(slotTitles)[i], 80, 1, handle)) {
-					break;
-				}
-			}
-		}
-		// seek to the position in the file containing the description for the slot selected
-		if (fseek(handle, (_GM(slotSelected) - 1) * 81, SEEK_SET) == 0) {
-			fwrite(&_GM(slotInUse)[_GM(slotSelected) - 1], 1, 1, handle);
-			fwrite(_GM(slotTitles)[_GM(slotSelected) - 1], 80, 1, handle);
-		}
-
-		// Close the handle
-		fclose(handle);
-	}
-
 	// Kill the save menu
 	DestroySaveLoadMenu(true);
 
 	// Shutdown the menu system
 	menu_Shutdown(true);
-#else
-	error("TODO: saving");
-#endif
 }
 
 

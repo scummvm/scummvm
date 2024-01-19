@@ -351,4 +351,15 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 	return true;
 }
 
+bool M4Engine::saveGameFromMenu(int slotNum, const Common::String &desc,
+		Graphics::Surface &thumbnail) {
+	M4MetaEngine *metaEngine = static_cast<M4MetaEngine *>(getMetaEngine());
+	metaEngine->_thumbnail = &thumbnail;
+
+	bool result = saveGameState(slotNum, desc).getCode() == Common::kNoError;
+
+	metaEngine->_thumbnail = nullptr;
+	return result;
+}
+
 } // End of namespace M4

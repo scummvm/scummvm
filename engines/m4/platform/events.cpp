@@ -220,7 +220,8 @@ bool Events::util_kbd_check(int32 *parm1) {
 	if (is_mod_key(ks))
 		return false;
 
-	*parm1 = ks.keycode | ((ks.flags & (Common::KBD_CTRL | Common::KBD_ALT)) << 16);
+	int key = (ks.ascii >= 32 && ks.ascii <= 127) ? ks.ascii : ks.keycode;
+	*parm1 = key | ((ks.flags & (Common::KBD_CTRL | Common::KBD_ALT)) << 16);
 	return true;
 }
 

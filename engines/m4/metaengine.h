@@ -30,10 +30,10 @@ private:
 	Common::InSaveFile *getOriginalSave(const Common::String &saveName) const;
 
 public:
-	Graphics::Surface _thumbnail;
+	Graphics::Surface *_thumbnail = nullptr;
 
 public:
-	~M4MetaEngine() override;
+	~M4MetaEngine() override {}
 
 	const char *getName() const override;
 
