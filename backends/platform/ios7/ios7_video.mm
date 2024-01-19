@@ -796,11 +796,11 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[self addEvent:InternalEvent(kInputTap, kUIViewTapDouble, 2)];
 }
 
-- (void)handleKeyPress:(unichar)c {
+- (void)handleKeyPress:(unichar)c withModifierFlags:(int)f {
 	if (c == '`') {
-		[self addEvent:InternalEvent(kInputKeyPressed, '\033', 0)];
+		[self addEvent:InternalEvent(kInputKeyPressed, '\033', f)];
 	} else {
-		[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
+		[self addEvent:InternalEvent(kInputKeyPressed, c, f)];
 	}
 }
 

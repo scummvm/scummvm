@@ -166,7 +166,7 @@
  * Propagate all delete callbacks to the backend.
  */
 -(void)deleteBackward {
-	[softKeyboard handleKeyPress:'\b'];
+	[softKeyboard handleKeyPress:'\b' withModifierFlags:0];
 	[super deleteBackward];
 }
 
@@ -288,23 +288,23 @@
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_UP];
+	[softKeyboard handleKeyPress:Common::KEYCODE_UP withModifierFlags:0];
 }
 
 - (void) downArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_DOWN];
+	[softKeyboard handleKeyPress:Common::KEYCODE_DOWN withModifierFlags:0];
 }
 
 - (void) leftArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_LEFT];
+	[softKeyboard handleKeyPress:Common::KEYCODE_LEFT withModifierFlags:0];
 }
 
 - (void) rightArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT];
+	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT withModifierFlags:0];
 }
 
 - (void) escapeKey: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE];
+	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE withModifierFlags:0];
 }
 
 - (void) mainMenuKey {
@@ -312,79 +312,79 @@
 }
 
 - (void) escapeKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE];
+	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE withModifierFlags:0];
 }
 
 - (void) tabKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_TAB];
+	[softKeyboard handleKeyPress:Common::KEYCODE_TAB withModifierFlags:0];
 }
 
 - (void) fn1Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F1];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F1 withModifierFlags:0];
 }
 
 - (void) fn2Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F2];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F2 withModifierFlags:0];
 }
 
 - (void) fn3Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F3];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F3 withModifierFlags:0];
 }
 
 - (void) fn4Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F4];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F4 withModifierFlags:0];
 }
 
 - (void) fn5Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F5];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F5 withModifierFlags:0];
 }
 
 - (void) fn6Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F6];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F6 withModifierFlags:0];
 }
 
 - (void) fn7Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F7];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F7 withModifierFlags:0];
 }
 
 - (void) fn8Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F8];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F8 withModifierFlags:0];
 }
 
 - (void) fn9Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F9];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F9 withModifierFlags:0];
 }
 
 - (void) fn10Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F10];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F10 withModifierFlags:0];
 }
 
 - (void) fn11Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F11];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F11 withModifierFlags:0];
 }
 
 - (void) fn12Key {
-	[softKeyboard handleKeyPress:Common::KEYCODE_F12];
+	[softKeyboard handleKeyPress:Common::KEYCODE_F12 withModifierFlags:0];
 }
 
 - (void) leftArrowKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_LEFT];
+	[softKeyboard handleKeyPress:Common::KEYCODE_LEFT withModifierFlags:0];
 }
 
 - (void) upArrowKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_UP];
+	[softKeyboard handleKeyPress:Common::KEYCODE_UP withModifierFlags:0];
 }
 
 - (void) rightArrowKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT];
+	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT withModifierFlags:0];
 }
 
 - (void) downArrowKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_DOWN];
+	[softKeyboard handleKeyPress:Common::KEYCODE_DOWN withModifierFlags:0];
 }
 
 - (void) returnKey {
-	[softKeyboard handleKeyPress:Common::KEYCODE_RETURN];
+	[softKeyboard handleKeyPress:Common::KEYCODE_RETURN withModifierFlags:0];
 }
 
 - (void) switchKeyboardLayout {
@@ -528,7 +528,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text {
 	if (text.length) {
-		[inputDelegate handleKeyPress:[text characterAtIndex:0]];
+		[inputDelegate handleKeyPress:[text characterAtIndex:0] withModifierFlags:0];
 	}
 	return YES;
 }
@@ -549,8 +549,8 @@
 	inputDelegate = delegate;
 }
 
-- (void)handleKeyPress:(unichar)c {
-	[inputDelegate handleKeyPress:c];
+- (void)handleKeyPress:(unichar)c withModifierFlags:(int)f {
+	[inputDelegate handleKeyPress:c withModifierFlags:f];
 }
 
 - (void)handleMainMenuKey {
