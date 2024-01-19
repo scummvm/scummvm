@@ -320,6 +320,14 @@
 	return [self overloadKeys:numArray withSelector:@selector(handleNumberKey:)];
 }
 
+- (NSArray *)overloadFnKeys {
+	if (@available(iOS 13.4, *)) {
+		NSArray<NSString *> *fnKeys = [[NSArray alloc] initWithObjects:UIKeyInputF1, UIKeyInputF2, UIKeyInputF3, UIKeyInputF4, UIKeyInputF5, UIKeyInputF6, UIKeyInputF7, UIKeyInputF8, UIKeyInputF9, UIKeyInputF10, UIKeyInputF11, UIKeyInputF12, nil];
+		return [self overloadKeys:fnKeys withSelector:@selector(handleFnKey:)];
+	}
+	return nil;
+}
+
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
 	return (((flags & UIKeyModifierShift) ? Common::KBD_SHIFT : 0) |
 		((flags & UIKeyModifierControl) ? Common::KBD_CTRL : 0) |
@@ -403,6 +411,35 @@
 	}
 }
 
+- (void)handleFnKey:(UIKeyCommand *)keyCommand {
+	if (@available(iOS 13.4, *)) {
+		if (keyCommand.input == UIKeyInputF1) {
+			[self fn1Key];
+		} else if (keyCommand.input == UIKeyInputF2) {
+			[self fn2Key];
+		} else if (keyCommand.input == UIKeyInputF3) {
+			[self fn3Key];
+		} else if (keyCommand.input == UIKeyInputF4) {
+			[self fn4Key];
+		} else if (keyCommand.input == UIKeyInputF5) {
+			[self fn5Key];
+		} else if (keyCommand.input == UIKeyInputF6) {
+			[self fn6Key];
+		} else if (keyCommand.input == UIKeyInputF7) {
+			[self fn7Key];
+		} else if (keyCommand.input == UIKeyInputF8) {
+			[self fn8Key];
+		} else if (keyCommand.input == UIKeyInputF9) {
+			[self fn9Key];
+		} else if (keyCommand.input == UIKeyInputF10) {
+			[self fn10Key];
+		} else if (keyCommand.input == UIKeyInputF11) {
+			[self fn11Key];
+		} else if (keyCommand.input == UIKeyInputF12) {
+			[self fn12Key];
+		}
+	}
+}
 
 - (NSArray *)keyCommands {
 	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
