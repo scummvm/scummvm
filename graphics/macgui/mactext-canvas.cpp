@@ -60,7 +60,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	// Check if there is nothing to add, then remove the last chunk
 	// This happens when the previous run is finished only with
 	// empty formatting, or when we were adding text for the first time
-	if (chunk->text.empty() && str.empty()) {
+	if (chunk->text.empty() && str.empty() && (_text[curLine].chunks.size() > 1)) {
 		D(9, "** chopChunk, replaced formatting, line %d", curLine);
 
 		_text[curLine].chunks.pop_back();
@@ -1109,7 +1109,7 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	bool paragraphEnd = _text[end].paragraphEnd;
 
 #if DEBUG
-	D(9, "MacTextCanvas::reshuffleParagraph: ppos: %d", ppos);
+	D(9, "MacTextCanvas::reshuffleParagraph: ppos: %d, start: %d, end: %d", ppos, start, end);
 	debugPrint("MacTextCanvas::reshuffleParagraph(1)");
 #endif
 
@@ -1168,7 +1168,13 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 
 #if DEBUG
 	debugPrint("MacTextCanvas::reshuffleParagraph(3)");
+	D(9, "Chunks: ");
+	for (auto &ch : _text[curLine].chunks)
+		ch.debugPrint();
+
+	D(9, "");
 #endif
+
 
 	// Restore the paragraph marker
 	_text[curLine].paragraphEnd = paragraphEnd;
