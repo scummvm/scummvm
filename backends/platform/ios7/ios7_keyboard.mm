@@ -288,11 +288,16 @@
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierControl andSelector:selector]];
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierAlternate andSelector:selector]];
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierCommand andSelector:selector]];
-		// Sticky
+		// UIKeyModifierAlphaShift seems broken since iOS 13
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierAlphaShift andSelector:selector]];
 		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierNumericPad andSelector:selector]];
 	}
 	return overloadedKeys;
+}
+
+- (NSArray *)overloadArrowKeys {
+	NSArray<NSString *> *arrowKeys = [[NSArray alloc] initWithObjects:UIKeyInputUpArrow, UIKeyInputDownArrow, UIKeyInputLeftArrow, UIKeyInputRightArrow, nil];
+	return [self overloadKeys:arrowKeys withSelector:@selector(handleArrowKey:)];
 }
 
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
@@ -302,6 +307,18 @@
 		((flags & UIKeyModifierCommand) ? Common::KBD_META : 0) |
 		((flags & UIKeyModifierAlphaShift) ? Common::KBD_CAPS : 0) |
 		((flags & UIKeyModifierNumericPad) ? Common::KBD_NUM : 0));
+}
+
+- (void)handleArrowKey:(UIKeyCommand *)keyCommand {
+	if (keyCommand.input == UIKeyInputUpArrow) {
+		[self upArrow:keyCommand];
+	} else if (keyCommand.input == UIKeyInputDownArrow) {
+		[self downArrow:keyCommand];
+	} else if (keyCommand.input == UIKeyInputLeftArrow) {
+		[self leftArrow:keyCommand];
+	} else {
+		[self rightArrow:keyCommand];
+	}
 }
 
 - (NSArray *)keyCommands {
@@ -318,19 +335,35 @@
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_UP withModifierFlags:0];
+	if (keyCommand.modifierFlags == UIKeyModifierCommand) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_PAGEUP withModifierFlags:0];
+	} else {
+		[softKeyboard handleKeyPress:Common::KEYCODE_UP withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
 }
 
 - (void) downArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_DOWN withModifierFlags:0];
+	if (keyCommand.modifierFlags == UIKeyModifierCommand) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_PAGEDOWN withModifierFlags:0];
+	} else {
+		[softKeyboard handleKeyPress:Common::KEYCODE_DOWN withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
 }
 
 - (void) leftArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_LEFT withModifierFlags:0];
+	if (keyCommand.modifierFlags == UIKeyModifierCommand) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_HOME withModifierFlags:0];
+	} else {
+		[softKeyboard handleKeyPress:Common::KEYCODE_LEFT withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
 }
 
 - (void) rightArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT withModifierFlags:0];
+	if (keyCommand.modifierFlags == UIKeyModifierCommand) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_END withModifierFlags:0];
+	} else {
+		[softKeyboard handleKeyPress:Common::KEYCODE_RIGHT withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
 }
 
 - (void) escapeKey: (UIKeyCommand *) keyCommand {
