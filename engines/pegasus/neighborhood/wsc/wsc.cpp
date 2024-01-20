@@ -1896,7 +1896,7 @@ void WSC::turnTo(const DirectionConstant direction) {
 		}
 		// fall through
 		// FIXME: fall through intentional?
-		// clone2727 says: This falls through?!??! WTF?
+		// clone2727 says: This falls through?!??!
 	case MakeRoomView(kWSC42, kEast):
 		_privateFlags.setFlag(kWSCPrivateSinclairOfficeOpenFlag, false);
 		setCurrentActivation(kActivationSinclairOfficeLocked);
