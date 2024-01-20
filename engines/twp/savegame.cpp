@@ -422,16 +422,17 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 
 bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &savegame) {
 	Common::Array<byte> data(stream->size());
-	stream->read(&data[0], data.size());
-	BTEACrypto::decrypt((uint32 *)&data[0], data.size() / 4, savegameKey);
+	stream->read(data.data(), data.size());
+	BTEACrypto::decrypt((uint32 *)data.data(), data.size() / 4, savegameKey);
 	savegame.hashData = *(int32_t *)(&data[data.size() - 16]);
 	savegame.time = *(int32_t *)&data[data.size() - 12];
-	int32_t hashCheck = computeHash(&data[0], data.size() - 16);
+	int32_t hashCheck = computeHash(data.data(), data.size() - 16);
 	if (savegame.hashData != hashCheck)
 		return false;
 
 	MemStream ms;
-	ms.open(&data[0], data.size() - 16);
+	if(!ms.open(data.data(), data.size() - 16))
+		return false;
 
 	GGHashMapDecoder decoder;
 	savegame.jSavegame = decoder.open(&ms);

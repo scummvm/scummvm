@@ -55,7 +55,7 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 					t.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
 					g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), vertexColor, t);
 				}
-				g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
+				g_engine->getGfx().drawLinesLoop(vertices.data(), vertices.size(), transf);
 			}
 		} break;
 		case WalkboxMode::Merged: {
@@ -77,7 +77,7 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 					t.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
 					g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), vertexColor, t);
 				}
-				g_engine->getGfx().drawLinesLoop(&vertices[0], vertices.size(), transf);
+				g_engine->getGfx().drawLinesLoop(vertices.data(), vertices.size(), transf);
 			}
 		} break;
 		default:
@@ -124,7 +124,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 				t.translate(Math::Vector3d(p.getX(), p.getY(), 0.f));
 				g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), yellow, t);
 			}
-			g_engine->getGfx().drawLines(&vertices[0], vertices.size());
+			g_engine->getGfx().drawLines(vertices.data(), vertices.size());
 		}
 	}
 
@@ -182,7 +182,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 			vertices.push_back(Vertex(g_engine->roomToScreen(path[i]), yellow));
 		}
 		if (vertices.size() > 0) {
-			g_engine->getGfx().drawLines(&vertices[0], vertices.size());
+			g_engine->getGfx().drawLines(vertices.data(), vertices.size());
 		}
 	}
 }
