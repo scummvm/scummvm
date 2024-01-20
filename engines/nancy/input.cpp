@@ -170,7 +170,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	using namespace Nancy;
 
 	Common::String gameId = ConfMan.get("gameid", target);
-	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-main", "Nancy Drew");
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-main", _("Nancy Drew"));
 	Action *act;
 
 	act = new Action(kStandardActionLeftClick, _("Left Click Interact"));
@@ -226,7 +226,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	keymaps.push_back(mainKeymap);
 	
 	if (gameId == "nancy3" || gameId == "nancy6") {
-		Keymap *mazeKeymap = new Keymap(Keymap::kKeymapTypeGame, mazeKeymapID, "Nancy Drew - Maze");
+		Keymap *mazeKeymap = new Keymap(Keymap::kKeymapTypeGame, mazeKeymapID, _("Nancy Drew - Maze"));
 
 		act = new Action("RAYCM", _("Show/hide maze map"));
 		act->setCustomEngineActionEvent(kNancyActionShowRaycastMap);
