@@ -39,6 +39,11 @@ private:
 	bool _hasTicked = false;
 	uint32 _flagFrameIndex = 0;
 
+	// TODO: Probably the start of a mode enum
+	bool _isShowingStringBox = false;
+	Common::StringArray _drawnStringBox;
+
+
 	Graphics::ManagedSurface _backgroundSurface;
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
