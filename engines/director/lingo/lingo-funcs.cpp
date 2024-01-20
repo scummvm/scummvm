@@ -53,11 +53,11 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 
 	_vm->_skipFrameAdvance = true;
 
-	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
-	// freeze this script context. We'll return to it after entering the next frame.
-	g_lingo->_freezeState = true;
 
 	if (movie.type != VOID) {
+		// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
+		// freeze this script context. We'll return to it after entering the next movie.
+		g_lingo->_freezeState = true;
 		Common::String movieFilenameRaw = movie.asString();
 
 		if (!stage->setNextMovie(movieFilenameRaw))
@@ -94,6 +94,11 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 
 		return;
 	}
+
+	if (g_director->getVersion() < 400)
+		// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
+		// freeze this script context. We'll return to it after entering the next frame.
+		g_lingo->_freezeState = true;
 
 	if (frame.type == STRING) {
 		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame \"%s\"", frame.u.s->c_str());
