@@ -432,7 +432,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
 		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
 		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -2638,7 +2638,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
 		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
 		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4302,7 +4302,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 509525},
 		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 546000},
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for translate detection
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
