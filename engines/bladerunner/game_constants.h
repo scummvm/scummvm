@@ -504,7 +504,7 @@ enum Flags {
 	kFlagMA05toMA04                           =  63,
 	kFlagGaffApproachedMcCoyAboutZuben        =  64,
 	kFlagMcCoyCommentsOnTB05Monitors          =  65, // Re-purposed. Original: 65 is never used
-	// 66 is never used
+	kFlagMcCoyCommentsOnNR03Sloth             =  66, // Re-purposed. Original: 66 is never used
 	// 67 is never used
 	kFlagCT02toCT01                           =  68,
 	kFlagCT02toCT03                           =  69,
@@ -1168,6 +1168,8 @@ enum Flags {
 	kFlagPS04WeaponsOrderForm                 = 727,
 	kFlagDR01Visited                          = 728, // Re-purposed. Original: 728 is never used
 	kFlagNR08DektoraShow                      = 729
+	// INFO Flags count is set to 800 with _gameInfo->getFlagCount()
+	// (the code technically allows up to 831, but there are checks and asserts for <= _flagCount in GameFlags class)
 };
 
 enum Variables {
