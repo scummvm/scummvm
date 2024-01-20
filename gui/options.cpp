@@ -151,21 +151,21 @@ static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1
 
 static const char *guiBaseLabels[] = {
 	// I18N: Extremely large GUI scale
-	_s("Extremely large"),
+	_s("200% - Extremely large"),
 	// I18N: Very very large GUI scale
-	_s("Very very large"),
+	_s("175% - Very large"),
 	// I18N: Very large GUI scale
-	_s("Very large"),
+	_s("150% - Larger"),
 	// I18N: Large GUI scale
-	_s("Large"),
+	_s("125% - Large"),
 	// I18N: Medium GUI scale
-	_s("Medium"),
+	_s("100% - Medium"),
 	// I18N: Small GUI scale
-	_s("Small"),
+	_s("75% - Small"),
 	// I18N: Smaller GUI scale
-	_s("Smaller"),
+	_s("50% - Smaller"),
 	// I18N: Smallest GUI scale
-	_s("Smallest"),
+	_s("25% - Smallest"),
 	nullptr
 };
 static const int guiBaseValues[] = { 200, 175, 150, 125, 100, 75, 50, 25, -1 };
