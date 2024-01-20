@@ -150,6 +150,10 @@ static const char *const savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"),
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
 static const char *const guiBaseLabels[] = {
+	// I18N: Extremely large GUI scale
+	_s("Extremely large"),
+	// I18N: Very very large GUI scale
+	_s("Very very large"),
 	// I18N: Very large GUI scale
 	_s("Very large"),
 	// I18N: Large GUI scale
@@ -158,9 +162,13 @@ static const char *const guiBaseLabels[] = {
 	_s("Medium"),
 	// I18N: Small GUI scale
 	_s("Small"),
+	// I18N: Smaller GUI scale
+	_s("Smaller"),
+	// I18N: Smallest GUI scale
+	_s("Smallest"),
 	nullptr
 };
-static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
+static const int guiBaseValues[] = { 200, 175, 150, 125, 100, 75, 50, 25, -1 };
 
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
