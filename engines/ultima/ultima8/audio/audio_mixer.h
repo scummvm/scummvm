@@ -40,8 +40,6 @@ private:
 	MidiPlayer *_midiPlayer;
 	Common::Array<AudioChannel *> _channels;
 
-	void            Lock();
-	void            Unlock();
 public:
 	AudioMixer(Audio::Mixer *mixer);
 	~AudioMixer();

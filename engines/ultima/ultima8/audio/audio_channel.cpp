@@ -97,10 +97,6 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 		_mixer->pauseHandle(_soundHandle, true);
 }
 
-void AudioChannel::playMusicStream(Audio::AudioStream *stream) {
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream);
-}
-
 bool AudioChannel::isPlaying() {
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_sample = nullptr;
@@ -116,13 +112,6 @@ void AudioChannel::stop() {
 void AudioChannel::setPaused(bool paused) {
 	_paused = paused;
 	_mixer->pauseHandle(_soundHandle, paused);
-}
-
-void AudioChannel::decompressNextFrame() {
-	// Get next frame of data
-	uint8 *playData = &_playData[0];
-	uint8 *src2 = playData + _decompressorSize + (_frameSize * (1 - _frameEvenOdd));
-	(void)_sample->decompressFrame(playData, src2);
 }
 
 } // End of namespace Ultima8

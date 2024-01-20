@@ -50,11 +50,7 @@ private:
 	uint32          _pitchShift;    // AudioProcess::PITCH_SHIFT_NONE = no shift
 	int             _priority;      // anything.
 	bool            _paused;        // true/false
-private:
-	/**
-	 * Decompresses the next frame of sample data
-	 */
-	void decompressNextFrame();
+
 public:
 	AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo);
 	~AudioChannel(void);
@@ -64,23 +60,7 @@ public:
 	void playSample(AudioSample *sample, int loop, int priority, bool paused, 
 		bool isSpeech, uint32 pitchShift, int lvol, int rvol);
 
-	void playMusicStream(Audio::AudioStream *stream);
-
 	bool isPlaying();
-
-	void setPitchShift(int pitchShift) {
-		_pitchShift = pitchShift;
-	}
-	uint32 getPitchShift() const {
-		return _pitchShift;
-	}
-
-	void setLoop(int loop) {
-		_loop = loop;
-	}
-	int32 getLoop() const {
-		return _loop;
-	}
 
 	void setVolume(int lvol, int rvol) {
 		_lVol = lvol;
