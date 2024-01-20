@@ -216,7 +216,7 @@ public:
 
 private:
 	DialogState _state = DialogState::None;
-	int _currentStatement = 0;
+    size_t _currentStatement = 0;
 	unique_ptr<YCompilationUnit> _cu;
 	YLabel *_lbl = nullptr;
 	DialogSlot _slots[MAXDIALOGSLOTS];

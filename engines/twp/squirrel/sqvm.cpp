@@ -1741,8 +1741,8 @@ SQObjectPtr &SQVM::GetAt(SQInteger n) { CheckStackAccess(n); return _stack[n]; }
 
 void SQVM::CheckStackAccess(SQInteger n) {
     if(n < 0 || n >= _stack.size()){
-        std::ostringstream s;
-        s << "Stack of the VM accessed with n=" << n << " and stacksize=" << _stack.size();
+        //std::ostringstream s;
+        //s << "Stack of the VM accessed with n=" << n << " and stacksize=" << _stack.size();
         //throw std::out_of_range(s.str());
 		exit(-1);
     }

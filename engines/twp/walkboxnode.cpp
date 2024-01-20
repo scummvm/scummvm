@@ -91,7 +91,7 @@ PathNode::PathNode() : Node("Path") {
 }
 
 Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
-	for (int i = 0; i < g_engine->_room->_mergedPolygon.size(); i++) {
+	for (size_t i = 0; i < g_engine->_room->_mergedPolygon.size(); i++) {
 		Walkbox &wb = g_engine->_room->_mergedPolygon[i];
 		if (!wb.isVisible() && wb.contains(pos)) {
 			return wb.getClosestPointOnEdge(pos);

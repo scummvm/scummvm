@@ -197,7 +197,7 @@ void Dialog::choose(int choice) {
 void Dialog::choose(DialogSlot *slot) {
 	if (slot && slot->_isValid) {
 		sqcall("onChoiceClick");
-		for (int i = 0; i < slot->_stmt->_conds.size(); i++) {
+		for (size_t i = 0; i < slot->_stmt->_conds.size(); i++) {
 			YCond *cond = slot->_stmt->_conds[i];
 			CondStateVisitor v(slot->_dlg, DialogSelMode::Choose);
 			cond->accept(v);
@@ -348,8 +348,8 @@ void Dialog::selectLabel(int line, const Common::String &name) {
 
 void Dialog::gotoNextLabel() {
 	if (_lbl) {
-		int i = Twp::find(_cu->_labels, _lbl);
-		if ((i != -1) && (i != _cu->_labels.size() - 1)) {
+        size_t i = Twp::find(_cu->_labels, _lbl);
+		if ((i != (size_t)-1) && (i != _cu->_labels.size() - 1)) {
 			YLabel *label = _cu->_labels[i + 1];
 			selectLabel(label->_line, label->_name);
 		} else {

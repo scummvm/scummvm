@@ -59,7 +59,7 @@ protected:
 	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 	void drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index);
 	Math::Matrix4 transform(Math::Matrix4 trsf, int index);
-	float getAlpha(int index) const;
+	float getAlpha(size_t index) const;
 	float height() const;
 	int iconIndex(Math::Vector2d pos) const;
 	Common::Rect rect() const;

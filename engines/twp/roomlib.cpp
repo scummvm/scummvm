@@ -78,7 +78,7 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 		return sq_throwerror(v, "Invalid argument number in clampInWalkbox");
 	}
 	const Common::Array<Walkbox> &walkboxes = g_engine->_room->_walkboxes;
-	for (int i = 0; i < walkboxes.size(); i++) {
+	for (size_t i = 0; i < walkboxes.size(); i++) {
 		const Walkbox &walkbox = walkboxes[i];
 		if (walkbox.contains(pos1)) {
 			sqpush(v, pos1);
@@ -228,7 +228,7 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 	Common::String name;
 	if (SQ_FAILED(sqget(v, 2, name)))
 		return sq_throwerror(v, "failed to get name");
-	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
 		if (room->_name == name) {
 			sqpush(v, room->_table);
@@ -252,7 +252,7 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 // }
 static SQInteger masterRoomArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
-	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
 		sq_pushobject(v, room->_table);
 		sq_arrayappend(v, -2);
@@ -268,7 +268,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 		sq_resetobject(&closure);
 		if (SQ_FAILED(sqget(v, 3, closure)))
 			return sq_throwerror(v, "failed to get closure");
-		for (int i = 0; i < g_engine->_room->_triggers.size(); i++) {
+		for (size_t i = 0; i < g_engine->_room->_triggers.size(); i++) {
 			Object *trigger = g_engine->_room->_triggers[i];
 			if ((trigger->_enter._unVal.pClosure == closure._unVal.pClosure) || (trigger->_leave._unVal.pClosure == closure._unVal.pClosure)) {
 				g_engine->_room->_triggers.remove_at(i);
@@ -279,8 +279,8 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 		Object *obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
-		int i = find(g_engine->_room->_triggers, obj);
-		if (i != -1) {
+        size_t i = find(g_engine->_room->_triggers, obj);
+		if (i != (size_t)-1) {
 			debug("Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
 			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
 		}
@@ -303,7 +303,7 @@ static SQInteger roomActors(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get room");
 
 	sq_newarray(v, 0);
-	for (int i = 0; i < g_engine->_actors.size(); i++) {
+	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		Object *actor = g_engine->_actors[i];
 		if (actor->_room == room) {
 			sqpush(v, actor->_table);

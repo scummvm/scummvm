@@ -24,6 +24,7 @@
 
 #include "squirrel/squirrel.h"
 #include "common/str.h"
+#include "common/util.h"
 #include "twp/twp.h"
 #include "twp/vm.h"
 
@@ -172,13 +173,13 @@ ThreadBase *sqthread(int id);
 
 template<typename... T>
 void sqcall(HSQUIRRELVM v, HSQOBJECT o, const char *name, T... args) {
-	constexpr std::size_t n = sizeof...(T);
+	constexpr size_t n = sizeof...(T);
 	SQInteger top = sq_gettop(v);
 	sqpushfunc(v, o, name);
 
 	sq_pushobject(v, o);
 	if (n > 0) {
-		sqpush(v, std::forward<T>(args)...);
+		sqpush(v, Common::forward<T>(args)...);
 	}
 	sq_call(v, 1 + n, SQFalse, SQTrue);
 	sq_settop(v, top);
@@ -186,14 +187,14 @@ void sqcall(HSQUIRRELVM v, HSQOBJECT o, const char *name, T... args) {
 
 template<typename... T>
 void sqcall(HSQOBJECT o, const char *name, T... args) {
-	constexpr std::size_t n = sizeof...(T);
+	constexpr size_t n = sizeof...(T);
 	HSQUIRRELVM v = g_engine->getVm();
 	SQInteger top = sq_gettop(v);
 	sqpushfunc(v, o, name);
 
 	sq_pushobject(v, o);
 	if (n > 0) {
-		sqpush(v, std::forward<T>(args)...);
+		sqpush(v, Common::forward<T>(args)...);
 	}
 	sq_call(v, 1 + n, SQFalse, SQTrue);
 	sq_settop(v, top);
@@ -201,7 +202,7 @@ void sqcall(HSQOBJECT o, const char *name, T... args) {
 
 template<typename... T>
 void sqcall(const char *name, T... args) {
-	constexpr std::size_t n = sizeof...(T);
+	constexpr size_t n = sizeof...(T);
 	HSQUIRRELVM v = g_engine->getVm();
 	HSQOBJECT o = sqrootTbl(v);
 	SQInteger top = sq_gettop(v);
@@ -209,7 +210,7 @@ void sqcall(const char *name, T... args) {
 
 	sq_pushobject(v, o);
 	if (n > 0) {
-		sqpush(v, std::forward<T>(args)...);
+		sqpush(v, Common::forward<T>(args)...);
 	}
 	sq_call(v, 1 + n, SQFalse, SQTrue);
 	sq_settop(v, top);
@@ -217,7 +218,7 @@ void sqcall(const char *name, T... args) {
 
 template<typename TResult, typename... T>
 void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
-	constexpr std::size_t n = sizeof...(T);
+	constexpr size_t n = sizeof...(T);
 	HSQUIRRELVM v = g_engine->getVm();
 	SQInteger top = sq_gettop(v);
 	sqpush(v, o);
@@ -230,7 +231,7 @@ void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
 	sq_remove(v, -2);
 
 	sqpush(v, o);
-	sqpush(v, std::forward<T>(args)...);
+	sqpush(v, Common::forward<T>(args)...);
 	if (SQ_FAILED(sq_call(v, n + 1, SQTrue, SQTrue))) {
 		// sqstd_printcallstack(v);
 		sq_settop(v, top);
@@ -243,7 +244,7 @@ void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
 
 template<typename TResult, typename... T>
 void sqcallfunc(TResult &result, const char *name, T... args) {
-	constexpr std::size_t n = sizeof...(T);
+	constexpr size_t n = sizeof...(T);
 	HSQUIRRELVM v = g_engine->getVm();
 	HSQOBJECT o = sqrootTbl(v);
 	SQInteger top = sq_gettop(v);
@@ -257,7 +258,7 @@ void sqcallfunc(TResult &result, const char *name, T... args) {
 	sq_remove(v, -2);
 
 	sqpush(v, o);
-	sqpush(v, std::forward<T>(args)...);
+	sqpush(v, Common::forward<T>(args)...);
 	if (SQ_FAILED(sq_call(v, n + 1, SQTrue, SQTrue))) {
 		// sqstd_printcallstack(v);
 		sq_settop(v, top);

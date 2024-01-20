@@ -59,7 +59,7 @@ Math::Matrix4 ActorSwitcher::transform(Math::Matrix4 trsf, int index) {
 	return trsf;
 }
 
-float ActorSwitcher::getAlpha(int index) const {
+float ActorSwitcher::getAlpha(size_t index) const {
 	if (index == (_slots.size() - 1))
 		return ENABLE_ALPHA;
 	if (_mode & asTemporaryUnselectable)
@@ -85,7 +85,7 @@ void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color 
 
 void ActorSwitcher::drawCore(Math::Matrix4 trsf) {
 	if (_mouseOver) {
-		for (int i = 0; i < _slots.size(); i++) {
+		for (size_t i = 0; i < _slots.size(); i++) {
 			ActorSwitcherSlot &slot = _slots[i];
 			drawIcon(slot.icon, slot.back, slot.frame, trsf, i);
 		}
@@ -152,7 +152,7 @@ void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float 
 		if (_mouseOver && (g_engine->_cursor.leftDown) && !_down) {
 			_down = true;
 			// check if we allow to select an actor
-			int iconIdx = iconIndex(scrPos);
+            size_t iconIdx = iconIndex(scrPos);
 			if ((_mode & asOn) || (iconIdx == (_slots.size() - 1))) {
 				if (_slots[iconIdx].selectFunc != nullptr)
 					_slots[iconIdx].select();

@@ -253,7 +253,7 @@ public:
 	bool _lit = false;
 	Object *_owner = nullptr;
 	Common::Array<Object *> _inventory;
-	int _inventoryOffset = 0;
+    int _inventoryOffset = 0;
 	Common::StringArray _icons;
 	int _iconFps = 0;
 	int _iconIndex = 0;

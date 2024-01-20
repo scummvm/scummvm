@@ -288,9 +288,9 @@ template<typename TFunc>
 void objsAt(Math::Vector2d pos, TFunc func) {
 	if (g_engine->_uiInv.getObject() && g_engine->_room->_fullscreen == FULLSCREENROOM)
 		func(g_engine->_uiInv.getObject());
-	for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 		Layer *layer = g_engine->_room->_layers[i];
-		for (int j = 0; j < layer->_objects.size(); j++) {
+		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if ((obj != g_engine->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
 				if (func(obj))
@@ -312,7 +312,7 @@ Object *inventoryAt(Math::Vector2d pos) {
 }
 
 static void selectSlotActor(int id) {
-	for (int i = 0; i < g_engine->_actors.size(); i++) {
+	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		if (g_engine->_actors[i]->getId() == id) {
 			g_engine->setActor(g_engine->_actors[i]);
 			break;
@@ -747,7 +747,7 @@ Common::Error TwpEngine::run() {
 								actors.push_back(slot->actor);
 							}
 						}
-						int index = find(actors, _actor) + 1;
+                        size_t index = find(actors, _actor) + 1;
 						if (index >= actors.size())
 							index -= actors.size();
 						setActor(actors[index], true);
@@ -941,7 +941,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 		result->load(entry);
 		result->_name = name;
 		result->_pseudo = pseudo;
-		for (int i = 0; i < result->_layers.size(); i++) {
+		for (size_t i = 0; i < result->_layers.size(); i++) {
 			Layer *layer = result->_layers[i];
 			// create layer node
 			ParallaxNode *layerNode = new ParallaxNode(layer->_parallax, result->_sheet, layer->_names);
@@ -950,7 +950,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 			layer->_node = layerNode;
 			result->_scene->addChild(layerNode);
 
-			for (int j = 0; j < layer->_objects.size(); j++) {
+			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Object *obj = layer->_objects[j];
 				if (!sqrawexists(table, obj->_key)) {
 					// this object does not exist, so create it
@@ -980,9 +980,9 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 	}
 
 	// assign parent node
-	for (int i = 0; i < result->_layers.size(); i++) {
+	for (size_t i = 0; i < result->_layers.size(); i++) {
 		Layer *layer = result->_layers[i];
-		for (int j = 0; j < layer->_objects.size(); j++) {
+		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if (obj->_parent.size() > 0) {
 				Object *parent = result->getObj(obj->_parent);
@@ -1117,9 +1117,9 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 
 	// call actor enter function and objects enter function
 	actorEnter();
-	for (int i = 0; i < room->_layers.size(); i++) {
+	for (size_t i = 0; i < room->_layers.size(); i++) {
 		Layer *layer = room->_layers[i];
-		for (int j = 0; j < layer->_objects.size(); j++) {
+		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			// add all scaling triggers
 			if (obj->_objType == ObjectType::otTrigger) {
@@ -1180,9 +1180,9 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 		}
 
 		// delete all temporary objects
-		for (int i = 0; i < _room->_layers.size(); i++) {
+		for (size_t i = 0; i < _room->_layers.size(); i++) {
 			Layer *layer = _room->_layers[i];
-			for (int j = 0; j < layer->_objects.size(); j++) {
+			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Object *obj = layer->_objects[j];
 				if (obj->_temporary) {
 					delete obj;
@@ -1196,7 +1196,7 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 		sqcall("exitedRoom", _room->_table);
 
 		// stop all local threads
-		for (int i = 0; i < _threads.size(); i++) {
+		for (size_t i = 0; i < _threads.size(); i++) {
 			ThreadBase *thread = _threads[i];
 			if (!thread->isGlobal()) {
 				thread->stop();
@@ -1480,7 +1480,7 @@ void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
 void TwpEngine::updateTriggers() {
 	if (_actor) {
 		// check if actor enters or leaves an object trigger
-		for (int i = 0; i < _room->_triggers.size(); i++) {
+		for (size_t i = 0; i < _room->_triggers.size(); i++) {
 			Object *trigger = _room->_triggers[i];
 			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
 				debug("call enter trigger %s", trigger->_name.c_str());
@@ -1494,7 +1494,7 @@ void TwpEngine::updateTriggers() {
 		}
 
 		// check if actor enters or leaves a scaling trigger
-		for (int i = 0; i < _room->_scalingTriggers.size(); i++) {
+		for (size_t i = 0; i < _room->_scalingTriggers.size(); i++) {
 			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
 			if (trigger->_obj->_triggerActive && !trigger->_obj->contains(_actor->_node->getAbsPos())) {
 				debug("leave scaling trigger %s", trigger->_obj->_key.c_str());
@@ -1502,7 +1502,7 @@ void TwpEngine::updateTriggers() {
 				_room->_scaling = _room->_scalings[0];
 			}
 		}
-		for (int i = 0; i < _room->_scalingTriggers.size(); i++) {
+		for (size_t i = 0; i < _room->_scalingTriggers.size(); i++) {
 			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
 			if (!trigger->_obj->_triggerActive && trigger->_obj->contains(_actor->_node->getAbsPos())) {
 				debug("enter scaling trigger %s", trigger->_obj->_key.c_str());
@@ -1542,7 +1542,7 @@ void TwpEngine::skipCutscene() {
 }
 
 Scaling *TwpEngine::getScaling(const Common::String &name) {
-	for (int i = 0; i < _room->_scalings.size(); i++) {
+	for (size_t i = 0; i < _room->_scalings.size(); i++) {
 		Scaling *scaling = &_room->_scalings[i];
 		if (scaling->trigger == name) {
 			return scaling;

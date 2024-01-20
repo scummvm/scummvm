@@ -108,7 +108,7 @@ public:
 public:
 	uint32 id;
 	int width, height;
-	uint32 fbo;
+	uint fbo;
 };
 
 class RenderTexture : public Texture {

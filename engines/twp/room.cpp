@@ -72,13 +72,13 @@ static Math::Vector2d parseParallax(const Common::JSONValue &v) {
 
 static Walkbox parseWalkbox(const Common::String &text) {
 	Common::Array<Math::Vector2d> points;
-	int i = 1;
-	int endPos;
+    size_t i = 1;
+    size_t endPos;
 	do {
 		uint32 commaPos = text.find(',', i);
 		long x = strtol(text.substr(i, commaPos - i).c_str(), nullptr, 10);
 		endPos = text.find('}', commaPos + 1);
-		long y = std::strtol(text.substr(commaPos + 1, endPos - commaPos - 1).c_str(), nullptr, 10);
+		long y = strtol(text.substr(commaPos + 1, endPos - commaPos - 1).c_str(), nullptr, 10);
 		i = endPos + 3;
 		points.push_back({(float)x, (float)y});
 	} while ((text.size() - 1) != endPos);
@@ -100,7 +100,7 @@ static Scaling parseScaling(const Common::JSONArray &jScalings) {
 static ClipperLib::Path toPolygon(const Walkbox &walkbox) {
 	ClipperLib::Path path;
 	const Common::Array<Math::Vector2d> &points = walkbox.getPoints();
-	for (int i = 0; i < points.size(); i++) {
+	for (size_t i = 0; i < points.size(); i++) {
 		path.push_back(ClipperLib::IntPoint(points[i].getX(), points[i].getY()));
 	}
 	return path;
@@ -108,7 +108,7 @@ static ClipperLib::Path toPolygon(const Walkbox &walkbox) {
 
 static Walkbox toWalkbox(const ClipperLib::Path &path) {
 	Common::Array<Math::Vector2d> pts;
-	for (int i = 0; i < path.size(); i++) {
+	for (size_t i = 0; i < path.size(); i++) {
 		const ClipperLib::IntPoint &pt = path[i];
 		pts.push_back(Math::Vector2d(pt.X, pt.Y));
 	}
@@ -119,7 +119,7 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 	Common::Array<Walkbox> result;
 	if (walkboxes.size() > 0) {
 		ClipperLib::Paths subjects, clips;
-		for (int i = 0; i < walkboxes.size(); i++) {
+		for (size_t i = 0; i < walkboxes.size(); i++) {
 			const Walkbox &wb = walkboxes[i];
 			if (wb.isVisible()) {
 				subjects.push_back(toPolygon(wb));
@@ -134,7 +134,7 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 		c.AddPaths(clips, ClipperLib::ptClip, true);
 		c.Execute(ClipperLib::ClipType::ctDifference, solutions, ClipperLib::pftEvenOdd);
 
-		for (int i = 0; i < solutions.size(); i++) {
+		for (size_t i = 0; i < solutions.size(); i++) {
 			result.push_back(toWalkbox(solutions[i]));
 		}
 	}
@@ -149,7 +149,7 @@ Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
 }
 
 Room::~Room() {
-	for (int i = 0; i < _layers.size(); i++) {
+	for (size_t i = 0; i < _layers.size(); i++) {
 		delete _layers[i];
 	}
 	delete _scene;
@@ -271,7 +271,7 @@ void Room::load(Common::SeekableReadStream &s) {
 		backNames.push_back(jRoom["background"]->asString());
 	} else {
 		const Common::JSONArray &jBacks = jRoom["background"]->asArray();
-		for (int i = 0; i < jBacks.size(); i++) {
+		for (size_t i = 0; i < jBacks.size(); i++) {
 			backNames.push_back(jBacks[i]->asString());
 		}
 	}
@@ -284,12 +284,12 @@ void Room::load(Common::SeekableReadStream &s) {
 	// layers
 	if (jRoom.contains("layers")) {
 		const Common::JSONArray &jLayers = jRoom["layers"]->asArray();
-		for (int i = 0; i < jLayers.size(); i++) {
+		for (size_t i = 0; i < jLayers.size(); i++) {
 			Common::StringArray names;
 			const Common::JSONObject &jLayer = jLayers[i]->asObject();
 			if (jLayer["name"]->isArray()) {
 				const Common::JSONArray &jNames = jLayer["name"]->asArray();
-				for (int j = 0; j < jNames.size(); j++) {
+				for (size_t j = 0; j < jNames.size(); j++) {
 					names.push_back(jNames[j]->asString());
 				}
 			} else if (jLayer["name"]->isString()) {
@@ -370,7 +370,7 @@ void Room::load(Common::SeekableReadStream &s) {
 
 	// Fix room size (why ?)
 	int width = 0;
-	for (int i = 0; i < backNames.size(); i++) {
+	for (size_t i = 0; i < backNames.size(); i++) {
 		Common::String name = backNames[i];
 		width += g_engine->_resManager.spriteSheet(_sheet)->frameTable[name].sourceSize.getX();
 	}
@@ -380,7 +380,7 @@ void Room::load(Common::SeekableReadStream &s) {
 }
 
 Layer *Room::layer(int zsort) {
-	for (int i = 0; i < _layers.size(); i++) {
+	for (size_t i = 0; i < _layers.size(); i++) {
 		Layer *l = _layers[i];
 		if (l->_zsort == zsort)
 			return l;
@@ -402,9 +402,9 @@ Math::Vector2d Room::getScreenSize() {
 }
 
 Object *Room::getObj(const Common::String &key) {
-	for (int i = 0; i < _layers.size(); i++) {
+	for (size_t i = 0; i < _layers.size(); i++) {
 		Layer *layer = _layers[i];
-		for (int j = 0; j < layer->_objects.size(); j++) {
+		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if (obj->_key == key)
 				return obj;
@@ -455,9 +455,9 @@ void Room::update(float elapsed) {
 		_overlayTo->update(elapsed);
 	// if (_rotateTo)
 	// 	_rotateTo->update(elapsedSec);
-	for (int j = 0; j < _layers.size(); j++) {
+	for (size_t j = 0; j < _layers.size(); j++) {
 		Layer *layer = _layers[j];
-		for (int k = 0; k < layer->_objects.size(); k++) {
+		for (size_t k = 0; k < layer->_objects.size(); k++) {
 			Object *obj = layer->_objects[k];
 			obj->update(elapsed);
 		}
@@ -465,7 +465,7 @@ void Room::update(float elapsed) {
 }
 
 void Room::walkboxHidden(const Common::String &name, bool hidden) {
-	for (int i = 0; i < _walkboxes.size(); i++) {
+	for (size_t i = 0; i < _walkboxes.size(); i++) {
 		Walkbox &wb = _walkboxes[i];
 		if (wb._name == name) {
 			wb.setVisible(!hidden);
@@ -528,7 +528,7 @@ bool Walkbox::contains(Math::Vector2d position, bool toleranceOnOutside) const {
 	Math::Vector2d oldPoint(_polygon[_polygon.size() - 1]);
 	float oldSqDist = distanceSquared(oldPoint, point);
 
-	for (int i = 0; i < _polygon.size(); i++) {
+	for (size_t i = 0; i < _polygon.size(); i++) {
 		Math::Vector2d newPoint = _polygon[i];
 		float newSqDist = distanceSquared(newPoint, point);
 
@@ -557,7 +557,7 @@ bool Walkbox::contains(Math::Vector2d position, bool toleranceOnOutside) const {
 float Scaling::getScaling(float yPos) {
 	if (values.size() == 0)
 		return 1.0f;
-	for (int i = 0; i < values.size(); i++) {
+	for (size_t i = 0; i < values.size(); i++) {
 		ScalingValue scaling = values[i];
 		if (yPos < scaling.y) {
 			if (i == 0)
