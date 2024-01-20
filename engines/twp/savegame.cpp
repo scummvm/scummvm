@@ -922,7 +922,7 @@ static Common::JSONValue *createSaveGame() {
 	json["objects"] = createJObjects();
 	json["rooms"] = createJRooms();
 	json["savebuild"] = new Common::JSONValue(958LL);
-	json["savetime"] = new Common::JSONValue(getTime());
+	json["savetime"] = new Common::JSONValue((long long)getTime());
 	json["selectedActor"] = new Common::JSONValue(g_engine->_actor ? g_engine->_actor->_key : "");
 	json["version"] = new Common::JSONValue((long long int)2);
 	return new Common::JSONValue(json);

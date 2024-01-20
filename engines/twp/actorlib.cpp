@@ -754,8 +754,8 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
 		Facing *facing = nullptr;
+		int dir;
 		if (nArgs == 5) {
-			int dir;
 			if (SQ_FAILED(sqget(v, 5, dir)))
 				return sq_throwerror(v, "failed to get dir");
 			facing = (Facing *)&dir;
