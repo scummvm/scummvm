@@ -60,6 +60,20 @@ void TTMInterpreter::unload() {
 	_scriptData.scr = nullptr;
 }
 
+void TTMInterpreter::setActiveDialogue(uint16 num) {
+	Common::Array<Dialogue> &dialogues = _vm->getScene()->getLines();
+	_text = nullptr;
+	for (Dialogue &dialogue: dialogues) {
+		if (dialogue._num == num)
+			_text = &dialogue;
+		// HACK to get Dragon intro working
+		if (!_text && dialogue._num == num + 14)
+			_text = &dialogue;
+	}
+	if (_text && !_text->_str.empty())
+		_state.delay += _text->_time * 9;  // More correctly, 9 - text-speed-setting
+}
+
 bool TTMInterpreter::run() {
 	Common::SeekableReadStream *scr = _scriptData.scr;
 	if (!scr)
@@ -228,18 +242,7 @@ bool TTMInterpreter::run() {
 			// DESCRIPTION IN TTM TAGS.
 			debug("SHOW SCENE TEXT: %u", ivals[0]);
 			_state.scene = ivals[0];
-
-			Common::Array<Dialogue> &dialogues = _vm->getScene()->getLines();
-			_text = nullptr;
-			for (Dialogue &dialogue: dialogues) {
-				if (dialogue._num == _state.scene)
-					_text = &dialogue;
-				// HACK to get Dragon intro working
-				if (!_text && dialogue._num == _state.scene + 14)
-					_text = &dialogue;
-			}
-			if (_text && !_text->_str.empty())
-				_state.delay += 1500;
+			setActiveDialogue(_state.scene);
 			continue;
 		}
 
@@ -282,6 +285,7 @@ bool TTMInterpreter::run() {
 	g_system->unlockScreen();
 	g_system->updateScreen();
 	g_system->delayMillis(_state.delay);
+
 	return true;
 }
 

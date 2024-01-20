@@ -36,6 +36,100 @@
 
 namespace Dgds {
 
+template<class S> Common::String _dumpStructList(const Common::String &indent, const Common::String &name, const Common::Array<S> &list) {
+	if (list.empty())
+		return "";
+
+	const Common::String nextind = indent + "    ";
+	Common::String str = Common::String::format("\n%s%s=", Common::String(indent + "  ").c_str(), name.c_str());
+	for (const auto &s : list) {
+		str += "\n";
+		str += s.dump(nextind);
+	}
+	return str;
+}
+
+
+Common::String Rect::dump(const Common::String &indent) const {
+	return Common::String::format("%sRect<%d,%d %d,%d>", indent.c_str(), x, y, width, height);
+}
+
+
+Common::String SceneStruct1::dump(const Common::String &indent) const {
+	return Common::String::format("%sSceneStruct1<%d flg 0x%02x %d>", indent.c_str(), val1, flags, val3);
+}
+
+
+Common::String SceneStruct2::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSceneStruct2<%s %d %d", indent.c_str(), rect.dump("").c_str(), field1_0x8, field2_0xa);
+	str += _dumpStructList(indent, "struct1list", struct1List);
+	str += _dumpStructList(indent, "struct5list1", struct5List1);
+	str += _dumpStructList(indent, "struct5list2", struct5List2);
+	str += _dumpStructList(indent, "struct5list3", struct5List3);
+	str += "\n";
+	str += indent + ">";
+	return str;
+}
+
+
+Common::String SceneStruct5::dump(const Common::String &indent) const {
+	Common::String uints;
+	if (uintList.empty()) {
+		uints = "[]";
+	} else {
+		uints = "[";
+		for  (uint i : uintList)
+			uints += Common::String::format("%d ", i);
+		uints.setChar(']', uints.size() - 1);
+	}
+	Common::String str = Common::String::format("%sSceneStruct5<%d uints: %s", indent.c_str(), val, uints.c_str());
+
+	str += _dumpStructList(indent, "struct1list", struct1List);
+	if (!struct1List.empty()) {
+		str += "\n";
+		str += indent;
+	}
+	str += ">";
+	return str;
+}
+
+
+Common::String SceneStruct2_Extended::dump(const Common::String &indent) const {
+	Common::String super = SceneStruct2::dump(indent + "  ");
+
+	Common::String str = Common::String::format("%sSceneStruct2_Ext<\n%s\n unk10 %d cursor %d unk12 %d unk13 %d unk14 %d", indent.c_str(), super.c_str(), field10_0x24, _mouseCursorNum, field12_0x28, field13_0x2a, field14_0x2c);
+	str += _dumpStructList(indent, "struct5list5", struct5List5);
+	str += _dumpStructList(indent, "struct5list6", struct5List6);
+	str += "\n";
+	str += indent + ">";
+	return str;
+}
+
+
+Common::String MouseCursor::dump(const Common::String &indent) const {
+	return Common::String::format("%sMouseCursor<%d %d>", indent.c_str(), _hotX, _hotY);
+}
+
+
+Common::String SceneStruct4::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSceneStruct4<%d %d", indent.c_str(), val1, val2);
+
+	str += _dumpStructList(indent, "struct5list", struct5List);
+	str += "\n";
+	str += indent + ">";
+	return str;
+}
+
+
+Common::String SceneStruct7::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSceneStruct7<%d %d", indent.c_str(), val, field1_0x2);
+	str += _dumpStructList(indent, "struct1list", struct1List);
+	str += _dumpStructList(indent, "struct5list", struct5List);
+	str += "\n";
+	str += indent + ">";
+	return str;
+}
+
 
 void Dialogue::draw(Graphics::Surface *dst, int mode) {
 	switch (_frameType) {
@@ -164,6 +258,24 @@ void Dialogue::drawStage4(Graphics::Surface *dst) {
 
 }
 
+Common::String Dialogue::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d", indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize, _flags, _frameType, _time, _nextDialogNum, _field15_0x22, _field18_0x28);
+	str += _dumpStructList(indent, "subStrings", _subStrings);
+	str += "\n";
+	str += indent + "  str='" + _str + "'>";
+	return str;
+}
+
+Common::String DialogueSubstring::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSubDialogue<%d %d-%d", indent.c_str(), val, strOff1, strOff2);
+	str += _dumpStructList(indent, "struct5list", struct5List);
+	if (!struct5List.empty()) {
+		str += "\n";
+		str += indent;
+	}
+	str += ">";
+	return str;
+}
 
 // //////////////////////////////////// //
 
@@ -220,7 +332,7 @@ bool Scene::readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array
 		readStruct2(s, dst);
 	}
 	for (SceneStruct2_Extended &dst : list) {
-		dst.field11_0x26 = s->readUint16LE();
+		dst._mouseCursorNum = s->readUint16LE();
 		dst.field12_0x28 = s->readUint16LE();
 		dst.field14_0x2c = s->readUint16LE();
 		if (!isVersionUnder(" 1.211"))
@@ -307,9 +419,9 @@ bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialog
 		}
 
 		dst._frameType = s->readUint16LE(); // 01 =simple frame, 02 = with title w/ text before :, 03 = baloon, 04 = eliptical
-		dst._field12_0x1a = s->readUint16LE();
+		dst._time = s->readUint16LE();
 		if (isVersionOver(" 1.207")) {
-			dst._maybeNextDialogNum = s->readUint16LE();
+			dst._nextDialogNum = s->readUint16LE();
 		}
 
 		uint16 nbytes = s->readUint16LE();
@@ -422,6 +534,24 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	return !stream->err();
 }
 
+Common::String SDSScene::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
+	str += _dumpStructList(indent, "struct5List1", _struct5List1);
+	str += _dumpStructList(indent, "struct5List2", _struct5List2);
+	str += _dumpStructList(indent, "struct5List3", _struct5List3);
+	str += _dumpStructList(indent, "struct5List4", _struct5List4);
+	str += _dumpStructList(indent, "struct2List", _struct2List);
+	str += _dumpStructList(indent, "struct4List1", _struct4List1);
+	str += _dumpStructList(indent, "struct4List2", _struct4List2);
+	str += _dumpStructList(indent, "dialogues", _dialogues);
+	str += _dumpStructList(indent, "struct7List", _struct7List);
+
+	str += "\n";
+	str += indent + ">";
+	return str;
+}
+
+
 
 GDSScene::GDSScene() {
 }
@@ -483,6 +613,22 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 		readStruct4List(stream, _struct4List1);
 
 	return !stream->err();
+}
+
+Common::String GDSScene::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
+	str += _dumpStructList(indent, "struct2ExtList", _struct2ExtList);
+	str += _dumpStructList(indent, "struct5List1", _struct5List1);
+	str += _dumpStructList(indent, "struct5List2", _struct5List2);
+	str += _dumpStructList(indent, "struct5List3", _struct5List3);
+	str += _dumpStructList(indent, "struct5List4", _struct5List4);
+	str += _dumpStructList(indent, "struct5List5", _struct5List5);
+	str += _dumpStructList(indent, "struct4List1", _struct4List1);
+	str += _dumpStructList(indent, "struct4List2", _struct4List2);
+
+	str += "\n";
+	str += indent + ">";
+	return str;
 }
 
 
