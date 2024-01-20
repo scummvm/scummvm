@@ -82,6 +82,8 @@ struct Color {
 	Color operator*(float f) {
   		return Color(rgba.r * f, rgba.g * f, rgba.b * f, rgba.a * f);
 	}
+
+	int toInt() const;
 };
 
 // This is a point in 2D with a color and texture coordinates

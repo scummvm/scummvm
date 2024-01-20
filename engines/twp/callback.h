@@ -32,7 +32,12 @@ class Callback {
 public:
 	Callback(int id, float duration, const Common::String& name, const Common::Array<HSQOBJECT>& args);
 	bool update(float elapsed);
+
+	Common::String getName() const { return _name; }
 	int getId() const { return _id; }
+	float getDuration() const { return _duration; }
+	float getElapsed() const { return _elapsed; }
+	const Common::Array<HSQOBJECT>& getArgs() const { return _args; }
 
 private:
 	int _id = 0;

@@ -39,6 +39,7 @@ class SaveGameManager {
 public:
 	static bool getSaveGame(Common::SeekableReadStream *stream, SaveGame &savegame);
 	bool loadGame(const SaveGame &savegame);
+	void saveGame(Common::WriteStream *stream);
 
 private:
 	void loadGameScene(const Common::JSONObject &json);

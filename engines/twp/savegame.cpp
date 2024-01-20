@@ -23,13 +23,27 @@
 #include "twp/savegame.h"
 #include "twp/squtil.h"
 #include "twp/btea.h"
+#include "twp/time.h"
+#include "common/file.h"
+#include "common/savefile.h"
 
 namespace Twp {
+
+const static uint32 savegameKey[] = {0xAEA4EDF3, 0xAFF8332A, 0xB5A2DBB4, 0x9B4BA022};
 
 static Object *actor(const Common::String &key) {
 	for (int i = 0; i < g_engine->_actors.size(); i++) {
 		Object *a = g_engine->_actors[i];
 		if (a->_key == key)
+			return a;
+	}
+	return nullptr;
+}
+
+static Object *actor(int id) {
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+		Object *a = g_engine->_actors[i];
+		if (a->getId() == id)
 			return a;
 	}
 	return nullptr;
@@ -373,8 +387,8 @@ static int32_t computeHash(byte *data, size_t n) {
 	return result;
 }
 
-bool SaveGameManager::loadGame(const SaveGame& savegame) {
-	const Common::JSONObject& json = savegame.jSavegame->asObject();
+bool SaveGameManager::loadGame(const SaveGame &savegame) {
+	const Common::JSONObject &json = savegame.jSavegame->asObject();
 	long long int version = json["version"]->asIntegerNumber();
 	if (version != 2) {
 		error("Cannot load savegame version %lld", version);
@@ -406,8 +420,7 @@ bool SaveGameManager::loadGame(const SaveGame& savegame) {
 	return true;
 }
 
-bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame& savegame) {
-	static uint32 savegameKey[] = {0xAEA4EDF3, 0xAFF8332A, 0xB5A2DBB4, 0x9B4BA022};
+bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &savegame) {
 	Common::Array<byte> data(stream->size());
 	stream->read(&data[0], data.size());
 	BTEACrypto::decrypt((uint32 *)&data[0], data.size() / 4, savegameKey);
@@ -422,7 +435,10 @@ bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame& 
 
 	GGHashMapDecoder decoder;
 	savegame.jSavegame = decoder.open(&ms);
-	const Common::JSONObject& jSavegame = savegame.jSavegame->asObject();
+	if(!savegame.jSavegame)
+		return false;
+
+	const Common::JSONObject &jSavegame = savegame.jSavegame->asObject();
 	savegame.gameTime = jSavegame["gameTime"]->asNumber();
 	savegame.easyMode = jSavegame["easy_mode"]->asIntegerNumber() != 0;
 
@@ -553,6 +569,400 @@ void SaveGameManager::loadObjects(const Common::JSONObject &json) {
 		else
 			warning("object '%s' not found", it->_key.c_str());
 	}
+}
+
+static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false) {
+	switch (obj._type) {
+	case OT_INTEGER:
+		return new Common::JSONValue(sq_objtointeger(&obj));
+	case OT_FLOAT:
+		return new Common::JSONValue(sq_objtofloat(&obj));
+	case OT_STRING:
+		return new Common::JSONValue(sq_objtostring(&obj));
+	case OT_NULL:
+		return new Common::JSONValue();
+	case OT_ARRAY: {
+		Common::JSONArray arr;
+		sqgetitems(obj, [&arr](HSQOBJECT &item) { arr.push_back(tojson(item, true)); });
+		return new Common::JSONValue(arr);
+	}
+	case OT_TABLE: {
+		Common::JSONObject jObj;
+		if (checkId) {
+			int id;
+			sqgetf(obj, "_id", id);
+			if (isActor(id)) {
+				Object *a = actor(id);
+				jObj["_actorKey"] = new Common::JSONValue(a->_key);
+				return new Common::JSONValue(jObj);
+			} else if (isObject(id)) {
+				Object *o = sqobj(id);
+				if (!o)
+					return new Common::JSONValue();
+				jObj["_objectKey"] = new Common::JSONValue(o->_key);
+				if (o->_room && o->_room->_pseudo)
+					jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
+				return new Common::JSONValue(jObj);
+			} else if (isRoom(id)) {
+				Room *r = getRoom(id);
+				jObj["_roomKey"] = new Common::JSONValue(r->_name);
+				return new Common::JSONValue(jObj);
+			}
+		}
+
+		HSQUIRRELVM v = g_engine->getVm();
+		HSQOBJECT rootTbl = sqrootTbl(v);
+		sqgetpairs(obj, [&](const Common::String &k, HSQOBJECT &oTable) {
+			if ((k.size() > 0) && (!k.hasPrefix("_"))) {
+				if (!(skipObj && isObject(getId(oTable)) && (pseudo || sqrawexists(rootTbl, k)))) {
+					Common::JSONValue *json = tojson(oTable, true);
+					if (json) {
+						jObj[k] = json;
+					}
+				}
+			}
+		});
+		return new Common::JSONValue(jObj);
+	}
+	default:
+		return nullptr;
+	}
+}
+
+static Common::String removeFileExt(const Common::String &s) {
+	size_t i = s.findLastOf('.');
+	if (i != Common::String::npos) {
+		return s.substr(0, i);
+	}
+	return s;
+}
+
+Common::String toString(const Math::Vector2d &pos) {
+	return Common::String::format("{%d,%d}", (int)pos.getX(), (int)pos.getY());
+}
+
+static Common::JSONValue *createJActor(Object *actor) {
+	Common::JSONValue *jActorValue = tojson(actor->_table, false);
+	Common::JSONObject jActor(jActorValue->asObject());
+	int color = actor->_node->getComputedColor().toInt();
+	if (color != Color().toInt())
+		jActor["_color"] = new Common::JSONValue((long long int)color);
+	//   if (actor->hasCustomAnim())
+	//     jActor["_animations"] = actor->getCustomAnims();
+	jActor["_costume"] = new Common::JSONValue(removeFileExt(actor->_costumeName));
+	jActor["_dir"] = new Common::JSONValue((long long int)actor->_facing);
+	jActor["_lockFacing"] = new Common::JSONValue((long long int)actor->_facingLockValue);
+	jActor["_pos"] = new Common::JSONValue(toString(actor->_node->getPos()));
+	if (actor->_useDir != dNone)
+		jActor["_useDir"] = new Common::JSONValue((long long int)actor->_useDir);
+	if (actor->_usePos != Math::Vector2d(0.f, 0.f))
+		jActor["_usePos"] = new Common::JSONValue(toString(actor->_usePos));
+	if (actor->_node->getRenderOffset() != Math::Vector2d(0.f, 45.f))
+		jActor["_renderOffset"] = new Common::JSONValue(toString(actor->_node->getRenderOffset()));
+	if (actor->_costumeSheet.size() > 0)
+		jActor["_costumeSheet"] = new Common::JSONValue(actor->_costumeSheet);
+	if (actor->_room)
+		jActor["_roomKey"] = new Common::JSONValue(actor->_room->_name);
+	if (!actor->isTouchable() && actor->_node->isVisible())
+		jActor["_untouchable"] = new Common::JSONValue(1LL);
+	if (!actor->_node->isVisible())
+		jActor["_hidden"] = new Common::JSONValue(1LL);
+	if (actor->_volume != 0.f)
+		jActor["_volume"] = new Common::JSONValue(actor->_volume);
+	//   result.fields.sort(cmpKey);
+	return new Common::JSONValue(jActor);
+}
+
+static Common::JSONValue *createJActors() {
+	Common::JSONObject jActors;
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+		Object *actor = g_engine->_actors[i];
+		if (actor->_key.size() > 0) {
+			jActors[actor->_key] = createJActor(actor);
+		}
+	}
+	// result.fields.sort(cmpKey);
+	return new Common::JSONValue(jActors);
+}
+
+static Common::JSONValue *createJCallback(const Callback &callback) {
+	Common::JSONObject result;
+	result["function"] = new Common::JSONValue(callback.getName());
+	result["guid"] = new Common::JSONValue((long long int)callback.getId());
+	result["time"] = new Common::JSONValue(MAX(0.0, (double)(callback.getDuration() - callback.getElapsed())));
+	Common::JSONArray jArgs;
+	const Common::Array<HSQOBJECT> &args = callback.getArgs();
+	for (int i = 0; i < args.size(); i++) {
+		jArgs.push_back(tojson(args[i], false));
+	}
+	if (jArgs.size() > 0)
+		result["param"] = new Common::JSONValue(jArgs);
+	return new Common::JSONValue(result);
+}
+
+static Common::JSONValue *createJCallbackArray() {
+	Common::JSONArray result;
+	for (int i = 0; i < g_engine->_callbacks.size(); i++) {
+		result.push_back(createJCallback(*g_engine->_callbacks[i]));
+	}
+	return new Common::JSONValue(result);
+}
+
+static Common::JSONValue *createJCallbacks() {
+	Common::JSONObject json;
+	json["callbacks"] = createJCallbackArray();
+	json["nextGuid"] = new Common::JSONValue((long long int)getCallbackId());
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJRoomKey(Room *room) {
+	return new Common::JSONValue(room ? room->_name : "Void");
+}
+
+Common::String createJDlgStateKey(const DialogConditionState &state) {
+	Common::String s;
+	switch (state.mode) {
+	case OnceEver:
+		s = "&";
+		break;
+	case ShowOnce:
+		s = "#";
+		break;
+	case Once:
+		s = "?";
+		break;
+	case ShowOnceEver:
+		s = "$";
+		break;
+	default:
+		break;
+	}
+	return Common::String::format("%s%s%d%s", s.c_str(), state.dialog.c_str(), state.line, state.actorKey.c_str());
+}
+
+static Common::JSONValue *createJDialog() {
+	Common::JSONObject json;
+	for (int i = 0; i < g_engine->_dialog._states.size(); i++) {
+		const DialogConditionState &state = g_engine->_dialog._states[i];
+		if (state.mode != TempOnce) {
+			// TODO: value should be 1 or another value ?
+			json[createJDlgStateKey(state)] = new Common::JSONValue(state.mode == ShowOnce ? 2LL : 1LL);
+		}
+	}
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJEasyMode() {
+	HSQOBJECT g;
+	sqgetf("g", g);
+	int easyMode;
+	sqgetf(g, "easy_mode", easyMode);
+	return new Common::JSONValue((long long int)easyMode);
+}
+
+static Common::JSONValue *createJBool(bool value) {
+	return new Common::JSONValue(value ? 1LL : 0LL);
+}
+
+static Common::JSONValue *createJSelectableActor(const ActorSlot &slot) {
+	Common::JSONObject json;
+	if (slot.actor) {
+		json["_actorKey"] = new Common::JSONValue(slot.actor->_key);
+	}
+	json["selectable"] = createJBool(slot.selectable);
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJSelectableActors() {
+	Common::JSONArray json;
+	for (int i = 0; i < NUMACTORS; i++) {
+		const ActorSlot &slot = g_engine->_hud._actorSlots[i];
+		json.push_back(createJSelectableActor(slot));
+	}
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJGameScene() {
+	bool actorsSelectable = asOn & g_engine->_actorSwitcher._mode;
+	bool actorsTempUnselectable = asTemporaryUnselectable & g_engine->_actorSwitcher._mode;
+	Common::JSONObject json;
+	json["actorsSelectable"] = createJBool(actorsSelectable);
+	json["actorsTempUnselectable"] = createJBool(actorsTempUnselectable);
+	// TODO: json["forceTalkieText"] = createJBool(tmpPrefs().forceTalkieText);
+	json["selectableActors"] = createJSelectableActors();
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJGlobals() {
+	HSQOBJECT g;
+	sqgetf("g", g);
+	//   result.fields.sort(cmpKey);
+	return tojson(g, false);
+}
+
+static Common::JSONValue *createJInventory(const ActorSlot &slot) {
+	Common::JSONObject json;
+	if (!slot.actor) {
+		json["scroll"] = new Common::JSONValue(0LL);
+	} else {
+		Common::JSONArray objKeys;
+		Common::JSONArray jiggleArray;
+		bool anyJiggle = false;
+		//  for (obj in slot.actor.inventory) {
+		for (int i = 0; i < slot.actor->_inventory.size(); i++) {
+			Object *obj = slot.actor->_inventory[i];
+			// TODO: jiggle
+			// let jiggle = obj.getJiggle()
+			bool jiggle = false;
+			// if (jiggle)
+			// 	anyJiggle = true;
+			jiggleArray.push_back(createJBool(jiggle));
+			objKeys.push_back(new Common::JSONValue(obj->_key));
+		}
+
+		if (objKeys.size() > 0) {
+			json["objects"] = new Common::JSONValue(objKeys);
+		}
+		json["scroll"] = new Common::JSONValue((long long int)slot.actor->_inventoryOffset);
+		if (anyJiggle)
+			json["jiggle"] = new Common::JSONValue(jiggleArray);
+	}
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJInventory() {
+	Common::JSONArray slots;
+	for (int i = 0; i < NUMACTORS; i++) {
+		const ActorSlot &slot = g_engine->_hud._actorSlots[i];
+		slots.push_back(createJInventory(slot));
+	}
+	Common::JSONObject json;
+	json["slots"] = new Common::JSONValue(slots);
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJObject(HSQOBJECT &table, Object *obj) {
+	Common::JSONObject json(tojson(table, false)->asObject());
+	if (obj) {
+		if (!obj->_node->isVisible())
+			json["_hidden"] = new Common::JSONValue(1LL);
+		if (obj->_state != 0)
+			json["_state"] = new Common::JSONValue((long long int)obj->_state);
+		if (obj->_node->isVisible() && !obj->isTouchable())
+			json["_touchable"] = new Common::JSONValue(0LL);
+		if (obj->_node->getOffset() != Math::Vector2d())
+			json["_offset"] = new Common::JSONValue(toString(obj->_node->getOffset()));
+	}
+	//   result.fields.sort(cmpKey)
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJObjects() {
+	Common::JSONObject json;
+	sqgetpairs(sqrootTbl(g_engine->getVm()), [&](const Common::String &k, HSQOBJECT &v) {
+		if (isObject(getId(v))) {
+			Object *obj = sqobj(v);
+			if (!obj || (obj->_objType == otNone)) {
+				// info fmt"obj: createJObject({k})"
+				json[k] = createJObject(v, obj);
+			}
+		}
+	});
+	//   result.fields.sort(cmpKey)
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJPseudoObjects(Room *room) {
+	Common::JSONObject json;
+	sqgetpairs(room->_table, [&](const Common::String &k, HSQOBJECT &v) {
+		if (isObject(getId(v))) {
+			Object *obj = sqobj(v);
+			// info fmt"pseudoObj: createJObject({k})"
+			json[k] = createJObject(v, obj);
+		}
+	});
+	//   result.fields.sort(cmpKey)
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJRoom(Room *room) {
+	Common::JSONObject json(tojson(room->_table, false, true, room->_pseudo)->asObject());
+	if (room->_pseudo) {
+		json["_pseudoObjects"] = createJPseudoObjects(room);
+	}
+	//   result.fields.sort(cmpKey)
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createJRooms() {
+	Common::JSONObject json;
+	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		Room *room = g_engine->_rooms[i];
+		if (room)
+			json[room->_name] = createJRoom(room);
+	}
+	//   result.fields.sort(cmpKey);
+	return new Common::JSONValue(json);
+}
+
+static Common::JSONValue *createSaveGame() {
+	Common::JSONObject json;
+	json["actors"] = createJActors();
+	json["callbacks"] = createJCallbacks();
+	json["currentRoom"] = createJRoomKey(g_engine->_room);
+	json["dialog"] = createJDialog();
+	json["easy_mode"] = createJEasyMode();
+	json["gameGUID"] = new Common::JSONValue("");
+	json["gameScene"] = createJGameScene();
+	json["gameTime"] = new Common::JSONValue(g_engine->_time);
+	json["globals"] = createJGlobals();
+	json["inputState"] = new Common::JSONValue((long long int)g_engine->_inputState.getState());
+	json["inventory"] = createJInventory();
+	json["objects"] = createJObjects();
+	json["rooms"] = createJRooms();
+	json["savebuild"] = new Common::JSONValue(958LL);
+	json["savetime"] = new Common::JSONValue(getTime());
+	json["selectedActor"] = new Common::JSONValue(g_engine->_actor ? g_engine->_actor->_key : "");
+	json["version"] = new Common::JSONValue((long long int)2);
+	return new Common::JSONValue(json);
+}
+
+void SaveGameManager::saveGame(Common::WriteStream *ws) {
+	sqcall("preSave");
+	Common::JSONValue *data = createSaveGame();
+
+	// dump savegame as json
+	// Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving("save.json", false);
+	// Common::String s = data->stringify(true);
+	// saveFile->write(s.c_str(),s.size());
+	// saveFile->finalize();
+
+	const uint32 fullSize = 500000;
+	Common::Array<byte> buffer(fullSize + 16);
+	OutMemStream stream;
+	stream.open(buffer.data(), buffer.size());
+
+	GGHashMapEncoder encoder;
+	encoder.open(&stream);
+	encoder.write(data->asObject());
+
+	int32 savetime = data->asObject()["savetime"]->asIntegerNumber();
+	int32 hash = computeHash(buffer.data(), fullSize);
+	byte marker = (8 - ((fullSize + 9) % 8));
+
+	// write at the end 16 bytes: hashdata (4 bytes) + savetime (4 bytes) + marker (8 bytes)
+	int32 *p = (int32 *)(buffer.data() + fullSize);
+	p[0] = hash;
+	p[1] = savetime;
+	memset(&p[2], marker, 8);
+
+	// then encode data
+	BTEACrypto::encrypt((uint32 *)buffer.data(), buffer.size() / 4, savegameKey);
+
+	// and write data
+	ws->write(buffer.data(), buffer.size());
+
+	sqcall("postSave");
 }
 
 } // namespace Twp

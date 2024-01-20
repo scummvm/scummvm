@@ -45,4 +45,8 @@ DateTime toDateTime(int64_t t) {
 	return dateTime;
 }
 
+int64_t getTime() {
+	return (int64_t)time(NULL);
+}
+
 } // namespace Twp

@@ -115,6 +115,8 @@ public:
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	void capture(Common::WriteStream &stream, Math::Vector2d size);
 
 	Math::Vector2d winToScreen(Math::Vector2d pos);
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
@@ -146,7 +148,7 @@ public:
 
 private:
 	void update(float elapsedMs);
-	void draw();
+	void draw(RenderTexture* texture = nullptr);
 	void exitRoom(Room *nextRoom);
 	void actorEnter();
 	void actorExit();

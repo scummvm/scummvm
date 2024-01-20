@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/list.h"
 #include "common/path.h"
+#include "common/stablemap.h"
 #include "common/formats/json.h"
 
 namespace Twp {
@@ -49,6 +50,23 @@ public:
 
 private:
     const byte* _buf = nullptr;
+	int64 _bufSize = 0;
+	int64 _pos = 0;
+};
+
+class OutMemStream: public Common::SeekableWriteStream {
+public:
+	OutMemStream();
+
+	bool open(byte* buf, int64 bufSize);
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+
+	int64 pos() const  override;
+	int64 size() const  override;
+	bool seek(int64 offset, int whence = SEEK_SET)  override;
+
+private:
+    byte* _buf = nullptr;
 	int64 _bufSize = 0;
 	int64 _pos = 0;
 };
@@ -106,6 +124,31 @@ private:
 private:
 	Common::SeekableReadStream *_stream = nullptr;
 	Common::Array<int> _offsets;
+};
+
+class GGHashMapEncoder {
+public:
+	GGHashMapEncoder();
+
+	void open(Common::SeekableWriteStream* stream);
+	void write(const Common::JSONObject& obj);
+
+private:
+	void writeMarker(byte marker);
+	void writeString(const Common::String& s);
+	void writeRawString(const Common::String& s);
+	void writeNull();
+	void writeInt(int value);
+	void writeFloat(float value);
+	void writeArray(const Common::JSONArray& arr);
+	void writeValue(const Common::JSONValue* obj);
+	void writeMap(const Common::JSONObject &obj);
+	void writeKeys();
+	void writeKey(const Common::String& key);
+
+private:
+	Common::SeekableWriteStream* _s = nullptr;
+	Common::StableMap<Common::String, uint32> _strings;
 };
 
 struct GGPackEntry {

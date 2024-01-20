@@ -33,6 +33,7 @@ struct DateTime {
 
 Common::String formatTime(int64_t time, const char *format);
 DateTime toDateTime(int64_t time);
+int64_t getTime();
 
 } // namespace Twp
 

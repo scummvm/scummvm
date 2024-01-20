@@ -30,6 +30,14 @@ namespace Twp {
 
 static Texture gEmptyTexture;
 
+int Color::toInt() const {
+	int r = (rgba.r * 255.f);
+	int g = (rgba.g * 255.f);
+	int b = (rgba.b * 255.f);
+	int a = (rgba.a * 255.f);
+	return (r << 16) | (g << 8) | b | (a << 24);
+}
+
 Vertex::Vertex() {}
 
 Vertex::Vertex(Math::Vector2d p, Color c, Math::Vector2d t)
