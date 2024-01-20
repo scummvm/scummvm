@@ -403,8 +403,6 @@ def extract_xcode_macbinary(
         for id, data in xobj.items():
             print(f"{id} - {data['name']}")
         raise ValueError("Need to specify resource ID")
-    for entry in xobj[xobj_id]["xmethtable"]:
-        print(entry)
     type: XCodeType = (
         "XFCN"
         if xobj_id.startswith("XFCN_")
@@ -412,6 +410,9 @@ def extract_xcode_macbinary(
         if xobj_id.startswith("XCMD_")
         else "XObject"
     )
+    if type == "XObject":
+        for entry in xobj[xobj_id]["xmethtable"]:
+            print(entry)
     slug = xobj[xobj_id]["name"].lower()
     if type in ["XFCN", "XCMD"]:
         slug += type.lower()
