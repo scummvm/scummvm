@@ -2386,12 +2386,21 @@ void GlobalOptionsDialog::build() {
 #endif
 
 	// Misc Tab
-	_guiBasePopUp->setSelected(2);
+	bool seenValue = false;
 	int value = ConfMan.getInt("gui_scale");
+
+	if (!value)
+		value = 100; // Setting default sane value
+
 	for (int i = 0; guiBaseLabels[i]; i++) {
-		if (value == guiBaseValues[i])
+		if (value == guiBaseValues[i]) {
+			seenValue = true;
 			_guiBasePopUp->setSelected(i);
+		}
 	}
+
+	if (!seenValue)
+		_guiBasePopUp->setSelected(ARRAYSIZE(guiBaseLabels) - 1);
 
 	_autosavePeriodPopUp->setSelected(1);
 	value = ConfMan.getInt("autosave_period");
@@ -2538,8 +2547,22 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 	_guiBasePopUpDesc = new StaticTextWidget(boss, prefix + "GUIBasePopupDesc", _("GUI scale:"));
 	_guiBasePopUp = new PopUpWidget(boss, prefix + "GUIBasePopup");
 
+	bool seenValue = false;
+	int oldGuiScale = ConfMan.getInt("gui_scale");
+
+	if (!oldGuiScale)
+		oldGuiScale = 100; // Setting default sane value
+
 	for (int i = 0; guiBaseLabels[i]; i++) {
+		if (guiBaseValues[i] == oldGuiScale)
+			seenValue = true;
+
 		_guiBasePopUp->appendEntry(_(guiBaseLabels[i]), guiBaseValues[i]);
+	}
+
+	if (!seenValue) {
+		Common::U32String customText = Common::U32String::format(_("%d%% - Custom"), oldGuiScale);
+		_guiBasePopUp->appendEntry(customText, oldGuiScale);
 	}
 
 	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", _("GUI renderer:"));
