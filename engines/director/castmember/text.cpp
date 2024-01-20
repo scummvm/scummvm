@@ -345,7 +345,7 @@ void TextCastMember::importRTE(byte *text) {
 
 void TextCastMember::setRawText(const Common::String &text) {
 	// Do nothing if text did not change
-	if (_rtext.equals(text))
+	if (_ptext.equals(Common::U32String(text)))
 		return;
 
 	_rtext = text;
