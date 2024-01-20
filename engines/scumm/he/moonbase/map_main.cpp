@@ -49,27 +49,80 @@ Map::~Map() {
 }
 
 bool Map::generateNewMap() {
+	deleteMap();
+
 	if (!ConfMan.getBool("generate_random_maps"))
 		return false;
 
-	// TODO: Show a dialog allowing the user to customize options.
+	// Show a dialog allowing the user to customize options.
+	if (!_vm->mapGeneratorDialog(!strcmp(_vm->_game.variant, "Demo")))
+		// They have clicked cancel, abort.
+		return false;
 
 	// Create a new seed just for the below values.  This is to
 	// ensure these are truely random after generating a previous
 	// map (or to debug with a prefixed seed).
 	_rnd.generateNewSeed();
 
-	// Don't randomly pick nonstandard map sizes.
-	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
+	int mapSize = 0;
+	if (ConfMan.hasKey("map_size"))
+		mapSize = ConfMan.getInt("map_size");
+	if (mapSize < 4 || mapSize > 10)
+		// Don't randomly pick nonstandard map sizes.
+		mapSize = _rnd.getRandomNumberRngSigned(4, 8);
 
-	uint8 generator = _rnd.getRandomNumberRng(1, 2);
+	mapSize *= 8;
 
-	int tileSet = _rnd.getRandomNumberRngSigned(1, 6);
+	uint8 generator = 0;
+	if (ConfMan.hasKey("map_algorithm"))
+		generator = ConfMan.getInt("map_algorithm");
+	if (generator < SPIFF_GEN || generator > KATTON_GEN)
+		generator = _rnd.getRandomNumberRng(1, 2);
 
-	// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
-	int energy = _rnd.getRandomNumberRngSigned(2, 4);
-	int terrain = _rnd.getRandomNumberRngSigned(2, 4);
-	int water = _rnd.getRandomNumberRngSigned(2, 4);
+	int tileSet = 0;
+	if (ConfMan.hasKey("map_tileset"))
+		tileSet = ConfMan.getInt("map_tileset");
+	if (tileSet < 1 || tileSet > 6)
+		tileSet = _rnd.getRandomNumberRngSigned(1, 6);
+
+	if (!strcmp(_vm->_game.variant, "Demo") && (tileSet == 1 ||
+		tileSet == 3 || tileSet == 5)) {
+		// Demo version only has tilesets 1, 2, 4 and 6.
+		switch (_rnd.getRandomNumber(3)) {
+		case 0:
+			tileSet = 1;
+			break;
+		case 1:
+			tileSet = 2;
+			break;
+		case 2:
+			tileSet = 4;
+			break;
+		default:
+			tileSet = 6;
+		}
+	}
+
+	int energy = -1;
+	if (ConfMan.hasKey("map_energy"))
+		energy = ConfMan.getInt("map_energy");
+	if (energy < 0 || energy > 6)
+		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
+		energy = _rnd.getRandomNumberRngSigned(2, 4);
+
+	int terrain = -1;
+	if (ConfMan.hasKey("map_terrain"))
+		terrain = ConfMan.getInt("map_terrain");
+	if (terrain < 0 || terrain > 6)
+		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
+		terrain = _rnd.getRandomNumberRngSigned(2, 4);
+
+	int water = -1;
+	if (ConfMan.hasKey("map_water"))
+		water = ConfMan.getInt("map_water");
+	if (water < 0 || water > 6)
+		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
+		water = _rnd.getRandomNumberRngSigned(2, 4);
 
 	// 32767 is RAND_MAX on Windows
 	int seed = _rnd.getRandomNumber(32767);

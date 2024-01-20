@@ -99,6 +99,8 @@
 #include "scumm/he/net/net_lobby.h"
 #endif
 #endif
+
+#include "scumm/he/moonbase/dialog-mapgenerator.h"
 #endif
 
 #include "backends/audiocd/audiocd.h"
@@ -3919,6 +3921,15 @@ int ScummEngine_v90he::networkSessionDialog() {
 	// Joining a session
 	SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);
+}
+#endif
+
+#ifdef ENABLE_HE
+bool ScummEngine_v100he::mapGeneratorDialog(bool demo) {
+	// Runs the map generator options dialog
+	// for Moonbase Commander.
+	MapGeneratorDialog dialog(demo);
+	return runDialog(dialog) == 1;
 }
 #endif
 
