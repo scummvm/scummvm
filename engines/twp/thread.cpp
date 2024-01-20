@@ -59,7 +59,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 	_pauseable = true;
 
 	HSQUIRRELVM v = g_engine->getVm();
-	for (int i = 0; i < _args.size(); i++) {
+	for (size_t i = 0; i < _args.size(); i++) {
 		sq_addref(v, &_args[i]);
 	}
 	sq_addref(v, &_threadObj);
@@ -70,7 +70,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 Thread::~Thread() {
 	debug("delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
 	HSQUIRRELVM v = g_engine->getVm();
-	for (int i = 0; i < _args.size(); i++) {
+	for (size_t i = 0; i < _args.size(); i++) {
 		sq_release(v, &_args[i]);
 	}
 	sq_release(v, &_threadObj);
@@ -84,7 +84,7 @@ bool Thread::call() {
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, _closureObj);
 	sq_pushobject(v, _envObj);
-	for (int i = 0; i < _args.size(); i++) {
+	for (size_t i = 0; i < _args.size(); i++) {
 		sq_pushobject(v, _args[i]);
 	}
 	if (SQ_FAILED(sq_call(v, 1 + _args.size(), SQFalse, SQTrue))) {
@@ -131,7 +131,7 @@ Cutscene::Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJ
 	debug("Create cutscene %d with input: 0x%X", _id, _inputState);
 	g_engine->_inputState.setInputActive(false);
 	g_engine->_inputState.setShowCursor(false);
-	for (int i = 0; i < g_engine->_threads.size(); i++) {
+	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
 		ThreadBase *thread = g_engine->_threads[i];
 		if (thread->isGlobal())
 			thread->pause();
@@ -175,7 +175,7 @@ void Cutscene::stop() {
 	debug("Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
 	Common::Array<ThreadBase *> threads(g_engine->_threads);
-	for (int i = 0; i < threads.size(); i++) {
+	for (size_t i = 0; i < threads.size(); i++) {
 		ThreadBase *thread = threads[i];
 		if (thread->isGlobal())
 			thread->unpause();

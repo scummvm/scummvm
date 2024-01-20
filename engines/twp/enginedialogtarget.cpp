@@ -54,7 +54,7 @@ private:
 
 static Object *actor(const Common::String &name) {
 	// for (actor in gEngine.actors) {
-	for (int i = 0; i < g_engine->_actors.size(); i++) {
+	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		Object *actor = g_engine->_actors[i];
 		if (actor->_key == name)
 			return actor;

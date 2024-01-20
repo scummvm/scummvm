@@ -96,11 +96,11 @@ void Texture::capture(Graphics::Surface &surface) {
 	GLint boundFrameBuffer;
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
-	if (boundFrameBuffer != fbo) {
+	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	}
 	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-	if (boundFrameBuffer != fbo) {
+	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
 	}
 	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);

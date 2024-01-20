@@ -174,7 +174,7 @@ public:
 private:
 	Common::String _sheet;
 	Common::Array<Common::String> _frames;
-	int _frameIndex = 0;
+    size_t _frameIndex = 0;
 	float _elapsed = 0.f;
 	float _frameDuration = 0.f;
 	bool _loop = false;

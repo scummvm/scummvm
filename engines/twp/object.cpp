@@ -153,7 +153,7 @@ void Object::play(const Common::String &state, bool loop, bool instant) {
 }
 
 bool Object::playCore(const Common::String &state, bool loop, bool instant) {
-	for (int i = 0; i < _anims.size(); i++) {
+	for (size_t i = 0; i < _anims.size(); i++) {
 		ObjectAnimation &anim = _anims[i];
 		if (anim.name == state) {
 			_animFlags = anim.flags;
@@ -172,7 +172,7 @@ bool Object::playCore(const Common::String &state, bool loop, bool instant) {
 
 void Object::showLayer(const Common::String &layer, bool visible) {
 	int index = -1;
-	for (int i = 0; i < _hiddenLayers.size(); i++) {
+	for (size_t i = 0; i < _hiddenLayers.size(); i++) {
 		if (_hiddenLayers[i] == layer) {
 			index = i;
 			break;
@@ -187,7 +187,7 @@ void Object::showLayer(const Common::String &layer, bool visible) {
 			_hiddenLayers.push_back(layer);
 	}
 	if (_node != NULL) {
-		for (int i = 0; i < _node->getChildren().size(); i++) {
+		for (size_t i = 0; i < _node->getChildren().size(); i++) {
 			Node *node = _node->getChildren()[i];
 			if (node->getName() == layer) {
 				node->setVisible(visible);
@@ -199,7 +199,7 @@ void Object::showLayer(const Common::String &layer, bool visible) {
 Facing Object::getFacing() const {
 	if (_facingLockValue != 0)
 		return (Facing)_facingLockValue;
-	for (int i = 0; i < _facingMap.size(); i++) {
+	for (size_t i = 0; i < _facingMap.size(); i++) {
 		if (_facingMap[i].key == _facing)
 			return _facingMap[i].value;
 	}

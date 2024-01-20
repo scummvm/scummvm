@@ -64,7 +64,7 @@ private:
 
 private:
 	Common::U32String _text;
-	int _off;
+    size_t _off;
 };
 
 static Math::Vector2d normalize(Texture *texture, Math::Vector2d v) {
@@ -112,7 +112,7 @@ static int skipUntil(const Common::U32String& s, const char *until, int start = 
 static float width(Text &text, TokenReader &reader, Token tok) {
 	float result = 0;
 	Common::String s = reader.substr(tok);
-	for (int i = 0; i < s.size(); i++) {
+	for (size_t i = 0; i < s.size(); i++) {
 		char c = s[i];
 		result += text.getFont()->getGlyph(c).advance;
 	}
@@ -301,11 +301,11 @@ void Text::update() {
 		float maxW;
 		float lineHeight = _font->getLineHeight();
 		float y = -lineHeight;
-		for (int i = 0; i < lines.size(); i++) {
+		for (size_t i = 0; i < lines.size(); i++) {
 			Line &line = lines[i];
 			CodePoint prevChar;
 			x = 0;
-			for (int j = 0; j < line.tokens.size(); j++) {
+			for (size_t j = 0; j < line.tokens.size(); j++) {
 				tok = line.tokens[j];
 				if (tok.id == tiColor) {
 					int iColor;
@@ -314,7 +314,7 @@ void Text::update() {
 					color = Color::withAlpha(Color::rgb(iColor & 0x00FFFFFF), color.rgba.a);
 				} else {
 					Common::U32String s = reader.substr(tok);
-					for (int k = 0; k < s.size(); k++) {
+					for (size_t k = 0; k < s.size(); k++) {
 						CodePoint c = s[k];
 						Glyph glyph = _font->getGlyph(c);
 						float kern = _font->getKerning(prevChar, c);
@@ -332,17 +332,17 @@ void Text::update() {
 
 		// Align text
 		if (_hAlign == thRight) {
-			for (int i = 0; i < lines.size(); i++) {
+			for (size_t i = 0; i < lines.size(); i++) {
 				float w = maxW - _quads[i].width();
-				for (int j = 0; j < lines[i].charInfos.size(); j++) {
+				for (size_t j = 0; j < lines[i].charInfos.size(); j++) {
 					CharInfo &info = lines[i].charInfos[j];
 					info.pos.setX(info.pos.getX() + w);
 				}
 			}
 		} else if (_hAlign == thCenter) {
-			for (int i = 0; i < lines.size(); i++) {
+			for (size_t i = 0; i < lines.size(); i++) {
 				float w = maxW - _quads[i].width();
-				for (int j = 0; j < lines[i].charInfos.size(); j++) {
+				for (size_t j = 0; j < lines[i].charInfos.size(); j++) {
 					CharInfo &info = lines[i].charInfos[j];
 					info.pos.setX(info.pos.getX() + w / 2.f);
 				}
@@ -350,8 +350,8 @@ void Text::update() {
 		}
 
 		// Add the glyphs to the vertices
-		for (int i = 0; i < lines.size(); i++) {
-			for (int j = 0; j < lines[i].charInfos.size(); j++) {
+		for (size_t i = 0; i < lines.size(); i++) {
+			for (size_t j = 0; j < lines[i].charInfos.size(); j++) {
 				const CharInfo &info = lines[i].charInfos[j];
 				addGlyphQuad(_texture, _vertices, info);
 			}

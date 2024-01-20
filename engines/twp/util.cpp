@@ -160,7 +160,7 @@ Common::String join(const Common::Array<Common::String> &array, const Common::St
 	Common::String result;
 	if (array.size() > 0) {
 		result += array[0];
-		for (int i = 1; i < array.size(); i++) {
+		for (size_t i = 1; i < array.size(); i++) {
 			result += (sep + array[i]);
 		}
 	}

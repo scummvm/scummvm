@@ -744,9 +744,9 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	switch (nArgs) {
 	case 1: {
-		for (int i = 0; i < g_engine->_room->_layers.size(); i++) {
+		for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 			Layer *layer = g_engine->_room->_layers[i];
-			for (int j = 0; j < layer->_objects.size(); j++) {
+			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Object *obj = layer->_objects[j];
 				obj->_exec.enabled = false;
 			}

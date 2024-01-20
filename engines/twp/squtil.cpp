@@ -256,7 +256,7 @@ void sqcall(const char *name, const Common::Array<HSQOBJECT> &args) {
 	sqpushfunc(v, o, name);
 
 	sq_pushobject(v, o);
-	for (int i = 0; i < args.size(); i++) {
+	for (size_t i = 0; i < args.size(); i++) {
 		sq_pushobject(v, args[i]);
 	}
 	sq_call(v, 1 + args.size(), SQFalse, SQTrue);
@@ -275,7 +275,7 @@ Room *sqroom(HSQOBJECT table) {
 }
 
 Room *getRoom(int id) {
-	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
 		if (getId(room->_table) == id)
 			return room;
@@ -292,17 +292,17 @@ Room *sqroom(HSQUIRRELVM v, int i) {
 }
 
 Object *sqobj(int id) {
-	for (int i = 0; i < g_engine->_actors.size(); i++) {
+	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		Object *actor = g_engine->_actors[i];
 		if (getId(actor->_table) == id)
 			return actor;
 	}
 
-	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
-		for (int j = 0; j < room->_layers.size(); j++) {
+		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Layer *layer = room->_layers[j];
-			for (int k = 0; k < layer->_objects.size(); k++) {
+			for (size_t k = 0; k < layer->_objects.size(); k++) {
 				Object *obj = layer->_objects[k];
 				if (getId(obj->_table) == id)
 					return obj;
@@ -325,7 +325,7 @@ Object *sqobj(HSQUIRRELVM v, int i) {
 
 Object *sqactor(HSQOBJECT table) {
 	int id = getId(table);
-	for (int i = 0; i < g_engine->_actors.size(); i++) {
+	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		Object *actor = g_engine->_actors[i];
 		if (actor->getId() == id)
 			return actor;
@@ -341,7 +341,7 @@ Object *sqactor(HSQUIRRELVM v, int i) {
 }
 
 SoundDefinition *sqsounddef(int id) {
-	for (int i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
+	for (size_t i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
 		SoundDefinition *sound = g_engine->_audio._soundDefs[i];
 		if (sound->getId() == id)
 			return sound;
@@ -407,7 +407,7 @@ ThreadBase *sqthread(int id) {
 		}
 	}
 
-	for (int i = 0; i < g_engine->_threads.size(); i++) {
+	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
 		ThreadBase *t = g_engine->_threads[i];
 		if (t->getId() == id) {
 			return t;

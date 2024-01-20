@@ -452,7 +452,7 @@ YExp *YackParser::parseInstructionExpression() {
 		auto pExp = new YLimit();
 		if (_it->id == YackTokenId::Int) {
 			auto node = _reader.readText(*_it++);
-			pExp->_max = std::strtol(node.c_str(), nullptr, 10);
+			pExp->_max = strtol(node.c_str(), nullptr, 10);
 		}
 		return pExp;
 	}

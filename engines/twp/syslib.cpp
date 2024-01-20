@@ -633,7 +633,7 @@ static SQInteger removeCallback(HSQUIRRELVM v) {
 	int id = 0;
 	if (SQ_FAILED(sqget(v, 2, id)))
 		return sq_throwerror(v, "failed to get callback");
-	for (int i = 0; i < g_engine->_callbacks.size(); i++) {
+	for (size_t i = 0; i < g_engine->_callbacks.size(); i++) {
 		Callback *cb = g_engine->_callbacks[i];
 		if (cb->getId() == id) {
 			g_engine->_callbacks.remove_at(i);

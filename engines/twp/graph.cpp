@@ -114,10 +114,10 @@ Graph::Graph() {}
 Graph::Graph(const Graph &graph) {
 	_nodes = graph._nodes;
 	_concaveVertices = graph._concaveVertices;
-	for (int i = 0; i < graph._edges.size(); i++) {
+	for (size_t i = 0; i < graph._edges.size(); i++) {
 		const Common::Array<GraphEdge> &e = graph._edges[i];
 		Common::Array<GraphEdge> sEdges;
-		for (int j = 0; j < e.size(); j++) {
+		for (size_t j = 0; j < e.size(); j++) {
 			const GraphEdge &se = e[j];
 			sEdges.push_back(GraphEdge(se.start, se.to, se.cost));
 		}
@@ -158,7 +158,7 @@ void AStar::search(int source, int target) {
 		_spt[NCN] = _sf[NCN];
 		if (NCN != target) {
 			// for (edge in _graph->edges[NCN]) {
-			for (int i = 0; i < _graph->_edges[NCN].size(); i++) {
+			for (size_t i = 0; i < _graph->_edges[NCN].size(); i++) {
 				GraphEdge &edge = _graph->_edges[NCN][i];
 				float Hcost = length(_graph->_nodes[edge.to] - _graph->_nodes[target]);
 				float Gcost = _gCost[NCN] + edge.cost;
@@ -190,7 +190,7 @@ void Graph::addEdge(GraphEdge e) {
 
 GraphEdge *Graph::edge(int start, int to) {
 	Common::Array<GraphEdge> &edges = _edges[start];
-	for (int i = 0; i < edges.size(); i++) {
+	for (size_t i = 0; i < edges.size(); i++) {
 		GraphEdge *e = &edges[i];
 		if (e->to == to)
 			return e;
@@ -200,7 +200,7 @@ GraphEdge *Graph::edge(int start, int to) {
 
 Common::Array<int> reverse(const Common::Array<int> &arr) {
 	Common::Array<int> result(arr.size());
-	for (int i = 0; i < arr.size(); i++) {
+	for (size_t i = 0; i < arr.size(); i++) {
 		result[arr.size() - 1 - i] = arr[i];
 	}
 	return result;
@@ -241,7 +241,7 @@ static bool inside(const Walkbox &self, Math::Vector2d position, bool toleranceO
 	Math::Vector2d oldPoint(polygon[polygon.size() - 1]);
 	float oldSqDist = distanceSquared(oldPoint, point);
 
-	for (int i = 0; i < polygon.size(); i++) {
+	for (size_t i = 0; i < polygon.size(); i++) {
 		Math::Vector2d newPoint = polygon[i];
 		float newSqDist = distanceSquared(newPoint, point);
 
@@ -273,7 +273,7 @@ Math::Vector2d Walkbox::getClosestPointOnEdge(Math::Vector2d p3) const {
 	float minDist = 100000.0f;
 
 	const Common::Array<Math::Vector2d> &polygon = getPoints();
-	for (int i = 0; i < polygon.size(); i++) {
+	for (size_t i = 0; i < polygon.size(); i++) {
 		float dist = distanceToSegment(p3, polygon[i], polygon[(i + 1) % polygon.size()]);
 		if (dist < minDist) {
 			minDist = dist;
@@ -305,7 +305,9 @@ Math::Vector2d Walkbox::getClosestPointOnEdge(Math::Vector2d p3) const {
 }
 
 static bool less(Math::Vector2d p1, Math::Vector2d p2) {
-	return ((p1.getX() < p2.getX() - EPSILON) || (abs(p1.getX() - p2.getX()) < EPSILON) && (p1.getY() < p2.getY() - EPSILON));
+	return (((p1.getX() < p2.getX() - EPSILON) ||
+			 (abs(p1.getX() - p2.getX()) < EPSILON)) &&
+			(p1.getY() < p2.getY() - EPSILON));
 }
 
 static float det(float a, float b, float c, float d) {
@@ -368,7 +370,7 @@ bool PathFinder::inLineOfSight(Math::Vector2d start, Math::Vector2d to) {
 		return true;
 
 	// Not in LOS if any edge is intersected by the start-end line segment
-	for (int i = 0; i < _walkboxes.size(); i++) {
+	for (size_t i = 0; i < _walkboxes.size(); i++) {
 		Walkbox &walkbox = _walkboxes[i];
 		const Common::Array<Math::Vector2d> &polygon = walkbox.getPoints();
 		int size = polygon.size();
@@ -387,7 +389,7 @@ bool PathFinder::inLineOfSight(Math::Vector2d start, Math::Vector2d to) {
 	// Finally the middle point in the segment determines if in LOS or not
 	Math::Vector2d v2 = (start + to) / 2.0f;
 	bool result = _walkboxes[0].contains(v2);
-	for (int i = 1; i < _walkboxes.size(); i++) {
+	for (size_t i = 1; i < _walkboxes.size(); i++) {
 		if (_walkboxes[i].contains(v2, false))
 			result = false;
 	}
@@ -397,7 +399,7 @@ bool PathFinder::inLineOfSight(Math::Vector2d start, Math::Vector2d to) {
 static int minIndex(const Common::Array<float> values) {
 	float min = values[0];
 	int index = 0;
-	for (int i = 1; i < values.size(); i++) {
+	for (size_t i = 1; i < values.size(); i++) {
 		if (values[i] < min) {
 			index = i;
 			min = values[i];
@@ -408,11 +410,11 @@ static int minIndex(const Common::Array<float> values) {
 
 Graph *PathFinder::createGraph() {
 	Graph *result = new Graph();
-	for (int i = 0; i < _walkboxes.size(); i++) {
+	for (size_t i = 0; i < _walkboxes.size(); i++) {
 		Walkbox &walkbox = _walkboxes[i];
 		if (walkbox.getPoints().size() > 2) {
 			bool visible = walkbox.isVisible();
-			for (int j = 0; j < walkbox.getPoints().size(); j++) {
+			for (size_t j = 0; j < walkbox.getPoints().size(); j++) {
 				if (walkbox.concave(j) == visible) {
 					Math::Vector2d vertex = walkbox.getPoints()[j];
 					result->_concaveVertices.push_back(vertex);
@@ -422,8 +424,8 @@ Graph *PathFinder::createGraph() {
 		}
 	}
 
-	for (int i = 0; i < result->_concaveVertices.size(); i++) {
-		for (int j = 0; j < result->_concaveVertices.size(); j++) {
+	for (size_t i = 0; i < result->_concaveVertices.size(); i++) {
+		for (size_t j = 0; j < result->_concaveVertices.size(); j++) {
 			Math::Vector2d c1(result->_concaveVertices[i]);
 			Math::Vector2d c2(result->_concaveVertices[j]);
 			if (inLineOfSight(c1, c2)) {
@@ -439,7 +441,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 	Common::Array<Math::Vector2d> result;
 	if (_walkboxes.size() > 0) {
 		// find the walkbox where the actor is and put it first
-		for (int i = 0; i < _walkboxes.size(); i++) {
+		for (size_t i = 0; i < _walkboxes.size(); i++) {
 			const Walkbox &wb = _walkboxes[i];
 			if (inside(wb, start) && (i != 0)) {
 				SWAP(_walkboxes[0], _walkboxes[i]);
@@ -450,7 +452,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 		// if no walkbox has been found => find the nearest walkbox
 		if (!inside(_walkboxes[0], start)) {
 			Common::Array<float> dists(_walkboxes.size());
-			for (int i = 0; i < _walkboxes.size(); i++) {
+			for (size_t i = 0; i < _walkboxes.size(); i++) {
 				Walkbox wb = _walkboxes[i];
 				dists[i] = distance(wb.getClosestPointOnEdge(start), start);
 			}
@@ -474,7 +476,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 
 		walkgraph->addNode(start);
 
-		for (int i = 0; i < walkgraph->_concaveVertices.size(); i++) {
+		for (size_t i = 0; i < walkgraph->_concaveVertices.size(); i++) {
 			Math::Vector2d c = walkgraph->_concaveVertices[i];
 			if (inLineOfSight(start, c))
 				walkgraph->addEdge(GraphEdge(startNodeIndex, i, distance(start, c)));
@@ -484,7 +486,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 		int endNodeIndex = walkgraph->_nodes.size();
 		walkgraph->addNode(to);
 
-		for (int i = 0; i < walkgraph->_concaveVertices.size(); i++) {
+		for (size_t i = 0; i < walkgraph->_concaveVertices.size(); i++) {
 			Math::Vector2d c = walkgraph->_concaveVertices[i];
 			if (inLineOfSight(to, c))
 				walkgraph->addEdge(GraphEdge(i, endNodeIndex, distance(to, c)));
@@ -494,7 +496,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 			walkgraph->addEdge(GraphEdge(startNodeIndex, endNodeIndex, distance(start, to)));
 
 		Common::Array<int> indices = walkgraph->getPath(startNodeIndex, endNodeIndex);
-		for (int i = 0; i < indices.size(); i++) {
+		for (size_t i = 0; i < indices.size(); i++) {
 			int index = indices[i];
 			result.push_back(walkgraph->_nodes[index]);
 		}
