@@ -469,16 +469,19 @@
 }
 
 - (NSArray *)keyCommands {
-	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
-	[self setWantsPriority: upArrow];
-	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
-	[self setWantsPriority: downArrow];
-	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
-	[self setWantsPriority: leftArrow];
-	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
-	[self setWantsPriority: rightArrow];
-	UIKeyCommand *escapeKey = [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags: 0 action: @selector(escapeKey:)];
-	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, escapeKey, nil];
+	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[NSMutableArray alloc] init];
+	// Arrows
+	[overloadedKeys addObjectsFromArray:[self overloadArrowKeys]];
+	// Roman letters
+	[overloadedKeys addObjectsFromArray:[self overloadRomanLetters]];
+	// Numbers
+	[overloadedKeys addObjectsFromArray:[self overloadNumbers]];
+	// FN keys
+	[overloadedKeys addObjectsFromArray:[self overloadFnKeys]];
+	// ESC, PAGE_UP, PAGE_DOWN, HOME, END
+	[overloadedKeys addObjectsFromArray:[self overloadSpecialKeys]];
+
+	return overloadedKeys;
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
