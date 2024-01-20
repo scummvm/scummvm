@@ -221,7 +221,7 @@ bool Events::util_kbd_check(int32 *parm1) {
 		return false;
 
 	int flags = ks.flags & (Common::KBD_CTRL | Common::KBD_ALT);
-	int key = (ks.ascii >= 32 && ks.ascii <= 127 && !flags) ? ks.ascii : ks.keycode;
+	int key = (ks.ascii >= 32 && ks.ascii <= 127 && !flags) ? ks.ascii : (int)ks.keycode;
 	*parm1 = key | (flags << 16);
 
 	return true;
