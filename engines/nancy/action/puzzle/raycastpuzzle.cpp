@@ -1243,18 +1243,21 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 		int32 yCell = ((int32)newY) & 0x7F;
 
 		int collisionSize = 48;
+		int c = 0;
+
+#define ClampCell(x) (c = x, c >= 0 && c < (int)_wallMap.size() && xGrid > 0 && yGrid > 0 && xGrid < _mapFullWidth && yGrid < _mapFullHeight) ? _wallMap[c] : 1;
 
 		// Check neighboring cells
-		uint32 cellLeft = xGrid > 0 ? _wallMap[yGrid * _mapFullWidth + xGrid - 1] : 1;
-		uint32 cellTop = yGrid > 0 ? _wallMap[(yGrid - 1) * _mapFullWidth + xGrid] : 1;
-		uint32 cellRight = xGrid < _mapFullWidth ? _wallMap[yGrid * _mapFullWidth + xGrid + 1] : 1;
-		uint32 cellBottom = yGrid < _mapFullHeight ? _wallMap[(yGrid + 1) * _mapFullWidth + xGrid] : 1;
+		uint32 cellLeft 	= ClampCell(yGrid * _mapFullWidth + xGrid - 1);
+		uint32 cellTop 		= ClampCell((yGrid - 1) * _mapFullWidth + xGrid);
+		uint32 cellRight 	= ClampCell(yGrid * _mapFullWidth + xGrid + 1);
+		uint32 cellBottom 	= ClampCell((yGrid + 1) * _mapFullWidth + xGrid);
 
 		// Allow passage through doors
-		cellLeft = (cellLeft & kDoor) ? 0 : cellLeft;
-		cellTop = (cellTop & kDoor) ? 0 : cellTop;
-		cellRight = (cellRight & kDoor) ? 0 : cellRight;
-		cellBottom = (cellBottom & kDoor) ? 0 : cellBottom;
+		cellLeft	= (cellLeft & kDoor)	? 0 : cellLeft;
+		cellTop		= (cellTop & kDoor)		? 0 : cellTop;
+		cellRight	= (cellRight & kDoor)	? 0 : cellRight;
+		cellBottom	= (cellBottom & kDoor)	? 0 : cellBottom;
 
 		if (cellLeft && yCell < collisionSize) {
 			newY = (((int32)newY) & 0xFF80) + collisionSize;
@@ -1282,20 +1285,20 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 		cellRight = xGrid < _mapFullWidth ? _wallMap[yGrid * _mapFullWidth + xGrid + 1] : 1;
 		cellBottom = yGrid < _mapFullHeight ? _wallMap[(yGrid + 1) * _mapFullWidth + xGrid] : 1;
 
-		uint32 cellTopLeft = (xGrid > 0 && yGrid > 0) ? _wallMap[(yGrid - 1) * _mapFullWidth + xGrid - 1] : 1;
-		uint32 cellTopRight = (xGrid < _mapFullWidth && yGrid > 0) ? _wallMap[(yGrid - 1) * _mapFullWidth + xGrid + 1] : 1;
-		uint32 cellBottomLeft = (xGrid > 0 && yGrid < _mapFullHeight) ? _wallMap[(yGrid + 1) * _mapFullWidth + xGrid - 1] : 1;
-		uint32 cellBottomRight = (xGrid < _mapFullWidth && yGrid < _mapFullHeight) ? _wallMap[(yGrid + 1) * _mapFullWidth + xGrid + 1] : 1;
+		uint32 cellTopLeft 		= ClampCell((yGrid - 1) * _mapFullWidth + xGrid - 1);
+		uint32 cellTopRight 	= ClampCell((yGrid - 1) * _mapFullWidth + xGrid + 1);
+		uint32 cellBottomLeft 	= ClampCell((yGrid + 1) * _mapFullWidth + xGrid - 1);
+		uint32 cellBottomRight 	= ClampCell((yGrid + 1) * _mapFullWidth + xGrid + 1);
 
-		cellLeft = (cellLeft & kDoor) ? 0 : cellLeft;
-		cellTop = (cellTop & kDoor) ? 0 : cellTop;
-		cellRight = (cellRight & kDoor) ? 0 : cellRight;
-		cellBottom = (cellBottom & kDoor) ? 0 : cellBottom;
+		cellLeft 		= (cellLeft & kDoor) 		? 0 : cellLeft;
+		cellTop 		= (cellTop & kDoor) 		? 0 : cellTop;
+		cellRight 		= (cellRight & kDoor) 		? 0 : cellRight;
+		cellBottom 		= (cellBottom & kDoor) 		? 0 : cellBottom;
 
-		cellTopLeft = (cellTopLeft & kDoor) ? 0 : cellTopLeft;
-		cellTopRight = (cellTopRight & kDoor) ? 0 : cellTopRight;
-		cellBottomLeft = (cellBottomLeft & kDoor) ? 0 : cellBottomLeft;
-		cellBottomRight = (cellBottomRight & kDoor) ? 0 : cellBottomRight;
+		cellTopLeft 	= (cellTopLeft & kDoor) 	? 0 : cellTopLeft;
+		cellTopRight 	= (cellTopRight & kDoor) 	? 0 : cellTopRight;
+		cellBottomLeft 	= (cellBottomLeft & kDoor) 	? 0 : cellBottomLeft;
+		cellBottomRight	= (cellBottomRight & kDoor)	? 0 : cellBottomRight;
 
 		// Make sure the player doesn't clip diagonally into a wall
 		// Improvement: in the original engine the player just gets stuck when hitting a corner;
