@@ -291,8 +291,8 @@ void SdlWindow::getDisplayDpi(float *dpi, float *defaultDpi) const {
 float SdlWindow::getDpiScalingFactor() const {
 	float dpi, defaultDpi;
 	getDisplayDpi(&dpi, &defaultDpi);
-	debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 	float ratio = dpi / defaultDpi;
+	debug(4, "Reported DPI: %g default: %g, ratio %g, clipped: %g", dpi, defaultDpi, ratio, CLIP(ratio, 1.0f, 4.0f));
 	// Getting the DPI can be unreliable, so clamp the scaling factor to make sure
 	// we do not return unreasonable values.
 	return CLIP(ratio, 1.0f, 4.0f);
