@@ -155,8 +155,10 @@ void sqexec(HSQUIRRELVM v, const char *code, const char *filename = nullptr);
 class Room;
 class Object;
 
+int getId(HSQOBJECT table);
 Room *sqroom(HSQOBJECT table);
 Room *sqroom(HSQUIRRELVM v, int i);
+Room *getRoom(int id);
 Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
 Object *sqobj(int i);

@@ -263,7 +263,7 @@ void sqcall(const char *name, const Common::Array<HSQOBJECT> &args) {
 	sq_settop(v, top);
 }
 
-static int getId(HSQOBJECT table) {
+int getId(HSQOBJECT table) {
 	SQInteger result = 0;
 	sqgetf(table, "_id", result);
 	return (int)result;
@@ -271,6 +271,10 @@ static int getId(HSQOBJECT table) {
 
 Room *sqroom(HSQOBJECT table) {
 	int id = getId(table);
+	return getRoom(id);
+}
+
+Room *getRoom(int id) {
 	for (int i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
 		if (getId(room->_table) == id)

@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
+#include "image/png.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/opengl/system_headers.h"
@@ -560,7 +561,7 @@ void TwpEngine::setShaderEffect(RoomEffect effect) {
 	}
 }
 
-void TwpEngine::draw() {
+void TwpEngine::draw(RenderTexture* outTexture) {
 	if (_room) {
 		Math::Vector2d screenSize = _room->getScreenSize();
 		_gfx.camera(screenSize);
@@ -578,7 +579,9 @@ void TwpEngine::draw() {
 
 	// then render this texture with room effect to another texture
 	_gfx.setRenderTarget(&renderTexture2);
-	setShaderEffect(_room->_effect);
+	if (_room) {
+		setShaderEffect(_room->_effect);
+	}
 	_shaderParams.randomValue[0] = g_engine->getRandom();
 	_shaderParams.timeLapse = fmodf(_time, 1000.f);
 	_shaderParams.iGlobalTime = _shaderParams.timeLapse;
@@ -597,7 +600,7 @@ void TwpEngine::draw() {
 		_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 		_gfx.cameraPos(_fadeShader->_cameraPos);
 		_gfx.clear(Color(0, 0, 0));
-		if (_fadeShader->_effect == FadeEffect::Wobble) {
+		if (_fadeShader->_room && _fadeShader->_effect == FadeEffect::Wobble) {
 			Math::Vector2d camSize = _fadeShader->_room->getScreenSize();
 			_gfx.camera(camSize);
 			_fadeShader->_room->_scene->draw();
@@ -640,7 +643,7 @@ void TwpEngine::draw() {
 
 	// draw to screen
 	_gfx.use(nullptr);
-	_gfx.setRenderTarget(nullptr);
+	_gfx.setRenderTarget(outTexture);
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect != FadeEffect::None);
 
@@ -884,7 +887,36 @@ Common::String TwpEngine::getSaveStateName(int slot) const {
 	return Common::String::format("twp%02d.save", slot);
 }
 
+static Common::String changeFileExt(const Common::String &s, const Common::String &ext) {
+	size_t i = s.findLastOf('.');
+	if (i != Common::String::npos) {
+		return s.substr(0, i) + ext;
+	}
+	return s + ext;
+}
+
+Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::String name = getSaveStateName(slot);
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(name, false);
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	Common::Error result = saveGameStream(saveFile, isAutosave);
+	if (result.getCode() == Common::kNoError) {
+		name = changeFileExt(name, ".png");
+		Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(name, false);
+		g_engine->capture(*thumbnail, Math::Vector2d(320, 180));
+		thumbnail->finalize();
+
+		saveFile->finalize();
+	}
+
+	delete saveFile;
+	return result;
+}
+
 Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	_saveGameManager.saveGame(stream);
 	return Common::kNoError;
 }
 
@@ -1517,6 +1549,17 @@ Scaling *TwpEngine::getScaling(const Common::String &name) {
 		}
 	}
 	return nullptr;
+}
+
+void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
+	RenderTexture rt(size);
+	draw(&rt);
+
+	Graphics::Surface s;
+	rt.capture(s);
+	s.flipVertical(Common::Rect(size.getX(), size.getY()));
+
+	Image::writePNG(stream, s);
 }
 
 ScalingTrigger::ScalingTrigger(Object *obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}

@@ -25,6 +25,7 @@
 
 namespace Twp {
 
+#define GGP_SIGNATURE 0x04030201
 #define GGP_NULL 1
 #define GGP_DICTIONARY 2
 #define GGP_ARRAY 3
@@ -504,6 +505,44 @@ bool MemStream::seek(int64 offset, int whence) {
 	return true;
 }
 
+OutMemStream::OutMemStream() : _buf(nullptr), _bufSize(0), _pos(0) {
+}
+
+bool OutMemStream::open(byte *buf, int64 bufSize) {
+	_buf = buf;
+	_bufSize = bufSize;
+	_pos = 0;
+	return true;
+}
+
+uint32 OutMemStream::write(const void *dataPtr, uint32 dataSize) {
+	int64 size = MIN((int64)dataSize, (int64)_bufSize - _pos);
+	memcpy(_buf + _pos, dataPtr, size);
+	_pos += size;
+	return size;
+}
+
+int64 OutMemStream::pos() const {
+	return _pos;
+}
+
+int64 OutMemStream::size() const {
+	return _bufSize;
+}
+
+bool OutMemStream::seek(int64 offset, int whence) {
+	if (whence == SEEK_SET) {
+		_pos = offset;
+		return true;
+	}
+	if (whence == SEEK_CUR) {
+		_pos += offset;
+		return true;
+	}
+	_pos = _bufSize + offset;
+	return true;
+}
+
 RangeStream::RangeStream() : _s(nullptr), _size(0) {
 }
 
@@ -594,17 +633,18 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 	s->seek(entriesOffset);
 
 	// decode entries
-	XorStream xor ;
-	xor.open(s, entriesSize, key);
+	XorStream xs;
+	xs.open(s, entriesSize, key);
 	Common::Array<byte> buffer(entriesSize);
-	xor.read(buffer.data(), entriesSize);
+	xs.read(buffer.data(), entriesSize);
 
 	// read entries as hash
 	MemStream ms;
 	ms.open(buffer.data(), entriesSize);
 	GGHashMapDecoder tblDecoder;
 	Common::JSONValue *value = tblDecoder.open(&ms);
-	if(!value) return false;
+	if (!value)
+		return false;
 
 	const Common::JSONObject &obj = value->asObject();
 	const Common::JSONArray &files = obj["files"]->asArray();
@@ -731,6 +771,128 @@ bool GGPackSet::assetExists(const char *asset) {
 			return true;
 	}
 	return false;
+}
+
+GGHashMapEncoder::GGHashMapEncoder() {
+}
+
+void GGHashMapEncoder::open(Common::SeekableWriteStream *stream) {
+	_s = stream;
+}
+
+void GGHashMapEncoder::write(const Common::JSONObject &obj) {
+	_s->writeUint32LE(GGP_SIGNATURE);
+	_s->writeUint32LE(obj.size());
+	_s->writeUint32LE(0);
+	writeMap(obj);
+	writeKeys();
+}
+
+void GGHashMapEncoder::writeKey(const Common::String &key) {
+	for (auto it = key.begin(); it != key.end(); it++) {
+		_s->writeByte(*it);
+	}
+	_s->writeByte(0);
+}
+
+void GGHashMapEncoder::writeKeys() {
+	int64 plo = _s->pos();
+	_s->seek(8, SEEK_SET);
+	_s->writeUint32LE(plo);
+	_s->seek(plo, SEEK_SET);
+
+	// write offsets
+	Common::StringArray strings(_strings.size());
+	for (auto it = _strings.begin(); it != _strings.end(); it++) {
+		strings[it->second] = it->first;
+	}
+	writeMarker(GGP_OFFSETS);
+	int64 offset = _s->pos() + 4 * strings.size() + 5;
+	for (auto it = strings.begin(); it != strings.end(); it++) {
+		_s->writeUint32LE(offset);
+		offset += it->size() + 1;
+	}
+	_s->writeUint32LE(GGP_ENDOFFSETS);
+
+	// write keys
+	writeMarker(GGP_KEYS);
+	for (auto it = strings.begin(); it != strings.end(); it++) {
+		writeKey(*it);
+	}
+}
+
+void GGHashMapEncoder::writeMarker(byte marker) {
+	_s->writeByte(marker);
+}
+
+void GGHashMapEncoder::writeRawString(const Common::String &s) {
+	if (_strings.find(s) != _strings.end()) {
+		_s->writeUint32LE(_strings[s]);
+	} else {
+		uint offset = _strings.size();
+		_strings.insert(Common::Pair<Common::String, uint32>(s, offset));
+		_s->writeUint32LE(offset);
+	}
+}
+
+void GGHashMapEncoder::writeString(const Common::String &s) {
+	writeMarker(GGP_STRING);
+	writeRawString(s);
+}
+
+void GGHashMapEncoder::writeInt(int value) {
+	writeMarker(GGP_INTEGER);
+	Common::String s = Common::String::format("%d", value);
+	writeRawString(s);
+}
+
+void GGHashMapEncoder::writeFloat(float value) {
+	writeMarker(GGP_DOUBLE);
+	Common::String s = Common::String::format("%f", value);
+	writeRawString(s);
+}
+
+void GGHashMapEncoder::writeNull() {
+	writeMarker(GGP_NULL);
+}
+
+void GGHashMapEncoder::writeValue(const Common::JSONValue *obj) {
+	if (obj->isIntegerNumber()) {
+		writeInt(obj->asIntegerNumber());
+	} else if (obj->isNumber()) {
+		writeFloat(obj->asNumber());
+	} else if (obj->isBool()) {
+		writeInt(obj->asBool() ? 1 : 0);
+	} else if (obj->isNull()) {
+		writeNull();
+	} else if (obj->isString()) {
+		writeString(obj->asString());
+	} else if (obj->isArray()) {
+		writeArray(obj->asArray());
+	} else if (obj->isObject()) {
+		writeMap(obj->asObject());
+	} else {
+		error("JSON value not managed");
+	}
+}
+
+void GGHashMapEncoder::writeArray(const Common::JSONArray &arr) {
+	writeMarker(GGP_ARRAY);
+	_s->writeUint32LE(arr.size());
+	for (auto it = arr.begin(); it != arr.end(); it++) {
+		writeValue(*it);
+	}
+	writeMarker(GGP_ARRAY);
+}
+
+void GGHashMapEncoder::writeMap(const Common::JSONObject &obj) {
+	writeMarker(GGP_DICTIONARY);
+	_s->writeUint32LE(obj.size());
+	for (auto it = obj.begin(); it != obj.end(); it++) {
+		writeRawString(it->_key);
+		writeValue(it->_value);
+	}
+	writeMarker(GGP_DICTIONARY);
 }
 
 } // namespace Twp
