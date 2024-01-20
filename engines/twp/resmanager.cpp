@@ -73,9 +73,9 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 
 	// read all contents
 	Common::Array<char> data(r.size());
-	r.read(&data[0], r.size());
+	r.read(data.data(), r.size());
 
-	Common::String s(&data[0], r.size());
+	Common::String s(data.data(), r.size());
 	_spriteSheets[name].parseSpriteSheet(s);
 }
 

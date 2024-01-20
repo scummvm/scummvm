@@ -34,7 +34,7 @@ namespace Twp {
 
 void SoundStream::open(SoundDefinition *sndDef) {
 	sndDef->load();
-	_stream.open(&sndDef->_buffer[0], sndDef->_buffer.size());
+	_stream.open(sndDef->_buffer.data(), sndDef->_buffer.size());
 }
 
 uint32 SoundStream::read(void *dataPtr, uint32 dataSize) {
@@ -65,7 +65,7 @@ void SoundDefinition::load() {
 		GGPackEntryReader entry;
 		entry.open(g_engine->_pack, _name);
 		_buffer.resize(entry.size());
-		entry.read(&_buffer[0], entry.size());
+		entry.read(_buffer.data(), entry.size());
 	}
 }
 

@@ -337,6 +337,8 @@ int Talking::loadActorSpeech(const Common::String &name) {
 }
 
 void Talking::say(const Common::String &text) {
+	if(text.empty()) return;
+
 	Common::String txt(text);
 	if (text[0] == '@') {
 		int id = atoi(text.c_str() + 1);

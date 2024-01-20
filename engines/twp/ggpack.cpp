@@ -670,15 +670,17 @@ bool GGPackEntryReader::open(GGPackDecoder &pack, const Common::String &entry) {
 	pack._s->seek(e.offset);
 
 	RangeStream rs;
-	rs.open(pack._s, e.size);
+	if(!rs.open(pack._s, e.size))
+		return false;
+
 	XorStream xs;
-	xs.open(&rs, e.size, pack._key);
+	if(!xs.open(&rs, e.size, pack._key))
+		return false;
 
 	_buf.resize(e.size);
-	xs.read(&_buf[0], e.size);
+	xs.read(_buf.data(), e.size);
 
-	_ms.open(&_buf[0], e.size);
-	return true;
+	return _ms.open(_buf.data(), e.size);
 }
 
 bool GGPackEntryReader::open(GGPackSet &packs, const Common::String &entry) {

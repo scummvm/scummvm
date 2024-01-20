@@ -167,26 +167,27 @@ Common::String join(const Common::Array<Common::String> &array, const Common::St
 	return result;
 }
 
-Common::String replace(const Common::String& s, const Common::String& what, const Common::String& by) {
+Common::String replace(const Common::String &s, const Common::String &what, const Common::String &by) {
 	Common::String result;
 	uint i = 0;
 	size_t whatSize = what.size();
 	while (true) {
-      uint j = s.find(what, i);
-      if (j == Common::String::npos) break;
-      result += s.substr(i, j - i);
-      result += by;
-      i = j + whatSize;
+		uint j = s.find(what, i);
+		if (j == Common::String::npos)
+			break;
+		result += s.substr(i, j - i);
+		result += by;
+		i = j + whatSize;
 	}
-    result += s.substr(i);
+	result += s.substr(i);
 	return result;
 }
 
 Common::String remove(const Common::String &txt, char startC, char endC) {
-	if (txt[0] == startC) {
+	if ((txt.size() > 0) && txt[0] == startC) {
 		uint32 i = txt.find(endC);
 		if (i != Common::String::npos) {
-			return txt.substr(i+1);
+			return txt.substr(i + 1);
 		}
 	}
 	return txt;

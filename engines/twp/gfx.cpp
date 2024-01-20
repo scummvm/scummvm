@@ -99,12 +99,12 @@ void Texture::capture(Graphics::Surface &surface) {
 	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	}
-	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
 	}
 	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	surface.init(width, height, 4 * width, &pixels[0], fmt);
+	surface.init(width, height, 4 * width, pixels.data(), fmt);
 }
 
 RenderTexture::RenderTexture(Math::Vector2d size) {
