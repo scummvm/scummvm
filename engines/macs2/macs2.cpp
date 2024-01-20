@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "audio/fmopl.h"
+#include "view1.h"
 
 namespace Macs2 {
 
@@ -383,10 +384,6 @@ void Macs2Engine::readResourceFile() {
 	file.read(stringsData, numBytesStrings);
 	_stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
 
-
-	// Try executing the script
-	ExecuteScript(_scriptStream);
-
 	// Load the background map
 	// _map = readRLEImage(0x0024BD9B, file);
 	// _map = readRLEImage(0x00248FCE, file);
@@ -710,6 +707,9 @@ void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
 
 	// TODO: Implement naive string printing here, refine later
 	Common::StringArray strings = DecodeStrings(_stringsStream, bp2, bp4);
+	// TODO: Look for good pattern for the view, this feels like it is not intended this way
+	View1 *currentView = (View1 *)findView("View1");
+	currentView->setStringBox(strings);
 }
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
