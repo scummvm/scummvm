@@ -181,10 +181,13 @@ Common::Error DgdsEngine::run() {
 	if (getGameId() == GID_DRAGON) {
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
+		//debug("%s", _gdsScene->dump("").c_str());
+
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 
 		interpIntro.load("TITLE1.ADS");
+
 		loadCorners("DCORNERS.BMP");
 	} else if (getGameId() == GID_CHINA) {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
@@ -273,8 +276,10 @@ Common::Error DgdsEngine::run() {
 
 				if (!creditsShown) {
 					creditsShown = true;
-					if (getGameId() == GID_DRAGON)
+					if (getGameId() == GID_DRAGON) {
 						_scene->load("S55.SDS", _resource, _decompressor); // FIXME: Removing this breaks the Bahumat scene dialog
+						//debug("%s", _scene->dump("").c_str());
+					}
 					interpIntro.load("INTRO.ADS");
 				} else {
 					return Common::kNoError;

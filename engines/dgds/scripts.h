@@ -78,6 +78,8 @@ public:
 	uint16 getScene() const { return _state.scene; }
 
 protected:
+	void setActiveDialogue(uint16 num);
+
 	DgdsEngine *_vm;
 
 	Dialogue *_text;

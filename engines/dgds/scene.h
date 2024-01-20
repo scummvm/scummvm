@@ -34,12 +34,16 @@ struct Rect {
 	int y;
 	int width;
 	int height;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 struct SceneStruct1 {
 	uint16 val1;
 	uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
 	uint16 val3;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 struct SceneStruct2 {
@@ -50,22 +54,28 @@ struct SceneStruct2 {
 	Common::Array<struct SceneStruct5> struct5List1;
 	Common::Array<struct SceneStruct5> struct5List2;
 	Common::Array<struct SceneStruct5> struct5List3;
+
+	virtual Common::String dump(const Common::String &indent) const;
 };
 
 struct SceneStruct5 {
 	Common::Array<struct SceneStruct1> struct1List;
 	Common::Array<uint16> uintList;
 	uint16 val;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 struct SceneStruct2_Extended : public SceneStruct2 {
 	Common::Array<struct SceneStruct5> struct5List5;
 	Common::Array<struct SceneStruct5> struct5List6;
 	uint16 field10_0x24;
-	uint16 field11_0x26;
+	uint16 _mouseCursorNum;
 	uint16 field12_0x28;
 	uint16 field13_0x2a;
 	uint16 field14_0x2c;
+
+	Common::String dump(const Common::String &indent) const override;
 };
 
 struct MouseCursor {
@@ -73,12 +83,16 @@ struct MouseCursor {
 	uint16 _hotY;
 	// pointer to cursor image
 	//Common::SharedPtr<Image> _img;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 struct SceneStruct4 {
 	uint16 val1;
 	uint16 val2;
 	Common::Array<struct SceneStruct5> struct5List;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 
@@ -93,14 +107,17 @@ public:
 	uint16 _fontSize;
 	uint32 _flags; // includes justify
 	uint16 _frameType;
-	uint16 _field12_0x1a;
-	uint16 _maybeNextDialogNum;
+	uint16 _time;
+	uint16 _nextDialogNum;
 	Common::Array<struct DialogueSubstring> _subStrings;
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
 
  	void draw(Graphics::Surface *dst, int mode);
+
+	Common::String dump(const Common::String &indent) const;
+
 private:
 	void drawType1(Graphics::Surface *dst, int mode);
 	void drawType2(Graphics::Surface *dst, int mode);
@@ -117,6 +134,8 @@ struct SceneStruct7 {
 	int16 field1_0x2;
 	Common::Array<struct SceneStruct1> struct1List;
 	Common::Array<struct SceneStruct5> struct5List;
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 struct DialogueSubstring {
@@ -125,6 +144,8 @@ struct DialogueSubstring {
 	byte unk[8]; /* Not initialized in loader */
 	Common::Array<struct SceneStruct5> struct5List;
 	uint val; /* First entry initialized to 1 in loader */
+
+	Common::String dump(const Common::String &indent) const;
 };
 
 
@@ -170,6 +191,7 @@ public:
 	bool parseInf(Common::SeekableReadStream *s);
 	const Common::String &getIconFile() const { return _iconFile; }
 
+	Common::String dump(const Common::String &indent) const;
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
@@ -191,6 +213,8 @@ public:
 	bool parse(Common::SeekableReadStream *s) override;
 
 	Common::Array<class Dialogue> &getLines() { return _dialogues; }
+
+	Common::String dump(const Common::String &indent) const;
 
 private:
 	int _num;
