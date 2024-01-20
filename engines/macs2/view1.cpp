@@ -168,8 +168,6 @@ namespace Macs2 {
 			renderString(50 + borderWidth + padding, lineOffset, *iter);
 			lineOffset += 10;
 		}
-
-		// TODO: Change cursor, stop animations, hide again
 	}
 
 	void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface& s) {
@@ -184,6 +182,19 @@ namespace Macs2 {
 			DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s);
 			currentX += currentData.Width;
 		}
+	}
+
+	void View1::setStringBox(const Common::StringArray& sa) {
+		_drawnStringBox = sa;
+		_isShowingStringBox = true;
+
+		// TODO: Change cursor, stop animations, hide again
+		redraw();
+	}
+
+	void View1::clearStringBox() {
+		_isShowingStringBox = false;
+		redraw();
 	}
 
 	bool View1::msgFocus(const FocusMessage &msg) {
@@ -216,6 +227,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	else if (msg.ascii == (uint16)'m') {
 		_backgroundSurface = g_engine->_bgImageShip;
 		redraw();
+	} else if (msg.ascii == (uint16)'s') {
+		g_engine->ExecuteScript(g_engine->_scriptStream);
 	}
 	return true;
 }
@@ -292,14 +305,17 @@ void View1::draw() {
 
 	// Draw a shaded rectangle
 	// drawDarkRectangle(50, 50, 100, 50);
-	drawStringBackground(50, 50, 100, 50);
+	// drawStringBackground(50, 50, 100, 50);
+	if (_isShowingStringBox) {
+		showStringBox(_drawnStringBox);
+	}
 
 	// Draw all glyphs
 	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
 
 	DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
 	drawBackgroundAnimations(s);
-	renderString(200, 100, "Hello, world!");
+	// renderString(200, 100, "Hello, world!");
 
 	DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 }

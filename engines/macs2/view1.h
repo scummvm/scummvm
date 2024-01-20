@@ -58,6 +58,8 @@ private:
 
 	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
+
+
 public:
 	View1();
 	virtual ~View1() {}
@@ -67,6 +69,9 @@ public:
 	bool msgMouseDown(const MouseDownMessage& msg) override;
 	void draw() override;
 	bool tick() override;
+
+	void setStringBox(const Common::StringArray& sa);
+	void clearStringBox();
 
 	void DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s);
 	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s);
