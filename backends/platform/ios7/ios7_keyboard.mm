@@ -274,6 +274,36 @@
 	}
 }
 
+- (UIKeyCommand *)createKeyCommandForKey:(NSString *)key withModifierFlags:(UIKeyModifierFlags)flags andSelector:(SEL)selector {
+	UIKeyCommand *k = [UIKeyCommand keyCommandWithInput:key modifierFlags:flags action:selector];
+	[self setWantsPriority:k];
+	return k;
+}
+
+- (NSArray *)overloadKeys:(NSArray<NSString *> *)keys withSelector:(SEL)selector {
+	NSMutableArray<UIKeyCommand *> *overloadedKeys = [[NSMutableArray alloc] init];
+	for (NSString *key in keys) {
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:0 andSelector:selector]];
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierShift andSelector:selector]];
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierControl andSelector:selector]];
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierAlternate andSelector:selector]];
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierCommand andSelector:selector]];
+		// Sticky
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierAlphaShift andSelector:selector]];
+		[overloadedKeys addObject:[self createKeyCommandForKey:key withModifierFlags:UIKeyModifierNumericPad andSelector:selector]];
+	}
+	return overloadedKeys;
+}
+
+- (int)convertModifierFlags:(UIKeyModifierFlags)flags {
+	return (((flags & UIKeyModifierShift) ? Common::KBD_SHIFT : 0) |
+		((flags & UIKeyModifierControl) ? Common::KBD_CTRL : 0) |
+		((flags & UIKeyModifierAlternate) ? Common::KBD_ALT : 0) |
+		((flags & UIKeyModifierCommand) ? Common::KBD_META : 0) |
+		((flags & UIKeyModifierAlphaShift) ? Common::KBD_CAPS : 0) |
+		((flags & UIKeyModifierNumericPad) ? Common::KBD_NUM : 0));
+}
+
 - (NSArray *)keyCommands {
 	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
 	[self setWantsPriority: upArrow];
