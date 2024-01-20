@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:20+0000\n"
+"POT-Creation-Date: 2024-01-20 19:35+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1587,50 +1587,56 @@ msgstr "30분마다"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Very large"
-msgid "Extremely large"
+msgid "200% - Extremely large"
 msgstr "아주 크게"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
 #, fuzzy
 #| msgid "Very large"
-msgid "Very very large"
+msgid "175% - Very large"
 msgstr "아주 크게"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
-msgid "Very large"
-msgstr "아주 크게"
+#, c-format
+msgid "150% - Larger"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
-msgid "Large"
-msgstr "크게"
+#, c-format
+msgid "125% - Large"
+msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-msgid "Medium"
+#, fuzzy
+#| msgid "Medium"
+msgid "100% - Medium"
 msgstr "중간"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-msgid "Small"
+#, fuzzy, c-format
+#| msgid "Small"
+msgid "75% - Small"
 msgstr "작게"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smaller"
+msgid "50% - Smaller"
 msgstr "작게"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smallest"
+msgid "25% - Smallest"
 msgstr "작게"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
@@ -11274,6 +11280,14 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#, fuzzy
+#~| msgid "Very large"
+#~ msgid "Very very large"
+#~ msgstr "아주 크게"
+
+#~ msgid "Large"
+#~ msgstr "크게"
 
 #~ msgid ""
 #~ "Your game is patched with a fan made script patch. Such patches have been "

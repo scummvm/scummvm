@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:20+0000\n"
+"POT-Creation-Date: 2024-01-20 19:35+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1584,50 +1584,56 @@ msgstr "Minden 30 percben"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Very large"
-msgid "Extremely large"
+msgid "200% - Extremely large"
 msgstr "Nagyon nagy"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
 #, fuzzy
 #| msgid "Very large"
-msgid "Very very large"
+msgid "175% - Very large"
 msgstr "Nagyon nagy"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
-msgid "Very large"
-msgstr "Nagyon nagy"
+#, c-format
+msgid "150% - Larger"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
-msgid "Large"
-msgstr "Nagy"
+#, c-format
+msgid "125% - Large"
+msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-msgid "Medium"
+#, fuzzy
+#| msgid "Medium"
+msgid "100% - Medium"
 msgstr "Közepes"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-msgid "Small"
+#, fuzzy, c-format
+#| msgid "Small"
+msgid "75% - Small"
 msgstr "Kicsi"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smaller"
+msgid "50% - Smaller"
 msgstr "Kicsi"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smallest"
+msgid "25% - Smallest"
 msgstr "Kicsi"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
@@ -11356,6 +11362,14 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#, fuzzy
+#~| msgid "Very large"
+#~ msgid "Very very large"
+#~ msgstr "Nagyon nagy"
+
+#~ msgid "Large"
+#~ msgstr "Nagy"
 
 #~ msgid ""
 #~ "Your game is patched with a fan made script patch. Such patches have been "

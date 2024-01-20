@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:20+0000\n"
+"POT-Creation-Date: 2024-01-20 19:35+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -1593,42 +1593,48 @@ msgstr "Cada 30 min"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-msgid "Extremely large"
+#, c-format
+msgid "200% - Extremely large"
 msgstr ""
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-msgid "Very very large"
+msgid "175% - Very large"
 msgstr ""
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
-msgid "Very large"
+#, c-format
+msgid "150% - Larger"
 msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
-msgid "Large"
+#, c-format
+msgid "125% - Large"
 msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-msgid "Medium"
+msgid "100% - Medium"
 msgstr ""
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-msgid "Small"
+#, c-format
+msgid "75% - Small"
 msgstr ""
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-msgid "Smaller"
+#, c-format
+msgid "50% - Smaller"
 msgstr ""
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-msgid "Smallest"
+#, c-format
+msgid "25% - Smallest"
 msgstr ""
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:20+0000\n"
+"POT-Creation-Date: 2024-01-20 19:35+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -1586,50 +1586,56 @@ msgstr "Кожныя 30 хвілін"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Very large"
-msgid "Extremely large"
+msgid "200% - Extremely large"
 msgstr "Дужа вялікі"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
 #, fuzzy
 #| msgid "Very large"
-msgid "Very very large"
+msgid "175% - Very large"
 msgstr "Дужа вялікі"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
-msgid "Very large"
-msgstr "Дужа вялікі"
+#, c-format
+msgid "150% - Larger"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
-msgid "Large"
-msgstr "Вялікі"
+#, c-format
+msgid "125% - Large"
+msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-msgid "Medium"
+#, fuzzy
+#| msgid "Medium"
+msgid "100% - Medium"
 msgstr "Сярэдні"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-msgid "Small"
+#, fuzzy, c-format
+#| msgid "Small"
+msgid "75% - Small"
 msgstr "Малы"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smaller"
+msgid "50% - Smaller"
 msgstr "Малы"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smallest"
+msgid "25% - Smallest"
 msgstr "Малы"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
@@ -11327,6 +11333,14 @@ msgstr ""
 "ці пак GNU FreeFont. Вам спатрэбяцца ўсе шрыфты выбранага паку, а менавіта: "
 "LiberationMono, LiberationSans and LiberationSerif, or FreeMono, FreeSans і "
 "FreeSerif адпаведна."
+
+#, fuzzy
+#~| msgid "Very large"
+#~ msgid "Very very large"
+#~ msgstr "Дужа вялікі"
+
+#~ msgid "Large"
+#~ msgstr "Вялікі"
 
 #~ msgid ""
 #~ "Your game is patched with a fan made script patch. Such patches have been "

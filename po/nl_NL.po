@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:20+0000\n"
+"POT-Creation-Date: 2024-01-20 19:35+0000\n"
 "PO-Revision-Date: 2023-12-14 20:07+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1589,50 +1589,56 @@ msgstr "Elke 30 minuten"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Very large"
-msgid "Extremely large"
+msgid "200% - Extremely large"
 msgstr "Heel groot"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
 #, fuzzy
 #| msgid "Very large"
-msgid "Very very large"
+msgid "175% - Very large"
 msgstr "Heel groot"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
-msgid "Very large"
-msgstr "Heel groot"
+#, c-format
+msgid "150% - Larger"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
-msgid "Large"
-msgstr "Groot"
+#, c-format
+msgid "125% - Large"
+msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-msgid "Medium"
+#, fuzzy
+#| msgid "Medium"
+msgid "100% - Medium"
 msgstr "Gemiddeld"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-msgid "Small"
+#, fuzzy, c-format
+#| msgid "Small"
+msgid "75% - Small"
 msgstr "Klein"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smaller"
+msgid "50% - Smaller"
 msgstr "Klein"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy
+#, fuzzy, c-format
 #| msgid "Small"
-msgid "Smallest"
+msgid "25% - Smallest"
 msgstr "Klein"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
@@ -11258,6 +11264,14 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#, fuzzy
+#~| msgid "Very large"
+#~ msgid "Very very large"
+#~ msgstr "Heel groot"
+
+#~ msgid "Large"
+#~ msgstr "Groot"
 
 #~ msgid ""
 #~ "Your game is patched with a fan made script patch. Such patches have been "
