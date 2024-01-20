@@ -8,5 +8,6 @@ engines/scumm/input.cpp
 engines/scumm/metaengine.cpp
 engines/scumm/saveload.cpp
 engines/scumm/scumm.cpp
+engines/scumm/he/moonbase/dialog-mapgenerator.cpp
 engines/scumm/he/sound_he.cpp
 engines/scumm/imuse/drivers/amiga.cpp
