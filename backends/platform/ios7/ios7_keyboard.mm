@@ -328,6 +328,16 @@
 	return nil;
 }
 
+- (NSArray *)overloadSpecialKeys {
+	NSMutableArray<NSString *> *specialKeys = [[NSMutableArray alloc] initWithObjects:UIKeyInputEscape, UIKeyInputPageUp, UIKeyInputPageDown, nil];
+
+	if (@available(iOS 13.4, *)) {
+		[specialKeys addObject: UIKeyInputHome];
+		[specialKeys addObject: UIKeyInputEnd];
+	}
+	return [self overloadKeys:specialKeys withSelector:@selector(handleSpecialKey:)];
+}
+
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
 	return (((flags & UIKeyModifierShift) ? Common::KBD_SHIFT : 0) |
 		((flags & UIKeyModifierControl) ? Common::KBD_CTRL : 0) |
@@ -437,6 +447,23 @@
 			[self fn11Key];
 		} else if (keyCommand.input == UIKeyInputF12) {
 			[self fn12Key];
+		}
+	}
+}
+
+- (void)handleSpecialKey:(UIKeyCommand *)keyCommand {
+	if (keyCommand.input == UIKeyInputEscape) {
+		[self escapeKey:keyCommand];
+	} else if (keyCommand.input == UIKeyInputPageUp) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_PAGEUP withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	} else if (keyCommand.input == UIKeyInputPageDown) {
+		[softKeyboard handleKeyPress:Common::KEYCODE_PAGEDOWN withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+	}
+	if (@available(iOS 13.4, *)) {
+		if (keyCommand.input == UIKeyInputHome) {
+			[softKeyboard handleKeyPress:Common::KEYCODE_HOME withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
+		} else if (keyCommand.input == UIKeyInputEnd) {
+			[softKeyboard handleKeyPress:Common::KEYCODE_END withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
 		}
 	}
 }
