@@ -186,7 +186,7 @@ void CruMusicProcess::playMusic_internal(int track) {
 		const Std::string fname = Std::string::format("sound/%s.amf", _trackNames[track]);
 		FileSystem *filesystem = FileSystem::get_instance();
 		assert(filesystem);
-		Common::SeekableReadStream *rs = filesystem->ReadFile(fname);
+		Common::SeekableReadStream *rs = filesystem->ReadFile(fname.c_str());
 		if (!rs) {
 			// This happens in No Regret demo.
 			warning("Couldn't load AMF file: %s", fname.c_str());

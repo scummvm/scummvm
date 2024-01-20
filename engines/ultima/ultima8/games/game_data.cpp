@@ -144,7 +144,7 @@ const ShapeFrame *GameData::getFrame(FrameID f) const {
 
 void GameData::loadTranslation() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Std::string translationfile;
+	Common::Path translationfile;
 
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		switch (_gameInfo->_language) {
@@ -171,7 +171,7 @@ void GameData::loadTranslation() {
 	}
 
 	if (!translationfile.empty()) {
-		debug(MM_INFO, "Loading translation: %s", translationfile.c_str());
+		debug(MM_INFO, "Loading translation: %s", translationfile.toString().c_str());
 
 		config->readConfigFile(translationfile, "language");
 	}
@@ -242,7 +242,7 @@ void GameData::loadU8Data() {
 	filename += "usecode.flx";
 
 
-	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename.c_str());
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
@@ -419,7 +419,7 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 			continue;
 		}
 
-		const Std::string &filename = vals[0];
+		const Common::Path filename(vals[0]);
 		int pointsize = atoi(vals[1].c_str());
 		uint32 col32 = strtol(vals[2].c_str(), 0, 0);
 		int border = atoi(vals[3].c_str());
@@ -441,12 +441,6 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 	s = new SpeechFlex*;
 	*s = nullptr;
 
-	FileSystem *filesystem = FileSystem::get_instance();
-
-	static const Std::string u8_sound_ = "sound/";
-	char num_flx [32];
-	snprintf(num_flx , 32, "%i.flx", shapeNum);
-
 	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
 		warning("GameData::getSpeechFlex: Unknown language.");
@@ -454,7 +448,10 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 		return nullptr;
 	}
 
-	Common::SeekableReadStream *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
+	Common::Path path(Common::String::format("sound/%c%i.flx", langletter, shapeNum));
+
+	FileSystem *filesystem = FileSystem::get_instance();
+	Common::SeekableReadStream *sflx = filesystem->ReadFile(path);
 	if (sflx) {
 		*s = new SpeechFlex(sflx);
 	}
@@ -517,8 +514,7 @@ void GameData::loadRemorseData() {
 	filename += langletter;
 	filename += "usecode.flx";
 
-
-	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename.c_str());
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 

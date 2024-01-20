@@ -50,7 +50,7 @@ public:
 	//! \param root The name of the root node in the file
 	//! \param readonly If true, don't write to this file's tree (or the file)
 	//! \return true if successful
-	bool readConfigFile(Std::string fname, const Std::string &category);
+	bool readConfigFile(const Common::Path &fname, const Std::string &category);
 
 	//! clear everything
 	void clear();

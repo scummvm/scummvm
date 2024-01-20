@@ -22,7 +22,6 @@
 #ifndef ULTIMA8_FILESYS_FILESYSTEM_H
 #define ULTIMA8_FILESYS_FILESYSTEM_H
 
-#include "ultima/shared/std/string.h"
 #include "common/file.h"
 
 namespace Ultima {
@@ -37,10 +36,7 @@ public:
 		return _fileSystem;
 	}
 
-	//! Open a file as readable. Streamed.
-	//! \param vfn the (virtual) filename
-	//! \return nullptr on failure
-	Common::SeekableReadStream *ReadFile(const Std::string &vfn);
+	Common::SeekableReadStream *ReadFile(const Common::Path &path);
 
 private:
 	static FileSystem *_fileSystem;

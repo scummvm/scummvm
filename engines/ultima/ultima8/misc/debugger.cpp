@@ -1748,9 +1748,9 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	Std::string filename = Common::String::format("static/%s.skf", argv[1]);
+	Common::String filename = Common::String::format("static/%s.skf", argv[1]);
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename.c_str());
 	if (!skf) {
 		debugPrintf("movie not found.\n");
 		return true;

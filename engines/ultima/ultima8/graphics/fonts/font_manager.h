@@ -40,7 +40,7 @@ class TTFont;
 class FontManager {
 private:
 	struct TTFId {
-		Std::string _filename;
+		Common::Path _filename;
 		int _pointSize;
 		bool operator<(const TTFId &other) const {
 			return (_pointSize < other._pointSize ||
@@ -67,7 +67,7 @@ private:
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
 	//! loading it if necessary.
-	Graphics::Font *getTTF_Font(const Std::string &filename, int pointsize, bool antialiasing);
+	Graphics::Font *getTTF_Font(const Common::Path &filename, int pointsize, bool antialiasing);
 
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Font *newFont);
@@ -101,7 +101,7 @@ public:
 	//! \param rgb the color to use for the font
 	//! \param bordersize the size of the black border to add
 	//! \param SJIS true for a Japanese game font
-	bool addTTFOverride(unsigned int fontnum, const Std::string &filename,
+	bool addTTFOverride(unsigned int fontnum, const Common::Path &filename,
 	                    int pointsize, uint32 rgb, int bordersize,
 	                    bool SJIS = false);
 
@@ -112,7 +112,7 @@ public:
 	bool addJPOverride(unsigned int fontnum, unsigned int jpfont, uint32 rgb);
 
 	//! load a TTF (for non-game fonts)
-	bool loadTTFont(unsigned int ttfnum, const Std::string &filename,
+	bool loadTTFont(unsigned int ttfnum, const Common::Path &filename,
 	                int pointsize, uint32 rgb, int bordersize);
 
 	// Reset the game fonts
