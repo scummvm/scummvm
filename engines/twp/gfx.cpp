@@ -28,8 +28,6 @@
 
 namespace Twp {
 
-static Texture gEmptyTexture;
-
 int Color::toInt() const {
 	int r = (rgba.r * 255.f);
 	int g = (rgba.g * 255.f);
@@ -224,7 +222,7 @@ void Gfx::init() {
 	empty.h = 1;
 	empty.format = fmt;
 	empty.setPixels(pixels);
-	gEmptyTexture.load(empty);
+	_emptyTexture.load(empty);
 
 	const char *fragmentSrc = R"(#version 110
 		varying vec4 v_color;
@@ -270,8 +268,8 @@ Math::Matrix4 Gfx::getFinalTransform(Math::Matrix4 trsf) {
 }
 
 void Gfx::noTexture() {
-	_texture = &gEmptyTexture;
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, gEmptyTexture.id));
+	_texture = &_emptyTexture;
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _emptyTexture.id));
 }
 
 void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
@@ -286,7 +284,7 @@ void Gfx::drawLinesLoop(Vertex *vertices, int count, Math::Matrix4 trsf) {
 
 void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture *texture) {
 	if (v_size > 0) {
-		_texture = texture ? texture : &gEmptyTexture;
+		_texture = texture ? texture : &_emptyTexture;
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
 
 		// set blending
@@ -333,7 +331,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 	if (i_size > 0) {
 		int num = _shader->getNumTextures();
 		if (num == 0) {
-			_texture = texture ? texture : &gEmptyTexture;
+			_texture = texture ? texture : &_emptyTexture;
 			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
 		} else {
 			for (int i = 0; i < num; i++) {
