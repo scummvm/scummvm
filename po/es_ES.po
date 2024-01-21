@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2024-01-03 10:24+0000\n"
+"PO-Revision-Date: 2024-01-21 10:10+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1640,57 +1640,49 @@ msgstr "Cada 30 minutos"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Muy grande"
+msgstr "200 % - Extremadamente grande"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Muy grande"
+msgstr "175 % - Muy grande"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150 % - Más grande"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125 % - Grande"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Mediana"
+msgstr "100 % - Mediana"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Pequeña"
+msgstr "75 % - Pequeña"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Pequeña"
+msgstr "50 % - Más pequeña"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Pequeña"
+msgstr "25 % - Muy pequeña"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
@@ -2204,7 +2196,7 @@ msgstr "Escala de interfaz:"
 #: gui/options.cpp:2564
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d %% - Personalizada"
 
 #: gui/options.cpp:2568
 msgid "GUI renderer:"
