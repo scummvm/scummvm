@@ -70,20 +70,6 @@
 	#endif
 	#undef GL_GLEXT_PROTOTYPES
 
-	#ifndef GL_BGRA
-		#define GL_BGRA GL_BGRA_EXT
-	#endif
-
-	#if !defined(GL_UNPACK_ROW_LENGTH)
-		// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
-		#define GL_UNPACK_ROW_LENGTH 0x0CF2
-	#endif
-
-	#if !defined(GL_MAX_SAMPLES)
-		// The Android SDK and SDL1 don't declare GL_MAX_SAMPLES
-		#define GL_MAX_SAMPLES 0x8D57
-	#endif
-
 #elif USE_FORCED_GLES
 
 	#define GL_GLEXT_PROTOTYPES
@@ -97,10 +83,34 @@
 	#undef GL_GLEXT_PROTOTYPES
 
 #endif
+
+#if !defined(GL_BGRA) && defined(GL_BGRA_EXT)
+	#define GL_BGRA GL_BGRA_EXT
+#endif
+
+#if !defined(GL_MIRRORED_REPEAT) && defined(GL_MIRRORED_REPEAT_OES)
+	#define GL_MIRRORED_REPEAT GL_MIRRORED_REPEAT_OES
 #endif
 
 #if !defined(GL_TEXTURE_MAX_LEVEL) && defined(GL_TEXTURE_MAX_LEVEL_APPLE)
 	#define GL_TEXTURE_MAX_LEVEL GL_TEXTURE_MAX_LEVEL_APPLE
+#endif
+
+#if !defined(GL_CLAMP_TO_BORDER)
+	// Multiple extensions provide this using the same value
+	#define GL_CLAMP_TO_BORDER 0x812D
+#endif
+
+#if !defined(GL_UNPACK_ROW_LENGTH)
+	// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
+	#define GL_UNPACK_ROW_LENGTH 0x0CF2
+#endif
+
+#if !defined(GL_MAX_SAMPLES)
+	// The Android SDK and SDL1 don't declare GL_MAX_SAMPLES
+	#define GL_MAX_SAMPLES 0x8D57
+#endif
+
 #endif
 
 #endif

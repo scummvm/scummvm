@@ -94,12 +94,14 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		}
 		auto vertexIndices = _faceEBO[face];
 		auto numVertexIndices = (face)->vertexIndices.size();
-		if (!_gfx->computeLightsEnabled()) {
+#if !USE_FORCED_GLES
+		if (!_gfx->computeLightsEnabled() && OpenGLContext.type != OpenGL::kContextGLES) {
 			if (material.doubleSided)
 				glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 			else
 				glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		}
+#endif
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];
@@ -107,7 +109,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
-					glColor3f(1.0f, 1.0f, 1.0f);
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				if (material.doubleSided) {
 					vertex.texS = vertex.stexS;
 					vertex.texT = 1.0f - vertex.stexT;
@@ -119,7 +121,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material.r, material.g, material.b);
 				else
-					glColor3f(material.r, material.g, material.b);
+					glColor4f(material.r, material.g, material.b, 1.0f);
 			}
 
 			if (_gfx->computeLightsEnabled()) {
@@ -183,6 +185,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 				vertex.r = color.x();
 				vertex.g = color.y();
 				vertex.b = color.z();
+				vertex.a = 0xff; /* needed for compatibility with OpenGL ES 1.x */
 			}
 			_faceVBO[index] = vertex;
 		}
@@ -199,7 +202,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			glTexCoordPointer(2, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].texS);
 		glNormalPointer(GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].nx);
 		if (_gfx->computeLightsEnabled())
-			glColorPointer(3, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].r);
+			glColorPointer(4, GL_FLOAT, sizeof(PropVertex), &_faceVBO[0].r);
 
 		glDrawElements(GL_TRIANGLES, face->vertexIndices.size(), GL_UNSIGNED_INT, vertexIndices);
 
