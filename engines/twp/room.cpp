@@ -72,8 +72,8 @@ static Math::Vector2d parseParallax(const Common::JSONValue &v) {
 
 static Walkbox parseWalkbox(const Common::String &text) {
 	Common::Array<Math::Vector2d> points;
-    size_t i = 1;
-    size_t endPos;
+	size_t i = 1;
+	size_t endPos;
 	do {
 		uint32 commaPos = text.find(',', i);
 		long x = strtol(text.substr(i, commaPos - i).c_str(), nullptr, 10);
@@ -416,6 +416,7 @@ Object *Room::getObj(const Common::String &key) {
 Light *Room::createLight(Color color, Math::Vector2d pos) {
 	Light *result = &_lights._lights[_lights._numLights];
 	result->id = 100000 + _lights._numLights;
+	result->on = true;
 	result->color = color;
 	result->pos = pos;
 	_lights._numLights++;
