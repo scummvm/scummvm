@@ -1123,6 +1123,7 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	if (_room)
 		_room->_scene->remove();
 	_room = room;
+	room->_effect = RoomEffect::None;
 	_scene.addChild(_room->_scene);
 	_room->_lights._numLights = 0;
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
