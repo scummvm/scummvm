@@ -184,6 +184,7 @@ private:
 	void noTexture();
 
 private:
+	Texture _emptyTexture;
 	uint32 _vbo = 0, _ebo = 0;
 	Shader _defaultShader;
 	Shader *_shader = nullptr;
