@@ -2043,7 +2043,13 @@ void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
 
 // AD2044 ops
 OPCODE_STUB(AnimT)
-OPCODE_STUB(AnimForward)
+
+void Runtime::scriptOpAnimForward(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	error("AnimForward NYI");
+}
+
 OPCODE_STUB(AnimReverse)
 OPCODE_STUB(AnimKForward)
 OPCODE_STUB(Say2K)
@@ -2304,6 +2310,12 @@ bool Runtime::runScript() {
 			DISPATCH_OP(AnimKForward);
 			DISPATCH_OP(NoUpdate);
 			DISPATCH_OP(NoClear);
+
+			DISPATCH_OP(M);
+			DISPATCH_OP(EM);
+			DISPATCH_OP(SE);
+			DISPATCH_OP(SDot);
+			DISPATCH_OP(E);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));

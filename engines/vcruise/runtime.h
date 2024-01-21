@@ -116,6 +116,13 @@ enum GameState {
 	kGameStateMenu,
 };
 
+struct AD2044AnimationDef {
+	byte roomID;
+	byte lookupID;
+	short fwdAnimationID;
+	short revAnimationID;
+};
+
 struct AnimationDef {
 	AnimationDef();
 
@@ -368,6 +375,14 @@ struct FrameData2 {
 	int32 angle;
 	uint16 frameNumberInArea;
 	uint16 unknown;	// Subarea or something?
+};
+
+struct AnimFrameRange {
+	AnimFrameRange();
+
+	uint animationNum;
+	uint firstFrame;
+	uint lastFrame;	// Inclusive
 };
 
 struct InventoryItem {
@@ -845,7 +860,8 @@ private:
 
 	void processUniversalKeymappedEvents(KeymappedEvent evt);
 
-	void loadIndex();
+	void loadReahSchizmIndex();
+	void loadAD2044Index();
 	void findWaves();
 	void loadConfig(const char *cfgPath);
 	void loadScore();
@@ -869,6 +885,7 @@ private:
 	bool dischargeIdleClick();
 	void loadFrameData(Common::SeekableReadStream *stream);
 	void loadFrameData2(Common::SeekableReadStream *stream);
+	void loadTabData(uint animNumber, Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
 	void startScoreSection();
@@ -1250,6 +1267,7 @@ private:
 	Common::Array<uint> _roomDuplicationOffsets;
 	RoomToScreenNameToRoomMap_t _globalRoomScreenNameToScreenIDs;
 	Common::SharedPtr<ScriptSet> _scriptSet;
+	Common::Array<AD2044AnimationDef> _ad2044AnimationDefs;
 
 	Common::Array<CallStackFrame> _scriptCallStack;
 
@@ -1299,8 +1317,12 @@ private:
 	Common::Array<FrameData2> _frameData2;
 	//uint32 _loadedArea;
 
+	// Reah/Schizm animation map
 	Common::Array<Common::String> _animDefNames;
 	Common::HashMap<Common::String, uint> _animDefNameToIndex;
+
+	// AD2044 animation map
+	Common::HashMap<int, AnimFrameRange> _animIDToFrameRange;
 
 	bool _idleLockInteractions;
 	bool _idleIsOnInteraction;

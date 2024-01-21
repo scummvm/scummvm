@@ -331,7 +331,6 @@ public:
 private:
 	void load();
 
-	static const uint kNumScreens = 96;
 	static const uint kFirstScreen = 0xa0;
 
 	uint _roomNumber;
@@ -367,7 +366,15 @@ void AD2044MapLoader::load() {
 	// This is loaded even if the open fails
 	_isLoaded = true;
 
-	Common::Path mapFileName(Common::String::format("map/SCR%i.MAP", static_cast<int>(_roomNumber * 100u + _screenNumber)));
+	if (_screenNumber < kFirstScreen)
+		return;
+
+	uint adjustedScreenNumber = _screenNumber - kFirstScreen;
+
+	if (adjustedScreenNumber > 99)
+		return;
+
+	Common::Path mapFileName(Common::String::format("map/SCR%i.MAP", static_cast<int>(_roomNumber * 100u + adjustedScreenNumber)));
 	Common::File mapFile;
 
 	if (!mapFile.open(mapFileName))
@@ -838,6 +845,9 @@ FrameData::FrameData() : areaID{0, 0, 0, 0}, areaFrameIndex(0), frameIndex(0), f
 }
 
 FrameData2::FrameData2() : x(0), y(0), angle(0), frameNumberInArea(0), unknown(0) {
+}
+
+AnimFrameRange::AnimFrameRange() : animationNum(0), firstFrame(0), lastFrame(0) {
 }
 
 SoundParams3D::SoundParams3D() : minRange(0), maxRange(0), unknownRange(0) {
@@ -1361,6 +1371,11 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["curDrop"] = 91;
 	}
 
+	if (_gameID == GID_AD2044) {
+		_namedCursors["CUR_PRZOD"] = 2; // Przod = forward
+		_namedCursors["CUR_PRAWO"] = 3;	// Prawo = right
+	}
+
 	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
 	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableDown] = 3;
 	_panCursors[kPanCursorDraggableHoriz] = 4;
@@ -1477,7 +1492,12 @@ bool Runtime::bootGame(bool newGame) {
 		_musicMute = false;
 
 	debug(1, "Booting V-Cruise game...");
-	loadIndex();
+
+	if (_gameID == GID_AD2044)
+		loadAD2044Index();
+	else
+		loadReahSchizmIndex();
+
 	debug(1, "Index loaded OK");
 	findWaves();
 	debug(1, "Waves indexed OK");
@@ -1510,7 +1530,7 @@ bool Runtime::bootGame(bool newGame) {
 		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
 		startConfig.disc = 1;
 		startConfig.room = 1;
-		startConfig.screen = 5;
+		startConfig.screen = 0xa5;
 		startConfig.direction = 0;
 	} else
 		error("Don't have a start config for this game");
@@ -1671,13 +1691,11 @@ bool Runtime::bootGame(bool newGame) {
 	_gameState = kGameStateIdle;
 
 	if (newGame) {
-		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
+		if (_gameID == GID_AD2044 || (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu"))) {
 			_mostRecentValidSaveState = generateNewGameSnapshot();
 			restoreSaveGameSnapshot();
 		} else {
-			uint initialScreen = (_gameID == GID_AD2044) ? 5 : 0xb1;
-
-			changeToScreen(1, initialScreen);
+			changeToScreen(1, 0xb1);
 		}
 	}
 
@@ -2722,12 +2740,7 @@ void Runtime::queueOSEvent(const OSEvent &evt) {
 	_pendingEvents.push_back(timedEvt);
 }
 
-void Runtime::loadIndex() {
-	if (_gameID == GID_AD2044) {
-		// No index
-		return;
-	}
-
+void Runtime::loadReahSchizmIndex() {
 	const char *indexPath = "Log/Index.txt";
 
 	Common::INIFile iniFile;
@@ -2778,6 +2791,65 @@ void Runtime::loadIndex() {
 			if (!parseIndexDef(indexParseType, roomNumber, keyValue.key, keyValue.value))
 				break;
 		}
+	}
+}
+
+void Runtime::loadAD2044Index() {
+	const byte searchPattern[] = {0x01, 0x01, 0xa1, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc7, 0x00, 0xc7, 0x00, 0x00, 0x00};
+
+	Common::File f;
+	if (!f.open("ad2044.exe") || f.size() > 2u * 1024u * 1024u)
+		error("Couldn't open ad2044.exe to read animation index");
+
+	uint32 exeSize = static_cast<uint32>(f.size());
+
+	Common::Array<byte> exeContents;
+	exeContents.resize(exeSize);
+
+	if (exeSize < sizeof(searchPattern) || f.read(&exeContents[0], exeSize) != exeSize)
+		error("Couldn't load executable to scan for animation table");
+
+	uint endPoint = exeSize - sizeof(searchPattern);
+
+	bool foundAnimTable = false;
+	uint32 animTablePos = 0;
+
+	for (uint i = 0; i <= endPoint; i++) {
+		bool match = true;
+		for (uint j = 0; j < sizeof(searchPattern); j++) {
+			if (exeContents[i + j] != searchPattern[j]) {
+				match = false;
+				break;
+			}
+		}
+
+		if (match) {
+			if (foundAnimTable)
+				error("Found multiple byte patterns matching animation table in ad2044.exe");
+
+			foundAnimTable = true;
+			animTablePos = i;
+		}
+	}
+
+	if (!foundAnimTable)
+		error("Couldn't find animation table in ad2044.exe");
+
+	// Parse the animation table.  The unparsed values are the same for all entries.
+	for (uint entryPos = animTablePos; entryPos < exeSize - 15u; entryPos += 16) {
+		const byte *entry = &exeContents[entryPos];
+
+		AD2044AnimationDef animDef;
+		animDef.roomID = entry[1];
+		animDef.lookupID = entry[2];
+
+		animDef.fwdAnimationID = READ_LE_INT16(entry + 10);
+		animDef.revAnimationID = READ_LE_INT16(entry + 12);
+
+		if (animDef.lookupID == 0)	// Terminator
+			break;
+
+		_ad2044AnimationDefs.push_back(animDef);
 	}
 }
 
@@ -3600,13 +3672,28 @@ void Runtime::loadFrameData(Common::SeekableReadStream *stream) {
 		char decAreaFrameIndex[4];
 		memcpy(decAreaFrameIndex, frameData + 12, 4);
 
-		uint areaFrameIndex = 0;
-		for (int digit = 0; digit < 4; digit++) {
-			char c = decAreaFrameIndex[digit];
-			if (c < '0' || c > '9')
-				error("Invalid area frame index in DTA data");
+		bool isPadFrame = false;
 
-			areaFrameIndex = areaFrameIndex * 10u + static_cast<uint>(c - '0');
+		if (_gameID == GID_AD2044) {
+			isPadFrame = true;
+
+			for (uint j = 0; j < 8; j++) {
+				if (frameData[j + 8] != 0) {
+					isPadFrame = false;
+					break;
+				}
+			}
+		}
+
+		uint areaFrameIndex = 0;
+		if (!isPadFrame) {
+			for (int digit = 0; digit < 4; digit++) {
+				char c = decAreaFrameIndex[digit];
+				if (c < '0' || c > '9')
+					error("Invalid area frame index in DTA data");
+
+				areaFrameIndex = areaFrameIndex * 10u + static_cast<uint>(c - '0');
+			}
 		}
 
 		fd.areaFrameIndex = areaFrameIndex;
@@ -3639,6 +3726,99 @@ void Runtime::loadFrameData2(Common::SeekableReadStream *stream) {
 		fd2.angle = READ_LE_INT32(&fd2.angle);
 		fd2.frameNumberInArea = READ_LE_UINT16(&fd2.frameNumberInArea);
 		fd2.unknown = READ_LE_UINT16(&fd2.unknown);
+	}
+}
+
+void Runtime::loadTabData(uint animNumber, Common::SeekableReadStream *stream) {
+	int64 size64 = stream->size() - stream->pos();
+
+	if (size64 > UINT_MAX || size64 < 0)
+		error("Internal error: Oversized TAB file");
+
+	uint32 fileSize = static_cast<uint32>(size64);
+
+	Common::Array<Common::String> lines;
+
+	Common::Array<char> chars;
+	chars.resize(fileSize);
+
+	if (fileSize > 0 && stream->read(&chars[0], fileSize) != fileSize)
+		error("Failed to read TAB file data");
+
+	uint searchStart = 0;
+	while (searchStart < chars.size()) {
+		uint endPos = searchStart;
+		while (endPos != chars.size()) {
+			if (chars[endPos] == '\n' || chars[endPos] == '\r')
+				break;
+
+			endPos++;
+		}
+
+		if (endPos == searchStart)
+			lines.push_back(Common::String(""));
+		else
+			lines.push_back(Common::String(&chars[searchStart], endPos - searchStart));
+
+
+		if (endPos != chars.size() && chars[endPos] == '\r')
+			endPos++;
+		if (endPos != chars.size() && chars[endPos] == '\n')
+			endPos++;
+
+		searchStart = endPos;
+	}
+
+	for (const Common::String &line : lines) {
+		if (line.hasPrefix("//"))
+			continue;
+
+		uint32 openBracePos = line.find('{');
+		if (openBracePos == Common::String::npos)
+			continue;
+
+		uint32 closeBracePos = line.find("},", openBracePos + 1);
+		if (closeBracePos == Common::String::npos)
+			error("Strangely-formatted animation table line: %s", line.c_str());
+
+		Common::String enclosedContents = line.substr(1, closeBracePos - 1);
+
+		uint32 firstCommaPos = enclosedContents.find(',');
+		if (firstCommaPos == Common::String::npos)
+			error("Strangely-formatted animation table line: %s", line.c_str());
+
+		uint32 secondCommaPos = enclosedContents.find(',', firstCommaPos + 1);
+		if (secondCommaPos == Common::String::npos)
+			error("Strangely-formatted animation table line: %s", line.c_str());
+
+		Common::String numbers[3] = {
+			enclosedContents.substr(0, firstCommaPos),
+			enclosedContents.substr(firstCommaPos + 1, secondCommaPos - (firstCommaPos + 1)),
+			enclosedContents.substr(secondCommaPos + 1)
+		};
+
+		int parsedNumbers[3] = {0, 0, 0};
+
+		uint i = 0;
+		for (Common::String &str : numbers) {
+			str.trim();
+
+			if (sscanf(str.c_str(), "%i", &parsedNumbers[i]) != 1)
+				error("Strangely-formatted animation table line: %s", line.c_str());
+
+			i++;
+		}
+
+		AnimFrameRange frameRange;
+		frameRange.animationNum = animNumber;
+		frameRange.firstFrame = static_cast<uint>(parsedNumbers[1]);
+		frameRange.lastFrame = static_cast<uint>(parsedNumbers[2]);
+
+		// Animation ID 9099 is duplicated but it doesn't really matter since the duplicate is identical
+		if (_animIDToFrameRange.find(parsedNumbers[0]) == _animIDToFrameRange.end())
+			_animIDToFrameRange[parsedNumbers[0]] = frameRange;
+		else
+			warning("Animation ID %i was duplicated", parsedNumbers[0]);
 	}
 }
 
@@ -3757,6 +3937,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	if (animFile < 0)
 		animFile = -animFile;
 
+	bool isAD2044 = (_gameID == GID_AD2044);
+
 	if (_loadedAnimation != static_cast<uint>(animFile)) {
 		_loadedAnimation = animFile;
 		_frameData.clear();
@@ -3764,7 +3946,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		_animDecoder.reset();
 		_animDecoderState = kAnimDecoderStateStopped;
 
-		Common::Path aviFileName(Common::String::format("Anims/Anim%04i.avi", animFile));
+		Common::Path aviFileName(Common::String::format(isAD2044 ? "anims/ANIM%04i.AVI" : "Anims/Anim%04i.avi", animFile));
 		Common::File *aviFile = new Common::File();
 
 		if (aviFile->open(aviFileName)) {
@@ -3780,28 +3962,43 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		applyAnimationVolume();
 
-		Common::Path sfxFileName(Common::String::format("Sfx/Anim%04i.sfx", animFile));
-		Common::File sfxFile;
-
 		_sfxData.reset();
 
-		if (sfxFile.open(sfxFileName))
-			_sfxData.load(sfxFile, _mixer);
-		sfxFile.close();
+		if (!isAD2044) {
+			Common::Path sfxFileName(Common::String::format("Sfx/Anim%04i.sfx", animFile));
+			Common::File sfxFile;
 
-		Common::Path dtaFileName(Common::String::format("Anims/Anim%04i.dta", animFile));
+			if (sfxFile.open(sfxFileName))
+				_sfxData.load(sfxFile, _mixer);
+			sfxFile.close();
+		}
+
+		Common::Path dtaFileName(Common::String::format(isAD2044 ? "anims/ANIM0001.DTA" : "Anims/Anim%04i.dta", animFile));
 		Common::File dtaFile;
 
 		if (dtaFile.open(dtaFileName))
 			loadFrameData(&dtaFile);
 		dtaFile.close();
 
-		Common::Path twoDtFileName(Common::String::format("Dta/Anim%04i.2dt", animFile));
-		Common::File twoDtFile;
+		if (!isAD2044) {
+			Common::Path twoDtFileName(Common::String::format("Dta/Anim%04i.2dt", animFile));
+			Common::File twoDtFile;
 
-		if (twoDtFile.open(twoDtFileName))
-			loadFrameData2(&twoDtFile);
-		twoDtFile.close();
+			if (twoDtFile.open(twoDtFileName))
+				loadFrameData2(&twoDtFile);
+			twoDtFile.close();
+		}
+
+		if (isAD2044) {
+			_animIDToFrameRange.clear();
+
+			Common::Path tabFileName(Common::String::format("anims/ANIM%04i.TAB", animFile));
+			Common::File tabFile;
+
+			if (tabFile.open(tabFileName))
+				loadTabData(animFile, &tabFile);
+			tabFile.close();
+		}
 
 		_loadedAnimationHasSound = (_animDecoder->getAudioTrackCount() > 0);
 
@@ -4862,6 +5059,9 @@ void Runtime::drawCompass() {
 	if (!isTrayVisible())
 		return;
 
+	if (_gameID == GID_AD2044)
+		return;
+
 	bool haveHorizontalRotate = false;
 	bool haveUp = false;
 	bool haveDown = false;
@@ -5224,6 +5424,10 @@ void Runtime::changeToMenuPage(MenuPage *menuPage) {
 }
 
 void Runtime::checkInGameMenuHover() {
+	// TODO
+	if (_gameID == GID_AD2044)
+		return;
+
 	if (_inGameMenuState == kInGameMenuStateInvisible) {
 		if (_menuSection.rect.contains(_mousePos) && _isInGame) {
 			// Figure out what elements should be visible
@@ -5980,6 +6184,12 @@ Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 		altState->loadedAnimation = altState->screenNumber;
 	} else
 		mainState->loadedAnimation = 1;
+
+	// AD2044 new game normally loads a pre-packaged save.  Unlike Reah and Schizm,
+	// it doesn't appear to have a startup script, so we need to set up everything
+	// that it needs here.
+	if (_gameID == GID_AD2044)
+		mainState->animDisplayingFrame = 345;
 
 	return snapshot;
 }
