@@ -32,6 +32,10 @@
 namespace Nancy {
 namespace Action {
 
+PasswordPuzzle::~PasswordPuzzle() {
+	g_nancy->_input->setVKEnabled(false);
+}
+
 void PasswordPuzzle::init() {
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
@@ -89,7 +93,7 @@ void PasswordPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		g_nancy->_input->setVKEnabled(true);
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
 		_state = kRun;
 		// fall through
@@ -177,9 +181,14 @@ void PasswordPuzzle::execute() {
 			break;
 		}
 
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		g_nancy->_input->setVKEnabled(false);
 		finishExecution();
 	}
+}
+
+void PasswordPuzzle::onPause(bool paused) {
+	g_nancy->_input->setVKEnabled(!paused);
+	RenderActionRecord::onPause(paused);
 }
 
 void PasswordPuzzle::handleInput(NancyInput &input) {

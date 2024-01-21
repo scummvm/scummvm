@@ -20,6 +20,7 @@
  */
 
 #include "common/translation.h"
+#include "common/system.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -163,6 +164,10 @@ void InputManager::setKeymapEnabled(Common::String keymapName, bool enabled) {
 	Common::Keymap *keymap = keymapper->getKeymap(keymapName);
 	if (keymap)
 		keymap->setEnabled(enabled);
+}
+
+void InputManager::setVKEnabled(bool enabled) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, enabled);
 }
 
 void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target) {

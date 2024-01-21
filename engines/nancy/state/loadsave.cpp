@@ -59,6 +59,8 @@ LoadSaveMenu::~LoadSaveMenu() {
 
 	delete _exitButton;
 	delete _cancelButton;
+
+	g_nancy->_input->setVKEnabled(false);
 }
 
 void LoadSaveMenu::process() {
@@ -98,10 +100,14 @@ void LoadSaveMenu::process() {
 }
 
 void LoadSaveMenu::onStateEnter(const NancyState::NancyState prevState) {
+	if (_state == kEnterFilename) {
+		g_nancy->_input->setVKEnabled(true);
+	}
 	registerGraphics();
 }
 
 bool LoadSaveMenu::onStateExit(const NancyState::NancyState nextState) {
+	g_nancy->_input->setVKEnabled(false);
 	return _destroyOnExit;
 }
 
@@ -403,7 +409,7 @@ void LoadSaveMenu::enterFilename() {
 		_blinkingCursorOverlay.setVisible(true);
 		_nextBlink = g_nancy->getTotalPlayTime() + _loadSaveData->_blinkingTimeDelay;
 		_enteringNewState = false;
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		g_nancy->_input->setVKEnabled(true);
 	}
 
 	// Perform cursor blinking
@@ -441,7 +447,7 @@ void LoadSaveMenu::enterFilename() {
 		_state = kRun;
 		_enteringNewState = true;
 		g_nancy->_sound->playSound("BULS");
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		g_nancy->_input->setVKEnabled(false);
 		return;
 	}
 
@@ -450,7 +456,7 @@ void LoadSaveMenu::enterFilename() {
 		_state = kSave;
 		_enteringNewState = true;
 		g_nancy->_sound->playSound("BULS");
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		g_nancy->_input->setVKEnabled(false);
 		return;
 	}
 }
