@@ -308,10 +308,10 @@ void Text::update() {
 			for (size_t j = 0; j < line.tokens.size(); j++) {
 				tok = line.tokens[j];
 				if (tok.id == tiColor) {
-					int iColor;
+					uint iColor;
 					Common::String s = reader.substr(tok);
 					sscanf(s.c_str() + 1, "%x", &iColor);
-					color = Color::withAlpha(Color::rgb(iColor & 0x00FFFFFF), color.rgba.a);
+					color = Color::withAlpha(Color::rgb((int)(iColor & 0x00FFFFFF)), color.rgba.a);
 				} else {
 					Common::U32String s = reader.substr(tok);
 					for (size_t k = 0; k < s.size(); k++) {
