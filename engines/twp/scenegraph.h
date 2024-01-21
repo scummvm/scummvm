@@ -178,7 +178,7 @@ private:
 	float _elapsed = 0.f;
 	float _frameDuration = 0.f;
 	bool _loop = false;
-	bool _instant;
+	bool _instant = false;
 	Object *_obj = nullptr;
 };
 

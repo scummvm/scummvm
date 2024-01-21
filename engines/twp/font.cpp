@@ -298,7 +298,7 @@ void Text::update() {
 		lines.push_back(line1);
 
 		// create quads for all characters
-		float maxW;
+		float maxW = 0.f;
 		float lineHeight = _font->getLineHeight();
 		float y = -lineHeight;
 		for (size_t i = 0; i < lines.size(); i++) {

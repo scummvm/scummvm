@@ -148,7 +148,7 @@ public:
 	Common::Array<Object *> _objects;
 	Scene *_scene = nullptr;
 	OverlayNode _overlayNode;	// Represents an overlay
-	RoomEffect _effect;
+	RoomEffect _effect = RoomEffect::None;
 	Motor* _overlayTo = nullptr;
 	PathFinder _pathFinder;
 };
