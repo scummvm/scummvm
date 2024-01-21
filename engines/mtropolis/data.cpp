@@ -202,18 +202,7 @@ bool DataReader::readF64(double &value) {
 }
 
 bool DataReader::readPlatformFloat(Common::XPFloat &value) {
-	if (_dataFormat == kDataFormatMacintosh) {
-		return readMultiple(value.signAndExponent, value.mantissa);
-	} else if (_dataFormat == kDataFormatWindows) {
-		uint64 bits;
-		if (!readU64(bits))
-			return false;
-		value = Common::XPFloat::fromDoubleBits(bits);
-
-		return true;
-	}
-
-	return false;
+	return readMultiple(value);
 }
 
 bool DataReader::read(void *dest, size_t size) {
