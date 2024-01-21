@@ -58,6 +58,9 @@ void Movie::initFromMovieFile(const Common::Path &fileName, bool transparent) {
 
 	releaseMovie();
 	_video = new Video::QuickTimeDecoder();
+	// enableEditListBoundsCheckQuirk(true) fixes bug #14855
+	// At least one video file (Images/AI/Caldoria/XAE1) requires this fix
+	_video->enableEditListBoundsCheckQuirk(true);
 	if (!_video->loadFile(fileName)) {
 		// Replace any colon with an underscore, since only macOS
 		// supports that. See PegasusEngine::detectOpeningClosingDirectory()

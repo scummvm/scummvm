@@ -40,9 +40,8 @@ FileSystem::~FileSystem() {
 
 
 // Open a streaming file as readable. Streamed (0 on failure)
-Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn) {
+Common::SeekableReadStream *FileSystem::ReadFile(const Common::Path &path) {
 	Common::File *f = new Common::File();
-	Common::Path path(vfn);
 	if (f->open(path))
 		return f;
 

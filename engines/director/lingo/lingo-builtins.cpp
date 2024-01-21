@@ -166,7 +166,7 @@ static BuiltinProto builtins[] = {
 	{ "constrainV",		LB::b_constrainV,	2, 2, 200, FBLTIN },	// D2 f
 	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1, 400, CBLTIN }, //			D4 c
 	{ "duplicate",		LB::b_duplicate,	1, 2, 400, CBLTIN },	//			D4 c
-	{ "editableText",	LB::b_editableText,	0, 0, 200, CBLTIN },	// D2, FIXME: the field in D4+
+	{ "editableText",	LB::b_editableText,	0, 0, 200, CBLTIN },	// D2
 	{ "erase",			LB::b_erase,		1, 1, 400, CBLTIN },	//			D4 c
 	{ "findEmpty",		LB::b_findEmpty,	1, 1, 400, FBLTIN },	//			D4 f
 		// go															// D2
@@ -1890,6 +1890,10 @@ void LB::b_alert(int nargs) {
 void LB::b_clearGlobals(int nargs) {
 	for (auto &it : g_lingo->_globalvars) {
 		if (!it._value.ignoreGlobal) {
+			// For some reason, factory objects are not removed
+			// by this command.
+			if (it._value.type == OBJECT && it._value.u.obj->getObjType() & (kFactoryObj | kScriptObj))
+				continue;
 			g_lingo->_globalvars.erase(it._key);
 		}
 	}
@@ -1997,6 +2001,8 @@ void LB::b_duplicate(int nargs) {
 }
 
 void LB::b_editableText(int nargs) {
+	// editableText is deprecated in D4+ with the addition of "the editableText",
+	// but is still a valid function call.
 	Score *sc = g_director->getCurrentMovie()->getScore();
 	if (!sc) {
 		warning("b_editableText: no score");
@@ -2013,7 +2019,7 @@ void LB::b_editableText(int nargs) {
 		} else {
 			warning("b_editableText: sprite index out of bounds");
 		}
-	} else if (nargs == 0 && g_director->getVersion() < 400) {
+	} else if (nargs == 0) {
 		g_lingo->dropStack(nargs);
 
 		if (g_lingo->_currentChannelId == -1) {
@@ -2710,7 +2716,8 @@ void LB::b_spriteBox(int nargs) {
 
 	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 	channel->setBbox(l, t, r, b);
-	channel->_sprite->_cast->setModified(true);
+	if (channel->_sprite->_cast)
+		channel->_sprite->_cast->setModified(true);
 	channel->_dirty = true;
 }
 

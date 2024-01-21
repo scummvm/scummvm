@@ -75,6 +75,19 @@ void SpecialEffect::updateGraphics() {
 		// nancy7+ version, draws as many frames as possible, ease in/out interpolation
 		if (_startTime == 0) {
 			_startTime = g_nancy->getTotalPlayTime();
+
+			// The original code times how long the first frame takes to draw,
+			// divides the total time by that time, and uses the result to
+			// decide how many frames need to be drawn. This results in highly
+			// variable timing depending on the machine the game is played on.
+			// On modern PCs, it even results in a divide by 0 that effectively
+			// stops the special effect from playing. Using the original _totalTime
+			// value results in the effect taking much longer than the developers
+			// intended (as made obvious in the dog scare sequence in the beginning
+			// of nancy7), so we manually shorten the timings to better match what
+			// the developers would've seen when on their machines.
+			_totalTime /= 2;
+			_fadeToBlackTime /= 2;
 		}
 
 		if (g_nancy->getTotalPlayTime() > _startTime + _totalTime) {
@@ -110,6 +123,7 @@ void SpecialEffect::updateGraphics() {
 void SpecialEffect::onSceneChange() {
 	g_nancy->_graphicsManager->screenshotScreen(_fadeFrom);
 	_drawSurface.rawBlitFrom(_fadeFrom, _rect, Common::Point());
+	_halfInitialized = true;
 }
 
 void SpecialEffect::afterSceneChange() {

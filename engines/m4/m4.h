@@ -75,13 +75,11 @@ protected:
 	virtual void setupConsole() = 0;
 
 public:
-	Graphics::Screen *_screen = nullptr;
-
-public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	~M4Engine() override;
 
 	uint32 getFeatures() const;
+
 	bool useOriginalSaveLoad() const {
 		return _useOriginalSaveLoad;
 	}
@@ -104,7 +102,7 @@ public:
 	/**
 	 * Return if it's a demo
 	 */
-	bool isDemo() const;
+	int isDemo() const;
 
 	/**
 	 * Gets a random number
@@ -152,6 +150,17 @@ public:
 	 * Lists the saves
 	 */
 	SaveStateList listSaves() const;
+
+	/**
+	 * Returns the savegame thumbnail for a save
+	 */
+	bool loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const;
+
+	/**
+	 * Save game from in-game save menu
+	 */
+	bool saveGameFromMenu(int slotNum, const Common::String &desc,
+		Graphics::Surface &thumbnail);
 
 	/**
 	 * Show save game dialog

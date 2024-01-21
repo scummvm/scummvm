@@ -276,7 +276,9 @@ static struct WinKeyCodeMapping {
 };
 
 void DirectorEngine::loadKeyCodes() {
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
+	if ((g_director->getPlatform() == Common::kPlatformWindows) && (g_director->getVersion() < 400)) {
+		// Allegedly this keykode list applies for the Windows version of D3.
+		// D4 and D5 for Windows are both confirmed to use the Mac keycode table.
 		for (WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 			_KeyCodes[k->scummvm] = k->win;
 	} else {
@@ -1204,6 +1206,12 @@ Common::CodePage getEncoding(Common::Platform platform, Common::Language languag
 	default:
 		break;
 	}
+	// If there's no language override, but there is a Lingo
+	// request for a double-byte interpreter, assume this means
+	// the text cast members contain Shift-JIS.
+	if (!g_lingo->_romanLingo)
+		return Common::kWindows932; // Shift JIS
+
 	return (platform == Common::kPlatformWindows)
 				? Common::kWindows1252
 				: Common::kMacRoman;

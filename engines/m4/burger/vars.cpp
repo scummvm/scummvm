@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "m4/burger/vars.h"
@@ -95,7 +96,17 @@ void Vars::main_cold_data_init() {
 	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_executing]);
 
 	// Set up game mode and starting room
-	_executing = !g_engine->isDemo() ? WHOLE_GAME : INTERACTIVE_DEMO;
+	switch (g_engine->isDemo()) {
+	case GStyle_Demo:
+		_executing = INTERACTIVE_DEMO;
+		break;
+	case GStyle_NonInteractiveDemo:
+		_executing = MAGAZINE_DEMO;
+		break;
+	default:
+		_executing = WHOLE_GAME;
+		break;
+	}
 
 	switch (_executing) {
 	case JUST_OVERVIEW:
@@ -109,7 +120,7 @@ void Vars::main_cold_data_init() {
 		break;
 
 	case WHOLE_GAME:
-		_game.setRoom(g_engine->autosaveExists() ? 903 : 951);
+		_game.setRoom(ConfMan.getBool("seen_intro") || g_engine->savesExist() ? 903 : 951);
 		break;
 	}
 

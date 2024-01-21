@@ -22,14 +22,11 @@
 #include "m4/console.h"
 #include "m4/m4.h"
 #include "m4/vars.h"
-#include "m4/burger/vars.h"
-#include "m4/burger/burger.h"
 
 namespace M4 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("teleport",  WRAP_METHOD(Console, cmdTeleport));
-	registerCmd("global",    WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
 	registerCmd("digi",      WRAP_METHOD(Console, cmdDigi));
@@ -45,24 +42,6 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 		debugPrintf("Currently in room %d\n", _G(game).room_id);
 		return true;
 	}
-}
-
-bool Console::cmdGlobal(int argc, const char **argv) {
-	if (!Burger::g_vars) {
-		debugPrintf("Not Orion Burger\n");
-	} else if (argc == 2) {
-		int flagNum = atol(argv[1]);
-		debugPrintf("Global %d = %d\n", flagNum, Burger::g_vars->_flags[flagNum]);
-	} else if (argc == 3) {
-		int flagNum = atol(argv[1]);
-		int flagVal = atol(argv[2]);
-		Burger::g_vars->_flags[flagNum] = flagVal;
-		debugPrintf("Global set\n");
-	} else {
-		debugPrintf("Global <num> [<value>]\n");
-	}
-
-	return true;
 }
 
 bool Console::cmdItem(int argc, const char **argv) {

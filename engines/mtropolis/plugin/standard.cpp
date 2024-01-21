@@ -999,8 +999,8 @@ bool ListVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue 
 
 		size_t listSize = storage->_list->getSize();
 		for (size_t i = 1; i < listSize; i++) {
-			size_t sourceIndex = i;
-			size_t destIndex = sourceIndex + rng->getRandomNumber(static_cast<uint>(listSize - 1 - i));
+			size_t sourceIndex = i - 1;
+			size_t destIndex = sourceIndex + rng->getRandomNumber(static_cast<uint>(listSize - i));
 			if (sourceIndex != destIndex) {
 				DynamicValue srcValue;
 				DynamicValue destValue;

@@ -36,6 +36,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{ Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug" },
 	{ Nancy::kDebugScene, "Scene", "Scene debug" },
 	{ Nancy::kDebugSound, "Sound", "Sound debug" },
+	{ Nancy::kDebugHypertext, "Hypertext", "Hypertext rendering debug" },
 	DEBUG_CHANNEL_END
 };
 

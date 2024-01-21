@@ -26,11 +26,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/conv_io.h"
+#include "m4/graphics/gr_sprite.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/platform/sound/midi.h"
@@ -55,7 +57,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(sy
 }
 
 M4Engine::~M4Engine() {
-	delete _screen;
 }
 
 uint32 M4Engine::getFeatures() const {
@@ -74,8 +75,13 @@ Common::Language M4Engine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool M4Engine::isDemo() const {
-	return (getFeatures() & ADGF_DEMO) != 0;
+int M4Engine::isDemo() const {
+	if ((getFeatures() & ADGF_DEMO) == 0)
+		return GStyle_Game;
+	else if (_gameDescription->features & kFeaturesNonInteractiveDemo)
+		return GStyle_NonInteractiveDemo;
+	else
+		return GStyle_Demo;
 }
 
 Common::Error M4Engine::run() {
@@ -292,6 +298,68 @@ SaveStateList M4Engine::listSaves() const {
 
 bool M4Engine::savesExist() const {
 	return !listSaves().empty();
+}
+
+bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
+	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
+	if (!desc.isValid())
+		return false;
+
+	// Gert the thumbnail
+	const Graphics::Surface *surf = desc.getThumbnail();
+	assert(surf->format.bytesPerPixel == 2);
+
+	// Set up output sprite
+	thumbnail->w = surf->w;
+	thumbnail->h = surf->h;
+	thumbnail->encoding = NO_COMPRESS;
+
+	byte *data = (byte *)malloc(surf->w * surf->h);
+	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(MemHandle));
+	*thumbnail->sourceHandle = data;
+	thumbnail->sourceOffset = 0;
+	thumbnail->data = data;
+
+	byte pal[PALETTE_SIZE];
+	byte r, g, b;
+	int proximity, minProximity;
+	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
+
+	// Translate the 16-bit thumbnail to paletted
+	for (int y = 0; y < surf->h; ++y) {
+		const uint16 *srcLine = (const uint16 *)surf->getBasePtr(0, y);
+		byte *destLine = data + surf->w * y;
+
+		for (int x = 0; x < surf->w; ++x, ++srcLine, ++destLine) {
+			proximity = minProximity = 0xffff;
+			surf->format.colorToRGB(*srcLine, r, g, b);
+
+			const byte *palP = pal;
+			for (int palIdx = 0; palIdx < PALETTE_COUNT; ++palIdx, palP += 3) {
+				proximity = ABS((int)r - (int)palP[0]) +
+					ABS((int)g - (int)palP[1]) +
+					ABS((int)b - (int)palP[2]);
+
+				if (proximity < minProximity) {
+					minProximity = proximity;
+					*destLine = (byte)palIdx;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+bool M4Engine::saveGameFromMenu(int slotNum, const Common::String &desc,
+		Graphics::Surface &thumbnail) {
+	M4MetaEngine *metaEngine = static_cast<M4MetaEngine *>(getMetaEngine());
+	metaEngine->_thumbnail = &thumbnail;
+
+	bool result = saveGameState(slotNum, desc).getCode() == Common::kNoError;
+
+	metaEngine->_thumbnail = nullptr;
+	return result;
 }
 
 } // End of namespace M4

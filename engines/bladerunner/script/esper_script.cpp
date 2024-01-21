@@ -367,9 +367,14 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 			break;
 
 		case 20:
-			Actor_Voice_Over(2140, kActorVoiceOver);
-			Actor_Voice_Over(2150, kActorVoiceOver);
-			Actor_Voice_Over(2160, kActorVoiceOver);
+			if (_vm->_cutContent
+			    && (Query_Difficulty_Level() != kGameDifficultyEasy || Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring))) {
+				Actor_Voice_Over(4130, kActorVoiceOver); // TLKA
+			} else {
+				Actor_Voice_Over(2140, kActorVoiceOver);
+				Actor_Voice_Over(2150, kActorVoiceOver);
+				Actor_Voice_Over(2160, kActorVoiceOver);
+			}
 			if (!Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)) {
 				Actor_Says(kActorMcCoy, 6945, 3);
 				Sound_Play(kSfxBR034_1A, 50, 0, 0, 50);

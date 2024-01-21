@@ -190,8 +190,7 @@ int ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y) {
 char *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer) {
 	if ((index < 0) || (index >= listbox->ItemCount))
 		quit("!ListBoxGetItemText: invalid item specified");
-	strncpy(buffer, listbox->Items[index].GetCStr(), 198);
-	buffer[199] = 0;
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", listbox->Items[index].GetCStr());
 	return buffer;
 }
 

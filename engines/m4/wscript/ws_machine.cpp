@@ -1023,6 +1023,25 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 	return m;
 }
 
+machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, int32 val5, int32 val6,
+	int32 val7, int32 val8, int32 val9, int32 val10, bool flag,
+	MessageCB intrMsg, const char *machName) {
+	_G(globals)[GLB_TEMP_1] = val1 << 24;
+	_G(globals)[GLB_TEMP_2] = val2 << 16;
+	_G(globals)[GLB_TEMP_3] = val3 << 16;
+	_G(globals)[GLB_TEMP_4] = val4 << 16;
+
+	_G(globals)[GLB_TEMP_5] = (val5 << 16) / 100;
+	_G(globals)[GLB_TEMP_6] = val6 << 16;
+	_G(globals)[GLB_TEMP_7] = val7 << 16;
+	_G(globals)[GLB_TEMP_8] = val8 << 16;
+	_G(globals)[GLB_TEMP_9] = (val9 << 16) / 100;
+	_G(globals)[GLB_TEMP_10] = val10 << 16;
+	_G(globals)[GLB_TEMP_11] = flag ? 0xffff0000 : 0x10000;
+
+	return TriggerMachineByHash(40, nullptr, -1, -1, intrMsg, false, machName);
+}
+
 enum {
 	REGULAR_MSG = 0,
 	PERSISTENT_MSG
@@ -1232,6 +1251,24 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 		_GWS(myGlobalMessages) = _GWS(myGlobalMessages)->next;
 		mem_free(tempGlobalMsg);
 	}
+}
+
+void sendWSMessage(int32 val1, machine *recv, int32 val2, int32 val3, int32 val4,
+	int32 trigger, int32 val5, int32 val6, int32 val7, int32 val8) {
+	if (!trigger)
+		trigger = -1;
+
+	_G(globals)[GLB_TEMP_1] = val1 << 16;
+	_G(globals)[GLB_TEMP_2] = val3 << 24;
+	_G(globals)[GLB_TEMP_3] = val3 << 16;
+	_G(globals)[GLB_TEMP_4] = val4 << 16;
+	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_6] = val6 << 16;
+	_G(globals)[GLB_TEMP_7] = val7 << 16;
+	_G(globals)[GLB_TEMP_8] = val8 << 16;
+	_G(globals)[GLB_TEMP_9] = val5 << 16;
+
+	sendWSMessage(0x10000, 0, recv, 0, nullptr, 1);
 }
 
 } // End of namespace M4

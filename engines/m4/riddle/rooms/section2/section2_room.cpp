@@ -19,40 +19,18 @@
  *
  */
 
-#include "backends/events/sdl/sdl-events.h"
+#include "m4/riddle/rooms/section2/section2.h"
+#include "m4/riddle/vars.h"
 
-SDL_Joystick *SDL_JoystickOpen (int index) {
-	return nullptr;
+namespace M4 {
+namespace Riddle {
+namespace Rooms {
+
+bool Section2Room::keyCheck() const {
+	return _G(flags)[V286] && _G(flags)[V288] && _G(flags)[V287] &&
+		inv_player_has("KEY");
 }
 
-const char *SDL_JoystickName (int index) {
-	return nullptr;
-}
-
-int SDL_NumJoysticks (void) {
-	return 0;
-}
-
-void SDL_JoystickClose (SDL_Joystick *joystick) {
-}
-
-// SDL CDAudio is not used on kolibri as it's redirected away from
-// in platform-specific code but since it's still linked-in it needs those stubs
-CDstatus SDL_CDStatus (SDL_CD *cdrom) {
-	return CD_ERROR;
-}
-
-int SDL_CDPlayTracks (SDL_CD *cdrom, int start_track, int start_frame, int ntracks, int nframes) {
-	return -1;
-}
-
-int SDL_CDStop (SDL_CD *cdrom) {
-	return -1;
-}
-
-SDL_CD *SDL_CDOpen (int drive) {
-	return nullptr;
-}
-
-void SDL_CDClose (SDL_CD *cdrom) {
-}
+} // namespace Rooms
+} // namespace Riddle
+} // namespace M4

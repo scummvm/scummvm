@@ -34,6 +34,8 @@ namespace Riddle {
 
 enum global_triggers {
 	gFIRST_GLOBAL_TRIGGER = 10000,
+
+	kCALLED_EACH_LOOP = 32764
 };
 
 class Vars : public M4::Vars {

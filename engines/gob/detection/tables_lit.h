@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -84,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -101,7 +97,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -115,7 +110,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -129,7 +123,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -143,7 +136,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -157,7 +149,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -171,7 +162,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -185,7 +175,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -199,7 +188,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -213,7 +201,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -227,7 +214,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -241,7 +227,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -255,7 +240,6 @@
 		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -272,7 +256,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -286,7 +269,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -300,7 +282,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -314,7 +295,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -328,7 +308,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -342,7 +321,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -359,7 +337,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -374,7 +351,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -391,7 +367,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -406,7 +381,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -424,7 +398,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -441,7 +414,6 @@
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	"demo.stk", "demo.tot", 0
 },
@@ -455,7 +427,6 @@
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	"demo.stk", "demo.tot", 0
 },
@@ -469,7 +440,6 @@
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	"demo.stk", "demo.tot", 0
 },
@@ -485,7 +455,6 @@
 		ADGF_PIRATED,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
 },

@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/thumbnail.h"
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/adv_r/other.h"
@@ -53,7 +54,6 @@ void CreateSaveMenu(RGB8 *myPalette);
 void CreateLoadMenu(RGB8 *myPalette);
 
 Sprite *menu_CreateThumbnail(int32 *spriteSize) {
-#ifdef TODO
 	Sprite *thumbNailSprite;
 	GrBuff *thumbNail;
 	Buffer *scrnBuff, *intrBuff, *destBuff, RLE8Buff;
@@ -62,7 +62,7 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 	int32 i, status;
 	int32 currRow, beginRow, endRow;
 
-	// Create a Sprite for the rle8 thumbNail
+	// Create a Sprite for the thumbNail
 	if ((thumbNailSprite = (Sprite *)mem_alloc(sizeof(Sprite), "sprite")) == nullptr) {
 		return nullptr;
 	}
@@ -237,9 +237,6 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 	mem_free((void *)RLE8Buff.data);
 
 	return thumbNailSprite;
-#else
-	error("TODO: createThumbnail");
-#endif
 }
 
 
@@ -357,6 +354,15 @@ void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) 
 	if (backgroundBuff) {
 		gr_buffer_rect_copy_2(backgroundBuff, myBuff, 0, 0, x, y, backgroundBuff->w, backgroundBuff->h);
 		myItem->background->release();
+	} else if (myItem->tag == SL_TAG_THUMBNAIL && mySprite->w == 160) {
+		// Hack for handling smaller ScummVM thumbnails
+		for (int yp = y; yp < (y + SL_THUMBNAIL_H); ++yp) {
+			byte *line = myBuff->data + myBuff->stride * yp + x;
+			Common::fill(line, line + SL_THUMBNAIL_W, 0);
+		}
+
+		x += 25;
+		y += 25;
 	}
 
 	// Draw the sprite in
@@ -482,9 +488,7 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 	myButton = (menuItemButton *)myItem->itemInfo;
 
 	switch (myButton->buttonType) {
-
 	case BTN_TYPE_GM_GENERIC:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[GM_BUTTON_NORM];
@@ -503,7 +507,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_SAVE:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_SAVE_BTN_NORM];
@@ -522,7 +525,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_LOAD:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_LOAD_BTN_NORM];
@@ -541,7 +543,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_TEXT:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_OVER:
 			font_set_colors(TEXT_COLOR_OVER_SHADOW, TEXT_COLOR_OVER_FOREGROUND, TEXT_COLOR_OVER_HILITE);
@@ -568,7 +569,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_SL_CANCEL:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[SL_CANCEL_BTN_NORM];
@@ -587,7 +587,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_OM_DONE:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[OM_DONE_BTN_NORM];
@@ -606,7 +605,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 		break;
 
 	case BTN_TYPE_OM_CANCEL:
-
 		switch (myButton->itemFlags) {
 		case BTN_STATE_NORM:
 			mySprite = _GM(menuSprites)[OM_CANCEL_BTN_NORM];
@@ -623,9 +621,6 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 			break;
 		}
 		break;
-
-
-
 	}
 
 	// Get the menu buffer
@@ -645,9 +640,9 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 
 	// If the button is a textbutton, write in the text
 	if ((myButton->buttonType == BTN_TYPE_SL_TEXT) && (myButton->prompt)) {
-		//write in the special tag
+		// Write in the special tag
 		Common::sprintf_s(tempStr, 32, "%02d", myItem->tag - 1000 + _GM(firstSlotIndex));
-		/* Common::sprintf_s(tempStr, "%02d", myButton->specialTag); */
+
 		gr_font_set(_GM(menuFont));
 		gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
 		gr_font_write(myBuff, myButton->prompt, x + 26, y + 1, 0, -1);
@@ -792,7 +787,7 @@ bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 
 
 
 menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback, int32 buttonType,
-	bool greyed, bool transparent, char *prompt, ItemHandlerFunction i_handler) {
+	bool greyed, bool transparent, const char *prompt, ItemHandlerFunction i_handler) {
 	menuItem *newItem;
 	menuItemButton *buttonInfo;
 	ScreenContext *myScreen;
@@ -1748,7 +1743,6 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 	handled = true;
 
 	if (eventType == EVENT_MOUSE) {
-
 		switch (event) {
 		case _ME_L_click:
 		case _ME_doubleclick:
@@ -1796,7 +1790,6 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 		}
 	} else if ((eventType == EVENT_KEY) && (myText->itemFlags == TF_OVER)) {
 		switch (event) {
-
 		case KEY_RETURN:
 			_GM(deleteSaveDesc) = false;
 			execCallback = true;
@@ -1874,15 +1867,11 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 			}
 			break;
 		}
-	}
-
-	// The only events a NORM textfield can respond to are doubleclick_release and <return> keypress
-	else if ((eventType == EVENT_KEY) && (event == KEY_RETURN)) {
+	} else if ((eventType == EVENT_KEY) && (event == KEY_RETURN)) {
+		// The only events a NORM textfield can respond to are doubleclick_release and <return> keypress
 		execCallback = true;
-	}
-
-	//otherwise the event will not be handled
-	else {
+	} else {
+		// Otherwise the event will not be handled
 		return false;
 	}
 
@@ -1898,9 +1887,9 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 	// See if we need to call the callback function
 	if (execCallback && myItem->callback) {
-		//		  digi_play(inv_click_snd, 2, 255, -1, inv_click_snd_room_lock);
 		(myItem->callback)((void *)myItem, (void *)myItem->myMenu);
 		myScreen = vmng_screen_find((void *)myItem->myMenu, &status);
+
 		if ((!myScreen) || (status != SCRN_ACTIVE)) {
 			*currItem = nullptr;
 		}
@@ -1911,7 +1900,7 @@ bool textfield_Handler(void *theItem, int32 eventType, int32 event, int32 x, int
 
 
 menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
-	char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
+		const char *prompt, int32 specialTag, CALLBACK callback, bool transparent) {
 	menuItem *newItem;
 	menuItemTextField *textInfo;
 	ScreenContext *myScreen;
@@ -2407,7 +2396,8 @@ bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2,
 
 	// Initialize the vars
 	handled = false;
-	*currScreen = false;
+	if (currScreen)
+		*currScreen = false;
 
 	// Make sure the screen exists and is active
 	myScreen = vmng_screen_find(theMenu, &status);
@@ -2953,85 +2943,8 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 
 
 bool LoadThumbNail(int32 slotNum) {
-#ifdef TODO
-	char saveFN[256];
-	Common::File f;
-	int32 byteCount;
-	bool errFlag;
-
-	errFlag = false;
-	Common::sprintf_s(saveFN, "%s\\%s%03d.SAV", homeDir, "BURG", slotNum + 1);
-	handle = fopen(saveFN, "rb");
-	if (!handle) {
-		errFlag = true;
-	}
-
-	// First seek past the save game description
-	if (!errFlag) {
-		if (!fread(&byteCount, sizeof(int32), 1, handle)) {
-			errFlag = true;
-		}
-	}
-	if (!errFlag) {
-		if (fseek(handle, byteCount, SEEK_CUR) != 0) {
-			errFlag = true;
-		}
-	}
-
-	// Read in the sprite structure
-	if (!errFlag) {
-		byteCount = sizeof(Sprite);
-		if (!fread(_GM(thumbNails)[slotNum], sizeof(Sprite), 1, handle)) {
-			errFlag = true;
-		}
-	}
-
-	// Read in the size of the thumbnail data
-	if (!errFlag) {
-		if (!fread(&byteCount, sizeof(int32), 1, handle)) {
-			errFlag = true;
-		}
-	}
-
-	// Now create a handle to hold the sprite data
-	if (!errFlag) {
-		if ((_GM(thumbNails)[slotNum]->sourceHandle = NewHandle(byteCount, "thumbNail source")) == nullptr) {
-			errFlag = true;
-		}
-		_GM(thumbNails)[slotNum]->sourceOffset = 0;
-	}
-
-	// Lock the handle, and read the thumbnail data in
-	if (!errFlag) {
-		HLock(_GM(thumbNails)[slotNum]->sourceHandle);
-		_GM(thumbNails)[slotNum]->data = (uint8 *)((int32) * (_GM(thumbNails)[slotNum]->sourceHandle) + _GM(thumbNails)[slotNum]->sourceOffset);
-		if (!fread(_GM(thumbNails)[slotNum]->data, byteCount, 1, handle)) {
-			errFlag = true;
-		}
-		HUnLock(_GM(thumbNails)[slotNum]->sourceHandle);
-	}
-
-	// In case of an error, clean everything up
-	if (errFlag) {
-		if (_GM(thumbNails)[slotNum]->sourceHandle) {
-			DisposeHandle(_GM(thumbNails)[slotNum]->sourceHandle);
-			_GM(thumbNails)[slotNum]->sourceHandle = false;
-		}
-		_GM(slotInUse)[slotNum] = false;
-		Common::strcpy_s(_GM(slotTitles)[slotNum], "<empty>");
-	}
-	if (handle) {
-		fclose(handle);
-	}
-
-	if (errFlag) {
-		return false;
-	} else {
-		return true;
-	}
-#else
-	error("TODO: LoadThumbnail");
-#endif
+	Sprite *&thumbNailSprite = _GM(thumbNails)[slotNum];
+	return g_engine->loadSaveThumbnail(slotNum + 1, thumbNailSprite);
 }
 
 
@@ -3203,14 +3116,10 @@ void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
 
 
 void cb_SaveLoad_Save(void *, void *theMenu) {
-#ifdef TODO
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myTextItem;
 	menuItemTextField *myText;
-	FILE *handle;
-	char saveFN[80], dummy;
-	bool fileExists, saveGameFailed;
-	int32 i;
+	bool saveGameFailed;
 
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
@@ -3230,13 +3139,11 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 	Common::strcpy_s(_GM(slotTitles)[_GM(slotSelected) - 1], 80, myText->prompt);
 
 	// Save the game
-	// Copy the string so the save games will all be "RIPxxx.SAV"
-	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
-	saveGameFailed = (bool)kernel_save_game(_GM(slotSelected), myText->prompt, 80, _GM(saveLoadThumbNail), _GM(sizeofThumbData));
+	saveGameFailed = !g_engine->saveGameFromMenu(_GM(slotSelected),
+		myText->prompt, _GM(_thumbnail));
 
 	// If the save game failed, bring up the err menu
 	if (saveGameFailed) {
-
 		// Kill the save menu
 		DestroySaveLoadMenu(true);
 
@@ -3247,65 +3154,21 @@ void cb_SaveLoad_Save(void *, void *theMenu) {
 		return;
 	}
 
-	// Now update the saves.dir file
-	// First open the file
-	fileExists = true;
-	Common::sprintf_s(saveFN, "%s\\saves.dir", homeDir);
-	handle = fopen(saveFN, "rb+");
-
-	// If it does not, open it, and create
-	if (!handle) {
-		handle = fopen(saveFN, "wb+");
-		fileExists = false;
-	}
-
-	// It should either be open and empty, open and readable
-	if (handle) {
-		// If the file doesn't exists, dump out all the slot titles
-		if (!fileExists) {
-			dummy = 0;
-			for (i = 0; i < MAX_SLOTS; i++) {
-				if (!fwrite(&dummy, 1, 1, handle)) {
-					break;
-				}
-				if (!fwrite(_GM(slotTitles)[i], 80, 1, handle)) {
-					break;
-				}
-			}
-		}
-		// seek to the position in the file containing the description for the slot selected
-		if (fseek(handle, (_GM(slotSelected) - 1) * 81, SEEK_SET) == 0) {
-			fwrite(&_GM(slotInUse)[_GM(slotSelected) - 1], 1, 1, handle);
-			fwrite(_GM(slotTitles)[_GM(slotSelected) - 1], 80, 1, handle);
-		}
-
-		// Close the handle
-		fclose(handle);
-	}
-
 	// Kill the save menu
 	DestroySaveLoadMenu(true);
 
 	// Shutdown the menu system
 	menu_Shutdown(true);
-#else
-	error("TODO: saving");
-#endif
 }
 
 
 void cb_SaveLoad_Load(void *, void *theMenu) {
-//	guiMenu *myMenu = (guiMenu *)theMenu;
 	KernelTriggerType oldMode;
 
 	// If (slotSelected < 0) this callback is being executed by pressing return prematurely
 	if (_GM(slotSelected) < 0) {
 		return;
 	}
-
-	// Load the game
-	// Copy the string so the kernel_load_game will find a saved game of the format: "RIPxxx.SAV"
-//	Common::strlcpy(_G(game).save_file_name, "BURG", 8);
 
 	// Kill the menu
 	DestroySaveLoadMenu(false);
@@ -3323,8 +3186,9 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 	// Start the restore process
 	_G(kernel).restore_slot = _GM(slotSelected);
 	oldMode = _G(kernel).trigger_mode;
+
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatchx(kernel_trigger_create(TRIG_RESTORE_GAME));
+	kernel_trigger_dispatch_now(TRIG_RESTORE_GAME);
 	_G(kernel).trigger_mode = oldMode;
 }
 
@@ -3336,7 +3200,6 @@ void cb_SaveLoad_Cancel(void *, void *theMenu) {
 
 	// If a slot has been selected, cancel will re-enable all slots
 	if (_GM(slotSelected) >= 0) {
-
 		// Enable the prev buttons
 		for (i = 1001; i <= 1010; i++) {
 			if (_GM(currMenuIsSave) || _GM(slotInUse)[i - 1001 + _GM(firstSlotIndex)]) {
@@ -3366,7 +3229,7 @@ void cb_SaveLoad_Cancel(void *, void *theMenu) {
 			// Remove the thumbnail
 			if (_GM(saveLoadThumbNail)) {
 				_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
-				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
+				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, myMenu);
 			}
 		}
 		SetFirstSlot(_GM(firstSlotIndex), myMenu);
@@ -3386,10 +3249,9 @@ void cb_SaveLoad_Cancel(void *, void *theMenu) {
 
 		// Reset the slot selected var
 		_GM(slotSelected) = -1;
-	}
 
-	//otherwise, back to the game menu
-	else {
+	} else {
+		// Otherwise, back to the game menu
 
 		// Destroy the menu
 		DestroySaveLoadMenu(_GM(currMenuIsSave));
@@ -3410,6 +3272,8 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemButton *myButton;
 	int32 i, x, y, w, h;
+	char prompt[80];
+	int32 specialTag;
 
 	// Verify params
 	if ((!myMenu) || (!myItem) || (!myItem->itemInfo)) {
@@ -3418,6 +3282,8 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 
 	// Get the button
 	myButton = (menuItemButton *)myItem->itemInfo;
+	Common::strcpy_s(prompt, 80, myButton->prompt);
+	specialTag = myButton->specialTag;
 
 	// Set the globals
 	_GM(slotSelected) = myButton->specialTag;
@@ -3440,16 +3306,16 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 
 	if (_GM(currMenuIsSave)) {
 		// Replace the current button with a textfield
-		if (!strcmp(myButton->prompt, "<empty>")) {
+		if (!strcmp(prompt, "<empty>")) {
 			menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_OVER,
-				nullptr, myButton->specialTag, cb_SaveLoad_Save, true);
+				nullptr, specialTag, cb_SaveLoad_Save, true);
 		} else {
 			menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_OVER,
-				myButton->prompt, myButton->specialTag, cb_SaveLoad_Save, true);
+				prompt, specialTag, cb_SaveLoad_Save, true);
 		}
 	} else {
 		menu_TextFieldAdd(myMenu, 2000, x, y, w, h, TF_NORM,
-			myButton->prompt, myButton->specialTag, cb_SaveLoad_Load, true);
+			prompt, specialTag, cb_SaveLoad_Load, true);
 	}
 
 	// Disable the slider
@@ -3476,8 +3342,11 @@ void InitializeSlotTables(void) {
 	}
 
 	for (const auto &save : saves) {
-		Common::String desc = save.getDescription();
-		Common::strcpy_s(_GM(slotTitles)[save.getSaveSlot()], 80, desc.c_str());
+		if (save.getSaveSlot() != 0) {
+			Common::String desc = save.getDescription();
+			Common::strcpy_s(_GM(slotTitles)[save.getSaveSlot() - 1], 80, desc.c_str());
+			_GM(slotInUse)[save.getSaveSlot() - 1] = true;
+		}
 	}
 }
 
@@ -3506,10 +3375,8 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 
 		// This determines that we are over the button
 		if ((myButton->itemFlags == BTN_STATE_OVER) || (myButton->itemFlags == BTN_STATE_PRESS)) {
-
 			// See if the current _GM(saveLoadThumbNail) is pointing to the correct sprite
 			if (_GM(saveLoadThumbNail) != _GM(thumbNails)[myButton->specialTag - 1]) {
-
 				_GM(saveLoadThumbNail) = _GM(thumbNails)[myButton->specialTag - 1];
 				menu_ItemRefresh(nullptr, SL_TAG_THUMBNAIL, (guiMenu *)myItem->myMenu);
 			}
@@ -3636,8 +3503,12 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	}
 
 	if (_GM(currMenuIsSave)) {
-		// Create the thumbnail
+		// Create thumbnails. One in the original game format for displaying,
+		// and the other in the ScummVM format for actually using in the save files
 		_GM(saveLoadThumbNail) = menu_CreateThumbnail(&_GM(sizeofThumbData));
+		_GM(_thumbnail).free();
+		Graphics::createThumbnail(_GM(_thumbnail));
+
 	} else {
 		UpdateThumbNails(0, _GM(slMenu));
 		_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];

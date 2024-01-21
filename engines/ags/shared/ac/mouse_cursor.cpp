@@ -21,11 +21,12 @@
 
 #include "ags/shared/ac/mouse_cursor.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "common/util.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
 
 void MouseCursor::clear() {
 	pic = 0;
@@ -40,7 +41,7 @@ void MouseCursor::ReadFromFile(Stream *in) {
 	hotx = in->ReadInt16();
 	hoty = in->ReadInt16();
 	view = in->ReadInt16();
-	in->Read(name, 10);
+	StrUtil::ReadCStrCount(name, in, MAX_CURSOR_NAME_LENGTH);
 	flags = in->ReadInt8();
 }
 
@@ -49,7 +50,7 @@ void MouseCursor::WriteToFile(Stream *out) {
 	out->WriteInt16(hotx);
 	out->WriteInt16(hoty);
 	out->WriteInt16(view);
-	out->Write(name, 10);
+	out->Write(name, MAX_CURSOR_NAME_LENGTH);
 	out->WriteInt8(flags);
 }
 

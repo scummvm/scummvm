@@ -121,13 +121,13 @@ cGuiGfxElement::~cGuiGfxElement() {
 	// Delete all textures / Images
 	if (mvImageBufferVec.size() > 0) {
 		for (int i = 0; i < (int)mvImageBufferVec.size(); ++i) {
-			// Skip for now, memory might be fucked..
+			// Skip for now, memory might be go haywire..
 			// mpGui->GetResources()->GetImageManager()->Destroy(mvImageBufferVec[i]);
 		}
 	} else {
 		for (int i = 0; i < mlTextureNum; ++i) {
 			if (mvImages[i]) {
-				// Skip for now, memory might be fucked..
+				// Skip for now, memory might go haywire..
 				// mpGui->GetResources()->GetImageManager()->Destroy(mvImages[i]);
 			} else if (mvTextures[i]) {
 				mpGui->GetResources()->GetTextureManager()->Destroy(mvTextures[i]);

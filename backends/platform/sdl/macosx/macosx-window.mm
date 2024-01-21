@@ -31,8 +31,10 @@ float SdlWindow_MacOSX::getDpiScalingFactor() const {
 	SDL_SysWMinfo wmInfo;
 	if (getSDLWMInformation(&wmInfo)) {
 		NSWindow *nswindow = wmInfo.info.cocoa.window;
-		if ([nswindow respondsToSelector:@selector(backingScaleFactor)])
+		if ([nswindow respondsToSelector:@selector(backingScaleFactor)]) {
+			debug(4, "Reported DPI ratio: %g", [nswindow backingScaleFactor]);
 			return [nswindow backingScaleFactor];
+		}
 	}
 #endif
 

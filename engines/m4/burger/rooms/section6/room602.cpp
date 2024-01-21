@@ -321,13 +321,13 @@ void Room602::init() {
 		_G(kernel).call_daemon_every_loop = true;
 
 	if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1) {
-		_series2 = series_play("612wheel", 0x5ff, 0, -1, 0, -1);
+		_mouseWheel = series_play("612wheel", 0x5ff, 0, -1, 0, -1);
 
-	} else if (_G(game).room_id == 502) {
-		_series2 = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
+	} else if (_G(game).room_id == 602) {
+		_mouseWheel = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
 
 	} else {
-		_series2 = series_show("612wheel", 0x6ff, 0, -1, -1, 0);
+		_mouseWheel = series_show("612wheel", 0x6ff, 0, -1, -1, 0);
 	}
 
 	_series3 = series_show("602door", 0xf00, 1, -1, -1, 0, 100,
@@ -547,7 +547,7 @@ void Room602::daemon() {
 	case 2:
 		switch (_val3) {
 		case 48:
-			_val4 = 17;
+			_magnetState = 17;
 			kernel_trigger_dispatch_now(4);
 			break;
 
@@ -558,7 +558,7 @@ void Room602::daemon() {
 			_val3 = 63;
 			digi_play("602_004", 2, 255, 6, 602);
 			kernel_timing_trigger(1, 2);
-			_val4 = 16;
+			_magnetState = 16;
 			kernel_trigger_dispatch_now(4);
 			break;
 
@@ -585,7 +585,7 @@ void Room602::daemon() {
 					-_G(flags)[V257] / 21, _G(flags)[V257]);
 			}
 
-			_val4 = 16;
+			_magnetState = 16;
 			kernel_trigger_dispatch_now(4);
 			break;
 
@@ -609,7 +609,7 @@ void Room602::daemon() {
 					-_G(flags)[V257] / 21, _G(flags)[V257]);
 			}
 
-			_val4 = 17;
+			_magnetState = 17;
 			kernel_trigger_dispatch_now(4);
 			break;
 
@@ -623,16 +623,16 @@ void Room602::daemon() {
 		_G(flags)[kGerbilCageDoor] = 1;
 		_val3 = 63;
 		kernel_trigger_dispatch_now(2);
-		terminateMachineAndNull(_series2);
+		terminateMachineAndNull(_mouseWheel);
 
-		_series2 = series_play(_G(game).room_id == 602 ? "602wheel" : "612wheel",
+		_mouseWheel = series_play(_G(game).room_id == 602 ? "602wheel" : "612wheel",
 			0x5ff, 0, -1, 0, -1);
 		hotspot_set_active("DOOR", false);
 		hotspot_set_active("EXIT", true);
 		break;
 
 	case 4:
-		switch (_val4) {
+		switch (_magnetState) {
 		case 16:
 			if (!_G(flags)[V265]) {
 				if (_G(game).room_id == 602) {
@@ -650,6 +650,7 @@ void Room602::daemon() {
 				terminateMachineAndNull(_series10);
 			_G(flags)[V265] = 0;
 			break;
+
 		default:
 			break;
 		}
@@ -697,7 +698,7 @@ void Room602::daemon() {
 
 	case 13:
 		_G(flags)[V263] = 1;
-		_series2 = series_play(_G(game).room_id == 602 ? "602wi07b" : "612wi07b", 0x6ff);
+		_mouseWheel = series_play(_G(game).room_id == 602 ? "602wi07b" : "612wi07b", 0x6ff, 0, -1, 6, -1);
 		player_set_commands_allowed(true);
 		term_message("Ready to keep running...");
 		break;
@@ -887,7 +888,7 @@ void Room602::daemon() {
 
 				digi_preload_stream_breaks(SERIES1);
 				digi_preload_stream_breaks(SERIES2);
-				terminateMachineAndNull(_series2);
+				terminateMachineAndNull(_mouseWheel);
 
 				_sectionSeries2 = series_load("602wi7as");
 				_sectionSeries3 = series_load("602wi7bs");
@@ -899,7 +900,6 @@ void Room602::daemon() {
 					kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 				} else {
-					// TODO: This seems like it's incorrect in the original
 					_series9 = series_play("602wi7as", 6, 0x700, -1);
 					_val3 = 62;
 					series_stream_with_breaks(SERIES1,
@@ -927,7 +927,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			_G(flags)[V263] = 0;
 
-			terminateMachineAndNull(_series2);
+			terminateMachineAndNull(_mouseWheel);
 			_G(wilbur_should) = 14;
 
 			if (_G(game).room_id == 602) {
@@ -965,9 +965,9 @@ void Room602::daemon() {
 			series_unload(_sectionSeries3);
 
 			if (_G(game).room_id == 602) {
-				_series2 = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
+				_mouseWheel = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
 			} else {
-				_series2 = series_show("612wheel", 0x6ff, 0, -1, -1, 0);
+				_mouseWheel = series_show("612wheel", 0x6ff, 0, -1, -1, 0);
 			}
 
 			_G(flags)[V260] = 1;

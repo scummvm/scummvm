@@ -597,14 +597,14 @@ void NancyEngine::readDatFile() {
 		error("nancy.dat is invalid");
 	}
 
-	byte major = datFile->readByte();
-	byte minor = datFile->readByte();
+	int8 major = datFile->readSByte();
+	int8 minor = datFile->readSByte();
 	if (major != _datFileMajorVersion) {
 		error("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d",
 			_datFileMajorVersion, _datFileMinorVersion, major, minor);
 	} else {
-		if (minor != _datFileMinorVersion) {
-			warning("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d. Game may still work, but expect bugs",
+		if (minor < _datFileMinorVersion) {
+			warning("Incorrect nancy.dat version. Expected at least '%d.%d', found %d.%d. Game may still work, but expect bugs",
 			_datFileMajorVersion, _datFileMinorVersion, major, minor);
 		}
 	}
@@ -624,7 +624,7 @@ void NancyEngine::readDatFile() {
 	uint32 nextGameOffset = gameType == numGames ? datFile->size() : datFile->readUint32LE();
 	datFile->seek(thisGameOffset);
 
-	_staticData.readData(*datFile, _gameDescription->desc.language, nextGameOffset);
+	_staticData.readData(*datFile, _gameDescription->desc.language, nextGameOffset, major, minor);
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {

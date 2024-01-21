@@ -23,11 +23,12 @@
 #include "ags/shared/ac/character_info.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
 
 void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_ver) {
 	defview = in->ReadInt32();
@@ -73,8 +74,8 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	in->ReadArrayOfInt16(inv, MAX_INV);
 	actx = in->ReadInt16();
 	acty = in->ReadInt16();
-	in->Read(name, 40);
-	in->Read(scrname, MAX_SCRIPT_NAME_LEN);
+	StrUtil::ReadCStrCount(name, in, MAX_CHAR_NAME_LEN);
+	StrUtil::ReadCStrCount(scrname, in, MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
 
 	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||

@@ -324,6 +324,11 @@ TEMPLATE bool BASESTRING::operator!=(const value_type *x) const {
 }
 
 TEMPLATE int BASESTRING::compareTo(const BaseString &x) const {
+	if (_size == 0 &&
+	    x.size() == 0) {
+		return 0;
+	}
+
 	int n = cMemCmp(_str, x._str, MIN<uint32>(_size, x.size()));
 	if (n != 0)
 		return n;
@@ -1106,7 +1111,6 @@ TEMPLATE T *BASESTRING::cMemChr(value_type *str, value_type c, size_t count) {
 TEMPLATE int BASESTRING::cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count) {
 	assert(ptr1);
 	assert(ptr2);
-	assert(count);
 
 	for (size_t i = 0; i < count; ++i) {
 		value_type sc = ptr1[i];

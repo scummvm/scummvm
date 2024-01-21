@@ -42,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -56,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -70,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -84,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -98,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -112,7 +107,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -126,7 +120,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
@@ -145,7 +138,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeUrban,
 	kFeatures640x480 | kFeaturesTrueColor | kFeaturesSCNDemo,
 	0, 0, 2
 },

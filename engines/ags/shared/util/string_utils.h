@@ -77,7 +77,16 @@ void            WriteString(const char *cstr, Stream *out);
 void            WriteString(const char *cstr, size_t len, Stream *out);
 
 // Serialize and unserialize string as c-string (null-terminated sequence)
-void            ReadCStr(char *buf, Stream *in, size_t buf_limit);
+//
+// Reads a null-terminated string until getting a null-terminator.
+// writes into the buffer up to the buf_limit.
+// Note that this will keep reading the stream out until 0 is read,
+// even if buffer is already full.
+// Guarantees that output buffer will contain a null-terminator.
+void			ReadCStr(char *buf, Stream *in, size_t buf_limit);
+// Reads N characters into the provided buffer.
+// Guarantees that output buffer will contain a null-terminator.
+void			ReadCStrCount(char *buf, Stream *in, size_t count);
 // Reads a null-terminated string and !! mallocs !! a char buffer for it;
 // returns nullptr if the read string is empty.
 // Buffer is hard-limited to 1024 bytes, including null-terminator.

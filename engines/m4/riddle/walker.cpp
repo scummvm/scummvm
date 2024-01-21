@@ -35,118 +35,82 @@ namespace Riddle {
 #define SHADOW_SERIES_HASH 8
 #define NUM_SHADOW_SERIES  5
 
-// These are the walker types
-#define WALKER_WILBUR          0
-#define WALKER_FLUMIX          1
-
-// These are the shadow types
-#define SHADOW_WILBUR          0
-#define SHADOW_FLUMIX          1
-
-static const char *WILBUR_SERIES[8] = {
-	"WILBUR01", "WILBUR02", "WILBUR03", "WILBUR04", "WILBUR05",
-	"WILBUR07", "WILBUR08", "WILBUR09"
+static const char *RIPLEY_SERIES[5] = {
+	"test1", "test2", "test3", "test4", "test5"
 };
-static const int16 WILBUR_SERIES_DIRS[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, -1
+static const int16 RIPLEY_SERIES_DIRS[] = {
+	0, 1, 2, 3, 4, -4
 };
 
-static const char *WILBUR_SHADOWS[5] = {
-	"WILBUR01_SHADOW", "WILBUR02_SHADOW", "WILBUR03_SHADOW",
-	"WILBUR04_SHADOW", "WILBUR05_SHADOW"
+static const char *RIPLEY_SHADOWS[5] = {
+	"ripsh1", "ripsh2", "ripsh3", "ripsh4", "ripsh5"
 };
-static const int16 WILBUR_SHADOWS_DIRS[6] = {
-	8, 9, 10, 11, 12, -1
+static const int16 RIPLEY_SHADOWS_DIRS[6] = {
+	10, 11, 12, 13, 14, -1
+};
+
+static const char *SAFARI_SERIES[4] = {
+	"rip safari walker position 1",
+	"rip safari walker position 2",
+	"rip safari walker position 3",
+	"rip safari walker position 4"
+};
+static const int16 SAFARI_SERIES_DIRS[] = {
+	0, 1, 2, 3, 4, -4
+};
+
+static const char *SAFARI_SHADOWS[8] = {
+	"safari shadow 1", "safari shadow 2", "safari shadow 3",
+	"safari shadow 4", "safari shadow 5", "trek feng walker pos 3",
+	"trek feng walker pos 4", "trek feng walker pos 5"
+};
+static const int16 SAFARI_SHADOWS_DIRS[6] = {
+	10, 11, 12, 13, 14, -1
 };
 
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-#ifdef TODO
-	int32 triggerType, soundNumber;
-
-	triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	int32 triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	//int32 subVal = _G(globals)[GLB_TEMP_3] >> 16;
 
 	switch (triggerType) {
 	case 0:
+	default:
 		// Ignore this trigger, it's not important
-		break;
+		return;
 
 	case 1:
-		// Specific action is finished
-		// If user trigger is desired, dispatch it
-		if (myMessage >> 16 >= 0)
-			// Trigger will go to where it was called from
-			kernel_trigger_dispatchx(myMessage);
 		break;
 
 	case 2:
-		// Walker has arrived at a node
-		if (walker_has_walk_finished(sender)) {
-			// Walks walker to next node if not at end of walk
-			sendWSMessage(ENDWALK << 16, 0, sender, 0, nullptr, 1);
-		}
+		if (walker_has_walk_finished(sender))
+			sendWSMessage(0x30000, 0, nullptr, 0, nullptr, 1);
+		else
+			_G(player).waiting_for_walk = false;
 		break;
 
 	case 3:
-		// Walker has finished his walk and is facing final direction
-		_G(player).waiting_for_walk = false;
-
-		// if user trigger is desired, dispatch it
-		if (myMessage >> 16 >= 0)
-			// trigger will go to where it was called from
-			kernel_trigger_dispatchx(myMessage);
-		break;
-
-	case 20:
-		// Walker wants to make a sound
-		soundNumber = myMessage >> 16;
-		switch (soundNumber) {
-		case 21:
-		case 22:
-		case 25:
-			if (!_G(flags)[V298])
-				_G(digi).playRandom();
-			break;
-
-		case 23:
-			switch (imath_ranged_rand(1, 3)) {
-			case 1:
-				digi_play("crack1", 1, 50, NO_TRIGGER, GLOBAL_SCENE);
-				break;
-			case 2:
-				digi_play("crack2", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
-				break;
-			case 3:
-				digi_play("crack3", 1, 80, NO_TRIGGER, GLOBAL_SCENE);
-				break;
-			default:
-				break;
-			}
-			break;
-
-		case 24:
-			if (!_G(flags)[V298])
-				digi_play("hmmm", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	default:
 		_G(player).waiting_for_walk = false;
 		break;
 	}
-#endif
+
+	if (triggerType >= 0)
+		kernel_trigger_dispatchx(myMessage);
 }
 
 bool Walker::walk_load_walker_and_shadow_series() {
-	return ws_walk_load_walker_series(WILBUR_SERIES_DIRS, WILBUR_SERIES, true) &&
-		ws_walk_load_shadow_series(WILBUR_SHADOWS_DIRS, WILBUR_SHADOWS);
+	switch (_G(player).walker_type) {
+	case 0:
+		return ws_walk_load_walker_series(RIPLEY_SERIES_DIRS, RIPLEY_SERIES, true) &&
+			ws_walk_load_shadow_series(RIPLEY_SHADOWS_DIRS, RIPLEY_SHADOWS);
+	case 1:
+		return ws_walk_load_walker_series(SAFARI_SERIES_DIRS, SAFARI_SERIES, true) &&
+			ws_walk_load_shadow_series(SAFARI_SHADOWS_DIRS, SAFARI_SHADOWS);
+	default:
+		return false;
+	}
 }
 
 machine *Walker::walk_initialize_walker() {
-#ifdef TODO
 	machine *m;
 	int32 s;
 
@@ -158,8 +122,8 @@ machine *Walker::walk_initialize_walker() {
 		_G(player).walker_visible = true;
 
 		// Wilbur walker
-		_G(player).walker_type = WALKER_WILBUR;
-		_G(player).shadow_type = SHADOW_WILBUR;
+		_G(player).walker_type = WALKER_PLAYER;
+		_G(player).shadow_type = SHADOW_PLAYER;
 
 		_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
 		_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
@@ -172,7 +136,7 @@ machine *Walker::walk_initialize_walker() {
 		_G(globals)[GLB_TEMP_6] = s;
 		_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
 
-		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "Wilbur Walker");
+		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
 
 		// we need to all init sequences to happen immediately (init coordinates)
 		cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
@@ -182,23 +146,10 @@ machine *Walker::walk_initialize_walker() {
 	}
 
 	return m;
-#else
-	return nullptr;
-#endif
 }
 
 void Walker::reset_walker_sprites() {
-#ifdef TODO
-	if (_G(roomVal3)) {
-		for (int i = 0; WILBUR_SERIES_DIRS[i] != -1; ++i) {
-			series_load(WILBUR_SERIES[i], WILBUR_SERIES_DIRS[i]);
-		}
-	}
-
-	ws_unhide_walker(_G(my_walker));
-	gr_restore_palette();
-	kernel_timing_trigger(1, 1026);
-#endif
+	error("TODO: reset_walker_sprites");
 }
 
 void Walker::unloadSprites() {
@@ -234,12 +185,16 @@ void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigge
 	_G(player_facing_y) = facing_y;
 	_G(player_trigger) = trigger;
 	player_hotspot_walk_override(x, y, -1, gSET_FACING);
+#else
+	error("TODO: player_walk_to");
 #endif
 }
 
 void player_walk_to(int32 x, int32 y, int trigger) {
 #ifdef TODO
 	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
+#else
+	error("TODO: player_walk_to");
 #endif
 }
 

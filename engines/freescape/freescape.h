@@ -91,6 +91,7 @@ public:
 	void purgeKeyboardEvents();
 	void purgeMouseEvents();
 	void pushEvent(Common::Event &event);
+	void clearExitEvents();
 
 private:
 	// for continuous events (keyDown)

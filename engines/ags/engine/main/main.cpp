@@ -213,8 +213,7 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			if (argc < ee + 2)
 				break;
 			_GP(play).takeover_data = atoi(argv[ee + 1]);
-			strncpy(_GP(play).takeover_from, argv[ee + 2], 49);
-			_GP(play).takeover_from[49] = 0;
+			snprintf(_GP(play).takeover_from, sizeof(_GP(play).takeover_from), "%s", argv[ee + 2]);
 			ee += 2;
 		} else if (ags_stricmp(arg, "--clear-cache-on-room-change") == 0) {
 			cfg["misc"]["clear_cache_on_room_change"] = "1";

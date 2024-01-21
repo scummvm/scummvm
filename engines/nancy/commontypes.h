@@ -317,9 +317,9 @@ struct StaticData {
 	uint16 numEventFlags = 168;
 	Common::Array<uint16> mapAccessSceneIDs;
 	Common::Array<uint16> genericEventFlags;
-	uint16 numNonItemCursors = 12;
-	uint16 numCurtainAnimationFrames = 7;
+	uint16 numCursorTypes = 4;
 	uint32 logoEndAfter = 7000;
+	int16 wonGameSceneID = -1;
 
 	// Data for sound channels
 	SoundChannelInfo soundChannelInfo;
@@ -338,7 +338,7 @@ struct StaticData {
 	// Debug strings
 	Common::Array<Common::String> eventFlagNames;
 
-	void readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos);
+	void readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos, int8 majorVersion, int8 minorVersion);
 };
 
 } // End of namespace Nancy

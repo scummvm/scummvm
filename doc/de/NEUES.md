@@ -3,6 +3,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.9.0 (XX.XX.XXXX)
 
+ Neue Spiele:
+   - Unterstützung für Orion Burger hinzugefügt.
+
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
 

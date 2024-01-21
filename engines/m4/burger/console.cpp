@@ -27,7 +27,24 @@ namespace M4 {
 namespace Burger {
 
 Console::Console() : M4::Console() {
+	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("test", WRAP_METHOD(Console, cmdTest));
+}
+
+bool Console::cmdGlobal(int argc, const char **argv) {
+	if (argc == 2) {
+		int flagNum = atol(argv[1]);
+		debugPrintf("Global %d = %d\n", flagNum, _G(flags)[flagNum]);
+	} else if (argc == 3) {
+		int flagNum = atol(argv[1]);
+		int flagVal = atol(argv[2]);
+		_G(flags)[flagNum] = flagVal;
+		debugPrintf("Global set\n");
+	} else {
+		debugPrintf("Global <num> [<value>]\n");
+	}
+
+	return true;
 }
 
 bool Console::cmdTest(int argc, const char **argv) {
@@ -40,7 +57,6 @@ bool Console::cmdTest(int argc, const char **argv) {
 	debugPrintf("Tests passed = %d\n", tests);
 	return true;
 }
-
 
 } // End of namespace Burger
 } // End of namespace M4

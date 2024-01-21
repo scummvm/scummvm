@@ -1334,8 +1334,7 @@ const char *Character_GetName(CharacterInfo *chaa) {
 }
 
 void Character_SetName(CharacterInfo *chaa, const char *newName) {
-	strncpy(chaa->name, newName, 40);
-	chaa->name[39] = 0;
+	snprintf(chaa->name, MAX_CHAR_NAME_LEN, "%s", newName);
 	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 }
 

@@ -446,8 +446,10 @@ void Score::update() {
 		}
 	}
 
-	// this updates currentFrameNumber
-	loadFrame(nextFrameNumberToLoad, true);
+	if (_curFrameNumber != nextFrameNumberToLoad) {
+  	// this updates _curFrameNumber
+		loadFrame(nextFrameNumberToLoad, true);
+	}
 
 	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
 	// puppetTempo is overridden by changes in score tempo
@@ -1321,11 +1323,22 @@ bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 }
 
 Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
-	Common::List<Channel *>intersections;
+	Common::List<Channel *> intersections;
+	Common::List<Channel *> appendix;
 
 	for (uint i = 0; i < _channels.size(); i++) {
-		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty())
-			intersections.push_back(_channels[i]);
+		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty()) {
+			// Editable text sprites will (more or less) always be rendered in front of other sprites,
+			// regardless of their order in the channel list.
+			if (_channels[i]->getEditable()) {
+				appendix.push_back(_channels[i]);
+			} else {
+				intersections.push_back(_channels[i]);
+			}
+		}
+	}
+	for (auto &ch : appendix) {
+		intersections.push_back(ch);
 	}
 
 	return intersections;
@@ -1543,8 +1556,8 @@ bool Score::readOneFrame() {
 			_currentFrame->readChannel(*_framesStream, channelOffset, channelSize, _version);
 		}
 
-		if (debugChannelSet(4, kDebugLoading)) {
-			debugC(4, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
+		if (debugChannelSet(9, kDebugLoading)) {
+			debugC(9, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
 		}
 
 		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, _currentFrame->_mainChannels.actionId.asString().c_str());

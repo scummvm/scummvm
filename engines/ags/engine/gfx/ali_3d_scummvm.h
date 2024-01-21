@@ -160,12 +160,13 @@ public:
 	ScummVMRendererGraphicsDriver();
 	~ScummVMRendererGraphicsDriver() override;
 
-	const char *GetDriverName() override {
-		return "SDL 2D Software renderer";
-	}
 	const char *GetDriverID() override {
 		return "Software";
 	}
+	const char *GetDriverName() override {
+		return "ScummVM 2D renderer";
+	}
+
 	void SetTintMethod(TintMethod /*method*/) override;
 	bool SetDisplayMode(const DisplayMode &mode) override;
 	void UpdateDeviceScreen(const Size &screen_sz) override;

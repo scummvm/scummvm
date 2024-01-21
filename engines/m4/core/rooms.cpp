@@ -77,7 +77,7 @@ void Sections::game_daemon_code() {
 	if (_G(kernel).continue_handling_trigger)
 		global_daemon();
 
-	if (_G(kernel).trigger == 32001) {
+	if (_G(kernel).trigger == TRIG_RESTORE_GAME) {
 		_G(game).room_id = -1;
 		_G(game).section_id = -1;
 		_G(game).previous_room = KERNEL_RESTORING_GAME;

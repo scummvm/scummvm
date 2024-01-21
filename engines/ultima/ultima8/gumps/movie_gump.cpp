@@ -79,11 +79,11 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
 	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(path);
+	Common::SeekableReadStream *rs = filesys->ReadFile(path.c_str());
 	if (!rs) {
 		// Try with a "0" in the name
 		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
-		rs = filesys->ReadFile(adjustedfn);
+		rs = filesys->ReadFile(adjustedfn.c_str());
 		if (!rs)
 			return nullptr;
 	}

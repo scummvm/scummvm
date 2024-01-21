@@ -21,7 +21,7 @@
 
 // BufferedStream represents a buffered file stream; uses memory buffer
 // during read and write operations to limit number reads and writes on disk
-// and thus improve i/o perfomance.
+// and thus improve i/o performance.
 //
 // BufferedSectionStream is a subclass stream that limits reading by an
 // arbitrary offset range.

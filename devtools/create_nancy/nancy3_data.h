@@ -25,15 +25,14 @@
 #include "types.h"
 
 const GameConstants _nancy3Constants = {
-	18,
-	336,
-	{ }, // No Map state
-	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	18,												// numItems
+	336,											// numEventFlags
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,			// genericEventFlags
 		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
-	24,
-	7,
-	4000
+	8,												// numCursorTypes
+	4000,											// logoEndAfter
+	32												// wonGameSceneID
 };
 
 const SoundChannelInfo _nancy3to7SoundChannelInfo = {
@@ -679,11 +678,11 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"L said scraper",
 	"L said screen",
 	"L said sellout",
-	"L said thump"
+	"L said thump",
 	"L said Valdez",
 	"Louis available",
 	"met Abby",
-	"met BG"
+	"met BG",
 	"met Charlie",
 	"met Emily",
 	"met Louis",
@@ -850,7 +849,7 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"empty",
 	"empty",
 	"empty",
-	"empty",
+	"empty"
 };
 
 const Common::Array<const char *> nancy3PatchSrcFiles {

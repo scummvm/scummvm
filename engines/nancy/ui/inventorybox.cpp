@@ -250,6 +250,13 @@ void InventoryBox::onScrollbarMove() {
 	_needsRedraw = true;
 }
 
+InventoryBox::Curtains::Curtains() :
+	RenderObject(10),
+	_soundTriggered(false),
+	_areOpen(false),
+	_curFrame(0),
+	_numFrames(g_nancy->getGameType() == kGameTypeVampire ? 10 : 7) {}
+
 void InventoryBox::Curtains::init() {
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
@@ -276,7 +283,7 @@ void InventoryBox::Curtains::init() {
 void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
-		if (_curFrame < g_nancy->getStaticData().numCurtainAnimationFrames && time > _nextFrameTime) {
+		if (_curFrame < _numFrames && time > _nextFrameTime) {
 			auto *inventoryData = GetEngineData(INV);
 			assert(inventoryData);
 
@@ -303,7 +310,7 @@ void InventoryBox::Curtains::updateGraphics() {
 		}
 	}
 
-	if (_curFrame == 0 || _curFrame == g_nancy->getStaticData().numCurtainAnimationFrames) {
+	if (_curFrame == 0 || _curFrame == _numFrames) {
 		_soundTriggered = false;
 	}
 }
@@ -313,7 +320,7 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Common::Rect srcRect;
 	Common::Point destPoint;
 
-	if (frame > (uint)(g_nancy->getStaticData().numCurtainAnimationFrames - 1)) {
+	if (frame > (uint)(_numFrames - 1)) {
 		// TVD keeps the last frame visible
 		if (g_nancy->getGameType() > kGameTypeVampire) {
 			setVisible(false);

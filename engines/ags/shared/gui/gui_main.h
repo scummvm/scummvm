@@ -218,10 +218,22 @@ namespace GUI {
 extern GuiVersion GameGuiVersion;
 extern GuiOptions Options;
 
-// Calculates the text's graphical position, given the alignment
-Rect CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align);
-// Calculates the text's graphical position, given the horizontal alignment
+// Calculates the text's draw position, given the alignment
+// optionally returns the real graphical rect that the text would occupy
+Point CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align, Rect *gr_rect = nullptr);
+// Calculates the text's draw position and horizontal extent,
+// using strictly horizontal alignment
 Line CalcTextPositionHor(const char *text, int font, int x1, int x2, int y, FrameAlignment align);
+// Calculates the graphical rect that the text would occupy
+// if drawn at the given coordinates
+Rect CalcTextGraphicalRect(const char *text, int font, const Point &at);
+// Calculates the graphical rect that the text would occupy
+// if drawn aligned to the given frame
+Rect CalcTextGraphicalRect(const char *text, int font, const Rect &frame, FrameAlignment align);
+// Calculates a vertical graphical extent for a given font,
+// which is a top and bottom offsets in zero-based coordinates.
+// NOTE: this applies font size fixups.
+Line CalcFontGraphicalVExtent(int font);
 // Draw standart "shading" effect over rectangle
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc);
 // Draw text aligned inside rectangle

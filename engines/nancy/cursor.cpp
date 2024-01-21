@@ -46,13 +46,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	chunkStream->seek(0);
 
 	// First, we need to figure out the number of possible CursorTypes in the current game
-	// These grew as the engine got more complicated, so we use nancy.dat to store a related property
-	// TODO: Change nancy.dat so it just directly stores the number of cursor types
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 2;
-	} else {
-		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 3;
-	}
+	_numCursorTypes = g_nancy->getStaticData().numCursorTypes;
 
 	// The structure of CURS is weird:
 
@@ -79,7 +73,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	// however, this cannot happen until the engine is more mature and I'm more aware of what changes they made to the
 	// cursor code in later games.
 
-	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * _numCursorTypes;
+	uint numCursors = _numCursorTypes * (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3) + g_nancy->getStaticData().numItems * _numCursorTypes;
 	_cursors.resize(numCursors);
 
 	for (uint i = 0; i < numCursors; ++i) {
@@ -256,7 +250,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		itemID = 0;
 	} else {
 		// Item held
-		itemsOffset = g_nancy->getStaticData().numNonItemCursors;
+		itemsOffset = _numCursorTypes * (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3);
 		_hasItem = true;
 	}
 

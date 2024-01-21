@@ -166,11 +166,10 @@ bool DumpFile::open(const Path &filename, bool createPath) {
 			StringArray components = dirname.splitComponents();
 
 			Common::Path subpath;
-			for (StringArray::iterator it = components.end() - 1; it != components.begin(); --it) {
-				subpath.joinInPlace(*it, Common::Path::kNoSeparator);
-				if (subpath.empty()) {
-					continue;
-				}
+			for (StringArray::iterator it = components.begin(); it != components.end(); ++it) {
+				subpath.appendInPlace(*it, Common::Path::kNoSeparator);
+				// Add a trailing path separator
+				subpath.appendInPlace("/");
 				node = g_system->getFilesystemFactory()->makeFileNodePath(subpath.toString(Common::Path::kNativeSeparator));
 				if (node->exists()) {
 					delete node;

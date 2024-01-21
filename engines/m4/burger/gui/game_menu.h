@@ -23,6 +23,7 @@
 #ifndef M4_BURGER_GUI_GAME_MENU_H
 #define M4_BURGER_GUI_GAME_MENU_H
 
+#include "graphics/surface.h"
 #include "m4/m4_types.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/gui/gui_univ.h"
@@ -66,7 +67,7 @@ struct menuItemMsg {
 struct menuItemButton {
 	int32 itemFlags;
 	int32 buttonType;
-	char *prompt;
+	const char *prompt;
 	menuItem *assocItem;
 	int32 specialTag;
 };
@@ -130,7 +131,7 @@ void menu_EnableMsg(menuItem *myItem, int32 tag, guiMenu *myMenu);
 bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, CALLBACK callback = nullptr,
 	int32 buttonType = 0, bool ghosted = false, bool transparent = false,
-	char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
+	const char *prompt = nullptr, ItemHandlerFunction i_handler = button_Handler);
 void menu_DisableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
 void menu_EnableButton(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
@@ -146,7 +147,7 @@ void menu_EnableVSlider(menuItem *myItem, int32 tag, guiMenu *myMenu);
 
 // Textfields
 menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int32 h, int32 initFlags,
-	char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
+	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 //GAME MENU FUNCTIONS
 void CreateGameMenu(RGB8 *myPalette);
@@ -179,21 +180,21 @@ void CreateGameMenuFromMain(RGB8 *myPalette);
 // 206 dark grey
 // 236 very dark purple
 
-#define TEXT_COLOR_GREY_HILITE		236  
-#define TEXT_COLOR_GREY_FOREGROUND  131  
-#define TEXT_COLOR_GREY_SHADOW		186  
+#define TEXT_COLOR_GREY_HILITE		192  
+#define TEXT_COLOR_GREY_FOREGROUND  210
+#define TEXT_COLOR_GREY_SHADOW		229  
 
-#define TEXT_COLOR_NORM_HILITE		129  
-#define TEXT_COLOR_NORM_FOREGROUND	130  
-#define TEXT_COLOR_NORM_SHADOW		236  
+#define TEXT_COLOR_NORM_HILITE		3  
+#define TEXT_COLOR_NORM_FOREGROUND	2  
+#define TEXT_COLOR_NORM_SHADOW		1  
 
-#define TEXT_COLOR_OVER_HILITE		129  
-#define TEXT_COLOR_OVER_FOREGROUND	130  
-#define TEXT_COLOR_OVER_SHADOW		236
+#define TEXT_COLOR_OVER_HILITE		3  
+#define TEXT_COLOR_OVER_FOREGROUND	2  
+#define TEXT_COLOR_OVER_SHADOW		1
 
-#define TEXT_COLOR_PRESS_HILITE		236	 
-#define TEXT_COLOR_PRESS_FOREGROUND 130  		
-#define TEXT_COLOR_PRESS_SHADOW		129  
+#define TEXT_COLOR_PRESS_HILITE		3	 
+#define TEXT_COLOR_PRESS_FOREGROUND 2  		
+#define TEXT_COLOR_PRESS_SHADOW		1  
 
 #define SLIDER_BAR_COLOR	129
 
@@ -495,7 +496,8 @@ struct MenuGlobals {
 	bool deleteSaveDesc = false;
 
 	Sprite **thumbNails = nullptr;
-	Sprite *saveLoadThumbNail = nullptr;
+	Sprite *saveLoadThumbNail = nullptr;	// Original used for menu display
+	Graphics::Surface _thumbnail;			// ScummVM version used for savegame
 	int32 sizeofThumbData = -1;
 	int32 thumbIndex = 0;
 
@@ -505,6 +507,10 @@ struct MenuGlobals {
 
 	int32 remember_digi_volume;			// For cancelling out of the options menu
 	int32 remember_digestability;		// For cancelling out of the options menu
+
+	~MenuGlobals() {
+		_thumbnail.free();
+	}
 };
 
 void CreateGameMenuMain(RGB8 *myPalette);

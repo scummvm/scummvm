@@ -603,7 +603,7 @@ unsigned char MixColorAlpha (unsigned char fg,unsigned char bg,unsigned char alp
 	int out_b = (palette[fg].b>>1) * alpha + (palette[bg].b>>1) * (255 - alpha);
 	//unsigned char ralpha = alpha>>2;
 	//unsigned char invralpha = 64-ralpha;
-	//if (ralpha > alpha) engine->AbortGame ("wtf");
+	//if (ralpha > alpha) engine->AbortGame ("oops");
 	//int out_r = alphamultiply[(palette[fg].r>>1)][ralpha] + alphamultiply[(palette[bg].r>>1)][(invralpha)];
 	//int out_g = alphamultiply[(palette[fg].g)][ralpha] + alphamultiply[(palette[bg].g)][(invralpha)];
 	//int out_b = alphamultiply[(palette[fg].b>>1)][ralpha] + alphamultiply[(palette[bg].b>>1)][(invralpha)];
@@ -629,7 +629,7 @@ unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char 
 	int i=0;
 	int add_r,add_b,add_g = 0;
 	char ralpha = alpha>>2;
-	//if (ralpha > alpha) engine->AbortGame ("wtf");
+	//if (ralpha > alpha) engine->AbortGame ("oops");
 	//add_r = (((palette[fg].r>>1) * (alpha))>>8);
 	//add_b = (((palette[fg].b>>1) * (alpha))>>8);
 	//add_g = (((palette[fg].g)    * (alpha))>>8);

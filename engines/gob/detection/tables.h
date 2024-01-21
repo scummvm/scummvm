@@ -109,7 +109,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_adiboudchou.h"		// Adiboud'chou / Addy Buschu series
 	#include "gob/detection/tables_crousti.h"   // Croustibat
 
-	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
+	{ AD_TABLE_END_MARKER, kFeaturesNone, 0, 0, 0}
 };
 
 // File-based fallback tables

@@ -2648,7 +2648,7 @@ __mode_return _player::Player_running() {
 
 	// set anim set
 	log->cur_anim_type = __RUN;
-	MS->Set_motion(__MOTION_RUN); // wtf is this for?
+	MS->Set_motion(__MOTION_RUN); // what is this for?
 	MS->Set_can_save(TRUE8); // can save
 
 	// arm?

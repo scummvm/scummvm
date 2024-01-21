@@ -86,6 +86,12 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_angleRotations.push_back(5);
 	_angleRotations.push_back(10);
 	_angleRotations.push_back(15);
+
+	_maxEnergy = 27;
+	_maxShield = 10; // TODO
+
+	_initialEnergy = 16;
+	_initialShield = 10; // TODO
 }
 
 void EclipseEngine::initGameState() {
@@ -113,6 +119,9 @@ void EclipseEngine::initGameState() {
 	_lastMinute = 0;
 	_demoIndex = 0;
 	_demoEvents.clear();
+
+	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
+	_gameStateVars[k8bitVariableShield] = _initialShield;
 }
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {

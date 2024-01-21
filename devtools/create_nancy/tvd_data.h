@@ -25,13 +25,16 @@
 #include "types.h"
 
 const GameConstants _tvdConstants = {
-	24,
-	120,
-	{ 0, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 125, 219, 220 },
-	{ 110, 111, 112, 113, 114 },
-	8,
-	10,
-	167000
+	24,								// numItems
+	120,							// numEventFlags
+	{ 110, 111, 112, 113, 114 },	// genericEventFlags
+	4,								// numCursorTypes
+	167000,							// logoEndAfter
+	59								// wonGameSceneID
+};
+
+const Common::Array<uint16> _tvdMapAccessSceneIDs = {
+	0, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 125, 219, 220
 };
 
 const SoundChannelInfo _tvdToNancy2SoundChannelInfo = {

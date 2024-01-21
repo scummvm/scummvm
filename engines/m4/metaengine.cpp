@@ -116,6 +116,13 @@ Common::InSaveFile *M4MetaEngine::getOriginalSave(const Common::String &saveName
 	return nullptr;
 }
 
+void M4MetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	if (!_thumbnail)
+		return AdvancedMetaEngine::getSavegameThumbnail(thumb);
+
+	thumb.copyFrom(*_thumbnail);
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(M4)
 REGISTER_PLUGIN_DYNAMIC(M4, PLUGIN_TYPE_ENGINE, M4MetaEngine);
 #else

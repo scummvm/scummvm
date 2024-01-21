@@ -91,7 +91,33 @@ void SceneScriptNR03::SceneLoaded() {
 	Obstacle_Object("PG3", true);
 	Obstacle_Object("X2BACKBARBOTTOM01", true);
 	Obstacle_Object("X2BACKSTAGETOP", true);
-	Unclickable_Object("PG3");
+	if (_vm->_cutContent) {
+	    if (!Game_Flag_Query(kFlagMcCoyCommentsOnNR03Sloth)) {
+			Clickable_Object("PG3");
+			Clickable_Object("PO3");
+			Clickable_Object("PWG1");
+			Clickable_Object("O1");
+			Clickable_Object("PGM1");
+			Clickable_Object("PW4");
+			Clickable_Object("PUNK1");
+			Clickable_Object("PUNKW2");
+			Clickable_Object("PUNK4");
+			Clickable_Object("AR01MAN2");
+			Clickable_Object("PUNK3+");
+			Clickable_Object("COP4PS03");
+			Clickable_Object("AR01PNKW");
+			Clickable_Object("PUNK WOMAN 3++");
+			Clickable_Object("PUNKMAN2+");
+			Clickable_Object("ASIANTALKRIGHT");
+			Clickable_Object("PUNKW1");
+			Clickable_Object("MAN5");
+			Clickable_Object("MAN7");
+			Clickable_Object("PMAN2");
+			Clickable_Object("NM2");
+		}
+	} else {
+		Unclickable_Object("PG3");
+	}
 	Unobstacle_Object("X2BACKBARBOTTOM02", true);
 	Unobstacle_Object("NM2", true);
 	Unobstacle_Object("MAN5", true);
@@ -104,11 +130,64 @@ bool SceneScriptNR03::MouseClick(int x, int y) {
 }
 
 bool SceneScriptNR03::ClickedOn3DObject(const char *objectName, bool a2) {
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (Object_Query_Click("PG3", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "PG3", true);
+		// There is no 3770 quote for kActorVoiceOver
+		// This part was not triggered though, since object PG3 was made unclickable
 		Actor_Voice_Over(3770, kActorVoiceOver);
 		return true;
 	}
+#else
+	if (_vm->_cutContent
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnNR03Sloth)
+	    && (Object_Query_Click("PG3", objectName)
+	        || Object_Query_Click("PO3", objectName)
+	        || Object_Query_Click("PWG1", objectName)
+	        || Object_Query_Click("O1", objectName)
+	        || Object_Query_Click("PGM1", objectName)
+	        || Object_Query_Click("PW4", objectName)
+	        || Object_Query_Click("PUNK1", objectName)
+	        || Object_Query_Click("PUNKW2", objectName)
+	        || Object_Query_Click("PUNK4", objectName)
+	        || Object_Query_Click("AR01MAN2", objectName)
+	        || Object_Query_Click("PUNK3+", objectName)
+	        || Object_Query_Click("COP4PS03", objectName)
+	        || Object_Query_Click("AR01PNKW", objectName)
+	        || Object_Query_Click("PUNK WOMAN 3++", objectName)
+	        || Object_Query_Click("PUNKMAN2+", objectName)
+	        || Object_Query_Click("ASIANTALKRIGHT", objectName)
+	        || Object_Query_Click("PUNKW1", objectName)
+	        || Object_Query_Click("MAN5", objectName)
+	        || Object_Query_Click("MAN7", objectName)
+	        || Object_Query_Click("PMAN2", objectName)
+	        || Object_Query_Click("NM2", objectName) )) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnNR03Sloth);
+			Actor_Voice_Over(3760, kActorVoiceOver);
+			Unclickable_Object("PG3");
+			Unclickable_Object("PO3");
+			Unclickable_Object("PWG1");
+			Unclickable_Object("O1");
+			Unclickable_Object("PGM1");
+			Unclickable_Object("PW4");
+			Unclickable_Object("PUNK1");
+			Unclickable_Object("PUNKW2");
+			Unclickable_Object("PUNK4");
+			Unclickable_Object("AR01MAN2");
+			Unclickable_Object("PUNK3+");
+			Unclickable_Object("COP4PS03");
+			Unclickable_Object("AR01PNKW");
+			Unclickable_Object("PUNK WOMAN 3++");
+			Unclickable_Object("PUNKMAN2+");
+			Unclickable_Object("ASIANTALKRIGHT");
+			Unclickable_Object("PUNKW1");
+			Unclickable_Object("MAN5");
+			Unclickable_Object("MAN7");
+			Unclickable_Object("PMAN2");
+			Unclickable_Object("NM2");
+		return true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 

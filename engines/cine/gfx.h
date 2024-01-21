@@ -333,7 +333,6 @@ void maskBgOverlay(int targetBgIdx, const byte *spritePtr, const byte *maskPtr, 
 void fadeFromBlack();
 void fadeToBlack();
 
-// wtf?!
 //void gfxDrawMaskedSprite(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
 void gfxWaitVBL();
 void gfxRedrawMouseCursor();

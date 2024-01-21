@@ -29,12 +29,31 @@ namespace Riddle {
 namespace Rooms {
 
 class Room494 : public Room {
+private:
+	static void escapeFn(void *, void *);
+	int getSelectedButton() const;
+	void restoreHotkeys();
+
+private:
+	int _menuButtons = 0;
+	int _selectedBtn2 = -1;
+	int _selectedBtn1 = -1;
+	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
+	machine *_buttons[6];
+	HotkeyCB _hotkeyEscape = nullptr;
+	HotkeyCB _hotkeySave = nullptr;
+	HotkeyCB _hotkeyLoad = nullptr;
+	bool _selectState = false;
+
 public:
 	Room494() : Room() {}
 	~Room494() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
 };
 
 } // namespace Rooms

@@ -89,4 +89,10 @@ void EventManagerWrapper::pushEvent(Common::Event &event) {
 	_delegate->pushEvent(event);
 }
 
+void EventManagerWrapper::clearExitEvents() {
+	_delegate->resetQuit();
+	_delegate->resetReturnToLauncher();
+
+}
+
 } // namespace Freescape

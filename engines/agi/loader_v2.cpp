@@ -83,6 +83,51 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 	return errOK;
 }
 
+/**
+ * Detects if the volume format is really V3.
+ *
+ * The volume format for a V2 game should have 5 byte headers.
+ * The CoCo3 version of Xmas Card 86 has 7 byte headers.
+ * The resource length repeats as if it were a V3 volume with no compression.
+ *
+ * This function detects if a volume has this unusual structure so that
+ * loadVolRes() can ignore the two extra header bytes.
+ */
+bool AgiLoader_v2::detectV3VolumeFormat() {
+	uint8 volume = _vm->_game.dirLogic[0].volume;
+	Common::Path path(Common::String::format("vol.%i", volume));
+	Common::File volumeFile;
+	if (!volumeFile.open(path)) {
+		return false;
+	}
+
+	// read the first few entries and see if they match the 7 byte header
+	uint8 volumeHeader[7];
+	for (int i = 0; i < 5; i++) {
+		if (volumeFile.read(&volumeHeader, 7) != 7) {
+			return false;
+		}
+		// signature
+		if (READ_BE_UINT16(volumeHeader) != 0x1234) {
+			return false;
+		}
+		// volume number
+		if (volumeHeader[2] != volume) {
+			return false;
+		}
+		// duplicate resource lengths
+		uint16 resourceLength1 = READ_LE_UINT16(volumeHeader + 3);
+		uint16 resourceLength2 = READ_LE_UINT16(volumeHeader + 5);
+		if (resourceLength1 != resourceLength2) {
+			return false;
+		}
+		if (!volumeFile.seek(resourceLength1, SEEK_CUR)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 int AgiLoader_v2::init() {
 	int ec = errOK;
 
@@ -94,6 +139,8 @@ int AgiLoader_v2::init() {
 		ec = loadDir(_vm->_game.dirView, VIEWDIR);
 	if (ec == errOK)
 		ec = loadDir(_vm->_game.dirSound, SNDDIR);
+	if (ec == errOK)
+		_hasV3VolumeFormat = detectV3VolumeFormat();
 
 	return ec;
 }
@@ -138,11 +185,11 @@ int AgiLoader_v2::unloadResource(int16 resourceType, int16 resourceNr) {
 /**
  * This function loads a raw resource into memory,
  * if further decoding is required, it must be done by another
- * routine. NULL is returned if unsucsessfull.
+ * routine. NULL is returned if unsuccessful.
  */
 uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = nullptr;
-	char x[6];
+	uint8 volumeHeader[7];
 	Common::File fp;
 	unsigned int sig;
 	Common::Path path(Common::String::format("vol.%i", agid->volume));
@@ -152,9 +199,9 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);
 		fp.seek(agid->offset, SEEK_SET);
-		fp.read(&x, 5);
-		if ((sig = READ_BE_UINT16((uint8 *) x)) == 0x1234) {
-			agid->len = READ_LE_UINT16((uint8 *) x + 3);
+		fp.read(&volumeHeader, _hasV3VolumeFormat ? 7 : 5);
+		if ((sig = READ_BE_UINT16(volumeHeader)) == 0x1234) {
+			agid->len = READ_LE_UINT16(volumeHeader + 3);
 			data = (uint8 *)calloc(1, agid->len + 32);
 			if (data != nullptr) {
 				fp.read(data, agid->len);
@@ -234,11 +281,12 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
 
-		if (data != nullptr) {
-			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
-			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+		// "data" is freed by objects created by createFromRawResource on success
+		_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+		if (_vm->_game.sounds[resourceNr] != nullptr) {
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
 		} else {
+			free(data);
 			ec = errBadResource;
 		}
 		break;

@@ -36,13 +36,12 @@ enum {
 	MENU_5 = 5,
 	MENU_RESTARTING = 6,
 	MENU_RESTART = 7,
-	MENU_8 = 8
+	MENU_8 = 8,
+	MENU_EXIT = 9
 };
 
-static const MenuButtonDef DEMO_BUTTONS[4] = {
-	{ 337, 82, 622, 140, 0, 1, 2, 3, BTNSTATE_ENABLED, 3 },
+static const MenuButtonDef DEMO_BUTTONS[2] = {
 	{ 337, 138, 622, 197, 4, 5, 6, 7, BTNSTATE_ENABLED, 6 },
-	{ 337, 198, 622, 256, 8, 9, 10, 11, BTNSTATE_ENABLED, 5 },
 	{ 337, 260, 622, 317, 12, 13, 14, 15, BTNSTATE_ENABLED, 9 }
 };
 
@@ -62,7 +61,7 @@ void Room901::init() {
 	case JUST_OVERVIEW:
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
-		setButtons(DEMO_BUTTONS, 4);
+		setButtons(DEMO_BUTTONS, 2);
 		series_play("901order", 0, 0, -1, 60, -1, 100, 165, 395, 0, -1);
 		break;
 
@@ -96,13 +95,8 @@ void Room901::daemon() {
 		break;
 
 	case MENU_3:
-		if (g_engine->isDemo()) {
-			warning("This option is not available under ScummVM");
-			_G(game).setRoom(601);
-		} else {
-			player_set_commands_allowed(false);
-			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9005);
-		}
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9005);
 		break;
 
 	case MENU_4:
@@ -112,14 +106,9 @@ void Room901::daemon() {
 
 	case MENU_5:
 	case MENU_8:
-		if (g_engine->isDemo()) {
-			warning("This option is not available under ScummVM");
-			_G(game).setRoom(601);
-		} else {
-			_G(room902Flag) = _G(kernel).trigger == 8;
-			player_set_commands_allowed(false);
-			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9002);
-		}
+		_G(room902Flag) = _G(kernel).trigger == 8;
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 9002);
 		break;
 
 	case MENU_RESTARTING:
@@ -133,6 +122,10 @@ void Room901::daemon() {
 
 	case MENU_RESTART:
 		_G(game).setRoom(601);
+		break;
+
+	case MENU_EXIT:
+		_G(kernel).going = false;
 		break;
 
 	default:

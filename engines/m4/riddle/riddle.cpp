@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "m4/riddle/riddle.h"
+#include "m4/riddle/console.h"
 #include "m4/riddle/vars.h"
 #include "m4/core/errors.h"
 #include "m4/console.h"
@@ -46,7 +47,7 @@ M4::Vars *RiddleEngine::createVars() {
 }
 
 void RiddleEngine::setupConsole() {
-	setDebugger(new M4::Console());
+	setDebugger(new Riddle::Console());
 }
 
 void RiddleEngine::showEngineInfo() {

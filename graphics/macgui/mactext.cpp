@@ -125,7 +125,11 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 		byte r, g, b;
-		_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
+		if (_wm->_pixelformat.bytesPerPixel == 4) {
+			_wm->decomposeColor<uint32>(fgcolor, r, g, b);
+		} else {
+			_wm->decomposeColor<byte>(fgcolor, r, g, b);
+		}
 		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -826,8 +830,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	if (_canvas._textShadow)
 		g->blitFrom(*_canvas._shadowSurface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff + _canvas._textShadow, yoff + _canvas._textShadow));
 
-	uint32 bgcolor = _canvas._tbgcolor < 0xff ? _canvas._tbgcolor : 0;
-	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), bgcolor);
+	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), _canvas._tbgcolor);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
@@ -1847,6 +1850,13 @@ void MacText::deletePreviousCharInternal(int *row, int *col) {
 		*col = _canvas.getLineCharWidth(*row - 1);
 		(*row)--;
 
+#if DEBUG
+		D(9, "MacText::deletePreviousCharInternal: Chunks: ");
+		for (auto &ch : _canvas._text[*row].chunks)
+			ch.debugPrint();
+
+		D(9, "");
+#endif
 		// formatting matches, glue texts as normal
 		if (_canvas._text[*row].lastChunk().equals(_canvas._text[*row + 1].firstChunk())) {
 			_canvas._text[*row].lastChunk().text += _canvas._text[*row + 1].firstChunk().text;
@@ -1856,7 +1866,7 @@ void MacText::deletePreviousCharInternal(int *row, int *col) {
 			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].firstChunk()));
 			_canvas._text[*row].firstChunk().text.clear();
 		}
-		_canvas._text[*row].paragraphEnd = false;
+		_canvas._text[*row].paragraphEnd = _canvas._text[*row + 1].paragraphEnd;
 
 		for (uint i = 1; i < _canvas._text[*row + 1].chunks.size(); i++)
 			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].chunks[i]));
@@ -1908,6 +1918,15 @@ void MacText::addNewLine(int *row, int *col) {
 	MacTextLine *line = &_canvas._text[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
+
+#if DEBUG
+	D(9, "MacText::addNewLine: Chunks: ");
+	for (auto &c : line->chunks)
+		c.debugPrint();
+
+	D(9, "");
+#endif
+
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 

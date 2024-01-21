@@ -236,9 +236,14 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueBombingSuspect:
 		KIA_Play_Photograph(31);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
+		if (_vm->_cutContent
+		    && (Query_Difficulty_Level() != kGameDifficultyEasy || Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring))) {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4130); // TLKA
+		} else {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
+		}
 		break;
 	case kClueDetonatorWire:
 		KIA_Play_Slice_Model(kModelAnimationDetonatorWire);
@@ -516,17 +521,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueGordosLighterReplicant:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
-		if (_vm->_cutContent) {
-			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)) {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450); // TLK02 (Act 3 or 4 only)
-			} else {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350); // TLK0A
-			}
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460); // TLK02 (Act 3 or 4 only)
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470); // TLK02 (Act 3 or 4 only)
-		} else {
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
-		}
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
 	case kClueGordosLighterHuman:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterHuman);

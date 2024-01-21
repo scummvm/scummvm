@@ -225,6 +225,9 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fgpalinfo1 = stxt->_style.r;
 	_fgpalinfo2 = stxt->_style.g;
 	_fgpalinfo3 = stxt->_style.b;
+	// The default color in the Stxt will override the fgcolor,
+	// e.g. empty editable text boxes will use the Stxt color
+	_fgcolor = g_director->_wm->findBestColor(_fgpalinfo1 >> 8, _fgpalinfo2 >> 8, _fgpalinfo3 >> 8);
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
 	_rtext = stxt->_rtext;
@@ -342,7 +345,7 @@ void TextCastMember::importRTE(byte *text) {
 
 void TextCastMember::setRawText(const Common::String &text) {
 	// Do nothing if text did not change
-	if (_rtext.equals(text))
+	if (_ptext.equals(Common::U32String(text)))
 		return;
 
 	_rtext = text;

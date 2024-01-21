@@ -216,7 +216,7 @@ static inline Bits MakeVolume( Bitu wave, Bitu volume ) {
 #if 0
 	//Check if we overflow the 31 shift limit
 	if ( exp >= 32 ) {
-		LOG_MSG( "WTF %d %d", total, exp );
+		LOG_MSG( "Overflow %d %d", total, exp );
 	}
 #endif
 	return (sig >> exp);

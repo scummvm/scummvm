@@ -36,12 +36,12 @@ namespace Burger {
 #define NUM_SHADOW_SERIES  5
 
 // These are the walker types
-#define WALKER_WILBUR          0
-#define WALKER_FLUMIX          1
+#define WALKER_PLAYER          0
+#define WALKER_ALT          1
 
 // These are the shadow types
-#define SHADOW_WILBUR          0
-#define SHADOW_FLUMIX          1
+#define SHADOW_PLAYER          0
+#define SHADOW_ALT          1
 
 static const char *WILBUR_SERIES[8] = {
 	"WILBUR01", "WILBUR02", "WILBUR03", "WILBUR04", "WILBUR05",
@@ -155,8 +155,8 @@ machine *Walker::walk_initialize_walker() {
 		_G(player).walker_visible = true;
 
 		// Wilbur walker
-		_G(player).walker_type = WALKER_WILBUR;
-		_G(player).shadow_type = SHADOW_WILBUR;
+		_G(player).walker_type = WALKER_PLAYER;
+		_G(player).shadow_type = SHADOW_PLAYER;
 
 		_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
 		_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0

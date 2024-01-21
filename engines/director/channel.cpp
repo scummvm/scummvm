@@ -470,6 +470,15 @@ void Channel::updateTextCast() {
 	}
 }
 
+bool Channel::getEditable() {
+	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
+		if (_widget && (Graphics::MacText *)_widget->isEditable()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
 		// if the sprite is editable, then we refresh the selEnd and setStart

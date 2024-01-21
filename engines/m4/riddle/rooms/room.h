@@ -33,6 +33,13 @@ namespace Riddle {
 namespace Rooms {
 
 class Room : public M4::Room {
+protected:
+	static void intrMsgNull(frac16 myMessage, machine *sender) {}
+	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender);
+
+	void restoreAutosave();
+	int _roomVal1 = 0;
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}

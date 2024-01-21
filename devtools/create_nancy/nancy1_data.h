@@ -25,15 +25,18 @@
 #include "types.h"
 
 const GameConstants _nancy1Constants = {
-	11,
-	168,
-	{ 9, 10, 11, 666, 888, 1200, 1250, 1666 },
-	{	44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+	11,													// numItems
+	168,												// numEventFlags
+	{	44, 45, 46, 47, 48, 49, 50, 51, 52, 53,			// genericEventFlags
 		63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
 		75, 76, 77, 78, 79, 80, 81, 82, 83, 84 },
-	12,
-	7,
-	7000
+	4,													// numCursorTypes
+	7000,												// logoEndAfter
+	42													// wonGameSceneID
+};
+
+const Common::Array<uint16> _nancy1MapAccessSceneIDs = {
+	9, 10, 11, 666, 888, 1200, 1250, 1666
 };
 
 const Common::Array<Common::Language> _nancy1LanguagesOrder = {

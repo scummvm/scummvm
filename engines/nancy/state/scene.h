@@ -114,7 +114,8 @@ public:
 	// Used when winning/losing game
 	void setDestroyOnExit() { _destroyOnExit = true; }
 
-	bool isRunningAd() { return _isRunningAd; }
+	bool isRunningAd() const { return _isRunningAd; }
+	bool isRunningSpecialEffect() const;
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);

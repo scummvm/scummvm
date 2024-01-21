@@ -31,7 +31,7 @@
 #include "nancy7_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 1
-#define NANCYDAT_MINOR_VERSION 0
+#define NANCYDAT_MINOR_VERSION 1
 
 #define NANCYDAT_NUM_GAMES 8
 
@@ -85,15 +85,16 @@ void NORETURN_PRE error(const char *s, ...) {
 	exit(1);
 }
 
+const uint32 _mapAccessTag = MKTAG('M', 'A', 'P', 'A');
+
 void writeConstants(File &output, const GameConstants &gameConstants) {
 	output.writeUint32(MKTAG('C', 'O', 'N', 'S'));
 	output.writeUint16(gameConstants.numItems);
 	output.writeUint16(gameConstants.numEventFlags);
-	writeToFile(output, gameConstants.mapAccessSceneIDs);
 	writeToFile(output, gameConstants.genericEventFlags);
-	output.writeUint16(gameConstants.numNonItemCursors);
-	output.writeUint16(gameConstants.numCurtainAnimationFrames);
+	output.writeUint16(gameConstants.numCursorTypes);
 	output.writeUint32(gameConstants.logoEndAfter);
+	output.writeUint16(gameConstants.wonGameSceneID);
 }
 
 void writeSoundChannels(File &output, const SoundChannelInfo &soundChannelInfo) {
@@ -199,6 +200,7 @@ int main(int argc, char *argv[]) {
 	// The Vampire Diaries data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _tvdConstants))
+	WRAPWITHOFFSET(output.writeUint32(_mapAccessTag); writeToFile(output, _tvdMapAccessSceneIDs));
 	WRAPWITHOFFSET(writeSoundChannels(output, _tvdToNancy2SoundChannelInfo))
 	WRAPWITHOFFSET(writeLanguages(output, _tvdLanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _tvdConditionalDialogue, _tvdConditionalDialogueTexts))
@@ -209,6 +211,7 @@ int main(int argc, char *argv[]) {
 	// Nancy Drew: Secrets Can Kill data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy1Constants))
+	WRAPWITHOFFSET(output.writeUint32(_mapAccessTag); writeToFile(output, _nancy1MapAccessSceneIDs));
 	WRAPWITHOFFSET(writeSoundChannels(output, _tvdToNancy2SoundChannelInfo))
 	WRAPWITHOFFSET(writeLanguages(output, _nancy1LanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy1ConditionalDialogue, _nancy1ConditionalDialogueTexts))

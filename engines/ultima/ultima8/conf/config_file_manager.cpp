@@ -43,7 +43,7 @@ ConfigFileManager::~ConfigFileManager() {
 	_configFileManager = nullptr;
 }
 
-bool ConfigFileManager::readConfigFile(string fname, const Std::string &category) {
+bool ConfigFileManager::readConfigFile(const Common::Path &fname, const Std::string &category) {
 	Common::SeekableReadStream *f = FileSystem::get_instance()->ReadFile(fname);
 	if (!f) return false;
 

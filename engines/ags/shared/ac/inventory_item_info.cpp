@@ -28,7 +28,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void InventoryItemInfo::ReadFromFile(Stream *in) {
-	in->Read(name, 25);
+	StrUtil::ReadCStrCount(name, in, MAX_INVENTORY_NAME_LENGTH);
 	pic = in->ReadInt32();
 	cursorPic = in->ReadInt32();
 	hotx = in->ReadInt32();
@@ -38,7 +38,7 @@ void InventoryItemInfo::ReadFromFile(Stream *in) {
 }
 
 void InventoryItemInfo::WriteToFile(Stream *out) {
-	out->Write(name, 25);
+	out->Write(name, MAX_INVENTORY_NAME_LENGTH);
 	out->WriteInt32(pic);
 	out->WriteInt32(cursorPic);
 	out->WriteInt32(hotx);

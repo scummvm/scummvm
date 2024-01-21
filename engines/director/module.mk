@@ -106,10 +106,12 @@ MODULE_OBJS = \
 	lingo/xlibs/movutils.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
+	lingo/xlibs/panel.o \
 	lingo/xlibs/popupmenuxobj.o \
 	lingo/xlibs/porta.o \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
+	lingo/xlibs/processxobj.o \
 	lingo/xlibs/qtcatmovieplayerxobj.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/qtvr.o \
@@ -125,6 +127,7 @@ MODULE_OBJS = \
 	lingo/xlibs/vmisonxfcn.o \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/widgetxobj.o \
+	lingo/xlibs/window.o \
 	lingo/xlibs/winxobj.o \
 	lingo/xlibs/wininfo.o \
 	lingo/xlibs/xcmdglue.o \

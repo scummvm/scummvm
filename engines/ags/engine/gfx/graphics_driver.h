@@ -97,8 +97,10 @@ typedef void (*GFXDRV_CLIENTCALLBACKINITGFX)(void *data);
 
 class IGraphicsDriver {
 public:
-	virtual const char *GetDriverName() = 0;
+	// Gets graphic driver's identifier
 	virtual const char *GetDriverID() = 0;
+	// Gets graphic driver's "friendly name"
+	virtual const char *GetDriverName() = 0;
 	virtual void SetTintMethod(TintMethod method) = 0;
 	// Initialize given display mode
 	virtual bool SetDisplayMode(const DisplayMode &mode) = 0;

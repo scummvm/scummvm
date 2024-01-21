@@ -131,7 +131,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRectArray(s, ornamentSrcs, 6, 6, kGameTypeVampire, kGameTypeNancy1);
 	readRectArray(s, ornamentDests, 6, 6, kGameTypeVampire, kGameTypeNancy1);
 
-	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
+	uint numFrames = g_nancy->getGameType() == kGameTypeVampire ? 10 : 7;
 
 	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
 

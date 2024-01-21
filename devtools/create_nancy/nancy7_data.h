@@ -25,15 +25,14 @@
 #include "types.h"
 
 const GameConstants _nancy7Constants ={
-	41,
-	576,
-	{ }, // No Map state
-	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	41,												// numItems
+	576,											// numEventFlags
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,			// genericEventFlags
 		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
-	60,
-	7,
-	4000
+	20,												// numCursorTypes
+	4000,											// logoEndAfter
+	32												// wonGameSceneID
 };
 
 const Common::Array<Common::Language> _nancy7LanguagesOrder = {
@@ -264,9 +263,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy7ConditionalDialog
 		{ { kEv, 217, false }, { kEv, 386, false } } },
 	{	0, 1655, "NSM55",
 		{ { kEv, 119, true }, { kEv, 373, false } } },
-	{	0, 1655, "NSM56",
+	{	0, 1656, "NSM56",
 		{ { kEv, 324, true }, { kEv, 122, false }, { kEv, 185, false }, { kEv, 378, false }, { kEv, 244, false } } },
-	{	0, 1655, "NSM56",
+	{	0, 1656, "NSM56",
 		{ { kEv, 388, true }, { kEv, 122, false }, { kEv, 185, false }, { kEv, 378, false }, { kEv, 244, false } } },
 	{	0, 1657, "NSM57",
 		{ { kEv, 187, true }, { kEv, 376, false } } },

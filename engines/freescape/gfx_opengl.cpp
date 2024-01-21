@@ -287,6 +287,23 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
 
+	// Quick billboard effect inspired from this code:
+	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	GLfloat m[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	for(int i = 1; i < 4; i++)
+		for(int j = 0; j < 4; j++ ) {
+			if (i == 2)
+				continue;
+			if (i == j)
+				m[i*4 + j] = 1.0;
+			else
+				m[i*4 + j] = 0.0;
+		}
+
+	glLoadMatrixf(m);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
@@ -306,70 +323,15 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-
-	/*uint8 r, g, b;
-
-	GLfloat m[16];
-	GLfloat p[16];
-
-	glGetFloatv(GL_MODELVIEW_MATRIX, m);
-	glGetFloatv(GL_PROJECTION_MATRIX, p);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glMatrixMode(GL_PROJECTION);
-
-	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
-	glMultMatrixf(lookMatrix.getData());
-	//glLoadIdentity();
-	//glOrtho(0, _screenW, _screenH, 0, 0, 1);
-
-
-	r = 0xff;
-	g = 0xff;
-	b = 0x55;
-
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-
-	glColor3ub(r, g, b);
-	int triangleAmount = 20;
-	float twicePi = (float)(2.0 * M_PI);
-	float radius = 10.0;
-
-	Common::Point ball_position(320 / 2, 200 / 2);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
-
-	for(int i = 0; i <= triangleAmount; i++) {
-		copyToVertexArray(i + 1,
-			Math::Vector3d(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)),
-						ball_position.y + (radius * sin(i * twicePi / triangleAmount)), 0)
-		);
-	}
-
-	glVertexPointer(3, GL_FLOAT, 0, _verts);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(m);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(p);*/
+	glPopMatrix();
 }
 
 void OpenGLRenderer::drawEclipse(byte color1, byte color2) {
 	Math::Vector3d sunPosition(-5000, 2000, 500);
-	float radius = 750.0;
+	float radius = 500.0;
 	drawCelestialBody(sunPosition, radius, color1);
 
-	Math::Vector3d moonPosition(-5000, 2000, 1500);
+	Math::Vector3d moonPosition(-5000, 2000, 1000);
 	drawCelestialBody(moonPosition, radius, color2);
 }
 

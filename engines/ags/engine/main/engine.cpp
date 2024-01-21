@@ -779,7 +779,7 @@ void engine_init_game_settings() {
 
 void engine_setup_scsystem_auxiliary() {
 	// ScriptSystem::aci_version is only 10 chars long
-	Common::strlcpy(_GP(scsystem).aci_version, _G(EngineVersion).LongString.GetCStr(), 10);
+	snprintf(_GP(scsystem).aci_version, sizeof(_GP(scsystem).aci_version), "%s", _G(EngineVersion).LongString.GetCStr());
 	if (_GP(usetup).override_script_os >= 0) {
 		_GP(scsystem).os = _GP(usetup).override_script_os;
 	} else {
@@ -1183,6 +1183,8 @@ int initialize_engine(const ConfigTree &startup_opts) {
 }
 
 bool engine_try_set_gfxmode_any(const DisplayModeSetup &setup) {
+	const DisplayMode old_dm = _G(gfxDriver) ? _G(gfxDriver)->GetDisplayMode() : DisplayMode();
+
 	engine_shutdown_gfxmode();
 
 	sys_renderer_set_output(_GP(usetup).software_render_driver);
@@ -1192,7 +1194,7 @@ bool engine_try_set_gfxmode_any(const DisplayModeSetup &setup) {
 		setup, ColorDepthOption(_GP(game).GetColorDepth()));
 
 	if (res)
-		engine_post_gfxmode_setup(init_desktop);
+		engine_post_gfxmode_setup(init_desktop, old_dm);
 	// Make sure that we don't receive window events queued during init
 	sys_flush_events();
 	return res;
@@ -1246,7 +1248,7 @@ bool engine_try_switch_windowed_gfxmode() {
 	// active display mode.
 	if (!_G(gfxDriver)->GetDisplayMode().IsRealFullscreen())
 		init_desktop = get_desktop_size();
-	engine_post_gfxmode_setup(init_desktop);
+	engine_post_gfxmode_setup(init_desktop, old_dm);
 	// Make sure that we don't receive window events queued during init
 	sys_flush_events();
 	return res;

@@ -639,14 +639,17 @@ public:
 class AgiLoader_v2 : public AgiLoader {
 private:
 	AgiEngine *_vm;
+	bool _hasV3VolumeFormat;
 
 	int loadDir(AgiDir *agid, const char *fname);
 	uint8 *loadVolRes(AgiDir *agid);
+	bool detectV3VolumeFormat();
 
 public:
 
 	AgiLoader_v2(AgiEngine *vm) {
 		_vm = vm;
+		_hasV3VolumeFormat = false;
 	}
 
 	int init() override;

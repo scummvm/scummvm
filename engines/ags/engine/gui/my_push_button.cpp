@@ -40,8 +40,7 @@ MyPushButton::MyPushButton(int xx, int yy, int wi, int hi, const char *tex) {   
 	wid = wi;
 	hit = hi + 1;               //hit=hi;
 	state = 0;
-	strncpy(text, tex, 50);
-	text[49] = 0;
+	snprintf(text, sizeof(text), "%s", tex);
 }
 
 void MyPushButton::draw(Bitmap *ds) {

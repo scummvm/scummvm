@@ -1011,6 +1011,14 @@ static String getIdentifierComponent(const String &in) {
 	return part;
 }
 
+uint Path::hash() const {
+	return hashit(_str.c_str());
+}
+
+uint Path::hashIgnoreCase() const {
+	return hashit_lower(_str);
+}
+
 // This hash algorithm is inspired by a Python proposal to hash for tuples
 // https://bugs.python.org/issue942952#msg20602
 // As we don't have the length, it's not added in but
@@ -1019,32 +1027,6 @@ struct hasher {
 	uint result;
 	uint mult;
 };
-
-uint Path::hash() const {
-	hasher v = { 0x345678, 1000003 };
-	reduceComponents<hasher &>(
-		[](hasher &value, const String &in, bool last) -> hasher & {
-			uint hash = hashit(in.c_str());
-
-			value.result = (value.result + hash) * value.mult;
-			value.mult = (value.mult * 69069);
-			return value;
-		}, v);
-	return v.result;
-}
-
-uint Path::hashIgnoreCase() const {
-	hasher v = { 0x345678, 1000003 };
-	reduceComponents<hasher &>(
-		[](hasher &value, const String &in, bool last) -> hasher & {
-			uint hash = hashit_lower(in);
-
-			value.result = (value.result + hash) * value.mult;
-			value.mult = (value.mult * 69069);
-			return value;
-		}, v);
-	return v.result;
-}
 
 uint Path::hashIgnoreCaseAndMac() const {
 	hasher v = { 0x345678, 1000003 };
@@ -1067,10 +1049,7 @@ bool Path::matchPattern(const Path &pattern) const {
 }
 
 bool Path::equalsIgnoreCase(const Path &other) const {
-	return compareComponents(
-		[](const String &x, const String &y) {
-			return x.equalsIgnoreCase(y);
-		}, other);
+	return _str.equalsIgnoreCase(other._str);
 }
 
 bool Path::equalsIgnoreCaseAndMac(const Path &other) const {
