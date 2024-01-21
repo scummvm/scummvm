@@ -35,6 +35,10 @@
 namespace Nancy {
 namespace Action {
 
+RiddlePuzzle::~RiddlePuzzle() {
+	g_nancy->_input->setVKEnabled(false);
+}
+
 void RiddlePuzzle::init() {
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
@@ -144,7 +148,7 @@ void RiddlePuzzle::execute() {
 		case kWaitForSound:
 			if (!g_nancy->_sound->isSoundPlaying(_riddles[_riddleID].sound)) {
 				_solveState = kNotSolved;
-				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+				g_nancy->_input->setVKEnabled(true);
 			}
 
 			break;
@@ -255,10 +259,15 @@ void RiddlePuzzle::execute() {
 		g_nancy->_sound->stopSound(_enterSound);
 
 		sceneChange->execute();
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		g_nancy->_input->setVKEnabled(false);
 		finishExecution();
 	}
 	}
+}
+
+void RiddlePuzzle::onPause(bool paused) {
+	g_nancy->_input->setVKEnabled(!paused);
+	RenderActionRecord::onPause(paused);
 }
 
 void RiddlePuzzle::handleInput(NancyInput &input) {

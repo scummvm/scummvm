@@ -94,6 +94,7 @@ public:
 	void forceCleanInput();
 	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
 	void setKeymapEnabled(Common::String keymapName, bool enabled);
+	void setVKEnabled(bool enabled);
 
 	static void initKeymaps(Common::KeymapArray &keymaps, const char *target);
 

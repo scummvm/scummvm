@@ -34,12 +34,13 @@ class RiddlePuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kWaitForSound, kNotSolved, kFailed, kSolvedOne, kSolvedAll };
 	RiddlePuzzle() : RenderActionRecord(7) {}
-	virtual ~RiddlePuzzle() {}
+	virtual ~RiddlePuzzle();
 
 	void init() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+	void onPause(bool paused) override;
 	void handleInput(NancyInput &input) override;
 
 protected:
