@@ -1063,6 +1063,10 @@ bool RaycastDeferredLoader::loadInner() {
 	return _isDone;
 }
 
+RaycastPuzzle::~RaycastPuzzle() {
+	g_nancy->_input->setKeymapEnabled(Nancy::InputManager::_mazeKeymapID, false);
+}
+
 void RaycastPuzzle::init() {
 	_puzzleData = GetEngineData(RCPR);
 	assert(_puzzleData);
@@ -1107,6 +1111,7 @@ void RaycastPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
 		init();
+		g_nancy->_input->setKeymapEnabled(Nancy::InputManager::_mazeKeymapID, true);
 		break;
 	case kRun:
 		checkSwitch();
@@ -1124,6 +1129,11 @@ void RaycastPuzzle::execute() {
 		finishExecution();
 		break;
 	}
+}
+
+void RaycastPuzzle::onPause(bool pause) {
+	RenderActionRecord::onPause(pause);
+	g_nancy->_input->setKeymapEnabled(Nancy::InputManager::_mazeKeymapID, !pause);
 }
 
 void RaycastPuzzle::handleInput(NancyInput &input) {

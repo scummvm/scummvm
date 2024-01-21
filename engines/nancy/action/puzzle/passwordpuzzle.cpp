@@ -92,7 +92,6 @@ void PasswordPuzzle::execute() {
 		init();
 		registerGraphics();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-		g_nancy->_input->enableSecondaryKeymaps(false);
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
 		_state = kRun;
 		// fall through
@@ -181,7 +180,6 @@ void PasswordPuzzle::execute() {
 		}
 
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		g_nancy->_input->enableSecondaryKeymaps(true);
 		finishExecution();
 	}
 }
