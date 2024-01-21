@@ -671,7 +671,10 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 const char *SmushPlayer::getString(int id) {
 	if (_strings != nullptr) {
 		return _strings->get(id);
-	} else return nullptr;
+	} else {
+		warning("Couldn't load string with id {%d}, are you maybe missing a TRS subtitle file?", id);
+		return nullptr;
+	}
 }
 
 bool SmushPlayer::readString(const char *file) {

@@ -1385,7 +1385,10 @@ const char *Insane::handleTrsTag(int32 trsId) {
 	debugC(DEBUG_INSANE, "Insane::handleTrsTag(%d)", trsId);
 	if (_player != nullptr) {
 		return _player->getString(trsId);
-	} else return nullptr;
+	} else {
+		warning("Couldn't load Trs block corresponding to id {%d}, are you maybe missing a TRS subtitle file?", trsId);
+		return nullptr;
+	}
 }
 
 bool Insane::smush_eitherNotStartNewFrame() {
