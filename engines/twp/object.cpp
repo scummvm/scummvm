@@ -330,6 +330,7 @@ Common::String Object::getIcon() {
 	if (_icons.size() > 0)
 		return _icons[_iconIndex];
 	HSQOBJECT iconTable;
+	sq_resetobject(&iconTable);
 	sqgetf(_table, "icon", iconTable);
 	if (iconTable._type == OT_NULL) {
 		warning("object table is null");

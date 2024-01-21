@@ -370,19 +370,18 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 
 static SQInteger getPrivatePref(HSQUIRRELVM v) {
 	Common::String key;
-	if (SQ_FAILED(sqget(v, 2, key)))
+	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, "failed to get key");
-	debug("TODO: getPrivatePref");
-	// else if (g_engine->getPrefs().hasPrivPref(key))
+	// } else if (g_engine->getPrefs().hasPrivPref(key)) {
 	// 	return sqpush(v, g_engine->getPrefs().privPrefAsJson(key));
-	// else
-	if (sq_gettop(v) == 3) {
+	} else if (sq_gettop(v) == 3) {
 		HSQOBJECT obj;
 		sq_getstackobj(v, 3, &obj);
 		sqpush(v, obj);
 		return 1;
 	}
-	return sq_throwerror(v, "getPrivatePref: invalid argument");
+	sq_pushnull(v);
+	return 1;
 }
 
 static SQInteger incutscene(HSQUIRRELVM v) {

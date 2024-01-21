@@ -64,7 +64,7 @@ private:
 	virtual void drawCore(Math::Matrix4 trsf) override;
 
 private:
-	PathMode _mode;
+	PathMode _mode = PathMode::None;
 };
 
 } // namespace Twp

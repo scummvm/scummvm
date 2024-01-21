@@ -33,7 +33,7 @@ extern const char* ghostShader;
 extern const char* sepiaShader;
 
 struct ShaderParams {
-    RoomEffect effect;
+    RoomEffect effect = RoomEffect::None;
     float sepiaFlicker = 1.f;
     float randomValue[5];
     float timeLapse;
