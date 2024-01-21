@@ -23,6 +23,7 @@
 #define MTROPOLIS_DATA_H
 
 #include "common/array.h"
+#include "common/data-io.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/hashmap.h"
@@ -38,6 +39,73 @@
 // This is separated from asset construction for a number of reasons, mainly that data parsing has
 // several quirky parses, and there are a lot of fields where, due to platform-specific byte
 // swaps, we know the size of the value but don't know what it means.
+
+namespace MTropolis {
+
+class PlugIn;
+
+namespace Data {
+
+enum DataFormat {
+	kDataFormatUnknown,
+
+	kDataFormatMacintosh,
+	kDataFormatWindows,
+};
+
+} // End of namespace Data
+
+} // End of namespace MTropolis
+
+namespace Common {
+
+template<>
+struct DataFormatTraits<MTropolis::Data::DataFormat> {
+	static inline bool isLittleEndian(MTropolis::Data::DataFormat dataFormat) {
+		return dataFormat != MTropolis::Data::kDataFormatMacintosh;
+	}
+};
+
+template<>
+struct DataIO<MTropolis::Data::DataFormat, Common::XPFloat> {
+	static const uint kMaxSize = 10;
+
+	static inline uint computeSize(MTropolis::Data::DataFormat dataFormat) {
+		if (dataFormat == MTropolis::Data::kDataFormatMacintosh)
+			return 10;
+		else if (dataFormat == MTropolis::Data::kDataFormatWindows)
+			return 8;
+		else
+			return 0;
+	}
+
+	static inline void encode(MTropolis::Data::DataFormat dataFormat, byte *data, const Common::XPFloat &value) {
+		if (dataFormat == MTropolis::Data::kDataFormatMacintosh) {
+			DataIO<MTropolis::Data::DataFormat, uint16>::encode(dataFormat, data + 0, value.signAndExponent);
+			DataIO<MTropolis::Data::DataFormat, uint64>::encode(dataFormat, data + 2, value.mantissa);
+		} else if (MTropolis::Data::kDataFormatWindows) {
+			uint64 doubleBits = 0;
+			bool overflowed = false;
+			value.toDoubleBitsSafe(doubleBits, overflowed);
+			DataIO<MTropolis::Data::DataFormat, uint64>::encode(dataFormat, data, doubleBits);
+		}
+	}
+
+	static inline void decode(MTropolis::Data::DataFormat dataFormat, const byte *data, Common::XPFloat &value) {
+		if (dataFormat == MTropolis::Data::kDataFormatMacintosh) {
+			DataIO<MTropolis::Data::DataFormat, uint16>::decode(dataFormat, data + 0, value.signAndExponent);
+			DataIO<MTropolis::Data::DataFormat, uint64>::decode(dataFormat, data + 2, value.mantissa);
+		} else if (MTropolis::Data::kDataFormatWindows) {
+			uint64 doubleBits = 0;
+			DataIO<MTropolis::Data::DataFormat, uint64>::decode(dataFormat, data, doubleBits);
+			value = value.fromDoubleBits(doubleBits);
+		}
+	}
+};
+
+} // End of namespace Common
+
+
 namespace MTropolis {
 
 class PlugIn;
@@ -68,13 +136,6 @@ enum ProjectFormat {
 	kProjectFormatMacintosh,
 	kProjectFormatWindows,
 	kProjectFormatNeutral,
-};
-
-enum DataFormat {
-	kDataFormatUnknown,
-
-	kDataFormatMacintosh,
-	kDataFormatWindows,
 };
 
 enum DataReadErrorCode {
@@ -196,217 +257,6 @@ namespace StructuralFlags {
 	};
 } // End of namespace StructuralFlags
 
-template<class T>
-struct SimpleDataIO {
-	static const uint kMaxSize = sizeof(T);
-
-	static uint computeSize(DataFormat dataFormat);
-
-	static void encode(DataFormat dataFormat, byte *data, const T &value);
-	static void decode(DataFormat dataFormat, const byte *data, T &value);
-};
-
-template<class T>
-uint SimpleDataIO<T>::computeSize(DataFormat dataFormat) {
-	return sizeof(T);
-}
-
-template<class T>
-void SimpleDataIO<T>::encode(DataFormat dataFormat, byte *data, const T &value) {
-	const byte *valueBytes = reinterpret_cast<const byte *>(&value);
-	byte *dataBytes = reinterpret_cast<byte *>(data);
-
-	const bool isTargetLE = (dataFormat != kDataFormatMacintosh);
-#ifdef SCUMM_LITTLE_ENDIAN
-	const bool isSystemLE = true;
-#endif
-#ifdef SCUMM_BIG_ENDIAN
-	const bool isSystemLE = false;
-#endif
-
-	const bool requiresSwap = (isSystemLE != isTargetLE);
-
-	byte temp[sizeof(T)];
-
-	if (requiresSwap) {
-		for (uint i = 0; i < sizeof(T); i++)
-			temp[i] = valueBytes[sizeof(T) - 1 - i];
-	} else {
-		for (uint i = 0; i < sizeof(T); i++)
-			temp[i] = valueBytes[i];
-	}
-
-	for (uint i = 0; i < sizeof(T); i++)
-		dataBytes[i] = temp[i];
-}
-
-template<class T>
-void SimpleDataIO<T>::decode(DataFormat dataFormat, const byte *data, T &value) {
-	byte *valueBytes = reinterpret_cast<byte *>(&value);
-	const byte *dataBytes = reinterpret_cast<const byte *>(data);
-
-	const bool isTargetLE = (dataFormat != kDataFormatMacintosh);
-#ifdef SCUMM_LITTLE_ENDIAN
-	const bool isSystemLE = true;
-#endif
-#ifdef SCUMM_BIG_ENDIAN
-	const bool isSystemLE = false;
-#endif
-
-	const bool requiresSwap = (isSystemLE != isTargetLE);
-
-	byte temp[sizeof(T)];
-
-	if (requiresSwap) {
-		for (uint i = 0; i < sizeof(T); i++)
-			temp[i] = dataBytes[sizeof(T) - 1 - i];
-	} else {
-		for (uint i = 0; i < sizeof(T); i++)
-			temp[i] = dataBytes[i];
-	}
-
-	for (uint i = 0; i < sizeof(T); i++)
-		valueBytes[i] = temp[i];
-}
-
-template<class T>
-struct DataIO {
-};
-
-template<>
-struct DataIO<uint8> : public SimpleDataIO<uint8> {
-};
-
-template<>
-struct DataIO<uint16> : public SimpleDataIO<uint16> {
-};
-template<>
-struct DataIO<uint32> : public SimpleDataIO<uint32> {
-};
-template<>
-struct DataIO<uint64> : public SimpleDataIO<uint64> {
-};
-
-template<>
-struct DataIO<int8> : public SimpleDataIO<int8> {
-};
-
-template<>
-struct DataIO<int16> : public SimpleDataIO<int16> {
-};
-template<>
-struct DataIO<int32> : public SimpleDataIO<int32> {
-};
-template<>
-struct DataIO<int64> : public SimpleDataIO<int64> {
-};
-
-template<>
-struct DataIO<char> : public SimpleDataIO<char> {
-};
-
-template<>
-struct DataIO<float> : public SimpleDataIO<float> {
-};
-
-template<>
-struct DataIO<double> : public SimpleDataIO<double> {
-};
-
-template<>
-struct DataIO<Common::XPFloat> {
-	static const uint kMaxSize = 10;
-
-	static uint computeSize(DataFormat dataFormat);
-
-	static void encode(DataFormat dataFormat, byte *data, const Common::XPFloat &value);
-	static void decode(DataFormat dataFormat, const byte *data, Common::XPFloat &value);
-};
-
-template<class T, class... TMore>
-struct DataMultipleIO;
-
-template<class T>
-struct DataMultipleIO<T> {
-	static const uint kMaxSize = DataIO<T>::kMaxSize;
-
-	static uint computeSize(DataFormat dataFormat);
-
-	static void encode(DataFormat dataFormat, byte *data, const T &value);
-	static void decode(DataFormat dataFormat, const byte *data, T &value);
-};
-
-template<class T>
-uint DataMultipleIO<T>::computeSize(DataFormat dataFormat) {
-	return DataIO<T>::computeSize(dataFormat);
-}
-
-template<class T>
-void DataMultipleIO<T>::encode(DataFormat dataFormat, byte *data, const T &value) {
-	return DataIO<T>::encode(dataFormat, data, value);
-}
-
-template<class T>
-void DataMultipleIO<T>::decode(DataFormat dataFormat, const byte *data, T &value) {
-	return DataIO<T>::decode(dataFormat, data, value);
-}
-
-template<class T, uint TSize>
-struct DataMultipleIO<T[TSize]> {
-	static const uint kMaxSize = DataIO<T>::kMaxSize * TSize;
-
-	static uint computeSize(DataFormat dataFormat);
-
-	static void encode(DataFormat dataFormat, byte *data, const T (&value)[TSize]);
-	static void decode(DataFormat dataFormat, const byte *data, T(&value)[TSize]);
-};
-
-template<class T, uint TSize>
-uint DataMultipleIO<T[TSize]>::computeSize(DataFormat dataFormat) {
-	return DataMultipleIO<T>::computeSize(dataFormat) * TSize;
-}
-
-template<class T, uint TSize>
-void DataMultipleIO<T[TSize]>::encode(DataFormat dataFormat, byte *data, const T(&value)[TSize]) {
-	const uint elementSize = DataIO<T>::computeSize(dataFormat);
-	for (uint i = 0; i < TSize; i++)
-		DataMultipleIO<T>::encode(dataFormat, data + elementSize * i, value[i]);
-}
-
-template<class T, uint TSize>
-void DataMultipleIO<T[TSize]>::decode(DataFormat dataFormat, const byte *data, T(&value)[TSize]) {
-	const uint elementSize = DataIO<T>::computeSize(dataFormat);
-	for (uint i = 0; i < TSize; i++)
-		DataMultipleIO<T>::decode(dataFormat, data + elementSize * i, value[i]);
-}
-
-template<class T, class... TMore>
-struct DataMultipleIO {
-	static const uint kMaxSize = DataIO<T>::kMaxSize + DataMultipleIO<TMore...>::kMaxSize;
-
-	static uint computeSize(DataFormat dataFormat);
-
-	static void encode(DataFormat dataFormat, byte *data, const T &firstValue, const TMore &...moreValues);
-	static void decode(DataFormat dataFormat, const byte *data, T &firstValue, TMore &...moreValues);
-};
-
-template<class T, class... TMore>
-uint DataMultipleIO<T, TMore...>::computeSize(DataFormat dataFormat) {
-	return DataMultipleIO<T>::computeSize(dataFormat) + DataMultipleIO<TMore...>::computeSize(dataFormat);
-}
-
-template<class T, class... TMore>
-void DataMultipleIO<T, TMore...>::encode(DataFormat dataFormat, byte *data, const T &firstValue, const TMore &...moreValues) {
-	DataMultipleIO<T>::encode(dataFormat, data, firstValue);
-	DataMultipleIO<TMore...>::encode(dataFormat, data + DataMultipleIO<T>::computeSize(dataFormat), moreValues...);
-}
-
-template<class T, class... TMore>
-void DataMultipleIO<T, TMore...>::decode(DataFormat dataFormat, const byte *data, T &firstValue, TMore &...moreValues) {
-	DataMultipleIO<T>::decode(dataFormat, data, firstValue);
-	DataMultipleIO<TMore...>::decode(dataFormat, data + DataMultipleIO<T>::computeSize(dataFormat), moreValues...);
-}
-
 
 class DataReader {
 public:
@@ -462,13 +312,13 @@ private:
 
 template<class... T>
 bool DataReader::readMultiple(T &...values) {
-	byte buffer[DataMultipleIO<T...>::kMaxSize];
-	const uint actualSize = DataMultipleIO<T...>::computeSize(_dataFormat);
+	byte buffer[Common::DataMultipleIO<DataFormat, T...>::kMaxSize];
+	const uint actualSize = Common::DataMultipleIO<DataFormat, T...>::computeSize(_dataFormat);
 
 	if (!read(buffer, actualSize))
 		return false;
 
-	DataMultipleIO<T...>::decode(_dataFormat, buffer, values...);
+	Common::DataMultipleIO<DataFormat, T...>::decode(_dataFormat, buffer, values...);
 	return true;
 }
 
