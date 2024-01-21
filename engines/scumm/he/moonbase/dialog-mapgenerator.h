@@ -32,6 +32,7 @@ public:
 	MapGeneratorDialog(bool demo);
 
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
 
 private:
 	void refresh();

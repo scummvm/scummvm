@@ -235,7 +235,6 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 	switch(cmd) {
 	case kAlgorCmd:
 		ConfMan.setInt("map_algorithm", data);
-		ConfMan.flushToDisk();
 		break;
 	case kAlgorRandCmd:
 		if (data == 1) {
@@ -251,12 +250,10 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_algorithm", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kSizeCmd:
 		ConfMan.setInt("map_size", data);
-		ConfMan.flushToDisk();
 		break;
 	case kSizeRandCmd:
 		if (data == 1) {
@@ -272,12 +269,10 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_size", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kTileCmd:
 		ConfMan.setInt("map_tileset", data);
-		ConfMan.flushToDisk();
 		break;
 	case kTileRandCmd:
 		if (data == 1) {
@@ -293,12 +288,10 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_tileset", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kEnergyCmd:
 		ConfMan.setInt("map_energy", data);
-		ConfMan.flushToDisk();
 		break;
 	case kEnergyRandCmd:
 		if (data == 1) {
@@ -314,12 +307,10 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_energy", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kTerrainCmd:
 		ConfMan.setInt("map_terrain", data);
-		ConfMan.flushToDisk();
 		break;
 	case kTerrainRandCmd:
 		if (data == 1) {
@@ -335,12 +326,10 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_terrain", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kWaterCmd:
 		ConfMan.setInt("map_water", data);
-		ConfMan.flushToDisk();
 		break;
 	case kWaterRandCmd:
 		if (data == 1) {
@@ -356,7 +345,6 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 			ConfMan.setInt("map_water", previousValue);
 		}
 
-		ConfMan.flushToDisk();
 		refresh();
 		break;
 	case kCancelCmd:
@@ -364,11 +352,25 @@ void MapGeneratorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		close();
 		break;
 	case kGenerateCmd:
+		ConfMan.flushToDisk();
 		setResult(1);
 		close();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void MapGeneratorDialog::handleKeyDown(Common::KeyState state) {
+	switch (state.keycode) {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		ConfMan.flushToDisk();
+		setResult(1);
+		close();
+		break;
+	default:
+		Dialog::handleKeyDown(state);
 	}
 }
 
