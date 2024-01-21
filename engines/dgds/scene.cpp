@@ -78,6 +78,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpNone: 		  return "none";
 	case kSceneOpChangeScene: return "changeScene";
 	case kSceneOpNoop:		  return "noop";
+	case kSceneOpEnableTrigger:   return "enabletrigger";
 	case kSceneOpMeanwhile:   return "meanwhile";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
@@ -104,7 +105,6 @@ Common::String SceneOp::dump(const Common::String &indent) const {
 	str += ">";
 	return str;
 }
-
 
 Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = SceneStruct2::dump(indent + "  ");
@@ -136,8 +136,8 @@ Common::String SceneStruct4::dump(const Common::String &indent) const {
 }
 
 
-Common::String SceneStruct7::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneStruct7<%d %d", indent.c_str(), val, field1_0x2);
+Common::String SceneTrigger::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sSceneTrigger<num %d %s", indent.c_str(), _num, _enabled ? "enabled" : "disabled");
 	str += _dumpStructList(indent, "struct1list", struct1List);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
@@ -344,7 +344,7 @@ bool Scene::readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneSt
 }
 
 
-bool Scene::readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const {
+bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const {
 	list.resize(s->readUint16LE());
 	for (GameItem &dst : list) {
 		readStruct2(s, dst);
@@ -464,10 +464,11 @@ bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialog
 }
 
 
-bool Scene::readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneStruct7> &list) const {
+bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct7 &dst : list) {
-		dst.val = s->readUint16LE();
+	for (SceneTrigger &dst : list) {
+		dst._num = s->readUint16LE();
+		dst._enabled = false;
 		readStruct1List(s, dst.struct1List);
 		readOpList(s, dst.sceneOpList);
 	}
@@ -489,6 +490,36 @@ bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array
 	}
 
 	return !s->err();
+}
+
+
+void SDSScene::enableTrigger(uint16 num) {
+	for (auto &trigger : _triggers) {
+		if (trigger._num == num)
+			trigger._enabled = true;
+	}
+}
+
+
+void Scene::runOps(const Common::Array<SceneOp> &ops) {
+	for (const SceneOp &op : ops) {
+		switch(op._opCode) {
+		case kSceneOpChangeScene:
+			warning("TODO: Change scene no to %d", op._args[0]);
+			break;
+		case kSceneOpNoop:
+			break;
+		case kSceneOpEnableTrigger:
+			enableTrigger(op._args[0]);
+			break;
+		case kSceneOpMeanwhile:
+			error("TODO: Implement meanwhile screen");
+			break;
+		default:
+			warning("TODO: Implement scene op %d", op._opCode);
+			break;
+		}
+	}
 }
 
 
@@ -546,7 +577,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	}
 	readDialogueList(stream, _dialogues);
 	if (isVersionOver(" 1.203")) {
-		readStruct7List(stream, _struct7List);
+		readTriggerList(stream, _triggers);
 	}
 
 	return !stream->err();
@@ -562,7 +593,7 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
 	str += _dumpStructList(indent, "dialogues", _dialogues);
-	str += _dumpStructList(indent, "struct7List", _struct7List);
+	str += _dumpStructList(indent, "triggers", _triggers);
 
 	str += "\n";
 	str += indent + ">";
@@ -625,7 +656,7 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	Common::Array<struct MouseCursor> struct3List;
 	_iconFile = stream->readString();
 	readMouseHotspotList(stream, struct3List);
-	readStruct2ExtendedList(stream, _gameItems);
+	readGameItemList(stream, _gameItems);
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))
 		readStruct4List(stream, _struct4List1);

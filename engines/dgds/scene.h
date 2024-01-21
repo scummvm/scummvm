@@ -61,7 +61,7 @@ struct SceneStruct2 {
 enum SceneOpCode {
 	kSceneOpNone = 0,
 	kSceneOpChangeScene = 1,  	// args: scene num
-	kSceneOpNoop = 2,		 	// args: none.
+	kSceneOpNoop = 2,		 	// args: none. Maybe should close dialogue?
 	kSceneOp3 = 3,				// args: array of uints
 	kSceneOp4 = 4,				// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
 	kSceneOp5 = 5,				// args: [item num, ??, ??]. give item?
@@ -70,7 +70,7 @@ enum SceneOpCode {
 	kSceneOp8 = 8,				// args: dialogue number. show dialogue?
 	kSceneOp9 = 9,				// args: none.
 	kSceneOp10 = 10,			// args: none. Looks through the struct2 list for something.
-	kSceneOp11 = 11,			// args: ? Takes a struct 7 number and finds it, then sets its field2 to 1.
+	kSceneOpEnableTrigger = 11,	// args: trigger num
 	kSceneOp12 = 12,			// args: none. Change scene to stored number (previous?)
 	kSceneOp13 = 13,			// args: none.
 	kSceneOp14 = 14,			// args: none.
@@ -161,9 +161,9 @@ private:
 	void drawStage4(Graphics::Surface *dst);
 };
 
-struct SceneStruct7 {
-	uint16 val;
-	int16 field1_0x2;
+struct SceneTrigger {
+	uint16 _num;
+	bool _enabled;
 	Common::Array<struct SceneStruct1> struct1List;
 	Common::Array<struct SceneOp> sceneOpList;
 
@@ -200,13 +200,17 @@ protected:
 	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const;
 	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
 	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
-	bool readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
+	bool readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
 	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;
-	bool readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneStruct7> &list) const;
+	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
+
+	void runOps(const Common::Array<SceneOp> &ops);
+
+	virtual void enableTrigger(uint16 num) {};
 
 	uint32 _magic;
 	Common::String _version;
@@ -250,6 +254,8 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 private:
+	void enableTrigger(uint16 num) override;
+
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;
 	Common::Array<struct SceneOp> _leaveSceneOps;
@@ -264,7 +270,7 @@ private:
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
 	Common::Array<class Dialogue> _dialogues;
-	Common::Array<struct SceneStruct7> _struct7List;
+	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
 };
 
