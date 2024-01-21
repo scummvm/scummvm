@@ -45,8 +45,32 @@ public:
 
 	void deleteMap();
 
-	uint32 getSeed() const {
+	uint8 getGenerator() const {
+		return _generator;
+	}
+
+	int getSize() const {
+		return _size;
+	}
+
+	int getSeed() const {
 		return _seed;
+	}
+
+	int getTileset() const {
+		return _tileset;
+	}
+
+	int getEnergy() const {
+		return _energy;
+	}
+
+	int getTerrain() const {
+		return _terrain;
+	}
+
+	int getWater() const {
+		return _water;
 	}
 
 	bool mapGenerated() const {
@@ -61,15 +85,17 @@ private:
 	// they're playing on the same generated map.
 	Common::RandomSource _rnd;
 
+	uint8 _generator;
+	int _size;
 	int _seed;
+	int _tileset;
+	int _energy;
+	int _terrain;
+	int _water;
 
 	bool _mapGenerated;
 	MapFile *_generatedMap;
 
-	// Data for makeWiz:
-	int _energy;
-	int _terrain;
-	int _water;
 	Common::SeekableReadStream *makeWiz();
 };
 
