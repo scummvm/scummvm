@@ -93,9 +93,11 @@ public:
 	NancyInput getInput() const;
 	void forceCleanInput();
 	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
-	void enableSecondaryKeymaps(bool enabled);
+	void setKeymapEnabled(Common::String keymapName, bool enabled);
 
 	static void initKeymaps(Common::KeymapArray &keymaps, const char *target);
+
+	static const char *_mazeKeymapID;
 
 private:
 	uint16 _inputs;

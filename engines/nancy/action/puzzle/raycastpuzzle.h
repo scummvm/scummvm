@@ -39,13 +39,14 @@ class RaycastPuzzle : public RenderActionRecord {
 	friend class RaycastLevelBuilder;
 public:
 	RaycastPuzzle() : RenderActionRecord(7), _map(7) {}
-	~RaycastPuzzle() override {}
+	~RaycastPuzzle() override;
 
 	void init() override;
 	void registerGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+	void onPause(bool pause) override;
 	void handleInput(NancyInput &input) override;
 	void updateGraphics() override;
 
