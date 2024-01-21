@@ -73,7 +73,7 @@ private:
     int _id;						// identifier for this sound
     Common::String _name;		    // name of the sound to load
     Common::Array<byte> _buffer;	// buffer containing the sound data
-    bool _loaded;				    // indicates whether or not the sound buffer has been loaded
+    bool _loaded = false;		    // indicates whether or not the sound buffer has been loaded
 };
 
 struct AudioSlot {
