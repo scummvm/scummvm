@@ -415,6 +415,7 @@ Object *Room::getObj(const Common::String &key) {
 
 Light *Room::createLight(Color color, Math::Vector2d pos) {
 	Light *result = &_lights._lights[_lights._numLights];
+	result->id = 100000 + _lights._numLights;
 	result->color = color;
 	result->pos = pos;
 	_lights._numLights++;
