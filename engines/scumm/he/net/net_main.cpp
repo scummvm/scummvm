@@ -406,6 +406,11 @@ int Net::doJoinSession(Session session) {
 		_sessionServerHost = nullptr;
 	}
 
+	if (_gameName == "moonbase" && session.mapGenerator > 0) {
+		// Generate the host's map.
+		_vm->_moonbase->_map->generateMapWithInfo(session.mapGenerator, session.mapSeed, session.mapSize, session.mapTileset, session.mapEnergy, session.mapTerrain, session.mapWater);
+	}
+
 	bool success = connectToSession(session.host, session.port);
 	if (!success) {
 		if (!session.local) {
@@ -436,11 +441,6 @@ int Net::doJoinSession(Session session) {
 		}
 		_vm->displayMessage(0, "Unable to join game session with address \"%s:%d\"", session.host.c_str(), session.port);
 		return false;
-	}
-
-	if (_gameName == "moonbase" && session.mapGenerator > 0) {
-		// Generate the host's map.
-		_vm->_moonbase->_map->generateMapWithInfo(session.mapGenerator, session.mapSeed, session.mapSize, session.mapTileset, session.mapEnergy, session.mapTerrain, session.mapWater);
 	}
 
 	return true;
