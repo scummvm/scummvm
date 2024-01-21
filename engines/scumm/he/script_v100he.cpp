@@ -2165,11 +2165,9 @@ void ScummEngine_v100he::o100_startScript() {
 	flags = fetchScriptByte();
 
 	if (_game.id == GID_MOONBASE && _roomResource == 5 &&
-		((!strcmp(_game.variant, "1.1") && script == 2178) || script == 2177)) {
-		// TODO: Only run if we're doing a single-player skirmesh or hosting a
-		// multiplayer game.
-		// (gGameMode == GAME-MODE-MULTIPLAYER-HOST || gGameMode == GAME-MODE-TCPIP-HOST ||
-		//  gGameMode == GAME-MODE-SINGLEPLAYER-SKIRMISH)
+		((!strcmp(_game.variant, "1.1") && script == 2178) || script == 2177) &&
+		readVar(253) == 24) {
+		// Only run the generator if we're doing a single-player skirmesh.
 		_moonbase->_map->generateNewMap();
 	} else if (_game.id == GID_MOONBASE && _roomResource == 5 &&
 		((!strcmp(_game.variant, "1.1") && script == 2252) || script == 2251) &&

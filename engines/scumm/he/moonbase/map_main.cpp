@@ -39,9 +39,13 @@ Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 	_mapGenerated = false;
 	_generatedMap = nullptr;
 
-	_energy = 0;
-	_terrain = 0;
-	_water = 0;
+	_generator = 0;
+	_size = 0;
+	_seed = 0;
+	_tileset = 0;
+	_energy = -1;
+	_terrain = -1;
+	_water = -1;
 }
 
 Map::~Map() {
@@ -133,7 +137,13 @@ bool Map::generateNewMap() {
 bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
 	deleteMap();
 
+	_generator = generator;
 	_seed = seed;
+	_size = mapSize;
+	_tileset = tileset;
+	_energy = energy;
+	_terrain = terrain;
+	_water = water;
 
 	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, getSeed(), mapSize, tileset, energy, terrain, water);
 	switch (generator) {
@@ -154,11 +164,6 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 		return false;
 	}
 
-	// Store these for wiz generation.
-	_energy = energy;
-	_terrain = terrain;
-	_water = water;
-
 	_mapGenerated = true;
 	return true;
 }
@@ -167,8 +172,16 @@ void Map::deleteMap() {
 	if (_mapGenerated) {
 		// Delete old map.
 		delete _generatedMap;
+		_generatedMap = nullptr;
 
 		_mapGenerated = false;
+		_generator = 0;
+		_size = 0;
+		_seed = 0;
+		_tileset = 0;
+		_energy = 0;
+		_terrain = 0;
+		_water = 0;
 		debug(1, "Map: Deleted.");
 	}
 }
