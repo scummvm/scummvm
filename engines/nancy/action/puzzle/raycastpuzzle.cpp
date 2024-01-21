@@ -1948,30 +1948,30 @@ void RaycastPuzzle::drawMaze() {
 		uint16 *ceilingDest = (uint16 *)_drawSurface.getBasePtr(viewBounds.left, ceilingY);
 
 		{
-			float floorSrcX, floorSrcY, ceilingSrcX, ceilingSrcY;
+			float floorViewAngle	= ((float)_fov / (float)(floorY - viewportCenterY))		* (float)_playerAltitude;
+			float ceilingViewAngle	= ((float)_fov / (float)(viewportCenterY - ceilingY))	* (float)((_wallHeight * 128) - _playerAltitude);
 
-			float floorViewAngle = ((float)_fov / (float)(floorY - viewportCenterY)) * (float)_playerAltitude;
-			float ceilingViewAngle = ((float)_fov / (float)(viewportCenterY - ceilingY)) * (float)((_wallHeight * 128) - _playerAltitude);
+			float floorLeftX    =	_cosTable[leftAngle]  *  (floorViewAngle   / _cosTable[_leftmostAngle])  + (float)_playerY;
+			float floorRightX   =	_cosTable[rightAngle] *  (floorViewAngle   / _cosTable[_rightmostAngle]) + (float)_playerY;
+			float floorLeftY    =	_sinTable[leftAngle]  * -(floorViewAngle   / _cosTable[_leftmostAngle])  + (float)_playerX;
+			float floorRightY   =	_sinTable[rightAngle] * -(floorViewAngle   / _cosTable[_rightmostAngle]) + (float)_playerX;
 
-			floorSrcX = _cosTable[leftAngle] * (floorViewAngle / _cosTable[_leftmostAngle]) + (float)_playerY;
-			floorSrcY = _sinTable[leftAngle] * -(floorViewAngle / _cosTable[_leftmostAngle]) + (float)_playerX;
-			ceilingSrcX = _cosTable[leftAngle] * (ceilingViewAngle / _cosTable[_leftmostAngle]) + (float)_playerY;
-			ceilingSrcY = _sinTable[leftAngle] * -(ceilingViewAngle / _cosTable[_leftmostAngle]) + (float)_playerX;
+			float ceilingLeftX  =	_cosTable[leftAngle]  *  (ceilingViewAngle / _cosTable[_leftmostAngle])  + (float)_playerY;
+			float ceilingRightX =	_cosTable[rightAngle] *  (ceilingViewAngle / _cosTable[_rightmostAngle]) + (float)_playerY;
+			float ceilingLeftY  =	_sinTable[leftAngle]  * -(ceilingViewAngle / _cosTable[_leftmostAngle])  + (float)_playerX;
+			float ceilingRightY =	_sinTable[rightAngle] * -(ceilingViewAngle / _cosTable[_rightmostAngle]) + (float)_playerX;
 
-			floorSrcFracX = (uint32)(floorSrcX * 65536.0);
-			floorSrcFracY = (uint32)(floorSrcY * 65536.0);
+			floorSrcFracX	= (uint32)(floorLeftX	* 65536.0);
+			floorSrcFracY	= (uint32)(floorLeftY	* 65536.0);
 
-			ceilingSrcFracX = (uint32)(ceilingSrcX * 65536.0);
-			ceilingSrcFracY = (uint32)(ceilingSrcY * 65536.0);
+			ceilingSrcFracX = (uint32)(ceilingLeftX * 65536.0);
+			ceilingSrcFracY = (uint32)(ceilingLeftY * 65536.0);
 
-			floorViewAngle /= _cosTable[_rightmostAngle];
-			ceilingViewAngle /= _cosTable[_rightmostAngle];
+			floorSrcIncrementX 		= (uint32)(((floorRightX	- floorLeftX)	/ (float)viewBounds.width()) * 65536.0);
+			floorSrcIncrementY 		= (uint32)(((floorRightY	- floorLeftY)	/ (float)viewBounds.width()) * 65536.0);
 
-			floorSrcIncrementX = (uint32)(((_cosTable[rightAngle] * floorViewAngle + (float)_playerY - floorSrcX) / (float)viewBounds.width()) * 65536.0);
-			floorSrcIncrementY = (uint32)(((_sinTable[rightAngle] * -(floorViewAngle) + (float)_playerX - floorSrcY) / (float)viewBounds.width()) * 65536.0);
-
-			ceilingSrcIncrementX = (uint32)(((_cosTable[rightAngle] * ceilingViewAngle + (float)_playerY - ceilingSrcX) / (float)viewBounds.width()) * 65536.0);
-			ceilingSrcIncrementY = (uint32)(((_sinTable[rightAngle] * -(ceilingViewAngle) + (float)_playerX - ceilingSrcY) / (float)viewBounds.width()) * 65536.0);
+			ceilingSrcIncrementX 	= (uint32)(((ceilingRightX	- ceilingLeftX) / (float)viewBounds.width()) * 65536.0);
+			ceilingSrcIncrementY 	= (uint32)(((ceilingRightY	- ceilingLeftY) / (float)viewBounds.width()) * 65536.0);
 		}
 
 		for (int x = viewBounds.left; x < viewBounds.right; ++x) {
