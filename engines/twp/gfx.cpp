@@ -108,7 +108,6 @@ void Texture::capture(Graphics::Surface &surface) {
 }
 
 RenderTexture::RenderTexture(Math::Vector2d size) {
-	// result = RenderTexture(width: size.x, height: size.y)
 	width = size.getX();
 	height = size.getY();
 

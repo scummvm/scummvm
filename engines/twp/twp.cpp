@@ -1596,12 +1596,13 @@ Scaling *TwpEngine::getScaling(const Common::String &name) {
 }
 
 void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
-	RenderTexture rt(size);
+	RenderTexture rt(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	draw(&rt);
 
 	Graphics::Surface s;
 	rt.capture(s);
 	s.flipVertical(Common::Rect(s.w, s.h));
+	s.scale(size.getX(), size.getY());
 
 	Image::writePNG(stream, s);
 }
