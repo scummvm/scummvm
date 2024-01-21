@@ -95,13 +95,12 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	return 1;
 }
 
-template<typename F>
-static SQInteger breakfunc(HSQUIRRELVM v, const F &func) {
+static SQInteger breakfunc(HSQUIRRELVM v, void func(ThreadBase *t, void *data), void *data) {
 	ThreadBase *t = sqthread(v);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	t->suspend();
-	func(t);
+	func(t, data);
 	return -666;
 }
 
@@ -167,6 +166,16 @@ static SQInteger addFolder(HSQUIRRELVM v) {
 	return 0;
 }
 
+static void threadFrames(ThreadBase *tb, void *data) {
+	int numFrames = *(int *)data;
+	((Thread *)tb)->_numFrames = numFrames;
+}
+
+static void threadTime(ThreadBase *tb, void *data) {
+	float time = *(float *)data;
+	((Thread *)tb)->_waitTime = time;
+}
+
 // When called in a function started with startthread, execution is suspended for count frames.
 // It is an error to call breakhere in a function that was not started with startthread.
 // Particularly useful instead of breaktime if you just want to wait 1 frame, since not all machines run at the same speed.
@@ -180,13 +189,13 @@ static SQInteger breakhere(HSQUIRRELVM v) {
 		int numFrames;
 		if (SQ_FAILED(sqget(v, 2, numFrames)))
 			return sq_throwerror(v, "failed to get numFrames");
-		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_numFrames = numFrames; });
+		return breakfunc(v, threadFrames, &numFrames);
 	}
 	if (t == OT_FLOAT) {
 		float time;
 		if (SQ_FAILED(sqget(v, 2, time)))
 			return sq_throwerror(v, "failed to get time");
-		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_waitTime = time; });
+		return breakfunc(v, threadTime, &time);
 	}
 	return sq_throwerror(v, Common::String::format("failed to get numFrames (wrong type = {%d})", t).c_str());
 }
@@ -203,10 +212,11 @@ static SQInteger breaktime(HSQUIRRELVM v) {
 	SQFloat time;
 	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
 		return sq_throwerror(v, "failed to get time");
-	if (time == 0.f)
-		return breakfunc(v, [](ThreadBase *t) { ((Thread *)t)->_numFrames = 1; });
-	else
-		return breakfunc(v, [&](ThreadBase *t) { ((Thread *)t)->_waitTime = time; });
+	if (time == 0.f) {
+		int frame = 1;
+		return breakfunc(v, threadFrames, &frame);
+	}
+	return breakfunc(v, threadTime, &time);
 }
 
 template<typename Predicate>
@@ -220,8 +230,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	if (!curThread)
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
-	debug("curThread.id: %d, %s", curThread->getId(), curThread->getName().c_str());
-	debug("add breakwhilecond name=%s pid=%d", name.c_str(), curThread->getId());
+	debug("add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
 	g_engine->_tasks.push_back(new BreakWhileCond<Predicate>(curThread->getId(), name, pred));
 	return -666;
 }
@@ -229,6 +238,16 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 static bool isAnimating(Object *obj) {
 	return obj->_nodeAnim->_anim && !obj->_nodeAnim->_disabled && obj->_animName != obj->getAnimName(STAND_ANIMNAME);
 }
+
+struct ObjAnimating {
+	ObjAnimating(Object *obj) : _obj(obj) {}
+	bool operator()() {
+		return isAnimating(_obj);
+	}
+
+private:
+	Object *_obj;
+};
 
 // When called in a function started with startthread, execution is suspended until animatingItem has completed its animation.
 // Note, animatingItem can be an actor or an object.
@@ -244,40 +263,59 @@ static SQInteger breakwhileanimating(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	return breakwhilecond(
-		v, [obj]() { return isAnimating(obj); }, "breakwhileanimating(%s)", obj->_key.c_str());
+	return breakwhilecond(v, ObjAnimating(obj), "breakwhileanimating(%s)", obj->_key.c_str());
 }
+
+struct CameraMoving {
+	bool operator()() {
+		return g_engine->_camera.isMoving();
+	}
+};
 
 // Breaks while a camera is moving.
 // Once the thread finishes execution, the method will continue running.
 // It is an error to call breakwhilecamera in a function that was not started with startthread.
 static SQInteger breakwhilecamera(HSQUIRRELVM v) {
-	return breakwhilecond(
-		v, [] { return g_engine->_camera.isMoving(); }, "breakwhilecamera()");
+	return breakwhilecond(v, CameraMoving(), "breakwhilecamera()");
 }
+
+struct CutsceneRunning {
+	bool operator()() {
+		return g_engine->_cutscene != nullptr;
+	}
+};
 
 // Breaks while a cutscene is running.
 // Once the thread finishes execution, the method will continue running.
 // It is an error to call breakwhilecutscene in a function that was not started with startthread.
 static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
-	return breakwhilecond(
-		v, [] { return g_engine->_cutscene != nullptr; }, "breakwhilecutscene()");
+	return breakwhilecond(v, CutsceneRunning(), "breakwhilecutscene()");
 }
+
+struct DialogRunning {
+	bool operator()() {
+		return g_engine->_dialog.getState() != DialogState::None;
+	}
+};
 
 // Breaks while a dialog is running.
 // Once the thread finishes execution, the method will continue running.
 // It is an error to call breakwhiledialog in a function that was not started with startthread.
 static SQInteger breakwhiledialog(HSQUIRRELVM v) {
-	return breakwhilecond(
-		v, [] { return g_engine->_dialog.getState() != DialogState::None; }, "breakwhiledialog()");
+	return breakwhilecond(v, DialogRunning(), "breakwhiledialog()");
 }
+
+struct InputOff {
+	bool operator()() {
+		return !g_engine->_inputState.getInputActive();
+	}
+};
 
 // Breaks while input is not active.
 // Once the thread finishes execution, the method will continue running.
 // It is an error to call breakwhileinputoff in a function that was not started with startthread.
 static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
-	return breakwhilecond(
-		v, [] { return !g_engine->_inputState.getInputActive(); }, "breakwhileinputoff()");
+	return breakwhilecond(v, InputOff(), "breakwhileinputoff()");
 }
 
 // Breaks while the thread referenced by threadId is running.
@@ -332,6 +370,23 @@ static bool isSomeoneTalking() {
 	return false;
 }
 
+struct SomeoneTalking {
+	bool operator()() {
+		return isSomeoneTalking();
+	}
+};
+
+struct ActorTalking {
+	ActorTalking(Object *obj) : _obj(obj) {}
+
+	bool operator()() {
+		return _obj->getTalking() && _obj->getTalking()->isEnabled();
+	}
+
+private:
+	Object *_obj;
+};
+
 // If an actor is specified, breaks until actor has finished talking.
 // If no actor is specified, breaks until ALL actors have finished talking.
 // Once talking finishes, the method will continue running.
@@ -347,19 +402,28 @@ static bool isSomeoneTalking() {
 static SQInteger breakwhiletalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 1) {
-		return breakwhilecond(
-			v, []() { return isSomeoneTalking(); }, "breakwhiletalking(all)");
+		return breakwhilecond(v, SomeoneTalking(), "breakwhiletalking(all)");
 	}
 	if (nArgs == 2) {
 		Object *obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
-		return breakwhilecond(
-			v, [obj]() { return obj->getTalking() && obj->getTalking()->isEnabled(); }, "breakwhiletalking(%s)", obj->_name.c_str());
+		return breakwhilecond(v, ActorTalking(obj), "breakwhiletalking(%s)", obj->_name.c_str());
 	}
 
 	return sq_throwerror(v, "Invalid number of arguments for breakwhiletalking");
 }
+
+struct ActorWalking {
+	ActorWalking(Object *obj) : _obj(obj) {}
+
+	bool operator()() {
+		return _obj->getWalkTo() && _obj->getWalkTo()->isEnabled();
+	}
+
+private:
+	Object *_obj;
+};
 
 // If an actor is specified, breaks until actor has finished walking.
 // Once arrived at destination, the method will continue running.
@@ -375,9 +439,19 @@ static SQInteger breakwhilewalking(HSQUIRRELVM v) {
 	Object *obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	return breakwhilecond(
-		v, [obj]() { return obj->getWalkTo() && obj->getWalkTo()->isEnabled(); }, "breakwhilewalking(%s)", obj->_name.c_str());
+	return breakwhilecond(v, ActorWalking(obj), "breakwhilewalking(%s)", obj->_name.c_str());
 }
+
+struct SoundPlaying {
+	SoundPlaying(int soundId) : _soundId(soundId) {}
+
+	bool operator()() {
+		return g_engine->_audio.playing(_soundId);
+	}
+
+private:
+	int _soundId;
+};
 
 // Breaks until specified sound has finished playing.
 // Once sound finishes, the method will continue running.
@@ -385,8 +459,7 @@ static SQInteger breakwhilesound(HSQUIRRELVM v) {
 	int soundId = 0;
 	if (SQ_FAILED(sqget(v, 2, soundId)))
 		return sq_throwerror(v, "failed to get sound");
-	return breakwhilecond(
-		v, [soundId]() { return g_engine->_audio.playing(soundId); }, "breakwhilesound(%d)", soundId);
+	return breakwhilecond(v, SoundPlaying(soundId), "breakwhilesound(%d)", soundId);
 }
 
 static SQInteger cutscene(HSQUIRRELVM v) {

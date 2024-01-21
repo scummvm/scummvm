@@ -69,7 +69,7 @@ static DialogConditionMode parseMode(char mode) {
 
 static DialogConditionState parseState(Common::String &dialog) {
 	Common::String dialogName;
-    size_t i = 1;
+	size_t i = 1;
 	while (i < dialog.size() && !Common::isDigit(dialog[i])) {
 		dialogName += dialog[i];
 		i++;
@@ -431,12 +431,12 @@ bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &
 		return false;
 
 	MemStream ms;
-	if(!ms.open(data.data(), data.size() - 16))
+	if (!ms.open(data.data(), data.size() - 16))
 		return false;
 
 	GGHashMapDecoder decoder;
 	savegame.jSavegame = decoder.open(&ms);
-	if(!savegame.jSavegame)
+	if (!savegame.jSavegame)
 		return false;
 
 	const Common::JSONObject &jSavegame = savegame.jSavegame->asObject();
@@ -483,6 +483,17 @@ void SaveGameManager::loadDialog(const Common::JSONObject &json) {
 	}
 }
 
+struct GetHObjects {
+	GetHObjects(Common::Array<HSQOBJECT> &objs) : _objs(objs) {}
+
+	void operator()(HSQOBJECT item) {
+		_objs.push_back(item);
+	}
+
+private:
+	Common::Array<HSQOBJECT> &_objs;
+};
+
 void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 	debug("loadCallbacks");
 	g_engine->_callbacks.clear();
@@ -497,7 +508,7 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 			if (jCallBackHash.contains("param")) {
 				HSQOBJECT arg;
 				toSquirrel(jCallBackHash["param"], arg);
-				sqgetitems(arg, [&args](HSQOBJECT &o) { args.push_back(o); });
+				sqgetitems(arg, GetHObjects(args));
 			}
 			g_engine->_callbacks.push_back(new Callback(id, time, name, args));
 		}
@@ -572,7 +583,39 @@ void SaveGameManager::loadObjects(const Common::JSONObject &json) {
 	}
 }
 
-static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false) {
+struct JsonCallback {
+	bool skipObj;
+	bool pseudo;
+	HSQOBJECT* rootTable;
+	Common::JSONObject* jObj;
+};
+
+static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false);
+
+static void fillMissingProperties(const Common::String &k, HSQOBJECT &oTable, void *data) {
+	JsonCallback* params = static_cast<JsonCallback*>(data);
+	if ((k.size() > 0) && (!k.hasPrefix("_"))) {
+		if (!(params->skipObj && isObject(getId(oTable)) && (params->pseudo || sqrawexists(*params->rootTable, k)))) {
+			Common::JSONValue *json = tojson(oTable, true);
+			if (json) {
+				(*params->jObj)[k] = json;
+			}
+		}
+	}
+}
+
+struct GetJArray {
+	GetJArray(Common::JSONArray &arr) : _arr(arr) {}
+
+	void operator()(HSQOBJECT item) {
+		_arr.push_back(tojson(item, true));
+	}
+
+private:
+	Common::JSONArray &_arr;
+};
+
+static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj, bool pseudo) {
 	switch (obj._type) {
 	case OT_INTEGER:
 		return new Common::JSONValue(sq_objtointeger(&obj));
@@ -584,7 +627,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 		return new Common::JSONValue();
 	case OT_ARRAY: {
 		Common::JSONArray arr;
-		sqgetitems(obj, [&arr](HSQOBJECT &item) { arr.push_back(tojson(item, true)); });
+		sqgetitems(obj, GetJArray(arr));
 		return new Common::JSONValue(arr);
 	}
 	case OT_TABLE: {
@@ -613,16 +656,14 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 
 		HSQUIRRELVM v = g_engine->getVm();
 		HSQOBJECT rootTbl = sqrootTbl(v);
-		sqgetpairs(obj, [&](const Common::String &k, HSQOBJECT &oTable) {
-			if ((k.size() > 0) && (!k.hasPrefix("_"))) {
-				if (!(skipObj && isObject(getId(oTable)) && (pseudo || sqrawexists(rootTbl, k)))) {
-					Common::JSONValue *json = tojson(oTable, true);
-					if (json) {
-						jObj[k] = json;
-					}
-				}
-			}
-		});
+
+		JsonCallback params;
+		params.jObj = &jObj;
+		params.pseudo = pseudo;
+		params.rootTable = &rootTbl;
+		params.skipObj = skipObj;
+		sqgetpairs(obj, fillMissingProperties, &params);
+
 		return new Common::JSONValue(jObj);
 	}
 	default:
@@ -858,30 +899,36 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Object *obj) {
 	return new Common::JSONValue(json);
 }
 
+static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
+	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
+	if (isObject(getId(v))) {
+		Object *obj = sqobj(v);
+		if (!obj || (obj->_objType == otNone)) {
+			// info fmt"obj: createJObject({k})"
+			(*jObj)[k] = createJObject(v, obj);
+		}
+	}
+}
+
 static Common::JSONValue *createJObjects() {
 	Common::JSONObject json;
-	sqgetpairs(sqrootTbl(g_engine->getVm()), [&](const Common::String &k, HSQOBJECT &v) {
-		if (isObject(getId(v))) {
-			Object *obj = sqobj(v);
-			if (!obj || (obj->_objType == otNone)) {
-				// info fmt"obj: createJObject({k})"
-				json[k] = createJObject(v, obj);
-			}
-		}
-	});
+	sqgetpairs(sqrootTbl(g_engine->getVm()), fillObjects, &json);
 	//   result.fields.sort(cmpKey)
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue *createJPseudoObjects(Room *room) {
-	Common::JSONObject json;
-	sqgetpairs(room->_table, [&](const Common::String &k, HSQOBJECT &v) {
-		if (isObject(getId(v))) {
+static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void* data) {
+	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
+	if (isObject(getId(v))) {
 			Object *obj = sqobj(v);
 			// info fmt"pseudoObj: createJObject({k})"
-			json[k] = createJObject(v, obj);
+			(*jObj)[k] = createJObject(v, obj);
 		}
-	});
+}
+
+static Common::JSONValue *createJPseudoObjects(Room *room) {
+	Common::JSONObject json;
+	sqgetpairs(room->_table, fillPseudoObjects, &json);
 	//   result.fields.sort(cmpKey)
 	return new Common::JSONValue(json);
 }

@@ -104,6 +104,8 @@ Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
 }
 
 void PathNode::drawCore(Math::Matrix4 trsf) {
+	if(!g_engine->_room) return;
+
 	Color red(1.f, 0.f, 0.f);
 	Color yellow(1.f, 1.f, 0.f);
 	Color blue(0.f, 0.f, 1.f);

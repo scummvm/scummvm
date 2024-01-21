@@ -30,6 +30,10 @@
 #include "twp/ids.h"
 #include "twp/squtil.h"
 
+#ifndef USE_VORBIS
+	#error TWP engine requires USE_VORBIS flag
+#endif
+
 namespace Twp {
 
 void SoundStream::open(SoundDefinition *sndDef) {
@@ -229,18 +233,17 @@ int AudioSystem::play(SoundDefinition *sndDef, Audio::Mixer::SoundType cat, int 
 	const Common::String &name = sndDef->getName();
 	Audio::SeekableAudioStream *audioStream;
 	if (name.hasSuffixIgnoreCase(".ogg")) {
-#ifdef USE_VORBIS
 		slot->stream.open(sndDef);
 		audioStream = Audio::makeVorbisStream(&slot->stream, DisposeAfterUse::NO);
-#else
-		audioStream = nullptr;
-#endif
 	} else if (name.hasSuffixIgnoreCase(".wav")) {
 		slot->stream.open(sndDef);
 		audioStream = Audio::makeWAVStream(&slot->stream, DisposeAfterUse::NO);
 	} else {
-		error("Unexpedted audio format: %s", name.c_str());
+		error("Unexpected audio format: %s", name.c_str());
 	}
+	if(!audioStream)
+		error("Failed to load audio: %s", name.c_str());
+
 	byte vol = (byte)(volume * 255);
 	int id = newSoundId();
 	if (fadeInTimeMs > 0.f) {

@@ -299,15 +299,23 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 	}
 }
 
-Object *inventoryAt(Math::Vector2d pos) {
-	Object *result = nullptr;
-	objsAt(pos, [&](Object *x) {
-		if (x->inInventory()) {
-			result = x;
+struct InInventory {
+	InInventory(Object *&obj) : _obj(obj) { _obj = nullptr; }
+	bool operator()(Object *obj) {
+		if (obj->inInventory()) {
+			_obj = obj;
 			return true;
 		}
 		return false;
-	});
+	}
+
+public:
+	Object *&_obj;
+};
+
+Object *inventoryAt(Math::Vector2d pos) {
+	Object *result;
+	objsAt(pos, InInventory(result));
 	return result;
 }
 
@@ -353,6 +361,21 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	return result;
 }
 
+struct GetNoun2 {
+	GetNoun2(Object *&obj) : _noun2(obj) {}
+
+	bool operator()(Object *obj) {
+		if (obj != g_engine->_actor && obj->getFlags() & GIVEABLE) {
+			_noun2 = obj;
+			return true;
+		}
+		return false;
+	}
+
+public:
+	Object *&_noun2;
+};
+
 void TwpEngine::update(float elapsed) {
 	_time += elapsed;
 	_frameCounter++;
@@ -379,13 +402,7 @@ void TwpEngine::update(float elapsed) {
 					_useFlag = ufNone;
 					_noun2 = nullptr;
 				} else {
-					objsAt(roomPos, [&](Object *x) {
-						if (x != _actor && x->getFlags() & GIVEABLE) {
-							_noun2 = x;
-							return true;
-						}
-						return false;
-					});
+					objsAt(roomPos, GetNoun2(_noun2));
 					if (_noun2)
 						debug("Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
 				}
@@ -561,7 +578,7 @@ void TwpEngine::setShaderEffect(RoomEffect effect) {
 	}
 }
 
-void TwpEngine::draw(RenderTexture* outTexture) {
+void TwpEngine::draw(RenderTexture *outTexture) {
 	if (_room) {
 		Math::Vector2d screenSize = _room->getScreenSize();
 		_gfx.camera(screenSize);
@@ -747,7 +764,7 @@ Common::Error TwpEngine::run() {
 								actors.push_back(slot->actor);
 							}
 						}
-                        size_t index = find(actors, _actor) + 1;
+						size_t index = find(actors, _actor) + 1;
 						if (index >= actors.size())
 							index -= actors.size();
 						setActor(actors[index], true);
@@ -920,6 +937,88 @@ Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAuto
 	return Common::kNoError;
 }
 
+struct DefineObjectParams {
+	HSQUIRRELVM v;
+	bool pseudo;
+	Room *room;
+	HSQOBJECT *roomTable;
+};
+
+static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
+	DefineObjectParams *params = static_cast<DefineObjectParams *>(data);
+	HSQUIRRELVM v = params->v;
+	if (oTable._type == OT_TABLE) {
+		if (params->pseudo) {
+			// if it's a pseudo room we need to clone each object
+			sq_pushobject(v, oTable);
+			sq_clone(v, -1);
+			sq_getstackobj(v, -1, &oTable);
+			sq_addref(v, &oTable);
+			sq_pop(v, 2);
+			sqsetf(params->room->_table, k, oTable);
+		}
+
+		if (sqrawexists(oTable, "icon")) {
+			// Add inventory object to root table
+			debug("Add %s to inventory", k.c_str());
+			sqsetf(sqrootTbl(params->v), k, oTable);
+
+			// set room as delegate
+			sqsetdelegate(oTable, *params->roomTable);
+
+			// declare flags if does not exist
+			if (!sqrawexists(oTable, "flags"))
+				sqsetf(oTable, "flags", 0);
+			Object *obj = new Object(oTable, k);
+			setId(obj->_table, newObjId());
+			obj->_node = new Node(k);
+			obj->_nodeAnim = new Anim(obj);
+			obj->_node->addChild(obj->_nodeAnim);
+			obj->setRoom(params->room);
+			// set room as delegate
+			sqsetdelegate(obj->_table, *params->roomTable);
+		} else {
+			Object *obj = params->room->getObj(k);
+			if (!obj) {
+				debug("object: %s not found in wimpy", k.c_str());
+				if (sqrawexists(oTable, "name")) {
+					obj = new Object();
+					obj->_key = k;
+					obj->_layer = params->room->layer(0);
+					params->room->layer(0)->_objects.push_back(obj);
+				} else {
+					return;
+				}
+			}
+
+			sqgetf(params->room->_table, k, obj->_table);
+			setId(obj->_table, newObjId());
+			debug("Create object: %s #%d", k.c_str(), obj->getId());
+
+			// add it to the root table if not a pseudo room
+			if (!params->pseudo)
+				sqsetf(sqrootTbl(params->v), k, obj->_table);
+
+			if (sqrawexists(obj->_table, "initState")) {
+				// info fmt"initState {obj.key}"
+				int state;
+				sqgetf(obj->_table, "initState", state);
+				obj->setState(state, true);
+			} else {
+				obj->setState(0, true);
+			}
+			obj->setRoom(params->room);
+
+			// set room as delegate
+			sqsetdelegate(obj->_table, *params->roomTable);
+
+			// declare flags if does not exist
+			if (!sqrawexists(obj->_table, "flags"))
+				sqsetf(obj->_table, "flags", 0);
+		}
+	}
+}
+
 Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
 	HSQUIRRELVM v = _vm.get();
 	debug("Load room: %s", name.c_str());
@@ -995,78 +1094,12 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 		}
 	}
 
-	sqgetpairs(result->_table, [&](const Common::String &k, HSQOBJECT &oTable) {
-		if (oTable._type == OT_TABLE) {
-			if (pseudo) {
-				// if it's a pseudo room we need to clone each object
-				sq_pushobject(v, oTable);
-				sq_clone(v, -1);
-				sq_getstackobj(v, -1, &oTable);
-				sq_addref(v, &oTable);
-				sq_pop(v, 2);
-				sqsetf(result->_table, k, oTable);
-			}
-
-			if (sqrawexists(oTable, "icon")) {
-				// Add inventory object to root table
-				debug("Add %s to inventory", k.c_str());
-				sqsetf(sqrootTbl(v), k, oTable);
-
-				// set room as delegate
-				sqsetdelegate(oTable, table);
-
-				// declare flags if does not exist
-				if (!sqrawexists(oTable, "flags"))
-					sqsetf(oTable, "flags", 0);
-				Object *obj = new Object(oTable, k);
-				setId(obj->_table, newObjId());
-				obj->_node = new Node(k);
-				obj->_nodeAnim = new Anim(obj);
-				obj->_node->addChild(obj->_nodeAnim);
-				obj->setRoom(result);
-				// set room as delegate
-				sqsetdelegate(obj->_table, table);
-			} else {
-				Object *obj = result->getObj(k);
-				if (!obj) {
-					debug("object: %s not found in wimpy", k.c_str());
-					if (sqrawexists(oTable, "name")) {
-						obj = new Object();
-						obj->_key = k;
-						obj->_layer = result->layer(0);
-						result->layer(0)->_objects.push_back(obj);
-					} else {
-						return;
-					}
-				}
-
-				sqgetf(result->_table, k, obj->_table);
-				setId(obj->_table, newObjId());
-				debug("Create object: %s #%d", k.c_str(), obj->getId());
-
-				// add it to the root table if not a pseudo room
-				if (!pseudo)
-					sqsetf(sqrootTbl(v), k, obj->_table);
-
-				if (sqrawexists(obj->_table, "initState")) {
-					// info fmt"initState {obj.key}"
-					int state;
-					sqgetf(obj->_table, "initState", state);
-					obj->setState(state, true);
-				} else {
-					obj->setState(0, true);
-				}
-				obj->setRoom(result);
-
-				// set room as delegate
-				sqsetdelegate(obj->_table, table);
-
-				// declare flags if does not exist
-				if (!sqrawexists(obj->_table, "flags"))
-					sqsetf(obj->_table, "flags", 0);
-			}
-		}
-	});
+	DefineObjectParams params;
+	params.pseudo = pseudo;
+	params.v = v;
+	params.room = result;
+	params.roomTable = &table;
+	sqgetpairs(result->_table, onGetPairs, &params);
 
 	// declare the room in the root table
 	setId(result->_table, newRoomId());
@@ -1291,16 +1324,27 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 	_fadeShader->_elapsed = 0.f;
 }
 
-Object *TwpEngine::objAt(Math::Vector2d pos) {
-	int zOrder = INT_MAX;
-	Object *result = nullptr;
-	objsAt(pos, [&](Object *obj) {
-		if (obj->_node->getZSort() < zOrder) {
-			result = obj;
-			zOrder = obj->_node->getZSort();
+struct GetByZorder {
+	GetByZorder(Object *&result) : _result(result) { result = nullptr; }
+
+	bool operator()(Object *obj) {
+		if (obj->_node->getZSort() < _zOrder) {
+			_result = obj;
+			_zOrder = obj->_node->getZSort();
 		}
 		return false;
-	});
+	}
+
+public:
+	Object *&_result;
+
+private:
+	int _zOrder = INT_MAX;
+};
+
+Object *TwpEngine::objAt(Math::Vector2d pos) {
+	Object *result;
+	objsAt(pos, GetByZorder(result));
 	return result;
 }
 
@@ -1557,7 +1601,7 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 
 	Graphics::Surface s;
 	rt.capture(s);
-	s.flipVertical(Common::Rect(size.getX(), size.getY()));
+	s.flipVertical(Common::Rect(s.w, s.h));
 
 	Image::writePNG(stream, s);
 }
