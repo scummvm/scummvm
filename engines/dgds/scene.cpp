@@ -61,28 +61,40 @@ Common::String SceneStruct1::dump(const Common::String &indent) const {
 
 
 Common::String SceneStruct2::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneStruct2<%s %d %d", indent.c_str(), rect.dump("").c_str(), field1_0x8, field2_0xa);
+	Common::String str = Common::String::format("%sSceneStruct2<%s %d %d",
+			indent.c_str(), rect.dump("").c_str(), field1_0x8, field2_0xa);
 	str += _dumpStructList(indent, "struct1list", struct1List);
-	str += _dumpStructList(indent, "struct5list1", struct5List1);
-	str += _dumpStructList(indent, "struct5list2", struct5List2);
-	str += _dumpStructList(indent, "struct5list3", struct5List3);
+	str += _dumpStructList(indent, "oplist1", opList1);
+	str += _dumpStructList(indent, "oplist2", opList2);
+	str += _dumpStructList(indent, "oplist3", opList3);
 	str += "\n";
 	str += indent + ">";
 	return str;
 }
 
 
-Common::String SceneStruct5::dump(const Common::String &indent) const {
-	Common::String uints;
-	if (uintList.empty()) {
-		uints = "[]";
-	} else {
-		uints = "[";
-		for  (uint i : uintList)
-			uints += Common::String::format("%d ", i);
-		uints.setChar(']', uints.size() - 1);
+static Common::String _sceneOpCodeName(SceneOpCode code) {
+	switch (code) {
+	case kSceneOpNone: 		  return "none";
+	case kSceneOpChangeScene: return "changeScene";
+	case kSceneOpNoop:		  return "noop";
+	case kSceneOpMeanwhile:   return "meanwhile";
+	default:
+		return Common::String::format("sceneOp%d", (int)code);
 	}
-	Common::String str = Common::String::format("%sSceneStruct5<%d uints: %s", indent.c_str(), val, uints.c_str());
+}
+
+Common::String SceneOp::dump(const Common::String &indent) const {
+	Common::String argsStr;
+	if (_args.empty()) {
+		argsStr = "[]";
+	} else {
+		argsStr = "[";
+		for  (uint i : _args)
+			argsStr += Common::String::format("%d ", i);
+		argsStr.setChar(']', argsStr.size() - 1);
+	}
+	Common::String str = Common::String::format("%sSceneOp<op: %s args: %s", indent.c_str(), _sceneOpCodeName(_opCode).c_str(), argsStr.c_str());
 
 	str += _dumpStructList(indent, "struct1list", struct1List);
 	if (!struct1List.empty()) {
@@ -94,12 +106,15 @@ Common::String SceneStruct5::dump(const Common::String &indent) const {
 }
 
 
-Common::String SceneStruct2_Extended::dump(const Common::String &indent) const {
+Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = SceneStruct2::dump(indent + "  ");
 
-	Common::String str = Common::String::format("%sSceneStruct2_Ext<\n%s\n unk10 %d cursor %d unk12 %d unk13 %d unk14 %d", indent.c_str(), super.c_str(), field10_0x24, _mouseCursorNum, field12_0x28, field13_0x2a, field14_0x2c);
-	str += _dumpStructList(indent, "struct5list5", struct5List5);
-	str += _dumpStructList(indent, "struct5list6", struct5List6);
+	Common::String str = Common::String::format(
+			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d unk13 %d unk14 %d",
+			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
+			_iconNum, field12_0x28, field13_0x2a, field14_0x2c);
+	str += _dumpStructList(indent, "oplist5", opList5);
+	str += _dumpStructList(indent, "oplist6", opList6);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -114,7 +129,7 @@ Common::String MouseCursor::dump(const Common::String &indent) const {
 Common::String SceneStruct4::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneStruct4<%d %d", indent.c_str(), val1, val2);
 
-	str += _dumpStructList(indent, "struct5list", struct5List);
+	str += _dumpStructList(indent, "oplist", opList);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -124,7 +139,7 @@ Common::String SceneStruct4::dump(const Common::String &indent) const {
 Common::String SceneStruct7::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneStruct7<%d %d", indent.c_str(), val, field1_0x2);
 	str += _dumpStructList(indent, "struct1list", struct1List);
-	str += _dumpStructList(indent, "struct5list", struct5List);
+	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -259,17 +274,20 @@ void Dialogue::drawStage4(Graphics::Surface *dst) {
 }
 
 Common::String Dialogue::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d", indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize, _flags, _frameType, _time, _nextDialogNum, _field15_0x22, _field18_0x28);
+	Common::String str = Common::String::format(
+			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d",
+			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize,
+			_flags, _frameType, _time, _nextDialogNum, _field15_0x22, _field18_0x28);
 	str += _dumpStructList(indent, "subStrings", _subStrings);
 	str += "\n";
 	str += indent + "  str='" + _str + "'>";
 	return str;
 }
 
-Common::String DialogueSubstring::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSubDialogue<%d %d-%d", indent.c_str(), val, strOff1, strOff2);
-	str += _dumpStructList(indent, "struct5list", struct5List);
-	if (!struct5List.empty()) {
+Common::String DialogueAction::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sDialogueAction<%d span: %d-%d", indent.c_str(), val, strStart, strEnd);
+	str += _dumpStructList(indent, "oplist", sceneOpList);
+	if (!sceneOpList.empty()) {
 		str += "\n";
 		str += indent;
 	}
@@ -310,9 +328,9 @@ bool Scene::readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const 
 	dst.field1_0x8 = s->readUint16LE();
 	dst.field2_0xa = s->readUint16LE();
 	readStruct1List(s, dst.struct1List);
-	readStruct5List(s, dst.struct5List1);
-	readStruct5List(s, dst.struct5List2);
-	readStruct5List(s, dst.struct5List3);
+	readOpList(s, dst.opList1);
+	readOpList(s, dst.opList2);
+	readOpList(s, dst.opList3);
 	return !s->err();
 }
 
@@ -326,21 +344,21 @@ bool Scene::readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneSt
 }
 
 
-bool Scene::readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<SceneStruct2_Extended> &list) const {
+bool Scene::readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct2_Extended &dst : list) {
+	for (GameItem &dst : list) {
 		readStruct2(s, dst);
 	}
-	for (SceneStruct2_Extended &dst : list) {
-		dst._mouseCursorNum = s->readUint16LE();
+	for (GameItem &dst : list) {
+		dst._iconNum = s->readUint16LE();
 		dst.field12_0x28 = s->readUint16LE();
 		dst.field14_0x2c = s->readUint16LE();
 		if (!isVersionUnder(" 1.211"))
 			dst.field13_0x2a = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
 			dst.field10_0x24 = s->readUint16LE();
-			readStruct5List(s, dst.struct5List5);
-			readStruct5List(s, dst.struct5List6);
+			readOpList(s, dst.opList5);
+			readOpList(s, dst.opList6);
 		}
 	}
 	return !s->err();
@@ -369,20 +387,20 @@ bool Scene::readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneSt
 			dst.val1 = s->readUint16LE();
 			dst.val2 = s->readUint16LE();
 		}
-		readStruct5List(s, dst.struct5List);
+		readOpList(s, dst.opList);
 	}
 	return !s->err();
 }
 
 
-bool Scene::readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneStruct5> &list) const {
+bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct5 &dst : list) {
+	for (SceneOp &dst : list) {
 		readStruct1List(s, dst.struct1List);
-		dst.val = s->readUint16LE();
+		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
 		int nvals = s->readUint16LE();
 		for (int i = 0; i < nvals / 2; i++) {
-			dst.uintList.push_back(s->readUint16LE());
+			dst._args.push_back(s->readUint16LE());
 		}
 	}
 
@@ -451,23 +469,23 @@ bool Scene::readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneSt
 	for (SceneStruct7 &dst : list) {
 		dst.val = s->readUint16LE();
 		readStruct1List(s, dst.struct1List);
-		readStruct5List(s, dst.struct5List);
+		readOpList(s, dst.sceneOpList);
 	}
 
 	return !s->err();
 }
 
 
-bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueSubstring> &list) const {
+bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const {
 	list.resize(s->readUint16LE());
 
 	if (!list.empty())
 		list[0].val = 1;
 
-	for (DialogueSubstring &dst : list) {
-		dst.strOff1 = s->readUint16LE();
-		dst.strOff2 = s->readUint16LE();
-		readStruct5List(s, dst.struct5List);
+	for (DialogueAction &dst : list) {
+		dst.strStart = s->readUint16LE();
+		dst.strEnd = s->readUint16LE();
+		readOpList(s, dst.sceneOpList);
 	}
 
 	return !s->err();
@@ -513,12 +531,12 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 		error("Unsupported scene version '%s'", _version.c_str());
 	}
 	_num = stream->readUint16LE();
-	readStruct5List(stream, _struct5List1);
-	readStruct5List(stream, _struct5List2);
+	readOpList(stream, _enterSceneOps);
+	readOpList(stream, _leaveSceneOps);
 	if (isVersionOver(" 1.206")) {
-		readStruct5List(stream, _struct5List3);
+		readOpList(stream, _opList3);
 	}
-	readStruct5List(stream, _struct5List4);
+	readOpList(stream, _opList4);
 	_field6_0x14 = stream->readUint16LE();
 	_adsFile = stream->readString();
 	readStruct2List(stream, _struct2List);
@@ -536,10 +554,10 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 
 Common::String SDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
-	str += _dumpStructList(indent, "struct5List1", _struct5List1);
-	str += _dumpStructList(indent, "struct5List2", _struct5List2);
-	str += _dumpStructList(indent, "struct5List3", _struct5List3);
-	str += _dumpStructList(indent, "struct5List4", _struct5List4);
+	str += _dumpStructList(indent, "enterSceneOps", _enterSceneOps);
+	str += _dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
+	str += _dumpStructList(indent, "opList3", _opList3);
+	str += _dumpStructList(indent, "opList4", _opList4);
 	str += _dumpStructList(indent, "struct2List", _struct2List);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
@@ -595,19 +613,19 @@ bool GDSScene::parseInf(Common::SeekableReadStream *s) {
 }
 
 bool GDSScene::parse(Common::SeekableReadStream *stream) {
-	readStruct5List(stream, _struct5List1);
-	readStruct5List(stream, _struct5List2);
+	readOpList(stream, _startGameOps);
+	readOpList(stream, _opList2);
 	if (isVersionOver(" 1.206"))
-		readStruct5List(stream, _struct5List3);
-	readStruct5List(stream, _struct5List4);
+		readOpList(stream, _opList3);
+	readOpList(stream, _opList4);
 	if (isVersionOver(" 1.208"))
-		readStruct5List(stream, _struct5List5);
+		readOpList(stream, _opList5);
 	Common::Array<struct SceneStruct1> struct1List;
 	readStruct1List(stream, struct1List);
 	Common::Array<struct MouseCursor> struct3List;
 	_iconFile = stream->readString();
 	readMouseHotspotList(stream, struct3List);
-	readStruct2ExtendedList(stream, _struct2ExtList);
+	readStruct2ExtendedList(stream, _gameItems);
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))
 		readStruct4List(stream, _struct4List1);
@@ -617,12 +635,12 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 
 Common::String GDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
-	str += _dumpStructList(indent, "struct2ExtList", _struct2ExtList);
-	str += _dumpStructList(indent, "struct5List1", _struct5List1);
-	str += _dumpStructList(indent, "struct5List2", _struct5List2);
-	str += _dumpStructList(indent, "struct5List3", _struct5List3);
-	str += _dumpStructList(indent, "struct5List4", _struct5List4);
-	str += _dumpStructList(indent, "struct5List5", _struct5List5);
+	str += _dumpStructList(indent, "gameItems", _gameItems);
+	str += _dumpStructList(indent, "opList1", _startGameOps);
+	str += _dumpStructList(indent, "opList2", _opList2);
+	str += _dumpStructList(indent, "opList3", _opList3);
+	str += _dumpStructList(indent, "opList4", _opList4);
+	str += _dumpStructList(indent, "opList5", _opList5);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
 
