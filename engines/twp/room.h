@@ -81,7 +81,7 @@ struct Light {
 	float coneDirection; // cone direction 0...360.f
 	float coneAngle;     // cone angle 0...360.f
 	float coneFalloff;   // cone falloff 0.f...1.0f
-	float cutOffRadius;  // cutoff raduus
+	float cutOffRadius;  // cutoff radius
 	float halfRadius;    // cone half radius 0.0f...1.0f
 	bool on;
 	int id;
