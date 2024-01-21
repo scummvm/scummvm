@@ -403,11 +403,6 @@ static SQInteger integer(HSQUIRRELVM v) {
 	return 1;
 }
 
-static SQInteger is_oftype(HSQUIRRELVM v, bool pred(SQObjectType)) {
-	sqpush(v, pred(sq_gettype(v, 2)));
-	return 1;
-}
-
 static SQInteger in_array(HSQUIRRELVM v) {
 	HSQOBJECT obj;
 	sq_resetobject(&obj);
@@ -445,19 +440,20 @@ static SQInteger in_array(HSQUIRRELVM v) {
 }
 
 static SQInteger is_array(HSQUIRRELVM v) {
-	return is_oftype(v, [](SQObjectType type) { return type == OT_ARRAY; });
+	return sqpush(v, sq_gettype(v, 2) == OT_ARRAY);
 }
 
 static SQInteger is_function(HSQUIRRELVM v) {
-	return is_oftype(v, [](SQObjectType type) { return (type == OT_CLOSURE) || (type == OT_NATIVECLOSURE); });
+	SQObjectType type = sq_gettype(v, 2);
+	return sqpush(v, type == OT_CLOSURE || type == OT_NATIVECLOSURE);
 }
 
 static SQInteger is_string(HSQUIRRELVM v) {
-	return is_oftype(v, [](SQObjectType type) { return type == OT_STRING; });
+	return sqpush(v, sq_gettype(v, 2) == OT_STRING);
 }
 
 static SQInteger is_table(HSQUIRRELVM v) {
-	return is_oftype(v, [](SQObjectType type) { return type == OT_TABLE; });
+	return sqpush(v, sq_gettype(v, 2) == OT_TABLE);
 }
 
 // Returns a random number from from to to inclusively.

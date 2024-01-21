@@ -75,7 +75,7 @@ SQInteger sqpush(HSQUIRRELVM v, Common::String value) {
 }
 
 template<>
-SQInteger sqpush(HSQUIRRELVM v, const char* value) {
+SQInteger sqpush(HSQUIRRELVM v, const char *value) {
 	sq_pushstring(v, value, -1);
 	return 1;
 }
@@ -416,6 +416,16 @@ ThreadBase *sqthread(int id) {
 	return nullptr;
 }
 
+struct GetThread {
+	GetThread(HSQUIRRELVM v) : _v(v) {}
+	bool operator()(ThreadBase *t) {
+		return t->getThread() == _v;
+	}
+
+private:
+	HSQUIRRELVM _v;
+};
+
 ThreadBase *sqthread(HSQUIRRELVM v) {
 	if (g_engine->_cutscene) {
 		if (g_engine->_cutscene->getThread() == v) {
@@ -423,9 +433,7 @@ ThreadBase *sqthread(HSQUIRRELVM v) {
 		}
 	}
 
-	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](ThreadBase *t) {
-		return t->getThread() == v;
-	});
+	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), GetThread(v));
 }
 
 static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<SoundDefinition *> &arr) {
@@ -443,6 +451,21 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<SoundDefinition *> &arr)
 	SQRESULT result = sq_getstackobj(v, i, &obj);
 	sqgetarray(v, obj, arr);
 	return result;
+}
+
+void sqgetpairs(HSQOBJECT obj, void func(const Common::String &key, HSQOBJECT &obj, void *data), void *data) {
+	HSQUIRRELVM v = g_engine->getVm();
+	sq_pushobject(v, obj);
+	sq_pushnull(v);
+	while (SQ_SUCCEEDED(sq_next(v, -2))) {
+		Common::String key;
+		HSQOBJECT o;
+		sqget(v, -1, o);
+		sqget(v, -2, key);
+		func(key, o, data);
+		sq_pop(v, 2);
+	}
+	sq_pop(v, 2);
 }
 
 } // namespace Twp

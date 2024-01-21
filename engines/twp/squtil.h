@@ -105,6 +105,8 @@ void sqgetitems(HSQOBJECT o, TFunc func) {
 	sq_pop(v, 2);
 }
 
+void sqgetpairs(HSQOBJECT obj, void func(const Common::String& key, HSQOBJECT& obj, void* data), void* data);
+
 template<typename TFunc>
 void sqgetpairs(HSQOBJECT obj, TFunc func) {
 	HSQUIRRELVM v = g_engine->getVm();

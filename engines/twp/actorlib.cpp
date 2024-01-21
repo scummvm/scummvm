@@ -812,6 +812,17 @@ static SQInteger flashSelectableActor(HSQUIRRELVM v) {
 	return 0;
 }
 
+struct GetStrings {
+	GetStrings(Common::StringArray &texts) : _texts(texts) {}
+
+	void operator()(HSQOBJECT item) {
+		_texts.push_back(sq_objtostring(&item));
+	}
+
+private:
+	Common::StringArray &_texts;
+};
+
 static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 	Object *obj;
 	int index;
@@ -827,7 +838,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 	if (sq_gettype(v, index) == OT_ARRAY) {
 		HSQOBJECT arr;
 		sq_getstackobj(v, index, &arr);
-		sqgetitems(arr, [&](HSQOBJECT item) { texts.push_back(sq_objtostring(&item)); });
+		sqgetitems(arr, GetStrings(texts));
 	} else {
 		int numIds = sq_gettop(v) - index + 1;
 		for (int i = 0; i < numIds; i++) {

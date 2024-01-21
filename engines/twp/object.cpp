@@ -306,6 +306,26 @@ void Object::setIcon(const Common::String &icon) {
 	sqsetf(_table, "icon", icon);
 }
 
+struct GetIcons {
+	GetIcons(int &fps, Common::StringArray &icons) : _fps(fps), _icons(icons) { _fps = 0; }
+	void operator()(HSQOBJECT item) {
+		if (_index == 0) {
+			_fps = sq_objtointeger(&item);
+		} else {
+			Common::String icon = sq_objtostring(&item);
+			_icons.push_back(icon);
+		}
+		_index++;
+	}
+
+public:
+	int &_fps;
+	Common::StringArray &_icons;
+
+private:
+	int _index = 0;
+};
+
 Common::String Object::getIcon() {
 	if (_icons.size() > 0)
 		return _icons[_iconIndex];
@@ -321,18 +341,9 @@ Common::String Object::getIcon() {
 		return result;
 	}
 	if (iconTable._type == OT_ARRAY) {
-		int i = 0;
-		int fps = 0;
+		int fps;
 		Common::StringArray icons;
-		sqgetitems(iconTable, [&](HSQOBJECT &item) {
-			if (i == 0) {
-				fps = sq_objtointeger(&item);
-			} else {
-				Common::String icon = sq_objtostring(&item);
-				icons.push_back(icon);
-			}
-			i++;
-		});
+		sqgetitems(iconTable, GetIcons(fps,icons));
 		setIcon(fps, icons);
 		return getIcon();
 	}
@@ -481,7 +492,7 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 
 	GGHashMapDecoder dec;
 	Common::JSONValue *json = dec.open(&entry);
-	if(!json) {
+	if (!json) {
 		warning("Costume %s(%s) for actor %s not found", name.c_str(), sheet.c_str(), _key.c_str());
 		return;
 	}
@@ -749,7 +760,7 @@ void Object::turn(Object *obj) {
 }
 
 void Object::jiggle(float amount) {
-  _jiggleTo = new Jiggle(_node, amount);
+	_jiggleTo = new Jiggle(_node, amount);
 }
 
 void Object::inventoryScrollUp() {
