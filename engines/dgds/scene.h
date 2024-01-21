@@ -51,26 +51,58 @@ struct SceneStruct2 {
 	uint16 field1_0x8;
 	uint16 field2_0xa;
 	Common::Array<struct SceneStruct1> struct1List;
-	Common::Array<struct SceneStruct5> struct5List1;
-	Common::Array<struct SceneStruct5> struct5List2;
-	Common::Array<struct SceneStruct5> struct5List3;
+	Common::Array<struct SceneOp> opList1;
+	Common::Array<struct SceneOp> opList2;
+	Common::Array<struct SceneOp> opList3;
 
 	virtual Common::String dump(const Common::String &indent) const;
 };
 
-struct SceneStruct5 {
+enum SceneOpCode {
+	kSceneOpNone = 0,
+	kSceneOpChangeScene = 1,  	// args: scene num
+	kSceneOpNoop = 2,		 	// args: none.
+	kSceneOp3 = 3,				// args: array of uints
+	kSceneOp4 = 4,				// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
+	kSceneOp5 = 5,				// args: [item num, ??, ??]. give item?
+	kSceneOp6 = 6,				// args: item num?
+	kSceneOp7 = 7,				// args: none.
+	kSceneOp8 = 8,				// args: dialogue number. show dialogue?
+	kSceneOp9 = 9,				// args: none.
+	kSceneOp10 = 10,			// args: none. Looks through the struct2 list for something.
+	kSceneOp11 = 11,			// args: ? Takes a struct 7 number and finds it, then sets its field2 to 1.
+	kSceneOp12 = 12,			// args: none. Change scene to stored number (previous?)
+	kSceneOp13 = 13,			// args: none.
+	kSceneOp14 = 14,			// args: none.
+	kSceneOp15 = 15,			// args: none.
+	kSceneOp16 = 16,			// args: none.
+	kSceneOp17 = 17,			// args: none.
+	kSceneOp18 = 18,			// args: none.
+	kSceneOp19 = 19,			// args: none.
+	kSceneOp100 = 100,			// args: none.
+	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
+	kSceneOp102 = 102,			// args: none.
+	kSceneOp103 = 103,			// args: none.
+	kSceneOp104 = 104,			// args: none.
+	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
+	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
+	kSceneOp107 = 107,			// args: none.
+	kSceneOp108 = 108,			// args: none.
+};
+
+struct SceneOp {
 	Common::Array<struct SceneStruct1> struct1List;
-	Common::Array<uint16> uintList;
-	uint16 val;
+	Common::Array<uint16> _args;
+	SceneOpCode _opCode;
 
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct SceneStruct2_Extended : public SceneStruct2 {
-	Common::Array<struct SceneStruct5> struct5List5;
-	Common::Array<struct SceneStruct5> struct5List6;
+struct GameItem : public SceneStruct2 {
+	Common::Array<struct SceneOp> opList5;
+	Common::Array<struct SceneOp> opList6;
 	uint16 field10_0x24;
-	uint16 _mouseCursorNum;
+	uint16 _iconNum;
 	uint16 field12_0x28;
 	uint16 field13_0x2a;
 	uint16 field14_0x2c;
@@ -90,7 +122,7 @@ struct MouseCursor {
 struct SceneStruct4 {
 	uint16 val1;
 	uint16 val2;
-	Common::Array<struct SceneStruct5> struct5List;
+	Common::Array<struct SceneOp> opList;
 
 	Common::String dump(const Common::String &indent) const;
 };
@@ -109,7 +141,7 @@ public:
 	uint16 _frameType;
 	uint16 _time;
 	uint16 _nextDialogNum;
-	Common::Array<struct DialogueSubstring> _subStrings;
+	Common::Array<struct DialogueAction> _subStrings;
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
@@ -133,16 +165,17 @@ struct SceneStruct7 {
 	uint16 val;
 	int16 field1_0x2;
 	Common::Array<struct SceneStruct1> struct1List;
-	Common::Array<struct SceneStruct5> struct5List;
+	Common::Array<struct SceneOp> sceneOpList;
 
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct DialogueSubstring {
-	uint16 strOff1;  // The game initializes these to pointers, but let's be a bit nicer.
-	uint16 strOff2;
+struct DialogueAction {
+	// The game initializes str offsets to pointers, but let's be a bit nicer.
+	uint16 strStart; /// The start of the clickable text for this action
+	uint16 strEnd;	 /// End of clickable text for this action
 	byte unk[8]; /* Not initialized in loader */
-	Common::Array<struct SceneStruct5> struct5List;
+	Common::Array<struct SceneOp> sceneOpList;
 	uint val; /* First entry initialized to 1 in loader */
 
 	Common::String dump(const Common::String &indent) const;
@@ -167,13 +200,13 @@ protected:
 	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const;
 	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
 	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
-	bool readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<SceneStruct2_Extended> &list) const;
+	bool readStruct2ExtendedList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
-	bool readStruct5List(Common::SeekableReadStream *s, Common::Array<SceneStruct5> &list) const;
+	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
 	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;
 	bool readStruct7List(Common::SeekableReadStream *s, Common::Array<SceneStruct7> &list) const;
-	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueSubstring> &list) const;
+	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
 
 	uint32 _magic;
 	Common::String _version;
@@ -195,12 +228,12 @@ public:
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
-	Common::Array<struct SceneStruct2_Extended> _struct2ExtList;
-	Common::Array<struct SceneStruct5> _struct5List1;
-	Common::Array<struct SceneStruct5> _struct5List2;
-	Common::Array<struct SceneStruct5> _struct5List3;
-	Common::Array<struct SceneStruct5> _struct5List4;
-	Common::Array<struct SceneStruct5> _struct5List5;
+	Common::Array<struct GameItem> _gameItems;
+	Common::Array<struct SceneOp> _startGameOps;
+	Common::Array<struct SceneOp> _opList2;
+	Common::Array<struct SceneOp> _opList3;
+	Common::Array<struct SceneOp> _opList4;
+	Common::Array<struct SceneOp> _opList5;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 };
@@ -218,10 +251,10 @@ public:
 
 private:
 	int _num;
-	Common::Array<struct SceneStruct5> _struct5List1;
-	Common::Array<struct SceneStruct5> _struct5List2;
-	Common::Array<struct SceneStruct5> _struct5List3;
-	Common::Array<struct SceneStruct5> _struct5List4;
+	Common::Array<struct SceneOp> _enterSceneOps;
+	Common::Array<struct SceneOp> _leaveSceneOps;
+	Common::Array<struct SceneOp> _opList3;
+	Common::Array<struct SceneOp> _opList4;
 	//uint _field5_0x12;
 	uint _field6_0x14;
 	Common::String _adsFile;
