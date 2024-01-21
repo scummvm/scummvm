@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/data-io.h"
 
 namespace Common {
 
@@ -273,6 +274,52 @@ public:
 		memcpy(&n, &value, 8);
 
 		writeUint64BE(n);
+	}
+
+	/**
+	 * Write multiple values to the stream using a specified data format,
+	 * return true on success and false on failure.
+	 */
+	template<class TDataFormat, class... T>
+	bool writeMultiple(const TDataFormat &dataFormat, const T &...values) {
+		const TDataFormat dataFormatCopy = dataFormat; // Copy to help compiler alias analysis, parameter is const ref to ensure TDataFormat is a concrete type
+
+		byte buffer[DataMultipleIO<TDataFormat, T...>::kMaxSize];
+		const uint actualSize = DataMultipleIO<TDataFormat, T...>::computeSize(dataFormatCopy);
+
+		DataMultipleIO<T...>::encode(dataFormatCopy, buffer, values...);
+
+		if (this->write(buffer, actualSize) != actualSize)
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * Write multiple values to the stream using a specified endianness,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool writeMultipleEndian(bool isLittle, const T &...values) {
+		return this->writeMultiple<EndianStorageFormat, T...>(isLittle ? EndianStorageFormat::Little : EndianStorageFormat::Big, values...);
+	}
+
+	/**
+	 * Write multiple values to the stream in little endian format,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool writeMultipleLE(const T &...values) {
+		return this->writeMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Little, values...);
+	}
+
+	/**
+	 * Write multiple values to the stream in big endian format,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool writeMultipleBE(const T &...values) {
+		return this->writeMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Big, values...);
 	}
 
 	/**
@@ -612,6 +659,51 @@ public:
 		uint8 val[8];
 		read(val, 8);
 		return READ_BE_FLOAT64(val);
+	}
+
+	/**
+	 * Read multiple values from the stream using a specified data format,
+	 * return true on success and false on failure.
+	 */
+	template<class TDataFormat, class... T>
+	bool readMultiple(const TDataFormat &dataFormat, T &...values) {
+		const TDataFormat dataFormatCopy = dataFormat;	// Copy to help compiler alias analysis, parameter is const ref to ensure TDataFormat is a concrete type
+
+		byte buffer[DataMultipleIO<TDataFormat, T...>::kMaxSize];
+		const uint actualSize = DataMultipleIO<TDataFormat, T...>::computeSize(dataFormatCopy);
+
+		if (read(buffer, actualSize) != actualSize)
+			return false;
+
+		DataMultipleIO<T...>::decode(dataFormatCopy, buffer, values...);
+		return true;
+	}
+
+	/**
+	 * Read multiple values from the stream using a specified endianness,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool readMultipleEndian(bool isLittle, T &...values) {
+		return this->readMultiple<EndianStorageFormat, T...>(isLittle ? EndianStorageFormat::Little : EndianStorageFormat::Big, values...);
+	}
+
+	/**
+	 * Read multiple values from the stream in little endian format,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool readMultipleLE(T &...values) {
+		return this->readMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Little, values...);
+	}
+
+	/**
+	 * Read multiple values from the stream in big endian format,
+	 * return true on success and false on failure.
+	 */
+	template<class... T>
+	inline bool readMultipleBE(T &...values) {
+		return this->readMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Big, values...);
 	}
 
 	/**
