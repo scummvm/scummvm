@@ -50,11 +50,17 @@ class Sound;
 class REQFileData;
 class Menu;
 struct DgdsADS;
+class ADSInterpreter;
 
 enum DgdsGameId {
 	GID_DRAGON,
 	GID_CHINA,
 	GID_BEAMISH
+};
+
+enum DgdsDetailLevel {
+	kDgdsDetailLow,
+	kDgdsDetailHigh
 };
 
 class DgdsEngine : public Engine {
@@ -76,6 +82,7 @@ private:
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
+	ADSInterpreter *_adsInterp;
 
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
@@ -98,10 +105,14 @@ public:
 	SDSScene *getScene() { return _scene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
+	void changeScene(int sceneNum);
+
+	DgdsDetailLevel getDetailLevel() const { return kDgdsDetailHigh; }
 
 private:
 	void loadCorners(const Common::String &filename);
 	void loadIcons();
+
 };
 
 } // End of namespace Dgds

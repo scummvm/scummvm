@@ -301,8 +301,18 @@ ADSInterpreter::~ADSInterpreter() {
 bool ADSInterpreter::load(const Common::String &filename) {
 	unload();
 
+	// For high detail, replace extension ADS with ADH.  Low detail is ADL.
+	Common::String detailfile = filename.substr(0, filename.size() - 1);
+	if (_vm->getDetailLevel() == kDgdsDetailLow)
+		detailfile += "L";
+	else
+		detailfile += "H";
+
+	if (!_vm->getResourceManager()->hasResource(detailfile))
+		detailfile = filename;
+
 	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
-	dgds.parse(&_scriptData, filename);
+	dgds.parse(&_scriptData, detailfile);
 
 	_state.scene = 0;
 	_state.subIdx = 0;
@@ -317,6 +327,7 @@ void ADSInterpreter::unload() {
 	_scriptData.names.clear();
 	delete _scriptData.scr;
 	_scriptData.scr = nullptr;
+	_state = ADSState();
 }
 
 bool ADSInterpreter::run() {
