@@ -1939,7 +1939,7 @@ void RaycastPuzzle::drawMaze() {
 
 	for (int floorY = viewportCenterY + 5; floorY < viewBounds.bottom; ++floorY) {
 		int ceilingY = viewportCenterY - (floorY - viewportCenterY) + 1;
-		uint32 	floorSrcFracX, floorSrcFracY,
+		int32 	floorSrcFracX, floorSrcFracY,
 				ceilingSrcFracX, ceilingSrcFracY,
 				floorSrcIncrementX, floorSrcIncrementY,
 				ceilingSrcIncrementX, ceilingSrcIncrementY;
@@ -1961,17 +1961,17 @@ void RaycastPuzzle::drawMaze() {
 			float ceilingLeftY  =	_sinTable[leftAngle]  * -(ceilingViewAngle / _cosTable[_leftmostAngle])  + (float)_playerX;
 			float ceilingRightY =	_sinTable[rightAngle] * -(ceilingViewAngle / _cosTable[_rightmostAngle]) + (float)_playerX;
 
-			floorSrcFracX	= (uint32)(floorLeftX	* 65536.0);
-			floorSrcFracY	= (uint32)(floorLeftY	* 65536.0);
+			floorSrcFracX	= (uint32)((double)floorLeftX	* 65536.0);
+			floorSrcFracY	= (uint32)((double)floorLeftY	* 65536.0);
 
-			ceilingSrcFracX = (uint32)(ceilingLeftX * 65536.0);
-			ceilingSrcFracY = (uint32)(ceilingLeftY * 65536.0);
+			ceilingSrcFracX = (uint32)((double)ceilingLeftX * 65536.0);
+			ceilingSrcFracY = (uint32)((double)ceilingLeftY * 65536.0);
 
-			floorSrcIncrementX 		= (uint32)(((floorRightX	- floorLeftX)	/ (float)viewBounds.width()) * 65536.0);
-			floorSrcIncrementY 		= (uint32)(((floorRightY	- floorLeftY)	/ (float)viewBounds.width()) * 65536.0);
+			floorSrcIncrementX 		= (uint32)((double)((floorRightX	- floorLeftX)	/ (float)viewBounds.width()) * 65536.0);
+			floorSrcIncrementY 		= (uint32)((double)((floorRightY	- floorLeftY)	/ (float)viewBounds.width()) * 65536.0);
 
-			ceilingSrcIncrementX 	= (uint32)(((ceilingRightX	- ceilingLeftX) / (float)viewBounds.width()) * 65536.0);
-			ceilingSrcIncrementY 	= (uint32)(((ceilingRightY	- ceilingLeftY) / (float)viewBounds.width()) * 65536.0);
+			ceilingSrcIncrementX 	= (uint32)((double)((ceilingRightX	- ceilingLeftX) / (float)viewBounds.width()) * 65536.0);
+			ceilingSrcIncrementY 	= (uint32)((double)((ceilingRightY	- ceilingLeftY) / (float)viewBounds.width()) * 65536.0);
 		}
 
 		for (int x = viewBounds.left; x < viewBounds.right; ++x) {
