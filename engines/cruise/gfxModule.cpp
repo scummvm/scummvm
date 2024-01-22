@@ -35,7 +35,6 @@ namespace Cruise {
 uint8 page00[320 * 200];
 uint8 page10[320 * 200];
 
-char screen[320 * 200];
 palEntry lpalette[256];
 
 int palDirtyMin = 256;
