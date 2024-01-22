@@ -66,6 +66,7 @@ private:
 		int mapEnergy = 0;
 		int mapTerrain = 0;
 		int mapWater = 0;
+		Common::String mapHash;
 	};
 	/**
 	 * Converts a formatted string into an Address object.
@@ -389,6 +390,14 @@ private:
 	int doJoinSession(Session session);
 
 	/**
+	 * Generates a Moonbase Commander map based on the provided
+	 * Session's configurations.
+	 *
+	 * @param session Session structure containing map data.
+	 */
+	void generateMoonbaseMap(Session session);
+
+	/**
 	 * Sends remote data to peer(s).
 	 *
 	 * @param typeOfSend A type of send this packet goes to, can be an indiviual peer, a group, host, or everybody.
@@ -551,6 +560,7 @@ private:
 	int _mapEnergy;
 	int _mapTerrain;
 	int _mapWater;
+	Common::String _mapHash;
 
 	bool _isShuttingDown;
 
