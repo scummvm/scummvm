@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2024-01-05 03:41+0000\n"
+"PO-Revision-Date: 2024-01-22 22:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1629,57 +1629,49 @@ msgstr "30 minuutin välein"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Todella suuri"
+msgstr "200% - Todella suuri"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Todella suuri"
+msgstr "175% - Hyvin suuri"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Suurempi"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Suuri"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Normaali"
+msgstr "100% - Normaali"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Pieni"
+msgstr "75% - Pieni"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Pieni"
+msgstr "50% - Pienempi"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Pieni"
+msgstr "25% - Pienin"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
@@ -2186,7 +2178,7 @@ msgstr "Käyttöliittymän skaalaus:"
 #: gui/options.cpp:2564
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - Mukautettu"
 
 #: gui/options.cpp:2568
 msgid "GUI renderer:"
