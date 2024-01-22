@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2023-12-29 17:20+0000\n"
+"PO-Revision-Date: 2024-01-22 10:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1610,57 +1610,49 @@ msgstr "Κάθε 30 λεπτά"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Πολύ μεγάλο"
+msgstr "200% - Εξαιρετικά μεγάλο"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Πολύ μεγάλο"
+msgstr "175% - Πολύ μεγάλο"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Μεγαλύτερο"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Μεγάλο"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Μεσαίο"
+msgstr "100% - Μεσαίο"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Μικρό"
+msgstr "75% - Μικρό"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Μικρό"
+msgstr "50% - Μικρότερο"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Μικρό"
+msgstr "25% - Πολύ μικρό"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
@@ -2175,7 +2167,7 @@ msgstr "Κλιμάκωση ΓΔΧ:"
 #: gui/options.cpp:2564
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - Προσαρμοσμένο"
 
 #: gui/options.cpp:2568
 msgid "GUI renderer:"
@@ -10268,12 +10260,12 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1235
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "Αδυναμία ανοίγματος του αρχείου πόρων από Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
-msgstr ""
+msgstr "Αδυναμία εύρεσης διακλάδωσης πόρων στο αρχείο πόρων από Macintosh %s"
 
 #: engines/scumm/scumm.cpp:1603
 msgid ""
@@ -10887,7 +10879,7 @@ msgstr "Ειδική Ενέργεια"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "Ζουμ Εικόνας"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
