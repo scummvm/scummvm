@@ -38,10 +38,21 @@ struct Rect {
 	Common::String dump(const Common::String &indent) const;
 };
 
+enum SceneCondition {
+	kSceneCondNone = 0,
+	kSceneCond1 = 1,
+	kSceneCond2 = 2,
+	kSceneCond4 = 4,
+	kSceneCondAlwaysTrue = 0x10,
+	kSceneCond20 = 0x20,
+	kSceneCondNeedItemField12 = 0x40,
+	kSceneCond80 = 0x80
+};
+
 struct SceneStruct1 {
-	uint16 val1;
-	uint16 flags; /* eg, see usage in FUN_1f1a_2106 */
-	uint16 val3;
+	uint16 _num;
+	SceneCondition _flags; /* eg, see usage in FUN_1f1a_2106 */
+	uint16 _val;
 
 	Common::String dump(const Common::String &indent) const;
 };
@@ -158,7 +169,7 @@ private:
 
 	void drawStage2(Graphics::Surface *dst);
 	void drawStage3(Graphics::Surface *dst);
-	void drawStage4(Graphics::Surface *dst);
+	void drawStage4(Graphics::Surface *dst, const Common::Rect &textArea, uint16 fontcol, const Common::String &txt);
 };
 
 struct SceneTrigger {
@@ -209,6 +220,7 @@ protected:
 	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
 
 	void runOps(const Common::Array<SceneOp> &ops);
+	bool checkConditions(const Common::Array<struct SceneStruct1> &cond);
 
 	virtual void enableTrigger(uint16 num) {};
 
@@ -229,6 +241,9 @@ public:
 	const Common::String &getIconFile() const { return _iconFile; }
 
 	Common::String dump(const Common::String &indent) const;
+
+	void runStartGameOps() { runOps(_startGameOps); }
+
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
@@ -248,9 +263,15 @@ public:
 
 	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
+	void unload();
 
 	Common::Array<class Dialogue> &getLines() { return _dialogues; }
+	const Common::String &getAdsFile() const { return _adsFile; }
+	void runEnterSceneOps() { runOps(_enterSceneOps); }
+	void runLeaveSceneOps() { runOps(_leaveSceneOps); }
+	void checkTriggers();
 
+	int getNum() const { return _num; }
 	Common::String dump(const Common::String &indent) const;
 
 private:

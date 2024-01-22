@@ -146,6 +146,35 @@ void DgdsEngine::loadIcons() {
 	}
 }
 
+void DgdsEngine::changeScene(int sceneNum) {
+	assert(_scene && _adsInterp);
+
+	if (sceneNum == _scene->getNum()) {
+		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
+		return;
+	}
+
+	_adsInterp->unload();
+	_scene->runLeaveSceneOps();
+	_scene->unload();
+
+	if (!_icons.empty()) {
+		CursorMan.popAllCursors();
+		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
+	}
+
+	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
+	if (!_resource->hasResource(sceneFile))
+		error("Tried to switch to non-existant scene %d", sceneNum);
+
+	_scene->load(sceneFile, _resource, _decompressor);
+	if (!_scene->getAdsFile().empty())
+		_adsInterp->load(_scene->getAdsFile());
+
+	_scene->runEnterSceneOps();
+	debug("%s", _scene->dump("").c_str());
+}
+
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -158,6 +187,7 @@ Common::Error DgdsEngine::run() {
 	_gdsScene = new GDSScene();
 	_fontManager = new FontManager();
 	_menu = new Menu();
+	_adsInterp = new ADSInterpreter(this);
 
 	setDebugger(_console);
 
@@ -170,7 +200,6 @@ Common::Error DgdsEngine::run() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
-	ADSInterpreter interpIntro(this);
 	bool creditsShown = false;
 	REQFileData invRequestData;
 	REQFileData vcrRequestData;
@@ -183,20 +212,22 @@ Common::Error DgdsEngine::run() {
 
 		//debug("%s", _gdsScene->dump("").c_str());
 
+		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 
-		interpIntro.load("TITLE1.ADS");
+		_gdsScene->runStartGameOps();
 
-		loadCorners("DCORNERS.BMP");
 	} else if (getGameId() == GID_CHINA) {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
+
+		//debug("%s", _gdsScene->dump("").c_str());
 
 		reqParser.parse(&invRequestData, "HINV.REQ");
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
 
 		//_scene->load("S101.SDS", _resource, _decompressor);
-		interpIntro.load("TITLE.ADS");
+		_adsInterp->load("TITLE.ADS");
 		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
 		// TODO: This doesn't parse correctly yet.
@@ -206,14 +237,13 @@ Common::Error DgdsEngine::run() {
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
-		interpIntro.load("TITLE.ADS");
+		_adsInterp->load("TITLE.ADS");
 		loadCorners("WCORNERS.BMP");
 	}
 
 	loadIcons();
-	if (!_icons.empty()) {
+	if (!_icons.empty())
 		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
-	}
 
 	//getDebugger()->attach();
 
@@ -271,22 +301,23 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
-			if (moveToNext || !interpIntro.run()) {
+			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 
 				if (!creditsShown) {
 					creditsShown = true;
 					if (getGameId() == GID_DRAGON) {
-						_scene->load("S55.SDS", _resource, _decompressor); // FIXME: Removing this breaks the Bahumat scene dialog
-						//debug("%s", _scene->dump("").c_str());
+						// TODO: This will be done by the trigger once we know how to do it.
+						// It's trigger number 3 in scene 3.
+						changeScene(55);
 					}
-					interpIntro.load("INTRO.ADS");
 				} else {
 					return Common::kNoError;
 				}
 			}
+			_scene->checkTriggers();
 		} else if (getGameId() == GID_BEAMISH) {
-			if (!interpIntro.run())
+			if (_adsInterp->run())
 				return Common::kNoError;
 		}
 

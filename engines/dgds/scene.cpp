@@ -31,6 +31,7 @@
 #include "dgds/dgds.h"
 #include "dgds/includes.h"
 #include "dgds/resource.h"
+#include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/font.h"
 
@@ -56,7 +57,7 @@ Common::String Rect::dump(const Common::String &indent) const {
 
 
 Common::String SceneStruct1::dump(const Common::String &indent) const {
-	return Common::String::format("%sSceneStruct1<%d flg 0x%02x %d>", indent.c_str(), val1, flags, val3);
+	return Common::String::format("%sSceneStruct1<%d flg 0x%02x %d>", indent.c_str(), _num, _flags, _val);
 }
 
 
@@ -146,12 +147,12 @@ Common::String SceneTrigger::dump(const Common::String &indent) const {
 }
 
 
-void Dialogue::draw(Graphics::Surface *dst, int mode) {
+void Dialogue::draw(Graphics::Surface *dst, int stage) {
 	switch (_frameType) {
-	case 1: return drawType1(dst, mode);
-	case 2: return drawType2(dst, mode);
-	case 3: return drawType3(dst, mode);
-	case 4: return drawType4(dst, mode);
+	case 1: return drawType1(dst, stage);
+	case 2: return drawType2(dst, stage);
+	case 3: return drawType3(dst, stage);
+	case 4: return drawType4(dst, stage);
 	default: error("unexpected frame type %d for dialog %d", _frameType, _num);
 	}
 }
@@ -168,12 +169,12 @@ static void _drawPixel(int x, int y, int color, void *data) {
 void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
 	//if (!_field15_0x22)
 	//	return;
-	if (stage == 1) {
-		int x = _rect.x;
-		int y = _rect.y;
-		int w = _rect.width;
-		int h = _rect.height;
+	int x = _rect.x;
+	int y = _rect.y;
+	int w = _rect.width;
+	int h = _rect.height;
 
+	if (stage == 1) {
 		// TODO: Is this right?
 		dst->fillRect(Common::Rect(x, y, x + w, y + h), _bgColor);
 		dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
@@ -185,47 +186,91 @@ void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
 		*(int *)(uVar1 + 8) = height + -6; */
 	} else if (stage == 2) {
 		drawStage2(dst);
-	} else if (stage == 2) {
-		drawStage2(dst);
+	} else if (stage == 3) {
+		drawStage3(dst);
 	} else {
-		drawStage4(dst);
+		drawStage4(dst, Common::Rect(x + 2, y + 2, x + w - 2, y + h - 2), _bgColor, _str);
 	}
 }
 
 // box with fancy frame and optional title (everything before ":")
 void Dialogue::drawType2(Graphics::Surface *dst, int stage) {
-	// TODO: Implement me properly.
-	Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
-	dst->fillRect(drawRect, _bgColor);
+	Common::String title;
+	Common::String txt;
+	uint32 colonpos = _str.find(':');
+	if (colonpos != Common::String::npos) {
+		title = _str.substr(0, colonpos);
+		txt = _str.substr(colonpos + 1);
+	} else {
+		txt = _str;
+	}
+
+	Common::Rect fillArea(_rect.x + 6, _rect.y + 6, _rect.x + _rect.width - 6, _rect.y + _rect.height - 6);
+	if (stage == 1) {
+		bool flatfill = _flags & 1; // TODO: make this an enum
+		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
+		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
+		if (!title.empty()) {
+			// TODO: Maybe should measure the font?
+			fillArea.top += 10;
+			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
+		}
+		if (flatfill)
+			dst->fillRect(fillArea, 0);
+		else
+			RequestData::fillBackground(dst, fillArea.left, fillArea.top, fillArea.width(), fillArea.height(), 6);
+
+		RequestData::drawCorners(dst, 19, fillArea.left - 2, fillArea.top - 2, fillArea.width() + 4, fillArea.height() + 4);
+
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else if (stage == 3) {
+		drawStage3(dst);
+	} else {
+		Common::Rect textRect = fillArea;
+		textRect.left += 8;
+		textRect.right -= 8;
+		drawStage4(dst, textRect, _fontColor, txt);
+	}
 }
 
 // comic baloon style box
 void Dialogue::drawType3(Graphics::Surface *dst, int stage) {
-	// TODO: Implement me properly.
-	Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
-	dst->fillRect(drawRect, _bgColor);
+	// TODO: Implement me properly.  Draw some circles and a bubble.
+	if (stage == 1) {
+		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
+		dst->fillRect(drawRect, _bgColor);
+	} else if (stage == 2) {
+		drawStage2(dst);
+	} else if (stage == 3) {
+		drawStage3(dst);
+	} else {
+		Common::Rect drawRect(_rect.x + 5, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height - 5);
+		drawStage4(dst, drawRect, _fontColor, _str);
+	}
 }
 
 // ellipse
 void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
+	int x = _rect.x;
+	int y = _rect.y;
+	int w = _rect.width;
+	int h = _rect.height;
+
+	int midy = (h - 1) / 2;
+	byte fillcolor;
+	byte fillbgcolor;
+	if (!(_flags & 1)) {
+		fillcolor = 0;
+		fillbgcolor = 15;
+	} else {
+		fillcolor = _fontColor;
+		fillbgcolor = _bgColor;
+	}
+
 	if (stage == 1) {
-		int x = _rect.x;
-		int y = _rect.y;
-		int w = _rect.width;
-		int h = _rect.height;
-
-		int midy = (h - 1) / 2;
 		//int radius = (midy * 5) / 4;
-
-		byte fillcolor;
-		byte fillbgcolor;
-		if (!(_flags & 1)) {
-			fillcolor = 0;
-			fillbgcolor = 15;
-		} else {
-			fillcolor = _fontColor;
-			fillbgcolor = _bgColor;
-		}
 
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
 		Common::Rect drawRect(x, y, x + w, y + h);
@@ -236,7 +281,8 @@ void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
 	} else if (stage == 2) {
 		drawStage2(dst);
 	} else {
-		drawStage4(dst);
+		Common::Rect textRect(x + midy, y + 1, x + w - midy, y + h - 1);
+		drawStage4(dst, textRect, fillcolor, _str);
 	}
 }
 
@@ -248,7 +294,7 @@ void Dialogue::drawStage3(Graphics::Surface *dst) {
 	// TODO: various text wrapping and alignment calculations happen here.
 }
 
-void Dialogue::drawStage4(Graphics::Surface *dst) {
+void Dialogue::drawStage4(Graphics::Surface *dst, const Common::Rect &textArea, uint16 fontcol, const Common::String &txt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();
 	FontManager::FontType fontType = FontManager::k6x6Font;
@@ -263,12 +309,12 @@ void Dialogue::drawStage4(Graphics::Surface *dst) {
 	// For now do the simplest wrapping.
 	Common::StringArray lines;
 	const int h = font->getFontHeight();
-	font->wordWrapText(_str, _rect.width, lines);
+	font->wordWrapText(txt, textArea.width(), lines);
 
-	int ystart = _rect.y + (_rect.height - lines.size() * h) / 2;
+	int ystart = textArea.top + (textArea.height() - lines.size() * h) / 2;
 	for (uint i = 0; i < lines.size(); i++) {
 		//const int w = font->getStringWidth(lines[i]);
-		font->drawString(dst, lines[i], _rect.x, ystart + i * h, _rect.width, _fontColor, Graphics::kTextAlignCenter);
+		font->drawString(dst, lines[i], textArea.left, ystart + i * h, textArea.width(), fontcol, Graphics::kTextAlignCenter);
 	}
 
 }
@@ -312,9 +358,9 @@ bool Scene::isVersionUnder(const char *version) const {
 bool Scene::readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const {
 	list.resize(s->readUint16LE());
 	for (SceneStruct1 &dst : list) {
-		dst.val1 = s->readUint16LE();
-		dst.flags = s->readUint16LE();
-		dst.val3 = s->readUint16LE();
+		dst._num = s->readUint16LE();
+		dst._flags = static_cast<SceneCondition>(s->readUint16LE());
+		dst._val = s->readUint16LE();
 	}
 	return !s->err();
 }
@@ -502,10 +548,11 @@ void SDSScene::enableTrigger(uint16 num) {
 
 
 void Scene::runOps(const Common::Array<SceneOp> &ops) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
-			warning("TODO: Change scene no to %d", op._args[0]);
+			engine->changeScene(op._args[0]);
 			break;
 		case kSceneOpNoop:
 			break;
@@ -520,6 +567,17 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		}
 	}
+}
+
+bool Scene::checkConditions(const Common::Array<struct SceneStruct1> &conds) {
+	for (const auto & c : conds) {
+		if (c._flags & kSceneCondAlwaysTrue)
+			return true;
+		// TODO: Finish this.
+		// 0x80 seems to check some value set
+		return false;
+	}
+	return true;
 }
 
 
@@ -583,6 +641,22 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	return !stream->err();
 }
 
+void SDSScene::unload() {
+	_num = 0;
+	_enterSceneOps.clear();
+	_leaveSceneOps.clear();
+	_opList3.clear();
+	_opList4.clear();
+	_field6_0x14 = 0;
+	_adsFile.clear();
+	_struct2List.clear();
+	_struct4List1.clear();
+	_struct4List2.clear();
+	_dialogues.clear();
+	_triggers.clear();
+}
+
+
 Common::String SDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
 	str += _dumpStructList(indent, "enterSceneOps", _enterSceneOps);
@@ -600,7 +674,26 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	return str;
 }
 
+void SDSScene::checkTriggers() {
+	// scene can change on these triggers.  if that happens we stop.
+	int startSceneNum = _num;
 
+	for (struct SceneTrigger &trigger : _triggers) {
+		if (!trigger._enabled)
+			continue;
+
+		if (!checkConditions(trigger.struct1List))
+			continue;
+
+		runOps(trigger.sceneOpList);
+
+		// If the scene changed, the list is no longer valid. Abort!
+		if (_num != startSceneNum)
+			return;
+
+		trigger._enabled = false;
+	}
+}
 
 GDSScene::GDSScene() {
 }
@@ -667,7 +760,7 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 Common::String GDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
 	str += _dumpStructList(indent, "gameItems", _gameItems);
-	str += _dumpStructList(indent, "opList1", _startGameOps);
+	str += _dumpStructList(indent, "startGameOps", _startGameOps);
 	str += _dumpStructList(indent, "opList2", _opList2);
 	str += _dumpStructList(indent, "opList3", _opList3);
 	str += _dumpStructList(indent, "opList4", _opList4);

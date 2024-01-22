@@ -546,14 +546,15 @@ void RequestData::drawCorners(Graphics::Surface *dst, uint16 startNum, uint16 x,
 	corners[7]->drawBitmap((x + width) - corners[7]->width(), (y + height) - corners[7]->height(), screenRect, *dst);
 }
 
-void RequestData::drawHeader(Graphics::Surface *dst, int16 yoffset, const Common::String &header) const {
+/*static*/
+void RequestData::drawHeader(Graphics::Surface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header) {
 	if (!header.empty()) {
 		const Font *font = getMenuFont();
 		int hwidth = font->getStringWidth(header);
 		int hheight = font->getFontHeight();
-		int hleft = _x + (_width - hwidth) / 2;
+		int hleft = x + (width - hwidth) / 2;
 		int hright = hleft + hwidth + 3;
-		int htop = _y + yoffset;
+		int htop = y + yoffset;
 		int hbottom = htop + hheight;
 
 		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, 0);
@@ -600,14 +601,14 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sli
 	corners[9]->drawBitmap(_x, (_y + sliderBgHeight) - corners[9]->height(), screenRect, *dst);
 	corners[10]->drawBitmap((_x + _width) - corners[10]->width(), (_y + sliderBgHeight) - corners[10]->height(), screenRect, *dst);
 
-	drawHeader(dst, 9, header);
+	drawHeader(dst, _x, _y, _width, 9, header);
 }
 
 
 void RequestData::drawBackgroundNoSliders(Graphics::Surface *dst, const Common::String &header) const {
 	fillBackground(dst, _x, _y, _width, _height, 0);
 	drawCorners(dst, 11, _x, _y, _width, _height);
-	drawHeader(dst, 4, header);
+	drawHeader(dst, _x, _y, _width, 4, header);
 }
 
 /*static*/
