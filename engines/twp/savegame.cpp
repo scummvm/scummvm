@@ -633,7 +633,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 	case OT_TABLE: {
 		Common::JSONObject jObj;
 		if (checkId) {
-			int id;
+			int id = 0;
 			sqgetf(obj, "_id", id);
 			if (isActor(id)) {
 				Object *a = actor(id);

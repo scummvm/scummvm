@@ -35,10 +35,10 @@ struct ObjectAnimation {
 	Common::Array<ObjectAnimation> layers;
 	Common::StringArray triggers;
 	Common::Array<Math::Vector2d> offsets;
-	bool loop;
-	float fps;
-	int flags;
-	int frameIndex;
+	bool loop = false;
+	float fps = 0.f;
+	int flags = 0;
+	int frameIndex = 0;
 };
 } // namespace Twp
 

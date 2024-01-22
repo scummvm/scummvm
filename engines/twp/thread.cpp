@@ -28,12 +28,12 @@ namespace Twp {
 
 bool ThreadBase::isDead() {
 	SQInteger state = sq_getvmstate(getThread());
-	return _stopRequest || state == 0;
+	return _stopRequest || state == SQ_VMSTATE_IDLE;
 }
 
 bool ThreadBase::isSuspended() {
 	SQInteger state = sq_getvmstate(getThread());
-	return state != 1;
+	return state != SQ_VMSTATE_RUNNING;
 }
 
 void ThreadBase::suspend() {
@@ -115,8 +115,8 @@ void Thread::stop() {
 	suspend();
 }
 
-Cutscene::Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
-	: _v(v),
+Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
+	: _parentThreadId(parentThreadId),
 	  _threadObj(threadObj),
 	  _closure(closure),
 	  _closureOverride(closureOverride),
@@ -128,7 +128,7 @@ Cutscene::Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJ
 	_actor = g_engine->_followActor;
 	_showCursor = g_engine->_inputState.getShowCursor();
 	_state = csStart;
-	debug("Create cutscene %d with input: 0x%X", _id, _inputState);
+	debug("Create cutscene %d with input: 0x%X from parent thread: %d", _id, _inputState, _parentThreadId);
 	g_engine->_inputState.setInputActive(false);
 	g_engine->_inputState.setShowCursor(false);
 	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
@@ -182,7 +182,7 @@ void Cutscene::stop() {
 	}
 	sqcall("onCutsceneEnded");
 
-	ThreadBase *t = sqthread(_v);
+	ThreadBase *t = sqthread(_parentThreadId);
 	if (t && t->getId())
 		t->unpause();
 	sq_suspendvm(getThread());

@@ -105,7 +105,7 @@ enum CutsceneState {
 class Object;
 class Cutscene final : public ThreadBase {
 public:
-	Cutscene(HSQUIRRELVM v, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
+	Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
 	virtual ~Cutscene() override final;
 
 	void start();
@@ -127,7 +127,7 @@ private:
 	void doCutsceneOverride();
 
 private:
-	HSQUIRRELVM _v;
+	int _parentThreadId = 0;
 	HSQOBJECT _threadObj, _closure, _closureOverride, _envObj;
 	CutsceneState _state;
 	bool _showCursor = false;
