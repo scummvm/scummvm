@@ -1961,17 +1961,18 @@ void RaycastPuzzle::drawMaze() {
 			float ceilingLeftY  =	_sinTable[leftAngle]  * -(ceilingViewAngle / _cosTable[_leftmostAngle])  + (float)_playerX;
 			float ceilingRightY =	_sinTable[rightAngle] * -(ceilingViewAngle / _cosTable[_rightmostAngle]) + (float)_playerX;
 
-			floorSrcFracX	= (uint32)(floorLeftX	* 65536.0);
-			floorSrcFracY	= (uint32)(floorLeftY	* 65536.0);
+			// Casting between negative float and uint is undefined behavior, hence the cast to signed int first
+			floorSrcFracX	= (uint32)((int32)(floorLeftX	* 65536.0));
+			floorSrcFracY	= (uint32)((int32)(floorLeftY	* 65536.0));
 
-			ceilingSrcFracX = (uint32)(ceilingLeftX * 65536.0);
-			ceilingSrcFracY = (uint32)(ceilingLeftY * 65536.0);
+			ceilingSrcFracX = (uint32)((int32)(ceilingLeftX * 65536.0));
+			ceilingSrcFracY = (uint32)((int32)(ceilingLeftY * 65536.0));
 
-			floorSrcIncrementX 		= (uint32)(((floorRightX	- floorLeftX)	/ (float)viewBounds.width()) * 65536.0);
-			floorSrcIncrementY 		= (uint32)(((floorRightY	- floorLeftY)	/ (float)viewBounds.width()) * 65536.0);
+			floorSrcIncrementX 		= (uint32)((int32)(((floorRightX	- floorLeftX)	/ (float)viewBounds.width()) * 65536.0));
+			floorSrcIncrementY 		= (uint32)((int32)(((floorRightY	- floorLeftY)	/ (float)viewBounds.width()) * 65536.0));
 
-			ceilingSrcIncrementX 	= (uint32)(((ceilingRightX	- ceilingLeftX) / (float)viewBounds.width()) * 65536.0);
-			ceilingSrcIncrementY 	= (uint32)(((ceilingRightY	- ceilingLeftY) / (float)viewBounds.width()) * 65536.0);
+			ceilingSrcIncrementX 	= (uint32)((int32)(((ceilingRightX	- ceilingLeftX) / (float)viewBounds.width()) * 65536.0));
+			ceilingSrcIncrementY 	= (uint32)((int32)(((ceilingRightY	- ceilingLeftY) / (float)viewBounds.width()) * 65536.0));
 		}
 
 		for (int x = viewBounds.left; x < viewBounds.right; ++x) {
