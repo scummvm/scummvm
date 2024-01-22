@@ -190,11 +190,11 @@ private:
 	Texture *_texture = nullptr;
 	Common::String _txt;
 	Color _col;
-	TextHAlignment _hAlign;
-	TextVAlignment _vAlign;
+	TextHAlignment _hAlign = TextHAlignment::thLeft;
+	TextVAlignment _vAlign = TextVAlignment::tvCenter;
 	Common::Array<Vertex> _vertices;
 	Math::Vector2d _bnds;
-	float _maxW = 0;
+	float _maxW = 0.f;
 	Common::Array<Common::Rect> _quads;
 	bool _dirty = false;
 };

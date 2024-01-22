@@ -492,7 +492,8 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get cutscene override closure");
 	}
 
-	Cutscene *cutscene = new Cutscene(v, threadObj, closure, closureOverride, envObj);
+	ThreadBase* parentThread = sqthread(v);
+	Cutscene *cutscene = new Cutscene(parentThread->getId(), threadObj, closure, closureOverride, envObj);
 	g_engine->_cutscene = cutscene;
 
 	// call the closure in the thread

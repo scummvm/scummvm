@@ -333,7 +333,6 @@ Common::String Object::getIcon() {
 	sq_resetobject(&iconTable);
 	sqgetf(_table, "icon", iconTable);
 	if (iconTable._type == OT_NULL) {
-		warning("object table is null");
 		return "";
 	}
 	if (iconTable._type == OT_STRING) {
