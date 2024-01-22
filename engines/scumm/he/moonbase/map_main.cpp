@@ -22,6 +22,8 @@
 #include "common/compression/deflate.h"
 #include "common/config-manager.h"
 
+#include "common/md5.h"
+
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
 
@@ -46,6 +48,8 @@ Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 	_energy = -1;
 	_terrain = -1;
 	_water = -1;
+
+	_mapHash = Common::String();
 }
 
 Map::~Map() {
@@ -164,6 +168,11 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 		return false;
 	}
 
+	// Compute MD5 hash of the newly generated map file:
+	Common::MemoryReadStream mapStream = Common::MemoryReadStream((byte *)_generatedMap, sizeof(MapFile));
+	_mapHash = Common::computeStreamMD5AsString(mapStream, 0);
+	debug(1, "Map: MD5: %s", _mapHash.c_str());
+
 	_mapGenerated = true;
 	return true;
 }
@@ -182,6 +191,7 @@ void Map::deleteMap() {
 		_energy = 0;
 		_terrain = 0;
 		_water = 0;
+		_mapHash = "";
 		debug(1, "Map: Deleted.");
 	}
 }

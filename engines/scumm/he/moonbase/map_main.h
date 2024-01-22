@@ -24,8 +24,8 @@
 
 #ifdef ENABLE_HE
 
-#include "common/stream.h"
 #include "common/random.h"
+#include "common/stream.h"
 
 #include "engines/scumm/he/moonbase/map_mif.h"
 
@@ -77,6 +77,10 @@ public:
 		return _mapGenerated;
 	}
 
+	Common::String getHash() const {
+		return _mapHash;
+	}
+
 private:
 	ScummEngine_v100he *_vm;
 
@@ -95,6 +99,7 @@ private:
 
 	bool _mapGenerated;
 	MapFile *_generatedMap;
+	Common::String _mapHash;
 
 	Common::SeekableReadStream *makeWiz();
 };
