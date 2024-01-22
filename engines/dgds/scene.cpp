@@ -149,10 +149,10 @@ Common::String SceneTrigger::dump(const Common::String &indent) const {
 
 void Dialogue::draw(Graphics::Surface *dst, int stage) {
 	switch (_frameType) {
-	case 1: return drawType1(dst, stage);
-	case 2: return drawType2(dst, stage);
-	case 3: return drawType3(dst, stage);
-	case 4: return drawType4(dst, stage);
+	case kDlgFramePlain: 	return drawType1(dst, stage);
+	case kDlgFrameBorder: 	return drawType2(dst, stage);
+	case kDlgFrameThought: 	return drawType3(dst, stage);
+	case kDlgFrameRounded: 	return drawType4(dst, stage);
 	default: error("unexpected frame type %d for dialog %d", _frameType, _num);
 	}
 }
@@ -189,7 +189,8 @@ void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
 	} else if (stage == 3) {
 		drawStage3(dst);
 	} else {
-		drawStage4(dst, Common::Rect(x + 2, y + 2, x + w - 2, y + h - 2), _bgColor, _str);
+		_textDrawRect = Common::Rect(x + 2, y + 2, x + w - 2, y + h - 2);
+		drawStage4(dst, _bgColor, _str);
 	}
 }
 
@@ -205,49 +206,124 @@ void Dialogue::drawType2(Graphics::Surface *dst, int stage) {
 		txt = _str;
 	}
 
-	Common::Rect fillArea(_rect.x + 6, _rect.y + 6, _rect.x + _rect.width - 6, _rect.y + _rect.height - 6);
 	if (stage == 1) {
-		bool flatfill = _flags & 1; // TODO: make this an enum
+		_textDrawRect = Common::Rect (_rect.x + 6, _rect.y + 6, _rect.x + _rect.width - 6, _rect.y + _rect.height - 6);
 		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
 		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
 		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
 		if (!title.empty()) {
 			// TODO: Maybe should measure the font?
-			fillArea.top += 10;
+			_textDrawRect.top += 10;
 			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
 		}
-		if (flatfill)
-			dst->fillRect(fillArea, 0);
+		if (_flags & kDlgFlagFlatBg)
+			dst->fillRect(_textDrawRect, 0);
 		else
-			RequestData::fillBackground(dst, fillArea.left, fillArea.top, fillArea.width(), fillArea.height(), 6);
+			RequestData::fillBackground(dst, _textDrawRect.left, _textDrawRect.top, _textDrawRect.width(), _textDrawRect.height(), 6);
 
-		RequestData::drawCorners(dst, 19, fillArea.left - 2, fillArea.top - 2, fillArea.width() + 4, fillArea.height() + 4);
+		RequestData::drawCorners(dst, 19, _textDrawRect.left - 2, _textDrawRect.top - 2, _textDrawRect.width() + 4, _textDrawRect.height() + 4);
 
+		_textDrawRect.left += 8;
+		_textDrawRect.right -= 8;
 	} else if (stage == 2) {
 		drawStage2(dst);
 	} else if (stage == 3) {
 		drawStage3(dst);
 	} else {
-		Common::Rect textRect = fillArea;
-		textRect.left += 8;
-		textRect.right -= 8;
-		drawStage4(dst, textRect, _fontColor, txt);
+		drawStage4(dst, _fontColor, txt);
 	}
 }
 
-// comic baloon style box
+static void _filledCircle(int x, int y, int xr, int yr, Graphics::Surface *dst, byte fgcol, byte bgcol) {
+	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, bgcol, true, _drawPixel, dst);
+	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, _drawPixel, dst);
+}
+
+// Comic tought box made up of circles with 2 circles going up to it.
+// Draw circles with 5/4 more pixels in x because the pixels are not square.
 void Dialogue::drawType3(Graphics::Surface *dst, int stage) {
-	// TODO: Implement me properly.  Draw some circles and a bubble.
 	if (stage == 1) {
-		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
-		dst->fillRect(drawRect, _bgColor);
+		uint16 xradius = 9999;
+		uint16 yradius = 40;
+		const int16 usabley = _rect.height - 31;
+		const int16 usablex = _rect.width - 30;
+		for (uint16 testyradius = 40; testyradius != 0; testyradius--) {
+			int16 testxradius = (testyradius * 5) / 4;
+			if ((usablex / testxradius > 2) && (usabley / testyradius > 2)) {
+				testxradius = usablex % testxradius + usabley % testyradius;
+				if (testxradius < xradius) {
+					yradius = testyradius;
+					xradius = testxradius;
+				}
+			}
+			if (testyradius < 20 && xradius != 9999)
+				break;
+		}
+
+		xradius = (yradius * 5) / 4;
+		const int16 circlesAcross = usablex / xradius - 1;
+		const int16 circlesDown = usabley / yradius - 1;
+
+		uint16 x = _rect.x + xradius;
+		uint16 y = _rect.y + yradius;
+
+		bool isbig = _rect.x + _rect.width / 2 > 160;
+		if (isbig)
+			x = x + 30;
+
+		byte fgcol = 0;
+		byte bgcol = 15;
+		if (_flags & kDlgFlagFlatBg) {
+			bgcol = _bgColor;
+			fgcol = _fontColor;
+		}
+
+		for (int i = 1; i < circlesDown; i++) {
+			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			y += yradius;
+		}
+		for (int i = 1; i < circlesAcross; i++) {
+			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			x += xradius;
+		}
+		for (int i = 1; i < circlesDown; i++) {
+			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			y -= yradius;
+		}
+		for (int i = 1; i < circlesAcross; i++) {
+			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			x -= xradius;
+		}
+
+		uint16 smallCircleX;
+		if (isbig) {
+			_filledCircle((x - xradius) - 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
+			smallCircleX = (x - xradius) - 20;
+		} else {
+			_filledCircle(x + circlesAcross * xradius + 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
+			smallCircleX = x + circlesAcross * xradius + 20;
+		}
+
+		_filledCircle(smallCircleX, y + circlesDown * yradius + 25, 5, 4, dst, fgcol, bgcol);
+
+		int16 yoff = (yradius * 27) / 32;
+		dst->fillRect(Common::Rect(x, y - yoff,
+					x + (circlesAcross - 1) * xradius + 1,
+					y + (circlesDown - 1) * yradius + yoff + 1), bgcol);
+		int16 xoff = (xradius * 27) / 32;
+		dst->fillRect(Common::Rect(x - xoff, y,
+					x + (circlesAcross - 1) * xradius + xoff + 1,
+					y + (circlesDown - 1) * yradius + 1), bgcol);
+
+		int16 textRectX = x - xradius / 2;
+		int16 textRectY = y - yradius / 2;
+		_textDrawRect = Common::Rect(textRectX, textRectY, textRectX + circlesAcross * xradius , textRectY + circlesDown * yradius);
 	} else if (stage == 2) {
 		drawStage2(dst);
 	} else if (stage == 3) {
 		drawStage3(dst);
 	} else {
-		Common::Rect drawRect(_rect.x + 5, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height - 5);
-		drawStage4(dst, drawRect, _fontColor, _str);
+		drawStage4(dst, _fontColor, _str);
 	}
 }
 
@@ -281,8 +357,8 @@ void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
 	} else if (stage == 2) {
 		drawStage2(dst);
 	} else {
-		Common::Rect textRect(x + midy, y + 1, x + w - midy, y + h - 1);
-		drawStage4(dst, textRect, fillcolor, _str);
+		_textDrawRect = Common::Rect(x + midy, y + 1, x + w - midy, y + h - 1);
+		drawStage4(dst, fillcolor, _str);
 	}
 }
 
@@ -294,10 +370,10 @@ void Dialogue::drawStage3(Graphics::Surface *dst) {
 	// TODO: various text wrapping and alignment calculations happen here.
 }
 
-void Dialogue::drawStage4(Graphics::Surface *dst, const Common::Rect &textArea, uint16 fontcol, const Common::String &txt) {
+void Dialogue::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();
-	FontManager::FontType fontType = FontManager::k6x6Font;
+	FontManager::FontType fontType = FontManager::kGameDlgFont;
 	if (_fontSize == 1)
 		fontType = FontManager::k8x8Font;
 	else if (_fontSize == 3)
@@ -309,13 +385,27 @@ void Dialogue::drawStage4(Graphics::Surface *dst, const Common::Rect &textArea, 
 	// For now do the simplest wrapping.
 	Common::StringArray lines;
 	const int h = font->getFontHeight();
-	font->wordWrapText(txt, textArea.width(), lines);
+	font->wordWrapText(txt, _textDrawRect.width(), lines);
 
-	int ystart = textArea.top + (textArea.height() - lines.size() * h) / 2;
-	for (uint i = 0; i < lines.size(); i++) {
-		//const int w = font->getStringWidth(lines[i]);
-		font->drawString(dst, lines[i], textArea.left, ystart + i * h, textArea.width(), fontcol, Graphics::kTextAlignCenter);
+	int ystart = _textDrawRect.top + (_textDrawRect.height() - lines.size() * h) / 2;
+
+	int x = _textDrawRect.left;
+	if (_flags & kDlgFlagLeftJust) {
+		// each line left-aligned, but overall block is still centered
+		int maxlen = -1;
+		for (const auto &line : lines)
+			maxlen = MAX(maxlen, font->getStringWidth(line));
+
+		x += (_textDrawRect.width() - maxlen) / 2;
+
+		for (uint i = 0; i < lines.size(); i++)
+			font->drawString(dst, lines[i], x, ystart + i * h, maxlen, fontcol, Graphics::kTextAlignLeft);
+	} else {
+		// center each line
+		for (uint i = 0; i < lines.size(); i++)
+			font->drawString(dst, lines[i], x, ystart + i * h, _textDrawRect.width(), fontcol, Graphics::kTextAlignCenter);
 	}
+
 
 }
 
@@ -475,14 +565,14 @@ bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialog
 		}
 		dst._fontSize = s->readUint16LE(); // 01 = 8x8, 02 = 6x6, 03 = 4x5
 		if (isVersionUnder(" 1.210")) {
-			dst._flags = s->readUint16LE();
+			dst._flags = static_cast<DialogueFlags>(s->readUint16LE());
 		} else {
 			// Game reads a 32 bit int but then truncates anyway..
 			// probably never used the full thing.
-			dst._flags = (s->readUint32LE() & 0xffff);
+			dst._flags = static_cast<DialogueFlags>(s->readUint32LE() & 0xffff);
 		}
 
-		dst._frameType = s->readUint16LE(); // 01 =simple frame, 02 = with title w/ text before :, 03 = baloon, 04 = eliptical
+		dst._frameType = static_cast<DialogueFrameType>(s->readUint16LE());
 		dst._time = s->readUint16LE();
 		if (isVersionOver(" 1.207")) {
 			dst._nextDialogNum = s->readUint16LE();

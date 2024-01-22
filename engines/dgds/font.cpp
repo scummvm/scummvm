@@ -162,6 +162,12 @@ void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 	Font::drawChar(dst, pos, bit, x, y, color);
 }
 
+int PFont::getCharWidth(uint32 chr) const {
+	if (!hasChar(chr))
+		return 0;
+	return _widths[chr - _start];
+}
+
 PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor) {
 	byte magic = input.readByte();
 	byte w = input.readByte();
@@ -212,15 +218,15 @@ void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompre
 	if (gameId == GID_DRAGON) {
 		tryLoadFont(kGameFont, "DRAGON.FNT", resMgr, decomp);
 		tryLoadFont(k7x8Font, "7X8.FNT", resMgr, decomp);
-		tryLoadFont(kP6x6Font, "P6X6.FNT", resMgr, decomp);
+		tryLoadFont(kGameDlgFont, "P6X6.FNT", resMgr, decomp);
 	} else if (gameId == GID_CHINA) {
 		tryLoadFont(kGameFont, "HOC.FNT", resMgr, decomp);
 		tryLoadFont(kChinaFont, "CHINA.FNT", resMgr, decomp);
-		tryLoadFont(kChineseFont, "CHINESE.FNT", resMgr, decomp);
+		tryLoadFont(kGameDlgFont, "CHINESE.FNT", resMgr, decomp);
 	} else if (gameId == GID_BEAMISH) {
 		tryLoadFont(kGameFont, "WILLY.FNT", resMgr, decomp);
 		tryLoadFont(kWVCRFont, "WVCR.FNT", resMgr, decomp);
-		tryLoadFont(kComix16Font, "COMIX_16.FNT", resMgr, decomp);
+		tryLoadFont(kGameDlgFont, "COMIX_16.FNT", resMgr, decomp);
 	}
 
 	_fonts.setVal(kDefaultFont, _fonts.getVal(kGameFont));

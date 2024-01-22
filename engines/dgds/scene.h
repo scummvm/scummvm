@@ -138,6 +138,18 @@ struct SceneStruct4 {
 	Common::String dump(const Common::String &indent) const;
 };
 
+enum DialogueFlags {
+	kDlgFlagNone = 0,
+	kDlgFlagFlatBg = 1,
+	kDlgFlagLeftJust = 2,
+};
+
+enum DialogueFrameType {
+	kDlgFramePlain = 1,
+	kDlgFrameBorder = 2,
+	kDlgFrameThought = 3,
+	kDlgFrameRounded = 4
+};
 
 class Dialogue {
 public:
@@ -148,8 +160,8 @@ public:
 	uint16 _field7_0xe;
 	uint16 _field8_0x10;
 	uint16 _fontSize;
-	uint32 _flags; // includes justify
-	uint16 _frameType;
+	DialogueFlags _flags;
+	DialogueFrameType _frameType;
 	uint16 _time;
 	uint16 _nextDialogNum;
 	Common::Array<struct DialogueAction> _subStrings;
@@ -162,6 +174,8 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 private:
+	Common::Rect _textDrawRect; // Calculated while drawing the background.
+
 	void drawType1(Graphics::Surface *dst, int mode);
 	void drawType2(Graphics::Surface *dst, int mode);
 	void drawType3(Graphics::Surface *dst, int mode);
@@ -169,7 +183,7 @@ private:
 
 	void drawStage2(Graphics::Surface *dst);
 	void drawStage3(Graphics::Surface *dst);
-	void drawStage4(Graphics::Surface *dst, const Common::Rect &textArea, uint16 fontcol, const Common::String &txt);
+	void drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt);
 };
 
 struct SceneTrigger {

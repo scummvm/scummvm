@@ -69,7 +69,7 @@ class PFont : public Font {
 public:
 	PFont(byte w, byte h, byte start, byte count, byte *data);
 	~PFont();
-	int getCharWidth(uint32 chr) const { return _widths[chr - _start]; }
+	int getCharWidth(uint32 chr) const;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	static PFont *load(Common::SeekableReadStream &input, Decompressor *decompressor);
 
@@ -104,12 +104,10 @@ public:
 		k6x6Font,
 		k4x5Font,
 		kGameFont, 		// DRAGON for Rise of the Dragon, WILLY for Willy Beamish, HOC for Heart of China.
+		kGameDlgFont,	// P6x6 for Rise of the Dragon, COMIX_16 for Willy Beamish, CHINESE for Heart of China
 		k7x8Font,	  	// Rise of the Dragon only
-		kP6x6Font,	  	// Rise of the Dragon only
 		kWVCRFont,    	// Willy Beamish only
-		kComix16Font, 	// Willy Beamish only
 		kChinaFont,   	// Heart of China only
-		kChineseFont, 	// Heart of China only
 	};
 
 	FontManager() {}
