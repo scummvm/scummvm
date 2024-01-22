@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2023-12-15 20:17+0000\n"
+"PO-Revision-Date: 2024-01-22 09:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1578,57 +1578,49 @@ msgstr "30分毎"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "ベリーラージ"
+msgstr "200% - 極大"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "ベリーラージ"
+msgstr "175% - 超巨大"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - 巨大"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - 大"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "ミディアム"
+msgstr "100% - 中"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "スモール"
+msgstr "75% - 小"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "スモール"
+msgstr "50% - より小さい"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "スモール"
+msgstr "25% - 最小"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
@@ -2130,7 +2122,7 @@ msgstr "GUIスケーリング："
 #: gui/options.cpp:2564
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - カスタム"
 
 #: gui/options.cpp:2568
 msgid "GUI renderer:"
@@ -4578,10 +4570,8 @@ msgstr "拡大モードOFF"
 
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting help"
-msgstr "設定"
+msgstr "ヘルプを得る"
 
 #: backends/platform/android/android.cpp:1034
 msgid ""
@@ -5979,7 +5969,7 @@ msgstr "多言語ゲームで使用する言語"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "ScummVMのセーブ管理を有効化"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
@@ -9823,12 +9813,12 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1235
 #, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr ""
+msgstr "Macintoshのリソース %s を開けません"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
-msgstr ""
+msgstr "Macintoshのリソース %s でフォークが見つかりません"
 
 #: engines/scumm/scumm.cpp:1603
 msgid ""
@@ -10402,7 +10392,7 @@ msgstr "スペシャルアクション"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "風景ズーム"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
