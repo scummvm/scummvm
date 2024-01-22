@@ -536,7 +536,7 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap)
-		ap->playSFX(sfxNum, priority, objId, -1, true);
+		ap->playSFX(sfxNum, priority, objId, -1, true, PITCH_SHIFT_NONE, 0xff, true);
 	else
 		warning("No AudioProcess");
 

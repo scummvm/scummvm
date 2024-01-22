@@ -94,6 +94,7 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
 	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
 
+	_mixer->stopHandle(_soundHandle);
 	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, vol, balance);
 	if (_pitchShift != AudioProcess::PITCH_SHIFT_NONE)
 		_mixer->setChannelRate(_soundHandle, stream->getRate() * pitchShift / AudioProcess::PITCH_SHIFT_NONE);
