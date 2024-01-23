@@ -38,7 +38,7 @@ enum GfxScreenUpscaledMode {
 	DISPLAY_UPSCALED_640x400  = 1
 };
 
-class AgiEngine;
+class AgiBase;
 
 enum GfxScreenMasks {
 	GFX_SCREEN_MASK_VISUAL      = 1,
@@ -69,8 +69,8 @@ private:
 public:
 	GfxMgr(AgiBase *vm, GfxFont *font);
 
-	int initVideo();
-	int deinitVideo();
+	void initVideo();
+	void deinitVideo();
 	void initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
 	void initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount = 16);
 	void setAGIPal(int);
@@ -176,9 +176,9 @@ public:
 	bool render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth = SCRIPT_WIDTH, int16 clipAgainstHeight = SCRIPT_HEIGHT);
 
 private:
-	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
-	void render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
-	void render_BlockHercules(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
+	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height);
+	void render_BlockCGA(int16 x, int16 y, int16 width, int16 height);
+	void render_BlockHercules(int16 x, int16 y, int16 width, int16 height);
 
 public:
 	void transition_Amiga();

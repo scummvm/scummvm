@@ -28,8 +28,8 @@ namespace Agi {
 void AgiEngine::updateView(ScreenObjEntry *screenObj) {
 	int16 celNr, lastCelNr;
 
-	if (screenObj->flags & fDontupdate) {
-		screenObj->flags &= ~fDontupdate;
+	if (screenObj->flags & fDontUpdate) {
+		screenObj->flags &= ~fDontUpdate;
 		return;
 	}
 
@@ -385,7 +385,7 @@ void AgiEngine::unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedDat
 
 /**
  * Unloads all data in a view resource
- * @param n number of view resource
+ * @param viewNr number of view resource
  */
 void AgiEngine::unloadView(int16 viewNr) {
 	AgiView *viewData = &_game.views[viewNr];
@@ -580,9 +580,8 @@ void AgiEngine::clipViewCoordinates(ScreenObjEntry *screenObj) {
 	}
 
 	if (getVersion() < 0x2000) {
-		screenObj->flags |= fDontupdate;
+		screenObj->flags |= fDontUpdate;
 	}
-
 }
 
 /**
