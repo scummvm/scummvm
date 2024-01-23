@@ -89,12 +89,12 @@ void TextMgr::init(SystemUI *systemUI) {
 	_systemUI = systemUI;
 }
 
-void TextMgr::configureScreen(uint16 row_Min) {
-	_window_Row_Min = row_Min;
-	_window_Row_Max = row_Min + 21;
+void TextMgr::configureScreen(uint16 gameRow) {
+	_window_Row_Min = gameRow;
+	_window_Row_Max = gameRow + 21;
 
 	// forward data to GfxMgr as well
-	_gfx->setRenderStartOffset(row_Min * FONT_VISUAL_HEIGHT);
+	_gfx->setRenderStartOffset(gameRow * FONT_VISUAL_HEIGHT);
 }
 uint16 TextMgr::getWindowRowMin() {
 	return _window_Row_Min;

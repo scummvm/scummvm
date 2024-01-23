@@ -510,8 +510,10 @@ byte GfxMgr::getCGAMixtureColor(byte color) {
 // Attention: in our implementation, y-coordinate is upper left.
 // Sierra passed the lower left instead. We changed it to make upscaling easier.
 void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
-	if (!render_Clip(x, y, width, height))
+	if (!render_Clip(x, y, width, height)) {
+		warning("render_Block ignored by clipping. x: %d, y: %d, w: %d, h: %d", x, y, width, height);
 		return;
+	}
 
 	switch (_vm->_renderMode) {
 	case Common::kRenderHercG:
@@ -532,21 +534,33 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 	}
 }
 
+// FIXME: This function needs clarification and cleanup. Half of the code is
+// logically dead or disabled. Is the purpose to adjust out-of-bounds coordinates
+// so that they fit within boundaries, or is it to identify out-of-bounds
+// coordinates so that the entire drawing operation can be rejected?
 bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth, int16 clipAgainstHeight) {
+	// Allow rendering all the way to the top of the visual screen, even if there
+	// is a menu bar. MMMG nursery rhyme message boxes appear over the menu bar
+	// when the scripts pass a y-coordinate of zero to print.at(). Bug #13820
+	int16 minY = 0 - _renderStartDisplayOffsetY;
+
 	if ((x >= clipAgainstWidth) || ((x + width - 1) < 0) ||
-	        (y < 0) || ((y + (height - 1)) >= clipAgainstHeight)) {
+	        (y < minY) || ((y + (height - 1)) >= clipAgainstHeight)) {
 		return false;
 	}
 
-	if (y < 0) {
+	// FIXME: this check is always false, see above
+	if (y < minY) {
 		height += y;
-		y = 0;
+		y = minY;
 	}
 
+	// FIXME: this check is always false, see above
 	if ((y + height - 1) >= clipAgainstHeight) {
 		height = clipAgainstHeight - y;
 	}
 
+	// FIXME: why is this disabled?
 #if 0
 	if ((y - height + 1) < 0)
 		height = y + 1;
@@ -966,8 +980,10 @@ void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bu
 //            Going beyond 160x168 will result in messageboxes not getting fully removed
 //            In KQ4's case, the scripts clear the screen that's why it works.
 void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
-	if (!render_Clip(x, y, width, height, VISUAL_WIDTH, VISUAL_HEIGHT - _renderStartVisualOffsetY))
+	if (!render_Clip(x, y, width, height, VISUAL_WIDTH, VISUAL_HEIGHT - _renderStartVisualOffsetY)) {
+		warning("drawBox ignored by clipping. x: %d, y: %d, w: %d, h: %d", x, y, width, height);
 		return;
+	}
 
 	// coordinate translation: visual-screen -> display-screen
 	translateVisualRectToDisplayScreen(x, y, width, height);

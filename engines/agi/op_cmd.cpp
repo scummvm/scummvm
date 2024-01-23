@@ -1850,11 +1850,11 @@ void cmdVersion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 void cmdConfigureScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *textMgr = state->_vm->_text;
-	uint16 lineMinPrint = parameter[0];
+	uint16 gameRow = parameter[0];
 	uint16 promptRow = parameter[1];
 	uint16 statusRow = parameter[2];
 
-	textMgr->configureScreen(lineMinPrint);
+	textMgr->configureScreen(gameRow);
 	textMgr->statusRow_Set(statusRow);
 	textMgr->promptRow_Set(promptRow);
 }
