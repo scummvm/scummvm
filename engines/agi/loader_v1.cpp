@@ -69,7 +69,7 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
-	// Cleanup
+	// initialize directory entries to empty
 	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		agid[i].volume = 0xFF;
 		agid[i].offset = _EMPTY;
@@ -92,8 +92,6 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 		}
 	}
 
-	fp.close();
-
 	return errOK;
 }
 
@@ -103,7 +101,7 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
-	// Cleanup
+	// initialize directory entries to empty
 	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		agid[i].volume = 0xFF;
 		agid[i].offset = _EMPTY;
@@ -126,8 +124,6 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 			agid[i].offset = (vol == 2) * IMAGE_SIZE + SECTOR_OFFSET(sec) + off;
 		}
 	}
-
-	fp.close();
 
 	return errOK;
 }
@@ -165,7 +161,6 @@ int AgiLoader_v1::init() {
 }
 
 uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
-	uint8 *data = nullptr;
 	Common::File fp;
 	int offset = agid->offset;
 
@@ -173,26 +168,30 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 		return nullptr;
 
 	if (offset > IMAGE_SIZE) {
-		fp.open(_filenameDisk1);
+		if (!fp.open(_filenameDisk1)) {
+			warning("AgiLoader_v1::loadVolRes: could not open %s", _filenameDisk1.c_str());
+			return nullptr;
+		}
 		offset -= IMAGE_SIZE;
 	} else {
-		fp.open(_filenameDisk0);
+		if (!fp.open(_filenameDisk0)) {
+			warning("AgiLoader_v1::loadVolRes: could not open %s", _filenameDisk0.c_str());
+			return nullptr;
+		}
 	}
 
 	fp.seek(offset, SEEK_SET);
 
-	int signature = fp.readUint16BE();
+	uint16 signature = fp.readUint16BE();
 	if (signature != 0x1234) {
 		warning("AgiLoader_v1::loadVolRes: bad signature %04x", signature);
 		return nullptr;
 	}
 
-	fp.readByte();
+	fp.readByte(); // volume number
 	agid->len = fp.readUint16LE();
-	data = (uint8 *)calloc(1, agid->len + 32);
+	uint8 *data = (uint8 *)calloc(1, agid->len + 32); // why the extra 32 bytes?
 	fp.read(data, agid->len);
-
-	fp.close();
 
 	return data;
 }
@@ -220,9 +219,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 			_vm->_game.logics[resourceNr].sIP = 2;
 		}
 
-		// if logic was cached, we get here
-		// reset code pointers incase it was cached
-
+		// reset code pointer in case logic was cached
 		_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		break;
 	case RESOURCETYPE_PICTURE:

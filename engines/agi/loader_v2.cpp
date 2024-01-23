@@ -28,9 +28,9 @@ namespace Agi {
 
 int AgiLoader_v2::detectGame() {
 	if (!Common::File::exists(LOGDIR) ||
-	        !Common::File::exists(PICDIR) ||
-	        !Common::File::exists(SNDDIR) ||
-	        !Common::File::exists(VIEWDIR))
+	    !Common::File::exists(PICDIR) ||
+	    !Common::File::exists(SNDDIR) ||
+	    !Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
 	// Should this go above the previous lines, so we can force emulation versions
@@ -42,44 +42,38 @@ int AgiLoader_v2::detectGame() {
 }
 
 int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
-	Common::File fp;
-	uint8 *mem;
-	uint32 flen;
-	uint i;
-
 	debug(0, "Loading directory: %s", fname);
 
+	Common::File fp;
 	if (!fp.open(fname)) {
 		return errBadFileOpen;
 	}
 
 	fp.seek(0, SEEK_END);
-	flen = fp.pos();
+	uint32 flen = fp.pos();
 	fp.seek(0, SEEK_SET);
 
-	if ((mem = (uint8 *)malloc(flen + 32)) == nullptr) {
-		fp.close();
+	uint8 *mem = (uint8 *)malloc(flen);
+	if (mem == nullptr) {
 		return errNotEnoughMemory;
 	}
 
 	fp.read(mem, flen);
 
-	// set all directory resources to gone
-	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+	// initialize directory entries to empty
+	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		agid[i].volume = 0xff;
 		agid[i].offset = _EMPTY;
 	}
 
-	// build directory entries
-	for (i = 0; i < flen; i += 3) {
+	// read directory entries
+	for (uint32 i = 0; i + 2 < flen; i += 3) {
 		agid[i / 3].volume = *(mem + i) >> 4;
 		agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
 		debugC(3, kDebugLevelResources, "%d: volume %d, offset 0x%05x", i / 3, agid[i / 3].volume, agid[i / 3].offset);
 	}
 
 	free(mem);
-	fp.close();
-
 	return errOK;
 }
 
@@ -173,7 +167,6 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = nullptr;
 	uint8 volumeHeader[7];
 	Common::File fp;
-	unsigned int sig;
 	Common::String path;
 
 	path = Common::String::format("vol.%i", agid->volume);
@@ -183,19 +176,19 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);
 		fp.seek(agid->offset, SEEK_SET);
 		fp.read(&volumeHeader, _hasV3VolumeFormat ? 7 : 5);
-		if ((sig = READ_BE_UINT16(volumeHeader)) == 0x1234) {
+		uint16 signature = READ_BE_UINT16(volumeHeader);
+		if (signature == 0x1234) {
 			agid->len = READ_LE_UINT16(volumeHeader + 3);
-			data = (uint8 *)calloc(1, agid->len + 32);
+			data = (uint8 *)calloc(1, agid->len + 32); // why the extra 32 bytes?
 			if (data != nullptr) {
 				fp.read(data, agid->len);
 			} else {
 				error("AgiLoader_v2::loadVolRes out of memory");
 			}
 		} else {
-			warning("AgiLoader_v2::loadVolRes: bad signature %04x", sig);
+			warning("AgiLoader_v2::loadVolRes: bad signature %04x", signature);
 			return nullptr;
 		}
-		fp.close();
 	} else {
 		// we have a bad volume resource
 		// set that resource to NA
