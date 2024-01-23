@@ -85,7 +85,7 @@ public:
 
 	int decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 pic_width = _DEFAULT_WIDTH, int16 pic_height = _DEFAULT_HEIGHT);
 	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
-	int unloadPicture(int);
+	int unloadPicture(int picNr);
 	void drawPicture();
 private:
 	void drawPictureC64();

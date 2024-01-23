@@ -587,12 +587,12 @@ void AgiEngine::clipViewCoordinates(ScreenObjEntry *screenObj) {
 
 /**
  * Set the view table entry as updating.
- * @param v pointer to view table entry
+ * @param viewPtr pointer to view table entry
  */
-void AgiEngine::startUpdate(ScreenObjEntry *v) {
-	if (~v->flags & fUpdate) {
+void AgiEngine::startUpdate(ScreenObjEntry *viewPtr) {
+	if (~viewPtr->flags & fUpdate) {
 		_sprites->eraseSprites();
-		v->flags |= fUpdate;
+		viewPtr->flags |= fUpdate;
 		_sprites->buildAllSpriteLists();
 		_sprites->drawAllSpriteLists();
 	}
@@ -600,7 +600,7 @@ void AgiEngine::startUpdate(ScreenObjEntry *v) {
 
 /**
  * Set the view table entry as non-updating.
- * @param v pointer to view table entry
+ * @param viewPtr pointer to view table entry
  */
 void AgiEngine::stopUpdate(ScreenObjEntry *viewPtr) {
 	if (viewPtr->flags & fUpdate) {

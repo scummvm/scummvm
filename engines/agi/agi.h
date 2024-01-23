@@ -610,8 +610,8 @@ public:
 	virtual int detectGame() = 0;
 	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
 	virtual int unloadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int loadObjects(const char *) = 0;
-	virtual int loadWords(const char *) = 0;
+	virtual int loadObjects(const char *fname) = 0;
+	virtual int loadWords(const char *fname) = 0;
 };
 
 class AgiLoader_v1 : public AgiLoader {
@@ -632,8 +632,8 @@ public:
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
 	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -657,8 +657,8 @@ public:
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
 	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
@@ -679,8 +679,8 @@ public:
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
 	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class GfxFont;
@@ -955,7 +955,7 @@ public:
 	int loadObjects(Common::File &fp);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
-	void objectSetLocation(uint16 objectNr, int);
+	void objectSetLocation(uint16 objectNr, int location);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
 	int readObjects(Common::File &fp, int flen);
@@ -965,9 +965,9 @@ public:
 	int decodeLogic(int16 logicNr);
 	void unloadLogic(int16 logicNr);
 	int runLogic(int16 logicNr);
-	void debugConsole(int, int, const char *);
+	void debugConsole(int lognum, int mode, const char *str);
 	bool testIfCode(int16 logicNr);
-	void executeAgiCommand(uint8, uint8 *);
+	void executeAgiCommand(uint8 op, uint8 *p);
 
 private:
 	bool _veryFirstInitialCycle; /**< signals, that currently the very first cycle is executed (restarts, etc. do not count!) */
@@ -988,13 +988,13 @@ public:
 	// Some submethods of testIfCode
 	void skipInstruction(byte op);
 	void skipInstructionsUntil(byte v);
-	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
-	uint8 testObjCenter(uint8, uint8, uint8, uint8, uint8);
-	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
-	uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
-	uint8 testSaid(uint8, uint8 *);
-	uint8 testController(uint8);
-	uint8 testCompareStrings(uint8, uint8);
+	uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	uint8 testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	uint8 testSaid(uint8 nwords, uint8 *cc);
+	uint8 testController(uint8 cont);
+	uint8 testCompareStrings(uint8 s1, uint8 s2);
 
 	// View
 private:
@@ -1007,8 +1007,8 @@ public:
 
 	void clipViewCoordinates(ScreenObjEntry *screenObj);
 
-	void startUpdate(ScreenObjEntry *);
-	void stopUpdate(ScreenObjEntry *);
+	void startUpdate(ScreenObjEntry *viewPtr);
+	void stopUpdate(ScreenObjEntry *viewPtr);
 	void updateScreenObjTable();
 	void unloadView(int16 viewNr);
 	int decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr);
