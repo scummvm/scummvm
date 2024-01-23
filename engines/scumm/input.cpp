@@ -192,14 +192,14 @@ void ScummEngine::parseEvent(Common::Event event) {
 		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
 
 		if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
-			_keyPressed = event.kbd;
-			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
+			event.kbd.ascii = (event.kbd.keycode - Common::KEYCODE_KP0) + '0';
+			event.kbd.flags = Common::KBD_NUM;
 		}
 
-		if (_keyPressed.ascii >= 512) {
+		if (event.kbd.ascii >= 512) {
 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 		} else {
-			_keyDownMap[_keyPressed.ascii] = false;
+			_keyDownMap[event.kbd.ascii] = false;
 
 			// Due to some weird bug with capslock key pressed
 			// generated keydown event is for lower letter but
