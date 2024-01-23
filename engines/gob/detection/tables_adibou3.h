@@ -122,4 +122,21 @@
 	0,0,0
 },
 
+// -- English: Adiboo 3 --
+
+{
+	{
+
+		"adibou3",
+		_s("Missing game code"), // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		AD_ENTRY1s("b3_common.stk", "3f34b0172396321d0c5e37c53b4de005", 523852),
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0,0,0
+},
+
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H
