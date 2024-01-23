@@ -48,6 +48,7 @@
 #include "director/castmember/sound.h"
 #include "director/castmember/text.h"
 #include "director/castmember/transition.h"
+#include "director/lingo/lingo-codegen.h"
 
 namespace Director {
 
@@ -1088,6 +1089,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 					error("Cast::loadLingoContext: Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
 				}
 				_lingoArchive->scriptContexts[script->_scriptType][script->_id] = script;
+				_lingoArchive->patchScriptHandler(script->_scriptType, CastMemberID(script->_id, _castLibID));
 			} else {
 				// Keep track of scripts that are not in scriptContexts
 				// Those scripts need to be cleaned up on ~LingoArchive
