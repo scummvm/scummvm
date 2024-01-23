@@ -168,6 +168,10 @@ void DgdsEngine::changeScene(int sceneNum) {
 		error("Tried to switch to non-existant scene %d", sceneNum);
 
 	_scene->load(sceneFile, _resource, _decompressor);
+
+	if (_scene->getMagic() != _gdsScene->getMagic())
+		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
+
 	if (!_scene->getAdsFile().empty())
 		_adsInterp->load(_scene->getAdsFile());
 
