@@ -89,7 +89,7 @@ bool TTMInterpreter::run() {
 		uint op = code & 0xFFF0;
 		int16 ivals[8];
 		Common::String sval;
-		
+
 		if (count > 8 && count != 0x0f)
 			error("Invalid TTM opcode %04x requires %d locals", code, count);
 
@@ -123,29 +123,28 @@ bool TTMInterpreter::run() {
 		case 0x0000:
 			// FINISH:	void
 			break;
-		case 0xf010:
-			// LOAD SCR:	filename:str
-			_vm->_image->drawScreen(sval, _vm->getBottomBuffer());
+		case 0x0020: //SAVE BACKGROUND
+			_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 			continue;
-		case 0xf020:
-			// LOAD BMP:	filename:str
-			_state.bmpNames[_state._currentBmpId] = sval;
+		case 0x0110: //PURGE void
+			// .. shouldn't actually clear the bmps, what should it do?
+			_state._currentBmpId = 0;
 			continue;
-		case 0xf050:
-			// LOAD PAL:	filename:str
-			_vm->_image->loadPalette(sval);
-			continue;
-		case 0xf060:
-			// LOAD SONG:	filename:str
-			if (_vm->_platform == Common::kPlatformAmiga) {
-				_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
-			} else if (_vm->_platform == Common::kPlatformMacintosh) {
-				_vm->_soundPlayer->playMacMusic(sval.c_str());
-			} else {
-				_vm->_soundPlayer->playMusic(sval.c_str());
-			}
-			continue;
+		case 0x0ff0: {
+			// REFRESH:	void
+			_vm->_resData.blitFrom(_vm->getBottomBuffer());
+			Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
+			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
+			_vm->getTopBuffer().fillRect(bmpArea, 0);
 
+			if (_text) {
+				_text->draw(_vm->_resData.surfacePtr(), 1);
+				_text->draw(_vm->_resData.surfacePtr(), 4);
+			}
+		} break;
+		case 0x1020: // SET DELAY:	    i:int   [0..n]
+			_state.delay += ivals[0] * 10;
+			continue;
 		case 0x1030: {
 			// SET BMP:	id:int [-1:n]
 			int bk = ivals[0];
@@ -159,33 +158,43 @@ bool TTMInterpreter::run() {
 			_state._currentBmpId = ivals[0];
 			continue;
 		case 0x1060:
-			// SELECT SCR|PAL:  id:int [0]
-			warning("Switching scene %d -> %d for opcode 0x1060 .. is that right?", _state.scene, ivals[0]);
-			_state.scene = ivals[0];
+			// SELECT PAL:  id:int [0]
+			warning("TTM: Switching palette to %d for opcode 0x1060, but we don't use it yet", ivals[0]);
+			_state._currentPalId = ivals[0];
 			continue;
 		case 0x1090:
 			// SELECT SONG:	    id:int [0]
 			continue;
-		case 0x4120:
-			// FADE IN:	?,?,?,?:byte
-			_vm->_image->setPalette();
+		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
+			debug("SET SCENE: %u", ivals[0]);
+			break;
+		case 0x1110: { //SHOW SCENE TEXT?:  i:int   [1..n]
+			// DESCRIPTION IN TTM TAGS.
+			debug("SHOW SCENE TEXT: %u", ivals[0]);
+			_state.scene = ivals[0];
+			setActiveDialogue(_state.scene);
+			continue;
+		}
+
+		case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
+			_state._drawColFG = static_cast<byte>(ivals[0]);
+			_state._drawColBG = static_cast<byte>(ivals[1]);
+			continue;
+
+		case 0x4000:
+			//SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
+			_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 			continue;
 		case 0x4110:
-			// FADE OUT:	?,?,?,?:byte
+			// FADE OUT:	colorno,ncolors,coloffset,speed:byte
 			g_system->delayMillis(_state.delay);
 			_vm->_image->clearPalette();
 			_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			continue;
-		// these 3 ops do interaction between the topBuffer (imgData) and the bottomBuffer (scrData) but... it might turn out this uses z values!
-		case 0xa050: { //GFX?	    i,j,k,l:int	[i<k,j<l] // HAPPENS IN INTRO.TTM:INTRO9
-			// it works like a bitblit, but it doesn't write if there's something already at the destination?
-			_vm->_resData.blitFrom(_vm->getBottomBuffer());
-			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-			_vm->getTopBuffer().copyFrom(_vm->_resData);
-			continue;
-		}
-		case 0x0020: //SAVE BG?:    void // OR PERHAPS SWAPBUFFERS ; it makes bmpData persist in the next frames.
-			_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
+		case 0x4120:
+			// FADE IN:	colorno,ncolors,coloffset,speed:byte
+			warning("TTM: FADE IN, implement me");
+			_vm->_image->setPalette();
 			continue;
 		case 0x4200: {
 			// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
@@ -195,25 +204,28 @@ bool TTMInterpreter::run() {
 			_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
 			continue;
 		}
-		case 0x0ff0: {
-			// REFRESH:	void
+		case 0xa000: // DRAW PIXEL x,y:int
+			_vm->getTopBuffer().setPixel(ivals[0], ivals[1], _state._drawColFG);
+			continue;
+		case 0xa050: //SAVE REGION    i,j,k,l:int	[i<k,j<l]
+			// it works like a bitblit, but it doesn't write if there's something already at the destination?
 			_vm->_resData.blitFrom(_vm->getBottomBuffer());
-			Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
-			_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
-			_vm->getTopBuffer().fillRect(bmpArea, 0);
-
-			if (_text) {
-				_text->draw(_vm->_resData.surfacePtr(), 1);
-				_text->draw(_vm->_resData.surfacePtr(), 4);
-			}
-		} break;
-
+			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
+			_vm->getTopBuffer().copyFrom(_vm->_resData);
+			continue;
+		case 0xa100:
+			//DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
+			bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+			_vm->getTopBuffer().fillRect(bmpArea, _state._drawColFG);
+			continue;
 		case 0xa520:
-			//DRAW BMP: x,y:int ; happens once in INTRO.TTM
+			// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
+			// FALL THROUGH
 		case 0xa530:
 			// CHINA
 			// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
 			// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
+			// FALL THROUGH
 		case 0xa500:
 			debug("DRAW \"%s\"", _state.bmpNames[_state._currentBmpId].c_str());
 
@@ -237,41 +249,53 @@ bool TTMInterpreter::run() {
 			else
 				warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 			continue;
-
-		case 0x1110: { //SHOW SCENE TEXT?:  i:int   [1..n]
-			// DESCRIPTION IN TTM TAGS.
-			debug("SHOW SCENE TEXT: %u", ivals[0]);
-			_state.scene = ivals[0];
-			setActiveDialogue(_state.scene);
+		case 0xf010:
+			// LOAD SCR:	filename:str
+			_vm->_image->drawScreen(sval, _vm->getBottomBuffer());
 			continue;
-		}
-
-		case 0x4000:
-			//SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
-			_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+		case 0xf020:
+			// LOAD BMP:	filename:str
+			_state.bmpNames[_state._currentBmpId] = sval;
+			continue;
+		case 0xf050:
+			// LOAD PAL:	filename:str
+			_vm->_image->loadPalette(sval);
+			continue;
+		case 0xf060:
+			// LOAD SONG:	filename:str
+			if (_vm->_platform == Common::kPlatformAmiga) {
+				_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
+			} else if (_vm->_platform == Common::kPlatformMacintosh) {
+				_vm->_soundPlayer->playMacMusic(sval.c_str());
+			} else {
+				_vm->_soundPlayer->playMusic(sval.c_str());
+			}
 			continue;
 
-		case 0xa100:
-			//SET BMP AREA? x,y,w,h:int	[0..320,0..200]
-			bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-			continue;
-
-		case 0x1020: //DELAY?:	    i:int   [0..n]
-			_state.delay += ivals[0] * 10;
-			continue;
-
-		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
-			debug("SET SCENE: %u", ivals[0]);
-			break;
-
-		case 0x2000: //SET FRAME1?: i,j:int [0..255]
-
-		case 0x0110: //PURGE IMGS?  void
-		case 0x0080: //DRAW BG:	    void
-		case 0x1100: //?	    i:int   [9]
-		case 0x1300: //?	    i:int   [72,98,99,100,107]
-
-		case 0x1310: //?	    i:int   [107]
+		// Unimplemented / unknown
+		case 0x0080: // DRAW BG:	    void
+		case 0x1100: // ?	    i:int   [9]
+		case 0x1120: // SET_BACKGROUND
+		case 0x1200: // GOTO
+		case 0x1300: // ?	    i:int   [72,98,99,100,107]
+		case 0x1310: // ?	    i:int   [107]
+		case 0x2010: // SET FRAME
+		case 0x2020: // SET TIMER
+		case 0x4210: // SAVE IMAGE REGION
+		case 0xA0A0: // DRAW LINE  x1,y1,x2,y2:int
+		//case 0xA100: // DRAW FILLED RECT  x1,y1,x2,y2:int
+		case 0xA110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
+		case 0xA300: // DRAW some string? x,y,w,h:int
+		case 0xA400: // DRAW FILLED CIRCLE
+		case 0xA424: // DRAW EMPTY CIRCLE
+		case 0xA510: // DRAW SPRITE1
+		case 0xA600: // CLEAR SCREEN
+		case 0xB600: // DRAW SCREEN
+		case 0xC020: // LOAD_SAMPLE
+		case 0xC030: // SELECT_SAMPLE
+		case 0xC040: // DESELECT_SAMPLE
+		case 0xC050: // PLAY_SAMPLE
+		case 0xC060: // STOP_SAMPLE
 
 		default:
 			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
@@ -344,7 +368,7 @@ bool ADSInterpreter::run() {
 				return false;
 			}
 		}
-			
+
 		return true;
 	}
 
@@ -356,7 +380,6 @@ bool ADSInterpreter::run() {
 
 	do {
 		uint16 code = scr->readUint16LE();
-		byte count = code & 0x000F;
 		//uint op = code & 0xFFF0;
 
 		if ((code & 0xFF00) == 0) {
@@ -365,45 +388,55 @@ bool ADSInterpreter::run() {
 
 		switch (code) {
 		case 0x2005: {
-			// play scene.
+			// ADD SCENE
 			_state.subIdx = scr->readUint16LE();
 			_state.subMax = scr->readUint16LE();
 			uint16 unk1 = scr->readUint16LE();
 			uint16 unk2 = scr->readUint16LE();
 			_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
-			debug("ADSInterpreter play scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", _state.subIdx, _state.subMax, unk1, unk2);
+			debug("ADSInterpreter add scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", _state.subIdx, _state.subMax, unk1, unk2);
 			return true;
 		}
+		case 0xFFFF:
+			// END
+			return false;
 
-		case 0xF010:
-		case 0xF200:
+		case 0x1330: { // IF_NOT_PLAYED, 2 params
+			uint16 unk1 = scr->readUint16LE();
+			uint16 unk2 = scr->readUint16LE();
+			warning("Unimplemented ADS opcode: IF_NOT_PLAYED %02x %02x", unk1, unk2);
+			continue;
+		}
+
+		//// unknown / to-be-implemented
+		case 0x0190:
+		case 0x1070: // unknown, 2 params
+		case 0x1340:
+		case 0x1350: // IF_PLAYED, 2 params
+		case 0x1360: // IF_NOT_RUNNING, 2 params
+		case 0x1370: // IF_RUNNING, 2 params
+		case 0x1420: // AND, 0 params
+		case 0x1430: // OR, 0 params
+		case 0x1500:
+		case 0x1510: // PLAY_SCENE, 0 params
+		case 0x1520: // PLAY_SCENE_2, 5 params
+		case 0x2000:
+		case 0x2010: // STOP_SCENE, 3 params
+		case 0x2020:
+		case 0x3010: // RANDOM_START, 0 params
+		case 0x3020: // RANDOM_??, 1 param
+		case 0x30FF: // RANDOM_END, 0 params
+		case 0x4000: // unknown, 3 params
+		case 0x4010:
+		case 0xF010: // FADE_OUT, 0 params
+		case 0xF200: // RUN_SCRIPT, 1 param
 		case 0xFDA8:
 		case 0xFE98:
 		case 0xFF88:
 		case 0xFF10:
-		case 0xFFFF:
-		case 0x0190:
-		case 0x1070:
-		case 0x1330:
-		case 0x1340:
-		case 0x1350:
-		case 0x1360:
-		case 0x1370:
-		case 0x1420:
-		case 0x1430:
-		case 0x1500:
-		case 0x1510:
-		case 0x1520:
-		case 0x2000:
-		case 0x2010:
-		case 0x2020:
-		case 0x3010:
-		case 0x3020:
-		case 0x30FF:
-		case 0x4000:
-		case 0x4010:
+		case 0xFFF0: // END_IF, 0 params
 		default:
-			warning("Unimplemented ADS opcode: 0x%04X (count %d)", code, count);
+			warning("Unimplemented ADS opcode: 0x%04X", code);
 			continue;
 		}
 		break;
