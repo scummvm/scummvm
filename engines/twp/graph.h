@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "math/vector2d.h"
+#include "twp/util.h"
 
 namespace Twp {
 
@@ -62,16 +63,15 @@ struct GraphEdge {
 class Graph {
 public:
 	Graph();
-	Graph(const Graph &graph);
-	void addNode(Math::Vector2d node);
+	void addNode(Vector2i node);
 	void addEdge(GraphEdge edge);
 	// Gets the edge from 'from' index to 'to' index.
 	GraphEdge *edge(int start, int to);
 	Common::Array<int> getPath(int source, int target);
 
-	Common::Array<Math::Vector2d> _nodes;
+	Common::Array<Vector2i> _nodes;
 	Common::Array<Common::Array<GraphEdge> > _edges;
-	Common::Array<Math::Vector2d> _concaveVertices;
+	Common::Array<Vector2i> _concaveVertices;
 };
 
 class AStar {
@@ -83,27 +83,27 @@ public:
 	Common::Array<GraphEdge *> _spt; // The Shortest Path Tree
 	Common::Array<float> _gCost;     // This array will store the G cost of each node
 	Common::Array<float> _fCost;     // This array will store the F cost of each node
-	Common::Array<GraphEdge*> _sf;    // The Search Frontier
+	Common::Array<GraphEdge *> _sf;  // The Search Frontier
 };
 
 // Represents an area where an actor can or cannot walk
 class Walkbox {
 public:
-	Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible = true);
+	Walkbox(const Common::Array<Vector2i> &polygon, bool visible = true);
 
-  	// Indicates whether or not the specified position is inside this walkbox.
-	bool contains(Math::Vector2d position, bool toleranceOnOutside = true) const;
+	// Indicates whether or not the specified position is inside this walkbox.
+	bool contains(Vector2i position, bool toleranceOnOutside = true) const;
 	bool concave(int vertex) const;
 	void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
-	const Common::Array<Math::Vector2d>& getPoints() const { return _polygon; }
-	Math::Vector2d getClosestPointOnEdge(Math::Vector2d p3) const;
+	const Common::Array<Vector2i> &getPoints() const { return _polygon; }
+	Vector2i getClosestPointOnEdge(Vector2i p) const;
 
 public:
 	Common::String _name;
 
 private:
-	Common::Array<Math::Vector2d> _polygon;
+	Common::Array<Vector2i> _polygon;
 	bool _visible;
 };
 
@@ -111,18 +111,20 @@ private:
 class PathFinder {
 public:
 	void setWalkboxes(const Common::Array<Walkbox> &walkboxes);
-	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d start, Math::Vector2d to);
+	Common::Array<Walkbox> getWalkboxes() const { return _walkboxes; }
+	Common::Array<Vector2i> calculatePath(Vector2i start, Vector2i to);
 	void setDirty(bool dirty) { _isDirty = dirty; }
 	bool isDirty() const { return _isDirty; }
-	const Graph* getGraph() const { return _graph; }
+	const Graph &getGraph() const { return _walkgraph; }
 
 private:
 	Graph *createGraph();
-	bool inLineOfSight(Math::Vector2d start, Math::Vector2d to);
+	bool inLineOfSight(Vector2i start, Vector2i to);
 
 private:
 	Common::Array<Walkbox> _walkboxes;
 	Graph *_graph = nullptr;
+	Graph _walkgraph;
 	bool _isDirty = true;
 };
 

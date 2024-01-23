@@ -230,7 +230,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 					// Just clicking on the ground
 					cancelSentence(_actor);
 					if (_actor->_room == _room)
-						_actor->walk(roomPos);
+						_actor->walk((Vector2i)roomPos);
 					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 					_holdToMove = true;
 				}
@@ -454,8 +454,8 @@ void TwpEngine::update(float elapsed) {
 					if (_holdToMove && (_time > _nextHoldToMoveTime)) {
 						walkFast();
 						cancelSentence(_actor);
-						if (_actor->_room == _room && (distance(_actor->_node->getAbsPos(), roomPos) > 5)) {
-							_actor->walk(roomPos);
+						if (_actor->_room == _room && (distance((Vector2i)_actor->_node->getAbsPos(), (Vector2i)roomPos) > 5)) {
+							_actor->walk((Vector2i)roomPos);
 						}
 						_nextHoldToMoveTime = _time + 0.250f;
 					}

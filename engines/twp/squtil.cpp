@@ -87,15 +87,20 @@ SQInteger sqpush(HSQUIRRELVM v, HSQOBJECT value) {
 }
 
 template<>
-SQInteger sqpush(HSQUIRRELVM v, Math::Vector2d value) {
+SQInteger sqpush(HSQUIRRELVM v, Vector2i value) {
 	sq_newtable(v);
 	sq_pushstring(v, "x", -1);
-	sq_pushinteger(v, value.getX());
+	sq_pushinteger(v, value.x);
 	sq_newslot(v, -3, SQFalse);
 	sq_pushstring(v, "y", -1);
-	sq_pushinteger(v, value.getY());
+	sq_pushinteger(v, value.y);
 	sq_newslot(v, -3, SQFalse);
 	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, Math::Vector2d value) {
+	return sqpush(v, (Vector2i)value);
 }
 
 template<>

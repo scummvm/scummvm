@@ -164,13 +164,14 @@ void ReachAnim::update(float elapsed) {
 	}
 }
 
-WalkTo::WalkTo(Object *obj, Math::Vector2d dest, int facing)
+WalkTo::WalkTo(Object *obj, Vector2i dest, int facing)
 	: _obj(obj), _facing(facing) {
 	if (obj->_useWalkboxes) {
-		_path = obj->_room->calculatePath(obj->_node->getAbsPos(), dest);
+		_path = obj->_room->calculatePath((Vector2i)obj->_node->getAbsPos(), dest);
 	} else {
-		_path = {obj->_node->getAbsPos(), dest};
+		_path = {(Vector2i)obj->_node->getAbsPos(), dest};
 	}
+
 	_wsd = sqrt(obj->_walkSpeed.getX() * obj->_walkSpeed.getX() + obj->_walkSpeed.getY() * obj->_walkSpeed.getY());
 	if (sqrawexists(obj->_table, "preWalking"))
 		sqcall(obj->_table, "preWalking");
@@ -234,18 +235,18 @@ void WalkTo::actorArrived() {
 
 void WalkTo::update(float elapsed) {
 	if (_path.size() != 0) {
-		Math::Vector2d dest = _path[0];
-		float d = distance(dest, _obj->_node->getAbsPos());
+		Vector2i dest = _path[0];
+		float d = distance(dest, (Vector2i)_obj->_node->getAbsPos());
 
 		// arrived at destination ?
 		if (d < 1.0) {
-			_obj->_node->setPos(_path[0]);
+			_obj->_node->setPos((Math::Vector2d)_path[0]);
 			_path.remove_at(0);
 			if (_path.size() == 0) {
 				actorArrived();
 			}
 		} else {
-			Math::Vector2d delta = dest - _obj->_node->getAbsPos();
+			Math::Vector2d delta = (Math::Vector2d)dest - _obj->_node->getAbsPos();
 			float duration = d / _wsd;
 			float factor = Twp::clamp(elapsed / duration, 0.f, 1.f);
 
@@ -337,7 +338,8 @@ int Talking::loadActorSpeech(const Common::String &name) {
 }
 
 void Talking::say(const Common::String &text) {
-	if(text.empty()) return;
+	if (text.empty())
+		return;
 
 	Common::String txt(text);
 	if (text[0] == '@') {

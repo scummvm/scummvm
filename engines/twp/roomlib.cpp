@@ -49,7 +49,7 @@ static SQInteger addTrigger(HSQUIRRELVM v) {
 
 static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
-	Math::Vector2d pos1, pos2;
+	Vector2i pos1, pos2;
 	if (numArgs == 3) {
 		int x = 0;
 		if (SQ_FAILED(sqget(v, 2, x)))
@@ -57,7 +57,7 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 		int y = 0;
 		if (SQ_FAILED(sqget(v, 3, y)))
 			return sq_throwerror(v, "failed to get y");
-		pos1 = Math::Vector2d(x, y);
+		pos1 = Vector2i(x, y);
 		pos2 = pos1;
 	} else if (numArgs == 5) {
 		int x1 = 0;
@@ -66,14 +66,14 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 		int y1 = 0;
 		if (SQ_FAILED(sqget(v, 3, y1)))
 			return sq_throwerror(v, "failed to get y1");
-		pos1 = Math::Vector2d(x1, y1);
+		pos1 = Vector2i(x1, y1);
 		int x2 = 0;
 		if (SQ_FAILED(sqget(v, 4, x2)))
 			return sq_throwerror(v, "failed to get x2");
 		int y2 = 0;
 		if (SQ_FAILED(sqget(v, 5, y1)))
 			return sq_throwerror(v, "failed to get y2");
-		pos2 = Math::Vector2d(x2, y2);
+		pos2 = Vector2i(x2, y2);
 	} else {
 		return sq_throwerror(v, "Invalid argument number in clampInWalkbox");
 	}
@@ -85,7 +85,7 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 			return 1;
 		}
 	}
-	Math::Vector2d pos = walkboxes[0].getClosestPointOnEdge(pos2);
+	Vector2i pos = walkboxes[0].getClosestPointOnEdge(pos2);
 	sqpush(v, pos);
 	return 1;
 }
