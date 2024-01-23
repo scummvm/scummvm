@@ -40,6 +40,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VIII unexpected jumping on left click.
    - Fix Ultima VIII camera during cutscenes for Shrine of the Ancient Ones.
    - Fix Ultima VIII invalid placement of items within containers.
+   - Fix Ultima VIII never-ending lava sounds.
 
  Android port:
    - Fixed crash in built-in help with German language.
