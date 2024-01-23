@@ -26,11 +26,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Primordia, Shardlight und Technobabylon hinzugefügt.
    - Unterstützung für The Excavation of Hob's Barrow, Strangeland und Whispers
      of a Machine hinzugefügt.
+   - Unterstützung für AGS-Spiele von Stranga und Cloak and Dagger hinzugefügt.
    - Unterstützung für Adibou 1 (Adi Jr.) hinzugefügt.
    - Unterstützung für Dark Side hinzugefügt.
    - Unterstützung für Kingdom: The Far Reaches hinzugefügt.
    - Unterstützung für Escape From Hell hinzugefügt.
-   - Unterstützung für Wrath of the Gods, Gadget: Invetion, Travel and Adventure,
+   - Unterstützung für Wrath of the Gods, Gadget: Invention, Travel and Adventure,
      The Dark Eye und 4 weitere Director-Titel hinzugefügt.
 
  Neue Plattformen:
