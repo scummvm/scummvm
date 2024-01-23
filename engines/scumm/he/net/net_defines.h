@@ -24,6 +24,13 @@
 
 namespace Scumm {
 
+// The version number of the network protocol.  Users
+// will be matched with the defined when hosting and joining
+// games.  Meaning it will not find users that are using
+// a different version.  This is done to ensure that
+// people are playing with the same netcode as the hosts.
+#define NETWORK_VERSION								"1.1"
+
 // pnetwin.h
 
 #define PN_PRIORITY_HIGH							0x00000001
