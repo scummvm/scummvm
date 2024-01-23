@@ -396,7 +396,7 @@ void AgiEngine::setupOpCodes(uint16 version) {
 
 	// Alter opcode parameters for specific games
 	if ((version >= 0x2000) && (version < 0x3000)) {
-		// AGI3 adjustments
+		// AGI2 adjustments
 
 		// 'quit' takes 0 args for 2.089
 		if (version == 0x2089)

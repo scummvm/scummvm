@@ -39,9 +39,7 @@ namespace Agi {
  * @param n room number
  */
 void AgiEngine::newRoom(int16 newRoomNr) {
-	ScreenObjEntry *screenObj;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	int i;
 
 	// Loading trigger
 	artificialDelayTrigger_NewRoom(newRoomNr);
@@ -49,16 +47,16 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	debugC(4, kDebugLevelMain, "*** room %d ***", newRoomNr);
 	_sound->stopSound();
 
-	i = 0;
-	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
-		screenObj->objectNr = i++;
-		screenObj->flags &= ~(fAnimated | fDrawn);
-		screenObj->flags |= fUpdate;
-		screenObj->stepTime = 1;
-		screenObj->stepTimeCount = 1;
-		screenObj->cycleTime = 1;
-		screenObj->cycleTimeCount = 1;
-		screenObj->stepSize = 1;
+	for (int i = 0; i < SCREENOBJECTS_MAX; i++) {
+		ScreenObjEntry &screenObj = _game.screenObjTable[i];
+		screenObj.objectNr = i;
+		screenObj.flags &= ~(fAnimated | fDrawn);
+		screenObj.flags |= fUpdate;
+		screenObj.stepTime = 1;
+		screenObj.stepTimeCount = 1;
+		screenObj.cycleTime = 1;
+		screenObj.cycleTimeCount = 1;
+		screenObj.stepSize = 1;
 	}
 	agiUnloadResources();
 
@@ -121,17 +119,13 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 }
 
 void AgiEngine::resetControllers() {
-	int i;
-
-	for (i = 0; i < MAX_CONTROLLERS; i++) {
+	for (int i = 0; i < MAX_CONTROLLERS; i++) {
 		_game.controllerOccurred[i] = false;
 	}
 }
 
 void AgiEngine::interpretCycle() {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	bool oldSound;
-	byte oldScore;
 
 	if (!_game.playerControl)
 		setVar(VM_VAR_EGO_DIRECTION, screenObjEgo->direction);
@@ -140,8 +134,8 @@ void AgiEngine::interpretCycle() {
 
 	checkAllMotions();
 
-	oldScore = getVar(VM_VAR_SCORE);
-	oldSound = getFlag(VM_FLAG_SOUND_ON);
+	byte oldScore = getVar(VM_VAR_SCORE);
+	bool oldSound = getFlag(VM_FLAG_SOUND_ON);
 
 	// Reset script heuristic here
 	resetGetVarSecondsHeuristic();
@@ -182,11 +176,10 @@ void AgiEngine::interpretCycle() {
 
 // We return the current key, or 0 if no key was pressed
 uint16 AgiEngine::processAGIEvents() {
-	uint16 key;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	wait(10);
-	key = doPollKeyboard();
+	uint16 key = doPollKeyboard();
 
 	// In AGI Mouse emulation mode we must update the mouse-related
 	// vars in every interpreter cycle.

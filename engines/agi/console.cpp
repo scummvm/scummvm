@@ -488,7 +488,7 @@ bool Console::Cmd_ScreenObj(int argc, const char **argv) {
 			flagsString += "UpdatePos ";
 		if (screenObj->flags & fOnLand)
 			flagsString += "OnLand ";
-		if (screenObj->flags & fDontupdate)
+		if (screenObj->flags & fDontUpdate)
 			flagsString += "DontUpdate ";
 		if (screenObj->flags & fFixLoop)
 			flagsString += "FixLoop ";
