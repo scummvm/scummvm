@@ -47,11 +47,14 @@ public:
 };
 
 struct TTMState {
-	TTMState() : scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0) {}
+	TTMState() : scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0), _currentPalId(0), _drawColFG(0), _drawColBG(0) {}
 	uint16 scene;
 	int delay;
 	Common::Rect _drawWin;
 	int _currentBmpId;
+	int _currentPalId;
+	byte _drawColFG;
+	byte _drawColBG;
 	Common::String bmpNames[16];
 };
 
