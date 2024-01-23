@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2024-01-19 21:42+0000\n"
+"PO-Revision-Date: 2024-01-23 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2543,32 +2543,31 @@ msgstr "Mugitu"
 
 #: gui/options.cpp:2908
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERROREA: Gordetako joko hauek mugitzean huts egin da:\n"
 
 #: gui/options.cpp:3003
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Ezin izan da jokoa gorde"
+msgstr "Akatsa laino biltegiratzea aldatzean!"
 
 #: gui/options.cpp:3006
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Beste laino biltegiratze bat dago aktibo."
 
 #: gui/options.cpp:3123
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Motore-pluginak ez ditu gordetako partidak onartzen"
+msgstr "Theme honek ez du aukeratutako hizkuntza onartzen!"
 
 #: gui/options.cpp:3126
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Jokoa EZ da kargatu"
+msgstr "Theme-a ezin da kargatu!"
 
 #: gui/options.cpp:3129
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Bestelako ezarpenak berrezarriko dira."
 
 #: gui/options.cpp:3201
 msgid "Select directory for GUI themes"
