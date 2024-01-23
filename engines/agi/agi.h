@@ -606,10 +606,9 @@ public:
 	virtual ~AgiLoader() {}
 
 	virtual int init() = 0;
-	virtual int deinit() = 0;
 	virtual int detectGame() = 0;
 	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int unloadResource(int16 resourceType, int16 resourceNr) = 0;
+	virtual void unloadResource(int16 resourceType, int16 resourceNr) = 0;
 	virtual int loadObjects(const char *fname) = 0;
 	virtual int loadWords(const char *fname) = 0;
 };
@@ -628,10 +627,9 @@ public:
 	AgiLoader_v1(AgiEngine *vm);
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };
@@ -653,10 +651,9 @@ public:
 	}
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };
@@ -675,10 +672,9 @@ public:
 	}
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };
@@ -914,10 +910,10 @@ public:
 	void wait(uint32 msec, bool busy = false);
 
 	int agiInit();
-	int agiDeinit();
+	void agiDeinit();
 	int agiDetectGame();
 	int agiLoadResource(int16 resourceType, int16 resourceNr);
-	int agiUnloadResource(int16 resourceType, int16 resourceNr);
+	void agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
 	int getKeypress() override;

@@ -164,11 +164,6 @@ int AgiLoader_v1::init() {
 	return ec;
 }
 
-int AgiLoader_v1::deinit() {
-	int ec = errOK;
-	return ec;
-}
-
 uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = nullptr;
 	Common::File fp;
@@ -293,7 +288,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 	return ec;
 }
 
-int AgiLoader_v1::unloadResource(int16 resourceType, int16 resourceNr) {
+void AgiLoader_v1::unloadResource(int16 resourceType, int16 resourceNr) {
 	switch (resourceType) {
 	case RESOURCETYPE_LOGIC:
 		_vm->unloadLogic(resourceNr);
@@ -310,8 +305,6 @@ int AgiLoader_v1::unloadResource(int16 resourceType, int16 resourceNr) {
 	default:
 		break;
 	}
-
-	return errOK;
 }
 
 int AgiLoader_v1::loadObjects(const char *fname) {

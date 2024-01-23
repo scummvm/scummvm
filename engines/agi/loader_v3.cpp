@@ -154,21 +154,7 @@ int AgiLoader_v3::init() {
 	return ec;
 }
 
-int AgiLoader_v3::deinit() {
-	int ec = errOK;
-
-#if 0
-	// unload words
-	agiV3UnloadWords();
-
-	// unload objects
-	agiV3UnloadObjects();
-#endif
-
-	return ec;
-}
-
-int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
+void AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
 	switch (resourceType) {
 	case RESOURCETYPE_LOGIC:
 		_vm->unloadLogic(resourceNr);
@@ -185,8 +171,6 @@ int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
 	default:
 		break;
 	}
-
-	return errOK;
 }
 
 /**
