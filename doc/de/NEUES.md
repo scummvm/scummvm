@@ -38,6 +38,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler bei der Text-Darstellung von Plaketten in Ultima VIII behoben.
    - Ultima VIII stürzt nicht mehr ab, wenn Items an den Rand des Bildschirms gezogen werden.
    - In Ultima VIII springt der Charakter nicht mehr unerwartet, wenn die linke Maustaste geklickt wird.
+   - Kamera im Shrine of the Anicent Ones in Ultima VIII korrigiert.
+   - Ungültige Item-Ablage innerhalb von Containern in Ultima VIII korrigiert.
+   - Nie endender Lava-Sound in Ultima VIII korrigiert.
 
  Android-Portierung:
    - Absturz in der eingebauten Hilfe korrigiert, der bei der Nutzung des deutschen Sprachpaketes auftritt.
