@@ -221,6 +221,9 @@ public:
 	bool isVersionOver(const char *version) const;
 	bool isVersionUnder(const char *version) const;
 
+	uint32 getMagic() const { return _magic; }
+	const Common::String &getVersion() const { return _version; }
+
 protected:
 	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const;
 	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
@@ -257,13 +260,14 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 	void runStartGameOps() { runOps(_startGameOps); }
+	void runQuitGameOps() { runOps(_quitGameOps); }
 
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
 	Common::Array<struct GameItem> _gameItems;
 	Common::Array<struct SceneOp> _startGameOps;
-	Common::Array<struct SceneOp> _opList2;
+	Common::Array<struct SceneOp> _quitGameOps;
 	Common::Array<struct SceneOp> _opList3;
 	Common::Array<struct SceneOp> _opList4;
 	Common::Array<struct SceneOp> _opList5;

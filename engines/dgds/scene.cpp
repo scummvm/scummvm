@@ -828,7 +828,7 @@ bool GDSScene::parseInf(Common::SeekableReadStream *s) {
 
 bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _startGameOps);
-	readOpList(stream, _opList2);
+	readOpList(stream, _quitGameOps);
 	if (isVersionOver(" 1.206"))
 		readOpList(stream, _opList3);
 	readOpList(stream, _opList4);
@@ -851,7 +851,7 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sGDSScene<icons %s", indent.c_str(), _iconFile.c_str());
 	str += _dumpStructList(indent, "gameItems", _gameItems);
 	str += _dumpStructList(indent, "startGameOps", _startGameOps);
-	str += _dumpStructList(indent, "opList2", _opList2);
+	str += _dumpStructList(indent, "quitGameOps", _quitGameOps);
 	str += _dumpStructList(indent, "opList3", _opList3);
 	str += _dumpStructList(indent, "opList4", _opList4);
 	str += _dumpStructList(indent, "opList5", _opList5);
