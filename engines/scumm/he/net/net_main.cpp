@@ -19,7 +19,6 @@
  *
  */
 
-#include "base/version.h"
 #include "common/config-manager.h"
 
 #include "scumm/he/intern_he.h"
@@ -334,8 +333,8 @@ int Net::createSession(char *name) {
 			_sessionServerPeer = 0;
 			// Create session to the session server.
 			Common::String req = Common::String::format(
-				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d,\"scummvm_version\":\"%s\",\"map_data\":%s}",
-				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers, gScummVMFullVersion, mapData.c_str());
+				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d,\"network_version\":\"%s\",\"map_data\":%s}",
+				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers, NETWORK_VERSION, mapData.c_str());
 			debugC(DEBUG_NETWORK, "NETWORK: Sending to session server: %s", req.c_str());
 			_sessionHost->send(req.c_str(), _sessionServerPeer);
 		} else {
@@ -669,8 +668,8 @@ int32 Net::updateQuerySessions() {
 	if (_sessionServerHost) {
 		// Get internet-based sessions from the session server.
 		Common::String getSessions = Common::String::format(
-			"{\"cmd\":\"get_sessions\",\"game\":\"%s\",\"version\":\"%s\",\"scummvm_version\":\"%s\"}",
-			_gameName.c_str(), _gameVersion.c_str(), gScummVMFullVersion);
+			"{\"cmd\":\"get_sessions\",\"game\":\"%s\",\"version\":\"%s\",\"network_version\":\"%s\"}",
+			_gameName.c_str(), _gameVersion.c_str(), NETWORK_VERSION);
 		_sessionServerHost->send(getSessions.c_str(), 0);
 
 		_gotSessions = false;

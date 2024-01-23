@@ -46,6 +46,10 @@
 #include "scumm/help.h"
 #endif
 
+#ifdef USE_ENET
+#include "scumm/he/net/net_defines.h"
+#endif
+
 using Graphics::kTextAlignCenter;
 using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
@@ -1695,6 +1699,9 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
 	}
+
+	// Display network version
+	_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
 }
 
 void HENetworkGameOptionsWidget::load() {
@@ -1773,6 +1780,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 					.addWidget("ServerReset", "", 15, 15)
 				.closeLayout()
 				.addWidget("EnableCompetitiveMods", "Checkbox")
+				.addWidget("NetworkVersion", "")
 			.closeLayout()
 		.closeDialog();
 #endif
@@ -1789,6 +1797,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 					.addWidget("SessionServerAddress", "EditTextWidget")
 					.addWidget("ServerReset", "", 15, 15)
 				.closeLayout()
+				.addWidget("NetworkVersion", "")
 			.closeLayout()
 		.closeDialog();
 	}

@@ -419,6 +419,8 @@ private:
 	GUI::EditTextWidget *_lobbyServerAddr;
 
 	GUI::CheckboxWidget *_enableCompetitiveMods;
+
+	GUI::StaticTextWidget *_networkVersion;
 };
 #endif
 
