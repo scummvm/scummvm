@@ -98,7 +98,7 @@ public:
 	uint16 _window_Row_Max;
 	int16 _reset_Column;
 
-	void configureScreen(uint16 row_Min);
+	void configureScreen(uint16 gameRow);
 	uint16 getWindowRowMin();
 
 	void dialogueOpen();
