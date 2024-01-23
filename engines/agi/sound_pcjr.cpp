@@ -159,7 +159,7 @@ void SoundGenPCJr::play(int resnum) {
 	_v1size = pcjrSound->getLength() - 1;
 }
 
-void SoundGenPCJr::stop(void) {
+void SoundGenPCJr::stop() {
 	int i;
 
 	for (i = 0; i < CHAN_MAX; i++) {

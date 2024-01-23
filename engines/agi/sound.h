@@ -77,7 +77,7 @@ public:
 	virtual ~SoundGen();
 
 	virtual void play(int resnum) = 0;
-	virtual void stop(void) = 0;
+	virtual void stop() = 0;
 
 	AgiBase *_vm;
 

@@ -983,13 +983,13 @@ int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width,
  * Unload an AGI picture resource.
  * This function unloads an AGI picture resource and deallocates
  * resource data.
- * @param n AGI picture resource number
+ * @param picNr AGI picture resource number
  */
-int PictureMgr::unloadPicture(int n) {
+int PictureMgr::unloadPicture(int picNr) {
 	// remove visual buffer & priority buffer if they exist
-	if (_vm->_game.dirPic[n].flags & RES_LOADED) {
-		free(_vm->_game.pictures[n].rdata);
-		_vm->_game.dirPic[n].flags &= ~RES_LOADED;
+	if (_vm->_game.dirPic[picNr].flags & RES_LOADED) {
+		free(_vm->_game.pictures[picNr].rdata);
+		_vm->_game.dirPic[picNr].flags &= ~RES_LOADED;
 	}
 
 	return errOK;

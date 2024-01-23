@@ -222,7 +222,7 @@ public:
 	~SoundGen2GS() override;
 
 	void play(int resnum) override;
-	void stop(void) override;
+	void stop() override;
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
 

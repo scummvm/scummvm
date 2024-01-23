@@ -71,7 +71,7 @@ public:
 	~SoundGenSarien() override;
 
 	void play(int resnum) override;
-	void stop(void) override;
+	void stop() override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
