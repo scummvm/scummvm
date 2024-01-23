@@ -130,29 +130,29 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 	}
 }
 
-float distanceSquared(Math::Vector2d p1, Math::Vector2d p2) {
-	float dx = p1.getX() - p2.getX();
-	float dy = p1.getY() - p2.getY();
+float distanceSquared(Vector2i p1, Vector2i p2) {
+	const float dx = p1.x - p2.x;
+	const float dy = p1.y - p2.y;
 	return dx * dx + dy * dy;
 }
 
-float distanceToSegmentSquared(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
-	float l2 = distanceSquared(v, w);
+float distanceToSegmentSquared(Vector2i p, Vector2i v, Vector2i w) {
+	const float l2 = distanceSquared(v, w);
 	if (l2 == 0)
 		return distanceSquared(p, v);
-	float t = ((p.getX() - v.getX()) * (w.getX() - v.getX()) + (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2;
+	const float t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
 	if (t < 0)
 		return distanceSquared(p, v);
 	if (t > 1)
 		return distanceSquared(p, w);
-	return distanceSquared(p, Math::Vector2d(v.getX() + t * (w.getX() - v.getX()), v.getY() + t * (w.getY() - v.getY())));
+	return distanceSquared(p, Vector2i(v.x + t * (w.x - v.x), v.y + t * (w.y - v.y)));
 }
 
-float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
+float distanceToSegment(Vector2i p, Vector2i v, Vector2i w) {
 	return sqrt(distanceToSegmentSquared(p, v, w));
 }
 
-float distance(Math::Vector2d p1, Math::Vector2d p2) {
+float distance(Vector2i p1, Vector2i p2) {
 	return sqrt(distanceSquared(p1, p2));
 }
 
@@ -160,7 +160,7 @@ Common::String join(const Common::Array<Common::String> &array, const Common::St
 	Common::String result;
 	if (array.size() > 0) {
 		result += array[0];
-		for (size_t i = 1; i < array.size(); i++) {
+		for (uint i = 1; i < array.size(); i++) {
 			result += (sep + array[i]);
 		}
 	}
@@ -170,7 +170,7 @@ Common::String join(const Common::Array<Common::String> &array, const Common::St
 Common::String replace(const Common::String &s, const Common::String &what, const Common::String &by) {
 	Common::String result;
 	uint i = 0;
-	size_t whatSize = what.size();
+	uint whatSize = what.size();
 	while (true) {
 		uint j = s.find(what, i);
 		if (j == Common::String::npos)

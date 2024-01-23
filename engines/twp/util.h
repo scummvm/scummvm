@@ -33,6 +33,35 @@ namespace Twp {
 
 class Object;
 
+struct Vector2i {
+	int x = 0;
+	int y = 0;
+
+	Vector2i() {}
+	Vector2i(int x_, int y_) : x(x_), y(y_) {}
+	Vector2i(float x_, float y_) : x(round(x_)), y(round(y_)) {}
+	explicit Vector2i(const Math::Vector2d &p) : x(round(p.getX())), y(round(p.getY())) {}
+	explicit operator Math::Vector2d() const {
+		return Math::Vector2d(x, y);
+	}
+
+	Vector2i operator-(const Vector2i &v) const {
+		return Vector2i(x - v.x, y - v.y);
+	}
+
+	Vector2i operator+(const Vector2i &v) const {
+		return Vector2i(x + v.x, y + v.y);
+	}
+
+	Vector2i operator*(float f) const {
+		return Vector2i(x * f, y * f);
+	}
+
+	Vector2i operator/(float f) const {
+		return Vector2i(x / f, y / f);
+	}
+};
+
 // general util
 template<typename T, class DL = Common::DefaultDeleter<T> >
 using unique_ptr = Common::ScopedPtr<T, DL>;
@@ -59,7 +88,7 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 
 // array util
 template<typename T>
-size_t find(const Common::Array<T>& array, const T& o) {
+size_t find(const Common::Array<T> &array, const T &o) {
 	for (size_t i = 0; i < array.size(); i++) {
 		if (array[i] == o) {
 			return i;
@@ -69,16 +98,16 @@ size_t find(const Common::Array<T>& array, const T& o) {
 }
 
 // string util
-Common::String join(const Common::Array<Common::String>& array, const Common::String& sep);
-Common::String replace(const Common::String& s, const Common::String& what, const Common::String& by);
+Common::String join(const Common::Array<Common::String> &array, const Common::String &sep);
+Common::String replace(const Common::String &s, const Common::String &what, const Common::String &by);
 Common::String remove(const Common::String &txt, char startC, char endC);
 
 // math util
 void scale(Math::Matrix4 &m, const Math::Vector2d &v);
 Math::Vector2d operator*(Math::Vector2d v, float f);
-float distance(Math::Vector2d p1, Math::Vector2d p2);
-float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
-float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
+float distance(Vector2i p1, Vector2i p2);
+float distanceSquared(Vector2i p1, Vector2i p2);
+float distanceToSegment(Vector2i p, Vector2i v, Vector2i w);
 
 } // namespace Twp
 

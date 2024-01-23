@@ -665,10 +665,9 @@ static bool verbNotClose(VerbId id) {
 }
 
 static void cantReach(Object *self, Object *noun2) {
-	// TODO: check if we need to use sqrawexists or sqexists
 	if (sqrawexists(self->_table, "verbCantReach")) {
 		int nParams = sqparamCount(g_engine->getVm(), self->_table, "verbCantReach");
-		debug("verbCantReach found in obj '{self.key}' with {nParams} params");
+		debug("verbCantReach found in obj '%s' with %d params", self->_key.c_str(), nParams);
 		if (nParams == 1) {
 			sqcall(self->_table, "verbCantReach");
 		} else {
@@ -676,12 +675,13 @@ static void cantReach(Object *self, Object *noun2) {
 			sq_resetobject(&table);
 			if (noun2)
 				table = noun2->_table;
-			sqcall(self->_table, "verbCantReach", self->_table, table);
+			sqcall(self->_table, "verbCantReach", table);
 		}
-	} else if (!noun2) {
+	} else if (noun2) {
 		cantReach(noun2, nullptr);
 	} else {
 		HSQOBJECT nilTbl;
+		sq_resetobject(&nilTbl);
 		sqcall(g_engine->_defaultObj, "verbCantReach", self->_table, !noun2 ? nilTbl : noun2->_table);
 	}
 }
@@ -701,11 +701,11 @@ void Object::execVerb() {
 				return;
 			}
 			// Did we get close enough?
-			float dist = distance(getUsePos(), noun1->getUsePos());
+			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun1->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debug("actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
-				cantReach(this, noun1);
+				cantReach(noun1, noun2);
 				return;
 			}
 			if (noun1->_useDir != dNone) {
@@ -719,11 +719,11 @@ void Object::execVerb() {
 				_exec.enabled = false;
 				return;
 			}
-			float dist = distance(getUsePos(), noun2->getUsePos());
+			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun2->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debug("actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
 			if (dist > min_dist) {
-				cantReach(this, noun2);
+				cantReach(noun1, noun2);
 				return;
 			}
 		}
@@ -735,8 +735,8 @@ void Object::execVerb() {
 }
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
-void Object::walk(Math::Vector2d pos, int facing) {
-	debug("walk to obj %s: %f,%f, %d", _key.c_str(), pos.getX(), pos.getY(), facing);
+void Object::walk(Vector2i pos, int facing) {
+	debug("walk to obj %s: %d,%d, %d", _key.c_str(), pos.x, pos.y, facing);
 	if (!_walkTo || (!_walkTo->isEnabled())) {
 		play(getAnimName(WALK_ANIMNAME), true);
 	}
@@ -747,7 +747,7 @@ void Object::walk(Math::Vector2d pos, int facing) {
 void Object::walk(Object *obj) {
 	debug("walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
 	Facing facing = (Facing)obj->_useDir;
-	walk(obj->getUsePos(), facing);
+	walk((Vector2i)obj->getUsePos(), facing);
 }
 
 void Object::turn(Facing facing) {

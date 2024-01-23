@@ -204,7 +204,7 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get object");
 	else
 		obj = g_engine->_actor;
-	sqpush(v, distance(actor->_node->getPos(), obj->getUsePos()));
+	sqpush(v, distance((Vector2i)actor->_node->getPos(), (Vector2i)obj->getUsePos()));
 	return 1;
 }
 
@@ -219,7 +219,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot");
 		// not sure about this, needs to be check one day ;)
-		sqpush(v, distance(actor1->_node->getAbsPos(), obj->getUsePos()) < distance(actor2->_node->getAbsPos(), obj->getUsePos()));
+		sqpush(v, distance((Vector2i)actor1->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < distance((Vector2i)actor2->_node->getAbsPos(), (Vector2i)obj->getUsePos()));
 		return 1;
 	} else if (nArgs == 4) {
 		Object *actor = sqactor(v, 2);
@@ -231,7 +231,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		int dist;
 		if (SQ_FAILED(sqget(v, 4, dist)))
 			return sq_throwerror(v, "failed to get distance");
-		sqpush(v, distance(actor->_node->getAbsPos(), obj->getUsePos()) < dist);
+		sqpush(v, distance((Vector2i)actor->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < dist);
 		return 1;
 	} else {
 		return sq_throwerror(v, "actorDistanceWithin not implemented");
@@ -336,7 +336,7 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 	for (size_t i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
 		const Walkbox &walkbox = g_engine->_room->_walkboxes[i];
 		if (walkbox._name == name) {
-			if (walkbox.contains(actor->_node->getAbsPos())) {
+			if (walkbox.contains((Vector2i)actor->_node->getAbsPos())) {
 				sqpush(v, true);
 				return 1;
 			}
@@ -689,7 +689,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 		dir = Math::Vector2d(dist, 0);
 		break;
 	}
-	actor->walk(actor->_node->getAbsPos() + dir);
+	actor->walk((Vector2i)(actor->_node->getAbsPos() + dir));
 	return 0;
 }
 
@@ -760,7 +760,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get dir");
 			facing = (Facing *)&dir;
 		}
-		actor->walk(Math::Vector2d(x, y), facing ? *facing : 0);
+		actor->walk(Vector2i(x, y), facing ? *facing : 0);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}

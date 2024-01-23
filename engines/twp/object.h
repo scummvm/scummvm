@@ -187,7 +187,7 @@ public:
 	void setReach(Motor *reach);
 	Motor *getWalkTo() const { return _walkTo; }
 	Motor *getReach() const { return _reach; }
-	void walk(Math::Vector2d pos, int facing = 0);
+	void walk(Vector2i pos, int facing = 0);
 	void walk(Object* obj);
 
 	void setTalking(Motor *talking);

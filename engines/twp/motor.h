@@ -205,10 +205,10 @@ private:
 
 class WalkTo : public Motor {
 public:
-	WalkTo(Object *obj, Math::Vector2d dest, int facing = 0);
+	WalkTo(Object *obj, Vector2i dest, int facing = 0);
 	virtual void disable() override;
 
-	const Common::Array<Math::Vector2d> &getPath() const { return _path; }
+	const Common::Array<Vector2i> &getPath() const { return _path; }
 
 private:
 	void actorArrived();
@@ -216,7 +216,7 @@ private:
 
 private:
 	Object *_obj = nullptr;
-	Common::Array<Math::Vector2d> _path;
+	Common::Array<Vector2i> _path;
 	int _facing = 0;
 	float _wsd;
 };

@@ -60,7 +60,7 @@ public:
 	PathMode getMode() const { return _mode; }
 
 private:
-	Math::Vector2d fixPos(Math::Vector2d pos);
+	Vector2i fixPos(Vector2i pos);
 	virtual void drawCore(Math::Matrix4 trsf) override;
 
 private:
