@@ -52,7 +52,7 @@ namespace Macs2 {
 		Graphics::ManagedSurface s = getSurface();
 
 		// TODO: Look up how we determine the width of the right border
-		constexpr int borderWidth = 20;
+		constexpr int borderWidth = 10;
 		constexpr int highlightWidth = 2;
 		// Draw the background
 		// Draw the border segments
@@ -161,11 +161,11 @@ namespace Macs2 {
 		int totalWidth = contentWidth + (borderWidth * padding) * 2;
 		int totalHeight = contentHeight + (borderWidth * padding) * 2;
 
-		drawStringBackground(50, 50, totalWidth, totalHeight);
+		drawStringBackground(20, 20, totalWidth, totalHeight);
 		// TODO range based
 		int lineOffset = borderWidth + padding;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-			renderString(50 + borderWidth + padding, lineOffset, *iter);
+			renderString(20 + borderWidth + padding, 20 + lineOffset, *iter);
 			lineOffset += 10;
 		}
 	}
@@ -184,6 +184,21 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::handleFading() {
+		if (currentFadeValue < 0) {
+			return;
+		}
+		currentFadeValue -= fadeDelta;
+		byte *colors = new byte[256 * 3];
+		g_system->getPaletteManager()->grabPalette(colors, 0, 256);
+
+		for (int i = 0; i < 256 * 3; i++) {
+			colors[i] -= currentFadeValue;
+		}
+		g_system->getPaletteManager()->setPalette(colors, 0, 256);
+
+	}
+
 	void View1::setStringBox(const Common::StringArray& sa) {
 		_drawnStringBox = sa;
 		_isShowingStringBox = true;
@@ -195,6 +210,10 @@ namespace Macs2 {
 	void View1::clearStringBox() {
 		_isShowingStringBox = false;
 		redraw();
+	}
+
+	void View1::startFading() {
+		currentFadeValue = 0x40;
 	}
 
 	bool View1::msgFocus(const FocusMessage &msg) {
@@ -236,6 +255,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 void View1::draw() {
 	g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
 
+	handleFading();
 	// Draw a bunch of squares on screen
 	Graphics::ManagedSurface s = getSurface();
 
@@ -253,6 +273,8 @@ void View1::draw() {
 
 	uint16 charX = 50;
 	uint16 charY = 100;
+	// TODO: I don't have the right offset yet plus there must be some trick to reading sequential frames, probl. need
+	// to seek in between frames
 	AnimFrame &f = g_engine->_animFrames[0];
 	DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
 	/* for (int x = 0; x < g_engine->_charWidth; x++) {
@@ -356,6 +378,10 @@ bool View1::tick() {
 			current.FrameIndex++;
 			current.FrameIndex = current.FrameIndex % current.numFrames;
 		}
+
+		// TODO: Piggybacking the guy on this
+		_guyFrameIndex++;
+		_guyFrameIndex = _guyFrameIndex % 6;
 		redraw();
 	}
 

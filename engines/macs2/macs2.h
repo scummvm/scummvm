@@ -37,6 +37,7 @@
 
 #include "macs2/detection.h"
 #include "macs2/events.h"
+#include "macs2/script/scriptexecutor.h"
 #include <common/memstream.h>
 
 namespace Macs2 {
@@ -77,6 +78,8 @@ class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Script::ScriptExecutor *_scriptExecutor;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -167,8 +170,6 @@ public:
 	int MeasureString(Common::String &s);
 
 	int MeasureStrings(Common::StringArray sa);
-
-	Common::String DecodeString(Common::MemoryReadStream* stream, int offset, int numLines);
 
 	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
 
