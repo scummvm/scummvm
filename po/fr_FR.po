@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-20 19:57+0000\n"
-"PO-Revision-Date: 2024-01-21 10:10+0000\n"
+"PO-Revision-Date: 2024-01-23 18:42+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1649,7 +1649,7 @@ msgstr "Toutes les 30 mins"
 #: gui/options.cpp:154
 #, c-format
 msgid "200% - Extremely large"
-msgstr "200% - Extrêmement grande"
+msgstr "200% - Super grande"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
