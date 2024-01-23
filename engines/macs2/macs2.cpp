@@ -322,7 +322,8 @@ void Macs2Engine::readResourceFile() {
 	// Load the animation frames
 	// TODO: Figure out how the game knows how many there are
 	// TODO: Figure out why the frames are not saved sequentially
-	file.seek(0x0009619E);
+	// file.seek(0x0009619E);
+	file.seek(0x006A5941);
 	for (int i = 0; i < 1; i++) {
 		_animFrames[i].ReadFromeFile(file);
 	}
@@ -868,38 +869,29 @@ int Macs2Engine::MeasureStrings(Common::StringArray sa) {
 	return max;
 }
 
-Common::String Macs2Engine::DecodeString(Common::MemoryReadStream* stream, int offset, int numLines)
-{
+Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
+	Common::StringArray result(numStrings);
 	stream->seek(offset);
-	
+
 	byte x;
 	byte y;
 	byte r;
-	Common::String result;
-	for (int i = 0; i != numLines; i++) {
+	
+	for (int i = 0; i < numStrings; i++) {
+		Common::String currentLine;
 		uint16 length = stream->readUint16LE();
-		int index = 1;
-		for (byte currentByte = stream->readByte(); index != length; currentByte = stream->readByte(), index++) {
+		byte currentByte; 
+		for (int index = 1; index < length+1; index++) {
+			currentByte = stream->readByte();
 			x = (byte)(index * index * 0x0c);
 			y = (byte)(currentByte ^ index);
 			r = (byte)(x ^ y);
-			result += (char)r;
+			currentLine += (char)r;
+			
 		}
+		result[i] = currentLine;
 	}
-	
-	return result;
-}
 
-Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
-	// TODO: Adjust to a non-seeking variant
-	Common::StringArray result(numStrings);
-	int64 pos = offset;
-	/* for (int i = 0; i < numStrings; i++) {
-		Common::String current = DecodeString(stream, pos);
-		pos = stream->pos();
-		result[i] = current;
-	} */
-	Common::String current = DecodeString(stream, pos, numStrings);
 	return result;
 }
 
