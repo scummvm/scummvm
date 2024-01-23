@@ -25,6 +25,7 @@
 
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 
 #include "icons/scummvm.xpm"
 
@@ -289,6 +290,9 @@ void SdlWindow::getDisplayDpi(float *dpi, float *defaultDpi) const {
 }
 
 float SdlWindow::getDpiScalingFactor() const {
+	if (ConfMan.hasKey("forced_dpi_scaling"))
+		return ConfMan.getInt("forced_dpi_scaling") / 100.f;
+
 	float dpi, defaultDpi;
 	getDisplayDpi(&dpi, &defaultDpi);
 	float ratio = dpi / defaultDpi;
