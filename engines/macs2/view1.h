@@ -39,6 +39,8 @@ private:
 	bool _hasTicked = false;
 	uint32 _flagFrameIndex = 0;
 
+	uint32 _guyFrameIndex = 0;
+
 	// TODO: Probably the start of a mode enum
 	bool _isShowingStringBox = false;
 	Common::StringArray _drawnStringBox;
@@ -58,7 +60,10 @@ private:
 
 	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
+	void handleFading();
 
+	int currentFadeValue = -1;
+	int fadeDelta = 4;
 
 public:
 	View1();
@@ -72,6 +77,8 @@ public:
 
 	void setStringBox(const Common::StringArray& sa);
 	void clearStringBox();
+
+	void startFading();
 
 	void DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s);
 	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s);
