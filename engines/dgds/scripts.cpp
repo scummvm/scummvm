@@ -362,7 +362,7 @@ void ADSInterpreter::unload() {
 	_state = ADSState();
 }
 
-bool ADSInterpreter::run() {
+void ADSInterpreter::playScene() {
 	// This is the main scene player loop, which will run
 	// after the first time the ADS script is loaded below
 	// TODO/FIXME: Rewrite this
@@ -373,10 +373,94 @@ bool ADSInterpreter::run() {
 				_state.subIdx++;
 				_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
 			} else {
-				return false;
+				_state.subMax = 0; // continue ADS script execution
 			}
 		}
+	}
+}
 
+void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
+	uint16 subIdx, subMax;
+
+	switch (code) {
+	case 0x2005: { // ADD SCENE TO QUEUE
+		subIdx = scr->readUint16LE();
+		subMax = scr->readUint16LE();
+		// TODO: We only add the first scene here, ignoring the rest
+		if (_state.subMax == 0) {
+			_state.scene = subIdx;
+			_state.subIdx = subIdx;
+			_state.subMax = subMax;
+			_ttmInterpreter->load(_scriptData.names[subIdx - 1]);
+		}
+		uint16 unk1 = scr->readUint16LE();
+		uint16 unk2 = scr->readUint16LE();
+		debug("ADSInterpreter add scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", subIdx, subMax, unk1, unk2);
+		break;
+	}
+	case 0x1330: { // IF_NOT_PLAYED, 2 params
+		subIdx = scr->readUint16LE();
+		subMax = scr->readUint16LE();
+		warning("Unimplemented ADS opcode: IF_NOT_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
+		break;
+	}
+	case 0x1350: { // IF_PLAYED, 2 params
+		subIdx = scr->readUint16LE();
+		subMax = scr->readUint16LE();
+		warning("Unimplemented ADS opcode: IF_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
+		break;
+	}
+	case 0x1360: { // IF_NOT_RUNNING, 2 params
+		subIdx = scr->readUint16LE();
+		subMax = scr->readUint16LE();
+		warning("Unimplemented ADS opcode: IF_NOT_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
+		break;
+	}
+	case 0x1370: { // IF_RUNNING, 2 params
+		subIdx = scr->readUint16LE();
+		subMax = scr->readUint16LE();
+		warning("Unimplemented ADS opcode: IF_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
+		break;
+	}
+	case 0x1510: // PLAY_SCENE, 0 params
+		debug("PLAY SCENE");
+		// TODO
+		break;
+	case 0xffff:	// END
+		break;
+
+	//// unknown / to-be-implemented
+	case 0x0190:
+	case 0x1070: // unknown, 2 params
+	case 0x1340:
+	case 0x1420: // AND, 0 params
+	case 0x1430: // OR, 0 params
+	case 0x1500:
+	case 0x1520: // PLAY_SCENE_2, 5 params
+	case 0x2000:
+	case 0x2010: // STOP_SCENE, 3 params
+	case 0x2020:
+	case 0x3010: // RANDOM_START, 0 params
+	case 0x3020: // RANDOM_??, 1 param
+	case 0x30FF: // RANDOM_END, 0 params
+	case 0x4000: // unknown, 3 params
+	case 0x4010:
+	case 0xF010: // FADE_OUT, 0 params
+	case 0xF200: // RUN_SCRIPT, 1 param
+	case 0xFDA8:
+	case 0xFE98:
+	case 0xFF88:
+	case 0xFF10:
+	case 0xFFF0: // END_IF, 0 params
+	default:
+		warning("Unimplemented ADS opcode: 0x%04X", code);
+		break;
+	}
+}
+
+bool ADSInterpreter::run() {
+	if (_state.subMax > 0) {
+		playScene();
 		return true;
 	}
 
@@ -390,67 +474,13 @@ bool ADSInterpreter::run() {
 		uint16 code = scr->readUint16LE();
 		//uint op = code & 0xFFF0;
 
-		if ((code & 0xFF00) == 0) {
+		if ((code & 0xFF00) == 0)
 			continue;
-		}
 
-		switch (code) {
-		case 0x2005: {
-			// ADD SCENE
-			_state.subIdx = scr->readUint16LE();
-			_state.subMax = scr->readUint16LE();
-			uint16 unk1 = scr->readUint16LE();
-			uint16 unk2 = scr->readUint16LE();
-			_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
-			debug("ADSInterpreter add scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", _state.subIdx, _state.subMax, unk1, unk2);
-			return true;
-		}
-		case 0xFFFF:
-			// END
-			return false;
-
-		case 0x1330: { // IF_NOT_PLAYED, 2 params
-			uint16 unk1 = scr->readUint16LE();
-			uint16 unk2 = scr->readUint16LE();
-			warning("Unimplemented ADS opcode: IF_NOT_PLAYED %02x %02x", unk1, unk2);
-			continue;
-		}
-
-		//// unknown / to-be-implemented
-		case 0x0190:
-		case 0x1070: // unknown, 2 params
-		case 0x1340:
-		case 0x1350: // IF_PLAYED, 2 params
-		case 0x1360: // IF_NOT_RUNNING, 2 params
-		case 0x1370: // IF_RUNNING, 2 params
-		case 0x1420: // AND, 0 params
-		case 0x1430: // OR, 0 params
-		case 0x1500:
-		case 0x1510: // PLAY_SCENE, 0 params
-		case 0x1520: // PLAY_SCENE_2, 5 params
-		case 0x2000:
-		case 0x2010: // STOP_SCENE, 3 params
-		case 0x2020:
-		case 0x3010: // RANDOM_START, 0 params
-		case 0x3020: // RANDOM_??, 1 param
-		case 0x30FF: // RANDOM_END, 0 params
-		case 0x4000: // unknown, 3 params
-		case 0x4010:
-		case 0xF010: // FADE_OUT, 0 params
-		case 0xF200: // RUN_SCRIPT, 1 param
-		case 0xFDA8:
-		case 0xFE98:
-		case 0xFF88:
-		case 0xFF10:
-		case 0xFFF0: // END_IF, 0 params
-		default:
-			warning("Unimplemented ADS opcode: 0x%04X", code);
-			continue;
-		}
-		break;
+		handleOperation(code, scr);
 	} while (scr->pos() < scr->size());
 
-	return false;
+	return true;
 }
 
 } // End of namespace Dgds
