@@ -65,7 +65,7 @@ namespace Dgds {
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
-	_resource(nullptr) {
+	_resource(nullptr), _gamePals(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -87,6 +87,7 @@ DgdsEngine::~DgdsEngine() {
 	DebugMan.removeAllDebugChannels();
 
 	delete _image;
+	delete _gamePals;
 	delete _decompressor;
 	delete _resource;
 	delete _scene;
@@ -186,6 +187,7 @@ Common::Error DgdsEngine::run() {
 	_resource = new ResourceManager();
 	_decompressor = new Decompressor();
 	_image = new Image(_resource, _decompressor);
+	_gamePals = new GamePalettes(_resource, _decompressor);
 	_soundPlayer = new Sound(_mixer, _resource, _decompressor);
 	_scene = new SDSScene();
 	_gdsScene = new GDSScene();
@@ -212,6 +214,7 @@ Common::Error DgdsEngine::run() {
 	_fontManager->loadFonts(getGameId(), _resource, _decompressor);
 
 	if (getGameId() == GID_DRAGON) {
+		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
 		//debug("%s", _gdsScene->dump("").c_str());
@@ -223,6 +226,7 @@ Common::Error DgdsEngine::run() {
 		_gdsScene->runStartGameOps();
 
 	} else if (getGameId() == GID_CHINA) {
+		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 
 		//debug("%s", _gdsScene->dump("").c_str());
@@ -234,6 +238,7 @@ Common::Error DgdsEngine::run() {
 		_adsInterp->load("TITLE.ADS");
 		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
+		_gamePals->loadPalette("WILLY.PAL");
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 
@@ -325,7 +330,7 @@ Common::Error DgdsEngine::run() {
 				return Common::kNoError;
 		}
 
-		g_system->delayMillis(40);
+		g_system->delayMillis(10);
 	}
 	return Common::kNoError;
 }

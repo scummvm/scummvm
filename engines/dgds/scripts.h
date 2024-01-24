@@ -47,9 +47,10 @@ public:
 };
 
 struct TTMState {
-	TTMState() : scene(0), delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0), _currentPalId(0), _drawColFG(0), _drawColBG(0) {}
+	TTMState() : scene(0), _delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0), _currentPalId(0), _drawColFG(0), _drawColBG(0), _delayStart(0) {}
 	uint16 scene;
-	int delay;
+	int _delay;
+	uint32 _delayStart;
 	Common::Rect _drawWin;
 	int _currentBmpId;
 	int _currentPalId;
@@ -83,6 +84,7 @@ public:
 protected:
 	void setActiveDialogue(uint16 num);
 	void handleOperation(uint16 op, byte count, int16 *ivals, Common::String &sval);
+	void updateScreen();
 
 	DgdsEngine *_vm;
 
@@ -99,6 +101,7 @@ public:
 	bool load(const Common::String &filename);
 	void unload();
 	bool run();
+	int numArgs(uint16 opcode) const;
 
 protected:
 	void handleOperation(uint16 code, Common::SeekableReadStream *scr);

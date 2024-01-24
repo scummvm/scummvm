@@ -43,6 +43,7 @@ class Console;
 class ResourceManager;
 class Decompressor;
 class Image;
+class GamePalettes;
 class FontManager;
 class SDSScene;
 class GDSScene;
@@ -83,6 +84,7 @@ private:
 	GDSScene *_gdsScene;
 	Menu *_menu;
 	ADSInterpreter *_adsInterp;
+	GamePalettes *_gamePals;
 
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
@@ -106,6 +108,7 @@ public:
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
 	void changeScene(int sceneNum);
+	GamePalettes *getGamePals() { return _gamePals; }
 
 	DgdsDetailLevel getDetailLevel() const { return kDgdsDetailHigh; }
 

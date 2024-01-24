@@ -39,9 +39,89 @@
 
 namespace Dgds {
 
-Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor) {
+Palette::Palette() {
 	memset(_palette, 0, 256 * 3);
-	memset(_blacks, 0, 256 * 3);
+}
+
+GamePalettes::GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor) : _curPalNum(0),
+_resourceMan(resourceMan), _decompressor(decompressor) {
+}
+
+void GamePalettes::loadPalette(Common::String filename) {
+	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
+	if (!fileStream) {
+		// Happens in the Amiga version of Dragon
+		warning("Couldn't load palette resource %s", filename.c_str());
+		return;
+	}
+
+	_palettes.resize(_palettes.size() + 1);
+
+	Palette &pal = _palettes.back();
+
+	DgdsChunkReader chunk(fileStream);
+	while (chunk.readNextHeader(EX_PAL, filename)) {
+		chunk.readContent(_decompressor);
+		Common::SeekableReadStream *chunkStream = chunk.getContent();
+		if (chunk.isSection(ID_VGA)) {
+			chunkStream->read(pal._palette, 256 * 3);
+
+			for (uint k = 0; k < 256 * 3; k += 3) {
+				pal._palette[k + 0] <<= 2;
+				pal._palette[k + 1] <<= 2;
+				pal._palette[k + 2] <<= 2;
+			}
+		}
+	}
+
+	delete fileStream;
+
+	selectPalNum(0);
+}
+
+void GamePalettes::selectPalNum(int num) {
+	_curPalNum = num;
+	setPalette();
+}
+
+void GamePalettes::setPalette() {
+	if (_curPalNum >= _palettes.size())
+		error("request to set pal %d but only have %d pals", _curPalNum, _palettes.size());
+
+	_curPal = _palettes[_palettes.size() - _curPalNum - 1];
+	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+}
+
+void GamePalettes::clearPalette() {
+	_curPal = _blacks;
+	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+}
+
+void GamePalettes::setFade(int col, int ncols, int coloff, int fade) {
+	if (coloff)
+		warning("TODO: Handle non-zero coloff in GamePalettes::setFade");
+
+	if (_curPalNum >= _palettes.size())
+		error("GamePalettes::setFade: invalid curPalNum %d, only have %d pals", _curPalNum, _palettes.size());
+
+	if (col + ncols > 256)
+		error("GamePalettes::setFade: request to fade past the end of the palette");
+
+	Palette &pal = _palettes[_palettes.size() - _curPalNum - 1];
+
+	for (int c = col; c < col + ncols; c++) {
+		byte r = pal._palette[c * 3 + 0];
+		byte g = pal._palette[c * 3 + 1];
+		byte b = pal._palette[c * 3 + 2];
+
+		_curPal._palette[c * 3 + 0] = r - (r  * fade) / 255;
+		_curPal._palette[c * 3 + 1] = g - (g  * fade) / 255;
+		_curPal._palette[c * 3 + 2] = b - (b  * fade) / 255;
+	}
+	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+}
+
+Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor) {
 }
 
 Image::~Image() {
@@ -472,41 +552,6 @@ bool Image::loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::Seeka
 			error("Image::loadSCN: Invalid data, x went off the end of the row");
 	}
 	return !stream->err();
-}
-
-void Image::loadPalette(Common::String filename) {
-	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
-	if (!fileStream) {
-		// Happens in the Amiga version of Dragon
-		warning("Couldn't load palette resource %s", filename.c_str());
-		return;
-	}
-
-
-	DgdsChunkReader chunk(fileStream);
-	while (chunk.readNextHeader(EX_PAL, filename)) {
-		chunk.readContent(_decompressor);
-		Common::SeekableReadStream *chunkStream = chunk.getContent();
-		if (chunk.isSection(ID_VGA)) {
-			chunkStream->read(_palette, 256 * 3);
-
-			for (uint k = 0; k < 256 * 3; k += 3) {
-				_palette[k + 0] <<= 2;
-				_palette[k + 1] <<= 2;
-				_palette[k + 2] <<= 2;
-			}
-		}
-	}
-
-	delete fileStream;
-}
-
-void Image::setPalette() {
-	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
-}
-
-void Image::clearPalette() {
-	g_system->getPaletteManager()->setPalette(_blacks, 0, 256);
 }
 
 int16 Image::width() const {
