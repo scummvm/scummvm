@@ -83,6 +83,8 @@ enum MenuButtonIds {
 	kMenuCalibrateMouse = 146,
 	kMenuCalibrateVCR = 144,
 	kMenuCalibratePlay = 147,
+	kMenuCalibrateVCRHoC = 159,
+	kMenuCalibratePlayHoC = 158,
 
 	kMenuFilesSave = 107,
 	kMenuFilesRestore = 106,
@@ -211,6 +213,7 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	case kMenuControlsPlay:
 	case kMenuOptionsPlay:
 	case kMenuCalibratePlay:
+	case kMenuCalibratePlayHoC:
 	case kMenuFilesPlay:
 	case kMenuMouseCalibrationPlay:
 		_curMenu = kMenuNone;
@@ -237,6 +240,7 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	case kMenuControlsVCR:
 	case kMenuOptionsVCR:
 	case kMenuCalibrateVCR:
+	case kMenuCalibrateVCRHoC:
 	case kMenuFilesVCR:
 	case kMenuQuitNo:
 	case kMenuRestartNo:
