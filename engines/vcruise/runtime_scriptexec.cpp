@@ -2060,8 +2060,17 @@ OPCODE_STUB(NoClear)
 OPCODE_STUB(Say1_AD2044)
 OPCODE_STUB(Say2_AD2044)
 OPCODE_STUB(Say1Rnd)
-OPCODE_STUB(M)
-OPCODE_STUB(EM)
+
+void Runtime::scriptOpM(ScriptArg_t arg) {
+	// Looks like this is possibly support to present a mouse click prompt and end
+	// with the #EM instruction, but so far as best I can tell, it just stops
+	// execution.
+	scriptOpLMB(arg);
+}
+
+void Runtime::scriptOpEM(ScriptArg_t arg) {
+}
+
 OPCODE_STUB(SE)
 OPCODE_STUB(SDot)
 OPCODE_STUB(E)
@@ -2071,6 +2080,8 @@ OPCODE_STUB(ISound)
 OPCODE_STUB(USound)
 OPCODE_STUB(RGet)
 
+
+// Unused Schizm ops
 // Only used in fnRandomBirds and fnRandomMachines in Room 60, both of which are unused
 OPCODE_STUB(SndAddRandom)
 OPCODE_STUB(SndClearRandom)
