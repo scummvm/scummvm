@@ -215,6 +215,9 @@ l0017_2774:
 
 void Adlib::Init() {
 	_opl = OPL::Config::create();
+	// TODO: Check where this is called from and if we need to implement that one as well
+	// TODO: CHeck if we need to react to return value
+	Func2686();
 }
 
 } // End of namespace Macs2

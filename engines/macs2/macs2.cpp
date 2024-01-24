@@ -34,6 +34,7 @@
 #include "graphics/pixelformat.h"
 #include "audio/fmopl.h"
 #include "view1.h"
+#include "adlib.h"
 
 namespace Macs2 {
 
@@ -381,6 +382,7 @@ void Macs2Engine::readResourceFile() {
 	_scriptData = new byte[scriptLength];
 	file.read(_scriptData, scriptLength);
 	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
+	_scriptExecutor->SetScript(_scriptStream);
 
 	// Load the strings for the scene
 	file.seek(0x000D2F22);
@@ -452,6 +454,8 @@ void Macs2Engine::readResourceFile() {
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Macs2") {
 	g_engine = this;
+	_scriptExecutor = new Script::ScriptExecutor();
+	_adlib = new Adlib();
 }
 
 Macs2Engine::~Macs2Engine() {
@@ -914,7 +918,8 @@ Common::Error Macs2Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 
-	
+	// Initialize Adlib
+	_adlib->Init();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
