@@ -236,9 +236,11 @@ Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 	bool found = false;
 
 	if (dev) {
+		Common::String deviceIDString = MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId);
+
 		MusicDevices i = getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (d->getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
+			if (d->getCompleteId().equals(deviceIDString)) {
 				found = true;
 				break;
 			}
