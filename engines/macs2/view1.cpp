@@ -185,16 +185,26 @@ namespace Macs2 {
 	}
 
 	void View1::handleFading() {
+
+		currentFadeValue -= fadeDelta;
 		if (currentFadeValue < 0) {
 			return;
 		}
-		currentFadeValue -= fadeDelta;
+
 		byte *colors = new byte[256 * 3];
-		g_system->getPaletteManager()->grabPalette(colors, 0, 256);
+		// g_system->getPaletteManager()->grabPalette(colors, 0, 256);
+		// Copy the untouched palette over
+		memcpy(colors, g_engine->_palVanilla, 256 * 3);
 
 		for (int i = 0; i < 256 * 3; i++) {
-			colors[i] -= currentFadeValue;
+			if (colors[i] < currentFadeValue) {
+				colors[i] = 0;
+			} else {
+				colors[i] -= currentFadeValue;
+			}
+			colors[i] = (colors[i] * 259 + 33) >> 6;
 		}
+
 		g_system->getPaletteManager()->setPalette(colors, 0, 256);
 
 	}
@@ -245,6 +255,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	}
 	else if (msg.ascii == (uint16)'m') {
 		_backgroundSurface = g_engine->_bgImageShip;
+		startFading();
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		g_engine->ExecuteScript(g_engine->_scriptStream);
@@ -275,7 +286,7 @@ void View1::draw() {
 	uint16 charY = 100;
 	// TODO: I don't have the right offset yet plus there must be some trick to reading sequential frames, probl. need
 	// to seek in between frames
-	AnimFrame &f = g_engine->_animFrames[0];
+	AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
 	DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
 	/* for (int x = 0; x < g_engine->_charWidth; x++) {
 		for (int y = 0; y < g_engine->_charHeight; y++) {

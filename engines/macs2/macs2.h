@@ -104,6 +104,7 @@ public:
 	struct Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
 	byte _pal[256 * 3] = { 0 };
+	byte _palVanilla[256 * 3] = { 0 };
 
 	byte* _charData;
 	char _charASCII;
