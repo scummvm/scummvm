@@ -258,7 +258,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		startFading();
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
-		g_engine->ExecuteScript(g_engine->_scriptStream);
+		// g_engine->ExecuteScript(g_engine->_scriptStream);
+		g_engine->RunScriptExecutor();
 	}
 	return true;
 }

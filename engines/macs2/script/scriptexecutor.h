@@ -45,7 +45,9 @@ namespace Macs2 {
 			void Func9F4D(uint16 &out1, uint16 &out2);
 
 			public:
-			void ExecuteScript(Common::MemoryReadStream *stream);
+		
+			void ExecuteScript();
+			void SetScript(Common::MemoryReadStream *stream);
 
 	};
 }	// namespace Script

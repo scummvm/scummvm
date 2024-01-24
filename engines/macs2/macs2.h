@@ -45,6 +45,7 @@ namespace Macs2 {
 struct Macs2GameDescription;
 
 enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
+class Adlib;
 
 
 
@@ -79,6 +80,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Script::ScriptExecutor *_scriptExecutor;
+	Adlib *_adlib;
 
 protected:
 	// Engine APIs
@@ -167,6 +169,10 @@ public:
 	void ScriptPrintString(Common::MemoryReadStream *stream);
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
+
+	void RunScriptExecutor() {
+		_scriptExecutor->ExecuteScript();
+	}
 
 	int MeasureString(Common::String &s);
 
