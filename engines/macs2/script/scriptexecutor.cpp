@@ -78,8 +78,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	debug("-- Entering 9F4D");
 	// fn0037_9F4D proc
 
-	// TODO: Test the negative here
-	int8 opcode1 = (int8) ReadByte(); // [bp-5h]
+	byte opcode1 = ReadByte(); // [bp-5h]
 	uint16 value = ReadWord(); // [bp-7h]
 
 	if (opcode1 == 0x0) {
@@ -92,13 +91,11 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	mov	[bp-4h],ax
 	mov	[bp-2h],dx
 	*/
+	}
 	// l0037_9F72:
-	} else if (opcode1 > 0) {
-		// TODO: This just doesn't seem to make any sense
+	if (opcode1 > 0) {
 		// l0037_9F78:
-		// TODO: Need to carefully check the jnc here
-		if (opcode1 < -1) {
-			
+		if (opcode1 < 0xFF) {
 			if ((value < 1) || (value > 0x800))  {
 				/*
 				We reach this by value being less than 1 or more than 800
@@ -107,24 +104,26 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 					jmp	0A32Ch
 				*/
 				// TODO: Implement the jump
+				return;
 			}
 			else {
+				// value between 1 and 0x800
 				// TODO: Implement
 			/*
 				l0037_9F94:
-	mov	ax,[bp-7h]
-	shl	ax,2h
-	les	di,[06C6h]
-	add	di,ax
-	mov	ax,es:[di-4h]
-	mov	dx,es:[di-2h]
-	mov	[bp-4h],ax mov[bp - 2h], dx */
+				mov	ax,[bp-7h]
+				shl	ax,2h
+				les	di,[06C6h]
+				add	di,ax
+				mov	ax,es:[di-4h]
+				mov	dx,es:[di-2h]
+				mov	[bp-4h],ax mov[bp - 2h], dx */
 			}
 		}
 	}
-	// opcode1 <= 0
 	// l0037_9FAE:
-	if (opcode1 != -1) {
+	if (opcode1 != 0xFF) {
+		// TODO: Do we write out a 0 for the values?
 		return;
 	}
 	// l0037_9FB7:
