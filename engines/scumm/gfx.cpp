@@ -4071,10 +4071,13 @@ void Gdi::writeRoomColor(byte *dst, byte color) const {
 #pragma mark -
 
 void ScummEngine::fadeIn(int effect) {
-	if (_disableFadeInEffect) {
+	if (_disableFadeInEffect || (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga)) {
 		// fadeIn() calls can be disabled in TheDig after a SMUSH movie
 		// has been played. Like the original interpreter, we introduce
 		// an extra flag to handle this.
+
+		// Screen fades are also disabled in the Amiga version of
+		// Maniac Mansion, verified on WinUAE
 		_disableFadeInEffect = false;
 		_doEffect = false;
 		_screenEffectFlag = true;
@@ -4126,6 +4129,14 @@ void ScummEngine::fadeIn(int effect) {
 }
 
 void ScummEngine::fadeOut(int effect) {
+	// Screen fades are disabled in the Amiga version of
+	// Maniac Mansion, verified on WinUAE
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga) {
+		_doEffect = false;
+		_screenEffectFlag = false;
+		return;
+	}
+
 	towns_waitForScroll(0);
 
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
@@ -4205,11 +4216,6 @@ void ScummEngine::transitionEffect(int a) {
 	int l, t, r, b;
 	int delay, numOfIterations;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga) {
-		// No transitions in the Amiga version of Maniac Mansion, verified on WinUAE.
-		return;
-	}
 
 	if (VAR_FADE_DELAY == 0xFF) {
 		if (_game.platform == Common::kPlatformC64) {
