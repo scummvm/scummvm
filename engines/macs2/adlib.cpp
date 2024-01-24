@@ -24,8 +24,62 @@
 
 namespace Macs2 {
 
-	
+void Adlib::Func2792(byte registerIndex, byte value) {
+	// fn0017_2792 proc
+	_opl->write(0x388, registerIndex);
 
+	// TODO: What I think happens here is that we save a copy of the register values
+	// at the +229Ch location
+	/*
+	mov	dl,[bp+6h]
+	mov	al,[bp+8h]
+	xor	ah,ah
+	mov	di,ax
+	mov	[di+229Ch],dl
+	xor	ax,ax
+	mov	[bp-2h],ax
+	jmp	27B5h
+	*/
+
+	/*
+
+	l0017_27B2:
+	inc	word ptr [bp-2h]
+
+l0017_27B5:
+	mov	dx,388h
+	in	al,dx
+	mov	[bp-3h],al
+	cmp	word ptr [bp-2h],6h
+	jnz	27B2h
+
+l0017_27C2:
+	;; The last pushed value is what we write out
+	mov	al,[bp+6h]
+	mov	dx,389h
+	out	dx,al
+	xor	ax,ax
+	mov	[bp-2h],ax
+	jmp	27D3h
+
+l0017_27D0:
+	inc	word ptr [bp-2h]
+
+l0017_27D3:
+	mov	dx,388h
+	in	al,dx
+	mov	[bp-3h],al
+	cmp	word ptr [bp-2h],24h
+	jnz	27D0h
+
+l0017_27E0:
+	leave
+	retf	4h
+
+	*/
+}
+
+void Adlib::Func2686() {
 	/*
 
 	fn0017_2686 proc
@@ -157,62 +211,6 @@ l0017_2774:
 	retf
 
 		*/
-
-
-
-void Adlib::Func2792(byte registerIndex, byte value) {
-	// fn0017_2792 proc
-	_opl->write(0x388, registerIndex);
-
-	// TODO: What I think happens here is that we save a copy of the register values
-	// at the +229Ch location
-	/*
-	mov	dl,[bp+6h]
-	mov	al,[bp+8h]
-	xor	ah,ah
-	mov	di,ax
-	mov	[di+229Ch],dl
-	xor	ax,ax
-	mov	[bp-2h],ax
-	jmp	27B5h
-	*/
-
-	/*
-
-	l0017_27B2:
-	inc	word ptr [bp-2h]
-
-l0017_27B5:
-	mov	dx,388h
-	in	al,dx
-	mov	[bp-3h],al
-	cmp	word ptr [bp-2h],6h
-	jnz	27B2h
-
-l0017_27C2:
-	;; The last pushed value is what we write out
-	mov	al,[bp+6h]
-	mov	dx,389h
-	out	dx,al
-	xor	ax,ax
-	mov	[bp-2h],ax
-	jmp	27D3h
-
-l0017_27D0:
-	inc	word ptr [bp-2h]
-
-l0017_27D3:
-	mov	dx,388h
-	in	al,dx
-	mov	[bp-3h],al
-	cmp	word ptr [bp-2h],24h
-	jnz	27D0h
-
-l0017_27E0:
-	leave
-	retf	4h
-
-	*/
 }
 
 void Adlib::Init() {

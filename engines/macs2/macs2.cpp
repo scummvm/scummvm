@@ -290,6 +290,8 @@ void Macs2Engine::readResourceFile() {
 	// Load the palette
 	file.seek(0x00248BCB);
 	file.read(_pal, 256 * 3);
+	// Make a copy that will not be color corrected, for fading
+	memcpy(_palVanilla, _pal, 256 * 3);
 
 	// Adjust the palette
 	for (int i = 0; i < 256 * 3; i++) {
@@ -324,8 +326,10 @@ void Macs2Engine::readResourceFile() {
 	// TODO: Figure out why the frames are not saved sequentially
 	// file.seek(0x0009619E);
 	file.seek(0x006A5941);
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 6; i++) {
 		_animFrames[i].ReadFromeFile(file);
+		// There are 6 empty bytes until the next one
+		file.seek(6, SEEK_CUR);
 	}
 
 	// Load the data for a border part

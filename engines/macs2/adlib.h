@@ -35,6 +35,7 @@ namespace Macs2 {
 	private:
 		OPL::OPL *_opl;
 
+		void Func2686();
 		void Func2792(byte registerIndex, byte value);
 
 	public:
