@@ -154,7 +154,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110:
-		// FADE OUT:	colorno,ncolors,coloffset,speed:byte
+		// FADE OUT:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->clearPalette();
 		} else {
@@ -162,7 +162,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 			// bring that down a bit to use less cpu.
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
-				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2] * 4, fade * 4);
+				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
 				updateScreen();
 				g_system->delayMillis(5);
 			}
@@ -170,13 +170,13 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x4120:
-		// FADE IN:	colorno,ncolors,coloffset,speed:byte
+		// FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
 		} else {
-			for (int i = 320; i != 0; i -= ivals[3]) {
-				int fade = MIN(i / 5, 63);
-				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2] * 4, fade * 4);
+			for (int i = 320; i > 0; i -= ivals[3]) {
+				int fade = MAX(0, MIN(i / 5, 63));
+				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
 				updateScreen();
 				g_system->delayMillis(5);
 			}
@@ -270,20 +270,21 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 
 	// Unimplemented / unknown
 	case 0x0070: // ? (0 args)
-	case 0x0230: // ? (0 args) - found in HoC intro
+	case 0x0220: // STOP CURRENT MUSIC
+	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1100: // ?	    i:int   [9]
 	case 0x1120: // SET_BACKGROUND
-	case 0x1300: // ? (1 args) - found in Dragon + HoC intro
-	case 0x1310: // ?	    i:int   [107]
+	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
+	case 0x1310: // STOP SFX    i:int   eg [107]
 	case 0x2010: // SET FRAME
 	case 0x2020: // SET TIMER
 	case 0x4210: // SAVE IMAGE REGION
-	// case 0xa100: // DRAW FILLED RECT  x1,y1,x2,y2:int
 	case 0xa300: // DRAW some string? x,y,w,h:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa424: // DRAW EMPTY CIRCLE
 	case 0xa510: // DRAW SPRITE1
 	case 0xa600: // CLEAR SCREEN
+	// From here on are not implemented in DRAGON
 	case 0xb000: // ? (0 args) - found in HoC intro
 	case 0xb010: // ? (3 args: 30, 2, 19) - found in HoC intro
 	case 0xb600: // DRAW SCREEN
