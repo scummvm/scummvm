@@ -216,10 +216,10 @@ void Sound::playMusic(const Common::String &filename) {
 			stream->read(_musicData, _musicSize);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
-			debug("        [%u]", count);
+			//debug("        [%u]", count);
 			for (uint32 k = 0; k < count; k++) {
-				uint16 idx = stream->readUint16LE();
-				debug("        %2u: %u", k, idx);
+				/*uint16 idx = */stream->readUint16LE();
+				//debug("        %2u: %u", k, idx);
 			}
 		}
 	}
@@ -274,19 +274,19 @@ uint32 availableSndTracks(const byte *data, uint32 size) {
 	while (pos[0] != 0xFF) {
 		byte drv = *pos++;
 
-		debug("(%d)", drv);
+		//debug("(%d)", drv);
 
 		while (pos[0] != 0xFF) {
 			uint16 off, siz;
 			readPartHeader(pos, off, siz);
 			off += sci_header;
 
-			debug("%06d:%d ", off, siz);
+			//debug("%06d:%d ", off, siz);
 
-			debug("Header bytes");
-			debug("[%06X]  ", data[off]);
-			debug("[%02X]  ", data[off+0]);
-			debug("[%02X]  ", data[off+1]);
+			//debug("Header bytes");
+			//debug("[%06X]  ", data[off]);
+			//debug("[%02X]  ", data[off+0]);
+			//debug("[%02X]  ", data[off+1]);
 
 			bool digital_pcm = false;
 			if (READ_LE_UINT16(&data[off]) == 0x00FE) {
@@ -295,20 +295,34 @@ uint32 availableSndTracks(const byte *data, uint32 size) {
 
 			switch (drv) {
 			case 0:	if (digital_pcm) {
-					debug("- Soundblaster");
+					//debug("- Soundblaster");
 					tracks |= DIGITAL_PCM;
 				} else {
-					debug("- Adlib");
+					//debug("- Adlib");
 					tracks |= TRACK_ADLIB;
-				}					break;
-			case 7:		debug("- General MIDI");
-					tracks |= TRACK_GM;		break;
-			case 9:		debug("- CMS");			break;
-			case 12:	debug("- MT-32");
-					tracks |= TRACK_MT32;		break;
-			case 18:	debug("- PC Speaker");		break;
-			case 19:	debug("- Tandy 1000");		break;
-			default:	debug("- Unknown %d", drv);	break;
+				}
+				break;
+			case 7:
+				//debug("- General MIDI");
+				tracks |= TRACK_GM;
+				break;
+			case 9:
+				//debug("- CMS");
+				break;
+			case 12:
+				//debug("- MT-32");
+				tracks |= TRACK_MT32;
+				break;
+			case 18:
+				//debug("- PC Speaker");
+				break;
+			case 19:
+				//debug("- Tandy 1000");
+				break;
+			default:
+				//debug("- Unknown %d", drv);
+				warning("Unknown music type %d", drv);
+				break;
 			}
 		}
 
