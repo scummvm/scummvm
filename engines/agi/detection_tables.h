@@ -422,7 +422,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_PO("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
-	// King's Quest 2 (Amiga) 2.0J
+	// King's Quest 2 (Amiga) 2.0J # 2.107
 	GAME_PO("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 2 (Mac) 2.0R 3/23/88
@@ -613,7 +613,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter NY (IIgs) 2.0E 10/05/88 (CE)
 	GAME3_P("mh1", "2.0E 1988-10-05 (CE)", "mhdir", "2f1509f76f24e6e7d213f2dadebbf156", 0x3149, 0, GID_MH1, Common::kPlatformApple2GS),
 
-	// Manhunter NY (Amiga) 1.06 3/18/89
+	// Manhunter NY (Amiga) 1.06 3/18/89 # 2.328
 	GAME3_PO("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, GF_OLDAMIGAV20, GID_MH1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// reported by Filippos (thebluegr) in bugreport #3048
@@ -691,10 +691,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 2489,
 							"OBJ/FLASHLIT.OOO", "d60a7b6ff96720037f7e88863f48c5d4", 97, 0x0000, GID_MICKEY, Common::kPlatformDOS),
 
-	// Mixed-Up Mother Goose (Amiga) 1.1
-	// Problematic: crashes
-	// Menus not tested
-	GAME3_PSO("mixedup", "1.1 1986-12-10", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3086, 0, GID_MIXEDUP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	// Mixed-Up Mother Goose (Amiga) 1.1 # 2.328
+	// Files are timestamped 1986-12-10, but this is a 1989 AGI 3 interpreter.
+	GAME3_PSO("mixedup", "1.1", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3149, 0, GID_MIXEDUP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Mixed Up Mother Goose (IIgs)
 	GAME_PO("mixedup", "1987", "3541954a7303467c6df87665312ffb6a", 0x2917, GID_MIXEDUP, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),

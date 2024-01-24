@@ -294,6 +294,7 @@ enum AgiMonitorType {
  * 2.202 (Space Quest II v2.0F)
  * 2.310 (Police Quest I v2.0B 1989-02-22)
  * 2.316 (Gold Rush! v2.05 1989-03-09)
+ * 2.328 (Mixed-Up Mother Mother Goose v1.1)
  * 2.333 (King's Quest III v2.15 1989-11-15)
  *
  * At least these Amiga AGI versions use value 20:
