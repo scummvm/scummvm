@@ -101,6 +101,9 @@ public:
 	bool run();
 
 protected:
+	void handleOperation(uint16 code, Common::SeekableReadStream *scr);
+	void playScene();
+
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
 
