@@ -144,7 +144,7 @@ void Inter_v7::setupOpcodesGob() {
 }
 
 void Inter_v7::o7_draw0x0C() {
-	WRITE_VAR(17, 0);
+	WRITE_VAR(11, 0);
 }
 
 void Inter_v7::o7_loadCursor(OpFuncParams &params) {
