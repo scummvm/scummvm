@@ -82,6 +82,7 @@ public:
 
 protected:
 	void setActiveDialogue(uint16 num);
+	void handleOperation(uint16 op, byte count, int16 *ivals, Common::String &sval);
 
 	DgdsEngine *_vm;
 
