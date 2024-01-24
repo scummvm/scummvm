@@ -43,7 +43,7 @@ TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(T
 
 ADDetectedGame TwpMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	for (auto it = allFiles.begin(); it != allFiles.end(); it++) {
-		if (it->_key.hasSuffix(".ggpack1")) {
+		if (it->_key.toString().hasSuffixIgnoreCase(".ggpack1")) {
 			return ADDetectedGame(Twp::gameDescriptions);
 		}
 	}
