@@ -22,6 +22,10 @@
 #ifndef ULTIMA8_AUDIO_AUDIOSAMPLE_H
 #define ULTIMA8_AUDIO_AUDIOSAMPLE_H
 
+namespace Audio {
+class SeekableAudioStream;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -30,8 +34,6 @@ protected:
 	uint32  _sampleRate;
 	uint32  _bits;
 	bool    _stereo;
-	int     _frameSize;
-	uint32  _decompressorSize;
 	uint32  _length;
 
 	uint32  _bufferSize;
@@ -52,21 +54,13 @@ public:
 	inline bool isStereo() const {
 		return _stereo;
 	}
-	inline uint32 getFrameSize() const {
-		return _frameSize;
-	}
-	inline uint32 getDecompressorDataSize() const {
-		return _decompressorSize;
-	}
 
 	//! get AudioSample _length (in samples)
 	inline uint32 getLength() const {
 		return _length;
 	}
 
-	virtual void initDecompressor(void *DecompData) const = 0;
-	virtual uint32 decompressFrame(void *DecompData, void *samples) const = 0;
-	virtual void rewind(void *DecompData) const = 0;
+	virtual Audio::SeekableAudioStream *makeStream() const = 0;
 };
 
 } // End of namespace Ultima8

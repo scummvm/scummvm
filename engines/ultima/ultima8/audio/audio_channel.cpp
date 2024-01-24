@@ -32,8 +32,8 @@ namespace Ultima8 {
 
 
 AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) :
-		_mixer(mixer), _decompressorSize(0), _frameSize(0), _loop(0), _sample(nullptr),
-		_frameEvenOdd(0), _paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
+		_mixer(mixer), _loop(0), _sample(nullptr),
+		_paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
 }
 
 AudioChannel::~AudioChannel(void) {
@@ -51,35 +51,8 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 	if (!_sample)
 		return;
 
-	// Setup buffers
-	_decompressorSize = _sample->getDecompressorDataSize();
-	_frameSize = _sample->getFrameSize();
-
-	if ((_decompressorSize + _frameSize * 2) > _playData.size()) {
-		_playData.resize(_decompressorSize + _frameSize * 2);
-	}
-
-	// Init the _sample decompressor
-	_sample->initDecompressor(&_playData[0]);
-
-	// Reset counter and stuff
-	_frameEvenOdd = 0;
-
-	// Get the data for the _sample
-	Common::MemoryWriteStreamDynamic streamData(DisposeAfterUse::NO);
-	int frameSize;
-	byte *framePtr = &_playData[_decompressorSize];
-
-	while ((frameSize = _sample->decompressFrame(&_playData[0], framePtr)) != 0)
-		streamData.write(framePtr, frameSize);
-
 	// Create the _sample
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-		new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
-		_sample->getRate(),
-		_sample->isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES
-	);
+	Audio::SeekableAudioStream *audioStream = _sample->makeStream();
 
 	int loops = _loop;
 	if (loops == -1) {

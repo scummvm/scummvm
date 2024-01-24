@@ -26,8 +26,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 AudioSample::AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo, bool deleteBuffer) :
-	_sampleRate(0), _bits(bits), _stereo(stereo),
-	_frameSize(0), _decompressorSize(0), _length(0),
+	_sampleRate(0), _bits(bits), _stereo(stereo), _length(0),
 	_bufferSize(size), _buffer(buffer), _deleteBuffer(deleteBuffer) {
 }
 

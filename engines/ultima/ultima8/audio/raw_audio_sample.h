@@ -33,16 +33,9 @@ public:
 	               uint32 rate, bool signeddata, bool stereo);
 	~RawAudioSample() override;
 
-	void initDecompressor(void *DecompData) const override;
-	uint32 decompressFrame(void *DecompData, void *samples) const override;
-	void rewind(void *DecompData) const override;
+	Audio::SeekableAudioStream *makeStream() const override;
 
 protected:
-
-	struct RawDecompData {
-		uint32 _pos;
-	};
-
 	bool _signedData;
 };
 

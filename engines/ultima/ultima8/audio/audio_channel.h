@@ -31,21 +31,13 @@ class AudioSample;
 
 class AudioChannel {
 private:
-	// We have:
-	// 1x decompressor size
-	// 2x frame size
-	Common::Array<byte> _playData;
-
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer *_mixer;
-	uint32          _decompressorSize;  // Persistent data for the decompressor
-	uint32          _frameSize;         //
 
 	int32           _loop;
 	AudioSample     *_sample;
 
 	// Info for sampling
-	uint32          _frameEvenOdd;  // which buffer is 'frame0'
 	int             _lVol, _rVol;   // 0-256
 	uint32          _pitchShift;    // AudioProcess::PITCH_SHIFT_NONE = no shift
 	int             _priority;      // anything.
