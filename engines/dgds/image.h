@@ -37,6 +37,34 @@ class Decompressor;
 class DgdsChunkReader;
 class ResourceManager;
 
+class Palette {
+public:
+	Palette();
+	byte _palette[256 * 3];
+};
+
+class GamePalettes {
+public:
+	GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor);
+	void loadPalette(Common::String filename);
+	void selectPalNum(int num);
+	void setPalette();
+	void clearPalette();
+
+	// Fade the colors in the current palette toward black. Start at col, and fade ncols of the palette.
+	// Add coloff to the result to move toward white.
+	void setFade(int col, int ncols, int coloff, int fade);
+
+private:
+	ResourceManager *_resourceMan;
+	Decompressor *_decompressor;
+
+	Palette _curPal;
+	uint _curPalNum;
+	Common::Array<Palette> _palettes;
+	Palette _blacks;
+};
+
 class Image {
 public:
 	Image(ResourceManager *resourceMan, Decompressor *decompressor);
@@ -47,9 +75,6 @@ public:
 	int frameCount(const Common::String &filename);
 	void drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface);
 
-	void loadPalette(Common::String filename);
-	void setPalette();
-	void clearPalette();
 	bool isLoaded() const { return _bmpData.getPixels() != nullptr; }
 	int16 width() const;
 	int16 height() const;
@@ -65,9 +90,6 @@ private:
 	Graphics::Surface _bmpData;
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;
-
-	byte _palette[256 * 3];
-	byte _blacks[256 * 3];
 };
 
 } // End of namespace Dgds

@@ -162,8 +162,9 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 		debugPrintf("Image only has %d frames\n", maxframe);
 		return true;
 	}
-	img.loadPalette("DYNAMIX.PAL");
-	img.setPalette();
+	GamePalettes pal(_vm->getResourceManager(), _vm->getDecompressor());
+	pal.loadPalette("DYNAMIX.PAL");
+	pal.setPalette();
 	img.loadBitmap(fname, frameno);
 	int width = img.width();
 	int height = img.height();

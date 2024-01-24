@@ -48,7 +48,7 @@ bool TTMInterpreter::load(const Common::String &filename) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	bool parseResult = dgds.parse(&_scriptData, filename);
 
-	_state.delay = 0;
+	_state._delay = 0;
 	_state.scene = 0;
 	_scriptData.scr->seek(0);
 
@@ -71,7 +71,12 @@ void TTMInterpreter::setActiveDialogue(uint16 num) {
 			_text = &dialogue;
 	}
 	if (_text && !_text->_str.empty())
-		_state.delay += _text->_time * 9;  // More correctly, 9 - text-speed-setting
+		_state._delay += _text->_time * 9;  // More correctly, 9 - text-speed-setting
+}
+
+void TTMInterpreter::updateScreen() {
+	g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->updateScreen();
 }
 
 void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common::String &sval) {
@@ -104,7 +109,8 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		}
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
-		_state.delay += ivals[0] * 10;
+		_state._delay += ivals[0] * 10;
+		_state._delayStart = g_system->getMillis();
 		break;
 	case 0x1030: {
 		// SET BMP:	id:int [-1:n]
@@ -120,8 +126,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0x1060:
 		// SELECT PAL:  id:int [0]
-		warning("TTM: Switching palette to %d for opcode 0x1060, but we don't use it yet", ivals[0]);
-		_state._currentPalId = ivals[0];
+		_vm->getGamePals()->selectPalNum(ivals[0]);
 		break;
 	case 0x1090:
 		// SELECT SONG:	    id:int [0]
@@ -150,14 +155,32 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0x4110:
 		// FADE OUT:	colorno,ncolors,coloffset,speed:byte
-		g_system->delayMillis(_state.delay);
-		_vm->_image->clearPalette();
+		if (ivals[3] == 0) {
+			_vm->getGamePals()->clearPalette();
+		} else {
+			// The original tight-loops here with 640 steps and i/10 as the fade level..
+			// bring that down a bit to use less cpu.
+			for (int i = 0; i < 320; i += ivals[3]) {
+				int fade = MIN(i / 5, 63);
+				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2] * 4, fade * 4);
+				updateScreen();
+				g_system->delayMillis(5);
+			}
+		}
 		_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x4120:
 		// FADE IN:	colorno,ncolors,coloffset,speed:byte
-		warning("TTM: FADE IN, implement me");
-		_vm->_image->setPalette();
+		if (ivals[3] == 0) {
+			_vm->getGamePals()->setPalette();
+		} else {
+			for (int i = 320; i != 0; i -= ivals[3]) {
+				int fade = MIN(i / 5, 63);
+				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2] * 4, fade * 4);
+				updateScreen();
+				g_system->delayMillis(5);
+			}
+		}
 		break;
 	case 0x4200: {
 		// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
@@ -183,6 +206,13 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		// DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
 		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
 		_vm->getTopBuffer().fillRect(bmpArea, _state._drawColFG);
+		break;
+	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
+		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, _state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, _state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, _state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, _state._drawColFG);
 		break;
 	case 0xa520:
 		// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
@@ -225,7 +255,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0xf050:
 		// LOAD PAL:	filename:str
-		_vm->_image->loadPalette(sval);
+		_vm->getGamePals()->loadPalette(sval);
 		break;
 	case 0xf060:
 		// LOAD SONG:	filename:str
@@ -249,7 +279,6 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 	case 0x2020: // SET TIMER
 	case 0x4210: // SAVE IMAGE REGION
 	// case 0xa100: // DRAW FILLED RECT  x1,y1,x2,y2:int
-	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
 	case 0xa300: // DRAW some string? x,y,w,h:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa424: // DRAW EMPTY CIRCLE
@@ -277,7 +306,11 @@ bool TTMInterpreter::run() {
 	if (scr->pos() >= scr->size())
 		return false;
 
-	_state.delay = 0;
+	if (_state._delayStart + _state._delay > g_system->getMillis()) {
+		return true;
+	}
+	_state._delay = 0;
+	_state._delayStart = 0;
 
 	uint16 code = scr->readUint16LE();
 	uint16 op = code & 0xFFF0;
@@ -313,10 +346,7 @@ bool TTMInterpreter::run() {
 	debug(" ");
 
 	handleOperation(op, count, ivals, sval);
-
-	g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	g_system->updateScreen();
-	g_system->delayMillis(_state.delay);
+	updateScreen();
 
 	return true;
 }
@@ -383,6 +413,10 @@ void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	uint16 subIdx, subMax;
 
 	switch (code) {
+	case 0x0001:
+	case 0x0005:
+		// Seems to be "enter" or "label", does nothing.  0x0005 can be used for searching..
+		break;
 	case 0x2005: { // ADD SCENE TO QUEUE
 		subIdx = scr->readUint16LE();
 		subMax = scr->readUint16LE();
@@ -452,9 +486,13 @@ void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xFF88:
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
-	default:
-		warning("Unimplemented ADS opcode: 0x%04X", code);
+	default: {
+		int nops = numArgs(code);
+		warning("Unimplemented ADS opcode: 0x%04X (skip %d args)", code, nops);
+		for (int i = 0; i < nops; i++)
+			scr->readUint16LE();
 		break;
+	}
 	}
 }
 
@@ -472,15 +510,53 @@ bool ADSInterpreter::run() {
 
 	do {
 		uint16 code = scr->readUint16LE();
-		//uint op = code & 0xFFF0;
-
-		if ((code & 0xFF00) == 0)
-			continue;
-
 		handleOperation(code, scr);
 	} while (scr->pos() < scr->size());
 
 	return true;
 }
+
+int ADSInterpreter::numArgs(uint16 opcode) const {
+	// TODO: This list is from DRAGON, there may be more entries in newer games.
+	switch (opcode) {
+	case 0x1080:
+	case 0x3020:
+	case 0xF010:
+	case 0xF200:
+	case 0xF210:
+		return 1;
+
+	case 0x1010:
+	case 0x1020:
+	case 0x1030:
+	case 0x1040:
+	case 0x1050:
+	case 0x1060:
+	case 0x1070:
+	case 0x1310:
+	case 0x1320:
+	case 0x1330:
+	case 0x1340:
+	case 0x1350:
+	case 0x1360:
+	case 0x1370:
+		return 2;
+
+	case 0x2010:
+	case 0x2015:
+	case 0x2020:
+	case 0x4000:
+	case 0x4010:
+		return 3;
+
+	case 0x2000:
+	case 0x2005:
+		return 4;
+
+	default:
+		return 0;
+	}
+}
+
 
 } // End of namespace Dgds
