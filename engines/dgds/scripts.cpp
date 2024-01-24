@@ -123,8 +123,11 @@ bool TTMInterpreter::run() {
 		case 0x0000:
 			// FINISH:	void
 			break;
-		case 0x0020: //SAVE BACKGROUND
+		case 0x0020: // SAVE BACKGROUND
 			_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
+			continue;
+		case 0x0080: // DRAW BACKGROUND
+			_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
 			continue;
 		case 0x0110: //PURGE void
 			// .. shouldn't actually clear the bmps, what should it do?
@@ -167,7 +170,7 @@ bool TTMInterpreter::run() {
 			continue;
 		case 0x10a0: //SET SCENE?:  i:int   [0..n], often 0, called on scene change?
 			debug("SET SCENE: %u", ivals[0]);
-			break;
+			continue;
 		case 0x1110: { //SHOW SCENE TEXT?:  i:int   [1..n]
 			// DESCRIPTION IN TTM TAGS.
 			debug("SHOW SCENE TEXT: %u", ivals[0]);
@@ -175,12 +178,14 @@ bool TTMInterpreter::run() {
 			setActiveDialogue(_state.scene);
 			continue;
 		}
-
+		case 0x1200:	// GOTO
+			debug("GOTO SCENE: %u", ivals[0]);
+			_state.scene = ivals[0];
+			continue;
 		case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
 			_state._drawColFG = static_cast<byte>(ivals[0]);
 			_state._drawColBG = static_cast<byte>(ivals[1]);
 			continue;
-
 		case 0x4000:
 			//SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
 			_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
@@ -212,6 +217,9 @@ bool TTMInterpreter::run() {
 			_vm->_resData.blitFrom(_vm->getBottomBuffer());
 			_vm->_resData.transBlitFrom(_vm->getTopBuffer());
 			_vm->getTopBuffer().copyFrom(_vm->_resData);
+			continue;
+		case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
+			_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], _state._drawColFG);
 			continue;
 		case 0xa100:
 			//DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
@@ -273,29 +281,30 @@ bool TTMInterpreter::run() {
 			continue;
 
 		// Unimplemented / unknown
-		case 0x0080: // DRAW BG:	    void
+		case 0x0070: // ? (0 args)
+		case 0x0230: // ? (0 args) - found in HoC intro
 		case 0x1100: // ?	    i:int   [9]
 		case 0x1120: // SET_BACKGROUND
-		case 0x1200: // GOTO
-		case 0x1300: // ?	    i:int   [72,98,99,100,107]
+		case 0x1300: // ? (1 args) - found in Dragon + HoC intro
 		case 0x1310: // ?	    i:int   [107]
 		case 0x2010: // SET FRAME
 		case 0x2020: // SET TIMER
 		case 0x4210: // SAVE IMAGE REGION
-		case 0xA0A0: // DRAW LINE  x1,y1,x2,y2:int
-		//case 0xA100: // DRAW FILLED RECT  x1,y1,x2,y2:int
-		case 0xA110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
-		case 0xA300: // DRAW some string? x,y,w,h:int
-		case 0xA400: // DRAW FILLED CIRCLE
-		case 0xA424: // DRAW EMPTY CIRCLE
-		case 0xA510: // DRAW SPRITE1
-		case 0xA600: // CLEAR SCREEN
-		case 0xB600: // DRAW SCREEN
-		case 0xC020: // LOAD_SAMPLE
-		case 0xC030: // SELECT_SAMPLE
-		case 0xC040: // DESELECT_SAMPLE
-		case 0xC050: // PLAY_SAMPLE
-		case 0xC060: // STOP_SAMPLE
+		//case 0xa100: // DRAW FILLED RECT  x1,y1,x2,y2:int
+		case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
+		case 0xa300: // DRAW some string? x,y,w,h:int
+		case 0xa400: // DRAW FILLED CIRCLE
+		case 0xa424: // DRAW EMPTY CIRCLE
+		case 0xa510: // DRAW SPRITE1
+		case 0xa600: // CLEAR SCREEN
+		case 0xb000: // ? (0 args) - found in HoC intro
+		case 0xb010: // ? (3 args: 30, 2, 19) - found in HoC intro
+		case 0xb600: // DRAW SCREEN
+		case 0xc020: // LOAD_SAMPLE
+		case 0xc030: // SELECT_SAMPLE
+		case 0xc040: // DESELECT_SAMPLE
+		case 0xc050: // PLAY_SAMPLE
+		case 0xc060: // STOP_SAMPLE
 
 		default:
 			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
