@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/platform.h"
 #include "director/types.h"
 #include "graphics/macgui/macbutton.h"
 
@@ -429,7 +430,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = 1;
 		break;
 	case kTheCommandDown:
-		d = (movie->_keyFlags & Common::KBD_META) ? 1 : 0;
+		if (g_director->getPlatform() == Common::kPlatformWindows)
+			d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		else
+			d = (movie->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
 		d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
