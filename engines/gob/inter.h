@@ -770,6 +770,7 @@ protected:
 
 	void o7_oemToANSI(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
+	void o7_getFreeDiskSpace(OpGobParams &params);
 
 private:
 	INIConfig _inis;
