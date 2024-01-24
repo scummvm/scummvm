@@ -97,10 +97,7 @@ void GamePalettes::clearPalette() {
 	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
 }
 
-void GamePalettes::setFade(int col, int ncols, int coloff, int fade) {
-	if (coloff)
-		warning("TODO: Handle non-zero coloff in GamePalettes::setFade");
-
+void GamePalettes::setFade(int col, int ncols, int targetcol, int fade) {
 	if (_curPalNum >= _palettes.size())
 		error("GamePalettes::setFade: invalid curPalNum %d, only have %d pals", _curPalNum, _palettes.size());
 
@@ -109,14 +106,18 @@ void GamePalettes::setFade(int col, int ncols, int coloff, int fade) {
 
 	Palette &pal = _palettes[_palettes.size() - _curPalNum - 1];
 
+	byte r2 = pal._palette[targetcol * 3 + 0];
+	byte g2 = pal._palette[targetcol * 3 + 1];
+	byte b2 = pal._palette[targetcol * 3 + 2];
+
 	for (int c = col; c < col + ncols; c++) {
 		byte r = pal._palette[c * 3 + 0];
 		byte g = pal._palette[c * 3 + 1];
 		byte b = pal._palette[c * 3 + 2];
 
-		_curPal._palette[c * 3 + 0] = r - (r  * fade) / 255;
-		_curPal._palette[c * 3 + 1] = g - (g  * fade) / 255;
-		_curPal._palette[c * 3 + 2] = b - (b  * fade) / 255;
+		_curPal._palette[c * 3 + 0] = r2 * fade / 255 + r * (255 - fade) / 255;
+		_curPal._palette[c * 3 + 1] = g2 * fade / 255 + g * (255 - fade) / 255;
+		_curPal._palette[c * 3 + 2] = b2 * fade / 255 + b * (255 - fade) / 255;
 	}
 	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
 }
