@@ -797,7 +797,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	*/
 
 
-	void Script::ScriptExecutor::ExecuteScript(Common::MemoryReadStream *stream) {
+	void Script::ScriptExecutor::ExecuteScript() {
 	// Not yet implemented - seems to signal that the script is empty?
 	/*
 	l0037_DB6A:
@@ -2139,6 +2139,10 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 */
+	}
+
+	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
+		_stream = stream;
 	}
 
 } // namespace Script 
