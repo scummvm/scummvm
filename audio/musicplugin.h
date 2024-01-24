@@ -102,7 +102,7 @@ public:
 	 * implemented for the MT-32 emulator to check whether the required rom
 	 * files are present.
 	 */
-	virtual bool checkDevice(MidiDriver::DeviceHandle) const { return true; }
+	virtual bool checkDevice(MidiDriver::DeviceHandle hdl, int flags, bool quiet) const { return true; }
 
 	/**
 	 * Tries to instantiate a MIDI Driver instance based on the device
