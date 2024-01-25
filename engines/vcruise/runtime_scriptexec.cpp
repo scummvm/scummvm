@@ -2044,17 +2044,63 @@ void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
 // AD2044 ops
 OPCODE_STUB(AnimT)
 
-void Runtime::scriptOpAnimForward(ScriptArg_t arg) {
+void Runtime::scriptOpAnimAD2044(bool isForward) {
 	TAKE_STACK_INT(2);
 
-	error("AnimForward NYI");
+	int16 animationID = 0;
+
+	bool found = false;
+
+	for (const AD2044AnimationDef &def : _ad2044AnimationDefs) {
+		if (static_cast<StackInt_t>(def.lookupID) == stackArgs[0]) {
+			animationID = isForward ? def.fwdAnimationID : def.revAnimationID;
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+		error("Couldn't resolve animation lookup ID %i", static_cast<int>(stackArgs[0]));
+
+	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _animIDToFrameRange.find(animationID);
+	if (animRangeIt == _animIDToFrameRange.end())
+		error("Couldn't resolve animation ID %i", static_cast<int>(animationID));
+
+	AnimationDef animDef;
+	animDef.animNum = animRangeIt->_value.animationNum;
+	animDef.firstFrame = animRangeIt->_value.firstFrame;
+	animDef.lastFrame = animRangeIt->_value.lastFrame;
+
+	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
+
+	_gameState = kGameStateWaitingForAnimation;
+	_screenNumber = stackArgs[1];
+	_havePendingScreenChange = true;
+
+	clearIdleAnimations();
+
+	if (_loadedAnimationHasSound)
+		changeToCursor(nullptr);
+	else {
+		changeToCursor(_cursors[kCursorWait]);
+	}
 }
 
-OPCODE_STUB(AnimReverse)
+void Runtime::scriptOpAnimForward(ScriptArg_t arg) {
+	scriptOpAnimAD2044(true);
+}
+
+void Runtime::scriptOpAnimReverse(ScriptArg_t arg) {
+	scriptOpAnimAD2044(false);
+}
+
 OPCODE_STUB(AnimKForward)
 OPCODE_STUB(Say2K)
 OPCODE_STUB(Say3K)
-OPCODE_STUB(NoUpdate)
+
+void Runtime::scriptOpNoUpdate(ScriptArg_t arg) {
+}
+
 OPCODE_STUB(NoClear)
 
 OPCODE_STUB(Say1_AD2044)

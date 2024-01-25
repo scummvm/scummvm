@@ -318,6 +318,8 @@ void ReahSchizmMapLoader::unload() {
 	for (uint screen = 0; screen < kNumScreens; screen++)
 		for (uint direction = 0; direction < kNumDirections; direction++)
 			_screenDirections[screen][direction].reset();
+
+	_isLoaded = false;
 }
 
 class AD2044MapLoader : public MapLoader {
@@ -385,6 +387,7 @@ void AD2044MapLoader::load() {
 
 void AD2044MapLoader::unload() {
 	_currentMap.reset();
+	_isLoaded = false;
 }
 
 
@@ -1250,7 +1253,13 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	_rng.reset(new Common::RandomSource("vcruise"));
 
 #ifdef USE_FREETYPE2
-	_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+	if (_gameID == GID_AD2044) {
+		Common::File f;
+		if (f.open("gfx/AD2044.TTF"))
+			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+	} else
+		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+
 	_subtitleFont = _subtitleFontKeepalive.get();
 #endif
 
@@ -1374,6 +1383,7 @@ void Runtime::loadCursors(const char *exeName) {
 	if (_gameID == GID_AD2044) {
 		_namedCursors["CUR_PRZOD"] = 2; // Przod = forward
 		_namedCursors["CUR_PRAWO"] = 3;	// Prawo = right
+		_namedCursors["CUR_LEWO"] = 1; // Lewo = left
 		_namedCursors["CUR_LUPA"] = 6; // Lupa = magnifier
 	}
 
@@ -3424,7 +3434,7 @@ void Runtime::refreshCursor(uint32 currentTime) {
 		timeSinceTimeBase %= _cursorCycleLength * 50u;
 		_cursorTimeBase = currentTime - timeSinceTimeBase;
 
-		stepTime = timeSinceTimeBase * 60u / 1000u;
+		stepTime = (timeSinceTimeBase * 60u / 1000u) % _cursorCycleLength;
 	}
 
 	uint imageIndex = 0;

@@ -1154,6 +1154,7 @@ private:
 	void scriptOpItemHighlightSetTrue(ScriptArg_t arg);
 
 	// AD2044 ops
+	void scriptOpAnimAD2044(bool isForward);
 	void scriptOpAnimT(ScriptArg_t arg);
 	void scriptOpAnimForward(ScriptArg_t arg);
 	void scriptOpAnimReverse(ScriptArg_t arg);
@@ -1388,6 +1389,7 @@ private:
 	static const uint kAnimDefStackArgs = 8;
 
 	static const uint kCursorArrow = 0;
+	static const uint kCursorWait = 29;
 
 	static const int kPanoramaPanningMarginX = 11;
 	static const int kPanoramaPanningMarginY = 11;
