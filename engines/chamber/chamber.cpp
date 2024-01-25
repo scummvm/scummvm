@@ -48,6 +48,9 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_rnd = new Common::RandomSource("chamber");
 
 	_shouldQuit = false;
+	_shouldRestart = false;
+	_prioritycommand_1 = false;
+	_prioritycommand_2 = false;
 	_pxiData = NULL;
 
 	_speakerHandle = NULL;
