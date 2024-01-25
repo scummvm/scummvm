@@ -661,8 +661,14 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	// draw to screen
 	_gfx.use(nullptr);
 	_gfx.setRenderTarget(outTexture);
+	_gfx.clear(Color(0, 0, 0));
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
-	_gfx.drawSprite(*screenTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect != FadeEffect::None);
+	Math::Matrix4 m1, m2, m;
+	m1.setPosition(Math::Vector3d(-SCREEN_WIDTH/2.f, -SCREEN_HEIGHT/2.f, 0.f));
+	m2.setPosition(Math::Vector3d(SCREEN_WIDTH/2.f, SCREEN_HEIGHT/2.f, 0.f));
+	Math::Angle angle;
+	m.buildAroundZ(Math::Angle(-_room->_rotation));
+	_gfx.drawSprite(*screenTexture, Color(), m2*m*m1, false, _fadeShader->_effect != FadeEffect::None);
 
 	// draw UI
 	_gfx.cameraPos(camPos);

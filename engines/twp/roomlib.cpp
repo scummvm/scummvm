@@ -279,7 +279,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 		Object *obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
-        size_t i = find(g_engine->_room->_triggers, obj);
+		size_t i = find(g_engine->_room->_triggers, obj);
 		if (i != (size_t)-1) {
 			debug("Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
 			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
@@ -443,7 +443,10 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 }
 
 static SQInteger roomRotateTo(HSQUIRRELVM v) {
-	warning("TODO: roomRotateTo not implemented");
+	float rotation;
+	if (SQ_FAILED(sqget(v, 2, rotation)))
+		return sq_throwerror(v, "failed to get rotation");
+	g_engine->_room->_rotateTo = new RoomRotateTo(g_engine->_room, rotation);
 	return 0;
 }
 

@@ -87,6 +87,20 @@ void RotateTo::update(float elapsed) {
 		disable();
 }
 
+RoomRotateTo::~RoomRotateTo() {}
+
+RoomRotateTo::RoomRotateTo(Room *room, float to)
+	: _room(room),
+	  _tween(room->_rotation, to, 0.200f, intToInterpolationMethod(0)) {
+}
+
+void RoomRotateTo::update(float elapsed) {
+	_tween.update(elapsed);
+	_room->_rotation = _tween.current();
+	if (!_tween.running())
+		disable();
+}
+
 ScaleTo::~ScaleTo() {}
 
 ScaleTo::ScaleTo(float duration, Node *node, float to, InterpolationMethod im)

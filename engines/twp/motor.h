@@ -145,6 +145,19 @@ private:
 	Tween<float> _tween;
 };
 
+class RoomRotateTo : public Motor {
+public:
+	virtual ~RoomRotateTo();
+	RoomRotateTo(Room *room, float to);
+
+private:
+	virtual void update(float elasped) override;
+
+private:
+	Room *_room = nullptr;
+	Tween<float> _tween;
+};
+
 class ScaleTo : public Motor {
 public:
 	virtual ~ScaleTo();

@@ -150,6 +150,8 @@ public:
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect = RoomEffect::None;
 	Motor* _overlayTo = nullptr;
+	Motor* _rotateTo = nullptr;
+	float _rotation = 0.f;
 	PathFinder _pathFinder;
 };
 
