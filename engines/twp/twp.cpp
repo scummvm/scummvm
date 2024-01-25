@@ -217,7 +217,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 			return;
 		}
 
-		if (_cursor.leftDown) {
+		if (_cursor.isLeftDown()) {
 			// button left: execute selected verb
 			bool handled = clickedAtHandled(roomPos);
 			if (!handled && obj) {
@@ -236,7 +236,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 				}
 			}
 
-		} else if (_cursor.rightDown) {
+		} else if (_cursor.isRightDown()) {
 			// button right: execute default verb
 			if (obj) {
 				VerbId verb;
