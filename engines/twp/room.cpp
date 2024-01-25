@@ -460,8 +460,8 @@ Color Room::getOverlay() const {
 void Room::update(float elapsed) {
 	if (_overlayTo)
 		_overlayTo->update(elapsed);
-	// if (_rotateTo)
-	// 	_rotateTo->update(elapsedSec);
+	if (_rotateTo)
+		_rotateTo->update(elapsed);
 	for (size_t j = 0; j < _layers.size(); j++) {
 		Layer *layer = _layers[j];
 		for (size_t k = 0; k < layer->_objects.size(); k++) {
