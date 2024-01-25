@@ -260,4 +260,23 @@ int AudioSystem::play(SoundDefinition *sndDef, Audio::Mixer::SoundType cat, int 
 	return id;
 }
 
+int AudioSystem::getElapsed(int id) const {
+	for (int i = 0; i < 32; i++) {
+		if (_slots[i].id == id) {
+			Audio::Timestamp t = g_engine->_mixer->getElapsedTime(_slots[i].handle);
+			return t.msecs();
+		}
+	}
+	return 0;
+}
+
+int AudioSystem::getDuration(int id) const {
+	for (int i = 0; i < 32; i++) {
+		if (_slots[i].id == id) {
+			return _slots[i].total;
+		}
+	}
+	return 0;
+}
+
 } // namespace Twp
