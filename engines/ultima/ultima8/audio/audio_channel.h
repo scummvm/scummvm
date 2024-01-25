@@ -33,16 +33,7 @@ class AudioChannel {
 private:
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer *_mixer;
-
-	int32           _loop;
-	AudioSample     *_sample;
-
-	// Info for sampling
-	byte            _volume;
-	int8            _balance;
-	uint32          _pitchShift;    // AudioProcess::PITCH_SHIFT_NONE = no shift
-	int             _priority;      // anything.
-	bool            _paused;        // true/false
+	int _priority;
 
 public:
 	AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo);
@@ -50,20 +41,14 @@ public:
 
 	void stop();
 
-	void playSample(AudioSample *sample, int loop, int priority, bool paused, 
+	void playSample(AudioSample *sample, int loop, int priority,
 		bool isSpeech, uint32 pitchShift, byte volume, int8 balance);
 
 	bool isPlaying();
 
 	void setVolume(byte volume, int8 balance) {
-		_volume = volume;
-		_balance = balance;
 		_mixer->setChannelVolume(_soundHandle, volume);
 		_mixer->setChannelBalance(_soundHandle, balance);
-	}
-	void getVolume(byte &volume, int8 &balance) const {
-		volume = _volume;
-		balance = _balance;
 	}
 
 	void setPriority(int priority) {
@@ -74,10 +59,6 @@ public:
 	}
 
 	void setPaused(bool paused);
-
-	bool isPaused() const {
-		return _paused;
-	}
 };
 
 } // End of namespace Ultima8

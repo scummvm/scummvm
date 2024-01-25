@@ -55,15 +55,12 @@ public:
 	void            reset();
 	void            createProcesses();
 
-	int             playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient);
+	int             playSample(AudioSample *sample, int loop, int priority, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient);
 	bool            isPlaying(int chan);
 	void            stopSample(int chan);
 
 	void            setPaused(int chan, bool paused);
-	bool            isPaused(int chan);
-
 	void            setVolume(int chan, byte volume, int8 balance);
-	void            getVolume(int chan, byte &volume, int8 &balance);
 
 	void            openMidiOutput();
 	void            closeMidiOutput();

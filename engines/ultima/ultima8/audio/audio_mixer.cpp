@@ -78,7 +78,7 @@ void AudioMixer::reset() {
 	_mixer->stopAll();
 }
 
-int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient) {
+int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient) {
 	int lowest = -1;
 	int lowprior = 65536;
 
@@ -97,7 +97,7 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 	}
 
 	if (i != maxchan || lowprior < priority)
-		_channels[lowest]->playSample(sample, loop, priority, paused, isSpeech, pitch_shift, volume, balance);
+		_channels[lowest]->playSample(sample, loop, priority, isSpeech, pitch_shift, volume, balance);
 	else
 		lowest = -1;
 
@@ -127,27 +127,12 @@ void AudioMixer::setPaused(int chan, bool paused) {
 	_channels[chan]->setPaused(paused);
 }
 
-bool AudioMixer::isPaused(int chan) {
-	if (chan >= TOTAL_CHANNEL_COUNT|| chan < 0)
-		return false;
-
-	bool ret = _channels[chan]->isPaused();
-
-	return ret;
-}
 
 void AudioMixer::setVolume(int chan, byte volume, int8 balance) {
 	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
 	_channels[chan]->setVolume(volume, balance);
-}
-
-void AudioMixer::getVolume(int chan, byte &volume, int8 &balance) {
-	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
-		return;
-
-	_channels[chan]->getVolume(volume, balance);
 }
 
 void AudioMixer::openMidiOutput() {

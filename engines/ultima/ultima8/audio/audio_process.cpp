@@ -211,7 +211,7 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 
 int AudioProcess::playSample(AudioSample *sample, int priority, int loops, bool isSpeech, uint32 pitchShift, int16 volume, int8 balance, bool ambient) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	int channel = mixer->playSample(sample, loops, priority, false, isSpeech, pitchShift, volume, balance, ambient);
+	int channel = mixer->playSample(sample, loops, priority, isSpeech, pitchShift, volume, balance, ambient);
 
 	if (channel == -1) return channel;
 
