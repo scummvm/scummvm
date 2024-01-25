@@ -82,10 +82,6 @@ public:
 
 private:
 	int _textureLoc[2];
-	int _timerLoc;
-	int _fadeLoc;
-	int _fadeToSepLoc;
-	int _movementLoc;
 };
 
 }

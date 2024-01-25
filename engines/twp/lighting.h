@@ -27,29 +27,29 @@
 
 namespace Twp {
 
-class Lighting: public Shader {
-public:
-	Lighting();
-	virtual ~Lighting();
+// class Lighting {
+// public:
+// 	Lighting();
+// 	virtual ~Lighting();
 
-	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &texture);
+// 	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &texture);
 
-private:
-	virtual void applyUniforms() final;
+// private:
+// 	virtual void applyUniforms() final;
 
-private:
-	int32 _contentSizeLoc;
-	int32 _spriteOffsetLoc;
-	int32 _spritePosInSheetLoc;
-	int32 _spriteSizeRelToSheetLoc;
-	int32 _numberLightsLoc;
-	int32 _ambientColorLoc;
+// private:
+// 	int32 _contentSizeLoc;
+// 	int32 _spriteOffsetLoc;
+// 	int32 _spritePosInSheetLoc;
+// 	int32 _spriteSizeRelToSheetLoc;
+// 	int32 _numberLightsLoc;
+// 	int32 _ambientColorLoc;
 
-	Math::Vector2d _contentSize;
-	Math::Vector2d _spriteOffset;
-	Math::Vector2d _spritePosInSheet;
-	Math::Vector2d _spriteSizeRelToSheet;
-};
+// 	Math::Vector2d _contentSize;
+// 	Math::Vector2d _spriteOffset;
+// 	Math::Vector2d _spritePosInSheet;
+// 	Math::Vector2d _spriteSizeRelToSheet;
+// };
 
 } // namespace Twp
 

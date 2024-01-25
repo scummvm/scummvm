@@ -98,21 +98,17 @@ void HudShader::init() {
 		texColor *= v_color;
 		gl_FragColor = texColor;
 	})";
-	Shader::init(vsrc, fsrc);
-
-	GL_CALL(_rangesLoc = glGetUniformLocation(program, "u_ranges"));
-	GL_CALL(_shadowColorLoc = glGetUniformLocation(program, "u_shadowColor"));
-	GL_CALL(_normalColorLoc = glGetUniformLocation(program, "u_normalColor"));
-	GL_CALL(_highlightColorLoc = glGetUniformLocation(program, "u_highlightColor"));
+	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
+	Shader::init("hud", v_source, f_source, attributes);
 }
 
 HudShader::~HudShader() {}
 
 void HudShader::applyUniforms() {
-	GL_CALL(glUniform2f(_rangesLoc, 0.8f, 0.8f));
-	GL_CALL(glUniform4f(_shadowColorLoc, _shadowColor.rgba.r, _shadowColor.rgba.g, _shadowColor.rgba.b, _shadowColor.rgba.a));
-	GL_CALL(glUniform4f(_normalColorLoc, _normalColor.rgba.r, _normalColor.rgba.g, _normalColor.rgba.b, _normalColor.rgba.a));
-	GL_CALL(glUniform4f(_highlightColorLoc, _highlightColor.rgba.r, _highlightColor.rgba.g, _highlightColor.rgba.b, _highlightColor.rgba.a));
+	setUniform("u_ranges", Math::Vector2d(0.8f, 0.8f));
+	setUniform4("u_shadowColor", _shadowColor);
+	setUniform4("u_normalColor", _normalColor);
+	setUniform4("u_highlightColor", _highlightColor);
 }
 
 Hud::Hud() : Node("hud") {
