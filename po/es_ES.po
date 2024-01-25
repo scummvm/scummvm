@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-21 10:10+0000\n"
+"PO-Revision-Date: 2024-01-25 10:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8555,7 +8555,7 @@ msgstr "Nombre del archivo de partida inválido"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Nancy Drew"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
@@ -8571,7 +8571,7 @@ msgstr "Modificador de movimiento rápido"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "Nancy Drew - Laberinto"
 
 #: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
