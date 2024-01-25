@@ -17,9 +17,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  NANCY:
    - Fixed the telephone hints in Secrets Can Kill.
+   - Fixed the crashing and drawing issues on ARM machines when playing
+     Message in a Haunted Mansion's maze minigame.
    - Fixed the 'M' keyboard key not working in Message in a Haunted Mansion.
    - Allowed general keymaps to be shown in the engine Keymaps menu.
-   - Virtual keyboard now triggers when using the load/save menu.
+   - Virtual keyboard now correctly triggers on/off wherever text input is needed.
 
  SCUMM:
    - Fix screen corruption (and sometimes even crashes) in Mac Loom and
