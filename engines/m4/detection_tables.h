@@ -42,7 +42,6 @@ static const M4GameDescription gameDescriptions[] = {
 		GType_Burger,
 		kFeaturesCD
 	},
-	// TODO: Currently French version crashes on start up. Still to be investigated
 	{
 		{
 			"burger",
@@ -50,7 +49,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("burger.has", "3887c30f0d2f93fed7549120748c07fd", 724755),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_Burger,
