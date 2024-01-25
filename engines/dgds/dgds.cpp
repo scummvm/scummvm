@@ -330,7 +330,9 @@ Common::Error DgdsEngine::run() {
 				return Common::kNoError;
 		}
 
+		g_system->updateScreen();
 		g_system->delayMillis(10);
+
 	}
 	return Common::kNoError;
 }
