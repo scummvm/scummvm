@@ -17,6 +17,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  NANCY:
    - Telefon-Hinweise in Secrets Can Kill korrigiert.
+   - Abstürze und Grafikfehler auf ARM-Geräten im Labyrinth-Minispiel in
+     Message in a Haunted Mansion korrigiert.
    - Die "M"-Taste auf der Tastatur funktioniert in Message in a Haunted Mansion jetzt korrekt.
    - Allgemeine Tastenkürzel werden jetzt im Engine-Tastenkürzel-Menü angezeigt.
    - Das virtuelle Keyboard wird im Lade-/Speicher-Menü korrekt ausgelöst.
