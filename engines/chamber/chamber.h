@@ -21,6 +21,7 @@
 
 #ifndef CHAMBER_H
 #define CHAMBER_H
+#define RUNCOMMAND_RESTART 1337
 
 #include "common/random.h"
 #include "common/serializer.h"
@@ -48,6 +49,8 @@ public:
 	Common::Language getLanguage() const;
 
 	Common::Error run() override;
+	Common::Error init();
+	Common::Error execute();
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
@@ -62,6 +65,9 @@ public:
 
 public:
 	bool _shouldQuit;
+	bool _shouldRestart;
+	bool _prioritycommand_1;
+	bool _prioritycommand_2;
 
 	byte *_pxiData;
 

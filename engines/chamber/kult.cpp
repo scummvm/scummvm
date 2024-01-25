@@ -19,10 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-
-#include <setjmp.h>
-
 #include "common/error.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -167,6 +163,8 @@ process:
 			updateUndrawCursor(target);
 			refreshSpritesData();
 			runCommand();
+			if (g_vm->_shouldRestart)
+				return;
 			blitSpritesToBackBuffer();
 			processInput();
 			drawSpots(target);
@@ -175,7 +173,9 @@ process:
 
 			updateUndrawCursor(target);
 			refreshSpritesData();
-			runCommandKeepSp();
+			uint16 restart = runCommandKeepSp();
+			if (restart == RUNCOMMAND_RESTART && g_vm->_shouldRestart)
+				return;
 			script_byte_vars.used_commands++;
 			if (script_byte_vars.dead_flag) {
 				if (--script_byte_vars.tries_left == 0)
@@ -194,13 +194,11 @@ void exitGame(void) {
 	uninitTimer();
 }
 
-jmp_buf restart_jmp;
-
 #ifdef DEBUG_ENDING
 extern theEnd(void);
 #endif
 
-Common::Error ChamberEngine::run() {
+Common::Error ChamberEngine::init() {
 	byte c;
 
 	// Initialize graphics using following:
@@ -309,10 +307,10 @@ Common::Error ChamberEngine::run() {
 		}
 	}
 
-	/*restart game from here*/
-//restart:;
-	setjmp(restart_jmp);
+	return Common::kNoError;
+}
 
+Common::Error ChamberEngine::execute() {
 	randomize();
 
 	/* Set start zone */
@@ -354,6 +352,8 @@ Common::Error ChamberEngine::run() {
 
 	/* Main game loop */
 	gameLoop(frontbuffer);
+	if (g_vm->_shouldRestart)
+		run();
 
 	/*TODO: the following code is never executed since gameLoop is infinite (or the whole game is restarted) */
 
@@ -361,6 +361,17 @@ Common::Error ChamberEngine::run() {
 	uninitInput();
 
 	exitGame();
+
+	return Common::kNoError;
+}
+Common::Error ChamberEngine::run() {
+	if (!g_vm->_shouldRestart)
+		init();
+
+	do {
+		g_vm->_shouldRestart = false;
+		execute();
+	} while (g_vm->_shouldRestart);
 
 	return Common::kNoError;
 }
