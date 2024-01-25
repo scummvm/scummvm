@@ -355,8 +355,7 @@ FadeShader::FadeShader() {
 		}
 		gl_FragColor.a = 1.0;
 	})";
-	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
-	init("fadeShader", vsrc, fadeShader, attributes);
+	init("fadeShader", vsrc, fadeShader);
 
 	GL_CALL(_textureLoc[0] = getUniformLocation("u_texture"));
 	GL_CALL(_textureLoc[1] = getUniformLocation("u_texture2"));

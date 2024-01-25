@@ -98,8 +98,7 @@ void HudShader::init() {
 		texColor *= v_color;
 		gl_FragColor = texColor;
 	})";
-	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
-	Shader::init("hud", v_source, f_source, attributes);
+	Shader::init("hud", v_source, f_source);
 }
 
 HudShader::~HudShader() {}
