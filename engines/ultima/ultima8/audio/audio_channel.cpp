@@ -33,18 +33,18 @@ namespace Ultima8 {
 
 AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) :
 		_mixer(mixer), _loop(0), _sample(nullptr),
-		_paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
+		_paused(false), _priority(0), _volume(0), _balance(0), _pitchShift(0) {
 }
 
 AudioChannel::~AudioChannel(void) {
 }
 
-void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitchShift, int lvol, int rvol) {
+void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitchShift, byte volume, int8 balance) {
 	_sample = sample;
 	_loop = loop;
 	_priority = priority;
-	_lVol = lvol;
-	_rVol = rvol;
+	_volume = volume;
+	_balance = balance;
 	_paused = paused;
 	_pitchShift = pitchShift;
 
@@ -63,12 +63,8 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 		(Audio::AudioStream *)audioStream :
 		new Audio::LoopingAudioStream(audioStream, loops);
 
-	// Play it
-	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
-	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
-
 	_mixer->stopHandle(_soundHandle);
-	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, vol, balance);
+	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, volume, balance);
 	if (_pitchShift != AudioProcess::PITCH_SHIFT_NONE)
 		_mixer->setChannelRate(_soundHandle, stream->getRate() * pitchShift / AudioProcess::PITCH_SHIFT_NONE);
 	if (paused)

@@ -38,7 +38,8 @@ private:
 	AudioSample     *_sample;
 
 	// Info for sampling
-	int             _lVol, _rVol;   // 0-256
+	byte            _volume;
+	int8            _balance;
 	uint32          _pitchShift;    // AudioProcess::PITCH_SHIFT_NONE = no shift
 	int             _priority;      // anything.
 	bool            _paused;        // true/false
@@ -50,19 +51,19 @@ public:
 	void stop();
 
 	void playSample(AudioSample *sample, int loop, int priority, bool paused, 
-		bool isSpeech, uint32 pitchShift, int lvol, int rvol);
+		bool isSpeech, uint32 pitchShift, byte volume, int8 balance);
 
 	bool isPlaying();
 
-	void setVolume(int lvol, int rvol) {
-		_lVol = lvol;
-		_rVol = rvol;
-		_mixer->setChannelVolume(_soundHandle, (rvol + lvol) / 2);
-		_mixer->setChannelBalance(_soundHandle, (rvol - lvol) / 2);
+	void setVolume(byte volume, int8 balance) {
+		_volume = volume;
+		_balance = balance;
+		_mixer->setChannelVolume(_soundHandle, volume);
+		_mixer->setChannelBalance(_soundHandle, balance);
 	}
-	void getVolume(int &lvol, int &rvol) const {
-		lvol = _lVol;
-		rvol = _rVol;
+	void getVolume(byte &volume, int8 &balance) const {
+		volume = _volume;
+		balance = _balance;
 	}
 
 	void setPriority(int priority) {
