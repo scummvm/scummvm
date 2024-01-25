@@ -24,6 +24,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/system.h"
 
 #include "graphics/surface.h"
 #include "graphics/primitives.h"
@@ -56,8 +57,8 @@ Common::String Rect::dump(const Common::String &indent) const {
 }
 
 
-Common::String SceneStruct1::dump(const Common::String &indent) const {
-	return Common::String::format("%sSceneStruct1<%d flg 0x%02x %d>", indent.c_str(), _num, _flags, _val);
+Common::String SceneConditions::dump(const Common::String &indent) const {
+	return Common::String::format("%sSceneCondition<%d flg 0x%02x %d>", indent.c_str(), _num, _flags, _val);
 }
 
 
@@ -79,6 +80,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpNone: 		  return "none";
 	case kSceneOpChangeScene: return "changeScene";
 	case kSceneOpNoop:		  return "noop";
+	case kSceneOpShowDlg:		  return "showdlg";
 	case kSceneOpEnableTrigger:   return "enabletrigger";
 	case kSceneOpMeanwhile:   return "meanwhile";
 	default:
@@ -98,8 +100,8 @@ Common::String SceneOp::dump(const Common::String &indent) const {
 	}
 	Common::String str = Common::String::format("%sSceneOp<op: %s args: %s", indent.c_str(), _sceneOpCodeName(_opCode).c_str(), argsStr.c_str());
 
-	str += _dumpStructList(indent, "struct1list", struct1List);
-	if (!struct1List.empty()) {
+	str += _dumpStructList(indent, "conditionList", _conditionList);
+	if (!_conditionList.empty()) {
 		str += "\n";
 		str += indent;
 	}
@@ -139,12 +141,18 @@ Common::String SceneStruct4::dump(const Common::String &indent) const {
 
 Common::String SceneTrigger::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneTrigger<num %d %s", indent.c_str(), _num, _enabled ? "enabled" : "disabled");
-	str += _dumpStructList(indent, "struct1list", struct1List);
+	str += _dumpStructList(indent, "struct1list", conditionList);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
 	str += indent + ">";
 	return str;
 }
+
+
+Dialogue::Dialogue() : _num(0), _bgColor(0), _fontColor(0), _field7_0xe(0), _field8_0x10(0),
+	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0),
+	_field15_0x22(0), _field18_0x28(0), _hideTime(0)
+{}
 
 
 void Dialogue::draw(Graphics::Surface *dst, int stage) {
@@ -175,21 +183,14 @@ void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
 	int h = _rect.height;
 
 	if (stage == 1) {
-		// TODO: Is this right?
 		dst->fillRect(Common::Rect(x, y, x + w, y + h), _bgColor);
 		dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
-		/*
-		int uVar1 = _field15_0x22;
-		*(int *)(uVar1 + 2) = x + 3;
-		*(int *)(uVar1 + 4) = y + 3;
-		*(int *)(uVar1 + 6) = width + -6;
-		*(int *)(uVar1 + 8) = height + -6; */
 	} else if (stage == 2) {
 		drawStage2(dst);
 	} else if (stage == 3) {
 		drawStage3(dst);
 	} else {
-		_textDrawRect = Common::Rect(x + 2, y + 2, x + w - 2, y + h - 2);
+		_textDrawRect = Common::Rect(x + 3, y + 3, x + w - 3, y + h - 3);
 		drawStage4(dst, _bgColor, _str);
 	}
 }
@@ -409,6 +410,18 @@ void Dialogue::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::
 
 }
 
+void Dialogue::addFlag(DialogueFlags flg) {
+	_flags = static_cast<DialogueFlags>(_flags | flg);
+}
+
+void Dialogue::clearFlag(DialogueFlags flg) {
+	_flags = static_cast<DialogueFlags>(_flags & ~flg);
+}
+
+bool Dialogue::hasFlag(DialogueFlags flg) const {
+	return _flags & flg;
+}
+
 Common::String Dialogue::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
 			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d",
@@ -445,9 +458,9 @@ bool Scene::isVersionUnder(const char *version) const {
 }
 
 
-bool Scene::readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const {
+bool Scene::readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct1 &dst : list) {
+	for (SceneConditions &dst : list) {
 		dst._num = s->readUint16LE();
 		dst._flags = static_cast<SceneCondition>(s->readUint16LE());
 		dst._val = s->readUint16LE();
@@ -463,7 +476,7 @@ bool Scene::readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const 
 	dst.rect.height = s->readUint16LE();
 	dst.field1_0x8 = s->readUint16LE();
 	dst.field2_0xa = s->readUint16LE();
-	readStruct1List(s, dst.struct1List);
+	readConditionList(s, dst.struct1List);
 	readOpList(s, dst.opList1);
 	readOpList(s, dst.opList2);
 	readOpList(s, dst.opList3);
@@ -532,7 +545,7 @@ bool Scene::readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneSt
 bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const {
 	list.resize(s->readUint16LE());
 	for (SceneOp &dst : list) {
-		readStruct1List(s, dst.struct1List);
+		readConditionList(s, dst._conditionList);
 		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
 		int nvals = s->readUint16LE();
 		for (int i = 0; i < nvals / 2; i++) {
@@ -605,7 +618,7 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 	for (SceneTrigger &dst : list) {
 		dst._num = s->readUint16LE();
 		dst._enabled = false;
-		readStruct1List(s, dst.struct1List);
+		readConditionList(s, dst.conditionList);
 		readOpList(s, dst.sceneOpList);
 	}
 
@@ -646,6 +659,9 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpNoop:
 			break;
+		case kSceneOpShowDlg:
+			showDialog(op._args[0]);
+			break;
 		case kSceneOpEnableTrigger:
 			enableTrigger(op._args[0]);
 			break;
@@ -659,15 +675,48 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 	}
 }
 
-bool Scene::checkConditions(const Common::Array<struct SceneStruct1> &conds) {
+bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) {
+	if (conds.empty())
+		return true;
+	uint truecount = 0;
 	for (const auto & c : conds) {
-		if (c._flags & kSceneCondAlwaysTrue)
+		uint16 refval = c._val;
+		uint16 checkval;
+		SceneCondition cflag = c._flags;
+		if (cflag & kSceneCondAlwaysTrue)
 			return true;
-		// TODO: Finish this.
-		// 0x80 seems to check some value set
-		return false;
+
+		if (cflag & kSceneCond80) {
+			refval = 1;
+			// TODO: check something about current ADS script?
+			checkval = 0;
+
+			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
+			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
+				refval = 0;
+		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemField12) {
+			// TODO: Get game object c._num and check value  from object table
+			checkval = 0;
+		} else {
+			// TODO: Check something about current SDS scene??
+			checkval = 0;
+		}
+
+		bool result = false;
+		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCond80 | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
+		if (cflag == kSceneCondNone)
+			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
+		if ((cflag & kSceneCondLessThan) && checkval < refval)
+			result = true;
+		if ((cflag & kSceneCondEqual) && checkval == refval)
+			result = true;
+		if (cflag & kSceneCondNegate)
+			result = !result;
+
+		if (result)
+			truecount++;
 	}
-	return true;
+	return truecount == conds.size();
 }
 
 
@@ -723,7 +772,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	if (isVersionOver(" 1.205")) {
 		readStruct4List(stream, _struct4List2);
 	}
-	readDialogueList(stream, _dialogues);
+	readDialogueList(stream, _dialogs);
 	if (isVersionOver(" 1.203")) {
 		readTriggerList(stream, _triggers);
 	}
@@ -742,7 +791,7 @@ void SDSScene::unload() {
 	_struct2List.clear();
 	_struct4List1.clear();
 	_struct4List2.clear();
-	_dialogues.clear();
+	_dialogs.clear();
 	_triggers.clear();
 }
 
@@ -756,7 +805,7 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "struct2List", _struct2List);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
-	str += _dumpStructList(indent, "dialogues", _dialogues);
+	str += _dumpStructList(indent, "dialogues", _dialogs);
 	str += _dumpStructList(indent, "triggers", _triggers);
 
 	str += "\n";
@@ -772,7 +821,7 @@ void SDSScene::checkTriggers() {
 		if (!trigger._enabled)
 			continue;
 
-		if (!checkConditions(trigger.struct1List))
+		if (!checkConditions(trigger.conditionList))
 			continue;
 
 		runOps(trigger.sceneOpList);
@@ -784,6 +833,51 @@ void SDSScene::checkTriggers() {
 		trigger._enabled = false;
 	}
 }
+
+void SDSScene::showDialog(uint16 num) {
+	for (auto &dialog : _dialogs) {
+		if (dialog._num == num) {
+			dialog.addFlag(kDlgFlagVisible);
+			// hide time gets set the first time it's drawn.
+		}
+	}
+}
+
+bool SDSScene::checkDialogActive() {
+	uint32 timeNow = g_system->getMillis();
+	bool retval = false;
+	for (auto &dialog : _dialogs) {
+		if (dialog.hasFlag(kDlgFlagVisible)) {
+			if (dialog._hideTime > 0 && dialog._hideTime < timeNow) {
+				dialog.clearFlag(kDlgFlagVisible);
+				dialog._hideTime = 0;
+				if (dialog._nextDialogNum) {
+					showDialog(dialog._nextDialogNum);
+					retval = true;
+				}
+			} else {
+				retval = true;
+			}
+		}
+	}
+	return retval;
+}
+
+bool SDSScene::drawActiveDialog(Graphics::Surface *dst, int mode) {
+	bool retval = false;
+	for (auto &dialog : _dialogs) {
+		if (dialog.hasFlag(kDlgFlagVisible)) {
+			if (dialog._hideTime == 0 && dialog._time > 0) {
+				// TOOD: This should be (9 - text-speed-slider-setting)
+				dialog._hideTime = g_system->getMillis() + dialog._time * 9;
+			}
+			dialog.draw(dst, mode);
+			retval = true;
+		}
+	}
+	return retval;
+}
+
 
 GDSScene::GDSScene() {
 }
@@ -834,11 +928,11 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _opList4);
 	if (isVersionOver(" 1.208"))
 		readOpList(stream, _opList5);
-	Common::Array<struct SceneStruct1> struct1List;
-	readStruct1List(stream, struct1List);
-	Common::Array<struct MouseCursor> struct3List;
+	Common::Array<struct SceneConditions> conditionList;
+	readConditionList(stream, conditionList);
+	Common::Array<struct MouseCursor> cursorList;
 	_iconFile = stream->readString();
-	readMouseHotspotList(stream, struct3List);
+	readMouseHotspotList(stream, cursorList);
 	readGameItemList(stream, _gameItems);
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))

@@ -42,7 +42,7 @@
 
 namespace Dgds {
 
-TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _text(nullptr) {}
+TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
 bool TTMInterpreter::load(const Common::String &filename) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
@@ -60,22 +60,16 @@ void TTMInterpreter::unload() {
 	_scriptData.scr = nullptr;
 }
 
-void TTMInterpreter::setActiveDialogue(uint16 num) {
-	Common::Array<Dialogue> &dialogues = _vm->getScene()->getLines();
-	_text = nullptr;
-	for (Dialogue &dialogue: dialogues) {
-		if (dialogue._num == num)
-			_text = &dialogue;
-		// HACK to get Dragon intro working
-		if (!_text && dialogue._num == num + 14)
-			_text = &dialogue;
-	}
-	if (_text && !_text->_str.empty())
-		_state._delay += _text->_time * 9;  // More correctly, 9 - text-speed-setting
-}
-
 void TTMInterpreter::updateScreen() {
 	g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	if (_state._setupFinished && _vm->getScene()->checkDialogActive()) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		_vm->getScene()->drawActiveDialog(screen, 1);
+		_vm->getScene()->drawActiveDialog(screen, 4);
+		g_system->unlockScreen();
+	}
+
 	g_system->updateScreen();
 }
 
@@ -102,11 +96,6 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
 		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
-
-		if (_text) {
-			_text->draw(_vm->_resData.surfacePtr(), 1);
-			_text->draw(_vm->_resData.surfacePtr(), 4);
-		}
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
 		_state._delay += ivals[0] * 10;
@@ -132,16 +121,17 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		// SELECT SONG:	    id:int [0]
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
-		debug("SET SCENE: %u", ivals[0]);
+		debug("SCENE SETUP DONE: %u", ivals[0]);
+		_state._setupFinished = true;
 		break;
-	case 0x1110: { // SHOW SCENE TEXT?:  i:int   [1..n]
+	case 0x1110: { // SET_SCENE:  i:int   [1..n]
 		// DESCRIPTION IN TTM TAGS.
-		debug("SHOW SCENE TEXT: %u", ivals[0]);
+		debug("SET SCENE: %u", ivals[0]);
 		_state.scene = ivals[0];
-		setActiveDialogue(_state.scene);
+		_state._setupFinished = false;
 		break;
 	}
-	case 0x1200: // GOTO
+	case 0x1200: // GOTO? How different to SET SCENE??
 		debug("GOTO SCENE: %u", ivals[0]);
 		_state.scene = ivals[0];
 		break;
@@ -169,7 +159,14 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		}
 		_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
-	case 0x4120:
+	case 0x4120: {
+		// blt first?
+		_vm->_resData.blitFrom(_vm->getBottomBuffer());
+		Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
+		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
+		_vm->getTopBuffer().fillRect(bmpArea, 0);
+
+	
 		// FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -182,6 +179,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 			}
 		}
 		break;
+	}
 	case 0x4200: {
 		// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
 		const Common::Rect destRect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
@@ -272,6 +270,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 	case 0x0070: // ? (0 args)
 	case 0x0220: // STOP CURRENT MUSIC
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
+	case 0x1070: // SELECT FONT  i:int
 	case 0x1100: // ?	    i:int   [9]
 	case 0x1120: // SET_BACKGROUND
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
@@ -347,6 +346,7 @@ bool TTMInterpreter::run() {
 	debug(" ");
 
 	handleOperation(op, count, ivals, sval);
+
 	updateScreen();
 
 	return true;
@@ -383,6 +383,8 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	_scriptData.scr->seek(0);
 	_scriptData.filename = filename;
 
+	_state._subsPlayed.resize(_scriptData.names.size());
+	_state._subsRunning.resize(_scriptData.names.size());
 	return true;
 }
 
@@ -399,10 +401,13 @@ void ADSInterpreter::playScene() {
 	// TODO/FIXME: Rewrite this
 	if (_state.subMax != 0) {
 		if (!_ttmInterpreter->run()) {
+			_state._subsRunning[_state.subIdx - 1] = false;
+			_state._subsPlayed[_state.subIdx - 1] = true;
 			const uint16 id = _state.subIdx - 1;
 			if (id + 1 < _scriptData.names.size()) {
 				_state.subIdx++;
 				_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
+				_state._subsRunning[_state.subIdx - 1] = true;
 			} else {
 				_state.subMax = 0; // continue ADS script execution
 			}
@@ -410,7 +415,21 @@ void ADSInterpreter::playScene() {
 	}
 }
 
-void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
+void ADSInterpreter::skipToEndIf(Common::SeekableReadStream *scr) {
+	while (scr->pos() < scr->size()) {
+		uint16 op = scr->readUint16LE();
+		if (op == 0x1520)
+			scr->seek(-2);
+		if (op == 0 || op == 0x1520)
+			return;
+		int nargs = numArgs(op);
+		for (int i = 0; i < nargs; i++)
+			scr->readUint16LE();
+	}
+}
+
+
+bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 subIdx, subMax;
 
 	switch (code) {
@@ -437,32 +456,40 @@ void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		subIdx = scr->readUint16LE();
 		subMax = scr->readUint16LE();
 		warning("Unimplemented ADS opcode: IF_NOT_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
+		if (_state._subsPlayed[subIdx - 1])
+			skipToEndIf(scr);
 		break;
 	}
 	case 0x1350: { // IF_PLAYED, 2 params
 		subIdx = scr->readUint16LE();
 		subMax = scr->readUint16LE();
 		warning("Unimplemented ADS opcode: IF_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
+		if (!_state._subsPlayed[subIdx - 1])
+			skipToEndIf(scr);
 		break;
 	}
 	case 0x1360: { // IF_NOT_RUNNING, 2 params
 		subIdx = scr->readUint16LE();
 		subMax = scr->readUint16LE();
 		warning("Unimplemented ADS opcode: IF_NOT_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
+		if (_state._subsRunning[subIdx - 1])
+			skipToEndIf(scr);
 		break;
 	}
 	case 0x1370: { // IF_RUNNING, 2 params
 		subIdx = scr->readUint16LE();
 		subMax = scr->readUint16LE();
 		warning("Unimplemented ADS opcode: IF_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
+		if (!_state._subsRunning[subIdx - 1])
+			skipToEndIf(scr);
 		break;
 	}
 	case 0x1510: // PLAY_SCENE, 0 params
-		debug("PLAY SCENE");
-		// TODO
-		break;
+		debug("ADS PLAY SCENE");
+		return false;
+
 	case 0xffff:	// END
-		break;
+		return false;
 
 	//// unknown / to-be-implemented
 	case 0x0190:
@@ -471,10 +498,10 @@ void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
 	case 0x1500:
-	case 0x1520: // PLAY_SCENE_2, 5 params
+	case 0x1520: // PLAY_SCENE_ENDIF, 5 params
 	case 0x2000:
 	case 0x2010: // STOP_SCENE, 3 params
-	case 0x2020:
+	case 0x2020: // RESET SCENE?
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params
@@ -495,6 +522,8 @@ void ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 	}
 	}
+	
+	return true;
 }
 
 bool ADSInterpreter::run() {
@@ -509,10 +538,11 @@ bool ADSInterpreter::run() {
 	if (scr->pos() >= scr->size())
 		return false;
 
+	bool more = true;
 	do {
 		uint16 code = scr->readUint16LE();
-		handleOperation(code, scr);
-	} while (scr->pos() < scr->size());
+		more = handleOperation(code, scr);
+	} while (more && scr->pos() < scr->size());
 
 	return true;
 }

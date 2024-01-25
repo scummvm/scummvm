@@ -40,16 +40,17 @@ struct Rect {
 
 enum SceneCondition {
 	kSceneCondNone = 0,
-	kSceneCond1 = 1,
-	kSceneCond2 = 2,
-	kSceneCond4 = 4,
+	kSceneCondLessThan = 1,
+	kSceneCondEqual = 2,
+	kSceneCondNegate = 4,
+	kSceneCondSceneAbsVal = 8,
 	kSceneCondAlwaysTrue = 0x10,
-	kSceneCond20 = 0x20,
+	kSceneCondNeedItemField14 = 0x20,
 	kSceneCondNeedItemField12 = 0x40,
 	kSceneCond80 = 0x80
 };
 
-struct SceneStruct1 {
+struct SceneConditions {
 	uint16 _num;
 	SceneCondition _flags; /* eg, see usage in FUN_1f1a_2106 */
 	uint16 _val;
@@ -61,7 +62,7 @@ struct SceneStruct2 {
 	struct Rect rect;
 	uint16 field1_0x8;
 	uint16 field2_0xa;
-	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<struct SceneConditions> struct1List;
 	Common::Array<struct SceneOp> opList1;
 	Common::Array<struct SceneOp> opList2;
 	Common::Array<struct SceneOp> opList3;
@@ -78,7 +79,7 @@ enum SceneOpCode {
 	kSceneOp5 = 5,				// args: [item num, ??, ??]. give item?
 	kSceneOp6 = 6,				// args: item num?
 	kSceneOp7 = 7,				// args: none.
-	kSceneOp8 = 8,				// args: dialogue number. show dialogue?
+	kSceneOpShowDlg = 8,		// args: dialogue number. show dialogue?
 	kSceneOp9 = 9,				// args: none.
 	kSceneOp10 = 10,			// args: none. Looks through the struct2 list for something.
 	kSceneOpEnableTrigger = 11,	// args: trigger num
@@ -102,7 +103,7 @@ enum SceneOpCode {
 };
 
 struct SceneOp {
-	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<struct SceneConditions> _conditionList;
 	Common::Array<uint16> _args;
 	SceneOpCode _opCode;
 
@@ -142,6 +143,7 @@ enum DialogueFlags {
 	kDlgFlagNone = 0,
 	kDlgFlagFlatBg = 1,
 	kDlgFlagLeftJust = 2,
+	kDlgFlagVisible = 0x8000,
 };
 
 enum DialogueFrameType {
@@ -153,6 +155,7 @@ enum DialogueFrameType {
 
 class Dialogue {
 public:
+	Dialogue();
 	uint16 _num;
 	Rect _rect;
 	uint16 _bgColor;
@@ -168,8 +171,13 @@ public:
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
+	
+	uint _hideTime;
 
  	void draw(Graphics::Surface *dst, int mode);
+ 	void addFlag(DialogueFlags flg);
+ 	void clearFlag(DialogueFlags flg);
+ 	bool hasFlag(DialogueFlags flg) const;
 
 	Common::String dump(const Common::String &indent) const;
 
@@ -189,7 +197,7 @@ private:
 struct SceneTrigger {
 	uint16 _num;
 	bool _enabled;
-	Common::Array<struct SceneStruct1> struct1List;
+	Common::Array<struct SceneConditions> conditionList;
 	Common::Array<struct SceneOp> sceneOpList;
 
 	Common::String dump(const Common::String &indent) const;
@@ -225,7 +233,7 @@ public:
 	const Common::String &getVersion() const { return _version; }
 
 protected:
-	bool readStruct1List(Common::SeekableReadStream *s, Common::Array<SceneStruct1> &list) const;
+	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
 	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
 	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
 	bool readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
@@ -237,9 +245,10 @@ protected:
 	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
 
 	void runOps(const Common::Array<SceneOp> &ops);
-	bool checkConditions(const Common::Array<struct SceneStruct1> &cond);
+	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
 
-	virtual void enableTrigger(uint16 num) {};
+	virtual void enableTrigger(uint16 num) {}
+	virtual void showDialog(uint16 num) {}
 
 	uint32 _magic;
 	Common::String _version;
@@ -283,7 +292,6 @@ public:
 	bool parse(Common::SeekableReadStream *s) override;
 	void unload();
 
-	Common::Array<class Dialogue> &getLines() { return _dialogues; }
 	const Common::String &getAdsFile() const { return _adsFile; }
 	void runEnterSceneOps() { runOps(_enterSceneOps); }
 	void runLeaveSceneOps() { runOps(_leaveSceneOps); }
@@ -292,8 +300,12 @@ public:
 	int getNum() const { return _num; }
 	Common::String dump(const Common::String &indent) const;
 
+	bool checkDialogActive();
+	bool drawActiveDialog(Graphics::Surface *dst, int mode);
+
 private:
 	void enableTrigger(uint16 num) override;
+	void showDialog(uint16 num) override;
 
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;
@@ -308,7 +320,7 @@ private:
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
-	Common::Array<class Dialogue> _dialogues;
+	Common::Array<class Dialogue> _dialogs;
 	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
 };

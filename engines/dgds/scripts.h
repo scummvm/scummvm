@@ -47,7 +47,7 @@ public:
 };
 
 struct TTMState {
-	TTMState() : scene(0), _delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0), _currentPalId(0), _drawColFG(0), _drawColBG(0), _delayStart(0) {}
+	TTMState() : scene(0), _delay(0), _drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), _currentBmpId(0), _currentPalId(0), _drawColFG(0), _drawColBG(0), _delayStart(0), _setupFinished(false) {}
 	uint16 scene;
 	int _delay;
 	uint32 _delayStart;
@@ -56,6 +56,7 @@ struct TTMState {
 	int _currentPalId;
 	byte _drawColFG;
 	byte _drawColBG;
+	bool _setupFinished;
 	Common::String bmpNames[16];
 };
 
@@ -69,6 +70,8 @@ struct ADSState {
 	ADSState() : scene(0), subIdx(0), subMax(0) {}
 	uint16 scene;
 	uint16 subIdx, subMax;
+	Common::Array<bool> _subsPlayed;
+	Common::Array<bool> _subsRunning;
 };
 
 class TTMInterpreter {
@@ -82,13 +85,10 @@ public:
 	uint16 getScene() const { return _state.scene; }
 
 protected:
-	void setActiveDialogue(uint16 num);
 	void handleOperation(uint16 op, byte count, int16 *ivals, Common::String &sval);
 	void updateScreen();
 
 	DgdsEngine *_vm;
-
-	Dialogue *_text;
 	TTMData _scriptData;
 	TTMState _state;
 };
@@ -104,8 +104,9 @@ public:
 	int numArgs(uint16 opcode) const;
 
 protected:
-	void handleOperation(uint16 code, Common::SeekableReadStream *scr);
+	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
 	void playScene();
+	void skipToEndIf(Common::SeekableReadStream *scr);
 
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
