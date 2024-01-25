@@ -187,16 +187,17 @@ l0017_2730:
 	mov	word ptr [bp-4h],2h
 	jmp	2754h
 
-l0017_2751:
 	inc	word ptr [bp-4h]
+	*/
+// l0017_2751:
+// l0017_2754:
+	// Reset all register to 0
+	for (int i = 2; i < 256; i++) {
+		Func2792(i, 0);
+	}
 
-l0017_2754:
-	mov	al,[bp-4h]
-	push	ax
-	push	0h
-	call	far 0017h:2792h
-	cmp	word ptr [bp-4h],0FFh
-	jnz	2751h
+
+	/*
 
 l0017_2766:
 	push	1h
