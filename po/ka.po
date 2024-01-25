@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:57+0000\n"
+"POT-Creation-Date: 2024-01-25 07:54+0000\n"
 "PO-Revision-Date: 2024-01-14 03:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -6523,19 +6523,19 @@ msgstr "თაღლითობის რეჟიმის ჩართვა"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
 msgid "Move up"
 msgstr "აწევა"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
 msgid "Move down"
 msgstr "ქვემოთ ჩამოწევა"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "მარცხნივ გაწევა"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "მარჯვნივ გაწევა"
 
@@ -7337,7 +7337,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "თამაში შეჩერებულია. გასაგრძელებლად დააწექით ნებისმიერ ღილაკს."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:220
+#: engines/nancy/input.cpp:225
 msgid "Open main menu"
 msgstr "მთავარი მენიუს გახსნა"
 
@@ -7618,19 +7618,27 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:176
+#: engines/nancy/input.cpp:178
+msgid "Nancy Drew"
+msgstr ""
+
+#: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:183
+#: engines/nancy/input.cpp:188
 msgid "Right Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:219
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:231
+#: engines/nancy/input.cpp:234
+msgid "Nancy Drew - Maze"
+msgstr ""
+
+#: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
 msgstr "რუკის ჩვენება/დამალვა"
 

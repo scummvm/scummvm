@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:57+0000\n"
+"POT-Creation-Date: 2024-01-25 07:54+0000\n"
 "PO-Revision-Date: 2023-12-14 20:07+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6938,19 +6938,19 @@ msgstr "Valsspeel modus aangezet"
 msgid "Debug info and level selection becomes available"
 msgstr "Debug info en level selectie komen beschikbaar"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
 msgid "Move up"
 msgstr "Beweeg omhoog"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
 msgid "Move down"
 msgstr "Beweeg omlaag"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "Beweeg naar links"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "Beweeg naar rechts"
 
@@ -7826,7 +7826,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:220
+#: engines/nancy/input.cpp:225
 msgid "Open main menu"
 msgstr "Open hoofd menu"
 
@@ -8134,19 +8134,27 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
-#: engines/nancy/input.cpp:176
+#: engines/nancy/input.cpp:178
+msgid "Nancy Drew"
+msgstr ""
+
+#: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
 msgstr "Linker Klik Interactie"
 
-#: engines/nancy/input.cpp:183
+#: engines/nancy/input.cpp:188
 msgid "Right Click Interact"
 msgstr "Rechter klik Interactie"
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:219
 msgid "Fast move modifier"
 msgstr "Snelle modus bewerker"
 
-#: engines/nancy/input.cpp:231
+#: engines/nancy/input.cpp:234
+msgid "Nancy Drew - Maze"
+msgstr ""
+
+#: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
 msgstr "Toon/verberg doolhof plattegrond"
 

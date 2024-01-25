@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-01-20 19:57+0000\n"
+"POT-Creation-Date: 2024-01-25 07:54+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6952,22 +6952,22 @@ msgstr "Aktivér snydetilstand"
 msgid "Debug info and level selection becomes available"
 msgstr "Fejlretningsinformation og valg af bane bliver tilgængeligt"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
 #, fuzzy
 msgid "Move up"
 msgstr "Flyt bagud"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
 #, fuzzy
 msgid "Move down"
 msgstr "Annuller download"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:202
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
 #, fuzzy
 msgid "Move left"
 msgstr "Flyt til venstre"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:208
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
 #, fuzzy
 msgid "Move right"
 msgstr "Flyt til højre"
@@ -7872,7 +7872,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spillet er sat på pause. Tryk på en tast for at fortsætte."
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:220
+#: engines/nancy/input.cpp:225
 #, fuzzy
 msgid "Open main menu"
 msgstr "~R~etur til oversigt"
@@ -8198,22 +8198,30 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Ugyldigt filnavn til at gemme"
 
-#: engines/nancy/input.cpp:176
+#: engines/nancy/input.cpp:178
+msgid "Nancy Drew"
+msgstr ""
+
+#: engines/nancy/input.cpp:181
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Venstreklik"
 
-#: engines/nancy/input.cpp:183
+#: engines/nancy/input.cpp:188
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Enkelt højreklik"
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:219
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Hurtigtilstand"
 
-#: engines/nancy/input.cpp:231
+#: engines/nancy/input.cpp:234
+msgid "Nancy Drew - Maze"
+msgstr ""
+
+#: engines/nancy/input.cpp:236
 #, fuzzy
 msgid "Show/hide maze map"
 msgstr "Vis tastatur"
