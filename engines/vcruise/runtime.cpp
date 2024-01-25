@@ -331,6 +331,12 @@ public:
 	void unload() override;
 
 private:
+	struct ScreenOverride {
+		uint roomNumber;
+		uint screenNumber;
+		int actualMapFileID;
+	};
+
 	void load();
 
 	static const uint kFirstScreen = 0xa0;
@@ -340,6 +346,15 @@ private:
 	bool _isLoaded;
 
 	Common::SharedPtr<MapScreenDirectionDef> _currentMap;
+
+	static const ScreenOverride sk_screenOverrides[];
+};
+
+const AD2044MapLoader::ScreenOverride AD2044MapLoader::sk_screenOverrides[] = {
+	// Room 1
+	{1, 0xb6, 145},	// After pushing the button to open the capsule
+	{1, 0x6a, 142},	// Opening an apple on the table
+	{1, 0x6b, 143}, // Clicking the tablet in the apple
 };
 
 AD2044MapLoader::AD2044MapLoader() : _roomNumber(0), _screenNumber(0), _isLoaded(false) {
@@ -368,19 +383,35 @@ void AD2044MapLoader::load() {
 	// This is loaded even if the open fails
 	_isLoaded = true;
 
-	if (_screenNumber < kFirstScreen)
-		return;
+	int scrFileID = -1;
 
-	uint adjustedScreenNumber = _screenNumber - kFirstScreen;
+	for (const ScreenOverride &screenOverride : sk_screenOverrides) {
+		if (screenOverride.roomNumber == _roomNumber && screenOverride.screenNumber == _screenNumber) {
+			scrFileID = screenOverride.actualMapFileID;
+			break;
+		}
+	}
 
-	if (adjustedScreenNumber > 99)
-		return;
+	if (scrFileID < 0) {
+		if (_screenNumber < kFirstScreen)
+			return;
 
-	Common::Path mapFileName(Common::String::format("map/SCR%i.MAP", static_cast<int>(_roomNumber * 100u + adjustedScreenNumber)));
+		uint adjustedScreenNumber = _screenNumber - kFirstScreen;
+
+		if (adjustedScreenNumber > 99)
+			return;
+
+		scrFileID = static_cast<int>(_roomNumber * 100u + adjustedScreenNumber);
+	}
+
+	Common::Path mapFileName(Common::String::format("map/SCR%i.MAP", scrFileID));
 	Common::File mapFile;
 
-	if (!mapFile.open(mapFileName))
-		return;
+	debug(1, "Loading screen map %s", mapFileName.toString(Common::Path::kNativeSeparator).c_str());
+
+	if (!mapFile.open(mapFileName)) {
+		error("Couldn't resolve map file for room %u screen %u", _roomNumber, _screenNumber);
+	}
 
 	_currentMap = loadScreenDirectionDef(mapFile);
 }
@@ -1394,6 +1425,7 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["CUR_LUPA"] = 6; // Lupa = magnifier
 		_namedCursors["CUR_NAC"] = 5; // Nac = top?  Not sure.  But this is the finger pointer.
 		_namedCursors["CUR_TYL"] = 2; // Tyl = back
+		_namedCursors["CUR_OTWORZ"] = 11; // Otworz = open
 	}
 
 	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
@@ -3157,8 +3189,16 @@ void Runtime::resolveSoundByName(const Common::String &soundName, bool load, Sta
 	Common::String sndName = soundName;
 
 	uint soundID = 0;
-	for (uint i = 0; i < 4; i++)
-		soundID = soundID * 10u + (sndName[i] - '0');
+
+	if (_gameID == GID_AD2044) {
+		for (uint i = 0; i < 2; i++)
+			soundID = soundID * 10u + (sndName[i] - '0');
+		for (uint i = 0; i < 5; i++)
+			soundID = soundID * 10u + (sndName[6 + i] - '0');
+	} else {
+		for (uint i = 0; i < 4; i++)
+			soundID = soundID * 10u + (sndName[i] - '0');
+	}
 
 	sndName.toLowercase();
 
