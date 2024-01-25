@@ -1384,7 +1384,7 @@ void Runtime::loadCursors(const char *exeName) {
 	}
 
 	if (_gameID == GID_AD2044) {
-		_namedCursors["CUR_PRZOD"] = 2; // Przod = forward
+		_namedCursors["CUR_PRZOD"] = 4; // Przod = forward
 		_namedCursors["CUR_PRAWO"] = 3;	// Prawo = right
 		_namedCursors["CUR_LEWO"] = 1; // Lewo = left
 		_namedCursors["CUR_LUPA"] = 6; // Lupa = magnifier
