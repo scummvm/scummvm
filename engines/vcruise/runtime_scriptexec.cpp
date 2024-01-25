@@ -2373,6 +2373,10 @@ bool Runtime::runScript() {
 			DISPATCH_OP(NoUpdate);
 			DISPATCH_OP(NoClear);
 
+			DISPATCH_OP(Say1_AD2044);
+			DISPATCH_OP(Say2_AD2044);
+			DISPATCH_OP(Say1Rnd);
+
 			DISPATCH_OP(M);
 			DISPATCH_OP(EM);
 			DISPATCH_OP(SE);
