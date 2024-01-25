@@ -1256,7 +1256,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	if (_gameID == GID_AD2044) {
 		Common::File f;
 		if (f.open("gfx/AD2044.TTF"))
-			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
 	} else
 		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
 
@@ -1278,11 +1278,14 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 Runtime::~Runtime() {
 }
 
-void Runtime::initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt) {
+void Runtime::initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &subtitleRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt) {
 	_gameSection.init(gameRect, pixFmt);
 	_menuSection.init(menuRect, pixFmt);
 	_traySection.init(trayRect, pixFmt);
 	_fullscreenMenuSection.init(fullscreenMenuRect, pixFmt);
+
+	if (!subtitleRect.isEmpty())
+		_subtitleSection.init(subtitleRect, pixFmt);
 }
 
 void Runtime::loadCursors(const char *exeName) {
@@ -3537,6 +3540,11 @@ bool Runtime::dischargeIdleMouseMove() {
 		_idleHaveDragInteraction = false;
 		changeToCursor(_cursors[kCursorArrow]);
 		resetInventoryHighlights();
+
+		if (_gameID == GID_AD2044 && _tooltipText.size() > 0) {
+			_tooltipText.clear();
+			redrawSubtitleSection();
+		}
 	}
 
 	bool changedCircuitState = false;
@@ -4234,7 +4242,11 @@ void Runtime::stopSubtitles() {
 	_subtitleQueue.clear();
 	_isDisplayingSubtitles = false;
 	_isSubtitleSourceAnimation = false;
-	redrawTray();
+
+	if (_gameID == GID_AD2044)
+		redrawSubtitleSection();
+	else
+		redrawTray();
 }
 
 void Runtime::stopSound(SoundInstance &sound) {
@@ -4397,17 +4409,24 @@ void Runtime::updateSubtitles() {
 				_isDisplayingSubtitles = false;
 
 				if (_subtitleQueue.size() == 0) {
+					// Queue was exhausted
+
 					// Is this really what we want to be doing?
-					if (_escOn)
-						clearTray();
-					else
-						redrawTray();
+					if (_escOn) {
+						if (_gameID == GID_AD2044)
+							clearSubtitleSection();
+						else
+							clearTray();
+					} else {
+						if (_gameID == GID_AD2044)
+							redrawSubtitleSection();
+						else
+							redrawTray();
+					}
 				}
 			} else
 				break;
 		} else {
-			Graphics::ManagedSurface *surf = _traySection.surf.get();
-
 			Common::Array<Common::U32String> lines;
 
 			uint lineStart = 0;
@@ -4422,23 +4441,12 @@ void Runtime::updateSubtitles() {
 				lineStart = lineEnd + 1;
 			}
 
-			clearTray();
+			if (_gameID == GID_AD2044)
+				clearSubtitleSection();
+			else
+				clearTray();
 
-			if (_subtitleFont) {
-				int lineHeight = _subtitleFont->getFontHeight();
-
-				int topY = (surf->h - lineHeight * static_cast<int>(lines.size())) / 2;
-
-				uint32 textColor = surf->format.RGBToColor(queueItem.color[0], queueItem.color[1], queueItem.color[2]);
-
-				for (uint lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
-					const Common::U32String &line = lines[lineIndex];
-					int lineWidth = _subtitleFont->getStringWidth(line);
-					_subtitleFont->drawString(surf, line, (surf->w - lineWidth) / 2, topY + static_cast<int>(lineIndex) * lineHeight, lineWidth, textColor);
-				}
-			}
-
-			commitSectionToScreen(_traySection, Common::Rect(0, 0, _traySection.rect.width(), _traySection.rect.height()));
+			drawSubtitleText(lines, queueItem.color);
 
 			_isDisplayingSubtitles = true;
 		}
@@ -5038,6 +5046,79 @@ void Runtime::clearTray() {
 	}
 
 	this->commitSectionToScreen(_traySection, trayRect);
+}
+
+void Runtime::redrawSubtitleSection() {
+	if (_subtitleQueue.size() != 0)
+		return;
+
+	clearSubtitleSection();
+
+	if (!_tooltipText.empty()) {
+		Common::CodePage codePage = Common::kWindows1250;
+
+		Common::Array<Common::U32String> lines;
+
+		uint32 lastStringStart = 0;
+		for (;;) {
+			uint32 backslashPos = _tooltipText.find('\\', lastStringStart);
+			if (backslashPos == Common::String::npos)
+				break;
+
+			Common::String slice = _tooltipText.substr(lastStringStart, backslashPos - lastStringStart);
+			lines.push_back(slice.decode(codePage));
+			lastStringStart = backslashPos + 1;
+		}
+
+		Common::String lastSlice = _tooltipText.substr(lastStringStart, _tooltipText.size() - lastStringStart);
+		lines.push_back(lastSlice.decode(codePage));
+
+		uint8 color[3] = {255, 255, 0};
+		drawSubtitleText(lines, color);
+	}
+}
+
+void Runtime::clearSubtitleSection() {
+	Common::Rect stRect;
+	if (_gameID == GID_AD2044) {
+		stRect = _subtitleSection.rect;
+		stRect.translate(-stRect.left, -stRect.top);
+		_subtitleSection.surf->blitFrom(*_backgroundGraphic, _subtitleSection.rect, stRect);
+	}
+
+	this->commitSectionToScreen(_subtitleSection, stRect);
+}
+
+void Runtime::drawSubtitleText(const Common::Array<Common::U32String> &lines, const uint8 (&color)[3]) {
+	RenderSection &stSection = (_gameID == GID_AD2044) ? _subtitleSection : _traySection;
+	Graphics::ManagedSurface *surf = stSection.surf.get();
+
+	if (_subtitleFont) {
+		int lineHeight = _subtitleFont->getFontHeight();
+
+		int xOffset = 0;
+		int topY = 0;
+		if (_gameID == GID_AD2044) {
+			topY = 13;
+			xOffset = 5;
+		} else
+			topY = (surf->h - lineHeight * static_cast<int>(lines.size())) / 2;
+
+		uint32 textColor = surf->format.RGBToColor(color[0], color[1], color[2]);
+
+		for (uint lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
+			const Common::U32String &line = lines[lineIndex];
+			int lineWidth = _subtitleFont->getStringWidth(line);
+
+			int xPos = (surf->w - lineWidth) / 2 + xOffset;
+			int yPos = topY + static_cast<int>(lineIndex) * lineHeight;
+
+			_subtitleFont->drawString(surf, line, xPos + 2, yPos + 2, lineWidth, 0);
+			_subtitleFont->drawString(surf, line, xPos, yPos, lineWidth, textColor);
+		}
+	}
+
+	commitSectionToScreen(stSection, Common::Rect(0, 0, stSection.rect.width(), stSection.rect.height()));
 }
 
 void Runtime::drawInventory(uint slot) {

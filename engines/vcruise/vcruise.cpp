@@ -148,6 +148,7 @@ Common::Error VCruiseEngine::run() {
 		_menuBarRect = Common::Rect(size.x - menuBarSize.x, 0, size.x, menuBarSize.y);
 		_videoRect = Common::Rect(videoTL, videoTL + videoSize);
 		_trayRect = Common::Rect(0, size.y - traySize.y, size.x, size.y);
+		_subtitleRect = Common::Rect(_videoRect.left, _videoRect.bottom, _videoRect.right, _trayRect.top);
 	} else {
 		Common::Point videoSize;
 		Common::Point traySize;
@@ -194,7 +195,7 @@ Common::Error VCruiseEngine::run() {
 	_system->fillScreen(0);
 
 	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID, _gameDescription->defaultLanguage));
-	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, Common::Rect(640, 480), _system->getScreenFormat());
+	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, _subtitleRect, Common::Rect(640, 480), _system->getScreenFormat());
 
 	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;
 

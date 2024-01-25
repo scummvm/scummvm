@@ -613,7 +613,7 @@ public:
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage);
 	virtual ~Runtime();
 
-	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
+	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &subtitleRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
 
 	void loadCursors(const char *exeName);
 	void setDebugMode(bool debugMode);
@@ -940,6 +940,9 @@ private:
 	void clearScreen();
 	void redrawTray();
 	void clearTray();
+	void redrawSubtitleSection();
+	void clearSubtitleSection();
+	void drawSubtitleText(const Common::Array<Common::U32String> &lines, const uint8 (&color)[3]);
 	void drawInventory(uint slot);
 	void drawCompass();
 	bool isTrayVisible() const;
@@ -1354,6 +1357,7 @@ private:
 	RenderSection _menuSection;
 	RenderSection _traySection;
 	RenderSection _fullscreenMenuSection;
+	RenderSection _subtitleSection;
 
 	Common::Point _mousePos;
 	Common::Point _lmbDownPos;
@@ -1440,6 +1444,9 @@ private:
 	uint32 _cursorCycleLength;
 
 	int32 _dbToVolume[49];
+
+	// AD2044 tooltips
+	Common::String _tooltipText;
 };
 
 } // End of namespace VCruise

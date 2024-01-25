@@ -76,6 +76,7 @@ private:
 	Common::Rect _videoRect;
 	Common::Rect _menuBarRect;
 	Common::Rect _trayRect;
+	Common::Rect _subtitleRect;
 
 	Common::FSNode _rootFSNode;
 

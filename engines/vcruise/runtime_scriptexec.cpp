@@ -2119,7 +2119,12 @@ void Runtime::scriptOpEM(ScriptArg_t arg) {
 
 OPCODE_STUB(SE)
 OPCODE_STUB(SDot)
-OPCODE_STUB(E)
+
+void Runtime::scriptOpE(ScriptArg_t arg) {
+	_tooltipText = _scriptSet->strings[arg];
+	redrawSubtitleSection();
+}
+
 OPCODE_STUB(Dot)
 OPCODE_STUB(Sound)
 OPCODE_STUB(ISound)
