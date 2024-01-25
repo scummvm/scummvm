@@ -37,7 +37,7 @@ public:
 
 	virtual void trig() override {
 		int i = g_engine->getRandomSource().getRandomNumber(_sounds.size() - 1);
-		g_engine->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType, 0, 0.f, 0.f, _objId);
+		g_engine->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType, 0, 0.f, 1.f, _objId);
 	}
 
 private:
