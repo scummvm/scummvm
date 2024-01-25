@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "math/vector2d.h"
 #include "math/matrix4.h"
+#include "graphics/opengl/shader.h"
 
 namespace Twp {
 
@@ -124,39 +125,41 @@ struct TextureSlot {
 
 class Shader {
 public:
+friend class Gfx;
+public:
 	Shader();
 	virtual ~Shader();
 
-	void init(const char *vertex, const char *fragment);
+	void init(const char *name, const char *vertex, const char *fragment, const char *const *attributes);
+
+	int getUniformLocation(const char *name) const;
+
+	void setUniform(const char * name, int value);
+	void setUniform(const char * name, float value);
+	void setUniform(const char * name, float* value, size_t count);
 
 	void setUniform(const char *name, Math::Matrix4 value);
-	void setUniform(const char * name, float value);
+	void setUniform(const char * name, Math::Vector2d value);
 	void setUniform(const char * name, Math::Vector3d value);
-	void setUniform(const char * name, Color value);
+	void setUniform3(const char * name, Color value);
+	void setUniform4(const char * name, Color value);
 
 	virtual void applyUniforms() {}
 	virtual int getNumTextures() { return 0;};
 	virtual int getTexture(int index) { return 0;};
 	virtual int getTextureLoc(int index) { return 0;};
 
-	int getUniformLocation(const char *name);
-
 private:
-	uint32 loadShader(const char *code, uint32 shaderType);
-	void statusShader(uint32 shader);
-
-public:
-	uint32 program;
-
-private:
-	uint32 _vertex;
-	uint32 _fragment;
 	Common::HashMap<int, TextureSlot> _textures;
+	OpenGL::Shader _shader;
 };
 
 typedef Common::HashMap<int, TextureSlot> Textures;
 
 class Gfx {
+public:
+	friend class Shader;
+
 public:
 	void init();
 
@@ -193,7 +196,6 @@ private:
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture *_texture = nullptr;
-	int32 _posLoc = 0, _colLoc = 0, _texCoordsLoc = 0;
 	int32 _oldFbo = 0;
 };
 } // namespace Twp

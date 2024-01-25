@@ -355,24 +355,21 @@ FadeShader::FadeShader() {
 		}
 		gl_FragColor.a = 1.0;
 	})";
-	init(vsrc, fadeShader);
+	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
+	init("fadeShader", vsrc, fadeShader, attributes);
 
-	GL_CALL(_textureLoc[0] = glGetUniformLocation(program, "u_texture"));
-	GL_CALL(_textureLoc[1] = glGetUniformLocation(program, "u_texture2"));
-	GL_CALL(_timerLoc = glGetUniformLocation(program, "u_timer"));
-	GL_CALL(_fadeLoc = glGetUniformLocation(program, "u_fade"));
-	GL_CALL(_fadeToSepLoc = glGetUniformLocation(program, "u_fadeToSep"));
-	GL_CALL(_movementLoc = glGetUniformLocation(program, "u_movement"));
+	GL_CALL(_textureLoc[0] = getUniformLocation("u_texture"));
+	GL_CALL(_textureLoc[1] = getUniformLocation("u_texture2"));
 }
 
 FadeShader::~FadeShader() {}
 
 void FadeShader::applyUniforms() {
 	float movement = (sin(M_PI * _fade) * _movement);
-	GL_CALL(glUniform1f(_timerLoc, _elapsed));
-	GL_CALL(glUniform1f(_fadeLoc, _fade));
-	GL_CALL(glUniform1i(_fadeToSepLoc, _fadeToSepia ? 1 : 0));
-	GL_CALL(glUniform1f(_movementLoc, movement));
+	setUniform("u_timer", _elapsed);
+	setUniform("u_fade", _fade);
+	setUniform("u_fadeToSep", _fadeToSepia ? 1 : 0);
+	setUniform("u_movement", movement);
 }
 
 int FadeShader::getNumTextures() { return 2; }
@@ -392,7 +389,7 @@ int FadeShader::getTextureLoc(int index) { return _textureLoc[index]; }
 void ShaderParams::updateShader() {
 	if (effect == RoomEffect::Sepia) {
 		Shader *shader = g_engine->getGfx().getShader();
-		shader->setUniform("RandomValue", randomValue);
+		shader->setUniform("RandomValue", randomValue, 5);
 		shader->setUniform("TimeLapse", timeLapse);
 	}
 	//   } else if (effect == RoomEffect::Vhs) {
@@ -405,9 +402,9 @@ void ShaderParams::updateShader() {
 		shader->setUniform("iGlobalTime", iGlobalTime);
 		shader->setUniform("iFade", iFade);
 		shader->setUniform("wobbleIntensity", wobbleIntensity);
-		shader->setUniform("shadows", shadows);
-		shader->setUniform("midtones", midtones);
-		shader->setUniform("highlights", highlights);
+		shader->setUniform3("shadows", shadows);
+		shader->setUniform3("midtones", midtones);
+		shader->setUniform3("highlights", highlights);
 	}
 }
 

@@ -139,79 +139,43 @@ Shader::Shader() {
 Shader::~Shader() {
 }
 
-void Shader::init(const char *vertex, const char *fragment) {
-	if (vertex) {
-		_vertex = loadShader(vertex, GL_VERTEX_SHADER);
-	}
-	if (fragment) {
-		_fragment = loadShader(fragment, GL_FRAGMENT_SHADER);
-	}
-	GL_CALL(program = glCreateProgram());
-	GL_CALL(glAttachShader(program, _vertex));
-	GL_CALL(glAttachShader(program, _fragment));
-	GL_CALL(glLinkProgram(program));
+void Shader::init(const char *name, const char *vertex, const char *fragment, const char *const *attributes) {
+	_shader.loadFromStrings(name, vertex, fragment, attributes);
+
+	uint32 vbo = g_engine->getGfx()._vbo;
+	_shader.enableVertexAttribute("a_position", vbo, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)0);
+	_shader.enableVertexAttribute("a_color", vbo, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)(2 * sizeof(float)));
+	_shader.enableVertexAttribute("a_texCoords", vbo, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)(6 * sizeof(float)));
 }
 
-uint32 Shader::loadShader(const char *code, uint32 shaderType) {
-	uint32 result;
-	GL_CALL(result = glCreateShader(shaderType));
-	GL_CALL(glShaderSource(result, 1, &code, nullptr));
-	GL_CALL(glCompileShader(result));
-	statusShader(result);
-	return result;
+int Shader::getUniformLocation(const char *name) const {
+	return _shader.getUniformLocation(name);
 }
 
-void Shader::statusShader(uint32 shader) {
-	int status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-	if (status != GL_TRUE) {
-		int logLength;
-		char message[1024];
-		glGetShaderInfoLog(shader, 1024, &logLength, &message[0]);
-		debug("%s", message);
-	}
+void Shader::setUniform(const char * name, int value) {
+	_shader.setUniform(name, value);
 }
 
-int Shader::getUniformLocation(const char *name) {
-	int loc;
-	GL_CALL(loc = glGetUniformLocation(program, name));
-	return loc;
+void Shader::setUniform(const char * name, float value) {
+	_shader.setUniform1f(name, value);
 }
 
-void Shader::setUniform(const char *name, Math::Matrix4 value) {
-	GLint prev;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
-	glUseProgram(program);
-	int loc = getUniformLocation(name);
-	GL_CALL(glUniformMatrix4fv(loc, 1, GL_FALSE, value.getData()));
-	glUseProgram(prev);
+void Shader::setUniform(const char * name, float* value, size_t count) {
+	GLint loc = _shader.getUniformLocation(name);
+	GL_CALL(glUniform1fv(loc, count, value));
 }
 
-void Shader::setUniform(const char *name, float value) {
-	GLint prev;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
-	glUseProgram(program);
-	int loc = getUniformLocation(name);
-	GL_CALL(glUniform1f(loc, value));
-	glUseProgram(prev);
+
+void Shader::setUniform(const char *name, Math::Vector2d value) {
+	_shader.setUniform(name, value);
 }
 
-void Shader::setUniform(const char *name, Math::Vector3d value) {
-	GLint prev;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
-	glUseProgram(program);
-	int loc = getUniformLocation(name);
-	GL_CALL(glUniform3fv(loc, 1, value.getData()));
-	glUseProgram(prev);
+void Shader::setUniform3(const char *name, Color value) {
+	_shader.setUniform(name, Math::Vector3d(value.v));
 }
 
-void Shader::setUniform(const char *name, Color value) {
-	GLint prev;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
-	glUseProgram(program);
-	int loc = getUniformLocation(name);
-	GL_CALL(glUniform3fv(loc, 1, value.v));
-	glUseProgram(prev);
+void Shader::setUniform4(const char *name, Color value) {
+	_shader.setUniform(name, Math::Vector4d(value.v));
 }
 
 void Gfx::init() {
@@ -224,33 +188,23 @@ void Gfx::init() {
 	empty.setPixels(pixels);
 	_emptyTexture.load(empty);
 
+	GL_CALL(glGenBuffers(1, &_vbo));
+	GL_CALL(glGenBuffers(1, &_ebo));
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
+
 	const char *fragmentSrc = R"(#version 110
-		varying vec4 v_color;
+	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	uniform sampler2D u_texture;
 	void main() {
 		vec4 tex_color = texture2D(u_texture, v_texCoords);
 		gl_FragColor = v_color * tex_color;
 	})";
-	_defaultShader.init(vsrc, fragmentSrc);
+	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
+	_defaultShader.init("default", vsrc, fragmentSrc, attributes);
 	_shader = &_defaultShader;
 	_mvp = ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
-
-	GL_CALL(glGenBuffers(1, &_vbo));
-	GL_CALL(glGenBuffers(1, &_ebo));
-	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
-	GL_CALL(_posLoc = glGetAttribLocation(_defaultShader.program, "a_position"));
-	GL_CALL(_colLoc = glGetAttribLocation(_defaultShader.program, "a_color"));
-	GL_CALL(_texCoordsLoc = glGetAttribLocation(_defaultShader.program, "a_texCoords"));
-	GL_CALL(glGetUniformLocation(_defaultShader.program, "u_texture"));
-	GL_CALL(glGetUniformLocation(_defaultShader.program, "u_transform"));
-	GL_CALL(glVertexAttribPointer(_posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-	GL_CALL(glEnableVertexAttribArray(_posLoc));
-	GL_CALL(glVertexAttribPointer(_colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-	GL_CALL(glEnableVertexAttribArray(_colLoc));
-	GL_CALL(glVertexAttribPointer(_texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
-	GL_CALL(glEnableVertexAttribArray(_texCoordsLoc));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFbo);
@@ -292,18 +246,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
 		GL_CALL(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
-		GL_CALL(glUseProgram(_shader->program));
-
-		int posLoc = glGetAttribLocation(_defaultShader.program, "a_position");
-		int colLoc = glGetAttribLocation(_defaultShader.program, "a_color");
-		int texCoordsLoc = glGetAttribLocation(_defaultShader.program, "a_texCoords");
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-		GL_CALL(glEnableVertexAttribArray(posLoc));
-		GL_CALL(glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-		GL_CALL(glEnableVertexAttribArray(colLoc));
-		GL_CALL(glVertexAttribPointer(colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-		GL_CALL(glEnableVertexAttribArray(texCoordsLoc));
-		GL_CALL(glVertexAttribPointer(texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
 
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
@@ -313,10 +256,10 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 		GL_CALL(glUniform1i(0, 0));
 
 		Math::Matrix4 m = getFinalTransform(trsf);
-		_shader->setUniform("u_transform", m);
+		_shader->_shader.setUniform("u_transform", m);
 		GL_CALL(glDrawArrays((GLenum)primitivesType, 0, v_size));
+		_shader->_shader.unbind();
 
-		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		GL_CALL(glDisableVertexAttribArray(0));
@@ -344,16 +287,11 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
 		GL_CALL(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
-		GL_CALL(glUseProgram(_shader->program));
+		_shader->_shader.use();
 
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 
-		GL_CALL(glEnableVertexAttribArray(0));
-		GL_CALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-		GL_CALL(glEnableVertexAttribArray(2));
-		GL_CALL(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-		GL_CALL(glEnableVertexAttribArray(1));
-		GL_CALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
@@ -363,7 +301,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		if (num == 0) {
 			GL_CALL(glActiveTexture(GL_TEXTURE0));
 			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
-			GL_CALL(glUniform1i(_shader->getUniformLocation("u_texture"), 0));
+			GL_CALL(glUniform1i(_shader->_shader.getUniformLocation("u_texture"), 0));
 		} else {
 			for (int i = 0; i < num; i++) {
 				GL_CALL(glActiveTexture(GL_TEXTURE0 + i));
@@ -372,16 +310,12 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 			}
 		}
 
-		_shader->setUniform("u_transform", getFinalTransform(trsf));
+		_shader->_shader.setUniform("u_transform", getFinalTransform(trsf));
 		_shader->applyUniforms();
 		GL_CALL(glDrawElements(primitivesType, i_size, GL_UNSIGNED_INT, NULL));
+		_shader->_shader.unbind();
 
-		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		GL_CALL(glDisableVertexAttribArray(0));
-		GL_CALL(glDisableVertexAttribArray(1));
-		GL_CALL(glDisableVertexAttribArray(2));
-
 		glDisable(GL_BLEND);
 	}
 }

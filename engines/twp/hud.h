@@ -101,12 +101,6 @@ public:
 	Color _shadowColor;
 	Color _normalColor;
 	Color _highlightColor;
-
-private:
-	int _rangesLoc;
-	int _shadowColorLoc;
-	int _normalColorLoc;
-	int _highlightColorLoc;
 };
 
 class Hud : public Node {
