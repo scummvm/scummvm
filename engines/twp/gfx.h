@@ -130,7 +130,7 @@ public:
 	Shader();
 	virtual ~Shader();
 
-	void init(const char *name, const char *vertex, const char *fragment, const char *const *attributes);
+	void init(const char *name, const char *vertex, const char *fragment);
 
 	int getUniformLocation(const char *name) const;
 

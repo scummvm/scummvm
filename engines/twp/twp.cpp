@@ -709,10 +709,9 @@ Common::Error TwpEngine::run() {
 	_gfx.init();
 	_hud.init();
 
-	const char* attributes[]={"a_position", "a_color", "a_texCoords", nullptr};
-	_bwShader.init("black&white", vsrc, bwShader, attributes);
-	_ghostShader.init("ghost", vsrc, ghostShader, attributes);
-	_sepiaShader.init("sepia", vsrc, sepiaShader, attributes);
+	_bwShader.init("black&white", vsrc, bwShader);
+	_ghostShader.init("ghost", vsrc, ghostShader);
+	_sepiaShader.init("sepia", vsrc, sepiaShader);
 	_fadeShader.reset(new FadeShader());
 
 	// _lighting = new Lighting();

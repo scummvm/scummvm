@@ -139,7 +139,8 @@ Shader::Shader() {
 Shader::~Shader() {
 }
 
-void Shader::init(const char *name, const char *vertex, const char *fragment, const char *const *attributes) {
+void Shader::init(const char *name, const char *vertex, const char *fragment) {
+	const char* attributes[]={"a_position", "a_color", "a_texCoords", nullptr};
 	_shader.loadFromStrings(name, vertex, fragment, attributes);
 
 	uint32 vbo = g_engine->getGfx()._vbo;
@@ -201,8 +202,7 @@ void Gfx::init() {
 		vec4 tex_color = texture2D(u_texture, v_texCoords);
 		gl_FragColor = v_color * tex_color;
 	})";
-	const char* attributes[]={"a_position","a_color","a_texCoords",nullptr};
-	_defaultShader.init("default", vsrc, fragmentSrc, attributes);
+	_defaultShader.init("default", vsrc, fragmentSrc);
 	_shader = &_defaultShader;
 	_mvp = ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 
@@ -301,7 +301,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		if (num == 0) {
 			GL_CALL(glActiveTexture(GL_TEXTURE0));
 			GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
-			GL_CALL(glUniform1i(_shader->_shader.getUniformLocation("u_texture"), 0));
+			GL_CALL(glUniform1i(_shader->getUniformLocation("u_texture"), 0));
 		} else {
 			for (int i = 0; i < num; i++) {
 				GL_CALL(glActiveTexture(GL_TEXTURE0 + i));
