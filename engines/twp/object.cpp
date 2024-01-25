@@ -112,7 +112,7 @@ int Object::getId() const {
 	return (int)result;
 }
 
-Common::String Object::getname() const {
+Common::String Object::getName() const {
 	if ((_table._type == OT_TABLE) && (sqrawexists(_table, "name"))) {
 		Common::String result;
 		sqgetf(_table, "name", result);
