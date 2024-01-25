@@ -451,6 +451,7 @@ struct SaveGameSwappableState {
 	uint roomNumber;
 	uint screenNumber;
 	uint direction;
+	uint disc;
 	bool havePendingPostSwapScreenReset;
 
 	uint loadedAnimation;
@@ -478,7 +479,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 9;
+	static const uint kSaveGameCurrentVersion = 10;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 	static const uint kMaxStates = 2;
 
@@ -1204,6 +1205,7 @@ private:
 	uint _screenNumber;
 	uint _direction;
 	uint _hero;
+	uint _disc;
 
 	uint _swapOutRoom;
 	uint _swapOutScreen;

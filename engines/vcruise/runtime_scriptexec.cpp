@@ -2103,9 +2103,32 @@ void Runtime::scriptOpNoUpdate(ScriptArg_t arg) {
 
 OPCODE_STUB(NoClear)
 
-OPCODE_STUB(Say1_AD2044)
+void Runtime::scriptOpSay1_AD2044(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	Common::String soundName = Common::String::format("%02i-%08i", static_cast<int>(_disc * 10u + 1u), static_cast<int>(stackArgs[0]));
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(soundName, true, soundID, cachedSound);
+
+	if (cachedSound) {
+		TriggeredOneShot oneShot;
+		oneShot.soundID = soundID;
+		oneShot.uniqueSlot = _disc;
+
+		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+			triggerSound(kSoundLoopBehaviorNo, *cachedSound, 100, 0, false, true);
+			_triggeredOneShots.push_back(oneShot);
+		}
+	}
+}
+
+void Runtime::scriptOpSay1Rnd(ScriptArg_t arg) {
+	scriptOpSay1_AD2044(arg);
+}
+
 OPCODE_STUB(Say2_AD2044)
-OPCODE_STUB(Say1Rnd)
 
 void Runtime::scriptOpM(ScriptArg_t arg) {
 	// Looks like this is possibly support to present a mouse click prompt and end
@@ -2382,6 +2405,9 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SE);
 			DISPATCH_OP(SDot);
 			DISPATCH_OP(E);
+
+			DISPATCH_OP(Sound);
+			DISPATCH_OP(ISound);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));

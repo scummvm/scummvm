@@ -940,7 +940,7 @@ void SaveGameSwappableState::Sound::read(Common::ReadStream *stream, uint saveGa
 	params3D.read(stream);
 }
 
-SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), havePendingPostSwapScreenReset(false),
+SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), disc(0), havePendingPostSwapScreenReset(false),
 												   musicTrack(0), musicVolume(100), musicActive(true), musicMuteDisabled(false), animVolume(100),
 												   loadedAnimation(0), animDisplayingFrame(0) {
 }
@@ -959,6 +959,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		stream->writeUint32BE(states[sti]->roomNumber);
 		stream->writeUint32BE(states[sti]->screenNumber);
 		stream->writeUint32BE(states[sti]->direction);
+		stream->writeUint32BE(states[sti]->disc);
 		stream->writeByte(states[sti]->havePendingPostSwapScreenReset ? 1 : 0);
 	}
 
@@ -1066,6 +1067,9 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		states[sti]->roomNumber = stream->readUint32BE();
 		states[sti]->screenNumber = stream->readUint32BE();
 		states[sti]->direction = stream->readUint32BE();
+
+		if (saveVersion >= 10)
+			states[sti]->disc = stream->readUint32BE();
 
 		if (saveVersion >= 7)
 			states[sti]->havePendingPostSwapScreenReset = (stream->readByte() != 0);
@@ -1218,7 +1222,7 @@ FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 }
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
+	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _disc(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _lowQualityGraphicsMode(false),
@@ -1388,6 +1392,8 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["CUR_PRAWO"] = 3;	// Prawo = right
 		_namedCursors["CUR_LEWO"] = 1; // Lewo = left
 		_namedCursors["CUR_LUPA"] = 6; // Lupa = magnifier
+		_namedCursors["CUR_NAC"] = 5; // Nac = top?  Not sure.  But this is the finger pointer.
+		_namedCursors["CUR_TYL"] = 2; // Tyl = back
 	}
 
 	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
@@ -6155,6 +6161,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_roomNumber = mainState->roomNumber;
 	_screenNumber = mainState->screenNumber;
 	_direction = mainState->direction;
+	_disc = mainState->disc;
 	_havePendingPostSwapScreenReset = mainState->havePendingPostSwapScreenReset;
 	_hero = snapshot->hero;
 	_swapOutRoom = snapshot->swapOutRoom;
