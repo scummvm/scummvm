@@ -87,7 +87,7 @@ public:
 	virtual bool isEnabled() const { return _enabled; }
 	virtual void update(float elapsed) = 0;
 
-private:
+protected:
 	bool _enabled = true;
 };
 
@@ -240,13 +240,16 @@ public:
 	Talking(Object *obj, const Common::StringArray &texts, Color color);
 	virtual ~Talking() {}
 
-private:
+	void append(const Common::StringArray &texts);
+
 	virtual void update(float elapsed) override;
 	virtual void disable() override;
+
+private:
+	void say(const Common::String &text);
 	int onTalkieId(int id);
 	Common::String talkieKey();
 	void setDuration(const Common::String &text);
-	void say(const Common::String &text);
 	int loadActorSpeech(const Common::String &name);
 
 private:

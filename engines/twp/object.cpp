@@ -343,7 +343,7 @@ Common::String Object::getIcon() {
 	if (iconTable._type == OT_ARRAY) {
 		int fps;
 		Common::StringArray icons;
-		sqgetitems(iconTable, GetIcons(fps,icons));
+		sqgetitems(iconTable, GetIcons(fps, icons));
 		setIcon(fps, icons);
 		return getIcon();
 	}
@@ -775,7 +775,12 @@ void Object::inventoryScrollDown() {
 }
 
 void TalkingState::say(const Common::StringArray &texts, Object *obj) {
-	obj->setTalking(new Talking(obj, texts, _color));
+	Talking *talking = static_cast<Talking *>(obj->getTalking());
+	if (!talking) {
+		obj->setTalking(new Talking(obj, texts, _color));
+	} else {
+		talking->append(texts);
+	}
 }
 
 } // namespace Twp

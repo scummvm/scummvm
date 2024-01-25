@@ -289,6 +289,11 @@ Talking::Talking(Object *obj, const Common::StringArray &texts, Color color) {
 	say(texts[0]);
 }
 
+void Talking::append(const Common::StringArray &texts) {
+	_texts.push_back(texts);
+	_enabled = !_texts.empty();
+}
+
 static int letterToIndex(char c) {
 	switch (c) {
 	case 'A':
@@ -315,25 +320,37 @@ static int letterToIndex(char c) {
 }
 
 void Talking::update(float elapsed) {
-	if (isEnabled()) {
-		_elapsed += elapsed;
-		if (_elapsed < _duration) {
-			char letter = _lip.letter(_elapsed);
-			_obj->setHeadIndex(letterToIndex(letter));
+	if (!isEnabled())
+		return;
+
+	_elapsed += elapsed;
+	if (_obj->_sound) {
+		if (!g_engine->_audio.playing(_obj->_sound)) {
+			debug("talking %s audio stopped", _obj->_key.c_str());
+			_obj->_sound = 0;
 		} else {
-			if (_texts.size() > 0) {
-				say(_texts[0]);
-				_texts.remove_at(0);
-			} else {
-				disable();
-			}
+			float e = g_engine->_audio.getElapsed(_obj->_sound) / 1000.f;
+			char letter = _lip.letter(e);
+			_obj->setHeadIndex(letterToIndex(letter));
 		}
+	} else if (_elapsed < _duration) {
+		char letter = _lip.letter(_elapsed);
+		_obj->setHeadIndex(letterToIndex(letter));
+	} else if (!_texts.empty()) {
+		debug("talking %s: %s", _obj->_key.c_str(), _texts[0].c_str());
+		say(_texts[0]);
+		_texts.remove_at(0);
+	} else {
+		debug("talking %s: ended", _obj->_key.c_str());
+		disable();
 	}
 }
 
 int Talking::loadActorSpeech(const Common::String &name) {
-	if (!ConfMan.getBool("talkiesHearVoice"))
+	if (!ConfMan.getBool("talkiesHearVoice")) {
+		debug("talking %s: talkiesHearVoice: false", _obj->_key.c_str());
 		return 0;
+	}
 
 	debug("loadActorSpeech %s.ogg", name.c_str());
 	Common::String filename(name);
@@ -345,7 +362,12 @@ int Talking::loadActorSpeech(const Common::String &name) {
 			debug("File %s.ogg not found", name.c_str());
 		} else {
 			g_engine->_audio._soundDefs.push_back(soundDefinition);
-			return g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
+			int id = g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
+			int duration = g_engine->_audio.getDuration(id);
+			debug("talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
+			if (duration)
+				_duration = duration / 1000.f;
+			return id;
 		}
 	}
 	return 0;
@@ -406,7 +428,8 @@ void Talking::say(const Common::String &text) {
 		}
 	}
 
-	setDuration(txt);
+	if (!_obj->_sound)
+		setDuration(txt);
 
 	if (_obj->_sayNode) {
 		_obj->_sayNode->remove();
@@ -425,6 +448,7 @@ void Talking::say(const Common::String &text) {
 	_obj->_sayNode->setPos(pos);
 	_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
 	g_engine->_screenScene.addChild(_obj->_sayNode);
+	_elapsed = 0.f;
 }
 
 void Talking::disable() {

@@ -103,6 +103,9 @@ public:
 	float getMasterVolume() const;
 	void setVolume(int id, float vol);
 
+	int getElapsed(int id) const;
+	int getDuration(int id) const;
+
 	void update(float elapsed);
 
 	Common::Array<SoundDefinition*> _soundDefs;
