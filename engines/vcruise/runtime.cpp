@@ -1553,6 +1553,9 @@ bool Runtime::bootGame(bool newGame) {
 		_trayCornerGraphic = loadGraphic("Select_2", true);
 	}
 
+	if (_gameID == GID_AD2044)
+		_backgroundGraphic = loadGraphicFromPath("SCR0.BMP", true);
+
 	Common::Language lang = _defaultLanguage;
 
 	if (ConfMan.hasKey("language")) {
@@ -5002,7 +5005,11 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 }
 
 void Runtime::clearScreen() {
-	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+	if (_gameID == GID_AD2044) {
+		_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic);
+		commitSectionToScreen(_fullscreenMenuSection, _fullscreenMenuSection.rect);
+	} else
+		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
 }
 
 void Runtime::redrawTray() {
@@ -5018,16 +5025,26 @@ void Runtime::redrawTray() {
 }
 
 void Runtime::clearTray() {
-	uint32 blackColor = _traySection.surf->format.RGBToColor(0, 0, 0);
-	Common::Rect trayRect(0, 0, _traySection.surf->w, _traySection.surf->h);
+	Common::Rect trayRect;
+	if (_gameID == GID_AD2044) {
+		trayRect = _traySection.rect;
+		trayRect.translate(-trayRect.left, -trayRect.top);
+		_traySection.surf->blitFrom(*_backgroundGraphic, _traySection.rect, trayRect);
+	} else {
+		uint32 blackColor = _traySection.surf->format.RGBToColor(0, 0, 0);
+		trayRect = Common::Rect(0, 0, _traySection.surf->w, _traySection.surf->h);
 
-	_traySection.surf->fillRect(trayRect, blackColor);
+		_traySection.surf->fillRect(trayRect, blackColor);
+	}
 
 	this->commitSectionToScreen(_traySection, trayRect);
 }
 
 void Runtime::drawInventory(uint slot) {
 	if (!isTrayVisible())
+		return;
+
+	if (_gameID == GID_AD2044)
 		return;
 
 	Common::Rect trayRect = _traySection.rect;
@@ -5196,6 +5213,10 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 	filePath.appendInPlace(graphicName);
 	filePath.appendInPlace(".bmp");
 
+	return loadGraphicFromPath(filePath, required);
+}
+
+Common::SharedPtr<Graphics::Surface> Runtime::loadGraphicFromPath(const Common::Path &filePath, bool required) {
 	Common::File f;
 	if (!f.open(filePath)) {
 		warning("Couldn't open BMP file '%s'", filePath.toString(Common::Path::kNativeSeparator).c_str());

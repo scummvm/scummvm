@@ -80,6 +80,7 @@ Common::Error VCruiseEngine::run() {
 
 #if !defined(USE_JPEG)
 	if (_gameDescription->desc.flags & VCRUISE_GF_NEED_JPEG) {
+		.
 		return Common::Error(Common::kUnknownError, _s("This game requires JPEG support, which was not compiled in."));
 	}
 #endif

@@ -947,6 +947,7 @@ private:
 
 	Common::String getFileNameForItemGraphic(uint itemID) const;
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, bool required);
+	Common::SharedPtr<Graphics::Surface> loadGraphicFromPath(const Common::Path &path, bool required);
 
 	bool loadSubtitles(Common::CodePage codePage, bool guessCodePage);
 
@@ -1186,6 +1187,7 @@ private:
 	Common::SharedPtr<Graphics::Surface> _trayBackgroundGraphic;
 	Common::SharedPtr<Graphics::Surface> _trayHighlightGraphic;
 	Common::SharedPtr<Graphics::Surface> _trayCornerGraphic;
+	Common::SharedPtr<Graphics::Surface> _backgroundGraphic;
 
 	Common::Array<Common::SharedPtr<Graphics::Surface> > _uiGraphics;
 
