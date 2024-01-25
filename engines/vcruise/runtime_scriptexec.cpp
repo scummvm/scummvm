@@ -2128,7 +2128,9 @@ void Runtime::scriptOpSay1Rnd(ScriptArg_t arg) {
 	scriptOpSay1_AD2044(arg);
 }
 
-OPCODE_STUB(Say2_AD2044)
+void Runtime::scriptOpSay2_AD2044(ScriptArg_t arg) {
+	scriptOpSay1_AD2044(arg);
+}
 
 void Runtime::scriptOpM(ScriptArg_t arg) {
 	// Looks like this is possibly support to present a mouse click prompt and end
@@ -2149,8 +2151,15 @@ void Runtime::scriptOpE(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(Dot)
-OPCODE_STUB(Sound)
-OPCODE_STUB(ISound)
+
+void Runtime::scriptOpSound(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+}
+
+void Runtime::scriptOpISound(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+}
+
 OPCODE_STUB(USound)
 OPCODE_STUB(RGet)
 
