@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-20 23:50+0000\n"
+"PO-Revision-Date: 2024-01-25 19:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -8443,7 +8443,7 @@ msgstr "Неверное имя файла для записи"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Нэнси Дрю"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
@@ -8459,7 +8459,7 @@ msgstr "Переключатель быстрого режима"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "Нэнси Дрю - Лабиринт"
 
 #: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
