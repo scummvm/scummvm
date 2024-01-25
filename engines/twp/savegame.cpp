@@ -410,6 +410,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	loadObjects(json["objects"]->asObject());
 	setActor(json["selectedActor"]->asString());
 	g_engine->setRoom(room(json["currentRoom"]->asString()));
+	g_engine->cameraAt(g_engine->_actor->_node->getPos());
 
 	HSQUIRRELVM v = g_engine->getVm();
 	sqsetf(sqrootTbl(v), "SAVEBUILD", json["savebuild"]->asIntegerNumber());

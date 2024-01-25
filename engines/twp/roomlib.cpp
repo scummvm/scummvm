@@ -43,6 +43,7 @@ static SQInteger addTrigger(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, obj->_leave)))
 			return sq_throwerror(v, "failed to get leave");
 	sq_addref(g_engine->getVm(), &obj->_leave);
+	obj->_triggerActive = true;
 	g_engine->_room->_triggers.push_back(obj);
 	return 0;
 }
@@ -113,9 +114,9 @@ static SQInteger enableTrigger(HSQUIRRELVM v) {
 	bool enabled;
 	if (SQ_FAILED(sqget(v, 3, enabled)))
 		return sq_throwerror(v, "failed to get enabled");
-	if (enabled)
+	if (enabled) {
 		g_engine->_room->_triggers.push_back(obj);
-	else {
+	} else {
 		int index = find(g_engine->_room->_triggers, obj);
 		if (index != -1)
 			g_engine->_room->_triggers.remove_at(index);

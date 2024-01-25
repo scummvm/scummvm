@@ -1534,11 +1534,11 @@ void TwpEngine::updateTriggers() {
 		for (size_t i = 0; i < _room->_triggers.size(); i++) {
 			Object *trigger = _room->_triggers[i];
 			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
-				debug("call enter trigger %s", trigger->_name.c_str());
+				debug("call enter trigger %s", trigger->_key.c_str());
 				trigger->_triggerActive = true;
 				callTrigger(trigger, trigger->_enter);
 			} else if (trigger->_triggerActive && !trigger->contains(_actor->_node->getAbsPos())) {
-				debug("call leave trigger %s", trigger->_name.c_str());
+				debug("call leave trigger %s", trigger->_key.c_str());
 				trigger->_triggerActive = false;
 				callTrigger(trigger, trigger->_leave);
 			}
