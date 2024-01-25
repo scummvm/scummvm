@@ -262,7 +262,7 @@ Common::String TwpEngine::cursorText() {
 		}
 
 		// give can be used only on inventory and talkto to talkable objects (actors)
-		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->getname());
+		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->getName());
 
 		// add verb if not walk to or if noun1 is present
 		if ((_hud._verb.id.id > 1) || (result.size() > 0)) {
@@ -278,7 +278,7 @@ Common::String TwpEngine::cursorText() {
 			else if (_useFlag == ufGiveTo)
 				result += " " + _textDb.getText(10003);
 			if (_noun2)
-				result += " " + _textDb.getText(_noun2->getname());
+				result += " " + _textDb.getText(_noun2->getName());
 		}
 	}
 	return result;
@@ -468,7 +468,7 @@ void TwpEngine::update(float elapsed) {
 			_hud.setVisible(false);
 			_uiInv.setVisible(false);
 			_noun1 = objAt(roomPos);
-			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->_name);
+			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->getName());
 			_sentence.setText(cText);
 			_inputState.setCursorShape(CursorShape::Normal);
 			if (_cursor.leftDown)
