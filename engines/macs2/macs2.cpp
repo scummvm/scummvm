@@ -477,7 +477,7 @@ bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
 uint16 ScriptReadWord(Common::MemoryReadStream* stream) {
 	const int64 pos = stream->pos();
 	const uint16 result = stream->readUint16LE();
-	debug("Script read (word): %.4x at offset %.4x\n", result, pos);
+	debug("Script read (word): %.4x at offset %.4x", result, pos);
 	return result;
 }
 
@@ -486,7 +486,7 @@ byte ScriptReadByte(Common::MemoryReadStream* stream) {
 
 	const int64 pos = stream->pos();
 	const byte result = stream->readByte();
-	debug("Script read (byte): %.2x at offset %.4x\n", result, pos);
+	debug("Script read (byte): %.2x at offset %.4x", result, pos);
 	return result;
 }
 
