@@ -64,6 +64,17 @@
 
 namespace VCruise {
 
+struct InitialItemPlacement {
+	uint roomNumber;
+	uint screenNumber;
+	uint itemID;
+};
+
+const InitialItemPlacement g_ad2044InitialItemPlacements[] = {
+	{1, 0xb8, 24},	// Cigarette pack
+	{1, 0xac, 27},	// Matches
+};
+
 struct CodePageGuess {
 	Common::CodePage codePage;
 	Runtime::CharSet charSet;
@@ -431,8 +442,13 @@ OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyC
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
 	rect = paramRect;
-	surf.reset(new Graphics::ManagedSurface(paramRect.width(), paramRect.height(), fmt));
-	surf->fillRect(Common::Rect(0, 0, surf->w, surf->h), 0xffffffff);
+	pixFmt = fmt;
+	if (paramRect.isEmpty())
+		surf.reset();
+	else {
+		surf.reset(new Graphics::ManagedSurface(paramRect.width(), paramRect.height(), fmt));
+		surf->fillRect(Common::Rect(0, 0, surf->w, surf->h), 0xffffffff);
+	}
 }
 
 Runtime::StackValue::ValueUnion::ValueUnion() {
@@ -976,8 +992,36 @@ SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0
 												   loadedAnimation(0), animDisplayingFrame(0) {
 }
 
+SaveGameSnapshot::PagedInventoryItem::PagedInventoryItem() : page(0), slot(0), itemID(0) {
+}
+
+void SaveGameSnapshot::PagedInventoryItem::write(Common::WriteStream *stream) const {
+	stream->writeByte(page);
+	stream->writeByte(slot);
+	stream->writeByte(itemID);
+}
+
+void SaveGameSnapshot::PagedInventoryItem::read(Common::ReadStream *stream, uint saveGameVersion) {
+	page = stream->readByte();
+	slot = stream->readByte();
+	itemID = stream->readByte();
+}
+
+SaveGameSnapshot::PlacedInventoryItem::PlacedInventoryItem() : locationID(0), itemID(0) {
+}
+
+void SaveGameSnapshot::PlacedInventoryItem::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(locationID);
+	stream->writeByte(itemID);
+}
+
+void SaveGameSnapshot::PlacedInventoryItem::read(Common::ReadStream *stream, uint saveGameVersion) {
+	locationID = stream->readUint32BE();
+	itemID = stream->readByte();
+}
+
 SaveGameSnapshot::SaveGameSnapshot() : hero(0), swapOutRoom(0), swapOutScreen(0), swapOutDirection(0),
-	escOn(false), numStates(1), listenerX(0), listenerY(0), listenerAngle(0) {
+	escOn(false), numStates(1), listenerX(0), listenerY(0), listenerAngle(0), inventoryPage(0), inventoryActiveItem(0) {
 }
 
 void SaveGameSnapshot::write(Common::WriteStream *stream) const {
@@ -1035,6 +1079,10 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	stream->writeUint32BE(variables.size());
 	stream->writeUint32BE(timers.size());
+	stream->writeUint32BE(placedItems.size());
+	stream->writeUint32BE(pagedItems.size());
+	stream->writeByte(inventoryPage);
+	stream->writeByte(inventoryActiveItem);
 
 	for (uint sti = 0; sti < numStates; sti++) {
 		for (const SaveGameSwappableState::InventoryItem &invItem : states[sti]->inventory)
@@ -1066,6 +1114,12 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		stream->writeUint32BE(timer._key);
 		stream->writeUint32BE(timer._value);
 	}
+
+	for (const PlacedInventoryItem &item : placedItems)
+		item.write(stream);
+
+	for (const PagedInventoryItem &item : pagedItems)
+		item.write(stream);
 }
 
 LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
@@ -1180,6 +1234,19 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	uint numVars = stream->readUint32BE();
 	uint numTimers = stream->readUint32BE();
 
+	uint numPlacedItems = 0;
+	uint numPagedItems = 0;
+
+	if (saveVersion >= 10) {
+		numPlacedItems = stream->readUint32BE();
+		numPagedItems = stream->readUint32BE();
+		this->inventoryPage = stream->readByte();
+		this->inventoryActiveItem = stream->readByte();
+	} else {
+		this->inventoryPage = 0;
+		this->inventoryActiveItem = 0;
+	}
+
 	if (stream->eos() || stream->err())
 		return kLoadGameOutcomeSaveDataCorrupted;
 
@@ -1191,7 +1258,6 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	triggeredOneShots.resize(numOneShots);
 
-	
 	for (uint sti = 0; sti < numStates; sti++) {
 		for (uint i = 0; i < numInventory[sti]; i++)
 			states[sti]->inventory[i].read(stream);
@@ -1227,6 +1293,18 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		uint32 value = stream->readUint32BE();
 
 		timers[key] = value;
+	}
+
+	for (uint i = 0; i < numPlacedItems; i++) {
+		PlacedInventoryItem item;
+		item.read(stream, saveVersion);
+		placedItems.push_back(item);
+	}
+
+	for (uint i = 0; i < numPagedItems; i++) {
+		PagedInventoryItem item;
+		item.read(stream, saveVersion);
+		pagedItems.push_back(item);
 	}
 
 	if (stream->eos() || stream->err())
@@ -1274,7 +1352,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _isInGame(false),
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false),
 	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _charSet(kCharSetLatin),
-	  _isCDVariant(false), _currentAnimatedCursor(nullptr), _currentCursor(nullptr), _cursorTimeBase(0), _cursorCycleLength(0) {
+	  _isCDVariant(false), _currentAnimatedCursor(nullptr), _currentCursor(nullptr), _cursorTimeBase(0), _cursorCycleLength(0),
+	  _inventoryActivePage(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -1321,6 +1400,8 @@ void Runtime::initSections(const Common::Rect &gameRect, const Common::Rect &men
 
 	if (!subtitleRect.isEmpty())
 		_subtitleSection.init(subtitleRect, pixFmt);
+
+	_placedItemBackBufferSection.init(Common::Rect(), pixFmt);
 }
 
 void Runtime::loadCursors(const char *exeName) {
@@ -1588,10 +1669,10 @@ bool Runtime::bootGame(bool newGame) {
 		error("Don't have a start config for this game");
 
 	if (_gameID != GID_AD2044) {
-		_trayBackgroundGraphic = loadGraphic("Pocket", true);
-		_trayHighlightGraphic = loadGraphic("Select", true);
-		_trayCompassGraphic = loadGraphic("Select_1", true);
-		_trayCornerGraphic = loadGraphic("Select_2", true);
+		_trayBackgroundGraphic = loadGraphic("Pocket", "", true);
+		_trayHighlightGraphic = loadGraphic("Select", "", true);
+		_trayCompassGraphic = loadGraphic("Select_1", "", true);
+		_trayCornerGraphic = loadGraphic("Select_2", "", true);
 	}
 
 	if (_gameID == GID_AD2044)
@@ -1729,11 +1810,11 @@ bool Runtime::bootGame(bool newGame) {
 		_uiGraphics.resize(24);
 		for (uint i = 0; i < _uiGraphics.size(); i++) {
 			if (_gameID == GID_REAH) {
-				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
+				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), "", false);
 				if (_languageIndex != 0 && !_uiGraphics[i])
-					_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
+					_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), "", false);
 			} else if (_gameID == GID_SCHIZM) {
-				_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
+				_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), "", false);
 			}
 		}
 	}
@@ -2002,6 +2083,9 @@ bool Runtime::runIdle() {
 					return true;
 				case kKeymappedEventQuit:
 					changeToMenuPage(createMenuQuit(_gameID == GID_SCHIZM));
+					return true;
+				case kKeymappedEventPutItem:
+					cheatPutItem();
 					return true;
 				default:
 					break;
@@ -3343,6 +3427,33 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		_forceAllowSaves = false;
 
 		recordSaveGameSnapshot();
+
+		_placedItemRect = Common::Rect();
+		if (_gameID == GID_AD2044) {
+			const MapScreenDirectionDef *screenDef = _mapLoader->getScreenDirection(_screenNumber, _direction);
+			if (screenDef) {
+				for (const InteractionDef &interaction : screenDef->interactions) {
+					if (interaction.objectType == 2) {
+						_placedItemRect = interaction.rect;
+						break;
+					}
+				}
+			}
+
+			_placedItemRect = _placedItemRect.findIntersectingRect(Common::Rect(640, 480));
+
+			Common::Rect renderRect = _placedItemRect;
+			renderRect.translate(_gameSection.rect.left, _gameSection.rect.top);
+
+			_placedItemBackBufferSection.init(renderRect, _placedItemBackBufferSection.pixFmt);
+
+			if (!_placedItemRect.isEmpty())
+				_placedItemBackBufferSection.surf->blitFrom(*_gameSection.surf, _placedItemRect, Common::Point(0, 0));
+
+			updatePlacedItemCache();
+
+			drawPlacedItemGraphic();
+		}
 	}
 }
 
@@ -5036,10 +5147,12 @@ void Runtime::inventoryAddItem(uint item) {
 	if (firstOpenSlot == kNumInventorySlots)
 		error("Tried to add an inventory item but ran out of slots");
 
-	Common::String itemFileName = getFileNameForItemGraphic(item);
+	Common::String itemFileName;
+	Common::String alphaFileName;
+	getFileNamesForItemGraphic(item, itemFileName, alphaFileName);
 
 	_inventory[firstOpenSlot].itemID = item;
-	_inventory[firstOpenSlot].graphic = loadGraphic(itemFileName, false);
+	_inventory[firstOpenSlot].graphic = loadGraphic(itemFileName, alphaFileName, false);
 
 	drawInventory(firstOpenSlot);
 }
@@ -5324,23 +5437,120 @@ void Runtime::resetInventoryHighlights() {
 	}
 }
 
-Common::String Runtime::getFileNameForItemGraphic(uint itemID) const {
-	if (_gameID == GID_REAH)
-		return Common::String::format("Thing%u", itemID);
-	else if (_gameID == GID_SCHIZM)
-		return Common::String::format("Item%u", itemID);
-	else {
-		error("Unknown game, can't format inventory item");
-		return "";
+void Runtime::loadInventoryFromPage() {
+	for (uint slot = 0; slot < kNumInventorySlots; slot++)
+		_inventory[slot] = _inventoryPages[_inventoryActivePage][slot];
+}
+
+void Runtime::copyInventoryToPage() {
+	for (uint slot = 0; slot < kNumInventorySlots; slot++)
+		_inventoryPages[_inventoryActivePage][slot] = _inventory[slot];
+}
+
+void Runtime::cheatPutItem() {
+	uint32 location = getLocationForScreen(_roomNumber, _screenNumber);
+
+	uint8 &pid = _placedItems[location];
+	pid++;
+
+	if (pid == 30 || pid == 45 || pid == 49 || pid == 59)
+		pid++;
+	else if (pid == 62)
+		pid += 2;
+	else if (pid == 74)
+		pid = 1;
+
+	updatePlacedItemCache();
+
+	clearPlacedItemGraphic();
+	drawPlacedItemGraphic();
+}
+
+uint32 Runtime::getLocationForScreen(uint roomNumber, uint screenNumber) {
+	return roomNumber * 10000u + screenNumber;
+}
+
+void Runtime::updatePlacedItemCache() {
+	uint32 placedItemLocationID = getLocationForScreen(_roomNumber, _screenNumber);
+	Common::HashMap<uint32, uint8>::const_iterator placedItemIt = _placedItems.find(placedItemLocationID);
+	if (placedItemIt != _placedItems.end()) {
+		uint8 itemID = placedItemIt->_value;
+
+		if (_inventoryPlacedItemCache.itemID != itemID) {
+			Common::String itemFileName;
+			Common::String alphaFileName;
+
+			_inventoryPlacedItemCache.itemID = itemID;
+			getFileNamesForItemGraphic(itemID, itemFileName, alphaFileName);
+			_inventoryPlacedItemCache.graphic = loadGraphic(itemFileName, alphaFileName, false);
+		}
+	} else {
+		_inventoryPlacedItemCache = InventoryItem();
 	}
 }
 
-Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &graphicName, bool required) {
-	Common::Path filePath("Gfx/");
-	filePath.appendInPlace(graphicName);
-	filePath.appendInPlace(".bmp");
+void Runtime::drawPlacedItemGraphic() {
+	const Graphics::Surface *surf = _inventoryPlacedItemCache.graphic.get();
+	if (surf) {
+		Common::Point drawPos((_placedItemRect.left + _placedItemRect.right - surf->w) / 2, (_placedItemRect.top + _placedItemRect.bottom - surf->h) / 2);
 
-	return loadGraphicFromPath(filePath, required);
+		_gameSection.surf->blitFrom(*surf, drawPos);
+		drawSectionToScreen(_gameSection, _placedItemRect);
+	}
+}
+
+void Runtime::clearPlacedItemGraphic() {
+	if (!_placedItemRect.isEmpty()) {
+		_gameSection.surf->blitFrom(*_placedItemBackBufferSection.surf, Common::Point(_placedItemRect.left, _placedItemRect.top));
+		drawSectionToScreen(_gameSection, _placedItemRect);
+	}
+}
+
+void Runtime::getFileNamesForItemGraphic(uint itemID, Common::String &outFileName, Common::String &outAlphaFileName) const {
+	if (_gameID == GID_REAH)
+		outFileName = Common::String::format("Thing%u", itemID);
+	else if (_gameID == GID_SCHIZM)
+		outFileName = Common::String::format("Item%u", itemID);
+	else if (_gameID == GID_AD2044) {
+		outFileName = Common::String::format(_lowQualityGraphicsMode ? "RZB%u" : "RZE%u", itemID);
+		outAlphaFileName = Common::String::format("MAS%u", itemID);
+	} else
+		error("Unknown game, can't format inventory item");
+}
+
+Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required) {
+	Common::Path filePath((_gameID == GID_AD2044) ? "rze/" : "Gfx/");
+
+	filePath.appendInPlace(graphicName);
+	filePath.appendInPlace((_gameID == GID_AD2044) ? ".BMP" : ".bmp");
+
+	Common::SharedPtr<Graphics::Surface> surf = loadGraphicFromPath(filePath, required);
+
+	if (surf && !alphaName.empty()) {
+		Common::SharedPtr<Graphics::Surface> alphaSurf = loadGraphic(alphaName, "", required);
+		if (alphaSurf) {
+			if (surf->w != alphaSurf->w || surf->h != alphaSurf->h)
+				error("Mismatched graphic sizes");
+
+			int h = surf->h;
+			int w = surf->w;
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
+					uint32 alphaSurfPixel = alphaSurf->getPixel(x, y);
+
+					uint8 r = 0;
+					uint8 g = 0;
+					uint8 b = 0;
+					uint8 a = 0;
+					alphaSurf->format.colorToARGB(alphaSurfPixel, a, r, g, b);
+					if (r < 128)
+						surf->setPixel(x, y, 0);
+				}
+			}
+		}
+	}
+
+	return surf;
 }
 
 Common::SharedPtr<Graphics::Surface> Runtime::loadGraphicFromPath(const Common::Path &filePath, bool required) {
@@ -5362,7 +5572,8 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphicFromPath(const Common::
 
 	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface(), Graphics::SurfaceDeleter());
 	surf->copyFrom(*bmpDecoder.getSurface());
-	surf = Common::SharedPtr<Graphics::Surface>(surf->convertTo(Graphics::createPixelFormat<8888>()), Graphics::SurfaceDeleter());
+	surf = Common::SharedPtr<Graphics::Surface>(surf->convertTo(Graphics::createPixelFormat<8888>(), bmpDecoder.getPalette(), bmpDecoder.getPaletteColorCount()), Graphics::SurfaceDeleter());
+
 	return surf;
 }
 
@@ -6078,19 +6289,23 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->states[0].reset(new SaveGameSwappableState());
 	if (_gameID == GID_REAH)
 		snapshot->numStates = 1;
-	else if (_gameID == GID_SCHIZM) {
+	else if (_gameID == GID_SCHIZM || _gameID == GID_AD2044) {
 		snapshot->numStates = 2;
 		snapshot->states[1] = _altState;
 	}
 
 	SaveGameSwappableState *mainState = snapshot->states[0].get();
 
-	for (const InventoryItem &inventoryItem : _inventory) {
-		SaveGameSwappableState::InventoryItem saveItem;
-		saveItem.itemID = inventoryItem.itemID;
-		saveItem.highlighted = inventoryItem.highlighted;
+	if (_gameID == GID_AD2044) {
+		copyInventoryToPage();
+	} else {
+		for (const InventoryItem &inventoryItem : _inventory) {
+			SaveGameSwappableState::InventoryItem saveItem;
+			saveItem.itemID = inventoryItem.itemID;
+			saveItem.highlighted = inventoryItem.highlighted;
 
-		mainState->inventory.push_back(saveItem);
+			mainState->inventory.push_back(saveItem);
+		}
 	}
 
 	mainState->roomNumber = _roomNumber;
@@ -6098,6 +6313,8 @@ void Runtime::recordSaveGameSnapshot() {
 	mainState->direction = _direction;
 	mainState->havePendingPostSwapScreenReset = false;
 	snapshot->hero = _hero;
+	snapshot->inventoryPage = _inventoryActivePage;
+	snapshot->inventoryActiveItem = _inventoryActiveItem.itemID;
 
 	snapshot->pendingStaticAnimParams = _pendingStaticAnimParams;
 
@@ -6134,6 +6351,28 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->listenerX = _listenerX;
 	snapshot->listenerY = _listenerY;
 	snapshot->listenerAngle = _listenerAngle;
+
+	for (const Common::HashMap<uint32, uint8>::Node &placedItem : _placedItems) {
+		SaveGameSnapshot::PlacedInventoryItem saveItem;
+		saveItem.locationID = placedItem._key;
+		saveItem.itemID = placedItem._value;
+
+		snapshot->placedItems.push_back(saveItem);
+	}
+
+	for (uint page = 0; page < kNumInventoryPages; page++) {
+		for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+			uint itemID = _inventoryPages[page][slot].itemID;
+			if (itemID != 0) {
+				SaveGameSnapshot::PagedInventoryItem pagedItem;
+				pagedItem.page = page;
+				pagedItem.slot = slot;
+				pagedItem.itemID = itemID;
+
+				snapshot->pagedItems.push_back(pagedItem);
+			}
+		}
+	}
 }
 
 void Runtime::recordSounds(SaveGameSwappableState &state) {
@@ -6184,17 +6423,72 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	SaveGameSwappableState *mainState = snapshot->states[0].get();
 
-	for (uint i = 0; i < kNumInventorySlots && i < mainState->inventory.size(); i++) {
-		const SaveGameSwappableState::InventoryItem &saveItem = mainState->inventory[i];
+	if (_gameID == GID_AD2044) {
+		for (uint page = 0; page < kNumInventoryPages; page++)
+			for (uint slot = 0; slot < kNumInventorySlots; slot++)
+				_inventoryPages[page][slot].itemID = 0;
 
-		_inventory[i].itemID = saveItem.itemID;
-		_inventory[i].highlighted = saveItem.highlighted;
+		for (const SaveGameSnapshot::PagedInventoryItem &pagedItem : snapshot->pagedItems) {
+			if (pagedItem.page >= kNumInventoryPages || pagedItem.slot >= kNumInventorySlots)
+				error("Invalid item slot in save game snapshot");
 
-		if (saveItem.itemID) {
-			Common::String itemFileName = getFileNameForItemGraphic(saveItem.itemID);
-			_inventory[i].graphic = loadGraphic(itemFileName, false);
+			InventoryItem &invItem = _inventoryPages[pagedItem.page][pagedItem.slot];
+			invItem.itemID = pagedItem.itemID;			
+
+			if (invItem.itemID) {
+				Common::String itemFileName;
+				Common::String alphaFileName;
+				getFileNamesForItemGraphic(invItem.itemID, itemFileName, alphaFileName);
+				invItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
+			}
+		}
+
+		for (uint page = 0; page < kNumInventoryPages; page++) {
+			for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+				InventoryItem &invItem = _inventoryPages[page][slot];
+				if (!invItem.itemID)
+					invItem.graphic.reset();
+			}
+		}
+
+		_inventoryActiveItem.itemID = snapshot->inventoryActiveItem;
+		if (_inventoryActiveItem.itemID) {
+			Common::String itemFileName;
+			Common::String alphaFileName;
+			getFileNamesForItemGraphic(_inventoryActiveItem.itemID, itemFileName, alphaFileName);
+			_inventoryActiveItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
 		} else {
-			_inventory[i].graphic.reset();
+			_inventoryActiveItem.graphic.reset();
+		}
+
+		_inventoryPlacedItemCache = InventoryItem();
+
+		if (snapshot->inventoryPage >= kNumInventoryPages)
+			error("Invalid inventory page");
+
+		_inventoryActivePage = snapshot->inventoryPage;
+
+		loadInventoryFromPage();
+
+		_placedItems.clear();
+		for (const SaveGameSnapshot::PlacedInventoryItem &placedItem : snapshot->placedItems) {
+			_placedItems[placedItem.locationID] = placedItem.itemID;
+		}
+	} else {
+		for (uint i = 0; i < kNumInventorySlots && i < mainState->inventory.size(); i++) {
+			const SaveGameSwappableState::InventoryItem &saveItem = mainState->inventory[i];
+
+			_inventory[i].itemID = saveItem.itemID;
+			_inventory[i].highlighted = saveItem.highlighted;
+
+			if (saveItem.itemID) {
+				Common::String itemFileName;
+				Common::String alphaFileName;
+				getFileNamesForItemGraphic(saveItem.itemID, itemFileName, alphaFileName);
+				_inventory[i].graphic = loadGraphic(itemFileName, alphaFileName, false);
+			} else {
+				_inventory[i].graphic.reset();
+			}
 		}
 	}
 
@@ -6348,8 +6642,24 @@ Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 	// AD2044 new game normally loads a pre-packaged save.  Unlike Reah and Schizm,
 	// it doesn't appear to have a startup script, so we need to set up everything
 	// that it needs here.
-	if (_gameID == GID_AD2044)
+	if (_gameID == GID_AD2044) {
 		mainState->animDisplayingFrame = 345;
+
+		SaveGameSnapshot::PagedInventoryItem item;
+		item.page = 0;
+		item.slot = 1;
+		item.itemID = 54;	// Electronic goaler (sic)
+
+		for (const InitialItemPlacement &itemPlacement : g_ad2044InitialItemPlacements) {
+			SaveGameSnapshot::PlacedInventoryItem placedItem;
+			placedItem.locationID = getLocationForScreen(itemPlacement.roomNumber, itemPlacement.screenNumber);
+			placedItem.itemID = itemPlacement.itemID;
+
+			snapshot->placedItems.push_back(placedItem);
+		}
+
+		snapshot->pagedItems.push_back(item);
+	}
 
 	return snapshot;
 }

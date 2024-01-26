@@ -22,6 +22,8 @@
 #ifndef VCRUISE_RUNTIME_H
 #define VCRUISE_RUNTIME_H
 
+#include "graphics/pixelformat.h"
+
 #include "common/hashmap.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
@@ -473,6 +475,27 @@ struct SaveGameSwappableState {
 };
 
 struct SaveGameSnapshot {
+	struct PagedInventoryItem {
+		PagedInventoryItem();
+
+		uint8 page;
+		uint8 slot;
+		uint8 itemID;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream, uint saveGameVersion);
+	};
+
+	struct PlacedInventoryItem {
+		PlacedInventoryItem();
+
+		uint32 locationID;
+		uint8 itemID;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream, uint saveGameVersion);
+	};
+
 	SaveGameSnapshot();
 
 	void write(Common::WriteStream *stream) const;
@@ -490,6 +513,8 @@ struct SaveGameSnapshot {
 	uint swapOutRoom;
 	uint swapOutScreen;
 	uint swapOutDirection;
+	uint8 inventoryPage;
+	uint8 inventoryActiveItem;
 
 	uint numStates;
 	Common::SharedPtr<SaveGameSwappableState> states[kMaxStates];
@@ -508,6 +533,8 @@ struct SaveGameSnapshot {
 
 	Common::HashMap<uint32, int32> variables;
 	Common::HashMap<uint, uint32> timers;
+	Common::Array<PagedInventoryItem> pagedItems;
+	Common::Array<PlacedInventoryItem> placedItems;
 };
 
 enum OSEventType {
@@ -539,6 +566,8 @@ enum KeymappedEvent {
 	kKeymappedEventSoundVolumeUp,
 
 	kKeymappedEventSkipAnimation,
+
+	kKeymappedEventPutItem,
 };
 
 struct OSEvent {
@@ -674,6 +703,7 @@ private:
 	struct RenderSection {
 		Common::SharedPtr<Graphics::ManagedSurface> surf;
 		Common::Rect rect;
+		Graphics::PixelFormat pixFmt;
 
 		void init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt);
 	};
@@ -775,6 +805,7 @@ private:
 	static const uint kPanoramaHorizFlags = (kPanoramaLeftFlag | kPanoramaRightFlag);
 
 	static const uint kNumInventorySlots = 6;
+	static const uint kNumInventoryPages = 8;
 
 	typedef int32 ScriptArg_t;
 	typedef int32 StackInt_t;
@@ -948,9 +979,16 @@ private:
 	void drawCompass();
 	bool isTrayVisible() const;
 	void resetInventoryHighlights();
+	void loadInventoryFromPage();
+	void copyInventoryToPage();
+	void cheatPutItem();
+	static uint32 getLocationForScreen(uint roomNumber, uint screenNumber);
+	void updatePlacedItemCache();
+	void drawPlacedItemGraphic();
+	void clearPlacedItemGraphic();
 
-	Common::String getFileNameForItemGraphic(uint itemID) const;
-	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, bool required);
+	void getFileNamesForItemGraphic(uint itemID, Common::String &outGraphicFileName, Common::String &outAlphaFileName) const;
+	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required);
 	Common::SharedPtr<Graphics::Surface> loadGraphicFromPath(const Common::Path &path, bool required);
 
 	bool loadSubtitles(Common::CodePage codePage, bool guessCodePage);
@@ -1186,6 +1224,12 @@ private:
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursorsShort;      // Cursors indexed as CURSOR_#
 
 	InventoryItem _inventory[kNumInventorySlots];
+	InventoryItem _inventoryPages[kNumInventoryPages][kNumInventorySlots];
+	Common::HashMap<uint32, uint8> _placedItems;
+	uint8 _inventoryActivePage;
+	InventoryItem _inventoryActiveItem;
+	InventoryItem _inventoryPlacedItemCache;
+	Common::Rect _placedItemRect;
 
 	Common::SharedPtr<Graphics::Surface> _trayCompassGraphic;
 	Common::SharedPtr<Graphics::Surface> _trayBackgroundGraphic;
@@ -1360,6 +1404,7 @@ private:
 	RenderSection _traySection;
 	RenderSection _fullscreenMenuSection;
 	RenderSection _subtitleSection;
+	RenderSection _placedItemBackBufferSection;
 
 	Common::Point _mousePos;
 	Common::Point _lmbDownPos;

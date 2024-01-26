@@ -197,6 +197,10 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventSkipAnimation);
 	keymap->addAction(act);
 
+	act = new Common::Action("VCRUISE_PUT_ITEM", _("Cycle item in scene (debug cheat)"));
+	act->setCustomEngineActionEvent(VCruise::kKeymappedEventPutItem);
+	keymap->addAction(act);
+
 	return Common::Keymap::arrayOf(keymap);
 }
 
