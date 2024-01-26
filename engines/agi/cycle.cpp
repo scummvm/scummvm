@@ -488,10 +488,7 @@ int AgiEngine::runGame() {
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		case Common::kPlatformAmiga:
-			if (getFeatures() & GF_OLDAMIGAV20)
-				setVar(VM_VAR_COMPUTER, kAgiComputerAmigaOld);
-			else
-				setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
+			setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
 			break;
 		case Common::kPlatformApple2GS:

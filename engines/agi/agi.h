@@ -115,18 +115,13 @@ enum AgiGameType {
 	GType_V3 = 3
 };
 
-//
-// GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
-// uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
-//
 enum AgiGameFeatures {
 	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1),
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games
-	GF_OLDAMIGAV20 = (1 << 4),
 	GF_2GSOLDSOUND = (1 << 5),
-	GF_EXTCHAR = (1 << 6) // use WORDS.TOK.EXTENDED
+	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
 };
 
 enum BooterDisks {
@@ -284,31 +279,12 @@ enum AgiMonitorType {
 /**
  * Different computer types.
  * Used with AGI variable 20 i.e. vComputer.
- *
- * At least these Amiga AGI versions use value 5:
- * 2.082 (King's Quest I v1.0U 1986)
- * 2.090 (King's Quest III v1.01 1986-11-08)
- * x.yyy (Black Cauldron v2.00 1987-06-14)
- * x.yyy (Larry I v1.05 1987-06-26)
- * 2.107 (King's Quest II v2.0J. Date is probably 1987-01-29)
- * 2.202 (Space Quest II v2.0F)
- * 2.310 (Police Quest I v2.0B 1989-02-22)
- * 2.316 (Gold Rush! v2.05 1989-03-09)
- * 2.328 (Mixed-Up Mother Mother Goose v1.1)
- * 2.333 (King's Quest III v2.15 1989-11-15)
- *
- * At least these Amiga AGI versions use value 20:
- * 2.082 (Space Quest I v1.2 1986)
- * x.yyy (Manhunter NY 1.06 3/18/89)
- * 2.333 (Manhunter SF 3.06 8/17/89)
- *
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
 	kAgiComputerAtariST = 4,
-	kAgiComputerAmiga = 5, // Newer Amiga AGI interpreters' value (Commonly used)
-	kAgiComputerApple2GS = 7,
-	kAgiComputerAmigaOld = 20 // Older Amiga AGI interpreters' value (Seldom used)
+	kAgiComputerAmiga = 5,
+	kAgiComputerApple2GS = 7
 };
 
 enum AgiSoundType {

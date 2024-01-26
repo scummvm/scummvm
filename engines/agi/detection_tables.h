@@ -614,7 +614,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3_P("mh1", "2.0E 1988-10-05 (CE)", "mhdir", "2f1509f76f24e6e7d213f2dadebbf156", 0x3149, 0, GID_MH1, Common::kPlatformApple2GS),
 
 	// Manhunter NY (Amiga) 1.06 3/18/89 # 2.328
-	GAME3_PO("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, GF_OLDAMIGAV20, GID_MH1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME3_PO("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, 0, GID_MH1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// reported by Filippos (thebluegr) in bugreport #3048
 	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
@@ -651,7 +651,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
 	// Manhunter SF (Amiga) 3.06 8/17/89        # 2.333
-	GAME3_PSO("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3149, GF_OLDAMIGAV20, GID_MH2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME3_PSO("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3149, 0, GID_MH2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Manhunter SF (PC 5.25") 3.02 5.25\"" [AGI 3.002.149]
 	GAME3("mh2", "3.02 1989-07-26 5.25\"", "mh2dir", "bbb2c2f88d5740f7437fb7aa6f080b7b", 0x3149, GID_MH2),
@@ -758,7 +758,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (Amiga) 1.2            # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, 0, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Space Quest 1 (Mac) 1.5D
 	GAME_P("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
