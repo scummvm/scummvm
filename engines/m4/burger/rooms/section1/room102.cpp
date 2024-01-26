@@ -469,8 +469,7 @@ void Room102::daemon() {
 
 			case 36:
 				_harryShould = 36;
-				series_play("102ha03", 0xa00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 16, 16);
-				series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+				Series::series_play("102ha03", 0xa00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 16, 16);
 				break;
 
 			case 37:
@@ -478,7 +477,7 @@ void Room102::daemon() {
 				_G(flags)[GLB_TEMP_5] = 2;
 				digi_preload_stream_breaks(STREAMS2);
 				series_play("102ha09s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-				series_stream_with_breaks(STREAMS2, "102ha09", 6, 256, 3);
+				series_stream_with_breaks(STREAMS2, "102ha09", 6, 0x100, 3);
 				break;
 
 			case 38:
@@ -508,7 +507,7 @@ void Room102::daemon() {
 				freeWilburChair();
 
 				digi_preload_stream_breaks(STREAMS4);
-				series_play("102ha04s", 1024, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha04s", 0x400, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS4, "102ha04", 6, 0x300, 3);
 				break;
 
@@ -517,7 +516,7 @@ void Room102::daemon() {
 				digi_stop(2);
 				_wilburChairMode = 59;
 				_wilburChairShould = 58;
-				kernel_trigger_dispatch_now(4);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_CHAIR_ANIMATION);
 
 				_index3 = series_load("102wi05", -1);
 				_index4 = series_load("102ha05", -1);
@@ -526,7 +525,7 @@ void Room102::daemon() {
 
 				Series::series_play("102ha05", 0xa00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 
-				conv_load_and_prepare("conv06", 21, false);
+				conv_load_and_prepare("conv06", 21);
 				conv_export_pointer_curr(&_val4, 0);
 				conv_export_value_curr(_G(flags)[V001], 1);
 				conv_play_curr();
@@ -597,6 +596,7 @@ void Room102::daemon() {
 			case 44:
 				_harryMode = 45;
 				Series::series_play("102ha05", 0xa00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 16, 24);
+				conv_resume_curr();
 				break;
 
 			case 45:
@@ -605,12 +605,12 @@ void Room102::daemon() {
 
 			case 48:
 				_harryMode = 49;
-				Series::series_play("102ha05", 0xa00, 2, 3, 6, 0, 100, 0, 0, 0, 3);
+				Series::series_play("102ha05", 0xa00, 2, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 49:
 				_harryMode = 50;
-				Series::series_play("102ha05", 0xb02, 2, 3, 30, 0, 100, 0, 0, 8, 8);
+				Series::series_play("102ha05", 0xb02, 2, kCHANGE_HARRY_ANIMATION, 30, 0, 100, 0, 0, 8, 8);
 				break;
 
 			case 50:
@@ -619,7 +619,7 @@ void Room102::daemon() {
 				series_unload(_index3);
 				_wilburChairShould = 65;
 				_harryMode = 51;
-				series_play_with_breaks(PLAY1, "102ha11", 0xa00, 3, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY1, "102ha11", 0xa00, kCHANGE_HARRY_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 51:
@@ -641,7 +641,7 @@ void Room102::daemon() {
 				terminateMachineAndNull(_series1);
 				terminateMachineAndNull(_series1s);
 				_harryMode = 47;
-				series_play_with_breaks(PLAY2, "102ha06", 0xa00, 3, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY2, "102ha06", 0xa00, kCHANGE_HARRY_ANIMATION, 3, 6, 100, 0, 0);
 				hotspot_set_active("harry", true);
 				break;
 
