@@ -1115,9 +1115,10 @@ void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	int8 x, y;
 
 	switch (opCodeTable[182].parameterSize) {
-	// The 2 arguments version is used at least in Amiga Gold Rush!
-	// (v2.05 1989-03-09, Amiga AGI 2.316) in logics 130 and 150
-	// (Using arguments (0, 0), (0, 7), (0, 8), (9, 9) and (-9, 9)).
+	// The 2 parameter version is used in:
+	// Amiga/Atari ST Gold Rush!   - Logic 130, 150
+	// Amiga/Atari ST Manhunter 1  - Logic 0
+	// Amiga Manhunter 2           - Logic 0
 	case 2:
 		// Both arguments are signed 8-bit (i.e. in range -128 to +127).
 		x = (int8) parameter[0];
@@ -2272,7 +2273,7 @@ void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->_vm->_gfx->setPriorityTable(priorityBase);
 }
 
-void cmdMousePosn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+void cmdGetMousePosn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 destVarNr1 = parameter[0];
 	uint16 destVarNr2 = parameter[1];
 	int16 mouseX = vm->_mouse.pos.x;

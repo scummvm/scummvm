@@ -24,6 +24,13 @@
 
 namespace Agi {
 
+// FIXME: The parameter strings in the opcode table have mistakes.
+// Nothing depends on the values of the individual characters.
+// Some are out of sync with how the opcode function interprets
+// the parameter. Only the string lengths are used to indicate
+// the parameter count for parsing.
+// Consult the opcode functions for the real parameter types.
+
 const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
 	{ "",                   "",         &condUnknown },     // 00
 	{ "equaln",             "vn",       &condEqual },       // 01
@@ -345,13 +352,13 @@ AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "hold.key",           "",         &cmdHoldKey },          // AD
 	{ "set.pri.base",       "n",        &cmdSetPriBase },       // AE AGI2.936+ *AND* also inside AGI2.425
 	{ "discard.sound",      "n",        &cmdDiscardSound },     // AF was skip for PC
-	{ "hide.mouse",         "",         &cmdHideMouse },        // B0 1 arg for AGI version 3.002.086 AGI3+ only starts here
+	{ "hide.mouse",         "",         &cmdHideMouse },        // B0 1 arg for AGI3 Apple IIGS and AGI 3.002.086. AGI3+ only starts here
 	{ "allow.menu",         "n",        &cmdAllowMenu },        // B1
-	{ "show.mouse",         "",         &cmdShowMouse },        // B2
+	{ "show.mouse",         "",         &cmdShowMouse },        // B2 1 arg for AGI3 Apple IIGS
 	{ "fence.mouse",        "nnnn",     &cmdFenceMouse },       // B3
-	{ "mouse.posn",         "vv",       &cmdMousePosn },        // B4
-	{ "release.key",        "",         &cmdReleaseKey },       // B5 2 args for at least the Amiga GR (v2.05 1989-03-09) using AGI 2.316
-	{ "adj.ego.move.to.xy", "",         &cmdAdjEgoMoveToXY }    // B6
+	{ "get.mse.posn",       "vv",       &cmdGetMousePosn },     // B4
+	{ "release.key",        "",         &cmdReleaseKey },       // B5
+	{ "adj.ego.move.to.x.y","",         &cmdAdjEgoMoveToXY }    // B6 2 args for Amiga/Atari ST GR, MH1, MH2
 };
 
 //
@@ -402,9 +409,10 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		if (version == 0x2089)
 			_opCodes[0x86].parameters = "";
 
-		// 'print.at' and 'print.at.v' take 3 args before 2.089.
-		// This is documented in the specs as only < 2.440, but
-		// SQ1 1.0X (2.089) and KQ3 (2.272) take 4 args. Bug #10872
+		// 'print.at' and 'print.at.v' take three parameters before 2.089.
+		// This is documented in the specs as only < 2.440, but SQ1 1.0X (2.089)
+		// and KQ3 (2.272) take four. Bug #10872. No game scripts have been
+		// discovered that call either opcode with only three parameters.
 		if (version < 0x2089) {
 			_opCodes[0x97].parameters = "vvv";
 			_opCodes[0x98].parameters = "vvv";
@@ -413,32 +421,36 @@ void AgiEngine::setupOpCodes(uint16 version) {
 
 	if (version >= 0x3000) {
 		// AGI3 adjustments
-		// 'unknown176' takes 1 arg for 3.002.086, not 0 args.
-		// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
-		// Is this actually used anywhere? -- dsymonds
+
+		// hide.mouse and hide.key take 1 parameter for 3.002.086.
+		// KQ4 is the only known game with this interpreter and
+		// its scripts do not call either opcode. no game scripts
+		// have been discovered that call hold.key with 1 parameter.
 		if (version == 0x3086) {
-			_opCodes[0xb0].parameters = "n";
-			_opCodes[0xad].parameters = "n";
+			_opCodes[0xb0].parameters = "n"; // hide.mouse
+			_opCodes[0xad].parameters = "n"; // hold.key
+		}
+
+		// hide.mouse and show.mouse take 1 parameter on Apple IIGS.
+		// Used by Black Cauldron, Gold Rush, King's Quest IV, and Manhunter 1.
+		// Fixes bugs #6161 and #5885.
+		if (getPlatform() == Common::kPlatformApple2GS) {
+			_opCodes[0xb0].parameters = "n";  // hide.mouse
+			_opCodes[0xb2].parameters = "n";  // show.mouse
+		}
+
+		// adj.ego.move.to.x.y takes two parameters for Amiga/Atari ST
+		// versions of Gold Rush, Manhunter 1, and Manhunter 2.
+		// No scripts have been discovered that call adj.ego.move.to.x.y
+		// with zero parameters.
+		if ((getGameID() == GID_GOLDRUSH ||
+			 getGameID() == GID_MH1 ||
+			 getGameID() == GID_MH2) &&
+			(getPlatform() == Common::kPlatformAmiga ||
+			 getPlatform() == Common::kPlatformAtariST)) {
+			_opCodes[0xb6].parameters = "vv";
 		}
 	}
-
-	// TODO: This could be either turned into a game feature, or a version
-	// specific check, instead of a game version check
-	// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
-	// show.mouse and hide.mouse. Fixes bugs #6161 and #5885.
-	if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
-	        getPlatform() == Common::kPlatformApple2GS) {
-		_opCodes[176].parameters = "n";  // hide.mouse
-		_opCodes[178].parameters = "n";  // show.mouse
-	}
-
-	// FIXME: Apply this fix to other games also that use 2 arguments for command 182.
-	// 'adj.ego.move.to.x.y' (i.e. command 182) takes 2 arguments for at least the
-	// Amiga Gold Rush! (v2.05 1989-03-09) using Amiga AGI 2.316. Amiga's Gold Rush
-	// has been set to use AGI 3.149 in ScummVM so that's why this initialization is
-	// here and not in setupV2Game.
-	if (getGameID() == GID_GOLDRUSH && getPlatform() == Common::kPlatformAmiga)
-		_opCodes[182].parameters = "vv";
 
 	// add invalid entries for every opcode, that is not defined at all
 	for (int opCodeNr = opCodesTableSize; opCodeNr < ARRAYSIZE(_opCodes); opCodeNr++) {
