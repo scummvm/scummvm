@@ -35,6 +35,7 @@ namespace Macs2 {
 	private:
 		OPL::OPL *_opl;
 
+		// TODO: Maybe we need to add the caller, fn0017_24FD proc
 		void Func2686();
 		void Func2792(byte registerIndex, byte value);
 

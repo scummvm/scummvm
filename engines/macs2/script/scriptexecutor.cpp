@@ -933,6 +933,8 @@ uint16 Script::ScriptExecutor::ReadWord() {
 			*/
 		} else {
 			ScriptNoEntry
+			// TODO: Breaking for now to be able to see the log until this point
+			break;
 		}
 		}
 		// 0E3BDh
