@@ -397,9 +397,6 @@ void Score::update() {
 		return;
 	}
 
-	for (uint ch = 0; ch < _channels.size(); ch++)
-		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
-
 	uint32 nextFrameNumberToLoad = _curFrameNumber;
 
 	if (!_vm->_playbackPaused) {
