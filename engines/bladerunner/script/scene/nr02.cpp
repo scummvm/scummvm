@@ -132,11 +132,11 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 						// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
 						// so the check for specific chapters is redundantly restrictive here.
 						// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
-						Actor_Voice_Over(kActorVoiceOver, 1450);
+						Actor_Voice_Over(1450, kActorVoiceOver);
 					} else {
 						// TLK0A
 						// Re-use quote from Zuben's death (picking up his photo from the Rep Squad)
-						Actor_Voice_Over(kActorVoiceOver, 350);
+						Actor_Voice_Over(350, kActorVoiceOver);
 					}
 					// NOTE this is only in TLK02
 					// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
@@ -144,8 +144,8 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 					// so the check for specific chapters is redundantly restrictive here.
 					// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
 					if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
-						Actor_Voice_Over(kActorVoiceOver, 1460);
-						Actor_Voice_Over(kActorVoiceOver, 1470);
+						Actor_Voice_Over(1460, kActorVoiceOver);
+						Actor_Voice_Over(1470, kActorVoiceOver);
 					}
 				}
 				Item_Pickup_Spin_Effect(kModelAnimationGordosLighterReplicant, 214, 380);
