@@ -1948,6 +1948,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			g_lingo->lingoError("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
 		g_lingo->push(d);
+		g_debugger->propReadHook(propName);
 		return;
 	}
 	if (obj.type == PARRAY) {
@@ -1956,6 +1957,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			d = obj.u.parr->arr[index - 1].v;
 		}
 		g_lingo->push(d);
+		g_debugger->propReadHook(propName);
 		return;
 	}
 	if (obj.type == RECT) {
@@ -1971,6 +1973,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			g_lingo->lingoError("Lingo::getObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
 		g_lingo->push(d);
+		g_debugger->propReadHook(propName);
 		return;
 	}
 	if (obj.type == CASTREF) {
@@ -2067,6 +2070,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	if (obj.type == OBJECT) {
 		if (obj.u.obj->hasProp(propName)) {
 			obj.u.obj->setProp(propName, val);
+			g_debugger->propWriteHook(propName);
 		} else {
 			g_lingo->lingoError("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
@@ -2078,6 +2082,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->arr.push_back(cell);
 		}
+		g_debugger->propWriteHook(propName);
 	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {

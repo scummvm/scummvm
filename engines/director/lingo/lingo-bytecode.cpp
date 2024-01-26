@@ -26,6 +26,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/debugger.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
@@ -595,6 +596,7 @@ void LC::cb_theassign() {
 	if (g_lingo->_state->me.type == OBJECT) {
 		// Don't bother checking if the property is defined, leave that to the object.
 		// For D3-style anonymous objects/factories, you are allowed to define whatever properties you like.
+		g_debugger->propWriteHook(name);
 		g_lingo->_state->me.u.obj->setProp(name, value);
 	} else {
 		warning("cb_theassign: no me object");
@@ -622,6 +624,7 @@ void LC::cb_thepush() {
 	if (g_lingo->_state->me.type == OBJECT) {
 		if (g_lingo->_state->me.u.obj->hasProp(name)) {
 			g_lingo->push(g_lingo->_state->me.u.obj->getProp(name));
+			g_debugger->propReadHook(name);
 			return;
 		}
 

@@ -94,6 +94,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("bf", WRAP_METHOD(Debugger, cmdBpFrame));
 	registerCmd("bpentity", WRAP_METHOD(Debugger, cmdBpEntity));
 	registerCmd("be", WRAP_METHOD(Debugger, cmdBpEntity));
+	registerCmd("bpprop", WRAP_METHOD(Debugger, cmdBpProp));
+	registerCmd("bp", WRAP_METHOD(Debugger, cmdBpProp));
 	registerCmd("bpvar", WRAP_METHOD(Debugger, cmdBpVar));
 	registerCmd("bv", WRAP_METHOD(Debugger, cmdBpVar));
 	registerCmd("bpevent", WRAP_METHOD(Debugger, cmdBpEvent));
@@ -122,6 +124,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	_bpCheckMoviePath = false;
 	_bpNextMovieMatch = false;
 	_bpMatchScriptId = 0;
+	_bpCheckPropRead = false;
+	_bpCheckPropWrite = false;
 	_bpCheckVarRead = false;
 	_bpCheckVarWrite = false;
 	_bpCheckEntityRead = false;
@@ -185,6 +189,8 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" bpentity / be [entityName] [r/w/rw] - Create a breakpoint on a Lingo \"the\" entity being accessed in a specific way\n");
 	debugPrintf(" bpentity / be [entityName:fieldName] - Create a breakpoint on a Lingo \"the\" field being read or modified\n");
 	debugPrintf(" bpentity / be [entityName:fieldName] [r/w/rw] - Create a breakpoint on a Lingo \"the\" field being accessed in a specific way\n");
+	debugPrintf(" bpprop / bp [varName] - Create a breakpoint on a Lingo object property being read or modified\n");
+	debugPrintf(" bpprop / bp [varName] [r/w/rw] - Create a breakpoint on a Lingo object property being accessed in a specific way\n");
 	debugPrintf(" bpvar / bv [varName] - Create a breakpoint on a Lingo variable being read or modified\n");
 	debugPrintf(" bpvar / bv [varName] [r/w/rw] - Create a breakpoint on a Lingo variable being accessed in a specific way\n");
 	debugPrintf(" bpevent / bn [eventName] - Create a breakpoint on a Lingo event\n");
@@ -214,6 +220,11 @@ Common::String Breakpoint::format() {
 		break;
 	case kBreakpointMovieFrame:
 		result += Common::String::format("Movie %s:%d", moviePath.c_str(), frameOffset);
+		break;
+	case kBreakpointProperty:
+		result += "Property "+ varName + ":";
+		result += varRead ? "r" : "";
+		result += varWrite ? "w" : "";
 		break;
 	case kBreakpointVariable:
 		result += "Variable "+ varName + ":";
@@ -763,6 +774,34 @@ bool Debugger::cmdBpEntity(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdBpProp(int argc, const char **argv) {
+	if (argc == 2 || argc == 3) {
+		Breakpoint bp;
+		bp.type = kBreakpointProperty;
+		bp.varName = argv[1];
+		if (argc == 3) {
+			Common::String props = argv[2];
+			bp.varRead = props.contains("r") || props.contains("R");
+			bp.varWrite = props.contains("w") || props.contains("W");
+			if (!(bp.varRead || bp.varWrite)) {
+				debugPrintf("Must specify r, w, or rw.");
+				return true;
+			}
+		} else {
+			bp.varRead = true;
+			bp.varWrite = true;
+		}
+		bp.id = _bpNextId;
+		_bpNextId++;
+		_breakpoints.push_back(bp);
+		bpUpdateState();
+		debugPrintf("Added %s\n", bp.format().c_str());
+	} else {
+		debugPrintf("Must specify a property.\n");
+	}
+	return true;
+}
+
 bool Debugger::cmdBpVar(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Breakpoint bp;
@@ -992,6 +1031,8 @@ void Debugger::bpUpdateState() {
 	_bpMatchScriptId = 0;
 	_bpMatchMoviePath.clear();
 	_bpMatchFrameOffsets.clear();
+	_bpCheckPropRead = false;
+	_bpCheckPropWrite = false;
 	_bpCheckVarRead = false;
 	_bpCheckVarWrite = false;
 	_bpCheckEntityRead = false;
@@ -1036,6 +1077,9 @@ void Debugger::bpUpdateState() {
 				_bpMatchMoviePath = it.moviePath;
 				_bpMatchFrameOffsets.setVal(it.frameOffset, nullptr);
 			}
+		} else if (it.type == kBreakpointProperty) {
+			_bpCheckPropRead |= it.varRead;
+			_bpCheckPropWrite |= it.varWrite;
 		} else if (it.type == kBreakpointVariable) {
 			_bpCheckVarRead |= it.varRead;
 			_bpCheckVarWrite |= it.varWrite;
@@ -1221,6 +1265,40 @@ void Debugger::builtinHook(const Symbol &funcSym) {
 		}
 	}
 	bpTest(builtinMatch);
+}
+
+void Debugger::propReadHook(const Common::String &name) {
+	if (name.empty())
+		return;
+	if (_bpCheckPropRead) {
+		for (auto &it : _breakpoints) {
+			if (it.type == kBreakpointProperty && it.varRead && it.varName.equalsIgnoreCase(name)) {
+				debugPrintf("Hit a breakpoint:\n");
+				debugPrintf("%s\n", it.format().c_str());
+				cmdScriptFrame(0, nullptr);
+				attach();
+				g_system->updateScreen();
+				break;
+			}
+		}
+	}
+}
+
+void Debugger::propWriteHook(const Common::String &name) {
+	if (name.empty())
+		return;
+	if (_bpCheckPropWrite) {
+		for (auto &it : _breakpoints) {
+			if (it.type == kBreakpointProperty && it.varWrite && it.varName.equalsIgnoreCase(name)) {
+				debugPrintf("Hit a breakpoint:\n");
+				debugPrintf("%s\n", it.format().c_str());
+				cmdScriptFrame(0, nullptr);
+				attach();
+				g_system->updateScreen();
+				break;
+			}
+		}
+	}
 }
 
 void Debugger::varReadHook(const Common::String &name) {
