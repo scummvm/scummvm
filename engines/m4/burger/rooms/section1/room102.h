@@ -40,16 +40,15 @@ private:
 	uint32 _val10 = 99999;
 	int _harryMode = 0;
 	int _harryShould = 0;
-	int _val13 = 0;
-	int _val14 = 0;
+	int _wilburChairShould = 0;
+	int _wilburChairMode = 0;
 	int _val16 = 0;
 	int _trigger = -1;
 	KernelTriggerType _triggerMode = KT_DAEMON;
 	machine *_series1 = nullptr;
 	machine *_series1s = nullptr;
 	machine *_series3 = nullptr;
-	machine *_series4 = nullptr;
-	machine *_series5 = nullptr;
+	Series _wilburChair;
 	machine *_series6 = nullptr;
 	machine *_series7 = nullptr;
 	machine *_laz1 = nullptr;
@@ -66,7 +65,7 @@ private:
 	void setupLaz();
 	const char *getDigi1(int num) const;
 	const char *getDigi2(int num) const;
-	void sub1();
+	void freeWilburChair();
 	void queuePlay(const char *filename, int trigger = 29, KernelTriggerType triggerMode = KT_DAEMON);
 	void freshen();
 	void conv04();
