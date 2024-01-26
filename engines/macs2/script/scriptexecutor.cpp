@@ -664,14 +664,14 @@ l0037_A32C:
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
-	debug("Script read (byte): %.2x at offset %.4x\n", result, pos);
+	debug("Script read (byte): %.2x at offset %.4x", result, pos);
 	return result;
 }
 
 uint16 Script::ScriptExecutor::ReadWord() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
-	debug("Script read (word): %.4x at offset %.4x\n", result, pos);
+	debug("Script read (word): %.4x at offset %.4x", result, pos);
 	return result;
 }
 
@@ -797,6 +797,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 	void Script::ScriptExecutor::ExecuteScript() {
+		debug("----- Scripting function entered");
 	// Not yet implemented - seems to signal that the script is empty?
 	/*
 	l0037_DB6A:
@@ -2140,6 +2141,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 */
+debug("----- Scripting function left");
 	}
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
