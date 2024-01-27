@@ -64,14 +64,14 @@ static const KeybindingRecord COMMON_KEYS[] = {
 
 static const KeybindingRecord U8_KEYS[] = {
 	{ ACTION_BEDROLL, "BEDROLL", "Bedroll", "MainActor::useBedroll", nullptr, "b", nullptr },
-	{ ACTION_BACKPACK, "BACKPACK", "Use Backpack", "MainActor::useBackpack", nullptr, "i", nullptr },
-	{ ACTION_KEYRING, "KEYRING", "Keyring", "MainActor::useKeyring", nullptr, "k", nullptr },
-	{ ACTION_MINIMAP, "MINIMAP", "Toggle Minimap", "MiniMapGump::toggle", nullptr, "m", "JOY_LEFT_TRIGGER" },
+	{ ACTION_BACKPACK, "BACKPACK", "Use Backpack", "MainActor::useBackpack", nullptr, "i", "JOY_LEFT_SHOULDER" },
+	{ ACTION_KEYRING, "KEYRING", "Keyring", "MainActor::useKeyring", nullptr, "k", "JOY_RIGHT_STICK" },
+	{ ACTION_MINIMAP, "MINIMAP", "Toggle Minimap", "MiniMapGump::toggle", nullptr, "m", "JOY_BACK" },
 	{ ACTION_RECALL, "RECALL", "Use Recall", "MainActor::useRecall", nullptr, "r", nullptr },
-	{ ACTION_INVENTORY, "INVENTORY", "Inventory", "MainActor::useInventory", nullptr, "z", "JOY_LEFT_SHOULDER" },
+	{ ACTION_INVENTORY, "INVENTORY", "Inventory", "MainActor::useInventory", nullptr, "z", "JOY_LEFT_STICK" },
 	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", "Close Gumps", "GUIApp::closeItemGumps", nullptr, "BACKSPACE", nullptr },
 	{ ACTION_JUMP, "JUMP", "Jump (fake both-button-click)", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "SPACE", nullptr },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LCTRL", "JOY_RIGHT_SHOULDER" },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LCTRL", "JOY_LEFT_TRIGGER" },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
