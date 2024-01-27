@@ -1105,6 +1105,10 @@ protected:
 	DrawingOnFloppyDiskHandler  *_adibou2DrawingThumbnailOnFloppyDiskHandler;
 	FakeFileHandler             *_adibou2TestDobHandler;
 	FakeFileHandler             *_adibou2ExerciseListHandler;
+	FakeFileHandler             *_adibou2RelanceHandler;
+	FakeFileHandler             *_adibou2MemHandler;
+	GameFileHandler             *_adibou2SciencesProgressHandler[kChildrenCount];
+	GameFileHandler             *_adibou2AppliSciencesIniHandler;
 
 	FakeFileHandler             *_addy4BaseHandler[2];
 	FakeFileHandler             *_addy4GrundschuleHandler[11];

@@ -822,6 +822,27 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"test.dob",     kSaveModeSave, nullptr, "test floppy disk file" },
 
 	{"TEMP/liste.$$$", kSaveModeSave, nullptr, "exercise list" },
+	{"TEMP/relance.$$$", kSaveModeSave, nullptr, "app info" },
+	{"TEMP/mem.$$$", kSaveModeSave, nullptr, "app info" },
+
+	{"DATA/GIE05_01.pho", kSaveModeSave, nullptr, "app progress" }, // Child 01
+	{"DATA/GIE05_02.pho", kSaveModeSave, nullptr, "app progress" }, // Child 02
+	{"DATA/GIE05_03.pho", kSaveModeSave, nullptr, "app progress" }, // Child 03
+	{"DATA/GIE05_04.pho", kSaveModeSave, nullptr, "app progress" }, // Child 04
+	{"DATA/GIE05_05.pho", kSaveModeSave, nullptr, "app progress" }, // Child 05
+	{"DATA/GIE05_06.pho", kSaveModeSave, nullptr, "app progress" }, // Child 06
+	{"DATA/GIE05_07.pho", kSaveModeSave, nullptr, "app progress" }, // Child 07
+	{"DATA/GIE05_08.pho", kSaveModeSave, nullptr, "app progress" }, // Child 08
+	{"DATA/GIE05_09.pho", kSaveModeSave, nullptr, "app progress" }, // Child 09
+	{"DATA/GIE05_10.pho", kSaveModeSave, nullptr, "app progress" }, // Child 10
+	{"DATA/GIE05_11.pho", kSaveModeSave, nullptr, "app progress" }, // Child 11
+	{"DATA/GIE05_12.pho", kSaveModeSave, nullptr, "app progress" }, // Child 12
+	{"DATA/GIE05_13.pho", kSaveModeSave, nullptr, "app progress" }, // Child 13
+	{"DATA/GIE05_14.pho", kSaveModeSave, nullptr, "app progress" }, // Child 14
+	{"DATA/GIE05_15.pho", kSaveModeSave, nullptr, "app progress" }, // Child 15
+	{"DATA/GIE05_16.pho", kSaveModeSave, nullptr, "app progress" }, // Child 16
+
+	{"APPLIS/appli_05.ini", kSaveModeSave, nullptr, "app info" },
 
     // Adi 4 / Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
@@ -1336,6 +1357,16 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 																											   true);
 	_saveFiles[index++].handler = _adibou2TestDobHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _adibou2ExerciseListHandler = new FakeFileHandler(_vm);
+	_saveFiles[index++].handler = _adibou2RelanceHandler = new FakeFileHandler(_vm);
+	_saveFiles[index++].handler = _adibou2MemHandler = new FakeFileHandler(_vm);
+
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		_saveFiles[index++].handler = _adibou2SciencesProgressHandler[i] = new GameFileHandler(_vm,
+																							   targetName,
+																							   Common::String::format("gie_05_%02d_pho", i + 1));
+	}
+
+	_saveFiles[index++].handler = _adibou2AppliSciencesIniHandler = new GameFileHandler(_vm, targetName, "appli_05_ini");
 
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
@@ -1410,6 +1441,14 @@ SaveLoad_v7::~SaveLoad_v7() {
 	delete _adibou2DrawingThumbnailOnFloppyDiskHandler;
 	delete _adibou2TestDobHandler;
 	delete _adibou2ExerciseListHandler;
+	delete _adibou2RelanceHandler;
+	delete _adibou2MemHandler;
+
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		delete _adibou2SciencesProgressHandler[i];
+	}
+
+	delete _adibou2AppliSciencesIniHandler;
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
