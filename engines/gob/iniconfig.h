@@ -28,15 +28,17 @@
 #ifndef GOB_INICONFIG_H
 #define GOB_INICONFIG_H
 
-#include "common/str.h"
 #include "common/formats/ini-file.h"
 #include "common/hashmap.h"
+#include "common/str.h"
+
+#include "gob.h"
 
 namespace Gob {
 
 class INIConfig {
 public:
-	INIConfig();
+	INIConfig(GobEngine *vm);
 	~INIConfig();
 
 	bool getValue(Common::String &result, const Common::String &file,
@@ -54,10 +56,12 @@ private:
 
 	typedef Common::HashMap<Common::String, Config, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ConfigMap;
 
+	GobEngine *_vm;
 	ConfigMap _configs;
 
 	bool getConfig(const Common::String &file, Config &config);
 
+	bool readConfigFromDisk(const Common::String &file, Config &config);
 	bool openConfig(const Common::String &file, Config &config);
 	bool createConfig(const Common::String &file, Config &config);
 };

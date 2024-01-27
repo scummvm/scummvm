@@ -58,7 +58,7 @@ namespace Gob {
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm) {
+Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm), _inis(vm) {
 }
 
 void Inter_v7::setupOpcodesDraw() {
