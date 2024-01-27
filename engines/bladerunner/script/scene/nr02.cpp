@@ -121,33 +121,9 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
 			if (itemId == kItemGordosLighterReplicant) {
 				Item_Remove_From_World(kItemGordosLighterReplicant);
-				if (_vm->_cutContent) {
-					// Provide immediate feedback to the player that the lighter indicates Gordo is a Replicant,
-					// since the model of the lighter itself is not (much?) different than when he's human.
-					// Also these lines seem that they belong here (Act 3).
-					if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)
-					    && (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3)) {
-						// NOTE this is only in TLK02
-						// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
-						// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
-						// so the check for specific chapters is redundantly restrictive here.
-						// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
-						Actor_Voice_Over(1450, kActorVoiceOver);
-					} else {
-						// TLK0A
-						// Re-use quote from Zuben's death (picking up his photo from the Rep Squad)
-						Actor_Voice_Over(350, kActorVoiceOver);
-					}
-					// NOTE this is only in TLK02
-					// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
-					// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
-					// so the check for specific chapters is redundantly restrictive here.
-					// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
-					if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
-						Actor_Voice_Over(1460, kActorVoiceOver);
-						Actor_Voice_Over(1470, kActorVoiceOver);
-					}
-				}
+				// NOTE Do not restore McCoy's voiceover on Gordo's lighter here,
+				// since it can overlap with Gordo's performance, especially if the player
+				// picks up the lighter just when Gordo's act is starting or has started
 				Item_Pickup_Spin_Effect(kModelAnimationGordosLighterReplicant, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterReplicant, true, -1);
 			}

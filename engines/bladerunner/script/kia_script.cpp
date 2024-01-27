@@ -521,7 +521,33 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueGordosLighterReplicant:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		if (_vm->_cutContent) {
+			// Indicates Gordo is a Replicant.
+			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)
+				&& (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3)) {
+				// NOTE this is only in TLK02
+				// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
+				// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
+				// so the check for specific chapters is redundantly restrictive here.
+				// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450);
+			} else {
+				// TLK0A
+				// Re-use quote from Zuben's death (picking up his photo from the Rep Squad)
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+			}
+			// NOTE this is only in TLK02
+			// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
+			// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
+			// so the check for specific chapters is redundantly restrictive here.
+			// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
+			if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460);
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470);
+			}
+		} else {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		}
 		break;
 	case kClueGordosLighterHuman:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterHuman);
