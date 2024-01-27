@@ -33,11 +33,6 @@ int AgiLoader_v2::detectGame() {
 	    !Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
-	// Should this go above the previous lines, so we can force emulation versions
-	// even for AGDS games? -- dsymonds
-	if (_vm->getFeatures() & GF_AGDS)
-		_vm->setVersion(0x2440);   // ALL AGDS games built for 2.440
-
 	return errOK;
 }
 
