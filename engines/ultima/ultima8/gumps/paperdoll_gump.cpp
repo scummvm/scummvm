@@ -388,7 +388,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 
 void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->getObjId() == _statButtonId &&
-	        message == ButtonWidget::BUTTON_CLICK) {
+		(message == ButtonWidget::BUTTON_CLICK || message == ButtonWidget::BUTTON_DOUBLE)) {
 		// check if there already is an open MiniStatsGump
 		Gump *desktop = Ultima8Engine::get_instance()->getDesktopGump();
 		Gump *statsgump = desktop->FindGump<MiniStatsGump>();

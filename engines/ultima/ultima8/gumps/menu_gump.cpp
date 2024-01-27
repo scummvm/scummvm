@@ -209,8 +209,10 @@ void MenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 
 	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
-	if (buttonWidget && message == ButtonWidget::BUTTON_CLICK) {
-		selectEntry(child->GetIndex());
+	if (buttonWidget) {
+		if (message == ButtonWidget::BUTTON_CLICK || message == ButtonWidget::BUTTON_DOUBLE) {
+			selectEntry(buttonWidget->GetIndex());
+		}
 	}
 }
 

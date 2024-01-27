@@ -106,7 +106,7 @@ void PagedGump::ChildNotify(Gump *child, uint32 message) {
 
 	ObjId cid = child->getObjId();
 
-	if (message == ButtonWidget::BUTTON_CLICK) {
+	if (message == ButtonWidget::BUTTON_UP) {
 		if (cid == _nextButton->getObjId()) {
 			if (_current + 1 != _gumps.end()) {
 				(*_current)->HideGump();

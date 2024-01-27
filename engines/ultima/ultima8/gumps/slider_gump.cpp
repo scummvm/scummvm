@@ -145,7 +145,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 void SliderGump::ChildNotify(Gump *child, uint32 message) {
 	switch (child->GetIndex()) {
 	case OK_INDEX:
-		if (message == ButtonWidget::BUTTON_CLICK)
+		if (message == ButtonWidget::BUTTON_CLICK || message == ButtonWidget::BUTTON_DOUBLE)
 			Close();
 		break;
 	case LEFT_INDEX:

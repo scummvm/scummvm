@@ -140,7 +140,7 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 
 void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
 	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
-	if (buttonWidget && msg == ButtonWidget::BUTTON_CLICK) {
+	if (buttonWidget && (msg == ButtonWidget::BUTTON_CLICK || msg == ButtonWidget::BUTTON_DOUBLE)) {
 		_processResult = child->GetIndex();
 		Close();
 	}
