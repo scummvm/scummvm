@@ -357,9 +357,13 @@ struct CLOK : public EngineData {
 	uint32 timeToKeepOpen = 0;
 	uint16 frameTime = 0;
 
-	uint32 nancy5CountdownTime = 0;
-	Common::Array<Common::Rect> nancy5DaySrcs;
-	Common::Array<Common::Rect> nancy5CountdownSrcs;
+	bool clockIsDisabled = false;
+	bool clockIsDay = false; // nancy5 clock
+
+	uint32 countdownTime = 0;
+	Common::Array<Common::Rect> daySrcs;
+	Common::Array<Common::Rect> countdownSrcs;
+	Common::Rect disabledSrc; // possibly useless
 };
 
 // Contains data for special effects (fades between scenes/fades to black).

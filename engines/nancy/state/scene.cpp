@@ -741,7 +741,12 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 UI::Clock *Scene::getClock() {
-	return g_nancy->getGameType() != kGameTypeNancy5 ? (UI::Clock *)_clock : nullptr;
+	auto *clok = GetEngineData(CLOK);
+	if (clok->clockIsDisabled || clok->clockIsDay) {
+		return nullptr;
+	} else {
+		return (UI::Clock *)_clock;
+	}
 }
 
 void Scene::init() {
@@ -1174,15 +1179,20 @@ void Scene::initStaticData() {
 		_clock->init();
 	}
 
+	// Init just the clock (nancy2 and up; nancy1 has no clock, only a map button)
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
-		if (g_nancy->getGameType() == kGameTypeNancy5) {
-			// Nancy 5 uses a custom "clock" that mostly just indicates the in-game day
+		auto *clok = GetEngineData(CLOK);
+		if (clok->clockIsDay) {
+			// nancy5 uses a different "clock" that mostly just indicates the in-game day
 			_clock = new UI::Nancy5Clock();
-		} else {
+			_clock->init();
+		} else if (!clok->clockIsDisabled) {
 			_clock = new UI::Clock();
+			_clock->init();
+		} else {
+			// In nancy7 the clock is entirely disabled
+			_clock = nullptr;
 		}
-		
-		_clock->init();
 	}
 
 	_state = kLoad;

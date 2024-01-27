@@ -567,11 +567,13 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint32LE(timeToKeepOpen);
 	s.syncAsUint16LE(frameTime);
 
+	s.syncAsByte(clockIsDisabled, kGameTypeNancy5);
+	s.syncAsByte(clockIsDay, kGameTypeNancy5);
+	s.syncAsUint32LE(countdownTime, kGameTypeNancy5);
 	s.skip(2, kGameTypeNancy5);
-	s.syncAsUint32LE(nancy5CountdownTime, kGameTypeNancy5);
-	s.skip(2, kGameTypeNancy5);
-	readRectArray(s, nancy5DaySrcs, 3, 3, kGameTypeNancy5);
-	readRectArray(s, nancy5CountdownSrcs, 13, 13, kGameTypeNancy5);
+	readRectArray(s, daySrcs, 3, 3, kGameTypeNancy5);
+	readRectArray(s, countdownSrcs, 13, 13, kGameTypeNancy5);
+	readRect(s, disabledSrc, kGameTypeNancy5);
 }
 
 SPEC::SPEC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
