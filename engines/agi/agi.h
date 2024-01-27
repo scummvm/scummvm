@@ -413,9 +413,6 @@ struct AgiGame {
 	bool playerControl; /**< player is in control */
 	bool exitAllLogics; /**< break cycle after new.room */
 	bool pictureShown;  /**< show.pic has been issued */
-#define ID_AGDS     0x00000001
-#define ID_AMIGA    0x00000002
-	int gameFlags;      /**< agi options flags */
 
 	// windows
 	AgiBlock block;
@@ -512,7 +509,6 @@ struct AgiGame {
 		playerControl = false;
 		exitAllLogics = false;
 		pictureShown = false;
-		gameFlags = 0;
 
 		// block defaulted by AgiBlock constructor
 
