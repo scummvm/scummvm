@@ -72,6 +72,7 @@ Score::Score(Movie *movie) {
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
+	_nextFrameDelay = 0;
 	_lastTempo = 0;
 	_waitForChannel = 0;
 	_waitForVideoChannel = 0;
@@ -273,6 +274,7 @@ void Score::startPlay() {
 	_curFrameNumber = 1;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
+	_nextFrameDelay = 0;
 
 	if (!_currentFrame) {
 		warning("Score::startLoop(): Movie has no frames");
@@ -323,80 +325,48 @@ void Score::stopPlay() {
 	_lingo->executePerFrameHook(-1, 0);
 }
 
-void Score::update() {
-	if (_activeFade) {
-		if (!_soundManager->fadeChannel(_activeFade))
-			_activeFade = 0;
+void Score::setDelay(uint32 ticks) {
+	// the score will continually loop at the exitFrame handler,
+	// even if the handler sets a new delay value only the first one
+	// will be acknowledged.
+	if (!_nextFrameDelay) {
+		_nextFrameDelay = g_system->getMillis() + (ticks * 1000 / 60);
+		debugC(5, kDebugLoading, "Score::setDelay(): delaying %d ticks, next frame time at %d", ticks, _nextFrameDelay);
 	}
+}
 
-	if (!debugChannelSet(-1, kDebugFast)) {
-		bool keepWaiting = false;
+bool Score::isWaitingForNextFrame() {
+	bool keepWaiting = false;
 
-		debugC(8, kDebugLoading, "Score::update(): nextFrameTime: %d, time: %d", _nextFrameTime, g_system->getMillis(false));
-		if (_waitForChannel) {
-			if (_soundManager->isChannelActive(_waitForChannel)) {
-				keepWaiting = true;
-			} else {
-				_waitForChannel = 0;
-			}
-		} else if (_waitForClick) {
-			if (g_system->getMillis() >= _nextFrameTime + 1000) {
-				_waitForClickCursor = !_waitForClickCursor;
-				renderCursor(_movie->getWindow()->getMousePos());
-				_nextFrameTime = g_system->getMillis();
-			}
+	debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d", _nextFrameTime, g_system->getMillis(false));
+	if (_waitForChannel) {
+		if (_soundManager->isChannelActive(_waitForChannel)) {
 			keepWaiting = true;
-		} else if (_waitForVideoChannel) {
-			Channel *movieChannel = _channels[_waitForVideoChannel];
-			if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0) {
-				keepWaiting = true;
-			} else {
-				_waitForVideoChannel = 0;
-			}
-		} else if (g_system->getMillis() < _nextFrameTime) {
+		} else {
+			_waitForChannel = 0;
+		}
+	} else if (_waitForClick) {
+		if (g_system->getMillis() >= _nextFrameTime + 1000) {
+			_waitForClickCursor = !_waitForClickCursor;
+			renderCursor(_movie->getWindow()->getMousePos());
+			_nextFrameTime = g_system->getMillis();
+		}
+		keepWaiting = true;
+	} else if (_waitForVideoChannel) {
+		Channel *movieChannel = _channels[_waitForVideoChannel];
+		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0) {
 			keepWaiting = true;
+		} else {
+			_waitForVideoChannel = 0;
 		}
-
-		if (keepWaiting) {
-			if (_movie->_videoPlayback) {
-				updateWidgets(true);
-				_window->render();
-			}
-
-			// Don't process frozen script if we use jump instructions
-			// like "go to frame", or open a new movie.
-			if (!_nextFrame || _nextFrame == _curFrameNumber) {
-				processFrozenScripts();
-			}
-
-			return;
-		}
+	} else if (g_system->getMillis() < _nextFrameTime) {
+		keepWaiting = true;
 	}
 
-	// For previous frame
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
-		// When Lingo::func_goto* is called, _nextFrame is set
-		// and _skipFrameAdvance is set to true.
-		// exitFrame is not called in this case.
-		if (!_vm->_skipFrameAdvance && _vm->getVersion() >= 400) {
-			_movie->processEvent(kEventExitFrame);
-		}
+	return keepWaiting;
+}
 
-		// If there is a transition, the perFrameHook is called
-		// after each transition subframe instead.
-		if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
-			_lingo->executePerFrameHook(_curFrameNumber, 0);
-		}
-	}
-
-	_vm->_skipFrameAdvance = false;
-
-	// the exitFrame event handler may have stopped this movie
-	if (_playState == kPlayStopped) {
-		processFrozenScripts();
-		return;
-	}
-
+void Score::updateCurrentFrame() {
 	uint32 nextFrameNumberToLoad = _curFrameNumber;
 
 	if (!_vm->_playbackPaused) {
@@ -420,7 +390,6 @@ void Score::update() {
 				_playState = kPlayStopped;
 				window->setNextMovie(ref.movie);
 				window->_nextMovie.frameI = ref.frameI;
-				processFrozenScripts();
 				return;
 			}
 			nextFrameNumberToLoad = ref.frameI;
@@ -444,10 +413,13 @@ void Score::update() {
 	}
 
 	if (_curFrameNumber != nextFrameNumberToLoad) {
-		// this updates _curFrameNumber
+		// this copies in the frame data and updates _curFrameNumber
 		loadFrame(nextFrameNumberToLoad, true);
 	}
+	return;
+}
 
+void Score::updateNextFrameTime() {
 	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
 	// puppetTempo is overridden by changes in score tempo
 	if (_currentFrame->_mainChannels.tempo || tempo != _lastTempo) {
@@ -469,34 +441,34 @@ void Score::update() {
 		if (tempo >= 256 - maxDelay) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
+			debugC(5, kDebugLoading, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
 		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
 			if (g_director->_fpsLimit)
 				_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
+			debugC(5, kDebugLoading, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 		} else {
 			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				renderCursor(_movie->getWindow()->getMousePos());
-				debugC(5, kDebugLoading, "Score::update(): waiting for mouse click before next frame");
+				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for mouse click before next frame");
 			} else if (!waitForClickOnly && tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
-				debugC(5, kDebugLoading, "Score::update(): waiting for sound channel 1 before next frame");
+				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for sound channel 1 before next frame");
 			} else if (!waitForClickOnly && tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
-				debugC(5, kDebugLoading, "Score::update(): waiting for sound channel 2 before next frame");
+				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for sound channel 2 before next frame");
 			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
 				// Wait for a digital video in a channel to finish playing
 				_waitForVideoChannel = tempo - 135;
-				debugC(5, kDebugLoading, "Score::update(): waiting for video in channel %d before next frame", _waitForVideoChannel);
+				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
 			} else {
-				warning("Unhandled tempo instruction: %d", tempo);
+				warning("Score::updateNextFrameTime(): Unhandled tempo instruction: %d", tempo);
 			}
 			_nextFrameTime = g_system->getMillis();
 		}
@@ -507,11 +479,115 @@ void Score::update() {
 
 	if (debugChannelSet(-1, kDebugSlow))
 		_nextFrameTime += 1000;
+}
+
+void Score::update() {
+	if (_activeFade) {
+		if (!_soundManager->fadeChannel(_activeFade))
+			_activeFade = 0;
+	}
+
+	if (!debugChannelSet(-1, kDebugFast)) {
+		// end update cycle if we're still waiting for the next frame
+		if (isWaitingForNextFrame()) {
+			if (_movie->_videoPlayback) {
+				updateWidgets(true);
+				_window->render();
+			}
+
+			// Don't process frozen script if we use jump instructions
+			// like "go to frame", or open a new movie.
+			if (!_nextFrame || _nextFrame == _curFrameNumber) {
+				processFrozenScripts();
+			}
+			return;
+		}
+	}
+
+	// For previous frame
+	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+		// When Lingo::func_goto* is called, _nextFrame is set
+		// and _skipFrameAdvance is set to true.
+		// exitFrame is not called in this case.
+		if (!_vm->_skipFrameAdvance) {
+			// Exit the current frame. This can include scopeless ScoreScripts.
+			_movie->processEvent(kEventExitFrame);
+		}
+	}
+
+	_vm->_skipFrameAdvance = false;
+
+	// Check for delay
+	if (g_system->getMillis() < _nextFrameDelay) {
+		if (_movie->_videoPlayback) {
+			updateWidgets(true);
+			_window->render();
+		}
+
+		// Don't process frozen script if we use jump instructions
+		// like "go to frame", or open a new movie.
+		if (!_nextFrame || _nextFrame == _curFrameNumber) {
+			processFrozenScripts();
+		}
+
+		return;
+	}
+	_nextFrameDelay = 0;
+
+	// the exitFrame event handler may have stopped this movie
+	if (_playState == kPlayStopped) {
+		processFrozenScripts();
+		return;
+	}
+
+	// change current frame and load frame data, if required
+	updateCurrentFrame();
+
+	// set the delay time/condition until the next frame
+	updateNextFrameTime();
 
 	debugC(1, kDebugLoading, "******************************  Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
 	g_debugger->frameHook();
 
-	_lingo->executeImmediateScripts(_currentFrame);
+	// movie could have been stopped by a window switch or a debug flag
+	if (_playState == kPlayStopped) {
+		processFrozenScripts();
+		return;
+	}
+
+	uint32 count = _window->frozenLingoStateCount();
+
+	// new frame, first call the perFrameHook (if one exists)
+	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+		// Call the perFrameHook as soon as a frame switch is done.
+		// If there is a transition, the perFrameHook is called
+		// after each transition subframe instead of here.
+		if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
+			_lingo->executePerFrameHook(_curFrameNumber, 0);
+		}
+	}
+	if (_window->frozenLingoStateCount() > count)
+		return;
+
+	// check to see if we've hit the recursion limit
+	if (_vm->getVersion() >= 400 && _window->frozenLingoStateCount() >= 2) {
+		debugC(1, kDebugLoading, "Score::update(): hitting depth limit for D4 scripts, defrosting");
+		processFrozenScripts();
+		return;
+	} else if (_window->frozenLingoStateCount() >= 64) {
+		warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
+		processFrozenScripts();
+		return;
+	}
+
+	// then call the stepMovie hook (if one exists)
+	// skip the first frame
+	count = _window->frozenLingoStateCount();
+	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+		_movie->processEvent(kEventStepMovie);
+	}
+	if (_window->frozenLingoStateCount() > count)
+		return;
 
 	if (_vm->getVersion() >= 600) {
 		// _movie->processEvent(kEventBeginSprite);
@@ -524,36 +600,19 @@ void Score::update() {
 	renderFrame(_curFrameNumber);
 	_window->_newMovieStarted = false;
 
-	// Enter and exit from previous frame
-	if (!_vm->_playbackPaused) {
-		uint32 count = _window->frozenLingoStateCount();
-		// Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
-		// D4 will only process recursive enterFrame handlers to a depth of 2.
-		// Any more will be ignored.
-		if ((_vm->getVersion() >= 400)) {
-			if (count < 2 || _window->recursiveEnterFrameCount() < 2)
-				_movie->processEvent(kEventEnterFrame);
-			else {
-				warning("Score::update(): ignoring recursive enterFrame handler, frozenLingoStateCount: %d, enterFrames: %d", count, _window->recursiveEnterFrameCount());
-			}
-		} else if ((_vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
-			// Force a flush of any frozen scripts before raising enterFrame
-			if (!processFrozenScripts())
-				return;
-			_movie->processEvent(kEventEnterFrame);
-			if ((_vm->getVersion() >= 300) || _movie->_allowOutdatedLingo) {
-				// Movie version of enterFrame, for D3 only. The D3 Interactivity Manual claims
-				// "This handler executes before anything else when the playback head moves."
-				// but this is incorrect. The frame script is executed first.
-				_movie->processEvent(kEventStepMovie);
-			}
-		}
-		// If another frozen state gets triggered, wait another update() before thawing
-		if ((_vm->getVersion() < 400) && _window->frozenLingoStateCount() > 0)
-			return;
-		else if ((_vm->getVersion() >= 400) && _window->frozenLingoStateCount() > count)
-			return;
+	// then call the enterFrame hook (if one exists)
+	count = _window->frozenLingoStateCount();
+	if (!_vm->_playbackPaused && _vm->getVersion() >= 400) {
+		_movie->processEvent(kEventEnterFrame);
 	}
+	if (_window->frozenLingoStateCount() > count)
+		return;
+
+	// then execute any immediate scripts, i.e. handlers attached to sprites
+	count = _window->frozenLingoStateCount();
+	_lingo->executeImmediateScripts(_currentFrame);
+	if (_window->frozenLingoStateCount() > count)
+		return;
 
 	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame.
 	// If they don't complete (i.e. another freezing event like a "go to frame"),
