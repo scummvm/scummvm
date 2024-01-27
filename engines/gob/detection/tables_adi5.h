@@ -78,5 +78,19 @@
 	kFeatures640x480,
 	0,0,0
 },
+{
+	{
+
+		"adi5",
+		_s("Missing game code"), // Addy 5 Mathe Demo (Engine: DEV7 version unknown)
+		AD_ENTRY1s("adi5.stk", "72fb3c7807845e414d107aa4612f95df", 141858),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0,0,0
+},
 
 #endif // GOB_DETECTION_TABLES_ADI5_H
