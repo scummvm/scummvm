@@ -84,6 +84,14 @@
 		#define GL_MAX_SAMPLES 0x8D57
 	#endif
 
+	#if !defined(GL_STACK_OVERFLOW_KHR)
+		#define GL_STACK_OVERFLOW_KHR 0x0503
+	#endif
+
+	#if !defined(GL_STACK_UNDERFLOW_KHR)
+		#define GL_STACK_UNDERFLOW_KHR 0x0504
+	#endif
+
 #elif USE_FORCED_GLES
 
 	#define GL_GLEXT_PROTOTYPES
