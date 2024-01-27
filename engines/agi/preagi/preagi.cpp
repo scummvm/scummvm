@@ -50,8 +50,6 @@ void PreAgiEngine::initialize() {
 
 	_font->init();
 
-	_game.gameFlags = 0;
-
 	//_game._vm->_text->charAttrib_Set(15, 0);
 
 	_defaultColor = 0xF;

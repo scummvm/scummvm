@@ -143,15 +143,9 @@ int AgiEngine::agiInit() {
 	}
 
 	if (getPlatform() == Common::kPlatformAmiga)
-		_game.gameFlags |= ID_AMIGA;
-
-	if (getFeatures() & GF_AGDS)
-		_game.gameFlags |= ID_AGDS;
-
-	if (_game.gameFlags & ID_AMIGA)
 		debug(1, "Amiga padded game detected.");
 
-	if (_game.gameFlags & ID_AGDS)
+	if (getFeatures() & GF_AGDS)
 		debug(1, "AGDS mode enabled.");
 
 	ec = _loader->init();   // load vol files, etc
@@ -449,8 +443,6 @@ void AgiEngine::initialize() {
 	_gfx->initVideo();
 
 	_text->init(_systemUI);
-
-	_game.gameFlags = 0;
 
 	_text->charAttrib_Set(15, 0);
 

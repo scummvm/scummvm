@@ -28,7 +28,7 @@ namespace Agi {
 int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 	unsigned int i, so, padsize, spos;
 
-	padsize = _game.gameFlags & ID_AMIGA ? 4 : 3;
+	padsize = getPlatform() == Common::kPlatformAmiga ? 4 : 3;
 
 	_game.numObjects = 0;
 

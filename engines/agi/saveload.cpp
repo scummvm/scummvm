@@ -175,7 +175,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->writeSint16BE((int16)_game.exitAllLogics);
 	out->writeSint16BE((int16)_game.pictureShown);
 	out->writeSint16BE((int16)_text->promptIsEnabled()); // was "_game.hasPrompt", no longer needed
-	out->writeSint16BE((int16)_game.gameFlags);
+	out->writeSint16BE(0);	// was _game.gameFlags, no longer needed
 
 	if (_text->promptIsEnabled()) {
 		out->writeSint16BE(0x7FFF);
@@ -504,7 +504,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_game.exitAllLogics = in->readSint16BE();
 	in->readSint16BE(); // was _game.pictureShown
 	in->readSint16BE(); // was _game.hasPrompt, no longer needed
-	_game.gameFlags = in->readSint16BE();
+	in->readSint16BE();	// was _game.gameFlags, no longer needed
 	if (in->readSint16BE()) {
 		_text->promptEnable();
 	} else {
