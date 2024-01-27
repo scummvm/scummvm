@@ -1455,7 +1455,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		// game directory, just like in multi-cd-aware versions.
 		Common::Array<uint32> installedApplications = getAdibou2InstalledApplications();
 		int32 indexAppli = VAR_OFFSET(20196);
-		if (indexAppli == -1) {
+		if (indexAppli <= 0) {
 			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
 			Common::ArchiveMemberDetailsList files;
 			SearchMan.listMatchingMembers(files, Common::Path(file)); // Search for CD.INF files
