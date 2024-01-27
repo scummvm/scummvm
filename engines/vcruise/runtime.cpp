@@ -21,6 +21,7 @@
 
 #include "common/formats/winexe.h"
 #include "common/config-manager.h"
+#include "common/crc.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -64,6 +65,89 @@
 
 namespace VCruise {
 
+struct AD2044ItemInfo {
+	uint32 enNameCRC;
+	uint32 plNameCRC;
+	bool inspectable;
+};
+
+const AD2044ItemInfo g_ad2044ItemInfos[] = {
+	{0, 0, false},	// 0
+	{0, 0, false},	// 1
+	{0, 0, false},	// 2
+	{0, 0, false},	// 3
+	{0, 0, false},	// 4
+	{0, 0, false},	// 5
+	{0, 0, false},	// 6
+	{0, 0, false},	// 7
+	{0, 0, false},	// 8
+	{0, 0, false},	// 9
+	{0, 0, false},	// 10
+	{0, 0, false},	// 11
+	{0, 0, false},	// 12
+	{0, 0, false},	// 13
+	{0, 0, false},	// 14
+	{0, 0, false},	// 15
+	{0, 0, false},	// 16
+	{0, 0, false},	// 17
+	{0, 0, false},	// 18
+	{0, 0, false},	// 19
+	{0, 0, false},	// 20
+	{0, 0, false},	// 21
+	{0, 0, false},	// 22
+	{0, 0, false},	// 23
+	{0, 0, false},	// 24
+	{0, 0, false},	// 25
+	{0, 0, false},	// 26
+	{0, 0, false},	// 27
+	{0, 0, false},	// 28
+	{0, 0, false},	// 29
+	{0, 0, false},	// 30
+	{0, 0, false},	// 31
+	{0, 0, false},	// 32
+	{0, 0, false},	// 33
+	{0, 0, false},	// 34
+	{0, 0, false},	// 35
+	{0, 0, false},	// 36
+	{0, 0, false},	// 37
+	{0, 0, false},	// 38
+	{0, 0, false},	// 39
+	{0, 0, false},	// 40
+	{0, 0, false},	// 41
+	{0, 0, false},	// 42
+	{0, 0, false},	// 43
+	{0, 0, false},	// 44
+	{0, 0, false},	// 45
+	{0, 0, false},	// 46
+	{0, 0, false},	// 47
+	{0, 0, false},	// 48
+	{0, 0, false},	// 49
+	{0, 0, false},	// 50
+	{0, 0, false},	// 51
+	{0, 0, false},	// 52
+	{0, 0, false},	// 53
+	{0x83d54448, 0x839911EF, false}, // 54
+	{0, 0, false},	// 55
+	{0, 0, false},	// 56
+	{0, 0, false},	// 57
+	{0, 0, false},	// 58
+	{0, 0, false},	// 59
+	{0, 0, false},	// 60
+	{0, 0, false},	// 61
+	{0, 0, false},	// 62
+	{0, 0, false},	// 63
+	{0, 0, false},	// 64
+	{0, 0, false},	// 65
+	{0, 0, false},	// 66
+	{0, 0, false},	// 67
+	{0, 0, false},	// 68
+	{0, 0, false},	// 69
+	{0, 0, false},	// 70
+	{0, 0, false},	// 71
+	{0, 0, false},	// 72
+	{0, 0, false},	// 73
+};
+
 struct InitialItemPlacement {
 	uint roomNumber;
 	uint screenNumber;
@@ -74,6 +158,90 @@ const InitialItemPlacement g_ad2044InitialItemPlacements[] = {
 	{1, 0xb8, 24},	// Cigarette pack
 	{1, 0xac, 27},	// Matches
 };
+
+struct AD2044Graphics {
+	explicit AD2044Graphics(const Common::SharedPtr<Common::WinResources> &resources, bool lowQuality, const Graphics::PixelFormat &pixFmt);
+
+	Common::SharedPtr<Graphics::Surface> invDownClicked;
+	Common::SharedPtr<Graphics::Surface> invUpClicked;
+	Common::SharedPtr<Graphics::Surface> musicClicked;
+	Common::SharedPtr<Graphics::Surface> musicClickedDeep;
+	Common::SharedPtr<Graphics::Surface> soundClicked;
+	Common::SharedPtr<Graphics::Surface> soundClickedDeep;
+	Common::SharedPtr<Graphics::Surface> exitClicked;
+	Common::SharedPtr<Graphics::Surface> loadClicked;
+	Common::SharedPtr<Graphics::Surface> saveClicked;
+	Common::SharedPtr<Graphics::Surface> resizeClicked;
+	Common::SharedPtr<Graphics::Surface> musicVolUpClicked;
+	Common::SharedPtr<Graphics::Surface> musicVolDownClicked;
+	Common::SharedPtr<Graphics::Surface> music;
+	Common::SharedPtr<Graphics::Surface> musicVol;
+	Common::SharedPtr<Graphics::Surface> sound;
+	Common::SharedPtr<Graphics::Surface> soundVol;
+	Common::SharedPtr<Graphics::Surface> musicDisabled;
+	Common::SharedPtr<Graphics::Surface> musicVolDisabled;
+	Common::SharedPtr<Graphics::Surface> soundDisabled;
+	Common::SharedPtr<Graphics::Surface> soundVolDisabled;
+	Common::SharedPtr<Graphics::Surface> examine;
+	Common::SharedPtr<Graphics::Surface> examineDisabled;
+	Common::SharedPtr<Graphics::Surface> invPage[8];
+
+
+	void loadGraphic(Common::SharedPtr<Graphics::Surface> AD2044Graphics::*field, const Common::String &resName);
+	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &resName) const;
+	void finishLoading();
+
+private:
+	AD2044Graphics() = delete;
+
+	bool _lowQuality;
+	Common::SharedPtr<Common::WinResources> _resources;
+	Common::Array<Common::WinResourceID> _resourceIDs;
+	const Graphics::PixelFormat _pixFmt;
+};
+
+AD2044Graphics::AD2044Graphics(const Common::SharedPtr<Common::WinResources> &resources, bool lowQuality, const Graphics::PixelFormat &pixFmt)
+	: _resources(resources), _lowQuality(lowQuality), _pixFmt(pixFmt) {
+
+	_resourceIDs = resources->getIDList(Common::kWinBitmap);
+}
+
+void AD2044Graphics::loadGraphic(Common::SharedPtr<Graphics::Surface> AD2044Graphics::*field, const Common::String &resNameBase) {
+	this->*field = loadGraphic(resNameBase);
+}
+
+Common::SharedPtr<Graphics::Surface> AD2044Graphics::loadGraphic(const Common::String &resNameBase) const {
+	Common::String resName = _lowQuality ? (Common::String("D") + resNameBase) : resNameBase;
+
+	const Common::WinResourceID *resID = nullptr;
+	for (const Common::WinResourceID &resIDCandidate : _resourceIDs) {
+		if (resIDCandidate.getString() == resName) {
+			resID = &resIDCandidate;
+			break;
+		}
+	}
+
+	if (!resID)
+		error("Couldn't find bitmap graphic %s", resName.c_str());
+
+	Common::ScopedPtr<Common::SeekableReadStream> bmpResource(_resources->getResource(Common::kWinBitmap, *resID));
+
+	if (!bmpResource)
+		error("Couldn't open bitmap graphic %s", resName.c_str());
+
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(*bmpResource))
+		error("Couldn't load bitmap graphic %s", resName.c_str());
+
+	const Graphics::Surface *bmpSurf = decoder.getSurface();
+
+	Common::SharedPtr<Graphics::Surface> surf(bmpSurf->convertTo(_pixFmt, decoder.getPalette(), decoder.getPaletteColorCount()), Graphics::SurfaceDeleter());
+	return surf;
+}
+
+void AD2044Graphics::finishLoading() {
+	_resources.reset();
+}
 
 struct CodePageGuess {
 	Common::CodePage codePage;
@@ -1627,7 +1795,7 @@ bool Runtime::bootGame(bool newGame) {
 	debug(1, "Booting V-Cruise game...");
 
 	if (_gameID == GID_AD2044)
-		loadAD2044Index();
+		loadAD2044ExecutableResources();
 	else
 		loadReahSchizmIndex();
 
@@ -2933,7 +3101,7 @@ void Runtime::loadReahSchizmIndex() {
 	}
 }
 
-void Runtime::loadAD2044Index() {
+void Runtime::loadAD2044ExecutableResources() {
 	const byte searchPattern[] = {0x01, 0x01, 0xa1, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc7, 0x00, 0xc7, 0x00, 0x00, 0x00};
 
 	Common::File f;
@@ -2989,6 +3157,81 @@ void Runtime::loadAD2044Index() {
 			break;
 
 		_ad2044AnimationDefs.push_back(animDef);
+	}
+
+	f.seek(0);
+
+	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(&f));
+
+	if (!winRes)
+		error("Couldn't open executable resources");
+
+	_ad2044Graphics.reset(new AD2044Graphics(winRes, _lowQualityGraphicsMode, _gameSection.pixFmt));
+
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::invDownClicked, "GDOL");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::invUpClicked, "GGORA");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicClickedDeep, "GUZ03");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::soundClickedDeep, "GUZ06");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::exitClicked, "GUZ1");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::saveClicked, "GUZ10");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::resizeClicked, "GUZ2");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicClicked, "GUZ3");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::soundClicked, "GUZ6");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicVolUpClicked, "GUZ7");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicVolDownClicked, "GUZ8");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::loadClicked, "GUZ9");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::music, "GUZN3");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicVol, "GUZN4");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::sound, "GUZN6");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::soundVol, "GUZN7");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicDisabled, "NIC3");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::musicVolDisabled, "NIC4");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::soundDisabled, "NIC6");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::soundVolDisabled, "NIC7");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::examine, "OKO");
+	_ad2044Graphics->loadGraphic(&AD2044Graphics::examineDisabled, "OKOZ");
+
+	for (int i = 0; i < 8; i++)
+		_ad2044Graphics->invPage[i] = _ad2044Graphics->loadGraphic(Common::String::format("POJ%i", static_cast<int>(i + 1)));
+
+	_ad2044Graphics->finishLoading();
+
+	Common::HashMap<uint32, uint32> stringHashToFilePos;
+
+	for (const AD2044ItemInfo &itemInfo : g_ad2044ItemInfos) {
+		stringHashToFilePos[itemInfo.enNameCRC] = 0;
+		stringHashToFilePos[itemInfo.plNameCRC] = 0;
+	}
+
+	stringHashToFilePos.erase(0);
+
+	// Scan for strings
+	Common::CRC32 crc;
+
+	uint32 strStartPos = 0;
+	uint32 rollingCRC = crc.getInitRemainder();
+
+	for (uint i = 0; i < exeContents.size(); i++) {
+		byte b = exeContents[i];
+		if (b == 0) {
+			uint32 strLength = i - strStartPos;
+			rollingCRC = crc.finalize(rollingCRC);
+			if (strLength != 0) {
+				Common::HashMap<uint32, uint32>::iterator it = stringHashToFilePos.find(rollingCRC);
+				if (it != stringHashToFilePos.end())
+					it->_value = strStartPos;
+			}
+
+#if 1
+			if (strStartPos == 100460) {
+				debug(1, "Check CRC was %u", rollingCRC);
+			}
+#endif
+
+			rollingCRC = crc.getInitRemainder();
+			strStartPos = i + 1;
+		} else
+			rollingCRC = crc.processByte(b, rollingCRC);
 	}
 }
 

@@ -97,6 +97,7 @@ struct Instruction;
 struct RoomScriptSet;
 struct SoundLoopInfo;
 class SampleLoopAudioStream;
+struct AD2044Graphics;
 
 enum GameState {
 	kGameStateBoot,							// Booting the game
@@ -893,7 +894,7 @@ private:
 	void processUniversalKeymappedEvents(KeymappedEvent evt);
 
 	void loadReahSchizmIndex();
-	void loadAD2044Index();
+	void loadAD2044ExecutableResources();
 	void findWaves();
 	void loadConfig(const char *cfgPath);
 	void loadScore();
@@ -1450,6 +1451,7 @@ private:
 	static const uint kSoundCacheSize = 16;
 
 	static const uint kHeroChangeInteractionID = 0xffffffffu;
+	static const uint kObjectInteractionID = 0xfffffffeu;
 
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
@@ -1494,6 +1496,8 @@ private:
 
 	// AD2044 tooltips
 	Common::String _tooltipText;
+
+	Common::SharedPtr<AD2044Graphics> _ad2044Graphics;
 };
 
 } // End of namespace VCruise
