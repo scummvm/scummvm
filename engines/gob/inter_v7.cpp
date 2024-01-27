@@ -798,7 +798,10 @@ void Inter_v7::o7_openItk() {
 }
 
 void Inter_v7::o7_findFile() {
-	Common::Path filePattern(getFile(_vm->_game->_script->evalString()));
+	const char* filePatternStr = _vm->_game->_script->evalString();
+	bool isPattern = Common::String(filePatternStr).contains('*') || Common::String(filePatternStr).contains('?');
+
+	Common::Path filePattern(getFile(filePatternStr, !isPattern), '\\');
 	Common::ArchiveMemberList files;
 
 	SearchMan.listMatchingMembers(files, filePattern);
