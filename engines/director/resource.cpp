@@ -277,6 +277,8 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
 		// we've encountered a movie saved from Director, not a projector.
 		result = loadEXERIFX(exeStream, 0);
+		// ownership handed to loadEXERIFX
+		exeStream = nullptr;
 	} else if (initialTag == MKTAG('R', 'I', 'F', 'F') || initialTag == MKTAG('F', 'F', 'I', 'R')) { // This is just a normal movie
 		result = new RIFFArchive();
 
@@ -285,6 +287,8 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 			delete result;
 			return nullptr;
 		}
+		// ownership handed to RIFFArchive
+		exeStream = nullptr;
 	} else {
 		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
 		if (!exe) {
@@ -328,17 +332,13 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 			delete exeStream;
 			return nullptr;
 		}
-
-		if (result) {
-			result->setPathName(movie);
-		}
-
-		return result;
+		// ownership passed to an EXE loader
+		exeStream = nullptr;
 	}
 
 	if (result)
 		result->setPathName(movie);
-	else
+	else if (exeStream)
 		delete exeStream;
 
 	return result;
