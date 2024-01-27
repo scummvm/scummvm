@@ -218,6 +218,10 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	}
 }
 
+void U8SaveGump::onMouseDouble(int button, int32 mx, int32 my) {
+	onMouseClick(button, mx, my);
+}
+
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 	EditWidget *widget = dynamic_cast<EditWidget *>(child);
 	if (widget && message == EditWidget::EDIT_ENTER) {
