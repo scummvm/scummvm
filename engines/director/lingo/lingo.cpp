@@ -1502,6 +1502,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			for (uint i = 0; i < _actorList.u.farr->arr.size(); i++) {
 				Datum actor = _actorList.u.farr->arr[i];
 				Symbol method = actor.u.obj->getMethod("stepFrame");
+				debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>, frame %d, subframe %d", actor.asString(true).c_str(), frame, subframe);
 				if (method.nargs == 1)
 					push(actor);
 				LC::call(method, method.nargs, false);

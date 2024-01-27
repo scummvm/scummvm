@@ -93,6 +93,7 @@ public:
 	void startPlay();
 	void step();
 	void stopPlay();
+	void setDelay(uint32 ticks);
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrameNum() { return _curFrameNumber; }
@@ -137,6 +138,9 @@ public:
 	Common::String formatChannelInfo();
 
 private:
+	bool isWaitingForNextFrame();
+	void updateCurrentFrame();
+	void updateNextFrameTime();
 	void update();
 	void playQueuedSound();
 
@@ -175,6 +179,7 @@ public:
 
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	uint32 _nextFrameDelay;
 	int _lastTempo;
 	int _waitForChannel;
 	int _waitForVideoChannel;

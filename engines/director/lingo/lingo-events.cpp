@@ -92,7 +92,7 @@ ScriptType Lingo::event2script(LEvent ev) {
 		switch (ev) {
 		//case kEventStartMovie: // We are precompiling it now
 		//	return kMovieScript;
-		case kEventEnterFrame:
+		case kEventExitFrame:
 			return kScoreScript;
 		default:
 			return kNoneScript;
@@ -172,15 +172,18 @@ void Movie::queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 	if (!script)
 		return;
 
-	// Scopeless statements (ie one lined lingo commands) are executed at enterFrame
-	// A score script can have both scopeless and scoped lingo. (eg. porting from D3.1 to D4)
-	if (event == kEventEnterFrame && script->_eventHandlers.contains(kEventGeneric)) {
-		queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, true, 0));
-	}
-
 	if (script->_eventHandlers.contains(event)) {
 		queue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false, 0));
 	}
+	// Scopeless statements (ie one lined lingo commands) are executed at exitFrame
+	// A score script can have both scopeless and scoped lingo. (eg. porting from D3.1 to D4)
+	// In the event of both being specified in the ScoreScript, the scopeless handler is ignored.
+
+	if (event == kEventExitFrame && script->_eventHandlers.contains(kEventGeneric) &&
+		!(script->_eventHandlers.contains(kEventExitFrame) || script->_eventHandlers.contains(kEventEnterFrame))) {
+		queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false, 0));
+	}
+
 }
 
 void Movie::queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId) {
@@ -261,7 +264,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 			}
 			break;
 
-		case kEventEnterFrame:
+		case kEventExitFrame:
 			queueFrameEvent(queue, event, eventId);
 			break;
 
