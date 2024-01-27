@@ -6351,6 +6351,7 @@ if test "$_opengl_mode" != none ; then
 		sdl)
 			# This case is for pure SDL backend. Many platforms overload it and create a new backend
 			# They still make use of SDL but it's handled below in the default case
+			_opengl_glad=yes
 			case $_sdlversion in
 				1.2.*)
 					# Stock SDL 1.2 only supports OpenGL contexts.
@@ -6367,7 +6368,7 @@ if test "$_opengl_mode" != none ; then
 							;;
 						emscripten)
 							_opengl_mode=gles2
-							_opengl_glad=no
+							_opengl_glad=no # https://github.com/Dav1dde/glad-web/issues/12
 							append_var OPENGL_LIBS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
 							;;
 						*)
@@ -6377,7 +6378,6 @@ if test "$_opengl_mode" != none ; then
 					esac
 					;;
 			esac
-			_opengl_glad=yes
 			;;
 		switch)
 			_opengl_mode=gles2
