@@ -2053,6 +2053,9 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		_musicEngine->saveLoadWithSerializer(s);
 	}
 
+	// At least from now on, VAR_SOUNDCARD will have a reliable value.
+	if (s.isLoading() && (_game.heversion < 70 && _game.version <= 6))
+		setSoundCardVarToCurrentConfig();
 
 	//
 	// Save/load the charset renderer state

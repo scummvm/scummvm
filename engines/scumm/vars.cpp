@@ -773,36 +773,7 @@ void ScummEngine_v100he::resetScummVars() {
 
 void ScummEngine::resetScummVars() {
 	if (_game.heversion < 70 && _game.version <= 6) {
-		// VAR_SOUNDCARD modes
-		// 0 PC Speaker
-		// 1 Tandy
-		// 2 CMS
-		// 3 AdLib
-		// 4 Roland
-		switch (_sound->_musicType) {
-		case MDT_NONE:
-		case MDT_PCSPK:
-			VAR(VAR_SOUNDCARD) = 0;
-			break;
-		case MDT_PCJR:
-			VAR(VAR_SOUNDCARD) = 1;
-			break;
-		case MDT_CMS:
-			VAR(VAR_SOUNDCARD) = 2;
-			break;
-		case MDT_ADLIB:
-			VAR(VAR_SOUNDCARD) = 3;
-			break;
-		default:
-			if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_LOOM && _game.version == 3))
-			   &&  (_game.platform == Common::kPlatformDOS)) {
-				VAR(VAR_SOUNDCARD) = 4;
-			} else {
-				VAR(VAR_SOUNDCARD) = 3;
-			}
-			break;
-		}
-
+		setSoundCardVarToCurrentConfig();
 		setVideoModeVarToCurrentConfig();
 
 		if (_game.platform == Common::kPlatformMacintosh && (_game.features & GF_OLD_BUNDLE)) {
@@ -872,6 +843,41 @@ void ScummEngine::setVideoModeVarToCurrentConfig() {
 		VAR(VAR_VIDEOMODE) = 13;
 	else
 		VAR(VAR_VIDEOMODE) = 19;
+}
+
+void ScummEngine::setSoundCardVarToCurrentConfig() {
+	if (VAR_SOUNDCARD == 0xFF)
+		return;
+
+	// VAR_SOUNDCARD modes
+	// 0 PC Speaker
+	// 1 Tandy
+	// 2 CMS
+	// 3 AdLib
+	// 4 Roland
+	switch (_sound->_musicType) {
+	case MDT_NONE:
+	case MDT_PCSPK:
+		VAR(VAR_SOUNDCARD) = 0;
+		break;
+	case MDT_PCJR:
+		VAR(VAR_SOUNDCARD) = 1;
+		break;
+	case MDT_CMS:
+		VAR(VAR_SOUNDCARD) = 2;
+		break;
+	case MDT_ADLIB:
+		VAR(VAR_SOUNDCARD) = 3;
+		break;
+	default:
+		if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_LOOM && _game.version == 3))
+			&&  (_game.platform == Common::kPlatformDOS)) {
+			VAR(VAR_SOUNDCARD) = 4;
+		} else {
+			VAR(VAR_SOUNDCARD) = 3;
+		}
+		break;
+	}
 }
 
 } // End of namespace Scumm

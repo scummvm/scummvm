@@ -602,6 +602,7 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 	void setVideoModeVarToCurrentConfig();
+	void setSoundCardVarToCurrentConfig();
 
 	void setupCharsetRenderer(const Common::Path &macFontFile);
 	void setupCostumeRenderer();
