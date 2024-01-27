@@ -83,7 +83,9 @@ void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
-
+void PagedGump::onMouseDouble(int button, int32 mx, int32 my) {
+	Close();
+}
 
 bool PagedGump::OnKeyDown(int key, int mod) {
 	if (_current != _gumps.end())
