@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 
 #include "agi/agi.h"
+#include "agi/lzw.h"
 #include "agi/words.h"
 
 namespace Agi {
@@ -75,12 +76,13 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 /**
  * Detects if the volume format is really V3.
  *
- * The volume format for a V2 game should have 5 byte headers.
- * The CoCo3 version of Xmas Card 86 has 7 byte headers.
- * The resource length repeats as if it were a V3 volume with no compression.
- *
- * This function detects if a volume has this unusual structure so that
- * loadVolRes() can ignore the two extra header bytes.
+ * The CoCo3 version of Leisure Suit Larry uses a V3 volume, even
+ * though it is a V2 game with V2 directory files. Sierra's other
+ * CoCo3 release, King's Quest III, uses regular V2 volumes.
+ * Fan ports of DOS games to CoCo3 use V3 volumes; presumably they
+ * used the Leisure Suit Larry interpreter.
+ * 
+ * Returns true if Logic 0's volume matches the V3 format.
  */
 bool AgiLoader_v2::detectV3VolumeFormat() {
 	uint8 volume = _vm->_game.dirLogic[0].volume;
@@ -92,25 +94,30 @@ bool AgiLoader_v2::detectV3VolumeFormat() {
 
 	// read the first few entries and see if they match the 7 byte header
 	uint8 volumeHeader[7];
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 10; i++) {
 		if (volumeFile.read(&volumeHeader, 7) != 7) {
 			return false;
 		}
+
 		// signature
 		if (READ_BE_UINT16(volumeHeader) != 0x1234) {
 			return false;
 		}
-		// volume number
-		if (volumeHeader[2] != volume) {
+
+		// volume number (high bit == pic compression)
+		if ((volumeHeader[2] & 0x7f) != volume) {
 			return false;
 		}
-		// duplicate resource lengths
-		uint16 resourceLength1 = READ_LE_UINT16(volumeHeader + 3);
-		uint16 resourceLength2 = READ_LE_UINT16(volumeHeader + 5);
-		if (resourceLength1 != resourceLength2) {
-			return false;
-		}
-		if (!volumeFile.seek(resourceLength1, SEEK_CUR)) {
+
+		// uncompressed and compressed resource length.
+		// we can't validate these values against each other.
+		// uncompressed should always be greater than or equal
+		// to compressed, but fan tools compressed small resources
+		// even when the result was larger than uncompressed.
+		// (Coco3 fan ports of KQ4, MH1, MH2)
+		uint16 compressedResourceLength = READ_LE_UINT16(volumeHeader + 5);
+
+		if (!volumeFile.seek(compressedResourceLength, SEEK_CUR)) {
 			return false;
 		}
 	}
@@ -172,17 +179,34 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		fp.seek(agid->offset, SEEK_SET);
 		fp.read(&volumeHeader, _hasV3VolumeFormat ? 7 : 5);
 		uint16 signature = READ_BE_UINT16(volumeHeader);
-		if (signature == 0x1234) {
-			agid->len = READ_LE_UINT16(volumeHeader + 3);
-			data = (uint8 *)calloc(1, agid->len + 32); // why the extra 32 bytes?
-			if (data != nullptr) {
-				fp.read(data, agid->len);
-			} else {
-				error("AgiLoader_v2::loadVolRes out of memory");
-			}
-		} else {
+		if (signature != 0x1234) {
 			warning("AgiLoader_v2::loadVolRes: bad signature %04x", signature);
 			return nullptr;
+		}
+
+		agid->len = READ_LE_UINT16(volumeHeader + 3);
+		if (_hasV3VolumeFormat) {
+			agid->clen = READ_LE_UINT16(volumeHeader + 5);
+		} else {
+			agid->clen = agid->len;
+		}
+
+		uint8 *compBuffer = (uint8 *)calloc(1, agid->clen + 32); // why the extra 32 bytes?
+		fp.read(compBuffer, agid->clen);
+
+		if ((volumeHeader[2] & 0x80) && _hasV3VolumeFormat) { // compressed pic
+			// effectively uncompressed, but having only 4-bit parameters for F0 / F2 commands
+			data = compBuffer;
+			agid->flags |= RES_PICTURE_V3_NIBBLE_PARM;
+		} else if (agid->len == agid->clen) {
+			// do not decompress
+			data = compBuffer;
+		} else {
+			// it is compressed
+			data = (uint8 *)calloc(1, agid->len + 32); // why the extra 32 bytes?
+			lzwExpand(compBuffer, data, agid->len);
+			free(compBuffer);
+			agid->flags |= RES_COMPRESSED;
 		}
 	} else {
 		// we have a bad volume resource
