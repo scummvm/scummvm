@@ -525,22 +525,37 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 	} break;
 	case EX_POP_CHARACTER_SELECTION:
 		// seems not to be used
-		warning("TODO: exCommand EX_POP_CHARACTER_SELECTION: not implemented");
+		warning("exCommand EX_POP_CHARACTER_SELECTION: not implemented");
 		break;
 	case EX_CAMERA_TRACKING:
 		warning("TODO: exCommand EX_CAMERA_TRACKING: not implemented");
 		break;
+	case EX_BUTTON_HOVER_SOUND: {
+		SoundDefinition* sound = sqsounddef(v, 3);
+		if (!sound)
+			return sq_throwerror(v, "failed to get sound for EX_BUTTON_HOVER_SOUND");
+		g_engine->_audio._soundHover = sound;
+	} break;
 	case EX_RESTART:
 		warning("TODO: exCommand EX_RESTART: not implemented");
 		break;
 	case EX_IDLE_TIME:
+		// used in demo only in watchForIdle
 		warning("TODO: exCommand EX_IDLE_TIME: not implemented");
 		break;
 	case EX_DISABLE_SAVESYSTEM:
-		warning("TODO: exCommand EX_DISABLE_SAVESYSTEM: not implemented");
+		// seems not to be used
+		warning("exCommand EX_DISABLE_SAVESYSTEM: not implemented");
+		break;
+	case EX_SHOW_OPTIONS:
+    	g_engine->openMainMenuDialog();
 		break;
 	case EX_OPTIONS_MUSIC:
 		warning("TODO: exCommand EX_OPTIONS_MUSIC: not implemented");
+		break;
+	case EX_FORCE_TALKIE_TEXT:
+		// seems not to be used
+		warning("exCommand EX_FORCE_TALKIE_TEXT: not implemented");
 		break;
 	default:
 		warning("exCommand(%dd) not implemented", cmd);

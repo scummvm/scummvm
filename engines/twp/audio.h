@@ -109,6 +109,7 @@ public:
 	void update(float elapsed);
 
 	Common::Array<SoundDefinition*> _soundDefs;
+	SoundDefinition* _soundHover = nullptr;	// not used yet, should be used in the GUI
 
 private:
 	void updateVolume(AudioSlot* slot);
