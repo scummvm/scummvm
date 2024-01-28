@@ -390,6 +390,8 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 
 		case kTransPushUp:									// 14
 			rto.translate(0, h - t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rto.clip(clipRect);
 			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(0, t.yStepSize * i);
