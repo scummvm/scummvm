@@ -156,11 +156,11 @@ public:
 	void compileScriptSet(ScriptSet *ss);
 
 private:
-	bool parseNumber(const Common::String &token, uint32 &outNumber) const;
+	bool parseNumber(const Common::String &token, uint32 &outNumber, bool mayStartWithNonZeroDigit) const;
 	static bool parseDecNumber(const Common::String &token, uint start, uint32 &outNumber);
 	static bool parseHexNumber(const Common::String &token, uint start, uint32 &outNumber);
 	static bool parseBinNumber(const Common::String &token, uint start, uint32 &outNumber);
-	void expectNumber(uint32 &outNumber);
+	void expectNumber(uint32 &outNumber, bool mayStartWithNonZeroDigit);
 
 	void compileRoomScriptSet(RoomScriptSet *rss);
 	void compileReahOrAD2044ScreenScriptSet(ScreenScriptSet *sss);
@@ -232,7 +232,7 @@ ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::Path &blamePath
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 
-bool ScriptCompiler::parseNumber(const Common::String &token, uint32 &outNumber) const {
+bool ScriptCompiler::parseNumber(const Common::String &token, uint32 &outNumber, bool mayStartWithNonZeroDigit) const {
 	if (token.size() == 0)
 		return false;
 
@@ -240,7 +240,16 @@ bool ScriptCompiler::parseNumber(const Common::String &token, uint32 &outNumber)
 		return parseDecNumber(token, 1, outNumber);
 
 	if (_dialect == kScriptDialectReah || _dialect == kScriptDialectAD2044) {
-		if (token[0] == '0') {
+		bool isValidNumber = false;
+
+		char firstChar = token[0];
+
+		if (_dialect == kScriptDialectReah || !mayStartWithNonZeroDigit)
+			isValidNumber = (firstChar == '0');
+		else
+			isValidNumber = (firstChar >= '0' && firstChar <= '9');	// Some room numbers lack a 0 prefix
+
+		if (isValidNumber) {
 			switch (_numberParsingMode) {
 			case kNumberParsingDec:
 				return parseDecNumber(token, 0, outNumber);
@@ -329,11 +338,11 @@ bool ScriptCompiler::parseBinNumber(const Common::String &token, uint start, uin
 	return true;
 }
 
-void ScriptCompiler::expectNumber(uint32 &outNumber) {
+void ScriptCompiler::expectNumber(uint32 &outNumber, bool mayStartWithNonZeroDigit) {
 	TextParserState state;
 	Common::String token;
 	if (_parser.parseToken(token, state)) {
-		if (!parseNumber(token, outNumber))
+		if (!parseNumber(token, outNumber, mayStartWithNonZeroDigit))
 			error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 	} else {
 		error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
@@ -373,7 +382,7 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 				uint32 roomNumber = 0;
 
 				if (_parser.parseToken(token, state)) {
-					if (!parseNumber(token, roomNumber))
+					if (!parseNumber(token, roomNumber, true))
 						error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 
 					ss->roomScripts[roomNumber] = roomScript;
@@ -406,7 +415,7 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			return;
 		} else if (token == _scrToken) {
 			uint32 screenNumber = 0;
-			expectNumber(screenNumber);
+			expectNumber(screenNumber, false);
 
 			Common::SharedPtr<ScreenScriptSet> sss(new ScreenScriptSet());
 			if (_dialect == kScriptDialectReah || _dialect == kScriptDialectAD2044)
@@ -438,7 +447,7 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			}
 
 			uint32 number = 0;
-			if (!parseNumber(value, number))
+			if (!parseNumber(value, number, false))
 				error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
 
 			int32 signedNumber = static_cast<int32>(number);
@@ -492,7 +501,7 @@ void ScriptCompiler::compileReahOrAD2044ScreenScriptSet(ScreenScriptSet *sss) {
 			return;
 		} else if (token == "~*") {
 			uint32 interactionNumber = 0;
-			expectNumber(interactionNumber);
+			expectNumber(interactionNumber, false);
 
 			codeGenScript(protoScript, *currentScript);
 
@@ -535,7 +544,7 @@ void ScriptCompiler::compileSchizmScreenScriptSet(ScreenScriptSet *sss) {
 			return;
 		} else if (token == "~*") {
 			uint32 interactionNumber = 0;
-			expectNumber(interactionNumber);
+			expectNumber(interactionNumber, false);
 
 			codeGenScript(protoScript, *currentScript);
 
@@ -601,6 +610,7 @@ static ScriptNamedInstruction g_ad2044NamedInstructions[] = {
 	//{"r?", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
 	//{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"r@", ProtoOp::kProtoOpScript, ScriptOps::kRGet},
+	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kRSet},
 	//{"clearPocket", ProtoOp::kProtoOpScript, ScriptOps::kItemClear},
 	{"cursor!", ProtoOp::kProtoOpScript, ScriptOps::kSetCursor},
 	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
@@ -964,15 +974,15 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 	}
 
 	if (_dialect == kScriptDialectSchizm && token.hasPrefix("-")) {
-		uint32 unumber = 0;
-		if (parseNumber(token.substr(1), unumber)) {
-			script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, -static_cast<int32>(unumber)));
+		uint32 number = 0;
+		if (parseNumber(token.substr(1), number, false)) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, -static_cast<int32>(number)));
 			return true;
 		}
 	}
 
 	uint32 number = 0;
-	if (parseNumber(token, number)) {
+	if (parseNumber(token, number, false)) {
 		script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, number));
 		return true;
 	}
@@ -1016,7 +1026,7 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 	if (token == "#case") {
 		uint32 caseNumber = 0;
 		_parser.expect(":", _blamePath);
-		expectNumber(caseNumber);
+		expectNumber(caseNumber, false);
 
 		script.instrs.push_back(ProtoInstruction(kProtoOpCase, ScriptOps::kInvalid, caseNumber));
 		return true;
@@ -1024,7 +1034,7 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 
 	if (token == "#case:") {
 		uint32 caseNumber = 0;
-		expectNumber(caseNumber);
+		expectNumber(caseNumber, false);
 
 		script.instrs.push_back(ProtoInstruction(kProtoOpCase, ScriptOps::kInvalid, caseNumber));
 		return true;

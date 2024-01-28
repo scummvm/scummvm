@@ -53,6 +53,8 @@
 
 #include "gui/message.h"
 
+#include "vcruise/ad2044_items.h"
+#include "vcruise/ad2044_ui.h"
 #include "vcruise/audio_player.h"
 #include "vcruise/circuitpuzzle.h"
 #include "vcruise/sampleloop.h"
@@ -65,89 +67,6 @@
 
 namespace VCruise {
 
-struct AD2044ItemInfo {
-	uint32 enNameCRC;
-	uint32 plNameCRC;
-	bool inspectable;
-};
-
-const AD2044ItemInfo g_ad2044ItemInfos[] = {
-	{0, 0, false},	// 0
-	{0, 0, false},	// 1
-	{0, 0, false},	// 2
-	{0, 0, false},	// 3
-	{0, 0, false},	// 4
-	{0, 0, false},	// 5
-	{0, 0, false},	// 6
-	{0, 0, false},	// 7
-	{0, 0, false},	// 8
-	{0, 0, false},	// 9
-	{0, 0, false},	// 10
-	{0, 0, false},	// 11
-	{0, 0, false},	// 12
-	{0, 0, false},	// 13
-	{0, 0, false},	// 14
-	{0, 0, false},	// 15
-	{0, 0, false},	// 16
-	{0, 0, false},	// 17
-	{0, 0, false},	// 18
-	{0, 0, false},	// 19
-	{0, 0, false},	// 20
-	{0, 0, false},	// 21
-	{0, 0, false},	// 22
-	{0, 0, false},	// 23
-	{0, 0, false},	// 24
-	{0, 0, false},	// 25
-	{0, 0, false},	// 26
-	{0, 0, false},	// 27
-	{0, 0, false},	// 28
-	{0, 0, false},	// 29
-	{0, 0, false},	// 30
-	{0, 0, false},	// 31
-	{0, 0, false},	// 32
-	{0, 0, false},	// 33
-	{0, 0, false},	// 34
-	{0, 0, false},	// 35
-	{0, 0, false},	// 36
-	{0, 0, false},	// 37
-	{0, 0, false},	// 38
-	{0, 0, false},	// 39
-	{0, 0, false},	// 40
-	{0, 0, false},	// 41
-	{0, 0, false},	// 42
-	{0, 0, false},	// 43
-	{0, 0, false},	// 44
-	{0, 0, false},	// 45
-	{0, 0, false},	// 46
-	{0, 0, false},	// 47
-	{0, 0, false},	// 48
-	{0, 0, false},	// 49
-	{0, 0, false},	// 50
-	{0, 0, false},	// 51
-	{0, 0, false},	// 52
-	{0, 0, false},	// 53
-	{0x83d54448, 0x839911EF, false}, // 54
-	{0, 0, false},	// 55
-	{0, 0, false},	// 56
-	{0, 0, false},	// 57
-	{0, 0, false},	// 58
-	{0, 0, false},	// 59
-	{0, 0, false},	// 60
-	{0, 0, false},	// 61
-	{0, 0, false},	// 62
-	{0, 0, false},	// 63
-	{0, 0, false},	// 64
-	{0, 0, false},	// 65
-	{0, 0, false},	// 66
-	{0, 0, false},	// 67
-	{0, 0, false},	// 68
-	{0, 0, false},	// 69
-	{0, 0, false},	// 70
-	{0, 0, false},	// 71
-	{0, 0, false},	// 72
-	{0, 0, false},	// 73
-};
-
 struct InitialItemPlacement {
 	uint roomNumber;
 	uint screenNumber;
@@ -155,6 +74,7 @@ struct InitialItemPlacement {
 };
 
 const InitialItemPlacement g_ad2044InitialItemPlacements[] = {
+	{1, 0xb0, 18},	// Spoon
 	{1, 0xb8, 24},	// Cigarette pack
 	{1, 0xac, 27},	// Matches
 };
@@ -534,6 +454,17 @@ const AD2044MapLoader::ScreenOverride AD2044MapLoader::sk_screenOverrides[] = {
 	{1, 0xb6, 145},	// After pushing the button to open the capsule
 	{1, 0x6a, 142},	// Opening an apple on the table
 	{1, 0x6b, 143}, // Clicking the tablet in the apple
+	{1, 0x6c, 144}, // Table facing the center of the room with soup bowl empty
+
+	// Room 23
+	{23, 0xbb, 127}, // Bathroom entry point
+	{23, 0xbc, 128}, // Sink
+	{23, 0xbd, 129}, // Looking at toilet, seat down
+	{23, 0xbe, 130}, // Looking at toilet, seat up
+	{23, 0x61, 133}, // Bathroom looking at boots
+	{23, 0x62, 134}, // Looking behind boots
+	{23, 0x63, 135}, // Standing behind toilet looking at sink
+	{23, 0x64, 136}, // Looking under toilet
 };
 
 AD2044MapLoader::AD2044MapLoader() : _roomNumber(0), _screenNumber(0), _isLoaded(false) {
@@ -589,7 +520,7 @@ void AD2044MapLoader::load() {
 	debug(1, "Loading screen map %s", mapFileName.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!mapFile.open(mapFileName)) {
-		error("Couldn't resolve map file for room %u screen %u", _roomNumber, _screenNumber);
+		error("Couldn't resolve map file for room %u screen %x", _roomNumber, _screenNumber);
 	}
 
 	_currentMap = loadScreenDirectionDef(mapFile);
@@ -1519,7 +1450,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false),
-	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _charSet(kCharSetLatin),
+	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _language(defaultLanguage), _charSet(kCharSetLatin),
 	  _isCDVariant(false), _currentAnimatedCursor(nullptr), _currentCursor(nullptr), _cursorTimeBase(0), _cursorCycleLength(0),
 	  _inventoryActivePage(0) {
 
@@ -1930,6 +1861,8 @@ bool Runtime::bootGame(bool newGame) {
 				_languageIndex = li;
 		}
 	}
+
+	_language = lang;
 
 	debug(2, "Language index: %u   Default language index: %u", _languageIndex, _defaultLanguageIndex);
 
@@ -3918,9 +3851,24 @@ bool Runtime::dischargeIdleMouseMove() {
 	uint interactionID = 0;
 	if (sdDef && !_idleLockInteractions) {
 		for (const InteractionDef &idef : sdDef->interactions) {
-			if (idef.objectType == 1 && idef.rect.contains(relMouse)) {
+			if (idef.objectType == 1 && interactionID == 0 && idef.rect.contains(relMouse)) {
 				isOnInteraction = true;
 				interactionID = idef.interactionID;
+			}
+
+			if (_gameID == GID_AD2044 && idef.objectType == 3 && idef.rect.contains(relMouse)) {
+				uint32 locationID = getLocationForScreen(_roomNumber, _screenNumber);
+				if (_placedItems.find(locationID) == _placedItems.end()) {
+					if (_inventoryActiveItem.itemID != 0) {
+						isOnInteraction = true;
+						interactionID = kObjectDropInteractionID;
+					}
+				} else {
+					if (_inventoryActiveItem.itemID == 0) {
+						isOnInteraction = true;
+						interactionID = kObjectPickupInteractionID;
+					}
+				}
 				break;
 			}
 		}
@@ -3995,6 +3943,12 @@ bool Runtime::dischargeIdleMouseMove() {
 		if (interactionID == kHeroChangeInteractionID) {
 			changeToCursor(_cursors[16]);
 			_idleHaveClickInteraction = true;
+		} else if (interactionID == kObjectDropInteractionID) {
+			changeToCursor(_cursors[7]);
+			_idleHaveClickInteraction = true;
+		} else if (interactionID == kObjectPickupInteractionID) {
+			changeToCursor(_cursors[8]);
+			_idleHaveClickInteraction = true;
 		} else {
 			// New interaction, is there a script?
 			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
@@ -4047,11 +4001,21 @@ bool Runtime::dischargeIdleClick() {
 		if (_gameID == GID_SCHIZM && _idleInteractionID == kHeroChangeInteractionID) {
 			changeHero();
 			return true;
+		} else if (_gameID == GID_AD2044 && _idleInteractionID == kObjectDropInteractionID) {
+			dropActiveItem();
+			recordSaveGameSnapshot();
+			_havePendingReturnToIdleState = true;
+			return true;
+		} else if (_gameID == GID_AD2044 && _idleInteractionID == kObjectPickupInteractionID) {
+			pickupPlacedItem();
+			recordSaveGameSnapshot();
+			_havePendingReturnToIdleState = true;
+			return true;
 		} else {
 			// Interaction, is there a script?
 			Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
 
-			_idleIsOnInteraction = false; // ?
+			_idleIsOnInteraction = false; // Clear so new interactions at the same mouse coord are detected
 
 			if (script) {
 				ScriptEnvironmentVars vars;
@@ -5749,6 +5713,71 @@ void Runtime::clearPlacedItemGraphic() {
 	}
 }
 
+void Runtime::drawActiveItemGraphic() {
+	if (_inventoryActiveItem.graphic) {
+		Common::Rect itemRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ActiveItemRender);
+
+		_fullscreenMenuSection.surf->blitFrom(*_inventoryActiveItem.graphic, Common::Point(itemRect.left, itemRect.top));
+		drawSectionToScreen(_fullscreenMenuSection, itemRect);
+	}
+
+	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].inspectionScreenID != 0) {
+		Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
+
+		_fullscreenMenuSection.surf->blitFrom(*_ad2044Graphics->examine, Common::Point(examineRect.left, examineRect.top));
+		drawSectionToScreen(_fullscreenMenuSection, examineRect);
+	}
+}
+
+void Runtime::clearActiveItemGraphic() {
+	Common::Rect rectsToClear[] = {
+		AD2044Interface::getRectForUI(AD2044InterfaceRectID::ActiveItemRender),
+		AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton),
+	};
+
+	for (const Common::Rect &rectToClear : rectsToClear) {
+		_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic, rectToClear, rectToClear);
+		drawSectionToScreen(_fullscreenMenuSection, rectToClear);
+	}
+}
+
+void Runtime::dropActiveItem() {
+	if (_inventoryActiveItem.itemID == 0)
+		return;
+
+	uint32 locationID = getLocationForScreen(_roomNumber, _screenNumber);
+	uint8 &placedItemIDRef = _placedItems[locationID];
+
+	if (placedItemIDRef == 0) {
+		placedItemIDRef = static_cast<uint8>(_inventoryActiveItem.itemID);
+		_inventoryPlacedItemCache = _inventoryActiveItem;
+		_inventoryActiveItem = InventoryItem();
+	}
+
+	drawPlacedItemGraphic();
+	clearActiveItemGraphic();
+}
+
+void Runtime::pickupPlacedItem() {
+	if (_inventoryActiveItem.itemID != 0)
+		return;
+
+	uint32 locationID = getLocationForScreen(_roomNumber, _screenNumber);
+	Common::HashMap<uint32, uint8>::iterator placedItemIt = _placedItems.find(locationID);
+	if (placedItemIt == _placedItems.end())
+		return;
+
+	if (placedItemIt->_value != _inventoryPlacedItemCache.itemID)
+		error("Placed item cache desynced somehow, please report this as a bug");
+
+	_placedItems.erase(placedItemIt);
+	_inventoryActiveItem = _inventoryPlacedItemCache;
+	_inventoryPlacedItemCache = InventoryItem();
+
+	clearPlacedItemGraphic();
+	drawActiveItemGraphic();
+}
+
 void Runtime::getFileNamesForItemGraphic(uint itemID, Common::String &outFileName, Common::String &outAlphaFileName) const {
 	if (_gameID == GID_REAH)
 		outFileName = Common::String::format("Thing%u", itemID);
@@ -6507,7 +6536,7 @@ void Runtime::onKeymappedEvent(KeymappedEvent kme) {
 
 bool Runtime::canSave(bool onCurrentScreen) const {
 	if (onCurrentScreen) {
-		return (_mostRecentlyRecordedSaveState.get() != nullptr && (_haveHorizPanAnimations || _forceAllowSaves));
+		return (_mostRecentlyRecordedSaveState.get() != nullptr && (_haveHorizPanAnimations || _forceAllowSaves || _gameID == GID_AD2044));
 	} else {
 		return _mostRecentValidSaveState.get() != nullptr && _isInGame;
 	}
@@ -6902,6 +6931,10 @@ Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 		}
 
 		snapshot->pagedItems.push_back(item);
+
+		// Alt state is for item inspection
+		snapshot->numStates = 2;
+		snapshot->states[1].reset(new SaveGameSwappableState());
 	}
 
 	return snapshot;

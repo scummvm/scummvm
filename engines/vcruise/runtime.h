@@ -987,6 +987,10 @@ private:
 	void updatePlacedItemCache();
 	void drawPlacedItemGraphic();
 	void clearPlacedItemGraphic();
+	void drawActiveItemGraphic();
+	void clearActiveItemGraphic();
+	void dropActiveItem();
+	void pickupPlacedItem();
 
 	void getFileNamesForItemGraphic(uint itemID, Common::String &outGraphicFileName, Common::String &outAlphaFileName) const;
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required);
@@ -1220,6 +1224,7 @@ private:
 	void scriptOpSay2K(ScriptArg_t arg);
 	void scriptOpSay3K(ScriptArg_t arg);
 	void scriptOpRGet(ScriptArg_t arg);
+	void scriptOpRSet(ScriptArg_t arg);
 
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursors;      // Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursorsShort;      // Cursors indexed as CURSOR_#
@@ -1451,7 +1456,8 @@ private:
 	static const uint kSoundCacheSize = 16;
 
 	static const uint kHeroChangeInteractionID = 0xffffffffu;
-	static const uint kObjectInteractionID = 0xfffffffeu;
+	static const uint kObjectDropInteractionID = 0xfffffffeu;
+	static const uint kObjectPickupInteractionID = 0xfffffffdu;
 
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
@@ -1465,6 +1471,7 @@ private:
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
 	uint _defaultLanguageIndex;
 	uint _languageIndex;
+	Common::Language _language;
 	CharSet _charSet;
 	bool _isCDVariant;
 	StartConfigDef _startConfigs[kNumStartConfigs];
@@ -1496,6 +1503,7 @@ private:
 
 	// AD2044 tooltips
 	Common::String _tooltipText;
+	Common::String _subtitleText;
 
 	Common::SharedPtr<AD2044Graphics> _ad2044Graphics;
 };

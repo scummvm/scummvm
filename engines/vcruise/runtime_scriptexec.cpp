@@ -21,6 +21,7 @@
 
 #include "common/random.h"
 
+#include "vcruise/ad2044_items.h"
 #include "vcruise/audio_player.h"
 #include "vcruise/circuitpuzzle.h"
 #include "vcruise/runtime.h"
@@ -2042,7 +2043,28 @@ void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
 }
 
 // AD2044 ops
-OPCODE_STUB(AnimT)
+void Runtime::scriptOpAnimT(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	StackInt_t animationID = stackArgs[0];
+
+	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _animIDToFrameRange.find(animationID);
+	if (animRangeIt == _animIDToFrameRange.end())
+		error("Couldn't resolve animation ID %i", static_cast<int>(animationID));
+
+	AnimationDef animDef;
+	animDef.animNum = animRangeIt->_value.animationNum;
+	animDef.firstFrame = animRangeIt->_value.firstFrame;
+	animDef.lastFrame = animRangeIt->_value.lastFrame;
+
+	_haveIdleAnimations[0] = true;
+
+	StaticAnimation &outAnim = _idleAnimations[0];
+
+	outAnim = StaticAnimation();
+	outAnim.animDefs[0] = animDef;
+	outAnim.animDefs[1] = animDef;
+}
 
 void Runtime::scriptOpAnimAD2044(bool isForward) {
 	TAKE_STACK_INT(2);
@@ -2142,15 +2164,37 @@ void Runtime::scriptOpM(ScriptArg_t arg) {
 void Runtime::scriptOpEM(ScriptArg_t arg) {
 }
 
-OPCODE_STUB(SE)
-OPCODE_STUB(SDot)
+void Runtime::scriptOpSE(ScriptArg_t arg) {
+	// English subtitle
+	if (_language == Common::PL_POL)
+		return;
+
+	_subtitleText = _scriptSet->strings[arg];
+}
+
+void Runtime::scriptOpSDot(ScriptArg_t arg) {
+	// Polish subtitle
+	if (_language == Common::PL_POL)
+		return;
+
+	_subtitleText = _scriptSet->strings[arg];
+}
 
 void Runtime::scriptOpE(ScriptArg_t arg) {
+	if (_language == Common::PL_POL)
+		return;
+
 	_tooltipText = _scriptSet->strings[arg];
 	redrawSubtitleSection();
 }
 
-OPCODE_STUB(Dot)
+void Runtime::scriptOpDot(ScriptArg_t arg) {
+	if (_language != Common::PL_POL)
+		return;
+
+	_tooltipText = _scriptSet->strings[arg];
+	redrawSubtitleSection();
+}
 
 void Runtime::scriptOpSound(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
@@ -2161,7 +2205,23 @@ void Runtime::scriptOpISound(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(USound)
-OPCODE_STUB(RGet)
+
+void Runtime::scriptOpRGet(ScriptArg_t arg) {
+	StackInt_t itemID = 0x2000;
+
+	if (_inventoryActiveItem.itemID < kNumAD2044Items) {
+		itemID = g_ad2044ItemInfos[_inventoryActiveItem.itemID].scriptItemID;
+		if (itemID == 0) {
+			warning("No script item ID for item type %i", static_cast<int>(_inventoryActiveItem.itemID));
+			itemID = 0x2000;
+		}
+	} else
+		error("Invalid item ID");
+
+	_scriptStack.push_back(StackValue(itemID));
+}
+
+OPCODE_STUB(RSet)
 
 
 // Unused Schizm ops
@@ -2414,9 +2474,13 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SE);
 			DISPATCH_OP(SDot);
 			DISPATCH_OP(E);
+			DISPATCH_OP(Dot);
 
 			DISPATCH_OP(Sound);
 			DISPATCH_OP(ISound);
+
+			DISPATCH_OP(RGet);
+			DISPATCH_OP(RSet);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));
