@@ -40,6 +40,10 @@
 namespace Nancy {
 namespace Action {
 
+ActionManager::~ActionManager() {
+	clearActionRecords();
+}
+
 void ActionManager::handleInput(NancyInput &input) {
 	bool setHoverCursor = false;
 	for (auto &rec : _records) {

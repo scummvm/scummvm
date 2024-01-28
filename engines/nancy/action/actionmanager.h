@@ -55,7 +55,7 @@ public:
 	static const byte kCursStandard				= 254;
 
 	ActionManager() {}
-	virtual ~ActionManager() {}
+	virtual ~ActionManager();
 
 	void handleInput(NancyInput &input);
 
