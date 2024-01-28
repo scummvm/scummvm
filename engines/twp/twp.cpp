@@ -438,9 +438,10 @@ void TwpEngine::update(float elapsed) {
 			}
 
 			_inputState.setHotspot(_noun1 != nullptr);
-			_hud.setVisible(_inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None);
+			bool hudVisible = _inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None  && !_cutscene;
+			_hud.setVisible(hudVisible);
 			_sentence.setVisible(_hud.isVisible());
-			_uiInv.setVisible(_hud.isVisible() && !_cutscene);
+			_uiInv.setVisible(hudVisible);
 			_actorSwitcher.setVisible((_dialog.getState() == DialogState::None) && !_cutscene);
 			// Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
 			//_sentence.setText(cursortxt.c_str());
@@ -545,7 +546,7 @@ void TwpEngine::update(float elapsed) {
 	if (!_actor) {
 		_uiInv.update(elapsed);
 	} else {
-		_hud.update(scrPos, _noun1, _cursor.isLeftDown());
+		_hud.update(elapsed, scrPos, _noun1, _cursor.isLeftDown());
 		VerbUiColors *verbUI = &_hud.actorSlot(_actor)->verbUiColors;
 		_uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
 	}

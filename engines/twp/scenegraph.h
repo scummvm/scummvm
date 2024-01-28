@@ -45,7 +45,7 @@ public:
 	void setName(const Common::String &name) { _name = name; }
 	const Common::String &getName() const { return _name; }
 
-	void setVisible(bool visible) { _visible = visible; }
+	virtual void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
 
 	// Adds new child in current node.
@@ -297,6 +297,8 @@ public:
 	Object* getObject() const { return _obj; }
 	Math::Vector2d getPos(Object* inv) const;
 
+	void setVisible(bool visible) override;
+
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
 	void drawArrows(Math::Matrix4 trsf);
@@ -313,6 +315,8 @@ private:
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;
 	float _jiggleTime = 0.f;
+	float _fadeTime = 0.f;
+	bool _fadeIn = false;
 };
 
 class SentenceNode: public Node {
