@@ -1285,7 +1285,11 @@ void BladeRunnerEngine::gameTick() {
 		for (int y = 0; y < kOriginalGameHeight; ++y) {
 			for (int x = 0; x < kOriginalGameWidth; ++x) {
 				uint8 a, r, g, b;
-				getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
+				//getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
+				a = 1;
+				r = _zbuffer->getData()[y*kOriginalGameWidth + x] / 256;
+				g = r;
+				b = r;
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
 				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
 			}
