@@ -582,6 +582,11 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 			Math::Vector2d pos(startOffsetX + ((float)(i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET)), startOffsetY - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET)));
 			Math::Matrix4 t(trsf);
 			t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
+			if (obj->_jiggle) {
+				Math::Matrix3 rot;
+				rot.buildAroundZ(18.f * sin(_jiggleTime));
+				t.setRotation(rot);
+			}
 			float s = obj->getScale();
 			Twp::scale(t, Math::Vector2d(s, s));
 			drawSprite(*itemFrame, texture, Color(), t);
@@ -598,6 +603,8 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 }
 
 void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
+	_jiggleTime += 10.f * elapsed;
+
 	// udate colors
 	_actor = actor;
 	_backColor = backColor;
