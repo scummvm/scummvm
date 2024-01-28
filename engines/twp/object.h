@@ -265,6 +265,7 @@ public:
 	int _popCount = 0;
 	Sentence _exec;
 	int _sound = 0;
+	bool _jiggle = false;
 
 private:
 	Motor *_alphaTo = nullptr;

@@ -312,6 +312,7 @@ private:
 	Common::Rect _itemRects[NUMOBJECTS];
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;
+	float _jiggleTime = 0.f;
 };
 
 class SentenceNode: public Node {

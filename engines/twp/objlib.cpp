@@ -210,9 +210,16 @@ static SQInteger isObject(HSQUIRRELVM v) {
 }
 
 static SQInteger jiggleInventory(HSQUIRRELVM v) {
-	// TODO: jiggleInventory
-	warning("jiggleInventory not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+    if (!obj) {
+      return sq_throwerror(v, "failed to get object");
+    }
+    SQInteger enabled = 0;
+    if (SQ_FAILED(sq_getinteger(v, 3, &enabled))) {
+      return sq_throwerror(v, "failed to get enabled");
+    }
+    obj->_jiggle = enabled != 0;
+    return 0;
 }
 
 // Rotate the object around its origin back and forth by the specified amount of pixels.
