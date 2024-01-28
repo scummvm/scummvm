@@ -231,6 +231,7 @@ private:
 	SentenceNode _sentence;
 	WalkboxNode _walkboxNode;
 	PathNode _pathNode;
+	LightingNode _lightingNode;
 	Shader _bwShader;
 	Shader _ghostShader;
 	Shader _sepiaShader;

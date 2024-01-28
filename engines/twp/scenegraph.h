@@ -111,6 +111,7 @@ public:
 	void draw(Math::Matrix4 parent = Math::Matrix4());
 
 protected:
+	virtual void onDrawChildren(Math::Matrix4 trsf);
 	virtual void onColorUpdated(Color c) {}
 	virtual void drawCore(Math::Matrix4 trsf) {}
 
@@ -143,6 +144,7 @@ public:
 	Math::Matrix4 getTrsf(Math::Matrix4 parentTrsf) override final;
 
 protected:
+	void onDrawChildren(Math::Matrix4 trsf) override;
 	void drawCore(Math::Matrix4 trsf) override final;
 
 private:

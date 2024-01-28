@@ -70,6 +70,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenScene.setName("Screen");
 	_scene.addChild(&_walkboxNode);
 	_screenScene.addChild(&_pathNode);
+	_screenScene.addChild(&_lightingNode);
 	_screenScene.addChild(&_hotspotMarker);
 	_screenScene.addChild(&_inputState);
 	_screenScene.addChild(&_sentence);
@@ -605,6 +606,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	_gfx.setRenderTarget(&renderTexture2);
 	if (_room) {
 		setShaderEffect(_room->_effect);
+		_lighting->update(_room->_lights);
 	}
 	_shaderParams.randomValue[0] = g_engine->getRandom();
 	_shaderParams.timeLapse = fmodf(_time, 1000.f);
@@ -714,7 +716,7 @@ Common::Error TwpEngine::run() {
 	_sepiaShader.init("sepia", vsrc, sepiaShader);
 	_fadeShader.reset(new FadeShader());
 
-	// _lighting = new Lighting();
+	_lighting = new Lighting();
 
 	_pack.init();
 
@@ -859,6 +861,11 @@ Common::Error TwpEngine::run() {
 						debugC(kDebugGame, "set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
 																																  : "none"));
 						_pathNode.setMode(mode);
+					}
+					break;
+				case Common::KEYCODE_l:
+					if (control) {
+						_lightingNode.setVisible(!_lightingNode.isVisible());
 					}
 					break;
 				default:

@@ -733,11 +733,6 @@ static SQInteger removeCallback(HSQUIRRELVM v) {
 	return 0;
 }
 
-static SQInteger setAmbientLight(HSQUIRRELVM v) {
-	warning("TODO: setAmbientLight: not implemented");
-	return 0;
-}
-
 static SQInteger startthread(HSQUIRRELVM v) {
 	return _startthread(v, false);
 }
@@ -847,7 +842,6 @@ void sqgame_register_syslib(HSQUIRRELVM v) {
 	regFunc(v, microTime, _SC("microTime"));
 	regFunc(v, moveCursorTo, _SC("moveCursorTo"));
 	regFunc(v, removeCallback, _SC("removeCallback"));
-	regFunc(v, setAmbientLight, _SC("setAmbientLight"));
 	regFunc(v, startglobalthread, _SC("startglobalthread"));
 	regFunc(v, startthread, _SC("startthread"));
 	regFunc(v, stopthread, _SC("stopthread"));

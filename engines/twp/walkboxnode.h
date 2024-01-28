@@ -67,6 +67,14 @@ private:
 	PathMode _mode = PathMode::None;
 };
 
+class LightingNode : public Node {
+public:
+	LightingNode();
+
+private:
+	virtual void drawCore(Math::Matrix4 trsf) override;
+};
+
 } // namespace Twp
 
 #endif
