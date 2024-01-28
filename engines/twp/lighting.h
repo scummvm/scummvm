@@ -25,31 +25,42 @@
 #include "twp/gfx.h"
 #include "twp/spritesheet.h"
 
+#define MAX_LIGHTS 50
+
 namespace Twp {
 
-// class Lighting {
-// public:
-// 	Lighting();
-// 	virtual ~Lighting();
+struct Lights;
 
-// 	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &texture);
+class Lighting : public Shader {
+public:
+	Lighting();
+	virtual ~Lighting();
 
-// private:
-// 	virtual void applyUniforms() final;
+	void setSpriteOffset(const Math::Vector2d& offset);
+	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &getNumTextures);
 
-// private:
-// 	int32 _contentSizeLoc;
-// 	int32 _spriteOffsetLoc;
-// 	int32 _spritePosInSheetLoc;
-// 	int32 _spriteSizeRelToSheetLoc;
-// 	int32 _numberLightsLoc;
-// 	int32 _ambientColorLoc;
+	void update(const Lights& lights);
 
-// 	Math::Vector2d _contentSize;
-// 	Math::Vector2d _spriteOffset;
-// 	Math::Vector2d _spritePosInSheet;
-// 	Math::Vector2d _spriteSizeRelToSheet;
-// };
+private:
+	virtual void applyUniforms() final;
+
+public:
+	Math::Vector2d _contentSize;
+	Math::Vector2d _spriteOffset;
+	Math::Vector2d _spritePosInSheet;
+	Math::Vector2d _spriteSizeRelToSheet;
+
+	Color _ambientLight; // Ambient light color
+	int u_numberLights = 0;
+	float u_lightPos[3 * MAX_LIGHTS];
+	float u_coneDirection[2 * MAX_LIGHTS];
+	float u_coneCosineHalfConeAngle[MAX_LIGHTS];
+	float u_coneFalloff[MAX_LIGHTS];
+	float u_lightColor[3 * MAX_LIGHTS];
+	float u_brightness[MAX_LIGHTS];
+	float u_cutoffRadius[MAX_LIGHTS];
+	float u_halfRadius[MAX_LIGHTS];
+};
 
 } // namespace Twp
 

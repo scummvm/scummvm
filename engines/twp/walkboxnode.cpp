@@ -21,6 +21,7 @@
 
 #include "twp/twp.h"
 #include "twp/walkboxnode.h"
+#include "twp/lighting.h"
 
 namespace Twp {
 
@@ -47,7 +48,7 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 				const Walkbox &wb = walkboxes[i];
 				const Color color = wb.isVisible() ? green : red;
 				Common::Array<Vertex> vertices;
-				const Common::Array<Vector2i>& points = wb.getPoints();
+				const Common::Array<Vector2i> &points = wb.getPoints();
 				for (uint j = 0; j < points.size(); j++) {
 					Vector2i pInt = points[j];
 					Math::Vector2d p = (Math::Vector2d)pInt;
@@ -69,7 +70,7 @@ void WalkboxNode::drawCore(Math::Matrix4 trsf) {
 				const Walkbox &wb = walkboxes[i];
 				const Color color = i == 0 ? green : red;
 				Common::Array<Vertex> vertices;
-				const Common::Array<Vector2i>& points = wb.getPoints();
+				const Common::Array<Vector2i> &points = wb.getPoints();
 				for (uint j = 0; j < points.size(); j++) {
 					Vector2i pInt = points[j];
 					Math::Vector2d p = (Math::Vector2d)pInt;
@@ -138,7 +139,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	}
 
 	// draw graph nodes
-	const Twp::Graph& graph = g_engine->_room->_pathFinder.getGraph();
+	const Twp::Graph &graph = g_engine->_room->_pathFinder.getGraph();
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All))) {
 		for (uint i = 0; i < graph._concaveVertices.size(); i++) {
 			const Math::Vector2d p = g_engine->roomToScreen((Math::Vector2d)graph._concaveVertices[i]) - Math::Vector2d(2.f, 2.f);
@@ -195,7 +196,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 
 		// draw a green square if inside walkbox, red if not
 		Common::Array<Walkbox> walkboxes = g_engine->_room ? g_engine->_room->_pathFinder.getWalkboxes() : Common::Array<Walkbox>();
-		if(walkboxes.empty())
+		if (walkboxes.empty())
 			return;
 
 		const bool inside = (walkboxes.size() > 0) && walkboxes[0].contains((Vector2i)roomPos);
@@ -207,8 +208,27 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		// draw a blue square on the closest point
 		pos = g_engine->roomToScreen((Math::Vector2d)walkboxes[0].getClosestPointOnEdge((Vector2i)roomPos));
 		t = Math::Matrix4();
-		t.translate(Math::Vector3d(pos.getX()-2.f, pos.getY()-2.f, 0.f));
+		t.translate(Math::Vector3d(pos.getX() - 2.f, pos.getY() - 2.f, 0.f));
 		g_engine->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), blue, t);
+	}
+}
+
+LightingNode::LightingNode() : Node("Lighting") {
+	setVisible(false);
+}
+
+void LightingNode::drawCore(Math::Matrix4 trsf) {
+	if (!g_engine->_room)
+		return;
+
+	const float size = 6.0f;
+	for (int i = 0; i < MAX_LIGHTS; i++) {
+		float *pos = &g_engine->_lighting->u_lightPos[i * 3];
+		float *color = &g_engine->_lighting->u_lightColor[i * 3];
+		Math::Vector2d p = g_engine->roomToScreen(Math::Vector2d(pos[0], pos[1]));
+		Math::Matrix4 t;
+		t.translate(Math::Vector3d(p.getX() - size / 2.f, p.getY() - size / 2.f, 0.f));
+		g_engine->getGfx().drawQuad(Math::Vector2d(size, size), Color(color[0], color[1], color[2]), t);
 	}
 }
 

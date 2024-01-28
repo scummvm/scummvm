@@ -19,6 +19,7 @@
  *
  */
 
+#include "twp/lighting.h"
 #include "twp/squtil.h"
 #include "twp/room.h"
 #include "twp/object.h"
@@ -418,6 +419,26 @@ ThreadBase *sqthread(int id) {
 			return t;
 		}
 	}
+	return nullptr;
+}
+
+Light *sqlight(int id) {
+	if(!g_engine->_room)
+		return nullptr;
+
+	for (size_t i = 0; i < MAX_LIGHTS; i++) {
+		Light *light = &g_engine->_room->_lights._lights[i];
+		if (light->id == id) {
+			return light;
+		}
+	}
+	return nullptr;
+}
+
+Light *sqlight(HSQUIRRELVM v, int i) {
+	int id;
+	if (SQ_SUCCEEDED(sqget(v, i, id)))
+		return sqlight(id);
 	return nullptr;
 }
 

@@ -133,42 +133,93 @@ static SQInteger enterRoomFromDoor(HSQUIRRELVM v) {
 }
 
 static SQInteger lightBrightness(HSQUIRRELVM v) {
-	warning("TODO: lightBrightness not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float brightness;
+		if (SQ_FAILED(sqget(v, 3, brightness)))
+			return sq_throwerror(v, "failed to get brightness");
+		light->brightness = brightness;
+	}
 	return 0;
 }
 
 static SQInteger lightConeDirection(HSQUIRRELVM v) {
-	warning("TODO: lightConeDirection not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float direction;
+		if (SQ_FAILED(sqget(v, 3, direction)))
+			return sq_throwerror(v, "failed to get direction");
+		light->coneDirection = direction;
+	}
 	return 0;
 }
 
 static SQInteger lightConeAngle(HSQUIRRELVM v) {
-	warning("TODO: lightConeAngle not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float angle;
+		if (SQ_FAILED(sqget(v, 3, angle)))
+			return sq_throwerror(v, "failed to get angle");
+		light->coneAngle = angle;
+	}
 	return 0;
 }
 
 static SQInteger lightConeFalloff(HSQUIRRELVM v) {
-	warning("TODO: lightConeFalloff not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float falloff;
+		if (SQ_FAILED(sqget(v, 3, falloff)))
+			return sq_throwerror(v, "failed to get falloff");
+		light->coneFalloff = falloff;
+	}
 	return 0;
 }
 
 static SQInteger lightCutOffRadius(HSQUIRRELVM v) {
-	warning("TODO: lightCutOffRadius not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float cutOffRadius;
+		if (SQ_FAILED(sqget(v, 3, cutOffRadius)))
+			return sq_throwerror(v, "failed to get cutOffRadius");
+		light->cutOffRadius = cutOffRadius;
+	}
 	return 0;
 }
 
 static SQInteger lightHalfRadius(HSQUIRRELVM v) {
-	warning("TODO: lightHalfRadius not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		float halfRadius;
+		if (SQ_FAILED(sqget(v, 3, halfRadius)))
+			return sq_throwerror(v, "failed to get halfRadius");
+		light->halfRadius = halfRadius;
+	}
 	return 0;
 }
 
 static SQInteger lightTurnOn(HSQUIRRELVM v) {
-	warning("TODO: lightTurnOn not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		bool on;
+		if (SQ_FAILED(sqget(v, 3, on)))
+			return sq_throwerror(v, "failed to get on");
+
+		light->on = on;
+	}
 	return 0;
 }
 
 static SQInteger lightZRange(HSQUIRRELVM v) {
-	warning("TODO: lightZRange not implemented");
+	Light *light = sqlight(v, 2);
+	if (light) {
+		int nearY, farY;
+		if (SQ_FAILED(sqget(v, 3, nearY)))
+			return sq_throwerror(v, "failed to get nearY");
+		if (SQ_FAILED(sqget(v, 4, farY)))
+			return sq_throwerror(v, "failed to get farY");
+		warning("lightZRange not implemented");
+	}
 	return 0;
 }
 
@@ -459,6 +510,14 @@ static SQInteger roomSize(HSQUIRRELVM v) {
 	return 1;
 }
 
+static SQInteger setAmbientLight(HSQUIRRELVM v) {
+	int c = 0;
+	if (SQ_FAILED(sqget(v, 2, c)))
+		return sq_throwerror(v, "failed to get color");
+	g_engine->_room->_lights._ambientLight = Color::rgb(c);
+	return 0;
+}
+
 // Sets walkbox to be hidden (YES) or not (NO).
 // If the walkbox is hidden, the actors cannot walk to any point within that area anymore, nor to any walkbox that's connected to it on the other side from the actor.
 // Often used on small walkboxes below a gate or door to keep the actor from crossing that boundary if the gate/door is closed.
@@ -499,6 +558,7 @@ void sqgame_register_roomlib(HSQUIRRELVM v) {
 	regFunc(v, roomRotateTo, "roomRotateTo");
 	regFunc(v, roomSize, "roomSize");
 	regFunc(v, roomOverlayColor, "roomOverlayColor");
+	regFunc(v, setAmbientLight, _SC("setAmbientLight"));
 	regFunc(v, walkboxHidden, "walkboxHidden");
 }
 } // namespace Twp

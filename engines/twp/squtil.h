@@ -172,6 +172,8 @@ SoundDefinition *sqsounddef(int id);
 ThreadBase *sqthread(HSQUIRRELVM v);
 ThreadBase *sqthread(HSQUIRRELVM v, int id);
 ThreadBase *sqthread(int id);
+Light *sqlight(int id);
+Light *sqlight(HSQUIRRELVM v, int i);
 
 template<typename... T>
 void sqcall(HSQUIRRELVM v, HSQOBJECT o, const char *name, T... args) {

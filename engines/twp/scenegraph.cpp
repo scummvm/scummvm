@@ -28,6 +28,7 @@
 #include "twp/gfx.h"
 #include "twp/object.h"
 #include "twp/util.h"
+#include "twp/lighting.h"
 
 namespace Twp {
 
@@ -179,18 +180,22 @@ static int cmpNodes(const Node *x, const Node *y) {
 	return y->getZSort() < x->getZSort();
 }
 
+void Node::onDrawChildren(Math::Matrix4 trsf) {
+	Common::Array<Node *> children(_children);
+	Common::sort(children.begin(), children.end(), cmpNodes);
+	for (size_t i = 0; i < children.size(); i++) {
+		Node *child = children[i];
+		child->draw(trsf);
+	}
+}
+
 void Node::draw(Math::Matrix4 parent) {
 	if (_visible) {
 		Math::Matrix4 trsf = getTrsf(parent);
 		Math::Matrix4 myTrsf(trsf);
 		myTrsf.translate(Math::Vector3d(-_anchor.getX(), _anchor.getY(), 0.f));
-		Common::Array<Node *> children(_children);
-		Common::sort(children.begin(), children.end(), cmpNodes);
 		drawCore(myTrsf);
-		for (size_t i = 0; i < children.size(); i++) {
-			Node *child = children[i];
-			child->draw(trsf);
-		}
+		onDrawChildren(trsf);
 	}
 }
 
@@ -239,20 +244,37 @@ Math::Matrix4 ParallaxNode::getTrsf(Math::Matrix4 parentTrsf) {
 	return trsf;
 }
 
+void ParallaxNode::onDrawChildren(Math::Matrix4 trsf) {
+	Node::onDrawChildren(trsf);
+}
+
 void ParallaxNode::drawCore(Math::Matrix4 trsf) {
 	Gfx &gfx = g_engine->getGfx();
 	SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
 	Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
+
+	// enable debug lighting
+	if (_zOrder == 0) {
+		g_engine->getGfx().use(g_engine->_lighting);
+	} else {
+		g_engine->getGfx().use(nullptr);
+	}
+
 	Math::Matrix4 t = trsf;
 	float x = 0.f;
 	for (size_t i = 0; i < _frames.size(); i++) {
 		const SpriteSheetFrame &frame = sheet->frameTable[_frames[i]];
+		g_engine->_lighting->setSpriteOffset({0.f, static_cast<float>(-frame.frame.height())});
+		g_engine->_lighting->setSpriteSheetFrame(frame, *texture);
+
 		Math::Matrix4 myTrsf = t;
 		myTrsf.translate(Math::Vector3d(x + frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f));
 		gfx.drawSprite(frame.frame, *texture, getColor(), myTrsf);
 		t = trsf;
 		x += frame.frame.width();
 	}
+
+	g_engine->getGfx().use(nullptr);
 }
 
 Anim::Anim(Object *obj)
@@ -360,7 +382,16 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			float y = 0.5f * (sf.sourceSize.getY()) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
 			Math::Vector3d pos(int(-x), int(y), 0.f);
 			trsf.translate(pos);
+			if (_obj->_lit) {
+				g_engine->getGfx().use(g_engine->_lighting);
+				Math::Vector2d p = getAbsPos();
+				g_engine->_lighting->setSpriteOffset({(flipX ? 0.f : -sf.frame.width()) + p.getX(), -sf.frame.height() - p.getY()});
+				g_engine->_lighting->setSpriteSheetFrame(sf, *texture);
+			} else {
+				g_engine->getGfx().use(nullptr);
+			}
 			g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
+			g_engine->getGfx().use(nullptr);
 		}
 	}
 }

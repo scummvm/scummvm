@@ -77,18 +77,18 @@ struct Scaling {
 struct Light {
 	Color color;
 	Math::Vector2d pos;
-	float brightness;    // light brightness 1.0f...100.f
-	float coneDirection; // cone direction 0...360.f
-	float coneAngle;     // cone angle 0...360.f
-	float coneFalloff;   // cone falloff 0.f...1.0f
-	float cutOffRadius;  // cutoff radius
-	float halfRadius;    // cone half radius 0.0f...1.0f
-	bool on;
-	int id;
+	float brightness = 0.f;    // light brightness 1.0f...100.f
+	float coneDirection = 0.f; // cone direction 0...360.f
+	float coneAngle = 0.f;     // cone angle 0...360.f
+	float coneFalloff = 0.f;   // cone falloff 0.f...1.0f
+	float cutOffRadius = 0.f;  // cutoff radius
+	float halfRadius = 0.f;    // cone half radius 0.0f...1.0f
+	bool on = false;
+	int id = 0;
 };
 
 struct Lights {
-	int _numLights; // Number of lights
+	int _numLights = 0; // Number of lights
 	Light _lights[50];
 	Color _ambientLight; // Ambient light color
 };

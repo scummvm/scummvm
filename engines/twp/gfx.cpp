@@ -140,7 +140,7 @@ Shader::~Shader() {
 }
 
 void Shader::init(const char *name, const char *vertex, const char *fragment) {
-	const char* attributes[]={"a_position", "a_color", "a_texCoords", nullptr};
+	const char *attributes[] = {"a_position", "a_color", "a_texCoords", nullptr};
 	_shader.loadFromStrings(name, vertex, fragment, attributes);
 
 	uint32 vbo = g_engine->getGfx()._vbo;
@@ -153,19 +153,28 @@ int Shader::getUniformLocation(const char *name) const {
 	return _shader.getUniformLocation(name);
 }
 
-void Shader::setUniform(const char * name, int value) {
+void Shader::setUniform(const char *name, int value) {
 	_shader.setUniform(name, value);
 }
 
-void Shader::setUniform(const char * name, float value) {
+void Shader::setUniform(const char *name, float value) {
 	_shader.setUniform1f(name, value);
 }
 
-void Shader::setUniform(const char * name, float* value, size_t count) {
+void Shader::setUniform(const char *name, float *value, size_t count) {
 	GLint loc = _shader.getUniformLocation(name);
 	GL_CALL(glUniform1fv(loc, count, value));
 }
 
+void Shader::setUniform2(const char *name, float *value, size_t count) {
+	GLint loc = _shader.getUniformLocation(name);
+	GL_CALL(glUniform2fv(loc, count, value));
+}
+
+void Shader::setUniform3(const char *name, float *value, size_t count) {
+	GLint loc = _shader.getUniformLocation(name);
+	GL_CALL(glUniform3fv(loc, count, value));
+}
 
 void Shader::setUniform(const char *name, Math::Vector2d value) {
 	_shader.setUniform(name, value);
