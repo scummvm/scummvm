@@ -475,6 +475,23 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		else if ((hasMovementFlags(MOVE_MOUSE_DIRECTION) && mouselength == 0) || hasMovementFlags(MOVE_STEP)) {
 			nextanim = Animation::jumpUp;
 		}
+		else if (!hasMovementFlags(MOVE_MOUSE_DIRECTION)) {
+			// check if there's something we can climb up onto here
+			Animation::Sequence climbanim = Animation::climb72;
+			while (climbanim >= Animation::climb16) {
+				if (avatar->tryAnim(climbanim, direction) ==
+					Animation::SUCCESS) {
+					nextanim = climbanim;
+				}
+				climbanim = static_cast<Animation::Sequence>(climbanim - 1);
+			}
+
+			if (nextanim >= Animation::climb16 && nextanim <= Animation::climb72) {
+				// climbing gives str/dex
+				avatar->accumulateStr(2 + nextanim - Animation::climb16);
+				avatar->accumulateDex(2 * (2 + nextanim - Animation::climb16));
+			}
+		}
 
 		nextanim = Animation::checkWeapon(nextanim, lastanim);
 		waitFor(avatar->doAnim(nextanim, direction));
@@ -506,7 +523,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 			jump(Animation::jump, direction);
 		}
 		else {
-			if (nextanim != Animation::jumpUp) {
+			if (nextanim >= Animation::climb16 && nextanim <= Animation::climb72) {
 				// climbing gives str/dex
 				avatar->accumulateStr(2 + nextanim - Animation::climb16);
 				avatar->accumulateDex(2 * (2 + nextanim - Animation::climb16));
