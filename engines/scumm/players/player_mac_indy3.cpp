@@ -246,7 +246,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 	AudioStream_I3M::CallbackProc _nextTickProc;
 
-	ScummEngine *_vm; 
+	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	static Common::WeakPtr<I3MPlayer> *_inst;
 
@@ -358,7 +358,7 @@ void AudioStream_I3M::initBuffers(uint32 feedBufferSize) {
 	for (int i = 0; i < 2; ++i) {
 		_buffers[i].size = feedBufferSize;
 		_buffers[i].start = new int8[_buffers[i].size];
-		_buffers[i].end = _buffers[i].start + _buffers[i].size;		
+		_buffers[i].end = _buffers[i].start + _buffers[i].size;
 	}
 	clearBuffer();
 }
@@ -452,7 +452,7 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 					_buffers[ii].lastR = lpos[1];
 			}
 		}
-	
+
 		*buffer++ = CLIP<int16>(smpL >> 8, -32768, 32767);
 		if (_isStereo)
 			*buffer++ = CLIP<int16>(smpR >> 8, -32768, 32767);
@@ -987,7 +987,7 @@ void I3MPlayer::setQuality(int qual) {
 		_mdrv = new I3MLQSynthDriver(_mixer->mutex(), false);
 		_qualHi = false;
 		assert(_mdrv);
-	}	
+	}
 
 	if (dr != _drivers.end())
 		*dr = _mdrv;
@@ -1268,7 +1268,7 @@ void I3MPlayer::MusicChannel::nextTick() {
 	}
 
 	_envStepLen = *in & 0xffff;
-	_envRate = *in >> 16;	
+	_envRate = *in >> 16;
 }
 
 void I3MPlayer::MusicChannel::parseNextEvents() {
@@ -1468,7 +1468,7 @@ const uint32 I3MPlayer::MusicChannel::_envShapes[98] = {
 	0xea60ffff, 0x00000004, 0xf63c0008, 0x00000000, 0x9c40ffff, 0xe8900005, 0x0000ffff, 0x00000000,
 	0x0000ffff, 0x00960154, 0xff6a0154, 0x0000ffff, 0x0000ffff, 0x00000000,
 	0x4e20ffff, 0x0fa00007, 0x03e8000f, 0x00000000, 0x88b8ffff, 0xf830000f, 0x0000ffff, 0x00000000,
-	0x88b8ffff, 0x01f40014, 0x00000000, 0x00000000, 0xafc8ffff, 0xfe0c003c, 0x0000ffff, 0x00000000 
+	0x88b8ffff, 0x01f40014, 0x00000000, 0x00000000, 0xafc8ffff, 0xfe0c003c, 0x0000ffff, 0x00000000
 };
 
 void I3MPlayer::updateSoundEffect() {
@@ -1476,7 +1476,7 @@ void I3MPlayer::updateSoundEffect() {
 	bool chkRestart = false;
 
 	if (!_soundEffectPlaying || !_lastSound) {
-		chkRestart = true;		
+		chkRestart = true;
 	} else {
 		if (_soundEffectNumLoops > 0)
 			--_soundEffectNumLoops;
@@ -1498,7 +1498,7 @@ void I3MPlayer::checkRestartSoundEffects() {
 	for (int i = 1; i < _idRangeMax; ++i) {
 		if (!_soundUsage[i] || isSong(i))
 			continue;
-		
+
 		const uint8 *ptr = _vm->getResourceAddress(rtSound, i);
 		assert(ptr);
 		if (READ_BE_UINT16(ptr + 6) == 0)
