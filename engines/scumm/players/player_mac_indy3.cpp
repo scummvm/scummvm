@@ -337,11 +337,6 @@ public:
 	MusicChannel *getMusicChannel(uint8 id) const;
 };
 
-/*template <typename T> Common::SharedPtr<T> &&makeSharedBuffer(T *buff) {
-	
-	return Common::SharedPtr<T>::SharedPtr//<T, Common::ArrayDeleter<T> >(buff);
-}*/
-
 AudioStream_I3M::AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate) : Audio::AudioStream(), _drv(drv), _vblSmpQty(0), _vblSmpQtyRem(0), _frameSize(stereo ? 2 : 1),
 	_vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate), _vblCbProc(nullptr), _isStereo(stereo), _interp(interpolate) {
 	assert(_drv);
@@ -1052,9 +1047,6 @@ void I3MPlayer::startSong(int id) {
 	if (_lastSong != -1)
 		--_soundUsage[_lastSong];
 	_lastSong = _lastSound = id;
-
-	//byte unused1 = ptr[4];
-	//byte unused2 = ptr[5];
 
 	if (isHiQuality()) {
 		_qualHi = true;
