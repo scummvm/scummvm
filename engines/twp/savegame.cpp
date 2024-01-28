@@ -546,6 +546,7 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 		for (int i = 0; i < NUMACTORS; i++) {
 			Object *actor = g_engine->_hud._actorSlots[i].actor;
 			if (actor) {
+				int jiggleCount = 0;
 				actor->_inventory.clear();
 				const Common::JSONObject &jSlot = jSlots[i]->asObject();
 				if (jSlot.contains("objects")) {
@@ -556,11 +557,12 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 							Object *obj = object(jObj->asString());
 							if (!obj)
 								warning("inventory obj '%s' not found", jObj->asString().c_str());
-							else
+							else {
 								actor->pickupObject(obj);
+								obj->_jiggle = jSlot["jiggle"]->isArray() && jSlot["jiggle"]->asArray()[jiggleCount++]->asIntegerNumber() != 0;
+							}
 						}
 					}
-					// TODO: "jiggle"
 				}
 				actor->_inventoryOffset = jSlot["scroll"]->asIntegerNumber();
 			}
@@ -851,15 +853,11 @@ static Common::JSONValue *createJInventory(const ActorSlot &slot) {
 		Common::JSONArray objKeys;
 		Common::JSONArray jiggleArray;
 		bool anyJiggle = false;
-		//  for (obj in slot.actor.inventory) {
 		for (size_t i = 0; i < slot.actor->_inventory.size(); i++) {
 			Object *obj = slot.actor->_inventory[i];
-			// TODO: jiggle
-			// let jiggle = obj.getJiggle()
-			bool jiggle = false;
-			// if (jiggle)
-			// 	anyJiggle = true;
-			jiggleArray.push_back(createJBool(jiggle));
+			if (obj->_jiggle)
+				anyJiggle = true;
+			jiggleArray.push_back(createJBool(obj->_jiggle));
 			objKeys.push_back(new Common::JSONValue(obj->_key));
 		}
 
