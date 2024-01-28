@@ -291,9 +291,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("bc", "2.10 1988-11-10 3.5\"", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
 
 	// Black Cauldron (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("bc", "", "51212c54808ade96176f201ae0ac7a6f", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
 	// Black Cauldron (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("bc", "updated", "c4e1937f74e8100cd0152b904434d8b4", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
 	// Donald Duck's Playground (PC Booter) 1.0Q
@@ -373,9 +375,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	// Gold Rush! (CoCo3 720k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
 	// Gold Rush! (CoCo3 360k/720k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
 	// King's Quest 1 (DOS) 1.0U [AGI 2.272]
@@ -408,12 +412,15 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("kq1", "2.0F 1987-05-05 5.25\"/3.5\"", "10ad66e2ecbd66951534a50aedcd0128", 0x2917, GID_KQ1),
 
 	// King's Quest 1 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq1", "", "10ad66e2ecbd66951534a50aedcd0128", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
 	// King's Quest 1 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq1", "fixed", "4c8ef8b5d2f1b6c1a93e456d1f1ffc74", 768, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
 	// King's Quest 1 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq1", "updated", "94087178c78933a4af3cd24d1c8dd7b2", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
 	// King's Quest 1 (Russian)
@@ -485,15 +492,19 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_LPS("kq2", "", "35211c574ececebdc723b23e35f99275", 543, Common::RU_RUS, 0x2917, GID_KQ2, Common::kPlatformDOS),
 
 	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "", "b944c4ff18fb8867362dc21cc688a283", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 2 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "updated", "f64a606de740a5348f3d125c03e989fe", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "fixed", "fb33ac2768a94a89117a270771db465c", 768, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 2 (CoCo3 720k)
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "", "bdb10876cd4cb20eabd88778c40b4075", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 3 (Amiga) 1.01 11/8/86
@@ -541,6 +552,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_LPS("kq3", "2.14 1988-03-15 3.5\"", "87956c92d23f53d81bf2ee9e08fdc64c", 390, Common::ES_ESP, 0x2936, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
+	// Official port by Sierra
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
 	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
@@ -575,12 +587,15 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("kq4", "Demo 1988-12-20", "dmdir", "a3332d70170a878469d870b14863d0bf", 0x3149, GID_KQ4),
 
 	// King's Quest 4 (CoCo3 720k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq4", "", "9e7729a28e749ca241d2bf71b9b2dbde", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
 
 	// King's Quest 4 (CoCo3 360k/720k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq4", "updated", "1959ca10739edb34069bb504dbd74805", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
 
-	// King's Quest 4 (CoCo3 360k/720k) update by Guillaume Major (2021)
+	// King's Quest 4 (CoCo3 360k/720k)
+	// Unofficial port by Guillaume Major
 	GAME_PS("kq4", "", "ef1c0d2d14fe643929a092621c7459cc", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
 
 	// Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
@@ -605,6 +620,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("lsl1", "1.05 1987-06-26", "8a0076429890531832f0dc113285e31e", 0x2440, GID_LSL1, Common::kPlatformMacintosh),
 
 	// Leisure Suit Larry 1 (CoCo3 158k/360k) [AGI 2.072]
+	// Official port by Sierra
 	GAME_PS("lsl1", "", "a2de1fe76565c3e8b40c9d036b5e5612", 198, 0x2440, GID_LSL1, Common::kPlatformCoCo3),
 
 	// Manhunter NY (ST) 1.03 10/20/88
@@ -624,9 +640,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
 
 	// Manhunter NY (CoCo3 720k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("mh1", "", "b968285caf2f591c78dd9c9e26ab8974", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
 
 	// Manhunter NY (CoCo3 360k/720k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("mh1", "updated", "d47da950c62289f8d4ccf36af73365f2", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
 
 	{
@@ -681,9 +699,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	// Manhunter SF (CoCo3 720k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("mh2", "", "acaaa577e10d1753c5a74f6ae1d858d4", 591, 0x2440, GID_MH2, Common::kPlatformCoCo3),
 
 	// Manhunter SF (CoCo3 720k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("mh2", "updated", "c64875766700196e72a92359f70f45a9", 591, 0x2440, GID_MH2, Common::kPlatformCoCo3),
 
 	// Mickey's Space Adventure
@@ -702,6 +722,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("mixedup", "1987-11-10", "e524655abf9b96a3b179ffcd1d0f79af", 0x2917, GID_MIXEDUP),
 
 	// Mixed-Up Mother Goose (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("mixedup", "", "44e63e9b4d4822a31edea0e8a7e7eac4", 606, 0x2440, GID_MIXEDUP, Common::kPlatformCoCo3),
 
 	// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
@@ -739,9 +760,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_LPS("pq1", "2.0G 1987-12-03", "5d151f2f4c4e0675534d49b13529da3f", 360, Common::ES_ESP, 0x2917, GID_PQ1, Common::kPlatformDOS),
 
 	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("pq1", "", "28a077041f75aab78f66804800940085", 375, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
 
 	// Police Quest 1 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("pq1", "updated", "63b9a9c6eec154751dd446cd3693e0e2", 768, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 1 (ST) 1.1A
@@ -780,12 +803,15 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, GF_EXTCHAR, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 372, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "fixed", "ca822b768b6462e410423ea7f498daee", 768, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "updated", "7fa54e6bb7ffeb4cf20eca39d86f5fb2", 387, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
@@ -859,9 +885,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq2", "2.0F 1989-01-05 5.25\"", "bb5a44d0bea416f2cd4c3385eaa21af4", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
+	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.072]
+	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "updated", "d24f19b047e65e1763eff4b46f3d50df", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
 
 	// Troll's Tale (PC Booter)
@@ -903,6 +931,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
 
 	// Xmas Card 1986 (CoCo3 360k) [AGI 2.072]
+	// Appears to be an unofficial port
 	GAME_PS("xmascard", "", "25ad35e9628fc77e5e0dd35852a272b6", 768, 0x2440, GID_XMASCARD, Common::kPlatformCoCo3),
 
 	FANMADE_FO("2 Player Demo", "4279f46b3cebd855132496476b1d2cca", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
