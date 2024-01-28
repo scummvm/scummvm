@@ -116,7 +116,9 @@ public:
 	void init();
 	ActorSlot *actorSlot(Object *actor);
 	bool isOver() const { return _over; }
-	void update(Math::Vector2d pos, Object *hotspot, bool mouseClick);
+	void update(float elapsed, Math::Vector2d pos, Object *hotspot, bool mouseClick);
+
+	void setVisible(bool visible) override;
 
 private:
 	virtual void drawCore(Math::Matrix4 trsf) override final;
@@ -132,6 +134,8 @@ public:
 	bool _mouseClick = false;
 	bool _over = false;
 	int _defaultVerbId = 0;
+	float _fadeTime = 0.f;
+	bool _fadeIn = false;
 };
 } // namespace Twp
 

@@ -275,7 +275,8 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	_frameDuration = 1.0 / _getFps(fps, anim->fps);
 	_loop = loop || anim->loop;
 	_instant = instant;
-	if(_obj) setVisible(Twp::find(_obj->_hiddenLayers, _anim->name) == (size_t)-1);
+	if (_obj)
+		setVisible(Twp::find(_obj->_hiddenLayers, _anim->name) == (size_t)-1);
 
 	clear();
 	for (size_t i = 0; i < _anim->layers.size(); i++) {
@@ -537,8 +538,8 @@ void Inventory::drawArrows(Math::Matrix4 trsf) {
 	Math::Matrix4 tDn(trsf);
 	tDn.translate(Math::Vector3d(SCREEN_WIDTH / 2.f + ARROWWIDTH / 2.f + MARGIN, 0.5f * ARROWHEIGHT, 0.f));
 
-	drawSprite(*arrowUp, texture, Color::withAlpha(_verbNormal, alphaUp), tUp);
-	drawSprite(*arrowDn, texture, Color::withAlpha(_verbNormal, alphaDn), tDn);
+	drawSprite(*arrowUp, texture, Color::withAlpha(_verbNormal, alphaUp * getAlpha()), tUp);
+	drawSprite(*arrowDn, texture, Color::withAlpha(_verbNormal, alphaDn * getAlpha()), tDn);
 }
 
 void Inventory::drawBack(Math::Matrix4 trsf) {
@@ -553,7 +554,7 @@ void Inventory::drawBack(Math::Matrix4 trsf) {
 	for (int i = 0; i < 4; i++) {
 		Math::Matrix4 t(trsf);
 		t.translate(Math::Vector3d(offsetX, offsetY, 0.f));
-		drawSprite(*back, texture, _backColor, t);
+		drawSprite(*back, texture, Color::withAlpha(_backColor, getAlpha()), t);
 		offsetX += back->sourceSize.getX() + BACKOFFSET;
 	}
 
@@ -562,7 +563,7 @@ void Inventory::drawBack(Math::Matrix4 trsf) {
 	for (int i = 0; i < 4; i++) {
 		Math::Matrix4 t(trsf);
 		t.translate(Math::Vector3d(offsetX, offsetY, 0.f));
-		drawSprite(*back, texture, _backColor, t);
+		drawSprite(*back, texture, Color::withAlpha(_backColor, getAlpha()), t);
 		offsetX += back->sourceSize.getX() + BACKOFFSET;
 	}
 }
@@ -589,7 +590,7 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 			}
 			float s = obj->getScale();
 			Twp::scale(t, Math::Vector2d(s, s));
-			drawSprite(*itemFrame, texture, Color(), t);
+			drawSprite(*itemFrame, texture, Color::withAlpha(Color(), getAlpha()), t);
 		}
 	}
 }
@@ -604,6 +605,22 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 
 void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
 	_jiggleTime += 10.f * elapsed;
+	_fadeTime += elapsed;
+
+	if (_fadeTime > 2.f) {
+		_fadeTime = 2.f;
+		if (!_fadeIn) {
+			setVisible(false);
+		}
+	}
+
+	if (_fadeIn) {
+		float alpha = MIN(_fadeTime, 2.0f) / 2.0f;
+		setAlpha(alpha);
+	} else {
+		float alpha = MAX(2.0f - _fadeTime, 0.0f) / 2.0f;
+		setAlpha(alpha);
+	}
 
 	// udate colors
 	_actor = actor;
@@ -630,7 +647,7 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 		for (int i = 0; i < NUMOBJECTS; i++) {
 			const Common::Rect &item = _itemRects[i];
 			if (item.contains(scrPos.getX(), scrPos.getY())) {
-                size_t index = _actor->_inventoryOffset * NUMOBJECTSBYROW + i;
+				size_t index = _actor->_inventoryOffset * NUMOBJECTSBYROW + i;
 				if (index < _actor->_inventory.size())
 					_obj = _actor->_inventory[index];
 				break;
@@ -641,6 +658,16 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 			Object *obj = _actor->_inventory[i];
 			obj->update(elapsed);
 		}
+	}
+}
+
+void Inventory::setVisible(bool visible) {
+	if (_fadeIn != visible) {
+		_fadeIn = visible;
+		if (visible) {
+			Node::setVisible(visible);
+		}
+		_fadeTime = 0;
 	}
 }
 
