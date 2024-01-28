@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-03 05:41+0000\n"
+"PO-Revision-Date: 2024-01-29 05:42+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1547,17 +1547,14 @@ msgstr "Cada 30 minuts"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Molt gran"
+msgstr "200% - Extremadament gran"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Molt gran"
+msgstr "175% - Molt gran"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
@@ -1573,31 +1570,26 @@ msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Mitjana"
+msgstr "100% - Mitjana"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Petita"
+msgstr "75% - Petita"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Petita"
+msgstr "50% - Més petita"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Petita"
+msgstr "25% - La més petita"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
