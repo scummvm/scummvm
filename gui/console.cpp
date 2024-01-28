@@ -122,6 +122,11 @@ void ConsoleDialog::init() {
 	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
 	_linesInBuffer = kBufferSize / kCharsPerLine;
 
+	_isDragging = false;
+
+	_selBegin = -1;
+	_selEnd = -1;
+
 	resetPrompt();
 }
 
@@ -214,9 +219,13 @@ void ConsoleDialog::drawLine(int line) {
 		int l = (start + line) % _linesInBuffer;
 		byte c = buffer(l * kCharsPerLine + column);
 #else
-		byte c = buffer((start + line) * kCharsPerLine + column);
+		int idx = (start + line) * kCharsPerLine + column;
+		byte c = buffer(idx);
 #endif
-		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
+		if (idx >= MIN(_selBegin, _selEnd) && idx < MAX(_selBegin, _selEnd))
+			g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font, ThemeEngine::kFontColorNormal, true);
+		else
+			g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
 }
@@ -537,23 +546,44 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
 	if (evt.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 		switch (evt.customType) {
-			case kActionCopy:
-				{
-					Common::String userInput = getUserInput();
-					if (!userInput.empty())
-						g_system->setTextInClipboard(userInput);
+		case kActionCopy: {
+			if (_selBegin == -1 && _selEnd == -1) {
+				Common::String userInput = getUserInput();
+				if (!userInput.empty())
+					g_system->setTextInClipboard(userInput);
+			} else {
+				Common::String str = "";
+				Common::String whitespaces = ""; // for dealing with trailing whitespaces
+				for (int i = MIN(_selBegin, _selEnd); i < MAX(_selBegin, _selEnd); i++) {
+					if (i % kCharsPerLine != kCharsPerLine - 1) {
+						if (buffer(i) == ' ') {
+							whitespaces += buffer(i);
+						} else {
+							str += whitespaces;
+							str += buffer(i);
+							whitespaces = "";
+						}
+					} else {
+						whitespaces = "";
+						str += "\n";
+					}
 				}
-				break;
-			case kActionPaste:
-				if (g_system->hasTextInClipboard()) {
-					Common::U32String text = g_system->getTextFromClipboard();
-					insertIntoPrompt(text.encode().c_str());
-					scrollToCurrent();
-					drawLine(pos2line(_currentPos));
-				}
-				break;
-			default:
-				break;
+				g_system->setTextInClipboard(str);
+				_selBegin = -1;
+				_selEnd = -1;
+				drawDialog(kDrawLayerForeground);
+			}
+		} break;
+		case kActionPaste:
+			if (g_system->hasTextInClipboard()) {
+				Common::U32String text = g_system->getTextFromClipboard();
+				insertIntoPrompt(text.encode().c_str());
+				scrollToCurrent();
+				drawLine(pos2line(_currentPos));
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -843,6 +873,59 @@ void ConsoleDialog::scrollToCurrent() {
 		_scrollLine = line;
 		updateScrollBuffer();
 		g_gui.scheduleTopDialogRedraw();
+	}
+}
+
+void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	Widget *w;
+
+	w = findWidget(x, y);
+
+	if (w) {
+		if (!(w->getFlags() & WIDGET_IGNORE_DRAG))
+			_dragWidget = w;
+
+		if (w != _focusedWidget && w->wantsFocus()) {
+			setFocusWidget(w);
+		}
+
+		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
+	} else if (_selBegin == -1 && _selEnd == -1) {
+		int check = (y - _topPadding) / (kConsoleLineHeight / 2);
+		if (check % 2) {
+			int lineNumber = (check - 1) / 2;
+			int ind = (x - _leftPadding) / kConsoleCharWidth;
+			_selBegin = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + ind;
+			_selEnd = _selBegin;
+			_isDragging = true;
+		}
+	} else {
+		_selBegin = -1;
+		_selEnd = -1;
+		drawDialog(kDrawLayerForeground);
+	}
+}
+
+void ConsoleDialog::handleMouseMoved(int x, int y, int button) {
+	if (!_isDragging)
+		Dialog::handleMouseMoved(x, y, button);
+	else {
+		int check = (y - _topPadding) / (kConsoleLineHeight / 2);
+		if (check % 2) {
+			int lineNumber = (check - 1) / 2;
+			int col = (x - _leftPadding) / kConsoleCharWidth;
+			_selEnd = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + col;
+			drawDialog(kDrawLayerForeground);
+		}
+	}
+}
+
+void ConsoleDialog::handleMouseUp(int x, int y, int button, int clickCount) {
+	Dialog::handleMouseUp(x, y, button, clickCount);
+	_isDragging = false;
+	if (_selBegin == _selEnd) {
+		_selBegin = -1;
+		_selEnd = -1;
 	}
 }
 
