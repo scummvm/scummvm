@@ -457,6 +457,11 @@ const AD2044MapLoader::ScreenOverride AD2044MapLoader::sk_screenOverrides[] = {
 	{1, 0x6c, 144}, // Table facing the center of the room with soup bowl empty
 
 	// Room 23
+	{23, 0xa3, 103}, // Looking at high mirror
+	{23, 0xa4, 104}, // After taking mirror
+
+	{23, 0xb9, 125}, // Bathroom looking down the stairs
+	//{23, 0xb9, 126}, // ???
 	{23, 0xbb, 127}, // Bathroom entry point
 	{23, 0xbc, 128}, // Sink
 	{23, 0xbd, 129}, // Looking at toilet, seat down
@@ -1606,6 +1611,8 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["CUR_NAC"] = 5; // Nac = top?  Not sure.  But this is the finger pointer.
 		_namedCursors["CUR_TYL"] = 2; // Tyl = back
 		_namedCursors["CUR_OTWORZ"] = 11; // Otworz = open
+		_namedCursors["CUR_WEZ"] = 8; // Wez = Pick up
+		_namedCursors["CUR_ZOSTAW"] = 7; // Put down
 	}
 
 	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;

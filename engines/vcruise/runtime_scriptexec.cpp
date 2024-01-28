@@ -2211,7 +2211,7 @@ void Runtime::scriptOpRGet(ScriptArg_t arg) {
 
 	if (_inventoryActiveItem.itemID < kNumAD2044Items) {
 		itemID = g_ad2044ItemInfos[_inventoryActiveItem.itemID].scriptItemID;
-		if (itemID == 0) {
+		if (itemID == 0 && _inventoryActiveItem.itemID != 0) {
 			warning("No script item ID for item type %i", static_cast<int>(_inventoryActiveItem.itemID));
 			itemID = 0x2000;
 		}
@@ -2221,7 +2221,30 @@ void Runtime::scriptOpRGet(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(itemID));
 }
 
-OPCODE_STUB(RSet)
+void Runtime::scriptOpRSet(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	for (uint itemID = 0; itemID < kNumAD2044Items; itemID++) {
+		if (static_cast<StackInt_t>(g_ad2044ItemInfos[itemID].scriptItemID) == stackArgs[0]) {
+
+			if (_inventoryActiveItem.itemID != itemID) {
+				Common::String itemFileName;
+				Common::String alphaFileName;
+
+				_inventoryActiveItem.itemID = itemID;
+				getFileNamesForItemGraphic(itemID, itemFileName, alphaFileName);
+				_inventoryActiveItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
+
+				clearActiveItemGraphic();
+				drawActiveItemGraphic();
+			}
+			return;
+		}
+	}
+
+	// NYI
+	error("Couldn't resolve item ID for script item %i", static_cast<int>(stackArgs[0]));
+}
 
 
 // Unused Schizm ops
