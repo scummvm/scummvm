@@ -44,7 +44,7 @@ void Overlay::init() {
 	
 	g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
-	setFrame(_firstFrame);
+	_currentFrame = _firstFrame;
 
 	RenderObject::init();
 }
@@ -221,7 +221,22 @@ void Overlay::execute() {
 					}
 				}
 
-				setFrame(nextFrame);
+				// Workaround for:
+				// - the arcade machine in nancy1 scene 833
+				// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
+				// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
+				// Assumes all rects in a single animation have the same dimensions
+				Common::Rect srcRect = _srcRects[nextFrame];
+				if (!srcRect.isValidRect() || srcRect.width() != _srcRects[0].width() || srcRect.height() != _srcRects[0].height()) {
+					srcRect.setWidth(_srcRects[0].width());
+					srcRect.setHeight(_srcRects[0].height());
+				}
+
+				_drawSurface.create(_fullSurface, srcRect);
+				setTransparent(_transparency == kPlayOverlayTransparent);
+
+				_currentFrame = nextFrame;
+				_needsRedraw = true;
 			}
 		} else {
 			// Check if we've moved the viewport
@@ -233,32 +248,86 @@ void Overlay::execute() {
 				setVisible(false);
 				_hasHotspot = false;
 
+				// First, check if there's more than one blit description for the current viewport frame.
+				// This happens in nancy7 scene 3600
+				Common::Array<uint16> blitsForThisFrame;
+				Common::Rect destRect;
 				for (uint i = 0; i < _blitDescriptions.size(); ++i) {
 					if (_currentViewportFrame == _blitDescriptions[i].frameID) {
-						moveTo(_blitDescriptions[i].dest);
-						setVisible(true);
+						blitsForThisFrame.push_back(i);
+						if (destRect.isEmpty()) {
+							destRect = _blitDescriptions[i].dest;
+						} else {
+							destRect.extend(_blitDescriptions[i].dest);
+						}
+					}
+				}
 
+				if (_overlayType == kPlayOverlayStatic && blitsForThisFrame.size()) {
+					moveTo(destRect);
+					setVisible(true);
+
+					if (blitsForThisFrame.size() != 1) {
+						_drawSurface.create(destRect.width(), destRect.height(), _fullSurface.format);
+						setTransparent(true); // Force transparency. This shouldn't break anything. Hopefully.
+						_drawSurface.clear(_drawSurface.getTransparentColor());
+					}
+
+					for (uint i = 0; i < blitsForThisFrame.size(); ++i) {
 						// In static mode every "animation" frame corresponds to a viewport frame
-						if (_overlayType == kPlayOverlayStatic) {
-							setFrame(i);
+						// Static mode overlays use both the general source rects (_srcRects),
+						// and the ones inside the blit description struct corresponding to the current scene background.
 
-							if (g_nancy->getGameType() <= kGameTypeNancy2) {
-								// In nancy2, the presence of a hotspot relies on whether the Overlay has a scene change
-								if (_enableHotspot == kPlayOverlayWithHotspot) {
-									_hotspot = _screenPosition;
-									_hasHotspot = true;
-								}
+						// BlitDescriptions contain the id of the source rect to actually use
+						Common::Rect srcRect = _srcRects[_blitDescriptions[blitsForThisFrame[i]].staticRectID];
+						Common::Rect staticBounds = _blitDescriptions[blitsForThisFrame[i]].src;
+
+						if (_usesAutotext) {
+							// For autotext overlays, the srcRect is junk data
+							srcRect = staticBounds;
+						} else {
+							// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
+							// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
+							// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
+							// inside the blit description below were used for blitting from that intermediate surface to the screen.
+							// We can achieve the same results by doung the calculations below
+							srcRect.translate(staticBounds.left, staticBounds.top);
+
+							if (srcRect.isEmpty()) {
+								srcRect.setWidth(staticBounds.width());
+								srcRect.setHeight(staticBounds.height());
 							} else {
-								// nancy3 added a per-frame flag for hotspots. This allows the overlay to be clickable
-								// even without a scene change (useful for setting flags).
-								if (_blitDescriptions[i].hasHotspot == kPlayOverlayWithHotspot) {
-									_hotspot = _screenPosition;
-									_hasHotspot = true;
-								}
+								// Grab whichever dimensions are smaller. Fixes the book in nancy5 scene 3000
+								srcRect.setWidth(MIN<int>(staticBounds.width(), srcRect.width()));
+								srcRect.setHeight(MIN<int>(staticBounds.height(), srcRect.height()));
 							}
 						}
 
-						break;
+						if (blitsForThisFrame.size() == 1) {
+							_drawSurface.create(_fullSurface, srcRect);
+							setTransparent(_transparency == kPlayOverlayTransparent);
+						} else {
+							Common::Rect d = _blitDescriptions[blitsForThisFrame[i]].dest;
+							d.translate(-destRect.left, -destRect.top);
+							_drawSurface.blitFrom(_fullSurface, srcRect, d);
+						}
+
+						_needsRedraw = true;
+
+						if (g_nancy->getGameType() <= kGameTypeNancy2) {
+							// In nancy2, the presence of a hotspot relies on whether the Overlay has a scene change
+							if (_enableHotspot == kPlayOverlayWithHotspot) {
+								_hotspot = _screenPosition;
+								_hasHotspot = true;
+							}
+						} else {
+							// nancy3 added a per-frame flag for hotspots. This allows the overlay to be clickable
+							// even without a scene change (useful for setting flags).
+							if (_blitDescriptions[i].hasHotspot == kPlayOverlayWithHotspot) {
+								_hotspot = _screenPosition;
+								_hasHotspot = true;
+							}
+						}
 					}
 				}
 			}
@@ -291,62 +360,6 @@ Common::String Overlay::getRecordTypeName() const {
 	} else {
 		return "Overlay";
 	}
-}
-
-void Overlay::setFrame(uint frame) {
-	_currentFrame = frame;
-
-	Common::Rect srcRect;
-
-	if (_overlayType == kPlayOverlayAnimated) {
-		// Workaround for:
-		// - the arcade machine in nancy1 scene 833
-		// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
-		// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
-		// Assumes all rects in a single animation have the same dimensions
-		srcRect = _srcRects[frame];
-		if (!srcRect.isValidRect() || srcRect.width() != _srcRects[0].width() || srcRect.height() != _srcRects[0].height()) {
-			srcRect.setWidth(_srcRects[0].width());
-			srcRect.setHeight(_srcRects[0].height());
-		}
-	} else {
-		if (_currentViewportFrame == -1) {
-			return;
-		}
-
-		// Static mode overlays use both the general source rects (_srcRects),
-		// and the ones inside the blit description struct corresponding to the current scene background.
-
-		// BlitDescriptions contain the id of the source rect to actually use
-		srcRect = _srcRects[_blitDescriptions[frame].staticRectID];
-		Common::Rect staticBounds = _blitDescriptions[frame].src;
-
-		if (_usesAutotext) {
-			// For autotext overlays, the srcRect is junk data
-			srcRect = staticBounds;
-		} else {
-			// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
-			// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
-			// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
-			// inside the blit description below were used for blitting from that intermediate surface to the screen.
-			// We can achieve the same results by doung the calculations below
-			srcRect.translate(staticBounds.left, staticBounds.top);
-
-			if (srcRect.isEmpty()) {
-				srcRect.setWidth(staticBounds.width());
-				srcRect.setHeight(staticBounds.height());
-			} else {
-				// Grab whichever dimensions are smaller. Fixes the book in nancy5 scene 3000
-				srcRect.setWidth(MIN<int>(staticBounds.width(), srcRect.width()));
-				srcRect.setHeight(MIN<int>(staticBounds.height(), srcRect.height()));
-			}
-		}	
-	}
-
-	_drawSurface.create(_fullSurface, srcRect);
-	setTransparent(_transparency == kPlayOverlayTransparent);
-
-	_needsRedraw = true;
 }
 
 void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {

@@ -87,8 +87,6 @@ protected:
 	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
 
-	void setFrame(uint frame);
-
 	Graphics::ManagedSurface _fullSurface;
 };
 
