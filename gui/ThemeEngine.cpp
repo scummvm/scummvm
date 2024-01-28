@@ -1455,7 +1455,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 	drawDDText(textId, colorId, r, str, restore, useEllipsis, align, kTextAlignVCenter, deltax, drawableTextArea);
 }
 
-void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color) {
+void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color, bool highlight) {
 	if (!ready())
 		return;
 
@@ -1467,6 +1467,8 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	// TODO: Handle clipping when drawing chars
 
 	restoreBackground(charArea);
+	if (highlight)
+		_screen.fillRect(r, _screen.format.RGBToColor(0, 255, 0));
 	font->drawChar(&_screen, ch, charArea.left, charArea.top, rgbColor);
 	addDirtyRect(charArea);
 }

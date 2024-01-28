@@ -131,6 +131,11 @@ protected:
 
 	Common::String _prompt;
 
+	bool _isDragging;
+
+	int _selBegin;
+	int _selEnd;
+
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
 	virtual ~ConsoleDialog();
@@ -145,6 +150,9 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleOtherEvent(const Common::Event &evt) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
 
 	int printFormat(int dummy, MSVC_PRINTF const char *format, ...) GCC_PRINTF(3, 4);
 	int vprintFormat(int dummy, const char *format, va_list argptr);
