@@ -396,10 +396,10 @@ void Talking::say(const Common::String &text) {
 			debug("Lip %s loaded", path.c_str());
 		}
 
-		// TODO: call sayingLine
 		if (_obj->_sound) {
 			g_engine->_audio.stop(_obj->_sound);
 		}
+
 		_obj->_sound = loadActorSpeech(name);
 	} else if (text[0] == '^') {
 		txt = text.substr(1);
@@ -413,6 +413,11 @@ void Talking::say(const Common::String &text) {
 	}
 
 	debug("sayLine '%s'", txt.c_str());
+
+	if (sqrawexists(_obj->_table, "sayingLine")) {
+		const char *anim = _obj->_animName.empty() ? nullptr : _obj->_animName.c_str();
+		sqcall(_obj->_table, "sayingLine", anim, txt);
+	}
 
 	// modify state ?
 	Common::String state;
