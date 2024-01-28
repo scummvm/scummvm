@@ -2238,10 +2238,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		return;
 	}
 
-	if (!_mouseOrigSurface) {
-		return;
-	}
-
 	_cursorNeedsRedraw = true;
 
 	int cursorScale;
