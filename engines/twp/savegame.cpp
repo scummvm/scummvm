@@ -559,7 +559,7 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 								warning("inventory obj '%s' not found", jObj->asString().c_str());
 							else {
 								actor->pickupObject(obj);
-								obj->_jiggle = jSlot["jiggle"]->isArray() && jSlot["jiggle"]->asArray()[jiggleCount++]->asIntegerNumber() != 0;
+								obj->_jiggle = jSlot.contains("jiggle") && jSlot["jiggle"]->isArray() && jSlot["jiggle"]->asArray()[jiggleCount++]->asIntegerNumber() != 0;
 							}
 						}
 					}
