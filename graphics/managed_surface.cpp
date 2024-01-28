@@ -181,8 +181,11 @@ void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 }
 
 void ManagedSurface::free() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
+	if (_disposeAfterUse == DisposeAfterUse::YES) {
 		_innerSurface.free();
+	} else {
+		_innerSurface.setPixels(nullptr);
+	}
 
 	_disposeAfterUse = DisposeAfterUse::NO;
 	_owner = nullptr;
