@@ -71,8 +71,9 @@ void Log::print(const char *message, const bool printTime) {
 	while (*message) {
 		if (_startOfLine) {
 			_startOfLine = false;
-			if (printTime)
-				printTimeStamp();
+			// TODO: Busy programmers lay way of disabling timestamps
+			// if (printTime)
+				// printTimeStamp();
 		}
 
 		const char *msgStart = message;
