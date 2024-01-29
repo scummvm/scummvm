@@ -989,8 +989,12 @@ private:
 	void clearPlacedItemGraphic();
 	void drawActiveItemGraphic();
 	void clearActiveItemGraphic();
+	void drawInventoryItemGraphic(uint slot);
+	void clearInventoryItemGraphic(uint slot);
 	void dropActiveItem();
 	void pickupPlacedItem();
+	void stashActiveItemToInventory(uint slot);
+	void pickupInventoryItem(uint slot);
 
 	void getFileNamesForItemGraphic(uint itemID, Common::String &outGraphicFileName, Common::String &outAlphaFileName) const;
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required);

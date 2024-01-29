@@ -4041,6 +4041,16 @@ bool Runtime::dischargeIdleClick() {
 			recordSaveGameSnapshot();
 			_havePendingReturnToIdleState = true;
 			return true;
+		} else if (_gameID == GID_AD2044 && _idleInteractionID >= kPickupInventorySlot0InteractionID && _idleInteractionID <= kPickupInventorySlot5InteractionID) {
+			pickupInventoryItem(_idleInteractionID - kPickupInventorySlot0InteractionID);
+			recordSaveGameSnapshot();
+			_havePendingReturnToIdleState = true;
+			return true;
+		} else if (_gameID == GID_AD2044 && _idleInteractionID >= kReturnInventorySlot0InteractionID && _idleInteractionID <= kReturnInventorySlot5InteractionID) {
+			stashActiveItemToInventory(_idleInteractionID - kReturnInventorySlot0InteractionID);
+			recordSaveGameSnapshot();
+			_havePendingReturnToIdleState = true;
+			return true;
 		} else {
 			// Interaction, is there a script?
 			Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
@@ -5771,6 +5781,22 @@ void Runtime::clearActiveItemGraphic() {
 	}
 }
 
+void Runtime::drawInventoryItemGraphic(uint slot) {
+	if (_inventory[slot].graphic) {
+		Common::Rect rect = AD2044Interface::getRectForUI(static_cast<AD2044InterfaceRectID>(static_cast<uint>(AD2044InterfaceRectID::InventoryRender0) + slot));
+
+		_fullscreenMenuSection.surf->blitFrom(*_inventory[slot].graphic, Common::Point(rect.left, rect.top));
+		drawSectionToScreen(_fullscreenMenuSection, rect);
+	}
+}
+
+void Runtime::clearInventoryItemGraphic(uint slot) {
+	Common::Rect rect = AD2044Interface::getRectForUI(static_cast<AD2044InterfaceRectID>(static_cast<uint>(AD2044InterfaceRectID::InventoryRender0) + slot));
+
+	_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic, rect, rect);
+	drawSectionToScreen(_fullscreenMenuSection, rect);
+}
+
 void Runtime::dropActiveItem() {
 	if (_inventoryActiveItem.itemID == 0)
 		return;
@@ -5805,6 +5831,35 @@ void Runtime::pickupPlacedItem() {
 	_inventoryPlacedItemCache = InventoryItem();
 
 	clearPlacedItemGraphic();
+	drawActiveItemGraphic();
+}
+
+void Runtime::stashActiveItemToInventory(uint slot) {
+	if (_inventoryActiveItem.itemID == 0)
+		return;
+
+	if (_inventory[slot].itemID != 0)
+		return;
+
+	_inventory[slot] = _inventoryActiveItem;
+	_inventoryActiveItem = InventoryItem();
+
+
+	clearActiveItemGraphic();
+	drawInventoryItemGraphic(slot);
+}
+
+void Runtime::pickupInventoryItem(uint slot) {
+	if (_inventoryActiveItem.itemID != 0)
+		return;
+
+	if (_inventory[slot].itemID == 0)
+		return;
+
+	_inventoryActiveItem = _inventory[slot];
+	_inventory[slot] = InventoryItem();
+
+	clearInventoryItemGraphic(slot);
 	drawActiveItemGraphic();
 }
 
