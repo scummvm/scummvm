@@ -2711,11 +2711,16 @@ void LB::b_spriteBox(int nargs) {
 	if (!channel)
 		return;
 
-	// This automatically sets the sctretch mode
+	// This automatically sets the stretch mode
 	channel->_sprite->_stretch = true;
 
 	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
-	channel->setBbox(l, t, r, b);
+	channel->setBbox(
+		l < r ? l : r,
+		t < b ? t : b,
+		r > l ? r : l,
+		b > t ? b : t
+	);
 	if (channel->_sprite->_cast)
 		channel->_sprite->_cast->setModified(true);
 	channel->_dirty = true;

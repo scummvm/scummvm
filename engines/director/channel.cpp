@@ -559,7 +559,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 }
 
 void Channel::setWidth(int w) {
-	if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
+	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
 		return;
 	_width = MAX<int>(w, 0);
 
@@ -568,7 +568,7 @@ void Channel::setWidth(int w) {
 }
 
 void Channel::setHeight(int h) {
-	if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
+	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
 		return;
 	_height = MAX<int>(h, 0);
 
@@ -577,7 +577,7 @@ void Channel::setHeight(int h) {
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
-	if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
+	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
 		return;
 	_width = r - l;
 	_height = b - t;
