@@ -178,7 +178,7 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	sqsetf(obj->_table, "name", name);
 	obj->_key = name;
 	obj->_node->setName(name);
-	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
+	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 
 	obj->_room = this;
 	obj->_sheet = sheet;
@@ -216,7 +216,7 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 
 	// assign an id
 	setId(obj->_table, newObjId());
-	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
+	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
 	obj->_node->setName(obj->_key);
 
@@ -260,7 +260,7 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 void Room::load(Common::SeekableReadStream &s) {
 	GGHashMapDecoder d;
 	Common::JSONValue *value = d.open(&s);
-	// debug("Room: %s", value->stringify().c_str());
+	// debugC(kDebugGame, "Room: %s", value->stringify().c_str());
 	const Common::JSONObject &jRoom = value->asObject();
 
 	_name = jRoom["name"]->asString();

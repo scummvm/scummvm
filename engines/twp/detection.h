@@ -27,11 +27,17 @@
 namespace Twp {
 
 enum TwpDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4,
+	kDebugText	     	= 1 << 0,
+	kDebugGGPack     	= 1 << 1,
+	kDebugRes     		= 1 << 2,
+	kDebugDialog 		= 1 << 3,
+	kDebugGenScript 	= 1 << 4,
+	kDebugObjScript 	= 1 << 5,
+	kDebugSysScript 	= 1 << 6,
+	kDebugRoomScript	= 1 << 7,
+	kDebugActScript		= 1 << 8,
+	kDebugSndScript		= 1 << 9,
+	kDebugGame			= 1 << 10,
 };
 
 extern const PlainGameDescriptor twpGames[];

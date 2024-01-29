@@ -23,6 +23,7 @@
 #include "twp/tsv.h"
 #include "twp/squtil.h"
 #include "twp/squirrel/squirrel.h"
+#include "twp/detection.h"
 
 namespace Twp {
 
@@ -34,7 +35,7 @@ void TextDb::parseTsv(Common::SeekableReadStream &stream) {
 		int id = atoi(line.c_str());
 		Common::String s = line.substr(pos + 1);
 		_texts[id] = s;
-		debug("%d: %s", id, _texts[id].c_str());
+		debugC(kDebugText, "%d: %s", id, _texts[id].c_str());
 	}
 }
 

@@ -91,7 +91,7 @@ static SQInteger defineSound(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get filename");
 	SoundDefinition *sound = new SoundDefinition(filename);
 	g_engine->_audio._soundDefs.push_back(sound);
-	debug("defineSound(%s)-> %d", filename.c_str(), sound->getId());
+	debugC(kDebugSndScript, "defineSound(%s)-> %d", filename.c_str(), sound->getId());
 	sqpush(v, sound->getId());
 	return 1;
 }

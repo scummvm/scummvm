@@ -104,7 +104,7 @@ bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
 	int x = roomPos.getX();
 	int y = roomPos.getY();
 	if (sqrawexists(_room->_table, "clickedAt")) {
-		debug("clickedAt %d, %d", x, y);
+		debugC(kDebugGame, "clickedAt %d, %d", x, y);
 		sqcallfunc(result, _room->_table, "clickedAt", x, y);
 	}
 	if (!result) {
@@ -126,14 +126,14 @@ bool TwpEngine::preWalk(Object *actor, VerbId verbId, Object *noun1, Object *nou
 		sq_resetobject(&n2Table);
 	}
 	if (sqrawexists(actor->_table, "actorPreWalk")) {
-		debug("actorPreWalk %d n1=%s(%s) n2=%s", verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str());
+		debugC(kDebugGame, "actorPreWalk %d n1=%s(%s) n2=%s", verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str());
 		sqcallfunc(result, actor->_table, "actorPreWalk", verbId.id, noun1->_table, n2Table);
 	}
 	if (!result) {
 		Common::String funcName = isActor(noun1->getId()) ? "actorPreWalk" : "objectPreWalk";
 		if (sqrawexists(noun1->_table, funcName)) {
 			sqcallfunc(result, noun1->_table, funcName.c_str(), verbId.id, noun1->_table, n2Table);
-			debug("%s %d n1=%s(%s) n2=%s -> %s", funcName.c_str(), verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str(), result ? "yes" : "no");
+			debugC(kDebugGame, "%s %d n1=%s(%s) n2=%s -> %s", funcName.c_str(), verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str(), result ? "yes" : "no");
 		}
 	}
 	return result;
@@ -151,12 +151,12 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	debug("exec(%s,%d,%s,%s)", name.c_str(), verbId.id, noun1name.c_str(), noun2name.c_str());
+	debugC(kDebugGame, "exec(%s,%d,%s,%s)", name.c_str(), verbId.id, noun1name.c_str(), noun2name.c_str());
 	actor = !actor ? g_engine->_actor : actor;
 	if ((verbId.id <= 0) || (verbId.id > MAX_VERBS) || (!noun1) || (!actor))
 		return false;
 
-	debug("noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory() ? "YES" : "NO", noun1->isTouchable() ? "YES" : "NO", verbNoWalkTo(verbId, noun1) ? "YES" : "NO");
+	debugC(kDebugGame, "noun1.inInventory: %s and noun1.touchable: %s nowalk: %s", noun1->inInventory() ? "YES" : "NO", noun1->isTouchable() ? "YES" : "NO", verbNoWalkTo(verbId, noun1) ? "YES" : "NO");
 
 	// test if object became untouchable
 	if (!noun1->inInventory() && !noun1->isTouchable())
@@ -199,7 +199,7 @@ void TwpEngine::flashSelectableActor(int flash) {
 
 void TwpEngine::walkFast(bool state) {
 	if (_walkFastState != state) {
-		debug("walk fast: %s", state ? "yes" : "no");
+		debugC(kDebugGame, "walk fast: %s", state ? "yes" : "no");
 		_walkFastState = state;
 		if (_actor)
 			sqcall(_actor->_table, "run", state);
@@ -404,7 +404,7 @@ void TwpEngine::update(float elapsed) {
 				} else {
 					objsAt(roomPos, GetNoun2(_noun2));
 					if (_noun2)
-						debug("Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
+						debugC(kDebugGame, "Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
 				}
 			} else {
 				_noun1 = objAt(roomPos);
@@ -820,7 +820,7 @@ Common::Error TwpEngine::run() {
 				case Common::KEYCODE_w:
 					if (control) {
 						WalkboxMode mode = (WalkboxMode)(((int)_walkboxNode.getMode() + 1) % 3);
-						debug("set walkbox mode to: %s", (mode == WalkboxMode::Merged ? "merged" : mode == WalkboxMode::All ? "all"
+						debugC(kDebugGame, "set walkbox mode to: %s", (mode == WalkboxMode::Merged ? "merged" : mode == WalkboxMode::All ? "all"
 																															: "none"));
 						_walkboxNode.setMode(mode);
 					}
@@ -828,7 +828,7 @@ Common::Error TwpEngine::run() {
 				case Common::KEYCODE_g:
 					if (control) {
 						PathMode mode = (PathMode)(((int)_pathNode.getMode() + 1) % 3);
-						debug("set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
+						debugC(kDebugGame, "set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
 																													 : "none"));
 						_pathNode.setMode(mode);
 					}
@@ -967,7 +967,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 
 		if (sqrawexists(oTable, "icon")) {
 			// Add inventory object to root table
-			debug("Add %s to inventory", k.c_str());
+			debugC(kDebugGame, "Add %s to inventory", k.c_str());
 			sqsetf(sqrootTbl(params->v), k, oTable);
 
 			// set room as delegate
@@ -987,7 +987,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 		} else {
 			Object *obj = params->room->getObj(k);
 			if (!obj) {
-				debug("object: %s not found in wimpy", k.c_str());
+				debugC(kDebugGame, "object: %s not found in wimpy", k.c_str());
 				if (sqrawexists(oTable, "name")) {
 					obj = new Object();
 					obj->_key = k;
@@ -1000,7 +1000,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 
 			sqgetf(params->room->_table, k, obj->_table);
 			setId(obj->_table, newObjId());
-			debug("Create object: %s #%d", k.c_str(), obj->getId());
+			debugC(kDebugGame, "Create object: %s #%d", k.c_str(), obj->getId());
 
 			// add it to the root table if not a pseudo room
 			if (!params->pseudo)
@@ -1028,7 +1028,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 
 Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
 	HSQUIRRELVM v = _vm.get();
-	debug("Load room: %s", name.c_str());
+	debugC(kDebugGame, "Load room: %s", name.c_str());
 	Room *result;
 	if (name == "Void") {
 		result = new Room(name, table);
@@ -1118,7 +1118,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 void TwpEngine::enterRoom(Room *room, Object *door) {
 	HSQUIRRELVM v = getVm();
 	// Called when the room is entered.
-	debug("call enter room function of %s", room->_name.c_str());
+	debugC(kDebugGame, "call enter room function of %s", room->_name.c_str());
 
 	// exit current room
 	exitRoom(_room);
@@ -1263,7 +1263,7 @@ void TwpEngine::actorExit() {
 }
 
 void TwpEngine::cancelSentence(Object *actor) {
-	debug("cancelSentence");
+	debugC(kDebugGame, "cancelSentence");
 	if (!actor)
 		actor = _actor;
 	if (actor)
@@ -1282,14 +1282,14 @@ void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
 void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 	if (_pack.assetExists(entry.c_str())) {
 		GGPackEntryReader reader;
-		debug("read existing '%s'", entry.c_str());
+		debugC(kDebugGame, "read existing '%s'", entry.c_str());
 		reader.open(_pack, entry);
 		Common::String code = reader.readString();
-		// debug("%s", code.c_str());
+		// debugC(kDebugGame, "%s", code.c_str());
 		sqexec(v, code.c_str(), entry.c_str());
 	} else {
 		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
-		debug("read existing '%s'", newEntry.c_str());
+		debugC(kDebugGame, "read existing '%s'", newEntry.c_str());
 		if (_pack.assetExists(newEntry.c_str())) {
 			execBnutEntry(v, newEntry);
 		} else {
@@ -1396,7 +1396,7 @@ static void giveTo(Object *actor1, Object *actor2, Object *obj) {
 }
 
 void TwpEngine::resetVerb() {
-	debug("reset nouns");
+	debugC(kDebugGame, "reset nouns");
 	_noun1 = nullptr;
 	_noun2 = nullptr;
 	_useFlag = ufNone;
@@ -1413,7 +1413,7 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	ActorSlot *slot = _hud.actorSlot(actor);
 	Verb *verb = slot->getVerb(verbId.id);
 	Common::String verbFuncName = verb ? verb->fun : slot->getVerb(0)->fun;
-	debug("callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
+	debugC(kDebugGame, "callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
 	if (!noun1->inInventory() && !noun1->isTouchable())
@@ -1432,23 +1432,23 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 
 	if (verbId.id == VERB_GIVE) {
 		if (!noun2) {
-			debug("set use flag to ufGiveTo");
+			debugC(kDebugGame, "set use flag to ufGiveTo");
 			_useFlag = ufGiveTo;
 			_noun1 = noun1;
 		} else {
 			bool handled = false;
 			if (sqrawexists(noun2->_table, verbFuncName)) {
-				debug("call %s on %s", verbFuncName.c_str(), noun2->_key.c_str());
+				debugC(kDebugGame, "call %s on %s", verbFuncName.c_str(), noun2->_key.c_str());
 				sqcallfunc(handled, noun2->_table, verbFuncName.c_str(), noun1->_table);
 			}
 			// verbGive is called on object only for non selectable actors
 			if (!handled && !selectable(noun2) && sqrawexists(noun1->_table, verbFuncName)) {
-				debug("call %s on %s", verbFuncName.c_str(), noun1->_key.c_str());
+				debugC(kDebugGame, "call %s on %s", verbFuncName.c_str(), noun1->_key.c_str());
 				sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
 				handled = true;
 			}
 			if (!handled) {
-				debug("call objectGive");
+				debugC(kDebugGame, "call objectGive");
 				sqcall("objectGive", noun1->_table, _actor->_table, noun2->_table);
 				giveTo(_actor, noun2, noun1);
 			}
@@ -1460,7 +1460,7 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	if (!noun2) {
 		if (sqrawexists(noun1->_table, verbFuncName)) {
 			int count = sqparamCount(getVm(), noun1->_table, verbFuncName);
-			debug("call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
+			debugC(kDebugGame, "call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
 			if (count == 1) {
 				sqcall(noun1->_table, verbFuncName.c_str());
 			} else {
@@ -1469,17 +1469,17 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
 			sqcall(noun1->_table, VERBDEFAULT);
 		} else {
-			debug("call defaultObject.%s", verbFuncName.c_str());
+			debugC(kDebugGame, "call defaultObject.%s", verbFuncName.c_str());
 			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, actor->_table);
 		}
 	} else {
 		if (sqrawexists(noun1->_table, verbFuncName)) {
-			debug("call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
+			debugC(kDebugGame, "call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());
 			sqcall(noun1->_table, verbFuncName.c_str(), noun2->_table);
 		} else if (sqrawexists(noun1->_table, VERBDEFAULT)) {
 			sqcall(noun1->_table, VERBDEFAULT);
 		} else {
-			debug("call defaultObject.%s", verbFuncName.c_str());
+			debugC(kDebugGame, "call defaultObject.%s", verbFuncName.c_str());
 			sqcall(_defaultObj, verbFuncName.c_str(), noun1->_table, noun2->_table);
 		}
 	}
@@ -1519,7 +1519,7 @@ void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
 
 		Thread *thread = new Thread("Trigger", false, threadObj, obj->_table, trigger, args);
 
-		debug("create triggerthread id: %d}", thread->getId());
+		debugC(kDebugGame, "create triggerthread id: %d}", thread->getId());
 		g_engine->_threads.push_back(thread);
 
 		// call the closure in the thread
@@ -1535,11 +1535,11 @@ void TwpEngine::updateTriggers() {
 		for (size_t i = 0; i < _room->_triggers.size(); i++) {
 			Object *trigger = _room->_triggers[i];
 			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
-				debug("call enter trigger %s", trigger->_key.c_str());
+				debugC(kDebugGame, "call enter trigger %s", trigger->_key.c_str());
 				trigger->_triggerActive = true;
 				callTrigger(trigger, trigger->_enter);
 			} else if (trigger->_triggerActive && !trigger->contains(_actor->_node->getAbsPos())) {
-				debug("call leave trigger %s", trigger->_key.c_str());
+				debugC(kDebugGame, "call leave trigger %s", trigger->_key.c_str());
 				trigger->_triggerActive = false;
 				callTrigger(trigger, trigger->_leave);
 			}
@@ -1549,7 +1549,7 @@ void TwpEngine::updateTriggers() {
 		for (size_t i = 0; i < _room->_scalingTriggers.size(); i++) {
 			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
 			if (trigger->_obj->_triggerActive && !trigger->_obj->contains(_actor->_node->getAbsPos())) {
-				debug("leave scaling trigger %s", trigger->_obj->_key.c_str());
+				debugC(kDebugGame, "leave scaling trigger %s", trigger->_obj->_key.c_str());
 				trigger->_obj->_triggerActive = false;
 				_room->_scaling = _room->_scalings[0];
 			}
@@ -1557,7 +1557,7 @@ void TwpEngine::updateTriggers() {
 		for (size_t i = 0; i < _room->_scalingTriggers.size(); i++) {
 			ScalingTrigger *trigger = &_room->_scalingTriggers[i];
 			if (!trigger->_obj->_triggerActive && trigger->_obj->contains(_actor->_node->getAbsPos())) {
-				debug("enter scaling trigger %s", trigger->_obj->_key.c_str());
+				debugC(kDebugGame, "enter scaling trigger %s", trigger->_obj->_key.c_str());
 				trigger->_obj->_triggerActive = true;
 				_room->_scaling = *trigger->_scaling;
 			}

@@ -102,7 +102,7 @@ static SQInteger createLight(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 4, y)))
 		return sq_throwerror(v, "failed to get y");
 	Light *light = g_engine->_room->createLight(Color::rgb(color), Math::Vector2d(x, y));
-	debug("createLight(%d) -> %d", color, light->id);
+	debugC(kDebugRoomScript, "createLight(%d) -> %d", color, light->id);
 	sqpush(v, light->id);
 	return 1;
 }
@@ -186,7 +186,7 @@ static SQInteger defineRoom(HSQUIRRELVM v) {
 	if (name.size() == 0)
 		sqgetf(v, table, "background", name);
 	Room *room = g_engine->defineRoom(name, table);
-	debug("Define room: %s", name.c_str());
+	debugC(kDebugRoomScript, "Define room: %s", name.c_str());
 	g_engine->_rooms.push_back(room);
 	sqpush(v, room->_table);
 	return 1;
@@ -214,7 +214,7 @@ static SQInteger definePseudoRoom(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get room table");
 
 	Room *room = g_engine->defineRoom(name, table, true);
-	debug("Define pseudo room: %s", name);
+	debugC(kDebugRoomScript, "Define pseudo room: %s", name);
 	g_engine->_rooms.push_back(room);
 	sqpush(v, room->_table);
 	return 1;
@@ -282,7 +282,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get object");
 		size_t i = find(g_engine->_room->_triggers, obj);
 		if (i != (size_t)-1) {
-			debug("Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
+			debugC(kDebugRoomScript, "Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
 			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
 		}
 		return 0;
@@ -437,7 +437,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 		float duration;
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
-		debug("start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
+		debugC(kDebugRoomScript, "start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
 		g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::fromRgba(endColor));
 	}
 	return 0;

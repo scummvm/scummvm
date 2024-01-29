@@ -22,6 +22,7 @@
 #include "twp/ggpack.h"
 #include "common/archive.h"
 #include "common/debug.h"
+#include "twp/detection.h"
 
 namespace Twp {
 
@@ -654,7 +655,7 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 		int offset = (int)file["offset"]->asIntegerNumber();
 		int size = (int)file["size"]->asIntegerNumber();
 		_entries[filename] = GGPackEntry{offset, size};
-		// debug("filename: %s, off: %d, size: %d", filename.c_str(), offset, size);
+		debug(kDebugGGPack, "filename: %s, off: %d, size: %d", filename.c_str(), offset, size);
 	}
 	delete value;
 
@@ -758,7 +759,7 @@ void GGPackSet::init() {
 
 		if (_packs.size() > 0) {
 			// the game has been detected because we have at least 1 ggpack file.
-			debug("Thimbleweed Park detected with key %s", key_names[i]);
+			debugC(kDebugGGPack, "Thimbleweed Park detected with key %s", key_names[i]);
 			return;
 		}
 	}

@@ -465,7 +465,7 @@ void SaveGameManager::loadGameScene(const Common::JSONObject &json) {
 }
 
 void SaveGameManager::loadDialog(const Common::JSONObject &json) {
-	debug("loadDialog");
+	debugC(kDebugGame, "loadDialog");
 	g_engine->_dialog._states.clear();
 	for (auto it = json.begin(); it != json.end(); it++) {
 		Common::String dialog(it->_key);
@@ -496,7 +496,7 @@ private:
 };
 
 void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
-	debug("loadCallbacks");
+	debugC(kDebugGame, "loadCallbacks");
 	g_engine->_callbacks.clear();
 	if (!json["callbacks"]->isNull()) {
 		const Common::JSONArray &jCallbacks = json["callbacks"]->asArray();
@@ -518,7 +518,7 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 }
 
 void SaveGameManager::loadGlobals(const Common::JSONObject &json) {
-	debug("loadGlobals");
+	debugC(kDebugGame, "loadGlobals");
 	HSQUIRRELVM v = g_engine->getVm();
 	HSQOBJECT g;
 	sqgetf("g", g);

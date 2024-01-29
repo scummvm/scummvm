@@ -367,12 +367,12 @@ int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {
 	sq_pushstring(v, name.c_str(), -1);
 	if (SQ_FAILED(sq_get(v, -2))) {
 		sq_settop(v, top);
-		debug("can't find %s function", name.c_str());
+		debugC(kDebugGame, "can't find %s function", name.c_str());
 		return 0;
 	}
 	SQInteger nparams, nfreevars;
 	sq_getclosureinfo(v, -1, &nparams, &nfreevars);
-	debug("%s function found with %lld parameters", name.c_str(), nparams);
+	debugC(kDebugGame, "%s function found with %lld parameters", name.c_str(), nparams);
 	sq_settop(v, top);
 	return nparams;
 }

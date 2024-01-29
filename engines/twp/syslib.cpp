@@ -85,7 +85,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 
 	g_engine->_threads.push_back(t);
 
-	debug("create thread %s", t->getName().c_str());
+	debugC(kDebugSysScript, "create thread %s", t->getName().c_str());
 
 	// call the closure in the thread
 	if (!t->call())
@@ -230,7 +230,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	if (!curThread)
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
-	debug("add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
+	debugC(kDebugSysScript, "add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
 	g_engine->_tasks.push_back(new BreakWhileCond<Predicate>(curThread->getId(), name, pred));
 	return -666;
 }
@@ -337,7 +337,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 	int id = 0;
 	if (sq_gettype(v, 2) == OT_INTEGER)
 		sqget(v, 2, id);
-	debug("breakwhilerunning: %d", id);
+	debugC(kDebugSysScript, "breakwhilerunning: %d", id);
 
 	ThreadBase *t = sqthread(id);
 	if (!t) {
@@ -502,7 +502,7 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger cutsceneOverride(HSQUIRRELVM v) {
-	debug("cutsceneOverride");
+	debugC(kDebugSysScript, "cutsceneOverride");
 	g_engine->_cutscene->cutsceneOverride();
 	return 0;
 }
@@ -650,7 +650,7 @@ static SQInteger inputVerbs(HSQUIRRELVM v) {
 	bool on;
 	if (SQ_FAILED(sqget(v, 2, on)))
 		return sq_throwerror(v, "failed to get isActive");
-	debug("inputVerbs: %s", on ? "yes" : "no");
+	debugC(kDebugSysScript, "inputVerbs: %s", on ? "yes" : "no");
 	g_engine->_inputState.setInputVerbsActive(on);
 	return 1;
 }
@@ -671,7 +671,7 @@ static SQInteger logEvent(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get message");
 		msg = event + ": " + msg;
 	}
-	debug("%s", msg.c_str());
+	debugC(kDebugSysScript, "%s", msg.c_str());
 	return 0;
 }
 
@@ -681,7 +681,7 @@ static SQInteger logInfo(HSQUIRRELVM v) {
 	Common::String msg;
 	if (SQ_FAILED(sqget(v, 2, msg)))
 		return sq_throwerror(v, "failed to get message");
-	debug("%s", msg.c_str());
+	debugC(kDebugSysScript, "%s", msg.c_str());
 	return 0;
 }
 

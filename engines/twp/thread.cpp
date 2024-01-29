@@ -68,7 +68,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 }
 
 Thread::~Thread() {
-	debug("delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
+	debugC(kDebugGame, "delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
 	HSQUIRRELVM v = g_engine->getVm();
 	for (size_t i = 0; i < _args.size(); i++) {
 		sq_release(v, &_args[i]);
@@ -128,7 +128,7 @@ Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, H
 	_actor = g_engine->_followActor;
 	_showCursor = g_engine->_inputState.getShowCursor();
 	_state = csStart;
-	debug("Create cutscene %d with input: 0x%X from parent thread: %d", _id, _inputState, _parentThreadId);
+	debugC(kDebugGame, "Create cutscene %d with input: 0x%X from parent thread: %d", _id, _inputState, _parentThreadId);
 	g_engine->_inputState.setInputActive(false);
 	g_engine->_inputState.setShowCursor(false);
 	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
@@ -144,7 +144,7 @@ Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, H
 }
 
 Cutscene::~Cutscene() {
-	debug("destroy cutscene %d", _id);
+	debugC(kDebugGame, "destroy cutscene %d", _id);
 	HSQUIRRELVM vm = g_engine->getVm();
 	sq_release(vm, &_threadObj);
 	sq_release(vm, &_closure);
@@ -167,12 +167,12 @@ void Cutscene::start() {
 
 void Cutscene::stop() {
 	_state = csQuit;
-	debug("End cutscene: %d", getId());
+	debugC(kDebugGame, "End cutscene: %d", getId());
 	g_engine->_inputState.setState(_inputState);
 	g_engine->_inputState.setShowCursor(_showCursor);
 	if (_showCursor)
 		g_engine->_inputState.setInputActive(true);
-	debug("Restore cutscene input: %X", _inputState);
+	debugC(kDebugGame, "Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
 	Common::Array<ThreadBase *> threads(g_engine->_threads);
 	for (size_t i = 0; i < threads.size(); i++) {
@@ -191,7 +191,7 @@ void Cutscene::stop() {
 void Cutscene::checkEndCutsceneOverride() {
 	if (isStopped()) {
 		_state = csEnd;
-		debug("end checkEndCutsceneOverride");
+		debugC(kDebugGame, "end checkEndCutsceneOverride");
 	}
 }
 
@@ -210,18 +210,18 @@ bool Cutscene::update(float elapsed) {
 
 	switch (_state) {
 	case csStart:
-		debug("startCutscene");
+		debugC(kDebugGame, "startCutscene");
 		start();
 		return false;
 	case csCheckEnd:
 		checkEndCutscene();
 		return false;
 	case csOverride:
-		debug("doCutsceneOverride");
+		debugC(kDebugGame, "doCutsceneOverride");
 		doCutsceneOverride();
 		return false;
 	case csCheckOverride:
-		debug("checkEndCutsceneOverride");
+		debugC(kDebugGame, "checkEndCutsceneOverride");
 		checkEndCutsceneOverride();
 		return false;
 	case csEnd:
@@ -239,7 +239,7 @@ bool Cutscene::hasOverride() const {
 void Cutscene::doCutsceneOverride() {
 	if (hasOverride()) {
 		_state = csCheckOverride;
-		debug("start cutsceneOverride");
+		debugC(kDebugGame, "start cutsceneOverride");
 		sq_pushobject(getThread(), _closureOverride);
 		sq_pushobject(getThread(), _envObj);
 		if (SQ_FAILED(sq_call(getThread(), 1, SQFalse, SQTrue)))

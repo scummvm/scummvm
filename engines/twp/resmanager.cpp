@@ -44,7 +44,7 @@ Common::String getKey(const char *path) {
 }
 
 void ResManager::loadTexture(const Common::String &name) {
-	debug("Load texture %s", name.c_str());
+	debugC(kDebugRes, "Load texture %s", name.c_str());
 	GGPackEntryReader r;
 	if(!r.open(g_engine->_pack, name)) {
 		error("Texture %s not found", name.c_str());
@@ -81,12 +81,12 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 
 void ResManager::loadFont(const Common::String &name) {
 	if (name == "sayline") {
-		debug("Load font %s", name.c_str());
+		debugC(kDebugRes, "Load font %s", name.c_str());
 		Common::String resName = ConfMan.getBool("retroFonts") ? "FontRetroSheet": "FontModernSheet";
 		_fontModernSheet.load(resName);
 		_fonts[name] = &_fontModernSheet;
 	} else if (name == "C64Font") {
-		debug("Load font %s", name.c_str());
+		debugC(kDebugRes, "Load font %s", name.c_str());
 		_fontC64TermSheet.load("FontC64TermSheet");
 		_fonts[name] = &_fontC64TermSheet;
 	} else {

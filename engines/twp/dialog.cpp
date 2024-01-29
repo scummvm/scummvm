@@ -36,11 +36,11 @@ public:
 		if (_motors.size() > 0) {
 			_motors[0]->update(elapsed);
 			if (!_motors[0]->isEnabled()) {
-				debug("SerialMotors next");
+				debugC(kDebugDialog, "SerialMotors next");
 				_motors.remove_at(0);
 			}
 		} else {
-			debug("SerialMotors is over");
+			debugC(kDebugDialog, "SerialMotors is over");
 			disable();
 		}
 	}
@@ -103,27 +103,27 @@ ExpVisitor::ExpVisitor(Dialog *dialog) : _dialog(dialog) {}
 ExpVisitor::~ExpVisitor() {}
 
 void ExpVisitor::visit(const YCodeExp &node) {
-	debug("execute code %s", node._code.c_str());
+	debugC(kDebugDialog, "execute code %s", node._code.c_str());
 	sqexec(g_engine->getVm(), node._code.c_str(), "dialog");
 }
 
 void ExpVisitor::visit(const YGoto &node) {
-	debug("execute goto %s", node._name.c_str());
+	debugC(kDebugDialog, "execute goto %s", node._name.c_str());
 	_dialog->selectLabel(node._line, node._name);
 }
 
 void ExpVisitor::visit(const YShutup &node) {
-	debug("shutup");
+	debugC(kDebugDialog, "shutup");
 	_dialog->_tgt->shutup();
 }
 
 void ExpVisitor::visit(const YPause &node) {
-	debug("pause %d", node._time);
+	debugC(kDebugDialog, "pause %d", node._time);
 	_dialog->_action = _dialog->_tgt->pause(node._time);
 }
 
 void ExpVisitor::visit(const YWaitFor &node) {
-	debug("TODO: waitFor {%s}", node._actor.c_str());
+	debugC(kDebugDialog, "TODO: waitFor {%s}", node._actor.c_str());
 }
 
 void ExpVisitor::visit(const YParrot &node) {
@@ -143,12 +143,12 @@ void ExpVisitor::visit(const YAllowObjects &node) {
 }
 
 void ExpVisitor::visit(const YWaitWhile &node) {
-	debug("wait while");
+	debugC(kDebugDialog, "wait while");
 	_dialog->_action = _dialog->_tgt->waitWhile(node._cond);
 }
 
 void ExpVisitor::visit(const YLimit &node) {
-	debug("limit");
+	debugC(kDebugDialog, "limit");
 	_dialog->_context.limit = node._max;
 }
 
@@ -219,7 +219,7 @@ void Dialog::start(const Common::String &actor, const Common::String &name, cons
 	_context = DialogContext{.actor = actor, .dialogName = name, .parrot = true, .limit = MAXCHOICES};
 	// keepIf(self.states, proc(x: DialogConditionState): bool = x.mode != TempOnce);
 	Common::String path = name + ".byack";
-	debug("start dialog %s", path.c_str());
+	debugC(kDebugDialog, "start dialog %s", path.c_str());
 	GGPackEntryReader reader;
 	reader.open(g_engine->_pack, path);
 	YackParser parser;
@@ -271,11 +271,11 @@ bool Dialog::isOnce(int line) const {
 	for (size_t i = 0; i < _states.size(); i++) {
 		const DialogConditionState &state = _states[i];
 		if (state.mode == Once && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
-			debug("isOnce %d: false", line);
+			debugC(kDebugDialog, "isOnce %d: false", line);
 			return false;
 		}
 	}
-	debug("isOnce %d: true", line);
+	debugC(kDebugDialog, "isOnce %d: true", line);
 	return true;
 }
 
@@ -283,11 +283,11 @@ bool Dialog::isShowOnce(int line) const {
 	for (size_t i = 0; i < _states.size(); i++) {
 		const DialogConditionState &state = _states[i];
 		if (state.mode == ShowOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
-			debug("isShowOnce %d: false", line);
+			debugC(kDebugDialog, "isShowOnce %d: false", line);
 			return false;
 		}
 	}
-	debug("isShowOnce %d: true", line);
+	debugC(kDebugDialog, "isShowOnce %d: true", line);
 	return true;
 }
 
@@ -295,11 +295,11 @@ bool Dialog::isOnceEver(int line) const {
 	for (size_t i = 0; i < _states.size(); i++) {
 		const DialogConditionState &state = _states[i];
 		if (state.mode == OnceEver && state.dialog == _context.dialogName && state.line == line) {
-			debug("isOnceEver %d: false", line);
+			debugC(kDebugDialog, "isOnceEver %d: false", line);
 			return false;
 		}
 	}
-	debug("isOnceEver %d: true", line);
+	debugC(kDebugDialog, "isOnceEver %d: true", line);
 	return true;
 }
 
@@ -307,17 +307,17 @@ bool Dialog::isTempOnce(int line) const {
 	for (size_t i = 0; i < _states.size(); i++) {
 		const DialogConditionState &state = _states[i];
 		if (state.mode == TempOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
-			debug("isTempOnce %d: false", line);
+			debugC(kDebugDialog, "isTempOnce %d: false", line);
 			return false;
 		}
 	}
-	debug("isTempOnce %d: true", line);
+	debugC(kDebugDialog, "isTempOnce %d: true", line);
 	return true;
 }
 
 bool Dialog::isCond(const Common::String &cond) const {
 	bool result = _tgt->execCond(cond);
-	debug("isCond '%s': %s", cond.c_str(), result ? "TRUE" : "FALSE");
+	debugC(kDebugDialog, "isCond '%s': %s", cond.c_str(), result ? "TRUE" : "FALSE");
 	return result;
 }
 
@@ -339,7 +339,7 @@ YLabel *Dialog::label(int line, const Common::String &name) const {
 }
 
 void Dialog::selectLabel(int line, const Common::String &name) {
-	debug("select label %s", name.c_str());
+	debugC(kDebugDialog, "select label %s", name.c_str());
 	_lbl = label(line, name);
 	_currentStatement = 0;
 	clearSlots();
