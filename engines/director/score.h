@@ -123,17 +123,17 @@ public:
 
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	bool renderPrePaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void setLastPalette(uint16 frameId);
+	void renderSprites(RenderMode mode = kRenderModeNormal);
+	bool renderPrePaletteCycle(RenderMode mode = kRenderModeNormal);
+	void setLastPalette();
 	bool isPaletteColorCycling();
-	void renderPaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderPaletteCycle(RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void updateWidgets(bool hasVideoPlayback);
 
 	void invalidateRectsForMember(CastMember *member);
 
-	void playSoundChannel(uint16 frameId, bool puppetOnly);
+	void playSoundChannel(bool puppetOnly);
 
 	Common::String formatChannelInfo();
 

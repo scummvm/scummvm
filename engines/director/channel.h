@@ -62,7 +62,7 @@ public:
 	void setBbox(int l, int t, int r, int b);
 	void setPosition(int x, int y, bool force = false);
 	void setCast(CastMemberID memberID);
-	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	void setClean(Sprite *nextSprite, bool partial = false);
 	bool getEditable();
 	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
