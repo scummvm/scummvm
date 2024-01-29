@@ -154,12 +154,12 @@ public:
 	~I3MFourToneSynthDriver() override;
 
 	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
-	void start();
-	void stop();
+	void start() override;
+	void stop() override;
 
-	void setDuration(uint16 duration);
+	void setDuration(uint16 duration) override;
 	void setWaveForm(uint8 chan, const uint8 *data, uint32 dataSize);
-	void setRate(uint8 chan, uint16 rate);
+	void setRate(uint8 chan, uint16 rate) override;
 
 private:
 	uint32 _pos;
