@@ -22,6 +22,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/resource.h"
 
 #include "engines/nancy/misc/hypertext.h"
 
@@ -48,19 +49,35 @@ void HypertextParser::addTextLine(const Common::String &text) {
 	_needsTextRedraw = true;
 }
 
+void HypertextParser::addImage(uint16 lineID, const Common::Rect &src) {
+	_imageLineIDs.push_back(lineID);
+	_imageSrcs.push_back(src);
+}
+
+void HypertextParser::setImageName(const Common::Path &name) {
+	_imageName = name;
+}
+
 void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID) {
 	using namespace Common;
 
 	const Font *font = nullptr;
 	const Font *highlightFont = nullptr;
+	Graphics::ManagedSurface image;
 
 	_numDrawnLines = 0;
+
+	if (!_imageName.empty()) {
+		g_nancy->_resource->loadImage(_imageName, image);
+	}
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
 		Common::String currentLine;
 		bool hasHotspot = false;
 		Rect hotspot;
 		Common::Queue<ColorFontChange> colorTextChanges;
+		Common::Queue<uint16> newlineTokens;
+		newlineTokens.push(0);
 		int curFontID = fontID;
 		uint numNonSpaceChars = 0;
 
@@ -107,6 +124,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					}
 
 					currentLine += '\n';
+					newlineTokens.push(numNonSpaceChars);
 					continue;
 				case 't' :
 					// Tab
@@ -158,6 +176,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		
 		font = g_nancy->_graphicsManager->getFont(curFontID);
 		highlightFont = g_nancy->_graphicsManager->getFont(highlightFontID);
+		assert(font && highlightFont);
 
 		// Do word wrapping on the text, sans tokens. This assumes
 		// all text uses fonts of the same width
@@ -176,8 +195,41 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		// respect color tokens
 		uint totalCharsDrawn = 0;
 		byte colorID = _defaultTextColor;
-		for (Common::String &line : wrappedLines) {
-			uint horizontalOffset = 0;
+		uint numNewlineTokens = 0;
+		uint horizontalOffset = 0;
+		for (uint lineNumber = 0; lineNumber < wrappedLines.size(); ++lineNumber) {
+			Common::String &line = wrappedLines[lineNumber];
+			horizontalOffset = 0;
+			// Draw images
+			if (newlineTokens.front() <= totalCharsDrawn) {
+				newlineTokens.pop();
+
+				for (uint i = 0; i < _imageLineIDs.size(); ++i) {
+					if (numNewlineTokens == _imageLineIDs[i]) {
+						// A lot of magic numbers that make sure we draw pixel-perfect. This is a mess for three reasons:
+						// - The original engine draws strings with a bottom-left anchor, while ScummVM uses top-left
+						// - The original engine uses inclusive rects, while ScummVM uses non-includive
+						// - The original engine does some stupid stuff with spacing
+						// This works correctly in nancy7, but might fail with different games/fonts
+						if (lineNumber != 0) {
+							_imageVerticalOffset += (font->getFontHeight() + 1) / 2 + 1;
+						}
+
+						_fullSurface.blitFrom(image, _imageSrcs[i],
+							Common::Point(	textBounds.left + horizontalOffset + 1,
+											textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset));
+						_imageVerticalOffset += _imageSrcs[i].height() - 1;
+
+						if (lineNumber == 0) {
+							_imageVerticalOffset += font->getFontHeight() / 2 - 1;
+						} else {
+							_imageVerticalOffset += (font->getFontHeight() + 1) / 2 + 3;
+						}
+					}
+				}
+
+				++numNewlineTokens;
+			}
 
 			// Trim whitespaces (only) at beginning and end of wrapped lines
 			while (line.lastChar() == ' ') {
@@ -220,7 +272,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				font->drawString(				&_fullSurface,
 												stringToDraw,
 												textBounds.left + horizontalOffset,
-												textBounds.top + _numDrawnLines * font->getFontHeight(),
+												textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset,
 												textBounds.width(),
 												colorID);
 
@@ -229,7 +281,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
 												textBounds.left + horizontalOffset,
-												textBounds.top + _numDrawnLines * highlightFont->getFontHeight(),
+												textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset,
 												textBounds.width(),
 												colorID);
 				}
@@ -252,7 +304,25 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 			++_numDrawnLines;
 
 			// Record the height of the text currently drawn. Used for textbox scrolling
-			_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight();
+			_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight() + _imageVerticalOffset;
+		}
+
+		// Draw the footer image(s)
+		for (uint i = 0; i < _imageLineIDs.size(); ++i) {
+			if (numNewlineTokens <= _imageLineIDs[i]) {
+				_imageVerticalOffset += (font->getFontHeight() + 1) / 2 + 1;
+
+				_fullSurface.blitFrom(image, _imageSrcs[i],
+					Common::Point(	textBounds.left + horizontalOffset + 1,
+									textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset));
+				_imageVerticalOffset += _imageSrcs[i].height() - 1;
+
+				if (i < _imageLineIDs.size() - 1) {
+					_imageVerticalOffset += (font->getFontHeight() + 1) / 2 + 3;
+				}
+
+				_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight() + _imageVerticalOffset;
+			}
 		}
 
 		// Add the hotspot to the list

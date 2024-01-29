@@ -52,12 +52,6 @@ protected:
 	uint16 _surfWidth = 0;
 	uint16 _surfHeight = 0;
 
-	// Data for displaying images inside text; not supported yet
-	Common::Path _imageName;
-
-	Common::Array<uint16> _imageLineIDs;
-	Common::Array<Common::Rect> _imageSrcs;
-
 	bool _useAutotextChunk = false;
 
 	// Only one of these is valid

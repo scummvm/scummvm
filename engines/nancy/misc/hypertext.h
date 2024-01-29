@@ -37,13 +37,16 @@ public:
 		_numDrawnLines(0),
 		_drawnTextHeight(0),
 		_needsTextRedraw(false),
-		_defaultTextColor(0) {}
+		_defaultTextColor(0),
+		_imageVerticalOffset(0) {}
 	virtual ~HypertextParser() {};
 
 protected:
 	void initSurfaces(uint width, uint height, const struct Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor);
 
 	void addTextLine(const Common::String &text);
+	void addImage(uint16 lineID, const Common::Rect &src);
+	void setImageName(const Common::Path &name);
 
 	void drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID);
 	virtual void clear();
@@ -54,9 +57,15 @@ protected:
 	uint32 _backgroundColor;
 	uint32 _highlightBackgroundColor;
 	uint _defaultTextColor;
+	uint _imageVerticalOffset;
 
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;
+
+	// Data for displaying images inside text; used in Hypertext
+	Common::Path _imageName;
+	Common::Array<uint16> _imageLineIDs;
+	Common::Array<Common::Rect> _imageSrcs;
 
 	uint16 _numDrawnLines;
 	uint16 _drawnTextHeight;

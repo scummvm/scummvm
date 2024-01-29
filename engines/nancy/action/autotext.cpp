@@ -40,15 +40,19 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 	_surfWidth = stream.readUint16LE();
 	_surfHeight = stream.readUint16LE();
 
-	readFilename(stream, _imageName);
+	Common::Path imageName;
+	readFilename(stream, imageName);
 
 	uint16 numImages = stream.readUint16LE();
+	if (numImages) {
+		for (uint i = 0; i < numImages; ++i) {
+			uint16 line = stream.readUint16LE();
+			Common::Rect src;
+			readRect(stream, src);
+			addImage(line, src);
+		}
 
-	_imageLineIDs.resize(numImages);
-	_imageSrcs.resize(numImages);
-	for (uint i = 0; i < numImages; ++i) {
-		_imageLineIDs[i] = stream.readUint16LE();
-		readRect(stream, _imageSrcs[i]);
+		setImageName(imageName);
 	}
 
 	stream.skip((5 - numImages) * (2 + 16));
@@ -139,6 +143,14 @@ void Autotext::execute() {
 		Common::Rect textBounds = surf.getBounds();
 		textBounds.left += _offset.x;
 		textBounds.top += _offset.y;
+
+		const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
+		assert(font);
+		uint d = (font->getFontHeight() + 1) / 2 + 1;
+
+		textBounds.top += d + 1;
+		textBounds.left += d;
+
 		drawAllText(textBounds, _fontID, _fontID);
 	}
 
