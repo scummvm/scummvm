@@ -185,6 +185,8 @@ void Room102::daemon() {
 		break;
 
 	case kCHANGE_HARRY_ANIMATION:
+		warning("%d - %d", _harryMode, _harryShould);
+
 		switch (_harryShould) {
 		case 19:
 			term_message(" mumble or change channel");
@@ -1508,6 +1510,8 @@ void Room102::conv04() {
 				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				player_update_info();
 				ws_walk(192, 327, 0, -1, 4);
+				conv_resume_curr();
+
 			} else if (node == 4 && entry == 0) {
 				digi_preload("102_030");
 				digi_preload("102_031");
@@ -1696,7 +1700,6 @@ void Room102::conv06() {
 		conv_resume_curr();
 	}
 }
-
 
 } // namespace Rooms
 } // namespace Burger
