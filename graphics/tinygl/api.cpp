@@ -156,7 +156,7 @@ void tglEdgeFlag(TGLboolean flag) {
 	TinyGL::GLParam p[2];
 
 	p[0].op = TinyGL::OP_EdgeFlag;
-	p[1].i = flag == TGL_TRUE ? 1 : 0;;
+	p[1].i = flag == TGL_TRUE ? 1 : 0;
 
 	c->gl_add_op(p);
 }

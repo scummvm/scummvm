@@ -57,7 +57,7 @@ SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
 	_saveFiles[index++].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
 	_saveFiles[index++].handler = _constructionHandler = new GameFileHandler(vm, targetName, "construction");
-	_saveFiles[index++].handler = _menuHandler = new TempSpriteHandler(vm);;
+	_saveFiles[index++].handler = _menuHandler = new TempSpriteHandler(vm);
 	for (int i = 0; i < kAdibou1NbrOfDrawings; i++) {
 		_saveFiles[index++].handler = _drawingWithThumbnailHandler[i] = new DrawingWithThumbnailHandler(vm,
 																									   targetName,
@@ -93,7 +93,7 @@ int32 SaveLoad_Adibou1::SpriteHandler::getSize() {
 	Common::String fileName = _file.build();
 
 	if (fileName.empty())
-		return -1;;
+		return -1;
 
 	SaveReader reader(1, 0, fileName);
 	SaveHeader header;

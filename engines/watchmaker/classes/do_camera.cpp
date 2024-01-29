@@ -111,7 +111,7 @@ void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn) {
 		}
 
 		t3dVectCopy(Target, &mesh->Trasl);
-		Target->y = CurFloorY + CHEST_HEIGHT;;
+		Target->y = CurFloorY + CHEST_HEIGHT;
 		if ((bn) && (frame > 0)) {
 			if (mesh->Flags & T3D_MESH_DEFAULTANIM)
 				bone = &mesh->DefaultAnim.BoneTable[bn];

@@ -228,7 +228,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	if (name)
 		snprintf(name, MAX_FILENAME_SIZE, "%s", s);
 
-	for (;; ) {
+	for (;;) {
 		if (c[x])
 			break;
 		x++;

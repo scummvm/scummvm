@@ -782,7 +782,7 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 					if (_font.get(position + j * 32 + i))
 						surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
 					else
-						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);;
+						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
 				}
 			}
 		}

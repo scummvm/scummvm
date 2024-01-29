@@ -3173,7 +3173,7 @@ void doT2D(WGame &game) {
 		switch (bT2DActive) {
 		case tSCANNER:
 			w = &t2dWin[T2D_WIN_SCANNER_BACKGROUND];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_SCANNER_BACKGROUND_WIN].tnum           = LoadDDBitmap(game, "t2d\\Scanner_BackgroundWin.tga", rSURFACESTRETCH);
@@ -3203,7 +3203,7 @@ void doT2D(WGame &game) {
 			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
 
 			w = &t2dWin[T2D_WIN_SCANNER_TOOLBAR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 621;
 			w->py = 184;
 			w->bm[T2D_BM_SCANNER_TOOLBAR_WIN].tnum              = LoadDDBitmap(game, "t2d\\Scanner_ToolbarWin.tga", rSURFACESTRETCH);
@@ -3267,7 +3267,7 @@ void doT2D(WGame &game) {
 			b->tnum = EXTRALS_SCAN;
 
 			w = &t2dWin[T2D_WIN_SCANNER_PROGRESSBAR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 280;
 			w->py = 300;
 			w->bm[T2D_BM_SCANNER_PROGRESSBAR_WIN].tnum          = LoadDDBitmap(game, "t2d\\Scanner_ProgressWin.tga", rSURFACESTRETCH);
@@ -3299,13 +3299,13 @@ void doT2D(WGame &game) {
 			LinkWinX = 0;
 			LinkWinY = 0;
 
-			SelectorFlag = false;;
+			SelectorFlag = false;
 			break;
 
 		case tCOMPUTER:
 			//Inizializzazione finestra BackGround
 			w = &t2dWin[T2D_WIN_COMPUTER_BACKGROUND];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_COMPUTER_BACKGROUND_WIN].tnum          = LoadDDBitmap(game, "t2d\\Computer_BackgroundWin.tga", rSURFACESTRETCH);
@@ -3392,7 +3392,7 @@ void doT2D(WGame &game) {
 			//2: DialError
 			//3: SearchError
 			w = &t2dWin[T2D_WIN_COMPUTER_ERROR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 300;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_COMERROR_WIN].tnum            = LoadDDBitmap(game, "t2d\\Computer_ComError_Win.tga", rSURFACESTRETCH);
@@ -3472,7 +3472,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra DialUp
 			w = &t2dWin[T2D_WIN_COMPUTER_DIALUP];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 300;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_DIALUP_WIN].tnum          = LoadDDBitmap(game, "t2d\\Computer_DialUpWin.tga", rSURFACESTRETCH);
@@ -3625,7 +3625,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Search
 			w = &t2dWin[T2D_WIN_COMPUTER_SEARCH];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 100;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN].tnum         = LoadDDBitmap(game, "t2d\\Computer_Search_Alphabetical.tga", rSURFACESTRETCH);
@@ -3800,7 +3800,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra EMail
 			w = &t2dWin[T2D_WIN_COMPUTER_EMAIL];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 50;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_EMAIL_WIN].tnum           = LoadDDBitmap(game, "t2d\\Computer_EMail_Win.tga", rSURFACESTRETCH);
@@ -3998,7 +3998,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra DocList
 			w = &t2dWin[T2D_WIN_COMPUTER_DOCLIST];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 100;
 			w->py = 150;
 			w->bm[T2D_BM_COMPUTER_DOCLIST_WIN].tnum             = LoadDDBitmap(game, "t2d\\Computer_DocList_Win.tga", rSURFACESTRETCH);
@@ -4178,7 +4178,7 @@ void doT2D(WGame &game) {
 
 		case tDIARIO:
 			w = &t2dWin[T2D_WIN_DIARIO];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_DIARIO_PAGE_1].tnum            = LoadDDBitmap(game, "t2d\\Diario_Page1.tga", rSURFACESTRETCH);
@@ -4369,7 +4369,7 @@ void doT2D(WGame &game) {
 		case tPDA:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_PDA_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_PDA_MAIN_WIN].tnum         = LoadDDBitmap(game, "t2d\\PDA_Main_Win.tga", rSURFACESTRETCH);
@@ -4430,7 +4430,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Log Viewer
 			w = &t2dWin[T2D_WIN_PDA_LOG];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_LOG_WIN].tnum                  = LoadDDBitmap(game, "t2d\\PDA_Log_Win.tga", rSURFACESTRETCH);
@@ -4514,7 +4514,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Tone Sequencer
 			w = &t2dWin[T2D_WIN_PDA_TONE];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_TONE_WIN].tnum                 = LoadDDBitmap(game, "t2d\\PDA_Tone_Win.tga", rSURFACESTRETCH);
@@ -4591,7 +4591,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Help
 			w = &t2dWin[T2D_WIN_PDA_HELP];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_HELP_WIN].tnum                 = LoadDDBitmap(game, "t2d\\PDA_Help_Win.tga", rSURFACESTRETCH);
@@ -4692,7 +4692,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_OPTIONS_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps
@@ -4937,7 +4937,7 @@ void doT2D(WGame &game) {
 			optionsCurPos = 0;
 			optionsSlot = 0;
 			optionsWhat = 0;
-			optionsSaveDescriptActive = false;;
+			optionsSaveDescriptActive = false;
 			NSaves = 0;
 			RefreshSaveImg(game, 0, 2);
 
@@ -4961,7 +4961,7 @@ void doT2D(WGame &game) {
 		case tMAINMENU:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_MAINMENU_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps
@@ -5038,7 +5038,7 @@ void doT2D(WGame &game) {
 		case tGAMEOVER:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_GAMEOVER_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps

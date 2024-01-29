@@ -912,8 +912,8 @@ void GridWidget::calcInnerHeight() {
 				}
 			}
 			x = _scrollWindowPaddingX;
-			_sortedEntryList[k]->x = x;;
-			_sortedEntryList[k]->y = y;;
+			_sortedEntryList[k]->x = x;
+			_sortedEntryList[k]->y = y;
 			x = _scrollWindowPaddingX + _gridXSpacing;
 			++row;
 			y += _sortedEntryList[k]->h + _gridYSpacing;

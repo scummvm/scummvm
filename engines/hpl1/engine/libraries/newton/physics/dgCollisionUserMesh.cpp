@@ -150,7 +150,7 @@ void dgCollisionUserMesh::DebugCollision(const dgMatrix &matrixPtr,
 	 dgCollisionUserMeshShowPolyContext context;
 
 	 context.m_matrix = matrixPtr;
-	 context.m_userData = userData;;
+	 context.m_userData = userData;
 	 context.m_callback = callback;
 
 	 dgVector p0 (dgFloat32 (-1.0e20f), dgFloat32 (-1.0e20f), dgFloat32 (-1.0e20f), dgFloat32 (0.0f));

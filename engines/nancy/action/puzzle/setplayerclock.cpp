@@ -163,7 +163,7 @@ void SetPlayerClock::execute() {
 			if (_sceneChangeTime == 0) {
 				if (!g_nancy->_sound->isSoundPlaying(_alarmSetSound)) {
 					g_nancy->_sound->stopSound(_buttonSound);
-					g_nancy->_sound->stopSound(_alarmSetSound);;
+					g_nancy->_sound->stopSound(_alarmSetSound);
 					NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
 					_alarmSetScene.execute();
 					finishExecution();

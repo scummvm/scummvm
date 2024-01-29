@@ -470,7 +470,7 @@ void ProcessGopherCamera(WGame &game) {
 		zero.y = CHEST_HEIGHT;
 
 		GetCameraTarget(game.init, &t3dCurCamera->Target);
-		t3dCurCamera->Target.y = LastFloorY + CHEST_HEIGHT;;
+		t3dCurCamera->Target.y = LastFloorY + CHEST_HEIGHT;
 		t3dVectAdd(&t3dCurCamera->Source,  &t3dCurCamera->Target, &zero);
 		Palla50->Flags |= T3D_CHARACTER_HIDE;
 		Freccia50->Flags |= T3D_CHARACTER_HIDE;

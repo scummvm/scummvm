@@ -164,9 +164,9 @@ void dgCollisionCompound::dgNodeBase::reset() {
 	m_shape = NULL;
 
 	m_p0 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
-	m_p1 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
-	m_size = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
-	m_origin = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
+	m_p1 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
+	m_size = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
+	m_origin = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_area = 0.0f;
 }
@@ -2175,7 +2175,7 @@ dgInt32 dgCollisionCompound::ClosestDitance(dgBody *const compoundBody,
 					leftDist = left->BoxClosestDistance(points, 8);
 				}
 
-				const dgNodeBase *const right = me->m_right;;
+				const dgNodeBase *const right = me->m_right;
 				dgFloat32 rightDist = dgFloat32(0.0f);
 				if (right->m_type != m_leaf) {
 					rightDist = right->BoxClosestDistance(points, 8);

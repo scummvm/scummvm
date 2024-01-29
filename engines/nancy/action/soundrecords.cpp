@@ -271,7 +271,7 @@ void PlayRandomSoundTerse::readData(Common::SeekableReadStream &stream) {
 void PlayRandomSoundTerse::execute() {
 	if (_state == kBegin) {
 		uint16 randomID = g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1);
-		_sound.name = _soundNames[randomID];;
+		_sound.name = _soundNames[randomID];
 		_ccText = _ccTexts[randomID];
 	}
 

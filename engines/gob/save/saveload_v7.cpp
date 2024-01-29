@@ -859,7 +859,7 @@ int32 SaveLoad_v7::SpriteHandler::getSize() {
 	Common::String fileName = _file.build();
 
 	if (fileName.empty())
-		return -1;;
+		return -1;
 
 	SaveReader reader(1, 0, fileName);
 	SaveHeader header;

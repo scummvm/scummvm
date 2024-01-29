@@ -3079,7 +3079,7 @@ void dgJacobianMemory::CalculateForcesSimulationModeSimd(
 				dgInt32 j;
 				j = first + k;
 				// force[j] = dgFloat32 (0.0f);
-				// accel[j] -= dgFloat32 (0.0f);;
+				// accel[j] -= dgFloat32 (0.0f);
 				// deltaAccel[j] = dgFloat32 (0.0f);
 				// deltaForce[j] = dgFloat32 (0.0f);
 				normalForceIndex[j] = -1;
@@ -4356,7 +4356,7 @@ dgFloat32 dgJacobianMemory::CalculateJointForcesSimd(dgInt32 joint,
 			dgInt32 i;
 			i = first + j;
 			// force[i] = dgFloat32 (0.0f);
-			// accel[j] -= dgFloat32 (0.0f);;
+			// accel[j] -= dgFloat32 (0.0f);
 			// activeRow[j] = dgFloat32 (0.0f);
 			// deltaAccel[j] = dgFloat32 (0.0f);
 			// deltaForce[j] = dgFloat32 (0.0f);

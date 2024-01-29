@@ -90,7 +90,7 @@ Token::Type FCLInstruction::getType() {
 }
 
 bool FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {
-	bool executed = false;;
+	bool executed = false;
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;

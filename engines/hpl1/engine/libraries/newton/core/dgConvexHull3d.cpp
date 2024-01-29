@@ -340,7 +340,7 @@ dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex *const points, const dgFloa
 	}
 
 	validTetrahedrum = false;
-	dgBigVector e2(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));;
+	dgBigVector e2(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	dgBigVector normal(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	for (dgInt32 i = 2; i < normalCount; i ++) {
 		dgInt32 indexSV = SupportVertex(&tree, points, normalArray[i]);

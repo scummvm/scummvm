@@ -4678,7 +4678,7 @@ int asCBuilder::RegisterVirtualProperty(asCScriptNode *node, asCScriptCode *file
 				else if (funcNode->tokenType == ttIdentifier && file->TokenEquals(funcNode->tokenPos, funcNode->tokenLength, OVERRIDE_TOKEN))
 					funcTraits.SetTrait(asTRAIT_OVERRIDE, true);
 				else {
-					asCString msg(&file->code[funcNode->tokenPos], funcNode->tokenLength);;
+					asCString msg(&file->code[funcNode->tokenPos], funcNode->tokenLength);
 					msg.Format(TXT_UNEXPECTED_TOKEN_s, msg.AddressOf());
 					WriteError(msg.AddressOf(), file, node);
 				}

@@ -1642,7 +1642,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 	int chunk = -1;
 
 	if (_canvas._text[nrow].chunks.size() > 0) {
-		int alignOffset = _canvas.getAlignOffset(nrow) + _canvas._text[nrow].indent + _canvas._text[nrow].firstLineIndent;;
+		int alignOffset = _canvas.getAlignOffset(nrow) + _canvas._text[nrow].indent + _canvas._text[nrow].firstLineIndent;
 
 		int width = 0, pwidth = 0;
 		int mcol = 0, pmcol = 0;
