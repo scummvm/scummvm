@@ -46,6 +46,14 @@ enum MoveFlags {
 };
 
 struct CostumeData {
+	CostumeData() : animCounter(0), soundCounter(0), soundPos(0), stopped(0) {
+		memset(animType, 0, sizeof(animType));
+		memset(curpos, 0xFF, sizeof(curpos));
+		memset(start, 0xFF, sizeof(start));
+		memset(end, 0xFF, sizeof(end));
+		memset(frame, 0xFF, sizeof(frame));
+	}
+
 	byte animType[16];
 	uint16 animCounter;
 	byte soundCounter;

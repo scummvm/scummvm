@@ -444,14 +444,17 @@ const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedSt
 		return nullptr;
 
 	if (_vm->_game.version == 8) {
+		assert(stringno - 1 < ARRAYSIZE(string_map_table_v8));
 		return string_map_table_v8[stringno - 1].string;
 	} else if (_vm->_game.version == 7) {
+		assert(stringno - 1 < ARRAYSIZE(string_map_table_v7));
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 
 		if (!result) {
 			result = string_map_table_v7[stringno - 1].string;
 		}
 	} else if (_vm->_game.version == 6) {
+		assert(stringno - 1 < ARRAYSIZE(string_map_table_v6));
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
@@ -784,11 +787,14 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	}
 
 	if (useHardcodedV3QuitPrompt) {
+		assert(langIndex < ARRAYSIZE(hardcodedV3QuitPrompt));
 		return hardcodedV3QuitPrompt[langIndex];
 	}
 
 	if (useFixedDottMenuStrings) {
 		stringno -= 21;
+		assert(langIndex < ARRAYSIZE(fixedDottMenuStrings));
+		assert(stringno < ARRAYSIZE(fixedDottMenuStrings[0]));
 		return fixedDottMenuStrings[langIndex][stringno];
 	}
 
@@ -812,6 +818,9 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			return altStr;
 		}
 	}
+
+	assert(langIndex < ARRAYSIZE(strMap1));
+	assert(stringno < ARRAYSIZE(strMap1[0]));
 	return strMap1[langIndex][stringno];
 }
 

@@ -535,7 +535,7 @@ void SmushDeltaGlyphsDecoder::decode2(byte *dst, const byte *src, int width, int
 }
 #endif
 
-SmushDeltaGlyphsDecoder::SmushDeltaGlyphsDecoder(int width, int height) {
+SmushDeltaGlyphsDecoder::SmushDeltaGlyphsDecoder(int width, int height) : _prevSeqNb(0), _dSrc(nullptr), _paramPtr(nullptr), _dPitch(0), _offset1(0), _offset2(0) {
 	_lastTableWidth = -1;
 	_width = width;
 	_height = height;
