@@ -831,7 +831,7 @@ void ScummEngine_v5::o5_chainScript() {
 	// FIXME: Do we still need this workaround, 19 years later? I can't
 	// reproduce the original crash anymore, maybe we handle uninitialized
 	// local values the same way the original interpreter did, now?
-	if (_game.id == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
+	if (_game.id == GID_INDY3 && cur != 0xFF && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 

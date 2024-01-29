@@ -452,7 +452,7 @@ void Player_Towns_v1::startSoundEx(int sound, int velo, int pan, int note) {
 
 		pan = pan ? (((pan << 7) - pan) + 50) / 100 : 64;
 
-		playPcmTrack(sound, ptr + 6, velo ? velo : ptr[14] >> 1, pan, note ? note : ptr[50], pri);
+		playPcmTrack(sound, ptr + 6, velo, pan, note ? note : ptr[50], pri);
 
 	} else if (ptr[13] == 2) {
 		int volLeft = velo;

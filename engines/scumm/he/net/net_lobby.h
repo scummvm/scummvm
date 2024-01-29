@@ -88,7 +88,7 @@ public:
 	~Lobby();
 
 	void doNetworkOnceAFrame();
-	void send(Common::JSONObject data);
+	void send(Common::JSONObject &data);
 
 	int32 dispatch(int op, int numArgs, int32 *args);
 

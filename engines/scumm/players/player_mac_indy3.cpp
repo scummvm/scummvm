@@ -1168,7 +1168,7 @@ void I3MPlayer::updateSong() {
 		}
 	}
 
-	for (int i = _numMusicChannels - 1; i >= 0; --i)
+	for (int i = 0; i < _numMusicChannels; ++i)
 		_mdrv->setRate(i, _lastSong ? _musicChannels[i]->checkPeriod() : 0);
 	if (_songPlaying)
 		_mdrv->setDuration(10);

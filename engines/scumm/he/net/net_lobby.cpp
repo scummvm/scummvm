@@ -74,7 +74,7 @@ void Lobby::doNetworkOnceAFrame() {
 	}
 }
 
-void Lobby::send(Common::JSONObject data) {
+void Lobby::send(Common::JSONObject &data) {
 	if (!_socket) {
 		warning("LOBBY: Attempted to send data while not connected to server");
 		return;

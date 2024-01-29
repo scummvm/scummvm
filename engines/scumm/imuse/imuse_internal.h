@@ -129,7 +129,7 @@ struct ParameterFader {
 	uint32 total_time;
 	uint32 current_time;
 
-	ParameterFader() { param = 0; }
+	ParameterFader() : param(0), start(0), end(0), total_time(0), current_time(0) {}
 	void init() { param = 0; }
 };
 
