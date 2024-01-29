@@ -668,8 +668,12 @@ uint32 I3MLowLevelPCMDriver::calcRate(uint32 outRate, uint32 factor, uint32 data
 	}
 
 	sh = ~sh;
-	factor <<= sh;
-	dataRate = ((dataRate >> (32 - sh)) | (dataRate << sh)) ^ factor;
+	if (sh) {
+		factor <<= sh;
+		dataRate = ((dataRate >> (32 - sh)) | (dataRate << sh));
+	}
+
+	dataRate ^= factor;
 
 	if (outRate & 0xffff) {
 		bool altpth = false;
@@ -681,7 +685,7 @@ uint32 I3MLowLevelPCMDriver::calcRate(uint32 outRate, uint32 factor, uint32 data
 		} else {
 			c = dataRate % (outRate >> 16);
 			dataRate /= (outRate >> 16);
-			t = ((c << 16) | (factor >> 16)) - (dataRate * (outRate & 0xffff));
+			t = ((c << 16) | (factor >> 16)) - ((dataRate & 0xffff) * (outRate & 0xffff));
 			factor = (factor << 16) | dataRate;
 			dataRate =  t & (uint32)-1;
 			altpth = (int64)t < 0;
@@ -893,7 +897,7 @@ bool I3MPlayer::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 fee
 
 	for (int i = 0; i < 4; ++i)
 		mdrv->setWaveForm(i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
-
+	_qualHi = true;
 	_mdrv = mdrv;
 
 	_drivers.push_back(_mdrv);
@@ -1047,6 +1051,11 @@ void I3MPlayer::startSong(int id) {
 	if (_lastSong != -1)
 		--_soundUsage[_lastSong];
 	_lastSong = _lastSound = id;
+
+	// This applies if the quality mode is set to kQualAuto
+	// and the VAR_SOUNDCARD setting changes.
+	if (_qualHi != isHiQuality())
+		setQuality(_qmode);
 
 	if (isHiQuality()) {
 		_qualHi = true;
@@ -1357,7 +1366,7 @@ bool I3MPlayer::MusicChannel::ctrl_setShape(const byte *&pos) {
 bool I3MPlayer::MusicChannel::ctrl_modPara(const byte *&pos) {
 	static const uint16 table[10] = { 0x0000, 0x1000, 0x1000, 0x1000, 0x2000, 0x0020, 0x3020, 0x2000, 0x2020, 0x1000 };
 	int ix = (*pos++);
-	if ((ix & 1) || (ix >> 1 >= ARRAYSIZE(table)))
+	if ((ix & 1) || ((ix >> 1) + 1 >= ARRAYSIZE(table)))
 		error("I3MPlayer::MusicChannel::ctrl_modPara(): data error");
 	ix >>= 1;
 	_modType = table[ix];
@@ -1593,6 +1602,6 @@ void Player_Mac_Indy3::setQuality(int qual) {
 
 #undef ASC_DEVICE_RATE
 #undef PCM_BUFFER_SIZE
-#undef RATE_CNV_BIT_RES
+#undef RATECNV_BIT_PRECSN
 
 } // End of namespace Scumm
