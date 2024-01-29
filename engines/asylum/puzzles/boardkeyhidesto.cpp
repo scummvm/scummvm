@@ -127,6 +127,31 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData[] = {
 		true,
 		10, 0,
 		"\xE7 \xFA \xF4 \xEE \xE4   \xE0 \xE9 \xE1 \xE7 \xEE "
+	},
+	// Basque
+	{
+		56,
+		kGameFlag283,
+		503,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		11,
+		{
+			{'A',   45,   56},
+			{'K',  199,   74},
+			{'A',  538,   88},
+			{'D',  276,  121},
+			{'L',  276,  137},
+			{'Z',  170,  152},
+			{'T',  536,   151},
+			{'A',  279,   185},
+			{'I',  494,   200},
+			{'G',  101,   248},
+			{'U',  546,   247}
+		},
+		true,
+		10, 0,
+		"D A U K A   G I L T Z A "
 	}
 };
 
