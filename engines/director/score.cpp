@@ -644,6 +644,9 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_skipTransition) {
 		_window->render();
 		_skipTransition = false;
+	} else if (g_director->_playbackPaused) {
+		renderSprites(frameId, mode);
+		_window->render();
 	} else if (!renderTransition(frameId)) {
 		bool skip = renderPrePaletteCycle(frameId, mode);
 		setLastPalette(frameId);
