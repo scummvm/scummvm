@@ -156,12 +156,14 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double left click = attack
-//			debugC(kDebugActor, "AvatarMover: combat attack");
+			if (hasMovementFlags(MOVE_ANY_DIRECTION)) {
+				waitFor(avatar->doAnim(Animation::attack, direction));
+			} else {
+				if (checkTurn(mousedir, false))
+					return;
 
-			if (checkTurn(mousedir, false))
-				return;
-
-			waitFor(avatar->doAnim(Animation::attack, mousedir));
+				waitFor(avatar->doAnim(Animation::attack, mousedir));
+			}
 			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// attacking gives str/dex
@@ -188,12 +190,14 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double right click = kick
-//			debugC(kDebugActor, "AvatarMover: combat kick");
+			if (hasMovementFlags(MOVE_ANY_DIRECTION)) {
+				waitFor(avatar->doAnim(Animation::kick, direction));
+			} else {
+				if (checkTurn(mousedir, false))
+					return;
 
-			if (checkTurn(mousedir, false))
-				return;
-
-			waitFor(avatar->doAnim(Animation::kick, mousedir));
+				waitFor(avatar->doAnim(Animation::kick, mousedir));
+			}
 			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// kicking gives str/dex
