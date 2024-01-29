@@ -34,8 +34,8 @@ namespace Scumm {
 #define PCM_BUFFER_SIZE		1024
 #define RATECNV_BIT_PRECSN	24
 
-extern const uint8 *_pv2ModTbl;
-extern const uint32 _pv2ModTblSize;
+extern const uint8 *g_pv2ModTbl;
+extern const uint32 g_pv2ModTblSize;
 
 class I3MPlayer;
 class AudioStream_I3M : public Audio::AudioStream {
@@ -1169,7 +1169,7 @@ uint16 savedOffset = 0;
 I3MPlayer::MusicChannel *I3MPlayer::MusicChannel::_ctrlChan = nullptr;
 
 I3MPlayer::MusicChannel::MusicChannel(I3MPlayer *pl) : _player(pl), _vars(nullptr), _numVars(0), _ctrlProc(nullptr),
-	_resSize(0), _savedOffset(savedOffset), _modShapes(_pv2ModTbl), _modShapesTableSize(_pv2ModTblSize) {
+	_resSize(0), _savedOffset(savedOffset), _modShapes(g_pv2ModTbl), _modShapesTableSize(g_pv2ModTblSize) {
 	static const CtrlProc ctrl[8] {
 		&I3MPlayer::MusicChannel::ctrl_setShape,
 		&I3MPlayer::MusicChannel::ctrl_modPara,
