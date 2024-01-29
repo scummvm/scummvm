@@ -55,7 +55,7 @@ Common::Archive *Resource::loadKyra1MacInstaller() {
 				error("Legend of Kyrandia installer file part %s is too short", partName.toString().c_str());
 			parts.push_back(Common::SharedPtr<Common::SeekableReadStream>(new Common::SeekableSubReadStream(stream, 100, stream->size(), DisposeAfterUse::YES)));
 		}
-		return loadStuffItArchive(new Common::ConcatReadStream(parts), "Install Legend of Kyrandia", "Legend of Kyrandia(TM) Installer.*");
+		return loadStuffItArchive(new Common::ConcatReadStream(Common::move(parts)), "Install Legend of Kyrandia", "Legend of Kyrandia(TM) Installer.*");
 	}
 
 	return nullptr;

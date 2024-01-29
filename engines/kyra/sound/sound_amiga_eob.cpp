@@ -157,7 +157,7 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 
 	if (!newSound.empty() && _ready) {
 		_driver->startSound(newSound);
-		_lastSound = newSound;
+		_lastSound = Common::move(newSound);
 	}
 }
 
@@ -207,7 +207,7 @@ void SoundAmiga_EoB::playSoundEffect(uint16 track, uint8 volume) {
 				debugC(5, kDebugLevelSound, "SoundAmiga_EoB::playSoundEffect(): Triggered workaround for wrongly named resource: '%s'", newSound.c_str());
 		}
 
-		_lastSound = newSound;
+		_lastSound = Common::move(newSound);
 	}
 }
 

@@ -961,7 +961,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 		t->extraProperties = in.readUint16();
 	}
 
-	return in.err() ? Common::String() : desc;
+	return in.err() ? Common::String() : Common::move(desc);
 }
 
 static uint32 encodeFrame4(const uint8 *src, uint8 *dst, uint32 insize) {
