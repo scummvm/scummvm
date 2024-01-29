@@ -1459,6 +1459,20 @@ private:
 	static const uint kObjectDropInteractionID = 0xfffffffeu;
 	static const uint kObjectPickupInteractionID = 0xfffffffdu;
 
+	static const uint kReturnInventorySlot0InteractionID = 0xfffffff1u;
+	static const uint kReturnInventorySlot1InteractionID = 0xfffffff2u;
+	static const uint kReturnInventorySlot2InteractionID = 0xfffffff3u;
+	static const uint kReturnInventorySlot3InteractionID = 0xfffffff4u;
+	static const uint kReturnInventorySlot4InteractionID = 0xfffffff5u;
+	static const uint kReturnInventorySlot5InteractionID = 0xfffffff6u;
+
+	static const uint kPickupInventorySlot0InteractionID = 0xfffffff7u;
+	static const uint kPickupInventorySlot1InteractionID = 0xfffffff8u;
+	static const uint kPickupInventorySlot2InteractionID = 0xfffffff9u;
+	static const uint kPickupInventorySlot3InteractionID = 0xfffffffau;
+	static const uint kPickupInventorySlot4InteractionID = 0xfffffffbu;
+	static const uint kPickupInventorySlot5InteractionID = 0xfffffffcu;
+
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
 

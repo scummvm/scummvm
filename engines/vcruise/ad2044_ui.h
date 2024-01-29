@@ -29,11 +29,22 @@ namespace VCruise {
 enum class AD2044InterfaceRectID {
 	ActiveItemRender,
 	ExamineButton,
+
+	InventoryRender0,
+	InventoryRender1,
+	InventoryRender2,
+	InventoryRender3,
+	InventoryRender4,
+	InventoryRender5,
+
 };
 
 namespace AD2044Interface {
 
 Common::Rect getRectForUI(AD2044InterfaceRectID rectID);
+Common::Rect getFirstInvSlotRect();
+uint getInvSlotSpacing();
+
 
 } // End of namespace AD2044Interface
 

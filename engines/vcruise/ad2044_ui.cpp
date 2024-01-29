@@ -31,9 +31,29 @@ Common::Rect getRectForUI(AD2044InterfaceRectID rectID) {
 		return Common::Rect(512, 150, 588, 217);
 	case AD2044InterfaceRectID::ExamineButton:
 		return Common::Rect(495, 248, 595, 318);
+	case AD2044InterfaceRectID::InventoryRender0:
+		return Common::Rect(24, 394, 100, 461);
+	case AD2044InterfaceRectID::InventoryRender1:
+		return Common::Rect(119, 395, 195, 462);
+	case AD2044InterfaceRectID::InventoryRender2:
+		return Common::Rect(209, 393, 285, 460);
+	case AD2044InterfaceRectID::InventoryRender3:
+		return Common::Rect(302, 393, 378, 460);
+	case AD2044InterfaceRectID::InventoryRender4:
+		return Common::Rect(393, 394, 469, 461);
+	case AD2044InterfaceRectID::InventoryRender5:
+		return Common::Rect(481, 393, 557, 460);
 	default:
 		return Common::Rect();
 	}
+}
+
+Common::Rect getFirstInvSlotRect() {
+	return Common::Rect(21, 392, 96, 460);
+}
+
+uint getInvSlotSpacing() {
+	return 92;
 }
 
 } // End of namespace AD2044Interface

@@ -3888,6 +3888,29 @@ bool Runtime::dischargeIdleMouseMove() {
 		}
 	}
 
+	if (_gameID == GID_AD2044 && !isOnInteraction) {
+		Common::Rect invSlotRect = AD2044Interface::getFirstInvSlotRect();
+
+		for (uint i = 0; i < kNumInventorySlots; i++) {
+			bool isItemInInventory = (_inventory[i].itemID != 0);
+			bool isItemActive = (_inventoryActiveItem.itemID != 0);
+
+			if (invSlotRect.contains(_mousePos)) {
+				if (isItemInInventory && !isItemActive) {
+					isOnInteraction = true;
+					interactionID = kPickupInventorySlot0InteractionID + i;
+				} else if (!isItemInInventory && isItemActive) {
+					isOnInteraction = true;
+					interactionID = kReturnInventorySlot0InteractionID + i;
+				}
+
+				break;
+			}
+
+			invSlotRect.translate(static_cast<int16>(AD2044Interface::getInvSlotSpacing()), 0);
+		}
+	}
+
 	if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
 		// Mouse left the previous interaction
 		_idleIsOnInteraction = false;
@@ -3950,10 +3973,10 @@ bool Runtime::dischargeIdleMouseMove() {
 		if (interactionID == kHeroChangeInteractionID) {
 			changeToCursor(_cursors[16]);
 			_idleHaveClickInteraction = true;
-		} else if (interactionID == kObjectDropInteractionID) {
+		} else if (interactionID == kObjectDropInteractionID || (interactionID >= kReturnInventorySlot0InteractionID && interactionID <= kReturnInventorySlot5InteractionID)) {
 			changeToCursor(_cursors[7]);
 			_idleHaveClickInteraction = true;
-		} else if (interactionID == kObjectPickupInteractionID) {
+		} else if (interactionID == kObjectPickupInteractionID || (interactionID >= kPickupInventorySlot0InteractionID && interactionID <= kPickupInventorySlot5InteractionID)) {
 			changeToCursor(_cursors[8]);
 			_idleHaveClickInteraction = true;
 		} else {
