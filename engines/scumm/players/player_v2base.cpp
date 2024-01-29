@@ -648,7 +648,7 @@ void Player_V2Base::nextTick() {
 	}
 }
 
-extern const uint8 *_pv2ModTbl = reinterpret_cast<const uint8*>(freqmod_table);
+const uint8 *_pv2ModTbl = reinterpret_cast<const uint8*>(freqmod_table);
 extern const uint32 _pv2ModTblSize = ARRAYSIZE(freqmod_table);
 
 } // End of namespace Scumm
