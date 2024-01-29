@@ -249,17 +249,19 @@ namespace Macs2 {
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
-	if (msg.ascii == (uint16)'i') {
+	if (msg.ascii == (uint16)'m') {
 		_backgroundSurface = g_engine->_map;
 		redraw();
 	}
-	else if (msg.ascii == (uint16)'m') {
+	else if (msg.ascii == (uint16)'b') {
 		_backgroundSurface = g_engine->_bgImageShip;
 		startFading();
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
 		g_engine->RunScriptExecutor();
+	} else if (msg.ascii == (uint16)'i') {
+		_isShowingInventory = !_isShowingInventory;
 	}
 	return true;
 }
@@ -352,6 +354,10 @@ void View1::draw() {
 	// renderString(200, 100, "Hello, world!");
 
 	DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
+
+	if (_isShowingInventory) {
+		drawInventory(s);
+	}
 }
 
 bool View1::tick() {
@@ -400,6 +406,10 @@ bool View1::tick() {
 	_lastMillis = tick_time;
 	
 	return true;
+}
+
+void View1::drawInventory(Graphics::ManagedSurface &s) {
+	drawDarkRectangle(0x36, 0x2c, 0x10A - 0x36, 0x82 - 0x2c);
 }
 
 void View1::DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s)
