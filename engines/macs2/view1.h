@@ -45,6 +45,8 @@ private:
 	bool _isShowingStringBox = false;
 	Common::StringArray _drawnStringBox;
 
+	bool _isShowingInventory = false;
+
 
 	Graphics::ManagedSurface _backgroundSurface;
 
@@ -74,6 +76,8 @@ public:
 	bool msgMouseDown(const MouseDownMessage& msg) override;
 	void draw() override;
 	bool tick() override;
+
+	void drawInventory(Graphics::ManagedSurface &s);
 
 	void setStringBox(const Common::StringArray& sa);
 	void clearStringBox();
