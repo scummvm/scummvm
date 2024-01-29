@@ -130,6 +130,10 @@ void Font::read(Common::SeekableReadStream &stream) {
 		_fontHeight = MAX<int>(cur.height(), _fontHeight);
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy6) {
+		_fontHeight = getCharWidth('o') * 2 - 1;
+	}
+
 	_textboxData = GetEngineData(TBOX);
 	assert(_textboxData);
 }
