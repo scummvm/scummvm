@@ -458,7 +458,8 @@ Common::JSONValue *GGHashMapDecoder::open(Common::SeekableReadStream *s) {
 		return nullptr;
 	}
 	_stream = s;
-	(void)s->readUint32LE();
+	/*uint32 numEntries =*/(void)s->readUint32LE();
+
 	if (!_readPlo(s, _offsets))
 		return nullptr;
 	return readHash();
@@ -671,11 +672,11 @@ bool GGPackEntryReader::open(GGPackDecoder &pack, const Common::String &entry) {
 	pack._s->seek(e.offset);
 
 	RangeStream rs;
-	if(!rs.open(pack._s, e.size))
+	if (!rs.open(pack._s, e.size))
 		return false;
 
 	XorStream xs;
-	if(!xs.open(&rs, e.size, pack._key))
+	if (!xs.open(&rs, e.size, pack._key))
 		return false;
 
 	_buf.resize(e.size);
@@ -685,8 +686,8 @@ bool GGPackEntryReader::open(GGPackDecoder &pack, const Common::String &entry) {
 }
 
 bool GGPackEntryReader::open(GGPackSet &packs, const Common::String &entry) {
-	for (size_t i = 0; i < packs._packs.size(); i++) {
-		GGPackDecoder *pack = &packs._packs[i];
+	for (auto it = packs._packs.begin(); it != packs._packs.end(); it++) {
+		GGPackDecoder *pack = &it->second;
 		if (open(*pack, entry))
 			return true;
 	}
@@ -733,6 +734,10 @@ uint32 GGBnutReader::read(void *dataPtr, uint32 dataSize) {
 
 bool GGBnutReader::eos() const { return _s->eos(); }
 
+bool GGPackSet::containsDLC() const {
+	return _packs.find(3) != _packs.end();
+}
+
 void GGPackSet::init() {
 	// try to auto-detect which XOR key to use to decrypt the resources of the game
 	const XorKey key1{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
@@ -750,14 +755,21 @@ void GGPackSet::init() {
 		const XorKey *key = &keys[i];
 		for (auto it = fileList.begin(); it != fileList.end(); ++it) {
 			const Common::ArchiveMember &m = **it;
+			Common::String fileName = m.getFileName();
+			size_t pos = fileName.findLastOf("ggpack");
+			if (pos == Common::String::npos)
+				continue;
+
+			long index = atol(fileName.c_str() + pos + 1);
+
 			Common::SeekableReadStream *stream = m.createReadStream();
 			GGPackDecoder pack;
 			if (stream && pack.open(stream, *key)) {
-				_packs.push_back(pack);
+				_packs[index] = pack;
 			}
 		}
 
-		if (_packs.size() > 0) {
+		if (!_packs.empty()) {
 			// the game has been detected because we have at least 1 ggpack file.
 			debugC(kDebugGGPack, "Thimbleweed Park detected with key %s", key_names[i]);
 			return;

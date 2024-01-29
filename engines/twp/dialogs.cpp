@@ -57,6 +57,7 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 
 	_enableDisplayTextGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Display Text"), _(""));
 	_enableHearVoiceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck2", _("Hear Voice"), _(""));
+	_enableDLC = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck3", _("Ransome *unbeeped* (DLC)"), _(""));
 
 	_langGUIDropdown = new GUI::PopUpWidget(widgetsBoss(), "TwpGameOptionsDialog.LangDropDown");
 	_langGUIDropdown->appendEntry(_("English"));
@@ -83,7 +84,8 @@ void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Comm
 		.addWidget("TextAndSpeechLabel", "OptionsLabel")
 		.addWidget("LangDropDown", "PopUp")
 		.addWidget("TextCheck1", "Checkbox")
-		.addWidget("TextCheck2", "Checkbox");
+		.addWidget("TextCheck2", "Checkbox")
+		.addWidget("TextCheck3", "Checkbox");
 
 	layouts.closeLayout().closeDialog();
 }
@@ -97,6 +99,7 @@ void TwpOptionsContainerWidget::load() {
 	_enableClassicSentenceGUICheckbox->setState(ConfMan.getBool("hudSentence", _domain));
 	_enableDisplayTextGUICheckbox->setState(ConfMan.getBool("talkiesShowText", _domain));
 	_enableHearVoiceGUICheckbox->setState(ConfMan.getBool("talkiesHearVoice", _domain));
+	_enableDLC->setState(ConfMan.getBool("ransomeUnbeeped", _domain));
 	Common::String lang = ConfMan.get("language", _domain);
 	int index = 0;
 	for (int i = 0; i < ARRAYSIZE(lang_items); i++) {
@@ -117,7 +120,7 @@ bool TwpOptionsContainerWidget::save() {
 	ConfMan.setBool("hudSentence", _enableClassicSentenceGUICheckbox->getState(), _domain);
 	ConfMan.setBool("talkiesShowText", _enableDisplayTextGUICheckbox->getState(), _domain);
 	ConfMan.setBool("talkiesHearVoice", _enableHearVoiceGUICheckbox->getState(), _domain);
-	ConfMan.setBool("talkiesHearVoice", _enableHearVoiceGUICheckbox->getState(), _domain);
+	ConfMan.setBool("ransomeUnbeeped", _enableDLC->getState(), _domain);
 	ConfMan.set("language", lang_items[_langGUIDropdown->getSelected()], _domain);
 	return true;
 }
