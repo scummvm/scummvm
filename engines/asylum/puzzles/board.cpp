@@ -56,6 +56,10 @@ PuzzleBoard::PuzzleBoard(AsylumEngine *engine, const PuzzleData *data) : Puzzle(
 	case Common::HE_ISR:
 		i = 3;
 		break;
+
+	case Common::EU_ESP:
+		i = 4;
+		break;
 	}
 
 	memcpy(&_data, &data[i], sizeof(PuzzleData));

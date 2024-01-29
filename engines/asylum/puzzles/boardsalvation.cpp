@@ -131,7 +131,32 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData[] = {
 		false,
 		12, 0,
 		"\xE4 \xF2 \xE5 \xF9 \xE9 \xE4   \xEC \xE0 "
-	}
+	},
+	// Basque
+	{
+		31,
+		kGameFlag281,
+		455,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		10,
+		{
+			{'B',   49,  56},
+			{'A',  317,  56},
+			{'O',  546,  85},
+			{'L',  267, 122},
+			{'Z',  157, 152},
+			{'R',  264, 184},
+			{'A',  564, 216},
+			{'I',  452, 231},
+			{'S',  251, 247},
+			{'A',  485, 279},
+			{'\0',   0,   0}
+		},
+		false,
+		0, 0,
+		"S A L B A Z I O R A "
+	},
 };
 
 static const uint32 puzzleSalvationSoundResourceIndex[11] = {5, 6, 7, 10, 11, 28, 29, 30, 31, 32, 36};
