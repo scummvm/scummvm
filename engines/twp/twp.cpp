@@ -717,6 +717,7 @@ Common::Error TwpEngine::run() {
 
 	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
 	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
+	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped"));
 
 	static int speed = 1;
 	static bool control = false;

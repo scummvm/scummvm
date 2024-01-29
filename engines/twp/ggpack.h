@@ -178,8 +178,10 @@ public:
 	void init();
 	bool assetExists(const char* asset);
 
+	bool containsDLC() const;
+
 public:
-	Common::Array<GGPackDecoder> _packs;
+	Common::StableMap<long, GGPackDecoder, Common::Greater<long>> _packs;
 };
 
 class GGBnutReader: public Common::ReadStream {
