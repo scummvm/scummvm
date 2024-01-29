@@ -2505,6 +2505,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(RGet);
 			DISPATCH_OP(RSet);
 
+			DISPATCH_OP(Say3K);
+
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));
 		}
