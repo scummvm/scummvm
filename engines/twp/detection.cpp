@@ -30,11 +30,17 @@
 #include "twp/detection_tables.h"
 
 const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
-	{Twp::kDebugGraphics, "Graphics", "Graphics debug level"},
-	{Twp::kDebugPath, "Path", "Pathfinding debug level"},
-	{Twp::kDebugFilePath, "FilePath", "File path debug level"},
-	{Twp::kDebugScan, "Scan", "Scan for unrecognised games"},
-	{Twp::kDebugScript, "Script", "Enable debug script dump"},
+	{Twp::kDebugText, "Text", "Text debug level"},
+	{Twp::kDebugGGPack, "GGPack", "GGPack debug level"},
+	{Twp::kDebugRes, "Res", "Resource debug level"},
+	{Twp::kDebugDialog, "Dialog", "Dialog debug level"},
+	{Twp::kDebugGenScript, "General", "Enable debug general script dump"},
+	{Twp::kDebugObjScript, "Object", "Enable debug object script dump"},
+	{Twp::kDebugSysScript, "System", "Enable debug system script dump"},
+	{Twp::kDebugRoomScript, "Room", "Enable debug room script dump"},
+	{Twp::kDebugActScript, "Actor", "Enable debug actor script dump"},
+	{Twp::kDebugSndScript, "Sound", "Enable debug sound script dump"},
+	{Twp::kDebugGame, "Game", "Game debug level"},
 	DEBUG_CHANNEL_END};
 
 TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(Twp::gameDescriptions,

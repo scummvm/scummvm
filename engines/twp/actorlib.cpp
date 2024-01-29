@@ -38,7 +38,7 @@ static SQInteger actorAlpha(HSQUIRRELVM v) {
 	float alpha;
 	if (SQ_FAILED(sqget(v, 3, alpha)))
 		return sq_throwerror(v, "failed to get alpha");
-	debug("actorAlpha(%s, %f)", actor->_key.c_str(), alpha);
+	debugC(kDebugActScript, "actorAlpha(%s, %f)", actor->_key.c_str(), alpha);
 	actor->_node->setAlpha(alpha);
 	return 0;
 }
@@ -89,14 +89,14 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 			Math::Vector2d pos = spot->_node->getPos() + spot->_usePos;
 			actor->setRoom(spot->_room);
 			actor->stopWalking();
-			debug("actorAt %s at %s (%d, %d), room '%s'", actor->_key.c_str(), spot->_key.c_str(), (int)pos.getX(), (int)pos.getY(), spot->_room->_name.c_str());
+			debugC(kDebugActScript, "actorAt %s at %s (%d, %d), room '%s'", actor->_key.c_str(), spot->_key.c_str(), (int)pos.getX(), (int)pos.getY(), spot->_room->_name.c_str());
 			actor->_node->setPos(pos);
 			actor->setFacing(getFacing(spot->_useDir, actor->getFacing()));
 		} else {
 			Room *room = sqroom(v, 3);
 			if (!room)
 				return sq_throwerror(v, "failed to get spot or room");
-			debug("actorAt %s room '%s'", actor->_key.c_str(), room->_name.c_str());
+			debugC(kDebugActScript, "actorAt %s room '%s'", actor->_key.c_str(), room->_name.c_str());
 			actor->stopWalking();
 			actor->setRoom(room);
 		}
@@ -111,7 +111,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
-		debug("actorAt %s room %d, %d", actor->_key.c_str(), x, y);
+		debugC(kDebugActScript, "actorAt %s room %d, %d", actor->_key.c_str(), x, y);
 		actor->stopWalking();
 		actor->_node->setPos(Math::Vector2d(x, y));
 		return 0;
@@ -132,7 +132,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 		int dir = 0;
 		if ((numArgs == 6) && SQ_FAILED(sqget(v, 6, dir)))
 			return sq_throwerror(v, "failed to get direction");
-		debug("actorAt %s, pos = (%d,%d), dir = %d", actor->_key.c_str(), x, y, dir);
+		debugC(kDebugActScript, "actorAt %s, pos = (%d,%d), dir = %d", actor->_key.c_str(), x, y, dir);
 		actor->stopWalking();
 		actor->_node->setPos(Math::Vector2d(x, y));
 		actor->setFacing(getFacing(dir, actor->getFacing()));
@@ -188,7 +188,7 @@ static SQInteger actorCostume(HSQUIRRELVM v) {
 	Common::String sheet;
 	if (sq_gettop(v) == 4)
 		sqget(v, 4, sheet);
-	debug("Actor costume %s %s", name.c_str(), sheet.c_str());
+	debugC(kDebugActScript, "Actor costume %s %s", name.c_str(), sheet.c_str());
 	actor->setCostume(name, sheet);
 	return 0;
 }
@@ -418,7 +418,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get actor");
 			Common::String key;
 			sqgetf(actor->_table, "_key", key);
-			debug("actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
+			debugC(kDebugActScript, "actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
 			ActorSlot *slot = g_engine->_hud.actorSlot(actor);
 			if (!slot)
 				warning("slot for actor %s not found", key.c_str());
@@ -498,7 +498,7 @@ static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
 	int loop = 0;
 	if ((sq_gettop(v) >= 4) && (SQ_FAILED(sqget(v, 4, loop))))
 		return sq_throwerror(v, "failed to get loop");
-	debug("Play anim %s %s loop=%s", actor->_key.c_str(), animation.c_str(), loop ? "yes" : "no");
+	debugC(kDebugActScript, "Play anim %s %s loop=%s", actor->_key.c_str(), animation.c_str(), loop ? "yes" : "no");
 	actor->play(animation, loop != 0);
 	return 0;
 }
@@ -794,7 +794,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	sqgetf(actor->_table, "_key", key);
 	actor->_key = key;
 
-	debug("Create actor %s %d", key.c_str(), actor->getId());
+	debugC(kDebugActScript, "Create actor %s %d", key.c_str(), actor->getId());
 	actor->_node = new ActorNode(actor);
 	actor->_nodeAnim = new Anim(actor);
 	actor->_node->addChild(actor->_nodeAnim);
@@ -850,7 +850,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 			}
 		}
 	}
-	debug("sayline: %s, %s", obj->_key.c_str(), join(texts, "|").c_str());
+	debugC(kDebugActScript, "sayline: %s, %s", obj->_key.c_str(), join(texts, "|").c_str());
 	obj->say(texts, obj->_talkColor);
 	return 0;
 }

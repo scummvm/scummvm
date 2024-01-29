@@ -79,7 +79,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 		}
 	}
 
-	debug("Create object: %s, %u", sheet.c_str(), frames.size());
+	debugC(kDebugObjScript, "Create object: %s, %u", sheet.c_str(), frames.size());
 	Object *obj = g_engine->_room->createObject(sheet, frames);
 	sq_pushobject(v, obj->_table);
 
@@ -133,7 +133,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 			break;
 		}
 	}
-	debug("Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
+	debugC(kDebugObjScript, "Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
 	Object *obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
 	sqpush(v, obj->_table);
 	return 1;
@@ -187,14 +187,14 @@ static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (!obj->_owner || (obj->_owner != g_engine->_actor)) {
-		debug("Is '%s(%s)' in inventory: no", obj->_name.c_str(), obj->_key.c_str());
+		debugC(kDebugObjScript, "Is '%s(%s)' in inventory: no", obj->_name.c_str(), obj->_key.c_str());
 		sqpush(v, false);
 		return 1;
 	}
 	int offset = obj->_owner->_inventoryOffset;
 	int index = find(obj->_owner->_inventory, obj);
 	int res = index >= offset * 4 && index < (offset * 4 + 8);
-	debug("Is '%s(%s)' in inventory: {%d}", obj->_name.c_str(), obj->_key.c_str(), res);
+	debugC(kDebugObjScript, "Is '%s(%s)' in inventory: {%d}", obj->_name.c_str(), obj->_key.c_str(), res);
 	sqpush(v, res);
 	return 1;
 }
@@ -402,7 +402,7 @@ static SQInteger objectHidden(HSQUIRRELVM v) {
 	if (obj) {
 		int hidden = 0;
 		sqget(v, 3, hidden);
-		debug("Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(), hidden == 0 ? "true" : "false");
+		debugC(kDebugObjScript, "Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(), hidden == 0 ? "true" : "false");
 		obj->_node->setVisible(hidden == 0);
 	}
 	return 0;

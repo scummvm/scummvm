@@ -364,7 +364,7 @@ void Object::setRoom(Room *room) {
 		}
 		Room *oldRoom = _room;
 		if (oldRoom && _node->getParent()) {
-			debug("Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
+			debugC(kDebugGame, "Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
 			Layer *layer = oldRoom->layer(0);
 			if (layer) {
 				int index = find(layer->_objects, this);
@@ -375,7 +375,7 @@ void Object::setRoom(Room *room) {
 			}
 		}
 		if (room && room->layer(0) && room->layer(0)->_node) {
-			debug("Add %s in room %s", _key.c_str(), room->_name.c_str());
+			debugC(kDebugGame, "Add %s in room %s", _key.c_str(), room->_name.c_str());
 			Layer *layer = room->layer(0);
 			if (layer) {
 				int index = find(layer->_objects, this);
@@ -407,7 +407,7 @@ void Object::stopObjectMotors() {
 
 void Object::setFacing(Facing facing) {
 	if (_facing != facing) {
-		debug("set facing: %d", facing);
+		debugC(kDebugGame, "set facing: %d", facing);
 		bool update = !(((_facing == FACE_LEFT) && (facing == FACE_RIGHT)) || ((_facing == FACE_RIGHT) && (facing == FACE_LEFT)));
 		_facing = facing;
 		if (update && _nodeAnim)
@@ -667,7 +667,7 @@ static bool verbNotClose(VerbId id) {
 static void cantReach(Object *self, Object *noun2) {
 	if (sqrawexists(self->_table, "verbCantReach")) {
 		int nParams = sqparamCount(g_engine->getVm(), self->_table, "verbCantReach");
-		debug("verbCantReach found in obj '%s' with %d params", self->_key.c_str(), nParams);
+		debugC(kDebugGame, "verbCantReach found in obj '%s' with %d params", self->_key.c_str(), nParams);
 		if (nParams == 1) {
 			sqcall(self->_table, "verbCantReach");
 		} else {
@@ -692,18 +692,18 @@ void Object::execVerb() {
 		Object *noun1 = _exec.noun1;
 		Object *noun2 = _exec.noun2;
 
-		debug("actorArrived: exec sentence");
+		debugC(kDebugGame, "actorArrived: exec sentence");
 		if (!noun1->inInventory()) {
 			// Object became untouchable as we were walking there
 			if (!noun1->isTouchable()) {
-				debug("actorArrived: noun1 untouchable");
+				debugC(kDebugGame, "actorArrived: noun1 untouchable");
 				_exec.enabled = false;
 				return;
 			}
 			// Did we get close enough?
 			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun1->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
-			debug("actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
+			debugC(kDebugGame, "actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
 				cantReach(noun1, noun2);
 				return;
@@ -715,20 +715,20 @@ void Object::execVerb() {
 		if (noun2 && !noun2->inInventory()) {
 			if (!noun2->isTouchable()) {
 				// Object became untouchable as we were walking there.
-				debug("actorArrived: noun2 untouchable");
+				debugC(kDebugGame, "actorArrived: noun2 untouchable");
 				_exec.enabled = false;
 				return;
 			}
 			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun2->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
-			debug("actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
+			debugC(kDebugGame, "actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
 			if (dist > min_dist) {
 				cantReach(noun1, noun2);
 				return;
 			}
 		}
 
-		debug("actorArrived: callVerb");
+		debugC(kDebugGame, "actorArrived: callVerb");
 		_exec.enabled = false;
 		g_engine->callVerb(this, verb, noun1, noun2);
 	}
@@ -736,7 +736,7 @@ void Object::execVerb() {
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
 void Object::walk(Vector2i pos, int facing) {
-	debug("walk to obj %s: %d,%d, %d", _key.c_str(), pos.x, pos.y, facing);
+	debugC(kDebugGame, "walk to obj %s: %d,%d, %d", _key.c_str(), pos.x, pos.y, facing);
 	if (!_walkTo || (!_walkTo->isEnabled())) {
 		play(getAnimName(WALK_ANIMNAME), true);
 	}
@@ -745,7 +745,7 @@ void Object::walk(Vector2i pos, int facing) {
 
 // Walks an actor to the `obj` and then faces it.
 void Object::walk(Object *obj) {
-	debug("walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
+	debugC(kDebugGame, "walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
 	Facing facing = (Facing)obj->_useDir;
 	walk((Vector2i)obj->getUsePos(), facing);
 }

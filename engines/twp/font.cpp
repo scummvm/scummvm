@@ -201,7 +201,7 @@ void BmFont::load(const Common::String &name) {
 	if (!g_engine->_pack.assetExists(path.c_str())) {
 		path = name + "Font.fnt";
 	}
-	debug("Load font %s", path.c_str());
+	debugC(kDebugRes, "Load font %s", path.c_str());
 	GGPackEntryReader entry;
 	if (!entry.open(g_engine->_pack, path)) {
 		error("error loading font %s", path.c_str());

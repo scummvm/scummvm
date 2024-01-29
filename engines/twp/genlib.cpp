@@ -251,7 +251,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
 	Math::Vector2d halfScreen(g_engine->_room->getScreenSize() / 2.f);
-	debug("cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
+	debugC(kDebugGenScript, "cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
 	g_engine->follow(nullptr);
 	g_engine->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
 	return 0;
@@ -323,7 +323,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 				SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
 				SpriteSheetFrame *verbFrame = &verbSheet->frameTable[Common::String::format("%s_en", vb.image.c_str())];
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
-				debug("findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
+				debugC(kDebugGenScript, "findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
 				sqpush(v, pos);
 				return 1;
 			}
@@ -340,7 +340,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 
 	Math::Vector2d rPos = g_engine->roomToScreen(obj->_node->getAbsPos());
 	Math::Vector2d pos(rPos.getX() + obj->_node->getSize().getX() / 2.f, rPos.getY() + obj->_node->getSize().getY() / 2.f);
-	debug("findScreenPosition(%s) => (%f,%f)", obj->_name.c_str(), pos.getX(), pos.getY());
+	debugC(kDebugGenScript, "findScreenPosition(%s) => (%f,%f)", obj->_name.c_str(), pos.getX(), pos.getY());
 	sqpush(v, pos);
 	return 1;
 }
@@ -486,7 +486,7 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 	const SQChar *orgFilename = nullptr;
 	if (SQ_FAILED(sqget(v, 2, orgFilename)))
 		return sq_throwerror(v, "failed to get filename");
-	debug("loadArray: %s", orgFilename);
+	debugC(kDebugGenScript, "loadArray: %s", orgFilename);
 	Common::String filename = g_engine->getPrefs().getKey(orgFilename);
 	GGPackEntryReader entry;
 	entry.open(g_engine->_pack, g_engine->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
@@ -711,7 +711,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 		sqgetf(table, "key", key);
 	if (sqrawexists(table, "flags"))
 		sqgetf(table, "flags", flags);
-	debug("setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
+	debugC(kDebugGenScript, "setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
 	g_engine->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
@@ -904,7 +904,7 @@ static SQInteger translate(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, text)))
 		return sq_throwerror(v, "Failed to get text");
 	Common::String newText = g_engine->getTextDb().getText(text);
-	debug("translate(%s): %s", text, newText.c_str());
+	debugC(kDebugGenScript, "translate(%s): %s", text, newText.c_str());
 	sqpush(v, newText);
 	return 1;
 }

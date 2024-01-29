@@ -194,7 +194,7 @@ WalkTo::WalkTo(Object *obj, Vector2i dest, int facing)
 void WalkTo::disable() {
 	Motor::disable();
 	if (_path.size() != 0) {
-		debug("actor walk cancelled");
+		debugC(kDebugGame, "actor walk cancelled");
 	}
 	if (_obj->isWalking())
 		_obj->play("stand");
@@ -209,17 +209,17 @@ void WalkTo::actorArrived() {
 	if (!needsReach)
 		disable();
 
-	debug("actorArrived");
+	debugC(kDebugGame, "actorArrived");
 	_obj->play("stand");
 	// the faces to the specified direction (if any)
 	if (_facing) {
-		debug("actor arrived with facing %d", _facing);
+		debugC(kDebugGame, "actor arrived with facing %d", _facing);
 		_obj->setFacing((Facing)_facing);
 	}
 
 	// call `actorArrived` callback
 	if (sqrawexists(_obj->_table, "actorArrived")) {
-		debug("call actorArrived callback");
+		debugC(kDebugGame, "call actorArrived callback");
 		sqcall(_obj->_table, "actorArrived");
 	}
 
@@ -231,7 +231,7 @@ void WalkTo::actorArrived() {
 		// call `postWalk`callback
 		Common::String funcName = isActor(noun1->getId()) ? "actorPostWalk" : "objectPostWalk";
 		if (sqrawexists(_obj->_table, funcName)) {
-			debug("call %s callback", funcName.c_str());
+			debugC(kDebugGame, "call %s callback", funcName.c_str());
 			HSQOBJECT n2Table;
 			if (noun2)
 				n2Table = noun2->_table;
@@ -326,7 +326,7 @@ void Talking::update(float elapsed) {
 	_elapsed += elapsed;
 	if (_obj->_sound) {
 		if (!g_engine->_audio.playing(_obj->_sound)) {
-			debug("talking %s audio stopped", _obj->_key.c_str());
+			debugC(kDebugGame, "talking %s audio stopped", _obj->_key.c_str());
 			_obj->_sound = 0;
 		} else {
 			float e = g_engine->_audio.getElapsed(_obj->_sound) / 1000.f;
@@ -337,34 +337,34 @@ void Talking::update(float elapsed) {
 		char letter = _lip.letter(_elapsed);
 		_obj->setHeadIndex(letterToIndex(letter));
 	} else if (!_texts.empty()) {
-		debug("talking %s: %s", _obj->_key.c_str(), _texts[0].c_str());
+		debugC(kDebugGame, "talking %s: %s", _obj->_key.c_str(), _texts[0].c_str());
 		say(_texts[0]);
 		_texts.remove_at(0);
 	} else {
-		debug("talking %s: ended", _obj->_key.c_str());
+		debugC(kDebugGame, "talking %s: ended", _obj->_key.c_str());
 		disable();
 	}
 }
 
 int Talking::loadActorSpeech(const Common::String &name) {
 	if (!ConfMan.getBool("talkiesHearVoice")) {
-		debug("talking %s: talkiesHearVoice: false", _obj->_key.c_str());
+		debugC(kDebugGame, "talking %s: talkiesHearVoice: false", _obj->_key.c_str());
 		return 0;
 	}
 
-	debug("loadActorSpeech %s.ogg", name.c_str());
+	debugC(kDebugGame, "loadActorSpeech %s.ogg", name.c_str());
 	Common::String filename(name);
 	filename.toUppercase();
 	filename += ".ogg";
 	if (g_engine->_pack.assetExists(filename.c_str())) {
 		SoundDefinition *soundDefinition = new SoundDefinition(filename);
 		if (!soundDefinition) {
-			debug("File %s.ogg not found", name.c_str());
+			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
 		} else {
 			g_engine->_audio._soundDefs.push_back(soundDefinition);
 			int id = g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
 			int duration = g_engine->_audio.getDuration(id);
-			debug("talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
+			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
 			if (duration)
 				_duration = duration / 1000.f;
 			return id;
@@ -388,12 +388,12 @@ void Talking::say(const Common::String &text) {
 		Common::String name = Common::String::format("%s_%d", key.c_str(), id);
 		Common::String path = name + ".lip";
 
-		debug("Load lip %s", path.c_str());
+		debugC(kDebugGame, "Load lip %s", path.c_str());
 		if (g_engine->_pack.assetExists(path.c_str())) {
 			GGPackEntryReader entry;
 			entry.open(g_engine->_pack, path);
 			_lip.load(&entry);
-			debug("Lip %s loaded", path.c_str());
+			debugC(kDebugGame, "Lip %s loaded", path.c_str());
 		}
 
 		if (_obj->_sound) {
@@ -412,7 +412,7 @@ void Talking::say(const Common::String &text) {
 			txt = txt.substr(i + 1);
 	}
 
-	debug("sayLine '%s'", txt.c_str());
+	debugC(kDebugGame, "sayLine '%s'", txt.c_str());
 
 	if (sqrawexists(_obj->_table, "sayingLine")) {
 		const char *anim = _obj->_animName.empty() ? nullptr : _obj->_animName.c_str();
@@ -425,7 +425,7 @@ void Talking::say(const Common::String &text) {
 		int i = txt.find('}');
 		if (i != -1) {
 			state = txt.substr(1, txt.size() - 2);
-			debug("Set state from anim '%s'", state.c_str());
+			debugC(kDebugGame, "Set state from anim '%s'", state.c_str());
 			if (state != "notalk") {
 				_obj->play(state);
 			}

@@ -20,6 +20,7 @@
  */
 
 #include "twp/yack.h"
+#include "twp/detection.h"
 #include "common/util.h"
 
 namespace Twp {
@@ -226,7 +227,7 @@ YackTokenId YackTokenReader::readYackTokenId() {
 		} else if (Common::isAlpha(c)) {
 			return readIdentifier(c);
 		}
-		debug("unknown character: %c", c);
+		debugC(kDebugDialog, "unknown character: %c", c);
 		return YackTokenId::None;
 	}
 }
@@ -325,7 +326,7 @@ YLabel *YackParser::parseLabel() {
 	// label
 	pLabel.reset(new YLabel(_it->line));
 	pLabel->_name = _reader.readText(*_it++);
-	// debug("label %s", pLabel->_name.c_str());
+	// debugC(kDebugDialog, "label %s", pLabel->_name.c_str());
 	do {
 		if (match({YackTokenId::Colon}) || match({YackTokenId::End}))
 			break;

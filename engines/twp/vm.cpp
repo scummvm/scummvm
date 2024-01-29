@@ -48,7 +48,7 @@ static HSQUIRRELVM gVm = nullptr;
 
 static void errorHandler(HSQUIRRELVM v, const SQChar *desc, const SQChar *source, SQInteger line,
 						 SQInteger column) {
-	debug("TWP: desc %s, source: %s (%lld,%lld)", desc, source, line, column);
+	debugN("TWP: desc %s, source: %s (%lld,%lld)", desc, source, line, column);
 }
 
 static SQInteger aux_printerror(HSQUIRRELVM v) {

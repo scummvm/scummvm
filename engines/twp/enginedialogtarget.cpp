@@ -80,7 +80,7 @@ Color EngineDialogTarget::actorColorHover(const Common::String &actor) {
 }
 
 Motor *EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
-	debug("say %s: %s", actor.c_str(), text.c_str());
+	debugC(kDebugDialog, "say %s: %s", actor.c_str(), text.c_str());
 	Object *act = actorOrCurrent(actor);
 	act->say({text}, act->_talkColor);
 	return act->getTalking();
@@ -113,14 +113,14 @@ bool EngineDialogTarget::execCond(const Common::String &cond) {
 	sq_pushroottable(v);
 	Common::String code = Common::String::format("return %s", cond.c_str());
 	if (SQ_FAILED(sq_compilebuffer(v, code.c_str(), code.size(), "condition", SQTrue))) {
-		debug("Error executing code %s", code.c_str());
+		debugC(kDebugDialog, "Error executing code %s", code.c_str());
 		return false;
 	}
 
 	sq_push(v, -2);
 	// call
 	if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
-		debug("Error calling code {code}");
+		debugC(kDebugDialog, "Error calling code {code}");
 		return false;
 	}
 
