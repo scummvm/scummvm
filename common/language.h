@@ -54,6 +54,7 @@ enum Language : int8 {
 	EN_GRB,
 	EN_USA,
 	ES_ESP,
+	EU_ESP,
 	ET_EST,
 	FA_IRN,
 	FI_FIN,
