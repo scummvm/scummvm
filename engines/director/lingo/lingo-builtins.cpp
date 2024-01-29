@@ -2823,7 +2823,7 @@ void LB::b_updateStage(int nargs) {
 	movie->getWindow()->render();
 
 	// play any puppet sounds that have been queued
-	score->playSoundChannel(score->getCurrentFrameNum(), true);
+	score->playSoundChannel(true);
 
 	if (score->_cursorDirty) {
 		score->renderCursor(movie->getWindow()->getMousePos());
