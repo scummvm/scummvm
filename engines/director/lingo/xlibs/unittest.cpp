@@ -86,7 +86,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	// force a full screen redraw before taking the screenshot
 	Score *score = g_director->getCurrentMovie()->getScore();
-	score->renderSprites(score->getCurrentFrameNum(), kRenderForceUpdate);
+	score->renderSprites(kRenderForceUpdate);
 	Window *window = g_director->getCurrentWindow();
 	window->render();
 	Graphics::ManagedSurface *windowSurface = window->getSurface();

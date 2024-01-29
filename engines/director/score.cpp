@@ -645,19 +645,19 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		_window->render();
 		_skipTransition = false;
 	} else if (g_director->_playbackPaused) {
-		renderSprites(frameId, mode);
+		renderSprites(mode);
 		_window->render();
 	} else if (!renderTransition(frameId)) {
-		bool skip = renderPrePaletteCycle(frameId, mode);
-		setLastPalette(frameId);
-		renderSprites(frameId, mode);
+		bool skip = renderPrePaletteCycle(mode);
+		setLastPalette();
+		renderSprites(mode);
 		_window->render();
 		if (!skip)
-			renderPaletteCycle(frameId, mode);
+			renderPaletteCycle(mode);
 	}
 
 
-	playSoundChannel(frameId, false);
+	playSoundChannel(false);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
@@ -673,20 +673,20 @@ bool Score::renderTransition(uint16 frameId) {
 	TransParams *tp = _window->_puppetTransition;
 
 	if (tp) {
-		setLastPalette(frameId);
+		setLastPalette();
 		_window->playTransition(frameId, tp->duration, tp->area, tp->chunkSize, tp->type, currentFrame->_mainChannels.scoreCachedPaletteId);
 		delete _window->_puppetTransition;
 		_window->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_mainChannels.transType) {
-		setLastPalette(frameId);
+		setLastPalette();
 		_window->playTransition(frameId, currentFrame->_mainChannels.transDuration, currentFrame->_mainChannels.transArea, currentFrame->_mainChannels.transChunkSize, currentFrame->_mainChannels.transType, currentFrame->_mainChannels.scoreCachedPaletteId);
 		return true;
 	} else if (!currentFrame->_mainChannels.trans.isNull()) {
 		CastMember *member = _movie->getCastMember(currentFrame->_mainChannels.trans);
 		if (member && member->_type == kCastTransition) {
 			TransitionCastMember *trans = static_cast<TransitionCastMember *>(member);
-			setLastPalette(frameId);
+			setLastPalette();
 			_window->playTransition(frameId, trans->_durationMillis, trans->_area, trans->_chunkSize, trans->_transType, currentFrame->_mainChannels.scoreCachedPaletteId);
 			return true;
 		}
@@ -694,7 +694,7 @@ bool Score::renderTransition(uint16 frameId) {
 	return false;
 }
 
-void Score::renderSprites(uint16 frameId, RenderMode mode) {
+void Score::renderSprites(RenderMode mode) {
 	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
@@ -726,7 +726,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				nextSprite->setCast(nextSprite->_castId);
 			}
 
-			channel->setClean(nextSprite, i);
+			channel->setClean(nextSprite);
 			// Check again to see if a video has just been started by setClean.
 			if (channel->isActiveVideo())
 				_movie->_videoPlayback = true;
@@ -742,7 +742,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				debugC(5, kDebugImages, "Score::renderSprites(): CH: %-3d: No sprite", i);
 			}
 		} else {
-			channel->setClean(nextSprite, i, true);
+			channel->setClean(nextSprite, true);
 		}
 
 		// update editable text channel after we render the sprites. because for the current frame, we may get those sprites only when we finished rendering
@@ -752,7 +752,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 	}
 }
 
-bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
+bool Score::renderPrePaletteCycle(RenderMode mode) {
 	if (_puppetPalette)
 		return false;
 
@@ -868,7 +868,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 	return false;
 }
 
-void Score::setLastPalette(uint16 frameId) {
+void Score::setLastPalette() {
 	if (_puppetPalette)
 		return;
 
@@ -909,7 +909,7 @@ bool Score::isPaletteColorCycling() {
 	return _currentFrame->_mainChannels.palette.colorCycling;
 }
 
-void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
+void Score::renderPaletteCycle(RenderMode mode) {
 	if (_puppetPalette)
 		return;
 
@@ -1438,7 +1438,7 @@ Channel *Score::getChannelById(uint16 id) {
 	return _channels[id];
 }
 
-void Score::playSoundChannel(uint16 frameId, bool puppetOnly) {
+void Score::playSoundChannel(bool puppetOnly) {
 	debugC(5, kDebugSound, "playSoundChannel(): Sound1 %s Sound2 %s", _currentFrame->_mainChannels.sound1.asString().c_str(), _currentFrame->_mainChannels.sound2.asString().c_str());
 	DirectorSound *sound = _window->getSoundManager();
 

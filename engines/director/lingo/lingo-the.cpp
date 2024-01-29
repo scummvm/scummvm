@@ -1155,7 +1155,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->getCurrentWindow()->setStageColor(g_director->transformColor(d.asInt()));
 
 		// Redraw the stage
-		score->renderSprites(score->getCurrentFrameNum(), kRenderForceUpdate);
+		score->renderSprites(kRenderForceUpdate);
 		g_director->getCurrentWindow()->render();
 		break;
 	case kTheSwitchColorDepth:
@@ -1644,7 +1644,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheRect:
 		if (d.type == RECT || (d.type == ARRAY && d.u.farr->arr.size() >= 4)) {
-			score->renderSprites(score->getCurrentFrameNum(), kRenderForceUpdate);
+			score->renderSprites(kRenderForceUpdate);
 			channel->setBbox(
 				d.u.farr->arr[0].u.i, d.u.farr->arr[1].u.i,
 				d.u.farr->arr[2].u.i, d.u.farr->arr[3].u.i

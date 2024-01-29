@@ -378,7 +378,7 @@ void Channel::setCast(CastMemberID memberID) {
 	_sprite->setAutoPuppet(kAPCast, true);
 }
 
-void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
+void Channel::setClean(Sprite *nextSprite, bool partial) {
 	if (!nextSprite)
 		return;
 
