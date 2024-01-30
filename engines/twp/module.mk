@@ -22,10 +22,17 @@ SQUIRREL_OBJS = \
 	squirrel/sqstdaux.o
 
 CLIPPER_OBJS = clipper/clipper.o
+IMGUI_OBJS = imgui/imgui.o \
+	imgui/imgui_draw.o \
+	imgui/imgui_widgets.o \
+	imgui/imgui_tables.o \
+	imgui_impl_opengl3_scummvm.o \
+	imgui_impl_sdl2_scummvm.o
 
 MODULE_OBJS = \
 	$(SQUIRREL_OBJS) \
 	$(CLIPPER_OBJS) \
+	$(IMGUI_OBJS) \
 	twp.o \
 	console.o \
 	metaengine.o \
@@ -70,6 +77,7 @@ MODULE_OBJS = \
 	btea.o \
 	time.o \
 	dialogs.o \
+	debugtools.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

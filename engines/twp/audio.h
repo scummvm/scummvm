@@ -28,19 +28,14 @@
 #include "audio/mixer.h"
 #include "twp/ggpack.h"
 
+namespace Audio {
+	class SeekableAudioStream;
+}
+
 namespace Twp {
 
 class AudioChannel;
 class SoundDefinition;
-
-struct SoundId {
-    int id;
-    int objId;
-    SoundDefinition* sndDef;
-    Audio::Mixer::SoundType cat;
-    AudioChannel* chan;
-    float pan;
-};
 
 class SoundDefinition;
 class SoundStream: public Common::SeekableReadStream {
@@ -77,16 +72,18 @@ private:
 };
 
 struct AudioSlot {
-	Audio::SoundHandle handle;			// handle returned when this sound has been played
-	SoundDefinition *sndDef = nullptr;	// sound definition associated to this slot
-	SoundStream stream;					// audio stream
-	bool busy = false;					// is sound active
-	float volume = 1.f;					// actual volume for this slot
-	float fadeInTimeMs = 0.f;			// fade-in time in milliseconds
-	float fadeOutTimeMs = 0.f;			// fade-out time in milliseconds
+	Audio::SoundHandle handle;					// handle returned when this sound has been played
+	SoundDefinition *sndDef = nullptr;			// sound definition associated to this slot
+	SoundStream stream;							// audio stream
+	bool busy = false;							// is sound active
+	float volume = 1.f;							// actual volume for this slot
+	float fadeInTimeMs = 0.f;					// fade-in time in milliseconds
+	float fadeOutTimeMs = 0.f;					// fade-out time in milliseconds
 	int total = 0;
-	int id = 0;							// unique sound ID
-	int objId = 0;						// object ID or 0 if none
+	int id = 0;									// unique sound ID
+	int objId = 0;								// object ID or 0 if none
+	int loopTimes = 0;							//
+	Audio::Mixer::SoundType soundType;			//
 };
 
 class AudioSystem {
@@ -109,6 +106,7 @@ public:
 	void update(float elapsed);
 
 	Common::Array<SoundDefinition*> _soundDefs;
+	AudioSlot _slots[32];
 	SoundDefinition* _soundHover = nullptr;	// not used yet, should be used in the GUI
 
 private:
@@ -116,7 +114,6 @@ private:
 	AudioSlot* getFreeSlot();
 
 private:
-	AudioSlot _slots[32];
 	float _masterVolume = 1.f;
 };
 
