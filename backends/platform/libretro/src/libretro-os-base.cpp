@@ -43,6 +43,7 @@ OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisibl
 
 	setLibretroDir(retro_get_system_dir(), s_systemDir);
 	setLibretroDir(retro_get_save_dir(), s_saveDir);
+	setLibretroDir(retro_get_playlist_dir(), s_playlistDir);
 
 	memset(_mouseButtons, 0, sizeof(_mouseButtons));
 
@@ -92,7 +93,7 @@ void OSystem_libretro::initBackend() {
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
 	checkPathSetting("soundfont", s_soundfontPath, false);
 	checkPathSetting("browser_lastpath", s_homeDir);
-	checkPathSetting("libretro_playlist_path", s_homeDir);
+	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
 
 	//Check other settings
 	if (! ConfMan.hasKey("libretro_playlist_version"))
@@ -178,9 +179,10 @@ bool OSystem_libretro::checkPathSetting(const char *setting, Common::String cons
 	return true;
 }
 
-void OSystem_libretro::setLibretroDir(const char * path; Common::String &var) {
+void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 	var = Common::String(path ? path : "");
-	if (! LibRetroFilesystemNode(var).isDirectory())
-		var.clear();
+	if (! var.empty())
+		if (! LibRetroFilesystemNode(var).isDirectory())
+			var.clear();
 	return;
 }

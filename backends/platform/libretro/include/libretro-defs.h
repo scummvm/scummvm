@@ -26,6 +26,12 @@
 // System analog stick range is -0x8000 to 0x8000
 #define ANALOG_RANGE 0x8000
 
+/* TODO: remove the following definition when libretro-common
+will be updated to include it */
+#ifndef RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY
+#define RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY 79
+#endif
+
 #define DEFAULT_SAMPLE_RATE     	48000
 #define DEFAULT_REFRESH_RATE    	60
 #define FRAMESKIP_MAX           	DEFAULT_REFRESH_RATE / 2

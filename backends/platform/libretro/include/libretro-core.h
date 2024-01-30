@@ -30,6 +30,7 @@ int retro_get_input_device(void);
 const char * retro_get_core_dir(void);
 const char * retro_get_system_dir(void);
 const char * retro_get_save_dir(void);
+const char * retro_get_playlist_dir(void);
 
 bool retro_setting_get_timing_inaccuracies_enabled(void);
 float retro_setting_get_frame_rate(void);

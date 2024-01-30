@@ -784,6 +784,14 @@ const char *retro_get_save_dir(void) {
 	return savedir;
 }
 
+const char *retro_get_playlist_dir(void) {
+	const char *playlistdir = NULL;
+
+	environ_cb(RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY, &playlistdir);
+
+	return playlistdir;
+}
+
 void retro_init(void) {
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))

@@ -81,6 +81,7 @@ private:
 	uint8 _cursorStatus;
 	Common::String s_systemDir;
 	Common::String s_saveDir;
+	Common::String s_playlistDir;
 	static Common::List<Common::Event> _events;
 
 public:
@@ -113,7 +114,7 @@ public:
 	void quit() override {}
 private:
 	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
-	void setLibretroDir(const char * path; Common::String &var);
+	void setLibretroDir(const char * path, Common::String &var);
 
 	/* Graphics */
 public:
