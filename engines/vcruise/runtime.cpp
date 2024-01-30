@@ -5526,8 +5526,8 @@ void Runtime::restoreSaveGameSnapshot() {
 	_musicActive = mainState->musicActive;
 
 	if (_musicActive) {
-		bool musicMutedBeforeRestore = (_musicMute && _musicMuteDisabled);
-		bool musicMutedAfterRestore = (_musicMute && mainState->musicMuteDisabled);
+		bool musicMutedBeforeRestore = (_musicMute && !_musicMuteDisabled);
+		bool musicMutedAfterRestore = (_musicMute && !mainState->musicMuteDisabled);
 		bool isNewTrack = (_scoreTrack != mainState->scoreTrack);
 
 		_musicMuteDisabled = mainState->musicMuteDisabled;
