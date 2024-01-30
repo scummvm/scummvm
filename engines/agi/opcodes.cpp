@@ -417,6 +417,16 @@ void AgiEngine::setupOpCodes(uint16 version) {
 			_opCodes[0x97].parameters = "vvv";
 			_opCodes[0x98].parameters = "vvv";
 		}
+
+		// TODO: Opcode B0 is used by SQ2 Apple IIgs, but its purpose is
+		// currently unknown. It takes one parameter, and that parameter
+ 		// appears to be a variable number. It is not hide.mouse from AGI3.
+		// No other AGI2 games have been discovered that call this opcode.
+		// Logic 1: during the spaceship cutscene in the intro, called with 53
+		// Logic 23: called twice with 39.
+		_opCodes[0xb0].name = "unknown";
+		_opCodes[0xb0].parameters = "v";
+		_opCodes[0xb0].functionPtr = &cmdUnknown;
 	}
 
 	if (version >= 0x3000) {

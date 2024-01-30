@@ -1017,17 +1017,7 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
-// Seems to have been added for AGI3, at least according to PC AGI
-// Space Quest 2 on Apple IIgs (using AGI ) calls it during the spaceship cutscene in the intro
-// but show.mouse is never called afterwards. Game running under emulator doesn't seem to hide the mouse cursor.
-// TODO: figure out, what exactly happens. Probably some hacked-in command and not related to mouse cursor for that game?
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (vm->getVersion() < 0x3000) {
-		// was not available before 3.086
-		warning("hide.mouse, although not available for current AGI version");
-		return;
-	}
-
 	if ((vm->getGameID() == GID_MH1) && (vm->getPlatform() == Common::kPlatformApple2GS)) {
 		// Called right after beating arcade sequence on day 4 in the hospital Parameter is "1".
 		// Right before cutscene. show.mouse isn't called. Probably different function.
