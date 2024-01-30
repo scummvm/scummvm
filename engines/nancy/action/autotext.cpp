@@ -151,7 +151,11 @@ void Autotext::execute() {
 		textBounds.top += d + 1;
 		textBounds.left += d;
 
-		drawAllText(textBounds, _fontID, _fontID);
+		// Original engine uses a particular value in the TBOX chunk in all
+		// text rendering, including Autotext
+		auto *tbox = GetEngineData(TBOX);
+
+		drawAllText(textBounds, tbox->leftOffset - textBounds.left, _fontID, _fontID);
 	}
 
 	_isDone = true;

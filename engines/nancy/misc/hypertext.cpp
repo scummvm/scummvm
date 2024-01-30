@@ -58,7 +58,7 @@ void HypertextParser::setImageName(const Common::Path &name) {
 	_imageName = name;
 }
 
-void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID) {
+void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffsetNonNewline, uint fontID, uint highlightFontID) {
 	using namespace Common;
 
 	const Font *font = nullptr;
@@ -197,12 +197,15 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		byte colorID = _defaultTextColor;
 		uint numNewlineTokens = 0;
 		uint horizontalOffset = 0;
+		bool newLineStart = false;
 		for (uint lineNumber = 0; lineNumber < wrappedLines.size(); ++lineNumber) {
 			Common::String &line = wrappedLines[lineNumber];
 			horizontalOffset = 0;
+			newLineStart = false;
 			// Draw images
 			if (newlineTokens.front() <= totalCharsDrawn) {
 				newlineTokens.pop();
+				newLineStart = true;
 
 				for (uint i = 0; i < _imageLineIDs.size(); ++i) {
 					if (numNewlineTokens == _imageLineIDs[i]) {
@@ -271,7 +274,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				// Draw the normal text
 				font->drawString(				&_fullSurface,
 												stringToDraw,
-												textBounds.left + horizontalOffset,
+												textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline),
 												textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset,
 												textBounds.width(),
 												colorID);
@@ -280,7 +283,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				if (hasHotspot) {
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
-												textBounds.left + horizontalOffset,
+												textBounds.left + horizontalOffset + (newLineStart ? leftOffsetNonNewline : 0),
 												textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset,
 												textBounds.width(),
 												colorID);

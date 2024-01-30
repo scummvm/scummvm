@@ -48,7 +48,7 @@ protected:
 	void addImage(uint16 lineID, const Common::Rect &src);
 	void setImageName(const Common::Path &name);
 
-	void drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID);
+	void drawAllText(const Common::Rect &textBounds, uint leftOffsetNonNewline, uint fontID, uint highlightFontID);
 	virtual void clear();
 
 	Graphics::ManagedSurface _fullSurface; 			// Contains all rendered text (may be cropped)
