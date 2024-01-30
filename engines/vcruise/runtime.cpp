@@ -3874,7 +3874,8 @@ void Runtime::updateSounds(uint32 timestamp) {
 			newVolume += static_cast<int32>(ramp);
 
 		if (newVolume != _musicVolume) {
-			_musicPlayer->setVolume(applyVolumeScale(newVolume));
+			if (_musicPlayer)
+				_musicPlayer->setVolume(applyVolumeScale(newVolume));
 			_musicVolume = newVolume;
 		}
 
