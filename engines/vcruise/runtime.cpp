@@ -2216,7 +2216,7 @@ void Runtime::terminateScript() {
 			return;
 	}
 
-	drawCompass();
+	redrawTray();
 
 	if (exitToMenu && _gameState == kGameStateIdle) {
 		quitToMenu();
@@ -4669,7 +4669,9 @@ bool Runtime::isTrayVisible() const {
 		// This is important in some situations, e.g. after "reuniting" with Hannah in the lower temple, if you go left,
 		// a ghost will give you a key.  Since that animation has sound, you'll return to idle in that animation,
 		// which will keep the tray hidden because it has sound.
-		if (_gameID == GID_REAH && _loadedAnimationHasSound)
+		//
+		// Ignore this condition if we're at the last frame (fixes inventory not drawing after trading weights in Reah)
+		if (_gameID == GID_REAH && _loadedAnimationHasSound && _animDisplayingFrame != _animLastFrame)
 			return false;
 
 		// Don't display tray during the intro cinematic.
