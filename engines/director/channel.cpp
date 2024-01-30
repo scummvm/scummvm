@@ -530,6 +530,12 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
 	}
 
+	// If the cast member is the same, persist the editable flag
+	bool editable = nextSprite->_editable;
+	if (_sprite->_castId == nextSprite->_castId) {
+		editable = _sprite->_editable;
+	}
+
 	int width = _width;
 	int height = _height;
 	bool immediate = _sprite->_immediate;
@@ -538,6 +544,8 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	// Persist the immediate flag
 	_sprite->_immediate = immediate;
+
+	_sprite->_editable = editable;
 
 	// TODO: auto expand text size is meaning less for us, not all text
 	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.
