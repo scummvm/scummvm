@@ -293,8 +293,14 @@ bool AGSEngine::isUnsupportedPre25() const {
 
 bool AGSEngine::is64BitGame() const {
 	Common::File f;
-	return f.open(_gameDescription->desc.filesDescriptions[0].fileName)
-		&& f.size() == -1;
+
+	// TODO: There are no more entries in the tables with -1 filesize, so this check doesn't really do anything.
+	// Maybe find a more reliable way to detect if the system can't handle these files?
+
+	if (_gameDescription->desc.filesDescriptions[0].fileName[0] == '\0')
+		return false;
+	else
+		return f.open(_gameDescription->desc.filesDescriptions[0].fileName) && f.size() == -1;
 }
 
 Common::FSNode AGSEngine::getGameFolder() {
