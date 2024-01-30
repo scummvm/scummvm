@@ -161,7 +161,7 @@ void Actor::initActor(int mode) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 		memset(_palette, 0, sizeof(_palette));
 		memset(_sound, 0, sizeof(_sound));
-		memset(&_cost, 0, sizeof(CostumeData));
+		_cost.reset();
 		_walkdata.reset();
 		_walkdata.point3.x = 32000;
 		_walkScript = 0;

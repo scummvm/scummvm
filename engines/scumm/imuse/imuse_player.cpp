@@ -424,7 +424,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 			snprintf((char *)&buf[a * 3], 3 * sizeof(char) + 1, " %02X", (int)p[a]);
 		}
 		if (a < len + 1 && (a * 3 < sizeof(buf) - 2)) {
-			if (a * 3 + 2 < sizeof(buf))
+			if (a * 3 + 2 < int(sizeof(buf)))
 				buf[a * 3] = buf[a * 3 + 1] = buf[a * 3 + 2] = '.';
 			else
 				warning("Player::sysEx(): Message too long (truncated)");

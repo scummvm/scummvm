@@ -46,12 +46,8 @@ enum MoveFlags {
 };
 
 struct CostumeData {
-	CostumeData() : animCounter(0), soundCounter(0), soundPos(0), stopped(0) {
-		memset(animType, 0, sizeof(animType));
-		memset(curpos, 0xFF, sizeof(curpos));
-		memset(start, 0xFF, sizeof(start));
-		memset(end, 0xFF, sizeof(end));
-		memset(frame, 0xFF, sizeof(frame));
+	CostumeData() {
+		reset();
 	}
 
 	byte animType[16];
@@ -70,11 +66,15 @@ struct CostumeData {
 	uint32 heCondMaskTable[16];
 
 	void reset() {
+		animCounter = 0;
+		soundCounter = 0;
+		soundPos = 0;
 		stopped = 0;
-		for (int i = 0; i < 16; i++) {
-			animType[i] = 0; // AKAT_Empty
-			curpos[i] = start[i] = end[i] = frame[i] = 0xFFFF;
-		}
+		memset(animType, 0, sizeof(animType)); // AKAT_Empty
+		memset(curpos, 0xFF, sizeof(curpos));
+		memset(start, 0xFF, sizeof(start));
+		memset(end, 0xFF, sizeof(end));
+		memset(frame, 0xFF, sizeof(frame));
 	}
 };
 

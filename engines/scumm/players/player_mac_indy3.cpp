@@ -848,7 +848,6 @@ I3MPlayer::I3MPlayer(ScummEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mix
 	assert(_musicChannels);
 	for (int i = 0; i < _numMusicChannels; ++i)
 		_musicChannels[i] = new MusicChannel(this);
-	memset(&_pcmSnd, 0, sizeof(_pcmSnd));
 }
 
 I3MPlayer::~I3MPlayer() {
