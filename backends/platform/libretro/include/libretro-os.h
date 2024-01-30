@@ -113,6 +113,7 @@ public:
 	void quit() override {}
 private:
 	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
+	void setLibretroDir(const char * path; Common::String &var);
 
 	/* Graphics */
 public:
