@@ -451,7 +451,7 @@ void Net::generateMoonbaseMap(Session session) {
 	// Generate the host's map.
 	while (!mapGenerated) {
 		_vm->_moonbase->_map->generateMapWithInfo(session.mapGenerator, session.mapSeed, session.mapSize, session.mapTileset, session.mapEnergy, session.mapTerrain, session.mapWater);
-		if (_vm->_moonbase->_map->getHash() == _sessions[0].mapHash) {
+		if (_vm->_moonbase->_map->getHash() == session.mapHash) {
 			mapGenerated = true;
 		} else {
 			warning("NETWORK: Maps does not match, trying again...");
