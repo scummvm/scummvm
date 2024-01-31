@@ -494,6 +494,34 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 	}
 }
 
+LOAD_v2::LOAD_v2(Common::SeekableReadStream *chunkStream) :
+		EngineData(chunkStream) {
+	readFilename(*chunkStream, _firstPageimageName);
+	readFilename(*chunkStream, _otherPageimageName);
+	readFilename(*chunkStream, _buttonsImageName);
+
+	readRectArray(*chunkStream, _unpressedButtonSrcs, 5);
+	readRectArray(*chunkStream, _pressedButtonSrcs, 5);
+	readRectArray(*chunkStream, _highlightedButtonSrcs, 5);
+	readRectArray(*chunkStream, _disabledButtonSrcs, 5);
+
+	readRectArray(*chunkStream, _buttonDests, 5);
+	readRectArray(*chunkStream, _textboxBounds, 10);
+
+	chunkStream->skip(25); // prefixes and suffixes for filenames
+
+	_mainFontID = chunkStream->readSint16LE();
+	_highlightFontID = chunkStream->readSint16LE();
+	_fontXOffset = chunkStream->readSint16LE();
+	_fontYOffset = chunkStream->readSint16LE();
+	
+	chunkStream->skip(16); // src rect for dash in font
+	_blinkingTimeDelay = chunkStream->readUint16LE();
+
+	readFilename(*chunkStream, _gameSavedPopup);
+	readFilename(*chunkStream, _emptySaveText);
+}
+
 SDLG::SDLG(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	while (chunkStream->pos() < chunkStream->size()) {
 		dialogs.push_back(Dialog(chunkStream));

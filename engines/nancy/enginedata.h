@@ -255,7 +255,7 @@ struct SET : public EngineData {
 	Common::Array<SoundDescription> _sounds;
 };
 
-// Contains data for the Save/Load screen
+// Contains data for the Save/Load screen. Used up to nancy7 
 struct LOAD : public EngineData {
 	LOAD(Common::SeekableReadStream *chunkStream);
 
@@ -295,6 +295,33 @@ struct LOAD : public EngineData {
 	Common::String _emptySaveText;
 	Common::String _defaultSaveNamePrefix;
 	// Common::Rect _gameSavedBounds
+};
+
+// Contains data for the new Save/Load screen. Used in nancy8 and up 
+struct LOAD_v2 : public EngineData {
+	LOAD_v2(Common::SeekableReadStream *chunkStream);
+
+	Common::Path _firstPageimageName;
+	Common::Path _otherPageimageName;
+	Common::Path _buttonsImageName;
+
+	Common::Array<Common::Rect> _unpressedButtonSrcs;
+	Common::Array<Common::Rect> _pressedButtonSrcs;
+	Common::Array<Common::Rect> _highlightedButtonSrcs;
+	Common::Array<Common::Rect> _disabledButtonSrcs;
+
+	Common::Array<Common::Rect> _buttonDests;
+	Common::Array<Common::Rect> _textboxBounds;
+
+	int16 _mainFontID;
+	int16 _highlightFontID;
+	int16 _fontXOffset;
+	int16 _fontYOffset;
+
+	uint16 _blinkingTimeDelay;
+
+	Common::Path _gameSavedPopup;
+	Common::String _emptySaveText;
 };
 
 // Contains data for the prompt that appears when exiting the game
