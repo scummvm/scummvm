@@ -693,17 +693,14 @@ Common::Error TwpEngine::run() {
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	// Setup Dear ImGui
 	OpenGLSdlGraphics3dManager *manager = dynamic_cast<OpenGLSdlGraphics3dManager *>(g_system->getPaletteManager());
-
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-
 	g_window = manager->getWindow()->getSDLWindow();
 	SDL_GLContext glContext = SDL_GL_GetCurrentContext();
 	ImGui_ImplSDL2_InitForOpenGL(g_window, glContext);
 	ImGui_ImplOpenGL3_Init("#version 110");
-
-	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
 	// Set the engine's debugger console
@@ -922,7 +919,9 @@ Common::Error TwpEngine::run() {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		g_system->delayMillis(10);
+		if(delta < 10) {
+			g_system->delayMillis(10 - delta);
+		}
 	}
 
 	// Cleanup
