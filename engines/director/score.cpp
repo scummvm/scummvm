@@ -427,7 +427,7 @@ void Score::updateCurrentFrame() {
 }
 
 void Score::updateNextFrameTime() {
-	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
+	byte tempo = _currentFrame->_mainChannels.tempo ? _currentFrame->_mainChannels.tempo : _currentFrame->_mainChannels.scoreCachedTempo;
 	// puppetTempo is overridden by changes in score tempo
 	if (_currentFrame->_mainChannels.tempo || tempo != _lastTempo) {
 		_puppetTempo = 0;
