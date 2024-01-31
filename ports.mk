@@ -513,6 +513,10 @@ ifdef USE_MIKMOD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmikmod.a
 endif
 
+ifdef USE_OPENMPT
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libopenmpt.a
+endif
+
 ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif

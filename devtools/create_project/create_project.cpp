@@ -1087,6 +1087,7 @@ const Feature s_features[] = {
 	{       "gif",         "USE_GIF", true, false, "libgif support" },
 	{      "faad",        "USE_FAAD", true, false, "AAC support" },
 	{    "mikmod",      "USE_MIKMOD", true, false, "libmikmod support" },
+	{   "openmpt",     "USE_OPENMPT", true, false, "libopenmpt support" },
 	{     "mpeg2",       "USE_MPEG2", true, true,  "MPEG-2 support" },
 	{ "theoradec",   "USE_THEORADEC", true, true,  "Theora decoding support" },
 	{       "vpx",         "USE_VPX", true, false, "VP8/VP9 decoding support" },

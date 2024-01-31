@@ -33,12 +33,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #endif
 
-#include "audio/mods/impulsetracker.h"
-
-#ifdef USE_MIKMOD
-
-#include <mikmod.h>
-
 #include "common/inttypes.h"
 #include "common/ptr.h"
 #include "common/stream.h"
@@ -48,8 +42,61 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
-// Start memory wrapper
-// Extras, mikmod mreader struct to wrap readstream
+#ifdef USE_OPENMPT
+
+#include <libopenmpt/libopenmpt.h>
+
+#elif defined(USE_MIKMOD)
+
+#include <mikmod.h>
+
+#endif
+
+#ifdef USE_OPENMPT
+
+static size_t memoryReaderRead(void *stream, void *dst, size_t bytes) {
+	Common::SeekableReadStream *reader = (Common::SeekableReadStream *)stream;
+
+	if (!reader) {
+		return 0;
+	}
+
+	uint32 receivedBytes = reader->read(dst, bytes);
+
+	if (receivedBytes < bytes) {
+		return 0;
+	}
+
+	return receivedBytes;
+}
+
+static int memoryReaderSeek(void *stream, int64_t offset, int whence) {
+	Common::SeekableReadStream *reader = (Common::SeekableReadStream *)stream;
+
+	if (!reader) {
+		return -1;
+	}
+
+	bool ret = reader->seek(offset, whence);
+
+	if (ret)
+		return 0;
+
+	return -1;
+}
+
+static int64_t memoryReaderTell(void *stream) {
+	Common::SeekableReadStream *reader = (Common::SeekableReadStream *)stream;
+
+	if (reader) {
+		return reader->pos();
+	}
+
+	return -1;
+}
+
+#elif defined(USE_MIKMOD)
+
 typedef struct MikMemoryReader {
 	MREADER core;
 	Common::SeekableReadStream *stream;
@@ -131,11 +178,106 @@ static long memoryReaderTell(MREADER *reader) {
 }
 // End memory wrappper
 
+#endif // USE_MIKMOD
+
+#ifdef USE_OPENMPT
+
 namespace Audio {
-class ImpulseTrackerMod : public RewindableAudioStream {
+class UniversalTrackerMod : public RewindableAudioStream {
 public:
-	ImpulseTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-	~ImpulseTrackerMod();
+	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate);
+	~UniversalTrackerMod();
+
+	// ImpulseTrackerMod functions
+	bool isLoaded() {
+		return _mpt_load_successful;
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		openmpt_module_read_interleaved_stereo(_mod, getRate(), numSamples / 2, buffer);
+
+		return numSamples;
+	}
+
+	bool isStereo() const override {
+		return true;
+	}
+
+	int getRate() const override {
+		return _sampleRate;
+	}
+
+	bool endOfData() const override {
+		return _stream->eos();
+	}
+
+	bool endOfStream() const override {
+		return endOfData();
+	}
+
+	// RewindableAudioStream API
+	bool rewind() override {
+		openmpt_module_set_position_seconds(_mod, 0.0);
+		return true;
+	}
+
+private:
+	DisposeAfterUse::Flag _dispose;
+	bool _mpt_load_successful = false;
+	Common::SeekableReadStream *_stream;
+	openmpt_module *_mod = nullptr;
+	int _sampleRate;
+};
+
+UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
+	if (!stream) {
+		warning("UniversalTrackerMod::UniversalTrackerMod(): Input file/stream is invalid.");
+		return;
+	}
+
+	int mod_err;
+	const char *mod_err_str = NULL;
+
+	_stream = stream;
+	_dispose = disposeAfterUse;
+	_sampleRate = rate;
+
+	openmpt_stream_callbacks stream_callbacks;
+	stream_callbacks.read = &memoryReaderRead;
+	stream_callbacks.seek = &memoryReaderSeek;
+	stream_callbacks.tell = &memoryReaderTell;
+
+	_mod = openmpt_module_create2(stream_callbacks, _stream, NULL, NULL, NULL, NULL, &mod_err, &mod_err_str, NULL);
+
+	if (!_mod) {
+		mod_err_str = openmpt_error_string(mod_err);
+		warning("UniversalTrackerMod::UniversalTrackerMod(): Parsing mod error: %s ", mod_err_str);
+		openmpt_free_string(mod_err_str);
+		return;
+	}
+
+	_mpt_load_successful = true;
+}
+
+UniversalTrackerMod::~UniversalTrackerMod() {
+	if (_mod)
+		openmpt_module_destroy(_mod);
+
+	if (_dispose == DisposeAfterUse::Flag::YES)
+		delete _stream;
+}
+
+} // End of namespace Audio
+
+#endif // #ifdef USE_OPENMPT
+
+#ifdef USE_MIKMOD
+
+namespace Audio {
+class UniversalTrackerMod : public RewindableAudioStream {
+public:
+	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate);
+	~UniversalTrackerMod();
 
 	// ImpulseTrackerMod functions
 	bool isLoaded() {
@@ -154,7 +296,7 @@ public:
 		return true;
 	}
 	int getRate() const override {
-		return 44100;
+		return _sampleRate;
 	}
 	bool endOfData() const override {
 		return !Player_Active();
@@ -175,13 +317,16 @@ private:
 	Common::SeekableReadStream *_stream;
 	MREADER *_reader = nullptr;
 	MODULE *_mod = nullptr;
+	int _sampleRate;
 };
 
-ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
 	if (!stream) {
-		warning("ImpulseTrackerMod::ImpulseTrackerMod(): Input file/stream is invalid.");
+		warning("UniversalTrackerMod::UniversalTrackerMod(): Input file/stream is invalid.");
 		return;
 	}
+
+	_sampleRate = rate;
 
 	MikMod_InitThreads();
 	MikMod_RegisterDriver(&drv_nos);
@@ -191,7 +336,7 @@ ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, Dispose
 	md_mixfreq = getRate();
 
 	if (MikMod_Init("")) {
-		warning("ImpulseTrackerMod::ImpulseTrackerMod(): Could not initialize sound, reason: %s",
+		warning("UniversalTrackerMod::UniversalTrackerMod(): Could not initialize sound, reason: %s",
 		        MikMod_strerror(MikMod_errno));
 		return;
 	}
@@ -206,7 +351,7 @@ ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, Dispose
 	_reader = createMikMemoryReader(_stream);
 	_mod = Player_LoadGeneric(_reader, 64, 0);
 	if (!_mod) {
-		warning("ImpulseTrackerMod::ImpulseTrackerMod(): Parsing mod error: %s", MikMod_strerror(MikMod_errno));
+		warning("UniversalTrackerMod::UniversalTrackerMod(): Parsing mod error: %s", MikMod_strerror(MikMod_errno));
 		return;
 	}
 
@@ -215,7 +360,7 @@ ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, Dispose
 	_mikmod_load_successful = true;
 }
 
-ImpulseTrackerMod::~ImpulseTrackerMod() {
+UniversalTrackerMod::~UniversalTrackerMod() {
 	Player_Stop();
 
 	if (_mod)
@@ -230,12 +375,16 @@ ImpulseTrackerMod::~ImpulseTrackerMod() {
 	MikMod_Exit();
 }
 
-RewindableAudioStream *makeImpulseTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	ImpulseTrackerMod *impulseTrackerMod = new ImpulseTrackerMod(stream, disposeAfterUse);
-	return impulseTrackerMod;
-}
 
-bool probeImpulseTracker(Common::SeekableReadStream *st) {
+} // End of namespace Audio
+
+#endif // #ifdef USE_MIKMOD
+
+namespace Audio {
+
+bool probeUniversalTracker(Common::SeekableReadStream *st) {
+#ifdef USE_MIKMOD
+
 	int32 setPos = st->pos();
 
 	// xm file
@@ -246,9 +395,45 @@ bool probeImpulseTracker(Common::SeekableReadStream *st) {
 		return true;
 	}
 
+#elif defined(USE_OPENMPT)
+
+	openmpt_stream_callbacks stream_callbacks;
+	stream_callbacks.read = &memoryReaderRead;
+	stream_callbacks.seek = &memoryReaderSeek;
+	stream_callbacks.tell = &memoryReaderTell;
+
+	uint result = openmpt_probe_file_header_from_stream(OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT, stream_callbacks, st, NULL, NULL, NULL, NULL, NULL, NULL);
+
+	if (result == OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS) {
+		return true;
+	}
+
+#endif
+
 	return false;
 }
 
-} // End of namespace Audio
+RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
 
-#endif // #ifdef USE_MIKMOD
+#if !defined(USE_OPENMPT) && !defined(USE_MIKMOD)
+	warning("Modplayer Support not compiled in");
+	return nullptr;
+#else
+
+	if (!probeUniversalTracker(stream)) {
+		return nullptr;
+	}
+
+	UniversalTrackerMod *impulseTrackerMod = new UniversalTrackerMod(stream, disposeAfterUse, rate);
+
+	if (!impulseTrackerMod->isLoaded()) {
+		delete impulseTrackerMod;
+		return nullptr;
+	}
+
+	return impulseTrackerMod;
+
+#endif
+}
+
+}

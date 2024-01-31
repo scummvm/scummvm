@@ -13,6 +13,7 @@
     "libjpeg-turbo",
     "libmad",
     "libmikmod",
+    "libopenmpt",
     "libmpeg2",
     "libogg",
     "libpng",

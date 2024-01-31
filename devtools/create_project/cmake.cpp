@@ -49,6 +49,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("flac", "flac").Libraries("FLAC"),
 		LibraryProps("mad", "mad").Libraries("mad"),
 		LibraryProps("mikmod", "mikmod").Libraries("mikmod"),
+		LibraryProps("openmpt", "openmpt").Libraries("openmpt"),
 		LibraryProps("ogg", "ogg").Libraries("ogg"),
 		LibraryProps("vorbis", "vorbisfile vorbis").Libraries("vorbisfile vorbis"),
 		LibraryProps("tremor", "vorbisidec").Libraries("vorbisidec"),

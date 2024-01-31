@@ -214,12 +214,9 @@ TestExitStatus SoundSubsystem::modPlayback() {
 		if (Audio::probeModXmS3m(&f))
 			mod = Audio::makeModXmS3mStream(&f, DisposeAfterUse::NO);
 
-#ifdef USE_MIKMOD
 		if (!mod) {
-			if (Audio::probeImpulseTracker(&f))
-				mod = Audio::makeImpulseTrackerStream(&f, DisposeAfterUse::NO);
+			mod = Audio::makeUniversalTrackerStream(&f, DisposeAfterUse::NO);
 		}
-#endif
 
 		if (!mod) {
 			Testsuite::displayMessage(Common::String::format("Could not load MOD file '%s'", music[i]));
