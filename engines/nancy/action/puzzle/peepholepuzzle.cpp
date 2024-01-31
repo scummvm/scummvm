@@ -38,7 +38,13 @@ void PeepholePuzzle::init() {
 	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 	moveTo(screenBounds);
 
-	g_nancy->_resource->loadImage(_innerImageName, _innerImage);
+	Common::Rect innerImageContentBounds;
+	g_nancy->_resource->loadImage(_innerImageName, _innerImage, Common::String(), &innerImageContentBounds);
+	if (!innerImageContentBounds.isEmpty()) {
+		// When using Autotext, make sure scrolling stops with the end of the text content.
+		// This was implemented in nancy7, but it's better to have it on for nancy6 as well.
+		_innerBounds.clip(innerImageContentBounds);
+	}
 
 	if (_buttonsImageName.empty()) {
 		// Empty image name for buttons, use other image as source
@@ -176,7 +182,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 			// Down
 			_currentSrc.translate(0, pixelsToMove);
 			if (_currentSrc.bottom > _innerBounds.bottom) {
-				_currentSrc.translate(0, _innerBounds.top - _currentSrc.top);
+				_currentSrc.translate(0, _innerBounds.bottom - _currentSrc.bottom);
 			}
 			break;
 		case 2 :
@@ -255,7 +261,32 @@ void PeepholePuzzle::checkButtons() {
 		} else {
 			_disabledButtons[i] = true;
 		}
-	}	
+	}
+
+	// Ensure that contents that do not overflow can't be scrolled
+	if (_innerBounds.height() <= _dest.height()) {
+		_disabledButtons[0] = _disabledButtons[1] = true;
+
+		if (!_buttonDisabledSrcs[0].isEmpty()) {
+			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[0], _buttonDests[0]);
+		}
+		
+		if (!_buttonDisabledSrcs[1].isEmpty()) {
+			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[1], _buttonDests[1]);
+		}
+	}
+
+	if (_innerBounds.width() <= _dest.width()) {
+		_disabledButtons[2] = _disabledButtons[3] = true;
+		
+		if (!_buttonDisabledSrcs[2].isEmpty()) {
+			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[2], _buttonDests[2]);
+		}
+
+		if (!_buttonDisabledSrcs[3].isEmpty()) {
+			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[3], _buttonDests[3]);
+		}
+	}
 }
 
 } // End of namespace Action

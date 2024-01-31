@@ -57,6 +57,7 @@ public:
 	uint32 getTransColor() { return _transColor; }
 
 	Graphics::ManagedSurface &getAutotextSurface(uint16 id) { return _autotextSurfaces.getOrCreateVal(id); }
+	Common::Rect &getAutotextSurfaceBounds(uint16 id) { return _autotextSurfaceBounds.getOrCreateVal(id); }
 
 	void grabViewportObjects(Common::Array<RenderObject *> &inArray);
 	void screenshotScreen(Graphics::ManagedSurface &inSurf);
@@ -91,6 +92,7 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 
 	Common::HashMap<uint16, Graphics::ManagedSurface> _autotextSurfaces;
+	Common::HashMap<uint16, Common::Rect> _autotextSurfaceBounds;
 
 	uint32 _transColor = 0;
 

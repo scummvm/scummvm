@@ -51,6 +51,13 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 
 		if (surfID >= 0) {
 			surf.copyFrom(g_nancy->_graphicsManager->getAutotextSurface(surfID));
+			if (outSrc) {
+				// Slightly hacky, but we pass the size of the drawn text using the outSrc parameter;
+				// value is only guaranteed to be valid for an active surface.
+				// This is used for PeepholePuzzle scrolling.
+				*outSrc = g_nancy->_graphicsManager->getAutotextSurfaceBounds(surfID);
+			}
+
 			return true;
 		}
 	}

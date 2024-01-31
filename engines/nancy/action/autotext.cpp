@@ -130,6 +130,7 @@ void Autotext::execute() {
 		uint surfHeight = _textLines[0].size() / 144 * _surfWidth;
 		surfHeight = MAX<uint>(surfHeight, _surfHeight + 20);
 		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(_surfaceID);
+		Common::Rect &surfBounds = g_nancy->_graphicsManager->getAutotextSurfaceBounds(_surfaceID);
 		surf.create(_surfWidth + 1, surfHeight, g_nancy->_graphicsManager->getInputPixelFormat());
 		if (_transparency) {
 			surf.clear(g_nancy->_graphicsManager->getTransColor());
@@ -156,6 +157,7 @@ void Autotext::execute() {
 		auto *tbox = GetEngineData(TBOX);
 
 		drawAllText(textBounds, tbox->leftOffset - textBounds.left, _fontID, _fontID);
+		surfBounds = Common::Rect(_fullSurface.w, _drawnTextHeight);
 	}
 
 	_isDone = true;
