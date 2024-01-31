@@ -256,7 +256,7 @@ void ScummEngine_v100he::setupOpcodes() {
 	OPCODE(0xb0, o72_findObjectWithClassOf);
 	OPCODE(0xb1, o71_polygonHit);
 	OPCODE(0xb2, o90_getLinesIntersectionPoint);
-	OPCODE(0xb3, o90_fontUnk);
+	OPCODE(0xb3, o90_fontEnum);
 	/* B4 */
 	OPCODE(0xb4, o72_getNumFreeArrays);
 	OPCODE(0xb5, o72_getArrayDimSize);
