@@ -319,7 +319,7 @@ struct StaticData {
 	Common::Array<uint16> genericEventFlags;
 	uint16 numCursorTypes = 4;
 	uint32 logoEndAfter = 7000;
-	int16 wonGameSceneID = -1;
+	int16 wonGameFlagID = -1;
 
 	// Data for sound channels
 	SoundChannelInfo soundChannelInfo;

@@ -801,7 +801,7 @@ void Scene::init() {
 
 	// Set relevant event flag when player has won the game at least once
 	if (ConfMan.get("PlayerWonTheGame", ConfMan.getActiveDomainName()) == "AcedTheGame") {
-		setEventFlag(g_nancy->getStaticData().wonGameSceneID, g_nancy->_true);
+		setEventFlag(g_nancy->getStaticData().wonGameFlagID, g_nancy->_true);
 	}
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {

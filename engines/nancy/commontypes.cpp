@@ -392,7 +392,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			
 			logoEndAfter = stream.readUint32LE();
 			if (minorVersion == 1) {
-				wonGameSceneID = stream.readUint16LE();
+				wonGameFlagID = stream.readUint16LE();
 			}
 
 			break;
