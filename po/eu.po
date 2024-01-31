@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-23 18:42+0000\n"
+"PO-Revision-Date: 2024-01-31 17:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2574,15 +2574,12 @@ msgid "Select directory for GUI themes"
 msgstr "Gaien direktorioa aukeratu"
 
 #: gui/options.cpp:3211
-#, fuzzy
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Gaien direktorioa aukeratu"
+msgstr "Aukeratu GUI abiarazlerako miniaturen direktorioa"
 
 #: gui/options.cpp:3222
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Pluginen direktorioa aukeratu"
+msgstr "Aukeratu direktorioa deskargatutako DLCentzat"
 
 #: gui/options.cpp:3233
 msgid "Select directory for extra files"
@@ -2593,27 +2590,28 @@ msgid "Select directory for plugins"
 msgstr "Pluginen direktorioa aukeratu"
 
 #: gui/options.cpp:3257
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Fitxategi gehigarrien direktorioa aukeratu"
+msgstr "Aukeratu Fitxategi Kudeatzailearen /root/ direktorioa"
 
 #: gui/options.cpp:3438
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Biltegiratze hau martxan dago. Gelditu nahi duzu?"
 
 #: gui/options.cpp:3447
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Itxaron oraingo Biltegiratzeak bukatzea eta saiatu berriz."
 
 #: gui/options.cpp:3650 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr ""
+msgstr "<oraintxe>"
 
 #: gui/options.cpp:3793
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Eskaerak huts egin du.\n"
+"Egiaztatu zure internet konexioa."
 
 #: gui/options.cpp:3817
 msgid ""
