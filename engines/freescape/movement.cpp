@@ -379,7 +379,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 		if (!executed)
 			setGameBit(31);
-		playSound(4, false);
+		playSound(2, false);
 	}
 
 	lastPosition = newPosition;
@@ -391,6 +391,8 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		_hasFallen = !_disableFalling;
 
 	if (!_hasFallen && fallen > 0) {
+		playSound(3, false);
+
 		// Position in Y was changed, let's re-run effects
 		runCollisionConditions(lastPosition, newPosition);
 	}

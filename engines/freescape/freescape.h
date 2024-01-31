@@ -38,6 +38,7 @@
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/sensor.h"
+#include "freescape/sound.h"
 
 namespace Common {
 class RandomSource;
@@ -67,20 +68,9 @@ enum {
 	kFreescapeDebugMedia = 1 << 4,
 };
 
-struct soundFx {
-	int size;
-	int sampleRate;
-	byte *data;
-};
-
 struct CGAPaletteEntry {
 	int areaId;
 	byte *palette;
-};
-
-class SizedPCSpeaker : public Audio::PCSpeaker {
-public:
-	bool endOfStream() const override { return !isPlaying(); }
 };
 
 class EventManagerWrapper {
@@ -374,11 +364,14 @@ public:
 	void playSilence(int duration, bool sync);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
-	void playTeleporter(int totalIters, bool sync);
+	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
+	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync);
 
 	void playSoundFx(int index, bool sync);
 	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;
+	void loadSpeakerFx(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration);
+	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
 
 	// Rendering
 	int _screenW, _screenH;

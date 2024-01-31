@@ -53,6 +53,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
+		loadSpeakerFx(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
 		for (auto &it : _areaMap) {
