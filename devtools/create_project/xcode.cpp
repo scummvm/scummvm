@@ -532,6 +532,10 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		DEF_LOCALLIB_STATIC("libmikmod");
 		DEF_LOCALXCFRAMEWORK("mikmod", projectOutputDirectory);
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_OPENMPT")) {
+		DEF_LOCALLIB_STATIC("libopenmpt");
+		DEF_LOCALXCFRAMEWORK("openmpt", projectOutputDirectory);
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
 		DEF_LOCALLIB_STATIC("libmpeg2");
 		DEF_LOCALXCFRAMEWORK("mpeg2", projectOutputDirectory);
@@ -667,6 +671,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MIKMOD")) {
 		frameworks_iOS.push_back(getLibString("mikmod", setup.useXCFramework));
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_OPENMPT")) {
+		frameworks_iOS.push_back(getLibString("openmpt", setup.useXCFramework));
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
 		frameworks_iOS.push_back(getLibString("mpeg2", setup.useXCFramework));
 	}
@@ -766,6 +773,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MIKMOD")) {
 		frameworks_osx.push_back("libmikmod.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_OPENMPT")) {
+		frameworks_osx.push_back("libopenmpt.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
 		frameworks_osx.push_back(getLibString("mpeg2", setup.useXCFramework));
@@ -894,6 +904,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MIKMOD")) {
 		frameworks_tvOS.push_back(getLibString("mikmod", setup.useXCFramework));
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_OPENMPT")) {
+		frameworks_tvOS.push_back(getLibString("openmpt", setup.useXCFramework));
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
 		frameworks_tvOS.push_back(getLibString("mpeg2", setup.useXCFramework));

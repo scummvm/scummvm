@@ -145,6 +145,10 @@ const char gScummVMFeatures[] = ""
 	"MikMod "
 #endif
 
+#ifdef USE_OPENMPT
+	"OpenMPT "
+#endif
+
 #ifdef USE_THEORADEC
 	"Theora "
 #endif

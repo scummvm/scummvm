@@ -25,13 +25,15 @@
  *  - sludge
  */
 
-#ifndef AUDIO_IMPULSETRACKER_H
-#define AUDIO_IMPULSETRACKER_H
+#ifndef AUDIO_UNIVERSALTRACKER_H
+#define AUDIO_UNIVERSALTRACKER_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
 
-#ifdef USE_MIKMOD
+#if defined(USE_MIKMOD) && defined(USE_OPENMPT)
+#error "MikMod and OpenMPT are mutually exclusive"
+#endif
 
 namespace Common {
 class SeekableReadStream;
@@ -47,14 +49,13 @@ class RewindableAudioStream;
  * @param disposeAfterUse   whether to delete the stream after use
  * @return  a new AudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeImpulseTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate = 48000);
 
 /**
  * Check if the stream is one of the supported formats
  */
-bool probeImpulseTracker(Common::SeekableReadStream *stream);
+bool probeUniversalTracker(Common::SeekableReadStream *stream);
 
 } // End of namespace Audio
 
-#endif // #ifdef USE_MIKMOD
-#endif // #ifndef AUDIO_IMPULSETRACKER_H
+#endif // #ifndef AUDIO_UNIVERSALTRACKER_H

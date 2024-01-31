@@ -170,6 +170,7 @@ _tinygl=yes
 _readline=auto
 _freetype2=auto
 _libmikmod=auto
+_libopenmpt=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
@@ -254,6 +255,7 @@ _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
 _libmikmodpath="$PATH"
+_libopenmptpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -1026,6 +1028,9 @@ Optional Libraries:
   --with-mikmod-prefix=DIR    Prefix where libmikmod is installed (optional)
   --enable-mikmod             enable mikmod module for playing various sound formats like impulsetracker [autodetect]
 
+  --with-openmpt-prefix=DIR    Prefix where libopenmpt is installed (optional)
+  --enable-openmpt             enable openmpt module for playing various sound formats like impulsetracker [autodetect]
+
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
@@ -1221,6 +1226,8 @@ for ac_option in $@; do
 	--disable-mpeg2)              _mpeg2=no              ;;
 	--enable-mikmod)              _libmikmod=yes         ;;
 	--disable-mikmod)             _libmikmod=no          ;;
+	--enable-openmpt)             _libopenmpt=yes        ;;
+	--disable-openmpt)            _libopenmpt=no         ;;
 	--enable-a52)                 _a52=yes               ;;
 	--disable-a52)                _a52=no                ;;
 	--disable-jpeg)               _jpeg=no               ;;
@@ -1534,6 +1541,10 @@ for ac_option in $@; do
 	--with-mikmod-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_libmikmodpath="$arg:$arg/bin"
+		;;
+	--with-openmpt-prefix=*)
+		arg=`echo $ac_option | cur -d '=' -f 2`
+		_libopenmptpath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5808,6 +5819,50 @@ echocheck "libcurl"
 echo "$_libcurl"
 
 define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
+
+#
+# Check for libopenmpt to be present
+#
+if test "$_libopenmpt" != "no"; then
+	echocheck "libopenmpt"
+
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libopenmpt; then
+		append_var LIBOPENMPT_LIBS "`$_pkgconfig --libs libopenmpt`"
+		append_var LIBOPENMPT_CFLAGS "`$_pkgconfig --cflags libopenmpt`"
+	else
+		append_var LIBOPENMPT_LIBS "-lopenmpt"
+	fi
+
+	if test "$_libopenmpt" = "auto"; then
+		_libopenmpt=no
+		cat > $TMPC << EOF
+		#include <libopenmpt/libopenmpt.h>
+		#include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+		int main(void) {
+			openmpt_module *mod = 0;
+			FILE *file = 0;
+
+			file = fopen("abc", "rb");
+			mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+
+			fclose(file);
+			return 0;
+		}
+EOF
+		cc_check $LIBOPENMPT_CFLAGS $LIBOPENMPT_LIBS && _libopenmpt=yes
+	fi
+
+	if test "$_libopenmpt" = "yes"; then
+		append_var LIBS "$LIBOPENMPT_LIBS"
+		append_var INCLUDES "$LIBOPENMPT_CFLAGS"
+
+		# Skip mikmod detection if openmpt is detected
+		_libmikmod=no
+	fi
+
+	define_in_config_if_yes "$_libopenmpt" "USE_OPENMPT"
+	echo "$_libopenmpt"
+fi
 
 #
 # Check for libmikmod to be present
