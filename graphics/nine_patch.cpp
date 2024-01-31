@@ -187,16 +187,16 @@ NinePatchBitmap::NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap
 	uint32 black, white;
 
 	if (bmp->format.isCLUT8()) {
-		byte palette[256 * 3];
+		Palette palette(256);
 		bmp->grabPalette(palette, 0, 256);
 
 		black = (uint32)-1;
 		white = (uint32)-1;
 
 		for (int j = 0; j < 256; j++) {
-			byte r = palette[(j * 3) + 0];
-			byte g = palette[(j * 3) + 1];
-			byte b = palette[(j * 3) + 2];
+			byte r = palette.data[(j * 3) + 0];
+			byte g = palette.data[(j * 3) + 1];
+			byte b = palette.data[(j * 3) + 2];
 
 			if (black == uint32(-1) && r == 0 && g == 0 && b == 0)
 				black = j;
@@ -306,16 +306,16 @@ void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int
 		drawRegions(*srf, dx, dy, dw, dh);
 
 		if (srf->format.isCLUT8()) {
-			uint8 palette[256 * 3];
+			Palette palette(256);
 			_bmp->grabPalette(palette, 0, 256);
 
 			for (int i = 0; i < srf->w; ++i) {
 				for (int j = 0; j < srf->h; ++j) {
 					byte color = *(byte*)srf->getBasePtr(i, j);
 					if (color != transColor) {
-						byte r = palette[(color * 3) + 0];
-						byte g = palette[(color * 3) + 1];
-						byte b = palette[(color * 3) + 2];
+						byte r = palette.data[(color * 3) + 0];
+						byte g = palette.data[(color * 3) + 1];
+						byte b = palette.data[(color * 3) + 2];
 						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
 					}
 				}

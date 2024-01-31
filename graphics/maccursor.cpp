@@ -25,12 +25,7 @@
 
 namespace Graphics {
 
-MacCursor::MacCursor() {
-	_surface = 0;
-	memset(_palette, 0, 256 * 3);
-
-	_hotspotX = 0;
-	_hotspotY = 0;
+MacCursor::MacCursor() : _surface(nullptr), _palette(256), _hotspotX(0), _hotspotY(0) {
 }
 
 MacCursor::~MacCursor() {
@@ -38,8 +33,9 @@ MacCursor::~MacCursor() {
 }
 
 void MacCursor::clear() {
-	delete[] _surface; _surface = 0;
-	memset(_palette, 0, 256 * 3);
+	delete[] _surface;
+	_surface = nullptr;
+	_palette.clear();
 }
 
 bool MacCursor::readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome, byte monochromeInvertedPixelColor, bool forceCURSFormat) {
@@ -82,9 +78,9 @@ bool MacCursor::readFromCURS(Common::SeekableReadStream &stream, byte monochrome
 	_hotspotX = stream.readUint16BE();
 
 	// Setup a basic palette
-	_palette[1 * 3 + 0] = 0xff;
-	_palette[1 * 3 + 1] = 0xff;
-	_palette[1 * 3 + 2] = 0xff;
+	_palette.data[1 * 3 + 0] = 0xff;
+	_palette.data[1 * 3 + 1] = 0xff;
+	_palette.data[1 * 3 + 2] = 0xff;
 
 	return !stream.eos();
 }
@@ -157,18 +153,18 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 	// Read just high byte of 16-bit color
 	for (int c = 0; c < ctSize; c++) {
 		stream.readUint16BE();
-		_palette[c * 3 + 0] = stream.readUint16BE() >> 8;
-		_palette[c * 3 + 1] = stream.readUint16BE() >> 8;
-		_palette[c * 3 + 2] = stream.readUint16BE() >> 8;
+		_palette.data[c * 3 + 0] = stream.readUint16BE() >> 8;
+		_palette.data[c * 3 + 1] = stream.readUint16BE() >> 8;
+		_palette.data[c * 3 + 2] = stream.readUint16BE() >> 8;
 	}
 
 	// Find black so that Macintosh black (255) can be remapped.
 	// This is necessary because we use 255 for the color key.
 	byte black = 0;
 	for (byte c = 0; c < 255; c++) {
-		if (_palette[c * 3 + 0] == 0 &&
-			_palette[c * 3 + 1] == 0 &&
-			_palette[c * 3 + 2] == 0) {
+		if (_palette.data[c * 3 + 0] == 0 &&
+			_palette.data[c * 3 + 1] == 0 &&
+			_palette.data[c * 3 + 2] == 0) {
 			black = c;
 			break;
 		}

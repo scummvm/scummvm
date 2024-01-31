@@ -350,8 +350,8 @@ public:
 
 	byte inverter(byte src);
 
-	const byte *getPalette() { return _palette; }
-	uint getPaletteSize() { return _paletteSize; }
+	const byte *getPalette() { return _palette.data; }
+	uint getPaletteSize() { return _palette.size; }
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
@@ -451,8 +451,7 @@ private:
 
 	MacPatterns _patterns;
 	MacPatterns _builtinPatterns;
-	byte *_palette;
-	uint _paletteSize;
+	Palette _palette;
 
 	MacMenu *_menu;
 	uint32 _menuDelay;

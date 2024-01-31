@@ -111,9 +111,98 @@ public:
 
 namespace Graphics {
 
+struct Palette {
+	byte data[256 * 3];
+	uint size;
+
+	/**
+	 * @brief Construct a new Palette object
+	 *
+	 * @param num   the number of palette entries
+	 */
+	Palette(uint num = 0);
+
+	Palette(const Palette &p);
+
+	bool equals(const Palette &p) const;
+
+	bool contains(const Palette &p) const;
+
+	void clear();
+
+	/**
+	 * Replace the specified range of the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * The palette data is specified in interleaved RGB format. That is, the
+	 * first byte of the memory block 'colors' points at is the red component
+	 * of the first new color; the second byte the green component of the first
+	 * new color; the third byte the blue component, the last byte to the alpha
+	 * (transparency) value. Then the second color starts, and so on. So memory
+	 * looks like this: R1-G1-B1-R2-G2-B2-R3-...
+	 *
+	 * @param colors	the new palette data, in interleaved RGB format
+	 * @param start		the first palette entry to be updated
+	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note It is an error if start+num exceeds 256, behavior is undefined
+	 *       in that case (the backend may ignore it silently or assert).
+	 * @note It is an error if this function gets called when the pixel format
+	 *       in use (the return value of getScreenFormat) has more than one
+	 *       byte per pixel.
+	 *
+	 * @see getScreenFormat
+	 */
+	void set(const byte *colors, uint start, uint num);
+	void set(const Palette &p, uint start, uint num);
+
+	/**
+	 * Grabs a specified part of the currently active palette.
+	 * The format is the same as for setPalette.
+	 *
+	 * This should return exactly the same RGB data as was setup via previous
+	 * setPalette calls.
+	 *
+	 * For example, for every valid value of start and num of the following
+	 * code:
+	 *
+	 * byte origPal[num*3];
+	 * // Setup origPal's data however you like
+	 * g_system->setPalette(origPal, start, num);
+	 * byte obtainedPal[num*3];
+	 * g_system->grabPalette(obtainedPal, start, num);
+	 *
+	 * the following should be true:
+	 *
+	 * memcmp(origPal, obtainedPal, num*3) == 0
+	 *
+	 * @see setPalette
+	 * @param colors	the palette data, in interleaved RGB format
+	 * @param start		the first platte entry to be read
+	 * @param num		the number of palette entries to be read
+	 *
+	 * @note It is an error if this function gets called when the pixel format
+	 *       in use (the return value of getScreenFormat) has more than one
+	 *       byte per pixel.
+	 *
+	 * @see getScreenFormat
+	 */
+	void grab(byte *colors, uint start, uint num) const;
+	void grab(Palette &p, uint start, uint num) const;
+};
+
 class PaletteLookup {
 public:
 	PaletteLookup();
+
+	/**
+	 * @brief Construct a new Palette Lookup object
+	 *
+	 * @param palette   the palette data
+	 */
+	PaletteLookup(const Palette &palette);
+
 	/**
 	 * @brief Construct a new Palette Lookup object
 	 *
@@ -121,6 +210,16 @@ public:
 	 * @param len       the number of palette entries to be read
 	 */
 	PaletteLookup(const byte *palette, uint len);
+
+	/**
+	 * @brief Pass palette to the look up. It also compares given palette
+	 * with the current one and resets cache only when their contents is different.
+	 *
+	 * @param palette   the palette
+	 *
+	 * @return true if palette was changed and false if it was the same
+	 */
+	bool setPalette(const Palette &palette);
 
 	/**
 	 * @brief Pass palette to the look up. It also compares given palette
@@ -153,11 +252,10 @@ public:
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
-	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
+	uint32 *createMap(const Palette &srcPalette, bool useNaiveAlg = false);
 
 private:
-	byte _palette[256 * 3];
-	uint _paletteSize;
+	Palette _palette;
 	Common::HashMap<int, byte> _colorHash;
 };
 

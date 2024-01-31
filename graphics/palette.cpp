@@ -22,30 +22,86 @@
 
 namespace Graphics {
 
-PaletteLookup::PaletteLookup() {
-	_paletteSize = 0;
+Palette::Palette(uint num) : size(num) {
+	memset(data, 0, sizeof(data));
 }
 
-PaletteLookup::PaletteLookup(const byte *palette, uint len)  {
-	_paletteSize = len;
-
-	memcpy(_palette, palette, len * 3);
+Palette::Palette(const Palette &p) : size(p.size) {
+	memcpy(data, p.data, size * 3);
 }
 
-bool PaletteLookup::setPalette(const byte *palette, uint len)  {
+bool Palette::equals(const Palette &p) const {
+	return p.size == size && !memcmp(data, p.data, p.size * 3);
+}
+
+bool Palette::contains(const Palette& p) const {
+	return p.size <= size && !memcmp(data, p.data, p.size * 3);
+}
+
+void Palette::clear() {
+	memset(data, 0, sizeof(data));
+}
+
+void Palette::set(const byte *colors, uint start, uint num) {
+	assert(start < 256 && (start + num) <= 256);
+	if (size < start + num)
+		size = start + num;
+	memcpy(data + 3 * start, colors, 3 * num);
+}
+
+void Palette::set(const Palette &p, uint start, uint num) {
+	assert(start < 256 && (start + num) <= 256);
+	if (size < start + num)
+		size = start + num;
+	memcpy(data + 3 * start, p.data, 3 * num);
+}
+
+void Palette::grab(byte *colors, uint start, uint num) const {
+	assert(start < 256 && (start + num) <= 256);
+	memcpy(colors, data + 3 * start, 3 * num);
+}
+
+void Palette::grab(Palette &p, uint start, uint num) const {
+	assert(start < 256 && (start + num) <= 256);
+	if (p.size < num)
+		p.size = num;
+	memcpy(p.data, data + 3 * start, 3 * num);
+}
+
+PaletteLookup::PaletteLookup(): _palette() {
+}
+
+PaletteLookup::PaletteLookup(const Palette &palette): _palette(palette) {
+}
+
+PaletteLookup::PaletteLookup(const byte *palette, uint len) : _palette(len) {
+	_palette.set(palette, 0, len);
+}
+
+bool PaletteLookup::setPalette(const Palette &palette) {
 	// Check if the passed palette matched the one we have
-	if (len == _paletteSize && !memcmp(_palette, palette, len * 3))
+	if (palette.equals(_palette))
 		return false;
 
-	_paletteSize = len;
-	memcpy(_palette, palette, len * 3);
+	_palette = palette;
+	_colorHash.clear();
+
+	return true;
+}
+
+bool PaletteLookup::setPalette(const byte *palette, uint len) {
+	// Check if the passed palette matched the one we have
+	if (len == _palette.size && !memcmp(_palette.data, palette, len * 3))
+		return false;
+
+	_palette.set(palette, 0, len);
 	_colorHash.clear();
 
 	return true;
 }
 
 byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
-	if (_paletteSize == 0) {
+	if (_palette.size == 0) {
 		warning("PaletteLookup::findBestColor(): Palette was not set");
 		return 0;
 	}
@@ -59,9 +115,9 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 		return _colorHash[color];
 
 	if (useNaiveAlg) {
-		byte *palettePtr = _palette;
+		byte *palettePtr = _palette.data;
 
-		for (uint i = 0; i < _paletteSize; i++) {
+		for (uint i = 0; i < _palette.size; i++) {
 			int redSquareDiff = (cr - palettePtr[0]) * (cr - palettePtr[0]);
 			int greenSquareDiff = (cg - palettePtr[1]) * (cg - palettePtr[1]);
 			int blueSquareDiff = (cb - palettePtr[2]) * (cb - palettePtr[2]);
@@ -75,11 +131,11 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 			palettePtr += 3;
 		}
 	} else {
-		for (uint i = 0; i < _paletteSize; ++i) {
-			int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
-			int r = *(_palette + 3 * i + 0) - cr;
-			int g = *(_palette + 3 * i + 1) - cg;
-			int b = *(_palette + 3 * i + 2) - cb;
+		for (uint i = 0; i < _palette.size; ++i) {
+			int rmean = (*(_palette.data + 3 * i + 0) + cr) / 2;
+			int r = *(_palette.data + 3 * i + 0) - cr;
+			int g = *(_palette.data + 3 * i + 1) - cg;
+			int b = *(_palette.data + 3 * i + 2) - cb;
 
 			double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
 			if (min > dist) {
@@ -94,15 +150,16 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 	return bestColor;
 }
 
-uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
-	if (len <= _paletteSize && memcmp(_palette, srcPalette, len * 3) == 0)
+uint32 *PaletteLookup::createMap(const Palette &srcPalette, bool useNaiveAlg) {
+	if (_palette.contains(srcPalette))
 		return nullptr;
 
-	uint32 *map = new uint32[len];
-	for (uint i = 0; i < len; i++) {
-		byte r = *srcPalette++;
-		byte g = *srcPalette++;
-		byte b = *srcPalette++;
+	uint32 *map = new uint32[srcPalette.size];
+	const byte *palettePtr = srcPalette.data;
+	for (uint i = 0; i < srcPalette.size; i++) {
+		byte r = *palettePtr++;
+		byte g = *palettePtr++;
+		byte b = *palettePtr++;
 
 		map[i] = findBestColor(r, g, b, useNaiveAlg);
 	}

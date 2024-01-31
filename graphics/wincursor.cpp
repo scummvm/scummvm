@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/palette.h"
 #include "graphics/wincursor.h"
 
 namespace Graphics {
@@ -48,9 +49,9 @@ public:
 	const byte *getSurface() const override { return _surface; }
 	const byte *getMask() const override { return _mask; }
 
-	const byte *getPalette() const override { return _palette; }
+	const byte *getPalette() const override { return _palette.data; }
 	byte getPaletteStartIndex() const override { return 0; }
-	uint16 getPaletteCount() const override { return 256; }
+	uint16 getPaletteCount() const override { return _palette.size; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream);
@@ -58,7 +59,7 @@ public:
 private:
 	byte *_surface;
 	byte *_mask;
-	byte _palette[256 * 3];
+	Palette _palette;
 
 	uint16 _width;    ///< The cursor's width.
 	uint16 _height;   ///< The cursor's height.
@@ -70,15 +71,8 @@ private:
 	void clear();
 };
 
-WinCursor::WinCursor() {
-	_width    = 0;
-	_height   = 0;
-	_hotspotX = 0;
-	_hotspotY = 0;
-	_surface  = nullptr;
-	_mask     = nullptr;
-	_keyColor = 0;
-	memset(_palette, 0, 256 * 3);
+WinCursor::WinCursor() : _surface(nullptr), _mask(nullptr), _palette(256),
+	_width(0), _height(0), _hotspotX(0), _hotspotY(0), _keyColor(0) {
 }
 
 WinCursor::~WinCursor() {
@@ -154,9 +148,9 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	// Reading the palette
 	stream.seek(40 + 4);
 	for (uint32 i = 0 ; i < numColors; i++) {
-		_palette[i * 3 + 2] = stream.readByte();
-		_palette[i * 3 + 1] = stream.readByte();
-		_palette[i * 3    ] = stream.readByte();
+		_palette.data[i * 3 + 2] = stream.readByte();
+		_palette.data[i * 3 + 1] = stream.readByte();
+		_palette.data[i * 3] = stream.readByte();
 		stream.readByte();
 	}
 
@@ -235,7 +229,7 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 		for (uint32 x = 0; x < _width; x++) {
 			byte &surfaceByte = _surface[y * _width + x];
 			if (src[x / 8] & (1 << (7 - x % 8))) {
-				const byte *paletteEntry = &_palette[surfaceByte * 3];
+				const byte *paletteEntry = &_palette.data[surfaceByte * 3];
 
 				// Per WDDM spec, white with 1 in the AND mask is inverted, any other color with 1 is transparent.
 				// Riven depends on this behavior for proper cursor transparency, since it uses cursors where the

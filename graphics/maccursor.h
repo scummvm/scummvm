@@ -39,6 +39,7 @@
 #include "common/stream.h"
 
 #include "graphics/cursor.h"
+#include "graphics/palette.h"
 
 namespace Graphics {
 
@@ -63,9 +64,9 @@ public:
 
 	const byte *getSurface() const { return _surface; }
 
-	virtual const byte *getPalette() const { return _palette; }
+	virtual const byte *getPalette() const { return _palette.data; }
 	byte getPaletteStartIndex() const { return 0; }
-	uint16 getPaletteCount() const { return 256; }
+	uint16 getPaletteCount() const { return _palette.size; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false, byte monochromeInvertedPixelColor = 0xff, bool forceCURSFormat = false);
@@ -75,7 +76,7 @@ protected:
 	bool readFromCRSR(Common::SeekableReadStream &stream, bool forceMonochrome, byte monochromeInvertedPixelColor);
 
 	byte *_surface;
-	byte _palette[256 * 3];
+	Palette _palette;
 
 	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
 	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.

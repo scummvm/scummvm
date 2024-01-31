@@ -33,6 +33,8 @@
 
 namespace Graphics {
 
+struct Palette;
+
 /**
  * @defgroup graphics_managed_surface Managed surface
  * @ingroup graphics
@@ -81,8 +83,8 @@ private:
 	/**
 	 * Local palette for 8-bit images.
 	 */
-	byte _palette[256 * 3];
-	bool _paletteSet;
+	Palette *_palette;
+
 protected:
 	/**
 	 * Inner method for blitting.
@@ -521,10 +523,7 @@ public:
 	 * Does a blitFrom ignoring any transparency settings
 	 */
 	void rawBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
-			const Common::Point &destPos) {
-		blitFromInner(src._innerSurface, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
-			destPos.y + srcRect.height()), src._paletteSet ? src._palette : nullptr);
-	}
+					 const Common::Point &destPos);
 	
 	/**
 	 * ManagedSurface::blendBlitTo is meant to be a highly optimized
@@ -740,26 +739,24 @@ public:
 	/**
 	 * Clear any existing palette.
 	 */
-	void clearPalette() {
-		_paletteSet = false;
-	}
+	void clearPalette();
 
 	/**
 	 * Return true if a palette has been set.
 	 */
-	bool hasPalette() const {
-		return _paletteSet;
-	}
+	bool hasPalette() const;
 
 	/**
 	 * Grab the palette using RGB tuples.
 	 */
 	void grabPalette(byte *colors, uint start, uint num) const;
+	void grabPalette(Palette &palette, uint start, uint num) const;
 
 	/**
 	 * Set the palette using RGB tuples.
 	 */
 	void setPalette(const byte *colors, uint start, uint num);
+	void setPalette(const Palette &palette, uint start, uint num);
 };
 /** @} */
 } // End of namespace Graphics
