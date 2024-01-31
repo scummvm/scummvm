@@ -43,7 +43,7 @@ public:
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
-	virtual void restoreAfterLoad() override;
+	void restoreAfterLoad() override;
 
 	// version 1 specific
 	virtual int getCurrentCdaSound() { return 0; }

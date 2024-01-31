@@ -106,7 +106,7 @@ public:
 	/**
 	 * Save or load the music state.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+	void saveLoadWithSerializer(Common::Serializer &ser) override {}
 
 	/**
 	 * Performs necessary post-load operations on the sound engine, like restarting of music

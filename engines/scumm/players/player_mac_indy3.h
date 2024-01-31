@@ -52,7 +52,7 @@ public:
 	int getSoundStatus(int id) const override;
 	void setQuality(int qual) override;
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
-	void restoreAfterLoad();
+	void restoreAfterLoad() override;
 
 private:
 	Common::SharedPtr<I3MPlayer> _player;
