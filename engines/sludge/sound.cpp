@@ -23,7 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/mod_xm_s3m.h"
-#include "audio/mods/impulsetracker.h"
+#include "audio/mods/universaltracker.h"
 
 #include "sludge/errors.h"
 #include "sludge/fileset.h"

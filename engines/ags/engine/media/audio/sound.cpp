@@ -30,7 +30,7 @@
 #include "ags/engine/media/audio/sound_clip.h"
 #include "ags/engine/media/audio/clip_my_midi.h"
 #include "ags/shared/core/asset_manager.h"
-#include "audio/mods/impulsetracker.h"
+#include "audio/mods/universaltracker.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/mp3.h"

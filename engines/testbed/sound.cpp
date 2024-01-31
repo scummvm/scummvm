@@ -21,7 +21,7 @@
 
 #include "audio/softsynth/pcspk.h"
 #include "audio/mods/mod_xm_s3m.h"
-#include "audio/mods/impulsetracker.h"
+#include "audio/mods/universaltracker.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -220,6 +220,7 @@ TestExitStatus SoundSubsystem::modPlayback() {
 				mod = Audio::makeImpulseTrackerStream(&f, DisposeAfterUse::NO);
 		}
 #endif
+
 		if (!mod) {
 			Testsuite::displayMessage(Common::String::format("Could not load MOD file '%s'", music[i]));
 			f.close();
