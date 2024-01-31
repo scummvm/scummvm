@@ -70,7 +70,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy7ConditionalDialog
 		{ { kEv, 124, false }, { kEv, 204, false }, { kIn, 23, true } } },
 	{	0, 1065, "NES65",
 		{ { kEv, 323, true }, { kEv, 112, false } } },
-	{	0, 1063, "NES63",
+	{	0, 1066, "NES66",
 		{ { kEv, 456, true }, { kEv, 102, true }, { kEv, 119, false } } },
 	{	0, 1067, "NES67",
 		{ { kEv, 302, true }, { kEv, 102, true }, { kEv, 121, false } } },
