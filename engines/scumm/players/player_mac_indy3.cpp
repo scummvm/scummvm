@@ -205,6 +205,8 @@ public:
 	int getMusicTimer();
 	int getSoundStatus(int id) const;
 	void setQuality(int qual);
+	void saveLoadWithSerializer(Common::Serializer &ser);
+	void restoreAfterLoad();
 
 	void generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const;
 	uint32 getDriverDeviceRate(uint8 drvID) const;
@@ -1003,6 +1005,20 @@ void I3MPlayer::setQuality(int qual) {
 	_macstr->initDrivers();
 }
 
+void I3MPlayer::saveLoadWithSerializer(Common::Serializer &ser) {
+	ser.syncBytes(_soundUsage, _idRangeMax, VER(113));
+}
+
+void I3MPlayer::restoreAfterLoad() {
+	stopActiveSound();
+	for (int i = 0; i < _idRangeMax; ++i) {
+		if (_soundUsage[i] && isSong(i)) {
+			--_soundUsage[i];
+			startSound(i);
+		}
+	}
+}
+
 void I3MPlayer::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const {
 	for (Common::Array<I3MSoundDriver*>::const_iterator i = _drivers.begin(); i != _drivers.end(); ++i)
 		(*i)->feed(dst, len, type, expectStereo);
@@ -1140,7 +1156,8 @@ void I3MPlayer::stopSong() {
 	Common::StackLock lock(_mixer->mutex());
 	_mdrv->stop();
 	_songPlaying = false;
-	--_soundUsage[_lastSong];
+	if (_soundUsage[_lastSong])
+		--_soundUsage[_lastSong];
 	_lastSound = _lastSong = 0;
 }
 
@@ -1597,6 +1614,16 @@ int Player_Mac_Indy3::getSoundStatus(int id) const {
 void Player_Mac_Indy3::setQuality(int qual) {
 	if (_player != nullptr)
 		_player->setQuality(qual);
+}
+
+void Player_Mac_Indy3::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (_player != nullptr)
+		_player->saveLoadWithSerializer(ser);
+}
+
+void Player_Mac_Indy3::restoreAfterLoad() {
+	if (_player != nullptr)
+		_player->restoreAfterLoad();
 }
 
 #undef ASC_DEVICE_RATE

@@ -106,7 +106,14 @@ public:
 	/**
 	 * Save or load the music state.
 	 */
-	void saveLoadWithSerializer(Common::Serializer &ser) override {}
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+
+	/**
+	 * Performs necessary post-load operations on the sound engine, like restarting of music
+	 * tracks or looping pcm sounds. Some targets get this done via scripts but others don't.
+	 * Currently, this is used for FM-Towns and Mac.
+	 */
+	virtual void restoreAfterLoad() {}
 };
 
 } // End of namespace Scumm

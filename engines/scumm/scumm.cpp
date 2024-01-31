@@ -3215,7 +3215,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 	if (_completeScreenRedraw) {
 		clearCharsetMask();
 		_charset->_hasMask = false;
-		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
+		bool restoreSounds = true;
 
 		if (_game.id == GID_LOOM) {
 			if (_currentRoom == 70) {
@@ -3282,7 +3282,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 						runScript(38, false, false, args);
 					}
 
-					restoreFMTownsSounds = false;
+					restoreSounds = false;
 
 				} else if (VAR(saveLoadVar) == 2) {
 					// This is our old hack. If verbs should be shown restore them.
@@ -3345,7 +3345,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 					beginCutscene(args);
 					startScene(saveLoadRoom, nullptr, 0);
 					endCutscene();
-					restoreFMTownsSounds = false;
+					restoreSounds = false;
 				}
 			}
 
@@ -3356,8 +3356,8 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 			redrawVerbs();
 		}
 
-		if (restoreFMTownsSounds)
-			_townsPlayer->restoreAfterLoad();
+		if (restoreSounds)
+			_musicEngine->restoreAfterLoad();
 	}
 }
 
@@ -3409,8 +3409,7 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 		clearCharsetMask();
 		_charset->_hasMask = false;
 
-		if (_townsPlayer)
-			_townsPlayer->restoreAfterLoad();
+		_musicEngine->restoreAfterLoad();
 
 		redrawVerbs();
 

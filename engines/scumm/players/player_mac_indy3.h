@@ -51,6 +51,8 @@ public:
 	int getMusicTimer() override;
 	int getSoundStatus(int id) const override;
 	void setQuality(int qual) override;
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	void restoreAfterLoad();
 
 private:
 	Common::SharedPtr<I3MPlayer> _player;
