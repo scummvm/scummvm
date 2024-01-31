@@ -576,6 +576,7 @@ protected:
 		SO_DRAW_XPOS = 38,
 		SO_DRAW_YPOS = 39,
 		SO_PROPERTY = 42,
+		SO_PRIORITY = 43,
 		SO_MOVE = 44,
 		SO_FIND = 45,
 		SO_GENERAL_CLIP_STATE = 46,
@@ -588,9 +589,17 @@ protected:
 		SO_ANGLE = 53,
 		SO_SET_FLAGS = 54,
 		SO_INIT = 57,
+		SO_AT_IMAGE = 62,
+		SO_IMAGE = 63,
+		SO_AT = 65,
+		SO_ERASE = 68,
+		SO_TO = 70,
 		SO_STEP_DIST = 77,
 		SO_ANIMATION = 82,
 		SO_PALETTE = 86,
+		SO_SCALE = 92,
+		SO_ANIMATION_SPEED = 97,
+		SO_SHADOW = 98,
 		SO_UPDATE = 124,
 		SO_CLASS = 125,
 		SO_SORT = 129,
@@ -609,7 +618,11 @@ protected:
 		SO_FONT_RENDER = 143,
 		SO_CLOSE = 165,
 		SO_RENDER_ELLIPSE = 189,
+		SO_REC = 195,
 		SO_FONT_END = 196,
+		SO_ACTOR_VARIABLE = 198,
+		SO_BAK = 199,
+		SO_BAKREC = 200
 	};
 
 	struct VideoParameters {
@@ -701,8 +714,8 @@ protected:
 	void o90_atan2();
 	void o90_getSegmentAngle();
 	void o90_getActorData();
-	void o90_startScriptUnk();
-	void o90_jumpToScriptUnk();
+	void o90_priorityStartScript();
+	void o90_priorityChainScript();
 	void o90_videoOps();
 	void o90_getVideoData();
 	void o90_wizImageOps();
@@ -727,7 +740,7 @@ protected:
 	void o90_getObjectData();
 	void o90_getPaletteData();
 	void o90_paletteOps();
-	void o90_fontUnk();
+	void o90_fontEnum();
 	void o90_getActorAnimProgress();
 	void o90_kernelGetFunctions();
 	void o90_kernelSetFunctions();
