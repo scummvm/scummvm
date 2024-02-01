@@ -362,6 +362,8 @@ void Anim::update(float elapsed) {
 void Anim::drawCore(Math::Matrix4 trsf) {
 	if (_frameIndex < _frames.size()) {
 		const Common::String &frame = _frames[_frameIndex];
+		if(frame == "null") return;
+
 		bool flipX = _obj->getFacing() == FACE_LEFT;
 		if (_sheet.size() == 0) {
 			_sheet = _obj->_sheet;
