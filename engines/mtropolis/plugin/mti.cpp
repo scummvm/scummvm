@@ -416,7 +416,7 @@ class PrintModifierImageSupplier : public GUI::ImageAlbumImageSupplier {
 public:
 	PrintModifierImageSupplier(const Common::String &inputPath, bool isMacVersion);
 
-	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, byte (&outPalette)[256 * 3], GUI::ImageAlbumImageMetadata &outMetadata) override;
+	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) override;
 	void releaseImageSlot(uint slot) override;
 	uint getNumSlots() const override;
 	Common::U32String getDefaultFileNameForSlot(uint slot) const override;
@@ -437,7 +437,7 @@ PrintModifierImageSupplier::PrintModifierImageSupplier(const Common::String &inp
 		_decoder.reset(new Image::BitmapDecoder());
 }
 
-bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, byte (&outPalette)[256 * 3], GUI::ImageAlbumImageMetadata &outMetadata) {
+bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) {
 	Common::ScopedPtr<Common::SeekableReadStream> dataStream(createReadStreamForSlot(slot));
 
 	if (!dataStream)
@@ -454,7 +454,7 @@ bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surfac
 	outHasPalette = _decoder->hasPalette();
 
 	if (_decoder->hasPalette())
-		memcpy(outPalette + _decoder->getPaletteStartIndex() * 3, _decoder->getPalette(), _decoder->getPaletteColorCount() * 3);
+		outPalette.set(_decoder->getPalette(), _decoder->getPaletteStartIndex(), _decoder->getPaletteColorCount());
 
 	outMetadata = GUI::ImageAlbumImageMetadata();
 	outMetadata._orientation = GUI::kImageAlbumImageOrientationLandscape;

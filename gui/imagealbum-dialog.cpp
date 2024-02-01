@@ -21,6 +21,8 @@
 
 #include "gui/imagealbum-dialog.h"
 
+#include "graphics/palette.h"
+
 #include "gui/dialog.h"
 #include "gui/filebrowser-dialog.h"
 #include "gui/gui-manager.h"
@@ -164,11 +166,8 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 
 		const Graphics::Surface *surf = nullptr;
 		bool hasPalette = false;
-		byte palette[256 * 3];
+		Graphics::Palette palette(256);
 		ImageAlbumImageMetadata metadata;
-
-		for (byte &paletteByte : palette)
-			paletteByte = 0;
 
 		if (_imageSupplier->loadImageSlot(slot, surf, hasPalette, palette, metadata)) {
 			if (!canSaveImage) {
@@ -251,7 +250,7 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 			_imageSupplier->releaseImageSlot(slot);
 
 			if (rescaledGraphic.format.bytesPerPixel == 1)
-				rescaledGraphic.convertToInPlace(Graphics::createPixelFormat<888>(), palette, 0, 256);
+				rescaledGraphic.convertToInPlace(Graphics::createPixelFormat<888>(), palette.data, 0, 256);
 
 			int32 xCoord = (static_cast<int32>(_imageContainer->getWidth()) - static_cast<int32>(scaledWidth)) / 2u;
 			int32 yCoord = (static_cast<int32>(_imageContainer->getHeight()) - static_cast<int32>(scaledHeight)) / 2u;
@@ -379,11 +378,8 @@ void ImageAlbumDialog::saveImageInSlot(uint slot) {
 	if (needsConversion) {
 		const Graphics::Surface *surf = nullptr;
 		bool hasPalette = false;
-		byte palette[256 * 3];
+		Graphics::Palette palette(256);
 		ImageAlbumImageMetadata metadata;
-
-		for (byte &paletteByte : palette)
-			paletteByte = 0;
 
 		if (_imageSupplier->loadImageSlot(slot, surf, hasPalette, palette, metadata)) {
 			Common::ScopedPtr<Common::SeekableWriteStream> writeStream;
@@ -400,7 +396,7 @@ void ImageAlbumDialog::saveImageInSlot(uint slot) {
 					assert(saveCallback);
 
 					Common::FormatInfo::ImageSaveProperties saveProps;
-					saveCallback(*writeStream, *surf, hasPalette ? palette : nullptr, saveProps);
+					saveCallback(*writeStream, *surf, hasPalette ? palette.data : nullptr, saveProps);
 				} else {
 					warning("Failed to open image output stream");
 				}

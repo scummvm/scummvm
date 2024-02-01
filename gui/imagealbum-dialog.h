@@ -34,6 +34,7 @@ class SeekableReadStream;
 
 namespace Graphics {
 
+struct Palette;
 struct Surface;
 
 } // End of namespace Graphics
@@ -81,7 +82,7 @@ public:
 	 * @param outMetadata             Outputted metadata for the image
 	 * @return True if the image loaded successfully, false if it failed
 	 */
-	virtual bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, byte (&outPalette)[256 * 3], ImageAlbumImageMetadata &outMetadata) = 0;
+	virtual bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, ImageAlbumImageMetadata &outMetadata) = 0;
 
 	/**
 	 * @brief Releases any resources for an image loaded with loadImageSlot
