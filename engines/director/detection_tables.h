@@ -110,6 +110,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chemicus",			"Chemicus: Journey to the Other Side" },
 	{ "chopsuey",			"Chop Suey" },
 	{ "circus",				"Circus!" },
+	{ "clamps",				"The Interactive Encyclopedia of Clamps" },
 	{ "connections",		"Connections" },
 	{ "cracking",			"Cracking the Conspiracy" },
 	{ "criticalpath",		"Critical Path" },
@@ -6060,6 +6061,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 'チュウチュウたたき'
 	MACGAME1_l("chuchutataki", "", "xn--w8j9aa6za4nb00ac",    "c148f66ae3511fb88733102aa27efe7e", 106172, Common::JA_JPN, 501),
 	WINGAME1t_l("chuchutataki", "", "TYUUTYUU.EXE",    "bfb442750a6a264825fac3cc12a69d71", 1411220, Common::JA_JPN, 501),
+
+	MACGAME1("clamps", "", "Clamp256", "tr:b69f9cb79da512852ed383a1cfef14b9", 718125, 500),
+	WINGAME1("clamps", "", "clamps.exe", "t:6c8184462730c86387dff6e8c50e236a", 1394481, 500),
 
 	// Series includes Schubert, Tchaikovsky, Mozart, Vivaldi and probably more
 	WINGAME1_l("clasplusbee2", "", "BEE2_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1694421, Common::ES_ESP, 501),
