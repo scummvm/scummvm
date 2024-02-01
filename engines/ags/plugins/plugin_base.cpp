@@ -24,6 +24,7 @@
 #include "ags/plugins/ags_agi/ags_agi.h"
 #include "ags/plugins/ags_app_open_url/ags_app_open_url.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
+#include "ags/plugins/ags_bm_font_renderer/ags_bm_font_renderer.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
 #include "ags/plugins/ags_collision_detector/ags_collision_detector.h"
 #include "ags/plugins/ags_consoles/ags_consoles.h"
@@ -81,6 +82,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();
+
+	if (fname.equalsIgnoreCase("AGSBMFontRenderer"))
+		return new AGSBMFontRenderer::AGSBMFontRenderer();
 
 	if (fname.equalsIgnoreCase("AGSClipboard"))
 		return new AGSClipboard::AGSClipboard();
