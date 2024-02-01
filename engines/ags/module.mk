@@ -320,6 +320,7 @@ MODULE_OBJS = \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_app_open_url/ags_app_open_url.o \
 	plugins/ags_blend/ags_blend.o \
+	plugins/ags_bm_font_renderer/ags_bm_font_renderer.o \
 	plugins/ags_clipboard/ags_clipboard.o \
 	plugins/ags_collision_detector/ags_collision_detector.o \
 	plugins/ags_consoles/ags_consoles.o \
