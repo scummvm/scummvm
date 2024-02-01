@@ -353,7 +353,7 @@ protected:
 	/**
 	 * The game palette if in CLUT8 mode.
 	 */
-	byte _gamePalette[3 * 256];
+	Graphics::Palette _gamePalette;
 
 	//
 	// Overlay
@@ -444,7 +444,7 @@ protected:
 	/**
 	 * The special cursor palette in case enabled.
 	 */
-	byte _cursorPalette[3 * 256];
+	Graphics::Palette _cursorPalette;
 
 #ifdef USE_SCALERS
 	/**

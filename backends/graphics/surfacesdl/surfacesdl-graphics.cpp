@@ -1555,17 +1555,17 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::Path &filename) con
 
 	SDL_Palette *sdlPalette = _hwScreen->format->palette;
 	if (sdlPalette) {
-		byte palette[256 * 3];
+		Graphics::Palette palette(256);
 		for (int i = 0; i < sdlPalette->ncolors; i++) {
-			palette[(i * 3) + 0] = sdlPalette->colors[i].r;
-			palette[(i * 3) + 1] = sdlPalette->colors[i].g;
-			palette[(i * 3) + 2] = sdlPalette->colors[i].b;
+			palette.data[(i * 3) + 0] = sdlPalette->colors[i].r;
+			palette.data[(i * 3) + 1] = sdlPalette->colors[i].g;
+			palette.data[(i * 3) + 2] = sdlPalette->colors[i].b;
 		}
 
 #ifdef USE_PNG
-		success = Image::writePNG(out, data, palette);
+		success = Image::writePNG(out, data, palette.data);
 #else
-		success = Image::writeBMP(out, data, palette);
+		success = Image::writeBMP(out, data, palette.data);
 #endif
 	} else {
 #ifdef USE_PNG

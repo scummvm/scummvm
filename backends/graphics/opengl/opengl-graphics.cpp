@@ -72,11 +72,11 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	: _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
 	  _pipeline(nullptr), _stretchMode(STRETCH_FIT),
 	  _defaultFormat(), _defaultFormatAlpha(), _targetBuffer(nullptr),
-	  _gameScreen(nullptr), _overlay(nullptr),
+	  _gameScreen(nullptr), _gamePalette(256), _overlay(nullptr),
 	  _cursor(nullptr), _cursorMask(nullptr),
 	  _cursorHotspotX(0), _cursorHotspotY(0),
 	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-	  _cursorKeyColor(0), _cursorUseKey(true), _cursorDontScale(false), _cursorPaletteEnabled(false), _shakeOffsetScaled()
+	  _cursorKeyColor(0), _cursorUseKey(true), _cursorDontScale(false), _cursorPaletteEnabled(false), _cursorPalette(256), _shakeOffsetScaled()
 #if !USE_FORCED_GLES
 	  , _libretroPipeline(nullptr)
 #endif
@@ -88,7 +88,6 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	  , _scalerPlugins(ScalerMan.getPlugins())
 #endif
 	{
-	memset(_gamePalette, 0, sizeof(_gamePalette));
 	OpenGLContext.reset();
 }
 
@@ -520,7 +519,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #endif
 		assert(_gameScreen);
 		if (_gameScreen->hasPalette()) {
-			_gameScreen->setPalette(0, 256, _gamePalette);
+			_gameScreen->setPalette(0, 256, _gamePalette.data);
 		}
 
 #ifdef USE_SCALERS
@@ -1129,7 +1128,7 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 	// automatically enables the cursor palette.
 	_cursorPaletteEnabled = true;
 
-	memcpy(_cursorPalette + start * 3, colors, num * 3);
+	_cursorPalette.set(colors, start, num);
 	updateCursorPalette();
 }
 
@@ -1252,7 +1251,7 @@ void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *ic
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
 
-	memcpy(_gamePalette + start * 3, colors, num * 3);
+	_gamePalette.set(colors, start, num);
 	_gameScreen->setPalette(start, num, colors);
 
 	// We might need to update the cursor palette here.
@@ -1262,7 +1261,7 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
 	assert(_gameScreen->hasPalette());
 
-	memcpy(colors, _gamePalette + start * 3, num * 3);
+	_gamePalette.grab(colors, start, num);
 }
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
@@ -1668,9 +1667,9 @@ void OpenGLGraphicsManager::updateCursorPalette() {
 	}
 
 	if (_cursorPaletteEnabled) {
-		_cursor->setPalette(0, 256, _cursorPalette);
+		_cursor->setPalette(0, 256, _cursorPalette.data);
 	} else {
-		_cursor->setPalette(0, 256, _gamePalette);
+		_cursor->setPalette(0, 256, _gamePalette.data);
 	}
 
 	if (_cursorUseKey)
