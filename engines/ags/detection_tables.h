@@ -2904,6 +2904,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "stansrevenge", "Stan's Revenge" },
 	{ "starfreakers", "StarFreakers" },
 	{ "stargateadv", "Stargate Adventure" },
+	{ "stargateatlantis", "Stargate: The City of Atlantis" },
 	{ "stargatequizz", "Stargate Quizz" },
 	{ "stargatesgc", "Stargate SGC" },
 	{ "stargatesolitaire", "Stargate Solitaire" },
@@ -5002,6 +5003,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96800964),
 	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 430357136),
 	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 505116629),
+	DEMO_ENTRY_EN("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 3262982892),
 	DEMO_ENTRY_EN("phantomfellows", "TPF.ags", "9e8ca56e0a85a5d75ae4f6fd1f6e3e21", 502058945),  // Linux
 	DEMO_ENTRY_EN("phonoi", "phonee.ags", "111794f6fe829a478dc9a7d4cea239c8", 237652019),  // v0.2
 	DEMO_ENTRY_EN("platformerius", "platformerius.exe", "a3ad5fa6463c0116a2ac8986841860e0", 1512479),
@@ -5085,6 +5087,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("sram2", "sram2.ags", "f55362aed016ba06b3488b7162199853", 293852887),  // Linux
 	DEMO_ENTRY_EN("stablepeteandthejoust", "StablePete.exe", "b142b43c146c25443a1d155d441a6a81", 30046740),  // v1.0
 	DEMO_ENTRY_EN("stablepeteandthejoust", "StablePete.exe", "b142b43c146c25443a1d155d441a6a81", 30048075),  // v1.1
+	DEMO_ENTRY("stargateatlantis", "Atlantis.exe", "3b5285594848a90298056cfeda4b2074", 13706734),  // En-Fr
 	DEMO_ENTRY_EN("startrekmansion", "ST_BTTM.exe", "615e73fc1874e92d60a1996c2330ea36", 42877388),
 	DEMO_ENTRY_EN("startropy", "Startropy.exe", "86cc8cd9b7443b68a374ad5d002c2945", 333959797),
 	DEMO_ENTRY("stellarmessep1", "StellarMessShortDemo.exe", "a409703089eebbcfa13f0a22f6fb71ed", 8067581),  // En-Fr-De-Es
@@ -5945,6 +5948,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("deadphones", "Dead Phones.ags", "4e020fddbc4b134a4555ee2fdf99a65d", 23643965),  // En-De v1.1
 	GAME_ENTRY("deadphones", "Dead Phones.ags", "83f01cf9c2e4d22c46b67aac9b8d6e35", 23644134),  // En-De v1.3
 	GAME_ENTRY("deadphones", "Dead Phones.ags", "acc52371b95f5c314edeba87a0bd541c", 24362372),  // En-De
+	GAME_ENTRY("deadphones", "Dead Phones.ags", "0f84a139fa49977177b4f614050d532d", 24362476),  // En-De final
 	GAME_ENTRY_EN("deadpixels", "Dead Pixels.exe", "06a03fe35791b0578068ab1873455463", 4018372),
 	GAME_ENTRY_EN("deadroom", "Dead room.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 871409),
 	GAME_ENTRY_EN("deadsilence", "Game.exe", "5c5d4680def6954c0cd22e82dc07d4d4", 3370359),
