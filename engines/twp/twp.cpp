@@ -863,11 +863,6 @@ Common::Error TwpEngine::run() {
 						_pathNode.setMode(mode);
 					}
 					break;
-				case Common::KEYCODE_l:
-					if (control) {
-						_lightingNode.setVisible(!_lightingNode.isVisible());
-					}
-					break;
 				default:
 					break;
 				}

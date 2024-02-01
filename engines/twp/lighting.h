@@ -37,7 +37,7 @@ public:
 	virtual ~Lighting();
 
 	void setSpriteOffset(const Math::Vector2d& offset);
-	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &getNumTextures);
+	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &getNumTextures, bool flipX);
 
 	void update(const Lights& lights);
 
@@ -50,6 +50,7 @@ public:
 	Math::Vector2d _spritePosInSheet;
 	Math::Vector2d _spriteSizeRelToSheet;
 
+	bool _debug = false; // if true change the way we draw the lights to debug them easily
 	Color _ambientLight; // Ambient light color
 	int u_numberLights = 0;
 	float u_lightPos[3 * MAX_LIGHTS];
@@ -60,6 +61,9 @@ public:
 	float u_brightness[MAX_LIGHTS];
 	float u_cutoffRadius[MAX_LIGHTS];
 	float u_halfRadius[MAX_LIGHTS];
+
+private:
+	bool _currentDebug = false;
 };
 
 } // namespace Twp

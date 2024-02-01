@@ -3,6 +3,7 @@
 #include "twp/twp.h"
 #include "twp/thread.h"
 #include "twp/dialog.h"
+#include "twp/lighting.h"
 
 namespace Twp {
 
@@ -128,7 +129,7 @@ static void drawStack() {
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Stack");
+	ImGui::Begin("Stack", &state._showStack);
 	ImGui::BeginChild("ScrollingRegion");
 	SQInteger size = sq_gettop(g_engine->getVm());
 	ImGui::Text("size: %lld", size);
@@ -322,6 +323,7 @@ static void drawGeneral() {
 			Color overlay = room->_overlayNode.getOverlayColor();
 			if (ImGui::ColorEdit4("Overlay", overlay.v))
 				room->_overlayNode.setOverlayColor(overlay);
+			ImGui::Checkbox("Debug Lights", &g_engine->_lighting->_debug);
 			ImGui::ColorEdit4("Ambient Light", room->_lights._ambientLight.v);
 			for (int i = 0; i < room->_lights._numLights; ++i) {
 				Common::String ss = Common::String::format("Light %d", i + 1);
