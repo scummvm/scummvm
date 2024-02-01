@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+#include "graphics/palette.h"
+
 #include "image/image_decoder.h"
 
 namespace Common {
@@ -62,9 +64,9 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream);
 	void destroy();
 	const Graphics::Surface *getSurface() const { return _outputSurface; }
-	const byte *getPalette() const { return _palette; }
+	const byte *getPalette() const { return _palette.data; }
 	int getPaletteSize() const { return 256; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteColorCount() const { return _palette.size; }
 
 	struct PixMap {
 		uint32 baseAddr;
@@ -89,8 +91,7 @@ public:
 
 private:
 	Common::Rect _imageRect;
-	byte _palette[256 * 3];
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 	Graphics::Surface *_outputSurface;
 	bool _continueParsing;
 	int _version;

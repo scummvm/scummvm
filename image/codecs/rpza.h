@@ -22,6 +22,7 @@
 #ifndef IMAGE_CODECS_RPZA_H
 #define IMAGE_CODECS_RPZA_H
 
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "image/codecs/codec.h"
 
@@ -41,7 +42,7 @@ public:
 	Graphics::PixelFormat getPixelFormat() const override { return _format; }
 
 	bool containsPalette() const override { return _ditherPalette != 0; }
-	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette; }
+	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette->data; }
 	bool hasDirtyPalette() const override { return _dirtyPalette; }
 	bool canDither(DitherType type) const override;
 	void setDither(DitherType type, const byte *palette) override;
@@ -49,7 +50,7 @@ public:
 private:
 	Graphics::PixelFormat _format;
 	Graphics::Surface *_surface;
-	byte *_ditherPalette;
+	Graphics::Palette *_ditherPalette;
 	bool _dirtyPalette;
 	byte *_colorMap;
 	uint16 _width, _height;

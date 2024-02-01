@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Common{
@@ -56,15 +57,14 @@ public:
 	void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	const byte *getPalette() const { return _palette.data; }
+	uint16 getPaletteColorCount() const { return _palette.size; }
 
 private:
 	void decodeRLE(Common::SeekableReadStream &stream, byte *dst, uint32 bytesPerScanline, bool compressed);
 
 	Graphics::Surface *_surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 };
 /** @} */
 } // End of namespace Image

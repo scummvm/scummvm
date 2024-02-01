@@ -521,8 +521,8 @@ bool QTRLEDecoder::canDither(DitherType type) const {
 void QTRLEDecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
-	_ditherPalette = new byte[256 * 3];
-	memcpy(_ditherPalette, palette, 256 * 3);
+	_ditherPalette = new Graphics::Palette(256);
+	_ditherPalette->set(palette, 0, 256);
 	_dirtyPalette = true;
 
 	delete[] _colorMap;

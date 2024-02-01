@@ -22,6 +22,7 @@
 #ifndef IMAGE_CODECS_QTRLE_H
 #define IMAGE_CODECS_QTRLE_H
 
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "image/codecs/codec.h"
 
@@ -41,7 +42,7 @@ public:
 	Graphics::PixelFormat getPixelFormat() const override;
 
 	bool containsPalette() const override { return _ditherPalette != 0; }
-	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette; }
+	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette->data; }
 	bool hasDirtyPalette() const override { return _dirtyPalette; }
 	bool canDither(DitherType type) const override;
 	void setDither(DitherType type, const byte *palette) override;
@@ -51,7 +52,7 @@ private:
 	Graphics::Surface *_surface;
 	uint16 _width, _height;
 	uint32 _paddedWidth;
-	byte *_ditherPalette;
+	Graphics::Palette *_ditherPalette;
 	bool _dirtyPalette;
 	byte *_colorMap;
 
