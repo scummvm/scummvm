@@ -23,6 +23,8 @@
 #include "common/timer.h"
 #include "common/file.h"
 
+#include "graphics/palette.h"
+
 #include "gui/dialog.h"
 #include "gui/imagealbum-dialog.h"
 
@@ -192,7 +194,7 @@ class ImageAlbumImageSupplier : public GUI::ImageAlbumImageSupplier {
 public:
 	void addFile(const Common::Path &path, Common::FormatInfo::FormatID format, bool dontReportFormat);
 
-	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, byte (&outPalette)[256 * 3], GUI::ImageAlbumImageMetadata &outMetadata) override;
+	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) override;
 	void releaseImageSlot(uint slot) override;
 	bool getFileFormatForImageSlot(uint slot, Common::FormatInfo::FormatID &outFormat) const override;
 	Common::SeekableReadStream *createReadStreamForSlot(uint slot) override;
@@ -217,7 +219,7 @@ void ImageAlbumImageSupplier::addFile(const Common::Path &path, Common::FormatIn
 	_slots.push_back(FileInfo(path, format, dontReportFormat));
 }
 
-bool ImageAlbumImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, byte (&outPalette)[256 * 3], GUI::ImageAlbumImageMetadata &outMetadata) {
+bool ImageAlbumImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) {
 
 	FileInfo &fi = _slots[slot];
 
@@ -244,7 +246,7 @@ bool ImageAlbumImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *
 	outSurface = fi._decoder->getSurface();
 	outHasPalette = fi._decoder->hasPalette();
 	if (fi._decoder->hasPalette())
-		memcpy(outPalette, fi._decoder->getPalette() + fi._decoder->getPaletteStartIndex() * 3, fi._decoder->getPaletteColorCount() * 3);
+		outPalette.set(fi._decoder->getPalette(), fi._decoder->getPaletteStartIndex(), fi._decoder->getPaletteColorCount());
 	outMetadata = GUI::ImageAlbumImageMetadata();
 
 	return true;
