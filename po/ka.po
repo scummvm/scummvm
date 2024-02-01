@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-28 01:42+0000\n"
+"PO-Revision-Date: 2024-02-01 14:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -8550,7 +8550,7 @@ msgstr "მისვლა"
 #: engines/scumm/help.cpp:231 engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
-msgstr ""
+msgstr "აღება"
 
 #: engines/scumm/help.cpp:146 engines/scumm/help.cpp:171
 msgid "What is"
@@ -9546,11 +9546,11 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:343
 msgid "Change Behaviour"
-msgstr ""
+msgstr "ქცევის შეცვლა"
 
 #: engines/twine/metaengine.cpp:355
 msgid "Options Menu"
-msgstr ""
+msgstr "პარამეტრების მენიუ"
 
 #: engines/twine/metaengine.cpp:367
 msgid "Use Selected Object"
@@ -9566,7 +9566,7 @@ msgstr "უკან"
 
 #: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
-msgstr ""
+msgstr "პროტოპაკის გამოყენება"
 
 #: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
