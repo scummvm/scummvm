@@ -326,16 +326,16 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 void CfoDecoder::CfoVideoTrack::fadeOut() {
 	for (int j = 0; j < 64; j++) {
 		for (int i = 0; i < 256; i++) {
-			if (_palette[i * 3 + 0] > 0)
-				--_palette[i * 3 + 0];
-			if (_palette[i * 3 + 1] > 0)
-				--_palette[i * 3 + 1];
-			if (_palette[i * 3 + 2] > 0)
-				--_palette[i * 3 + 2];
+			if (_palette.data[i * 3 + 0] > 0)
+				--_palette.data[i * 3 + 0];
+			if (_palette.data[i * 3 + 1] > 0)
+				--_palette.data[i * 3 + 1];
+			if (_palette.data[i * 3 + 2] > 0)
+				--_palette.data[i * 3 + 2];
 		}
 
 		//setScummVMPalette(_palette, 0, 256);
-		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+		g_system->getPaletteManager()->setPalette(_palette.data, 0, 256);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}

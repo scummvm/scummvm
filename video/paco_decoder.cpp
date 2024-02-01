@@ -167,18 +167,18 @@ const byte* PacoDecoder::getPalette(){
 
 const byte* PacoDecoder::PacoVideoTrack::getPalette() const {
 	_dirtyPalette = false;
-	return _palette;
+	return _palette.data;
 }
 
 PacoDecoder::PacoVideoTrack::PacoVideoTrack(
-	uint16 frameRate, uint16 frameCount, uint16 width, uint16 height) {
+	uint16 frameRate, uint16 frameCount, uint16 width, uint16 height) : _palette(256) {
 	_curFrame = 0;
 	_frameRate = frameRate;
 	_frameCount = frameCount;
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_palette = const_cast<byte *>(quickTimeDefaultPalette256);
+	_palette.set(quickTimeDefaultPalette256, 0, 256);
 	_dirtyPalette = true;
 }
 
@@ -246,12 +246,11 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 void PacoDecoder::PacoVideoTrack::handlePalette(Common::SeekableReadStream *fileStream) {
 	uint32 header = fileStream->readUint32BE();
 	if (header == 0x30000000) { // default quicktime palette
-		_palette = const_cast<byte *>(quickTimeDefaultPalette256);
+		_palette.set(quickTimeDefaultPalette256, 0, 256);
 	} else {
 		fileStream->readUint32BE(); // 4 bytes of 00
-		_palette = new byte[256 * 3]();
 		for (int i = 0; i < 256 * 3; i++){
-			_palette[i] = fileStream->readByte();
+			_palette.data[i] = fileStream->readByte();
 		}
 	}
 	_dirtyPalette = true;

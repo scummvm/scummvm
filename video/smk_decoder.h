@@ -26,6 +26,7 @@
 #include "common/bitstream.h"
 #include "common/rational.h"
 #include "common/rect.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -102,7 +103,7 @@ protected:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() { return _surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const { _dirtyPalette = false; return _palette.data; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		void readTrees(SmackerBitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
@@ -121,7 +122,7 @@ protected:
 		Common::Rational _frameRate;
 		uint32 _flags, _version;
 
-		byte _palette[3 * 256];
+		Graphics::Palette _palette;
 		mutable bool _dirtyPalette;
 
 		int _curFrame;

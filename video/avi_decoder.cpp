@@ -23,6 +23,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/palette.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -331,16 +333,16 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (bmInfo.clrUsed == 0)
 			bmInfo.clrUsed = 256;
 
-		byte *initialPalette = 0;
+		Graphics::Palette *initialPalette = nullptr;
 
 		if (bmInfo.bitCount == 8) {
-			initialPalette = new byte[256 * 3]();
+			initialPalette = new Graphics::Palette(256);
 
-			byte *palette = initialPalette;
+			Graphics::Palette *palette = initialPalette;
 			for (uint32 i = 0; i < bmInfo.clrUsed; i++) {
-				palette[i * 3 + 2] = _fileStream->readByte();
-				palette[i * 3 + 1] = _fileStream->readByte();
-				palette[i * 3] = _fileStream->readByte();
+				palette->data[i * 3 + 2] = _fileStream->readByte();
+				palette->data[i * 3 + 1] = _fileStream->readByte();
+				palette->data[i * 3] = _fileStream->readByte();
 				_fileStream->readByte();
 			}
 		}
@@ -945,19 +947,21 @@ VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
+AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, Graphics::Palette *initialPalette)
 		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette) {
 	_videoCodec = createCodec();
 	_lastFrame = 0;
 	_curFrame = -1;
 	_reversed = false;
+	_palette = new Graphics::Palette(256);
 
 	useInitialPalette();
 }
 
 AVIDecoder::AVIVideoTrack::~AVIVideoTrack() {
 	delete _videoCodec;
-	delete[] _initialPalette;
+	delete _initialPalette;
+	delete _palette;
 }
 
 void AVIDecoder::AVIVideoTrack::decodeFrame(Common::SeekableReadStream *stream) {
@@ -997,9 +1001,9 @@ void AVIDecoder::AVIVideoTrack::loadPaletteFromChunkRaw(Common::SeekableReadStre
 	assert(firstEntry >= 0);
 	assert(numEntries > 0);
 	for (uint16 i = firstEntry; i < numEntries + firstEntry; i++) {
-		_palette[i * 3] = chunk->readByte();
-		_palette[i * 3 + 1] = chunk->readByte();
-		_palette[i * 3 + 2] = chunk->readByte();
+		_palette->data[i * 3] = chunk->readByte();
+		_palette->data[i * 3 + 1] = chunk->readByte();
+		_palette->data[i * 3 + 2] = chunk->readByte();
 		chunk->readByte(); // Flags that don't serve us any purpose
 	}
 	_dirtyPalette = true;
@@ -1025,7 +1029,7 @@ void AVIDecoder::AVIVideoTrack::useInitialPalette() {
 	_dirtyPalette = false;
 
 	if (_initialPalette) {
-		memcpy(_palette, _initialPalette, sizeof(_palette));
+		_palette->set(*_initialPalette, 0, 256);
 		_dirtyPalette = true;
 	}
 }
@@ -1064,7 +1068,7 @@ const byte *AVIDecoder::AVIVideoTrack::getPalette() const {
 		return _videoCodec->getPalette();
 
 	_dirtyPalette = false;
-	return _palette;
+	return _palette->data;
 }
 
 bool AVIDecoder::AVIVideoTrack::hasDirtyPalette() const {

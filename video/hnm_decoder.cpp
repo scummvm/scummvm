@@ -277,13 +277,11 @@ HNMDecoder::HNMVideoTrack::HNMVideoTrack(uint32 frameCount,
 HNMDecoder::HNM45VideoTrack::HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize,
         uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate,
         const byte *initialPalette) :
-	HNMVideoTrack(frameCount, regularFrameDelayMs, audioSampleRate) {
+	HNMVideoTrack(frameCount, regularFrameDelayMs, audioSampleRate), _palette(256) {
 
 	// Get the currently loaded palette for undefined colors
 	if (initialPalette) {
-		memcpy(_palette, initialPalette, 256 * 3);
-	} else {
-		memset(_palette, 0, 256 * 3);
+		_palette.set(initialPalette, 0, 256);
 	}
 	_dirtyPalette = true;
 
@@ -355,7 +353,7 @@ void HNMDecoder::HNM45VideoTrack::decodePalette(byte *data, uint32 size) {
 			error("Not enough data for palette");
 		}
 
-		byte *palette_ptr = &_palette[start * 3];
+		byte *palette_ptr = &_palette.data[start * 3];
 		for (; count > 0; count--) {
 			byte r = *(data++);
 			byte g = *(data++);

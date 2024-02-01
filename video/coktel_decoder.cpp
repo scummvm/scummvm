@@ -28,6 +28,8 @@
 #include "common/types.h"
 #include "common/util.h"
 
+#include "graphics/palette.h"
+
 #include "video/coktel_decoder.h"
 
 #include "image/codecs/indeo3.h"
@@ -55,11 +57,11 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	_pauseStartTime(0), _isPaused(false) {
 
 	assert(_mixer);
-
-	memset(_palette, 0, 768);
+	_palette = new Graphics::Palette(256);
 }
 
 CoktelDecoder::~CoktelDecoder() {
+	delete _palette;
 }
 
 bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
@@ -308,7 +310,7 @@ uint32 CoktelDecoder::getFrameCount() const {
 
 const byte *CoktelDecoder::getPalette() {
 	_paletteDirty = false;
-	return _palette;
+	return _palette->data;
 }
 
 bool CoktelDecoder::hasDirtyPalette() const {
@@ -1115,7 +1117,7 @@ bool IMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// Palette
 	for (int i = 0; i < 768; i++)
-		_palette[i] = _stream->readByte() << 2;
+		_palette->data[i] = _stream->readByte() << 2;
 
 	_paletteDirty = true;
 
@@ -1396,7 +1398,7 @@ void IMDDecoder::processFrame() {
 			_paletteDirty = true;
 
 			for (int i = 0; i < 768; i++)
-				_palette[i] = _stream->readByte() << 2;
+				_palette->data[i] = _stream->readByte() << 2;
 
 			cmd = _stream->readUint16LE();
 		}
@@ -1513,7 +1515,7 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		int count = MIN((255 - index) * 3, 48);
 		for (int i = 0; i < count; i++)
-			_palette[index * 3 + i] = dataPtr[i] << 2;
+			_palette->data[index * 3 + i] = dataPtr[i] << 2;
 
 		dataPtr  += 48;
 		dataSize -= 49;
@@ -1949,7 +1951,7 @@ bool VMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (_features & kFeaturesPalette) {
 		for (int i = 0; i < 768; i++)
-			_palette[i] = _stream->readByte() << 2;
+			_palette->data[i] = _stream->readByte() << 2;
 
 		_paletteDirty = true;
 	}
@@ -2372,7 +2374,7 @@ void VMDDecoder::processFrame() {
 				uint8 count = _stream->readByte();
 
 				for (int j = 0; j < ((count + 1) * 3); j++)
-					_palette[index * 3 + j] = _stream->readByte() << 2;
+					_palette->data[index * 3 + j] = _stream->readByte() << 2;
 
 				_stream->skip((255 - count) * 3);
 

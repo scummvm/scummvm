@@ -32,6 +32,7 @@
 
 #include "audio/decoders/quicktime_intern.h"
 #include "common/scummsys.h"
+#include "graphics/palette.h"
 
 #include "video/video_decoder.h"
 
@@ -100,7 +101,7 @@ private:
 		uint16 _bitsPerSample;
 		char _codecName[32];
 		uint16 _colorTableId;
-		byte *_palette;
+		Graphics::Palette _palette;
 		Image::Codec *_videoCodec;
 	};
 
@@ -166,7 +167,7 @@ private:
 		bool _reversed;
 
 		// Forced dithering of frames
-		byte *_forcedDitherPalette;
+		Graphics::Palette *_forcedDitherPalette;
 		byte *_ditherTable;
 		Graphics::Surface *_ditherFrame;
 		const Graphics::Surface *forceDither(const Graphics::Surface &frame);

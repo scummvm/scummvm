@@ -588,7 +588,7 @@ VideoDecoder::AudioTrack *SmackerDecoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) {
+SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) : _palette(256) {
 	_surface = new Graphics::Surface();
 	_surface->create(width, height * ((flags & 6) ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
 	_dirtyBlocks.set_size(width * height / 16);
@@ -599,7 +599,6 @@ SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height
 	_curFrame = -1;
 	_dirtyPalette = false;
 	_MMapTree = _MClrTree = _FullTree = _TypeTree = 0;
-	memset(_palette, 0, 3 * 256);
 }
 
 SmackerDecoder::SmackerVideoTrack::~SmackerVideoTrack() {
@@ -788,10 +787,9 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 	stream->read(chunk, len);
 	byte *p = chunk;
 
-	byte oldPalette[3 * 256];
-	memcpy(oldPalette, _palette, 3 * 256);
+	Graphics::Palette oldPalette = _palette;
 
-	byte *pal = _palette;
+	byte *pal = _palette.data;
 
 	int sz = 0;
 	byte b0;
@@ -806,9 +804,9 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 			sz += c;
 
 			while (c--) {
-				*pal++ = oldPalette[s + 0];
-				*pal++ = oldPalette[s + 1];
-				*pal++ = oldPalette[s + 2];
+				*pal++ = oldPalette.data[s + 0];
+				*pal++ = oldPalette.data[s + 1];
+				*pal++ = oldPalette.data[s + 2];
 				s += 3;
 			}
 		} else {                       // top 2 bits are 00

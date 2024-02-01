@@ -40,6 +40,7 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
+struct Palette;
 struct PixelFormat;
 }
 
@@ -202,7 +203,7 @@ protected:
 
 	class AVIVideoTrack : public FixedRateVideoTrack {
 	public:
-		AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette = 0);
+		AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, Graphics::Palette *initialPalette = nullptr);
 		~AVIVideoTrack();
 
 		void decodeFrame(Common::SeekableReadStream *stream);
@@ -269,8 +270,8 @@ protected:
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
-		byte _palette[3 * 256];
-		byte *_initialPalette;
+		Graphics::Palette *_palette;
+		Graphics::Palette *_initialPalette;
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
 		bool _reversed;

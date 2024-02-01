@@ -50,6 +50,7 @@ class QueuingAudioStream;
 }
 
 namespace Graphics {
+struct Palette;
 struct PixelFormat;
 }
 
@@ -230,7 +231,7 @@ protected:
 
 	uint32 _startTime;
 
-	byte _palette[768];
+	Graphics::Palette *_palette;
 	bool _paletteDirty;
 
 	bool _isDouble;

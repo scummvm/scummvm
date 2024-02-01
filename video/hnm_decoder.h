@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "common/rational.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
@@ -92,7 +93,7 @@ private:
 		uint16 getHeight() const override { return _surface.h; }
 		Graphics::PixelFormat getPixelFormat() const override { return _surface.format; }
 		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
-		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette.data; }
 		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		virtual void newFrame(uint32 frameDelay) override;
@@ -108,7 +109,7 @@ private:
 
 		Graphics::Surface _surface;
 
-		byte _palette[256 * 3];
+		Graphics::Palette _palette;
 		mutable bool _dirtyPalette;
 
 		byte *_frameBufferC;

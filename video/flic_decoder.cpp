@@ -84,13 +84,12 @@ void FlicDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((FlicVideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
-FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader) {
+FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader) : _palette(256) {
 	_fileStream = stream;
 	_frameCount = frameCount;
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_palette = new byte[3 * 256]();
 	_dirtyPalette = false;
 
 	_curFrame = -1;
@@ -103,7 +102,6 @@ FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, 
 
 FlicDecoder::FlicVideoTrack::~FlicVideoTrack() {
 	delete _fileStream;
-	delete[] _palette;
 
 	_surface->free();
 	delete _surface;
@@ -363,7 +361,7 @@ void FlicDecoder::FlicVideoTrack::unpackPalette(uint8 *data) {
 	if (0 == READ_LE_UINT16(data)) { //special case
 		data += 2;
 		for (int i = 0; i < 256; ++i) {
-			memcpy(_palette + i * 3, data + i * 3, 3);
+			_palette.set(data + i * 3, i, 1);
 		}
 	} else {
 		uint8 palPos = 0;
@@ -373,7 +371,7 @@ void FlicDecoder::FlicVideoTrack::unpackPalette(uint8 *data) {
 			uint8 change = *data++;
 
 			for (int i = 0; i < change; ++i) {
-				memcpy(_palette + (palPos + i) * 3, data + i * 3, 3);
+				_palette.set(data + i * 3, palPos + i, 1);
 			}
 
 			palPos += change;

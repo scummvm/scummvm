@@ -23,6 +23,7 @@
 #define VIDEO_DXA_DECODER_H
 
 #include "common/rational.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
 
@@ -68,7 +69,7 @@ private:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const { _dirtyPalette = false; return _palette.data; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		void setFrameStartPos();
@@ -103,7 +104,7 @@ private:
 		uint16 _width, _height;
 		uint32 _frameRate;
 		uint32 _frameCount;
-		byte _palette[256 * 3];
+		Graphics::Palette _palette;
 		mutable bool _dirtyPalette;
 		int _curFrame;
 		uint32 _frameStartOffset;
