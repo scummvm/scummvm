@@ -223,6 +223,7 @@ public:
 	ShaderParams _shaderParams;
 	HotspotMarkerNode _hotspotMarker;
 	unique_ptr<FadeShader> _fadeShader;
+	LightingNode _lightingNode;
 
 private:
 	Gfx _gfx;
@@ -231,7 +232,6 @@ private:
 	SentenceNode _sentence;
 	WalkboxNode _walkboxNode;
 	PathNode _pathNode;
-	LightingNode _lightingNode;
 	Shader _bwShader;
 	Shader _ghostShader;
 	Shader _sepiaShader;

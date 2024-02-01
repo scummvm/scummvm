@@ -1,164 +1,162 @@
 #include "twp/lighting.h"
 #include "twp/room.h"
+#include "twp/twp.h"
 #include "graphics/opengl/debug.h"
 #include "graphics/opengl/system_headers.h"
 #include "common/math.h"
 
 namespace Twp {
 
-Lighting::Lighting() {
-	const char *vshader = R"(#version 110
-	uniform mat4 u_transform;
-	attribute vec2 a_position;
-	attribute vec4 a_color;
-	attribute vec2 a_texCoords;
-	varying vec4 v_color;
-	varying vec2 v_texCoords;
-	void main() {
-		gl_Position = u_transform * vec4(a_position, 0.0, 1.0);
-		v_color = a_color;
-		v_texCoords = a_texCoords;
-	})";
+static const char *fshader = R"(#version 110
+#ifdef GL_ES
+	precision highp float;
+#endif
 
-	const char *fshader = R"(#version 110
-	varying vec2 v_texCoords;
-	varying vec4 v_color;
+varying vec2 v_texCoords;
+varying vec4 v_color;
 
-	uniform sampler2D u_texture;
+uniform sampler2D u_texture;
 
-	uniform vec2 u_contentSize;
-	uniform vec3 u_ambientColor;
-	uniform vec2 u_spritePosInSheet;
-	uniform vec2 u_spriteSizeRelToSheet;
-	uniform vec2 u_spriteOffset;
+uniform vec2 u_contentSize;
+uniform vec3 u_ambientColor;
+uniform vec2 u_spritePosInSheet;
+uniform vec2 u_spriteSizeRelToSheet;
+uniform vec2 u_spriteOffset;
 
-	uniform int u_numberLights;
-	uniform vec3 u_lightPos[50];
-	uniform vec3 u_lightColor[50];
-	uniform float u_brightness[50];
-	uniform float u_cutoffRadius[50];
-	uniform float u_halfRadius[50];
-	uniform float u_coneCosineHalfConeAngle[50];
-	uniform float u_coneFalloff[50];
-	uniform vec2 u_coneDirection[50];
+uniform int u_numberLights;
+uniform vec3 u_lightPos[50];
+uniform vec3 u_lightColor[50];
+uniform float u_brightness[50];
+uniform float u_cutoffRadius[50];
+uniform float u_halfRadius[50];
+uniform float u_coneCosineHalfConeAngle[50];
+uniform float u_coneFalloff[50];
+uniform vec2 u_coneDirection[50];
 
-	void main(void) {
-		vec4 texColor = texture2D(u_texture, v_texCoords);
+void main(void) {
+	vec4 texColor = texture2D(u_texture, v_texCoords);
 
-		vec2 spriteTexCoord = (v_texCoords - u_spritePosInSheet) / u_spriteSizeRelToSheet; // [0..1]
-		vec2 pixelPos = spriteTexCoord * u_contentSize + u_spriteOffset;                   // [0..origSize]
-		vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
+	vec2 spriteTexCoord = (v_texCoords - u_spritePosInSheet) / u_spriteSizeRelToSheet; // [0..1]
+	vec2 pixelPos = spriteTexCoord * u_contentSize + u_spriteOffset;                   // [0..origSize]
+	vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
 
-		vec3 diffuse = vec3(0, 0, 0);
-		for (int i = 0; i < u_numberLights; i++) {
-			vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
-			float coneValue = dot(normalize(-lightVec), u_coneDirection[i]);
-			if (coneValue >= u_coneCosineHalfConeAngle[i]) {
-				float intercept = u_cutoffRadius[i] * u_halfRadius[i];
-				float dx_1 = 0.5 / intercept;
-				float dx_2 = 0.5 / (u_cutoffRadius[i] - intercept);
-				float offset = 0.5 + intercept * dx_2;
+	vec3 diffuse = vec3(0, 0, 0);
+	for (int i = 0; i < u_numberLights; i++) {
+		vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
+		float coneValue = dot(normalize(-lightVec), u_coneDirection[i]);
+		if (coneValue >= u_coneCosineHalfConeAngle[i]) {
+			float intercept = u_cutoffRadius[i] * u_halfRadius[i];
+			float dx_1 = 0.5 / intercept;
+			float dx_2 = 0.5 / (u_cutoffRadius[i] - intercept);
+			float offset = 0.5 + intercept * dx_2;
 
-				float lightDist = length(lightVec);
-				float falloffTermNear = clamp((1.0 - lightDist * dx_1), 0.0, 1.0);
-				float falloffTermFar = clamp((offset - lightDist * dx_2), 0.0, 1.0);
-				float falloffSelect = step(intercept, lightDist);
-				float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
-				float spotLight = u_brightness[i] * falloffTerm;
+			float lightDist = length(lightVec);
+			float falloffTermNear = clamp((1.0 - lightDist * dx_1), 0.0, 1.0);
+			float falloffTermFar = clamp((offset - lightDist * dx_2), 0.0, 1.0);
+			float falloffSelect = step(intercept, lightDist);
+			float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
+			float spotLight = u_brightness[i] * falloffTerm;
 
-				vec3 ltdiffuse = vec3(u_brightness[i] * falloffTerm) * u_lightColor[i];
+			vec3 ltdiffuse = vec3(u_brightness[i] * falloffTerm) * u_lightColor[i];
 
-				float coneRange = 1.0 - u_coneCosineHalfConeAngle[i];
-				float halfConeRange = coneRange * u_coneFalloff[i];
-				float conePos = 1.0 - coneValue;
-				float coneFalloff = 1.0;
-				if (conePos > halfConeRange) {
-					coneFalloff = 1.0 - ((conePos - halfConeRange) / (coneRange - halfConeRange));
-				}
-
-				diffuse += ltdiffuse * coneFalloff;
-				;
+			float coneRange = 1.0 - u_coneCosineHalfConeAngle[i];
+			float halfConeRange = coneRange * u_coneFalloff[i];
+			float conePos = 1.0 - coneValue;
+			float coneFalloff = 1.0;
+			if (conePos > halfConeRange) {
+				coneFalloff = 1.0 - ((conePos - halfConeRange) / (coneRange - halfConeRange));
 			}
+
+			diffuse += ltdiffuse * coneFalloff;
+			;
 		}
-		vec3 finalLight = (diffuse);
-		vec4 finalCol = texColor * v_color;
-		finalCol.rgb = finalCol.rgb * u_ambientColor;
-		gl_FragColor = vec4(finalCol.rgb + diffuse, finalCol.a);
-	})";
+	}
+	vec4 finalCol = texColor * v_color;
+	vec3 finalLight = (diffuse + u_ambientColor);
+	finalLight = min(finalLight, vec3(1, 1, 1));
+	gl_FragColor = vec4(finalCol.rgb * finalLight, finalCol.a);
+})";
 
-// 	const char *fshader = R"(#version 110
-// #ifdef GL_ES
-// precision highp float;
-// #endif
+static const char *debug_fshader = R"(#version 110
+varying vec2 v_texCoords;
+varying vec4 v_color;
 
-// varying vec2 v_texCoords;
-// varying vec4 v_color;
+uniform sampler2D u_texture;
 
-// uniform sampler2D u_texture;
+uniform vec2 u_contentSize;
+uniform vec3 u_ambientColor;
+uniform vec2 u_spritePosInSheet;
+uniform vec2 u_spriteSizeRelToSheet;
+uniform vec2 u_spriteOffset;
 
-// uniform vec2  u_contentSize;
-// uniform vec3  u_ambientColor;
-// uniform vec2 u_spritePosInSheet;
-// uniform vec2 u_spriteSizeRelToSheet;
-// uniform vec2 u_spriteOffset;
+uniform int u_numberLights;
+uniform vec3 u_lightPos[50];
+uniform vec3 u_lightColor[50];
+uniform float u_brightness[50];
+uniform float u_cutoffRadius[50];
+uniform float u_halfRadius[50];
+uniform float u_coneCosineHalfConeAngle[50];
+uniform float u_coneFalloff[50];
+uniform vec2 u_coneDirection[50];
 
-// uniform int  u_numberLights;
-// uniform vec3  u_lightPos[50];
-// uniform vec3  u_lightColor[50];
-// uniform float u_brightness[50];
-// uniform float u_cutoffRadius[50];
-// uniform float u_halfRadius[50];
-// uniform float u_coneCosineHalfConeAngle[50];
-// uniform float u_coneFalloff[50];
-// uniform vec2  u_coneDirection[50];
+void main(void) {
+	vec4 texColor = texture2D(u_texture, v_texCoords);
 
-// void main(void)
-// {
-//     vec4 texColor = texture2D(u_texture, v_texCoords);
+	vec2 spriteTexCoord = (v_texCoords - u_spritePosInSheet) / u_spriteSizeRelToSheet; // [0..1]
+	vec2 pixelPos = spriteTexCoord * u_contentSize + u_spriteOffset;                   // [0..origSize]
+	vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
 
-//     vec2 spriteTexCoord = (v_texCoords - u_spritePosInSheet) / u_spriteSizeRelToSheet; // [0..1]
-//     vec2 pixelPos = spriteTexCoord * u_contentSize + u_spriteOffset; // [0..origSize]
-//     vec2 curPixelPosInLocalSpace = vec2(pixelPos.x, -pixelPos.y);
+	vec3 diffuse = vec3(0, 0, 0);
+	for (int i = 0; i < u_numberLights; i++) {
+		vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
+		float coneValue = dot(normalize(-lightVec), u_coneDirection[i]);
+		if (coneValue >= u_coneCosineHalfConeAngle[i]) {
+			float intercept = u_cutoffRadius[i] * u_halfRadius[i];
+			float dx_1 = 0.5 / intercept;
+			float dx_2 = 0.5 / (u_cutoffRadius[i] - intercept);
+			float offset = 0.5 + intercept * dx_2;
 
-//     vec3 diffuse = vec3(0,0,0);
-//     for ( int i = 0; i < u_numberLights; i ++)
-//     {
-//         vec2 lightVec = curPixelPosInLocalSpace.xy - u_lightPos[i].xy;
-//         float coneValue = dot( normalize(-lightVec), u_coneDirection[i] );
-//         if ( coneValue >= u_coneCosineHalfConeAngle[i] )
-//         {
-//             float intercept = u_cutoffRadius[i] * u_halfRadius[i];
-//             float dx_1 = 0.5 / intercept;
-//             float dx_2 = 0.5 / (u_cutoffRadius[i] - intercept);
-//             float offset = 0.5 + intercept * dx_2;
+			float lightDist = length(lightVec);
+			float falloffTermNear = clamp((1.0 - lightDist * dx_1), 0.0, 1.0);
+			float falloffTermFar = clamp((offset - lightDist * dx_2), 0.0, 1.0);
+			float falloffSelect = step(intercept, lightDist);
+			float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
+			float spotLight = u_brightness[i] * falloffTerm;
 
-//             float lightDist = length(lightVec);
-//             float falloffTermNear = clamp((1.0 - lightDist * dx_1), 0.0, 1.0);
-//             float falloffTermFar  = clamp((offset - lightDist * dx_2), 0.0, 1.0);
-//             float falloffSelect = step(intercept, lightDist);
-//             float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
-//             float spotLight = u_brightness[i] * falloffTerm;
+			vec3 ltdiffuse = vec3(u_brightness[i] * falloffTerm) * u_lightColor[i];
 
-//             vec3 ltdiffuse = vec3(u_brightness[i] * falloffTerm) * u_lightColor[i];
+			float coneRange = 1.0 - u_coneCosineHalfConeAngle[i];
+			float halfConeRange = coneRange * u_coneFalloff[i];
+			float conePos = 1.0 - coneValue;
+			float coneFalloff = 1.0;
+			if (conePos > halfConeRange) {
+				coneFalloff = 1.0 - ((conePos - halfConeRange) / (coneRange - halfConeRange));
+			}
 
-//             float coneRange = 1.0-u_coneCosineHalfConeAngle[i];
-//             float halfConeRange = coneRange * u_coneFalloff[i];
-//             float conePos   = 1.0-coneValue;
-//             float coneFalloff = 1.0;
-//             if ( conePos > halfConeRange )
-//             {
-//                 coneFalloff = 1.0-((conePos-halfConeRange)/(coneRange-halfConeRange));
-//             }
+			diffuse += ltdiffuse * coneFalloff;
+			;
+		}
+	}
+	vec3 finalLight = (diffuse);
+	vec4 finalCol = texColor * v_color;
+	finalCol.rgb = finalCol.rgb * u_ambientColor;
+	gl_FragColor = vec4(finalCol.rgb + diffuse, finalCol.a);
+})";
 
-//             diffuse += ltdiffuse*coneFalloff;;
-//         }
-//     }
-//     vec4 finalCol = texColor * v_color;
-//     vec3 finalLight = (diffuse+u_ambientColor);
-//     finalLight = min( finalLight, vec3(1,1,1) );
-//     gl_FragColor = vec4(finalCol.rgb*finalLight, finalCol.a);
-// })";
+static const char *vshader = R"(#version 110
+uniform mat4 u_transform;
+attribute vec2 a_position;
+attribute vec4 a_color;
+attribute vec2 a_texCoords;
+varying vec4 v_color;
+varying vec2 v_texCoords;
+void main() {
+	gl_Position = u_transform * vec4(a_position, 0.0, 1.0);
+	v_color = a_color;
+	v_texCoords = a_texCoords;
+})";
 
+Lighting::Lighting() {
 	init("lighting", vshader, fshader);
 }
 
@@ -168,13 +166,18 @@ void Lighting::setSpriteOffset(const Math::Vector2d &offset) {
 	_spriteOffset = offset;
 }
 
-void Lighting::setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &texture) {
-	_contentSize = frame.sourceSize;
+void Lighting::setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &texture, bool flipX) {
+	_contentSize = flipX ? Math::Vector2d(frame.sourceSize.getX(), frame.sourceSize.getY()) : frame.sourceSize;
 	_spritePosInSheet = {(float)(frame.frame.left) / texture.width, (float)(frame.frame.top) / texture.height};
-	_spriteSizeRelToSheet = {(float)(frame.frame.width()) / texture.width, (float)(frame.frame.height()) / texture.height};
+	_spriteSizeRelToSheet = flipX ? Math::Vector2d((float)(-frame.sourceSize.getX()) / texture.width, (float)(frame.sourceSize.getY()) / texture.height) : Math::Vector2d((float)(frame.sourceSize.getX()) / texture.width, (float)(frame.sourceSize.getY()) / texture.height);
 }
 
 void Lighting::update(const Lights &lights) {
+	if (_currentDebug != _debug) {
+		init("lighting", vshader, _debug ? debug_fshader : fshader);
+		_currentDebug = _debug;
+		g_engine->_lightingNode.setVisible(_debug);
+	}
 	_ambientLight = lights._ambientLight;
 	u_numberLights = 0;
 	for (int i = 0; i < MIN(MAX_LIGHTS, lights._numLights); ++i) {
