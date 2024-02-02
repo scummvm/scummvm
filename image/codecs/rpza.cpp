@@ -48,7 +48,7 @@ RPZADecoder::~RPZADecoder() {
 		delete _surface;
 	}
 
-	delete[] _ditherPalette;
+	delete _ditherPalette;
 	delete[] _colorMap;
 }
 

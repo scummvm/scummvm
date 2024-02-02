@@ -393,7 +393,7 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _clipTableBuf;
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
+	delete _ditherPalette;
 }
 
 const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream &stream) {
@@ -640,7 +640,7 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
+	delete _ditherPalette;
 
 	_ditherPalette = new Graphics::Palette(256);
 	_ditherPalette->set(palette, 0, 256);

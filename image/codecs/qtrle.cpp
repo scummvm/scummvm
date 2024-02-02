@@ -56,7 +56,7 @@ QTRLEDecoder::~QTRLEDecoder() {
 	}
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
+	delete _ditherPalette;
 }
 
 #define CHECK_STREAM_PTR(n) \
