@@ -40,14 +40,14 @@ namespace Director {
 
 uint32 DirectorEngine::getMacTicks() { return (g_system->getMillis() * 60 / 1000.) - _tickBaseline; }
 
-bool DirectorEngine::processEvents(bool captureClick) {
+bool DirectorEngine::processEvents(bool captureClick, bool skipWindowManager) {
 	debugC(5, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debugC(5, kDebugEvents, "@@@@   Processing events");
 	debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		if (!_wm->processEvent(event)) {
+		if (skipWindowManager || !_wm->processEvent(event)) {
 			// We only want to handle these events if the event
 			// wasn't handled by the window manager.
 			switch (event.type) {
@@ -71,7 +71,7 @@ bool DirectorEngine::processEvents(bool captureClick) {
 			if (captureClick)
 				return true;
 			break;
-		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
 			if (captureClick)
 				return true;
 			break;
@@ -261,6 +261,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 		_currentHiliteChannelId = 0;
 		_mouseDownWasInButton = false;
+		g_director->loadSlowdownCooloff();
 		return true;
 
 	case Common::EVENT_KEYDOWN:
@@ -276,6 +277,7 @@ bool Movie::processEvent(Common::Event &event) {
 			_lastTimeOut = _lastEventTime;
 
 		queueUserEvent(kEventKeyDown);
+		g_director->loadSlowdownCooloff();
 		return true;
 
 	case Common::EVENT_KEYUP:
