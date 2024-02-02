@@ -209,6 +209,12 @@ namespace Macs2 {
 
 	}
 
+	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
+		for (int i = 0; i < 16; i++) {
+			renderString(g_engine->_pathfindingPoints[2 * i], g_engine->_pathfindingPoints[2 * i + 1], "x");
+		}
+	}
+
 	void View1::setStringBox(const Common::StringArray& sa) {
 		_drawnStringBox = sa;
 		_isShowingStringBox = true;
@@ -250,7 +256,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
 	if (msg.ascii == (uint16)'m') {
-		_backgroundSurface = g_engine->_map;
+		// _backgroundSurface = g_engine->_map;
+		_backgroundSurface = g_engine->_pathfindingMap;
 		redraw();
 	}
 	else if (msg.ascii == (uint16)'b') {
@@ -358,6 +365,8 @@ void View1::draw() {
 	if (_isShowingInventory) {
 		drawInventory(s);
 	}
+
+	drawPathfindingPoints(s);
 }
 
 bool View1::tick() {

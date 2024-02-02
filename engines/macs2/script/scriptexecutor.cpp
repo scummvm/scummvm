@@ -75,10 +75,12 @@ inline void ScriptExecutor::FuncA3D2() {
 void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// Results are [bp-4h] and [bp-2h]
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
-	debug("-- Entering 9F4D");
+	// debug("-- Entering 9F4D");
 	// fn0037_9F4D proc
 
 	byte opcode1 = ReadByte(); // [bp-5h]
+	debug("- 9F4D opcode: %.2x", opcode1);
+	// TODO: Consider writing this one also 
 	uint16 value = ReadWord(); // [bp-7h]
 
 	if (opcode1 == 0x0) {
@@ -104,6 +106,8 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 					jmp	0A32Ch
 				*/
 				// TODO: Implement the jump
+				// TODO: Add a return macro
+				debug("- 9F4D results: %.4x %.4x", out1, out2);
 				return;
 			}
 			else {
@@ -124,6 +128,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// l0037_9FAE:
 	if (opcode1 != 0xFF) {
 		// TODO: Do we write out a 0 for the values?
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	// l0037_9FB7:
@@ -658,20 +663,21 @@ l0037_A32C:
 	retf
 	*/
 
-	debug("-- Leaving 94FD");
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	// debug("-- Leaving 94FD");
 }
 
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
-	debug("Script read (byte): %.2x at offset %.4x", result, pos);
+	debug("Script read (byte): %.2x at location %.4x", result, pos);
 	return result;
 }
 
 uint16 Script::ScriptExecutor::ReadWord() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
-	debug("Script read (word): %.4x at offset %.4x", result, pos);
+	debug("Script read (word): %.4x at location %.4x", result, pos);
 	return result;
 }
 
@@ -828,7 +834,10 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
+		debug("- First block opcode: %.2x", opcode1);
 		byte length = ReadByte();  // [bp-2h]
+
+		
 
 		// TODO: Check if a switch would do it
 		if (opcode1 == 0x01) {
