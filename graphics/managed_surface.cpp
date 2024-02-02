@@ -852,11 +852,13 @@ bool ManagedSurface::hasPalette() const {
 }
 
 void ManagedSurface::grabPalette(byte *colors, uint start, uint num) const {
-	_palette->grab(colors, start, num);
+	if (_palette)
+		_palette->grab(colors, start, num);
 }
 
 void ManagedSurface::grabPalette(Palette &palette, uint start, uint num) const {
-	_palette->grab(palette, start, num);
+	if (_palette)
+		_palette->grab(palette, start, num);
 }
 
 void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
