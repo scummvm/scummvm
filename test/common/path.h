@@ -301,6 +301,10 @@ class PathTestSuite : public CxxTest::TestSuite
 		// Everything is relative to empty
 		TS_ASSERT_EQUALS(p1.isRelativeTo(p), true);
 		TS_ASSERT_EQUALS(p2.isRelativeTo(p), true);
+		// Everything is relative to itself
+		TS_ASSERT_EQUALS(p1.isRelativeTo(p1), true);
+		TS_ASSERT_EQUALS(p2.isRelativeTo(p2), true);
+
 		// A path is not relative to empty one
 		TS_ASSERT_EQUALS(p.isRelativeTo(p1), false);
 
@@ -326,6 +330,10 @@ class PathTestSuite : public CxxTest::TestSuite
 		// Everything is relative to empty
 		TS_ASSERT_EQUALS(p1.relativeTo(p).toString(), TEST_PATH);
 		TS_ASSERT_EQUALS(p2.relativeTo(p).toString(), TEST_ESCAPED1_PATH);
+		// Everything is relative to itself
+		TS_ASSERT_EQUALS(p1.relativeTo(p1), p);
+		TS_ASSERT_EQUALS(p2.relativeTo(p2), p);
+
 		// A path is not relative to empty one
 		TS_ASSERT_EQUALS(p.relativeTo(p1), p);
 

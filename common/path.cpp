@@ -601,13 +601,20 @@ const char *Path::getSuffix(const Common::Path &other) const {
 		if (_str.hasPrefix(other._str)) {
 			const char *suffix = _str.c_str() + other._str.size();
 			if (!other.isSeparatorTerminated()) {
-				// Make sure we didn't end up in the middle of some path component
-				if (*suffix != SEPARATOR && *suffix != '\x00') {
+				if (*suffix == SEPARATOR) {
+					// Skip the separator
+					return suffix + 1;
+				} else if (*suffix == '\x00') {
+					// Both paths are equal: return end of string
+					return suffix;
+				} else {
+					// We are in the middle of some path component: this is not relative
 					return nullptr;
 				}
-				suffix++;
+			} else {
+				// Other already had a separator: this is relative and starts with next component
+				return suffix;
 			}
-			return suffix;
 		} else {
 			return nullptr;
 		}
