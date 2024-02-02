@@ -299,6 +299,23 @@ void Macs2Engine::readResourceFile() {
 		_pal[i] = (_pal[i] * 259 + 33) >> 6;
 	}
 
+	// Load the pathfinding points
+	// TODO: Figure out how the game knows the length of this data
+	file.seek(0x0024BF72);
+	// TODO: Obviously not nice to assume a certain endianness, need to read values invividually
+	for (int i = 0; i < 16; i++) {
+		_pathfindingPoints[i*2] = file.readUint16LE();
+		_pathfindingPoints[i*2 + 1] = file.readUint16LE();
+		// Need to read 6 more bytes of unknown purpose
+		// TODO: Add them when I know what they do
+		for (int j = 0; j < 3; j++) {
+			file.readUint16LE();
+		}
+	}
+	
+
+	
+
 	// return check_cast<uint8>((c * 259 + 33) >> 6);
 
 	// Iterate over 0 to 199 for each row
@@ -398,6 +415,9 @@ void Macs2Engine::readResourceFile() {
 	// _map = readRLEImage(0x0024B0DF, file);
 	// TODO: This is the depth map - TBC that it's actually it
 	_map = readRLEImage(0x00248FCE, file);
+
+	// This is the walkability map - TBC if that's really it and how it works
+	_pathfindingMap = readRLEImage(0x00249CC1, file);
 	
 
 	// Load the data for the mouse cursor
