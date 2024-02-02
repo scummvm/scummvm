@@ -62,7 +62,7 @@ public:
 	Common::Path getPathName() const { return _pathName; }
 	Common::String getFileName() const;
 	void setPathName(const Common::Path &name) { _pathName = name; }
-	int getFileSize();
+	virtual uint32 getFileSize();
 
 	bool isOpen() const { return _stream != 0; }
 
@@ -102,6 +102,7 @@ public:
 	MacArchive();
 	~MacArchive() override;
 
+	uint32 getFileSize() override;
 	void close() override;
 	bool openFile(const Common::Path &path) override;
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;

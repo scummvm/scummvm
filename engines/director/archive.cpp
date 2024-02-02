@@ -110,7 +110,7 @@ void Archive::listUnaccessedChunks() {
 		debugC(5, kDebugLoading, "Unaccessed Chunks in '%s':\n%s", _pathName.toString(g_director->_dirSeparator).c_str(), s.c_str());
 }
 
-int Archive::getFileSize() {
+uint32 Archive::getFileSize() {
 	if (!_stream)
 		return 0;
 
@@ -299,6 +299,13 @@ MacArchive::MacArchive() : Archive(), _resFork(nullptr) {
 
 MacArchive::~MacArchive() {
 	delete _resFork;
+}
+
+uint32 MacArchive::getFileSize() {
+	if (!_resFork)
+		return 0;
+
+	return _resFork->getResForkDataSize();
 }
 
 void MacArchive::close() {
