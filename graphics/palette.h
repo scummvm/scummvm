@@ -231,6 +231,7 @@ public:
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
+	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
 	uint32 *createMap(const Palette &srcPalette, bool useNaiveAlg = false);
 
 private:
