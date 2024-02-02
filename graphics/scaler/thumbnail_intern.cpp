@@ -208,7 +208,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 		}
 	}
 
-	delete[] palette;
+	delete palette;
 
 	g_system->unlockScreen();
 	return true;
