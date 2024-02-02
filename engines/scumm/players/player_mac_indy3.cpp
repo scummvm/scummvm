@@ -31,6 +31,7 @@
 namespace Scumm {
 
 #define ASC_DEVICE_RATE		0x56EE8BA3
+#define VBL_UPDATE_RATE		0x003C25BD
 #define PCM_BUFFER_SIZE		1024
 #define RATECNV_BIT_PRECSN	24
 
@@ -141,11 +142,14 @@ private:
 
 class I3MMusicDriver : public I3MSoundDriver {
 public:
-	I3MMusicDriver(Common::Mutex &mutex, bool isStereo) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo) {}
+	I3MMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool isStereo) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo), _numChan(numChannels) {}
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void setDuration(uint16 duration) = 0;
 	virtual void setRate(uint8 chan, uint16 rate) = 0;
+	uint16 numChannels() const { return _numChan; }
+protected:
+	const uint16 _numChan;
 };
 
 class I3MFourToneSynthDriver final : public I3MMusicDriver {
@@ -173,13 +177,12 @@ private:
 	};
 
 	Channel *_chan;
-	const uint16 _numChan;
 };
 
-class I3MLQSynthDriver final : public I3MMusicDriver {
+class I3MSquareWaveSynthDriver final : public I3MMusicDriver {
 public:
-	I3MLQSynthDriver(Common::Mutex &mutex, bool isStereo) : I3MMusicDriver(mutex, isStereo) {}
-	~I3MLQSynthDriver() override {}
+	I3MSquareWaveSynthDriver(Common::Mutex &mutex, bool isStereo) : I3MMusicDriver(1, mutex, isStereo) {}
+	~I3MSquareWaveSynthDriver() override {}
 
 	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override {}
 	void start() override {}
@@ -281,9 +284,9 @@ private:
 		uint16 _envPhase;
 		uint16 _envRate;
 		uint16 _tempo;
-		uint16 _envCutoff;
+		uint16 _envSust;
 		int16 _transpose;
-		uint16 _envLen;
+		uint16 _envAtt;
 		uint16 _envShape;
 		uint16 _envStep;
 		uint16 _envStepLen;
@@ -342,8 +345,8 @@ public:
 AudioStream_I3M::AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate) : Audio::AudioStream(), _drv(drv), _vblSmpQty(0), _vblSmpQtyRem(0), _frameSize(stereo ? 2 : 1),
 	_vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate), _vblCbProc(nullptr), _isStereo(stereo), _interp(interpolate) {
 	assert(_drv);
-	_vblSmpQty = _outputRate / 60;
-	_vblSmpQtyRem = _outputRate % 60;
+	_vblSmpQty = (_outputRate << 16) / VBL_UPDATE_RATE;
+	_vblSmpQtyRem = (_outputRate << 16) % VBL_UPDATE_RATE;
 	_vblCountDown = _vblSmpQty;
 	_vblCountDownRem = 0;
 }
@@ -408,9 +411,12 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 
 	for (int i = _isStereo ? numSamples >> 1 : numSamples; i; --i) {
 		if (!--_vblCountDown) {
+			_vblCountDown = _vblSmpQty;
 			_vblCountDownRem += _vblSmpQtyRem;
-			_vblCountDown = _vblSmpQty + _vblCountDownRem / _vblSmpQty;
-			_vblCountDownRem %= _vblSmpQty;
+			while (_vblCountDownRem >= (_vblSmpQty << 16)) {
+				_vblCountDownRem -= (_vblSmpQty << 16);
+				++_vblCountDown;
+			}
 			runVblTask();
 		}
 
@@ -441,17 +447,18 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 
 			if (incr) {
 				_buffers[ii].pos += incr;
-				if (_buffers[ii].pos == _buffers[ii].end) {
-					_buffers[ii].pos -= _buffers[ii].size;
-					generateData(_buffers[ii].pos, _buffers[ii].size, stype[ii], _isStereo);
-				}
-
 				const int8 *lpos = _buffers[ii].pos;
 				if (lpos >= _buffers[ii].start + _frameSize)
 					lpos -= _frameSize;
 				_buffers[ii].lastL = lpos[0];
 				if (_isStereo)
 					_buffers[ii].lastR = lpos[1];
+
+				if (_buffers[ii].pos >= _buffers[ii].end) {
+					uint32 refreshSize = MIN<uint32>(_vblCountDown * _frameSize, _buffers[ii].size);
+					_buffers[ii].pos -= refreshSize;
+					generateData(_buffers[ii].pos, refreshSize, stype[ii], _isStereo);
+				}
 			}
 		}
 
@@ -740,7 +747,7 @@ uint32 I3MLowLevelPCMDriver::calcRate(uint32 outRate, uint32 factor, uint32 data
 }
 
 I3MFourToneSynthDriver::I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo) :
-	I3MMusicDriver(mutex, isStereo), _duration(0), _pos(0), _chan(nullptr), _numChan(4) {
+	I3MMusicDriver(4, mutex, isStereo), _duration(0), _pos(0), _chan(nullptr) {
 	_chan = new Channel[_numChan];
 }
 
@@ -767,7 +774,8 @@ void I3MFourToneSynthDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType
 		int16 smp = 0;
 		for (int i = 0; i < _numChan; ++i) {
 			_chan[i].phase += _chan[i].rate;
-			smp += _chan[i].waveform[(_chan[i].phase >> 16) & 0xff];
+			if (_chan[i].waveform != nullptr)
+				smp += _chan[i].waveform[(_chan[i].phase >> 16) & 0xff];
 		}
 
 		smp = CLIP<int8>(smp >> 2, -128, 127);
@@ -813,6 +821,7 @@ void I3MFourToneSynthDriver::setWaveForm(uint8 chan, const uint8 *data, uint32 d
 	Common::StackLock lock(_mutex);
 
 	delete[] _chan[chan].waveform;
+	_chan[chan].waveform = nullptr;
 	if (data == nullptr || dataSize == 0)
 		return;
 	dataSize = MIN<uint32>(256, dataSize);
@@ -826,6 +835,9 @@ void I3MFourToneSynthDriver::setWaveForm(uint8 chan, const uint8 *data, uint32 d
 void I3MFourToneSynthDriver::setRate(uint8 chan, uint16 rate) {
 	assert(chan < _numChan);
 	Common::StackLock lock(_mutex);
+
+	if (rate && rate < 1600)
+		rate = rate;
 
 	_chan[chan].rate = rate ? (0x5060000 / (rate >> ((rate < 1600) ? 8 : 6))) : 0;
 }
@@ -896,7 +908,7 @@ bool I3MPlayer::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 fee
 	if (!mdrv || !_sdrv)
 		return false;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < mdrv->numChannels(); ++i)
 		mdrv->setWaveForm(i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 	_qualHi = true;
 	_mdrv = mdrv;
@@ -984,12 +996,12 @@ void I3MPlayer::setQuality(int qual) {
 	if (isHiQuality()) {
 		I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), false);
 		assert(mdrv);
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < mdrv->numChannels(); ++i)
 			mdrv->setWaveForm(i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 		_mdrv = mdrv;
 		_qualHi = true;
 	} else {
-		_mdrv = new I3MLQSynthDriver(_mixer->mutex(), false);
+		_mdrv = new I3MSquareWaveSynthDriver(_mixer->mutex(), false);
 		_qualHi = false;
 		assert(_mdrv);
 	}
@@ -1184,7 +1196,7 @@ void I3MPlayer::updateSong() {
 		}
 	}
 
-	for (int i = 0; i < _numMusicChannels; ++i)
+	for (int i = 0; i < _mdrv->numChannels(); ++i)
 		_mdrv->setRate(i, _lastSong ? _musicChannels[i]->checkPeriod() : 0);
 	if (_songPlaying)
 		_mdrv->setDuration(10);
@@ -1208,8 +1220,8 @@ I3MPlayer::MusicChannel::MusicChannel(I3MPlayer *pl) : _player(pl), _vars(nullpt
 
 	const uint16 *mVars[] = {
 	/*  0 */	&_frameLen,			&_curPos,			&_freqCur,			&_freqIncr,			&_freqEff,
-	/*  5 */	&_envPhase,				&_envRate,				&_tempo,			&_envCutoff,		(uint16*)&_transpose,
-	/* 10 */	&_envLen,			&_envShape,			&_envStep,			&_envStepLen,		&_modType,
+	/*  5 */	&_envPhase,			&_envRate,			&_tempo,			&_envSust,			(uint16*)&_transpose,
+	/* 10 */	&_envAtt,			&_envShape,			&_envStep,			&_envStepLen,		&_modType,
 	/* 15 */	&_modState,			&_modStep,			&_modSensitivity,	&_modRange,			&_localVars[0],
 	/* 20 */	&_localVars[1],		&_localVars[2],		&_localVars[3],		&_localVars[4]
 	};
@@ -1257,7 +1269,7 @@ void I3MPlayer::MusicChannel::nextTick() {
 	_freqCur += _freqIncr;
 
 	uint16 v = _modState + _modStep;
-	int frqAdjust = 0;
+	uint16 frqAdjust = 0;
 
 	if (v != 0) {
 		if (v >= _modRange)
@@ -1270,8 +1282,8 @@ void I3MPlayer::MusicChannel::nextTick() {
 
 	_freqEff = _freqCur + frqAdjust;
 
-	if (_envLen && !--_envLen) {
-		_envStep = 4;
+	if (_envAtt && !--_envAtt) {
+		_envStep = 16;
 		_envStepLen = 1;
 	}
 
@@ -1281,15 +1293,15 @@ void I3MPlayer::MusicChannel::nextTick() {
 	if (!_envStepLen || --_envStepLen)
 		return;
 
-	int ix = _envShape + _envStep++;
+	int ix = _envShape + (_envStep >> 2);
 	assert(ix < ARRAYSIZE(_envShapes));
 	const uint32 *in = &_envShapes[ix];
 
-	for (; (*in & 0xffff) == 0xffff; ++in) {
+	for (_envStep += 4; (*in & 0xffff) == 0xffff; ++in) {
 		_envPhase = *in >> 16;
 		if (_envPhase == 0)
 			_envRate = 0;
-		++_envStep;
+		_envStep += 4;
 	}
 
 	_envStepLen = *in & 0xffff;
@@ -1359,12 +1371,12 @@ void I3MPlayer::MusicChannel::noteOn(uint16 duration, uint8 note) {
 	_envStep = 0;
 	_envStepLen = 1;
 	_frameLen = duration;
-	_envLen = _frameLen - _envCutoff;
+	_envAtt = _frameLen - _envSust;
 	int n = note + _transpose;
 	while (n < 0)
 		n += 12;
 
-	_freqEff = _freqCur = noteFreqTable[_hq ? 0 : 1][n % 12] >> ( n / 12);
+	_freqEff = _freqCur = noteFreqTable[_hq ? 0 : 1][n % 12] >> (n / 12);
 }
 
 uint16 I3MPlayer::MusicChannel::checkPeriod() const {
@@ -1627,6 +1639,7 @@ void Player_Mac_Indy3::restoreAfterLoad() {
 }
 
 #undef ASC_DEVICE_RATE
+#undef VBL_RATE
 #undef PCM_BUFFER_SIZE
 #undef RATECNV_BIT_PRECSN
 
