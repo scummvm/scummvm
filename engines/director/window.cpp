@@ -443,6 +443,32 @@ bool Window::loadNextMovie() {
 		return false;
 
 	probeResources(mov);
+
+	// Artificial delay for games that expect slow media, e.g. Spaceship Warlock
+	if (g_director->_loadSlowdownFactor && !debugChannelSet(-1, kDebugFast)) {
+		// Check that we're not cooling down from skipping a delay.
+		if (g_system->getMillis() > g_director->_loadSlowdownCooldownTime) {
+			uint32 delay = mov->getFileSize() * 1000 / g_director->_loadSlowdownFactor;
+			debugC(5, kDebugLoading, "Slowing load of next movie by %d ms", delay);
+			while (delay != 0) {
+				uint32 dec = MIN((uint32)10, delay);
+				// Skip delay if mouse is clicked
+				if (g_director->processEvents(true, true)) {
+					g_director->loadSlowdownCooloff();
+					break;
+				}
+				g_director->_wm->replaceCursor(Graphics::kMacCursorWatch);
+				g_director->draw();
+				g_system->delayMillis(dec);
+				delay -= dec;
+			}
+		}
+		// If this movie switch is within the cooldown time,
+		// don't add a delay. This is to allow for rapid navigation.
+		// User input events will call loadSlowdownCooloff() and
+		// extend the cooldown time.
+	}
+
 	_currentMovie = new Movie(this);
 	_currentMovie->setArchive(mov);
 
