@@ -718,7 +718,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = 0;	// Let's pretend the movie is compactified
 		break;
 	case kTheMovieFileSize:
-		d = movie->getArchive()->getFileSize();
+		d = (int)movie->getArchive()->getFileSize();
 		break;
 	case kTheMoviePath:
 	case kThePathName:
