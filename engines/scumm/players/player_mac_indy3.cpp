@@ -457,6 +457,7 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 				if (_buffers[ii].pos >= _buffers[ii].end) {
 					uint32 refreshSize = MIN<uint32>(_vblCountDown * _frameSize, _buffers[ii].size);
 					_buffers[ii].pos -= refreshSize;
+					refreshSize -= (incr - 1);
 					generateData(_buffers[ii].pos, refreshSize, stype[ii], _isStereo);
 				}
 			}
