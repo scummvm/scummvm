@@ -105,8 +105,11 @@ public:
 
 	struct Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
+	Graphics::ManagedSurface _pathfindingMap;
 	byte _pal[256 * 3] = { 0 };
 	byte _palVanilla[256 * 3] = { 0 };
+
+	uint16 _pathfindingPoints[32];
 
 	byte* _charData;
 	char _charASCII;

@@ -64,6 +64,8 @@ private:
 
 	void handleFading();
 
+	void drawPathfindingPoints(Graphics::ManagedSurface &s);
+
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
 
