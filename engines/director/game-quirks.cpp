@@ -100,6 +100,11 @@ struct SaveFilePath {
 };
 
 
+static void quirkWarlock() {
+	g_director->_loadSlowdownFactor = 150000;  // emulate a 1x CD drive
+	g_director->_fpsLimit = 15;
+}
+
 static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
 }
@@ -175,6 +180,12 @@ struct Quirk {
 	Common::Platform platform;
 	void (*quirk)();
 } quirks[] = {
+	// Spaceship Warlock is designed to run as quickly as possible on a
+	// single speed CD drive; there's often content just before a movie
+	// transition which would otherwise get skipped past.
+	{ "warlock", Common::kPlatformMacintosh, &quirkWarlock },
+	{ "warlock", Common::kPlatformWindows, &quirkWarlock },
+
 	// Eastern Mind sets the score to play back at a high frame rate,
 	// however the developers were using slow hardware, so some
 	// animations play back much faster than intended.
@@ -251,6 +262,11 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 
 		SearchMan.add(kQuirksCacheArchive, archive);
 	}
+}
+
+void DirectorEngine::loadSlowdownCooloff(uint32 delay) {
+	if (_loadSlowdownFactor)
+		_loadSlowdownCooldownTime = g_system->getMillis() + delay;
 }
 
 /*****************

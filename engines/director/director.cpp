@@ -101,6 +101,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_forceDate.tm_mon = -1;
 	_forceDate.tm_year = -1;
 	_forceDate.tm_wday = -1;
+	_loadSlowdownFactor = 0;
+	_loadSlowdownCooldownTime = 0;
 
 	_wm = nullptr;
 

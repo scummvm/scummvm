@@ -228,12 +228,13 @@ public:
 	bool desktopEnabled();
 
 	// events.cpp
-	bool processEvents(bool captureClick = false);
+	bool processEvents(bool captureClick = false, bool skipWindowManager = false);
 	void processEventQUIT();
 	uint32 getMacTicks();
 
 	// game-quirks.cpp
 	void gameQuirks(const char *target, Common::Platform platform);
+	void loadSlowdownCooloff(uint32 delay = 2000);
 
 	void delayMillis(uint32 delay);
 
@@ -282,6 +283,8 @@ public:
 	// used for quirks
 	byte _fpsLimit;
 	TimeDate _forceDate;
+	uint32 _loadSlowdownFactor;
+	uint32 _loadSlowdownCooldownTime;
 
 private:
 	byte _currentPalette[768];

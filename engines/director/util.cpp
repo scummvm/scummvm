@@ -499,6 +499,7 @@ Common::String rectifyRelativePath(const Common::String &path, const Common::Pat
 	}
 	Common::String result = "@:" + Common::Path::joinComponents(components).toString(g_director->_dirSeparator);
 	debug(9, "rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
+	warning("rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
 	return result;
 }
 
