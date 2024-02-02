@@ -58,6 +58,7 @@ struct Gizmo_Globals {
 	int _savedX = 0;
 	int _savedY = 0;
 
+	Gizmo_Globals();
 	~Gizmo_Globals();
 };
 

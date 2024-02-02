@@ -47,6 +47,10 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 static void gizmo_digi_daemon(int trigger);
 static void gizmo_daemon(int trigger);
 
+Gizmo_Globals::Gizmo_Globals() {
+	Common::fill(_roomFlags, _roomFlags + 15, false);
+}
+
 Gizmo_Globals::~Gizmo_Globals() {
 	mem_free(_gui);
 }

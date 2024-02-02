@@ -477,9 +477,9 @@ struct MenuGlobals {
 
 	//menu sprite series vars
 	char *menuSeriesResource = nullptr;
-	MemHandle menuSeriesHandle;
-	int32 menuSeriesOffset;
-	int32 menuSeriesPalOffset;
+	MemHandle menuSeriesHandle = nullptr;
+	int32 menuSeriesOffset = 0;
+	int32 menuSeriesPalOffset = 0;
 
 	Font *menuFont = nullptr;
 
@@ -505,8 +505,8 @@ struct MenuGlobals {
 	bool saveLoadFromHotkey = false;	// Come from hotkey, not through game menu
 	bool gameMenuFromMain = false;		// Come from main menu, not through escape
 
-	int32 remember_digi_volume;			// For cancelling out of the options menu
-	int32 remember_digestability;		// For cancelling out of the options menu
+	int32 remember_digi_volume = 0;		// For cancelling out of the options menu
+	int32 remember_digestability = 0;	// For cancelling out of the options menu
 
 	~MenuGlobals() {
 		_thumbnail.free();
