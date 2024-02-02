@@ -384,6 +384,7 @@ bool DarkEngine::checkIfGameEnded() {
 		} else {
 			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
+			playSound(19, true);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 	}
@@ -528,11 +529,12 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 90;
 		_pitch = 0;
-	}
+		playSound(9, true);
+	} else
+		playSound(5, false);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
-	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	// Color remaps are not restored in Dark Side
@@ -551,13 +553,18 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
+		//debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f", freq, hzFreq);
 
 		if (_flyMode && _gameStateVars[k8bitVariableEnergy] == 0) {
 			_flyMode = false;
 			insertTemporaryMessage(_messagesList[13], _countdown - 2);
-		} else if (_flyMode)
+		} else if (_flyMode) {
+			float hzFreq = 1193180.0 / 0xd537;
+			_speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, -1);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 2, 0, DisposeAfterUse::NO);
 			insertTemporaryMessage(_messagesList[11], _countdown - 2);
-		else {
+		} else {
+			_speaker->stop();
 			resolveCollisions(_position);
 			if (!_hasFallen)
 				insertTemporaryMessage(_messagesList[12], _countdown - 2);
@@ -712,7 +719,7 @@ void DarkEngine::drawInfoMenu() {
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
-					// TODO
+					playSound(6, true);
 				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_forceEndGame = true;
 					cont = false;

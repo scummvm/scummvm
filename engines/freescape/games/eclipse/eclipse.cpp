@@ -142,6 +142,11 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	_lastPosition = _position;
 
+	if (areaID == _startArea && entranceID == _startEntrance)
+		playSound(9, true);
+	else
+		playSound(5, false);
+
 	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
 		_gfx->_keyColor = 0;
 	} else

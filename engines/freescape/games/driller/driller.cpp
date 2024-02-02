@@ -165,6 +165,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 280;
 		_pitch = 0;
+		playSound(9, true);
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
 		_yaw = 90;
@@ -172,11 +173,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_flyMode = true; // Avoid falling
 		// Show the number of completed areas
 		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
-	}
+	} else
+		playSound(5, false);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
-	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
