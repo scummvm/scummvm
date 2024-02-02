@@ -836,9 +836,6 @@ void I3MFourToneSynthDriver::setRate(uint8 chan, uint16 rate) {
 	assert(chan < _numChan);
 	Common::StackLock lock(_mutex);
 
-	if (rate && rate < 1600)
-		rate = rate;
-
 	_chan[chan].rate = rate ? (0x5060000 / (rate >> ((rate < 1600) ? 8 : 6))) : 0;
 }
 
