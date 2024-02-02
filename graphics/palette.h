@@ -134,6 +134,9 @@ struct Palette {
 
 	Palette(const Palette &p);
 
+	bool operator==(const Palette &rhs) const { return equals(rhs); }
+	bool operator!=(const Palette &rhs) const { return !equals(rhs); }
+
 	bool equals(const Palette &p) const;
 
 	bool contains(const Palette &p) const;
