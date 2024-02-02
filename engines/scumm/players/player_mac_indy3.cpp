@@ -455,9 +455,14 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 					_buffers[ii].lastR = lpos[1];
 
 				if (_buffers[ii].pos >= _buffers[ii].end) {
-					uint32 refreshSize = MIN<uint32>(_vblCountDown * _frameSize, _buffers[ii].size);
-					_buffers[ii].pos -= refreshSize;
-					refreshSize -= (incr - 1);
+					int refreshSize = MIN<int>(_vblCountDown * _frameSize, _buffers[ii].size);
+					int ovrflow = _buffers[ii].pos - _buffers[ii].end;
+					_buffers[ii].pos -= (refreshSize + ovrflow);
+					if (_buffers[ii].pos < _buffers[ii].start) {
+						_buffers[ii].pos += ovrflow;
+						refreshSize -= ovrflow;
+					}
+					assert(_buffers[ii].pos + refreshSize == _buffers[ii].end);
 					generateData(_buffers[ii].pos, refreshSize, stype[ii], _isStereo);
 				}
 			}
