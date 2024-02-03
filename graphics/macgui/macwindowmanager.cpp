@@ -214,8 +214,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	if (g_system->getScreenFormat().isCLUT8())
 		g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
-	_palette.set(palette, 0, ARRAYSIZE(palette) / 3);
-	_paletteLookup.setPalette(_palette);
+	_paletteLookup.setPalette(palette, ARRAYSIZE(palette) / 3);
 
 	_fontMan = new MacFontManager(mode, language);
 
@@ -1366,9 +1365,7 @@ void MacWindowManager::popCursor() {
 #define LOOKUPCOLOR(x) _color ## x = findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
 
 void MacWindowManager::passPalette(const byte *pal, uint size) {
-	_palette.size = size;
-	_palette.set(pal, 0, size);
-	_paletteLookup.setPalette(_palette);
+	_paletteLookup.setPalette(pal, size);
 
 	LOOKUPCOLOR(White);
 	LOOKUPCOLOR(Gray80);
@@ -1396,9 +1393,10 @@ void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, by
 
 template <>
 void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte& b) {
-	r = *(_palette.data + 3 * (byte)color + 0);
-	g = *(_palette.data + 3 * (byte)color + 1);
-	b = *(_palette.data + 3 * (byte)color + 2);
+	const Palette &palette = _paletteLookup.getPalette();
+	r = *(palette.data + 3 * (byte)color + 0);
+	g = *(palette.data + 3 * (byte)color + 1);
+	b = *(palette.data + 3 * (byte)color + 2);
 }
 
 uint32 MacWindowManager::findBestColor(uint32 color) {

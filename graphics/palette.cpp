@@ -95,6 +95,7 @@ bool PaletteLookup::setPalette(const byte *palette, uint len) {
 		return false;
 
 	_palette.set(palette, 0, len);
+	_palette.size = len;
 	_colorHash.clear();
 
 	return true;

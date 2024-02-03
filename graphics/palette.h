@@ -190,6 +190,8 @@ public:
 	 */
 	PaletteLookup(const byte *palette, uint len);
 
+	const Palette &getPalette() const { return _palette; }
+
 	/**
 	 * @brief Pass palette to the look up. It also compares given palette
 	 * with the current one and resets cache only when their contents is different.
