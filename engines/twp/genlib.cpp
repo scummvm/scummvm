@@ -123,7 +123,7 @@ static SQInteger cameraAt(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get y");
 		pos = Math::Vector2d(x, y);
 	} else if (numArgs == 2) {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot or actor");
 		g_engine->follow(nullptr);
@@ -153,7 +153,7 @@ static SQInteger cameraBounds(HSQUIRRELVM v) {
 }
 
 static SQInteger cameraFollow(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	g_engine->follow(actor);
 	Math::Vector2d pos = actor->_node->getPos();
 	Common::SharedPtr<Room> oldRoom = g_engine->_room;
@@ -182,7 +182,7 @@ static SQInteger cameraInRoom(HSQUIRRELVM v) {
 	if (room) {
 		g_engine->setRoom(room);
 	} else {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj || !obj->_room) {
 			return sq_throwerror(v, "failed to get room");
 		}
@@ -206,7 +206,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 	float duration = 0.f;
 	InterpolationKind interpolation = IK_LINEAR;
 	if (numArgs == 3) {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object/actor");
 		pos = obj->getUsePos();
@@ -225,7 +225,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 			pos = Math::Vector2d(x, g_engine->getGfx().cameraPos().getY());
 			interpolation = (InterpolationKind)im;
 		} else {
-			Object *obj = sqobj(v, 2);
+			Common::SharedPtr<Object> obj = sqobj(v, 2);
 			if (SQ_FAILED(sqget(v, 3, duration)))
 				return sq_throwerror(v, "failed to get duration");
 			int im;
@@ -298,10 +298,10 @@ static SQInteger distance(HSQUIRRELVM v) {
 		return 1;
 	}
 
-	Object *obj1 = sqobj(v, 2);
+	Common::SharedPtr<Object> obj1 = sqobj(v, 2);
 	if (!obj1)
 		return sq_throwerror(v, "failed to get object1 or actor1");
-	Object *obj2 = sqobj(v, 3);
+	Common::SharedPtr<Object> obj2 = sqobj(v, 3);
 	if (!obj2)
 		return sq_throwerror(v, "failed to get object2 or actor2");
 	Math::Vector2d d = obj1->_node->getAbsPos() - obj2->_node->getAbsPos();
@@ -330,7 +330,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		}
 		return sq_throwerror(v, "failed to find verb");
 	}
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	if (obj->inInventory()) {
@@ -548,8 +548,8 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 		return 0;
 	}
 
-	Object *obj1 = nullptr;
-	Object *obj2 = nullptr;
+	Common::SharedPtr<Object> obj1 = nullptr;
+	Common::SharedPtr<Object> obj2 = nullptr;
 	if (nArgs >= 3) {
 		obj1 = sqobj(v, 3);
 		if (!obj1)
@@ -742,13 +742,13 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 		for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 			Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
-				Object *obj = layer->_objects[j];
+				Common::SharedPtr<Object> obj = layer->_objects[j];
 				obj->_exec.enabled = false;
 			}
 		}
 		break;
 	case 2: {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		obj->_exec.enabled = false;
 		break;
 	}

@@ -50,7 +50,7 @@ Facing flip(Facing facing) {
 	}
 }
 
-Facing getFacingToFaceTo(Object *actor, Object *obj) {
+Facing getFacingToFaceTo(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	Math::Vector2d d = obj->_node->getPos() + obj->_node->getOffset() - (actor->_node->getPos() + actor->_node->getOffset());
 	if (abs(d.getY()) > abs(d.getX())) {
 		return d.getY() > 0 ? FACE_BACK : FACE_FRONT;

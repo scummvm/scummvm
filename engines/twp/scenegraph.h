@@ -158,7 +158,7 @@ struct ObjectAnimation;
 class Object;
 class Anim : public Node {
 public:
-	Anim(Object *obj);
+	Anim(Object* obj);
 
 	void clearFrames();
 	void setAnim(const ObjectAnimation *anim, float fps = 0.f, bool loop = false, bool instant = false);
@@ -186,13 +186,13 @@ private:
 
 class ActorNode final : public Node {
 public:
-	ActorNode(Object *obj);
+	ActorNode(Common::SharedPtr<Object> obj);
 
 	int getZSort() const override final;
 	Math::Vector2d getScale() const override final;
 
 private:
-	Object *_object = nullptr;
+	Common::SharedPtr<Object> _object = nullptr;
 };
 
 class TextNode final : public Node {
@@ -294,10 +294,10 @@ private:
 class Inventory: public Node {
 public:
 	Inventory();
-	void update(float elapsed, Object* actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
+	void update(float elapsed, Common::SharedPtr<Object>  actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
 
-	Object* getObject() const { return _obj; }
-	Math::Vector2d getPos(Object* inv) const;
+	Common::SharedPtr<Object>  getObject() const { return _obj; }
+	Math::Vector2d getPos(Common::SharedPtr<Object>  inv) const;
 
 	void setVisible(bool visible) override;
 
@@ -309,10 +309,10 @@ private:
 	void drawSprite(SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
 
 private:
-	Object* _actor = nullptr;
+	Common::SharedPtr<Object>  _actor = nullptr;
     Color _backColor, _verbNormal;
     bool _down = false;
-    Object* _obj = nullptr;
+    Common::SharedPtr<Object>  _obj = nullptr;
 	Common::Rect _itemRects[NUMOBJECTS];
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;

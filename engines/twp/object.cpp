@@ -40,7 +40,7 @@ enum class BlinkState {
 
 class Blink : public Motor {
 public:
-	Blink(Object *obj, float min, float max) : _obj(obj), _min(min), _max(max) {
+	Blink(Common::SharedPtr<Object> obj, float min, float max) : _obj(obj), _min(min), _max(max) {
 		_obj->showLayer("blink", false);
 		_state = BlinkState::Closed;
 		_duration = g_engine->getRandom(min, max);
@@ -68,7 +68,7 @@ public:
 	}
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	BlinkState _state = BlinkState::Closed;
 	float _min = 0.f;
 	float _max = 0.f;
@@ -89,13 +89,19 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 }
 
 Object::~Object() {
-	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
+	if (_layer) {
+		size_t i = find(_layer->_objects, this);
+		if (i != (size_t)-1) {
+			_layer->_objects.remove_at(i);
+		}
+	}
+
 	_nodeAnim->remove();
 	_node->remove();
 }
 
-Object *Object::createActor() {
-	Object *result = new Object();
+Common::SharedPtr<Object> Object::createActor() {
+	Common::SharedPtr<Object> result(new Object());
 	result->_hotspot = Common::Rect(-18, 0, 37, 71);
 	result->_facing = FACE_FRONT;
 	result->_useWalkboxes = true;
@@ -357,35 +363,35 @@ int Object::getFlags() {
 	return result;
 }
 
-void Object::setRoom(Common::SharedPtr<Room> room) {
-	if ((_room != room) || !_node->getParent()) {
-		if (_room != room) {
-			stopObjectMotors();
+void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> room) {
+	if ((object->_room != room) || !object->_node->getParent()) {
+		if (object->_room != room) {
+			object->stopObjectMotors();
 		}
-		Common::SharedPtr<Room> oldRoom = _room;
-		if (oldRoom && _node->getParent()) {
-			debugC(kDebugGame, "Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
-			Common::SharedPtr<Layer>layer = oldRoom->layer(0);
+		Common::SharedPtr<Room> oldRoom = object->_room;
+		if (oldRoom && object->_node->getParent()) {
+			debugC(kDebugGame, "Remove %s from room %s", object->_key.c_str(), oldRoom->_name.c_str());
+			Common::SharedPtr<Layer> layer = oldRoom->layer(0);
 			if (layer) {
-				int index = find(layer->_objects, this);
+				int index = find(layer->_objects, object);
 				if (index != -1)
 					layer->_objects.remove_at(index);
 				if (layer)
-					layer->_node->removeChild(_node);
+					layer->_node->removeChild(object->_node);
 			}
 		}
 		if (room && room->layer(0) && room->layer(0)->_node) {
-			debugC(kDebugGame, "Add %s in room %s", _key.c_str(), room->_name.c_str());
+			debugC(kDebugGame, "Add %s in room %s", object->_key.c_str(), room->_name.c_str());
 			Common::SharedPtr<Layer> layer = room->layer(0);
 			if (layer) {
-				int index = find(layer->_objects, this);
+				int index = find(layer->_objects, object);
 				if (index == -1)
-					layer->_objects.push_back(this);
-				layer->_node->addChild(_node);
+					layer->_objects.push_back(object);
+				layer->_node->addChild(object->_node);
 			}
 		}
-		if (_room != room) {
-			_room = room;
+		if (object->_room != room) {
+			object->_room = room;
 		}
 	}
 }
@@ -438,7 +444,7 @@ bool Object::contains(Math::Vector2d pos) {
 	return _hotspot.contains(p.getX(), p.getY());
 }
 
-void Object::dependentOn(Object *dependentObj, int state) {
+void Object::dependentOn(Common::SharedPtr<Object> dependentObj, int state) {
 	_dependentState = state;
 	_dependentObj = dependentObj;
 }
@@ -480,11 +486,11 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 		play(getAnimName(WALK_ANIMNAME), true);
 }
 
-void Object::blinkRate(float min, float max) {
+void Object::blinkRate(Common::SharedPtr<Object> obj, float min, float max) {
 	if (min == 0.0 && max == 0.0) {
-		_blink.reset();
+		obj->_blink.reset();
 	} else {
-		_blink.reset(new Blink(this, min, max));
+		obj->_blink.reset(new Blink(obj, min, max));
 	}
 }
 
@@ -574,14 +580,14 @@ void Object::update(float elapsedSec) {
 	}
 }
 
-void Object::pickupObject(Object *obj) {
-	obj->_owner = this;
-	_inventory.push_back(obj);
+void Object::pickupObject(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
+	obj->_owner.reset(actor);
+	actor->_inventory.push_back(obj);
 
-	sqcall("onPickup", obj->_table, _table);
+	sqcall("onPickup", obj->_table, actor->_table);
 
 	if (sqrawexists(obj->_table, "onPickUp")) {
-		sqcall(obj->_table, "onPickUp", _table);
+		sqcall(obj->_table, "onPickUp", actor->_table);
 	}
 }
 
@@ -592,12 +598,12 @@ void Object::stopTalking() {
 	}
 }
 
-void Object::say(const Common::StringArray &texts, Color color) {
+void Object::say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color) {
 	if (texts.size() == 0)
 		return;
-	_talkingState._obj = this;
-	_talkingState._color = color;
-	_talkingState.say(texts, this);
+	obj->_talkingState._obj.reset(obj);
+	obj->_talkingState._color = color;
+	obj->_talkingState.say(texts, obj);
 }
 
 void Object::resetLockFacing() {
@@ -639,17 +645,12 @@ float Object::getScale() {
 	return 4.f;
 }
 
-void Object::removeInventory(Object *obj) {
+void Object::removeInventory(Common::SharedPtr<Object> obj) {
 	int i = find(_inventory, obj);
 	if (i >= 0) {
 		_inventory.remove_at(i);
 		obj->_owner = nullptr;
 	}
-}
-
-void Object::removeInventory() {
-	if (_owner)
-		_owner->removeInventory(this);
 }
 
 Common::String Object::getReachAnim() {
@@ -666,7 +667,7 @@ static bool verbNotClose(VerbId id) {
 	return id.id == VERB_LOOKAT;
 }
 
-static void cantReach(Object *self, Object *noun2) {
+static void cantReach(Common::SharedPtr<Object> self, Common::SharedPtr<Object> noun2) {
 	if (sqrawexists(self->_table, "verbCantReach")) {
 		int nParams = sqparamCount(g_engine->getVm(), self->_table, "verbCantReach");
 		debugC(kDebugGame, "verbCantReach found in obj '%s' with %d params", self->_key.c_str(), nParams);
@@ -688,22 +689,22 @@ static void cantReach(Object *self, Object *noun2) {
 	}
 }
 
-void Object::execVerb() {
-	if (_exec.enabled) {
-		VerbId verb = _exec.verb;
-		Object *noun1 = _exec.noun1;
-		Object *noun2 = _exec.noun2;
+void Object::execVerb(Common::SharedPtr<Object> obj) {
+	if (obj->_exec.enabled) {
+		VerbId verb = obj->_exec.verb;
+		Common::SharedPtr<Object> noun1 = obj->_exec.noun1;
+		Common::SharedPtr<Object> noun2 = obj->_exec.noun2;
 
 		debugC(kDebugGame, "actorArrived: exec sentence");
 		if (!noun1->inInventory()) {
 			// Object became untouchable as we were walking there
 			if (!noun1->isTouchable()) {
 				debugC(kDebugGame, "actorArrived: noun1 untouchable");
-				_exec.enabled = false;
+				obj->_exec.enabled = false;
 				return;
 			}
 			// Did we get close enough?
-			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun1->getUsePos());
+			float dist = distance((Vector2i)obj->getUsePos(), (Vector2i)noun1->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debugC(kDebugGame, "actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
@@ -711,17 +712,17 @@ void Object::execVerb() {
 				return;
 			}
 			if (noun1->_useDir != dNone) {
-				setFacing((Facing)noun1->_useDir);
+				obj->setFacing((Facing)noun1->_useDir);
 			}
 		}
 		if (noun2 && !noun2->inInventory()) {
 			if (!noun2->isTouchable()) {
 				// Object became untouchable as we were walking there.
 				debugC(kDebugGame, "actorArrived: noun2 untouchable");
-				_exec.enabled = false;
+				obj->_exec.enabled = false;
 				return;
 			}
-			float dist = distance((Vector2i)getUsePos(), (Vector2i)noun2->getUsePos());
+			float dist = distance((Vector2i)obj->getUsePos(), (Vector2i)noun2->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debugC(kDebugGame, "actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
 			if (dist > min_dist) {
@@ -731,34 +732,34 @@ void Object::execVerb() {
 		}
 
 		debugC(kDebugGame, "actorArrived: callVerb");
-		_exec.enabled = false;
-		g_engine->callVerb(this, verb, noun1, noun2);
+		obj->_exec.enabled = false;
+		g_engine->callVerb(obj, verb, noun1, noun2);
 	}
 }
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
-void Object::walk(Vector2i pos, int facing) {
-	debugC(kDebugGame, "walk to obj %s: %d,%d, %d", _key.c_str(), pos.x, pos.y, facing);
-	if (!_walkTo || (!_walkTo->isEnabled())) {
-		play(getAnimName(WALK_ANIMNAME), true);
+void Object::walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing) {
+	debugC(kDebugGame, "walk to obj %s: %d,%d, %d", obj->_key.c_str(), pos.x, pos.y, facing);
+	if (!obj->_walkTo || (!obj->_walkTo->isEnabled())) {
+		obj->play(obj->getAnimName(WALK_ANIMNAME), true);
 	}
-	_walkTo = new WalkTo(this, pos, facing);
+	obj->_walkTo = new WalkTo(obj, pos, facing);
 }
 
 // Walks an actor to the `obj` and then faces it.
-void Object::walk(Object *obj) {
+void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	debugC(kDebugGame, "walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
 	Facing facing = (Facing)obj->_useDir;
-	walk((Vector2i)obj->getUsePos(), facing);
+	walk(actor, (Vector2i)obj->getUsePos(), facing);
 }
 
 void Object::turn(Facing facing) {
 	setFacing(facing);
 }
 
-void Object::turn(Object *obj) {
-	Facing facing = getFacingToFaceTo(this, obj);
-	setFacing(facing);
+void Object::turn(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
+	Facing facing = getFacingToFaceTo(actor, obj);
+	actor->setFacing(facing);
 }
 
 void Object::jiggle(float amount) {
@@ -776,7 +777,7 @@ void Object::inventoryScrollDown() {
 	_inventoryOffset = clamp(_inventoryOffset, 0, ((int)_inventory.size() - 5) / 4);
 }
 
-void TalkingState::say(const Common::StringArray &texts, Object *obj) {
+void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Object> obj) {
 	Talking *talking = static_cast<Talking *>(obj->getTalking());
 	if (!talking) {
 		obj->setTalking(new Talking(obj, texts, _color));

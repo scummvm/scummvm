@@ -122,7 +122,7 @@ bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
 	return result;
 }
 
-bool TwpEngine::preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+bool TwpEngine::preWalk(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
 	bool result = false;
 	HSQOBJECT n2Table;
 	Common::String n2Name;
@@ -146,7 +146,7 @@ bool TwpEngine::preWalk(Object *actor, VerbId verbId, Object *noun1, Object *nou
 	return result;
 }
 
-static bool verbNoWalkTo(VerbId verbId, Object *noun1) {
+static bool verbNoWalkTo(VerbId verbId, Common::SharedPtr<Object> noun1) {
 	if (verbId.id == VERB_LOOKAT)
 		return (noun1->getFlags() & FAR_LOOK) != 0;
 	return false;
@@ -154,7 +154,7 @@ static bool verbNoWalkTo(VerbId verbId, Object *noun1) {
 
 // Called to execute a sentence and, if needed, start the actor walking.
 // If `actor` is `null` then the selectedActor is assumed.
-bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+bool TwpEngine::execSentence(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
@@ -183,7 +183,7 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 
 	if (verbNoWalkTo(verbId, noun1)) {
 		if (!noun1->inInventory()) { // TODO: test if verb.flags != VERB_INSTANT
-			actor->turn(noun1);
+			Object::turn(actor, noun1);
 			callVerb(actor, verbId, noun1, noun2);
 			return true;
 		}
@@ -193,10 +193,7 @@ bool TwpEngine::execSentence(Object *actor, VerbId verbId, Object *noun1, Object
 	actor->_exec.noun1 = noun1;
 	actor->_exec.noun2 = noun2;
 	actor->_exec.enabled = true;
-	if (!noun1->inInventory())
-		actor->walk(noun1);
-	else
-		actor->walk(noun2);
+	Object::walk(actor, noun1->inInventory() ? noun2 : noun1);
 	return true;
 }
 
@@ -216,7 +213,7 @@ void TwpEngine::walkFast(bool state) {
 void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 	if (_room && _inputState.getInputActive() && !_actorSwitcher.isMouseOver()) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
-		Object *obj = objAt(roomPos);
+		Common::SharedPtr<Object> obj = objAt(roomPos);
 
 		if (_cursor.doubleClick) {
 			walkFast(true);
@@ -237,7 +234,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 					// Just clicking on the ground
 					cancelSentence(_actor);
 					if (_actor->_room == _room)
-						_actor->walk((Vector2i)roomPos);
+						Object::walk(_actor, (Vector2i)roomPos);
 					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 					_holdToMove = true;
 				}
@@ -298,7 +295,7 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
+			Common::SharedPtr<Object> obj = layer->_objects[j];
 			if ((obj != g_engine->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
 				if (func(obj))
 					return;
@@ -307,8 +304,8 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 }
 
 struct InInventory {
-	InInventory(Object *&obj) : _obj(obj) { _obj = nullptr; }
-	bool operator()(Object *obj) {
+	InInventory(Common::SharedPtr<Object> &obj) : _obj(obj) { _obj = nullptr; }
+	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->inInventory()) {
 			_obj = obj;
 			return true;
@@ -317,11 +314,11 @@ struct InInventory {
 	}
 
 public:
-	Object *&_obj;
+	Common::SharedPtr<Object> &_obj;
 };
 
-Object *inventoryAt(Math::Vector2d pos) {
-	Object *result;
+Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
+	Common::SharedPtr<Object> result;
 	objsAt(pos, InInventory(result));
 	return result;
 }
@@ -369,9 +366,9 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 }
 
 struct GetNoun2 {
-	GetNoun2(Object *&obj) : _noun2(obj) {}
+	GetNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {}
 
-	bool operator()(Object *obj) {
+	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj != g_engine->_actor && obj->getFlags() & GIVEABLE) {
 			_noun2 = obj;
 			return true;
@@ -380,7 +377,7 @@ struct GetNoun2 {
 	}
 
 public:
-	Object *&_noun2;
+	Common::SharedPtr<Object> &_noun2;
 };
 
 void TwpEngine::update(float elapsed) {
@@ -463,7 +460,7 @@ void TwpEngine::update(float elapsed) {
 						walkFast();
 						cancelSentence(_actor);
 						if (_actor->_room == _room && (distance((Vector2i)_actor->_node->getAbsPos(), (Vector2i)roomPos) > 5)) {
-							_actor->walk((Vector2i)roomPos);
+							Object::walk(_actor, (Vector2i)roomPos);
 						}
 						_nextHoldToMoveTime = _time + 0.250f;
 					}
@@ -775,7 +772,7 @@ Common::Error TwpEngine::run() {
 					break;
 				case TwpAction::kSelectPreviousActor:
 					if (_actor) {
-						Common::Array<Object *> actors;
+						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
 							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
@@ -790,7 +787,7 @@ Common::Error TwpEngine::run() {
 					break;
 				case TwpAction::kSelectNextActor:
 					if (_actor) {
-						Common::Array<Object *> actors;
+						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
 							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
@@ -918,15 +915,15 @@ Common::Error TwpEngine::run() {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		if(delta < 10) {
+		if (delta < 10) {
 			g_system->delayMillis(10 - delta);
 		}
 	}
 
 	// Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	return Common::kNoError;
 }
@@ -1015,20 +1012,20 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			// declare flags if does not exist
 			if (!sqrawexists(oTable, "flags"))
 				sqsetf(oTable, "flags", 0);
-			Object *obj = new Object(oTable, k);
+			Common::SharedPtr<Object> obj(new Object(oTable, k));
 			setId(obj->_table, newObjId());
 			obj->_node = new Node(k);
-			obj->_nodeAnim = new Anim(obj);
+			obj->_nodeAnim = new Anim(obj.get());
 			obj->_node->addChild(obj->_nodeAnim);
-			obj->setRoom(params->room);
+			Object::setRoom(obj, params->room);
 			// set room as delegate
 			sqsetdelegate(obj->_table, params->room->_table);
 		} else {
-			Object *obj = params->room->getObj(k);
+			Common::SharedPtr<Object> obj = params->room->getObj(k);
 			if (!obj) {
 				debugC(kDebugGame, "object: %s not found in wimpy", k.c_str());
 				if (sqrawexists(oTable, "name")) {
-					obj = new Object();
+					obj.reset(new Object());
 					obj->_key = k;
 					obj->_layer = params->room->layer(0);
 					params->room->layer(0)->_objects.push_back(obj);
@@ -1053,7 +1050,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			} else {
 				obj->setState(0, true);
 			}
-			obj->setRoom(params->room);
+			Object::setRoom(obj, params->room);
 
 			// set room as delegate
 			sqsetdelegate(obj->_table, params->room->_table);
@@ -1083,7 +1080,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 		sqgetf(table, "background", background);
 		GGPackEntryReader entry;
 		entry.open(_pack, background + ".wimpy");
-		result->load(entry);
+		Room::load(result, entry);
 		result->_name = name;
 		result->_pseudo = pseudo;
 		for (size_t i = 0; i < result->_layers.size(); i++) {
@@ -1096,7 +1093,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 			result->_scene->addChild(layerNode);
 
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
-				Object *obj = layer->_objects[j];
+				Common::SharedPtr<Object> obj = layer->_objects[j];
 				if (!sqrawexists(table, obj->_key)) {
 					// this object does not exist, so create it
 					sq_newtable(v);
@@ -1110,7 +1107,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 
 					// adds the object to the room table
 					sqsetf(result->_table, obj->_key, obj->_table);
-					obj->setRoom(result);
+					Object::setRoom(obj, result);
 					obj->setState(0, true);
 
 					if (obj->_objType == otNone)
@@ -1128,9 +1125,9 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	for (size_t i = 0; i < result->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = result->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
+			Common::SharedPtr<Object> obj = layer->_objects[j];
 			if (obj->_parent.size() > 0) {
-				Object *parent = result->getObj(obj->_parent);
+				Common::SharedPtr<Object> parent = result->getObj(obj->_parent);
 				if (!parent) {
 					warning("parent: '%s' not found", obj->_parent.c_str());
 				} else {
@@ -1153,7 +1150,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	return result;
 }
 
-void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Object *door) {
+void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door) {
 	HSQUIRRELVM v = getVm();
 	// Called when the room is entered.
 	debugC(kDebugGame, "call enter room function of %s", room->_name.c_str());
@@ -1182,7 +1179,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Object *door) {
 		cancelSentence();
 		if (door) {
 			Facing facing = getOppositeFacing(door->getDoorFacing());
-			_actor->setRoom(room);
+			Object::setRoom(_actor, room);
 			if (door) {
 				_actor->setFacing(facing);
 				_actor->_node->setPos(door->getUsePos());
@@ -1199,7 +1196,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Object *door) {
 	for (size_t i = 0; i < room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
+			Common::SharedPtr<Object> obj = layer->_objects[j];
 			// add all scaling triggers
 			if (obj->_objType == ObjectType::otTrigger) {
 				Scaling *scaling = getScaling(obj->_key);
@@ -1261,13 +1258,15 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 		// delete all temporary objects
 		for (size_t i = 0; i < _room->_layers.size(); i++) {
 			Common::SharedPtr<Layer> layer = _room->_layers[i];
-			for (size_t j = 0; j < layer->_objects.size(); j++) {
-				Object *obj = layer->_objects[j];
+			for (auto it = layer->_objects.begin(); it != layer->_objects.end();) {
+				Common::SharedPtr<Object> obj = *it;
 				if (obj->_temporary) {
-					delete obj;
+					it = it = layer->_objects.erase(it);
+					continue;
 				} else if (isActor(obj->getId()) && _actor != obj) {
 					obj->stopObjectMotors();
 				}
+				it++;
 			}
 		}
 
@@ -1300,7 +1299,7 @@ void TwpEngine::actorExit() {
 	}
 }
 
-void TwpEngine::cancelSentence(Object *actor) {
+void TwpEngine::cancelSentence(Common::SharedPtr<Object> actor) {
 	debugC(kDebugGame, "cancelSentence");
 	if (!actor)
 		actor = _actor;
@@ -1349,7 +1348,7 @@ Math::Vector2d TwpEngine::cameraPos() {
 	return _camera.getAt();
 }
 
-void TwpEngine::follow(Object *actor) {
+void TwpEngine::follow(Common::SharedPtr<Object> actor) {
 	_followActor = actor;
 	if (actor) {
 		Math::Vector2d pos = actor->_node->getPos();
@@ -1371,9 +1370,9 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 }
 
 struct GetByZorder {
-	GetByZorder(Object *&result) : _result(result) { result = nullptr; }
+	GetByZorder(Common::SharedPtr<Object> &result) : _result(result) { result = nullptr; }
 
-	bool operator()(Object *obj) {
+	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() < _zOrder) {
 			_result = obj;
 			_zOrder = obj->_node->getZSort();
@@ -1382,19 +1381,19 @@ struct GetByZorder {
 	}
 
 public:
-	Object *&_result;
+	Common::SharedPtr<Object> &_result;
 
 private:
 	int _zOrder = INT_MAX;
 };
 
-Object *TwpEngine::objAt(Math::Vector2d pos) {
-	Object *result;
+Common::SharedPtr<Object> TwpEngine::objAt(Math::Vector2d pos) {
+	Common::SharedPtr<Object> result;
 	objsAt(pos, GetByZorder(result));
 	return result;
 }
 
-void TwpEngine::setActor(Object *actor, bool userSelected) {
+void TwpEngine::setActor(Common::SharedPtr<Object> actor, bool userSelected) {
 	_actor = actor;
 	_hud._actor = actor;
 	if (!_hud.getParent() && actor) {
@@ -1416,7 +1415,7 @@ void TwpEngine::setActor(Object *actor, bool userSelected) {
 		follow(actor);
 }
 
-bool TwpEngine::selectable(Object *actor) {
+bool TwpEngine::selectable(Common::SharedPtr<Object> actor) {
 	for (int i = 0; i < NUMACTORS; i++) {
 		ActorSlot *slot = &_hud._actorSlots[i];
 		if (slot->actor == actor)
@@ -1425,7 +1424,7 @@ bool TwpEngine::selectable(Object *actor) {
 	return false;
 }
 
-static void giveTo(Object *actor1, Object *actor2, Object *obj) {
+static void giveTo(Common::SharedPtr<Object> actor1, Common::SharedPtr<Object> actor2, Common::SharedPtr<Object> obj) {
 	obj->_owner = actor2;
 	actor2->_inventory.push_back(obj);
 	int index = find(actor1->_inventory, obj);
@@ -1441,7 +1440,7 @@ void TwpEngine::resetVerb() {
 	_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 }
 
-bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2) {
+bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
 	sqcall("onObjectClick", noun1->_table);
 
 	// Called after the actor has walked to the object.
@@ -1530,7 +1529,7 @@ bool TwpEngine::callVerb(Object *actor, VerbId verbId, Object *noun1, Object *no
 	return false;
 }
 
-void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
+void TwpEngine::callTrigger(Common::SharedPtr<Object> obj, HSQOBJECT trigger) {
 	if (trigger._type != OT_NULL) {
 		HSQUIRRELVM v = getVm();
 		// create trigger thread
@@ -1571,7 +1570,7 @@ void TwpEngine::updateTriggers() {
 	if (_actor) {
 		// check if actor enters or leaves an object trigger
 		for (size_t i = 0; i < _room->_triggers.size(); i++) {
-			Object *trigger = _room->_triggers[i];
+			Common::SharedPtr<Object> trigger = _room->_triggers[i];
 			if (!trigger->_triggerActive && trigger->contains(_actor->_node->getAbsPos())) {
 				debugC(kDebugGame, "call enter trigger %s", trigger->_key.c_str());
 				trigger->_triggerActive = true;
@@ -1653,6 +1652,6 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 	Image::writePNG(stream, s);
 }
 
-ScalingTrigger::ScalingTrigger(Object *obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
+ScalingTrigger::ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
 
 } // End of namespace Twp

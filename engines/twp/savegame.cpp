@@ -31,18 +31,18 @@ namespace Twp {
 
 const static uint32 savegameKey[] = {0xAEA4EDF3, 0xAFF8332A, 0xB5A2DBB4, 0x9B4BA022};
 
-static Object *actor(const Common::String &key) {
+static Common::SharedPtr<Object> actor(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *a = g_engine->_actors[i];
+		Common::SharedPtr<Object> a = g_engine->_actors[i];
 		if (a->_key == key)
 			return a;
 	}
 	return nullptr;
 }
 
-static Object *actor(int id) {
+static Common::SharedPtr<Object> actor(int id) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *a = g_engine->_actors[i];
+		Common::SharedPtr<Object> a = g_engine->_actors[i];
 		if (a->getId() == id)
 			return a;
 	}
@@ -104,11 +104,11 @@ static Common::SharedPtr<Room> room(const Common::String &name) {
 	return nullptr;
 }
 
-static Object *object(Common::SharedPtr<Room> room, const Common::String &key) {
+static Common::SharedPtr<Object> object(Common::SharedPtr<Room> room, const Common::String &key) {
 	for (size_t i = 0; i < room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *o = layer->_objects[j];
+			Common::SharedPtr<Object> o = layer->_objects[j];
 			if (o->_key == key)
 				return o;
 		}
@@ -116,13 +116,13 @@ static Object *object(Common::SharedPtr<Room> room, const Common::String &key) {
 	return nullptr;
 }
 
-static Object *object(const Common::String &key) {
+static Common::SharedPtr<Object> object(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Common::SharedPtr<Layer> layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
-				Object *o = layer->_objects[k];
+				Common::SharedPtr<Object> o = layer->_objects[k];
 				if (o->_key == key)
 					return o;
 			}
@@ -171,7 +171,7 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 				if (!r)
 					warning("room with key=%s not found", roomName.c_str());
 				else {
-					Object *o = object(r, objName);
+					Common::SharedPtr<Object> o = object(r, objName);
 					if (!o)
 						warning("room object with key=%s/%s not found", roomName.c_str(), objName.c_str());
 					else
@@ -187,7 +187,7 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 			}
 		} else if (jObject.contains("_objectKey")) {
 			Common::String objName = jObject["_objectKey"]->asString();
-			Object *o = object(objName);
+			Common::SharedPtr<Object> o = object(objName);
 			if (!o) {
 				warning("object with key=%s not found", objName.c_str());
 			} else {
@@ -213,7 +213,7 @@ static Common::String sub(const Common::String &s, size_t pos, size_t end) {
 	return s.substr(pos, s.size() - end);
 }
 
-static void setAnimations(Object *actor, const Common::JSONArray &anims) {
+static void setAnimations(Common::SharedPtr<Object> actor, const Common::JSONArray &anims) {
 	Common::String headAnim = anims[0]->asString();
 	Common::String standAnim = sub(anims[9]->asString(), 0, 7);
 	Common::String walkAnim = sub(anims[11]->asString(), 0, 7);
@@ -221,7 +221,7 @@ static void setAnimations(Object *actor, const Common::JSONArray &anims) {
 	actor->setAnimationNames(headAnim, standAnim, walkAnim, reachAnim);
 }
 
-static void loadActor(Object *actor, const Common::JSONObject &json) {
+static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject &json) {
 	bool touchable = true;
 	if (json.contains("_untouchable"))
 		touchable = json["_untouchable"]->asIntegerNumber() == 0;
@@ -257,7 +257,7 @@ static void loadActor(Object *actor, const Common::JSONObject &json) {
 		} else if (it->_key == "_renderOffset") {
 			actor->_node->setRenderOffset(parseVec2(it->_value->asString()));
 		} else if (it->_key == "_roomKey") {
-			actor->setRoom(room(it->_value->asString()));
+			Object::setRoom(actor, room(it->_value->asString()));
 		} else if ((it->_key == "_hidden") || (it->_key == "_untouchable")) {
 		} else if (it->_key == "_volume") {
 			actor->_volume = it->_value->asNumber();
@@ -279,7 +279,7 @@ static void loadActor(Object *actor, const Common::JSONObject &json) {
 		sqcall(actor->_table, "postLoad");
 }
 
-static void loadObject(Object *obj, const Common::JSONObject &json) {
+static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &json) {
 	int state = 0;
 	if (json.contains("_state"))
 		state = json["_state"]->asIntegerNumber();
@@ -314,7 +314,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 		} else if (it->_key == "_renderOffset") {
 			obj->_node->setRenderOffset(parseVec2(it->_value->asString()));
 		} else if (it->_key == "_roomKey") {
-			obj->setRoom(room(it->_value->asString()));
+			Object::setRoom(obj, room(it->_value->asString()));
 		} else if (!it->_key.hasPrefix("_")) {
 			HSQOBJECT tmp;
 			toSquirrel(it->_value, tmp);
@@ -333,7 +333,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 
 static void loadPseudoObjects(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
-		Object *o = object(room, it->_key);
+		Common::SharedPtr<Object> o = object(room, it->_key);
 		if (!o)
 			warning("load: room '%s' object '%s' not loaded because it has not been found", room->_name.c_str(), it->_key.c_str());
 		else
@@ -347,7 +347,7 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 			loadPseudoObjects(room, it->_value->asObject());
 		} else {
 			if (!it->_key.hasPrefix("_")) {
-				Object *o = object(room, it->_key);
+				Common::SharedPtr<Object> o = object(room, it->_key);
 				if (!o) {
 					HSQOBJECT tmp;
 					toSquirrel(it->_value, tmp);
@@ -371,7 +371,7 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 
 static void setActor(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *a = g_engine->_actors[i];
+		Common::SharedPtr<Object> a = g_engine->_actors[i];
 		if (a->_key == key) {
 			g_engine->setActor(a, false);
 			return;
@@ -458,7 +458,7 @@ void SaveGameManager::loadGameScene(const Common::JSONObject &json) {
 	const Common::JSONArray &jSelectableActors = json["selectableActors"]->asArray();
 	for (size_t i = 0; i < jSelectableActors.size(); i++) {
 		const Common::JSONObject &jSelectableActor = jSelectableActors[i]->asObject();
-		Object *act = jSelectableActor.contains("_actorKey") ? actor(jSelectableActor["_actorKey"]->asString()) : nullptr;
+		Common::SharedPtr<Object> act = jSelectableActor.contains("_actorKey") ? actor(jSelectableActor["_actorKey"]->asString()) : nullptr;
 		g_engine->_hud._actorSlots[i].actor = act;
 		g_engine->_hud._actorSlots[i].selectable = jSelectableActor["selectable"]->asIntegerNumber() != 0;
 	}
@@ -532,7 +532,7 @@ void SaveGameManager::loadGlobals(const Common::JSONObject &json) {
 
 void SaveGameManager::loadActors(const Common::JSONObject &json) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *a = g_engine->_actors[i];
+		Common::SharedPtr<Object> a = g_engine->_actors[i];
 		if (a->_key.size() > 0) {
 			loadActor(a, json[a->_key]->asObject());
 		}
@@ -544,7 +544,7 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 		const Common::JSONObject &jInventory = json->asObject();
 		const Common::JSONArray &jSlots = jInventory["slots"]->asArray();
 		for (int i = 0; i < NUMACTORS; i++) {
-			Object *actor = g_engine->_hud._actorSlots[i].actor;
+			Common::SharedPtr<Object> actor = g_engine->_hud._actorSlots[i].actor;
 			if (actor) {
 				int jiggleCount = 0;
 				actor->_inventory.clear();
@@ -554,11 +554,11 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 						const Common::JSONArray &jSlotObjects = jSlot["objects"]->asArray();
 						for (size_t j = 0; j < jSlotObjects.size(); j++) {
 							const Common::JSONValue *jObj = jSlotObjects[j];
-							Object *obj = object(jObj->asString());
+							Common::SharedPtr<Object> obj = object(jObj->asString());
 							if (!obj)
 								warning("inventory obj '%s' not found", jObj->asString().c_str());
 							else {
-								actor->pickupObject(obj);
+								Object::pickupObject(actor, obj);
 								obj->_jiggle = jSlot.contains("jiggle") && jSlot["jiggle"]->isArray() && jSlot["jiggle"]->asArray()[jiggleCount++]->asIntegerNumber() != 0;
 							}
 						}
@@ -578,7 +578,7 @@ void SaveGameManager::loadRooms(const Common::JSONObject &json) {
 
 void SaveGameManager::loadObjects(const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
-		Object *o = object(it->_key);
+		Common::SharedPtr<Object> o = object(it->_key);
 		if (o)
 			loadObject(o, it->_value->asObject());
 		else
@@ -639,11 +639,11 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 			int id = 0;
 			sqgetf(obj, "_id", id);
 			if (isActor(id)) {
-				Object *a = actor(id);
+				Common::SharedPtr<Object> a = actor(id);
 				jObj["_actorKey"] = new Common::JSONValue(a->_key);
 				return new Common::JSONValue(jObj);
 			} else if (isObject(id)) {
-				Object *o = sqobj(id);
+				Common::SharedPtr<Object> o = sqobj(id);
 				if (!o)
 					return new Common::JSONValue();
 				jObj["_objectKey"] = new Common::JSONValue(o->_key);
@@ -686,7 +686,7 @@ Common::String toString(const Math::Vector2d &pos) {
 	return Common::String::format("{%d,%d}", (int)pos.getX(), (int)pos.getY());
 }
 
-static Common::JSONValue *createJActor(Object *actor) {
+static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
 	Common::JSONValue *jActorValue = tojson(actor->_table, false);
 	Common::JSONObject jActor(jActorValue->asObject());
 	int color = actor->_node->getComputedColor().toInt();
@@ -721,7 +721,7 @@ static Common::JSONValue *createJActor(Object *actor) {
 static Common::JSONValue *createJActors() {
 	Common::JSONObject jActors;
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		if (actor->_key.size() > 0) {
 			jActors[actor->_key] = createJActor(actor);
 		}
@@ -854,7 +854,7 @@ static Common::JSONValue *createJInventory(const ActorSlot &slot) {
 		Common::JSONArray jiggleArray;
 		bool anyJiggle = false;
 		for (size_t i = 0; i < slot.actor->_inventory.size(); i++) {
-			Object *obj = slot.actor->_inventory[i];
+			Common::SharedPtr<Object> obj = slot.actor->_inventory[i];
 			if (obj->_jiggle)
 				anyJiggle = true;
 			jiggleArray.push_back(createJBool(obj->_jiggle));
@@ -882,7 +882,7 @@ static Common::JSONValue *createJInventory() {
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue *createJObject(HSQOBJECT &table, Object *obj) {
+static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Object> obj) {
 	Common::JSONObject json(tojson(table, false)->asObject());
 	if (obj) {
 		if (!obj->_node->isVisible())
@@ -901,7 +901,7 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Object *obj) {
 static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
 	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
 	if (isObject(getId(v))) {
-		Object *obj = sqobj(v);
+		Common::SharedPtr<Object> obj = sqobj(v);
 		if (!obj || (obj->_objType == otNone)) {
 			// info fmt"obj: createJObject({k})"
 			(*jObj)[k] = createJObject(v, obj);
@@ -919,7 +919,7 @@ static Common::JSONValue *createJObjects() {
 static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void* data) {
 	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
 	if (isObject(getId(v))) {
-			Object *obj = sqobj(v);
+			Common::SharedPtr<Object> obj = sqobj(v);
 			// info fmt"pseudoObj: createJObject({k})"
 			(*jObj)[k] = createJObject(v, obj);
 		}

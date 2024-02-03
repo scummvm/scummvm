@@ -116,7 +116,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	const Color red(1.f, 0.f, 0.f);
 	const Color yellow(1.f, 1.f, 0.f);
 	const Color blue(0.f, 0.f, 1.f);
-	const Object *actor = g_engine->_actor;
+	const Common::SharedPtr<Object> actor = g_engine->_actor;
 
 	// draw actor path
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor && actor->getWalkTo()) {
@@ -177,7 +177,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 		g_engine->getGfx().drawQuad(Math::Vector2d(8.f, 8.f), yellow, t);
 
-		Object *obj = g_engine->objAt(roomPos);
+		Common::SharedPtr<Object> obj = g_engine->objAt(roomPos);
 		if (obj) {
 			t = Math::Matrix4();
 			pos = g_engine->roomToScreen(obj->getUsePos()) - Math::Vector2d(4.f, 4.f);

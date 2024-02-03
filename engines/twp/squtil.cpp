@@ -297,9 +297,9 @@ Common::SharedPtr<Room> sqroom(HSQUIRRELVM v, int i) {
 	return nullptr;
 }
 
-Object *sqobj(int id) {
+Common::SharedPtr<Object> sqobj(int id) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		if (getId(actor->_table) == id)
 			return actor;
 	}
@@ -309,7 +309,7 @@ Object *sqobj(int id) {
 		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Common::SharedPtr<Layer> layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
-				Object *obj = layer->_objects[k];
+				Common::SharedPtr<Object> obj = layer->_objects[k];
 				if (getId(obj->_table) == id)
 					return obj;
 			}
@@ -318,28 +318,28 @@ Object *sqobj(int id) {
 	return nullptr;
 }
 
-Object *sqobj(HSQOBJECT table) {
+Common::SharedPtr<Object> sqobj(HSQOBJECT table) {
 	int id = getId(table);
 	return sqobj(id);
 }
 
-Object *sqobj(HSQUIRRELVM v, int i) {
+Common::SharedPtr<Object> sqobj(HSQUIRRELVM v, int i) {
 	HSQOBJECT table;
 	sq_getstackobj(v, i, &table);
 	return sqobj(table);
 }
 
-Object *sqactor(HSQOBJECT table) {
+Common::SharedPtr<Object> sqactor(HSQOBJECT table) {
 	int id = getId(table);
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		if (actor->getId() == id)
 			return actor;
 	}
 	return nullptr;
 }
 
-Object *sqactor(HSQUIRRELVM v, int i) {
+Common::SharedPtr<Object> sqactor(HSQUIRRELVM v, int i) {
 	HSQOBJECT table;
 	if (SQ_SUCCEEDED(sqget(v, i, table)))
 		return sqactor(table);

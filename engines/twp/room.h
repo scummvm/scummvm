@@ -57,7 +57,7 @@ public:
 
 public:
 	Common::Array<Common::String> _names;
-	Common::Array<Object *> _objects;
+	Common::Array<Common::SharedPtr<Object> > _objects;
 	Math::Vector2d _parallax;
 	int _zsort = 0;
 	Node *_node = nullptr;
@@ -95,9 +95,9 @@ struct Lights {
 };
 
 struct ScalingTrigger {
-	ScalingTrigger(Object * obj, Scaling* scaling);
+	ScalingTrigger(Common::SharedPtr<Object>  obj, Scaling* scaling);
 
-	Object * _obj = nullptr;
+	Common::SharedPtr<Object>  _obj = nullptr;
 	Scaling* _scaling = nullptr;
 };
 
@@ -108,21 +108,21 @@ public:
 	Room(const Common::String &name, HSQOBJECT &table);
 	~Room();
 
-	void load(Common::SeekableReadStream &s);
+	static void load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s);
 
 	void update(float elapsedSec);
 
-	Object *createObject(const Common::String &sheet, const Common::Array<Common::String> &frames);
-	Object *createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);
+	Common::SharedPtr<Object> createObject(const Common::String &sheet, const Common::Array<Common::String> &frames);
+	Common::SharedPtr<Object> createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);
 
 	Math::Vector2d getScreenSize();
 
 	Common::SharedPtr<Layer> layer(int zsort);
-	Object *getObj(const Common::String &key);
+	Common::SharedPtr<Object> getObj(const Common::String &key);
 
 	Light *createLight(Color color, Math::Vector2d pos);
 	float getScaling(float yPos);
-	void objectParallaxLayer(Object *obj, int zsort);
+	void objectParallaxLayer(Common::SharedPtr<Object> obj, int zsort);
 	void setOverlay(Color color);
 	Color getOverlay() const;
 
@@ -143,10 +143,10 @@ public:
 	HSQOBJECT _table;                  // Squirrel table representing this room
 	bool _entering = false;            // Indicates whether or not an actor is entering this room
 	Lights _lights;                    // Lights of the room
-	Common::Array<Object *> _triggers; // Triggers currently enabled in the room
+	Common::Array<Common::SharedPtr<Object> > _triggers; // Triggers currently enabled in the room
 	Common::Array<ScalingTrigger> _scalingTriggers; // Scaling Triggers of the room
 	bool _pseudo = false;
-	Common::Array<Object *> _objects;
+	Common::Array<Common::SharedPtr<Object> > _objects;
 	Scene *_scene = nullptr;
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect = RoomEffect::None;
