@@ -496,17 +496,16 @@ void TwpEngine::update(float elapsed) {
 	// update cutscene
 	if (_cutscene) {
 		if (_cutscene->update(elapsed)) {
-			delete _cutscene;
-			_cutscene = nullptr;
+			_cutscene.reset();
 		}
 	}
 
 	// update threads: make a copy of the threads because during threads update, new threads can be added
-	Common::Array<ThreadBase *> threads(_threads);
-	Common::Array<ThreadBase *> threadsToRemove;
+	Common::Array<Common::SharedPtr<ThreadBase> > threads(_threads);
+	Common::Array<Common::SharedPtr<ThreadBase> > threadsToRemove;
 
 	for (auto it = threads.begin(); it != threads.end(); it++) {
-		ThreadBase *thread = *it;
+		Common::SharedPtr<ThreadBase> thread = *it;
 		if (thread->update(elapsed)) {
 			threadsToRemove.push_back(thread);
 		}
@@ -514,20 +513,18 @@ void TwpEngine::update(float elapsed) {
 
 	// remove threads that are terminated
 	for (auto it = threadsToRemove.begin(); it != threadsToRemove.end(); it++) {
-		ThreadBase *thread = *it;
+		Common::SharedPtr<ThreadBase> thread = *it;
 		int i = find(_threads, *it);
 		if (i != -1) {
 			_threads.remove_at(i);
-			delete thread;
 		}
 	}
 
 	// update callbacks
 	for (auto it = _callbacks.begin(); it != _callbacks.end();) {
-		Callback *cb = *it;
+		Common::SharedPtr<Callback> cb = *it;
 		if (cb->update(elapsed)) {
 			it = _callbacks.erase(it);
-			delete cb;
 			continue;
 		}
 		it++;
@@ -535,10 +532,9 @@ void TwpEngine::update(float elapsed) {
 
 	// update tasks
 	for (auto it = _tasks.begin(); it != _tasks.end();) {
-		Task *task = *it;
+		Common::SharedPtr<Task> task = *it;
 		if (task->update(elapsed)) {
 			it = _tasks.erase(it);
-			delete task;
 			continue;
 		}
 		it++;
@@ -1280,7 +1276,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 
 		// stop all local threads
 		for (size_t i = 0; i < _threads.size(); i++) {
-			ThreadBase *thread = _threads[i];
+			Common::SharedPtr<ThreadBase> thread = _threads[i];
 			if (!thread->isGlobal()) {
 				thread->stop();
 			}
@@ -1562,7 +1558,7 @@ void TwpEngine::callTrigger(Object *obj, HSQOBJECT trigger) {
 		Thread *thread = new Thread("Trigger", false, threadObj, obj->_table, trigger, args);
 
 		debugC(kDebugGame, "create triggerthread id: %d}", thread->getId());
-		g_engine->_threads.push_back(thread);
+		g_engine->_threads.push_back(Common::SharedPtr<ThreadBase>(thread));
 
 		// call the closure in the thread
 		if (!thread->call()) {

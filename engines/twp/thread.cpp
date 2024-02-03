@@ -132,7 +132,7 @@ Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, H
 	g_engine->_inputState.setInputActive(false);
 	g_engine->_inputState.setShowCursor(false);
 	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
-		ThreadBase *thread = g_engine->_threads[i];
+		Common::SharedPtr<ThreadBase> thread = g_engine->_threads[i];
 		if (thread->isGlobal())
 			thread->pause();
 	}
@@ -174,15 +174,15 @@ void Cutscene::stop() {
 		g_engine->_inputState.setInputActive(true);
 	debugC(kDebugGame, "Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
-	Common::Array<ThreadBase *> threads(g_engine->_threads);
+	Common::Array<Common::SharedPtr<ThreadBase> > threads(g_engine->_threads);
 	for (size_t i = 0; i < threads.size(); i++) {
-		ThreadBase *thread = threads[i];
+		Common::SharedPtr<ThreadBase> thread = threads[i];
 		if (thread->isGlobal())
 			thread->unpause();
 	}
 	sqcall("onCutsceneEnded");
 
-	ThreadBase *t = sqthread(_parentThreadId);
+	Common::SharedPtr<ThreadBase> t = sqthread(_parentThreadId);
 	if (t && t->getId())
 		t->unpause();
 	sq_suspendvm(getThread());
