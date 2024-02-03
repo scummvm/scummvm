@@ -32,7 +32,7 @@ const GameConstants _nancy3Constants = {
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
 	8,												// numCursorTypes
 	4000,											// logoEndAfter
-	32												// wonGameSceneID
+	32												// wonGameFlagID
 };
 
 const SoundChannelInfo _nancy3to7SoundChannelInfo = {

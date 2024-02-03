@@ -30,7 +30,7 @@ const GameConstants _tvdConstants = {
 	{ 110, 111, 112, 113, 114 },	// genericEventFlags
 	4,								// numCursorTypes
 	167000,							// logoEndAfter
-	59								// wonGameSceneID
+	59								// wonGameFlagID
 };
 
 const Common::Array<uint16> _tvdMapAccessSceneIDs = {

@@ -32,7 +32,7 @@ const GameConstants _nancy1Constants = {
 		75, 76, 77, 78, 79, 80, 81, 82, 83, 84 },
 	4,													// numCursorTypes
 	7000,												// logoEndAfter
-	42													// wonGameSceneID
+	42													// wonGameFlagID
 };
 
 const Common::Array<uint16> _nancy1MapAccessSceneIDs = {

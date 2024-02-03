@@ -94,7 +94,7 @@ void writeConstants(File &output, const GameConstants &gameConstants) {
 	writeToFile(output, gameConstants.genericEventFlags);
 	output.writeUint16(gameConstants.numCursorTypes);
 	output.writeUint32(gameConstants.logoEndAfter);
-	output.writeUint16(gameConstants.wonGameSceneID);
+	output.writeUint16(gameConstants.wonGameFlagID);
 }
 
 void writeSoundChannels(File &output, const SoundChannelInfo &soundChannelInfo) {

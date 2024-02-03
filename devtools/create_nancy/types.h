@@ -37,7 +37,7 @@ struct GameConstants {
 	Common::Array<uint16> genericEventFlags;
 	uint16 numCursorTypes;
 	uint32 logoEndAfter;
-	uint16 wonGameSceneID;
+	uint16 wonGameFlagID;
 };
 
 struct EventFlagDescription {
