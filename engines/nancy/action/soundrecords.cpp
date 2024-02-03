@@ -68,6 +68,10 @@ void PlaySound::execute() {
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
 
+		if (g_nancy->getGameType() >= kGameTypeNancy8) {
+			NancySceneState.setEventFlag(_flag);
+		}
+
 		if (_changeSceneImmediately) {
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
@@ -84,7 +88,10 @@ void PlaySound::execute() {
 		break;
 	case kActionTrigger:
 		NancySceneState.changeScene(_sceneChange);
-		NancySceneState.setEventFlag(_flag);
+
+		if (g_nancy->getGameType() <= kGameTypeNancy7) {
+			NancySceneState.setEventFlag(_flag);
+		}
 
 		g_nancy->_sound->stopSound(_sound);
 
