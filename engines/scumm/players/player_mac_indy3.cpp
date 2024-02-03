@@ -33,6 +33,7 @@ namespace Scumm {
 #define ASC_DEVICE_RATE		0x56EE8BA3
 #define VBL_UPDATE_RATE		0x003C25BD
 #define PCM_BUFFER_SIZE		1024
+#define PCM_BUFFER_RESERVE	64
 #define RATECNV_BIT_PRECSN	24
 
 extern const uint8 *g_pv2ModTbl;
@@ -142,11 +143,17 @@ private:
 
 class I3MMusicDriver : public I3MSoundDriver {
 public:
+	enum ParaType {
+		kDuration = 0,
+		kChanRate = 1,
+		kChanWaveform = 2,
+		kSwTriplet = 3
+	};
+
 	I3MMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool isStereo) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo), _numChan(numChannels) {}
 	virtual void start() = 0;
 	virtual void stop() = 0;
-	virtual void setDuration(uint16 duration) = 0;
-	virtual void setRate(uint8 chan, uint16 rate) = 0;
+	virtual void setParameter(ParaType type, ...) = 0;
 	uint16 numChannels() const { return _numChan; }
 protected:
 	const uint16 _numChan;
@@ -154,18 +161,25 @@ protected:
 
 class I3MFourToneSynthDriver final : public I3MMusicDriver {
 public:
+	struct Data {
+		Data(uint16 dur) : duration(dur) { memset(rate, 0, sizeof(rate)); }
+		uint16 duration;
+		uint16 rate[4];
+	};
+public:
 	I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo);
 	~I3MFourToneSynthDriver() override;
 
 	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void start() override;
 	void stop() override;
-
-	void setDuration(uint16 duration) override;
-	void setWaveForm(uint8 chan, const uint8 *data, uint32 dataSize);
-	void setRate(uint8 chan, uint16 rate) override;
+	void setParameter(ParaType type, ...) override;
 
 private:
+	void setWaveForm(uint8 chan, const uint8 *data, uint32 dataSize);
+	void setDuration(uint16 duration);
+	void setRate(uint8 chan, uint16 rate);
+
 	uint32 _pos;
 	uint16 _duration;
 
@@ -181,15 +195,22 @@ private:
 
 class I3MSquareWaveSynthDriver final : public I3MMusicDriver {
 public:
+	struct Data {
+		Data() : count(0), ampltd(0), duration(0) {}
+		uint16 count;
+		uint16 ampltd;
+		uint16 duration;
+	};
+public:
 	I3MSquareWaveSynthDriver(Common::Mutex &mutex, bool isStereo) : I3MMusicDriver(1, mutex, isStereo) {}
 	~I3MSquareWaveSynthDriver() override {}
 
-	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override {}
-	void start() override {}
-	void stop() override {}
-
-	void setDuration(uint16 duration) override {}
-	void setRate(uint8 chan, uint16 rate) override {}
+	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
+	void start() override;
+	void stop() override;
+	void setParameter(ParaType argType, ...) override;
+private:
+	void pushTriplet(uint16 count, uint16 amplitude, uint16 duration);
 };
 
 class I3MPlayer {
@@ -362,7 +383,7 @@ void AudioStream_I3M::initBuffers(uint32 feedBufferSize) {
 
 	for (int i = 0; i < 2; ++i) {
 		_buffers[i].size = feedBufferSize;
-		_buffers[i].start = new int8[_buffers[i].size];
+		_buffers[i].start = new int8[_buffers[i].size + PCM_BUFFER_RESERVE];
 		_buffers[i].end = _buffers[i].start + _buffers[i].size;
 	}
 	clearBuffer();
@@ -386,7 +407,7 @@ void AudioStream_I3M::setVblCallback(const CallbackProc *proc) {
 
 void AudioStream_I3M::clearBuffer() {
 	for (int i = 0; i < 2; ++i) {
-		memset(_buffers[i].start, 0, _buffers[i].size);
+		memset(_buffers[i].start, 0, _buffers[i].size + PCM_BUFFER_RESERVE);
 		_buffers[i].pos = _buffers[i].start;
 	}
 }
@@ -456,13 +477,8 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 
 				if (_buffers[ii].pos >= _buffers[ii].end) {
 					int refreshSize = MIN<int>(_vblCountDown * _frameSize, _buffers[ii].size);
-					int ovrflow = _buffers[ii].pos - _buffers[ii].end;
-					_buffers[ii].pos -= (refreshSize + ovrflow);
-					if (_buffers[ii].pos < _buffers[ii].start) {
-						_buffers[ii].pos += ovrflow;
-						refreshSize -= ovrflow;
-					}
-					assert(_buffers[ii].pos + refreshSize == _buffers[ii].end);
+					_buffers[ii].pos -= refreshSize;
+					assert(_buffers[ii].pos + refreshSize < _buffers[ii].end + PCM_BUFFER_RESERVE);
 					generateData(_buffers[ii].pos, refreshSize, stype[ii], _isStereo);
 				}
 			}
@@ -815,17 +831,32 @@ void I3MFourToneSynthDriver::stop() {
 	setDuration(0);
 }
 
-void I3MFourToneSynthDriver::setDuration(uint16 duration) {
+void I3MFourToneSynthDriver::setParameter(ParaType type, ...)  {
 	Common::StackLock lock(_mutex);
-	_duration = duration;
-	_pos = 0;
-	_sig = false;
+	va_list arg;
+	va_start(arg, type);
+	int chan = (type == kChanRate || type == kChanWaveform) ? va_arg(arg, int) : 0;
+	const uint8 *ptr = (type == kChanWaveform) ? va_arg(arg, const uint8*) : nullptr;
+
+	switch (type) {
+	case kDuration:
+		setDuration(va_arg(arg, uint16));
+		break;
+	case kChanRate:
+		setRate(chan, va_arg(arg, uint16));
+		break;
+	case kChanWaveform:
+		setWaveForm(chan, ptr, va_arg(arg, uint32));
+		break;
+	default:
+		break;
+	}
+
+	va_end(arg);
 }
 
 void I3MFourToneSynthDriver::setWaveForm(uint8 chan, const uint8 *data, uint32 dataSize) {
 	assert(chan < _numChan);
-	Common::StackLock lock(_mutex);
-
 	delete[] _chan[chan].waveform;
 	_chan[chan].waveform = nullptr;
 	if (data == nullptr || dataSize == 0)
@@ -838,11 +869,51 @@ void I3MFourToneSynthDriver::setWaveForm(uint8 chan, const uint8 *data, uint32 d
 	_chan[chan].waveform = wf;
 }
 
+void I3MFourToneSynthDriver::setDuration(uint16 duration) {
+	_duration = duration;
+	_pos = 0;
+	_sig = false;
+}
+
 void I3MFourToneSynthDriver::setRate(uint8 chan, uint16 rate) {
 	assert(chan < _numChan);
-	Common::StackLock lock(_mutex);
+	_chan[chan].rate = rate ? (0x5060000 / (rate >> ((rate < 1600) ? 4 : 6))) : 0;
+}
 
-	_chan[chan].rate = rate ? (0x5060000 / (rate >> ((rate < 1600) ? 8 : 6))) : 0;
+void I3MSquareWaveSynthDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) {
+
+}
+
+void I3MSquareWaveSynthDriver::start() {
+
+}
+
+void I3MSquareWaveSynthDriver::stop() {
+
+}
+
+void I3MSquareWaveSynthDriver::setParameter(ParaType type, ...)  {
+	Common::StackLock lock(_mutex);
+	va_list arg;
+	va_start(arg, type);
+	uint16 a = 0;
+	uint16 b = 0;
+	
+	switch (type) {
+	case kSwTriplet:
+		a = va_arg(arg, uint16);
+		b = va_arg(arg, uint16);
+		pushTriplet(a, b, va_arg(arg, uint16));
+		break;
+	default:
+		break;
+	}
+
+	va_end(arg);
+}
+
+void I3MSquareWaveSynthDriver::I3MSquareWaveSynthDriver::pushTriplet(uint16 count, uint16 amplitude, uint16 duration) {
+
 }
 
 Common::WeakPtr<I3MPlayer> *I3MPlayer::_inst = nullptr;
@@ -912,7 +983,7 @@ bool I3MPlayer::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 fee
 		return false;
 
 	for (int i = 0; i < mdrv->numChannels(); ++i)
-		mdrv->setWaveForm(i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
+		mdrv->setParameter(I3MMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 	_qualHi = true;
 	_mdrv = mdrv;
 
@@ -1000,7 +1071,7 @@ void I3MPlayer::setQuality(int qual) {
 		I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), false);
 		assert(mdrv);
 		for (int i = 0; i < mdrv->numChannels(); ++i)
-			mdrv->setWaveForm(i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
+			mdrv->setParameter(I3MMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 		_mdrv = mdrv;
 		_qualHi = true;
 	} else {
@@ -1200,9 +1271,9 @@ void I3MPlayer::updateSong() {
 	}
 
 	for (int i = 0; i < _mdrv->numChannels(); ++i)
-		_mdrv->setRate(i, _lastSong ? _musicChannels[i]->checkPeriod() : 0);
+		_mdrv->setParameter(I3MMusicDriver::kChanRate, i, _lastSong ? _musicChannels[i]->checkPeriod() : 0);
 	if (_songPlaying)
-		_mdrv->setDuration(10);
+		_mdrv->setParameter(I3MMusicDriver::kDuration, 10);
 }
 
 uint16 savedOffset = 0;
@@ -1642,8 +1713,9 @@ void Player_Mac_Indy3::restoreAfterLoad() {
 }
 
 #undef ASC_DEVICE_RATE
-#undef VBL_RATE
+#undef VBL_UPDATE_RATE
 #undef PCM_BUFFER_SIZE
+#undef PCM_BUFFER_RESERVE
 #undef RATECNV_BIT_PRECSN
 
 } // End of namespace Scumm
