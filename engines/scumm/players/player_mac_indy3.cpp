@@ -42,7 +42,7 @@ extern const uint32 g_pv2ModTblSize;
 class I3MPlayer;
 class AudioStream_I3M : public Audio::AudioStream {
 public:
-	AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate);
+	AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate, bool internal16Bit);
 	~AudioStream_I3M() override;
 
 	void initBuffers(uint32 feedBufferSize);
@@ -60,7 +60,7 @@ public:
 	bool endOfData() const override { return false; }
 
 private:
-	void generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType, bool expectStereo) const;
+	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType, bool expectStereo) const;
 	void runVblTask();
 
 	I3MPlayer *_drv;
@@ -87,23 +87,29 @@ private:
 
 	const uint32 _outputRate;
 	const uint8 _frameSize;
-	bool _interp;
+	const bool _interp;
+	const int _smpInternalSize;
+	const int _volDown;
 
 	const bool _isStereo;
 };
 
 class I3MSoundDriver {
 public:
-	I3MSoundDriver(Common::Mutex &mutex, uint32 deviceRate, bool isStereo) : _mutex(mutex), _sig(false), _deviceRate(deviceRate), _stereo(isStereo) {}
+	I3MSoundDriver(Common::Mutex &mutex, uint32 deviceRate, bool isStereo, bool internal16Bit) : _mutex(mutex), _sig(false), _deviceRate(deviceRate), _stereo(isStereo),
+		_smpSize(internal16Bit ? 2 : 1), _smpMin(internal16Bit ? -32768 : -128), _smpMax(internal16Bit ? 32767 : 127) {}
 	virtual ~I3MSoundDriver() {}
-	virtual void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) = 0;
+	virtual void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) = 0;
 	uint32 getDeviceRate() const { return _deviceRate; }
 	bool checkSignal() const { return _sig; }
 	void resetSignal(bool state) { _sig = state; }
 protected:
 	Common::Mutex &_mutex;
 	const bool _stereo;
+	const int _smpSize;
 	const uint32 _deviceRate;
+	const int16 _smpMin;
+	const int16 _smpMax;
 	bool _sig;
 };
 
@@ -119,8 +125,8 @@ public:
 		byte baseFreq;
 	};
 public:
-	I3MLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool enableInterpolation, bool isStereo);
-	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
+	I3MLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool enableInterpolation, bool isStereo, bool internal16Bit);
+	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void play(PCMSound *snd);
 	void stop();
 private:
@@ -150,7 +156,7 @@ public:
 		kSwTriplet = 3
 	};
 
-	I3MMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool isStereo) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo), _numChan(numChannels) {}
+	I3MMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool isStereo, bool internal16Bit) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo, internal16Bit), _numChan(numChannels) {}
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void setParameter(ParaType type, ...) = 0;
@@ -161,16 +167,10 @@ protected:
 
 class I3MFourToneSynthDriver final : public I3MMusicDriver {
 public:
-	struct Data {
-		Data(uint16 dur) : duration(dur) { memset(rate, 0, sizeof(rate)); }
-		uint16 duration;
-		uint16 rate[4];
-	};
-public:
-	I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo);
+	I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo, bool internal16bit);
 	~I3MFourToneSynthDriver() override;
 
-	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
+	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void start() override;
 	void stop() override;
 	void setParameter(ParaType type, ...) override;
@@ -195,22 +195,22 @@ private:
 
 class I3MSquareWaveSynthDriver final : public I3MMusicDriver {
 public:
-	struct Data {
-		Data() : count(0), ampltd(0), duration(0) {}
-		uint16 count;
-		uint16 ampltd;
-		uint16 duration;
-	};
-public:
-	I3MSquareWaveSynthDriver(Common::Mutex &mutex, bool isStereo) : I3MMusicDriver(1, mutex, isStereo) {}
+	I3MSquareWaveSynthDriver(Common::Mutex &mutex, bool isStereo, bool internal16Bit) : I3MMusicDriver(1, mutex, isStereo, internal16Bit) {}
 	~I3MSquareWaveSynthDriver() override {}
 
-	void feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) override;
+	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void start() override;
 	void stop() override;
 	void setParameter(ParaType argType, ...) override;
 private:
 	void pushTriplet(uint16 count, uint16 amplitude, uint16 duration);
+
+	struct Triplet {
+		Triplet(uint16 cnt, uint16 ampl, uint16 dur) : count(cnt), amplitude(ampl), duration(dur) {}
+		uint16 count;
+		uint16 amplitude;
+		uint16 duration;
+	};
 };
 
 class I3MPlayer {
@@ -219,7 +219,7 @@ private:
 public:
 	~I3MPlayer();
 	static Common::SharedPtr<I3MPlayer> open(ScummEngine *scumm, Audio::Mixer *mixer);
-	bool startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 feedBufferSize, bool enableInterpolation);
+	bool startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 feedBufferSize, bool enableInterpolation, bool stereo, bool internal16Bit);
 
 	void setMusicVolume(int vol);
 	void setSfxVolume(int vol);
@@ -232,7 +232,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
 
-	void generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const;
+	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const;
 	uint32 getDriverDeviceRate(uint8 drvID) const;
 	void nextTick();
 
@@ -263,6 +263,8 @@ private:
 	bool _songPlaying;
 	bool _soundEffectPlaying;
 	int _qmode;
+	bool _16bit;
+	bool _stereo;
 	bool _qualHi;
 	bool _mixerThread;
 
@@ -363,8 +365,9 @@ public:
 	MusicChannel *getMusicChannel(uint8 id) const;
 };
 
-AudioStream_I3M::AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate) : Audio::AudioStream(), _drv(drv), _vblSmpQty(0), _vblSmpQtyRem(0), _frameSize(stereo ? 2 : 1),
-	_vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate), _vblCbProc(nullptr), _isStereo(stereo), _interp(interpolate) {
+AudioStream_I3M::AudioStream_I3M(I3MPlayer *drv, uint32 scummVMOutputrate, bool stereo, bool interpolate, bool internal16Bit) : Audio::AudioStream(), _drv(drv),
+	_vblSmpQty(0), _vblSmpQtyRem(0), _frameSize((stereo ? 2 : 1) * (internal16Bit ? 2 : 1)), _vblCountDown(0), _vblCountDownRem(0), _outputRate(scummVMOutputrate),
+		_vblCbProc(nullptr), _isStereo(stereo), _interp(interpolate), _smpInternalSize(internal16Bit ? 2 : 1), _volDown(internal16Bit ? 2 : 0) {
 	assert(_drv);
 	_vblSmpQty = (_outputRate << 16) / VBL_UPDATE_RATE;
 	_vblSmpQtyRem = (_outputRate << 16) % VBL_UPDATE_RATE;
@@ -382,9 +385,9 @@ void AudioStream_I3M::initBuffers(uint32 feedBufferSize) {
 		delete[] _buffers[i].start;
 
 	for (int i = 0; i < 2; ++i) {
-		_buffers[i].size = feedBufferSize;
+		_buffers[i].size = feedBufferSize / _frameSize;
 		_buffers[i].start = new int8[_buffers[i].size + PCM_BUFFER_RESERVE];
-		_buffers[i].end = _buffers[i].start + _buffers[i].size;
+		_buffers[i].end = &_buffers[i].start[_buffers[i].size];
 	}
 	clearBuffer();
 }
@@ -444,17 +447,19 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 		int32 smpL = 0;
 		int32 smpR = 0;
 		for (int ii = 0; ii < 2; ++ii) {
-			int diff = _buffers[ii].pos[0] - _buffers[ii].lastL;
+			int smpN = _smpInternalSize == 2 ? *reinterpret_cast<int16*>(_buffers[ii].pos) : _buffers[ii].pos[0];
+			int diff = smpN - _buffers[ii].lastL;
 			if (diff && _buffers[ii].rateConvAcc && _interp)
 				diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-			smpL += (int32)((_buffers[ii].lastL + diff) * _buffers[ii].volume);
+			smpL += (int32)((_buffers[ii].lastL + diff) * (_buffers[ii].volume >> _volDown));
 		}
 		if (_isStereo) {
 			for (int ii = 0; ii < 2; ++ii) {
-				int diff = _buffers[ii].pos[1] - _buffers[ii].lastR;
+				int smpN = _smpInternalSize == 2 ? *reinterpret_cast<int16*>(&_buffers[ii].pos[2]) : _buffers[ii].pos[1];
+				int diff = smpN - _buffers[ii].lastR;
 				if (diff && _buffers[ii].rateConvAcc && _interp)
 					diff = (diff * _buffers[ii].rateConvAcc) >> RATECNV_BIT_PRECSN;
-				smpR += (int32)((_buffers[ii].lastR + diff) * _buffers[ii].volume);
+				smpR += (int32)((_buffers[ii].lastR + diff) * (_buffers[ii].volume >> _volDown));
 			}
 		}
 
@@ -471,9 +476,16 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 				const int8 *lpos = _buffers[ii].pos;
 				if (lpos >= _buffers[ii].start + _frameSize)
 					lpos -= _frameSize;
-				_buffers[ii].lastL = lpos[0];
-				if (_isStereo)
-					_buffers[ii].lastR = lpos[1];
+
+				if (_smpInternalSize == 2) {
+					_buffers[ii].lastL = *reinterpret_cast<const int16*>(lpos);
+					if (_isStereo)
+						_buffers[ii].lastR = *reinterpret_cast<const int16*>(&lpos[2]);
+				} else {
+					_buffers[ii].lastL = lpos[0];
+					if (_isStereo)
+						_buffers[ii].lastR = lpos[1];
+				}
 
 				if (_buffers[ii].pos >= _buffers[ii].end) {
 					int refreshSize = MIN<int>(_vblCountDown * _frameSize, _buffers[ii].size);
@@ -491,9 +503,9 @@ int AudioStream_I3M::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
-void AudioStream_I3M::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const {
+void AudioStream_I3M::generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const {
 	if (_drv)
-		_drv->generateData(dst, len, type, expectStereo);
+		_drv->generateData(dst, byteSize, type, expectStereo);
 }
 
 void AudioStream_I3M::runVblTask() {
@@ -501,16 +513,17 @@ void AudioStream_I3M::runVblTask() {
 		(*_vblCbProc)();
 }
 
-I3MLowLevelPCMDriver::I3MLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool enableInterpolation, bool isStereo) :
-	I3MSoundDriver(mutex, deviceRate, isStereo), _interp(enableInterpolation), _frameSize(isStereo ? 2 : 1), _len(0), _rmH(0), _rmL(0), _smpWtAcc(0), _loopSt(0), _loopEnd(0), _baseFreq(0), _rcPos(0), _data(nullptr) {
-		_lastSmp[0] = _lastSmp[1] = 0;
+I3MLowLevelPCMDriver::I3MLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool enableInterpolation, bool isStereo, bool internal16Bit) :
+	I3MSoundDriver(mutex, deviceRate, isStereo, internal16Bit), _interp(enableInterpolation), _frameSize(isStereo ? 2 : 1), _len(0), _rmH(0), _rmL(0), _smpWtAcc(0), _loopSt(0),
+		_loopEnd(0), _baseFreq(0), _rcPos(0), _data(nullptr) {
+			_lastSmp[0] = _lastSmp[1] = 0;
 }
 
-void I3MLowLevelPCMDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) {
+void I3MLowLevelPCMDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) {
 	if (dst == nullptr || type != Audio::Mixer::kSFXSoundType)
 		return;
 
-	memset(dst, 0, len);
+	memset(dst, 0, byteSize);
 
 	if (_data == nullptr)
 		return;
@@ -521,7 +534,7 @@ void I3MLowLevelPCMDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType t
 	int32 diff = 0;
 	bool interp = (_interp && _rmL);
 
-	for (const int8 *end = dst + len; dst < end; ) {
+	for (const int8 *end = &dst[byteSize]; dst < end; dst += _smpSize) {
 		if (interp) {
 			for (int i = 0; i < _frameSize; ++ i) {
 				int8 in = _data[_rcPos + i];
@@ -530,10 +543,16 @@ void I3MLowLevelPCMDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType t
 					diff = (diff * (_smpWtAcc >> 1)) >> 15;
 					in = (_lastSmp[i] + diff) & 0xff;
 				}
-				*dst++ = in;
+				if (_smpSize == 2)
+					*reinterpret_cast<int16*>(dst) = in << 2;
+				else
+					*dst = in;
 			}
 		} else {
-			*dst++ = _data[_rcPos];
+			if (_smpSize == 2)
+				*reinterpret_cast<int16*>(dst) = _data[_rcPos] << 2;
+			else
+				*dst = _data[_rcPos];
 		}
 
 		uint32 lpos = _rcPos;
@@ -768,8 +787,8 @@ uint32 I3MLowLevelPCMDriver::calcRate(uint32 outRate, uint32 factor, uint32 data
 	return result;
 }
 
-I3MFourToneSynthDriver::I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo) :
-	I3MMusicDriver(4, mutex, isStereo), _duration(0), _pos(0), _chan(nullptr) {
+I3MFourToneSynthDriver::I3MFourToneSynthDriver(Common::Mutex &mutex, bool isStereo, bool internal16Bit) :
+	I3MMusicDriver(4, mutex, isStereo, internal16Bit), _duration(0), _pos(0), _chan(nullptr) {
 	_chan = new Channel[_numChan];
 }
 
@@ -780,14 +799,14 @@ I3MFourToneSynthDriver::~I3MFourToneSynthDriver() {
 	delete[] _chan;
 }
 
-void I3MFourToneSynthDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) {
+void I3MFourToneSynthDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) {
 	if (dst == nullptr || type != Audio::Mixer::kMusicSoundType)
 		return;
 
 	if (expectStereo != _stereo)
 		error("I3MFourToneSynthDriver::feed(): stereo/mono mismatch between sound data and mixer stream");
 
-	const int8 *end = dst + len;
+	const int8 *end = &dst[byteSize];
 
 	while (_duration && dst < end) {
 		if (_pos == 0)
@@ -800,10 +819,20 @@ void I3MFourToneSynthDriver::feed(int8 *dst, uint32 len, Audio::Mixer::SoundType
 				smp += _chan[i].waveform[(_chan[i].phase >> 16) & 0xff];
 		}
 
-		smp = CLIP<int8>(smp >> 2, -128, 127);
-		*dst++ = smp;
-		if (_stereo)
+		if (_smpSize == 2) {
+			smp = CLIP<int16>(smp, _smpMin, _smpMax);
+			*reinterpret_cast<int16*>(dst) = smp;
+			dst += _smpSize;
+			if (_stereo) {
+				*reinterpret_cast<int16*>(dst) = smp;
+				dst += _smpSize;
+			}
+		} else {
+			smp = CLIP<int16>(smp >> 2, _smpMin, _smpMax);
 			*dst++ = smp;
+			if (_stereo)
+				*dst++ = smp;
+		}
 
 		if (++_pos == 370) {
 			_pos = 0;
@@ -920,7 +949,7 @@ Common::WeakPtr<I3MPlayer> *I3MPlayer::_inst = nullptr;
 
 I3MPlayer::I3MPlayer(ScummEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _musicChannels(nullptr), _lastSound(0), _lastSong(-1), _lastSoundEffectPrio(0), _soundEffectNumLoops(-1),
 	_musicIDTable(nullptr), _macstr(nullptr), _musicIDTableLen(0), _soundUsage(0), _idRangeMax(86), _mdrv(nullptr), _sdrv(nullptr), _nextTickProc(this, &I3MPlayer::nextTick),
-	_songPlaying(false), _soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(0), _qualHi(false), _mixerThread(false), _activeChanCount(0), _numMusicChannels(4) {
+	_songPlaying(false), _soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(0), _stereo(false), _16bit(false), _qualHi(false), _mixerThread(false), _activeChanCount(0), _numMusicChannels(4) {
 	assert(_vm);
 	assert(_mixer);
 
@@ -965,26 +994,28 @@ Common::SharedPtr<I3MPlayer> I3MPlayer::open(ScummEngine *vm, Audio::Mixer *mixe
 		_inst = new Common::WeakPtr<I3MPlayer>(scp);
 		// We can start this with the ScummVM mixer output rate instead of the ASC rate. The Mac sample rate converter can handle it (at
 		// least for up to 48 KHz, I haven't tried higher settings) and we don't have to do another rate conversion in the ScummVM mixer.
-		if ((_inst == nullptr) || (mixer == nullptr) || !(scp->startDevices(mixer->getOutputRate(), mixer->getOutputRate() << 16/*ASC_DEVICE_RATE*/, PCM_BUFFER_SIZE, true)))
+		if ((_inst == nullptr) || (mixer == nullptr) || !(scp->startDevices(mixer->getOutputRate(), mixer->getOutputRate() << 16/*ASC_DEVICE_RATE*/, PCM_BUFFER_SIZE, true, false, true)))
 			error("I3MPlayer::open(): Failed to start player");
 	}
 
 	return _inst->lock();
 }
 
-bool I3MPlayer::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 feedBufferSize, bool enableInterpolation) {
-	_macstr = new AudioStream_I3M(this, outputRate, false, enableInterpolation);
+bool I3MPlayer::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 feedBufferSize, bool enableInterpolation, bool stereo, bool internal16Bit) {
+	_macstr = new AudioStream_I3M(this, outputRate, stereo, enableInterpolation, internal16Bit);
 	if (!_macstr || !_mixer)
 		return false;
 
-	_sdrv = new I3MLowLevelPCMDriver(_mixer->mutex(), pcmDeviceRate, enableInterpolation, false);
-	I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), false);
+	_sdrv = new I3MLowLevelPCMDriver(_mixer->mutex(), pcmDeviceRate, enableInterpolation, stereo, internal16Bit);
+	I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), stereo, internal16Bit);
 	if (!mdrv || !_sdrv)
 		return false;
 
 	for (int i = 0; i < mdrv->numChannels(); ++i)
 		mdrv->setParameter(I3MMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 	_qualHi = true;
+	_16bit = internal16Bit;
+	_stereo = stereo;
 	_mdrv = mdrv;
 
 	_drivers.push_back(_mdrv);
@@ -1068,14 +1099,14 @@ void I3MPlayer::setQuality(int qual) {
 	_qmode = qual;
 
 	if (isHiQuality()) {
-		I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), false);
+		I3MFourToneSynthDriver *mdrv = new I3MFourToneSynthDriver(_mixer->mutex(), _stereo, _16bit);
 		assert(mdrv);
 		for (int i = 0; i < mdrv->numChannels(); ++i)
 			mdrv->setParameter(I3MMusicDriver::kChanWaveform, i, _fourToneSynthWaveForm, sizeof(_fourToneSynthWaveForm));
 		_mdrv = mdrv;
 		_qualHi = true;
 	} else {
-		_mdrv = new I3MSquareWaveSynthDriver(_mixer->mutex(), false);
+		_mdrv = new I3MSquareWaveSynthDriver(_mixer->mutex(), _stereo, _16bit);
 		_qualHi = false;
 		assert(_mdrv);
 	}
