@@ -51,6 +51,10 @@ public:
 		kRotateRight			= 13,	// Used in 360 scenes in nancy6 and up
 		kInvertedRotateRight	= 14,	// Used in 360 scenes with inverted rotation; nancy6 and up
 		kInvertedRotateLeft		= 15,	// Used in 360 scenes with inverted rotation; nancy6 and up
+		kCustom1				= 16,	// Custom cursors change between games; Likely used in puzzles
+		kCustom1Hotspot			= 17,
+		kCustom2				= 18,
+		kCustom2Hotspot			= 19,
 		kNormalArrow,
 		kHotspotArrow
 	};

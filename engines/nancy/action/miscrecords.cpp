@@ -316,10 +316,14 @@ void EventFlagsMultiHS::execute() {
 
 		break;
 	case kActionTrigger:
-		_hasHotspot = false;
-		EventFlags::execute();
-		finishExecution();
-		break;
+		if (_hoverCursor != CursorManager::kCustom1 && _hoverCursor != CursorManager::kCustom2) {
+			_hasHotspot = false;
+			EventFlags::execute();
+			finishExecution();
+			break;
+		} else {
+			_state = kRun;
+		}
 	}
 }
 
