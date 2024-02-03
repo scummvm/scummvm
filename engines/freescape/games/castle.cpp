@@ -129,6 +129,7 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 }
 
 extern byte kEGADefaultPalette[16][3];
+extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
@@ -136,6 +137,15 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 	if (_renderMode == Common::kRenderEGA) {
 		_viewArea = Common::Rect(40, 33, 280, 152);
+
+		file.open("CME.EXE");
+		stream = unpackEXE(file);
+		if (stream) {
+			loadSpeakerFx(stream, 0x636d + 0x200, 0x63ed + 0x200);
+		}
+
+		delete stream;
+		file.close();
 
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
@@ -261,7 +271,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
 
-	playSound(5, false);
 	_lastPosition = _position;
 
 	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
@@ -275,11 +284,13 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 310;
 		_pitch = 0;
+		playSound(9, false);
+	} else {
+		playSound(5, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
-	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();

@@ -36,7 +36,8 @@ MODULE_OBJS := \
 	objects/sensor.o \
 	sweepAABB.o \
 	sound.o \
-	ui.o
+	ui.o \
+	unpack.o
 
 ifdef USE_TINYGL
 MODULE_OBJS += \
