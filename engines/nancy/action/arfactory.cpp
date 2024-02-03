@@ -276,6 +276,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySoundTerse();
 	case 160:
 		return new HintSystem();
+	case 161:
+		return new PlaySoundEventFlagTerse();
 	case 170:
 		return new SetPlayerClock();
 	case 200:

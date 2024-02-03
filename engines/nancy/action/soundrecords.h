@@ -76,13 +76,22 @@ protected:
 	Common::String getRecordTypeName() const override;
 };
 
-// Short version of PlaySoundCC
+// Short version of PlaySoundCC, no event flag
 class PlaySoundTerse : public PlaySoundCC {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySoundTerse"; }
+};
+
+// Short version of PlaySoundCC, with event flag
+class PlaySoundEventFlagTerse : public PlaySoundCC {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlaySoundEventFlagTerse"; }
 };
 
 // Used for sounds that pan left-right depending on the scene background frame.

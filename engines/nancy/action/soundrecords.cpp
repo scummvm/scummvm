@@ -154,6 +154,19 @@ void PlaySoundTerse::readData(Common::SeekableReadStream &stream) {
 	readCCText(stream, _ccText);
 }
 
+void PlaySoundEventFlagTerse::readData(Common::SeekableReadStream &stream) {
+	_sound.readTerse(stream);
+	_changeSceneImmediately = stream.readByte();
+	_sceneChange.sceneID = stream.readUint16LE();
+	_flag.label = stream.readUint16LE();
+	_flag.flag = stream.readByte();
+
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+	_soundEffect = new SoundEffectDescription;
+
+	readCCText(stream, _ccText);
+}
+
 void PlaySoundFrameAnchor::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 	stream.skip(2);
