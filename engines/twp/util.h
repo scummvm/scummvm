@@ -78,7 +78,7 @@ T clamp(T x, T a, T b) {
 // game util
 Facing getFacing(int dir, Facing facing);
 Facing flip(Facing facing);
-Facing getFacingToFaceTo(Object *actor, Object *obj);
+Facing getFacingToFaceTo(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 // parsing util
 bool toBool(const Common::JSONObject &jNode, const Common::String &key);
@@ -91,6 +91,16 @@ template<typename T>
 size_t find(const Common::Array<T> &array, const T &o) {
 	for (size_t i = 0; i < array.size(); i++) {
 		if (array[i] == o) {
+			return i;
+		}
+	}
+	return (size_t)-1;
+}
+
+template<typename T>
+size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T* o) {
+	for (size_t i = 0; i < array.size(); i++) {
+		if (array[i].get() == o) {
 			return i;
 		}
 	}

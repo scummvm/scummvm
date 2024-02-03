@@ -157,8 +157,8 @@ Room::~Room() {
 	delete _scene;
 }
 
-Object *Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
-	Object *obj = new Object();
+Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
+	Common::SharedPtr<Object> obj(new Object());
 	obj->_temporary = true;
 
 	HSQUIRRELVM v = g_engine->getVm();
@@ -198,8 +198,8 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	return obj;
 }
 
-Object *Room::createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth) {
-	Object *obj = new Object();
+Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth) {
+	Common::SharedPtr<Object> obj(new Object());
 	obj->_temporary = true;
 
 	HSQUIRRELVM v = g_engine->getVm();
@@ -253,18 +253,18 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 	return obj;
 }
 
-void Room::load(Common::SeekableReadStream &s) {
+void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	GGHashMapDecoder d;
 	Common::JSONValue *value = d.open(&s);
 	// debugC(kDebugGame, "Room: %s", value->stringify().c_str());
 	const Common::JSONObject &jRoom = value->asObject();
 
-	_name = jRoom["name"]->asString();
-	_sheet = jRoom["sheet"]->asString();
+	room->_name = jRoom["name"]->asString();
+	room->_sheet = jRoom["sheet"]->asString();
 
-	_roomSize = parseVec2(jRoom["roomsize"]->asString());
-	_height = jRoom.contains("height") ? jRoom["height"]->asIntegerNumber() : _roomSize.getY();
-	_fullscreen = jRoom.contains("fullscreen") ? jRoom["fullscreen"]->asIntegerNumber() : 0;
+	room->_roomSize = parseVec2(jRoom["roomsize"]->asString());
+	room->_height = jRoom.contains("height") ? jRoom["height"]->asIntegerNumber() : room->_roomSize.getY();
+	room->_fullscreen = jRoom.contains("fullscreen") ? jRoom["fullscreen"]->asIntegerNumber() : 0;
 
 	// backgrounds
 	Common::StringArray backNames;
@@ -279,7 +279,7 @@ void Room::load(Common::SeekableReadStream &s) {
 
 	{
 		 Common::SharedPtr<Layer> layer(new Layer(backNames, Math::Vector2d(1, 1), 0));
-		_layers.push_back(layer);
+		room->_layers.push_back(layer);
 	}
 
 	// layers
@@ -300,7 +300,7 @@ void Room::load(Common::SeekableReadStream &s) {
 			int zsort = jLayer["zsort"]->asIntegerNumber();
 
 			Common::SharedPtr<Layer> layer(new Layer(names, parallax, zsort));
-			_layers.push_back(layer);
+			room->_layers.push_back(layer);
 		}
 	}
 
@@ -313,7 +313,7 @@ void Room::load(Common::SeekableReadStream &s) {
 			if (jWalkbox.contains("name") && jWalkbox["name"]->isString()) {
 				walkbox._name = jWalkbox["name"]->asString();
 			}
-			_walkboxes.push_back(walkbox);
+			room->_walkboxes.push_back(walkbox);
 		}
 	}
 
@@ -322,14 +322,14 @@ void Room::load(Common::SeekableReadStream &s) {
 		const Common::JSONArray &jobjects = jRoom["objects"]->asArray();
 		for (auto it = jobjects.begin(); it != jobjects.end(); it++) {
 			const Common::JSONObject &jObject = (*it)->asObject();
-			Object *obj = new Object();
+			Common::SharedPtr<Object> obj(new Object());
 			Twp::setId(obj->_table, newObjId());
 			obj->_key = jObject["name"]->asString();
 			Node *objNode = new Node(obj->_key);
 			objNode->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
 			objNode->setZSort(jObject["zsort"]->asIntegerNumber());
 			obj->_node = objNode;
-			obj->_nodeAnim = new Anim(obj);
+			obj->_nodeAnim = new Anim(obj.get());
 			obj->_node->addChild(obj->_nodeAnim);
 			obj->_usePos = parseVec2(jObject["usepos"]->asString());
 			if (jObject.contains("usedir")) {
@@ -341,12 +341,12 @@ void Room::load(Common::SeekableReadStream &s) {
 			obj->_objType = toObjectType(jObject);
 			if (jObject.contains("parent"))
 				obj->_parent = jObject["parent"]->asString();
-			obj->_room.reset(this);
+			obj->_room = room;
 			if (jObject.contains("animations")) {
 				parseObjectAnimations(jObject["animations"]->asArray(), obj->_anims);
 			}
-			obj->_layer = layer(0);
-			layer(0)->_objects.push_back(obj);
+			obj->_layer = room->layer(0);
+			room->layer(0)->_objects.push_back(obj);
 		}
 	}
 
@@ -354,28 +354,28 @@ void Room::load(Common::SeekableReadStream &s) {
 	if (jRoom.contains("scaling")) {
 		const Common::JSONArray &jScalings = jRoom["scaling"]->asArray();
 		if (jScalings[0]->isString()) {
-			_scalings.push_back(parseScaling(jScalings));
+			room->_scalings.push_back(parseScaling(jScalings));
 		} else {
 			for (auto it = jScalings.begin(); it != jScalings.end(); it++) {
 				const Common::JSONObject &jScaling = (*it)->asObject();
 				Scaling scaling = parseScaling(jScaling["scaling"]->asArray());
 				if (jScaling.contains("trigger") && jScaling["trigger"]->isString())
 					scaling.trigger = jScaling["trigger"]->asString();
-				_scalings.push_back(scaling);
+				room->_scalings.push_back(scaling);
 			}
 		}
-		_scaling = _scalings[0];
+		room->_scaling = room->_scalings[0];
 	}
 
-	_mergedPolygon = merge(_walkboxes);
+	room->_mergedPolygon = merge(room->_walkboxes);
 
 	// Fix room size (why ?)
 	int width = 0;
 	for (size_t i = 0; i < backNames.size(); i++) {
 		Common::String name = backNames[i];
-		width += g_engine->_resManager.spriteSheet(_sheet)->frameTable[name].sourceSize.getX();
+		width += g_engine->_resManager.spriteSheet(room->_sheet)->frameTable[name].sourceSize.getX();
 	}
-	_roomSize.setX(width);
+	room->_roomSize.setX(width);
 
 	delete value;
 }
@@ -402,11 +402,11 @@ Math::Vector2d Room::getScreenSize() {
 	}
 }
 
-Object *Room::getObj(const Common::String &key) {
+Common::SharedPtr<Object> Room::getObj(const Common::String &key) {
 	for (size_t i = 0; i < _layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = _layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
+			Common::SharedPtr<Object> obj = layer->_objects[j];
 			if (obj->_key == key)
 				return obj;
 		}
@@ -428,7 +428,7 @@ float Room::getScaling(float yPos) {
 	return _scaling.getScaling(yPos);
 }
 
-void Room::objectParallaxLayer(Object *obj, int zsort) {
+void Room::objectParallaxLayer(Common::SharedPtr<Object> obj, int zsort) {
 	Common::SharedPtr<Layer> l = layer(zsort);
 	if (obj->_layer != l) {
 		// removes object from old layer
@@ -461,7 +461,7 @@ void Room::update(float elapsed) {
 	for (size_t j = 0; j < _layers.size(); j++) {
 		Common::SharedPtr<Layer> layer = _layers[j];
 		for (size_t k = 0; k < layer->_objects.size(); k++) {
-			Object *obj = layer->_objects[k];
+			Common::SharedPtr<Object> obj = layer->_objects[k];
 			obj->update(elapsed);
 		}
 	}

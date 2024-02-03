@@ -75,8 +75,8 @@ struct VerbId {
 class Object;
 struct Sentence {
 	VerbId verb;
-	Object *noun1 = nullptr;
-	Object *noun2 = nullptr;
+	Common::SharedPtr<Object> noun1 = nullptr;
+	Common::SharedPtr<Object> noun2 = nullptr;
 	bool enabled = false;
 };
 
@@ -85,12 +85,13 @@ class Room;
 class Motor;
 class Node;
 class Layer;
+class Blink;
 
 struct TalkingState {
-	Object *_obj;
+	Common::SharedPtr<Object> _obj;
 	Color _color;
 
-	void say(const Common::StringArray &texts, Object *obj);
+	void say(const Common::StringArray &texts, Common::SharedPtr<Object> obj);
 };
 
 struct LockFacing {
@@ -104,7 +105,7 @@ public:
 	Object(HSQOBJECT o, const Common::String &key);
 	~Object();
 
-	static Object *createActor();
+	static Common::SharedPtr<Object> createActor();
 
 	Common::String getName() const;
 	int getId() const;
@@ -155,17 +156,16 @@ public:
 	void setIcon(const Common::String &icon);
 	Common::String getIcon();
 	bool inInventory();
-	void removeInventory(Object *obj);
-	void removeInventory();
+	void removeInventory(Common::SharedPtr<Object> obj);
 
 	int getFlags();
 	UseFlag useFlag();
 
 	bool contains(Math::Vector2d pos);
-	void setRoom(Common::SharedPtr<Room> room);
+	static void setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> room);
 	void delObject();
 	void stopObjectMotors();
-	void dependentOn(Object *dependentObj, int state);
+	void dependentOn(Common::SharedPtr<Object> dependentObj, int state);
 
 	Common::String getAnimName(const Common::String &key);
 	void setHeadIndex(int head);
@@ -174,7 +174,7 @@ public:
 
 	bool isWalking();
 	void stopWalking();
-	void blinkRate(float min, float max);
+	static void blinkRate(Common::SharedPtr<Object>, float min, float max);
 	void setCostume(const Common::String &name, const Common::String &sheet);
 	void stand();
 
@@ -187,8 +187,8 @@ public:
 	void setReach(Motor *reach);
 	Motor *getWalkTo() const { return _walkTo; }
 	Motor *getReach() const { return _reach; }
-	void walk(Vector2i pos, int facing = 0);
-	void walk(Object* obj);
+	static void walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing = 0);
+	static void walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 	void setTalking(Motor *talking);
 	void setBlink(Motor *blink);
@@ -197,13 +197,13 @@ public:
 
 	Motor *getTalking() { return _talking; }
 	void stopTalking();
-	void say(const Common::StringArray &texts, Color color);
+	static void say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color);
 
-	void pickupObject(Object *obj);
+	static void pickupObject(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
-	void execVerb();
+	static void execVerb(Common::SharedPtr<Object> obj);
 	void turn(Facing facing);
-	void turn(Object* obj);
+	static void turn(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 	void jiggle(float amount);
 
 	void inventoryScrollUp();
@@ -251,16 +251,16 @@ public:
 	Color _talkColor;
 	Common::HashMap<Common::String, Common::String> _animNames;
 	bool _lit = false;
-	Object *_owner = nullptr;
-	Common::Array<Object *> _inventory;
-    int _inventoryOffset = 0;
+	Common::SharedPtr<Object> _owner = nullptr;
+	Common::Array<Common::SharedPtr<Object> > _inventory;
+	int _inventoryOffset = 0;
 	Common::StringArray _icons;
 	int _iconFps = 0;
 	int _iconIndex = 0;
 	float _iconElapsed = 0.f;
 	HSQOBJECT _enter, _leave;
 	int _dependentState = 0;
-	Object *_dependentObj = nullptr;
+	Common::SharedPtr<Object> _dependentObj = nullptr;
 	float _popElapsed = 0.f;
 	int _popCount = 0;
 	Sentence _exec;
@@ -274,7 +274,7 @@ private:
 	Motor *_walkTo = nullptr;
 	Motor *_reach = nullptr;
 	Motor *_talking = nullptr;
-	unique_ptr<Motor> _blink;
+	Common::SharedPtr<Blink> _blink;
 	Motor *_turnTo = nullptr;
 	Motor *_shakeTo = nullptr;
 	Motor *_jiggleTo = nullptr;

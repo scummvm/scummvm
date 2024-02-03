@@ -66,7 +66,7 @@ public:
 	VerbUiColors verbUiColors;
 	Verb verbs[MAX_VERBS];
 	bool selectable = false;
-	Object *actor = nullptr;
+	Common::SharedPtr<Object> actor = nullptr;
 
 public:
 	ActorSlot();
@@ -108,9 +108,9 @@ public:
 	Hud();
 
 	void init();
-	ActorSlot *actorSlot(Object *actor);
+	ActorSlot *actorSlot(Common::SharedPtr<Object> actor);
 	bool isOver() const { return _over; }
-	void update(float elapsed, Math::Vector2d pos, Object *hotspot, bool mouseClick);
+	void update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick);
 
 	void setVisible(bool visible) override;
 
@@ -120,7 +120,7 @@ private:
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];
-	Object *_actor = nullptr;
+	Common::SharedPtr<Object> _actor = nullptr;
 	VerbRect _verbRects[NUMVERBS];
 	Verb _verb;
 	HudShader _shader;

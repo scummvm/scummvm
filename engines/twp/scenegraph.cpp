@@ -105,7 +105,7 @@ void Node::clear() {
 }
 
 void Node::remove() {
-	if (_parent != NULL)
+	if (_parent)
 		_parent->removeChild(this);
 }
 
@@ -403,7 +403,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 	}
 }
 
-ActorNode::ActorNode(Object *obj)
+ActorNode::ActorNode(Common::SharedPtr<Object> obj)
 	: Node(obj->_key), _object(obj) {
 }
 
@@ -531,11 +531,11 @@ void OverlayNode::drawCore(Math::Matrix4 trsf) {
 	g_engine->getGfx().drawQuad(size, _ovlColor);
 }
 
-static bool hasUpArrow(Object *actor) {
+static bool hasUpArrow(Common::SharedPtr<Object> actor) {
 	return actor->_inventoryOffset != 0;
 }
 
-static bool hasDownArrow(Object *actor) {
+static bool hasDownArrow(Common::SharedPtr<Object> actor) {
 	return actor->_inventory.size() > (size_t)(actor->_inventoryOffset * NUMOBJECTSBYROW + NUMOBJECTS);
 }
 
@@ -549,7 +549,7 @@ Inventory::Inventory() : Node("Inventory") {
 	_arrowDnRect = Common::Rect(SCREEN_WIDTH / 2.f, MARGINBOTTOM, SCREEN_WIDTH / 2.f + ARROWWIDTH, MARGINBOTTOM + ARROWHEIGHT);
 }
 
-Math::Vector2d Inventory::getPos(Object *inv) const {
+Math::Vector2d Inventory::getPos(Common::SharedPtr<Object> inv) const {
 	if (_actor) {
 		int i = Twp::find(_actor->_inventory, inv) - _actor->_inventoryOffset * NUMOBJECTSBYROW;
 		return Math::Vector2d(_itemRects[i].left + _itemRects[i].width() / 2.f, _itemRects[i].bottom + _itemRects[i].height() / 2.f);
@@ -614,7 +614,7 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 	int count = MIN(NUMOBJECTS, (int)(_actor->_inventory.size() - _actor->_inventoryOffset * NUMOBJECTSBYROW));
 
 	for (int i = 0; i < count; i++) {
-		Object *obj = _actor->_inventory[_actor->_inventoryOffset * NUMOBJECTSBYROW + i];
+		Common::SharedPtr<Object> obj = _actor->_inventory[_actor->_inventoryOffset * NUMOBJECTSBYROW + i];
 		Common::String icon = obj->getIcon();
 		if (itemsSheet->frameTable.contains(icon)) {
 			SpriteSheetFrame *itemFrame = &itemsSheet->frameTable[icon];
@@ -641,7 +641,7 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 	}
 }
 
-void Inventory::update(float elapsed, Object *actor, Color backColor, Color verbNormal) {
+void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, Color backColor, Color verbNormal) {
 	_jiggleTime += 10.f * elapsed;
 	_fadeTime += elapsed;
 
@@ -693,7 +693,7 @@ void Inventory::update(float elapsed, Object *actor, Color backColor, Color verb
 		}
 
 		for (size_t i = 0; i < _actor->_inventory.size(); i++) {
-			Object *obj = _actor->_inventory[i];
+			Common::SharedPtr<Object> obj = _actor->_inventory[i];
 			obj->update(elapsed);
 		}
 	}
@@ -811,7 +811,7 @@ void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
 	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
-			Object *obj = layer->_objects[j];
+			Common::SharedPtr<Object> obj = layer->_objects[j];
 			if (isObject(obj->getId()) && (obj->_objType == otNone) && obj->isTouchable()) {
 				Math::Vector2d pos = g_engine->roomToScreen(obj->_node->getAbsPos());
 				Math::Matrix4 t;

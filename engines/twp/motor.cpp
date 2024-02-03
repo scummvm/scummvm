@@ -32,7 +32,7 @@ namespace Twp {
 
 OffsetTo::~OffsetTo() {}
 
-OffsetTo::OffsetTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im)
+OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getOffset(), pos, duration, im) {
 }
@@ -46,7 +46,7 @@ void OffsetTo::update(float elapsed) {
 
 MoveTo::~MoveTo() {}
 
-MoveTo::MoveTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im)
+MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getPos(), pos, duration, im) {
 }
@@ -60,7 +60,7 @@ void MoveTo::update(float elapsed) {
 
 AlphaTo::~AlphaTo() {}
 
-AlphaTo::AlphaTo(float duration, Object *obj, float to, InterpolationMethod im)
+AlphaTo::AlphaTo(float duration, Common::SharedPtr<Object> obj, float to, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getAlpha(), to, duration, im) {
 }
@@ -144,7 +144,7 @@ void OverlayTo::update(float elapsed) {
 		disable();
 }
 
-ReachAnim::ReachAnim(Object *actor, Object *obj)
+ReachAnim::ReachAnim(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj)
 	: _actor(actor), _obj(obj) {
 }
 
@@ -169,7 +169,7 @@ void ReachAnim::update(float elapsed) {
 		break;
 	case 2:
 		_actor->stand();
-		_actor->execVerb();
+		Object::execVerb(_actor);
 		disable();
 		_state = 3;
 		break;
@@ -178,7 +178,7 @@ void ReachAnim::update(float elapsed) {
 	}
 }
 
-WalkTo::WalkTo(Object *obj, Vector2i dest, int facing)
+WalkTo::WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing)
 	: _obj(obj), _facing(facing) {
 	if (obj->_useWalkboxes) {
 		_path = obj->_room->calculatePath((Vector2i)obj->_node->getAbsPos(), dest);
@@ -226,8 +226,8 @@ void WalkTo::actorArrived() {
 	// we need to execute a sentence when arrived ?
 	if (_obj->_exec.enabled) {
 		VerbId verb = _obj->_exec.verb;
-		Object *noun1 = _obj->_exec.noun1;
-		Object *noun2 = _obj->_exec.noun2;
+		Common::SharedPtr<Object> noun1 = _obj->_exec.noun1;
+		Common::SharedPtr<Object> noun2 = _obj->_exec.noun2;
 		// call `postWalk`callback
 		Common::String funcName = isActor(noun1->getId()) ? "actorPostWalk" : "objectPostWalk";
 		if (sqrawexists(_obj->_table, funcName)) {
@@ -243,7 +243,7 @@ void WalkTo::actorArrived() {
 		if (needsReach)
 			_obj->setReach(new ReachAnim(_obj, noun1));
 		else
-			_obj->execVerb();
+			Object::execVerb(_obj);
 	}
 }
 
@@ -282,7 +282,7 @@ void WalkTo::update(float elapsed) {
 	}
 }
 
-Talking::Talking(Object *obj, const Common::StringArray &texts, Color color) {
+Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color) {
 	_obj = obj;
 	_color = color;
 	_texts.assign(texts.begin() + 1, texts.end());

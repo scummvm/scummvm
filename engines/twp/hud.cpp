@@ -122,7 +122,7 @@ void Hud::init() {
 	_shader.init();
 }
 
-ActorSlot *Hud::actorSlot(Object *actor) {
+ActorSlot *Hud::actorSlot(Common::SharedPtr<Object> actor) {
 	for (int i = 0; i < NUMACTORS; i++) {
 		ActorSlot *slot = &_actorSlots[i];
 		if (slot->actor == actor) {
@@ -187,7 +187,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	_over = isOver;
 }
 
-void Hud::update(float elapsed, Math::Vector2d pos, Object *hotspot, bool mouseClick) {
+void Hud::update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick) {
 	_mousePos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 	_defaultVerbId = !hotspot ? 0 : hotspot->defaultVerbId();
 	_mouseClick = mouseClick;

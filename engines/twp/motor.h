@@ -95,39 +95,39 @@ class Object;
 class OffsetTo : public Motor {
 public:
 	virtual ~OffsetTo();
-	OffsetTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im);
+	OffsetTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	Tween<Math::Vector2d> _tween;
 };
 
 class MoveTo : public Motor {
 public:
 	virtual ~MoveTo();
-	MoveTo(float duration, Object *obj, Math::Vector2d pos, InterpolationMethod im);
+	MoveTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	Tween<Math::Vector2d> _tween;
 };
 
 class AlphaTo : public Motor {
 public:
 	virtual ~AlphaTo();
-	AlphaTo(float duration, Object *obj, float to, InterpolationMethod im);
+	AlphaTo(float duration, Common::SharedPtr<Object> obj, float to, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	Tween<float> _tween;
 };
 
@@ -202,7 +202,7 @@ private:
 class ReachAnim : public Motor {
 public:
 	virtual ~ReachAnim();
-	ReachAnim(Object *actor, Object *obj);
+	ReachAnim(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 	virtual void update(float elasped) override;
 
@@ -210,15 +210,15 @@ private:
 	void playReachAnim();
 
 private:
-	Object *_actor = nullptr;
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _actor = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	int _state = 0;
 	float _elapsed = 0.f;
 };
 
 class WalkTo : public Motor {
 public:
-	WalkTo(Object *obj, Vector2i dest, int facing = 0);
+	WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing = 0);
 	virtual void disable() override;
 
 	const Common::Array<Vector2i> &getPath() const { return _path; }
@@ -228,7 +228,7 @@ private:
 	virtual void update(float elapsed) override;
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	Common::Array<Vector2i> _path;
 	int _facing = 0;
 	float _wsd;
@@ -237,7 +237,7 @@ private:
 // Creates a talking animation for a specified object.
 class Talking : public Motor {
 public:
-	Talking(Object *obj, const Common::StringArray &texts, Color color);
+	Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color);
 	virtual ~Talking() {}
 
 	void append(const Common::StringArray &texts);
@@ -253,7 +253,7 @@ private:
 	int loadActorSpeech(const Common::String &name);
 
 private:
-	Object *_obj = nullptr;
+	Common::SharedPtr<Object> _obj = nullptr;
 	Node *_node = nullptr;
 	Lip _lip;
 	float _elapsed = 0.f;

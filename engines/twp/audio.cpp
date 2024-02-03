@@ -160,7 +160,7 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 		}
 	}
 	if (slot->objId) {
-		Object *obj = sqobj(slot->objId);
+		Common::SharedPtr<Object> obj = sqobj(slot->objId);
 		if (obj) {
 			float volObj = 0.f;
 			if (obj->_room == g_engine->_room) {

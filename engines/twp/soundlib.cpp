@@ -50,7 +50,7 @@ private:
 // If a list of multiple sounds or an array are given, will randomly choose between the sound files.
 // The triggerNumber says which trigger in the animation JSON file should be used as a trigger to play the sound.
 static SQInteger actorSound(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get actor or object");
 	int trigNum = 0;
@@ -128,7 +128,7 @@ static SQInteger playObjectSound(HSQUIRRELVM v) {
 	if (!soundDef)
 		return sq_throwerror(v, "failed to get sound");
 
-	Object *obj = sqobj(v, 3);
+	Common::SharedPtr<Object> obj = sqobj(v, 3);
 	if (!obj)
 		return sq_throwerror(v, "failed to get actor or object");
 	int loopTimes = 1;
@@ -233,7 +233,7 @@ static SQInteger loopObjectSound(HSQUIRRELVM v) {
 	SoundDefinition *sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get music");
-	Object *obj = sqobj(v, 3);
+	Common::SharedPtr<Object> obj = sqobj(v, 3);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (numArgs == 4) {

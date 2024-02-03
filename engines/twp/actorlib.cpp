@@ -32,7 +32,7 @@ namespace Twp {
 
 // Sets the transparency for an actor's image in [0.0..1.0]
 static SQInteger actorAlpha(HSQUIRRELVM v) {
-	Object *actor = sqobj(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	float alpha;
@@ -44,7 +44,7 @@ static SQInteger actorAlpha(HSQUIRRELVM v) {
 }
 
 static SQInteger actorAnimationFlags(HSQUIRRELVM v) {
-	Object *actor = sqobj(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	sqpush(v, actor->_animFlags);
@@ -52,7 +52,7 @@ static SQInteger actorAnimationFlags(HSQUIRRELVM v) {
 }
 
 static SQInteger actorAnimationNames(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 
@@ -81,13 +81,13 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	switch (numArgs) {
 	case 3: {
-		Object *actor = sqactor(v, 2);
+		Common::SharedPtr<Object> actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		Object *spot = sqobj(v, 3);
+		Common::SharedPtr<Object> spot = sqobj(v, 3);
 		if (spot) {
 			Math::Vector2d pos = spot->_node->getPos() + spot->_usePos;
-			actor->setRoom(spot->_room);
+			Object::setRoom(actor, spot->_room);
 			actor->stopWalking();
 			debugC(kDebugActScript, "actorAt %s at %s (%d, %d), room '%s'", actor->_key.c_str(), spot->_key.c_str(), (int)pos.getX(), (int)pos.getY(), spot->_room->_name.c_str());
 			actor->_node->setPos(pos);
@@ -98,12 +98,12 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get spot or room");
 			debugC(kDebugActScript, "actorAt %s room '%s'", actor->_key.c_str(), room->_name.c_str());
 			actor->stopWalking();
-			actor->setRoom(room);
+			Object::setRoom(actor, room);
 		}
 		return 0;
 	}
 	case 4: {
-		Object *actor = sqactor(v, 2);
+		Common::SharedPtr<Object> actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
 		int x, y;
@@ -118,7 +118,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 	}
 	case 5:
 	case 6: {
-		Object *actor = sqactor(v, 2);
+		Common::SharedPtr<Object> actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
 		Common::SharedPtr<Room> room = sqroom(v, 3);
@@ -136,7 +136,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 		actor->stopWalking();
 		actor->_node->setPos(Math::Vector2d(x, y));
 		actor->setFacing(getFacing(dir, actor->getFacing()));
-		actor->setRoom(room);
+		Object::setRoom(actor, room);
 		return 0;
 	}
 	default:
@@ -145,7 +145,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 }
 
 static SQInteger actorBlinkRate(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	float min;
@@ -154,7 +154,7 @@ static SQInteger actorBlinkRate(HSQUIRRELVM v) {
 	float max;
 	if (SQ_FAILED(sqget(v, 4, max)))
 		return sq_throwerror(v, "failed to get max");
-	actor->blinkRate(min, max);
+	Object::blinkRate(actor, min, max);
 	return 0;
 }
 
@@ -163,7 +163,7 @@ static SQInteger actorBlinkRate(HSQUIRRELVM v) {
 // . code-block:: Squirrel
 // actorColor(coroner, 0xc0c0c0)
 static SQInteger actorColor(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int c;
@@ -177,7 +177,7 @@ static SQInteger actorColor(HSQUIRRELVM v) {
 // If the actor is expected to preform the standard walk, talk, stand, reach animations, they need to exist in the file.
 // If a sheet is given, this is a sprite sheet containing all the images needed for the animation.
 static SQInteger actorCostume(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 
@@ -194,10 +194,10 @@ static SQInteger actorCostume(HSQUIRRELVM v) {
 }
 
 static SQInteger actorDistanceTo(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	Object *obj = nullptr;
+	Common::SharedPtr<Object> obj = nullptr;
 	if (sq_gettop(v) == 3)
 		obj = sqobj(v, 3);
 	if (!obj)
@@ -211,21 +211,21 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 3) {
-		Object *actor1 = g_engine->_actor;
-		Object *actor2 = sqactor(v, 2);
+		Common::SharedPtr<Object> actor1 = g_engine->_actor;
+		Common::SharedPtr<Object> actor2 = sqactor(v, 2);
 		if (!actor2)
 			return sq_throwerror(v, "failed to get actor");
-		Object *obj = sqobj(v, 3);
+		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot");
 		// not sure about this, needs to be check one day ;)
 		sqpush(v, distance((Vector2i)actor1->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < distance((Vector2i)actor2->_node->getAbsPos(), (Vector2i)obj->getUsePos()));
 		return 1;
 	} else if (nArgs == 4) {
-		Object *actor = sqactor(v, 2);
+		Common::SharedPtr<Object> actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		Object *obj = sqobj(v, 3);
+		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 		int dist;
@@ -242,7 +242,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 // Directions are: FACE_FRONT, FACE_BACK, FACE_LEFT, FACE_RIGHT.
 // Similar to actorTurnTo, but will not animate the change, it will instantly be in the specified direction.
 static SQInteger actorFace(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	SQInteger nArgs = sq_gettop(v);
@@ -264,7 +264,7 @@ static SQInteger actorFace(HSQUIRRELVM v) {
 			actor->setFacing((Facing)dir);
 		}
 	} else {
-		Object *actor2 = sqactor(v, 3);
+		Common::SharedPtr<Object> actor2 = sqactor(v, 3);
 		if (!actor2)
 			return sq_throwerror(v, "failed to get actor to face to");
 		Facing facing = getFacingToFaceTo(actor, actor2);
@@ -274,7 +274,7 @@ static SQInteger actorFace(HSQUIRRELVM v) {
 }
 
 static SQInteger actorHidden(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int hidden = 0;
@@ -294,10 +294,10 @@ static SQInteger actorHidden(HSQUIRRELVM v) {
 // if (stepsArray.len()) {    // someone's on the steps
 // }
 static SQInteger actorInTrigger(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	Object *obj = sqobj(v, 3);
+	Common::SharedPtr<Object> obj = sqobj(v, 3);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	bool inside = obj->contains(actor->_node->getAbsPos());
@@ -327,7 +327,7 @@ static SQInteger actorInTrigger(HSQUIRRELVM v) {
 //     }
 // }
 static SQInteger actorInWalkbox(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::String name;
@@ -347,7 +347,7 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 }
 
 static SQInteger actorRoom(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::SharedPtr<Room> room = actor->_room;
@@ -360,7 +360,7 @@ static SQInteger actorRoom(HSQUIRRELVM v) {
 }
 
 static SQInteger actorShowHideLayer(HSQUIRRELVM v, bool visible) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::String layer;
@@ -413,7 +413,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get slot");
 			g_engine->_hud._actorSlots[slot - 1].selectable = selectable;
 		} else {
-			Object *actor = sqactor(v, 2);
+			Common::SharedPtr<Object> actor = sqactor(v, 2);
 			if (!actor)
 				return sq_throwerror(v, "failed to get actor");
 			Common::String key;
@@ -436,7 +436,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 // Directions are: FACE_FRONT, FACE_BACK, FACE_LEFT, FACE_RIGHT.
 // If "NO" is specified, it removes all locking and allows the actor to change its facing direction based on player input or otherwise.
 static SQInteger actorLockFacing(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	switch (sq_gettype(v, 3)) {
@@ -471,7 +471,7 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 }
 
 static SQInteger actorPosX(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	sqpush(v, actor->_node->getPos().getX());
@@ -479,7 +479,7 @@ static SQInteger actorPosX(HSQUIRRELVM v) {
 }
 
 static SQInteger actorPosY(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	sqpush(v, actor->_node->getPos().getY());
@@ -489,7 +489,7 @@ static SQInteger actorPosY(HSQUIRRELVM v) {
 // Plays the specified animation from the player's costume JSON filename.
 // If YES loop the animation. Default is NO.
 static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::String animation;
@@ -509,7 +509,7 @@ static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
 // Actor's are typically adjusted so they are rendered from the middle of the bottom of their feet.
 // To maintain sanity, it is best if all actors have the same image size and are all adjust the same, but this is not a requirement.
 static SQInteger actorRenderOffset(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int x, y;
@@ -522,7 +522,7 @@ static SQInteger actorRenderOffset(HSQUIRRELVM v) {
 }
 
 static SQInteger actorStand(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	actor->stand();
@@ -535,7 +535,7 @@ static SQInteger actorStand(HSQUIRRELVM v) {
 // actorStopWalking(currentActor)
 // actorStopWalking(postalworker)
 static SQInteger actorStopWalking(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	actor->stopWalking();
@@ -545,7 +545,7 @@ static SQInteger actorStopWalking(HSQUIRRELVM v) {
 
 // Set the text color of the specified actor's text that appears when they speak.
 static SQInteger actorTalkColors(HSQUIRRELVM v) {
-	Object *actor = sqobj(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int color;
@@ -562,7 +562,7 @@ static SQInteger actorTalkColors(HSQUIRRELVM v) {
 // actorTalking()
 // actorTalking(vo)
 static SQInteger actorTalking(HSQUIRRELVM v) {
-	Object *actor = nullptr;
+	Common::SharedPtr<Object> actor = nullptr;
 	if (sq_gettop(v) == 2) {
 		actor = sqobj(v, 2);
 		if (!actor) {
@@ -579,7 +579,7 @@ static SQInteger actorTalking(HSQUIRRELVM v) {
 
 // Turn to the pos, dir, object or actor over 2 frames.
 static SQInteger actorTurnTo(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	if (sq_gettype(v, 3) == OT_INTEGER) {
@@ -588,17 +588,17 @@ static SQInteger actorTurnTo(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get facing");
 		actor->turn((Facing)facing);
 	} else {
-		Object *obj = sqobj(v, 3);
+		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object to face to");
-		actor->turn(obj);
+		Object::turn(actor, obj);
 	}
 	return 0;
 }
 
 // Specifies the offset that will be applied to the actor's speech text that appears on screen.
 static SQInteger actorTalkOffset(HSQUIRRELVM v) {
-	Object *actor = sqobj(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int x, y;
@@ -612,10 +612,10 @@ static SQInteger actorTalkOffset(HSQUIRRELVM v) {
 
 static SQInteger actorUsePos(HSQUIRRELVM v) {
 	Math::Vector2d usePos;
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	Object *obj = sqobj(v, 3);
+	Common::SharedPtr<Object> obj = sqobj(v, 3);
 	if (!obj)
 		usePos = Math::Vector2d();
 	else
@@ -636,7 +636,7 @@ static SQInteger actorUsePos(HSQUIRRELVM v) {
 // . code-block:: Squirrel
 // actorUseWalkboxes(coroner, NO)
 static SQInteger actorUseWalkboxes(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int useWalkboxes = 1;
@@ -647,7 +647,7 @@ static SQInteger actorUseWalkboxes(HSQUIRRELVM v) {
 }
 
 static SQInteger actorVolume(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	float volume = 0.0f;
@@ -668,7 +668,7 @@ static SQInteger actorVolume(HSQUIRRELVM v) {
 //     }
 // }
 static SQInteger actorWalkForward(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int dist;
@@ -689,7 +689,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 		dir = Math::Vector2d(dist, 0);
 		break;
 	}
-	actor->walk((Vector2i)(actor->_node->getAbsPos() + dir));
+	Object::walk(actor, (Vector2i)(actor->_node->getAbsPos() + dir));
 	return 0;
 }
 
@@ -708,7 +708,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 //}
 static SQInteger actorWalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	Object *actor = nullptr;
+	Common::SharedPtr<Object> actor = nullptr;
 	if (nArgs == 1) {
 		actor = g_engine->_actor;
 	} else if (nArgs == 2) {
@@ -723,7 +723,7 @@ static SQInteger actorWalking(HSQUIRRELVM v) {
 // The numbers are in pixel's per second.
 // The vertical movement is typically half (or more) than the horizontal movement to simulate depth in the 2D world.
 static SQInteger actorWalkSpeed(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	int x, y;
@@ -738,15 +738,15 @@ static SQInteger actorWalkSpeed(HSQUIRRELVM v) {
 // Tells the specified actor to walk to an x/y position or to an actor position or to an object position.
 static SQInteger actorWalkTo(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	if (nArgs == 3) {
-		Object *obj = sqobj(v, 3);
+		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get actor or object");
 		else
-			actor->walk(obj);
+			Object::walk(actor, obj);
 	} else if ((nArgs == 4) || (nArgs == 5)) {
 		int x, y;
 		if (SQ_FAILED(sqget(v, 3, x)))
@@ -760,7 +760,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 				return sq_throwerror(v, "failed to get dir");
 			facing = (Facing *)&dir;
 		}
-		actor->walk(Vector2i(x, y), facing ? *facing : 0);
+		Object::walk(actor, Vector2i(x, y), facing ? *facing : 0);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}
@@ -771,7 +771,7 @@ static SQInteger addSelectableActor(HSQUIRRELVM v) {
 	int slot;
 	if (SQ_FAILED(sqget(v, 2, slot)))
 		return sq_throwerror(v, "failed to get slot");
-	Object *actor = sqactor(v, 3);
+	Common::SharedPtr<Object> actor = sqactor(v, 3);
 	g_engine->_hud._actorSlots[slot - 1].actor = actor;
 	return 0;
 }
@@ -784,7 +784,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get a table");
 
 	HSQUIRRELVM vm = g_engine->getVm();
-	Object *actor = Object::createActor();
+	Common::SharedPtr<Object> actor = Object::createActor();
 	sq_resetobject(&actor->_table);
 	sq_getstackobj(v, 2, &actor->_table);
 	sq_addref(vm, &actor->_table);
@@ -796,7 +796,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 
 	debugC(kDebugActScript, "Create actor %s %d", key.c_str(), actor->getId());
 	actor->_node = new ActorNode(actor);
-	actor->_nodeAnim = new Anim(actor);
+	actor->_nodeAnim = new Anim(actor.get());
 	actor->_node->addChild(actor->_nodeAnim);
 	g_engine->_actors.push_back(actor);
 
@@ -824,7 +824,7 @@ private:
 };
 
 static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
-	Object *obj;
+	Common::SharedPtr<Object> obj;
 	int index;
 	Common::StringArray texts;
 	if (sq_gettype(v, 2) == OT_TABLE) {
@@ -851,7 +851,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 		}
 	}
 	debugC(kDebugActScript, "sayline: %s, %s", obj->_key.c_str(), join(texts, "|").c_str());
-	obj->say(texts, obj->_talkColor);
+	Object::say(obj, texts, obj->_talkColor);
 	return 0;
 }
 
@@ -891,7 +891,7 @@ static SQInteger sayLineAt(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 6, text)))
 			return sq_throwerror(v, "failed to get text");
 	} else {
-		Object *actor = sqactor(v, 4);
+		Common::SharedPtr<Object> actor = sqactor(v, 4);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
 		Math::Vector2d pos = g_engine->roomToScreen(actor->_node->getAbsPos());
@@ -908,7 +908,7 @@ static SQInteger sayLineAt(HSQUIRRELVM v) {
 
 // returns true if the specified actor is currently in the screen.
 static SQInteger isActorOnScreen(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get actor/object");
 
@@ -924,7 +924,7 @@ static SQInteger isActorOnScreen(HSQUIRRELVM v) {
 }
 
 static SQInteger isActorSelectable(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	ActorSlot *slot = g_engine->_hud.actorSlot(actor);
@@ -935,7 +935,7 @@ static SQInteger isActorSelectable(HSQUIRRELVM v) {
 
 // If an actor is specified, returns true otherwise returns false.
 static SQInteger is_actor(HSQUIRRELVM v) {
-	Object *actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	sqpush(v, actor != nullptr);
 	return 1;
 }
@@ -945,7 +945,7 @@ static SQInteger is_actor(HSQUIRRELVM v) {
 static SQInteger masterActorArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		sqpush(v, actor->_table);
 		sq_arrayappend(v, -2);
 	}
@@ -970,7 +970,7 @@ static SQInteger stopTalking(HSQUIRRELVM v) {
 		if (sq_gettype(v, 2) == OT_INTEGER) {
 			g_engine->stopTalking();
 		} else {
-			Object *actor = sqobj(v, 2);
+			Common::SharedPtr<Object> actor = sqobj(v, 2);
 			if (!actor)
 				return sq_throwerror(v, "failed to get actor/object");
 			actor->stopTalking();
@@ -997,12 +997,12 @@ static SQInteger selectActor(HSQUIRRELVM v) {
 // if (stepsArray.len()) {    // someone's on the steps
 // }
 static SQInteger triggerActors(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sq_newarray(v, 0);
 	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
-		Object *actor = *it;
+		Common::SharedPtr<Object> actor = *it;
 		if (obj->contains(actor->_node->getPos())) {
 			sq_pushobject(v, actor->_table);
 			sq_arrayappend(v, -2);

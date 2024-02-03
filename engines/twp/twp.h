@@ -123,26 +123,26 @@ public:
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
 
-	void setActor(Object *actor, bool userSelected = false);
-	Object *objAt(Math::Vector2d pos);
+	void setActor(Common::SharedPtr<Object> actor, bool userSelected = false);
+	Common::SharedPtr<Object> objAt(Math::Vector2d pos);
 	void flashSelectableActor(int flash);
 	void stopTalking();
 	void walkFast(bool state = true);
 
 	Common::SharedPtr<Room> defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Common::SharedPtr<Room> room);
-	void enterRoom(Common::SharedPtr<Room> room, Object *door = nullptr);
+	void enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door = nullptr);
 
 	void cameraAt(Math::Vector2d at);
 	// Returns the camera position: the position of the middle of the screen.
 	Math::Vector2d cameraPos();
-	void follow(Object *actor);
+	void follow(Common::SharedPtr<Object> actor);
 	void fadeTo(FadeEffect effect, float duration, bool fadeToSep = false);
 
 	void execNutEntry(HSQUIRRELVM v, const Common::String &entry);
 	void execBnutEntry(HSQUIRRELVM v, const Common::String &entry);
-	bool callVerb(Object *actor, VerbId verbId, Object *noun1, Object *noun2 = nullptr);
-	bool execSentence(Object *actor, VerbId verbId, Object *noun1, Object *noun2 = nullptr);
+	bool callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2 = nullptr);
+	bool execSentence(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2 = nullptr);
 
 	float getRandom() const;
 	float getRandom(float min, float max) const;
@@ -153,17 +153,17 @@ private:
 	void exitRoom(Common::SharedPtr<Room> nextRoom);
 	void actorEnter();
 	void actorExit();
-	void cancelSentence(Object *actor = nullptr);
+	void cancelSentence(Common::SharedPtr<Object> actor = nullptr);
 	void clickedAt(Math::Vector2d scrPos);
 	bool clickedAtHandled(Math::Vector2d roomPos);
 	void setShaderEffect(RoomEffect effect);
-	bool selectable(Object *actor);
+	bool selectable(Common::SharedPtr<Object> actor);
 	void resetVerb();
 	Common::String cursorText();
 	Verb verb();
-	bool preWalk(Object *actor, VerbId verbId, Object *noun1, Object *noun2);
+	bool preWalk(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2);
 	void updateTriggers();
-	void callTrigger(Object *obj, HSQOBJECT trigger);
+	void callTrigger(Common::SharedPtr<Object> obj, HSQOBJECT trigger);
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
 	Scaling *getScaling(const Common::String &name);
@@ -177,17 +177,17 @@ public:
 	GGPackSet _pack;
 	ResManager _resManager;
 	Common::Array<Common::SharedPtr<Room> > _rooms;
-	Common::Array<Object *> _actors;
-	Common::Array<Object *> _objects;
+	Common::Array<Common::SharedPtr<Object> > _actors;
+	Common::Array<Common::SharedPtr<Object> > _objects;
 	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
 	Common::Array<Common::SharedPtr<Task> > _tasks;
 	Common::Array<Common::SharedPtr<Callback> > _callbacks;
-	Object *_actor = nullptr;
-	Object *_followActor = nullptr;
+	Common::SharedPtr<Object> _actor = nullptr;
+	Common::SharedPtr<Object> _followActor = nullptr;
 	Common::SharedPtr<Room> _room;
 	float _time = 0.f;
-	Object *_noun1 = nullptr;
-	Object *_noun2 = nullptr;
+	Common::SharedPtr<Object> _noun1 = nullptr;
+	Common::SharedPtr<Object> _noun2 = nullptr;
 	UseFlag _useFlag;
 	HSQOBJECT _defaultObj;
 	bool _walkFastState = false;

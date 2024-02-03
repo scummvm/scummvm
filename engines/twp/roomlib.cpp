@@ -31,7 +31,7 @@ namespace Twp {
 
 static SQInteger addTrigger(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sq_resetobject(&obj->_enter);
@@ -108,7 +108,7 @@ static SQInteger createLight(HSQUIRRELVM v) {
 }
 
 static SQInteger enableTrigger(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	bool enabled;
@@ -125,7 +125,7 @@ static SQInteger enableTrigger(HSQUIRRELVM v) {
 }
 
 static SQInteger enterRoomFromDoor(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	g_engine->enterRoom(obj->_room, obj);
@@ -321,14 +321,14 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 3, closure)))
 			return sq_throwerror(v, "failed to get closure");
 		for (size_t i = 0; i < g_engine->_room->_triggers.size(); i++) {
-			Object *trigger = g_engine->_room->_triggers[i];
+			Common::SharedPtr<Object> trigger = g_engine->_room->_triggers[i];
 			if ((trigger->_enter._unVal.pClosure == closure._unVal.pClosure) || (trigger->_leave._unVal.pClosure == closure._unVal.pClosure)) {
 				g_engine->_room->_triggers.remove_at(i);
 				return 0;
 			}
 		}
 	} else {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 		size_t i = find(g_engine->_room->_triggers, obj);
@@ -356,7 +356,7 @@ static SQInteger roomActors(HSQUIRRELVM v) {
 
 	sq_newarray(v, 0);
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		if (actor->_room == room) {
 			sqpush(v, actor->_table);
 			sq_arrayappend(v, -2);

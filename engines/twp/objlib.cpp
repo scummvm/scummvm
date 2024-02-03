@@ -80,7 +80,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 	}
 
 	debugC(kDebugObjScript, "Create object: %s, %u", sheet.c_str(), frames.size());
-	Object *obj = g_engine->_room->createObject(sheet, frames);
+	Common::SharedPtr<Object> obj = g_engine->_room->createObject(sheet, frames);
 	obj->_room = g_engine->_room;
 	sq_pushobject(v, obj->_table);
 
@@ -135,7 +135,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 		}
 	}
 	debugC(kDebugObjScript, "Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
-	Object *obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
+	Common::SharedPtr<Object> obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
 	sqpush(v, obj->_table);
 	return 1;
 }
@@ -151,9 +151,10 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 // playObjectSound(randomfrom(soundDrip1, soundDrip2, soundDrip3), radioStudioBucket)
 // deleteObject(drip)
 static SQInteger deleteObject(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		delete obj;
+		size_t i = find(obj->_layer->_objects, obj);
+		obj->_layer->_objects.remove_at(i);
 	}
 	return 0;
 }
@@ -175,7 +176,7 @@ static SQInteger findObjectAt(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 3, y)))
 		return sq_throwerror(v, "failed to get y");
-	Object *obj = g_engine->objAt(Math::Vector2d(x, y));
+	Common::SharedPtr<Object> obj = g_engine->objAt(Math::Vector2d(x, y));
 	if (!obj)
 		sq_pushnull(v);
 	else
@@ -184,7 +185,7 @@ static SQInteger findObjectAt(HSQUIRRELVM v) {
 }
 
 static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (!obj->_owner || (obj->_owner != g_engine->_actor)) {
@@ -205,13 +206,13 @@ static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // if (isObject(obj) && objectValidUsePos(obj) && objectTouchable(obj)) {
 static SQInteger isObject(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	sqpush(v, obj && isObject(obj->getId()));
 	return 1;
 }
 
 static SQInteger jiggleInventory(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
     if (!obj) {
       return sq_throwerror(v, "failed to get object");
     }
@@ -231,7 +232,7 @@ static SQInteger jiggleInventory(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // jiggleObject(pigeonVan, 0.25)
 static SQInteger jiggleObject(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	float amount;
@@ -247,7 +248,7 @@ static SQInteger jiggleObject(HSQUIRRELVM v) {
 // loopObjectState(aStreetFire, 0)
 // loopObjectState(flies, 3)
 static SQInteger loopObjectState(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (sq_gettype(v, 3) == OT_INTEGER) {
@@ -272,7 +273,7 @@ static SQInteger loopObjectState(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectAlpha(cloud, 0.5)
 static SQInteger objectAlpha(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		float alpha = 0.0f;
 		if (SQ_FAILED(sq_getfloat(v, 3, &alpha)))
@@ -289,7 +290,7 @@ static SQInteger objectAlpha(HSQUIRRELVM v) {
 // See also stopObjectMotors.
 static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 	if (sq_gettype(v, 2) != OT_NULL) {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 		float alpha = 0.0f;
@@ -313,11 +314,11 @@ static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 // objectAt(text, 160,90)
 // objectAt(obj, leftMargin, topLinePos)
 static SQInteger objectAt(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (sq_gettop(v) == 3) {
-		Object *spot = sqobj(v, 3);
+		Common::SharedPtr<Object> spot = sqobj(v, 3);
 		if (!spot)
 			return sq_throwerror(v, "failed to get spot");
 		obj->_node->setPos(spot->getUsePos());
@@ -342,7 +343,7 @@ static SQInteger objectBumperCycle(HSQUIRRELVM v) {
 }
 
 static SQInteger objectCenter(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	Math::Vector2d pos = obj->_node->getPos() + obj->_usePos;
@@ -355,7 +356,7 @@ static SQInteger objectCenter(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectColor(warningSign, 0x808000)
 static SQInteger objectColor(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		int color = 0;
 		if (SQ_FAILED(sqget(v, 3, color)))
@@ -366,10 +367,10 @@ static SQInteger objectColor(HSQUIRRELVM v) {
 }
 
 static SQInteger objectDependentOn(HSQUIRRELVM v) {
-	Object *child = sqobj(v, 2);
+	Common::SharedPtr<Object> child = sqobj(v, 2);
 	if (!child)
 		return sq_throwerror(v, "failed to get child object");
-	Object *parent = sqobj(v, 3);
+	Common::SharedPtr<Object> parent = sqobj(v, 3);
 	if (!parent)
 		return sq_throwerror(v, "failed to get parent object");
 	int state = 0;
@@ -384,7 +385,7 @@ static SQInteger objectDependentOn(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectFPS(pigeon1, 15)
 static SQInteger objectFPS(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		float fps = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, fps)))
@@ -399,7 +400,7 @@ static SQInteger objectFPS(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectHidden(oldRags, YES)
 static SQInteger objectHidden(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		int hidden = 0;
 		sqget(v, 3, hidden);
@@ -417,7 +418,7 @@ static SQInteger objectHidden(HSQUIRRELVM v) {
 // objectHotspot(willie, 14, 0, 14, 62)         // Willie standing up
 // objectHotspot(willie, -28, 0, 28, 50)        // Willie lying down drunk
 static SQInteger objectHotspot(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	if (sq_gettop(v) == 2) {
@@ -449,7 +450,7 @@ static SQInteger objectHotspot(HSQUIRRELVM v) {
 // objectIcon(obj, "glowing_spell_book")
 // objectIcon(obj, "spell_book")
 static SQInteger objectIcon(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	switch (sq_gettype(v, 3)) {
@@ -487,7 +488,7 @@ static SQInteger objectIcon(HSQUIRRELVM v) {
 // Note: this is currently used for actor objects, but can also be used for room objects.
 // Lighting background flat art would be hard and probably look odd.
 static SQInteger objectLit(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	bool lit = false;
@@ -510,7 +511,7 @@ static SQInteger objectLit(HSQUIRRELVM v) {
 // - `stopObjectMotors method <#stopObjectMotors.e>`_
 // - `objectOffsetTo method <#objectOffsetTo.e>`_
 static SQInteger objectMoveTo(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		int x = 0;
 		int y = 0;
@@ -536,7 +537,7 @@ static SQInteger objectMoveTo(HSQUIRRELVM v) {
 // objectOffset(coroner, 0, 0)
 // objectOffset(SewerManhole.sewerManholeDime, 0, 96)
 static SQInteger objectOffset(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		int x = 0;
 		int y = 0;
@@ -551,7 +552,7 @@ static SQInteger objectOffset(HSQUIRRELVM v) {
 }
 
 static SQInteger objectOffsetTo(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		int x = 0;
 		int y = 0;
@@ -579,7 +580,7 @@ static SQInteger objectOffsetTo(HSQUIRRELVM v) {
 // objectOwner(dime) == currentActor
 // !objectOwner(countyMap1)
 static SQInteger objectOwner(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (!obj->_owner)
@@ -591,7 +592,7 @@ static SQInteger objectOwner(HSQUIRRELVM v) {
 
 // Changes the object's layer.
 static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	int layer = 0;
@@ -602,10 +603,10 @@ static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
 }
 
 static SQInteger objectParent(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get child");
-	Object *parent = sqobj(v, 3);
+	Common::SharedPtr<Object> parent = sqobj(v, 3);
 	if (!parent)
 		return sq_throwerror(v, "failed to get parent");
 	obj->_parent = parent->_key;
@@ -615,7 +616,7 @@ static SQInteger objectParent(HSQUIRRELVM v) {
 
 // Returns the x-coordinate of the given object or actor.
 static SQInteger objectPosX(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	float x = obj->getUsePos().getX() + obj->_hotspot.left + obj->_hotspot.width() / 2.0f;
@@ -625,7 +626,7 @@ static SQInteger objectPosX(HSQUIRRELVM v) {
 
 // Returns the y-coordinate of the given object or actor.
 static SQInteger objectPosY(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	float y = obj->getUsePos().getY() + obj->_hotspot.top + obj->_hotspot.height() / 2.0f;
@@ -639,7 +640,7 @@ static SQInteger objectPosY(HSQUIRRELVM v) {
 // Actor's are typically adjusted so they are rendered from the middle of the bottom of their feet.
 // To maintain sanity, it is best if all actors have the same image size and are all adjust the same, but this is not a requirement.
 static SQInteger objectRenderOffset(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	SQInteger x, y;
@@ -653,7 +654,7 @@ static SQInteger objectRenderOffset(HSQUIRRELVM v) {
 
 // Returns the room of a given object or actor.
 static SQInteger objectRoom(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (!obj->_room)
@@ -668,7 +669,7 @@ static SQInteger objectRoom(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectRotate(pigeonVanBackWheel, 0)
 static SQInteger objectRotate(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		float rotation = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, rotation)))
@@ -688,7 +689,7 @@ static SQInteger objectRotate(HSQUIRRELVM v) {
 // objectRotateTo(AStreet.aStreetPhoneBook, 6, 2.0, SWING)
 // objectRotateTo(firefly, direction, 12, LOOPING)
 static SQInteger objectRotateTo(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		float rotation = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, rotation)))
@@ -706,7 +707,7 @@ static SQInteger objectRotateTo(HSQUIRRELVM v) {
 
 // Sets how scaled the object's image will appear on screen. 1 is no scaling.
 static SQInteger objectScale(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	float scale = 0.0f;
@@ -717,7 +718,7 @@ static SQInteger objectScale(HSQUIRRELVM v) {
 }
 
 static SQInteger objectScaleTo(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj) {
 		float scale = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, scale)))
@@ -736,7 +737,7 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 // Sets the object in the screen space.
 // It means that its position is relative to the screen, not to the room.
 static SQInteger objectScreenSpace(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	g_engine->_screenScene.addChild(obj->_node);
@@ -765,7 +766,7 @@ static SQInteger objectShader(HSQUIRRELVM v) {
 static SQInteger objectState(HSQUIRRELVM v) {
 	if (sq_gettype(v, 2) == OT_NULL)
 		return 0;
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	SQInteger nArgs = sq_gettop(v);
@@ -785,7 +786,7 @@ static SQInteger objectState(HSQUIRRELVM v) {
 
 // Gets or sets if an object is player touchable.
 static SQInteger objectTouchable(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	SQInteger nArgs = sq_gettop(v);
@@ -810,7 +811,7 @@ static SQInteger objectTouchable(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectSort(censorBox, 0)   // Will be on top of everything.
 static SQInteger objectSort(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	int zsort;
@@ -826,7 +827,7 @@ static SQInteger objectSort(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectUsePos(popcornObject, -13, 0, FACE_RIGHT)
 static SQInteger objectUsePos(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	int x, y, dir;
@@ -846,7 +847,7 @@ static SQInteger objectUsePos(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectUsePosX(dimeLoc)
 static SQInteger objectUsePosX(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sqpush(v, obj->getUsePos().getX());
@@ -858,7 +859,7 @@ static SQInteger objectUsePosX(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // objectUsePosY(dimeLoc)
 static SQInteger objectUsePosY(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sqpush(v, obj->getUsePos().getY());
@@ -867,7 +868,7 @@ static SQInteger objectUsePosY(HSQUIRRELVM v) {
 
 // Returns true if the object's use position has been set (ie is not 0,0).
 static SQInteger objectValidUsePos(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sqpush(v, obj->_usePos != Math::Vector2d());
@@ -886,7 +887,7 @@ static SQInteger objectValidUsePos(HSQUIRRELVM v) {
 //    tries = 0
 //}
 static SQInteger objectValidVerb(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	int verb;
@@ -915,7 +916,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 	//
 	// .. code-block:: Squirrel
 	// pickupObject(Dime)
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj) {
 		HSQOBJECT o;
 		sq_getstackobj(v, 2, &o);
@@ -923,7 +924,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		sqgetf(o, "name", name);
 		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_engine->_textDb.getText(name).c_str()).c_str());
 	}
-	Object *actor = nullptr;
+	Common::SharedPtr<Object> actor = nullptr;
 	if (sq_gettop(v) >= 3) {
 		actor = sqactor(v, 3);
 		if (!actor)
@@ -931,15 +932,15 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 	}
 	if (!actor)
 		actor = g_engine->_actor;
-	actor->pickupObject(obj);
+	Object::pickupObject(actor, obj);
 	return 0;
 }
 
 static SQInteger pickupReplacementObject(HSQUIRRELVM v) {
-	Object *obj1 = sqobj(v, 2);
+	Common::SharedPtr<Object> obj1 = sqobj(v, 2);
 	if (!obj1)
 		return sq_throwerror(v, "failed to get object 1");
-	Object *obj2 = sqobj(v, 3);
+	Common::SharedPtr<Object> obj2 = sqobj(v, 3);
 	if (!obj2)
 		return sq_throwerror(v, "failed to get object 2");
 
@@ -951,7 +952,7 @@ static SQInteger pickupReplacementObject(HSQUIRRELVM v) {
 	}
 
 	// replace obj2 by obj1
-	Object *owner = obj2->_owner;
+	Common::SharedPtr<Object> owner = obj2->_owner;
 	int index = find(obj2->_owner->_inventory, obj2);
 	owner->_inventory[index] = obj1;
 	obj1->_owner = owner;
@@ -965,7 +966,7 @@ static SQInteger pickupReplacementObject(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // playObjectState(Mansion.windowShutters, OPEN)
 static SQInteger playObjectState(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return 0;
 	if (sq_gettype(v, 3) == OT_INTEGER) {
@@ -985,7 +986,7 @@ static SQInteger playObjectState(HSQUIRRELVM v) {
 }
 
 static SQInteger popInventory(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	int count;
@@ -998,10 +999,11 @@ static SQInteger popInventory(HSQUIRRELVM v) {
 // Removes an object from the current actor's inventory.
 // If the object is not in the current actor's inventory, the command silently fails.
 static SQInteger removeInventory(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	obj->removeInventory();
+	if (obj->_owner)
+		obj->_owner->removeInventory(obj);
 	return 0;
 }
 
@@ -1020,7 +1022,7 @@ static SQInteger setDefaultObject(HSQUIRRELVM v) {
 }
 
 static SQInteger shakeObject(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	float amount;
@@ -1031,7 +1033,7 @@ static SQInteger shakeObject(HSQUIRRELVM v) {
 }
 
 static SQInteger stopObjectMotors(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	obj->stopObjectMotors();

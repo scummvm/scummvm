@@ -52,37 +52,37 @@ private:
 	Common::String _cond;
 };
 
-static Object *actor(const Common::String &name) {
+static Common::SharedPtr<Object> actor(const Common::String &name) {
 	// for (actor in gEngine.actors) {
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Object *actor = g_engine->_actors[i];
+		Common::SharedPtr<Object> actor = g_engine->_actors[i];
 		if (actor->_key == name)
 			return actor;
 	}
 	return nullptr;
 }
 
-static Object *actorOrCurrent(const Common::String &name) {
-	Object *result = actor(name);
+static Common::SharedPtr<Object> actorOrCurrent(const Common::String &name) {
+	Common::SharedPtr<Object> result = actor(name);
 	if (!result)
 		result = g_engine->_actor;
 	return result;
 }
 
 Color EngineDialogTarget::actorColor(const Common::String &actor) {
-	Object *act = actorOrCurrent(actor);
+	Common::SharedPtr<Object> act = actorOrCurrent(actor);
 	return g_engine->_hud.actorSlot(act)->verbUiColors.dialogNormal;
 }
 
 Color EngineDialogTarget::actorColorHover(const Common::String &actor) {
-	Object *act = actorOrCurrent(actor);
+	Common::SharedPtr<Object> act = actorOrCurrent(actor);
 	return g_engine->_hud.actorSlot(act)->verbUiColors.dialogHighlight;
 }
 
 Motor *EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
 	debugC(kDebugDialog, "say %s: %s", actor.c_str(), text.c_str());
-	Object *act = actorOrCurrent(actor);
-	act->say({text}, act->_talkColor);
+	Common::SharedPtr<Object> act = actorOrCurrent(actor);
+	Object::say(act, {text}, act->_talkColor);
 	return act->getTalking();
 }
 
@@ -100,10 +100,10 @@ Motor *EngineDialogTarget::pause(float time) {
 
 bool EngineDialogTarget::execCond(const Common::String &cond) {
 	// check if the condition corresponds to an actor name
-	Object *act = actor(cond);
+	Common::SharedPtr<Object> act = actor(cond);
 	if (act) {
 		// yes, so we check if the current actor is the given actor name
-		Object *curActor = g_engine->_actor;
+		Common::SharedPtr<Object> curActor = g_engine->_actor;
 		return curActor && curActor->_key == act->_key;
 	}
 

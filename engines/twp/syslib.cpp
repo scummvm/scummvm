@@ -235,18 +235,18 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	return -666;
 }
 
-static bool isAnimating(Object *obj) {
+static bool isAnimating(Common::SharedPtr<Object> obj) {
 	return obj->_nodeAnim->_anim && !obj->_nodeAnim->_disabled && obj->_animName != obj->getAnimName(STAND_ANIMNAME);
 }
 
 struct ObjAnimating {
-	ObjAnimating(Object *obj) : _obj(obj) {}
+	ObjAnimating(Common::SharedPtr<Object> obj) : _obj(obj) {}
 	bool operator()() {
 		return isAnimating(_obj);
 	}
 
 private:
-	Object *_obj;
+	Common::SharedPtr<Object> _obj;
 };
 
 // When called in a function started with startthread, execution is suspended until animatingItem has completed its animation.
@@ -260,7 +260,7 @@ private:
 // breakwhileanimating(ray)
 // actorCostume(ray, "RayAnimation")
 static SQInteger breakwhileanimating(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	return breakwhilecond(v, ObjAnimating(obj), "breakwhileanimating(%s)", obj->_key.c_str());
@@ -355,14 +355,14 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 // Returns true if at least 1 actor is talking.
 static bool isSomeoneTalking() {
 	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
-		Object *obj = *it;
+		Common::SharedPtr<Object> obj = *it;
 		if (obj->getTalking() && obj->getTalking()->isEnabled())
 			return true;
 	}
 	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
-			Object *obj = *it2;
+			Common::SharedPtr<Object> obj = *it2;
 			if (obj->getTalking() && obj->getTalking()->isEnabled())
 				return true;
 		}
@@ -377,14 +377,14 @@ struct SomeoneTalking {
 };
 
 struct ActorTalking {
-	ActorTalking(Object *obj) : _obj(obj) {}
+	ActorTalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
 
 	bool operator()() {
 		return _obj->getTalking() && _obj->getTalking()->isEnabled();
 	}
 
 private:
-	Object *_obj;
+	Common::SharedPtr<Object> _obj;
 };
 
 // If an actor is specified, breaks until actor has finished talking.
@@ -405,7 +405,7 @@ static SQInteger breakwhiletalking(HSQUIRRELVM v) {
 		return breakwhilecond(v, SomeoneTalking(), "breakwhiletalking(all)");
 	}
 	if (nArgs == 2) {
-		Object *obj = sqobj(v, 2);
+		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 		return breakwhilecond(v, ActorTalking(obj), "breakwhiletalking(%s)", obj->_name.c_str());
@@ -415,14 +415,14 @@ static SQInteger breakwhiletalking(HSQUIRRELVM v) {
 }
 
 struct ActorWalking {
-	ActorWalking(Object *obj) : _obj(obj) {}
+	ActorWalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
 
 	bool operator()() {
 		return _obj->getWalkTo() && _obj->getWalkTo()->isEnabled();
 	}
 
 private:
-	Object *_obj;
+	Common::SharedPtr<Object> _obj;
 };
 
 // If an actor is specified, breaks until actor has finished walking.
@@ -436,7 +436,7 @@ private:
 //    pushSentence(VERB_USE, nickel, Nickel.copyTron)
 //})
 static SQInteger breakwhilewalking(HSQUIRRELVM v) {
-	Object *obj = sqobj(v, 2);
+	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	return breakwhilecond(v, ActorWalking(obj), "breakwhilewalking(%s)", obj->_name.c_str());

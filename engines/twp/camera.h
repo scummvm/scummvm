@@ -105,7 +105,7 @@ public:
 	inline bool isMoving() const { return _moving; }
 	void panTo(Math::Vector2d target, float time, InterpolationKind interpolation);
 
-	void update(Common::SharedPtr<Room> room, Object *follow, float elapsed);
+	void update(Common::SharedPtr<Room> room, Common::SharedPtr<Object> follow, float elapsed);
 
 private:
 	void clamp(Math::Vector2d at);
@@ -119,7 +119,7 @@ private:
 	float _elapsed = 0.f;
 	float _time = 0.f;
 	Common::SharedPtr<Room> _room;
-	Object *_follow = nullptr;
+	Common::SharedPtr<Object> _follow = nullptr;
 	EasingFunc_t _function = {&linear};
 };
 } // namespace Twp
