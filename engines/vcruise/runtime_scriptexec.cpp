@@ -1487,7 +1487,10 @@ void Runtime::scriptOpJump(ScriptArg_t arg) {
 
 void Runtime::scriptOpMusicStop(ScriptArg_t arg) {
 	_musicWavePlayer.reset();
-	_musicMidiPlayer.reset();
+	if (_musicMidiPlayer) {
+		Common::StackLock lock(_midiPlayerMutex);
+		_musicMidiPlayer.reset();
+	}
 	_musicActive = false;
 }
 
@@ -1516,7 +1519,10 @@ void Runtime::scriptOpScoreNormal(ScriptArg_t arg) {
 
 	if (_musicMute) {
 		_musicWavePlayer.reset();
-		_musicMidiPlayer.reset();
+		if (_musicMidiPlayer) {
+			Common::StackLock lock(_midiPlayerMutex);
+			_musicMidiPlayer.reset();
+		}
 		_scoreSectionEndTime = 0;
 	}
 }
