@@ -431,7 +431,8 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		return;
 
 	SoundID soundId(kSoundExternal, menu, submenu);
-	if (isChannelActive(soundChannel) && isLastPlayedSound(soundChannel, soundId))
+	// If the sound is the same ID ast the last played, do nothing.
+	if (isLastPlayedSound(soundChannel, soundId))
 		return;
 
 	if (menu < kMinSampledMenu || menu > kMaxSampledMenu) {
