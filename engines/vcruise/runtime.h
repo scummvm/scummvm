@@ -26,11 +26,13 @@
 
 #include "common/hashmap.h"
 #include "common/keyboard.h"
+#include "common/mutex.h"
 #include "common/rect.h"
 
 #include "vcruise/detection.h"
 
 class OSystem;
+class MidiDriver;
 
 namespace Common {
 
@@ -86,6 +88,7 @@ enum StartConfig {
 
 class AudioPlayer;
 class CircuitPuzzle;
+class MidiPlayer;
 class MenuInterface;
 class MenuPage;
 class RuntimeMenuInterface;
@@ -645,7 +648,7 @@ public:
 		kCharSetChineseSimplified,
 	};
 
-	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage);
+	Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage);
 	virtual ~Runtime();
 
 	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &subtitleRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
@@ -680,6 +683,8 @@ public:
 
 	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect);
 	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor, uint32 &outShadowOffset);
+
+	void onMidiTimer();
 
 private:
 	enum IndexParseType {
@@ -1343,7 +1348,9 @@ private:
 
 	Common::SharedPtr<Common::RandomSource> _rng;
 
-	Common::SharedPtr<AudioPlayer> _musicPlayer;
+	Common::SharedPtr<AudioPlayer> _musicWavePlayer;
+	Common::Mutex _midiPlayerMutex;
+	Common::SharedPtr<MidiPlayer> _musicMidiPlayer;
 	int _musicTrack;
 	int32 _musicVolume;
 	bool _musicActive;
@@ -1410,6 +1417,7 @@ private:
 	bool _inGameMenuButtonActive[5];
 
 	Audio::Mixer *_mixer;
+	MidiDriver *_midiDrv;
 
 	Common::SharedPtr<MapLoader> _mapLoader;
 

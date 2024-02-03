@@ -72,6 +72,8 @@ protected:
 
 private:
 	void handleEvents();
+	static void staticHandleMidiTimer(void *refCon);
+	void handleMidiTimer();
 
 	Common::Rect _videoRect;
 	Common::Rect _menuBarRect;

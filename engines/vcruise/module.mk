@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	ad2044_ui.o \
 	audio_player.o \
 	circuitpuzzle.o \
+	midi_player.o \
 	metaengine.o \
 	menu.o \
 	runtime.o \

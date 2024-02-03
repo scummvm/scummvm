@@ -58,6 +58,7 @@
 #include "vcruise/audio_player.h"
 #include "vcruise/circuitpuzzle.h"
 #include "vcruise/sampleloop.h"
+#include "vcruise/midi_player.h"
 #include "vcruise/menu.h"
 #include "vcruise/runtime.h"
 #include "vcruise/script.h"
@@ -1455,8 +1456,8 @@ void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::St
 FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 }
 
-Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _disc(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
+	: _system(system), _mixer(mixer), _midiDrv(midiDrv), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _disc(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _lowQualityGraphicsMode(false),
@@ -2064,6 +2065,14 @@ void Runtime::drawLabel(Graphics::ManagedSurface *surface, const Common::String 
 	uint32 realTextColor = surface->format.RGBToColor((textColorRGB >> 16) & 0xff, (textColorRGB >> 8) & 0xff, textColorRGB & 0xff);
 	font->drawString(surface, text, textPos.x, textPos.y, strWidth, realTextColor);
 }
+
+void Runtime::onMidiTimer() {
+	if (_musicMidiPlayer) {
+		Common::StackLock lock(_midiPlayerMutex);
+		_musicMidiPlayer->onMidiTimer();
+	}
+}
+
 
 bool Runtime::runIdle() {
 	if (_havePendingScreenChange) {
@@ -4267,10 +4276,15 @@ void Runtime::loadTabData(uint animNumber, Common::SeekableReadStream *stream) {
 }
 
 void Runtime::changeMusicTrack(int track) {
-	if (track == _musicTrack && _musicPlayer.get() != nullptr)
+	if (track == _musicTrack && _musicWavePlayer.get() != nullptr && _musicMidiPlayer.get() != nullptr)
 		return;
 
-	_musicPlayer.reset();
+	_musicWavePlayer.reset();
+	if (_musicMidiPlayer)
+	{
+		Common::StackLock lock(_midiPlayerMutex);
+		_musicMidiPlayer.reset();
+	}
 	_musicTrack = track;
 
 	if (!_musicActive)
@@ -4279,23 +4293,46 @@ void Runtime::changeMusicTrack(int track) {
 	if (_musicMute && !_musicMuteDisabled)
 		return;
 
-	Common::Path wavFileName(Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track)));
-	Common::File *wavFile = new Common::File();
-	if (wavFile->open(wavFileName)) {
-		if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
-			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
+	Common::String musicPathStr;
 
-			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, Audio::Mixer::kMusicSoundType));
-			_musicPlayer->play(applyVolumeScale(_musicVolume), 0);
+	if (_gameID == GID_AD2044)
+		musicPathStr = Common::String::format("sfx/music%02i.mid", static_cast<int>(track));
+	else
+		musicPathStr = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
+
+	Common::Path musicFileName(musicPathStr);
+	Common::File *musicFile = new Common::File();
+	if (musicFile->open(musicFileName)) {
+		if (_gameID == GID_AD2044) {
+			Common::ScopedPtr<Common::File> fileHolder(musicFile);
+
+			uint musicFileSize = static_cast<uint>(musicFile->size());
+
+			if (musicFileSize > 0) {
+				Common::Array<byte> musicData;
+				musicData.resize(musicFileSize);
+
+				musicFile->read(&musicData[0], musicFileSize);
+
+				Common::StackLock lock(_midiPlayerMutex);
+				_musicMidiPlayer.reset(new MidiPlayer(_midiDrv, Common::move(musicData), _musicVolume));
+			}
+		} else {
+			if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(musicFile, DisposeAfterUse::YES)) {
+				Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
+
+				_musicWavePlayer.reset(new AudioPlayer(_mixer, loopingStream, Audio::Mixer::kMusicSoundType));
+				_musicWavePlayer->play(applyVolumeScale(_musicVolume), 0);
+			}
 		}
 	} else {
-		warning("Music file '%s' is missing", wavFileName.toString(Common::Path::kNativeSeparator).c_str());
-		delete wavFile;
+		warning("Music file '%s' is missing", musicFileName.toString(Common::Path::kNativeSeparator).c_str());
+		delete musicFile;
 	}
 }
 
 void Runtime::startScoreSection() {
-	_musicPlayer.reset();
+	_musicWavePlayer.reset();
 	_scoreSectionEndTime = 0;
 
 	if (!_musicActive)
@@ -4322,8 +4359,8 @@ void Runtime::startScoreSection() {
 				Common::File *trackFile = new Common::File();
 				if (trackFile->open(trackFileName)) {
 					if (Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(trackFile, DisposeAfterUse::YES)) {
-						_musicPlayer.reset(new AudioPlayer(_mixer, Common::SharedPtr<Audio::AudioStream>(audioStream), Audio::Mixer::kMusicSoundType));
-						_musicPlayer->play(applyVolumeScale(sectionDef.volumeOrDurationInSeconds), 0);
+						_musicWavePlayer.reset(new AudioPlayer(_mixer, Common::SharedPtr<Audio::AudioStream>(audioStream), Audio::Mixer::kMusicSoundType));
+						_musicWavePlayer->play(applyVolumeScale(sectionDef.volumeOrDurationInSeconds), 0);
 
 						_scoreSectionEndTime = static_cast<uint32>(audioStream->getLength().msecs()) + g_system->getMillis();
 					} else {
@@ -4352,11 +4389,16 @@ void Runtime::setMusicMute(bool muted) {
 	if (prevIsActuallyMuted != isActuallyMuted) {
 		if (isActuallyMuted) {
 			// Became muted
-			_musicPlayer.reset();
+			_musicWavePlayer.reset();
+			if (_musicMidiPlayer)
+			{
+				Common::StackLock lock(_midiPlayerMutex);
+				_musicMidiPlayer.reset();
+			}
 			_scoreSectionEndTime = 0;
 		} else {
 			// Became unmuted
-			if (_gameID == GID_REAH)
+			if (_gameID == GID_REAH || _gameID == GID_AD2044)
 				changeMusicTrack(_musicTrack);
 			else if (_gameID == GID_SCHIZM)
 				startScoreSection();
@@ -4791,8 +4833,13 @@ void Runtime::updateSounds(uint32 timestamp) {
 			newVolume += static_cast<int32>(ramp);
 
 		if (newVolume != _musicVolume) {
-			if (_musicPlayer)
-				_musicPlayer->setVolume(applyVolumeScale(newVolume));
+			if (_musicWavePlayer)
+				_musicWavePlayer->setVolume(applyVolumeScale(newVolume));
+
+			if (_musicMidiPlayer) {
+				Common::StackLock lock(_midiPlayerMutex);
+				_musicMidiPlayer->setVolume(newVolume);
+			}
 			_musicVolume = newVolume;
 		}
 
@@ -6921,7 +6968,7 @@ void Runtime::restoreSaveGameSnapshot() {
 		_musicMuteDisabled = mainState->musicMuteDisabled;
 		_scoreTrack = mainState->scoreTrack;
 
-		if (_gameID == GID_REAH)
+		if (_gameID == GID_REAH || _gameID == GID_AD2044)
 			changeMusicTrack(mainState->musicTrack);
 		if (_gameID == GID_SCHIZM) {
 			// Only restart music if a new track is playing
@@ -6929,13 +6976,21 @@ void Runtime::restoreSaveGameSnapshot() {
 				_scoreSection = mainState->scoreSection;
 
 			if (!musicMutedBeforeRestore && musicMutedAfterRestore) {
-				_musicPlayer.reset();
+				_musicWavePlayer.reset();
+				{
+					Common::StackLock lock(_midiPlayerMutex);
+					_musicMidiPlayer.reset();
+				}
 				_scoreSectionEndTime = 0;
 			} else if (!musicMutedAfterRestore && (isNewTrack || musicMutedBeforeRestore))
 				startScoreSection();
 		}
 	} else {
-		_musicPlayer.reset();
+		_musicWavePlayer.reset();
+		if (_musicMidiPlayer) {
+			Common::StackLock lock(_midiPlayerMutex);
+			_musicMidiPlayer.reset();
+		}
 		_scoreSectionEndTime = 0;
 	}
 
@@ -7059,6 +7114,8 @@ Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 	// that it needs here.
 	if (_gameID == GID_AD2044) {
 		mainState->animDisplayingFrame = 345;
+		mainState->musicActive = true;
+		mainState->musicTrack = 1;
 
 		SaveGameSnapshot::PagedInventoryItem item;
 		item.page = 0;

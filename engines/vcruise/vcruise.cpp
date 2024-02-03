@@ -32,6 +32,7 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include "audio/mididrv.h"
 #include "audio/mixer.h"
 
 #include "gui/message.h"
@@ -75,6 +76,14 @@ void VCruiseEngine::handleEvents() {
 	}
 }
 
+void VCruiseEngine::staticHandleMidiTimer(void *refCon) {
+	static_cast<VCruiseEngine *>(refCon)->handleMidiTimer();
+}
+
+void VCruiseEngine::handleMidiTimer() {
+	_runtime->onMidiTimer();
+}
+
 Common::Error VCruiseEngine::run() {
 	Common::List<Graphics::PixelFormat> pixelFormats = _system->getSupportedFormats();
 
@@ -104,6 +113,17 @@ Common::Error VCruiseEngine::run() {
 		dialog.runModal();
 	}
 #endif
+
+	Common::ScopedPtr<MidiDriver> midiDrv;
+	if (_gameDescription->gameID == GID_AD2044) {
+		MidiDriver::DeviceHandle midiDevHdl = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		if (midiDevHdl) {
+			midiDrv.reset(MidiDriver::createMidi(midiDevHdl));
+
+			if (midiDrv->open() != 0)
+				midiDrv.reset();
+		}
+	}
 
 	if (_gameDescription->desc.flags & VCRUISE_GF_GENTEE_PACKAGE) {
 		Common::File *f = new Common::File();
@@ -194,8 +214,11 @@ Common::Error VCruiseEngine::run() {
 
 	_system->fillScreen(0);
 
-	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID, _gameDescription->defaultLanguage));
+	_runtime.reset(new Runtime(_system, _mixer, midiDrv.get(), _rootFSNode, _gameDescription->gameID, _gameDescription->defaultLanguage));
 	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, _subtitleRect, Common::Rect(640, 480), _system->getScreenFormat());
+
+	if (midiDrv)
+		midiDrv->setTimerCallback(this, VCruiseEngine::staticHandleMidiTimer);
 
 	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;
 
@@ -237,6 +260,10 @@ Common::Error VCruiseEngine::run() {
 		_runtime->drawFrame();
 		_system->delayMillis(5);
 	}
+
+
+	if (midiDrv)
+		midiDrv->setTimerCallback(nullptr, nullptr);
 
 	_runtime.reset();
 

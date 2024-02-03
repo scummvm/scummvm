@@ -744,8 +744,8 @@ void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 
 	if (duration == 0) {
 		_musicVolume = newVolume;
-		if (_musicPlayer)
-			_musicPlayer->setVolume(newVolume);
+		if (_musicWavePlayer)
+			_musicWavePlayer->setVolume(newVolume);
 	} else {
 		if (newVolume != _musicVolume) {
 			uint32 timestamp = g_system->getMillis();
@@ -1184,8 +1184,8 @@ void Runtime::scriptOpExit(ScriptArg_t arg) {
 		terminateScript();
 
 		changeMusicTrack(0);
-		if (_musicPlayer)
-			_musicPlayer->setVolumeAndBalance(applyVolumeScale(getDefaultSoundVolume()), 0);
+		if (_musicWavePlayer)
+			_musicWavePlayer->setVolumeAndBalance(applyVolumeScale(getDefaultSoundVolume()), 0);
 	} else {
 		error("Don't know what screen to go to on exit");
 	}
@@ -1486,7 +1486,8 @@ void Runtime::scriptOpJump(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpMusicStop(ScriptArg_t arg) {
-	_musicPlayer.reset();
+	_musicWavePlayer.reset();
+	_musicMidiPlayer.reset();
 	_musicActive = false;
 }
 
@@ -1514,7 +1515,8 @@ void Runtime::scriptOpScoreNormal(ScriptArg_t arg) {
 	_musicMuteDisabled = false;
 
 	if (_musicMute) {
-		_musicPlayer.reset();
+		_musicWavePlayer.reset();
+		_musicMidiPlayer.reset();
 		_scoreSectionEndTime = 0;
 	}
 }
