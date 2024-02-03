@@ -490,7 +490,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	// Check that the index into the series requested is within a valid range
 	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= (int)numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
+		ws_LogErrorMsg(FL, "CreateSprite: Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
 	}
 
@@ -1285,7 +1285,8 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	// Check that the index into the series requested is within a valid range
 	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
+		ws_LogErrorMsg(FL, "ws_get_sprite_width: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
+			numCels - 1, index, hash);
 		return -1;
 	}
 
@@ -1329,7 +1330,8 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	// Check that the index into the series requested is within a valid range
 	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
+		ws_LogErrorMsg(FL, "ws_get_sprite_height: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
+			numCels - 1, index, hash);
 		return -1;
 	}
 
