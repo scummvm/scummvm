@@ -3768,11 +3768,7 @@ bool ScummEngine::startManiac() {
 
 			if (path.isRelativeTo(currentPath)) {
 				path = path.relativeTo(currentPath);
-				// Do a case-insensitive non-path-mode match of the remainder.
-				// While strictly speaking it's too broad, this matchString
-				// ignores the presence or absence of trailing path separators
-				// in either currentPath or path.
-				if (path.toString('/').matchString("*maniac*", true, nullptr)) {
+				if (path.baseName().equalsIgnoreCase("maniac")) {
 					maniacTarget = iter->_key;
 					break;
 				}
