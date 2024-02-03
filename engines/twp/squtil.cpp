@@ -307,7 +307,7 @@ Object *sqobj(int id) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
-			Layer *layer = room->_layers[j];
+			Common::SharedPtr<Layer> layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
 				Object *obj = layer->_objects[k];
 				if (getId(obj->_table) == id)

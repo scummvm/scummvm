@@ -106,7 +106,7 @@ static Common::SharedPtr<Room> room(const Common::String &name) {
 
 static Object *object(Common::SharedPtr<Room> room, const Common::String &key) {
 	for (size_t i = 0; i < room->_layers.size(); i++) {
-		Layer *layer = room->_layers[i];
+		Common::SharedPtr<Layer> layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *o = layer->_objects[j];
 			if (o->_key == key)
@@ -120,7 +120,7 @@ static Object *object(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
 		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
-			Layer *layer = room->_layers[j];
+			Common::SharedPtr<Layer> layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
 				Object *o = layer->_objects[k];
 				if (o->_key == key)

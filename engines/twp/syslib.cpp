@@ -360,7 +360,7 @@ static bool isSomeoneTalking() {
 			return true;
 	}
 	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
-		Layer *layer = *it;
+		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			Object *obj = *it2;
 			if (obj->getTalking() && obj->getTalking()->isEnabled())

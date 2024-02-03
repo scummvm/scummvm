@@ -296,7 +296,7 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 	if (g_engine->_uiInv.getObject() && g_engine->_room->_fullscreen == FULLSCREENROOM)
 		func(g_engine->_uiInv.getObject());
 	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
-		Layer *layer = g_engine->_room->_layers[i];
+		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if ((obj != g_engine->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
@@ -1076,7 +1076,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	if (name == "Void") {
 		result.reset(new Room(name, table));
 		result->_scene = new Scene();
-		Layer *layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
+		Common::SharedPtr<Layer> layer(new Layer("background", Math::Vector2d(1.f, 1.f), 0));
 		layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray());
 		result->_layers.push_back(layer);
 		result->_scene->addChild(layer->_node);
@@ -1091,7 +1091,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 		result->_name = name;
 		result->_pseudo = pseudo;
 		for (size_t i = 0; i < result->_layers.size(); i++) {
-			Layer *layer = result->_layers[i];
+			Common::SharedPtr<Layer> layer = result->_layers[i];
 			// create layer node
 			ParallaxNode *layerNode = new ParallaxNode(layer->_parallax, result->_sheet, layer->_names);
 			layerNode->setZSort(layer->_zsort);
@@ -1130,7 +1130,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 
 	// assign parent node
 	for (size_t i = 0; i < result->_layers.size(); i++) {
-		Layer *layer = result->_layers[i];
+		Common::SharedPtr<Layer> layer = result->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if (obj->_parent.size() > 0) {
@@ -1201,7 +1201,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Object *door) {
 	// call actor enter function and objects enter function
 	actorEnter();
 	for (size_t i = 0; i < room->_layers.size(); i++) {
-		Layer *layer = room->_layers[i];
+		Common::SharedPtr<Layer> layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			// add all scaling triggers
@@ -1264,7 +1264,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 
 		// delete all temporary objects
 		for (size_t i = 0; i < _room->_layers.size(); i++) {
-			Layer *layer = _room->_layers[i];
+			Common::SharedPtr<Layer> layer = _room->_layers[i];
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Object *obj = layer->_objects[j];
 				if (obj->_temporary) {
@@ -1609,7 +1609,7 @@ void TwpEngine::updateTriggers() {
 
 void TwpEngine::stopTalking() {
 	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
-		Layer *layer = *it;
+		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			(*it2)->stopTalking();
 		}

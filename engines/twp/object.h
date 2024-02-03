@@ -233,7 +233,7 @@ public:
 	Node *_node = nullptr;
 	Node *_sayNode = nullptr;
 	Anim *_nodeAnim = nullptr;
-	Layer *_layer = nullptr;
+	Common::SharedPtr<Layer> _layer;
 	Common::StringArray _hiddenLayers;
 	Common::String _animName;
 	int _animFlags = 0;
