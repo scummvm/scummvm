@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 #include "math/vector2d.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/font.h"
@@ -116,7 +117,7 @@ public:
 
 	Math::Vector2d getScreenSize();
 
-	Layer *layer(int zsort);
+	Common::SharedPtr<Layer> layer(int zsort);
 	Object *getObj(const Common::String &key);
 
 	Light *createLight(Color color, Math::Vector2d pos);
@@ -134,7 +135,7 @@ public:
 	Math::Vector2d _roomSize;          // Size of the room
 	int _fullscreen = 0;               // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
 	int _height = 0;                   // Height of the room (what else ?)
-	Common::Array<Layer *> _layers;    // Parallax layers of a room
+	Common::Array<Common::SharedPtr<Layer> > _layers;    // Parallax layers of a room
 	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
 	Common::Array<Walkbox> _mergedPolygon;
 	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room

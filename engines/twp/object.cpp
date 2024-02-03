@@ -365,7 +365,7 @@ void Object::setRoom(Common::SharedPtr<Room> room) {
 		Common::SharedPtr<Room> oldRoom = _room;
 		if (oldRoom && _node->getParent()) {
 			debugC(kDebugGame, "Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
-			Layer *layer = oldRoom->layer(0);
+			Common::SharedPtr<Layer>layer = oldRoom->layer(0);
 			if (layer) {
 				int index = find(layer->_objects, this);
 				if (index != -1)
@@ -376,7 +376,7 @@ void Object::setRoom(Common::SharedPtr<Room> room) {
 		}
 		if (room && room->layer(0) && room->layer(0)->_node) {
 			debugC(kDebugGame, "Add %s in room %s", _key.c_str(), room->_name.c_str());
-			Layer *layer = room->layer(0);
+			Common::SharedPtr<Layer> layer = room->layer(0);
 			if (layer) {
 				int index = find(layer->_objects, this);
 				if (index == -1)

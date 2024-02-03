@@ -809,7 +809,7 @@ void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
 	SpriteSheetFrame *frame = &gameSheet->frameTable["hotspot_marker"];
 	Color color = Color::create(255, 165, 0);
 	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
-		Layer *layer = g_engine->_room->_layers[i];
+		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if (isObject(obj->getId()) && (obj->_objType == otNone) && obj->isTouchable()) {

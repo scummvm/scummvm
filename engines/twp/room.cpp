@@ -154,9 +154,6 @@ Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
 }
 
 Room::~Room() {
-	for (size_t i = 0; i < _layers.size(); i++) {
-		delete _layers[i];
-	}
 	delete _scene;
 }
 
@@ -281,7 +278,7 @@ void Room::load(Common::SeekableReadStream &s) {
 	}
 
 	{
-		Layer *layer = new Layer(backNames, Math::Vector2d(1, 1), 0);
+		 Common::SharedPtr<Layer> layer(new Layer(backNames, Math::Vector2d(1, 1), 0));
 		_layers.push_back(layer);
 	}
 
@@ -302,7 +299,7 @@ void Room::load(Common::SeekableReadStream &s) {
 			Math::Vector2d parallax = parseParallax(*jLayer["parallax"]);
 			int zsort = jLayer["zsort"]->asIntegerNumber();
 
-			Layer *layer = new Layer(names, parallax, zsort);
+			Common::SharedPtr<Layer> layer(new Layer(names, parallax, zsort));
 			_layers.push_back(layer);
 		}
 	}
@@ -383,9 +380,9 @@ void Room::load(Common::SeekableReadStream &s) {
 	delete value;
 }
 
-Layer *Room::layer(int zsort) {
+Common::SharedPtr<Layer> Room::layer(int zsort) {
 	for (size_t i = 0; i < _layers.size(); i++) {
-		Layer *l = _layers[i];
+		Common::SharedPtr<Layer> l = _layers[i];
 		if (l->_zsort == zsort)
 			return l;
 	}
@@ -407,7 +404,7 @@ Math::Vector2d Room::getScreenSize() {
 
 Object *Room::getObj(const Common::String &key) {
 	for (size_t i = 0; i < _layers.size(); i++) {
-		Layer *layer = _layers[i];
+		Common::SharedPtr<Layer> layer = _layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Object *obj = layer->_objects[j];
 			if (obj->_key == key)
@@ -432,7 +429,7 @@ float Room::getScaling(float yPos) {
 }
 
 void Room::objectParallaxLayer(Object *obj, int zsort) {
-	Layer *l = layer(zsort);
+	Common::SharedPtr<Layer> l = layer(zsort);
 	if (obj->_layer != l) {
 		// removes object from old layer
 		if (obj->_layer) {
@@ -462,7 +459,7 @@ void Room::update(float elapsed) {
 	if (_rotateTo)
 		_rotateTo->update(elapsed);
 	for (size_t j = 0; j < _layers.size(); j++) {
-		Layer *layer = _layers[j];
+		Common::SharedPtr<Layer> layer = _layers[j];
 		for (size_t k = 0; k < layer->_objects.size(); k++) {
 			Object *obj = layer->_objects[k];
 			obj->update(elapsed);
