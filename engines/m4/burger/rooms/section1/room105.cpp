@@ -270,6 +270,11 @@ void Room105::init() {
 	_series5 = 0;
 	digi_preload("105_001");
 
+	Common::fill(&_series1[0], &_series1[12], -1);
+	Common::fill(&_series2[0], &_series2[4], -1);
+	Common::fill(&_series3[0], &_series3[12], -1);
+	Common::fill(&_series4[0], &_series4[5], -1);
+
 	if (_G(flags)[V112]) {
 		series_play("105do01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 		_elgusShould = 59;
@@ -1716,7 +1721,7 @@ void Room105::loadAssets3() {
 	};
 
 	for (int i = 0; i < 12; ++i)
-		_series1[i] = series_load(NAMES[i]);
+		_series3[i] = series_load(NAMES[i]);
 
 	series_load("105eg10");
 	series_load("105eg10s");

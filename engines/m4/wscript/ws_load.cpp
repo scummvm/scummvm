@@ -143,6 +143,7 @@ bool InitWSAssets() {
 
 bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash) {
 	int32 i;
+	assert(maxHash >= minHash);
 
 	if (!_GWS(wsloaderInitialized)) {
 		return false;
