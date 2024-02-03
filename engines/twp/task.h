@@ -49,7 +49,7 @@ public:
 	virtual bool update(float elapsed) override final {
 		if (_cond())
 			return false;
-		ThreadBase *pt = sqthread(_parentId);
+		Common::SharedPtr<ThreadBase> pt = sqthread(_parentId);
 		if (pt) {
 			debugC(kDebugGame, "Resume task: %d, %s", _parentId, pt->getName().c_str());
 			pt->resume();

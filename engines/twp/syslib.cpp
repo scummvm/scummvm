@@ -83,7 +83,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 		sq_pop(v, 1); // pop name
 	sq_pop(v, 1);     // pop closure
 
-	g_engine->_threads.push_back(t);
+	g_engine->_threads.push_back(Common::SharedPtr<ThreadBase>(t));
 
 	debugC(kDebugSysScript, "create thread %s", t->getName().c_str());
 
@@ -95,8 +95,8 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	return 1;
 }
 
-static SQInteger breakfunc(HSQUIRRELVM v, void func(ThreadBase *t, void *data), void *data) {
-	ThreadBase *t = sqthread(v);
+static SQInteger breakfunc(HSQUIRRELVM v, void func(Common::SharedPtr<ThreadBase> t, void *data), void *data) {
+	Common::SharedPtr<ThreadBase> t = sqthread(v);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	t->suspend();
@@ -151,7 +151,7 @@ static SQInteger addCallback(HSQUIRRELVM v) {
 	}
 
 	Callback *callback = new Callback(newCallbackId(), duration, methodName, args);
-	g_engine->_callbacks.push_back(callback);
+	g_engine->_callbacks.push_back(Common::SharedPtr<Callback>(callback));
 
 	sqpush(v, callback->getId());
 	return 1;
@@ -166,14 +166,14 @@ static SQInteger addFolder(HSQUIRRELVM v) {
 	return 0;
 }
 
-static void threadFrames(ThreadBase *tb, void *data) {
+static void threadFrames(Common::SharedPtr<ThreadBase> tb, void *data) {
 	int numFrames = *(int *)data;
-	((Thread *)tb)->_numFrames = numFrames;
+	((Thread *)tb.get())->_numFrames = numFrames;
 }
 
-static void threadTime(ThreadBase *tb, void *data) {
+static void threadTime(Common::SharedPtr<ThreadBase> tb, void *data) {
 	float time = *(float *)data;
-	((Thread *)tb)->_waitTime = time;
+	((Thread *)tb.get())->_waitTime = time;
 }
 
 // When called in a function started with startthread, execution is suspended for count frames.
@@ -226,12 +226,12 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 	Common::String name = Common::String::format(fmt, va);
 	va_end(va);
 
-	ThreadBase *curThread = sqthread(v);
+	Common::SharedPtr<ThreadBase> curThread = sqthread(v);
 	if (!curThread)
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
 	debugC(kDebugSysScript, "add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
-	g_engine->_tasks.push_back(new BreakWhileCond<Predicate>(curThread->getId(), name, pred));
+	g_engine->_tasks.push_back(Common::SharedPtr<Task>(new BreakWhileCond<Predicate>(curThread->getId(), name, pred)));
 	return -666;
 }
 
@@ -339,7 +339,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 		sqget(v, 2, id);
 	debugC(kDebugSysScript, "breakwhilerunning: %d", id);
 
-	ThreadBase *t = sqthread(id);
+	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (!t) {
 		if (!isSound(id)) {
 			warning("thread and sound not found: %d", id);
@@ -492,9 +492,9 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get cutscene override closure");
 	}
 
-	ThreadBase* parentThread = sqthread(v);
+	Common::SharedPtr<ThreadBase> parentThread = sqthread(v);
 	Cutscene *cutscene = new Cutscene(parentThread->getId(), threadObj, closure, closureOverride, envObj);
-	g_engine->_cutscene = cutscene;
+	g_engine->_cutscene.reset(cutscene);
 
 	// call the closure in the thread
 	cutscene->update(0.f);
@@ -608,7 +608,7 @@ static SQInteger inputOff(HSQUIRRELVM v) {
 }
 
 static SQInteger inputOn(HSQUIRRELVM v) {
-	Cutscene *cutscene = g_engine->_cutscene;
+	Common::SharedPtr<Cutscene> cutscene = g_engine->_cutscene;
 	if (!cutscene || cutscene->isStopped()) {
 		g_engine->_inputState.setInputActive(true);
 		g_engine->_inputState.setShowCursor(true);
@@ -723,10 +723,9 @@ static SQInteger removeCallback(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, id)))
 		return sq_throwerror(v, "failed to get callback");
 	for (size_t i = 0; i < g_engine->_callbacks.size(); i++) {
-		Callback *cb = g_engine->_callbacks[i];
+		Common::SharedPtr<Callback> cb = g_engine->_callbacks[i];
 		if (cb->getId() == id) {
 			g_engine->_callbacks.remove_at(i);
-			delete cb;
 			return 0;
 		}
 	}
@@ -755,7 +754,7 @@ static SQInteger stopthread(HSQUIRRELVM v) {
 		return 1;
 	}
 
-	ThreadBase *t = sqthread(id);
+	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (t) {
 		t->stop();
 	}
@@ -783,7 +782,7 @@ static SQInteger stopthread(HSQUIRRELVM v) {
 //     }
 // }
 static SQInteger threadid(HSQUIRRELVM v) {
-	ThreadBase *t = sqthread(v);
+	Common::SharedPtr<ThreadBase> t = sqthread(v);
 	if (t)
 		sqpush(v, t->getId());
 	else
@@ -794,7 +793,7 @@ static SQInteger threadid(HSQUIRRELVM v) {
 // Specify whether a thread should be pauseable or not.
 // If a thread is not pauseable, it won't be possible to pause this thread.
 static SQInteger threadpauseable(HSQUIRRELVM v) {
-	ThreadBase *t = sqthread(v, 2);
+	Common::SharedPtr<ThreadBase> t = sqthread(v, 2);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
 	int pauseable = 0;

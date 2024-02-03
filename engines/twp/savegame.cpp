@@ -511,7 +511,7 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 				toSquirrel(jCallBackHash["param"], arg);
 				sqgetitems(arg, GetHObjects(args));
 			}
-			g_engine->_callbacks.push_back(new Callback(id, time, name, args));
+			g_engine->_callbacks.push_back(Common::SharedPtr<Callback>(new Callback(id, time, name, args)));
 		}
 	}
 	setCallbackId(json["nextGuid"]->asIntegerNumber());

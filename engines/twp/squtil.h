@@ -169,9 +169,9 @@ Object *sqactor(HSQOBJECT table);
 Object *sqactor(HSQUIRRELVM v, int i);
 SoundDefinition* sqsounddef(HSQUIRRELVM v, int i);
 SoundDefinition *sqsounddef(int id);
-ThreadBase *sqthread(HSQUIRRELVM v);
-ThreadBase *sqthread(HSQUIRRELVM v, int id);
-ThreadBase *sqthread(int id);
+Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v);
+Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v, int id);
+Common::SharedPtr<ThreadBase> sqthread(int id);
 Light *sqlight(int id);
 Light *sqlight(HSQUIRRELVM v, int i);
 

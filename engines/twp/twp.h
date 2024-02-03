@@ -149,7 +149,7 @@ public:
 
 private:
 	void update(float elapsedMs);
-	void draw(RenderTexture* texture = nullptr);
+	void draw(RenderTexture *texture = nullptr);
 	void exitRoom(Common::SharedPtr<Room> nextRoom);
 	void actorEnter();
 	void actorExit();
@@ -166,19 +166,22 @@ private:
 	void callTrigger(Object *obj, HSQOBJECT trigger);
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
-	Scaling* getScaling(const Common::String& name);
+	Scaling *getScaling(const Common::String &name);
 	void skipCutscene();
+
+private:
+	Vm _vm;
 
 public:
 	Graphics::Screen *_screen = nullptr;
 	GGPackSet _pack;
 	ResManager _resManager;
-	Common::Array<Common::SharedPtr<Room>> _rooms;
+	Common::Array<Common::SharedPtr<Room> > _rooms;
 	Common::Array<Object *> _actors;
 	Common::Array<Object *> _objects;
-	Common::Array<ThreadBase *> _threads;
-	Common::Array<Task *> _tasks;
-	Common::Array<Callback *> _callbacks;
+	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
+	Common::Array<Common::SharedPtr<Task> > _tasks;
+	Common::Array<Common::SharedPtr<Callback> > _callbacks;
 	Object *_actor = nullptr;
 	Object *_followActor = nullptr;
 	Common::SharedPtr<Room> _room;
@@ -192,7 +195,7 @@ public:
 	float _nextHoldToMoveTime = 0.f;
 	int _frameCounter = 0;
 	Lighting *_lighting = nullptr;
-	Cutscene *_cutscene = nullptr;
+	Common::SharedPtr<Cutscene> _cutscene;
 	Scene _scene;
 	Scene _screenScene;
 	NoOverrideNode _noOverride;
@@ -228,7 +231,6 @@ public:
 
 private:
 	Gfx _gfx;
-	Vm _vm;
 	Preferences _prefs;
 	SentenceNode _sentence;
 	WalkboxNode _walkboxNode;
