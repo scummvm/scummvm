@@ -28,6 +28,10 @@
 
 namespace Dgds {
 
+class ResourceManager;
+class Decompressor;
+
+
 // TODO: Use Common::Rect instead.
 struct Rect {
 	int x;
@@ -74,7 +78,7 @@ enum SceneOpCode {
 	kSceneOpNone = 0,
 	kSceneOpChangeScene = 1,  	// args: scene num
 	kSceneOpNoop = 2,		 	// args: none. Maybe should close dialogue?
-	kSceneOp3 = 3,				// args: array of uints
+	kSceneOpGlobal = 3,			// args: array of uints
 	kSceneOp4 = 4,				// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
 	kSceneOp5 = 5,				// args: [item num, ??, ??]. give item?
 	kSceneOp6 = 6,				// args: item num?
@@ -214,6 +218,17 @@ struct DialogueAction {
 	Common::String dump(const Common::String &indent) const;
 };
 
+/* A global value that only applies on a per-SDS-scene,
+   but stays with the GDS data as it sticks around during
+   the game */
+struct PerSceneGlobal {
+	uint16 _num;
+	uint16 _sceneNo;
+	uint16 _val;
+
+	Common::String dump(const Common::String &indent) const;
+};
+
 
 /**
  * A scene is described by an SDS file, which points to the ADS script to load
@@ -249,13 +264,12 @@ protected:
 
 	virtual void enableTrigger(uint16 num) {}
 	virtual void showDialog(uint16 num) {}
+	virtual void globalOps(const Common::Array<uint16> &args) {}
 
 	uint32 _magic;
 	Common::String _version;
 };
 
-class ResourceManager;
-class Decompressor;
 
 class GDSScene : public Scene {
 public:
@@ -265,11 +279,17 @@ public:
 	bool parse(Common::SeekableReadStream *s) override;
 	bool parseInf(Common::SeekableReadStream *s);
 	const Common::String &getIconFile() const { return _iconFile; }
+	bool readPerSceneGlobals(Common::SeekableReadStream *s);
+
+	uint16 getGlobal(uint num);
 
 	Common::String dump(const Common::String &indent) const;
 
 	void runStartGameOps() { runOps(_startGameOps); }
 	void runQuitGameOps() { runOps(_quitGameOps); }
+	void globalOps(const Common::Array<uint16> &args) override;
+	uint16 getGlobal(uint16 num);
+	uint16 setGlobal(uint16 num, uint16 val);
 
 private:
 	//byte _unk[32];
@@ -280,6 +300,7 @@ private:
 	Common::Array<struct SceneOp> _opList3;
 	Common::Array<struct SceneOp> _opList4;
 	Common::Array<struct SceneOp> _opList5;
+	Common::Array<struct PerSceneGlobal> _perSceneGlobals;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 };
@@ -302,6 +323,8 @@ public:
 
 	bool checkDialogActive();
 	bool drawActiveDialog(Graphics::Surface *dst, int mode);
+
+	void globalOps(const Common::Array<uint16> &args) override;
 
 private:
 	void enableTrigger(uint16 num) override;
