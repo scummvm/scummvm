@@ -35,7 +35,7 @@ const GameConstants _nancy3Constants = {
 	32												// wonGameFlagID
 };
 
-const SoundChannelInfo _nancy3to7SoundChannelInfo = {
+const SoundChannelInfo _nancy3andUpSoundChannelInfo = {
 	32, 14,
 	{ 12, 13, 30 },
 	{ 0, 1, 2, 3, 19, 26, 27, 29 },
