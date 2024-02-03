@@ -162,6 +162,7 @@ TheEntity entities[] = {
 	{ kTheVideoForWindowsPresent,	"videoForWindowsPresent",	false, 400, true },	//		D4 f
 	{ kTheWindow,			"window",			true,  400, false },	//			D4
 	{ kTheWindowList,		"windowList",		false, 400, false },	//			D4 p
+	{ kTheXtras,			"xtras",			false, 500, false },	//			D4 p
 	{ kTheNOEntity, nullptr, false, 0, false }
 };
 
