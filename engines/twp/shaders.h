@@ -70,7 +70,7 @@ private:
 
 public:
 	FadeEffect _effect = FadeEffect::None;
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	Texture *_texture1 = nullptr;
 	Texture *_texture2 = nullptr;
 	Math::Vector2d _cameraPos;

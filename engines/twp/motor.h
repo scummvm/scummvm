@@ -148,13 +148,13 @@ private:
 class RoomRotateTo : public Motor {
 public:
 	virtual ~RoomRotateTo();
-	RoomRotateTo(Room *room, float to);
+	RoomRotateTo(Common::SharedPtr<Room> room, float to);
 
 private:
 	virtual void update(float elasped) override;
 
 private:
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	Tween<float> _tween;
 };
 
@@ -189,12 +189,12 @@ private:
 class OverlayTo : public Motor {
 public:
 	virtual ~OverlayTo();
-	OverlayTo(float duration, Room *room, Color to);
+	OverlayTo(float duration, Common::SharedPtr<Room> room, Color to);
 
 	virtual void update(float elapsed) override;
 
 private:
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	Color _to;
 	Tween<Color> _tween;
 };

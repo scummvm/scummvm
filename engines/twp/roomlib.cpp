@@ -236,7 +236,7 @@ static SQInteger defineRoom(HSQUIRRELVM v) {
 	sqgetf(v, table, "name", name);
 	if (name.size() == 0)
 		sqgetf(v, table, "background", name);
-	Room *room = g_engine->defineRoom(name, table);
+	Common::SharedPtr<Room> room = g_engine->defineRoom(name, table);
 	debugC(kDebugRoomScript, "Define room: %s", name.c_str());
 	g_engine->_rooms.push_back(room);
 	sqpush(v, room->_table);
@@ -264,7 +264,7 @@ static SQInteger definePseudoRoom(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstackobj(v, -1, &table)))
 		return sq_throwerror(v, "failed to get room table");
 
-	Room *room = g_engine->defineRoom(name, table, true);
+	Common::SharedPtr<Room> room = g_engine->defineRoom(name, table, true);
 	debugC(kDebugRoomScript, "Define pseudo room: %s", name);
 	g_engine->_rooms.push_back(room);
 	sqpush(v, room->_table);
@@ -281,7 +281,7 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, name)))
 		return sq_throwerror(v, "failed to get name");
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		if (room->_name == name) {
 			sqpush(v, room->_table);
 			return 1;
@@ -305,7 +305,7 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 static SQInteger masterRoomArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		sq_pushobject(v, room->_table);
 		sq_arrayappend(v, -2);
 	}
@@ -350,7 +350,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 // local spotters = roomActors(currentRoom)
 // foreach(actor in spotters) { ...}
 static SQInteger roomActors(HSQUIRRELVM v) {
-	Room *room = sqroom(v, 2);
+	Common::SharedPtr<Room> room = sqroom(v, 2);
 	if (!room)
 		return sq_throwerror(v, "failed to get room");
 
@@ -442,7 +442,7 @@ static SQInteger roomFade(HSQUIRRELVM v) {
 // .. code-block:: Squirrel
 // roomLayer(GrateEntry, -2, NO)  // Make lights out layer invisible
 static SQInteger roomLayer(HSQUIRRELVM v) {
-	Room *r = sqroom(v, 2);
+	Common::SharedPtr<Room> r = sqroom(v, 2);
 	int layer;
 	SQInteger enabled;
 	if (SQ_FAILED(sqget(v, 3, layer)))
@@ -477,7 +477,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	if (SQ_FAILED(sqget(v, 2, startColor)))
 		return sq_throwerror(v, "failed to get startColor");
-	Room *room = g_engine->_room;
+	Common::SharedPtr<Room> room = g_engine->_room;
 	if (room->_overlayTo)
 		room->_overlayTo->disable();
 	room->setOverlay(Color::fromRgba(startColor));
@@ -503,7 +503,7 @@ static SQInteger roomRotateTo(HSQUIRRELVM v) {
 }
 
 static SQInteger roomSize(HSQUIRRELVM v) {
-	Room *room = sqroom(v, 2);
+	Common::SharedPtr<Room> room = sqroom(v, 2);
 	if (!room)
 		return sq_throwerror(v, "failed to get room");
 	sqpush(v, room->_roomSize);

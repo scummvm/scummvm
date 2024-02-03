@@ -180,7 +180,6 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	obj->_node->setName(name);
 	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 
-	obj->_room = this;
 	obj->_sheet = sheet;
 
 	// create anim if any
@@ -345,7 +344,7 @@ void Room::load(Common::SeekableReadStream &s) {
 			obj->_objType = toObjectType(jObject);
 			if (jObject.contains("parent"))
 				obj->_parent = jObject["parent"]->asString();
-			obj->_room = this;
+			obj->_room.reset(this);
 			if (jObject.contains("animations")) {
 				parseObjectAnimations(jObject["animations"]->asArray(), obj->_anims);
 			}

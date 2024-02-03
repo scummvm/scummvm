@@ -99,13 +99,13 @@ public:
 	inline void setBounds(const Rectf &bounds) { _bounds = bounds; }
 	inline Rectf getBounds() const { return _bounds; }
 
-	inline void setRoom(Room *room) { _room = room; }
-	inline Room *getRoom(Room *room) const { return _room; }
+	inline void setRoom(Common::SharedPtr<Room> room) { _room = room; }
+	inline Common::SharedPtr<Room> getRoom() const { return _room; }
 
 	inline bool isMoving() const { return _moving; }
 	void panTo(Math::Vector2d target, float time, InterpolationKind interpolation);
 
-	void update(Room *room, Object *follow, float elapsed);
+	void update(Common::SharedPtr<Room> room, Object *follow, float elapsed);
 
 private:
 	void clamp(Math::Vector2d at);
@@ -118,7 +118,7 @@ private:
 	Math::Vector2d _init, _target;
 	float _elapsed = 0.f;
 	float _time = 0.f;
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	Object *_follow = nullptr;
 	EasingFunc_t _function = {&linear};
 };

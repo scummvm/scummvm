@@ -275,21 +275,21 @@ int getId(HSQOBJECT table) {
 	return (int)result;
 }
 
-Room *sqroom(HSQOBJECT table) {
+Common::SharedPtr<Room> sqroom(HSQOBJECT table) {
 	int id = getId(table);
 	return getRoom(id);
 }
 
-Room *getRoom(int id) {
+Common::SharedPtr<Room> getRoom(int id) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		if (getId(room->_table) == id)
 			return room;
 	}
 	return nullptr;
 }
 
-Room *sqroom(HSQUIRRELVM v, int i) {
+Common::SharedPtr<Room> sqroom(HSQUIRRELVM v, int i) {
 	HSQOBJECT table;
 	if (SQ_SUCCEEDED(sqget(v, i, table))) {
 		return sqroom(table);
@@ -305,7 +305,7 @@ Object *sqobj(int id) {
 	}
 
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Layer *layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {

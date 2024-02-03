@@ -94,9 +94,9 @@ static DialogConditionState parseState(Common::String &dialog) {
 	return result;
 }
 
-static Room *room(const Common::String &name) {
+static Common::SharedPtr<Room> room(const Common::String &name) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		if (room->_name == name) {
 			return room;
 		}
@@ -104,7 +104,7 @@ static Room *room(const Common::String &name) {
 	return nullptr;
 }
 
-static Object *object(Room *room, const Common::String &key) {
+static Object *object(Common::SharedPtr<Room> room, const Common::String &key) {
 	for (size_t i = 0; i < room->_layers.size(); i++) {
 		Layer *layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
@@ -118,7 +118,7 @@ static Object *object(Room *room, const Common::String &key) {
 
 static Object *object(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Layer *layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
@@ -167,7 +167,7 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 			Common::String roomName = jObject["_roomKey"]->asString();
 			if (jObject.contains("_objectKey")) {
 				Common::String objName = jObject["_objectKey"]->asString();
-				Room *r = room(roomName);
+				Common::SharedPtr<Room> r = room(roomName);
 				if (!r)
 					warning("room with key=%s not found", roomName.c_str());
 				else {
@@ -178,7 +178,7 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 						obj = o->_table;
 				}
 			} else {
-				Room *r = room(roomName);
+				Common::SharedPtr<Room> r = room(roomName);
 				if (!r) {
 					warning("room with key=%s not found", roomName.c_str());
 				} else {
@@ -331,7 +331,7 @@ static void loadObject(Object *obj, const Common::JSONObject &json) {
 		sqcall(obj->_table, "postLoad");
 }
 
-static void loadPseudoObjects(Room *room, const Common::JSONObject &json) {
+static void loadPseudoObjects(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
 		Object *o = object(room, it->_key);
 		if (!o)
@@ -341,7 +341,7 @@ static void loadPseudoObjects(Room *room, const Common::JSONObject &json) {
 	}
 }
 
-static void loadRoom(Room *room, const Common::JSONObject &json) {
+static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
 		if (it->_key == "_pseudoObjects") {
 			loadPseudoObjects(room, it->_value->asObject());
@@ -651,7 +651,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 					jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
 				return new Common::JSONValue(jObj);
 			} else if (isRoom(id)) {
-				Room *r = getRoom(id);
+				Common::SharedPtr<Room> r = getRoom(id);
 				jObj["_roomKey"] = new Common::JSONValue(r->_name);
 				return new Common::JSONValue(jObj);
 			}
@@ -760,7 +760,7 @@ static Common::JSONValue *createJCallbacks() {
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue *createJRoomKey(Room *room) {
+static Common::JSONValue *createJRoomKey(Common::SharedPtr<Room> room) {
 	return new Common::JSONValue(room ? room->_name : "Void");
 }
 
@@ -925,14 +925,14 @@ static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void* data)
 		}
 }
 
-static Common::JSONValue *createJPseudoObjects(Room *room) {
+static Common::JSONValue *createJPseudoObjects(Common::SharedPtr<Room> room) {
 	Common::JSONObject json;
 	sqgetpairs(room->_table, fillPseudoObjects, &json);
 	//   result.fields.sort(cmpKey)
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue *createJRoom(Room *room) {
+static Common::JSONValue *createJRoom(Common::SharedPtr<Room> room) {
 	Common::JSONObject json(tojson(room->_table, false, true, room->_pseudo)->asObject());
 	if (room->_pseudo) {
 		json["_pseudoObjects"] = createJPseudoObjects(room);
@@ -944,7 +944,7 @@ static Common::JSONValue *createJRoom(Room *room) {
 static Common::JSONValue *createJRooms() {
 	Common::JSONObject json;
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Room *room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room = g_engine->_rooms[i];
 		if (room)
 			json[room->_name] = createJRoom(room);
 	}

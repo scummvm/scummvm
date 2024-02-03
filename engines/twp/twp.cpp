@@ -991,8 +991,7 @@ Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAuto
 struct DefineObjectParams {
 	HSQUIRRELVM v;
 	bool pseudo;
-	Room *room;
-	HSQOBJECT *roomTable;
+	Common::SharedPtr<Room> room;
 };
 
 static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
@@ -1015,7 +1014,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			sqsetf(sqrootTbl(params->v), k, oTable);
 
 			// set room as delegate
-			sqsetdelegate(oTable, *params->roomTable);
+			sqsetdelegate(oTable, params->room->_table);
 
 			// declare flags if does not exist
 			if (!sqrawexists(oTable, "flags"))
@@ -1027,7 +1026,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			obj->_node->addChild(obj->_nodeAnim);
 			obj->setRoom(params->room);
 			// set room as delegate
-			sqsetdelegate(obj->_table, *params->roomTable);
+			sqsetdelegate(obj->_table, params->room->_table);
 		} else {
 			Object *obj = params->room->getObj(k);
 			if (!obj) {
@@ -1061,7 +1060,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			obj->setRoom(params->room);
 
 			// set room as delegate
-			sqsetdelegate(obj->_table, *params->roomTable);
+			sqsetdelegate(obj->_table, params->room->_table);
 
 			// declare flags if does not exist
 			if (!sqrawexists(obj->_table, "flags"))
@@ -1070,12 +1069,12 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 	}
 }
 
-Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
+Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
 	HSQUIRRELVM v = _vm.get();
 	debugC(kDebugGame, "Load room: %s", name.c_str());
-	Room *result;
+	Common::SharedPtr<Room> result;
 	if (name == "Void") {
-		result = new Room(name, table);
+		result.reset(new Room(name, table));
 		result->_scene = new Scene();
 		Layer *layer = new Layer("background", Math::Vector2d(1.f, 1.f), 0);
 		layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray());
@@ -1083,7 +1082,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 		result->_scene->addChild(layer->_node);
 		sqsetf(sqrootTbl(v), name, result->_table);
 	} else {
-		result = new Room(name, table);
+		result.reset(new Room(name, table));
 		Common::String background;
 		sqgetf(table, "background", background);
 		GGPackEntryReader entry;
@@ -1149,7 +1148,6 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 	params.pseudo = pseudo;
 	params.v = v;
 	params.room = result;
-	params.roomTable = &table;
 	sqgetpairs(result->_table, onGetPairs, &params);
 
 	// declare the room in the root table
@@ -1159,7 +1157,7 @@ Room *TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool ps
 	return result;
 }
 
-void TwpEngine::enterRoom(Room *room, Object *door) {
+void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Object *door) {
 	HSQUIRRELVM v = getVm();
 	// Called when the room is entered.
 	debugC(kDebugGame, "call enter room function of %s", room->_name.c_str());
@@ -1247,7 +1245,7 @@ void TwpEngine::actorEnter() {
 	}
 }
 
-void TwpEngine::exitRoom(Room *nextRoom) {
+void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 	HSQUIRRELVM v = getVm();
 	_mixer->stopAll();
 	if (_room) {
@@ -1293,7 +1291,7 @@ void TwpEngine::exitRoom(Room *nextRoom) {
 	}
 }
 
-void TwpEngine::setRoom(Room *room) {
+void TwpEngine::setRoom(Common::SharedPtr<Room> room) {
 	if (room && _room != room)
 		enterRoom(room);
 }
@@ -1359,7 +1357,7 @@ void TwpEngine::follow(Object *actor) {
 	_followActor = actor;
 	if (actor) {
 		Math::Vector2d pos = actor->_node->getPos();
-		Room *oldRoom = _room;
+		Common::SharedPtr<Room> oldRoom = _room;
 		setRoom(actor->_room);
 		if (oldRoom != actor->_room)
 			cameraAt(pos);
@@ -1411,7 +1409,7 @@ void TwpEngine::setActor(Object *actor, bool userSelected) {
 
 	// call onActorSelected callbacks
 	sqcall("onActorSelected", actor->_table, userSelected);
-	Room *room = !actor ? nullptr : actor->_room;
+	Common::SharedPtr<Room> room = !actor ? nullptr : actor->_room;
 	if (room) {
 		if (sqrawexists(room->_table, "onActorSelected")) {
 			sqcall(room->_table, "onActorSelected", actor->_table, userSelected);

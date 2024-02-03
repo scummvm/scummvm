@@ -357,12 +357,12 @@ int Object::getFlags() {
 	return result;
 }
 
-void Object::setRoom(Room *room) {
+void Object::setRoom(Common::SharedPtr<Room> room) {
 	if ((_room != room) || !_node->getParent()) {
 		if (_room != room) {
 			stopObjectMotors();
 		}
-		Room *oldRoom = _room;
+		Common::SharedPtr<Room> oldRoom = _room;
 		if (oldRoom && _node->getParent()) {
 			debugC(kDebugGame, "Remove %s from room %s", _key.c_str(), oldRoom->_name.c_str());
 			Layer *layer = oldRoom->layer(0);
@@ -384,7 +384,9 @@ void Object::setRoom(Room *room) {
 				layer->_node->addChild(_node);
 			}
 		}
-		_room = room;
+		if (_room != room) {
+			_room = room;
+		}
 	}
 }
 
