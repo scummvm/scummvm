@@ -2057,6 +2057,8 @@ void Runtime::scriptOpAnimT(ScriptArg_t arg) {
 	animDef.firstFrame = animRangeIt->_value.firstFrame;
 	animDef.lastFrame = animRangeIt->_value.lastFrame;
 
+	_keepStaticAnimationInIdle = true;
+
 	_haveIdleAnimations[0] = true;
 
 	StaticAnimation &outAnim = _idleAnimations[0];

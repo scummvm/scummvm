@@ -77,6 +77,8 @@ const InitialItemPlacement g_ad2044InitialItemPlacements[] = {
 	{1, 0xb0, 18},	// Spoon
 	{1, 0xb8, 24},	// Cigarette pack
 	{1, 0xac, 27},	// Matches
+	{1, 0x62, 2},	// "A" tag
+	{1, 0x64, 58},  // Newspaper
 };
 
 struct AD2044Graphics {
@@ -452,6 +454,7 @@ private:
 const AD2044MapLoader::ScreenOverride AD2044MapLoader::sk_screenOverrides[] = {
 	// Room 1
 	{1, 0xb6, 145},	// After pushing the button to open the capsule
+	{1, 0x66, 138}, // Looking at banner
 	{1, 0x6a, 142},	// Opening an apple on the table
 	{1, 0x6b, 143}, // Clicking the tablet in the apple
 	{1, 0x6c, 144}, // Table facing the center of the room with soup bowl empty
@@ -1093,7 +1096,8 @@ void SaveGameSwappableState::Sound::read(Common::ReadStream *stream, uint saveGa
 
 SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), disc(0), havePendingPostSwapScreenReset(false),
 												   musicTrack(0), musicVolume(100), musicActive(true), musicMuteDisabled(false), animVolume(100),
-												   loadedAnimation(0), animDisplayingFrame(0) {
+												   loadedAnimation(0), animDisplayingFrame(0), haveIdleAnimationLoop(false), idleAnimNum(0), idleFirstFrame(0), idleLastFrame(0)
+{
 }
 
 SaveGameSnapshot::PagedInventoryItem::PagedInventoryItem() : page(0), slot(0), itemID(0) {
@@ -1140,6 +1144,12 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		stream->writeUint32BE(states[sti]->direction);
 		stream->writeUint32BE(states[sti]->disc);
 		stream->writeByte(states[sti]->havePendingPostSwapScreenReset ? 1 : 0);
+		stream->writeByte(states[sti]->haveIdleAnimationLoop ? 1 : 0);
+		if (states[sti]->haveIdleAnimationLoop) {
+			stream->writeUint32BE(states[sti]->idleAnimNum);
+			stream->writeUint32BE(states[sti]->idleFirstFrame);
+			stream->writeUint32BE(states[sti]->idleLastFrame);
+		}
 	}
 
 	stream->writeUint32BE(hero);
@@ -1262,6 +1272,17 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 		if (saveVersion >= 7)
 			states[sti]->havePendingPostSwapScreenReset = (stream->readByte() != 0);
+
+		if (saveVersion >= 10)
+			states[sti]->haveIdleAnimationLoop = (stream->readByte() != 0);
+		else
+			states[sti]->haveIdleAnimationLoop = false;
+
+		if (states[sti]->haveIdleAnimationLoop) {
+			states[sti]->idleAnimNum = stream->readUint32BE();
+			states[sti]->idleFirstFrame = stream->readUint32BE();
+			states[sti]->idleLastFrame = stream->readUint32BE();
+		}
 	}
 
 	if (saveVersion >= 6) {
@@ -1457,7 +1478,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false),
 	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _language(defaultLanguage), _charSet(kCharSetLatin),
 	  _isCDVariant(false), _currentAnimatedCursor(nullptr), _currentCursor(nullptr), _cursorTimeBase(0), _cursorCycleLength(0),
-	  _inventoryActivePage(0) {
+	  _inventoryActivePage(0), _keepStaticAnimationInIdle(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -3598,18 +3619,15 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			_havePanDownFromDirection[i] = false;
 		}
 
-		clearIdleAnimations();
+		if (!_keepStaticAnimationInIdle)
+			clearIdleAnimations();
 
-		for (uint i = 0; i < kNumDirections; i++)
-			_haveIdleAnimations[i] = false;
-
-		_havePendingPreIdleActions = true;
-		_haveIdleStaticAnimation = false;
-		_idleCurrentStaticAnimation.clear();
-		_havePendingPlayAmbientSounds = true;
 		_forceAllowSaves = false;
 
 		recordSaveGameSnapshot();
+
+		if (_keepStaticAnimationInIdle)
+			_keepStaticAnimationInIdle = false;
 
 		_placedItemRect = Common::Rect();
 		if (_gameID == GID_AD2044) {
@@ -3644,9 +3662,9 @@ void Runtime::clearIdleAnimations() {
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
 
-	_havePendingPreIdleActions = true;
 	_haveIdleStaticAnimation = false;
 	_idleCurrentStaticAnimation.clear();
+	_havePendingPreIdleActions = true;
 	_havePendingPlayAmbientSounds = true;
 }
 
@@ -5451,7 +5469,7 @@ void Runtime::clearTray() {
 		_traySection.surf->fillRect(trayRect, blackColor);
 	}
 
-	this->commitSectionToScreen(_traySection, trayRect);
+	drawSectionToScreen(_traySection, trayRect);
 }
 
 void Runtime::redrawSubtitleSection() {
@@ -5500,7 +5518,7 @@ void Runtime::drawSubtitleText(const Common::Array<Common::U32String> &lines, co
 	Graphics::ManagedSurface *surf = stSection.surf.get();
 
 	if (_subtitleFont) {
-		int lineHeight = _subtitleFont->getFontHeight();
+		int lineHeight = (_gameID == GID_AD2044) ? 24 : _subtitleFont->getFontHeight();
 
 		int xOffset = 0;
 		int topY = 0;
@@ -5531,8 +5549,10 @@ void Runtime::drawInventory(uint slot) {
 	if (!isTrayVisible())
 		return;
 
-	if (_gameID == GID_AD2044)
+	if (_gameID == GID_AD2044) {
+		drawInventoryItemGraphic(slot);
 		return;
+	}
 
 	Common::Rect trayRect = _traySection.rect;
 	trayRect.translate(-trayRect.left, -trayRect.top);
@@ -6698,6 +6718,17 @@ void Runtime::recordSaveGameSnapshot() {
 	mainState->loadedAnimation = _loadedAnimation;
 	mainState->animDisplayingFrame = _animDisplayingFrame;
 
+	if (_gameID == GID_AD2044) {
+		mainState->haveIdleAnimationLoop = _haveIdleAnimations[_direction];
+
+		if (mainState->haveIdleAnimationLoop) {
+			mainState->idleAnimNum = _idleAnimations[0].animDefs[0].animNum;
+			mainState->idleFirstFrame = _idleAnimations[0].animDefs[0].firstFrame;
+			mainState->idleLastFrame = _idleAnimations[0].animDefs[0].lastFrame;
+		}
+	} else
+		mainState->haveIdleAnimationLoop = false;
+
 	recordSounds(*mainState);
 
 	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
@@ -6849,6 +6880,7 @@ void Runtime::restoreSaveGameSnapshot() {
 		}
 	}
 
+	_keepStaticAnimationInIdle = false;
 	_roomNumber = mainState->roomNumber;
 	_screenNumber = mainState->screenNumber;
 	_direction = mainState->direction;
@@ -6966,6 +6998,32 @@ void Runtime::restoreSaveGameSnapshot() {
 	stopSubtitles();
 	clearScreen();
 	redrawTray();
+
+	if (_gameID == GID_AD2044) {
+		drawActiveItemGraphic();
+
+		clearIdleAnimations();
+
+		if (mainState->haveIdleAnimationLoop) {
+			_keepStaticAnimationInIdle = true;
+
+			
+			AnimationDef idleAnimDef;
+			idleAnimDef.animNum = mainState->idleAnimNum;
+			idleAnimDef.firstFrame = mainState->idleFirstFrame;
+			idleAnimDef.lastFrame = mainState->idleLastFrame;
+
+			_keepStaticAnimationInIdle = true;
+
+			_haveIdleAnimations[0] = true;
+
+			StaticAnimation staticAnim;
+			staticAnim.animDefs[0] = idleAnimDef;
+			staticAnim.animDefs[1] = idleAnimDef;
+
+			_idleAnimations[0] = staticAnim;
+		}
+	}
 }
 
 Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {

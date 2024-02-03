@@ -459,6 +459,10 @@ struct SaveGameSwappableState {
 
 	uint loadedAnimation;
 	uint animDisplayingFrame;
+	bool haveIdleAnimationLoop;
+	uint idleAnimNum;
+	uint idleFirstFrame;
+	uint idleLastFrame;
 
 	int musicTrack;
 
@@ -1276,6 +1280,7 @@ private:
 	StaticAnimation _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
 	bool _haveIdleStaticAnimation;
+	bool _keepStaticAnimationInIdle;
 	Common::String _idleCurrentStaticAnimation;
 	StaticAnimParams _pendingStaticAnimParams;
 
