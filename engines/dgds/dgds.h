@@ -52,6 +52,7 @@ class REQFileData;
 class Menu;
 struct DgdsADS;
 class ADSInterpreter;
+class Globals;
 
 enum DgdsGameId {
 	GID_DRAGON,
@@ -60,8 +61,8 @@ enum DgdsGameId {
 };
 
 enum DgdsDetailLevel {
-	kDgdsDetailLow,
-	kDgdsDetailHigh
+	kDgdsDetailLow = 0,
+	kDgdsDetailHigh = 1
 };
 
 class DgdsEngine : public Engine {
@@ -83,12 +84,15 @@ private:
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
+
 	ADSInterpreter *_adsInterp;
 	GamePalettes *_gamePals;
+	Globals *_gameGlobals;
 
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
 	Common::Array<Common::SharedPtr<Image>> _icons;
+	DgdsDetailLevel _detailLevel;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -105,12 +109,14 @@ public:
 	Decompressor *getDecompressor() { return _decompressor; }
 	const SDSScene *getScene() const { return _scene; }
 	SDSScene *getScene() { return _scene; }
+	GDSScene *getGDSScene() { return _gdsScene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
 	void changeScene(int sceneNum);
 	GamePalettes *getGamePals() { return _gamePals; }
+	Globals *getGameGlobals() { return _gameGlobals; }
 
-	DgdsDetailLevel getDetailLevel() const { return kDgdsDetailHigh; }
+	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 
 private:
 	void loadCorners(const Common::String &filename);

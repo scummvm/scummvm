@@ -35,6 +35,7 @@
 #include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/font.h"
+#include "dgds/globals.h"
 
 namespace Dgds {
 
@@ -80,8 +81,9 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpNone: 		  return "none";
 	case kSceneOpChangeScene: return "changeScene";
 	case kSceneOpNoop:		  return "noop";
-	case kSceneOpShowDlg:		  return "showdlg";
-	case kSceneOpEnableTrigger:   return "enabletrigger";
+	case kSceneOpGlobal:		return "global";
+	case kSceneOpShowDlg:		return "showdlg";
+	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpMeanwhile:   return "meanwhile";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
@@ -444,6 +446,10 @@ Common::String DialogueAction::dump(const Common::String &indent) const {
 	return str;
 }
 
+Common::String PerSceneGlobal::dump(const Common::String &indent) const {
+	return Common::String::format("%sPerSceneGlobal<num %d scene %d val %d>", indent.c_str(), _num, _sceneNo, _val);
+}
+
 // //////////////////////////////////// //
 
 Scene::Scene() : _magic(0) {
@@ -658,6 +664,9 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			engine->changeScene(op._args[0]);
 			break;
 		case kSceneOpNoop:
+			break;
+		case kSceneOpGlobal:
+			globalOps(op._args);
 			break;
 		case kSceneOpShowDlg:
 			showDialog(op._args[0]);
@@ -878,6 +887,10 @@ bool SDSScene::drawActiveDialog(Graphics::Surface *dst, int mode) {
 	return retval;
 }
 
+void SDSScene::globalOps(const Common::Array<uint16> &args) {
+	// The globals are held by the GDS scene
+	static_cast<DgdsEngine *>(g_engine)->getGDSScene()->globalOps(args);
+}
 
 GDSScene::GDSScene() {
 }
@@ -914,6 +927,16 @@ bool GDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 	return result;
 }
 
+bool GDSScene::readPerSceneGlobals(Common::SeekableReadStream *s) {
+	_perSceneGlobals.resize(s->readUint16LE());
+	for (PerSceneGlobal &dst : _perSceneGlobals) {
+		dst._num = s->readUint16LE();
+		dst._sceneNo = s->readUint16LE();
+		dst._val = s->readUint16LE();
+	}
+	return !s->err();
+}
+
 bool GDSScene::parseInf(Common::SeekableReadStream *s) {
 	_magic = s->readUint32LE();
 	_version = s->readString();
@@ -928,8 +951,7 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _opList4);
 	if (isVersionOver(" 1.208"))
 		readOpList(stream, _opList5);
-	Common::Array<struct SceneConditions> conditionList;
-	readConditionList(stream, conditionList);
+	readPerSceneGlobals(stream);
 	Common::Array<struct MouseCursor> cursorList;
 	_iconFile = stream->readString();
 	readMouseHotspotList(stream, cursorList);
@@ -949,6 +971,7 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "opList3", _opList3);
 	str += _dumpStructList(indent, "opList4", _opList4);
 	str += _dumpStructList(indent, "opList5", _opList5);
+	str += _dumpStructList(indent, "perSceneGlobals", _perSceneGlobals);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
 
@@ -957,6 +980,57 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 	return str;
 }
 
+void GDSScene::globalOps(const Common::Array<uint16> &args) {
+	for (uint i = 0; i < args.size() / 3; i++) {
+		uint16 num = args[i * 3 + 0];
+		uint16 op  = args[i * 3 + 1];
+		uint16 val = args[i * 3 + 2];
+
+		// CHECK ME: The original uses a different function here, but the
+		// result appears to be the same as just calling getGlobal?
+		num = getGlobal(num);
+
+		// Op bit 3 on means use absolute val of val.
+		// Off means val is another global to lookup
+		if (op & 8)
+			op = op & 0xfff7;
+        else
+			val = getGlobal(val);
+
+        if (op == 1)
+			val = num + val;
+		else if (op == 6)
+			val = (val == 0);
+		else if (op == 5)
+			val = num - val;
+
+		setGlobal(num, val);
+	}
+}
+
+uint16 GDSScene::getGlobal(uint16 num) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int curSceneNum = engine->getScene()->getNum();
+	for (const auto &global : _perSceneGlobals) {
+		if (global._num == num && (global._sceneNo == 0 || global._sceneNo == curSceneNum))
+			return global._val;
+	}
+	Globals *gameGlobals = engine->getGameGlobals();
+	return gameGlobals->getGlobal(num);
+}
+
+uint16 GDSScene::setGlobal(uint16 num, uint16 val) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int curSceneNum = engine->getScene()->getNum();
+	for (auto &global : _perSceneGlobals) {
+		if (global._num == num && (global._sceneNo == 0 || global._sceneNo == curSceneNum)) {
+			global._val = val;
+			return val;
+		}
+	}
+	Globals *gameGlobals = engine->getGameGlobals();
+	return gameGlobals->setGlobal(num, val);
+}
 
 } // End of namespace Dgds
 

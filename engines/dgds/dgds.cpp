@@ -51,6 +51,7 @@
 #include "dgds/detection_tables.h"
 #include "dgds/dgds.h"
 #include "dgds/font.h"
+#include "dgds/globals.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
 #include "dgds/menu.h"
@@ -65,7 +66,7 @@ namespace Dgds {
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
-	_resource(nullptr), _gamePals(nullptr) {
+	_resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr), _detailLevel(kDgdsDetailHigh) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -214,10 +215,11 @@ Common::Error DgdsEngine::run() {
 	_fontManager->loadFonts(getGameId(), _resource, _decompressor);
 
 	if (getGameId() == GID_DRAGON) {
+		_gameGlobals = new DragonGlobals();
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
-		//debug("%s", _gdsScene->dump("").c_str());
+		debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
@@ -226,6 +228,7 @@ Common::Error DgdsEngine::run() {
 		_gdsScene->runStartGameOps();
 
 	} else if (getGameId() == GID_CHINA) {
+		_gameGlobals = new Globals();
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 
@@ -238,6 +241,7 @@ Common::Error DgdsEngine::run() {
 		_adsInterp->load("TITLE.ADS");
 		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
+		_gameGlobals = new Globals();
 		_gamePals->loadPalette("WILLY.PAL");
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);

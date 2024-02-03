@@ -5,13 +5,14 @@ MODULE_OBJS := \
 	decompress.o \
 	dgds.o \
 	font.o \
+	globals.o \
 	image.o \
 	menu.o \
 	metaengine.o \
 	music.o \
 	parser.o \
-	resource.o \
 	request.o \
+	resource.o \
 	scripts.o \
 	scene.o \
 	sound.o
