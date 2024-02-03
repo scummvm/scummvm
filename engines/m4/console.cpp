@@ -22,6 +22,7 @@
 #include "m4/console.h"
 #include "m4/m4.h"
 #include "m4/vars.h"
+#include "m4/graphics/graphics.h"
 
 namespace M4 {
 
@@ -31,6 +32,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
 	registerCmd("digi",      WRAP_METHOD(Console, cmdDigi));
 	registerCmd("trigger",   WRAP_METHOD(Console, cmdTrigger));
+	registerCmd("cels",      WRAP_METHOD(Console, cmdCels));
+	registerCmd("cel",       WRAP_METHOD(Console, cmdCel));
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
@@ -85,6 +88,45 @@ bool Console::cmdTrigger(int argc, const char **argv) {
 		debugPrintf("trigger <number>\n");
 		return true;
 	}
+}
+
+bool Console::cmdCels(int argc, const char **argv) {
+	for (int i = 0; i < 256; ++i) {
+		if (_GWS(globalCELSnames)[i]) {
+			uint32 *celsPtr = (uint32 *)((intptr)*_GWS(globalCELSHandles)[i] +
+				_GWS(globalCELSoffsets)[i]);
+			debugPrintf("#%d - %s - count=%d, max w=%d, max h=%d\n",
+				i, _GWS(globalCELSnames)[i], celsPtr[CELS_COUNT],
+				celsPtr[CELS_SS_MAX_W], celsPtr[CELS_SS_MAX_H]);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdCel(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("cel <cel number>\n");
+	} else {
+		int num = atol(argv[1]);
+
+		if (!_GWS(globalCELSHandles)[num]) {
+			debugPrintf("cel index not in use\n");
+		} else {
+			uint32 *data = (uint32 *)((intptr)*_GWS(globalCELSHandles)[num] +
+				_GWS(globalCELSoffsets)[num]);
+
+			for (int i = 0; i < 15; i += 5) {
+				Common::String line = Common::String::format(
+					"%.8x %.8x %.8x %.8x %.8x",
+					data[i], data[i + 1], data[i + 2], data[i + 3], data[i + 4]
+				);
+				debugPrintf("%s\n", line.c_str());
+			}
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace M4
