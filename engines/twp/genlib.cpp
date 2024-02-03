@@ -156,7 +156,7 @@ static SQInteger cameraFollow(HSQUIRRELVM v) {
 	Object *actor = sqactor(v, 2);
 	g_engine->follow(actor);
 	Math::Vector2d pos = actor->_node->getPos();
-	Room *oldRoom = g_engine->_room;
+	Common::SharedPtr<Room> oldRoom = g_engine->_room;
 	if (actor->_room)
 		g_engine->setRoom(actor->_room);
 	if (oldRoom != actor->_room)
@@ -178,7 +178,7 @@ static SQInteger cameraFollow(HSQUIRRELVM v) {
 //      }
 // }
 static SQInteger cameraInRoom(HSQUIRRELVM v) {
-	Room *room = sqroom(v, 2);
+	Common::SharedPtr<Room> room = sqroom(v, 2);
 	if (room) {
 		g_engine->setRoom(room);
 	} else {

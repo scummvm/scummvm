@@ -65,7 +65,7 @@ void Camera::panTo(Math::Vector2d target, float time, InterpolationKind interpol
 	_time = time;
 }
 
-void Camera::update(Room *room, Object *follow, float elapsed) {
+void Camera::update(Common::SharedPtr<Room> room, Object *follow, float elapsed) {
 	_room = room;
 	_elapsed += elapsed;
 	bool isMoving = _elapsed < _time;

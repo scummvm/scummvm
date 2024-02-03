@@ -28,6 +28,7 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "common/ptr.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
@@ -128,9 +129,9 @@ public:
 	void stopTalking();
 	void walkFast(bool state = true);
 
-	Room *defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
-	void setRoom(Room *room);
-	void enterRoom(Room *room, Object *door = nullptr);
+	Common::SharedPtr<Room> defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
+	void setRoom(Common::SharedPtr<Room> room);
+	void enterRoom(Common::SharedPtr<Room> room, Object *door = nullptr);
 
 	void cameraAt(Math::Vector2d at);
 	// Returns the camera position: the position of the middle of the screen.
@@ -149,7 +150,7 @@ public:
 private:
 	void update(float elapsedMs);
 	void draw(RenderTexture* texture = nullptr);
-	void exitRoom(Room *nextRoom);
+	void exitRoom(Common::SharedPtr<Room> nextRoom);
 	void actorEnter();
 	void actorExit();
 	void cancelSentence(Object *actor = nullptr);
@@ -172,7 +173,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	GGPackSet _pack;
 	ResManager _resManager;
-	Common::Array<Room *> _rooms;
+	Common::Array<Common::SharedPtr<Room>> _rooms;
 	Common::Array<Object *> _actors;
 	Common::Array<Object *> _objects;
 	Common::Array<ThreadBase *> _threads;
@@ -180,7 +181,7 @@ public:
 	Common::Array<Callback *> _callbacks;
 	Object *_actor = nullptr;
 	Object *_followActor = nullptr;
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	float _time = 0.f;
 	Object *_noun1 = nullptr;
 	Object *_noun2 = nullptr;

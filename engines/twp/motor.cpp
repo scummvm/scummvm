@@ -89,7 +89,7 @@ void RotateTo::update(float elapsed) {
 
 RoomRotateTo::~RoomRotateTo() {}
 
-RoomRotateTo::RoomRotateTo(Room *room, float to)
+RoomRotateTo::RoomRotateTo(Common::SharedPtr<Room> room, float to)
 	: _room(room),
 	  _tween(room->_rotation, to, 0.200f, intToInterpolationMethod(0)) {
 }
@@ -129,7 +129,7 @@ void Shake::update(float elapsed) {
 	_node->setShakeOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
 }
 
-OverlayTo::OverlayTo(float duration, Room *room, Color to)
+OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, Color to)
 	: _room(room),
 	  _to(to),
 	  _tween(g_engine->_room->getOverlay(), to, duration, InterpolationMethod()) {

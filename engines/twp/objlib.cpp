@@ -81,6 +81,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	debugC(kDebugObjScript, "Create object: %s, %u", sheet.c_str(), frames.size());
 	Object *obj = g_engine->_room->createObject(sheet, frames);
+	obj->_room = g_engine->_room;
 	sq_pushobject(v, obj->_table);
 
 	return 1;

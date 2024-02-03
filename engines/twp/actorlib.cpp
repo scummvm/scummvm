@@ -93,7 +93,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 			actor->_node->setPos(pos);
 			actor->setFacing(getFacing(spot->_useDir, actor->getFacing()));
 		} else {
-			Room *room = sqroom(v, 3);
+			Common::SharedPtr<Room> room = sqroom(v, 3);
 			if (!room)
 				return sq_throwerror(v, "failed to get spot or room");
 			debugC(kDebugActScript, "actorAt %s room '%s'", actor->_key.c_str(), room->_name.c_str());
@@ -121,7 +121,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 		Object *actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		Room *room = sqroom(v, 3);
+		Common::SharedPtr<Room> room = sqroom(v, 3);
 		if (!room)
 			return sq_throwerror(v, "failed to get room");
 		int x, y;
@@ -350,7 +350,7 @@ static SQInteger actorRoom(HSQUIRRELVM v) {
 	Object *actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	Room *room = actor->_room;
+	Common::SharedPtr<Room> room = actor->_room;
 	if (!room) {
 		sq_pushnull(v);
 	} else {

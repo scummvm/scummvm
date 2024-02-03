@@ -159,9 +159,9 @@ class Room;
 class Object;
 
 int getId(HSQOBJECT table);
-Room *sqroom(HSQOBJECT table);
-Room *sqroom(HSQUIRRELVM v, int i);
-Room *getRoom(int id);
+Common::SharedPtr<Room> sqroom(HSQOBJECT table);
+Common::SharedPtr<Room> sqroom(HSQUIRRELVM v, int i);
+Common::SharedPtr<Room> getRoom(int id);
 Object *sqobj(HSQOBJECT table);
 Object *sqobj(HSQUIRRELVM v, int i);
 Object *sqobj(int i);

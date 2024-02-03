@@ -305,7 +305,7 @@ static void drawGeneral() {
 	}
 
 	// Room
-	Room *room = g_engine->_room;
+	Common::SharedPtr<Room> room = g_engine->_room;
 	if (room) {
 		if (ImGui::CollapsingHeader("Room")) {
 			ImGui::TextColored(gray, "Sheet:");

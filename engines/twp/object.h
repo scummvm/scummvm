@@ -162,7 +162,7 @@ public:
 	UseFlag useFlag();
 
 	bool contains(Math::Vector2d pos);
-	void setRoom(Room *room);
+	void setRoom(Common::SharedPtr<Room> room);
 	void delObject();
 	void stopObjectMotors();
 	void dependentOn(Object *dependentObj, int state);
@@ -227,7 +227,7 @@ public:
 	Direction _useDir = dNone;
 	Common::Rect _hotspot;
 	ObjectType _objType = otNone;
-	Room *_room = nullptr;
+	Common::SharedPtr<Room> _room;
 	Common::Array<ObjectAnimation> _anims;
 	bool _temporary = false;
 	Node *_node = nullptr;
