@@ -283,6 +283,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy6TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy6EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy6EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, 7, nancy6PatchSrcFiles, "files/nancy6"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy6PatchAssociations))
 
 	// Nancy Drew: Ghost Dogs of Moon Lake
 	gameOffsets.push_back(output.pos());
@@ -293,6 +295,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy7Goodbyes))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy7TelephoneRinging))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy7EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, 8, nancy7PatchSrcFiles, "files/nancy7"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy7PatchAssociations))
 
 	// Nancy Drew: The Haunted Carousel
 	gameOffsets.push_back(output.pos());

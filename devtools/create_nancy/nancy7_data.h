@@ -895,4 +895,23 @@ const Common::Array<const char *> _nancy7EventFlagNames = {
 	"EV_Empty75"
 };
 
+// Patch notes:
+// This is the official patch from HeR Interactive. The download page says the following:
+
+// Update addressing the following problems: Left and right navigation arrows may stop functioning.
+// Game exits while taking photos of birds. Player may be unable to exit journal. Characters
+// keep asking player to take bird pictures, even when this is complete. Player cannot get
+// bucket out of inventory to put out fire. (If you are experiencing this problem, please be sure to
+// start your game from Second Chance after installing the update.)
+
+const Common::Array<const char *> nancy7PatchSrcFiles {
+	"S2027.cif",
+	"S2224.cif",
+	"S2886.cif"
+};
+
+const Common::Array<PatchAssociation> nancy7PatchAssociations {
+	{ { "softlocks_fix", "true" }, { "S2027", "S2224", "S2886" } }
+};
+
 #endif // NANCY7DATA_H

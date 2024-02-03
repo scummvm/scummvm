@@ -708,4 +708,19 @@ const Common::Array<const char *> _nancy6EventFlagNames = {
 	"EV_TBD"
 };
 
+// Patch notes:
+// This is the official patch from HeR, which is supposed
+// to fix a freeze while talking to Bess & George, or at
+// the monolith. I've not experienced said issues, and the
+// patched scene is too big for me to inspect, so this is
+// untested (though it most likely works fine)
+
+const Common::Array<const char *> nancy6PatchSrcFiles {
+	"S1671.cif"
+};
+
+const Common::Array<PatchAssociation> nancy6PatchAssociations {
+	{ { "softlocks_fix", "true" }, { "S1671" } }
+};
+
 #endif // NANCY6DATA_H
