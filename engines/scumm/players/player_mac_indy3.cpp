@@ -840,10 +840,10 @@ void I3MFourToneSynthDriver::setParameter(ParaType type, ...)  {
 
 	switch (type) {
 	case kDuration:
-		setDuration(va_arg(arg, uint16));
+		setDuration((uint16)va_arg(arg, uint));
 		break;
 	case kChanRate:
-		setRate(chan, va_arg(arg, uint16));
+		setRate(chan, (uint16)va_arg(arg, uint));
 		break;
 	case kChanWaveform:
 		setWaveForm(chan, ptr, va_arg(arg, uint32));
@@ -901,9 +901,9 @@ void I3MSquareWaveSynthDriver::setParameter(ParaType type, ...)  {
 	
 	switch (type) {
 	case kSwTriplet:
-		a = va_arg(arg, uint16);
-		b = va_arg(arg, uint16);
-		pushTriplet(a, b, va_arg(arg, uint16));
+		a = (uint16)va_arg(arg, uint);
+		b = (uint16)va_arg(arg, uint);
+		pushTriplet(a, b, (uint16)va_arg(arg, uint));
 		break;
 	default:
 		break;
