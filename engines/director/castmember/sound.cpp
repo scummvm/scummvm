@@ -99,6 +99,21 @@ void SoundCastMember::load() {
 			// The looping flag wasn't added to sound cast members until D4.
 			// In older versions, always loop sounds that contain a loop start and end.
 			_looping = audio->hasLoopBounds();
+		} else {
+			// Some sound cast members at version kFileVer400 have looping=true with
+			// invalid loop bounds (bigger than sample size or non-consecutive).
+			// Resetting loop bounds to sample bounds and disabling looping similar
+			// to how D4 playback seems to work.
+			if (!audio->hasValidLoopBounds()) {
+				// only emit a warning for files > kFileVer400 as it's only kFileVer400 files that should be affected
+				if (_cast->_version > kFileVer400) {
+					warning("Sound::load(): Invalid loop bounds detected. Disabling looping for cast member id %d, sndId %d", _castId, sndId);
+				} else {
+					debugC(2, "Sound::load(): Invalid loop bounds detected. Disabling looping for cast member id %d, sndId %d", _castId, sndId);
+				}
+				_looping = false;
+				audio->resetLoopBounds();
+			}
 		}
 	}
 	if (sndData)

@@ -240,6 +240,8 @@ public:
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
 	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 	bool hasLoopBounds();
+	void resetLoopBounds();
+	bool hasValidLoopBounds();
 
 private:
 	byte *_data;
