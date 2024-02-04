@@ -31,6 +31,7 @@
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/platform/atari/dlmalloc.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -46,6 +47,7 @@
 #define MAX_V_SHAKE  16
 
 bool g_unalignedPitch = false;
+mspace g_mspace = nullptr;
 
 static const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
 static const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);

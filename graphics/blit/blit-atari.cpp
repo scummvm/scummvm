@@ -21,15 +21,11 @@
 
 #include "graphics/blit.h"
 #include "graphics/surface.h"
+#include "backends/platform/atari/dlmalloc.h"
 
 #include <cstdlib>	// malloc
 #include <cstring>	// memcpy, memset
 #include <mint/cookie.h>
-
-#include <mint/trap14.h>
-#define ct60_vm(mode, value) (long)trap_14_wwl((short)0xc60e, (short)(mode), (long)(value))
-#define ct60_vmalloc(value) ct60_vm(0, value)
-#define ct60_vmfree(value)  ct60_vm(1, value)
 
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "common/textconsole.h"	// error
@@ -98,6 +94,7 @@ void unlockSuperBlitter() {
 
 // see atari-graphics.cpp
 extern bool g_unalignedPitch;
+extern mspace g_mspace;
 
 namespace Graphics {
 
@@ -119,41 +116,34 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 
 	if (width && height) {
 #ifdef USE_SV_BLITTER
-		if (hasSuperVidel() && w >= 64 && h >= 64) {
-			pixels = (void *)ct60_vmalloc(height * pitch);
+		if (g_mspace) {
+			pixels = mspace_calloc(g_mspace, height * pitch, f.bytesPerPixel);
 
 			if (!pixels)
-				error("Not enough SVRAM to allocate a surface");
-
-			assert((uintptr)pixels >= 0xA0000000);
+				error("Not enough memory to allocate a surface");
+			else if (pixels <= (void *)0xA0000000)
+				warning("SuperVidel surface allocated in regular memory");
 		} else {
 #else
 		{
 #endif
-			// align buffer to a 16-byte boundary for move16 or C2P conversion
-			void *pixelsUnaligned = ::malloc(sizeof(uintptr) + (height * pitch) + ALIGN - 1);
-
-			if (!pixelsUnaligned)
+			pixels = ::calloc(height * pitch, f.bytesPerPixel);
+			if (!pixels)
 				error("Not enough memory to allocate a surface");
-
-			pixels = (void *)(((uintptr)pixelsUnaligned + sizeof(uintptr) + ALIGN - 1) & (-ALIGN));
-
-			// store the unaligned pointer for later free()
-			*((uintptr *)pixels - 1) = (uintptr)pixelsUnaligned;
+			else
+				assert(((uintptr)pixels & (ALIGN - 1)) == 0);
 		}
-
-		memset(pixels, 0, height * pitch);
 	}
 }
 
 void Surface::free() {
 #ifdef USE_SV_BLITTER
-	if (((uintptr)pixels & 0xFF000000) >= 0xA0000000)
-		ct60_vmfree(pixels);
+	if (g_mspace)
+		mspace_free(g_mspace, pixels);
 	else
 #endif
 	if (pixels)
-		::free((void *)*((uintptr *)pixels - 1));
+		::free(pixels);
 
 	pixels = nullptr;
 	w = h = pitch = 0;

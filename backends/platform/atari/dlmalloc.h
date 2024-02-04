@@ -29,6 +29,7 @@
 #define NO_MALLOC_STATS 1
 #define LACKS_TIME_H /* time(0) calls malloc... */
 #define MSPACES 1
+#define MALLOC_ALIGNMENT ((size_t)16U) /* 16B cache line */
 
 /*
 Copyright 2023 Doug Lea

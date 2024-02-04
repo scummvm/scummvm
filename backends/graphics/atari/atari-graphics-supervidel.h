@@ -28,6 +28,16 @@
 
 #include <mint/osbind.h>
 
+#ifdef USE_SV_BLITTER
+#include <mint/trap14.h>
+#define ct60_vm(mode, value) (long)trap_14_wwl((short)0xc60e, (short)(mode), (long)(value))
+#define ct60_vmalloc(value) ct60_vm(0, value)
+#define ct60_vmfree(value)  ct60_vm(1, value)
+
+#include "backends/platform/atari/dlmalloc.h"
+extern mspace g_mspace;
+#endif
+
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "common/debug.h"	// error() & warning()
 #include "common/scummsys.h"
@@ -46,6 +56,17 @@ public:
 		else
 			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
+#ifdef USE_SV_BLITTER
+		size_t vramSize = ct60_vmalloc(-1) - (16 * 1024 * 1024);	// SV XBIOS seems to forget the initial 16 MB ST RAM mirror
+		_vramBase = vramSize > 0 ? (void *)ct60_vmalloc(vramSize) : nullptr;
+		if (_vramBase) {
+			g_mspace = create_mspace_with_base(_vramBase, vramSize, 0);
+			debug("Allocated VRAM at %p (%ld bytes)", _vramBase, vramSize);
+		}
+
+		if (!g_mspace)
+			warning("VRAM allocation failed");
+#endif
 		// using virtual methods so must be done here
 		allocateSurfaces();
 	}
@@ -53,6 +74,16 @@ public:
 	~AtariSuperVidelManager() {
 		// using virtual methods so must be done here
 		freeSurfaces();
+
+#ifdef USE_SV_BLITTER
+		if (_vramBase) {
+			destroy_mspace(g_mspace);
+			g_mspace = nullptr;
+
+			ct60_vmfree(_vramBase);
+			_vramBase = nullptr;
+		}
+#endif
 	}
 
 private:
@@ -140,6 +171,10 @@ private:
 
 		return ret;
 	}
+
+#ifdef USE_SV_BLITTER
+	void *_vramBase = nullptr;
+#endif
 };
 
 #endif	// USE_SUPERVIDEL
