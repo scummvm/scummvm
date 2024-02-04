@@ -35,14 +35,14 @@ Digi::~Digi() {
 	unload_sounds();
 }
 
-void Digi::preload_sounds(const char **names) {
+void Digi::loadFootstepSounds(const char **names) {
 	if (!_sounds.empty())
 		unload_sounds();
 
 	if (names) {
 		for (; *names; ++names) {
 			if (preload(*names, NOWHERE))
-				_sounds[*names]._preloaded = true;
+				_sounds[*names]._walkingSound = true;
 		}
 	}
 }
@@ -138,13 +138,12 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	return 0;
 }
 
-void Digi::playRandom() {
-	// Get a list of any preloaded sounds, excluding individual sounds
-	// that were directly played
+void Digi::playFootsteps() {
+	// Get a list of the walking sounds
 	Common::Array<Common::String> names;
 
 	for (auto it = _sounds.begin(); it != _sounds.end(); ++it) {
-		if (it->_value._preloaded)
+		if (it->_value._walkingSound)
 			names.push_back(it->_key);
 	}
 

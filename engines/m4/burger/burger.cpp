@@ -233,12 +233,12 @@ void BurgerEngine::global_daemon() {
 			ws_unhide_walker(_G(my_walker));
 			player_set_commands_allowed(true);
 			_G(flags)[V299] = 0;
-			_G(flags)[V298] = 0;
+			_G(flags)[kDisableFootsteps] = 0;
 			_G(wilbur_should) = 10002;
 			break;
 		case 10002:
 			_G(flags)[V299] = 0;
-			_G(flags)[V298] = 0;
+			_G(flags)[kDisableFootsteps] = 0;
 			break;
 		case 10003:
 			player_set_commands_allowed(false);

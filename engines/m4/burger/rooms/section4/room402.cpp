@@ -223,7 +223,7 @@ void Room402::init() {
 			kernel_timing_trigger(120, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else {
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		static const char *NAMES[11] = {
 			"402p903a", "402p903b", "402p903c", "402p903d", "402p903e", "402p903f",
 			"402s010f", "402s010g", "402s010h", "402s010a", "402s010d"

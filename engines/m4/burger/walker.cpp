@@ -102,8 +102,8 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		case 21:
 		case 22:
 		case 25:
-			if (!_G(flags)[V298])
-				_G(digi).playRandom();
+			if (!_G(flags)[kDisableFootsteps])
+				_G(digi).playFootsteps();
 			break;
 
 		case 23:
@@ -123,7 +123,7 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 			break;
 
 		case 24:
-			if (!_G(flags)[V298])
+			if (!_G(flags)[kDisableFootsteps])
 				digi_play("hmmm", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
 			break;
 

@@ -559,7 +559,7 @@ void Room171::daemon() {
 		break;
 
 	case 6:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		_G(flags)[V299] = 1;
 		_flag1 = true;
 		conv_load_and_prepare("conv40", 7);
@@ -590,7 +590,7 @@ void Room171::daemon() {
 
 	case 7:
 		_val1 = 0;
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_G(flags)[V299] = 0;
 		_flag1 = false;
 		player_set_commands_allowed(true);

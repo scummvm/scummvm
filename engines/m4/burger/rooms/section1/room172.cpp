@@ -208,7 +208,7 @@ void Room172::daemon() {
 
 		case 12:
 			player_set_commands_allowed(false);
-			_G(flags)[V298] = 1;
+			_G(flags)[kDisableFootsteps] = 1;
 			freeSeries7();
 			_series5.terminate();
 			_pollyShould = 15;
@@ -227,7 +227,7 @@ void Room172::daemon() {
 			break;
 
 		case 15:
-			_G(flags)[V298] = 0;
+			_G(flags)[kDisableFootsteps] = 0;
 			player_set_commands_allowed(true);
 			_series5.play("172ap02", 0x400, 0, -1, 8, -1, 100, 0, 0, 28, 30);
 			playDigi3();
@@ -264,7 +264,7 @@ void Room172::daemon() {
 		break;
 
 	case 3:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		_G(flags)[V299] = 1;
 		conv_load_and_prepare("conv41", 4);
 		conv_export_value_curr(_G(flags)[V088], 0);
@@ -285,7 +285,7 @@ void Room172::daemon() {
 		}
 
 		kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_G(flags)[V299] = 0;
 		break;
 

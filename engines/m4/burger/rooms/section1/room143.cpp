@@ -796,7 +796,7 @@ void Room143::daemon() {
 				break;
 
 			default:
-				_G(flags)[V298] = 0;
+				_G(flags)[kDisableFootsteps] = 0;
 				_burlMode = 20;
 				series_play_with_breaks(PLAY9, "143bu04", 0xa00, kCHANGE_BURL_ANIMATION, 3);
 				break;
@@ -1094,7 +1094,7 @@ void Room143::daemon() {
 			player_update_info();
 			if (_G(player_info).y < 304) {
 				ws_walk(220, 304, 0, -1, 2);
-				_G(flags)[V298] = 1;
+				_G(flags)[kDisableFootsteps] = 1;
 			}
 
 			series_play_with_breaks(PLAY7, "143bu01", 0xe00, 22, 3);

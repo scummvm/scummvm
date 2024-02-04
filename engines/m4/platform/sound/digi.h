@@ -44,7 +44,7 @@ class Digi {
 		Common::String _filename;
 		byte *_data = nullptr;
 		size_t _size = 0;
-		bool _preloaded = false;
+		bool _walkingSound = false;
 		DigiEntry() {}
 		DigiEntry(Common::String &name, byte *data, size_t size) :
 			_filename(name), _data(data), _size(size) {}
@@ -75,7 +75,7 @@ public:
 	 */
 	bool preload(const Common::String &name, int roomNum = -1);
 
-	void preload_sounds(const char **names);
+	void loadFootstepSounds(const char **names);
 	void unload_sounds();
 	void unload(const Common::String &name);
 	void task();
@@ -89,7 +89,7 @@ public:
 
 	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
 	int32 play_loop(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
-	void playRandom();
+	void playFootsteps();
 	void stop(uint channel);
 	void flush_mem();
 

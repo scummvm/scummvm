@@ -121,7 +121,7 @@ void Room133_136::daemon() {
 		break;
 
 	case 2:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		digi_play("136c001", 1, 255, 5, 136);
 		_val1 = 1;
 		kernel_trigger_dispatch_now(3);
@@ -144,7 +144,7 @@ void Room133_136::daemon() {
 		break;
 
 	case 5:
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_val1 = 2;
 		break;
 

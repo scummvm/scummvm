@@ -448,7 +448,7 @@ void Room105::daemon() {
 					kernel_timing_trigger(60, 12);
 				} else {
 					player_set_commands_allowed(true);
-					_G(flags)[V298] = 0;
+					_G(flags)[kDisableFootsteps] = 0;
 				}
 				break;
 
@@ -591,7 +591,7 @@ void Room105::daemon() {
 					kernel_timing_trigger(60, 11);
 				} else {
 					player_set_commands_allowed(true);
-					_G(flags)[V298] = 0;
+					_G(flags)[kDisableFootsteps] = 0;
 				}
 				break;
 
@@ -676,7 +676,7 @@ void Room105::daemon() {
 					kernel_timing_trigger(60, 11);
 				} else {
 					player_set_commands_allowed(true);
-					_G(flags)[V298] = 0;
+					_G(flags)[kDisableFootsteps] = 0;
 				}
 				break;
 
@@ -860,7 +860,7 @@ void Room105::daemon() {
 
 				} else {
 					player_set_commands_allowed(true);
-					_G(flags)[V298] = 0;
+					_G(flags)[kDisableFootsteps] = 0;
 				}
 				break;
 
@@ -1373,7 +1373,7 @@ void Room105::parser() {
 				wilbur_speech("105w011");
 			} else {
 				player_set_commands_allowed(false);
-				_G(flags)[V298] = 1;
+				_G(flags)[kDisableFootsteps] = 1;
 				loadAssets4();
 				ws_hide_walker();
 				series_play_with_breaks(PLAY22, "105wi01", 0xa00, 18, 3);
@@ -1384,12 +1384,12 @@ void Room105::parser() {
 			series_play_with_breaks(PLAY31, "105wi05", 0x100, 16, 3);
 
 			if (!_G(flags)[V112]) {
-				_G(flags)[V298] = 1;
+				_G(flags)[kDisableFootsteps] = 1;
 				mayorsDoor();
 			}
 		} else if (player_said("GEAR", "complaints dept.")) {
 			player_set_commands_allowed(false);
-			_G(flags)[V298] = 1;
+			_G(flags)[kDisableFootsteps] = 1;
 			loadAssets3();
 			digi_preload("11n1402");
 			ws_hide_walker();

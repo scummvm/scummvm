@@ -451,7 +451,7 @@ void Room103::daemon() {
 	case 14:
 		_digi1 = imath_ranged_rand(1, 7);
 		preloadDigi1();
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 
 		if (_G(flags)[V024]) {
 			player_set_commands_allowed(true);
@@ -479,12 +479,12 @@ void Room103::daemon() {
 	case 17:
 		_G(flags)[V023] = 0;
 		_G(wilbur_should) = 6;
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		ws_walk(325, 173, 0, 10016);
 		break;
 
 	case 19:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		terminateMachineAndNull(_series2);
 		series_play_with_breaks(PLAY4, "103ha02", 0x100, kCHANGE_HARRY_ANIMATION, 2, 10, 100, 0, 0);
 		_frame = 10;

@@ -78,7 +78,7 @@ void Room702::daemon() {
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(kCHANGE_FLUMIX_ANIMATION);
 		kernel_trigger_dispatch_now(6);
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		pal_fade_init(0, 255, 100, 30, -1);
 		break;
 
@@ -224,7 +224,7 @@ void Room702::daemon() {
 			break;
 
 		case 11:
-			_G(flags)[V298] = 0;
+			_G(flags)[kDisableFootsteps] = 0;
 			break;
 
 		default:

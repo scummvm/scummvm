@@ -166,7 +166,7 @@ void Room407::init() {
 	pal_cycle_init(112, 127, 6);
 
 	if (!_G(flags)[V181] && _G(flags)[V171] == 4003) {
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		player_set_commands_allowed(false);
 	}
 
@@ -501,7 +501,7 @@ void Room407::daemon() {
 		break;
 
 	case 10:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		_G(flags)[V299] = 1;
 		conv_load_and_prepare("conv87", 12);
 		conv_export_pointer_curr(&_G(flags)[V180], 0);
@@ -509,7 +509,7 @@ void Room407::daemon() {
 		break;
 
 	case 11:
-		_G(flags)[V298] = 1;
+		_G(flags)[kDisableFootsteps] = 1;
 		_G(flags)[V299] = 1;
 		player_set_commands_allowed(false);
 		conv_load_and_prepare("conv88", 13);
@@ -517,7 +517,7 @@ void Room407::daemon() {
 		break;
 
 	case 12:
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_G(flags)[V299] = 0;
 		_G(flags)[V180] = 1;
 		terminateMachineAndNull(_rx);
@@ -526,13 +526,13 @@ void Room407::daemon() {
 		break;
 
 	case 13:
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_G(flags)[V299] = 0;
 		player_set_commands_allowed(true);
 		break;
 
 	case 14:
-		_G(flags)[V298] = 0;
+		_G(flags)[kDisableFootsteps] = 0;
 		_drumzShould = 21;
 		_vipeShould = 40;
 		series_play_with_breaks(PLAY18, "407poof", 0x2ff, 4008, 2);

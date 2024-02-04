@@ -106,7 +106,7 @@ void Room102::init() {
 	_val8 = 0;
 	_val9 = 0;
 	_val10 = 99999;
-	_G(flags)[V298] = 1;
+	_G(flags)[kDisableFootsteps] = 1;
 
 	digi_preload("102_001");
 	digi_preload("102_002");
