@@ -308,19 +308,13 @@ void YCompilationUnit::accept(YackVisitor &v) { v.visit(*this); }
 YLabel::YLabel(int line) { _line = line; }
 
 YLabel::~YLabel() {
-	for (size_t i = 0; i < _stmts.size(); i++) {
-		delete _stmts[i];
-	}
 }
 
 YCompilationUnit::~YCompilationUnit() {
-	for (size_t i = 0; i < _labels.size(); i++) {
-		delete _labels[i];
-	}
 }
 
-YLabel *YackParser::parseLabel() {
-	unique_ptr<YLabel> pLabel;
+Common::SharedPtr<YLabel> YackParser::parseLabel() {
+	Common::SharedPtr<YLabel> pLabel;
 	// :
 	_it++;
 	// label
@@ -330,15 +324,15 @@ YLabel *YackParser::parseLabel() {
 	do {
 		if (match({YackTokenId::Colon}) || match({YackTokenId::End}))
 			break;
-		YStatement *pStatement = parseStatement();
+		Common::SharedPtr<YStatement> pStatement = parseStatement();
 		pLabel->_stmts.push_back(pStatement);
 	} while (true);
 
-	return pLabel.release();
+	return pLabel;
 }
-YStatement *YackParser::parseStatement() {
-	unique_ptr<YStatement> pStatement;
-	pStatement.reset(new YStatement());
+
+Common::SharedPtr<YStatement> YackParser::parseStatement() {
+	Common::SharedPtr<YStatement> pStatement(new YStatement());
 
 	// expression
 	pStatement->_exp.reset(parseExpression());
@@ -346,27 +340,29 @@ YStatement *YackParser::parseStatement() {
 	while (match({YackTokenId::Condition})) {
 		pStatement->_conds.push_back(parseCondition());
 	}
-	return pStatement.release();
+	return pStatement;
 }
-YCond *YackParser::parseCondition() {
+
+Common::SharedPtr<YCond> YackParser::parseCondition() {
 	auto text = _reader.readText(*_it);
 	auto conditionText = text.substr(1, text.size() - 2);
 	auto line = _it->line;
 	_it++;
 	if (conditionText == "once") {
-		return new YOnce(line);
+		return Common::SharedPtr<YOnce>(new YOnce(line));
 	} else if (conditionText == "showonce") {
-		return new YShowOnce(line);
+		return Common::SharedPtr<YShowOnce>(new YShowOnce(line));
 	} else if (conditionText == "onceever") {
-		return new YOnceEver(line);
+		return Common::SharedPtr<YOnceEver>(new YOnceEver(line));
 	} else if (conditionText == "temponce") {
-		return new YTempOnce(line);
+		return Common::SharedPtr<YTempOnce>(new YTempOnce(line));
 	}
-	auto pCondition = new YCodeCond(line);
+	Common::SharedPtr<YCodeCond> pCondition(new YCodeCond(line));
 	pCondition->_code = conditionText;
 	return pCondition;
 }
-YExp *YackParser::parseExpression() {
+
+Common::SharedPtr<YExp> YackParser::parseExpression() {
 	if (match({YackTokenId::Identifier, YackTokenId::Colon, YackTokenId::String}))
 		return parseSayExpression();
 	if (match({YackTokenId::WaitWhile}))
@@ -381,36 +377,39 @@ YExp *YackParser::parseExpression() {
 		return parseCodeExpression();
 	return nullptr;
 }
-YSay *YackParser::parseSayExpression() {
+
+Common::SharedPtr<YSay> YackParser::parseSayExpression() {
 	auto actor = _reader.readText(*_it++);
 	_it++;
 	auto text = _reader.readText(*_it);
 	_it++;
-	auto pExp = new YSay();
+	Common::SharedPtr<YSay> pExp(new YSay());
 	pExp->_actor = actor;
 	pExp->_text = text.substr(1, text.size() - 2);
 	return pExp;
 }
-YExp *YackParser::parseWaitWhileExpression() {
+
+Common::SharedPtr<YExp> YackParser::parseWaitWhileExpression() {
 	auto waitwhile = _reader.readText(*_it++);
 	auto code = waitwhile.substr(10);
-	auto pExp = new YWaitWhile();
+	Common::SharedPtr<YWaitWhile> pExp(new YWaitWhile());
 	pExp->_cond = code;
 	return pExp;
 }
-YExp *YackParser::parseInstructionExpression() {
+
+Common::SharedPtr<YExp> YackParser::parseInstructionExpression() {
 	auto identifier = _reader.readText(*_it++);
 	if (identifier == "shutup") {
-		return new YShutup();
+		return Common::SharedPtr<YShutup>(new YShutup());
 	} else if (identifier == "pause") {
 		// pause number
 		auto time = atof(_reader.readText(*_it++).c_str());
-		auto pExp = new YPause();
+		Common::SharedPtr<YPause> pExp(new YPause());
 		pExp->_time = time;
 		return pExp;
 	} else if (identifier == "waitfor") {
 		// waitfor [actor]
-		auto pExp = new YWaitFor();
+		Common::SharedPtr<YWaitFor> pExp(new YWaitFor());
 		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
 			pExp->_actor = actor;
@@ -418,7 +417,7 @@ YExp *YackParser::parseInstructionExpression() {
 		return pExp;
 	} else if (identifier == "parrot") {
 		// parrot [active]
-		auto pExp = new YParrot();
+		Common::SharedPtr<YParrot> pExp(new YParrot());
 		if (_it->id == YackTokenId::Identifier) {
 			auto active = _reader.readText(*_it++);
 			pExp->_active = active == "yes";
@@ -426,7 +425,7 @@ YExp *YackParser::parseInstructionExpression() {
 		return pExp;
 	} else if (identifier == "dialog") {
 		// dialog [actor]
-		auto pExp = new YDialog();
+		Common::SharedPtr<YDialog> pExp(new YDialog());
 		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
 			pExp->_actor = actor;
@@ -434,7 +433,7 @@ YExp *YackParser::parseInstructionExpression() {
 		return pExp;
 	} else if (identifier == "override") {
 		// override [node]
-		auto pExp = new YOverride();
+		Common::SharedPtr<YOverride> pExp(new YOverride());
 		if (_it->id == YackTokenId::Identifier) {
 			auto node = _reader.readText(*_it++);
 			pExp->_node = node;
@@ -442,7 +441,7 @@ YExp *YackParser::parseInstructionExpression() {
 		return pExp;
 	} else if (identifier == "allowobjects") {
 		// allowobjects [allow]
-		auto pExp = new YAllowObjects();
+		Common::SharedPtr<YAllowObjects> pExp(new YAllowObjects());
 		if (_it->id == YackTokenId::Identifier) {
 			auto node = _reader.readText(*_it++);
 			pExp->_active = node == "YES";
@@ -450,7 +449,7 @@ YExp *YackParser::parseInstructionExpression() {
 		return pExp;
 	} else if (identifier == "limit") {
 		// limit [number]
-		auto pExp = new YLimit();
+		Common::SharedPtr<YLimit> pExp(new YLimit());
 		if (_it->id == YackTokenId::Int) {
 			auto node = _reader.readText(*_it++);
 			pExp->_max = strtol(node.c_str(), nullptr, 10);
@@ -459,21 +458,24 @@ YExp *YackParser::parseInstructionExpression() {
 	}
 	error("Unknown instruction: %s", identifier.c_str());
 }
-YGoto *YackParser::parseGotoExpression() {
+
+Common::SharedPtr<YGoto> YackParser::parseGotoExpression() {
 	_it++;
 	int line = _it->line;
 	auto name = _reader.readText(*_it++);
-	auto pExp = new YGoto(line);
+	Common::SharedPtr<YGoto> pExp(new YGoto(line));
 	pExp->_name = name;
 	return pExp;
 }
-YCodeExp *YackParser::parseCodeExpression() {
+
+Common::SharedPtr<YCodeExp> YackParser::parseCodeExpression() {
 	auto code = _reader.readText(*_it++);
-	auto pExp = new YCodeExp();
+	Common::SharedPtr<YCodeExp> pExp(new YCodeExp());
 	pExp->_code = code.substr(1);
 	return pExp;
 }
-YChoice *YackParser::parseChoiceExpression() {
+
+Common::SharedPtr<YChoice> YackParser::parseChoiceExpression() {
 	auto number = atol(_reader.readText(*_it).c_str());
 	_it++;
 	Common::String text;
@@ -485,10 +487,10 @@ YChoice *YackParser::parseChoiceExpression() {
 	}
 
 	_it++;
-	auto pExp = new YChoice();
+	Common::SharedPtr<YChoice> pExp(new YChoice());
 	pExp->_number = number;
 	pExp->_text = text;
-	pExp->_goto.reset(parseGotoExpression());
+	pExp->_goto = parseGotoExpression();
 	return pExp;
 }
 

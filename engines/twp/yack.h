@@ -154,7 +154,7 @@ public:
 public:
 	int _number = 0;
 	Common::String _text;
-	unique_ptr<YGoto> _goto;
+	Common::SharedPtr<YGoto> _goto;
 };
 
 class YSay : public YExp {
@@ -254,8 +254,8 @@ public:
 	virtual void accept(YackVisitor &v) override;
 
 public:
-	unique_ptr<YExp> _exp;
-	Common::Array<YCond *> _conds;
+	Common::SharedPtr<YExp> _exp;
+	Common::Array<Common::SharedPtr<YCond> > _conds;
 };
 
 class YLabel : public YackNode {
@@ -266,7 +266,7 @@ public:
 
 public:
 	Common::String _name;
-	Common::Array<YStatement *> _stmts;
+	Common::Array<Common::SharedPtr<YStatement> > _stmts;
 	int _line = 0;
 };
 
@@ -276,7 +276,7 @@ public:
 	virtual void accept(YackVisitor &v) override;
 
 public:
-	Common::Array<YLabel*> _labels;
+	Common::Array<Common::SharedPtr<YLabel> > _labels;
 };
 
 class YackVisitor {
@@ -388,16 +388,16 @@ public:
 
 private:
 	bool match(const std::initializer_list<YackTokenId> &ids);
-	YLabel* parseLabel();
-	YStatement *parseStatement();
-	YCond *parseCondition();
-	YExp *parseExpression();
-	YSay *parseSayExpression();
-	YExp *parseWaitWhileExpression();
-	YExp *parseInstructionExpression();
-	YGoto *parseGotoExpression();
-	YCodeExp *parseCodeExpression();
-	YChoice *parseChoiceExpression();
+	Common::SharedPtr<YLabel> parseLabel();
+	Common::SharedPtr<YStatement> parseStatement();
+	Common::SharedPtr<YCond> parseCondition();
+	Common::SharedPtr<YExp> parseExpression();
+	Common::SharedPtr<YSay> parseSayExpression();
+	Common::SharedPtr<YExp> parseWaitWhileExpression();
+	Common::SharedPtr<YExp> parseInstructionExpression();
+	Common::SharedPtr<YGoto> parseGotoExpression();
+	Common::SharedPtr<YCodeExp> parseCodeExpression();
+	Common::SharedPtr<YChoice> parseChoiceExpression();
 
 private:
 	YackTokenReader _reader;
