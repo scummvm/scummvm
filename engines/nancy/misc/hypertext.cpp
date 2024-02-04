@@ -85,7 +85,8 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		Common::StringTokenizer tokenizer(_textLines[lineID], "<>\"");
 
 		Common::String curToken;
-		while(!tokenizer.empty()) {
+		bool reachedEndTag = false;
+		while(!tokenizer.empty() && !reachedEndTag) {
 			curToken = tokenizer.nextToken();
 
 			if (tokenizer.delimitersAtTokenBegin().lastChar() == '<' && tokenizer.delimitersAtTokenEnd().firstChar() == '>') {
@@ -95,14 +96,20 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					// fall through
 				case 'o' :
 					// CC end
-					// fall through
+					if (curToken.size() != 1) {
+						break;
+					}
+					
+					continue;
 				case 'e' :
-					// End conversation. Originally used for quickly ending dialogue when debugging
-					// We do nothing and just skip
+					// End conversation. Originally used for quickly ending dialogue when debugging, but
+					// also marks the ending of the current text line.
 					if (curToken.size() != 1) {
 						break;
 					}
 
+					// Ignore the rest of the text. This fixes nancy7 scene 5770
+					reachedEndTag = true;
 					continue;
 				case 'h' :
 					// Hotspot
