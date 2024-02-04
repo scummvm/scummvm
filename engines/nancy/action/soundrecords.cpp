@@ -35,7 +35,7 @@ namespace Action {
 
 void SetVolume::readData(Common::SeekableReadStream &stream) {
 	channel = stream.readUint16LE();
-	volume = stream.readUint16LE();
+	volume = stream.readByte();
 }
 
 void SetVolume::execute() {

@@ -34,7 +34,7 @@ public:
 	void execute() override;
 
 	uint16 channel = 0;
-	uint16 volume = 0;
+	byte volume = 0;
 
 protected:
 	Common::String getRecordTypeName() const override { return "SetVolume"; }
