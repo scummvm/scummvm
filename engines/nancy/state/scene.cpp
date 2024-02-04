@@ -245,7 +245,15 @@ void Scene::pushScene(int16 itemID) {
 		_sceneState.pushedScene = _sceneState.currentScene;
 		_sceneState.isScenePushed = true;
 	} else {
-		_sceneState.pushedInvScene = _sceneState.currentScene;
+		if (_sceneState.isInvScenePushed) {
+			// Re-add current pushed item
+			addItemToInventory(_sceneState.pushedInvItemID);
+		} else {
+			// Only set this when another item hasn't been pushed, otherwise
+			// the player will never be able to exit
+			_sceneState.pushedInvScene = _sceneState.currentScene;
+		}
+		
 		_sceneState.isInvScenePushed = true;
 		_sceneState.pushedInvItemID = itemID;
 	}
@@ -261,6 +269,8 @@ void Scene::popScene(bool inventory) {
 		changeScene(_sceneState.pushedInvScene);
 		_sceneState.isInvScenePushed = false;
 		addItemToInventory(_sceneState.pushedInvItemID);
+		_sceneState.pushedInvItemID = kEvNoEvent;
+		_sceneState.pushedInvScene.sceneID = kNoScene;
 	}
 }
 
