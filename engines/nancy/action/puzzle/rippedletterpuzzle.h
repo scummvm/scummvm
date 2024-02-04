@@ -34,6 +34,7 @@ namespace Action {
 class RippedLetterPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
+	enum RotationType { kRotationNone = 0, kRotation90 = 1, kRotation180 = 2 };
 	RippedLetterPuzzle() : RenderActionRecord(7) {}
 	virtual ~RippedLetterPuzzle() {}
 
@@ -44,20 +45,31 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	Common::Path _imageName;
+
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
+
 	Common::Rect _rotateHotspot;
 	Common::Rect _takeHotspot;
 	Common::Rect _dropHotspot;
+
+	RotationType _rotationType = kRotation90;
+
 	Common::Array<int8> _initOrder;
 	Common::Array<byte> _initRotations;
 	Common::Array<int8> _solveOrder;
 	Common::Array<byte> _solveRotations;
+
+	bool _useCustomPickUpTile = false;
+	Common::Rect _customPickUpTileSrc;
+
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 	SoundDescription _rotateSound;
+
 	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
+
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
