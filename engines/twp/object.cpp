@@ -78,9 +78,9 @@ private:
 
 Object::Object()
 	: _talkOffset(0, 90) {
-	_node = new Node("newObj");
-	_nodeAnim = new Anim(this);
-	_node->addChild(_nodeAnim);
+	_node = Common::SharedPtr<Node>(new Node("newObj"));
+	_nodeAnim = Common::SharedPtr<Anim>(new Anim(this));
+	_node->addChild(_nodeAnim.get());
 	sq_resetobject(&_table);
 }
 
@@ -377,7 +377,7 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 				if (index != -1)
 					layer->_objects.remove_at(index);
 				if (layer)
-					layer->_node->removeChild(object->_node);
+					layer->_node->removeChild(object->_node.get());
 			}
 		}
 		if (room && room->layer(0) && room->layer(0)->_node) {
@@ -387,7 +387,7 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 				int index = find(layer->_objects, object);
 				if (index == -1)
 					layer->_objects.push_back(object);
-				layer->_node->addChild(object->_node);
+				layer->_node->addChild(object->_node.get());
 			}
 		}
 		if (object->_room != room) {
@@ -763,7 +763,7 @@ void Object::turn(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 }
 
 void Object::jiggle(float amount) {
-	_jiggleTo = new Jiggle(_node, amount);
+	_jiggleTo = new Jiggle(_node.get(), amount);
 }
 
 void Object::inventoryScrollUp() {

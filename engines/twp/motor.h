@@ -234,6 +234,7 @@ private:
 	float _wsd;
 };
 
+class TextNode;
 // Creates a talking animation for a specified object.
 class Talking : public Motor {
 public:
@@ -253,8 +254,8 @@ private:
 	int loadActorSpeech(const Common::String &name);
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
-	Node *_node = nullptr;
+	Common::SharedPtr<Object> _obj;
+	Common::SharedPtr<TextNode> _node;
 	Lip _lip;
 	float _elapsed = 0.f;
 	float _duration = 0.f;

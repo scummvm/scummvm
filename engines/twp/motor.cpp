@@ -440,8 +440,8 @@ void Talking::say(const Common::String &text) {
 		_obj->_sayNode->remove();
 	}
 	Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
-	_obj->_sayNode = new TextNode();
-	((TextNode *)_obj->_sayNode)->setText(text2);
+	_obj->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
+	_obj->_sayNode->setText(text2);
 	_obj->_sayNode->setColor(_color);
 	_node = _obj->_sayNode;
 	Math::Vector2d pos = g_engine->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
@@ -452,7 +452,7 @@ void Talking::say(const Common::String &text) {
 
 	_obj->_sayNode->setPos(pos);
 	_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
-	g_engine->_screenScene.addChild(_obj->_sayNode);
+	g_engine->_screenScene.addChild(_obj->_sayNode.get());
 	_elapsed = 0.f;
 }
 

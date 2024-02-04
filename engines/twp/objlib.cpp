@@ -610,7 +610,7 @@ static SQInteger objectParent(HSQUIRRELVM v) {
 	if (!parent)
 		return sq_throwerror(v, "failed to get parent");
 	obj->_parent = parent->_key;
-	parent->_node->addChild(obj->_node);
+	parent->_node->addChild(obj->_node.get());
 	return 0;
 }
 
@@ -700,7 +700,7 @@ static SQInteger objectRotateTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
-		obj->setRotateTo(new RotateTo(duration, obj->_node, rotation, intToInterpolationMethod(interpolation)));
+		obj->setRotateTo(new RotateTo(duration, obj->_node.get(), rotation, intToInterpolationMethod(interpolation)));
 	}
 	return 0;
 }
@@ -729,7 +729,7 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
-		obj->setRotateTo(new ScaleTo(duration, obj->_node, scale, intToInterpolationMethod(interpolation)));
+		obj->setRotateTo(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation)));
 	}
 	return 0;
 }
@@ -740,7 +740,7 @@ static SQInteger objectScreenSpace(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	g_engine->_screenScene.addChild(obj->_node);
+	g_engine->_screenScene.addChild(obj->_node.get());
 	return 0;
 }
 
@@ -1028,7 +1028,7 @@ static SQInteger shakeObject(HSQUIRRELVM v) {
 	float amount;
 	if (SQ_FAILED(sqget(v, 3, amount)))
 		return sq_throwerror(v, "failed to get amount");
-	obj->setShakeTo(new Shake(obj->_node, amount));
+	obj->setShakeTo(new Shake(obj->_node.get(), amount));
 	return 0;
 }
 

@@ -86,6 +86,7 @@ class Motor;
 class Node;
 class Layer;
 class Blink;
+class TextNode;
 
 struct TalkingState {
 	Common::SharedPtr<Object> _obj;
@@ -230,9 +231,9 @@ public:
 	Common::SharedPtr<Room> _room;
 	Common::Array<ObjectAnimation> _anims;
 	bool _temporary = false;
-	Node *_node = nullptr;
-	Node *_sayNode = nullptr;
-	Anim *_nodeAnim = nullptr;
+	Common::SharedPtr<Node> _node;
+	Common::SharedPtr<TextNode> _sayNode;
+	Common::SharedPtr<Anim> _nodeAnim;
 	Common::SharedPtr<Layer> _layer;
 	Common::StringArray _hiddenLayers;
 	Common::String _animName;
@@ -251,7 +252,7 @@ public:
 	Color _talkColor;
 	Common::HashMap<Common::String, Common::String> _animNames;
 	bool _lit = false;
-	Common::SharedPtr<Object> _owner = nullptr;
+	Common::SharedPtr<Object> _owner;
 	Common::Array<Common::SharedPtr<Object> > _inventory;
 	int _inventoryOffset = 0;
 	Common::StringArray _icons;
@@ -260,7 +261,7 @@ public:
 	float _iconElapsed = 0.f;
 	HSQOBJECT _enter, _leave;
 	int _dependentState = 0;
-	Common::SharedPtr<Object> _dependentObj = nullptr;
+	Common::SharedPtr<Object> _dependentObj;
 	float _popElapsed = 0.f;
 	int _popCount = 0;
 	Sentence _exec;

@@ -1014,9 +1014,9 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 				sqsetf(oTable, "flags", 0);
 			Common::SharedPtr<Object> obj(new Object(oTable, k));
 			setId(obj->_table, newObjId());
-			obj->_node = new Node(k);
-			obj->_nodeAnim = new Anim(obj.get());
-			obj->_node->addChild(obj->_nodeAnim);
+			obj->_node = Common::SharedPtr<Node>(new Node(k));
+			obj->_nodeAnim = Common::SharedPtr<Anim>(new Anim(obj.get()));
+			obj->_node->addChild(obj->_nodeAnim.get());
 			Object::setRoom(obj, params->room);
 			// set room as delegate
 			sqsetdelegate(obj->_table, params->room->_table);
@@ -1116,7 +1116,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 					obj->setTouchable(true);
 				}
 
-				layerNode->addChild(obj->_node);
+				layerNode->addChild(obj->_node.get());
 			}
 		}
 	}
@@ -1131,7 +1131,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 				if (!parent) {
 					warning("parent: '%s' not found", obj->_parent.c_str());
 				} else {
-					parent->_node->addChild(obj->_node);
+					parent->_node->addChild(obj->_node.get());
 				}
 			}
 		}
