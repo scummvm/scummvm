@@ -127,9 +127,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
-		return new PlaySecondaryVideo(0);
 	case 52:
-		return new PlaySecondaryVideo(1);
+		return new PlaySecondaryVideo();
 	case 53:
 		return new PlaySecondaryMovie();
 	case 54:

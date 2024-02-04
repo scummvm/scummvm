@@ -39,7 +39,7 @@ public:
 
 	enum HoverState { kNoHover, kHover, kEndHover };
 
-	PlaySecondaryVideo(uint chan) : RenderActionRecord(8), channel(chan) {}
+	PlaySecondaryVideo() : RenderActionRecord(8) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
 	void init() override;
@@ -70,7 +70,7 @@ public:
 
 protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
+	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 	bool isViewportRelative() const override { return true; }
 
 	Graphics::ManagedSurface _fullFrame;
@@ -80,8 +80,6 @@ protected:
 	int _currentViewportScroll = -1;
 	bool _isInFrame = false;
 	bool _isHovered = false;
-
-	uint channel;
 };
 
 } // End of namespace Action
