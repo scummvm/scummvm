@@ -67,9 +67,9 @@ void Vars::main_cold_data_init() {
 
 void Vars::global_menu_system_init() {
 /*
-	AddSystemHotkey(Common::KEYCODE_ESCAPE, escape_key_pressed);
-	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
-	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
+	AddSystemHotkey(KEY_ESCAPE, escape_key_pressed);
+	AddSystemHotkey(KEY_F2, cb_F2);
+	AddSystemHotkey(KEY_F3, cb_F3);
 
 	if (_interface.init(0, 5, 6, 8, 9))
 		static_cast<Inventory *>(_inventory)->init();

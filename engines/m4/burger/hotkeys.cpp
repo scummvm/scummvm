@@ -128,7 +128,7 @@ void Hotkeys::escape_key_pressed(void *, void *) {
 		case 971:
 			// Switch to main menu
 			_G(game).new_section = 9;
-			_G(game).new_room = 901;
+			_G(game).new_room = 903;
 			break;
 
 		case 903:

@@ -30,6 +30,7 @@
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
+#include "m4/platform/keys.h"
 #include "m4/detection.h"
 #include "m4/m4.h"
 
@@ -128,9 +129,9 @@ void Vars::main_cold_data_init() {
 }
 
 void Vars::global_menu_system_init() {
-	AddSystemHotkey(Common::KEYCODE_ESCAPE, escape_key_pressed);
-	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
-	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
+	AddSystemHotkey(KEY_ESCAPE, Hotkeys::escape_key_pressed);
+	AddSystemHotkey(KEY_F2, Hotkeys::saveGame);
+	AddSystemHotkey(KEY_F3, Hotkeys::loadGame);
 
 	if (_interface.init(0, 5, 6, 8, 9))
 		static_cast<Inventory *>(_inventory)->init();
@@ -161,18 +162,6 @@ void Vars::custom_ascii_converter_proc(char *string) {
 		while ((str = strstr(string, entry->_find)) != nullptr)
 			*str = entry->_replace;
 	}
-}
-
-void Vars::escape_key_pressed(void *, void *) {
-
-}
-
-void Vars::cb_F2(void *, void *) {
-
-}
-
-void Vars::cb_F3(void *, void *) {
-
 }
 
 } // namespace Burger

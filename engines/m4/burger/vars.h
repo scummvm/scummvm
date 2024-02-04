@@ -84,9 +84,6 @@ enum global_triggers {
 class Vars : public M4::Vars {
 private:
 	static void custom_ascii_converter_proc(char *string);
-	static void escape_key_pressed(void *, void *);
-	static void cb_F2(void *, void *);
-	static void cb_F3(void *, void *);
 
 protected:
 	void main_cold_data_init() override;
