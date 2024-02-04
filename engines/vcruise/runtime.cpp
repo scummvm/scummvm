@@ -511,6 +511,13 @@ void AD2044MapLoader::load() {
 		}
 	}
 
+	if (_roomNumber == 87) {
+		uint highDigit = (_screenNumber & 0xf0) >> 4;
+		uint lowDigit = _screenNumber & 0x0f;
+
+		scrFileID = 8700 + static_cast<int>(highDigit * 10u + lowDigit);
+	}
+
 	if (scrFileID < 0) {
 		if (_screenNumber < kFirstScreen)
 			return;
@@ -1754,9 +1761,16 @@ bool Runtime::bootGame(bool newGame) {
 
 	debug(1, "Booting V-Cruise game...");
 
-	if (_gameID == GID_AD2044)
+	if (_gameID == GID_AD2044) {
 		loadAD2044ExecutableResources();
-	else
+
+		Common::File tabFile;
+
+		if (tabFile.open(Common::Path("anims/ANIM0087.TAB")))
+			loadTabData(_examineAnimIDToFrameRange, 87, &tabFile);
+		else
+			error("Failed to load inspection animations");
+	} else
 		loadReahSchizmIndex();
 
 	debug(1, "Index loaded OK");
@@ -2067,10 +2081,9 @@ void Runtime::drawLabel(Graphics::ManagedSurface *surface, const Common::String 
 }
 
 void Runtime::onMidiTimer() {
-	if (_musicMidiPlayer) {
-		Common::StackLock lock(_midiPlayerMutex);
+	Common::StackLock lock(_midiPlayerMutex);
+	if (_musicMidiPlayer)
 		_musicMidiPlayer->onMidiTimer();
-	}
 }
 
 
@@ -3709,6 +3722,58 @@ void Runtime::changeHero() {
 	restoreSaveGameSnapshot();
 }
 
+void Runtime::changeToExamineItem() {
+	assert(canSave(true));
+
+	InventoryItem itemToExamine = _inventoryActiveItem;
+
+	_inventoryActiveItem = InventoryItem();
+
+	recordSaveGameSnapshot();
+
+	SaveGameSnapshot *snapshot = _mostRecentlyRecordedSaveState.get();
+
+	Common::SharedPtr<SaveGameSwappableState> currentState = snapshot->states[0];
+	Common::SharedPtr<SaveGameSwappableState> alternateState = snapshot->states[1];
+
+	// Move inventory into the new state
+	alternateState->inventory.clear();
+	alternateState->inventory = Common::move(currentState->inventory);
+
+	// For some reason the screen number translation converts decimal to hex
+	uint highDigit = itemToExamine.itemID / 10u;
+	uint lowDigit = itemToExamine.itemID % 10u;
+
+	Common::HashMap<int, AnimFrameRange>::const_iterator frameRangeIt = _examineAnimIDToFrameRange.find(8700 + static_cast<int>(itemToExamine.itemID));
+
+	if (frameRangeIt == _examineAnimIDToFrameRange.end())
+		error("Couldn't resolve animation frame range to examine item %u", static_cast<uint>(itemToExamine.itemID));
+
+	alternateState->loadedAnimation = frameRangeIt->_value.animationNum;
+	alternateState->animDisplayingFrame = frameRangeIt->_value.firstFrame;
+
+	alternateState->havePendingPostSwapScreenReset = true;
+	alternateState->roomNumber = 87;
+	alternateState->screenNumber = (highDigit * 0x10u) + lowDigit;
+	alternateState->direction = 0;
+
+	alternateState->musicActive = currentState->musicActive;
+	alternateState->musicMuteDisabled = currentState->musicMuteDisabled;
+	alternateState->musicTrack = currentState->musicTrack;
+	alternateState->musicVolume = currentState->musicVolume;
+
+	snapshot->states[0] = alternateState;
+	snapshot->states[1] = currentState;
+
+	snapshot->hero ^= 1u;
+
+	changeToCursor(_cursors[kCursorArrow]);
+
+	_mostRecentValidSaveState = _mostRecentlyRecordedSaveState;
+
+	restoreSaveGameSnapshot();
+}
+
 bool Runtime::triggerPreIdleActions() {
 	debug(1, "Triggering pre-idle actions in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
 
@@ -3936,6 +4001,17 @@ bool Runtime::dischargeIdleMouseMove() {
 
 			invSlotRect.translate(static_cast<int16>(AD2044Interface::getInvSlotSpacing()), 0);
 		}
+
+		if (_inventoryActiveItem.itemID != 0) {
+			if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].inspectionScreenID != 0) {
+				Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
+
+				if (examineRect.contains(_mousePos)) {
+					isOnInteraction = true;
+					interactionID = kExamineItemInteractionID;
+				}
+			}
+		}
 	}
 
 	if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
@@ -3999,6 +4075,9 @@ bool Runtime::dischargeIdleMouseMove() {
 
 		if (interactionID == kHeroChangeInteractionID) {
 			changeToCursor(_cursors[16]);
+			_idleHaveClickInteraction = true;
+		} else if (interactionID == kExamineItemInteractionID) {
+			changeToCursor(_cursors[5]);
 			_idleHaveClickInteraction = true;
 		} else if (interactionID == kObjectDropInteractionID || (interactionID >= kReturnInventorySlot0InteractionID && interactionID <= kReturnInventorySlot5InteractionID)) {
 			changeToCursor(_cursors[7]);
@@ -4067,6 +4146,9 @@ bool Runtime::dischargeIdleClick() {
 			pickupPlacedItem();
 			recordSaveGameSnapshot();
 			_havePendingReturnToIdleState = true;
+			return true;
+		} else if (_gameID == GID_AD2044 && _idleInteractionID == kExamineItemInteractionID) {
+			changeToExamineItem();
 			return true;
 		} else if (_gameID == GID_AD2044 && _idleInteractionID >= kPickupInventorySlot0InteractionID && _idleInteractionID <= kPickupInventorySlot5InteractionID) {
 			pickupInventoryItem(_idleInteractionID - kPickupInventorySlot0InteractionID);
@@ -4182,7 +4264,9 @@ void Runtime::loadFrameData2(Common::SeekableReadStream *stream) {
 	}
 }
 
-void Runtime::loadTabData(uint animNumber, Common::SeekableReadStream *stream) {
+void Runtime::loadTabData(Common::HashMap<int, AnimFrameRange> &animIDToFrameRangeMap, uint animNumber, Common::SeekableReadStream *stream) {
+	animIDToFrameRangeMap.clear();
+
 	int64 size64 = stream->size() - stream->pos();
 
 	if (size64 > UINT_MAX || size64 < 0)
@@ -4268,8 +4352,8 @@ void Runtime::loadTabData(uint animNumber, Common::SeekableReadStream *stream) {
 		frameRange.lastFrame = static_cast<uint>(parsedNumbers[2]);
 
 		// Animation ID 9099 is duplicated but it doesn't really matter since the duplicate is identical
-		if (_animIDToFrameRange.find(parsedNumbers[0]) == _animIDToFrameRange.end())
-			_animIDToFrameRange[parsedNumbers[0]] = frameRange;
+		if (animIDToFrameRangeMap.find(parsedNumbers[0]) == animIDToFrameRangeMap.end())
+			animIDToFrameRangeMap[parsedNumbers[0]] = frameRange;
 		else
 			warning("Animation ID %i was duplicated", parsedNumbers[0]);
 	}
@@ -4476,14 +4560,11 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		}
 
 		if (isAD2044) {
-			_animIDToFrameRange.clear();
-
 			Common::Path tabFileName(Common::String::format("anims/ANIM%04i.TAB", animFile));
 			Common::File tabFile;
 
 			if (tabFile.open(tabFileName))
-				loadTabData(animFile, &tabFile);
-			tabFile.close();
+				loadTabData(_currentRoomAnimIDToFrameRange, animFile, &tabFile);
 		}
 
 		_loadedAnimationHasSound = (_animDecoder->getAudioTrackCount() > 0);

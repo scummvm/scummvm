@@ -597,7 +597,9 @@ static ScriptNamedInstruction g_ad2044NamedInstructions[] = {
 	{"animT", ProtoOp::kProtoOpScript, ScriptOps::kAnimT},
 	{"ani+", ProtoOp::kProtoOpScript, ScriptOps::kAnimForward},
 	{"ani-", ProtoOp::kProtoOpScript, ScriptOps::kAnimReverse},
-	{"kani+", ProtoOp::kProtoOpScript, ScriptOps::kAnimForward},
+	{"kani+", ProtoOp::kProtoOpScript, ScriptOps::kAnimForward},	// FIXME: Do we really want to use this op?
+	{"anis+", ProtoOp::kProtoOpScript, ScriptOps::kAnimForward}, // FIXME: Do we really want to use this op?
+	{"anis-", ProtoOp::kProtoOpScript, ScriptOps::kAnimReverse}, // FIXME: Do we really want to use this op?
 	//{"static", ProtoOp::kProtoOpScript, ScriptOps::kStatic},
 	{"yes@", ProtoOp::kProtoOpScript, ScriptOps::kVarLoad},
 	{"yes!", ProtoOp::kProtoOpScript, ScriptOps::kVarStore},
@@ -611,6 +613,7 @@ static ScriptNamedInstruction g_ad2044NamedInstructions[] = {
 	//{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"r@", ProtoOp::kProtoOpScript, ScriptOps::kRGet},
 	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kRSet},
+	{"endr!", ProtoOp::kProtoOpScript, ScriptOps::kEndRSet},
 	//{"clearPocket", ProtoOp::kProtoOpScript, ScriptOps::kItemClear},
 	{"cursor!", ProtoOp::kProtoOpScript, ScriptOps::kSetCursor},
 	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
@@ -684,6 +687,8 @@ static ScriptNamedInstruction g_ad2044NamedInstructions[] = {
 	//{"disc3", ProtoOp::kProtoOpScript, ScriptOps::kDisc3},
 
 	//{"goto", ProtoOp::kProtoOpScript, ScriptOps::kGoto},
+
+	{"stop", ProtoOp::kProtoOpScript, ScriptOps::kStop},
 
 	{"#if", ProtoOp::kProtoOpIf, ScriptOps::kInvalid},
 	{"#eif", ProtoOp::kProtoOpEndIf, ScriptOps::kInvalid},

@@ -918,6 +918,7 @@ private:
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void clearIdleAnimations();
 	void changeHero();
+	void changeToExamineItem();
 	bool triggerPreIdleActions();
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<AnimatedCursor> &cursor);
@@ -927,7 +928,7 @@ private:
 	bool dischargeIdleClick();
 	void loadFrameData(Common::SeekableReadStream *stream);
 	void loadFrameData2(Common::SeekableReadStream *stream);
-	void loadTabData(uint animNumber, Common::SeekableReadStream *stream);
+	void loadTabData(Common::HashMap<int, AnimFrameRange> &animIDToFrameRangeMap, uint animNumber, Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
 	void startScoreSection();
@@ -1238,6 +1239,7 @@ private:
 	void scriptOpSay3K(ScriptArg_t arg);
 	void scriptOpRGet(ScriptArg_t arg);
 	void scriptOpRSet(ScriptArg_t arg);
+	void scriptOpEndRSet(ScriptArg_t arg);
 
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursors;      // Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursorsShort;      // Cursors indexed as CURSOR_#
@@ -1396,7 +1398,8 @@ private:
 	Common::HashMap<Common::String, uint> _animDefNameToIndex;
 
 	// AD2044 animation map
-	Common::HashMap<int, AnimFrameRange> _animIDToFrameRange;
+	Common::HashMap<int, AnimFrameRange> _currentRoomAnimIDToFrameRange;
+	Common::HashMap<int, AnimFrameRange> _examineAnimIDToFrameRange;
 
 	bool _idleLockInteractions;
 	bool _idleIsOnInteraction;
@@ -1472,9 +1475,7 @@ private:
 
 	static const uint kSoundCacheSize = 16;
 
-	static const uint kHeroChangeInteractionID = 0xffffffffu;
-	static const uint kObjectDropInteractionID = 0xfffffffeu;
-	static const uint kObjectPickupInteractionID = 0xfffffffdu;
+	static const uint kExamineItemInteractionID = 0xfffffff0u;
 
 	static const uint kReturnInventorySlot0InteractionID = 0xfffffff1u;
 	static const uint kReturnInventorySlot1InteractionID = 0xfffffff2u;
@@ -1489,6 +1490,11 @@ private:
 	static const uint kPickupInventorySlot3InteractionID = 0xfffffffau;
 	static const uint kPickupInventorySlot4InteractionID = 0xfffffffbu;
 	static const uint kPickupInventorySlot5InteractionID = 0xfffffffcu;
+
+	static const uint kObjectPickupInteractionID = 0xfffffffdu;
+	static const uint kObjectDropInteractionID = 0xfffffffeu;
+
+	static const uint kHeroChangeInteractionID = 0xffffffffu;
 
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;

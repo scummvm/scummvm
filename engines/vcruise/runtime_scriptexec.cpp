@@ -2056,8 +2056,8 @@ void Runtime::scriptOpAnimT(ScriptArg_t arg) {
 
 	StackInt_t animationID = stackArgs[0];
 
-	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _animIDToFrameRange.find(animationID);
-	if (animRangeIt == _animIDToFrameRange.end())
+	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _currentRoomAnimIDToFrameRange.find(animationID);
+	if (animRangeIt == _currentRoomAnimIDToFrameRange.end())
 		error("Couldn't resolve animation ID %i", static_cast<int>(animationID));
 
 	AnimationDef animDef;
@@ -2094,8 +2094,8 @@ void Runtime::scriptOpAnimAD2044(bool isForward) {
 	if (!found)
 		error("Couldn't resolve animation lookup ID %i", static_cast<int>(stackArgs[0]));
 
-	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _animIDToFrameRange.find(animationID);
-	if (animRangeIt == _animIDToFrameRange.end())
+	Common::HashMap<int, AnimFrameRange>::const_iterator animRangeIt = _currentRoomAnimIDToFrameRange.find(animationID);
+	if (animRangeIt == _currentRoomAnimIDToFrameRange.end())
 		error("Couldn't resolve animation ID %i", static_cast<int>(animationID));
 
 	AnimationDef animDef;
@@ -2252,9 +2252,10 @@ void Runtime::scriptOpRSet(ScriptArg_t arg) {
 		}
 	}
 
-	// NYI
 	error("Couldn't resolve item ID for script item %i", static_cast<int>(stackArgs[0]));
 }
+
+OPCODE_STUB(EndRSet)
 
 
 // Unused Schizm ops
@@ -2514,6 +2515,7 @@ bool Runtime::runScript() {
 
 			DISPATCH_OP(RGet);
 			DISPATCH_OP(RSet);
+			DISPATCH_OP(EndRSet);
 
 			DISPATCH_OP(Say3K);
 

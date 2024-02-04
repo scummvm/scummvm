@@ -242,6 +242,8 @@ enum ScriptOp {
 	kSay3K,
 	kRGet,
 	kRSet,
+	kEndRSet,
+	kStop,
 
 	kNumOps,
 };
