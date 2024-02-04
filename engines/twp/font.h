@@ -176,7 +176,7 @@ public:
 	TextVAlignment getVAlign() { return _vAlign; }
 
 	void setFont(const Common::String &fontName);
-	Font *getFont() { return _font; }
+	Common::SharedPtr<Font> getFont() { return _font; }
 	Math::Vector2d getBounds();
 
 	void draw(Gfx &gfx, Math::Matrix4 trsf = Math::Matrix4());
@@ -185,7 +185,7 @@ private:
 	void update();
 
 private:
-	Font *_font = nullptr;
+	Common::SharedPtr<Font> _font;
 	Common::String _fontName;
 	Texture *_texture = nullptr;
 	Common::String _txt;

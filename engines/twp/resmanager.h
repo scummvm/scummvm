@@ -36,7 +36,7 @@ public:
 
 	Texture *texture(const Common::String &name);
 	SpriteSheet *spriteSheet(const Common::String& name);
-	Font *font(const Common::String& name);
+	Common::SharedPtr<Font> font(const Common::String& name);
 
 private:
 	void loadTexture(const Common::String &name);
@@ -46,10 +46,7 @@ private:
 public:
 	Common::HashMap<Common::String, Texture> _textures;
 	Common::HashMap<Common::String, SpriteSheet> _spriteSheets;
-	Common::HashMap<Common::String, Font*> _fonts;
-	GGFont _fontModernSheet;
-	GGFont _fontRetroSheet;
-	GGFont _fontC64TermSheet;
+	Common::HashMap<Common::String, Common::SharedPtr<Font> > _fonts;
 };
 } // namespace Twp
 

@@ -60,7 +60,7 @@ public:
 	Common::Array<Common::SharedPtr<Object> > _objects;
 	Math::Vector2d _parallax;
 	int _zsort = 0;
-	Node *_node = nullptr;
+	Common::SharedPtr<Node> _node;
 };
 
 struct ScalingValue {
@@ -147,7 +147,7 @@ public:
 	Common::Array<ScalingTrigger> _scalingTriggers; // Scaling Triggers of the room
 	bool _pseudo = false;
 	Common::Array<Common::SharedPtr<Object> > _objects;
-	Scene *_scene = nullptr;
+	Common::SharedPtr<Scene> _scene;
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect = RoomEffect::None;
 	Motor* _overlayTo = nullptr;

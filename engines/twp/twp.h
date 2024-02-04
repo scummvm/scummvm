@@ -194,7 +194,7 @@ public:
 	bool _holdToMove = false;
 	float _nextHoldToMoveTime = 0.f;
 	int _frameCounter = 0;
-	Lighting *_lighting = nullptr;
+	Common::SharedPtr<Lighting> _lighting;
 	Common::SharedPtr<Cutscene> _cutscene;
 	Scene _scene;
 	Scene _screenScene;

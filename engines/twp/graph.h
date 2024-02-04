@@ -118,12 +118,12 @@ public:
 	const Graph &getGraph() const { return _walkgraph; }
 
 private:
-	Graph *createGraph();
+	Common::SharedPtr<Graph> createGraph();
 	bool inLineOfSight(Vector2i start, Vector2i to);
 
 private:
 	Common::Array<Walkbox> _walkboxes;
-	Graph *_graph = nullptr;
+	Common::SharedPtr<Graph> _graph;
 	Graph _walkgraph;
 	bool _isDirty = true;
 };

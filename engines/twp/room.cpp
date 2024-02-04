@@ -149,12 +149,11 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
 	setId(_table, newRoomId());
 	_name = name;
-	_scene = new Scene();
+	_scene = Common::SharedPtr<Scene>(new Scene());
 	_scene->addChild(&_overlayNode);
 }
 
 Room::~Room() {
-	delete _scene;
 }
 
 Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {

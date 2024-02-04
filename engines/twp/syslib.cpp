@@ -77,13 +77,13 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 		sq_getstring(v, -1, &name);
 
 	Common::String threadName = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(closureObj)->_function->_sourcename), _closure(closureObj)->_function->_lineinfos->_line);
-	Thread *t = new Thread(threadName, global, threadObj, envObj, closureObj, args);
+	Common::SharedPtr<Thread> t(new Thread(threadName, global, threadObj, envObj, closureObj, args));
 	sq_pop(vm, 1);
 	if (name)
 		sq_pop(v, 1); // pop name
 	sq_pop(v, 1);     // pop closure
 
-	g_engine->_threads.push_back(Common::SharedPtr<ThreadBase>(t));
+	g_engine->_threads.push_back(t);
 
 	debugC(kDebugSysScript, "create thread %s", t->getName().c_str());
 
@@ -150,8 +150,8 @@ static SQInteger addCallback(HSQUIRRELVM v) {
 		args.push_back(arg);
 	}
 
-	Callback *callback = new Callback(newCallbackId(), duration, methodName, args);
-	g_engine->_callbacks.push_back(Common::SharedPtr<Callback>(callback));
+	Common::SharedPtr<Callback> callback(new Callback(newCallbackId(), duration, methodName, args));
+	g_engine->_callbacks.push_back(callback);
 
 	sqpush(v, callback->getId());
 	return 1;
@@ -493,8 +493,8 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	}
 
 	Common::SharedPtr<ThreadBase> parentThread = sqthread(v);
-	Cutscene *cutscene = new Cutscene(parentThread->getId(), threadObj, closure, closureOverride, envObj);
-	g_engine->_cutscene.reset(cutscene);
+	Common::SharedPtr<Cutscene> cutscene(new Cutscene(parentThread->getId(), threadObj, closure, closureOverride, envObj));
+	g_engine->_cutscene = cutscene;
 
 	// call the closure in the thread
 	cutscene->update(0.f);

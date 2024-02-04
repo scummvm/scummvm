@@ -255,7 +255,7 @@ void ParallaxNode::drawCore(Math::Matrix4 trsf) {
 
 	// enable debug lighting ?
 	if (_zOrder == 0 && g_engine->_lighting->_debug) {
-		g_engine->getGfx().use(g_engine->_lighting);
+		g_engine->getGfx().use(g_engine->_lighting.get());
 	} else {
 		g_engine->getGfx().use(nullptr);
 	}
@@ -381,7 +381,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			const SpriteSheetFrame &sf = sheet->frameTable[frame];
 			Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
 			if (_obj->_lit) {
-				g_engine->getGfx().use(g_engine->_lighting);
+				g_engine->getGfx().use(g_engine->_lighting.get());
 				Math::Vector2d p = getAbsPos() + _obj->_node->getRenderOffset();
 				const float left = flipX ?
 					(-1.f + sf.sourceSize.getX()) / 2.f - sf.spriteSourceSize.left :
