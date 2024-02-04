@@ -40,10 +40,8 @@ void Digi::loadFootstepSounds(const char **names) {
 		unload_sounds();
 
 	if (names) {
-		for (; *names; ++names) {
-			if (preload(*names, NOWHERE))
-				_sounds[*names]._walkingSound = true;
-		}
+		for (; *names; ++names)
+			preload(*names, true, NOWHERE);
 	}
 }
 
@@ -56,7 +54,7 @@ void Digi::unload_sounds() {
 	_sounds.clear();
 }
 
-bool Digi::preload(const Common::String &name, int roomNum) {
+bool Digi::preload(const Common::String &name, bool isFootsteps, int roomNum) {
 	MemHandle workHandle;
 	int32 assetSize;
 
@@ -76,6 +74,7 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 	HUnLock(workHandle);
 
 	_sounds[name] = DigiEntry(fileName, pDest, assetSize);
+	_sounds[name]._isFootsteps = isFootsteps;
 	return false;
 }
 
@@ -88,14 +87,14 @@ void Digi::unload(const Common::String &name) {
 		}
 
 		// Remove the underlying resource
-		if (!_sounds[name]._filename.empty()) {
+		if (!_sounds[name]._filename.empty() && !_sounds[name]._isFootsteps) {
 			rtoss(_sounds[name]._filename);
 			_sounds[name]._filename.clear();
-		}
 
-		// Delete the sound entry
-		free(_sounds[name]._data);
-		_sounds.erase(name);
+			// Delete the sound entry
+			free(_sounds[name]._data);
+			_sounds.erase(name);
+		}
 	}
 }
 
@@ -118,7 +117,7 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	stop(channel);
 
 	// Load in the new sound
-	preload(name, room_num);
+	preload(name, false, room_num);
 	DigiEntry &entry = _sounds[name];
 	Channel &c = _channels[channel];
 
@@ -143,7 +142,7 @@ void Digi::playFootsteps() {
 	Common::Array<Common::String> names;
 
 	for (auto it = _sounds.begin(); it != _sounds.end(); ++it) {
-		if (it->_value._walkingSound)
+		if (it->_value._isFootsteps)
 			names.push_back(it->_key);
 	}
 
@@ -237,7 +236,7 @@ int32 Digi::ticks_to_play(const char *name, int roomNum) {
 } // namespace Sound
 
 bool digi_preload(const Common::String &name, int roomNum) {
-	return _G(digi).preload(name, roomNum);
+	return _G(digi).preload(name, false, roomNum);
 }
 
 void digi_unload(const Common::String &name) {
