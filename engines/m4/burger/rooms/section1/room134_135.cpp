@@ -803,52 +803,53 @@ void Room134_135::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if ((_G(flags)[V000] == 1002 && !_G(walker).wilbur_said(SAID1)) ||
-			(_G(flags)[V000] != 1002 && !_G(walker).wilbur_said(SAID2))) {
-		if (player_said("ENTER", "FORK IN THE ROAD") || player_said("gear", "fork in the road") ||
-				(lookFlag && player_said("fork in the road"))) {
-			player_set_commands_allowed(false);
-			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
+	if (_G(walker).wilbur_said((_G(flags)[V000] == 1002) ? SAID1 : SAID2)) {
+		// Already handled
+	} else if (player_said("ENTER", "FORK IN THE ROAD") || player_said("gear", "fork in the road") ||
+			(lookFlag && player_said("fork in the road"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 
-		} else if (player_said("ENTER", "MAIN STREET") || player_said("gear", "main street") ||
-				(lookFlag && player_said("main street"))) {
-			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
-		} else if (player_said("conv01")) {
-			conv01();
-		} else if (player_said("conv02")) {
-			conv02();
-		} else if (player_said("conv03")) {
-			conv03();
-		} else if (player_said("odie") && inv_player_has(_G(player).verb)) {
-			ws_hide_walker();
-			player_set_commands_allowed(false);
-			loadOdie();
-			_val9 = 31;
-			_val10 = 30;
-			kernel_trigger_dispatch_now(33);
-		} else if (inv_player_has(_G(player).verb) && player_said_any("fork in the road", "main street")) {
-			wilbur_speech("135w002");
-		} else if (lookFlag && player_said("baitbox")) {
-			wilbur_speech(_G(flags)[V038] ? "135w004" : "135w003");
-		} else if (lookFlag && player_said("wrecked truck")) {
-			wilbur_speech(_G(flags)[V052] ? "134w007" : "134w006");
-		} else if (player_said("take", "baitbox") || player_said("gear", "baitbox")) {
-			player_set_commands_allowed(false);
-			loadOdie();
-			_val9 = 34;
-			_val10 = 30;
-			kernel_trigger_dispatch_now(33);
-		} else if (player_said("talk to", "odie")) {
-			player_set_commands_allowed(false);
-			loadOdie();
-			_flag1 = true;
-			conv_load_and_prepare("conv03", 31);
-			conv_export_pointer_curr(&_G(flags)[V038], 1);
-			conv_export_value_curr(_G(flags)[V001], 3);
-			conv_play_curr();
-		} else if (player_said("conv06")) {
-			conv03();
-		}
+	} else if (player_said("ENTER", "MAIN STREET") || player_said("gear", "main street") ||
+			(lookFlag && player_said("main street"))) {
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
+	} else if (player_said("conv01")) {
+		conv01();
+	} else if (player_said("conv02")) {
+		conv02();
+	} else if (player_said("conv03")) {
+		conv03();
+	} else if (player_said("odie") && inv_player_has(_G(player).verb)) {
+		ws_hide_walker();
+		player_set_commands_allowed(false);
+		loadOdie();
+		_val9 = 31;
+		_val10 = 30;
+		kernel_trigger_dispatch_now(33);
+	} else if (inv_player_has(_G(player).verb) && player_said_any("fork in the road", "main street")) {
+		wilbur_speech("135w002");
+	} else if (lookFlag && player_said("baitbox")) {
+		wilbur_speech(_G(flags)[V038] ? "135w004" : "135w003");
+	} else if (lookFlag && player_said("wrecked truck")) {
+		wilbur_speech(_G(flags)[V052] ? "134w007" : "134w006");
+	} else if (player_said("take", "baitbox") || player_said("gear", "baitbox")) {
+		player_set_commands_allowed(false);
+		loadOdie();
+		_val9 = 34;
+		_val10 = 30;
+		kernel_trigger_dispatch_now(33);
+	} else if (player_said("talk to", "odie")) {
+		player_set_commands_allowed(false);
+		loadOdie();
+		_flag1 = true;
+		conv_load_and_prepare("conv03", 31);
+		conv_export_pointer_curr(&_G(flags)[V038], 1);
+		conv_export_value_curr(_G(flags)[V001], 3);
+		conv_play_curr();
+	} else if (player_said("conv06")) {
+		conv03();
+	} else {
+		return;
 	}
 
 	_G(player).command_ready = false;
