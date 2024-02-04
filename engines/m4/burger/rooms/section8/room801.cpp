@@ -650,10 +650,10 @@ int Room801::getWilburShould() const {
 }
 
 void Room801::loadSeries1() {
-	_series5 = series_play("804FX01", 0x400, 0, -1, 10);
-	_series6 = series_play("804FX02", 0x400, 0, -1, 45);
-	_series7 = series_play("804FX03", 0x400, 0, -1, 10);
-	_series8 = series_play("804FX04", 0x400, 0, -1, 10);
+	_series5 = series_play("804FX01", 0x400, 0, -1, 10, -1);
+	_series6 = series_play("804FX02", 0x400, 0, -1, 45, -1);
+	_series7 = series_play("804FX03", 0x400, 0, -1, 10, -1);
+	_series8 = series_play("804FX04", 0x400, 0, -1, 10, -1);
 }
 
 void Room801::loadSeries2() {
