@@ -29,8 +29,8 @@ namespace Twp {
 
 class SerialMotors : public Motor {
 public:
-	SerialMotors(const std::initializer_list<Motor *> &motors) : _motors(motors) {}
-	SerialMotors(const Common::Array<Motor *> &motors) : _motors(motors) {}
+	SerialMotors(const std::initializer_list<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
+	SerialMotors(const Common::Array<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
 
 	virtual void update(float elapsed) override {
 		if (_motors.size() > 0) {
@@ -46,7 +46,7 @@ public:
 	}
 
 private:
-	Common::Array<Motor *> _motors;
+	Common::Array<Common::SharedPtr<Motor> > _motors;
 };
 
 class SelectLabelMotor : public Motor {
@@ -205,9 +205,9 @@ void Dialog::choose(DialogSlot *slot) {
 		YChoice *choice = getChoice(slot);
 		if (slot->_dlg->_context.parrot) {
 			slot->_dlg->_state = DialogState::Active;
-			slot->_dlg->_action = new SerialMotors(
+			slot->_dlg->_action = Common::SharedPtr<SerialMotors>(new SerialMotors(
 				{slot->_dlg->_tgt->say(slot->_dlg->_context.actor, choice->_text),
-				 new SelectLabelMotor(slot->_dlg, choice->_goto->_line, choice->_goto->_name)});
+				 Common::SharedPtr<SelectLabelMotor>(new SelectLabelMotor(slot->_dlg, choice->_goto->_line, choice->_goto->_name))}));
 			slot->_dlg->clearSlots();
 		} else {
 			slot->_dlg->selectLabel(choice->_goto->_line, choice->_goto->_name);

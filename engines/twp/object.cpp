@@ -396,7 +396,7 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 	}
 }
 
-static void disableMotor(Motor *motor) {
+static void disableMotor(Common::SharedPtr<Motor> motor) {
 	if (motor)
 		motor->disable();
 }
@@ -407,7 +407,7 @@ void Object::stopObjectMotors() {
 	disableMotor(_moveTo);
 	disableMotor(_walkTo);
 	disableMotor(_talking);
-	disableMotor(_blink.get());
+	disableMotor(_blink);
 	disableMotor(_turnTo);
 	disableMotor(_shakeTo);
 	disableMotor(_jiggleTo);
@@ -529,14 +529,14 @@ void Object::stand() {
 	}                          \
 	_##motorTo = motorTo;
 
-void Object::setAlphaTo(Motor *alphaTo) { SET_MOTOR(alphaTo); }
-void Object::setRotateTo(Motor *rotateTo) { SET_MOTOR(rotateTo); }
-void Object::setMoveTo(Motor *moveTo) { SET_MOTOR(moveTo); }
-void Object::setWalkTo(Motor *walkTo) { SET_MOTOR(walkTo); }
-void Object::setReach(Motor *reach) { SET_MOTOR(reach); }
-void Object::setTalking(Motor *talking) { SET_MOTOR(talking); }
-void Object::setTurnTo(Motor *turnTo) { SET_MOTOR(turnTo); }
-void Object::setShakeTo(Motor *shakeTo) { SET_MOTOR(shakeTo); }
+void Object::setAlphaTo(Common::SharedPtr<Motor> alphaTo) { SET_MOTOR(alphaTo); }
+void Object::setRotateTo(Common::SharedPtr<Motor> rotateTo) { SET_MOTOR(rotateTo); }
+void Object::setMoveTo(Common::SharedPtr<Motor> moveTo) { SET_MOTOR(moveTo); }
+void Object::setWalkTo(Common::SharedPtr<Motor> walkTo) { SET_MOTOR(walkTo); }
+void Object::setReach(Common::SharedPtr<Motor> reach) { SET_MOTOR(reach); }
+void Object::setTalking(Common::SharedPtr<Motor> talking) { SET_MOTOR(talking); }
+void Object::setTurnTo(Common::SharedPtr<Motor> turnTo) { SET_MOTOR(turnTo); }
+void Object::setShakeTo(Common::SharedPtr<Motor> shakeTo) { SET_MOTOR(shakeTo); }
 
 void Object::update(float elapsedSec) {
 	if (_dependentObj)
@@ -743,7 +743,7 @@ void Object::walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing) {
 	if (!obj->_walkTo || (!obj->_walkTo->isEnabled())) {
 		obj->play(obj->getAnimName(WALK_ANIMNAME), true);
 	}
-	obj->_walkTo = new WalkTo(obj, pos, facing);
+	obj->_walkTo = Common::SharedPtr<WalkTo>(new WalkTo(obj, pos, facing));
 }
 
 // Walks an actor to the `obj` and then faces it.
@@ -763,7 +763,7 @@ void Object::turn(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 }
 
 void Object::jiggle(float amount) {
-	_jiggleTo = new Jiggle(_node.get(), amount);
+	_jiggleTo = Common::SharedPtr<Jiggle>(new Jiggle(_node.get(), amount));
 }
 
 void Object::inventoryScrollUp() {
@@ -778,9 +778,9 @@ void Object::inventoryScrollDown() {
 }
 
 void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Object> obj) {
-	Talking *talking = static_cast<Talking *>(obj->getTalking());
+	Talking *talking = static_cast<Talking *>(obj->getTalking().get());
 	if (!talking) {
-		obj->setTalking(new Talking(obj, texts, _color));
+		obj->setTalking(Common::SharedPtr<Talking>(new Talking(obj, texts, _color)));
 	} else {
 		talking->append(texts);
 	}

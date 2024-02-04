@@ -181,22 +181,22 @@ public:
 
 	void update(float elapsedSec);
 
-	void setAlphaTo(Motor *alphaTo);
-	void setRotateTo(Motor *rotateTo);
-	void setMoveTo(Motor *moveTo);
-	void setWalkTo(Motor *walkTo);
-	void setReach(Motor *reach);
-	Motor *getWalkTo() const { return _walkTo; }
-	Motor *getReach() const { return _reach; }
+	void setAlphaTo(Common::SharedPtr<Motor> alphaTo);
+	void setRotateTo(Common::SharedPtr<Motor> rotateTo);
+	void setMoveTo(Common::SharedPtr<Motor> moveTo);
+	void setWalkTo(Common::SharedPtr<Motor> walkTo);
+	void setReach(Common::SharedPtr<Motor> reach);
+	Common::SharedPtr<Motor> getWalkTo() { return _walkTo; }
+	Common::SharedPtr<Motor> getReach() { return _reach; }
 	static void walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing = 0);
 	static void walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
-	void setTalking(Motor *talking);
-	void setBlink(Motor *blink);
-	void setTurnTo(Motor *turnTo);
-	void setShakeTo(Motor *shakeTo);
+	void setTalking(Common::SharedPtr<Motor> talking);
+	void setBlink(Common::SharedPtr<Motor> blink);
+	void setTurnTo(Common::SharedPtr<Motor> turnTo);
+	void setShakeTo(Common::SharedPtr<Motor> shakeTo);
 
-	Motor *getTalking() { return _talking; }
+	Common::SharedPtr<Motor> getTalking() { return _talking; }
 	void stopTalking();
 	static void say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color);
 
@@ -269,16 +269,16 @@ public:
 	bool _jiggle = false;
 
 private:
-	Motor *_alphaTo = nullptr;
-	Motor *_rotateTo = nullptr;
-	Motor *_moveTo = nullptr;
-	Motor *_walkTo = nullptr;
-	Motor *_reach = nullptr;
-	Motor *_talking = nullptr;
+	Common::SharedPtr<Motor> _alphaTo;
+	Common::SharedPtr<Motor> _rotateTo;
+	Common::SharedPtr<Motor> _moveTo;
+	Common::SharedPtr<Motor> _walkTo;
+	Common::SharedPtr<Motor> _reach;
+	Common::SharedPtr<Motor> _talking;
 	Common::SharedPtr<Blink> _blink;
-	Motor *_turnTo = nullptr;
-	Motor *_shakeTo = nullptr;
-	Motor *_jiggleTo = nullptr;
+	Common::SharedPtr<Motor> _turnTo;
+	Common::SharedPtr<Motor> _shakeTo;
+	Common::SharedPtr<Motor> _jiggleTo;
 	TalkingState _talkingState;
 };
 

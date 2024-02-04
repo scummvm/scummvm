@@ -90,10 +90,10 @@ public:
 
 	virtual Color actorColor(const Common::String &actor) = 0;
 	virtual Color actorColorHover(const Common::String &actor) = 0;
-	virtual Motor *say(const Common::String &actor, const Common::String &text) = 0;
-	virtual Motor *waitWhile(const Common::String &cond) = 0;
+	virtual Common::SharedPtr<Motor> say(const Common::String &actor, const Common::String &text) = 0;
+	virtual Common::SharedPtr<Motor> waitWhile(const Common::String &cond) = 0;
 	virtual void shutup() = 0;
-	virtual Motor *pause(float time) = 0;
+	virtual Common::SharedPtr<Motor> pause(float time) = 0;
 	virtual bool execCond(const Common::String &cond) = 0;
 };
 
@@ -212,7 +212,7 @@ public:
 	Common::Array<DialogConditionState> _states;
 	DialogContext _context;
 	unique_ptr<DialogTarget> _tgt;
-	Motor* _action = nullptr;
+	Common::SharedPtr<Motor> _action;
 
 private:
 	DialogState _state = DialogState::None;

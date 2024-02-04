@@ -241,14 +241,14 @@ void WalkTo::actorArrived() {
 		}
 
 		if (needsReach)
-			_obj->setReach(new ReachAnim(_obj, noun1));
+			_obj->setReach(Common::SharedPtr<ReachAnim>(new ReachAnim(_obj, noun1)));
 		else
 			Object::execVerb(_obj);
 	}
 }
 
 void WalkTo::update(float elapsed) {
-	if (_path.size() != 0) {
+	if (_state == kWalking && !_path.empty()) {
 		Vector2i dest = _path[0];
 		float d = distance(dest, (Vector2i)_obj->_node->getAbsPos());
 
@@ -256,8 +256,10 @@ void WalkTo::update(float elapsed) {
 		if (d < 1.0) {
 			_obj->_node->setPos((Math::Vector2d)_path[0]);
 			_path.remove_at(0);
-			if (_path.size() == 0) {
+			if (_path.empty()) {
+				_state = kArrived;
 				actorArrived();
+				return;
 			}
 		} else {
 			Math::Vector2d delta = (Math::Vector2d)dest - _obj->_node->getAbsPos();
@@ -274,11 +276,13 @@ void WalkTo::update(float elapsed) {
 		}
 	}
 
-	Motor *reach = _obj->getReach();
-	if (reach && reach->isEnabled()) {
-		reach->update(elapsed);
-		if (!reach->isEnabled())
-			disable();
+	if(_state == kArrived) {
+		Common::SharedPtr<Motor> reach = _obj->getReach();
+		if (reach && reach->isEnabled()) {
+			reach->update(elapsed);
+			if (!reach->isEnabled())
+				disable();
+		}
 	}
 }
 

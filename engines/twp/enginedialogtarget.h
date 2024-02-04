@@ -30,10 +30,10 @@ class EngineDialogTarget : public DialogTarget {
 public:
 	virtual Color actorColor(const Common::String &actor) override;
 	virtual Color actorColorHover(const Common::String &actor) override;
-	virtual Motor *say(const Common::String &actor, const Common::String &text) override;
-	virtual Motor *waitWhile(const Common::String &cond) override;
+	virtual Common::SharedPtr<Motor> say(const Common::String &actor, const Common::String &text) override;
+	virtual Common::SharedPtr<Motor> waitWhile(const Common::String &cond) override;
 	virtual void shutup() override;
-	virtual Motor *pause(float time) override;
+	virtual Common::SharedPtr<Motor> pause(float time) override;
 	virtual bool execCond(const Common::String &cond) override;
 };
 

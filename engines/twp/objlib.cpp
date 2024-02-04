@@ -303,7 +303,7 @@ static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && (SQ_FAILED(sqget(v, 5, interpolation))))
 			interpolation = 0;
-		obj->setAlphaTo(new AlphaTo(t, obj, alpha, intToInterpolationMethod(interpolation)));
+		obj->setAlphaTo(Common::SharedPtr<AlphaTo>(new AlphaTo(t, obj, alpha, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
@@ -526,7 +526,7 @@ static SQInteger objectMoveTo(HSQUIRRELVM v) {
 		if ((sq_gettop(v) >= 6) && SQ_FAILED(sqget(v, 6, interpolation)))
 			interpolation = 0;
 		Math::Vector2d destPos = Math::Vector2d(x, y);
-		obj->setMoveTo(new MoveTo(duration, obj, destPos, intToInterpolationMethod(interpolation)));
+		obj->setMoveTo(Common::SharedPtr<MoveTo>(new MoveTo(duration, obj, destPos, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
@@ -568,7 +568,7 @@ static SQInteger objectOffsetTo(HSQUIRRELVM v) {
 		if ((sq_gettop(v) >= 6) && (SQ_FAILED(sq_getinteger(v, 6, &interpolation))))
 			interpolation = 0;
 		Math::Vector2d destPos(x, y);
-		obj->setMoveTo(new OffsetTo(duration, obj, destPos, intToInterpolationMethod(interpolation)));
+		obj->setMoveTo(Common::SharedPtr<OffsetTo>(new OffsetTo(duration, obj, destPos, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
@@ -700,7 +700,7 @@ static SQInteger objectRotateTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
-		obj->setRotateTo(new RotateTo(duration, obj->_node.get(), rotation, intToInterpolationMethod(interpolation)));
+		obj->setRotateTo(Common::SharedPtr<RotateTo>(new RotateTo(duration, obj->_node.get(), rotation, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
@@ -729,7 +729,7 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
-		obj->setRotateTo(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation)));
+		obj->setRotateTo(Common::SharedPtr<ScaleTo>(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
@@ -1028,7 +1028,7 @@ static SQInteger shakeObject(HSQUIRRELVM v) {
 	float amount;
 	if (SQ_FAILED(sqget(v, 3, amount)))
 		return sq_throwerror(v, "failed to get amount");
-	obj->setShakeTo(new Shake(obj->_node.get(), amount));
+	obj->setShakeTo(Common::SharedPtr<Shake>(new Shake(obj->_node.get(), amount)));
 	return 0;
 }
 
