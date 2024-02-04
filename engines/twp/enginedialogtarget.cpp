@@ -79,23 +79,23 @@ Color EngineDialogTarget::actorColorHover(const Common::String &actor) {
 	return g_engine->_hud.actorSlot(act)->verbUiColors.dialogHighlight;
 }
 
-Motor *EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
+Common::SharedPtr<Motor> EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
 	debugC(kDebugDialog, "say %s: %s", actor.c_str(), text.c_str());
 	Common::SharedPtr<Object> act = actorOrCurrent(actor);
 	Object::say(act, {text}, act->_talkColor);
 	return act->getTalking();
 }
 
-Motor *EngineDialogTarget::waitWhile(const Common::String &cond) {
-	return new WaitWhile(this, cond);
+Common::SharedPtr<Motor> EngineDialogTarget::waitWhile(const Common::String &cond) {
+	return Common::SharedPtr<WaitWhile>(new WaitWhile(this, cond));
 }
 
 void EngineDialogTarget::shutup() {
 	g_engine->stopTalking();
 }
 
-Motor *EngineDialogTarget::pause(float time) {
-	return new Pause(time);
+Common::SharedPtr<Motor> EngineDialogTarget::pause(float time) {
+	return Common::SharedPtr<Pause>(new Pause(time));
 }
 
 bool EngineDialogTarget::execCond(const Common::String &cond) {

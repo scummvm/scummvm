@@ -4,6 +4,7 @@
 #include "twp/thread.h"
 #include "twp/dialog.h"
 #include "twp/lighting.h"
+#include "common/debug-channels.h"
 
 namespace Twp {
 
@@ -172,7 +173,7 @@ static void drawResources() {
 	ImVec2 cursor = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 10.f));
 	ImGui::Text("Preview:");
-	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border|ImGuiChildFlags_ResizeX|ImGuiChildFlags_ResizeY);
+	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
 	for (auto &res : g_engine->_resManager._textures) {
 		if (state._textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
@@ -283,6 +284,30 @@ static void drawGeneral() {
 	ImGui::SameLine();
 	ImGui::Checkbox("Verbs", &g_engine->_inputState._inputVerbsActive);
 	ImGui::Separator();
+
+	if (ImGui::CollapsingHeader("Debug")) {
+		bool allEnabled = true;
+		auto channels = DebugMan.getDebugChannels();
+		for (auto &channel : channels) {
+			bool enabled = DebugMan.isDebugChannelEnabled(channel.channel);
+			allEnabled &= enabled;
+			if (ImGui::Checkbox(channel.name.c_str(), &enabled)) {
+				if (enabled) {
+					DebugMan.enableDebugChannel(channel.channel);
+				} else {
+					DebugMan.disableDebugChannel(channel.channel);
+				}
+			}
+		}
+		ImGui::Separator();
+		if (ImGui::Checkbox("All", &allEnabled)) {
+			if (allEnabled) {
+				DebugMan.enableAllDebugChannels();
+			} else {
+				DebugMan.disableAllDebugChannels();
+			}
+		}
+	}
 
 	// Camera
 	if (ImGui::CollapsingHeader("Camera")) {

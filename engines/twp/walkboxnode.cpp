@@ -120,7 +120,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 
 	// draw actor path
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor && actor->getWalkTo()) {
-		const WalkTo *walkTo = (WalkTo *)actor->getWalkTo();
+		const WalkTo *walkTo = (WalkTo *)actor->getWalkTo().get();
 		const Common::Array<Vector2i> &path = walkTo->getPath();
 		if (path.size() > 0) {
 			Common::Array<Vertex> vertices;

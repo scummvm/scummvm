@@ -216,22 +216,28 @@ private:
 	float _elapsed = 0.f;
 };
 
+enum WalkToState {
+	kWalking,
+	kArrived
+};
+
 class WalkTo : public Motor {
 public:
 	WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing = 0);
-	virtual void disable() override;
+	void disable() override;
 
 	const Common::Array<Vector2i> &getPath() const { return _path; }
 
 private:
 	void actorArrived();
-	virtual void update(float elapsed) override;
+	void update(float elapsed) override;
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _obj;
 	Common::Array<Vector2i> _path;
 	int _facing = 0;
 	float _wsd;
+	WalkToState _state = kWalking;
 };
 
 class TextNode;
