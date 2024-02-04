@@ -109,7 +109,7 @@ protected:
 		case CursorManager::kMoveLeft:
 			return "Hot1FrLeftSceneChange";
 		case CursorManager::kMoveRight:
-			return "Hot1FrUpSceneChange";
+			return "Hot1FrRightSceneChange";
 		default:
 			return "Hot1FrSceneChange";
 		}
