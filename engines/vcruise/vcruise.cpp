@@ -267,6 +267,9 @@ Common::Error VCruiseEngine::run() {
 
 	_runtime.reset();
 
+	if (midiDrv)
+		midiDrv->close();
+
 	if (_gameDescription->desc.flags & VCRUISE_GF_GENTEE_PACKAGE)
 		SearchMan.remove("VCruiseInstallerPackage");
 
