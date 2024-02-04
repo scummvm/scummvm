@@ -516,7 +516,7 @@ void Room602::daemon() {
 			_val1 = 60;
 
 			if (_G(flags)[V278]) {
-				series_play_with_breaks(PLAY11, "612wil7", 0x700, 1, 3, 6, 100, 114, -2);
+				series_play_with_breaks(PLAY11, "612wi17", 0x700, 1, 3, 6, 100, 114, -2);
 			} else {
 				series_play_with_breaks(PLAY11, "612wi17", 0x6ff, 1, 3, 6, 100, 0, 0);
 			}
