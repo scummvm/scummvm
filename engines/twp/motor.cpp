@@ -357,7 +357,7 @@ int Talking::loadActorSpeech(const Common::String &name) {
 	filename.toUppercase();
 	filename += ".ogg";
 	if (g_engine->_pack.assetExists(filename.c_str())) {
-		SoundDefinition *soundDefinition = new SoundDefinition(filename);
+		Common::SharedPtr<SoundDefinition> soundDefinition(new SoundDefinition(filename));
 		if (!soundDefinition) {
 			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
 		} else {

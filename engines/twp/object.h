@@ -243,7 +243,7 @@ public:
 	Facing _facing = FACE_FRONT;
 	int _facingLockValue = 0;
 	float _fps = 0.f;
-	Common::HashMap<int, Trigger *> _triggers;
+	Common::HashMap<int, Common::SharedPtr<Trigger> > _triggers;
 	Math::Vector2d _talkOffset;
 	Math::Vector2d _walkSpeed;
 	bool _triggerActive = false;

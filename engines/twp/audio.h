@@ -29,7 +29,7 @@
 #include "twp/ggpack.h"
 
 namespace Audio {
-	class SeekableAudioStream;
+class SeekableAudioStream;
 }
 
 namespace Twp {
@@ -38,9 +38,9 @@ class AudioChannel;
 class SoundDefinition;
 
 class SoundDefinition;
-class SoundStream: public Common::SeekableReadStream {
+class SoundStream : public Common::SeekableReadStream {
 public:
-	void open(SoundDefinition* sndDef);
+	void open(Common::SharedPtr<SoundDefinition> sndDef);
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 	virtual bool eos() const override;
@@ -58,40 +58,40 @@ public:
 	friend class SoundStream;
 
 public:
-	SoundDefinition(const Common::String& name);
+	SoundDefinition(const Common::String &name);
 
 	void load();
 	int getId() const { return _id; }
 	Common::String getName() const { return _name; }
 
 private:
-    int _id;						// identifier for this sound
-    Common::String _name;		    // name of the sound to load
-    Common::Array<byte> _buffer;	// buffer containing the sound data
-    bool _loaded = false;		    // indicates whether or not the sound buffer has been loaded
+	int _id;                     // identifier for this sound
+	Common::String _name;        // name of the sound to load
+	Common::Array<byte> _buffer; // buffer containing the sound data
+	bool _loaded = false;        // indicates whether or not the sound buffer has been loaded
 };
 
 struct AudioSlot {
-	Audio::SoundHandle handle;					// handle returned when this sound has been played
-	SoundDefinition *sndDef = nullptr;			// sound definition associated to this slot
-	SoundStream stream;							// audio stream
-	bool busy = false;							// is sound active
-	float volume = 1.f;							// actual volume for this slot
-	float fadeInTimeMs = 0.f;					// fade-in time in milliseconds
-	float fadeOutTimeMs = 0.f;					// fade-out time in milliseconds
+	Audio::SoundHandle handle;                           // handle returned when this sound has been played
+	Common::SharedPtr<SoundDefinition> sndDef = nullptr; // sound definition associated to this slot
+	SoundStream stream;                                  // audio stream
+	bool busy = false;                                   // is sound active
+	float volume = 1.f;                                  // actual volume for this slot
+	float fadeInTimeMs = 0.f;                            // fade-in time in milliseconds
+	float fadeOutTimeMs = 0.f;                           // fade-out time in milliseconds
 	int total = 0;
-	int id = 0;									// unique sound ID
-	int objId = 0;								// object ID or 0 if none
-	int loopTimes = 0;							//
-	Audio::Mixer::SoundType soundType;			//
+	int id = 0;                        // unique sound ID
+	int objId = 0;                     // object ID or 0 if none
+	int loopTimes = 0;                 //
+	Audio::Mixer::SoundType soundType; //
 };
 
 class AudioSystem {
 public:
-	int play(SoundDefinition* sndDef, Audio::Mixer::SoundType cat, int loopTimes = 0, float fadeInTimeMs = 0.f, float volume = 1.f, int objId = 0);
+	int play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::SoundType cat, int loopTimes = 0, float fadeInTimeMs = 0.f, float volume = 1.f, int objId = 0);
 
 	bool playing(int id) const;
-	bool playing(SoundDefinition* soundDef) const;
+	bool playing(Common::SharedPtr<SoundDefinition> soundDef) const;
 
 	void fadeOut(int id, float fadeTime);
 	void stop(int id);
@@ -105,13 +105,13 @@ public:
 
 	void update(float elapsed);
 
-	Common::Array<SoundDefinition*> _soundDefs;
+	Common::Array<Common::SharedPtr<SoundDefinition> > _soundDefs;
 	AudioSlot _slots[32];
-	SoundDefinition* _soundHover = nullptr;	// not used yet, should be used in the GUI
+	Common::SharedPtr<SoundDefinition> _soundHover; // not used yet, should be used in the GUI
 
 private:
-	void updateVolume(AudioSlot* slot);
-	AudioSlot* getFreeSlot();
+	void updateVolume(AudioSlot *slot);
+	AudioSlot *getFreeSlot();
 
 private:
 	float _masterVolume = 1.f;

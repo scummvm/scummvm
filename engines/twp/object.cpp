@@ -225,7 +225,7 @@ void Object::trig(const Common::String &name) {
 	} else {
 		int id = 0;
 		sqgetf(sqrootTbl(g_engine->getVm()), name.substr(1), id);
-		SoundDefinition *sound = sqsounddef(id);
+		Common::SharedPtr<SoundDefinition> sound = sqsounddef(id);
 		if (!sound)
 			warning("Cannot trig sound '%s', sound not found (id=%d, %s)", name.c_str(), id, _key.c_str());
 		else
