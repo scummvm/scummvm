@@ -87,8 +87,7 @@ void msseek(struct memstream *ms, unsigned int offset);
 void msclose(struct memstream *ms);
 void *memmem(void *l, size_t l_len, const void *s, size_t s_len);
 
-void reverse(unsigned char *s, size_t length)
-{
+void reverse(unsigned char *s, size_t length) {
     size_t i, j;
     unsigned char c;
 
@@ -103,8 +102,7 @@ void reverse(unsigned char *s, size_t length)
 }
 
 /* buf is already reversed, because EXEPACK use backward processing */
-void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int *unpacked_data_size, unsigned int packed_data_len)
-{
+void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int *unpacked_data_size, unsigned int packed_data_len) {
     unsigned char opcode;
     unsigned short count;
     unsigned char fillbyte;
@@ -159,8 +157,7 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
     *unpacked_data_size = cur_unpacked_data_size;
 }
 
-unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, struct exepack_header *eh, unsigned int *reloc_table_size)
-{
+unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, struct exepack_header *eh, unsigned int *reloc_table_size) {
     unsigned int exepack_offset = 0x00;
     unsigned int reloc_length;
     int nb_reloc;
@@ -209,8 +206,7 @@ unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, s
     return buf_reloc;
 }
 
-Common::MemoryReadStream *writeExe(struct dos_header *dh, unsigned char *unpacked_data, unsigned int unpacked_data_size, unsigned char *reloc, size_t reloc_size, size_t padding)
-{
+Common::MemoryReadStream *writeExe(struct dos_header *dh, unsigned char *unpacked_data, unsigned int unpacked_data_size, unsigned char *reloc, size_t reloc_size, size_t padding) {
     Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::NO);
 
     buf.write(dh, sizeof (struct dos_header));
@@ -222,8 +218,7 @@ Common::MemoryReadStream *writeExe(struct dos_header *dh, unsigned char *unpacke
 	return (new Common::MemoryReadStream(buf.getData(), buf.size()));
 }
 
-Common::MemoryReadStream *craftexec(struct dos_header *dh, struct exepack_header *eh, unsigned char *unpacked_data, unsigned int unpacked_data_size, unsigned char *reloc, unsigned int reloc_size)
-{
+Common::MemoryReadStream *craftexec(struct dos_header *dh, struct exepack_header *eh, unsigned char *unpacked_data, unsigned int unpacked_data_size, unsigned char *reloc, unsigned int reloc_size) {
     struct dos_header dhead;
     int header_size;
     int total_length;
@@ -250,8 +245,7 @@ Common::MemoryReadStream *craftexec(struct dos_header *dh, struct exepack_header
     return writeExe(&dhead, unpacked_data, unpacked_data_size, reloc, reloc_size, padding_length);
 }
 
-Common::MemoryReadStream *unpack(struct memstream *ms)
-{
+Common::MemoryReadStream *unpack(struct memstream *ms) {
     struct dos_header dh;
     struct exepack_header eh;
     unsigned int exepack_offset = 0x00;
@@ -300,8 +294,7 @@ Common::MemoryReadStream *unpack(struct memstream *ms)
 	return ret;
 }
 
-void *memmem(void *l, size_t l_len, const void *s, size_t s_len)
-{
+void *memmem(void *l, size_t l_len, const void *s, size_t s_len) {
     register char *cur, *last;
     char *cl = (char *)l;
     const char *cs = (const char *)s;
@@ -324,8 +317,7 @@ void *memmem(void *l, size_t l_len, const void *s, size_t s_len)
     return NULL;
 }
 
-void msopen(Common::File &file, struct memstream *ms)
-{
+void msopen(Common::File &file, struct memstream *ms) {
     assert(ms);
 
     ms->buf = (unsigned char*)malloc(sizeof (char) * file.size());
@@ -336,8 +328,7 @@ void msopen(Common::File &file, struct memstream *ms)
     ms->length = file.size();
 }
 
-unsigned int msread(struct memstream *ms, void *buf, unsigned int count)
-{
+unsigned int msread(struct memstream *ms, void *buf, unsigned int count) {
     unsigned int length;
 
     if (buf == NULL) {
@@ -359,8 +350,7 @@ unsigned int msread(struct memstream *ms, void *buf, unsigned int count)
     return length;
 }
 
-int mscanread(struct memstream *ms, unsigned int count)
-{
+int mscanread(struct memstream *ms, unsigned int count) {
     if (ms->pos > ms->length) {
         return 0;
     }
@@ -370,24 +360,21 @@ int mscanread(struct memstream *ms, unsigned int count)
     return 1;
 }
 
-unsigned int msgetavailable(struct memstream *ms)
-{
+unsigned int msgetavailable(struct memstream *ms) {
     if (ms->pos > ms->length) {
         return 0;
     }
     return ms->length - ms->pos;
 }
 
-void msseek(struct memstream *ms, unsigned int offset)
-{
+void msseek(struct memstream *ms, unsigned int offset) {
     if (offset > ms->length) {
         debug("invalid seek : 0x%X", offset);
     }
     ms->pos = offset;
 }
 
-void msclose(struct memstream *ms)
-{
+void msclose(struct memstream *ms) {
     if (ms != NULL) {
         if (ms->buf != NULL) {
             free(ms->buf);
@@ -396,8 +383,7 @@ void msclose(struct memstream *ms)
     }
 }
 
-int test_dos_header(struct memstream *ms)
-{
+int test_dos_header(struct memstream *ms) {
     struct dos_header dh;
 
     if (ms == NULL) {
