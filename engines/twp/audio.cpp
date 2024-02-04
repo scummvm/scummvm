@@ -36,7 +36,7 @@
 
 namespace Twp {
 
-void SoundStream::open(SoundDefinition *sndDef) {
+void SoundStream::open(Common::SharedPtr<SoundDefinition> sndDef) {
 	sndDef->load();
 	_stream.open(sndDef->_buffer.data(), sndDef->_buffer.size());
 }
@@ -90,7 +90,7 @@ bool AudioSystem::playing(int id) const {
 	return g_engine->_mixer->isSoundIDActive(id);
 }
 
-bool AudioSystem::playing(SoundDefinition *soundDef) const {
+bool AudioSystem::playing(Common::SharedPtr<SoundDefinition> soundDef) const {
 	for (int i = 0; i < 32; i++) {
 		if (_slots[i].busy && _slots[i].sndDef == soundDef) {
 			return g_engine->_mixer->isSoundHandleActive(_slots[i].handle);
@@ -240,7 +240,7 @@ AudioSlot *AudioSystem::getFreeSlot() {
 	return nullptr;
 }
 
-int AudioSystem::play(SoundDefinition *sndDef, Audio::Mixer::SoundType cat, int loopTimes, float fadeInTimeMs, float volume, int objId) {
+int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::SoundType cat, int loopTimes, float fadeInTimeMs, float volume, int objId) {
 	AudioSlot *slot = getFreeSlot();
 	if (!slot)
 		return 0;

@@ -32,7 +32,7 @@ namespace Twp {
 
 class SoundTrigger : public Trigger {
 public:
-	SoundTrigger(const Common::Array<SoundDefinition *> sounds, int objId) : _sounds(sounds), _objId(objId) {}
+	SoundTrigger(const Common::Array<Common::SharedPtr<SoundDefinition> > sounds, int objId) : _sounds(sounds), _objId(objId) {}
 	virtual ~SoundTrigger() {}
 
 	virtual void trig() override {
@@ -41,7 +41,7 @@ public:
 	}
 
 private:
-	const Common::Array<SoundDefinition *> _sounds;
+	const Common::Array<Common::SharedPtr<SoundDefinition> > _sounds;
 	int _objId;
 };
 
@@ -62,7 +62,7 @@ static SQInteger actorSound(HSQUIRRELVM v) {
 		if ((numSounds == 1) && (SQ_SUCCEEDED(sqget(v, 4, tmp))) && (tmp == 0)) {
 			obj->_triggers.erase(trigNum);
 		} else {
-			Common::Array<SoundDefinition *> sounds;
+			Common::Array<Common::SharedPtr<SoundDefinition> > sounds;
 			if (sq_gettype(v, 4) == OT_ARRAY) {
 				if (SQ_FAILED(sqgetarray(v, 4, sounds)))
 					return sq_throwerror(v, "failed to get sounds");
@@ -73,7 +73,7 @@ static SQInteger actorSound(HSQUIRRELVM v) {
 				}
 			}
 
-			Trigger *trigger = new SoundTrigger(sounds, obj->getId());
+			Common::SharedPtr<Trigger> trigger(new SoundTrigger(sounds, obj->getId()));
 			obj->_triggers[trigNum] = trigger;
 		}
 	}
@@ -89,7 +89,7 @@ static SQInteger defineSound(HSQUIRRELVM v) {
 	Common::String filename;
 	if (SQ_FAILED(sqget(v, 2, filename)))
 		return sq_throwerror(v, "failed to get filename");
-	SoundDefinition *sound = new SoundDefinition(filename);
+	Common::SharedPtr<SoundDefinition> sound(new SoundDefinition(filename));
 	g_engine->_audio._soundDefs.push_back(sound);
 	debugC(kDebugSndScript, "defineSound(%s)-> %d", filename.c_str(), sound->getId());
 	sqpush(v, sound->getId());
@@ -124,7 +124,7 @@ static SQInteger isSoundPlaying(HSQUIRRELVM v) {
 
 static SQInteger playObjectSound(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	SoundDefinition *soundDef = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> soundDef = sqsounddef(v, 2);
 	if (!soundDef)
 		return sq_throwerror(v, "failed to get sound");
 
@@ -156,7 +156,7 @@ static SQInteger playObjectSound(HSQUIRRELVM v) {
 // objectState(quickiePalFlickerLight, ON)
 // _flourescentSoundID = playSound(soundFlourescentOn)
 static SQInteger playSound(HSQUIRRELVM v) {
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound) {
 		int soundId = 0;
 		sqget(v, 2, soundId);
@@ -180,7 +180,7 @@ static SQInteger playSound(HSQUIRRELVM v) {
 //     }
 // }
 static SQInteger playSoundVolume(HSQUIRRELVM v) {
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get sound");
 	int soundId = g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
@@ -189,7 +189,7 @@ static SQInteger playSoundVolume(HSQUIRRELVM v) {
 }
 
 static SQInteger loadSound(HSQUIRRELVM v) {
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get sound");
 	sound->load();
@@ -212,7 +212,7 @@ static SQInteger loopMusic(HSQUIRRELVM v) {
 	int loopTimes = -1;
 	float fadeInTime = 0.f;
 	SQInteger numArgs = sq_gettop(v);
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get music");
 	if (numArgs == 3) {
@@ -230,7 +230,7 @@ static SQInteger loopObjectSound(HSQUIRRELVM v) {
 	int loopTimes = -1;
 	float fadeInTime = 0.f;
 	SQInteger numArgs = sq_gettop(v);
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get music");
 	Common::SharedPtr<Object> obj = sqobj(v, 3);
@@ -273,7 +273,7 @@ static SQInteger loopSound(HSQUIRRELVM v) {
 	int loopTimes = -1;
 	float fadeInTime = 0.f;
 	SQInteger numArgs = sq_gettop(v);
-	SoundDefinition *sound = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get music");
 	if (numArgs == 3) {
@@ -325,7 +325,7 @@ static SQInteger musicMixVolume(HSQUIRRELVM v) {
 }
 
 static SQInteger playMusic(HSQUIRRELVM v) {
-	SoundDefinition *soundDef = sqsounddef(v, 2);
+	Common::SharedPtr<SoundDefinition> soundDef = sqsounddef(v, 2);
 	if (!soundDef)
 		return sq_throwerror(v, "failed to get music");
 	int soundId = g_engine->_audio.play(soundDef, Audio::Mixer::SoundType::kMusicSoundType);

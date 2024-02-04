@@ -531,7 +531,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		warning("TODO: exCommand EX_CAMERA_TRACKING: not implemented");
 		break;
 	case EX_BUTTON_HOVER_SOUND: {
-		SoundDefinition* sound = sqsounddef(v, 3);
+		Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 3);
 		if (!sound)
 			return sq_throwerror(v, "failed to get sound for EX_BUTTON_HOVER_SOUND");
 		g_engine->_audio._soundHover = sound;

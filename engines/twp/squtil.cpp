@@ -346,16 +346,16 @@ Common::SharedPtr<Object> sqactor(HSQUIRRELVM v, int i) {
 	return nullptr;
 }
 
-SoundDefinition *sqsounddef(int id) {
+Common::SharedPtr<SoundDefinition> sqsounddef(int id) {
 	for (size_t i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
-		SoundDefinition *sound = g_engine->_audio._soundDefs[i];
+		Common::SharedPtr<SoundDefinition> sound = g_engine->_audio._soundDefs[i];
 		if (sound->getId() == id)
 			return sound;
 	}
 	return nullptr;
 }
 
-SoundDefinition *sqsounddef(HSQUIRRELVM v, int i) {
+Common::SharedPtr<SoundDefinition> sqsounddef(HSQUIRRELVM v, int i) {
 	int id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqsounddef(id);
@@ -462,7 +462,7 @@ Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v) {
 	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), GetThread(v));
 }
 
-static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<SoundDefinition *> &arr) {
+static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<Common::SharedPtr<SoundDefinition> > &arr) {
 	sq_pushobject(v, o);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
@@ -472,7 +472,7 @@ static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<SoundDefinition
 	sq_pop(v, 1);
 }
 
-SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<SoundDefinition *> &arr) {
+SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundDefinition> > &arr) {
 	HSQOBJECT obj;
 	SQRESULT result = sq_getstackobj(v, i, &obj);
 	sqgetarray(v, obj, arr);
