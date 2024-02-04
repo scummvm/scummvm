@@ -45,7 +45,7 @@ public:
 public:
 	bool _isValid = false;
 	Text _text;
-	YStatement *_stmt = nullptr;
+	Common::SharedPtr<YStatement> _stmt = nullptr;
 	Dialog *_dlg = nullptr;
 };
 
@@ -194,15 +194,15 @@ public:
 
 private:
 	void choose(DialogSlot* slot);
-	YLabel *label(int line, const Common::String &name) const;
+	Common::SharedPtr<YLabel> label(int line, const Common::String &name) const;
 	void gotoNextLabel();
 	bool choicesReady() const { return numSlots() > 0; }
 	void updateChoiceStates();
-	void run(YStatement *stmt);
-	bool acceptConditions(YStatement *stmt);
+	void run(Common::SharedPtr<YStatement> stmt);
+	bool acceptConditions(Common::SharedPtr<YStatement> stmt);
 	void running(float dt);
 
-	void addSlot(YStatement *stmt);
+	void addSlot(Common::SharedPtr<YStatement> stmt);
 	int numSlots() const;
 	void clearSlots();
 
@@ -218,7 +218,7 @@ private:
 	DialogState _state = DialogState::None;
     size_t _currentStatement = 0;
 	unique_ptr<YCompilationUnit> _cu;
-	YLabel *_lbl = nullptr;
+	Common::SharedPtr<YLabel> _lbl;
 	DialogSlot _slots[MAXDIALOGSLOTS];
 	Math::Vector2d _mousePos;
 };

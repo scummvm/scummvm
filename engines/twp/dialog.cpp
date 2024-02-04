@@ -198,7 +198,7 @@ void Dialog::choose(DialogSlot *slot) {
 	if (slot && slot->_isValid) {
 		sqcall("onChoiceClick");
 		for (size_t i = 0; i < slot->_stmt->_conds.size(); i++) {
-			YCond *cond = slot->_stmt->_conds[i];
+			Common::SharedPtr<YCond> cond = slot->_stmt->_conds[i];
 			CondStateVisitor v(slot->_dlg, DialogSelMode::Choose);
 			cond->accept(v);
 		}
@@ -321,16 +321,16 @@ bool Dialog::isCond(const Common::String &cond) const {
 	return result;
 }
 
-YLabel *Dialog::label(int line, const Common::String &name) const {
+Common::SharedPtr<YLabel> Dialog::label(int line, const Common::String &name) const {
 	for (size_t i = 0; i < _cu->_labels.size(); i++) {
-		YLabel *label = _cu->_labels[i];
+		Common::SharedPtr<YLabel> label = _cu->_labels[i];
 		if ((label->_name == name) && (label->_line >= line)) {
 			return label;
 		}
 	}
 	line = 0;
 	for (size_t i = 0; i < _cu->_labels.size(); i++) {
-		YLabel *label = _cu->_labels[i];
+		Common::SharedPtr<YLabel> label = _cu->_labels[i];
 		if ((label->_name == name) && (label->_line >= line)) {
 			return label;
 		}
@@ -350,7 +350,7 @@ void Dialog::gotoNextLabel() {
 	if (_lbl) {
         size_t i = Twp::find(_cu->_labels, _lbl);
 		if ((i != (size_t)-1) && (i != _cu->_labels.size() - 1)) {
-			YLabel *label = _cu->_labels[i + 1];
+			Common::SharedPtr<YLabel> label = _cu->_labels[i + 1];
 			selectLabel(label->_line, label->_name);
 		} else {
 			_state = None;
@@ -364,7 +364,7 @@ void Dialog::updateChoiceStates() {
 		DialogSlot *slot = &_slots[i];
 		if (slot->_isValid) {
 			for (size_t j = 0; j < slot->_stmt->_conds.size(); j++) {
-				YCond *cond = slot->_stmt->_conds[j];
+				Common::SharedPtr<YCond> cond = slot->_stmt->_conds[j];
 				CondStateVisitor v(this, DialogSelMode::Show);
 				cond->accept(v);
 			}
@@ -372,7 +372,7 @@ void Dialog::updateChoiceStates() {
 	}
 }
 
-void Dialog::run(YStatement *stmt) {
+void Dialog::run(Common::SharedPtr<YStatement> stmt) {
 	if (acceptConditions(stmt)) {
 		ExpVisitor visitor(this);
 		stmt->_exp->accept(visitor);
@@ -384,10 +384,10 @@ void Dialog::run(YStatement *stmt) {
 	_currentStatement++;
 }
 
-bool Dialog::acceptConditions(YStatement *stmt) {
+bool Dialog::acceptConditions(Common::SharedPtr<YStatement> stmt) {
 	CondVisitor vis(this);
 	for (size_t i = 0; i < stmt->_conds.size(); i++) {
-		YCond *cond = stmt->_conds[i];
+		Common::SharedPtr<YCond> cond = stmt->_conds[i];
 		cond->accept(vis);
 		if (!vis._accepted) {
 			return false;
@@ -405,7 +405,7 @@ void Dialog::running(float dt) {
 	else {
 		_state = Active;
 		while (_lbl && (_currentStatement < _lbl->_stmts.size()) && (_state == Active)) {
-			YStatement *statmt = _lbl->_stmts[_currentStatement];
+			Common::SharedPtr<YStatement> statmt = _lbl->_stmts[_currentStatement];
 			IsChoice isChoice;
 			statmt->_exp->accept(isChoice);
 			if (!acceptConditions(statmt))
@@ -438,7 +438,7 @@ static Common::String text(const Common::String &txt) {
 	return result;
 }
 
-void Dialog::addSlot(YStatement *stmt) {
+void Dialog::addSlot(Common::SharedPtr<YStatement> stmt) {
 	YChoice *choice = (YChoice *)stmt->_exp.get();
 	if ((!_slots[choice->_number - 1]._isValid) && (numSlots() < _context.limit)) {
 		DialogSlot *slot = &_slots[choice->_number - 1];
