@@ -282,8 +282,8 @@ static uint minIndex(const Common::Array<float> &values) {
 	return index;
 }
 
-Graph *PathFinder::createGraph() {
-	Graph *result = new Graph();
+Common::SharedPtr<Graph> PathFinder::createGraph() {
+	Common::SharedPtr<Graph> result(new Graph());
 	for (uint i = 0; i < _walkboxes.size(); i++) {
 		const Walkbox &walkbox = _walkboxes[i];
 		if (walkbox.getPoints().size() > 2) {

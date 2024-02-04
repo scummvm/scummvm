@@ -83,14 +83,16 @@ void ResManager::loadFont(const Common::String &name) {
 	if (name == "sayline") {
 		debugC(kDebugRes, "Load font %s", name.c_str());
 		Common::String resName = ConfMan.getBool("retroFonts") ? "FontRetroSheet": "FontModernSheet";
-		_fontModernSheet.load(resName);
-		_fonts[name] = &_fontModernSheet;
+		Common::SharedPtr<GGFont> fontModernSheet(new GGFont());
+		fontModernSheet->load(resName);
+		_fonts[name] = fontModernSheet;
 	} else if (name == "C64Font") {
 		debugC(kDebugRes, "Load font %s", name.c_str());
-		_fontC64TermSheet.load("FontC64TermSheet");
-		_fonts[name] = &_fontC64TermSheet;
+		Common::SharedPtr<GGFont> fontC64TermSheet(new GGFont());
+		fontC64TermSheet->load("FontC64TermSheet");
+		_fonts[name] = fontC64TermSheet;
 	} else {
-		BmFont* font = new BmFont();
+		Common::SharedPtr<BmFont> font(new BmFont());
 		font->load(name);
 		_fonts[name] = font;
 	}
@@ -104,7 +106,7 @@ SpriteSheet *ResManager::spriteSheet(const Common::String &name) {
 	return &_spriteSheets[key];
 }
 
-Font *ResManager::font(const Common::String &name) {
+Common::SharedPtr<Font> ResManager::font(const Common::String &name) {
 	Common::String key = getKey(name.c_str());
 	if (!_fonts.contains(key)) {
 		loadFont(key.c_str());

@@ -709,7 +709,7 @@ Common::Error TwpEngine::run() {
 	_sepiaShader.init("sepia", vsrc, sepiaShader);
 	_fadeShader.reset(new FadeShader());
 
-	_lighting = new Lighting();
+	_lighting = Common::SharedPtr<Lighting>(new Lighting());
 
 	_pack.init();
 
@@ -1068,11 +1068,11 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	Common::SharedPtr<Room> result;
 	if (name == "Void") {
 		result.reset(new Room(name, table));
-		result->_scene = new Scene();
+		result->_scene = Common::SharedPtr<Scene>(new Scene());
 		Common::SharedPtr<Layer> layer(new Layer("background", Math::Vector2d(1.f, 1.f), 0));
-		layer->_node = new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray());
+		layer->_node = Common::SharedPtr<Node>(new ParallaxNode(Math::Vector2d(1.f, 1.f), "", Common::StringArray()));
 		result->_layers.push_back(layer);
-		result->_scene->addChild(layer->_node);
+		result->_scene->addChild(layer->_node.get());
 		sqsetf(sqrootTbl(v), name, result->_table);
 	} else {
 		result.reset(new Room(name, table));
@@ -1086,11 +1086,11 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 		for (size_t i = 0; i < result->_layers.size(); i++) {
 			Common::SharedPtr<Layer> layer = result->_layers[i];
 			// create layer node
-			ParallaxNode *layerNode = new ParallaxNode(layer->_parallax, result->_sheet, layer->_names);
+			Common::SharedPtr<ParallaxNode> layerNode(new ParallaxNode(layer->_parallax, result->_sheet, layer->_names));
 			layerNode->setZSort(layer->_zsort);
 			layerNode->setName(Common::String::format("Layer %s(%d)", layer->_names[0].c_str(), layer->_zsort));
 			layer->_node = layerNode;
-			result->_scene->addChild(layerNode);
+			result->_scene->addChild(layerNode.get());
 
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Common::SharedPtr<Object> obj = layer->_objects[j];
@@ -1166,7 +1166,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 		_room->_scene->remove();
 	_room = room;
 	room->_effect = RoomEffect::None;
-	_scene.addChild(_room->_scene);
+	_scene.addChild(_room->_scene.get());
 	_room->_lights._numLights = 0;
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
@@ -1554,10 +1554,10 @@ void TwpEngine::callTrigger(Common::SharedPtr<Object> obj, HSQOBJECT trigger) {
 			args.push_back(_actor->_table);
 		}
 
-		Thread *thread = new Thread("Trigger", false, threadObj, obj->_table, trigger, args);
+		Common::SharedPtr<Thread> thread(new Thread("Trigger", false, threadObj, obj->_table, trigger, args));
 
 		debugC(kDebugGame, "create triggerthread id: %d}", thread->getId());
-		g_engine->_threads.push_back(Common::SharedPtr<ThreadBase>(thread));
+		g_engine->_threads.push_back(thread);
 
 		// call the closure in the thread
 		if (!thread->call()) {
