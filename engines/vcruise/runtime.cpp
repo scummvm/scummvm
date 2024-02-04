@@ -4360,7 +4360,7 @@ void Runtime::loadTabData(Common::HashMap<int, AnimFrameRange> &animIDToFrameRan
 }
 
 void Runtime::changeMusicTrack(int track) {
-	if (track == _musicTrack && _musicWavePlayer.get() != nullptr && _musicMidiPlayer.get() != nullptr)
+	if (track == _musicTrack && (_musicWavePlayer.get() != nullptr || _musicMidiPlayer.get() != nullptr))
 		return;
 
 	_musicWavePlayer.reset();
@@ -4379,9 +4379,12 @@ void Runtime::changeMusicTrack(int track) {
 
 	Common::String musicPathStr;
 
-	if (_gameID == GID_AD2044)
+	if (_gameID == GID_AD2044) {
+		if (!_midiDrv)
+			return;
+
 		musicPathStr = Common::String::format("sfx/music%02i.mid", static_cast<int>(track));
-	else
+	} else
 		musicPathStr = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
 
 	Common::Path musicFileName(musicPathStr);
