@@ -131,7 +131,7 @@ void Room801::init() {
 	player_set_commands_allowed(false);
 	pal_fade_set_start(0);
 	pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
-	_val1 = 10;
+	_wilburMode = 10;
 	digi_preload("800_001");
 
 	if (_G(flags)[GLB_TEMP_5] == 1) {
@@ -544,14 +544,14 @@ void Room801::daemon() {
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:
-		switch (_val1) {
+		switch (_wilburMode) {
 		case 9:
 			switch (_G(wilbur_should)) {
 			case 5:
 			case 6:
 			case 7:
 				_series12 = series_play("804WI04", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0);
-				_val1 = 11;
+				_wilburMode = 11;
 				break;
 
 			default:
@@ -566,7 +566,7 @@ void Room801::daemon() {
 			case 4:
 			case 7:
 				_series12 = series_play("804WI05", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0);
-				_val1 = 11;
+				_wilburMode = 11;
 				break;
 
 			case 5:
@@ -593,13 +593,13 @@ void Room801::daemon() {
 			switch (_G(wilbur_should)) {
 			case 4:
 				_series12 = series_play("804WI04", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0);
-				_val1 = 9;
+				_wilburMode = 9;
 				break;
 
 			case 5:
 			case 6:
 				_series12 = series_play("804WI05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0);
-				_val1 = 10;
+				_wilburMode = 10;
 				break;
 
 			case 7:
