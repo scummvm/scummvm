@@ -776,6 +776,9 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (debugChannelSet(-1, kDebugFast))
 			frameRate = 30;
 
+		if (g_director->_fpsLimit)
+			frameRate = MIN((int)g_director->_fpsLimit, frameRate);
+
 		int frameDelay = 1000 / 60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
 		if (_vm->getVersion() >= 500)
@@ -939,6 +942,10 @@ void Score::renderPaletteCycle(RenderMode mode) {
 	if (speed == 0)
 		return;
 
+	// Apply the global FPS limit if required
+	if (g_director->_fpsLimit)
+		speed = MIN((int)g_director->_fpsLimit, speed);
+
 	if (debugChannelSet(-1, kDebugFast))
 		speed = 30;
 
@@ -963,7 +970,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 
 			// Do a full color cycle in one frame transition
 			int steps = lastColor - firstColor + 1;
-			debugC(2, kDebugImages, "Score::renderPaletteCycle(): color cycle palette %s, from colors %d to %d, over %d steps %d times", currentPalette.asString().c_str(), firstColor, lastColor, steps, _currentFrame->_mainChannels.palette.cycleCount);
+			debugC(2, kDebugImages, "Score::renderPaletteCycle(): color cycle palette %s, from colors %d to %d, over %d steps %d times (delay: %d ms)", currentPalette.asString().c_str(), firstColor, lastColor, steps, _currentFrame->_mainChannels.palette.cycleCount, delay);
 			for (int i = 0; i < _currentFrame->_mainChannels.palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
 					uint32 startTime = g_system->getMillis();
@@ -1095,6 +1102,9 @@ void Score::renderPaletteCycle(RenderMode mode) {
 
 				if (debugChannelSet(-1, kDebugFast))
 					frameRate = 30;
+
+				if (g_director->_fpsLimit)
+					frameRate = MIN((int)g_director->_fpsLimit, frameRate);
 
 				int frameDelay = 1000 / 60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
