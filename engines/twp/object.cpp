@@ -68,7 +68,7 @@ public:
 	}
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _obj;
 	BlinkState _state = BlinkState::Closed;
 	float _min = 0.f;
 	float _max = 0.f;

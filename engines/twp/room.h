@@ -97,7 +97,7 @@ struct Lights {
 struct ScalingTrigger {
 	ScalingTrigger(Common::SharedPtr<Object>  obj, Scaling* scaling);
 
-	Common::SharedPtr<Object>  _obj = nullptr;
+	Common::SharedPtr<Object>  _obj;
 	Scaling* _scaling = nullptr;
 };
 
@@ -150,8 +150,8 @@ public:
 	Common::SharedPtr<Scene> _scene;
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect = RoomEffect::None;
-	Motor* _overlayTo = nullptr;
-	Motor* _rotateTo = nullptr;
+	Common::SharedPtr<Motor> _overlayTo;
+	Common::SharedPtr<Motor> _rotateTo;
 	float _rotation = 0.f;
 	PathFinder _pathFinder;
 };

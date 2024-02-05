@@ -197,7 +197,7 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	Common::SharedPtr<Object> obj = nullptr;
+	Common::SharedPtr<Object> obj;
 	if (sq_gettop(v) == 3)
 		obj = sqobj(v, 3);
 	if (!obj)
@@ -562,7 +562,7 @@ static SQInteger actorTalkColors(HSQUIRRELVM v) {
 // actorTalking()
 // actorTalking(vo)
 static SQInteger actorTalking(HSQUIRRELVM v) {
-	Common::SharedPtr<Object> actor = nullptr;
+	Common::SharedPtr<Object> actor;
 	if (sq_gettop(v) == 2) {
 		actor = sqobj(v, 2);
 		if (!actor) {
@@ -708,7 +708,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 //}
 static SQInteger actorWalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	Common::SharedPtr<Object> actor = nullptr;
+	Common::SharedPtr<Object> actor;
 	if (nArgs == 1) {
 		actor = g_engine->_actor;
 	} else if (nArgs == 2) {

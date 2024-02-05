@@ -119,7 +119,7 @@ private:
 	float _elapsed = 0.f;
 	float _time = 0.f;
 	Common::SharedPtr<Room> _room;
-	Common::SharedPtr<Object> _follow = nullptr;
+	Common::SharedPtr<Object> _follow;
 	EasingFunc_t _function = {&linear};
 };
 } // namespace Twp

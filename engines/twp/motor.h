@@ -101,7 +101,7 @@ private:
 	virtual void update(float elasped) override;
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _obj;
 	Tween<Math::Vector2d> _tween;
 };
 
@@ -114,7 +114,7 @@ private:
 	virtual void update(float elasped) override;
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _obj;
 	Tween<Math::Vector2d> _tween;
 };
 
@@ -127,7 +127,7 @@ private:
 	virtual void update(float elasped) override;
 
 private:
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _obj;
 	Tween<float> _tween;
 };
 
@@ -210,8 +210,8 @@ private:
 	void playReachAnim();
 
 private:
-	Common::SharedPtr<Object> _actor = nullptr;
-	Common::SharedPtr<Object> _obj = nullptr;
+	Common::SharedPtr<Object> _actor;
+	Common::SharedPtr<Object> _obj;
 	int _state = 0;
 	float _elapsed = 0.f;
 };
