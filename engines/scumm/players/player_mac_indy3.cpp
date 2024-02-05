@@ -167,7 +167,7 @@ public:
 	I3MMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool isStereo, bool internal16Bit) : I3MSoundDriver(mutex, ASC_DEVICE_RATE, isStereo, false, internal16Bit), _numChan(numChannels) {}
 	virtual void start() = 0;
 	virtual void stop() = 0;
-	virtual void setParameter(ParaType type, ...) = 0;
+	virtual void setParameter(int type, ...) = 0;
 	uint16 numChannels() const { return _numChan; }
 protected:
 	const uint16 _numChan;
@@ -181,7 +181,7 @@ public:
 	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void start() override;
 	void stop() override;
-	void setParameter(ParaType type, ...) override;
+	void setParameter(int type, ...) override;
 
 private:
 	void setWaveForm(uint8 chan, const uint8 *data, uint32 dataSize);
@@ -209,7 +209,7 @@ public:
 	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
 	void start() override;
 	void stop() override;
-	void setParameter(ParaType argType, ...) override;
+	void setParameter(int argType, ...) override;
 private:
 	void pushTriplet(uint16 count, uint16 amplitude, uint16 duration);
 
@@ -869,7 +869,7 @@ void I3MFourToneSynthDriver::stop() {
 	setDuration(0);
 }
 
-void I3MFourToneSynthDriver::setParameter(ParaType type, ...)  {
+void I3MFourToneSynthDriver::setParameter(int type, ...)  {
 	Common::StackLock lock(_mutex);
 	va_list arg;
 	va_start(arg, type);
@@ -930,13 +930,13 @@ void I3MSquareWaveSynthDriver::stop() {
 
 }
 
-void I3MSquareWaveSynthDriver::setParameter(ParaType type, ...)  {
+void I3MSquareWaveSynthDriver::setParameter(int type, ...)  {
 	Common::StackLock lock(_mutex);
 	va_list arg;
 	va_start(arg, type);
 	uint16 a = 0;
 	uint16 b = 0;
-	
+
 	switch (type) {
 	case kSwTriplet:
 		a = (uint16)va_arg(arg, uint);
