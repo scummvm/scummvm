@@ -548,8 +548,8 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 		return 0;
 	}
 
-	Common::SharedPtr<Object> obj1 = nullptr;
-	Common::SharedPtr<Object> obj2 = nullptr;
+	Common::SharedPtr<Object> obj1;
+	Common::SharedPtr<Object> obj2;
 	if (nArgs >= 3) {
 		obj1 = sqobj(v, 3);
 		if (!obj1)

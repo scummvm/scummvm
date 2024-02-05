@@ -73,7 +73,7 @@ private:
 
 struct AudioSlot {
 	Audio::SoundHandle handle;                           // handle returned when this sound has been played
-	Common::SharedPtr<SoundDefinition> sndDef = nullptr; // sound definition associated to this slot
+	Common::SharedPtr<SoundDefinition> sndDef; // sound definition associated to this slot
 	SoundStream stream;                                  // audio stream
 	bool busy = false;                                   // is sound active
 	float volume = 1.f;                                  // actual volume for this slot

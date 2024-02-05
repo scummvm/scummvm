@@ -303,9 +303,10 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	clear();
 	for (size_t i = 0; i < _anim->layers.size(); i++) {
 		const ObjectAnimation &layer = _anim->layers[i];
-		Anim *node = new Anim(_obj);
+		Common::SharedPtr<Anim> node(new Anim(_obj));
+		_anims.push_back(node);
 		node->setAnim(&layer, fps, loop, instant);
-		addChild(node);
+		addChild(node.get());
 	}
 }
 

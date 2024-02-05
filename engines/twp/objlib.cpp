@@ -924,7 +924,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		sqgetf(o, "name", name);
 		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_engine->_textDb.getText(name).c_str()).c_str());
 	}
-	Common::SharedPtr<Object> actor = nullptr;
+	Common::SharedPtr<Object> actor;
 	if (sq_gettop(v) >= 3) {
 		actor = sqactor(v, 3);
 		if (!actor)

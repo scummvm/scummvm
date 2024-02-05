@@ -132,7 +132,7 @@ private:
 	CutsceneState _state;
 	bool _showCursor = false;
 	InputStateFlag _inputState = (InputStateFlag)0;
-	Common::SharedPtr<Object> _actor = nullptr;
+	Common::SharedPtr<Object> _actor;
 };
 
 } // namespace Twp

@@ -489,7 +489,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
 		debugC(kDebugRoomScript, "start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
-		g_engine->_room->_overlayTo = new OverlayTo(duration, room, Color::fromRgba(endColor));
+		g_engine->_room->_overlayTo = Common::SharedPtr<OverlayTo>(new OverlayTo(duration, room, Color::fromRgba(endColor)));
 	}
 	return 0;
 }
@@ -498,7 +498,7 @@ static SQInteger roomRotateTo(HSQUIRRELVM v) {
 	float rotation;
 	if (SQ_FAILED(sqget(v, 2, rotation)))
 		return sq_throwerror(v, "failed to get rotation");
-	g_engine->_room->_rotateTo = new RoomRotateTo(g_engine->_room, rotation);
+	g_engine->_room->_rotateTo = Common::SharedPtr<RoomRotateTo>(new RoomRotateTo(g_engine->_room, rotation));
 	return 0;
 }
 

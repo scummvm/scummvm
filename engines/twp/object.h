@@ -75,8 +75,8 @@ struct VerbId {
 class Object;
 struct Sentence {
 	VerbId verb;
-	Common::SharedPtr<Object> noun1 = nullptr;
-	Common::SharedPtr<Object> noun2 = nullptr;
+	Common::SharedPtr<Object> noun1;
+	Common::SharedPtr<Object> noun2;
 	bool enabled = false;
 };
 

@@ -182,6 +182,7 @@ private:
 	bool _loop = false;
 	bool _instant = false;
 	Object *_obj = nullptr;
+	Common::Array<Common::SharedPtr<Anim> > _anims;
 };
 
 class ActorNode final : public Node {
@@ -192,7 +193,7 @@ public:
 	Math::Vector2d getScale() const override final;
 
 private:
-	Common::SharedPtr<Object> _object = nullptr;
+	Common::SharedPtr<Object> _object;
 };
 
 class TextNode final : public Node {
@@ -309,10 +310,10 @@ private:
 	void drawSprite(SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
 
 private:
-	Common::SharedPtr<Object>  _actor = nullptr;
+	Common::SharedPtr<Object>  _actor;
     Color _backColor, _verbNormal;
     bool _down = false;
-    Common::SharedPtr<Object>  _obj = nullptr;
+    Common::SharedPtr<Object>  _obj;
 	Common::Rect _itemRects[NUMOBJECTS];
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;

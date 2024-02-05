@@ -45,7 +45,7 @@ public:
 public:
 	bool _isValid = false;
 	Text _text;
-	Common::SharedPtr<YStatement> _stmt = nullptr;
+	Common::SharedPtr<YStatement> _stmt;
 	Dialog *_dlg = nullptr;
 };
 

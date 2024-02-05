@@ -66,7 +66,7 @@ public:
 	VerbUiColors verbUiColors;
 	Verb verbs[MAX_VERBS];
 	bool selectable = false;
-	Common::SharedPtr<Object> actor = nullptr;
+	Common::SharedPtr<Object> actor;
 
 public:
 	ActorSlot();
@@ -120,7 +120,7 @@ private:
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];
-	Common::SharedPtr<Object> _actor = nullptr;
+	Common::SharedPtr<Object> _actor;
 	VerbRect _verbRects[NUMVERBS];
 	Verb _verb;
 	HudShader _shader;

@@ -182,12 +182,12 @@ public:
 	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
 	Common::Array<Common::SharedPtr<Task> > _tasks;
 	Common::Array<Common::SharedPtr<Callback> > _callbacks;
-	Common::SharedPtr<Object> _actor = nullptr;
-	Common::SharedPtr<Object> _followActor = nullptr;
+	Common::SharedPtr<Object> _actor;
+	Common::SharedPtr<Object> _followActor;
 	Common::SharedPtr<Room> _room;
 	float _time = 0.f;
-	Common::SharedPtr<Object> _noun1 = nullptr;
-	Common::SharedPtr<Object> _noun2 = nullptr;
+	Common::SharedPtr<Object> _noun1;
+	Common::SharedPtr<Object> _noun2;
 	UseFlag _useFlag;
 	HSQOBJECT _defaultObj;
 	bool _walkFastState = false;
