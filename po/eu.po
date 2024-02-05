@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-01-25 07:54+0000\n"
-"PO-Revision-Date: 2024-01-31 17:42+0000\n"
+"PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -2618,16 +2618,17 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"Probatarako patroia ikusi behar zenuke.\n"
+"Shader eskala hau mantendu nahi duzu?"
 
 #: gui/options.cpp:3820
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Automatikoki leheneratzen %d segundotan"
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
 msgid "Enter Text"
-msgstr "Sartu"
+msgstr "Idatzi Testua"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -2702,24 +2703,21 @@ msgid "Unknown Author"
 msgstr "Egile ezezaguna"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
+msgstr "ScummVM-k ezin izan du direktorioa ireki!"
 
 #: gui/saveload-dialog.cpp:56
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Jokoa kargatzen..."
+msgstr "Gordetakoak deskargatzen..."
 
 #: gui/saveload-dialog.cpp:65
-#, fuzzy
 msgid "Run in background"
-msgstr "Aurrera mugitu"
+msgstr "Atzealdean exekutatu"
 
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s fitxategi)"
 
 #: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
@@ -2750,7 +2748,6 @@ msgid "Playtime: "
 msgstr "Denbora: "
 
 #: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:766
-#, fuzzy
 msgid "Untitled saved game"
 msgstr "Titulurik gabeko joko gordea"
 
@@ -2773,20 +2770,19 @@ msgstr "Sartu deskribapena %d zirrikiturako:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Aukeratu beheko zerrendako shader bat (edo aukeratu fitxategia)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Aukeratu fitxategia..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Aukeratu shader-a fitxategi sistematik"
 
 #: gui/shaderbrowser-dialog.cpp:137
-#, fuzzy
 msgid "Select shader"
-msgstr "Gaia aukeratu"
+msgstr "Aukeratu shader-a"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -2802,7 +2798,6 @@ msgid "Disabled GFX"
 msgstr "GFX desgaituta"
 
 #: gui/ThemeEngine.cpp:271
-#, fuzzy
 msgid "Standard renderer"
 msgstr "Errendatzaile estandarra"
 
@@ -2811,7 +2806,6 @@ msgid "Standard"
 msgstr "Estandarra"
 
 #: gui/ThemeEngine.cpp:273
-#, fuzzy
 msgid "Antialiased renderer"
 msgstr "Errendatzaile lausotua"
 
@@ -2820,37 +2814,35 @@ msgid "Antialiased"
 msgstr "Lausotua"
 
 #: gui/unknown-game-dialog.cpp:48
-#, fuzzy
 msgid "Add anyway"
-msgstr "Jolastu berdin-berdin"
+msgstr "Gehitu hala ere"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopiatu arbelera"
 
 #: gui/unknown-game-dialog.cpp:63
-#, fuzzy
 msgid "Report game"
-msgstr "Jokoa kargatu:"
+msgstr "Salatu jokoa"
 
 #: gui/unknown-game-dialog.cpp:100
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "Erabili azpiko botoia beharrezko informazioa zure arbelean kopiatzeko."
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Zuzenean salatu dezakezu jokoa Bug Tracker-ean."
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Jokoari buruzko beharrezko informazio guztia arbelean kopiatu da"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Jokoaren informazioa arblean kopiatzean huts egin da!"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2858,12 +2850,17 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"ScummVM-ko orain automatikoki egiaztatzen ditu eguneraketak,\n"
+"internetera sarbidea beharrezkoa da. Aukera hau\n"
+"aktibatu nahi al duzu?"
 
 #: gui/updates-dialog.cpp:51
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Aukera aurrerago alda dezakezu Aukeren leihoko\n"
+"Bestelakoak fitxan."
 
 #: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:455 gui/widget.cpp:457
 msgid "Clear value"
@@ -2874,13 +2871,12 @@ msgid "Play"
 msgstr "Jolastu"
 
 #: gui/widgets/grid.cpp:283
-#, fuzzy
 msgid "Saves"
-msgstr "Gorde"
+msgstr "Gordeak"
 
 #: base/main.cpp:603
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Konfigurazio fitxategiaren formatu okerra. gainidatzi?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
@@ -2905,6 +2901,25 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"In this new version of ScummVM for Android, significant changes were made to "
+"the file access system to allow support for modern versions of the Android "
+"Operating System.\n"
+"If you find that your existing added games or custom paths no longer work, "
+"please edit those paths:\n"
+"  1. From the Launcher, go to **Game Options > Paths**. Select **Game Path** "
+"or **Extra Path**, as appropriate. \n"
+"  2. Inside the ScummVM file browser, select **Go Up** until you reach the "
+"root folder which has the **<Add a new folder>** option.\n"
+"  3. Double-tap **<Add a new folder>**. In your device's file browser, "
+"navigate to the folder containing all your game folders. For example, **SD "
+"Card > ScummVMgames** \n"
+"  4. Select **Use this folder**. \n"
+"  5. Select **Allow** to give ScummVM permission to access the folder. \n"
+"  6. In the ScummVM file browser, double-tap to browse through your added "
+"folder. Select the folder containing the game's files, then tap **Choose**. "
+"\n"
+"\n"
+"Repeat steps 1 and 6 for each game."
 
 #: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1269
@@ -2917,7 +2932,7 @@ msgstr "Ados"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:672 base/main.cpp:697
 msgid "Read Later"
-msgstr ""
+msgstr "Irakurri beranduago"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
@@ -2940,6 +2955,23 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"In this new version of ScummVM for Android, significant changes were made to "
+"the file access system to allow support for modern versions of the Android "
+"Operating System.\n"
+"To add a game:\n"
+"\n"
+"  1. Select **Add Game...** from the launcher. \n"
+"  2. Inside the ScummVM file browser, select **Go Up** until you reach the "
+"root folder which has the **<Add a new folder>** option.\n"
+"  3. Double-tap **<Add a new folder>**. In your device's file browser, "
+"navigate to the folder containing all your game folders. For example, **SD "
+"Card > ScummVMgames** \n"
+"  4. Select **Use this folder**. \n"
+"  5. Select **Allow** to give ScummVM permission to access the folder. \n"
+"  6. In the ScummVM file browser, double-tap to browse through your added "
+"folder. Select the sub-folder containing the game's files, then tap "
+"**Choose**.\n"
+"Repeat steps 1 and 6 for each game."
 
 #: base/main.cpp:829
 msgid "Error running game:"
@@ -2967,7 +2999,7 @@ msgstr "Kolore modu ez-onartua"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Audio gailuaren hasiertzean huts egin da"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
@@ -3006,7 +3038,6 @@ msgid "Could not find suitable engine plugin"
 msgstr "Ezin izan da motore-plugin egokirik aurkitu"
 
 #: common/error.cpp:69
-#, fuzzy
 msgid "Engine plugin does not support saved games"
 msgstr "Motore-pluginak ez ditu gordetako partidak onartzen"
 
@@ -3039,7 +3070,7 @@ msgstr "PC-9801 (16 kolore)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh b/w"
 
 #: common/rendermode.cpp:88
 msgctxt "lowres"
@@ -3053,20 +3084,19 @@ msgstr "Herkules anbar-kolorekoa"
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr ""
+msgstr "Egunero"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr ""
+msgstr "Astero"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr ""
+msgstr "Hilabetero"
 
 #: common/updates.cpp:63
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Balioa kendu:"
+msgstr "<Balio okerra>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
@@ -3077,58 +3107,55 @@ msgstr "Balioa kendu:"
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
-#, fuzzy
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
 msgid "TB"
-msgstr ""
+msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Bitmap Irudi Fitxategia"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG Irudi Fitxategia"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG Irudi Fitxategia"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT Irudi Fitxategia"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Datu Fitxategia"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Irten ScummVM-tik"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Abendura grafikoen motorea"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -3143,42 +3170,39 @@ msgstr "Irten"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Konfig Fitxategi Errorea"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Ezin izan da ScummVM konfig fitxategia irakurri edo berria sortu!"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Partida gordeak:"
+msgstr "Gordetakoen Bide Errorea:"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Ezin izan da gordetze bidea sortu edo atzitu!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
 msgid "Icons Path Error"
-msgstr "Gehigarriak:"
+msgstr "Ikono Bide Errorea"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Ezin izan da ikono eta shader-en bidea sortu edo atzitu!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Ezin izan da gordetze bide orokorra atzitu! Itzuli defektuzko ScummVM "
+"Aukeretara, mesedez"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Teklatu birtuala"
+msgstr "Teklatu birtuala erakutsi/gorde"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3189,15 +3213,15 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Eginda"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "Modua aldatu"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
@@ -3205,25 +3229,25 @@ msgid "Enter"
 msgstr "Sartu"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Itxi"
+msgstr "Itxi laster-leihoa"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Mesedez aukeratu zure kanpo SD txartelaren *erroa*. Hau ScummVMek bidea "
+"atzitzeko beharrezkoa da: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "ScummVMrentzako Biltegiratze Atzitze Baimena ukatu egin da!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Hainbat abentura eta rol jokoren interpretatzailea"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:37
