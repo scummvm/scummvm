@@ -644,7 +644,7 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 	MemStream ms;
 	ms.open(buffer.data(), entriesSize);
 	GGHashMapDecoder tblDecoder;
-	Common::JSONValue *value = tblDecoder.open(&ms);
+	Common::ScopedPtr<Common::JSONValue> value(tblDecoder.open(&ms));
 	if (!value)
 		return false;
 
@@ -658,7 +658,6 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 		_entries[filename] = GGPackEntry{offset, size};
 		debug(kDebugGGPack, "filename: %s, off: %d, size: %d", filename.c_str(), offset, size);
 	}
-	delete value;
 
 	return true;
 }

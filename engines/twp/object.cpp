@@ -89,15 +89,15 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 }
 
 Object::~Object() {
+	_nodeAnim->remove();
+	_node->remove();
+
 	if (_layer) {
 		size_t i = find(_layer->_objects, this);
 		if (i != (size_t)-1) {
 			_layer->_objects.remove_at(i);
 		}
 	}
-
-	_nodeAnim->remove();
-	_node->remove();
 }
 
 Common::SharedPtr<Object> Object::createActor() {
@@ -499,7 +499,7 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 	entry.open(g_engine->_pack, name + ".json");
 
 	GGHashMapDecoder dec;
-	Common::JSONValue *json = dec.open(&entry);
+	Common::ScopedPtr<Common::JSONValue> json(dec.open(&entry));
 	if (!json) {
 		warning("Costume %s(%s) for actor %s not found", name.c_str(), sheet.c_str(), _key.c_str());
 		return;
@@ -515,8 +515,6 @@ void Object::setCostume(const Common::String &name, const Common::String &sheet)
 		_sheet = sheet;
 	}
 	stand();
-
-	delete json;
 }
 
 void Object::stand() {

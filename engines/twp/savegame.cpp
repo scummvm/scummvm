@@ -392,7 +392,6 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	long long int version = json["version"]->asIntegerNumber();
 	if (version != 2) {
 		error("Cannot load savegame version %lld", version);
-		delete savegame.jSavegame;
 		return false;
 	}
 
@@ -417,7 +416,6 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 
 	sqcall("postLoad");
 
-	delete savegame.jSavegame;
 	return true;
 }
 
@@ -436,7 +434,7 @@ bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &
 		return false;
 
 	GGHashMapDecoder decoder;
-	savegame.jSavegame = decoder.open(&ms);
+	savegame.jSavegame.reset(decoder.open(&ms));
 	if (!savegame.jSavegame)
 		return false;
 
