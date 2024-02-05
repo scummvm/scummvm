@@ -124,6 +124,35 @@ void EclipseEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = _initialShield;
 }
 
+bool EclipseEngine::checkIfGameEnded() {
+	if (_hasFallen) {
+		_hasFallen = false;
+		playSound(14, false);
+		insertTemporaryMessage(_messagesList[3], _countdown - 4);
+		drawBackground();
+		drawBorder();
+		drawUI();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		gotoArea(1, 33);
+	}
+
+	if (_currentArea->getAreaID() == 1 && _flyMode) {
+		// Draw a few frames
+		for (int i = 0; i < 10; i++) {
+			drawFrame();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+
+		g_system->delayMillis(5000);
+		return true;
+	}
+	return false;
+}
+
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
@@ -144,6 +173,8 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance)
 		playSound(9, true);
+	if (areaID == _startArea && entranceID == 33)
+		_flyMode = true;
 	else
 		playSound(5, false);
 

@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/file.h"
+#include "common/memstream.h"
+
 namespace Freescape {
 
 enum EclipseReleaseFlags {
@@ -48,7 +51,6 @@ public:
 	void initGameState() override;
 	void executePrint(FCLInstruction &instruction) override;
 
-
 	void drawBackground() override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
@@ -56,7 +58,9 @@ public:
 	void drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack);
 	void drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
 
+	Common::MemoryReadStream *load1bPCM(Common::File *file, int offset);
 
+	bool checkIfGameEnded() override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };

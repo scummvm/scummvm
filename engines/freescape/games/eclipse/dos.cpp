@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/file.h"
-
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -75,6 +73,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEC.EXE");
 
+		load1bPCM(&file, 0xd038 - 4);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x2530, 4);
 		for (auto &it : _areaMap) {
@@ -84,17 +83,20 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		}
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEclipseCGAPaletteRedGreen, 0, 4);
+
 	} else
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 }
 
 void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	int score = _gameStateVars[k8bitVariableScore];
+	int shield = _gameStateVars[k8bitVariableShield];
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
 	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0xFF);
+	uint32 redish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0x55);
 
 	Common::String message;
 	int deadline;
@@ -108,6 +110,9 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	Common::String scoreStr = Common::String::format("%07d", score);
 	drawStringInSurface(scoreStr, 136, 6, black, white, surface, 'Z' - '0' + 1);
+
+	Common::String shieldStr = Common::String::format("%02d", shield * 100 / _maxShield);
+	drawStringInSurface(shieldStr, 171, 162, black, redish, surface);
 
 	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
 	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, black, yellow, surface, 'Z' - '$' + 1);
@@ -126,5 +131,25 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	surface->fillRect(jarWater, blue);
 
 }
+
+Common::MemoryReadStream *EclipseEngine::load1bPCM(Common::File *file, int offset) {
+	file->seek(offset);
+	int size = file->readUint16LE();
+	debug("size: %d", size);
+	int freq = file->readUint16LE();
+	debug("freq: %x", freq);
+
+	uint8 *buf = (uint8 *)malloc(size * sizeof(uint8) * 8);
+	for (int i = 0; i < size; i++) {
+		uint8 byte = file->readByte();
+		for (int j = 0; j < 8; j++) {
+			buf[8 * i + j] = byte & 1 ? 255 : 0;
+			byte = byte >> 1;
+		}
+	}
+
+	return (new Common::MemoryReadStream(buf, size * 8));
+}
+
 
 } // End of namespace Freescape
