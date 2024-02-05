@@ -327,7 +327,9 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		case 6:
 			if (sprite.isQDShape()) {
 				sprite._pattern = stream.readUint16();
+				sprite._castId = CastMemberID(0, 0);
 			} else {
+				sprite._pattern = 0;
 				sprite._castId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
 			}
 			break;
