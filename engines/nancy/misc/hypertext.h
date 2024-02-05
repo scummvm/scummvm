@@ -41,6 +41,8 @@ public:
 		_imageVerticalOffset(0) {}
 	virtual ~HypertextParser() {};
 
+	bool hasBeenDrawn() const { return !_needsTextRedraw; }
+
 protected:
 	void initSurfaces(uint width, uint height, const struct Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor);
 
