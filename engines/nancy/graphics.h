@@ -54,6 +54,7 @@ public:
 
 	const Graphics::PixelFormat &getInputPixelFormat();
 	const Graphics::PixelFormat &getScreenPixelFormat();
+	const Graphics::PixelFormat &getTransparentPixelFormat();
 	uint32 getTransColor() { return _transColor; }
 
 	Graphics::ManagedSurface &getAutotextSurface(uint16 id) { return _autotextSurfaces.getOrCreateVal(id); }
@@ -74,7 +75,6 @@ public:
 
 	Graphics::ManagedSurface _object0;
 
-	Graphics::PixelFormat _screenPixelFormat;
 
 private:
 	void blitToScreen(const RenderObject &src, Common::Rect dest);
@@ -84,7 +84,9 @@ private:
 	Common::SortedArray<RenderObject *> _objects;
 
 	Graphics::PixelFormat _inputPixelFormat;
+	Graphics::PixelFormat _screenPixelFormat;
 	Graphics::PixelFormat _clut8Format;
+	Graphics::PixelFormat _transparentPixelFormat;
 
 	Graphics::Screen _screen;
 	Common::Array<Font> _fonts;

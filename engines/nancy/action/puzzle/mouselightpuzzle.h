@@ -30,6 +30,9 @@ namespace Action {
 // Shows a single image over the entire frame, with most of it blackened;
 // a circle around that follows the cursor reveals parts of the image.
 // Circle can have smooth or hard edges. Not actually a puzzle.
+
+// TODO: Optimize blitting; currently, the whole screen is redrawn
+// TODO: Add noise to the circle mask; there are artifacts at low brightness
 class MouseLightPuzzle : public RenderActionRecord {
 public:
 	MouseLightPuzzle() : RenderActionRecord(7) {}
@@ -49,9 +52,7 @@ protected:
 	byte _radius = 0;
 	bool _smoothEdges = false;
 
-	Graphics::ManagedSurface _baseImage;
 	Graphics::ManagedSurface _maskCircle;
-	Graphics::ManagedSurface _mask;
 
 	Common::Point _lastMousePos;
 };

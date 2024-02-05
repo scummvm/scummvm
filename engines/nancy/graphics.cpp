@@ -37,6 +37,7 @@ GraphicsManager::GraphicsManager() :
 	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
 	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
+	_transparentPixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
 	_isSuppressed(false) {}
 
 void GraphicsManager::init() {
@@ -136,7 +137,7 @@ void GraphicsManager::draw(bool updateScreen) {
 						// The entire area that would be drawn is obscured by another RenderObject.
 						// If the obscuring RenderObject is not transparent, we skip drawing current
 
-						if (!other._drawSurface.hasTransparentColor()) {
+						if (!other._drawSurface.hasTransparentColor() && other._drawSurface.format != _transparentPixelFormat) {
 							// No transparency, skip current
 							shouldSkip = true;
 							break;
@@ -402,6 +403,10 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 
 const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
 	return _screenPixelFormat;
+}
+
+const Graphics::PixelFormat &GraphicsManager::getTransparentPixelFormat() {
+	return _transparentPixelFormat;
 }
 
 void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray) {

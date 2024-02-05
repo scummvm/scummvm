@@ -27,7 +27,6 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
-
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 
 namespace Nancy {
@@ -35,14 +34,17 @@ namespace Action {
 
 void MouseLightPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear();
+
+	Graphics::ManagedSurface baseImage;
+	g_nancy->_resource->loadImage(_imageName, baseImage);
+
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getTransparentPixelFormat());
+	_drawSurface.blitFrom(baseImage);
+	((Graphics::Surface)_drawSurface).setAlpha(0);
+
 	setVisible(true);
 	moveTo(screenBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _baseImage);
-	
-	_mask.copyFrom(_drawSurface);
 	_maskCircle.create(_radius * 2, _radius * 2, g_nancy->_graphicsManager->getInputPixelFormat());
 	_maskCircle.clear();
 
@@ -87,7 +89,7 @@ void MouseLightPuzzle::handleInput(NancyInput &input) {
 	}
 
 	_lastMousePos = input.mousePos;
-	_drawSurface.clear();
+	((Graphics::Surface)_drawSurface).setAlpha(0);
 	_needsRedraw = true;
 
 	Common::Rect vpScreenPos = NancySceneState.getViewport().convertViewportToScreen(_screenPosition);
@@ -102,10 +104,16 @@ void MouseLightPuzzle::handleInput(NancyInput &input) {
 	Common::Rect srcRect = _maskCircle.getBounds();
 	Common::Rect::getBlitRect(blitDestPoint, srcRect, _drawSurface.getBounds());
 
-	_mask.clear();
-	_mask.copyRectToSurface(_maskCircle, blitDestPoint.x, blitDestPoint.y, srcRect);
-
-	_drawSurface.transBlitFrom(_baseImage, Common::Point(), _mask);
+	// Copy over the transparency to the draw surface
+	for (int y = srcRect.top; y < srcRect.bottom; ++y) {
+		uint32 *drawSurfPtr = (uint32 *)_drawSurface.getBasePtr(blitDestPoint.x, y + blitDestPoint.y - srcRect.top);
+		uint16 *circlePtr = (uint16 *)_maskCircle.getBasePtr(srcRect.left, y);
+		for (int x = srcRect.left; x < srcRect.right; ++x) {
+			*drawSurfPtr = (*drawSurfPtr & 0xFFFFFF00) | (byte)*circlePtr;
+			++drawSurfPtr;
+			++circlePtr;
+		}
+	}
 }
 
 } // End of namespace Action
