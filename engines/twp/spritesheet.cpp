@@ -45,7 +45,7 @@ static void parseFrame(const Common::String &key, const Common::JSONObject &valu
 }
 
 void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
-	Common::JSONValue *json = Common::JSON::parse(contents.c_str());
+	Common::ScopedPtr<Common::JSONValue> json(Common::JSON::parse(contents.c_str()));
 	const Common::JSONObject &obj = json->asObject()["frames"]->asObject();
 	for (auto it = obj.begin(); it != obj.end(); it++) {
 		parseFrame(it->_key, it->_value->asObject(), frameTable[it->_key]);
@@ -53,8 +53,6 @@ void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
 
 	const Common::JSONObject& jMeta = json->asObject()["meta"]->asObject();
 	meta.image = jMeta["image"]->asString();
-
-	delete json;
 }
 
 } // namespace Twp

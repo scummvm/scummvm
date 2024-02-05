@@ -32,7 +32,7 @@ struct SaveGame {
 	int64_t time = 0;
 	int64_t gameTime = 0;
 	bool easyMode = false;
-	Common::JSONValue *jSavegame = nullptr;
+	Common::ScopedPtr<Common::JSONValue> jSavegame;
 };
 
 class SaveGameManager {

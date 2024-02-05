@@ -254,7 +254,7 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 
 void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	GGHashMapDecoder d;
-	Common::JSONValue *value = d.open(&s);
+	Common::ScopedPtr<Common::JSONValue> value(d.open(&s));
 	// debugC(kDebugGame, "Room: %s", value->stringify().c_str());
 	const Common::JSONObject &jRoom = value->asObject();
 
@@ -375,8 +375,6 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 		width += g_engine->_resManager.spriteSheet(room->_sheet)->frameTable[name].sourceSize.getX();
 	}
 	room->_roomSize.setX(width);
-
-	delete value;
 }
 
 Common::SharedPtr<Layer> Room::layer(int zsort) {
