@@ -661,7 +661,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 	for (const SceneOp &op : ops) {
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
-			engine->changeScene(op._args[0]);
+			engine->changeScene(op._args[0], true);
 			break;
 		case kSceneOpNoop:
 			break;
@@ -675,7 +675,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			enableTrigger(op._args[0]);
 			break;
 		case kSceneOpMeanwhile:
-			error("TODO: Implement meanwhile screen");
+			warning("TODO: Implement meanwhile screen");
 			break;
 		default:
 			warning("TODO: Implement scene op %d", op._opCode);
@@ -688,6 +688,9 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 	if (conds.empty())
 		return true;
 	uint truecount = 0;
+	
+	Globals *globals = static_cast<DgdsEngine *>(g_engine)->getGameGlobals();
+	
 	for (const auto & c : conds) {
 		uint16 refval = c._val;
 		uint16 checkval;
@@ -698,17 +701,18 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		if (cflag & kSceneCond80) {
 			refval = 1;
 			// TODO: check something about current ADS script?
-			checkval = 0;
+			checkval = 0;  // ADS_2642_38f6(c._num);
 
 			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
 			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
 				refval = 0;
 		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemField12) {
-			// TODO: Get game object c._num and check value  from object table
+			// TODO: Get game item c._num and check value from item attributes
 			checkval = 0;
 		} else {
-			// TODO: Check something about current SDS scene??
-			checkval = 0;
+			checkval = globals->getGlobal(c._num);
+			if (!(cflag & kSceneCondSceneAbsVal))
+				refval = globals->getGlobal(refval);
 		}
 
 		bool result = false;
@@ -771,9 +775,9 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _enterSceneOps);
 	readOpList(stream, _leaveSceneOps);
 	if (isVersionOver(" 1.206")) {
-		readOpList(stream, _opList3);
+		readOpList(stream, _preTickOps);
 	}
-	readOpList(stream, _opList4);
+	readOpList(stream, _postTickOps);
 	_field6_0x14 = stream->readUint16LE();
 	_adsFile = stream->readString();
 	readStruct2List(stream, _struct2List);
@@ -793,8 +797,8 @@ void SDSScene::unload() {
 	_num = 0;
 	_enterSceneOps.clear();
 	_leaveSceneOps.clear();
-	_opList3.clear();
-	_opList4.clear();
+	_preTickOps.clear();
+	_postTickOps.clear();
 	_field6_0x14 = 0;
 	_adsFile.clear();
 	_struct2List.clear();
@@ -809,8 +813,8 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSDSScene<num %d %d ads %s", indent.c_str(), _num, _field6_0x14, _adsFile.c_str());
 	str += _dumpStructList(indent, "enterSceneOps", _enterSceneOps);
 	str += _dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
-	str += _dumpStructList(indent, "opList3", _opList3);
-	str += _dumpStructList(indent, "opList4", _opList4);
+	str += _dumpStructList(indent, "preTickOps", _preTickOps);
+	str += _dumpStructList(indent, "postTickOps", _postTickOps);
 	str += _dumpStructList(indent, "struct2List", _struct2List);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
@@ -947,10 +951,10 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _startGameOps);
 	readOpList(stream, _quitGameOps);
 	if (isVersionOver(" 1.206"))
-		readOpList(stream, _opList3);
-	readOpList(stream, _opList4);
+		readOpList(stream, _preTickOps);
+	readOpList(stream, _postTickOps);
 	if (isVersionOver(" 1.208"))
-		readOpList(stream, _opList5);
+		readOpList(stream, _onChangeSceneOps);
 	readPerSceneGlobals(stream);
 	Common::Array<struct MouseCursor> cursorList;
 	_iconFile = stream->readString();
@@ -968,9 +972,9 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "gameItems", _gameItems);
 	str += _dumpStructList(indent, "startGameOps", _startGameOps);
 	str += _dumpStructList(indent, "quitGameOps", _quitGameOps);
-	str += _dumpStructList(indent, "opList3", _opList3);
-	str += _dumpStructList(indent, "opList4", _opList4);
-	str += _dumpStructList(indent, "opList5", _opList5);
+	str += _dumpStructList(indent, "preTickOps", _preTickOps);
+	str += _dumpStructList(indent, "postTickOps", _postTickOps);
+	str += _dumpStructList(indent, "onChangeSceneOps", _onChangeSceneOps);
 	str += _dumpStructList(indent, "perSceneGlobals", _perSceneGlobals);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);

@@ -111,6 +111,7 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 			break;
 		}
 		scriptData->_pages = chunk.getContent()->readUint16LE();
+		scriptData->_pageOffsets.resize(scriptData->_pages + 1);
 		break;
 	default:
 		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());

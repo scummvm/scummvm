@@ -43,7 +43,9 @@ public:
 
 class TTMData : public ScriptParserData {
 public:
+	TTMData() : _pages(330), ScriptParserData() {}
 	uint16 _pages;
+	Common::Array<int> _pageOffsets;
 };
 
 struct TTMState {

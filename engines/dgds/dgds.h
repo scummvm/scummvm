@@ -112,7 +112,7 @@ public:
 	GDSScene *getGDSScene() { return _gdsScene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
-	void changeScene(int sceneNum);
+	void changeScene(int sceneNum, bool runChangeOps);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
 

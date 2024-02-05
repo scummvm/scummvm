@@ -246,6 +246,8 @@ public:
 
 	uint32 getMagic() const { return _magic; }
 	const Common::String &getVersion() const { return _version; }
+	void runPreTickOps() { runOps(_preTickOps); }
+	void runPostTickOps() { runOps(_postTickOps); }
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -268,6 +270,9 @@ protected:
 
 	uint32 _magic;
 	Common::String _version;
+
+	Common::Array<struct SceneOp> _preTickOps;
+	Common::Array<struct SceneOp> _postTickOps;
 };
 
 
@@ -287,6 +292,7 @@ public:
 
 	void runStartGameOps() { runOps(_startGameOps); }
 	void runQuitGameOps() { runOps(_quitGameOps); }
+	void runChangeSceneOps() { runOps(_onChangeSceneOps); }
 	void globalOps(const Common::Array<uint16> &args) override;
 	uint16 getGlobal(uint16 num);
 	uint16 setGlobal(uint16 num, uint16 val);
@@ -297,9 +303,7 @@ private:
 	Common::Array<struct GameItem> _gameItems;
 	Common::Array<struct SceneOp> _startGameOps;
 	Common::Array<struct SceneOp> _quitGameOps;
-	Common::Array<struct SceneOp> _opList3;
-	Common::Array<struct SceneOp> _opList4;
-	Common::Array<struct SceneOp> _opList5;
+	Common::Array<struct SceneOp> _onChangeSceneOps;
 	Common::Array<struct PerSceneGlobal> _perSceneGlobals;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
@@ -333,8 +337,6 @@ private:
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;
 	Common::Array<struct SceneOp> _leaveSceneOps;
-	Common::Array<struct SceneOp> _opList3;
-	Common::Array<struct SceneOp> _opList4;
 	//uint _field5_0x12;
 	uint _field6_0x14;
 	Common::String _adsFile;
