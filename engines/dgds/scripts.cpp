@@ -501,7 +501,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1520: // PLAY_SCENE_ENDIF, 5 params
 	case 0x2000:
 	case 0x2010: // STOP_SCENE, 3 params
-	case 0x2020: // RESET SCENE?
+	case 0x2020: // RESET SCENE, 2 params (scene, subScene)
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params

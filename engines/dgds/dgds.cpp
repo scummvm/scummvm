@@ -148,7 +148,7 @@ void DgdsEngine::loadIcons() {
 	}
 }
 
-void DgdsEngine::changeScene(int sceneNum) {
+void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	assert(_scene && _adsInterp);
 
 	if (sceneNum == _scene->getNum()) {
@@ -159,6 +159,8 @@ void DgdsEngine::changeScene(int sceneNum) {
 	_adsInterp->unload();
 	_scene->runLeaveSceneOps();
 	_scene->unload();
+
+	_gdsScene->runChangeSceneOps();
 
 	if (!_icons.empty()) {
 		CursorMan.popAllCursors();
@@ -322,7 +324,7 @@ Common::Error DgdsEngine::run() {
 					if (getGameId() == GID_DRAGON) {
 						// TODO: This will be done by the trigger once we know how to do it.
 						// It's trigger number 3 in scene 3.
-						changeScene(55);
+						changeScene(55, false);
 					}
 				} else {
 					return Common::kNoError;
