@@ -215,6 +215,15 @@ namespace Macs2 {
 		}
 	}
 
+	void View1::drawPath(Graphics::ManagedSurface &s) {
+		if (g_engine->_path.size() < 2) {
+			return;
+		}
+		for (int i = 0; i < g_engine->_path.size() - 1; i++) {
+			s.drawLine(g_engine->_path[i].x, g_engine->_path[i].y, g_engine->_path[i + 1].x, g_engine->_path[i + 1].y, 0xFF);
+		}
+	}
+
 	void View1::setStringBox(const Common::StringArray& sa) {
 		_drawnStringBox = sa;
 		_isShowingStringBox = true;
@@ -243,6 +252,7 @@ namespace Macs2 {
 		if (msg._button == MouseMessage::MB_LEFT) {
 			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
+			g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 			return true;
 		} else if (msg._button == MouseMessage::MB_RIGHT) {
 			g_engine->NextCursorMode();
@@ -297,7 +307,8 @@ void View1::draw() {
 	// TODO: I don't have the right offset yet plus there must be some trick to reading sequential frames, probl. need
 	// to seek in between frames
 	AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
-	DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
+	// DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
+	DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 0x64 * 3, f.Data, s);
 	/* for (int x = 0; x < g_engine->_charWidth; x++) {
 		for (int y = 0; y < g_engine->_charHeight; y++) {
 			uint8 val = g_engine->_charData[y * g_engine->_charWidth + x];
@@ -367,6 +378,7 @@ void View1::draw() {
 	}
 
 	drawPathfindingPoints(s);
+	drawPath(s);
 }
 
 bool View1::tick() {
@@ -444,6 +456,53 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			}
 		}
 	}
+}
+
+void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s) {
+	int xScaling = 0;
+	int yScaling = 0;
+
+	int currentTargetX = 0;
+	int currentTargetY = 0;
+
+	for (int currentSourceY = 0; currentSourceY < height; currentSourceY++) {
+		currentTargetX = 0;
+		for (int currentSourceX = 0; currentSourceX < width; currentSourceX++) {
+			uint8 val = data[currentSourceY * width + currentSourceX];
+			if (val != 0) {
+				uint16 finalX = x + currentTargetX;
+				uint16 finalY = y + currentTargetY;
+				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h)
+					s.setPixel(x + currentTargetX, y + currentTargetY, val);
+			}
+			do {
+				// Handle x scaling
+				xScaling += 0x64;
+				currentTargetX++;
+				if (xScaling <= scaling) {
+					// This means we repeat a pixel
+					currentSourceX--;
+					break;
+				}
+				xScaling -= scaling;
+				currentSourceX++;
+			} while (currentSourceX < width);
+		}
+		do {
+			// Handle y scaling
+			yScaling += 0x64;
+			currentTargetY++;
+			if (yScaling <= scaling) {
+				// This means we repeat a row
+				currentSourceY--;
+				break;
+			}
+			yScaling -= scaling;
+			currentSourceY++;
+		} while (currentSourceY < height);
+	}
+
+
 }
 
 } // namespace Macs2

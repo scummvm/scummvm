@@ -28,6 +28,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -491,6 +492,92 @@ bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
 		}
 	}
 	return false;
+}
+
+uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y){
+	// TODO: Handle only the basic case, and add an exception handling for the special case
+	// Look up the value from the map
+	// TODO: Implement the checks for bounds
+	uint16 value = _pathfindingMap.getPixel(x, y);
+	if (value < 0x0C8 || value > 0x0EF) {
+		return value;
+	}
+	error("Unhandled code in walkability check encountered");
+	return 0;
+	
+};
+
+bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	// TODO: need to figure out which algorithm the game uses exactly
+
+	// Trace a line between p1 and p2
+	// Look up in the map if we are walkable
+
+	// Bresenham's line algorithm, as described by Wikipedia
+	const bool steep = ABS(y2 - y1) > ABS(x2 - x1);
+
+	if (steep) {
+		SWAP(x1, y1);
+		SWAP(x2, y2);
+	}
+
+	const int delta_x = ABS(x2 - x1);
+	const int delta_y = ABS(y2 - y1);
+	const int delta_err = delta_y;
+	int x = x1;
+	int y = y1;
+	int err = 0;
+
+	const int x_step = (x1 < x2) ? 1 : -1;
+	const int y_step = (y1 < y2) ? 1 : -1;
+
+	uint16 walkability = 0;
+	int stopFlag = 0;
+
+	
+	if (steep) {
+		walkability = getWalkabilityAt(y, x);
+		stopFlag = false; // (*plotProc)(y, x, data);
+	}	
+	else {
+		walkability = getWalkabilityAt(x, y);
+		stopFlag = false; // (*plotProc)(x, y, data);
+	}
+	if (walkability > 0x0C7) {
+		return false;
+	}
+	
+	while (x != x2 && !stopFlag) {
+		x += x_step;
+		err += delta_err;
+		if (2 * err > delta_x) {
+			y += y_step;
+			err -= delta_x;
+		}
+		if (steep) {
+			walkability = getWalkabilityAt(y, x);
+			stopFlag = false; // (*plotProc)(y, x, data);
+		} else {
+			walkability = getWalkabilityAt(x, y);
+			stopFlag = false; // (*plotProc)(x, y, data);
+		}
+		if (walkability > 0x0C7) {
+			return false;
+		}
+	}
+	// return stopFlag;
+
+	return true;
+}
+
+void Macs2Engine::CalculatePath(const Common::Point& source, const Common::Point& destination) {
+	_path.clear();
+	// Check if the destination is reachable at first
+	if (isPathWalkable(source.x, source.y, destination.x, destination.y)) {
+		_path.push_back(source);
+		_path.push_back(destination);
+	}
+
 }
 
 // Does what 9F23 does
