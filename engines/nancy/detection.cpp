@@ -28,6 +28,8 @@ const char *const directoryGlobs[] = {
 	"iff",
 	"cifTree",
 	"datafiles",
+	"cdvideo", // used to test for unpacked variants
+	"hdvideo", // used to test for unpacked variants
 	nullptr
 };
 
@@ -431,7 +433,11 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by Strangerke
 		{
 			"nancy6", nullptr,
-			AD_ENTRY1s("ciftree.dat", "a97b848651fdcf38f5cad7092d98e4a1", 28888006),
+			{
+				{ "ciftree.dat", 0, "a97b848651fdcf38f5cad7092d98e4a1", 28888006 },
+				{ "amfid.avf", 0, "5f39a351a9fdd13fc24efbcb841cb059", 207695 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
@@ -616,7 +622,11 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by fracturehill
 		{
 			"nancy9", nullptr,
-			AD_ENTRY1s("ciftree.dat", "3a756e09631f4a2c8f48bf316e77b5d5", 26610718),
+			{
+				{ "ciftree.dat", 0, "3a756e09631f4a2c8f48bf316e77b5d5", 26610718 },
+				{ "andyfid.avf", 0, "4e11e5237e6776e342df6262fc930142", 1171821 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
