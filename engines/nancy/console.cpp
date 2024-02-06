@@ -24,8 +24,8 @@
 #include "common/config-manager.h"
 
 #include "audio/audiostream.h"
-
 #include "image/bmp.h"
+#include "video/bink_decoder.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/console.h"
@@ -76,9 +76,22 @@ NancyConsole::~NancyConsole() {}
 void NancyConsole::postEnter() {
 	GUI::Debugger::postEnter();
 	if (!_videoFile.empty()) {
-		Video::VideoDecoder *dec = new AVFDecoder;
+		Common::Path withExt = _videoFile;
+		Video::VideoDecoder *dec = new AVFDecoder();
 
-		if (dec->loadFile(_videoFile)) {
+		if (!dec->loadFile(withExt.append(".avf"))) {
+			// No AVF found, try Bink
+			delete dec;
+			dec = new Video::BinkDecoder();
+
+			if (!dec->loadFile(withExt.append(".bik"))) {
+				debugPrintf("Failed to load video '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
+				delete dec;
+				dec = nullptr;
+			}
+		}
+
+		if (dec) {
 			Graphics::ManagedSurface surf;
 
 			if (!_paletteFile.empty()) {
@@ -107,8 +120,6 @@ void NancyConsole::postEnter() {
 			}
 
 			g_nancy->_graphicsManager->redrawAll();
-		} else {
-			debugPrintf("Failed to load '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
 		}
 
 		_videoFile.clear();
@@ -381,7 +392,6 @@ bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
 		}
 
 		_videoFile = argv[1];
-		_videoFile.appendInPlace(".avf");
 		_paletteFile = argv[2];
 		return cmdExit(0, nullptr);
 	} else {
@@ -392,7 +402,6 @@ bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
 		}
 
 		_videoFile = argv[1];
-		_videoFile.appendInPlace(".avf");
 		return cmdExit(0, nullptr);
 	}
 }
