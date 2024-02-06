@@ -1350,10 +1350,12 @@ void ScummEngine_v90he::o90_getWizData() {
 			switch (fontProperty) {
 			case 2: // PFONT_EXTENT_X
 				//push(PFONT_GetStringWidth(iImage, szResultString));
+				push(0);
 				break;
 
 			case 3: // PFONT_EXTENT_Y
 				//push(PFONT_GetStringHeight(iImage, szResultString));
+				push(0);
 				break;
 			default:
 				// No default case in the original...
@@ -1432,7 +1434,7 @@ void ScummEngine_v90he::o90_priorityChainScript() {
 void ScummEngine_v90he::o90_videoOps() {
 	// Uses Smacker video
 	int status = fetchScriptByte();
-	int subOp = status - 49;
+	int subOp = status;
 
 	switch (subOp) {
 	case SO_LOAD: // 49
@@ -1452,7 +1454,7 @@ void ScummEngine_v90he::o90_videoOps() {
 	case SO_IMAGE: // 63
 		_videoParams.wizResNum = pop();
 		if (_videoParams.wizResNum)
-			_videoParams.flags |= 2;
+			_videoParams.flags |= MoviePlayer::vfImageSurface;
 		break;
 	case SO_CLOSE: // 165
 		_videoParams.status = status;
@@ -1461,9 +1463,9 @@ void ScummEngine_v90he::o90_videoOps() {
 		if (_videoParams.status == SO_LOAD) {
 			// Start video
 			if (_videoParams.flags == 0)
-				_videoParams.flags = 4;
+				_videoParams.flags = MoviePlayer::vfDefault;
 
-			if (_videoParams.flags & 2) {
+			if (_videoParams.flags & MoviePlayer::vfImageSurface) {
 				VAR(VAR_OPERATION_FAILURE) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags, _videoParams.wizResNum);
 			} else {
 				VAR(VAR_OPERATION_FAILURE) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags);
@@ -1517,7 +1519,7 @@ void ScummEngine_v90he::o90_floodFill() {
 
 	switch (subOp) {
 	case SO_SET_FLAGS: // 54
-		// TODO floodInfo.flags |= pop();
+		_floodFillParams.flags |= pop();
 		pop();
 		break;
 	case SO_INIT: // 57
@@ -1526,14 +1528,13 @@ void ScummEngine_v90he::o90_floodFill() {
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
 		_floodFillParams.box.bottom = 479;
-		adjustRect(_floodFillParams.box);
 		break;
 	case SO_AT: // 65
 		_floodFillParams.y = pop();
 		_floodFillParams.x = pop();
 		break;
 	case SO_COLOR: // 66
-		_floodFillParams.flags = pop(); // TODO: Should be .color!
+		_floodFillParams.color = pop();
 		break;
 	case SO_CLIPPED: // 67
 		_floodFillParams.box.bottom = pop();

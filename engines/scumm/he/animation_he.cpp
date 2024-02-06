@@ -77,7 +77,7 @@ int MoviePlayer::load(const Common::Path &filename, int flags, int image) {
 
 	debug(1, "Playing video %s", filename.toString().c_str());
 
-	if (flags & 2)
+	if (flags & vfImageSurface)
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, _video->getWidth(), _video->getHeight());
 
 	_flags = flags;
@@ -155,13 +155,13 @@ void MoviePlayer::handleNextFrame() {
 
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 
-	if (_flags & 2) {
+	if (_flags & vfImageSurface) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, _wizResNum);
 		assert(dstPtr);
 		uint8 *dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
 		assert(dst);
 		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bytesPerPixel);
-	} else if (_flags & 1) {
+	} else if (_flags & vfBackground) {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
 		Common::Rect imageRect(_video->getWidth(), _video->getHeight());

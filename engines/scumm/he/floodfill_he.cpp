@@ -174,14 +174,18 @@ skip:
 }
 
 void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
+	// To test this operation: use room 33 of BluesBirthday yellow disc
 	uint8 *dst;
 	VirtScreen *vs = &vm->_virtscr[kMainVirtScreen];
-	if (ffp->flags & 0x8000) {
+
+	int32 colorBackMask = vm->_game.heversion > 99 ? 0x01000000 : 0x8000;
+
+	if (ffp->color & colorBackMask) {
 		dst = vs->getBackPixels(0, vs->topline);
 	} else {
 		dst = vs->getPixels(0, vs->topline);
 	}
-	uint8 color = ffp->flags & 0xFF;
+	uint8 color = ffp->color & 0xFF;
 
 	Common::Rect r;
 	r.left = r.top = 12345;
@@ -204,7 +208,7 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 		ffs->color1 = *(dst + ffp->y * vs->w + ffp->x);
 	}
 
-	debug(5, "floodFill() x=%d y=%d color1=%d ffp->flags=0x%X", ffp->x, ffp->y, ffs->color1, ffp->flags);
+	debug(5, "floodFill() x=%d y=%d color1=%d ffp->color=0x%X", ffp->x, ffp->y, ffs->color1, ffp->color);
 	if (ffs->color1 != color) {
 		floodFillProcess(ffp->x, ffp->y, ffs, floodFillPixelCheck);
 		r = ffs->dstBox;
@@ -214,10 +218,10 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	delete[] ffs->fillLineTable;
 	delete ffs;
 
-	vm->VAR(119) = 1;
+	vm->VAR(vm->VAR_OPERATION_FAILURE) = 1;
 
 	if (r.left <= r.right && r.top <= r.bottom) {
-		if (ffp->flags & 0x8000) {
+		if (ffp->color & colorBackMask) {
 			vm->restoreBackgroundHE(r);
 		} else {
 			++r.bottom;

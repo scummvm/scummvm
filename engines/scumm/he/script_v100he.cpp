@@ -2292,7 +2292,7 @@ void ScummEngine_v100he::o100_videoOps() {
 	case SO_IMAGE:
 		_videoParams.wizResNum = pop();
 		if (_videoParams.wizResNum)
-			_videoParams.flags |= 2;
+			_videoParams.flags |= MoviePlayer::vfImageSurface;
 		break;
 	case SO_LOAD:
 		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
@@ -2305,12 +2305,12 @@ void ScummEngine_v100he::o100_videoOps() {
 		if (_videoParams.status == SO_LOAD) {
 			// Start video
 			if (_videoParams.flags == 0)
-				_videoParams.flags = 4;
+				_videoParams.flags = MoviePlayer::vfDefault;
 
-			if (_videoParams.flags & 2) {
-				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags, _videoParams.wizResNum);
+			if (_videoParams.flags & MoviePlayer::vfImageSurface) {
+				VAR(VAR_OPERATION_FAILURE) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags, _videoParams.wizResNum);
 			} else {
-				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags);
+				VAR(VAR_OPERATION_FAILURE) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags);
 			}
 		} else if (_videoParams.status == SO_CLOSE) {
 			// Stop video
