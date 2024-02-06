@@ -308,7 +308,7 @@ void View1::draw() {
 	// to seek in between frames
 	AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
 	// DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
-	DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 0x64 * 3, f.Data, s);
+	DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 26, f.Data, s);
 	/* for (int x = 0; x < g_engine->_charWidth; x++) {
 		for (int y = 0; y < g_engine->_charHeight; y++) {
 			uint8 val = g_engine->_charData[y * g_engine->_charWidth + x];
@@ -475,10 +475,10 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h)
 					s.setPixel(x + currentTargetX, y + currentTargetY, val);
 			}
+			xScaling += 0x64;
+			currentTargetX++;
 			do {
 				// Handle x scaling
-				xScaling += 0x64;
-				currentTargetX++;
 				if (xScaling <= scaling) {
 					// This means we repeat a pixel
 					currentSourceX--;
@@ -488,10 +488,10 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 				currentSourceX++;
 			} while (currentSourceX < width);
 		}
+		yScaling += 0x64;
+		currentTargetY++;
 		do {
 			// Handle y scaling
-			yScaling += 0x64;
-			currentTargetY++;
 			if (yScaling <= scaling) {
 				// This means we repeat a row
 				currentSourceY--;
