@@ -52,6 +52,7 @@
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
+#include "engines/nancy/action/puzzle/spigotpuzzle.h"
 #include "engines/nancy/action/puzzle/tangrampuzzle.h"
 #include "engines/nancy/action/puzzle/telephone.h"
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
@@ -329,6 +330,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new CubePuzzle();
 	case 224:
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
+	case 225:
+		return new SpigotPuzzle();
 	default:
 		return nullptr;
 	}

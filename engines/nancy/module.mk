@@ -35,6 +35,7 @@ MODULE_OBJS = \
   action/puzzle/setplayerclock.o \
   action/puzzle/sliderpuzzle.o \
   action/puzzle/soundequalizerpuzzle.o \
+  action/puzzle/spigotpuzzle.o \
   action/puzzle/tangrampuzzle.o \
   action/puzzle/telephone.o \
   action/puzzle/towerpuzzle.o \
