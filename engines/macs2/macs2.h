@@ -109,7 +109,17 @@ public:
 	byte _pal[256 * 3] = { 0 };
 	byte _palVanilla[256 * 3] = { 0 };
 
+	// fn0037_0E8C proc
+	uint16 getWalkabilityAt(uint16 x, uint16 y);
+
+	// fn0037_1196
+	bool isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+
 	uint16 _pathfindingPoints[32];
+
+	Common::Array<Common::Point> _path;
+
+	void CalculatePath(const Common::Point &source, const Common::Point &destination);
 
 	byte* _charData;
 	char _charASCII;
