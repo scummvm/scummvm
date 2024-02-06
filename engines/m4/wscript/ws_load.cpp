@@ -420,7 +420,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Fall through
 
 		case CHUNK_CELS: {
-#if defined(SCUMM_LITTLE_ENDIAN)
+#if defined(SCUMM_BIG_ENDIAN)
 			uint32 *index = (uint32 *)mainAssetPtr;
 			uint count = CELS_OFFSETS + READ_LE_UINT32(index + CELS_COUNT);
 			for (i = 0; i < count; ++i, ++index)
