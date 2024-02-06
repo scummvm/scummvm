@@ -930,7 +930,7 @@ void sqgame_register_genlib(HSQUIRRELVM v) {
 	regFunc(v, getPrivatePref, _SC("getPrivatePref"));
 	regFunc(v, incutscene, _SC("incutscene"));
 	regFunc(v, indialog, _SC("indialog"));
-	regFunc(v, integer, _SC("integer"));
+	regFunc(v, integer, _SC("int"));
 	regFunc(v, in_array, _SC("in_array"));
 	regFunc(v, is_array, _SC("is_array"));
 	regFunc(v, is_function, _SC("is_function"));
