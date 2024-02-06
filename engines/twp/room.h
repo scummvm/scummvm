@@ -146,7 +146,6 @@ public:
 	Common::Array<Common::SharedPtr<Object> > _triggers; // Triggers currently enabled in the room
 	Common::Array<ScalingTrigger> _scalingTriggers; // Scaling Triggers of the room
 	bool _pseudo = false;
-	Common::Array<Common::SharedPtr<Object> > _objects;
 	Common::SharedPtr<Scene> _scene;
 	OverlayNode _overlayNode;	// Represents an overlay
 	RoomEffect _effect = RoomEffect::None;

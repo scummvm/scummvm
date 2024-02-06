@@ -178,7 +178,6 @@ public:
 	ResManager _resManager;
 	Common::Array<Common::SharedPtr<Room> > _rooms;
 	Common::Array<Common::SharedPtr<Object> > _actors;
-	Common::Array<Common::SharedPtr<Object> > _objects;
 	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
 	Common::Array<Common::SharedPtr<Task> > _tasks;
 	Common::Array<Common::SharedPtr<Callback> > _callbacks;

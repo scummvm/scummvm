@@ -192,8 +192,6 @@ Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const 
 	obj->_layer = layer(0);
 	obj->setState(0);
 
-	g_engine->_objects.push_back(obj);
-
 	return obj;
 }
 
@@ -213,11 +211,11 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 	setId(obj->_table, newObjId());
 	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
-	obj->_node->setName(obj->_key);
 
 	Text txt(fontName, text, hAlign, vAlign, maxWidth);
 
 	Common::SharedPtr<TextNode> node(new TextNode());
+	node->setName(obj->_key);
 	node->setText(txt);
 	float y = 0.5f;
 	switch (vAlign) {
@@ -242,12 +240,11 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 		node->setAnchorNorm(Math::Vector2d(1.f, y));
 		break;
 	}
+	obj->_nodeAnim = nullptr;
 	obj->_node = node;
 	layer(0)->_objects.push_back(obj);
 	layer(0)->_node->addChild(obj->_node.get());
 	obj->_layer = layer(0);
-
-	g_engine->_objects.push_back(obj);
 
 	return obj;
 }
@@ -328,7 +325,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 			objNode->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
 			objNode->setZSort(jObject["zsort"]->asIntegerNumber());
 			obj->_node = objNode;
-			obj->_nodeAnim = Common::SharedPtr<Anim>(new Anim(obj.get()));
+			obj->_nodeAnim.reset(new Anim(obj.get()));
 			obj->_node->addChild(obj->_nodeAnim.get());
 			obj->_usePos = parseVec2(jObject["usepos"]->asString());
 			if (jObject.contains("usedir")) {

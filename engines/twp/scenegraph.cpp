@@ -56,7 +56,9 @@ Node::Node(const Common::String &name, Math::Vector2d scale, Color color)
 	  _scale(scale) {
 }
 
-Node::~Node() {}
+Node::~Node() {
+	remove();
+}
 
 void Node::addChild(Node *child) {
 	if (child->_parent == this)
@@ -90,7 +92,9 @@ int Node::find(Node *other) {
 
 void Node::removeChild(Node *child) {
 	int i = find(child);
-	_children.remove_at(i);
+	if(i != -1) {
+		_children.remove_at(i);
+	}
 	child->_parent = nullptr;
 }
 

@@ -153,8 +153,13 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 static SQInteger deleteObject(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		size_t i = find(obj->_layer->_objects, obj);
-		obj->_layer->_objects.remove_at(i);
+		if (obj->_layer) {
+			obj->_node->remove();
+			size_t i = find(obj->_layer->_objects, obj);
+			if (i != (size_t)-1) {
+				obj->_layer->_objects.remove_at(i);
+			}
+		}
 	}
 	return 0;
 }

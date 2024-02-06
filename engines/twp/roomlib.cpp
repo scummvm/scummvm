@@ -264,7 +264,7 @@ static SQInteger definePseudoRoom(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstackobj(v, -1, &table)))
 		return sq_throwerror(v, "failed to get room table");
 
-	Common::SharedPtr<Room> room = g_engine->defineRoom(name, table, true);
+	Common::SharedPtr<Room> room(g_engine->defineRoom(name, table, true));
 	debugC(kDebugRoomScript, "Define pseudo room: %s", name);
 	g_engine->_rooms.push_back(room);
 	sqpush(v, room->_table);
