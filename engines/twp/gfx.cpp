@@ -299,10 +299,6 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 		_shader->_shader.use();
 
 		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-
-		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-
-		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
 		GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
 		GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * i_size, indices, GL_STREAM_DRAW));
