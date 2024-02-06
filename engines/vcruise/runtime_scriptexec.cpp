@@ -2255,7 +2255,11 @@ void Runtime::scriptOpRSet(ScriptArg_t arg) {
 	error("Couldn't resolve item ID for script item %i", static_cast<int>(stackArgs[0]));
 }
 
-OPCODE_STUB(EndRSet)
+void Runtime::scriptOpEndRSet(ScriptArg_t arg) {
+	scriptOpRSet(arg);
+
+	returnFromExaminingItem();
+}
 
 
 // Unused Schizm ops

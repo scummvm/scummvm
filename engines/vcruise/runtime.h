@@ -919,6 +919,7 @@ private:
 	void clearIdleAnimations();
 	void changeHero();
 	void changeToExamineItem();
+	void returnFromExaminingItem();
 	bool triggerPreIdleActions();
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<AnimatedCursor> &cursor);

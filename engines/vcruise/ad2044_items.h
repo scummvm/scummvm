@@ -29,7 +29,7 @@ namespace VCruise {
 struct AD2044ItemInfo {
 	uint32 enNameCRC;
 	uint32 plNameCRC;
-	uint16 inspectionScreenID;
+	bool canBeExamined;
 	uint16 scriptItemID;
 };
 

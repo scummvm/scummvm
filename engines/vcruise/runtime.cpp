@@ -3724,6 +3724,7 @@ void Runtime::changeHero() {
 
 void Runtime::changeToExamineItem() {
 	assert(canSave(true));
+	assert(_hero == 0);
 
 	InventoryItem itemToExamine = _inventoryActiveItem;
 
@@ -3761,6 +3762,39 @@ void Runtime::changeToExamineItem() {
 	alternateState->musicMuteDisabled = currentState->musicMuteDisabled;
 	alternateState->musicTrack = currentState->musicTrack;
 	alternateState->musicVolume = currentState->musicVolume;
+
+	snapshot->states[0] = alternateState;
+	snapshot->states[1] = currentState;
+
+	snapshot->hero ^= 1u;
+
+	changeToCursor(_cursors[kCursorArrow]);
+
+	_mostRecentValidSaveState = _mostRecentlyRecordedSaveState;
+
+	restoreSaveGameSnapshot();
+}
+
+void Runtime::returnFromExaminingItem() {
+	assert(canSave(true));
+	assert(_hero == 1);
+
+	InventoryItem itemToReturnWith = _inventoryActiveItem;
+
+	_inventoryActiveItem = InventoryItem();
+
+	recordSaveGameSnapshot();
+
+	SaveGameSnapshot *snapshot = _mostRecentlyRecordedSaveState.get();
+
+	Common::SharedPtr<SaveGameSwappableState> currentState = snapshot->states[0];
+	Common::SharedPtr<SaveGameSwappableState> alternateState = snapshot->states[1];
+
+	// Move inventory into the new state
+	alternateState->inventory.clear();
+	alternateState->inventory = Common::move(currentState->inventory);
+
+	snapshot->inventoryActiveItem = itemToReturnWith.itemID;
 
 	snapshot->states[0] = alternateState;
 	snapshot->states[1] = currentState;
@@ -4003,7 +4037,7 @@ bool Runtime::dischargeIdleMouseMove() {
 		}
 
 		if (_inventoryActiveItem.itemID != 0) {
-			if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].inspectionScreenID != 0) {
+			if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined) {
 				Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
 
 				if (examineRect.contains(_mousePos)) {
@@ -5912,7 +5946,7 @@ void Runtime::drawActiveItemGraphic() {
 		drawSectionToScreen(_fullscreenMenuSection, itemRect);
 	}
 
-	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].inspectionScreenID != 0) {
+	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined) {
 		Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
 
 		_fullscreenMenuSection.surf->blitFrom(*_ad2044Graphics->examine, Common::Point(examineRect.left, examineRect.top));
