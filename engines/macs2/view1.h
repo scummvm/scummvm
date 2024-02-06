@@ -66,8 +66,12 @@ private:
 
 	void drawPathfindingPoints(Graphics::ManagedSurface &s);
 
+	void drawPath(Graphics::ManagedSurface &s);
+
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
+
+
 
 public:
 	View1();
@@ -88,6 +92,7 @@ public:
 
 	void DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s);
 	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s);
+	void DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s);
 };
 
 } // namespace Macs2

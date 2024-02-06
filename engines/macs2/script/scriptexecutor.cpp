@@ -53,7 +53,7 @@ inline void ScriptExecutor::FuncA3D2() {
 		}
 		// Do the skipping
 		_stream->seek(length, SEEK_CUR);
-		debug("A3D2 skipping %u bytes for opcode %.2x (%u)", length, opcode, skipValue);
+		debug("A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
 
 		// TODO: Add a log here
 		if (skipValue != 0) {
@@ -131,6 +131,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
+	// We are starting to execute opcode FFh here
 	// l0037_9FB7:
 	if (value == 0x1) {
 		ScriptUnimplementedOpcode(0x1)
@@ -139,11 +140,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// l0037_A008:
 /*
 
-
-	
-
-
-	;; This handles opcode FFh
+;; This handles opcode FFh
 	mov	ax,[bp-7h]
 	cmp	ax,1h
 	jnz	0A008h
@@ -417,16 +414,16 @@ l0037_A180:
 	mov	[bp-4h],ax
 	mov	[bp-2h],dx
 	jmp	0A32Ch
-
-l0037_A199:
-	cmp	ax,26h
-	jnz	0A1BCh
-
-l0037_A19E:
+	*/
+	// l0037_A199:
+	else if (value == 0x26) {
+		// TODO: We need the global here
+		/*
+		l0037_A19E:
 	cmp	byte ptr [1014h],0h
 	jz	0A1B1h
 
-l0037_A1A5:
+	l0037_A1A5:
 	mov	word ptr [bp-4h],1h
 	mov	word ptr [bp-2h],0h
 	jmp	0A1B9h
@@ -438,7 +435,15 @@ l0037_A1B1:
 
 l0037_A1B9:
 	jmp	0A32Ch
+		*/
+		// TODO: Temporary implementation
+		out1 = out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
+	
 
+/*
 l0037_A1BC:
 	cmp	ax,27h
 	jnz	0A1E9h
