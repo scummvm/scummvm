@@ -303,6 +303,10 @@ void Overlay::execute() {
 							}
 						}
 
+						// Make sure the srcRect doesn't extend beyond the image.
+						// This fixes nancy7 scene 4228
+						srcRect.clip(_fullSurface.getBounds());
+
 						if (blitsForThisFrame.size() == 1) {
 							_drawSurface.create(_fullSurface, srcRect);
 							setTransparent(_transparency == kPlayOverlayTransparent);
