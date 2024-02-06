@@ -419,11 +419,19 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			chunkSwap = true;
 			// Fall through
 
-		case CHUNK_CELS:
+		case CHUNK_CELS: {
+#if defined(SCUMM_LITTLE_ENDIAN)
+			uint32 *index = (uint32 *)mainAssetPtr;
+			uint count = CELS_OFFSETS + READ_LE_UINT32(index + CELS_COUNT);
+			for (i = 0; i < count; ++i, ++index)
+				*index = SWAP_INT32(*index);
+#endif
+
 			// Check the validity of the cels hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
 				error_show(FL, 'WSLA', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
 			}
+
 			ClearWSAssets(_WS_ASSET_CELS, *chunkHash, *chunkHash);
 
 			// Store the resource name
@@ -448,6 +456,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 				_GWS(globalCELSPaloffsets)[*chunkHash] = -1;
 			}
 			break;
+		}
 
 		default:
 			error_show(FL, 'WSLT', "Asset Name: %s, %d bytes into the file.", wsAssetName,
@@ -489,7 +498,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	numCels = celsPtr[CELS_COUNT];
 	if (index >= (int)numCels) {
 		ws_LogErrorMsg(FL, "CreateSprite: Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
@@ -500,11 +509,11 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
 	// Set the stream boolean
 	if (streamSeries) {
-		if (FROM_LE_32(myCelSource[CELS_STREAM]))
+		if (myCelSource[CELS_STREAM])
 			*streamSeries = true;
 		else
 			*streamSeries = false;
@@ -513,10 +522,10 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	// Initialize the sprite struct and return it
 	mySprite->next = mySprite->prev = nullptr;
 	mySprite->sourceHandle = resourceHandle;
-	mySprite->xOffset = FROM_LE_32(myCelSource[CELS_X]);
-	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
-	mySprite->w = FROM_LE_32(myCelSource[CELS_W]);
-	mySprite->h = FROM_LE_32(myCelSource[CELS_H]);
+	mySprite->xOffset = myCelSource[CELS_X];
+	mySprite->yOffset = myCelSource[CELS_Y];
+	mySprite->w = myCelSource[CELS_W];
+	mySprite->h = myCelSource[CELS_H];
 	mySprite->encoding = (uint8)myCelSource[CELS_COMP];
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
@@ -632,11 +641,11 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Return the values
 	if (maxW) {
-		*maxW = FROM_LE_32(celsPtr[CELS_SS_MAX_W]);
+		*maxW = celsPtr[CELS_SS_MAX_W];
 	}
 
 	if (maxH) {
-		*maxH = FROM_LE_32(celsPtr[CELS_SS_MAX_H]);
+		*maxH = celsPtr[CELS_SS_MAX_H];
 	}
 
 	// unlock the handle
@@ -1201,7 +1210,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 	// Find and return the number of sprites in the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return FROM_LE_32(celsPtr[CELS_COUNT]);
+	return celsPtr[CELS_COUNT];
 }
 
 
@@ -1228,7 +1237,7 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 
 	// Find and return the frame rate for the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return FROM_LE_32(celsPtr[CELS_FRAME_RATE]);
+	return celsPtr[CELS_FRAME_RATE];
 }
 
 
@@ -1255,7 +1264,7 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 
 	// Find and return the pix speed for the SS
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
-	return FROM_LE_32(celsPtr[CELS_PIX_SPEED]);
+	return celsPtr[CELS_PIX_SPEED];
 }
 
 int32 ws_get_sprite_width(uint32 hash, int32 index) {
@@ -1284,7 +1293,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	numCels = celsPtr[CELS_COUNT];
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "ws_get_sprite_width: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
 			numCels - 1, index, hash);
@@ -1298,9 +1307,9 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
-	return FROM_LE_32(myCelSource[CELS_W]);
+	return myCelSource[CELS_W];
 }
 
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
@@ -1329,7 +1338,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
-	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
+	numCels = celsPtr[CELS_COUNT];
 	if (index >= numCels) {
 		ws_LogErrorMsg(FL, "ws_get_sprite_height: Sprite index out of range - max index: %d, requested index: %d, hash: %d",
 			numCels - 1, index, hash);
@@ -1343,9 +1352,9 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
-	return FROM_LE_32(myCelSource[CELS_H]);
+	return myCelSource[CELS_H];
 }
 
 MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
