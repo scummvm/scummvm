@@ -27,17 +27,19 @@
 namespace Nancy {
 
 enum GameType {
-	kGameTypeNone = 0,
+	kGameTypeNone 	 = 0,
 	kGameTypeVampire = 1,
-	kGameTypeNancy1 = 2,
-	kGameTypeNancy2 = 3,
-	kGameTypeNancy3 = 4,
-	kGameTypeNancy4 = 5,
-	kGameTypeNancy5 = 6,
-	kGameTypeNancy6 = 7,
-	kGameTypeNancy7 = 8,
-	kGameTypeNancy8 = 9,
-	kGameTypeNancy9 = 10
+	kGameTypeNancy1  = 2,
+	kGameTypeNancy2  = 3,
+	kGameTypeNancy3  = 4,
+	kGameTypeNancy4  = 5,
+	kGameTypeNancy5  = 6,
+	kGameTypeNancy6  = 7,
+	kGameTypeNancy7  = 8,
+	kGameTypeNancy8  = 9,
+	kGameTypeNancy9  = 10,
+	kGameTypeNancy10 = 11,
+	kGameTypeNancy11 = 12,
 };
 
 enum NancyGameFlags {

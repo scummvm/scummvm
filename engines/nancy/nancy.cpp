@@ -101,7 +101,7 @@ NancyEngine::~NancyEngine() {
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
-	if (type >= kGameTypeVampire && type <= kGameTypeNancy9) {
+	if (type >= kGameTypeVampire && type <= kGameTypeNancy11) {
 		return new NancyEngine(syst, gd);
 	}
 
@@ -407,6 +407,10 @@ void NancyEngine::bootGameEngine() {
 
 	// Setup mixer
 	syncSoundSettings();
+
+	if (getGameType() >= kGameTypeNancy10) {
+		error("Game not supported; Use console to inspect game data");
+	}
 
 	IFF *iff = _resource->loadIFF("boot");
 	if (!iff)
