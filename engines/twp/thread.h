@@ -106,13 +106,13 @@ class Object;
 class Cutscene final : public ThreadBase {
 public:
 	Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
-	virtual ~Cutscene() override final;
+	~Cutscene() override final;
 
 	void start();
-	virtual bool isGlobal() override final { return false; }
-	virtual HSQUIRRELVM getThread() override final { return _threadObj._unVal.pThread; }
-	virtual bool update(float elapsed) override final;
-	virtual void stop() override final;
+	bool isGlobal() override final { return false; }
+	HSQUIRRELVM getThread() override final;
+	bool update(float elapsed) override final;
+	void stop() override final;
 
 	bool hasOverride() const;
 	inline void cutsceneOverride() { _state = csOverride; }

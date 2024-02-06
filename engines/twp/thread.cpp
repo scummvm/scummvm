@@ -185,7 +185,15 @@ void Cutscene::stop() {
 	Common::SharedPtr<ThreadBase> t = sqthread(_parentThreadId);
 	if (t && t->getId())
 		t->unpause();
-	sq_suspendvm(getThread());
+	HSQUIRRELVM thread = getThread();
+	if (thread)
+		sq_suspendvm(thread);
+}
+
+HSQUIRRELVM Cutscene::getThread() {
+	if (_threadObj._type != OT_THREAD)
+		return nullptr;
+	return _threadObj._unVal.pThread;
 }
 
 void Cutscene::checkEndCutsceneOverride() {

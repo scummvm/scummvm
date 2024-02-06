@@ -459,7 +459,10 @@ Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v) {
 		}
 	}
 
-	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), GetThread(v));
+	auto it = Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), GetThread(v));
+	if(it != g_engine->_threads.end())
+		return *it;
+	return nullptr;
 }
 
 static void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<Common::SharedPtr<SoundDefinition> > &arr) {

@@ -89,7 +89,7 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 }
 
 Object::~Object() {
-	_nodeAnim->remove();
+	if(_nodeAnim) _nodeAnim->remove();
 	_node->remove();
 
 	if (_layer) {

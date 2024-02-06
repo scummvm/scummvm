@@ -725,7 +725,7 @@ static SQInteger removeCallback(HSQUIRRELVM v) {
 	for (size_t i = 0; i < g_engine->_callbacks.size(); i++) {
 		Common::SharedPtr<Callback> cb = g_engine->_callbacks[i];
 		if (cb->getId() == id) {
-			g_engine->_callbacks.remove_at(i);
+			cb->remove();
 			return 0;
 		}
 	}

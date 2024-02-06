@@ -333,7 +333,7 @@ static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &
 
 static void loadPseudoObjects(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
-		Common::SharedPtr<Object> o = object(room, it->_key);
+		Common::SharedPtr<Object> o(object(room, it->_key));
 		if (!o)
 			warning("load: room '%s' object '%s' not loaded because it has not been found", room->_name.c_str(), it->_key.c_str());
 		else
@@ -347,7 +347,7 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 			loadPseudoObjects(room, it->_value->asObject());
 		} else {
 			if (!it->_key.hasPrefix("_")) {
-				Common::SharedPtr<Object> o = object(room, it->_key);
+				Common::SharedPtr<Object> o(object(room, it->_key));
 				if (!o) {
 					HSQOBJECT tmp;
 					toSquirrel(it->_value, tmp);
@@ -394,6 +394,8 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 		error("Cannot load savegame version %lld", version);
 		return false;
 	}
+
+	debug("%s", savegame.jSavegame->stringify().c_str());
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());

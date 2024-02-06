@@ -28,11 +28,17 @@ Callback::Callback(int id, float duration, const Common::String &name, const Com
 	: _id(id), _duration(duration), _name(name), _args(args) {
 }
 
+void Callback::remove() {
+	_dead = true;
+}
+
 void Callback::call() {
 	sqcall(_name.c_str(), _args);
 }
 
 bool Callback::update(float elapsed) {
+	if (_dead)
+		return true;
 	_elapsed += elapsed;
 	bool result = _elapsed > _duration;
 	if (result)

@@ -502,7 +502,7 @@ void TwpEngine::update(float elapsed) {
 	Common::Array<Common::SharedPtr<ThreadBase> > threadsToRemove;
 
 	for (auto it = threads.begin(); it != threads.end(); it++) {
-		Common::SharedPtr<ThreadBase> thread = *it;
+		Common::SharedPtr<ThreadBase> thread(*it);
 		if (thread->update(elapsed)) {
 			threadsToRemove.push_back(thread);
 		}
@@ -510,7 +510,7 @@ void TwpEngine::update(float elapsed) {
 
 	// remove threads that are terminated
 	for (auto it = threadsToRemove.begin(); it != threadsToRemove.end(); it++) {
-		Common::SharedPtr<ThreadBase> thread = *it;
+		Common::SharedPtr<ThreadBase> thread(*it);
 		int i = find(_threads, *it);
 		if (i != -1) {
 			_threads.remove_at(i);
@@ -519,8 +519,8 @@ void TwpEngine::update(float elapsed) {
 
 	// update callbacks
 	for (auto it = _callbacks.begin(); it != _callbacks.end();) {
-		Common::SharedPtr<Callback> cb = *it;
-		if (cb->update(elapsed)) {
+		Common::SharedPtr<Callback> cb(*it);
+		if (!cb || cb->update(elapsed)) {
 			it = _callbacks.erase(it);
 			continue;
 		}
@@ -529,7 +529,7 @@ void TwpEngine::update(float elapsed) {
 
 	// update tasks
 	for (auto it = _tasks.begin(); it != _tasks.end();) {
-		Common::SharedPtr<Task> task = *it;
+		Common::SharedPtr<Task> task(*it);
 		if (task->update(elapsed)) {
 			it = _tasks.erase(it);
 			continue;
@@ -989,18 +989,7 @@ struct DefineObjectParams {
 
 static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 	DefineObjectParams *params = static_cast<DefineObjectParams *>(data);
-	HSQUIRRELVM v = params->v;
 	if (oTable._type == OT_TABLE) {
-		if (params->pseudo) {
-			// if it's a pseudo room we need to clone each object
-			sq_pushobject(v, oTable);
-			sq_clone(v, -1);
-			sq_getstackobj(v, -1, &oTable);
-			sq_addref(v, &oTable);
-			sq_pop(v, 2);
-			sqsetf(params->room->_table, k, oTable);
-		}
-
 		if (sqrawexists(oTable, "icon")) {
 			// Add inventory object to root table
 			debugC(kDebugGame, "Add %s to inventory", k.c_str());
@@ -1094,7 +1083,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Common::SharedPtr<Object> obj = layer->_objects[j];
-				if (!sqrawexists(table, obj->_key)) {
+				if (!sqrawexists(result->_table, obj->_key)) {
 					// this object does not exist, so create it
 					sq_newtable(v);
 					sq_getstackobj(v, -1, &obj->_table);
@@ -1113,6 +1102,16 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 					if (obj->_objType == otNone)
 						obj->setTouchable(false);
 				} else if (obj->_objType == otNone) {
+					if (pseudo) {
+						// if it's a pseudo room we need to clone each object
+						sqgetf(result->_table, obj->_key, obj->_table);
+						sq_pushobject(v, obj->_table);
+						sq_clone(v, -1);
+						sq_getstackobj(v, -1, &obj->_table);
+						sq_addref(v, &obj->_table);
+						sq_remove(v, -2);
+						sqsetf(result->_table, obj->_key, obj->_table);
+					}
 					obj->setTouchable(true);
 				}
 
@@ -1259,9 +1258,9 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 		for (size_t i = 0; i < _room->_layers.size(); i++) {
 			Common::SharedPtr<Layer> layer = _room->_layers[i];
 			for (auto it = layer->_objects.begin(); it != layer->_objects.end();) {
-				Common::SharedPtr<Object> obj = *it;
+				Common::SharedPtr<Object> obj(*it);
 				if (obj->_temporary) {
-					it = it = layer->_objects.erase(it);
+					it = layer->_objects.erase(it);
 					continue;
 				} else if (isActor(obj->getId()) && _actor != obj) {
 					obj->stopObjectMotors();

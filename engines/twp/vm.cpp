@@ -80,7 +80,7 @@ static void printfunc(HSQUIRRELVM v, const SQChar *s, ...) {
 }
 
 Vm::Vm() {
-	gVm = v = sq_open(1024);
+	gVm = v = sq_open(1024 * 2);
 	sq_setcompilererrorhandler(v, errorHandler);
 	sq_newclosure(v, aux_printerror, 0);
 	sq_seterrorhandler(v);
