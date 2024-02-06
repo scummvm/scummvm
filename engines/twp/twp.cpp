@@ -607,21 +607,19 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	_shaderParams.updateShader();
 
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
-	bool flipY = _fadeShader->_effect == FadeEffect::Wobble;
 	Math::Vector2d camPos = _gfx.cameraPos();
-	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, flipY);
+	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect == FadeEffect::Wobble);
 
 	Texture *screenTexture = &renderTexture2;
 	if (_fadeShader->_effect != FadeEffect::None) {
 		// draw second room if any
 		_gfx.setRenderTarget(&renderTexture);
 		_gfx.use(nullptr);
-		_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 		_gfx.cameraPos(_fadeShader->_cameraPos);
-		_gfx.clear(Color(0, 0, 0));
+		_gfx.clear(Color(1, 0, 0));
 		if (_fadeShader->_room && _fadeShader->_effect == FadeEffect::Wobble) {
-			Math::Vector2d camSize = _fadeShader->_room->getScreenSize();
-			_gfx.camera(camSize);
+			Math::Vector2d screenSize = _fadeShader->_room->getScreenSize();
+			_gfx.camera(screenSize);
 			_fadeShader->_room->_scene->draw();
 		}
 
@@ -634,7 +632,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 		case FadeEffect::Wobble:
 			texture1 = &renderTexture;
 			texture2 = &renderTexture2;
-			screenTexture = &renderTexture;
+			screenTexture = &renderTexture3;
 			break;
 		case FadeEffect::In:
 			texture1 = &renderTexture,
@@ -670,7 +668,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	m2.setPosition(Math::Vector3d(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, 0.f));
 	Math::Angle angle;
 	m.buildAroundZ(Math::Angle(-_room->_rotation));
-	_gfx.drawSprite(*screenTexture, Color(), m2 * m * m1, false, _fadeShader->_effect != FadeEffect::None);
+	_gfx.drawSprite(*screenTexture, Color(), m2 * m * m1, false, false);
 
 	// draw UI
 	_gfx.cameraPos(camPos);
@@ -1156,7 +1154,11 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 
 	// exit current room
 	exitRoom(_room);
-	_fadeShader->_effect = FadeEffect::None;
+
+	// reset fade effect if we change the room except for wobble effect
+	if(_fadeShader->_effect != FadeEffect::Wobble) {
+		_fadeShader->_effect = FadeEffect::None;
+	}
 
 	// sets the current room for scripts
 	sqsetf(sqrootTbl(v), "currentRoom", room->_table);
@@ -1362,7 +1364,7 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 	_fadeShader->_fadeToSepia = fadeToSep;
 	_fadeShader->_effect = effect;
 	_fadeShader->_room = _room;
-	_fadeShader->_cameraPos = cameraPos();
+	_fadeShader->_cameraPos = _gfx.cameraPos();
 	_fadeShader->_duration = duration;
 	_fadeShader->_movement = effect == FadeEffect::Wobble ? 0.005f : 0.f;
 	_fadeShader->_elapsed = 0.f;

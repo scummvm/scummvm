@@ -61,12 +61,12 @@ public:
 	FadeShader();
 	virtual ~FadeShader() override;
 
-	virtual int getNumTextures() override;
-	virtual int getTexture(int index) override;
-	virtual int getTextureLoc(int index) override;
+	int getNumTextures() override;
+	int getTexture(int index) override;
+	int getTextureLoc(int index) override;
 
 private:
-	virtual void applyUniforms() final;
+	void applyUniforms() override;
 
 public:
 	FadeEffect _effect = FadeEffect::None;
