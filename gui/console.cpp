@@ -71,6 +71,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	_caretVisible = false;
 	_caretTime = 0;
+	_selectionTime = 0;
 
 	_slideMode = kNoSlideMode;
 	_slideTime = 0;
@@ -223,7 +224,7 @@ void ConsoleDialog::drawLine(int line) {
 		byte c = buffer(idx);
 #endif
 		if (idx >= MIN(_selBegin, _selEnd) && idx < MAX(_selBegin, _selEnd))
-			g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font, ThemeEngine::kFontColorNormal, true);
+			g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font, ThemeEngine::kFontColorNormal, ThemeEngine::kTextInversionFocus);
 		else
 			g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
@@ -248,7 +249,17 @@ void ConsoleDialog::handleTickle() {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
-
+	if (_selectionTime < time) {
+		_selectionTime += kDraggingTime;
+		if (_isScrollingDown) {
+			_scrollBar->handleMouseWheel(0, 0, 1);
+			_selEnd += kCharsPerLine;
+		}
+		if (_isScrollingUp) {
+			_scrollBar->handleMouseWheel(0, 0, -1);
+			_selEnd -= kCharsPerLine;
+		}
+	}
 	// Perform the "slide animation".
 	if (_slideMode != kNoSlideMode) {
 		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
@@ -509,6 +520,10 @@ void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
 	if (state.hasFlags(Common::KBD_CTRL)) {
 		specialKeys(state.keycode);
 	} else if ((state.ascii >= 32 && state.ascii <= 127) || (state.ascii >= 160 && state.ascii <= 255)) {
+		_selBegin = -1;
+		_selEnd = -1;
+		drawDialog(kDrawLayerForeground);
+
 		for (int i = _promptEndPos - 1; i >= _currentPos; i--)
 			buffer(i + 1) = buffer(i);
 		_promptEndPos++;
@@ -552,26 +567,23 @@ void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
 				if (!userInput.empty())
 					g_system->setTextInClipboard(userInput);
 			} else {
-				Common::String str = "";
-				Common::String whitespaces = ""; // for dealing with trailing whitespaces
+				Common::String str;
+				Common::String whitespaces; // for dealing with trailing whitespaces
 				for (int i = MIN(_selBegin, _selEnd); i < MAX(_selBegin, _selEnd); i++) {
 					if (i % kCharsPerLine != kCharsPerLine - 1) {
 						if (buffer(i) == ' ') {
-							whitespaces += buffer(i);
+							whitespaces += buffer(i); //to deal with trailing whitespaces
 						} else {
 							str += whitespaces;
 							str += buffer(i);
-							whitespaces = "";
+							whitespaces.clear();
 						}
 					} else {
-						whitespaces = "";
+						whitespaces.clear();
 						str += "\n";
 					}
 				}
 				g_system->setTextInClipboard(str);
-				_selBegin = -1;
-				_selEnd = -1;
-				drawDialog(kDrawLayerForeground);
 			}
 		} break;
 		case kActionPaste:
@@ -580,6 +592,10 @@ void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
 				insertIntoPrompt(text.encode().c_str());
 				scrollToCurrent();
 				drawLine(pos2line(_currentPos));
+
+				_selBegin = -1;
+				_selEnd = -1;
+				drawDialog(kDrawLayerForeground);
 			}
 			break;
 		default:
@@ -891,14 +907,11 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 	} else if (_selBegin == -1 && _selEnd == -1) {
-		int check = (y - _topPadding) / (kConsoleLineHeight / 2);
-		if (check % 2) {
-			int lineNumber = (check - 1) / 2;
-			int ind = (x - _leftPadding) / kConsoleCharWidth;
-			_selBegin = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + ind;
-			_selEnd = _selBegin;
-			_isDragging = true;
-		}
+		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
+		int ind = (x - _leftPadding) / kConsoleCharWidth;
+		_selBegin = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + ind;
+		_selEnd = _selBegin;
+		_isDragging = true;
 	} else {
 		_selBegin = -1;
 		_selEnd = -1;
@@ -910,14 +923,20 @@ void ConsoleDialog::handleMouseMoved(int x, int y, int button) {
 	if (!_isDragging)
 		Dialog::handleMouseMoved(x, y, button);
 	else {
-		int check = (y - _topPadding) / (kConsoleLineHeight / 2);
-		if (check % 2) {
-			int lineNumber = (check - 1) / 2;
-			int col = (x - _leftPadding) / kConsoleCharWidth;
-			_selEnd = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + col;
-			drawDialog(kDrawLayerForeground);
-		}
+		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
+		int col = (x - _leftPadding) / kConsoleCharWidth;
+		_selEnd = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + col;
+		if ((y - _topPadding) / (kConsoleLineHeight / 2) > 2 * _linesPerPage - 1)
+			_isScrollingDown = true;
+		else
+			_isScrollingDown = false;
+		if ((y - _topPadding) / (kConsoleLineHeight / 2) < 1)
+			_isScrollingUp = true;
+		else
+			_isScrollingUp = false;
+		drawDialog(kDrawLayerForeground);
 	}
+	drawDialog(kDrawLayerForeground);
 }
 
 void ConsoleDialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -927,6 +946,8 @@ void ConsoleDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 		_selBegin = -1;
 		_selEnd = -1;
 	}
+	_isScrollingUp = false;
+	_isScrollingDown = false;
 }
 
 } // End of namespace GUI

@@ -500,7 +500,7 @@ public:
 	              FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true,
 	              const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
-	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color = kFontColorNormal, bool highlight = false);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color = kFontColorNormal, TextInversionState inverted = ThemeEngine::kTextInversionNone);
 
 	void drawFoldIndicator(const Common::Rect &r, bool expanded);
 
