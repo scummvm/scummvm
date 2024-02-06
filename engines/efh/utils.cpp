@@ -59,7 +59,7 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 				_imp1PtrArray[counter++] = curPtr;
 		} else
 			++curPtr;
-	} while (*curPtr != 0x60 && counter <= target);
+	} while (*curPtr != 0x60 && counter <= target && !shouldQuitGame());
 
 	if (ConfMan.getBool("dump_scripts")) {
 		// Dump the decompressed IMP file
@@ -151,7 +151,7 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && !shouldQuit()) {
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && !shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -176,7 +176,7 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && !shouldQuit()) {
+	while (delay > 0 && !shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -227,7 +227,7 @@ Common::KeyCode EfhEngine::waitForKey() {
 	Common::Event event;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -262,7 +262,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
 		_system->getEventManager()->pollEvent(event);
 
 		if (event.type == Common::EVENT_KEYUP)
@@ -290,7 +290,7 @@ Common::KeyCode EfhEngine::getInputBlocking() {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuitGame()) {
 		_system->getEventManager()->pollEvent(event);
 
 		if (event.type == Common::EVENT_KEYUP)

@@ -105,7 +105,7 @@ void EfhEngine::rImageFile(const Common::Path &filename, uint8 *targetBuffer, ui
 	// => Write a class to handle that more properly
 	uint8 *ptr = targetBuffer;
 	uint16 counter = 0;
-	while (READ_LE_INT16(ptr) != 0) {
+	while (READ_LE_INT16(ptr) != 0 && !shouldQuitGame()) {
 		subFilesArray[counter] = ptr;
 		++counter;
 		int16 imageWidth = READ_LE_INT16(ptr);

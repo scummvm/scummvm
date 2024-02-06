@@ -84,7 +84,7 @@ Common::Error EfhEngine::run() {
 		return Common::kNoError;
 
 	uint32 lastMs = _system->getMillis();
-	while (!_shouldQuit) {
+	while (!shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -241,7 +241,7 @@ Common::Error EfhEngine::run() {
 			break;
 		}
 
-		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
+		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuitGame()) {
 			bool collisionFl = checkMonsterCollision();
 			if (collisionFl) {
 				_oldMapPosX = _mapPosX;
@@ -262,16 +262,16 @@ Common::Error EfhEngine::run() {
 			}
 		}
 
-		if (!_shouldQuit) {
+		if (!shouldQuitGame()) {
 			handleMapMonsterMoves();
 		}
 
-		if (_redrawNeededFl && !_shouldQuit) {
+		if (_redrawNeededFl && !shouldQuitGame()) {
 			drawScreen();
 			displayLowStatusScreen(true);
 		}
 
-		if (!_shouldQuit) {
+		if (!shouldQuitGame()) {
 			handleNewRoundEffects();
 
 			if (_tempTextDelay > 0) {
@@ -871,7 +871,7 @@ void EfhEngine::handleWinSequence() {
 
 	Common::KeyCode input = Common::KEYCODE_INVALID;
 
-	while (input != Common::KEYCODE_ESCAPE) {
+	while (input != Common::KEYCODE_ESCAPE && !shouldQuitGame()) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
@@ -1721,7 +1721,7 @@ void EfhEngine::handleMapMonsterMoves() {
 
 				break;
 			}
-		} while (!monsterMovedFl && retryCounter > 0);
+		} while (!monsterMovedFl && retryCounter > 0 && !shouldQuitGame());
 	}
 
 	if (attackMonsterId != -1)
@@ -2058,7 +2058,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 						curTextId = nextTextId;
 				}
 
-			} while (!textComplete && curTextId != -1);
+			} while (!textComplete && curTextId != -1 && !shouldQuitGame());
 
 			textComplete = false;
 			if (curTextId == 0xFF || curTextId == -1)
@@ -2445,7 +2445,7 @@ bool EfhEngine::checkMonsterCollision() {
 			default:
 				break;
 			}
-		} while (!endLoop);
+		} while (!endLoop && !shouldQuitGame());
 		return false;
 	}
 
