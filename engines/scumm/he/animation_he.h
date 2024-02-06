@@ -39,7 +39,17 @@ namespace Scumm {
 class ScummEngine_v90he;
 
 class MoviePlayer {
+
 public:
+	enum VideoFlags {
+		vfBackground     = 0x00000001,
+		vfImageSurface   = 0x00000002,
+		vfForeground     = 0x00000004,
+		vfLooping        = 0x00000008,
+		vfAllowFrameSkip = 0x00000010,
+		vfDefault        = (vfForeground),
+	};
+
 	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
 	~MoviePlayer();
 
