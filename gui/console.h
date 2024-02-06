@@ -71,7 +71,8 @@ protected:
 		kCharsPerLine = 128,
 		kBufferSize   = kCharsPerLine * 1024,
 
-		kHistorySize  = 20
+		kHistorySize  = 20,
+		kDraggingTime = 200
 	};
 
 	const Graphics::Font *_font;
@@ -91,6 +92,7 @@ protected:
 
 	bool   _caretVisible;
 	uint32 _caretTime;
+	uint32 _selectionTime;
 
 	enum SlideMode {
 		kNoSlideMode,
@@ -135,6 +137,9 @@ protected:
 
 	int _selBegin;
 	int _selEnd;
+
+	bool _isScrollingUp;
+	bool _isScrollingDown;
 
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
