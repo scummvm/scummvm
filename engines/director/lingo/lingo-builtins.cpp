@@ -2276,10 +2276,15 @@ void LB::b_installMenu(int nargs) {
 }
 
 void LB::b_label(int nargs) {
+	// label functions as marker when the input is an int
 	Datum d = g_lingo->pop();
-	uint16 label = g_lingo->func_label(d);
-
-	g_lingo->push(label);
+	int marker;
+	if (d.type == STRING) {
+		marker = g_lingo->func_label(d);
+	} else {
+		marker = g_lingo->func_marker(d.asInt());
+	}
+	g_lingo->push(marker);
 }
 
 void LB::b_marker(int nargs) {
