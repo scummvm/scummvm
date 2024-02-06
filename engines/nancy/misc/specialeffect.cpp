@@ -90,7 +90,7 @@ void SpecialEffect::updateGraphics() {
 			_fadeToBlackTime /= 2;
 		}
 
-		if (g_nancy->getTotalPlayTime() > _startTime + _totalTime) {
+		if (g_nancy->getTotalPlayTime() > _startTime + _totalTime && (_type != kThroughBlack || _throughBlackStarted2nd)) {
 			if (_currentFrame == 0) {
 				// Ensure at least one dissolve frame is shown
 				++_currentFrame;
@@ -98,21 +98,22 @@ void SpecialEffect::updateGraphics() {
 				setVisible(true);
 			}
 		} else {
-			// Use a Bezier curve for all fades. Not entirely accurate to the original engine,
+			// Use a curve for all fades. Not entirely accurate to the original engine,
 			// since that pre-calculated the number of frames and did some exponent magic on them
 			float alpha = (float)(g_nancy->getTotalPlayTime() - _startTime) / (float)_totalTime;
+			bool start2nd = alpha > 1;
 			alpha = alpha * alpha * (3.0 - 2.0 * alpha);
 			alpha *= 255;
 			GraphicsManager::crossDissolve(_fadeFrom, _fadeTo, alpha, _rect, _drawSurface);
 			setVisible(true);
 			++_currentFrame;
 
-			if (alpha > 255 && _type == kThroughBlack) {
+			if (start2nd && _type == kThroughBlack) {
 				_throughBlackStarted2nd = true;
-				void *temp = _fadeFrom.getPixels();
-				_fadeFrom.setPixels(_fadeTo.getPixels());
-				_fadeTo.setPixels(temp);
+				_fadeFrom.clear();
+				setVisible(false);
 				g_nancy->_graphicsManager->screenshotScreen(_fadeTo);
+				setVisible(true);
 				_startTime = g_nancy->getTotalPlayTime();
 				_currentFrame = 0;
 			}
