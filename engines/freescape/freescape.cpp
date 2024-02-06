@@ -211,8 +211,10 @@ FreescapeEngine::~FreescapeEngine() {
 	}
 
 	for (auto &it : _soundsFx) {
-		free(it._value->data);
-		free(it._value);
+		if (it._value) {
+			free(it._value->data);
+			free(it._value);
+		}
 	}
 }
 
