@@ -367,8 +367,8 @@ public:
 	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
 	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync);
 
-	void playSoundFx(int index, bool sync);
-	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
+	virtual void playSoundFx(int index, bool sync);
+	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;
 	void loadSpeakerFx(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration);
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;

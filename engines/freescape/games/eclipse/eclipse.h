@@ -20,7 +20,8 @@
  */
 
 #include "common/file.h"
-#include "common/memstream.h"
+
+#include "freescape/sound.h"
 
 namespace Freescape {
 
@@ -36,6 +37,7 @@ public:
 	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void borderScreen() override;
+	void titleScreen() override;
 
 	void loadAssetsDOSFullGame() override;
 
@@ -58,9 +60,12 @@ public:
 	void drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack);
 	void drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
 
-	Common::MemoryReadStream *load1bPCM(Common::File *file, int offset);
+	soundFx *load1bPCM(Common::SeekableReadStream *file, int offset);
 
 	bool checkIfGameEnded() override;
+	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) override;
+	void playSoundFx(int index, bool sync) override;
+
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };

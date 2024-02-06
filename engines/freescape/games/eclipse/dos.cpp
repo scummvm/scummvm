@@ -19,6 +19,9 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -51,6 +54,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
+		loadSoundsFx(&file, 0xecb4, 1);
 		loadSpeakerFx(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
@@ -132,23 +136,46 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 
 }
 
-Common::MemoryReadStream *EclipseEngine::load1bPCM(Common::File *file, int offset) {
+soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) {
+	soundFx *sound = (soundFx *)malloc(sizeof(soundFx));
 	file->seek(offset);
-	int size = file->readUint16LE();
-	debug("size: %d", size);
-	int freq = file->readUint16LE();
-	debug("freq: %x", freq);
+	sound->size = file->readUint16LE();
+	debugC(1, kFreescapeDebugParser, "size: %d", sound->size);
+	sound->sampleRate = file->readUint16LE();
+	debugC(1, kFreescapeDebugParser, "sample rate?: %f", sound->sampleRate);
 
-	uint8 *buf = (uint8 *)malloc(size * sizeof(uint8) * 8);
-	for (int i = 0; i < size; i++) {
+	uint8 *data = (uint8 *)malloc(sound->size * sizeof(uint8) * 8);
+	for (int i = 0; i < sound->size; i++) {
 		uint8 byte = file->readByte();
 		for (int j = 0; j < 8; j++) {
-			buf[8 * i + j] = byte & 1 ? 255 : 0;
+			data[8 * i + j] = byte & 1 ? 255 : 0;
 			byte = byte >> 1;
 		}
 	}
+	sound->size = sound->size * 8;
+	sound->data = (byte *)data;
+	return sound;
+}
 
-	return (new Common::MemoryReadStream(buf, size * 8));
+void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
+	for (int i = 0; i < 3; i++) {
+		_soundsFx[i] = load1bPCM(file, offset);
+		offset += (_soundsFx[i]->size / 8) + 4;
+	}
+}
+
+void EclipseEngine::playSoundFx(int index, bool sync) {
+	if (_soundsFx.size() == 0) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
+		return;
+	}
+
+	int size = _soundsFx[index]->size;
+	//int sampleRate = _soundsFx[index]->sampleRate;
+	byte *data = _soundsFx[index]->data;
+
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(data, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
 }
 
 

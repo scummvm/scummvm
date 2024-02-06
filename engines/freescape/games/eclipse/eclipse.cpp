@@ -197,6 +197,12 @@ void EclipseEngine::drawBackground() {
 	}
 }
 
+void EclipseEngine::titleScreen() {
+	if (isDOS())
+		playSoundFx(0, true);
+	FreescapeEngine::titleScreen();
+}
+
 
 void EclipseEngine::borderScreen() {
 	if (_border) {
