@@ -58,11 +58,9 @@ public:
 	void afterSceneChange();
 
 	bool isDone() const;
-	bool isHalfInitialized() const { return _halfInitialized; }
 	bool isInitialized() const { return _initialized; }
 
 protected:
-	bool _halfInitialized = false;
 	bool _initialized = false;
 
 	uint32 _nextFrameTime = 0;

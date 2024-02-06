@@ -123,7 +123,6 @@ void SpecialEffect::updateGraphics() {
 void SpecialEffect::onSceneChange() {
 	g_nancy->_graphicsManager->screenshotScreen(_fadeFrom);
 	_drawSurface.rawBlitFrom(_fadeFrom, _rect, Common::Point());
-	_halfInitialized = true;
 }
 
 void SpecialEffect::afterSceneChange() {
