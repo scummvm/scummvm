@@ -216,7 +216,8 @@ void Room305::parser() {
 		// Handled
 	} else if (player_said("climb", "stairs") || player_said("GEAR", "STAIRS")) {
 		player_set_commands_allowed(false);
-		kernel_trigger_dispatch_now(102);
+		_G(wilbur_should) = 102;
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("ENTER", "MINE") || player_said("ENTER", "DARKNESS")) {
 		player_set_commands_allowed(false);
 
