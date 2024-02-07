@@ -28,7 +28,7 @@
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
 #include "engines/engine.h"              // for Engine, g_engine
-#include "graphics/palette.h"            // for PaletteManager
+#include "graphics/paletteman.h"         // for PaletteManager
 #include "sci/console.h"                 // for Console
 #include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState

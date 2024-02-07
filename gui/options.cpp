@@ -68,7 +68,7 @@
 #endif
 #endif
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/pm5544.h"
 #include "graphics/renderer.h"
 #include "graphics/scalerplugin.h"

@@ -37,7 +37,7 @@
 #include "sword2/screen.h"
 #include "sword2/animation.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "gui/message.h"
 

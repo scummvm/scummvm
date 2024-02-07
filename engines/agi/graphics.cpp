@@ -25,7 +25,7 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"

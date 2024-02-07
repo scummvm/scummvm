@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"

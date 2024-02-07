@@ -26,7 +26,6 @@
 #include "hopkins/hopkins.h"
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "image/pcx.h"
 #include "common/file.h"
 #include "common/rect.h"

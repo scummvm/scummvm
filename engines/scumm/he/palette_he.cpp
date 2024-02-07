@@ -22,7 +22,7 @@
 #ifdef ENABLE_HE
 
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "scumm/scumm.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"

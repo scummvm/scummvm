@@ -26,6 +26,8 @@
  * considered part of the same process.
  */
 
+#include "graphics/paletteman.h"
+
 #include "immortal/immortal.h"
 
 namespace Immortal {

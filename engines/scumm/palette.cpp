@@ -25,7 +25,7 @@
 #include "common/util.h"
 
 #include "graphics/macega.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "scumm/resource.h"
 #include "scumm/scumm.h"

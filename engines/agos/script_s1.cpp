@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/localization.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"

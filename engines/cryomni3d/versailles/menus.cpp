@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 #include "image/bmp.h"
 #include "image/image_decoder.h"
 

@@ -32,7 +32,6 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 
-#include "graphics/palette.h"
 #include "image/jpeg.h"
 
 #ifdef USE_RGB_COLOR

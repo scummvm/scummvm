@@ -24,7 +24,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/cursorman.h"
 #include "engines/util.h"
 

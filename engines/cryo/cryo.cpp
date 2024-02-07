@@ -26,7 +26,6 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
-#include "graphics/palette.h"
 #include "common/system.h"
 #include "engines/util.h"
 

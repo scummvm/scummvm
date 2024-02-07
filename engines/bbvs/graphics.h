@@ -25,7 +25,6 @@
 #include "bbvs/spritemodule.h"
 #include "common/array.h"
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Bbvs {

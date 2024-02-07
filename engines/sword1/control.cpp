@@ -29,7 +29,6 @@
 #include "common/translation.h"
 #include "common/memstream.h"
 
-#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 #include "gui/message.h"
 

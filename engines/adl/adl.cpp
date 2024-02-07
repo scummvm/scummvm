@@ -32,7 +32,6 @@
 
 #include "engines/util.h"
 
-#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 
 #include "adl/adl.h"

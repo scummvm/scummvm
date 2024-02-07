@@ -28,8 +28,6 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
-
 namespace Video {
 
 VideoDecoder::VideoDecoder() {

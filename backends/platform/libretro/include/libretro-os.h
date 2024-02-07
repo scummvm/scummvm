@@ -24,7 +24,7 @@
 #include "common/mutex.h"
 #include "common/list.h"
 #include "common/events.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #define BASE_CURSOR_SPEED 4

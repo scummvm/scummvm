@@ -21,7 +21,7 @@
 
 #include "backends/base-backend.h"
 #include <graphics/surface.h>
-#include <graphics/palette.h>
+#include <graphics/paletteman.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
 #include "backends/audiocd/default/default-audiocd.h"

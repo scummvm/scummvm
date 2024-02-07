@@ -27,7 +27,7 @@
 #include "common/keyboard.h"
 
 #include "graphics/mode.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 /**
  * Abstract class for graphics manager. Subclasses

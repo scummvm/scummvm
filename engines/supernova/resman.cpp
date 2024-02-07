@@ -26,7 +26,6 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 
 #include "supernova/graphics.h"
 #include "supernova/resman.h"

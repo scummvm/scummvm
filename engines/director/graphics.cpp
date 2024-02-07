@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/memstream.h"
+#include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"

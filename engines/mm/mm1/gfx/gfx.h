@@ -22,8 +22,6 @@
 #ifndef MM1_GFX_H
 #define MM1_GFX_H
 
-#include "graphics/palette.h"
-
 namespace MM {
 namespace MM1 {
 namespace Gfx {

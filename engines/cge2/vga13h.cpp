@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/rect.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "cge2/general.h"
 #include "cge2/vga13h.h"
 #include "cge2/bitmap.h"

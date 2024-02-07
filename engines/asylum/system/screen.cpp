@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "graphics/paletteman.h"
 
 #include "asylum/system/screen.h"
 

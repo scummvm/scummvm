@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macwindowmanager.h"
 

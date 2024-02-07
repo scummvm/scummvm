@@ -25,7 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "common/algorithm.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "tsage/globals.h"
 

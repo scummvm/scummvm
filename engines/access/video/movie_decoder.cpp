@@ -35,7 +35,7 @@
 #include "common/keyboard.h"
 #include "engines/engine.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 

@@ -25,7 +25,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"

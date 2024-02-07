@@ -30,6 +30,7 @@
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/palette.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
 

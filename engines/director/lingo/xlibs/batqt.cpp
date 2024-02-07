@@ -53,6 +53,7 @@
  * XS     mSetBatch               -- Applies a set of batch commands
  */
 
+#include "graphics/paletteman.h"
 #include "video/qt_decoder.h"
 #include "director/director.h"
 #include "director/util.h"

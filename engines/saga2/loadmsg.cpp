@@ -26,7 +26,7 @@
 #include "saga2/saga2.h"
 #include "saga2/detection.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Saga2 {
 

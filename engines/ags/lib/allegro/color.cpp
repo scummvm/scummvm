@@ -27,7 +27,7 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace AGS3 {
 

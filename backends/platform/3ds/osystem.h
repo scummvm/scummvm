@@ -25,7 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "base/main.h"
 #include "audio/mixer_intern.h"
 #include "backends/graphics/graphics.h"

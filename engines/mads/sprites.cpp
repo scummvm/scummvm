@@ -21,7 +21,6 @@
 
 #include "common/scummsys.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "mads/mads.h"
 #include "mads/screen.h"
 #include "mads/msurface.h"

@@ -29,7 +29,6 @@
 
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "engines/savestate.h"

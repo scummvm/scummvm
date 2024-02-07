@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 #include "cge2/events.h"
 #include "cge2/snail.h"

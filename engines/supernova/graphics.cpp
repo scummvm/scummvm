@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "supernova/graphics.h"

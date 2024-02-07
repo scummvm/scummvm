@@ -19,6 +19,8 @@
  *
  */
 
+#include "graphics/paletteman.h"
+
 #include "bbvs/graphics.h"
 
 namespace Bbvs {

@@ -23,7 +23,7 @@
 #include "prince/prince.h"
 #include "prince/mhwanh.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "common/memstream.h"
 

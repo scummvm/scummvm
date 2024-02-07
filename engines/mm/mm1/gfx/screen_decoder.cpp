@@ -21,7 +21,6 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/gfx/screen_decoder.h"

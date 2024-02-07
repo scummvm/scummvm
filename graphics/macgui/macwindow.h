@@ -26,7 +26,6 @@
 
 #include "graphics/managed_surface.h"
 #include "graphics/nine_patch.h"
-#include "graphics/palette.h"
 #include "graphics/font.h"
 
 #include "graphics/macgui/macwidget.h"

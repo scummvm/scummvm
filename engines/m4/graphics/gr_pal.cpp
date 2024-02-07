@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "common/textconsole.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/core/errors.h"

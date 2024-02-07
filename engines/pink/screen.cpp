@@ -21,7 +21,7 @@
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/fonts/ttf.h"
 
 #include "pink/pink.h"

@@ -25,7 +25,7 @@
 
 #include "common/debug.h"
 #include "common/savefile.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
