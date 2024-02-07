@@ -734,7 +734,7 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 		int interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
-		obj->setRotateTo(Common::SharedPtr<ScaleTo>(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation))));
+		obj->setScaleTo(Common::SharedPtr<ScaleTo>(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation))));
 	}
 	return 0;
 }
