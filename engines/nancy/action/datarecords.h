@@ -52,6 +52,20 @@ protected:
 	Common::Array<HotspotDescription> _hotspots;
 };
 
+// Sets (or adds to) a value inside the TableData struct
+class SetValue : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SetValue"; }
+
+	byte _index = 0;
+	bool _shouldSet = false;
+	int16 _value = kNoTableValue;
+};
+
 // Sets up to 10 flags at once.
 class EventFlags : public ActionRecord {
 public:

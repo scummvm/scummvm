@@ -70,7 +70,7 @@ void TableIndexSetValueHS::execute() {
 			break;
 		case kIncrementTableValue:
 			++playerTable->singleValues[_tableIndex - 1];
-			if (playerTable->singleValues[_tableIndex - 1] >= playerTable->singleValues.size() + 1) {
+			if (playerTable->singleValues[_tableIndex - 1] >= (int)playerTable->singleValues.size() + 1) {
 				playerTable->singleValues[_tableIndex - 1] = 1;
 			}
 			break;
@@ -111,6 +111,40 @@ void TableIndexSetValueHS::execute() {
 		finishExecution();
 	}
 	}
+}
+
+void SetValue::readData(Common::SeekableReadStream &stream) {
+	_index = stream.readByte();
+	_shouldSet = stream.readByte();
+	_value = stream.readSint16LE();
+}
+
+void SetValue::execute() {
+	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	assert(playerTable);
+
+	// nancy8 has 20 single & 20 combo values, later games have 30/10
+	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+
+	if (_index < numSingleValues) {
+		// Single values
+		int16 curValue = playerTable->getSingleValue(_index);
+		if (_shouldSet || curValue == kNoTableValue) {
+			playerTable->setSingleValue(_index, _value);
+		} else {
+			playerTable->setSingleValue(_index, curValue + _value);
+		}
+	} else {
+		// Combo values
+		float curValue = playerTable->getComboValue(_index - numSingleValues);
+		if (_shouldSet || curValue == (float)kNoTableValue) {
+			playerTable->setComboValue(_index - numSingleValues, _value);
+		} else {
+			playerTable->setComboValue(_index - numSingleValues, curValue + _value);
+		}
+	}
+
+	finishExecution();
 }
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {

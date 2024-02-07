@@ -182,7 +182,7 @@ void TableData::synchronize(Common::Serializer &ser) {
 
 void TableData::setSingleValue(uint16 index, int16 value) {
 	if (singleValues.size() <= index) {
-		singleValues.resize(index, kNoTableValue);
+		singleValues.resize(index + 1, kNoTableValue);
 	}
 
 	singleValues[index] = value;
@@ -194,7 +194,7 @@ int16 TableData::getSingleValue(uint16 index) const {
 
 void TableData::setComboValue(uint16 index, float value) {
 	if (comboValues.size() < index) {
-		comboValues.resize(index, kNoTableValue);
+		comboValues.resize(index + 1, kNoTableValue);
 	}
 
 	comboValues[index] = value;
