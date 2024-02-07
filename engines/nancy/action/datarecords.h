@@ -79,6 +79,22 @@ protected:
 	Common::Array<int16> _percentages;
 };
 
+class ValueTest : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "ValueTest"; }
+
+	byte _valueIndex = 0;
+	byte _testType = 0;
+	byte _condition = 0;
+	Common::Array<byte> _indicesToTest;
+
+	int16 _flagToSet = kFlagNoLabel;
+};
+
 // Sets up to 10 flags at once.
 class EventFlags : public ActionRecord {
 public:

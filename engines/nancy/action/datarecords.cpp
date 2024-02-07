@@ -196,6 +196,137 @@ void SetValueCombo::execute() {
 	finishExecution();
 }
 
+void ValueTest::readData(Common::SeekableReadStream &stream) {
+	_valueIndex = stream.readByte();
+	_testType = stream.readByte();
+	_condition = stream.readByte();
+
+	_indicesToTest.resize(5);
+	for (uint i = 0; i < 5; ++i) {
+		_indicesToTest[i] = stream.readByte();
+	}
+
+	_flagToSet = stream.readSint16LE();
+}
+
+static const byte kTestAllCombo				= 0;
+static const byte kTestAllSingle			= 1;
+static const byte kTestSome					= 2;
+static const byte kTestActualValue			= 3;
+
+static const byte kTestEqualTo				= 0;
+static const byte kTestLessThan				= 1;
+static const byte kTestGreaterThan			= 2;
+static const byte kTestGreaterThanOrEqual	= 3;
+static const byte kTestLessThanOrEqual		= 4;
+
+void ValueTest::execute() {
+	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	assert(playerTable);
+
+	// nancy8 has 20 single & 20 combo values, later games have 30/10
+	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+
+	float testedValue;
+	if (_valueIndex < numSingleValues) {
+		// Test a single value
+		testedValue = playerTable->getSingleValue(_valueIndex);
+	} else {
+		// Test a combo value
+		testedValue = playerTable->getComboValue(_valueIndex - numSingleValues);
+	}
+
+	// Pick which values we will test against, depending on the _testType param
+	Common::Array<byte> testedIndices;
+	switch (_testType) {
+	case kTestAllSingle:
+		testedIndices.resize(numSingleValues);
+		for (uint i = 0; i < numSingleValues; ++i) {
+			testedIndices[i] = i;
+		}
+
+		break;
+	case kTestAllCombo:
+		testedIndices.resize(g_nancy->getGameType() == kGameTypeNancy8 ? 20 : 10);
+		for (uint i = 0; i < testedIndices.size(); ++i) {
+			testedIndices[i] = i + numSingleValues;
+		}
+
+		break;
+	case kTestSome:
+	case kTestActualValue:
+		testedIndices = _indicesToTest;
+		break;
+	}
+
+	bool satisfied = false;
+	for (uint i = 0; i < testedIndices.size(); ++i) {
+		if (testedIndices[i] == kNoTableIndex) {
+			continue;
+		}
+
+		float otherValue = 0;
+		if (_testType == kTestActualValue) {
+			otherValue = testedIndices[i];
+		} else {
+			if (testedIndices[i] < numSingleValues) {
+				// Test against single value
+				otherValue = playerTable->getSingleValue(testedIndices[i]);
+			} else {
+				// Test against combo value
+				otherValue = playerTable->getComboValue(testedIndices[i] - numSingleValues);
+			}
+
+			if (otherValue == (float)kNoTableValue) {
+				continue;
+			}
+		}
+
+		switch (_condition) {
+		case kTestEqualTo:
+			if (testedValue == otherValue) {
+				satisfied = true;
+			}
+
+			break;
+		case kTestLessThan:
+			if (testedValue < otherValue) {
+				satisfied = true;
+			}
+
+			break;
+		case kTestGreaterThan:
+			if (testedValue > otherValue) {
+				satisfied = true;
+			}
+
+			break;
+		case kTestGreaterThanOrEqual:
+			if (testedValue >= otherValue) {
+				satisfied = true;
+			}
+
+			break;
+		case kTestLessThanOrEqual:
+			if (testedValue <= otherValue) {
+				satisfied = true;
+			}
+
+			break;
+		}
+
+		if (satisfied) {
+			break;
+		}
+	}
+
+	if (satisfied) {
+		NancySceneState.setEventFlag(_flagToSet, g_nancy->_true);
+	}
+
+	finishExecution();
+}
+
 void EventFlags::readData(Common::SeekableReadStream &stream) {
 	if (!_isTerse) {
 		_flags.readData(stream);

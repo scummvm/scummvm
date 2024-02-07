@@ -189,6 +189,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new SetValue();
 	case 78:
 		return new SetValueCombo();
+	case 79:
+		return new ValueTest();
 	case 97:
 		return new EventFlags(true);
 	case 98:
