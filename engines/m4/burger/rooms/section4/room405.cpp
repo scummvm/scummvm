@@ -242,6 +242,10 @@ void Room405::daemon() {
 		_series1 = nullptr;
 		break;
 
+	case 12:
+		conv_resume_curr();
+		break;
+
 	case 13:
 		digi_play("405v513", 1, 255);
 		break;
@@ -419,6 +423,7 @@ void Room405::daemon() {
 		break;
 
 	case kCHANGE_VERA_ANIMATION:
+		warning("%d %d", _veraMode, _veraShould);
 		switch (_veraMode) {
 		case 4:
 			switch (_veraShould) {
@@ -532,7 +537,7 @@ void Room405::daemon() {
 				series_play_with_breaks(PLAY2, "405ve16", 0x100, kCHANGE_VERA_ANIMATION, 3);
 				break;
 
-			case 17:
+			case 15:
 				_veraShould = 9;
 				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				break;
@@ -540,6 +545,9 @@ void Room405::daemon() {
 			case 16:
 				_veraMode = 16;
 				Series::series_play("405ve15", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			case 24:
 				break;
 
 			default:
@@ -668,6 +676,7 @@ void Room405::daemon() {
 				break;
 
 			default:
+				_veraMode = 16;
 				Series::series_play("405ve11", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 4);
 				break;
 			}
