@@ -195,6 +195,7 @@ public:
 	void setBlink(Common::SharedPtr<Motor> blink);
 	void setTurnTo(Common::SharedPtr<Motor> turnTo);
 	void setShakeTo(Common::SharedPtr<Motor> shakeTo);
+	void setScaleTo(Common::SharedPtr<Motor> scaleTo);
 
 	Common::SharedPtr<Motor> getTalking() { return _talking; }
 	void stopTalking();
@@ -279,6 +280,7 @@ private:
 	Common::SharedPtr<Motor> _turnTo;
 	Common::SharedPtr<Motor> _shakeTo;
 	Common::SharedPtr<Motor> _jiggleTo;
+	Common::SharedPtr<Motor> _scaleTo;
 	TalkingState _talkingState;
 };
 
