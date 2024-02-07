@@ -395,7 +395,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 		return false;
 	}
 
-	debug("%s", savegame.jSavegame->stringify().c_str());
+	debugC(kDebugGame, "%s", savegame.jSavegame->stringify().c_str());
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
