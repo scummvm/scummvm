@@ -608,7 +608,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	Math::Vector2d camPos = _gfx.cameraPos();
-	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect == FadeEffect::Wobble);
+	_gfx.drawSprite(renderTexture, Color(), Math::Matrix4(), false, _fadeShader->_effect != FadeEffect::None);
 
 	Texture *screenTexture = &renderTexture2;
 	if (_fadeShader->_effect != FadeEffect::None) {
@@ -616,7 +616,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 		_gfx.setRenderTarget(&renderTexture);
 		_gfx.use(nullptr);
 		_gfx.cameraPos(_fadeShader->_cameraPos);
-		_gfx.clear(Color(1, 0, 0));
+		_gfx.clear(Color(0, 0, 0));
 		if (_fadeShader->_room && _fadeShader->_effect == FadeEffect::Wobble) {
 			Math::Vector2d screenSize = _fadeShader->_room->getScreenSize();
 			_gfx.camera(screenSize);
