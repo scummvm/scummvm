@@ -968,6 +968,14 @@ protected:
 		SO_ROOM_SAVEGAME_BY_NAME = 137,
 		SO_ROOM_SCREEN = 138,
 		SO_ROOM_SCROLL = 139,
+		SO_ROOM_SHAKE_OFF = 140,
+		SO_ROOM_SHAKE_ON = 141,
+		SO_ROOM_TRANSFORM = 142,
+
+		// SCRIPT
+		SO_BAK = 128,
+		SO_BAKREC = 129,
+		SO_REC = 130,
 
 		// SYSTEM
 		SO_FLUSH_OBJECT_DRAW_QUEUE = 128,
@@ -1031,8 +1039,8 @@ protected:
 	void o100_createSound();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
-	void o100_jumpToScriptUnk();
-	void o100_startScriptUnk();
+	void o100_priorityChainScript();
+	void o100_priorityStartScript();
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_setSystemMessage();
