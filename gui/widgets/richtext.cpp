@@ -34,6 +34,13 @@
 
 namespace GUI {
 
+Common::Array<Graphics::TTFMap> ttfFamily = {
+	{"NotoSans-Regular.ttf", Graphics::kMacFontRegular},
+	{"NotoSans-Bold.ttf", Graphics::kMacFontBold},
+	{"NotoSerif-Italic.ttf", Graphics::kMacFontItalic},
+	{"NotoSerif-Bold-Italic.ttf", Graphics::kMacFontBold | Graphics::kMacFontItalic},
+};
+
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(nullptr)  {
 
@@ -189,7 +196,8 @@ void RichTextWidget::createWidget() {
 
 	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
 
-	Graphics::MacFont macFont(Graphics::kMacFontNewYork, fontHeight, Graphics::kMacFontRegular);
+	int newId = wm->_fontMan->registerTTFFont(ttfFamily);
+	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 
 	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 

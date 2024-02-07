@@ -33,6 +33,11 @@ namespace Common {
 
 namespace Graphics {
 
+struct TTFMap {
+	const char *ttfName;
+	uint16 slant;
+};
+
 class MacFONTFont;
 class MacFontFamily;
 
@@ -173,6 +178,10 @@ public:
 	const Common::Array<MacFontFamily *> &getFontFamilies() { return _fontFamilies; }
 
 	void printFontRegistry(int debugLevel, uint32 channel);
+
+	int registerTTFFont(const Common::Array<Graphics::TTFMap> &ttfList);
+
+	int getFamilyId(int newId, int newSlant);
 
 private:
 	void loadFontsBDF();
