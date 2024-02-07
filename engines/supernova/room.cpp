@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/cursorman.h"
 
 #include "supernova/screen.h"

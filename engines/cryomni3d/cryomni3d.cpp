@@ -31,7 +31,7 @@
 #include "engines/util.h"
 
 #include "audio/mixer.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "cryomni3d/cryomni3d.h"
 #include "cryomni3d/datstream.h"

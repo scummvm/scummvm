@@ -19,7 +19,7 @@
  *
  */
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "drascula/drascula.h"
 

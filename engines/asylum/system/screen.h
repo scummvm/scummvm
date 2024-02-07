@@ -26,7 +26,6 @@
 #include "common/queue.h"
 #include "common/rect.h"
 
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "asylum/shared.h"

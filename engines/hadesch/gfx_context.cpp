@@ -24,7 +24,7 @@
 #include "hadesch/video.h"
 #include "hadesch/baptr.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "hadesch/hadesch.h"

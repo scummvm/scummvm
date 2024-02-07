@@ -29,7 +29,7 @@
 #include "common/textconsole.h"
 #include "engines/engine.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"

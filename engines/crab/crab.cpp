@@ -24,7 +24,6 @@
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "crab/crab.h"
 #include "crab/app.h"

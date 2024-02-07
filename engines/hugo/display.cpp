@@ -32,7 +32,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"

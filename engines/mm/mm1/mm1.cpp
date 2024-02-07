@@ -26,7 +26,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/gfx/gfx.h"

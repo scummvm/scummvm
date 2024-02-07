@@ -32,7 +32,6 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
 
 #include "hypno/grammar.h"
 #include "hypno/libfile.h"

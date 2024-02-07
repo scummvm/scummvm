@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/algorithm.h"
 #include "graphics/screen.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Graphics {
 

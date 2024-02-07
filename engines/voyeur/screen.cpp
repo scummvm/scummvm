@@ -23,7 +23,7 @@
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 namespace Voyeur {

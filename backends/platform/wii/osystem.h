@@ -32,7 +32,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
 

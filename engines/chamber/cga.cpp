@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"

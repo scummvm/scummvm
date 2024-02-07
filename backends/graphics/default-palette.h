@@ -22,7 +22,7 @@
 #ifndef BACKENDS_GRAPHICS_DEFAULT_PALETTE_H
 #define BACKENDS_GRAPHICS_DEFAULT_PALETTE_H
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 /**
  * This is a default implementation of the PaletteManager interface

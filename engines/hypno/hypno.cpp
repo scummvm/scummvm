@@ -36,6 +36,7 @@
 #include "common/timer.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "graphics/paletteman.h"
 #include "image/bmp.h"
 
 #include "hypno/grammar.h"

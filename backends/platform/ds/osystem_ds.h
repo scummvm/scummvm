@@ -29,7 +29,7 @@
 #include "backends/platform/ds/background.h"
 #include "backends/platform/ds/keyboard.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 enum {
 	GFX_NOSCALE = 0,

@@ -27,7 +27,7 @@
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "gui/browser.h"
 
 namespace Testbed {

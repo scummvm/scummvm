@@ -45,6 +45,7 @@
  * ScummVM Note: mMovieDone returns true when the movie is _not_ done.
  */
 
+#include "graphics/paletteman.h"
 #include "video/qt_decoder.h"
 
 #include "director/director.h"

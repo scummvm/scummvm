@@ -30,7 +30,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479

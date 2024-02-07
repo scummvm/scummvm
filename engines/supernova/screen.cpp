@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/text-to-speech.h"

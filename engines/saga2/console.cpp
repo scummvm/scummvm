@@ -20,7 +20,7 @@
  */
 
 #include "common/file.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "image/png.h"
 

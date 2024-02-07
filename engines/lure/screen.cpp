@@ -26,7 +26,7 @@
 #include "lure/decode.h"
 #include "lure/events.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Lure {
 

@@ -28,7 +28,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/maccursor.h"

@@ -27,7 +27,7 @@
 #include "common/serializer.h"
 #include "common/system.h"
 #include "common/compression/deflate.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "composer/composer.h"
 #include "composer/graphics.h"

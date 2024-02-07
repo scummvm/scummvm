@@ -44,7 +44,6 @@
 #include "engines/engine.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "gui/saveload.h"

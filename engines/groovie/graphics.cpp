@@ -25,7 +25,7 @@
 #include "common/rect.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Groovie {
 

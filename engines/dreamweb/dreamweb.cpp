@@ -31,7 +31,7 @@
 
 #include "engines/advancedDetector.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "dreamweb/detection.h"

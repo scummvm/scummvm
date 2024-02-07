@@ -29,7 +29,7 @@
 #include "engines/util.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 #include "image/pict.h"
 

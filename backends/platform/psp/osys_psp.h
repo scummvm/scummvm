@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"

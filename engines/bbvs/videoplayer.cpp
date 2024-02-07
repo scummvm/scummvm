@@ -21,7 +21,6 @@
 
 #include "bbvs/bbvs.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 

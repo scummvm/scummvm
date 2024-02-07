@@ -22,7 +22,7 @@
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Tucker {
 

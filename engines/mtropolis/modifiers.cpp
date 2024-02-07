@@ -23,7 +23,6 @@
 #include "common/random.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"

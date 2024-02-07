@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 

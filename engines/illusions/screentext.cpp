@@ -26,7 +26,6 @@
 #include "illusions/screen.h"
 #include "illusions/textdrawer.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 
 namespace Illusions {
 

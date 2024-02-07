@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 
 #include "lilliput/lilliput.h"
 #include "engines/util.h"

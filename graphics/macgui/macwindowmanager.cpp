@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"

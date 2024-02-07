@@ -26,7 +26,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "image/iff.h"

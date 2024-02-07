@@ -24,7 +24,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "access/access.h"
 #include "access/screen.h"
 #include "access/resources.h"

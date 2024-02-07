@@ -32,7 +32,7 @@
 
 #include "engines/savestate.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 namespace NGI {

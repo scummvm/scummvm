@@ -64,8 +64,6 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
-#include "graphics/palette.h"
-
 namespace Wage {
 
 using namespace Graphics::MacWindowConstants;

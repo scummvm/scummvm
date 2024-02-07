@@ -33,7 +33,7 @@
 #include "common/system.h"
 #include "common/memstream.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "engines/util.h"
 

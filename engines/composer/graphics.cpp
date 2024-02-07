@@ -20,7 +20,7 @@
  */
 #include "common/scummsys.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"

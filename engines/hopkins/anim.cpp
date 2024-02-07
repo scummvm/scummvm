@@ -27,7 +27,6 @@
 #include "hopkins/hopkins.h"
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"

@@ -29,7 +29,7 @@
 #include "common/compression/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/fonts/ttf.h"

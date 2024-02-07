@@ -33,7 +33,6 @@
 #include "common/memstream.h"
 
 #include "graphics/surface.h"
-#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 
 #include "engines/util.h"
