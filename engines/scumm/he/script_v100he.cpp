@@ -149,8 +149,8 @@ void ScummEngine_v100he::setupOpcodes() {
 	OPCODE(0x57, o6_printSystem);
 	/* 58 */
 	OPCODE(0x58, o6_printText);
-	OPCODE(0x59, o100_jumpToScriptUnk);
-	OPCODE(0x5a, o100_startScriptUnk);
+	OPCODE(0x59, o100_priorityChainScript);
+	OPCODE(0x5a, o100_priorityStartScript);
 	OPCODE(0x5b, o6_pseudoRoom);
 	/* 5C */
 	OPCODE(0x5c, o6_pushByte);
@@ -740,7 +740,7 @@ void ScummEngine_v100he::o100_jumpToScript() {
 	script = pop();
 	flags = fetchScriptByte();
 	stopObjectCode();
-	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v100he::o100_createSound() {
@@ -965,9 +965,9 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		_sprite->setGroupBounds(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
 	case SO_GROUP: // 38
-		type = pop() - 1;
+		type = pop();
 		switch (type) {
-		case 0: // SPRGRPOP_MOVE
+		case SPRGRPOP_MOVE: // 1
 			value2 = pop();
 			value1 = pop();
 			if (!_curSpriteGroupId)
@@ -975,48 +975,48 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 			_sprite->moveGroupMembers(_curSpriteGroupId, value1, value2);
 			break;
-		case 1: // SPRGRPOP_ORDER
+		case SPRGRPOP_ORDER: // 2
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersPriority(_curSpriteGroupId, value1);
 			break;
-		case 2: // SPRGRPOP_NEW_GROUP
+		case SPRGRPOP_NEW_GROUP: // 3
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersGroup(_curSpriteGroupId, value1);
 			break;
-		case 3: // SPRGRPOP_UPDATE_TYPE
+		case SPRGRPOP_UPDATE_TYPE: // 4
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersUpdateType(_curSpriteGroupId, value1);
 			break;
-		case 4: // SPRGRPOP_NEW
+		case SPRGRPOP_NEW: // 5
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersResetSprite(_curSpriteGroupId);
 			break;
-		case 5: // SPRGRPOP_ANIMATION_SPEED
+		case SPRGRPOP_ANIMATION_SPEED: // 6
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersAnimationSpeed(_curSpriteGroupId, value1);
 			break;
-		case 6: // SPRGRPOP_ANIMATION_TYPE
+		case SPRGRPOP_ANIMATION_TYPE: // 7
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersAutoAnimFlag(_curSpriteGroupId, value1);
 			break;
-		case 7: // SPRGRPOP_SHADOW
+		case SPRGRPOP_SHADOW: // 8
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
@@ -1070,16 +1070,16 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 			break;
 
 		switch (type) {
-		case 0: // SPRGRPPROP_XMUL
+		case SPRGRPPROP_XMUL: // 0
 			_sprite->setGroupXMul(_curSpriteGroupId, value1);
 			break;
-		case 1: // SPRGRPPROP_XDIV
+		case SPRGRPPROP_XDIV: // 1
 			_sprite->setGroupXDiv(_curSpriteGroupId, value1);
 			break;
-		case 2: // SPRGRPPROP_YMUL
+		case SPRGRPPROP_YMUL: // 2
 			_sprite->setGroupYMul(_curSpriteGroupId, value1);
 			break;
-		case 3: // SPRGRPPROP_YDIV
+		case SPRGRPPROP_YDIV: // 3
 			_sprite->setGroupYDiv(_curSpriteGroupId, value1);
 			break;
 		default:
@@ -1557,7 +1557,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 	}
 }
 
-void ScummEngine_v100he::o100_jumpToScriptUnk() {
+void ScummEngine_v100he::o100_priorityChainScript() {
 	int args[25];
 	int script, cycle;
 	byte flags;
@@ -1567,10 +1567,10 @@ void ScummEngine_v100he::o100_jumpToScriptUnk() {
 	script = pop();
 	flags = fetchScriptByte();
 	stopObjectCode();
-	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args, cycle);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args, cycle);
 }
 
-void ScummEngine_v100he::o100_startScriptUnk() {
+void ScummEngine_v100he::o100_priorityStartScript() {
 	int args[25];
 	int script, cycle;
 	byte flags;
@@ -1579,7 +1579,7 @@ void ScummEngine_v100he::o100_startScriptUnk() {
 	cycle = pop();
 	script = pop();
 	flags = fetchScriptByte();
-	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args, cycle);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args, cycle);
 }
 
 void ScummEngine_v100he::o100_redimArray() {
@@ -2016,19 +2016,19 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			switch (args[1]) {
-			case 0:
+			case SPRPROP_HFLIP: // 0
 				_sprite->setSpriteFlagXFlipped(spriteId, args[0]);
 				break;
-			case 1:
+			case SPRPROP_VFLIP: // 1
 				_sprite->setSpriteFlagYFlipped(spriteId, args[0]);
 				break;
-			case 2:
+			case SPRPROP_ACTIVE: // 2
 				_sprite->setSpriteFlagActive(spriteId, args[0]);
 				break;
-			case 3:
+			case SPRPROP_BACKGROUND_RENDER: // 3
 				_sprite->setSpriteFlagDoubleBuffered(spriteId, args[0]);
 				break;
-			case 4:
+			case SPRPROP_USE_IMAGE_REMAP_TABLE: // 4
 				_sprite->setSpriteFlagRemapPalette(spriteId, args[0]);
 				break;
 			default:
@@ -2167,7 +2167,7 @@ void ScummEngine_v100he::o100_startScript() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = fetchScriptByte();
-	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v100he::o100_systemOps() {
@@ -2545,16 +2545,16 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 		spriteGroupId = pop();
 		if (spriteGroupId) {
 			switch (type) {
-			case 0: // SPRGRPPROP_XMUL
+			case SPRGRPPROP_XMUL: // 0
 				push(_sprite->getGroupXMul(spriteGroupId));
 				break;
-			case 1: // SPRGRPPROP_XDIV
+			case SPRGRPPROP_XDIV: // 1
 				push(_sprite->getGroupXDiv(spriteGroupId));
 				break;
-			case 2: // SPRGRPPROP_YMUL
+			case SPRGRPPROP_YMUL: // 2
 				push(_sprite->getGroupYMul(spriteGroupId));
 				break;
-			case 3: // SPRGRPPROP_YDIV
+			case SPRGRPPROP_YDIV: // 3
 				push(_sprite->getGroupYDiv(spriteGroupId));
 				break;
 			default:
@@ -2895,19 +2895,19 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		spriteId = pop();
 		if (spriteId) {
 			switch (flags) {
-			case 0:
+			case SPRPROP_HFLIP: // 0
 				push(_sprite->getSpriteFlagXFlipped(spriteId));
 				break;
-			case 1:
+			case SPRPROP_VFLIP: // 1
 				push(_sprite->getSpriteFlagYFlipped(spriteId));
 				break;
-			case 2:
+			case SPRPROP_ACTIVE: // 2
 				push(_sprite->getSpriteFlagActive(spriteId));
 				break;
-			case 3:
+			case SPRPROP_BACKGROUND_RENDER: // 3
 				push(_sprite->getSpriteFlagDoubleBuffered(spriteId));
 				break;
-			case 4:
+			case SPRPROP_USE_IMAGE_REMAP_TABLE: // 4
 				push(_sprite->getSpriteFlagRemapPalette(spriteId));
 				break;
 			default:
