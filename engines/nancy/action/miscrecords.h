@@ -87,28 +87,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "SpecialEffect"; }
 };
 
-// Changes the selected value inside the TableData. Value can be incremented, decremented, or not changed.
-// Also responsible for checking whether all values are correct (as described in the TABL chunk). Nancy6 and up.
-class TableIndexSetValueHS : public ActionRecord {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
-
-	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_cursorType; }
-
-protected:
-	Common::String getRecordTypeName() const override { return "TableIndexSetValueHS"; }
-
-	uint16 _tableIndex = 0;
-	byte _valueChangeType = kNoChangeTableValue;
-	int16 _entryCorrectFlagID = -1;
-	int16 _allEntriesCorrectFlagID = -1;
-
-	MultiEventFlagDescription _flags;
-	uint16 _cursorType = 1;
-	Common::Array<HotspotDescription> _hotspots;
-};
-
 // Adds a caption to the textbox.
 class TextBoxWrite : public ActionRecord {
 public:
@@ -196,43 +174,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopTimer"; }
 };
 
-// Sets up to 10 flags at once.
-class EventFlags : public ActionRecord {
-public:
-	EventFlags(bool terse = false) : _isTerse(terse) {}
-	virtual ~EventFlags() {}
-
-	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
-
-	MultiEventFlagDescription _flags;
-	bool _isTerse;
-
-protected:
-	Common::String getRecordTypeName() const override { return _isTerse ? "EventFlagsTerse" : "EventFlags"; }
-};
-
-// Sets up to 10 flags when clicked. Hotspot can move alongside background frame.
-class EventFlagsMultiHS : public EventFlags {
-public:
-	EventFlagsMultiHS(bool isCursor, bool terse = false) : EventFlags(terse), _isCursor(isCursor) {}
-	virtual ~EventFlagsMultiHS() {}
-
-	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
-
-	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
-
-	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
-	Common::Array<HotspotDescription> _hotspots;
-
-	bool _isCursor;
-
-protected:
-	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
-};
-
 // Returns the player back to the main menu
 class GotoMenu : public ActionRecord {
 public:
@@ -289,21 +230,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "WinGame"; }
 };
 
-// Sets the difficulty level for the current save. Only appears at the start of the game.
-// First appears in nancy1. Nancy1 and nancy2 have three difficulty values, while later games
-// only have two: 0 and 2.
-class DifficultyLevel : public ActionRecord {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
-
-	uint16 _difficulty = 0;
-	FlagDescription _flag;
-
-protected:
-	Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
-};
-
 // Checks how many hints the player is allowed to get. If they are still allowed hints,
 // it selects an appropriate one and plays its sound/displays its caption in the Textbox.
 // The hint system was _only_ used in nancy1, since it's pretty limited and overly punishing.
@@ -327,4 +253,4 @@ protected:
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_RECORDTYPES_H
+#endif // NANCY_ACTION_MISCRECORDS_H
