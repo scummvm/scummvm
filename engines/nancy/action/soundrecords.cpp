@@ -309,12 +309,12 @@ void TableIndexPlaySound::execute() {
 	auto *tabl = GetEngineData(TABL);
 	assert(tabl);
 
-	if (_lastIndexVal != playerTable->currentIDs[_tableIndex - 1]) {
+	if (_lastIndexVal != playerTable->singleValues[_tableIndex - 1]) {
 		g_nancy->_sound->stopSound(_sound);
 		NancySceneState.getTextbox().clear();
-		_lastIndexVal = playerTable->currentIDs[_tableIndex - 1];
-		_sound.name = Common::String::format("%s%u", tabl->soundBaseName.c_str(), playerTable->currentIDs[_tableIndex - 1]);
-		_ccText = tabl->strings[playerTable->currentIDs[_tableIndex - 1] - 1];
+		_lastIndexVal = playerTable->singleValues[_tableIndex - 1];
+		_sound.name = Common::String::format("%s%u", tabl->soundBaseName.c_str(), playerTable->singleValues[_tableIndex - 1]);
+		_ccText = tabl->strings[playerTable->singleValues[_tableIndex - 1] - 1];
 	}
 
 	PlaySoundCC::execute();

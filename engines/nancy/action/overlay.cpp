@@ -425,8 +425,8 @@ void TableIndexOverlay::execute() {
 	auto *tabl = GetEngineData(TABL);
 	assert(tabl);
 
-	if (_lastIndexVal != playerTable->currentIDs[_tableIndex - 1]) {
-		_lastIndexVal = playerTable->currentIDs[_tableIndex - 1];
+	if (_lastIndexVal != playerTable->singleValues[_tableIndex - 1]) {
+		_lastIndexVal = playerTable->singleValues[_tableIndex - 1];
 		_srcRects.clear();
 		_srcRects.push_back(tabl->srcRects[_lastIndexVal - 1]);
 		_currentViewportFrame = -1; // Force redraw 

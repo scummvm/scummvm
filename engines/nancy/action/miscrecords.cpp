@@ -136,15 +136,15 @@ void TableIndexSetValueHS::execute() {
 		case kNoChangeTableValue:
 			break;
 		case kIncrementTableValue:
-			++playerTable->currentIDs[_tableIndex - 1];
-			if (playerTable->currentIDs[_tableIndex - 1] >= playerTable->currentIDs.size() + 1) {
-				playerTable->currentIDs[_tableIndex - 1] = 1;
+			++playerTable->singleValues[_tableIndex - 1];
+			if (playerTable->singleValues[_tableIndex - 1] >= playerTable->singleValues.size() + 1) {
+				playerTable->singleValues[_tableIndex - 1] = 1;
 			}
 			break;
 		case kDecrementTableValue:
-			--playerTable->currentIDs[_tableIndex - 1];
-			if (playerTable->currentIDs[_tableIndex - 1] == 0) {
-				playerTable->currentIDs[_tableIndex - 1] = playerTable->currentIDs.size();
+			--playerTable->singleValues[_tableIndex - 1];
+			if (playerTable->singleValues[_tableIndex - 1] == 0) {
+				playerTable->singleValues[_tableIndex - 1] = playerTable->singleValues.size();
 			}
 			
 			break;
@@ -153,7 +153,7 @@ void TableIndexSetValueHS::execute() {
 		// Check for correctness...
 
 		// ...of current index only...
-		if (playerTable->currentIDs[_tableIndex] == tabl->correctIDs[_tableIndex]) {
+		if (playerTable->singleValues[_tableIndex] == tabl->correctIDs[_tableIndex]) {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_true);
 		} else {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_false);
@@ -162,7 +162,7 @@ void TableIndexSetValueHS::execute() {
 		// ..and of all indices
 		bool allCorrect = true;
 		for (uint i = 0; i < tabl->correctIDs.size(); ++i) {
-			if (playerTable->currentIDs[i] != tabl->correctIDs[i]) {
+			if (playerTable->singleValues[i] != tabl->correctIDs[i]) {
 				allCorrect = false;
 				break;
 			}

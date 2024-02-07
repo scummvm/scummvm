@@ -145,21 +145,63 @@ void JournalData::synchronize(Common::Serializer &ser) {
 }
 
 TableData::TableData() {
-	auto *tabl = GetEngineData(TABL);
-	assert(tabl);
+	if (g_nancy->getGameType() == kGameTypeNancy6) {
+		auto *tabl = GetEngineData(TABL);
+		assert(tabl);
 
-	currentIDs = tabl->startIDs;
+		singleValues.resize(tabl->startIDs.size());
+		for (uint i = 0; i < tabl->startIDs.size(); ++i) {
+			singleValues[i] = tabl->startIDs[i];
+		}
+	}
 }
 
 void TableData::synchronize(Common::Serializer &ser) {
-	byte num = currentIDs.size();
+	byte num = singleValues.size();
 	ser.syncAsByte(num);
 
 	if (ser.isLoading()) {
-		currentIDs.resize(num);
+		singleValues.resize(num);
 	}
 
-	ser.syncArray(currentIDs.data(), num, Common::Serializer::Uint16LE);
+	ser.syncArray(singleValues.data(), num, Common::Serializer::Sint16LE);
+
+	if (g_nancy->getGameType() < kGameTypeNancy8) {
+		return;
+	}
+
+	num = comboValues.size();
+	ser.syncAsByte(num);
+
+	if (ser.isLoading()) {
+		comboValues.resize(num);
+	}
+
+	ser.syncArray(comboValues.data(), num, Common::Serializer::FloatLE);
+}
+
+void TableData::setSingleValue(uint16 index, int16 value) {
+	if (singleValues.size() <= index) {
+		singleValues.resize(index, kNoTableValue);
+	}
+
+	singleValues[index] = value;
+}
+
+int16 TableData::getSingleValue(uint16 index) const {
+	return index < singleValues.size() ? singleValues[index] : kNoTableValue;
+}
+
+void TableData::setComboValue(uint16 index, float value) {
+	if (comboValues.size() < index) {
+		comboValues.resize(index, kNoTableValue);
+	}
+
+	comboValues[index] = value;
+}
+
+float TableData::getComboValue(uint16 index) const {
+	return index < comboValues.size() ? comboValues[index] : kNoTableValue;
 }
 
 PuzzleData *makePuzzleData(const uint32 tag) {

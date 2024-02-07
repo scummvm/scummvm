@@ -117,8 +117,11 @@ struct JournalData : public PuzzleData {
 	Common::HashMap<uint16, Common::Array<Common::String>> journalEntries;
 };
 
-// Contains data related to nancy6's exhibit puzzle, which
-// spans multiple scenes and uses several special-purpose AR types
+// Contains variables that can be read and modified through action records.
+// Mixes two separate things:
+// - the exhibit data table in nancy6
+// - the general variable storage in nancy8 and up
+// The exhibit data was only ever used in nancy6, so mixing these should be ok.
 struct TableData : public PuzzleData {
 	TableData();
 	virtual ~TableData() {}
@@ -126,7 +129,14 @@ struct TableData : public PuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('T', 'A', 'B', 'L'); }
 	virtual void synchronize(Common::Serializer &ser);
 
-	Common::Array<uint16> currentIDs;
+	void setSingleValue(uint16 index, int16 value);
+	int16 getSingleValue(uint16 index) const;
+	
+	void setComboValue(uint16 index, float value);
+	float getComboValue(uint16 index) const;
+
+	Common::Array<int16> singleValues;
+	Common::Array<float> comboValues;
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);
