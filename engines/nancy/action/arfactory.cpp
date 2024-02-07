@@ -187,6 +187,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new TextboxClear();
 	case 77:
 		return new SetValue();
+	case 78:
+		return new SetValueCombo();
 	case 97:
 		return new EventFlags(true);
 	case 98:

@@ -117,6 +117,7 @@ static const byte kPlayOverlayNoHotspot				= 2;
 static const byte kNoChangeTableValue				= 0;
 static const byte kIncrementTableValue				= 1;
 static const byte kDecrementTableValue				= 2;
+static const uint16 kNoTableIndex					= 99;
 static const int16 kNoTableValue					= 9999;
 
 // 3D sound rotation

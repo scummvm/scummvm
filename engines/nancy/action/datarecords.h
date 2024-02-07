@@ -66,6 +66,19 @@ protected:
 	int16 _value = kNoTableValue;
 };
 
+class SetValueCombo : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SetValueCombo"; }
+
+	byte _valueIndex = 0;
+	Common::Array<byte> _indices;
+	Common::Array<int16> _percentages;
+};
+
 // Sets up to 10 flags at once.
 class EventFlags : public ActionRecord {
 public:

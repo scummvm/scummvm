@@ -147,6 +147,55 @@ void SetValue::execute() {
 	finishExecution();
 }
 
+void SetValueCombo::readData(Common::SeekableReadStream &stream) {
+	_valueIndex = stream.readByte();
+	
+	_indices.resize(10);
+	_percentages.resize(10);
+	for (uint i = 0; i < 10; ++i) {
+		_indices[i] = stream.readByte();
+		_percentages[i] = stream.readSint16LE();
+	}
+}
+
+void SetValueCombo::execute() {
+	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	assert(playerTable);
+
+	// nancy8 has 20 single & 20 combo values, later games have 30/10
+	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+
+	playerTable->setComboValue(_valueIndex - numSingleValues, 0);
+
+	for (uint i = 0; i < _indices.size(); ++i) {
+		if (_indices[i] != kNoTableIndex) {
+			float valueToAdd = 0;
+
+			if (_indices[i] == 100) { // ACTUAL_VALUE
+				valueToAdd = _percentages[i];
+			} else {
+				if (_indices[i] < numSingleValues) {
+					// Add a single value
+					if (playerTable->singleValues[_indices[i]] != kNoTableValue) {
+						valueToAdd = playerTable->singleValues[_indices[i]];
+						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
+					}
+				} else {
+					// Add another combo value
+					if (playerTable->comboValues[_indices[i] - numSingleValues] != kNoTableValue) {
+						valueToAdd = playerTable->comboValues[_indices[i] - numSingleValues];
+						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
+					}
+				}
+			}
+
+			playerTable->setComboValue(_valueIndex - numSingleValues, playerTable->getComboValue(_valueIndex - numSingleValues) + valueToAdd);
+		}
+	}
+
+	finishExecution();
+}
+
 void EventFlags::readData(Common::SeekableReadStream &stream) {
 	if (!_isTerse) {
 		_flags.readData(stream);
