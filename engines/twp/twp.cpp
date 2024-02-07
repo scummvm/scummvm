@@ -211,7 +211,7 @@ void TwpEngine::walkFast(bool state) {
 }
 
 void TwpEngine::clickedAt(Math::Vector2d scrPos) {
-	if (_room && _inputState.getInputActive() && !_actorSwitcher.isMouseOver()) {
+	if (_room && !_actorSwitcher.isMouseOver()) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Common::SharedPtr<Object> obj = objAt(roomPos);
 
@@ -452,7 +452,7 @@ void TwpEngine::update(float elapsed) {
 			_sentence.setText(cursorText());
 
 			// call clickedAt if any button down
-			if ((_dialog.getState() == DialogState::None) && !_hud.isOver()) {
+			if ((_inputState.getInputActive() && _dialog.getState() == DialogState::None) && !_hud.isOver()) {
 				if (_cursor.isLeftDown() || _cursor.isRightDown()) {
 					clickedAt(scrPos);
 				} else if (_cursor.leftDown || _cursor.rightDown) {
@@ -1156,7 +1156,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	exitRoom(_room);
 
 	// reset fade effect if we change the room except for wobble effect
-	if(_fadeShader->_effect != FadeEffect::Wobble) {
+	if (_fadeShader->_effect != FadeEffect::Wobble) {
 		_fadeShader->_effect = FadeEffect::None;
 	}
 
