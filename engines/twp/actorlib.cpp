@@ -386,16 +386,16 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 2, selectable)))
 			return sq_throwerror(v, "failed to get selectable");
 		switch (selectable) {
-		case 0:
+		case OFF:
 			g_engine->_actorSwitcher._mode &= (~asOn);
 			break;
-		case 1:
+		case ON:
 			g_engine->_actorSwitcher._mode |= asOn;
 			break;
-		case 2:
+		case TEMP_UNSELECTABLE:
 			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
 			break;
-		case 3:
+		case TEMP_SELECTABLE:
 			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
 			break;
 		default:
@@ -565,10 +565,6 @@ static SQInteger actorTalking(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor;
 	if (sq_gettop(v) == 2) {
 		actor = sqobj(v, 2);
-		if (!actor) {
-			sqpush(v, false);
-			return 1;
-		}
 	} else {
 		actor = g_engine->_actor;
 	}

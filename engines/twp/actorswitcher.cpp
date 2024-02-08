@@ -153,7 +153,7 @@ void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float 
 			_down = true;
 			// check if we allow to select an actor
             size_t iconIdx = iconIndex(scrPos);
-			if ((_mode & asOn) || (iconIdx == (_slots.size() - 1))) {
+			if ((_mode == asOn) || (iconIdx == (_slots.size() - 1))) {
 				if (_slots[iconIdx].selectFunc != nullptr)
 					_slots[iconIdx].select();
 			}

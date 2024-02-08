@@ -283,6 +283,24 @@ static void drawGeneral() {
 	ImGui::Checkbox("Cursor", &g_engine->_inputState._showCursor);
 	ImGui::SameLine();
 	ImGui::Checkbox("Verbs", &g_engine->_inputState._inputVerbsActive);
+
+	ImGui::Separator();
+	bool isSwitcherOn = g_engine->_actorSwitcher._mode == asOn;
+	if(ImGui::Checkbox("Switcher ON", &isSwitcherOn)) {
+		if(isSwitcherOn) {
+			g_engine->_actorSwitcher._mode |= asOn;
+		} else {
+			g_engine->_actorSwitcher._mode &= ~asOn;
+		}
+	}
+	bool isTemporaryUnselectable = g_engine->_actorSwitcher._mode & asTemporaryUnselectable;
+	if(ImGui::Checkbox("Switcher Temp. Unselectable", &isTemporaryUnselectable)) {
+		if(isTemporaryUnselectable) {
+			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
+		} else {
+			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
+		}
+	}
 	ImGui::Separator();
 
 	if (ImGui::CollapsingHeader("Debug")) {

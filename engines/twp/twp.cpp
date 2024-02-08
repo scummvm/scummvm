@@ -327,10 +327,12 @@ Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
 }
 
 static void selectSlotActor(int id) {
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		if (g_engine->_actors[i]->getId() == id) {
-			g_engine->setActor(g_engine->_actors[i]);
-			break;
+	if(g_engine->_actorSwitcher._mode == asOn) {
+		for (size_t i = 0; i < g_engine->_actors.size(); i++) {
+			if (g_engine->_actors[i]->getId() == id) {
+				g_engine->setActor(g_engine->_actors[i]);
+				break;
+			}
 		}
 	}
 }
@@ -792,7 +794,7 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectActor4:
 				case TwpAction::kSelectActor5:
 				case TwpAction::kSelectActor6:
-					if (_dialog.getState() == DialogState::None) {
+					if(g_engine->_actorSwitcher._mode == asOn) {
 						int index = (TwpAction)e.customType - kSelectActor1;
 						ActorSlot *slot = &_hud._actorSlots[index];
 						if (slot->selectable && slot->actor && (slot->actor->_room->_name != "Void")) {
@@ -801,7 +803,7 @@ Common::Error TwpEngine::run() {
 					}
 					break;
 				case TwpAction::kSelectPreviousActor:
-					if (_actor) {
+					if ((g_engine->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
@@ -816,7 +818,7 @@ Common::Error TwpEngine::run() {
 					}
 					break;
 				case TwpAction::kSelectNextActor:
-					if (_actor) {
+					if ((g_engine->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
