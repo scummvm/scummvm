@@ -147,6 +147,26 @@ protected:
 	Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
 };
 
+class ModifyListEntry : public ActionRecord {
+public:
+	enum Type { kAdd, kDelete, kMark };
+
+	ModifyListEntry(Type type) : _type(type) {}
+	virtual ~ModifyListEntry() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Type _type;
+
+	uint16 _surfaceID = 0;
+	Common::String _stringID;
+	uint16 _mark = 0;
+
+protected:
+	Common::String getRecordTypeName() const override;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

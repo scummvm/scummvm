@@ -126,9 +126,9 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			ser.syncAsUint16LE(numStrings);
 			auto &entry = journalEntries[id];
 			for (uint j = 0; j < numStrings; ++j) {
-				Common::String l;
-				ser.syncString(l);
-				entry.push_back(l);
+				entry.push_back(Entry());
+				ser.syncString(entry.back().stringID);
+				ser.syncAsUint16LE(entry.back().mark);
 			}
 		}
 	} else {
@@ -138,7 +138,8 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			uint16 numStrings = a._value.size();
 			ser.syncAsUint16LE(numStrings);
 			for (uint i = 0; i < numStrings; ++i) {
-				ser.syncString(a._value[i]);
+				ser.syncString(a._value[i].stringID);
+				ser.syncAsUint16LE(a._value[i].mark);
 			}
 		}
 	}

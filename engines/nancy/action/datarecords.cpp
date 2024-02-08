@@ -402,5 +402,62 @@ void DifficultyLevel::execute() {
 	_isDone = true;
 }
 
+void ModifyListEntry::readData(Common::SeekableReadStream &stream) {
+	_surfaceID = stream.readUint16LE();
+	readFilename(stream, _stringID);
+	_mark = stream.readUint16LE();
+}
+
+void ModifyListEntry::execute() {
+	JournalData *journalData = (Nancy::JournalData *)NancySceneState.getPuzzleData(Nancy::JournalData::getTag());
+	assert(journalData);
+
+	Common::Array<JournalData::Entry> &array = journalData->journalEntries[_surfaceID];
+
+	JournalData::Entry *found = nullptr;
+	for (uint i = 0; i < array.size(); ++i) {
+		if (array[i].stringID == _stringID) {
+			found = &array[i];
+			break;
+		}
+	}
+
+	switch (_type) {
+	case kAdd:
+		if (!found) {
+			array.push_back(JournalData::Entry(_stringID, _mark));
+		}
+
+		break;
+	case kDelete:
+		if (found) {
+			array.erase(found);
+		}
+
+		break;
+	case kMark:
+		if (found) {
+			found->mark = _mark;
+		}
+
+		break;
+	}
+
+	finishExecution();
+}
+
+Common::String ModifyListEntry::getRecordTypeName() const {
+	switch (_type) {
+	case kAdd:
+		return "AddListEntry";
+	case kDelete:
+		return "DeleteListEntry";
+	case kMark:
+		return "MarkListEntry";
+	}
+
+	return "";
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

@@ -89,7 +89,8 @@ void Autotext::execute() {
 		Common::String stringToPush;
 		auto &entriesForSurface = journalData->journalEntries[_surfaceID];
 		bool foundThisKey = false;
-		for (auto &stringID : entriesForSurface) {
+		for (auto &entry : entriesForSurface) {
+			Common::String &stringID = entry.stringID;
 			stringToPush += autotext->texts[stringID];
 			if (stringID == _textKey) {
 				foundThisKey = true;
@@ -100,11 +101,11 @@ void Autotext::execute() {
 			// Key inside this Autotext instance wasn't found inside existing list, push it back and add it to string to draw
 			if (!isLIFO) {
 				// Push at end
-				entriesForSurface.push_back(_textKey);
+				entriesForSurface.push_back(JournalData::Entry(_textKey));
 				stringToPush += autotext->texts[_textKey];
 			} else {
 				// Insert at front
-				entriesForSurface.insert_at(0, _textKey);
+				entriesForSurface.insert_at(0, JournalData::Entry(_textKey));
 				stringToPush = autotext->texts[_textKey] + stringToPush;
 			}
 		}

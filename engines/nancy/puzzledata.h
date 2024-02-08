@@ -111,10 +111,17 @@ struct JournalData : public PuzzleData {
 	JournalData() {}
 	virtual ~JournalData() {}
 
+	struct Entry {
+		Entry(const Common::String &s = Common::String(), int16 m = 0) : stringID(s), mark(m) {}
+
+		Common::String stringID;
+		uint16 mark = 0;
+	};
+
 	static constexpr uint32 getTag() { return MKTAG('J', 'O', 'U', 'R'); }
 	virtual void synchronize(Common::Serializer &ser);
 
-	Common::HashMap<uint16, Common::Array<Common::String>> journalEntries;
+	Common::HashMap<uint16, Common::Array<Entry>> journalEntries;
 };
 
 // Contains variables that can be read and modified through action records.

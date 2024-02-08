@@ -181,6 +181,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new TableIndexPlaySound();
 	case 67:
 		return new TableIndexSetValueHS();
+	case 71:
+		return new ModifyListEntry(ModifyListEntry::kAdd);
+	case 72:
+		return new ModifyListEntry(ModifyListEntry::kDelete);
+	case 73:
+		return new ModifyListEntry(ModifyListEntry::kMark);
 	case 75:
 		return new TextBoxWrite();
 	case 76:
