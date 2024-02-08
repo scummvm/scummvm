@@ -47,6 +47,7 @@ Common::Path resolvePath(const Common::String &path, const Common::Path &base, b
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path findAbsolutePath(const Common::String &path, bool directory = false, const char **exts = nullptr);
 Common::Path findPath(const Common::Path &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
 Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
 Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);

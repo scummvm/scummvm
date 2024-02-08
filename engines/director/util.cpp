@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
+#include "common/str-array.h"
 #include "common/tokenizer.h"
 #include "common/compression/deflate.h"
 
@@ -454,6 +455,55 @@ bool isAbsolutePath(const Common::String &path) {
 	return false;
 }
 
+bool isPathWithRelativeMarkers(const Common::String &path) {
+	if (path.contains("::"))
+		return true;
+	if (path.hasPrefix(".\\") || path.hasSuffix("\\.") || path.contains("\\.\\"))
+		return true;
+	if (path.hasPrefix("..\\") || path.hasSuffix("\\..") || path.contains("\\..\\"))
+		return true;
+	return false;
+}
+
+
+Common::String rectifyRelativePath(const Common::String &path, const Common::Path &base) {
+	Common::StringArray components = base.splitComponents();
+	uint32 idx = 0;
+
+	while (idx < path.size()) {
+		uint32 start = idx;
+		while (idx < path.size() && path[idx] != ':' && path[idx] != '\\')
+			idx++;
+		Common::String comp = path.substr(start, idx - start);
+		if (comp.equals("..") && !components.empty()) {
+			components.pop_back();
+		} else if (!comp.empty() && !comp.equals(".")) {
+			components.push_back(comp);
+		}
+		if (idx >= path.size())
+			break;
+
+		if (path[idx] == ':') {
+			idx += 1;
+			while (idx < path.size() && path[idx] == ':') {
+				if (!components.empty())
+					components.pop_back();
+				idx += 1;
+			}
+			continue;
+		}
+
+		if (path[idx] == '\\') {
+			idx += 1;
+			continue;
+		}
+	}
+	Common::String result = "@:" + Common::Path::joinComponents(components).toString(g_director->_dirSeparator);
+	debug(9, "rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
+	return result;
+}
+
+
 Common::Path toSafePath(const Common::String &path) {
 	// Encode a Director raw path as a platform-independent path.
 	// This needs special care, as Mac filenames allow using '/' in them!
@@ -778,6 +828,20 @@ Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common
 	return result;
 }
 
+Common::Path findAbsolutePath(const Common::String &path, bool directory, const char **exts) {
+	Common::Path result, base;
+	if (isAbsolutePath(path)) {
+		debugN(9, "%s", recIndent());
+		debug(9, "findAbsolutePath(): searching absolute path");
+		result = resolvePathWithFuzz(path, base, directory, exts);
+		if (!result.empty()) {
+			debugN(9, "%s", recIndent());
+			debug(9, "findAbsolutePath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+		}
+	}
+	return result;
+}
+
 Common::Path findPath(const Common::Path &path, bool currentFolder, bool searchPaths, bool directory, const char **exts) {
 	return findPath(path.toString(g_director->_dirSeparator), currentFolder, searchPaths, directory, exts);
 }
@@ -786,28 +850,30 @@ Common::Path findPath(const Common::String &path, bool currentFolder, bool searc
 	Common::Path result, base;
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): beginning search for \"%s\"", path.c_str());
+
+	Common::String currentPath = g_director->getCurrentPath();
+	Common::Path current = resolvePath(currentPath, base, true, exts);
+
+	Common::String testPath = path;
+	// If the path contains relative elements, rectify it with respect to the current folder
+	if (isPathWithRelativeMarkers(testPath)) {
+		testPath = rectifyRelativePath(testPath, current);
+	}
+
 	// For an absolute path, first check it relative to the filesystem
-	if (isAbsolutePath(path)) {
-		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): searching absolute path");
-		result = resolvePathWithFuzz(path, base, directory, exts);
-		if (!result.empty()) {
-			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
-			return result;
-		}
+	result = findAbsolutePath(testPath, directory, exts);
+	if (!result.empty()) {
+		return result;
 	}
 
 	if (currentFolder) {
-		Common::String currentPath = g_director->getCurrentPath();
-		Common::Path current = resolvePath(currentPath, base, true, exts);
 		debugN(9, "%s", recIndent());
 		debug(9, "findPath(): searching current folder %s", current.toString().c_str());
 		base = current;
-		result = resolvePartialPathWithFuzz(path, base, directory, exts);
+		result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 		if (!result.empty()) {
 			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 			return result;
 		}
 	}
@@ -816,10 +882,10 @@ Common::Path findPath(const Common::String &path, bool currentFolder, bool searc
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): searching game root path");
 	base = Common::Path();
-	result = resolvePartialPathWithFuzz(path, base, directory, exts);
+	result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 	if (!result.empty()) {
 		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 		return result;
 	}
 
@@ -845,10 +911,10 @@ Common::Path findPath(const Common::String &path, bool currentFolder, bool searc
 			}
 			debugN(9, "%s", recIndent());
 			debug(9, "findPath(): searching search path folder %s", searchIn.c_str());
-			result = resolvePartialPathWithFuzz(path, base, directory, exts);
+			result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 			if (!result.empty()) {
 				debugN(9, "%s", recIndent());
-				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 				return result;
 			}
 		}
