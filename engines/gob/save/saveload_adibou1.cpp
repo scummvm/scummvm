@@ -162,7 +162,7 @@ SaveLoad_Adibou1::DrawingWithThumbnailHandler::~DrawingWithThumbnailHandler() {
 
 int32 SaveLoad_Adibou1::DrawingWithThumbnailHandler::getSize() {
 	if (!_reader)
-		return -1;;
+		return -1;
 
 	if (!_reader->load())
 		return -1;

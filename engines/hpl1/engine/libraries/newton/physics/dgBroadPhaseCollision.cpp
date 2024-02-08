@@ -413,7 +413,7 @@ void dgBroadPhaseCollision::InvalidateCache() {
 			cell->m_active = 1;
 			cell->m_lastSortArray = &cell->m_sort[0];
 			//          cell->m_sort[0].InvalidateCache();
-			//          cell->m_sort[1].InvalidateCache();;
+			//          cell->m_sort[1].InvalidateCache();
 			//          cell->m_sort[2].InvalidateCache();
 		}
 	}

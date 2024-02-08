@@ -1773,7 +1773,7 @@ uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = 
 	uint16 maxWeight;
 
 	// get the mass capacity for this container
-	maxWeight = obj->massCapacity();;
+	maxWeight = obj->massCapacity();
 
 	// get the total mass this container is holding
 	weight = obj->totalContainedMass();
