@@ -108,7 +108,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return _saveGameManager._allowSaveGame;
 	}
 
 	virtual Common::String getSaveStateName(int slot) const override;

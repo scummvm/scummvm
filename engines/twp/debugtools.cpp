@@ -283,6 +283,8 @@ static void drawGeneral() {
 	ImGui::Checkbox("Cursor", &g_engine->_inputState._showCursor);
 	ImGui::SameLine();
 	ImGui::Checkbox("Verbs", &g_engine->_inputState._inputVerbsActive);
+	ImGui::SameLine();
+	ImGui::Checkbox("Allow SaveGame", &g_engine->_saveGameManager._allowSaveGame);
 
 	ImGui::Separator();
 	bool isSwitcherOn = g_engine->_actorSwitcher._mode == asOn;
