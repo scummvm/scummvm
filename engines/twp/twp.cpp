@@ -260,7 +260,7 @@ Verb TwpEngine::verb() {
 
 Common::String TwpEngine::cursorText() {
 	Common::String result;
-	if (_dialog.getState() == DialogState::None) {
+	if (_dialog.getState() == DialogState::None && _inputState.getInputActive()) {
 		if (_hud.isVisible() && _hud._over) {
 			return _hud._verb.id.id > 1 ? _textDb.getText(verb().text) : "";
 		}
