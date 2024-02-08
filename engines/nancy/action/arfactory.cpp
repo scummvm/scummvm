@@ -181,6 +181,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new TableIndexPlaySound();
 	case 67:
 		return new TableIndexSetValueHS();
+	case 68:
+		return new TextScroll(false);
+	case 70:
+		return new TextScroll(true); // AutotextEntryList
 	case 71:
 		return new ModifyListEntry(ModifyListEntry::kAdd);
 	case 72:

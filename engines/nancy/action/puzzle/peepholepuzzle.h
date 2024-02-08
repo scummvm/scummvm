@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_PEEPHOLEPUZZLE_H
 #define NANCY_ACTION_PEEPHOLEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/autotext.h"
 
 namespace Nancy {
 namespace Action {
@@ -73,6 +73,26 @@ protected:
 	int _pressedButton = -1;
 	uint32 _pressStart = 0;
 	Common::Array<bool> _disabledButtons = Common::Array<bool>(4, false);
+};
+
+// Combines the Peephole with the Autotext used to supply its text data
+// Implementing this with diamond-shaped multiple inheritance is bad,
+// but so is the original design, where a Peephole is constructed
+// on the fly and replaces the TextScroll/AutotextEntryList
+class TextScroll : public Autotext, public PeepholePuzzle {
+public:
+	TextScroll(bool isEntryList) : _isEntryList(isEntryList) {}
+
+	void init() override;
+	void execute() override { PeepholePuzzle::execute(); }
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return _isEntryList ? "AutotextEntryList" : "TextScroll"; }
+	void readExtraData(Common::SeekableReadStream &stream) override;
+
+	bool _isEntryList;
 };
 
 } // End of namespace Action

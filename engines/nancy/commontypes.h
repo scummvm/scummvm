@@ -120,6 +120,10 @@ static const byte kDecrementTableValue				= 2;
 static const uint16 kNoTableIndex					= 99;
 static const int16 kNoTableValue					= 9999;
 
+// Autotext ordering info
+static const uint16 kListLIFO						= 0;
+static const uint16 kListFIFO						= 1;
+
 // 3D sound rotation
 static const byte kRotateAroundX					= 0;
 static const byte kRotateAroundY					= 1;

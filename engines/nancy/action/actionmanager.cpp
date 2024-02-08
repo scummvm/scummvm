@@ -647,9 +647,9 @@ void ActionManager::synchronizeMovieWithSound() {
 		byte type = _activatedRecordsThisFrame[i]->_type;
 		// Rely on _type for cheaper type check
 		if (type == 53) {
-			movie = (PlaySecondaryMovie *)_activatedRecordsThisFrame[i];
+			movie = dynamic_cast<PlaySecondaryMovie *>(_activatedRecordsThisFrame[i]);
 		} else if (type == 150 || type == 151 || type == 157) {
-			sound = (PlaySound *)_activatedRecordsThisFrame[i];
+			sound = dynamic_cast<PlaySound *>(_activatedRecordsThisFrame[i]);
 		}
 
 		if (movie && sound) {

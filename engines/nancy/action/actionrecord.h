@@ -146,7 +146,7 @@ public:
 };
 
 // Base class for visual ActionRecords
-class RenderActionRecord : public ActionRecord, public RenderObject {
+class RenderActionRecord : public virtual ActionRecord, public RenderObject {
 public:
 	RenderActionRecord(uint zOrder) : RenderObject(zOrder) {}
 	virtual ~RenderActionRecord() {}

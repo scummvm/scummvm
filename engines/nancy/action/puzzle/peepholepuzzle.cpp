@@ -55,7 +55,7 @@ void PeepholePuzzle::init() {
 
 	_currentSrc = _startSrc;
 
-	setTransparent(true);
+	setTransparent(_transparency == kPlayOverlayTransparent);
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 	setVisible(true);
 
@@ -286,6 +286,49 @@ void PeepholePuzzle::checkButtons() {
 		if (!_buttonDisabledSrcs[3].isEmpty()) {
 			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[3], _buttonDests[3]);
 		}
+	}
+}
+
+void TextScroll::init() {
+	Autotext::execute();
+	_isDone = false; // Set to true by Autotext
+
+	// Supply the correct names to the resource manager
+	if (_surfaceID < 3) {
+		_innerImageName = Common::String::format("USE_AUTOTEXT%u", _surfaceID + 1);
+	} else {
+		_innerImageName = Common::String::format("USE_AUTOLIST%u", _surfaceID - 2);
+	}
+
+	// Make sure the initial bounds match the surface's
+	_innerBounds = _fullSurface.getBounds();
+
+	PeepholePuzzle::init();
+}
+
+void TextScroll::readData(Common::SeekableReadStream &stream) {
+	Autotext::readData(stream);
+
+	PeepholePuzzle::_transparency = Autotext::_transparency;
+}
+
+void TextScroll::readExtraData(Common::SeekableReadStream &stream) {
+	_order = stream.readUint16LE();
+	_shouldDrawMarks = stream.readByte();
+
+	readFilename(stream, _buttonsImageName);
+
+	readRect(stream, _startSrc);
+	readRect(stream, _dest);
+
+	readRectArray(stream, _buttonDests, 4);
+	readRectArray(stream, _buttonSrcs, 4);
+	readRectArray(stream, _buttonDisabledSrcs, 4);
+
+	_pixelsToScroll = stream.readByte();
+
+	if (!_isEntryList) {
+		Autotext::readExtraData(stream);
 	}
 }
 

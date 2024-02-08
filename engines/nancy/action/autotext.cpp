@@ -54,9 +54,12 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 
 		setImageName(imageName);
 	}
-
 	stream.skip((5 - numImages) * (2 + 16));
 
+	readExtraData(stream);
+}
+
+void Autotext::readExtraData(Common::SeekableReadStream &stream) {
 	_useAutotextChunk = stream.readByte();
 	readFilename(stream, _textKey);
 
@@ -81,9 +84,12 @@ void Autotext::execute() {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		bool isLIFO = (g_nancy->getGameType() == kGameTypeNancy7) && _surfaceID > 5; // This is nancy7-specific, later games implement LIFO in a different way
-		if (isLIFO) {
-			_surfaceID -= 3;
+		if (g_nancy->getGameType() == kGameTypeNancy7) {
+			// In nancy7 ONLY, ids 6, 7 & 8 mean LIFO ordering for a suface
+			if (_surfaceID > 5) {
+				_order = kListLIFO;
+				_surfaceID -= 3;
+			}
 		}
 
 		Common::String stringToPush;
@@ -91,23 +97,33 @@ void Autotext::execute() {
 		bool foundThisKey = false;
 		for (auto &entry : entriesForSurface) {
 			Common::String &stringID = entry.stringID;
-			stringToPush += autotext->texts[stringID];
-			if (stringID == _textKey) {
+
+			if (_order == kListFIFO) {
+				// Add to end of string
+				stringToPush += autotext->texts[stringID];
+			} else {
+				// Add to front of string
+				stringToPush = autotext->texts[stringID] + stringToPush;
+			}
+			
+			if (!_textKey.empty() && stringID == _textKey) {
 				foundThisKey = true;
 			}
 		}
 
-		if (!foundThisKey) {
+		// A text key may not be present in the data (see AutotextEntryList), so do not attempt to add to the list then
+		if (!foundThisKey && !_textKey.empty()) {
 			// Key inside this Autotext instance wasn't found inside existing list, push it back and add it to string to draw
-			if (!isLIFO) {
-				// Push at end
-				entriesForSurface.push_back(JournalData::Entry(_textKey));
+			if (_order == kListFIFO) {
+				// Add to end of string
 				stringToPush += autotext->texts[_textKey];
 			} else {
-				// Insert at front
-				entriesForSurface.insert_at(0, JournalData::Entry(_textKey));
+				// Add to front of string
 				stringToPush = autotext->texts[_textKey] + stringToPush;
 			}
+
+			// Entry is always added to end; on-screen ordering happens when reading list
+			entriesForSurface.push_back(JournalData::Entry(_textKey));
 		}
 
 		addTextLine(stringToPush);
