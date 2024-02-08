@@ -255,6 +255,9 @@ Verb TwpEngine::verb() {
 	Verb result = _hud._verb;
 	if (result.id.id == VERB_WALKTO && _noun1 && _noun1->inInventory())
 		result = *_hud.actorSlot(_actor)->getVerb(_noun1->defaultVerbId());
+	else if(_actor) {
+		result = *_hud.actorSlot(_actor)->getVerb(_hud._verb.id.id);
+	}
 	return result;
 }
 

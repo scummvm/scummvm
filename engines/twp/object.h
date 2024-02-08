@@ -69,7 +69,7 @@ public:
 };
 
 struct VerbId {
-	int id = 0;
+	int id = VERB_WALKTO;
 };
 
 class Object;
