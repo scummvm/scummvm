@@ -489,6 +489,12 @@ struct TABL : public EngineData {
 	Common::Array<Common::String> strings;
 };
 
+struct MARK : public EngineData {
+	MARK(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::Rect> _markSrcs;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

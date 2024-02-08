@@ -809,4 +809,8 @@ TABL::TABL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	chunkStream->skip((20 - numEntries) * 1000);
 }
 
+MARK::MARK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readRectArray(*chunkStream, _markSrcs, 5);
+}
+
 } // End of namespace Nancy

@@ -454,6 +454,7 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(RCPR)
 	LOAD_BOOT(RCLB)
 	LOAD_BOOT(TABL)
+	LOAD_BOOT(MARK)
 
 	if (g_nancy->getGameType() <= kGameTypeNancy7) {
 		LOAD_BOOT(LOAD)
