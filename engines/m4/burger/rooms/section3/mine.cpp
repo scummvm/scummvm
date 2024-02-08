@@ -195,6 +195,10 @@ void Mine::daemon() {
 
 		player_set_commands_allowed(false);
 		ws_walk(ei.home_x, ei.home_y, nullptr, 303, ei.home_facing);
+		term_message("Mine entry %d at (%d,%d) to (%d,%d, %d)",
+			_presentSceneID,
+			ei.offscreen_x, ei.offscreen_y,
+			ei.home_x, ei.home_y, ei.home_facing);
 		break;
 	}
 
