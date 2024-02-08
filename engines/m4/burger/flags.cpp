@@ -187,7 +187,7 @@ void Flags::reset1() {
 	inv_move_object("jawz o' life", 137);
 	inv_move_object("keys", 138);
 
-	(*this)[V112] = 0;
+	(*this)[kPerkinsLostIsland] = 0;
 	(*this)[kTourBusAtDiner] = 0;
 	(*this)[kIceBoxOpened] = 0;
 	(*this)[V245] = 10027;

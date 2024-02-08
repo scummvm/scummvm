@@ -147,7 +147,7 @@ void Room139_144::init() {
 		kernel_trigger_dispatch_now(kCHANGE_BURL_ANIMATION);
 	}
 
-	if (_G(flags)[V112]) {
+	if (_G(flags)[kPerkinsLostIsland]) {
 		series_play("144mb01", 0x600, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 	} else {
 		hotspot_set_active("motorboat", false);
@@ -408,7 +408,7 @@ void Room139_144::parser() {
 	if (player_said("talk to")) {
 		conv_load_and_prepare("conv31", 6);
 		conv_export_value_curr(_G(flags)[V052], 0);
-		conv_export_value_curr(_G(flags)[V112], 1);
+		conv_export_value_curr(_G(flags)[kPerkinsLostIsland], 1);
 		conv_play_curr();
 
 	} else if (_G(flags)[V000] == 1002 && _G(walker).wilbur_said(SAID1)) {
@@ -434,7 +434,7 @@ void Room139_144::parser() {
 		wilbur_speech(inv_player_has("deed") ? "139w004" : "139w003");
 
 	} else if (lookFlag && player_said("island") && _G(flags)[V000] == 1002) {
-		wilbur_speech(_G(flags)[V112] ? "144w002" : "144w001");
+		wilbur_speech(_G(flags)[kPerkinsLostIsland] ? "144w002" : "144w001");
 
 	} else if (player_said("enter", "vera's diner") || (lookFlag && player_said("vera's diner"))) {
 		player_set_commands_allowed(false);

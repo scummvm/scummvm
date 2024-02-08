@@ -68,7 +68,7 @@ void Room306::daemon() {
 		break;
 
 	case 3007:
-		if (!_G(flags)[V112]) {
+		if (!_G(flags)[kPerkinsLostIsland]) {
 			digi_preload_stream_breaks(SERIES2);
 			series_stream_with_breaks(SERIES2, "306burnt", 6, 1, 1);
 		} else if (_G(flags)[V118] == 3003) {

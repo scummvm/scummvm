@@ -185,7 +185,7 @@ void Room302::init() {
 
 	if (_G(flags)[kTrufflesInMine]) {
 		hotspot_set_active("TRUFFLES", false);
-	} else if (_G(flags)[V112]) {
+	} else if (_G(flags)[kPerkinsLostIsland]) {
 		series_load("302tr01");
 		series_load("302tr01s");
 		series_load("302tr02");
@@ -224,7 +224,7 @@ void Room302::init() {
 		ws_hide_walker();
 		_state1 = imath_ranged_rand(0, 2);
 
-		if (_G(flags)[V112]) {
+		if (_G(flags)[kPerkinsLostIsland]) {
 			_G(flags)[V113] = 1;
 			_volume = 125;
 			_val4 = 29;

@@ -639,7 +639,7 @@ void BurgerEngine::testDone3() {
 	_G(flags)[V109] = 1;
 	_G(flags)[V110] = 1;
 	_G(flags)[kTrufflesInMine] = 1;
-	_G(flags)[V112] = 1;
+	_G(flags)[kPerkinsLostIsland] = 1;
 	_G(flags)[V115] = 5;
 	_G(flags)[V116] = 1;
 	_G(flags)[V117] = 1;

@@ -145,7 +145,7 @@ enum {
 	V109 = 109,
 	V110 = 110,
 	kTrufflesInMine = 111,
-	V112 = 112,
+	kPerkinsLostIsland = 112,
 	V113 = 113,
 	V114 = 114,
 	V115 = 115,

@@ -388,7 +388,7 @@ void Room101::daemon() {
 		daemon12();
 
 		if (_G(flags)[kSecondTestPassed]) {
-			if (_G(flags)[kThirdTestPassed] || _G(flags)[V112] ||
+			if (_G(flags)[kThirdTestPassed] || _G(flags)[kPerkinsLostIsland] ||
 					_G(flags)[V080] || _G(flags)[V126]) {
 				terminateMachineAndNull(_machine1);
 				terminateMachineAndNull(_machine2);
@@ -809,7 +809,7 @@ void Room101::daemon15() {
 		_G(flags)[V039] = 1;
 		_G(flags)[kRoadOpened] = 1;
 		inv_give_to_player("DEED");
-		_G(flags)[V112] = 1;
+		_G(flags)[kPerkinsLostIsland] = 1;
 	} else {
 		_G(flags)[V000] = 1000;
 		if (_G(flags)[V021] == 10032)

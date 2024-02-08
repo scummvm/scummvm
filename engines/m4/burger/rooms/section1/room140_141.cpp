@@ -129,7 +129,7 @@ static const seriesStreamBreak SERIES3[] = {
 
 static const seriesStreamBreak SERIES4[] = {
 	{  0, "140_002", 2, 255, -1, 0, nullptr, 0 },
-	{ 10, nullptr,   2, 255, 13, 0, &Flags::_flags[V112], 0 },
+	{ 10, nullptr,   2, 255, 13, 0, &Flags::_flags[kPerkinsLostIsland], 0 },
 	{ 25, "140_002", 2, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
@@ -145,7 +145,7 @@ void Room140_141::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		player_set_commands_allowed(false);
 
-	if (!_G(flags)[V112]) {
+	if (!_G(flags)[kPerkinsLostIsland]) {
 		digi_preload("140t001a", 140);
 		digi_preload("140t001b", 140);
 		digi_preload("140t001c", 140);
@@ -170,7 +170,7 @@ void Room140_141::init() {
 	series_load("140tr07");
 	series_load("140tr07s");
 
-	if (!_G(flags)[V112]) {
+	if (!_G(flags)[kPerkinsLostIsland]) {
 		_series1 = series_play(_G(flags)[V000] == 1002 ? "141pboat" : "140pboat",
 			0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 
@@ -198,7 +198,7 @@ void Room140_141::init() {
 		_wilburMode = 52;
 		_wilburShould = 50;
 
-		if (_G(flags)[V112]) {
+		if (_G(flags)[kPerkinsLostIsland]) {
 			_trufflesMode = 1;
 			_trufflesShould = 8;
 		} else {
@@ -655,7 +655,7 @@ void Room140_141::daemon() {
 				_elmoShould = 49;
 				digi_preload_stream_breaks(SERIES2);
 				series_stream_with_breaks(SERIES2, "141pe26", 6, 0x100, 7);
-				_G(flags)[V112] = 1;
+				_G(flags)[kPerkinsLostIsland] = 1;
 				break;
 
 			case 49:
@@ -686,7 +686,7 @@ void Room140_141::daemon() {
 				_wilburShould = 52;
 				kernel_trigger_dispatch_now(8);
 
-				if (_G(flags)[V112])
+				if (_G(flags)[kPerkinsLostIsland])
 					_G(walker).wilbur_speech("141w001");
 				break;
 

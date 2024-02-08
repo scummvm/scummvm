@@ -275,7 +275,7 @@ void Room105::init() {
 	Common::fill(&_series3[0], &_series3[12], -1);
 	Common::fill(&_series4[0], &_series4[5], -1);
 
-	if (_G(flags)[V112]) {
+	if (_G(flags)[kPerkinsLostIsland]) {
 		series_play("105do01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 		_elgusShould = 59;
 		_elgusMode = 59;
@@ -962,14 +962,12 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 59:
 				frame = imath_ranged_rand(0, 1);
-				series_play("105ag12", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 40, 0, 100, 0, 0, frame, frame);
-				series_play("105ag12s", 0xa01, 0, -1, 40, 0, 100, 0, 0, frame, frame);
+				Series::series_play("105ag12", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 40, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 60:
 				_elgusMode = 60;
-				series_play("105ag13", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 0);
-				series_play("105ag13s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 0, 0);
+				Series::series_play("105ag13", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 0);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = _savedMode;
@@ -1081,7 +1079,7 @@ void Room105::daemon() {
 	case 15:
 		ws_unhide_walker();
 
-		if (_G(flags)[V112]) {
+		if (_G(flags)[kPerkinsLostIsland]) {
 			_savedMode = KT_DAEMON;
 			_savedTrigger = 21;
 			_digi1 = "105g003";
@@ -1106,7 +1104,7 @@ void Room105::daemon() {
 		break;
 
 	case 17:
-		if (_G(flags)[V112]) {
+		if (_G(flags)[kPerkinsLostIsland]) {
 			_savedMode = KT_DAEMON;
 			_savedTrigger = 21;
 			_digi1 = "105g002";
@@ -1296,7 +1294,7 @@ void Room105::daemon() {
 	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 62:
-			if (_G(flags)[V112] && !_G(flags)[V034]) {
+			if (_G(flags)[kPerkinsLostIsland] && !_G(flags)[V034]) {
 				player_set_commands_allowed(false);
 				_G(flags)[V034] = 1;
 				ws_walk(199, 279, 0, 19, 9);
@@ -1321,7 +1319,7 @@ void Room105::daemon() {
 void Room105::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (player_said("gear", "town records") && !_G(flags)[V112])
+	if (player_said("gear", "town records") && !_G(flags)[kPerkinsLostIsland])
 		player_hotspot_walk_override(186, 263, 10);
 
 	if (player_said("gear", "mayor's office"))
@@ -1346,7 +1344,7 @@ void Room105::parser() {
 	} else if (player_said("talk to")) {
 		startConv13();
 	} else if (lookFlag && player_said("town records")) {
-		if (_G(flags)[V112]) {
+		if (_G(flags)[kPerkinsLostIsland]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -1369,7 +1367,7 @@ void Room105::parser() {
 		}
 	} else if (!_G(walker).wilbur_said(SAID)) {
 		if (player_said("GEAR", "town records")) {
-			if (_G(flags)[V112]) {
+			if (_G(flags)[kPerkinsLostIsland]) {
 				wilbur_speech("105w011");
 			} else {
 				player_set_commands_allowed(false);
@@ -1383,7 +1381,7 @@ void Room105::parser() {
 			ws_hide_walker();
 			series_play_with_breaks(PLAY31, "105wi05", 0x100, 16, 3);
 
-			if (!_G(flags)[V112]) {
+			if (!_G(flags)[kPerkinsLostIsland]) {
 				_G(flags)[kDisableFootsteps] = 1;
 				mayorsDoor();
 			}
@@ -1659,6 +1657,8 @@ void Room105::conv13() {
 		} else if (who == 1) {
 			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
 		}
+
+		conv_resume();
 	} else if (conv_sound_to_play()) {
 		if (who <= 0) {
 			_elgusShould = (node == 2) ? 61 : 60;
