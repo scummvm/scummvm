@@ -1374,7 +1374,7 @@ struct GetByZorder {
 	GetByZorder(Common::SharedPtr<Object> &result) : _result(result) { result = nullptr; }
 
 	bool operator()(Common::SharedPtr<Object> obj) {
-		if (obj->_node->getZSort() < _zOrder) {
+		if (obj->_node->getZSort() <= _zOrder) {
 			_result = obj;
 			_zOrder = obj->_node->getZSort();
 		}
