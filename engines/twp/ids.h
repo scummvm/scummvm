@@ -126,8 +126,6 @@
 #define VERBFLAG_INSTANT  1
 #define TWP_NO  0
 #define TWP_YES  1
-#define UNSELECTABLE  0
-#define SELECTABLE  1
 #define TEMP_UNSELECTABLE  2
 #define TEMP_SELECTABLE  3
 #define MAC  1
