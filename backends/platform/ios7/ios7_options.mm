@@ -92,7 +92,7 @@ private:
 };
 
 IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "IOS7OptionsDialog", true, domain), _enabled(true) {
+		OptionsContainerWidget(boss, name, "IOS7OptionsDialog", false, domain), _enabled(true) {
 
 	_gamepadControllerCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadController", _("Show Gamepad Controller (iOS 15 and later)"));
 	_gamepadControllerOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacity", _("Gamepad opacity"));
@@ -177,7 +177,6 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(16, 16, 16, 16)
 #if TARGET_OS_IOS
 	            .addWidget("OnscreenControl", "Checkbox")
 #endif
