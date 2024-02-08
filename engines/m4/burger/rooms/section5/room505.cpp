@@ -198,9 +198,11 @@ void Room505::daemon() {
 			break;
 
 		case 7:
-			terminateMachineAndNull(_series1);
+			terminateMachineAndNull(_fan);
 			_borkState = 8;
-			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 10, 24);
+			_borkStairs[0] = series_play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 10, 24);
+			_borkStairs[1] = series_play("505bk01s", 0xc00, 0, 7, 6, 0, 100, 0, 0, 10, 24);
+
 			_val4 = 1;
 			kernel_trigger_dispatch_now(5);
 			break;
@@ -252,7 +254,7 @@ void Room505::daemon() {
 		break;
 
 	case 7:
-		_series1 = series_play("505fan", 0xbff);
+		_fan = series_play("505fan", 0xbff, 0, -1, 6, -1);
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:

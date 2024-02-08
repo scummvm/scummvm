@@ -416,7 +416,7 @@ void Room507::daemon() {
 			_val2 = 24;
 			_triggers[0] = 6;
 			_itemNum = 1;
-			_val8 = 11;
+			_triggers[1] = 11;
 			_state1 = imath_ranged_rand(1, 2);
 			_state2 = imath_ranged_rand(1, 2);
 			_state3 = imath_ranged_rand(1, 2);
@@ -525,8 +525,8 @@ void Room507::daemon() {
 			_val1 = 13;
 			_triggers[0] = 3;
 			_val3 = 31;
-			_val8 = 9;
-			_val9 = 10;
+			_triggers[1] = 11;
+			_triggers[2] = 10;
 			terminateMachineAndNull(_series3);
 			series_play_with_breaks(PLAY15, "507bk09", 0x8ff, 1, 2);
 			break;
@@ -652,7 +652,7 @@ void Room507::daemon() {
 			}
 
 			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
-			_val8 = 10;
+			_triggers[1] = 10;
 			series_play_with_breaks(PLAY7, "507wi05", 0x8ff, 1, 3);
 			break;
 

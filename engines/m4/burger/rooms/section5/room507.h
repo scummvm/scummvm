@@ -69,8 +69,6 @@ private:
 	int _val5 = 0;
 	int _val6 = 0;
 	int _itemNum = 0;
-	int _val8 = 0;
-	int _val9 = 0;
 
 	void loadSeries();
 

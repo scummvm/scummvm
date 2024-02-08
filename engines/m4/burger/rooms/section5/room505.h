@@ -39,7 +39,7 @@ private:
 	int _destTrigger = 0;
 	int _val3 = 0;
 	int _val4 = 0;
-	machine *_series1 = nullptr;
+	machine *_fan = nullptr;
 
 public:
 	Room505();
