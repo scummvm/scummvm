@@ -368,11 +368,30 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	return result;
 }
 
-struct GetNoun2 {
-	GetNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {}
+struct GetUseNoun2 {
+	GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+		_noun2 = nullptr;
+	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
-		if (obj != g_engine->_actor && obj->getFlags() & GIVEABLE) {
+		if ((obj != g_engine->_actor) && (g_engine->_noun1 != obj)) {
+			_noun2 = obj;
+			return true;
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_noun2;
+};
+
+struct GetGiveableNoun2 {
+	GetGiveableNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+		_noun2 = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if ((obj != g_engine->_actor) && (obj->getFlags() & GIVEABLE) && (g_engine->_noun2 != obj)) {
 			_noun2 = obj;
 			return true;
 		}
@@ -402,14 +421,14 @@ void TwpEngine::update(float elapsed) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		if (_room->_fullscreen == FULLSCREENROOM) {
 			if ((_hud._verb.id.id == VERB_USE) && (_useFlag != ufNone)) {
-				_noun2 = objAt(roomPos);
+				objsAt(roomPos, GetUseNoun2(_noun2));
 			} else if (_hud._verb.id.id == VERB_GIVE) {
 				if (_useFlag != ufGiveTo) {
 					_noun1 = inventoryAt(roomPos);
 					_useFlag = ufNone;
 					_noun2 = nullptr;
 				} else {
-					objsAt(roomPos, GetNoun2(_noun2));
+					objsAt(roomPos, GetGiveableNoun2(_noun2));
 					if (_noun2)
 						debugC(kDebugGame, "Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
 				}
