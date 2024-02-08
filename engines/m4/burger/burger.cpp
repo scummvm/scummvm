@@ -695,7 +695,7 @@ void BurgerEngine::testDone4() {
 	_G(flags)[V213] = 2;
 	_G(flags)[V214] = 0;
 	_G(flags)[V218] = 5003;
-	_G(flags)[V219] = 1;
+	_G(flags)[kTVOnFire] = 1;
 	_G(flags)[V223] = 2;
 	_G(flags)[V224] = 0;
 	_G(flags)[V227] = 1;

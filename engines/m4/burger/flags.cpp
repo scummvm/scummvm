@@ -310,7 +310,7 @@ void Flags::reset4() {
 	inv_move_object("DIRTY SOCK", 504);
 
 	(*this)[V218] = 5000;
-	(*this)[V219] = 0;
+	(*this)[kTVOnFire] = 0;
 	(*this)[V223] = 0;
 	(*this)[V224] = 0;
 

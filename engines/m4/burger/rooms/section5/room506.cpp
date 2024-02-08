@@ -127,18 +127,18 @@ void Room506::init() {
 	for (_ctr = 0; _ctr < 5; ++_ctr)
 		_triggers[_ctr] = -1;
 
-	if (_G(flags)[V219]) {
+	if (_G(flags)[kTVOnFire]) {
 		kernel_trigger_dispatch_now(12);
 	} else {
 		hotspot_set_active("FIRE", false);
 	}
 
-	if (_G(flags)[V219] == 0) {
+	if (_G(flags)[kTVOnFire] == 0) {
 		_val1 = 19;
 		kernel_trigger_dispatch_now(10);
 	}
 
-	if (_G(flags)[V219]) {
+	if (_G(flags)[kTVOnFire]) {
 		series_show("506windo", 0xf00);
 	} else {
 		hotspot_set_active("ROOF", false);
@@ -352,7 +352,7 @@ void Room506::daemon() {
 		break;
 
 	case 12:
-		_G(flags)[V219] = 1;
+		_G(flags)[kTVOnFire] = 1;
 		terminateMachineAndNull(_series1);
 		hotspot_set_active("JOYSTICK", false);
 		hotspot_set_active("FIRE", true);
@@ -361,7 +361,7 @@ void Room506::daemon() {
 
 	case 13:
 		series_show("506windo", 0xf00);
-		_G(flags)[V219] = 1;
+		_G(flags)[kTVOnFire] = 1;
 		hotspot_set_active("ROOF", true);
 		break;
 
@@ -469,13 +469,13 @@ void Room506::pre_parser() {
 void Room506::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (player_said("GEAR") && player_said_any("WINDOW", "ROOF") && !_G(flags)[V219]) {
+	if (player_said("GEAR") && player_said_any("WINDOW", "ROOF") && !_G(flags)[kTVOnFire]) {
 		wilbur_speech("500w004");
-	} else if (player_said("TELEVISION") && player_said("LOOK AT")) {
+	} else if (_G(flags)[kTVOnFire] && player_said("TELEVISION") && player_said("LOOK AT")) {
 		wilbur_speech("506w006");
-	} else if (player_said("TELEVISION") && player_said("GEAR")) {
+	} else if (_G(flags)[kTVOnFire] && player_said("TELEVISION") && player_said("GEAR")) {
 		wilbur_speech("506w008");
-	} else if (_G(flags)[V219] != 0 && player_said("VIDEO GAME") &&
+	} else if (_G(flags)[kTVOnFire] && player_said("VIDEO GAME") &&
 			player_said_any("TAKE", "GEAR")) {
 		// No implementation
 	} else if (_G(walker).wilbur_said(SAID)) {
@@ -487,7 +487,7 @@ void Room506::parser() {
 		_val2 = 15;
 		++_state2;
 	} else if (player_said_any("ROOF", "WINDOW") && player_said_any("ENTER", "GEAR") &&
-			_G(flags)[V219]) {
+			_G(flags)[kTVOnFire]) {
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("HALLWAY") && player_said_any("LEAVE", "LOOK AT", "GEAR")) {
