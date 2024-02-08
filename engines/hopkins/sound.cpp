@@ -417,7 +417,7 @@ void SoundManager::loadMusic(const Common::Path &file) {
 	Common::File f;
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 		Common::Path filename(file);
-		filename.append(".MOD");
+		filename.appendInPlace(".MOD");
 
 		if (!f.open(filename))
 			error("Error opening file %s", filename.toString().c_str());
@@ -438,7 +438,7 @@ void SoundManager::loadMusic(const Common::Path &file) {
 
 	} else {
 		Common::Path filename(file);
-		filename.append(".TWA");
+		filename.appendInPlace(".TWA");
 
 		if (!f.open(filename))
 			error("Error opening file %s", filename.toString().c_str());
