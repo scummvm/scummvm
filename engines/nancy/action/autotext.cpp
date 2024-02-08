@@ -97,13 +97,14 @@ void Autotext::execute() {
 		bool foundThisKey = false;
 		for (auto &entry : entriesForSurface) {
 			Common::String &stringID = entry.stringID;
+			Common::String markString = entry.mark ? Common::String::format("<%u>", entry.mark) : "";
 
 			if (_order == kListFIFO) {
 				// Add to end of string
-				stringToPush += autotext->texts[stringID];
+				stringToPush += (markString + autotext->texts[stringID]);
 			} else {
 				// Add to front of string
-				stringToPush = autotext->texts[stringID] + stringToPush;
+				stringToPush = markString + autotext->texts[stringID] + stringToPush;
 			}
 			
 			if (!_textKey.empty() && stringID == _textKey) {

@@ -59,7 +59,7 @@ protected:
 	uint32 _backgroundColor;
 	uint32 _highlightBackgroundColor;
 	uint _defaultTextColor;
-	uint _imageVerticalOffset;
+	int _imageVerticalOffset;
 
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;

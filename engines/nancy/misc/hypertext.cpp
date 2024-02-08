@@ -29,10 +29,12 @@
 namespace Nancy {
 namespace Misc {
 
-struct ColorFontChange {
-	bool isFont;
+struct MetaInfo {
+	enum Type { kColor, kFont, kMark };
+
+	Type type;
 	uint numChars;
-	byte colorOrFontID;
+	byte index;
 };
 
 void HypertextParser::initSurfaces(uint width, uint height, const Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor) {
@@ -75,7 +77,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		Common::String currentLine;
 		bool hasHotspot = false;
 		Rect hotspot;
-		Common::Queue<ColorFontChange> colorTextChanges;
+		Common::Queue<MetaInfo> metaInfo;
 		Common::Queue<uint16> newlineTokens;
 		newlineTokens.push(0);
 		int curFontID = fontID;
@@ -148,7 +150,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						break;
 					}
 					
-					colorTextChanges.push({false, numNonSpaceChars, (byte)(curToken[1] - 48)});
+					metaInfo.push({MetaInfo::kColor, numNonSpaceChars, (byte)(curToken[1] - '0')});
 					continue;
 				case 'f' :
 					// Font token
@@ -157,7 +159,18 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						break;
 					}
 
-					colorTextChanges.push({true, numNonSpaceChars, (byte)(curToken[1] - 48)});
+					metaInfo.push({MetaInfo::kFont, numNonSpaceChars, (byte)(curToken[1] - '0')});
+					continue;
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+					if (curToken.size() != 1) {
+						break;
+					}
+
+					metaInfo.push({MetaInfo::kMark, numNonSpaceChars, (byte)(curToken[0] - '1')});
 					continue;
 				default:
 					break;
@@ -258,20 +271,48 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			while (!line.empty()) {
 				Common::String subLine;
 
-				while (colorTextChanges.size() && totalCharsDrawn >= colorTextChanges.front().numChars) {
-					// We have a color/font change token at begginning of (what's left of) the current line
-					ColorFontChange change = colorTextChanges.pop();
-					if (change.isFont) {
-						curFontID = change.colorOrFontID;
+				while (metaInfo.size() && totalCharsDrawn >= metaInfo.front().numChars) {
+					// We have a color/font change token, or a mark at begginning of (what's left of) the current line
+					MetaInfo change = metaInfo.pop();
+					switch (change.type) {
+					case MetaInfo::kFont:
+						curFontID = change.index;
 						font = g_nancy->_graphicsManager->getFont(curFontID);
-					} else {
-						colorID = change.colorOrFontID;
+						break;
+					case MetaInfo::kColor:
+						colorID = change.index;
+						break;
+					case MetaInfo::kMark: {
+						auto *mark = GetEngineData(MARK);
+						assert(mark);
+
+						if (lineNumber == 0) {
+							// A mark on the first line pushes up all text
+							if (textBounds.top - _imageVerticalOffset > 3) {
+								_imageVerticalOffset -= 3;
+							} else {
+								_imageVerticalOffset = -textBounds.top;
+							}
+						}
+
+						Common::Rect markSrc = mark->_markSrcs[change.index];
+						Common::Rect markDest = markSrc;
+						markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
+							lineNumber == 0 ? 
+								textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
+								textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset - 4);
+
+						// For now we do not check if we need to go to new line; neither does the original
+						_fullSurface.blitFrom(g_nancy->_graphicsManager->_object0, markSrc, markDest);
+
+						horizontalOffset += markDest.width() + 2;
+					}
 					}
 				}
 
-				if (colorTextChanges.size() && totalCharsDrawn < colorTextChanges.front().numChars && colorTextChanges.front().numChars < (totalCharsDrawn + line.size())) {
+				if (metaInfo.size() && totalCharsDrawn < metaInfo.front().numChars && metaInfo.front().numChars < (totalCharsDrawn + line.size())) {
 					// There's a token inside the current line, so split off the part before it
-					subLine = line.substr(0, colorTextChanges.front().numChars - totalCharsDrawn);
+					subLine = line.substr(0, metaInfo.front().numChars - totalCharsDrawn);
 					line = line.substr(subLine.size());
 				}
 
