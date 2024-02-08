@@ -511,8 +511,8 @@ void TwpEngine::update(float elapsed) {
 	// remove threads that are terminated
 	for (auto it = threadsToRemove.begin(); it != threadsToRemove.end(); it++) {
 		Common::SharedPtr<ThreadBase> thread(*it);
-		int i = find(_threads, *it);
-		if (i != -1) {
+		size_t i = find(_threads, *it);
+		if (i != (size_t)-1) {
 			_threads.remove_at(i);
 		}
 	}
@@ -528,13 +528,23 @@ void TwpEngine::update(float elapsed) {
 	}
 
 	// update tasks
+	Common::Array<Common::SharedPtr<Task> > tasks(_tasks);
+	Common::Array<Common::SharedPtr<Task> > tasksToRemove;
 	for (auto it = _tasks.begin(); it != _tasks.end();) {
 		Common::SharedPtr<Task> task(*it);
 		if (task->update(elapsed)) {
-			it = _tasks.erase(it);
-			continue;
+			tasksToRemove.push_back(task);
 		}
 		it++;
+	}
+
+	// remove tasks that are terminated
+	for (auto it = tasksToRemove.begin(); it != tasksToRemove.end(); it++) {
+		Common::SharedPtr<Task> task(*it);
+		size_t i = find(_tasks, *it);
+		if (i != (size_t)-1) {
+			_tasks.remove_at(i);
+		}
 	}
 
 	// update objects
