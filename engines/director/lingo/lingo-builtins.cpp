@@ -1210,7 +1210,9 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 		return;
 	}
 
-	Common::Path path = findPath(pathRaw, true, true, true);
+	// getNthFileNameInFolder requires an absolute path as an input.
+	// relative paths will not match anything.
+	Common::Path path = findAbsolutePath(pathRaw, true);
 	// for directory, we either return the correct path, which we can access recursively.
 	// or we get a wrong path, which will lead us to a non-exist file node
 
