@@ -36,6 +36,7 @@
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 #include "gui/widgets/tab.h"
+#include "gui/widgets/scrollcontainer.h"
 
 #include "graphics/font.h"
 
@@ -347,7 +348,11 @@ ConfigDialog::ConfigDialog() :
 	//
 	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend", false);
 
-	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalConfig_Backend.Container", gameDomain);
+	ScrollContainerWidget *backendContainer = new ScrollContainerWidget(tab, "GlobalConfig_Backend.Container", "GlobalConfig_Backend_Container");
+	backendContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	backendContainer->setTarget(this);
+
+	_backendOptions = g_system->buildBackendOptionsWidget(backendContainer, "GlobalConfig_Backend_Container.Container", gameDomain);
 
 	if (_backendOptions) {
 		_backendOptions->setParentDialog(this);
