@@ -59,7 +59,6 @@ const seriesPlayBreak Room509::PLAY2[] = {
 };
 
 const seriesPlayBreak Room509::PLAY3[] = {
-	{  0, -1, nullptr,   0,   0, -1, 0,  0, nullptr,  0 },
 	{  0, 15, nullptr,   0,   0, -1, 0,  0, nullptr,  0 },
 	{ 16, -1, nullptr,   0,   0,  3, 0,  0, nullptr,  0 },
 	{ 16, -1, "500w086", 1, 255, -1, 4, -1, &_state1, 1 },
@@ -81,7 +80,6 @@ const seriesPlayBreak Room509::PLAY5[] = {
 };
 
 const seriesPlayBreak Room509::PLAY6[] = {
-	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
