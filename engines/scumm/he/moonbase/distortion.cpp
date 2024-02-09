@@ -68,8 +68,6 @@ static void blitDistortionCore(
 	int dy = dstRect.top;
 
 	int baseX, baseY;
-	const byte *srcData = (const byte *)srcBitmap->getBasePtr(0, 0);
-	int srcPitch = srcBitmap->pitch;
 
 	switch (transferOp) {
 	case kReflectionClipped:
@@ -90,7 +88,8 @@ static void blitDistortionCore(
 		int dx = idx;
 
 		for (int i = cw; --i >= 0;) {
-			uint16 p = READ_LE_UINT16(is);
+			uint16 p = READ_BE_UINT16(is);
+
 			int sx = baseX + dx + ((p >> 5) & 0x1f); // G color
 			int sy = baseY + dy + (p & 0x1f);        // B color;
 
@@ -112,7 +111,7 @@ static void blitDistortionCore(
 				sy = MAX<int>(srcClipRect->top, MIN<int>(sy, srcClipRect->bottom));
 			}
 
-			*d = *((const uint16 *)(srcData + sy * srcPitch + sx * 2));
+			*d = *((const uint16 *)srcBitmap->getBasePtr(sx, sy));
 
 			++d;
 			++is;
@@ -170,7 +169,7 @@ void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int
 		int r_reach = READ_LE_UINT16(blockData); blockData += 2;
 		int t_reach = READ_LE_UINT16(blockData); blockData += 2;
 		int b_reach = READ_LE_UINT16(blockData); blockData += 2;
-		int distortionPitch = ((width * 2 + 7) / 8); // 2 for 555
+		int distortionPitch = width * 2; // 2 for 555
 
 		if (width == 0 && height == 0)
 			continue;
