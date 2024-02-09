@@ -256,7 +256,7 @@ void Scene::pushScene(int16 itemID) {
 }
 
 void Scene::popScene(bool inventory) {
-	if (!inventory) {
+	if (!inventory || _sceneState.pushedInvItemID == -1) {
 		_sceneState.pushedScene.continueSceneSound = true;
 		changeScene(_sceneState.pushedScene);
 		_sceneState.isScenePushed = false;
