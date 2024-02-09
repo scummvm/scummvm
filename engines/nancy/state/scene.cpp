@@ -316,7 +316,11 @@ byte Scene::getPlayerTOD() const {
 	}
 }
 
-void Scene::addItemToInventory(uint16 id) {
+void Scene::addItemToInventory(int16 id) {
+	if (id == -1) {
+		return;
+	}
+
 	if (_flags.items[id] == g_nancy->_false) {
 		_flags.items[id] = g_nancy->_true;
 		if (_flags.heldItem == id) {
@@ -329,7 +333,11 @@ void Scene::addItemToInventory(uint16 id) {
 	}
 }
 
-void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
+void Scene::removeItemFromInventory(int16 id, bool pickUp) {
+	if (id == -1) {
+		return;
+	}
+
 	if (_flags.items[id] == g_nancy->_true || getHeldItem() == id) {
 		_flags.items[id] = g_nancy->_false;
 

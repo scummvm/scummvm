@@ -125,8 +125,8 @@ public:
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
 	byte getPlayerTOD() const;
 
-	void addItemToInventory(uint16 id);
-	void removeItemFromInventory(uint16 id, bool pickUp = true);
+	void addItemToInventory(int16 id);
+	void removeItemFromInventory(int16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
 	void setNoHeldItem();
