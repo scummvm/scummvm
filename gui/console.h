@@ -72,7 +72,7 @@ protected:
 		kBufferSize   = kCharsPerLine * 1024,
 
 		kHistorySize  = 20,
-		kDraggingTime = 200
+		kDraggingTime = 10
 	};
 
 	const Graphics::Font *_font;
@@ -138,8 +138,7 @@ protected:
 	int _selBegin;
 	int _selEnd;
 
-	bool _isScrollingUp;
-	bool _isScrollingDown;
+	int _scrollDirection;
 
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);

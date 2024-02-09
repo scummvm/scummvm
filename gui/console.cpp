@@ -128,6 +128,8 @@ void ConsoleDialog::init() {
 	_selBegin = -1;
 	_selEnd = -1;
 
+	_scrollDirection = 0;
+
 	resetPrompt();
 }
 
@@ -251,13 +253,9 @@ void ConsoleDialog::handleTickle() {
 	}
 	if (_selectionTime < time) {
 		_selectionTime += kDraggingTime;
-		if (_isScrollingDown) {
-			_scrollBar->handleMouseWheel(0, 0, 1);
-			_selEnd += kCharsPerLine;
-		}
-		if (_isScrollingUp) {
-			_scrollBar->handleMouseWheel(0, 0, -1);
-			_selEnd -= kCharsPerLine;
+		if (_isDragging && _scrollDirection != 0) {
+			_scrollBar->handleMouseWheel(0, 0, -_scrollDirection);
+			_selEnd -= kCharsPerLine * _scrollDirection;
 		}
 	}
 	// Perform the "slide animation".
@@ -562,7 +560,7 @@ void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
 	if (evt.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 		switch (evt.customType) {
 		case kActionCopy: {
-			if (_selBegin == -1 && _selEnd == -1) {
+			if (_selBegin == -1 || _selEnd == -1) {
 				Common::String userInput = getUserInput();
 				if (!userInput.empty())
 					g_system->setTextInClipboard(userInput);
@@ -572,7 +570,7 @@ void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
 				for (int i = MIN(_selBegin, _selEnd); i < MAX(_selBegin, _selEnd); i++) {
 					if (i % kCharsPerLine != kCharsPerLine - 1) {
 						if (buffer(i) == ' ') {
-							whitespaces += buffer(i); //to deal with trailing whitespaces
+							whitespaces += buffer(i); // to deal with trailing whitespaces
 						} else {
 							str += whitespaces;
 							str += buffer(i);
@@ -906,7 +904,10 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 		}
 
 		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
-	} else if (_selBegin == -1 && _selEnd == -1) {
+	} else if (_selBegin == -1 || _selEnd == -1) {
+		if (y > _h)
+			return;
+
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
 		int ind = (x - _leftPadding) / kConsoleCharWidth;
 		_selBegin = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + ind;
@@ -923,20 +924,25 @@ void ConsoleDialog::handleMouseMoved(int x, int y, int button) {
 	if (!_isDragging)
 		Dialog::handleMouseMoved(x, y, button);
 	else {
+		int selEndPreviousMove = _selEnd;
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
+		lineNumber = MIN(lineNumber, _linesPerPage - 1);
 		int col = (x - _leftPadding) / kConsoleCharWidth;
 		_selEnd = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + col;
-		if ((y - _topPadding) / (kConsoleLineHeight / 2) > 2 * _linesPerPage - 1)
-			_isScrollingDown = true;
+
+		if (_selEnd == selEndPreviousMove)
+			return;
+
+		if (lineNumber > _linesPerPage - 2)
+			_scrollDirection = -1;
+		else if (lineNumber < 1)
+			_scrollDirection = 1;
 		else
-			_isScrollingDown = false;
-		if ((y - _topPadding) / (kConsoleLineHeight / 2) < 1)
-			_isScrollingUp = true;
-		else
-			_isScrollingUp = false;
-		drawDialog(kDrawLayerForeground);
+			_scrollDirection = 0;
+
+		for (int i = MIN(_selEnd / kCharsPerLine, selEndPreviousMove / kCharsPerLine); i <= MAX(_selEnd / kCharsPerLine, selEndPreviousMove / kCharsPerLine); i++)
+			drawLine(i - _scrollBar->_currentPos / _scrollBar->_singleStep);
 	}
-	drawDialog(kDrawLayerForeground);
 }
 
 void ConsoleDialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -946,8 +952,7 @@ void ConsoleDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 		_selBegin = -1;
 		_selEnd = -1;
 	}
-	_isScrollingUp = false;
-	_isScrollingDown = false;
+	_scrollDirection = 0;
 }
 
 } // End of namespace GUI
