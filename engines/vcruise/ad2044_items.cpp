@@ -41,17 +41,17 @@ const AD2044ItemInfo g_ad2044ItemInfos[kNumAD2044Items] = {
 	{0, 0, false, 0},               // 14
 	{0, 0, false, 0},               // 15
 	{0, 0, false, 0},               // 16
-	{0, 0, false, 0},               // 17
-	{0, 0, true, 0x128},            // 18
+	{0, 0, false, 0},                      // 17
+	{0x3D70D2EC, 0x98382A38, true, 0x128}, // 18 spoon
 	{0, 0, false, 0},               // 19
 	{0, 0, false, 0},               // 20
 	{0, 0, false, 0},               // 21
 	{0, 0, false, 0},               // 22
 	{0, 0, false, 0},               // 23
-	{0, 0, false, 0},               // 24
+	{0, 0, true, 0x134},            // 24 cigarettes (filled)
 	{0, 0, false, 0},               // 25
 	{0, 0, false, 0},               // 26
-	{0, 0, false, 0},               // 27
+	{0, 0, true, 0x137},            // 27 matches
 	{0, 0, false, 0},               // 28
 	{0, 0, false, 0},               // 29
 	{0, 0, false, 0},               // 30
@@ -78,13 +78,13 @@ const AD2044ItemInfo g_ad2044ItemInfos[kNumAD2044Items] = {
 	{0, 0, false, 0},               // 51
 	{0, 0, false, 0},               // 52
 	{0, 0, false, 0},               // 53
-	{0x83d54448, 0x839911EF, 0, 0}, // 54
+	{0x83d54448, 0x839911EF, 0, 0}, // 54 goaler (sic)
 	{0, 0, false, 0},               // 55
 	{0, 0, false, 0},               // 56
 	{0, 0, false, 0},               // 57
 	{0, 0, false, 0},               // 58
 	{0, 0, false, 0},               // 59
-	{0, 0, false, 0x170},           // 60
+	{0, 0, false, 0x170},           // 60 mirror
 	{0, 0, false, 0},               // 61
 	{0, 0, false, 0},               // 62
 	{0, 0, false, 0},               // 63
@@ -92,12 +92,12 @@ const AD2044ItemInfo g_ad2044ItemInfos[kNumAD2044Items] = {
 	{0, 0, false, 0},               // 65
 	{0, 0, false, 0},               // 66
 	{0, 0, false, 0},               // 67
-	{0, 0, false, 0},               // 68
-	{0, 0, false, 0},               // 69
+	{0, 0, true, 0x178},            // 68 cigarette
+	{0, 0, true, 0x179},            // 69 cigarette (lit)
 	{0, 0, false, 0},               // 70
 	{0, 0, false, 0},               // 71
 	{0, 0, false, 0},               // 72
-	{0, 0, false, 0},               // 73
+	{0, 0, true, 0x183},            // 73 cigarettes (1 missing)
 };
 
 } // End of namespace VCruise

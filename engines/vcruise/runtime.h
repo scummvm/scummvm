@@ -1236,11 +1236,13 @@ private:
 	void scriptOpSound(ScriptArg_t arg);
 	void scriptOpISound(ScriptArg_t arg);
 	void scriptOpUSound(ScriptArg_t arg);
+	void scriptOpSayCycle_AD2044(const StackInt_t *values, uint numValues);
 	void scriptOpSay2K(ScriptArg_t arg);
 	void scriptOpSay3K(ScriptArg_t arg);
 	void scriptOpRGet(ScriptArg_t arg);
 	void scriptOpRSet(ScriptArg_t arg);
 	void scriptOpEndRSet(ScriptArg_t arg);
+	void scriptOpStop(ScriptArg_t arg);
 
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursors;      // Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<AnimatedCursor> > _cursorsShort;      // Cursors indexed as CURSOR_#
@@ -1544,6 +1546,7 @@ private:
 	Common::String _subtitleText;
 
 	Common::SharedPtr<AD2044Graphics> _ad2044Graphics;
+	Common::Array<Common::String> _ad2044ItemNames;
 };
 
 } // End of namespace VCruise

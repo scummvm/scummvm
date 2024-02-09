@@ -30,6 +30,23 @@
 
 namespace VCruise {
 
+struct AD2044UnusualAnimationRules {
+	enum Type {
+		kTypeLoop,	// Loop the animation
+		kTypePlayFirstFrameOnly,
+	};
+
+	uint roomNumber;
+	uint screenNumber;
+	uint interactionID;
+	uint8 animLookupID;
+	Type ruleType;
+};
+
+AD2044UnusualAnimationRules g_unusualAnimationRules[] = {
+	{87, 0x69, 0xa3, 0xa5, AD2044UnusualAnimationRules::kTypePlayFirstFrameOnly},
+};
+
 #ifdef PEEK_STACK
 #error "PEEK_STACK is already defined"
 #endif
@@ -2084,7 +2101,7 @@ void Runtime::scriptOpAnimAD2044(bool isForward) {
 	bool found = false;
 
 	for (const AD2044AnimationDef &def : _ad2044AnimationDefs) {
-		if (static_cast<StackInt_t>(def.lookupID) == stackArgs[0]) {
+		if (def.roomID == _roomNumber && static_cast<StackInt_t>(def.lookupID) == stackArgs[0]) {
 			animationID = isForward ? def.fwdAnimationID : def.revAnimationID;
 			found = true;
 			break;
@@ -2127,13 +2144,46 @@ void Runtime::scriptOpAnimReverse(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(AnimKForward)
-OPCODE_STUB(Say2K)
-OPCODE_STUB(Say3K)
 
 void Runtime::scriptOpNoUpdate(ScriptArg_t arg) {
 }
 
-OPCODE_STUB(NoClear)
+void Runtime::scriptOpNoClear(ScriptArg_t arg) {
+}
+
+void Runtime::scriptOpSayCycle_AD2044(const StackInt_t *values, uint numValues) {
+	// Checking the scripts, there don't appear to be any cycles that can't be tracked from
+	// the first value, so just use that.
+	uint &cyclePosRef = _sayCycles[static_cast<uint32>(values[0])];
+
+	Common::String soundName = Common::String::format("%02i-%08i", static_cast<int>(_disc * 10u + 1u), static_cast<int>(values[cyclePosRef]));
+
+	cyclePosRef = (cyclePosRef + 1u) % numValues;
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(soundName, true, soundID, cachedSound);
+
+	if (cachedSound) {
+		TriggeredOneShot oneShot;
+		oneShot.soundID = soundID;
+		oneShot.uniqueSlot = _disc;
+
+		triggerSound(kSoundLoopBehaviorNo, *cachedSound, 100, 0, false, true);
+	}
+}
+
+void Runtime::scriptOpSay2K(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	scriptOpSayCycle_AD2044(stackArgs, 2);
+}
+
+void Runtime::scriptOpSay3K(ScriptArg_t arg) {
+	TAKE_STACK_INT(3);
+
+	scriptOpSayCycle_AD2044(stackArgs, 3);
+}
 
 void Runtime::scriptOpSay1_AD2044(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
@@ -2252,7 +2302,7 @@ void Runtime::scriptOpRSet(ScriptArg_t arg) {
 		}
 	}
 
-	error("Couldn't resolve item ID for script item %i", static_cast<int>(stackArgs[0]));
+	error("Couldn't resolve item ID for script item 0x%x", static_cast<int>(stackArgs[0]));
 }
 
 void Runtime::scriptOpEndRSet(ScriptArg_t arg) {
@@ -2261,6 +2311,9 @@ void Runtime::scriptOpEndRSet(ScriptArg_t arg) {
 	returnFromExaminingItem();
 }
 
+void Runtime::scriptOpStop(ScriptArg_t arg) {
+	terminateScript();
+}
 
 // Unused Schizm ops
 // Only used in fnRandomBirds and fnRandomMachines in Room 60, both of which are unused
@@ -2521,7 +2574,9 @@ bool Runtime::runScript() {
 			DISPATCH_OP(RSet);
 			DISPATCH_OP(EndRSet);
 
+			DISPATCH_OP(Say2K);
 			DISPATCH_OP(Say3K);
+			DISPATCH_OP(Stop);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));

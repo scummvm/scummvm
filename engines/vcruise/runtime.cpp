@@ -3179,14 +3179,16 @@ void Runtime::loadAD2044ExecutableResources() {
 
 	_ad2044Graphics->finishLoading();
 
-	Common::HashMap<uint32, uint32> stringHashToFilePos;
+	Common::HashMap<uint32, Common::Pair<uint32, uint> > stringHashToFilePosAndLength;
 
 	for (const AD2044ItemInfo &itemInfo : g_ad2044ItemInfos) {
-		stringHashToFilePos[itemInfo.enNameCRC] = 0;
-		stringHashToFilePos[itemInfo.plNameCRC] = 0;
+		if (_language == Common::PL_POL)
+			stringHashToFilePosAndLength[itemInfo.plNameCRC] = Common::Pair<uint32, uint>(0, 0);
+		else
+			stringHashToFilePosAndLength[itemInfo.enNameCRC] = Common::Pair<uint32, uint>(0, 0);
 	}
 
-	stringHashToFilePos.erase(0);
+	stringHashToFilePosAndLength.erase(0);
 
 	// Scan for strings
 	Common::CRC32 crc;
@@ -3200,9 +3202,9 @@ void Runtime::loadAD2044ExecutableResources() {
 			uint32 strLength = i - strStartPos;
 			rollingCRC = crc.finalize(rollingCRC);
 			if (strLength != 0) {
-				Common::HashMap<uint32, uint32>::iterator it = stringHashToFilePos.find(rollingCRC);
-				if (it != stringHashToFilePos.end())
-					it->_value = strStartPos;
+				Common::HashMap<uint32, Common::Pair<uint32, uint> >::iterator it = stringHashToFilePosAndLength.find(rollingCRC);
+				if (it != stringHashToFilePosAndLength.end())
+					it->_value = Common::Pair<uint32, uint> (strStartPos, strLength);
 			}
 
 #if 1
@@ -3215,6 +3217,34 @@ void Runtime::loadAD2044ExecutableResources() {
 			strStartPos = i + 1;
 		} else
 			rollingCRC = crc.processByte(b, rollingCRC);
+	}
+
+	_ad2044ItemNames.clear();
+	_ad2044ItemNames.reserve(ARRAYSIZE(g_ad2044ItemInfos));
+
+	for (const AD2044ItemInfo &itemInfo : g_ad2044ItemInfos) {
+		Common::String itemInfoUTF8;
+		uint32 hash = itemInfo.enNameCRC;
+
+		if (_language == Common::PL_POL)
+			hash = itemInfo.plNameCRC;
+
+		if (hash != 0) {
+			Common::HashMap<uint32, Common::Pair<uint32, uint> >::const_iterator strIt = stringHashToFilePosAndLength.find(hash);
+
+			if (strIt != stringHashToFilePosAndLength.end()) {
+				uint32 filePos = strIt->_value.first;
+				uint length = strIt->_value.second;
+
+				if (length > 0) {
+					Common::String str(reinterpret_cast<const char *>(&exeContents[filePos]), length);
+
+					itemInfoUTF8 = str.decode(Common::CodePage::kWindows1250).encode(Common::kUtf8);
+				}
+			}
+		}
+
+		_ad2044ItemNames.push_back(itemInfoUTF8);
 	}
 }
 
