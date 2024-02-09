@@ -762,7 +762,7 @@ void Room405::daemon() {
 
 	case 26:
 		_vp03.terminate();
-		Series::series_play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 18, 18);
+		_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 18, 18);
 		Series::series_play("405vp09", 0x900, 0, 27, 7, 0, 100, 0, 0, 0, 3);
 		break;
 
