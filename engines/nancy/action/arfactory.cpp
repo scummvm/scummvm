@@ -174,7 +174,13 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new Autotext();
 		}
 	case 62:
-		return new MapCallHotMultiframe();
+		if (g_nancy->getGameType() <= kGameTypeNancy7) {
+			return new MapCallHotMultiframe(); // TVD/nancy1 only
+		} else {
+			return new ConversationCelTerse(); // nancy8 and up
+		}
+	case 63:
+		return new ConversationSoundTerse();		
 	case 65:
 		return new TableIndexOverlay();
 	case 66:
