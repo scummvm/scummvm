@@ -4066,7 +4066,7 @@ bool Runtime::dischargeIdleMouseMove() {
 			invSlotRect.translate(static_cast<int16>(AD2044Interface::getInvSlotSpacing()), 0);
 		}
 
-		if (_inventoryActiveItem.itemID != 0) {
+		if (_inventoryActiveItem.itemID != 0 && _hero == 0) {
 			if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined) {
 				Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
 
@@ -5976,7 +5976,7 @@ void Runtime::drawActiveItemGraphic() {
 		drawSectionToScreen(_fullscreenMenuSection, itemRect);
 	}
 
-	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined) {
+	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined && _hero == 0) {
 		Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
 
 		_fullscreenMenuSection.surf->blitFrom(*_ad2044Graphics->examine, Common::Point(examineRect.left, examineRect.top));
