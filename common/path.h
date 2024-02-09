@@ -397,19 +397,19 @@ public:
 	 * Returns this path with the given path appended (out-of-place).
 	 * Does not automatically add a directory separator.
 	 */
-	Path append(const Path &x) const {
+	WARN_UNUSED_RESULT Path append(const Path &x) const {
 		Path temp(*this);
 		temp.appendInPlace(x);
 		return temp;
 	}
 
 	/** @overload */
-	Path append(const String &str, char separator = '/') const {
+	WARN_UNUSED_RESULT Path append(const String &str, char separator = '/') const {
 		return append(str.c_str(), separator);
 	}
 
 	/** @overload */
-	Path append(const char *str, char separator = '/') const {
+	WARN_UNUSED_RESULT Path append(const char *str, char separator = '/') const {
 		Path temp(*this);
 		temp.appendInPlace(str, separator);
 		return temp;
@@ -419,10 +419,10 @@ public:
 	 * Appends exactly one component, without any separators
 	 * and prepends a separator if necessarry
 	 */
-	Path appendComponent(const char *str) const;
+	WARN_UNUSED_RESULT Path appendComponent(const char *str) const;
 
 	/** @overload */
-	Path appendComponent(const String &x) const {
+	WARN_UNUSED_RESULT Path appendComponent(const String &x) const {
 		return appendComponent(x.c_str());
 	}
 
@@ -444,19 +444,19 @@ public:
 	 * Returns this path joined with the given path (out-of-place).
 	 * Automatically adds a directory separator.
 	 */
-	Path join(const Path &x) const {
+	WARN_UNUSED_RESULT Path join(const Path &x) const {
 		Path temp(*this);
 		temp.joinInPlace(x);
 		return temp;
 	}
 
 	/** @overload */
-	Path join(const String &str, char separator = '/') const {
+	WARN_UNUSED_RESULT Path join(const String &str, char separator = '/') const {
 		return join(str.c_str(), separator);
 	}
 
 	/** @overload */
-	Path join(const char *str, char separator = '/') const {
+	WARN_UNUSED_RESULT Path join(const char *str, char separator = '/') const {
 		Path temp(*this);
 		temp.joinInPlace(str, separator);
 		return temp;
