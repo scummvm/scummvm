@@ -773,7 +773,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	// The low quality music in Loom was probably intended for low-end
 	// Macs. It plays only one channel, instead of three.
 
-	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+	if (target.empty() || ((gameid == "loom" || gameid == "indy3") && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
 	}
 

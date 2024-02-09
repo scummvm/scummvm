@@ -2170,6 +2170,8 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_INDY3) {
 		_musicEngine = new Player_Mac_Indy3(this, _mixer);
+		if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
+			_musicEngine->setQuality(Player_Mac_Indy3::kQualLo);
 		_sound->_musicType = MDT_MACINTOSH;
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
 		_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));

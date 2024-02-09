@@ -858,7 +858,10 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 	// 4 Roland
 	switch (_sound->_musicType) {
 	case MDT_MACINTOSH:
-		VAR(VAR_SOUNDCARD) = (_game.id == GID_INDY3) ? 11 : 3;
+		if (_game.id == GID_INDY3)
+			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 10 : 11;
+		else
+			VAR(VAR_SOUNDCARD) = 3;
 		break;
 	case MDT_NONE:
 	case MDT_PCSPK:
