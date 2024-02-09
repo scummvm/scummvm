@@ -254,8 +254,8 @@ struct SoundDescription {
 	Common::String name = "NO SOUND";
 	uint16 channelID = 0;
 	uint16 playCommands = 1;
-	uint16 numLoops = 0;
-	uint16 volume = 0;
+	uint16 numLoops = 1;
+	uint16 volume = 50;
 	uint16 panAnchorFrame = 0;
 	uint32 samplesPerSec = 0;
 	bool isPanning = false;
