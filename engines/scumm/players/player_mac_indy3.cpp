@@ -241,10 +241,10 @@ private:
 	void addTriplet(uint16 frequency, uint16 amplitude);
 
 	struct Triplet {
-		Triplet(uint16 cnt, uint16 ampl, uint16 dur) : count(cnt), amplitude(ampl & 0xff), duration(dur) {}
+		Triplet(uint16 cnt, uint16 ampl, uint16 dur) : count(cnt), amplitude(ampl), duration(dur) {}
 		Triplet() : Triplet(0xffff, 0xffff, 1) {}
 		Triplet &&fromScumm() { count = (count / 3) * 2; duration = MAX<uint8>(duration, 1); return Common::move(*this); }
-		void toHardware(uint32 &dstCount, uint8 &dstAmpl, uint16 &dstDur) { dstCount = count ? 0x58000000 / (5 * count) : 0; dstAmpl = amplitude >> 1; dstDur = duration; }
+		void toHardware(uint32 &dstCount, uint8 &dstAmpl, uint16 &dstDur) { dstCount = count ? 0x58000000 / (5 * count) : 0; dstAmpl = (amplitude & 0xff) >> 1; dstDur = duration; }
 		uint16 count;
 		uint16 amplitude;
 		uint16 duration;
