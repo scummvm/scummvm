@@ -95,7 +95,7 @@ public:
 	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
 	int32 play_loop(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
 	void playFootsteps();
-	void stop(uint channel);
+	void stop(uint channel, bool calledFromUnload = false);
 	void flush_mem();
 
 	void read_another_chunk();
