@@ -1037,7 +1037,7 @@ Common::WeakPtr<I3MPlayer> *I3MPlayer::_inst = nullptr;
 I3MPlayer::I3MPlayer(ScummEngine *vm, Audio::Mixer *mixer) :
 	_vm(vm), _mixer(mixer), _musicChannels(nullptr), _curSound(0), _curSong(0), _lastSoundEffectPrio(0), _idRangeMax(86), _soundEffectNumLoops(-1),
 	_musicIDTable(nullptr), _macstr(nullptr), _musicIDTableLen(0), _soundUsage(0), _mdrv(nullptr), _sdrv(nullptr), _nextTickProc(this, &I3MPlayer::nextTick),
-	_soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(2), _16bit(false), _qualHi(false),	_mixerThread(false), _activeChanCount(0),
+	_soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(0), _16bit(false), _qualHi(false),	_mixerThread(false), _activeChanCount(0),
 	_songUnfinished(false), _numMusicChannels(8), _numMusicTracks(4) {
 	assert(_vm);
 	assert(_mixer);
@@ -1395,7 +1395,7 @@ void I3MPlayer::updateSong() {
 	if (_curSong && (_qualHi || (_mdrv->getStatus() & I3MSoundDriver::kStatusDone))) {
 		_mdrv->clearFlags(I3MSoundDriver::kStatusOverflow);
 		while (_curSong && !(_mdrv->getStatus() & I3MSoundDriver::kStatusOverflow)) {
-			for (int i = _qualHi ? 4 : 4; i; --i) {
+			for (int i = 4; i; --i) {
 				for (int ii = 0; ii < _numMusicTracks && _curSong; ++ii)
 					_musicChannels[ii]->nextTick();
 			}
