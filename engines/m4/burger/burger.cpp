@@ -290,7 +290,7 @@ void BurgerEngine::global_daemon() {
 			break;
 		case 10009:
 			ws_unhide_walker(_G(my_walker));
-			_G(wilbur_should) = 10018;
+			_G(wilbur_should) = 10010;
 			_G(walker).wilbur_speech("602w012x", kCHANGE_WILBUR_ANIMATION);
 			break;
 		case 10010:
