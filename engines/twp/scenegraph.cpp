@@ -92,7 +92,7 @@ int Node::find(Node *other) {
 
 void Node::removeChild(Node *child) {
 	int i = find(child);
-	if(i != -1) {
+	if (i != -1) {
 		_children.remove_at(i);
 	}
 	child->_parent = nullptr;
@@ -180,15 +180,32 @@ void Node::setSize(Math::Vector2d size) {
 	}
 }
 
-static int cmpNodes(const Node *x, const Node *y) {
-	return y->getZSort() < x->getZSort();
+// this structure is used to have a stable sort
+typedef struct {
+	size_t index;
+	Node *node;
+} NodeSort;
+
+static int cmpNodes(const NodeSort &x, const NodeSort &y) {
+	if (y.node->getZSort() == x.node->getZSort()) {
+		return x.index < y.index;
+	}
+	return x.node->getZSort() > y.node->getZSort();
 }
 
 void Node::onDrawChildren(Math::Matrix4 trsf) {
-	Common::Array<Node *> children(_children);
+	// use this "stable sort" until there is something better available
+	Common::Array<NodeSort> children;
+	for (size_t i = 0; i < _children.size(); i++) {
+		children.push_back({i, _children[i]});
+	}
 	Common::sort(children.begin(), children.end(), cmpNodes);
+	_children.clear();
+	_children.reserve(children.size());
 	for (size_t i = 0; i < children.size(); i++) {
-		Node *child = children[i];
+		_children.push_back(children[i].node);
+	}
+	for (auto& child : _children) {
 		child->draw(trsf);
 	}
 }
@@ -367,7 +384,8 @@ void Anim::update(float elapsed) {
 void Anim::drawCore(Math::Matrix4 trsf) {
 	if (_frameIndex < _frames.size()) {
 		const Common::String &frame = _frames[_frameIndex];
-		if(frame == "null") return;
+		if (frame == "null")
+			return;
 
 		bool flipX = _obj->getFacing() == FACE_LEFT;
 		if (_sheet.size() == 0) {
@@ -388,9 +406,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			if (_obj->_lit) {
 				g_engine->getGfx().use(g_engine->_lighting.get());
 				Math::Vector2d p = getAbsPos() + _obj->_node->getRenderOffset();
-				const float left = flipX ?
-					(-1.f + sf.sourceSize.getX()) / 2.f - sf.spriteSourceSize.left :
-					sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f;
+				const float left = flipX ? (-1.f + sf.sourceSize.getX()) / 2.f - sf.spriteSourceSize.left : sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f;
 				const float top = -sf.sourceSize.getY() / 2.f + sf.spriteSourceSize.top;
 
 				g_engine->_lighting->setSpriteOffset({p.getX() + left, -p.getY() + top});

@@ -14,6 +14,8 @@ static struct {
 	bool _showStack = false;
 	bool _showAudio = false;
 	bool _showResources = false;
+	bool _showScenegraph = false;
+	Node* _node = nullptr;
 	ImGuiTextFilter _objFilter;
 	int _fadeEffect = 0;
 	float _fadeDuration = 0.f;
@@ -396,6 +398,7 @@ static void drawGeneral() {
 		ImGui::Checkbox("Stack", &state._showStack);
 		ImGui::Checkbox("Audio", &state._showAudio);
 		ImGui::Checkbox("Resources", &state._showResources);
+		ImGui::Checkbox("Scenegraph", &state._showScenegraph);
 	}
 	ImGui::Separator();
 
@@ -431,6 +434,67 @@ static void drawGeneral() {
 	ImGui::End();
 }
 
+static void drawNode(Node* node) {
+	auto children = node->getChildren();
+	bool selected = state._node == node;
+	if(children.empty()) {
+		if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+			state._node = node;
+		}
+	} else {
+		ImGui::PushID(node->getName().c_str());
+		if(ImGui::TreeNode("")) {
+			ImGui::SameLine();
+			if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+				state._node = node;
+			}
+			for(auto& child : children) {
+				drawNode(child);
+			}
+			ImGui::TreePop();
+		} else {
+			ImGui::SameLine();
+			if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+				state._node = node;
+			}
+		}
+		ImGui::PopID();
+	}
+}
+
+static void drawScenegraph() {
+	if (!state._showScenegraph)
+		return;
+
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Scenegraph", &state._showScenegraph);
+	drawNode(&g_engine->_scene);
+	ImGui::End();
+
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	if(state._node != nullptr) {
+		ImGui::Begin("Node");
+		state._node->isVisible();
+		bool visible = state._node->isVisible();
+		if(ImGui::Checkbox(state._node->getName().c_str(), &visible)) {
+			state._node->setVisible(visible);
+		}
+		int zsort = state._node->getZSort();
+		if(ImGui::DragInt("Z-Sort", &zsort)) {
+			state._node->setZSort(zsort);
+		}
+		Math::Vector2d pos = state._node->getPos();
+		if(ImGui::DragFloat2("Pos", pos.getData())) {
+			state._node->setPos(pos);
+		}
+		Math::Vector2d offset = state._node->getOffset();
+		if(ImGui::DragFloat2("Offset", offset.getData())) {
+			state._node->setOffset(offset);
+		}
+		ImGui::End();
+	}
+}
+
 void onImGuiRender() {
 	drawGeneral();
 	drawThreads();
@@ -438,6 +502,7 @@ void onImGuiRender() {
 	drawStack();
 	drawAudio();
 	drawResources();
+	drawScenegraph();
 }
 
 } // namespace Twp
