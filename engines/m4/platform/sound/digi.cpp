@@ -83,7 +83,7 @@ void Digi::unload(const Common::String &name) {
 		// Stop it if it's playing
 		for (int channel = 0; channel < MAX_CHANNELS; ++channel) {
 			if (_channels[channel]._name == name)
-				stop(channel);
+				stop(channel, true);
 		}
 
 		// Remove the underlying resource
@@ -166,7 +166,7 @@ Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_nu
 	}
 }
 
-void Digi::stop(uint channel) {
+void Digi::stop(uint channel, bool calledFromUnload) {
 	assert(channel < 4);
 
 	Channel &c = _channels[channel];
@@ -177,7 +177,9 @@ void Digi::stop(uint channel) {
 		c._trigger = -1;
 		c._name.clear();
 
-		digi_unload(name);
+		if (!calledFromUnload) {
+			digi_unload(name);
+		}
 	}
 }
 
