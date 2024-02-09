@@ -231,13 +231,13 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 }
 
 void Wiz::fillWizFlood(const WizParameters *params) {
-	if (params->processFlags & kWPFClipBox2) {
-		int px = params->box2.left;
-		int py = params->box2.top;
+	if (params->actionFlags & kWAFRenderCoords) {
+		int px = params->renderCoords.left;
+		int py = params->renderCoords.top;
 		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 		if (dataPtr) {
 			int state = 0;
-			if (params->processFlags & kWPFNewState) {
+			if (params->actionFlags & kWAFState) {
 				state = params->img.state;
 			}
 			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
@@ -247,14 +247,14 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			int h = READ_LE_UINT32(wizh + 0x8);
 			assert(c == 0);
 			Common::Rect imageRect(w, h);
-			if (params->processFlags & kWPFClipBox) {
+			if (params->actionFlags & kWAFRect) {
 				if (!imageRect.intersects(params->box)) {
 					return;
 				}
 				imageRect.clip(params->box);
 			}
 			uint8 color = _vm->VAR(93);
-			if (params->processFlags & kWPFFillColor) {
+			if (params->actionFlags & kWAFColor) {
 				color = params->fillColor;
 			}
 			if (imageRect.contains(px, py)) {

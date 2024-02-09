@@ -1300,7 +1300,7 @@ void Sprite::processImages(bool arg) {
 		wiz.conditionBits = spi->conditionBits;
 		spi->curImageState = wiz.img.state = imageState;
 		spi->curImage = wiz.img.resNum = image;
-		wiz.processFlags = kWPFNewState | kWPFSetPos;
+		wiz.actionFlags = kWAFState | kWAFSpot;
 		spi->curAngle = spi->angle;
 		spi->curScale = spi->scale;
 		spi->pos.x = wiz.img.x1;
@@ -1327,41 +1327,41 @@ void Sprite::processImages(bool arg) {
 			bboxPtr->bottom = -1234;
 		}
 
-		wiz.img.flags = kWIFMarkBufferDirty;
+		wiz.img.flags = kWRFForeground;
 		wiz.img.zorder = 0;
 		if (spr_flags & kSFXFlipped)
 			wiz.img.flags |= kWIFFlipX;
 		if (spr_flags & kSFYFlipped)
 			wiz.img.flags |= kWIFFlipY;
 		if (spr_flags & kSFDoubleBuffered) {
-			wiz.img.flags &= ~kWIFMarkBufferDirty;
-			wiz.img.flags |= kWIFBlitToFrontVideoBuffer;
+			wiz.img.flags &= ~kWRFForeground;
+			wiz.img.flags |= kWRFBackground;
 		}
 		if (spi->shadow) {
 			wiz.img.flags |= 0x200;
-			wiz.processFlags |= kWPFShadow;
+			wiz.actionFlags |= kWAFShadow;
 			wiz.img.shadow = spi->shadow;
 		}
 		if (spr_flags & kSFRemapPalette)
-			wiz.img.flags |= kWIFRemapPalette;
+			wiz.img.flags |= kWRFRemap;
 		if (spi->zbufferImage) {
-			wiz.processFlags |= 0x200000;
+			wiz.actionFlags |= 0x200000;
 			wiz.img.zbuffer = spi->zbufferImage;
 			wiz.img.zorder = spi->priority;
 		}
 		if (spi->sourceImage) {
-			wiz.processFlags |= kWPFMaskImg;
+			wiz.actionFlags |= kWAFSourceImg;
 			wiz.sourceImage = spi->sourceImage;
 		}
-		wiz.processFlags |= kWPFNewFlags;
+		wiz.actionFlags |= kWAFFlags;
 		wiz.img.flags |= spi->imgFlags;
 
 		if (spr_flags & kSFRotated) {
-			wiz.processFlags |= kWPFRotate;
+			wiz.actionFlags |= kWAFRotate;
 			wiz.angle = spi->angle;
 		}
 		if (spr_flags & kSFScaled) {
-			wiz.processFlags |= kWPFScaled;
+			wiz.actionFlags |= kWAFScaled;
 			wiz.scale = spi->scale;
 		}
 		spi->curImgFlags = wiz.img.flags;
@@ -1370,7 +1370,7 @@ void Sprite::processImages(bool arg) {
 			Common::Rect &spgBbox = _spriteGroups[spi->group].bbox;
 			if (spgBbox.isValidRect() && spi->bbox.intersects(spgBbox)) {
 				spi->bbox.clip(spgBbox);
-				wiz.processFlags |= kWPFClipBox;
+				wiz.actionFlags |= kWAFRect;
 				wiz.box = spi->bbox;
 			} else {
 				bboxPtr->left = 1234;
@@ -1381,11 +1381,11 @@ void Sprite::processImages(bool arg) {
 			}
 		}
 		if (spi->palette) {
-			wiz.processFlags |= kWPFPaletteNum;
+			wiz.actionFlags |= kWAFPalette;
 			wiz.img.palette = spi->palette;
 		}
 		if (spi->image && spi->group && _spriteGroups[spi->group].image) {
-			wiz.processFlags |= kWPFDstResNum;
+			wiz.actionFlags |= kWAFDestImage;
 			wiz.dstResNum = _spriteGroups[spi->group].image;
 		}
 		_vm->_wiz->displayWizComplexImage(&wiz);

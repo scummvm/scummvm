@@ -640,7 +640,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 	wi.resNum = pop();
 	wi.x1 = wi.y1 = 0;
 	wi.state = 0;
-	wi.flags = kWIFPrint;
+	wi.flags = kWRFPrint;
 	_wiz->displayWizImage(&wi);
 }
 
