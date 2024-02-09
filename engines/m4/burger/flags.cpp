@@ -152,7 +152,11 @@ void Flags::schedule_boonsville_time() {
 void Flags::reset1() {
 	set_boonsville_time(0);
 	(*this)[V000] = 1000;
-	inv_give_to_player("money");
+
+	if (_G(executing) == WHOLE_GAME)
+		inv_give_to_player("money");
+	else
+		inv_move_object("money", NOWHERE);
 
 	(*this)[V001] = 20;
 	(*this)[V005] = 0;
