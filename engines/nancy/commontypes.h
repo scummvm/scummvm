@@ -155,7 +155,7 @@ struct SceneChangeDescription {
 
 	int8 paletteID = -1; // TVD only
 
-	Math::Vector3d listenerFrontVector;
+	Math::Vector3d listenerFrontVector = Math::Vector3d(0, 0, 1);
 	uint16 frontVectorFrameID = 0;
 
 	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
