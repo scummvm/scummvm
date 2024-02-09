@@ -124,6 +124,13 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	if (isPiano && g_nancy->getGameType() >= kGameTypeNancy8) {
+		_specialCursor1Id = stream.readUint16LE();
+		readRect(stream, _specialCursor1Dest);
+		_specialCursor2Id = stream.readUint16LE();
+		readRect(stream, _specialCursor2Dest);
+	}
+
 	uint sequenceLength = 5;
 	ser.syncAsUint16LE(sequenceLength, kGameTypeNancy1);
 
@@ -166,6 +173,9 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		readRectArray(ser, _overlaySrcs, numOverlays);
 		readRectArray(ser, _overlayDests, numOverlays);
+	} else if (isPiano && g_nancy->getGameType() >= kGameTypeNancy8) {
+		readFilenameArray(stream, _pianoSoundNames, numElements);
+		stream.skip((maxNumElements - numElements) * 33);
 	}
 
 	if (ser.getVersion() > kGameTypeVampire) {
@@ -461,7 +471,14 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 
 	for (int i = 0; i < (int)_hotspots.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			// Set the custom cursor for nancy8+ PianoPuzzle
+			if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor1Dest).contains(input.mousePos)) {
+				g_nancy->_cursorManager->setCursorType((CursorManager::CursorType)_specialCursor1Id);
+			} else if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor2Dest).contains(input.mousePos)) {
+				g_nancy->_cursorManager->setCursorType((CursorManager::CursorType)_specialCursor2Id);
+			} else {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			}
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 				if (_puzzleType == kOrderItems) {
@@ -479,11 +496,18 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 
 				if (_puzzleType == kPiano) {
 					// Set the correct sound name for every piano key
-					if (Common::isDigit(_pushDownSound.name.lastChar())) {
-						_pushDownSound.name.deleteLastChar();
-					}
+					if (g_nancy->getGameType() <= kGameTypeNancy7) {
+						// In earlier games, the sound name is the base sound + a number
+						if (Common::isDigit(_pushDownSound.name.lastChar())) {
+							_pushDownSound.name.deleteLastChar();
+						}
 
-					_pushDownSound.name.insertChar('0' + i, _pushDownSound.name.size());
+						_pushDownSound.name.insertChar('0' + i, _pushDownSound.name.size());
+					} else {
+						// Later games added an array of sound names
+						_pushDownSound.name = _pianoSoundNames[i];
+					}
+					
 					g_nancy->_sound->loadSound(_pushDownSound);
 				}
 

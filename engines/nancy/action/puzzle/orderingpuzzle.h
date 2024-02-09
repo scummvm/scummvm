@@ -72,6 +72,13 @@ protected:
 	Common::Array<Common::Rect> _hotspots;
 	Common::Array<uint16> _correctSequence;
 
+	uint16 _specialCursor1Id = CursorManager::kHotspot;
+	Common::Rect _specialCursor1Dest;
+	uint16 _specialCursor2Id = CursorManager::kHotspot;
+	Common::Rect _specialCursor2Dest;
+
+	Common::Array<Common::String> _pianoSoundNames; // nancy8 and up
+
 	uint16 _state2InvItem = 0;
 	Common::Array<Common::Rect> _overlaySrcs;
 	Common::Array<Common::Rect> _overlayDests;
