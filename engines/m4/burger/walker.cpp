@@ -284,6 +284,12 @@ void disable_player() {
 void wilbur_abduct(int trigger) {
 	player_set_commands_allowed(false);
 	digi_stop(1);
+
+	if (_G(executing) == INTERACTIVE_DEMO) {
+		_G(game).setRoom(608);
+		return;
+	}
+
 	digi_preload("999_004");
 
 	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
