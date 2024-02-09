@@ -81,6 +81,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("invert_y"), _invertY))
 		error("Failed to parse bool from disable_falling option");
 
+	_gameStateControl = kFreescapeGameStateStart;
 	_startArea = 0;
 	_startEntrance = 0;
 	_currentArea = nullptr;
@@ -716,10 +717,32 @@ uint16 FreescapeEngine::getGameBit(int index) {
 }
 
 void FreescapeEngine::initGameState() {
+	_gameStateControl = kFreescapeGameStatePlaying;
+
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
+	for (auto &it : _areaMap)
+		it._value->resetArea();
+
 	_gameStateBits = 0;
+
+	_flyMode = false;
+	_noClipMode = false;
+	_playerWasCrushed = false;
+	_shootingFrames = 0;
+	_underFireFrames = 0;
+	_yaw = 0;
+	_pitch = 0;
+
+	_demoIndex = 0;
+	_demoEvents.clear();
+
+	removeTimers();
+	startCountdown(_initialCountdown - 1);
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	_lastMinute = minutes;
 }
 
 void FreescapeEngine::rotate(float xoffset, float yoffset) {

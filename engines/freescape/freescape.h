@@ -68,6 +68,13 @@ enum {
 	kFreescapeDebugMedia = 1 << 4,
 };
 
+enum GameStateControl {
+	kFreescapeGameStateStart,
+	kFreescapeGameStatePlaying,
+	kFreescapeGameStateDemo,
+	kFreescapeGameStateEnd,
+};
+
 struct CGAPaletteEntry {
 	int areaId;
 	byte *palette;
@@ -103,6 +110,7 @@ public:
 	~FreescapeEngine();
 
 	const ADGameDescription *_gameDescription;
+	GameStateControl _gameStateControl;
 	bool isDemo() const;
 
 	// Game selection

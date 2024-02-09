@@ -95,30 +95,10 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 }
 
 void EclipseEngine::initGameState() {
-	_flyMode = false;
-	_hasFallen = false;
-	_noClipMode = false;
-	_playerWasCrushed = false;
-	_shootingFrames = 0;
-	_underFireFrames = 0;
-	_yaw = 0;
-	_pitch = 0;
-
-	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
-		_gameStateVars[i] = 0;
-
-	for (auto &it : _areaMap)
-		it._value->resetArea();
-
-	_gameStateBits = 0;
+	FreescapeEngine::initGameState();
 
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
-	removeTimers();
-	startCountdown(_initialCountdown);
-	_lastMinute = 0;
-	_demoIndex = 0;
-	_demoEvents.clear();
 
 	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;

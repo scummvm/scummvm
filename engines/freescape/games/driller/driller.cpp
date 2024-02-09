@@ -718,19 +718,9 @@ void DrillerEngine::removeDrill(Area *area) {
 }
 
 void DrillerEngine::initGameState() {
-	_flyMode = false;
-	_noClipMode = false;
-	_playerWasCrushed = false;
-	_shootingFrames = 0;
-	_underFireFrames = 0;
-	_yaw = 0;
-	_pitch = 0;
-
-	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
-		_gameStateVars[i] = 0;
+	FreescapeEngine::initGameState();
 
 	for (auto &it : _areaMap) {
-		it._value->resetArea();
 		if (_drillStatusByArea[it._key] != kDrillerNoRig)
 			removeDrill(it._value);
 		_drillStatusByArea[it._key] = kDrillerNoRig;
@@ -740,7 +730,6 @@ void DrillerEngine::initGameState() {
 		}
 		_drillSuccessByArea[it._key] = 0;
 	}
-	_gameStateBits = 0;
 
 	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialTankShield;
@@ -753,12 +742,6 @@ void DrillerEngine::initGameState() {
 
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
-	removeTimers();
-	startCountdown(_initialCountdown - 1);
-
-	int seconds, minutes, hours;
-	getTimeFromCountdown(seconds, minutes, hours);
-	_lastMinute = minutes;
 	_demoIndex = 0;
 	_demoEvents.clear();
 

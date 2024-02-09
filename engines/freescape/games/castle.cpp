@@ -331,31 +331,9 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 }
 
 void CastleEngine::initGameState() {
-	_flyMode = false;
-	_noClipMode = false;
-	_shootingFrames = 0;
-	_underFireFrames = 0;
-	_yaw = 0;
-	_pitch = 0;
-
-	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
-		_gameStateVars[i] = 0;
-
-	for (auto &it : _areaMap)
-		it._value->resetArea();
-
-	_gameStateBits = 0;
-
-	//_gameStateVars[k8bitVariableEnergy] = _initialFuel;
-	//_gameStateVars[k8bitVariableShield] = _initialShield;
-
+	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
-	removeTimers();
-	startCountdown(_initialCountdown);
-	_lastMinute = 0;
-	_demoIndex = 0;
-	_demoEvents.clear();
 }
 
 void CastleEngine::executePrint(FCLInstruction &instruction) {
