@@ -33,7 +33,6 @@ void mapper_poll_device(void) {
 
 	//Get current status
 	mapper_digital_buttons_status = 0;
-	bool bitmasks = false;
 	// Store real digital buttons status
 	if (retro_get_input_bitmask_supported())
 		mapper_digital_buttons_status = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);

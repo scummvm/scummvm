@@ -221,7 +221,6 @@ void retro_osd_notification(const char *msg) {
 static void update_variables(void) {
 	struct retro_variable var;
 	updating_variables = true;
-	const char *osd_msg = "";
 
 	var.key = "scummvm_gamepad_cursor_only";
 	var.value = NULL;
@@ -1019,7 +1018,6 @@ void retro_run(void) {
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
 
 	bool skip_frame = false;
-	size_t samples_count = 0;
 
 	if (g_system) {
 

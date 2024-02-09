@@ -113,9 +113,7 @@ void OSystem_libretro::getMouseXYFromButton(bool is_x, int16 sign) {
 
 void OSystem_libretro::processInputs(void) {
 	int16 x, y;
-	float analog_amplitude_x, analog_amplitude_y;
 	float deltaAcc;
-	bool down;
 	int key_modifiers [3][2] = {{RETROKE_SHIFT_MOD, RETROKMOD_SHIFT}, {RETROKE_CTRL_MOD, RETROKMOD_CTRL}, {RETROKE_ALT_MOD, RETROKMOD_ALT}};
 	int key_flags = 0;
 	int retropad_value = 0;
