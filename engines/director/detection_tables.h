@@ -1315,6 +1315,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "voyagerkids",		"ボイジャーのキッズ CD-ROM" },
 
 	// Norwegian titles
+	{ "cyberfalsk", 		"Cyberfalsk" },
 	{ "norgesjakten",		"Norgesjakten" },
 
 	// Polish titles
@@ -3767,6 +3768,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// issued by Mitsui & Co. to promote its Curio City shopping services.
 	MACGAME1_l("curiocity", "Vol.1", "CURIO CITY", "8719de9c083aca942fc0e5c0a127b6dc", 502589, Common::JA_JPN, 404),
 	WINGAME1_l("curiocity", "Vol.1", "CURIO.EXE", "15a14209211895887d80e650984b9e32", 747389, Common::JA_JPN, 404),
+
+	WINGAME1_l("cyberfalsk", "", "FALSK.EXE", "t:5c9e7e9184f52f3d325bf5474d4ed34a", 692567, Common::NB_NOR, 404),
 
 	WINDEMO1t("d", "Demo", "DDEMO.EXE", "66359d2e80ba536e34cb4f70772a80e1", 697001, 404),
 
