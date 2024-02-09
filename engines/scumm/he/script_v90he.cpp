@@ -112,11 +112,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 	switch (subOp) {
 	case SO_WIDTH: // 32, HE99+
-		_wizParams.processFlags |= kWPFUseDefImgWidth;
+		_wizParams.actionFlags |= kWAFWidth;
 		_wizParams.resDefImgW = pop();
 		break;
 	case SO_HEIGHT: // 33, HE99+
-		_wizParams.processFlags |= kWPFUseDefImgHeight;
+		_wizParams.actionFlags |= kWAFHeight;
 		_wizParams.resDefImgH = pop();
 		break;
 	case SO_GENERAL_CLIP_STATE: // 46
@@ -130,39 +130,39 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.left = pop();
 		break;
 	case SO_DRAW: // 48
-		_wizParams.processMode = 1;
+		_wizParams.actionMode = kWADraw;
 		break;
 	case SO_LOAD: // 49
-		_wizParams.processFlags |= kWPFUseFile;
-		_wizParams.processMode = 3;
+		_wizParams.actionFlags |= kWAFFilename;
+		_wizParams.actionMode = kWALoad;
 		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		break;
 	case SO_SAVE: // 50
-		_wizParams.processFlags |= kWPFUseFile;
-		_wizParams.processMode = 4;
+		_wizParams.actionFlags |= kWAFFilename;
+		_wizParams.actionMode = kWASave;
 		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
-		_wizParams.fileWriteMode = pop();
+		_wizParams.fileType = pop();
 		break;
 	case SO_CAPTURE: // 51
-		_wizParams.processFlags |= kWPFClipBox | 0x100;
-		_wizParams.processMode = 2;
+		_wizParams.actionFlags |= kWAFRect | kWAFCompressionType;
+		_wizParams.actionMode = kWACapture;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
-		_wizParams.compType = pop();
+		_wizParams.compressionType = pop();
 		adjustRect(_wizParams.box);
 		break;
 	case SO_STATE: // 52
-		_wizParams.processFlags |= kWPFNewState;
+		_wizParams.actionFlags |= kWAFState;
 		_wizParams.img.state = pop();
 		break;
 	case SO_ANGLE: // 53
-		_wizParams.processFlags |= kWPFRotate;
+		_wizParams.actionFlags |= kWAFRotate;
 		_wizParams.angle = pop();
 		break;
 	case SO_SET_FLAGS: // 54
-		_wizParams.processFlags |= kWPFNewFlags;
+		_wizParams.actionFlags |= kWAFFlags;
 		_wizParams.img.flags |= pop();
 		break;
 	case SO_NOW: // 56
@@ -175,22 +175,22 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case SO_INIT: // 57
 		_wizParams.img.resNum = pop();
-		_wizParams.processMode = 0;
-		_wizParams.processFlags = 0;
+		_wizParams.actionMode = kWAUnknown;
+		_wizParams.actionFlags = 0;
 		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
-		_wizParams.params1 = 0;
-		_wizParams.params2 = 0;
+		_wizParams.propertyValue = 0;
+		_wizParams.propertyNumber = 0;
 		_wizParams.spriteId = 0;
 		_wizParams.spriteGroup = 0;
 		break;
 	case SO_AT_IMAGE: // 62, HE99+
-		_wizParams.processFlags |= kWPFMaskImg;
+		_wizParams.actionFlags |= kWAFSourceImg;
 		_wizParams.sourceImage = pop();
 		break;
 	case SO_AT: // 65
 	case SO_CURSOR_HOTSPOT: // 154
-		_wizParams.processFlags |= kWPFSetPos;
+		_wizParams.actionFlags |= kWAFSpot;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;
@@ -199,18 +199,18 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case SO_COLOR_LIST: // 249, HE98+
 		b = pop();
 		a = pop();
-		_wizParams.processFlags |= kWPFRemapPalette;
-		_wizParams.processMode = 6;
+		_wizParams.actionFlags |= kWAFRemapList;
+		_wizParams.actionMode = kWAModify;
 		if (_wizParams.remapNum == 0) {
-			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
+			memset(_wizParams.remapList, 0, sizeof(_wizParams.remapList));
 		}
-		assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
-		_wizParams.remapIndex[_wizParams.remapNum] = a;
-		_wizParams.remapColor[a] = b;
+		assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapList));
+		_wizParams.remapList[_wizParams.remapNum] = a;
+		_wizParams.remapTable[a] = b;
 		_wizParams.remapNum++;
 		break;
 	case SO_CLIPPED: // 67
-		_wizParams.processFlags |= kWPFClipBox;
+		_wizParams.actionFlags |= kWAFRect;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
@@ -218,74 +218,74 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		adjustRect(_wizParams.box);
 		break;
 	case SO_PALETTE: // 86, HE99+
-		_wizParams.processFlags |= kWPFPaletteNum;
+		_wizParams.actionFlags |= kWAFPalette;
 		_wizParams.img.palette = pop();
 		break;
 	case SO_SCALE: // 92
-		_wizParams.processFlags |= kWPFScaled;
+		_wizParams.actionFlags |= kWAFScaled;
 		_wizParams.scale = pop();
 		break;
 	case SO_SHADOW: // 98
-		_wizParams.processFlags |= kWPFShadow;
+		_wizParams.actionFlags |= kWAFShadow;
 		_wizParams.img.shadow = pop();
 		break;
 	case SO_POLY_POLYGON: // 131, HE99+
-		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
-		_wizParams.processMode = 7;
-		_wizParams.polygonId2 = pop();
-		_wizParams.polygonId1 = pop();
-		_wizParams.compType = pop();
+		_wizParams.actionFlags |= kWAFPolygon2 | kWAFCompressionType | kWAFPolygon;
+		_wizParams.actionMode = kWAPolyCapture;
+		_wizParams.polygon2 = pop();
+		_wizParams.polygon = pop();
+		_wizParams.compressionType = pop();
 		break;
 	case SO_RENDER_RECTANGLE: // 133, HE99+
-		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
-		_wizParams.processMode = 9;
+		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizParams.actionMode = kWARenderRectangle;
 		_wizParams.fillColor = pop();
-		_wizParams.box2.bottom = pop();
-		_wizParams.box2.right = pop();
-		_wizParams.box2.top = pop();
-		_wizParams.box2.left = pop();
-		adjustRect(_wizParams.box2);
+		_wizParams.renderCoords.bottom = pop();
+		_wizParams.renderCoords.right = pop();
+		_wizParams.renderCoords.top = pop();
+		_wizParams.renderCoords.left = pop();
+		adjustRect(_wizParams.renderCoords);
 		break;
 	case SO_RENDER_LINE: // 134, HE99+
-		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
-		_wizParams.processMode = 10;
+		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizParams.actionMode = kWARenderLine;
 		_wizParams.fillColor = pop();
-		_wizParams.box2.bottom = pop();
-		_wizParams.box2.right = pop();
-		_wizParams.box2.top = pop();
-		_wizParams.box2.left = pop();
-		adjustRect(_wizParams.box2);
+		_wizParams.renderCoords.bottom = pop();
+		_wizParams.renderCoords.right = pop();
+		_wizParams.renderCoords.top = pop();
+		_wizParams.renderCoords.left = pop();
+		adjustRect(_wizParams.renderCoords);
 		break;
 	case SO_RENDER_PIXEL: // 135, HE99+
-		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
-		_wizParams.processMode = 11;
+		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizParams.actionMode = kWARenderPixel;
 		_wizParams.fillColor = pop();
-		_wizParams.box2.top = _wizParams.box2.bottom = pop();
-		_wizParams.box2.left = _wizParams.box2.right = pop();
-		adjustRect(_wizParams.box2);
+		_wizParams.renderCoords.top = _wizParams.renderCoords.bottom = pop();
+		_wizParams.renderCoords.left = _wizParams.renderCoords.right = pop();
+		adjustRect(_wizParams.renderCoords);
 		break;
 	case SO_RENDER_FLOOD_FILL: // 136, HE99+
-		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
-		_wizParams.processMode = 12;
+		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizParams.actionMode = kWARenderFloodFill;
 		_wizParams.fillColor = pop();
-		_wizParams.box2.top = _wizParams.box2.bottom = pop();
-		_wizParams.box2.left = _wizParams.box2.right = pop();
-		adjustRect(_wizParams.box2);
+		_wizParams.renderCoords.top = _wizParams.renderCoords.bottom = pop();
+		_wizParams.renderCoords.left = _wizParams.renderCoords.right = pop();
+		adjustRect(_wizParams.renderCoords);
 		break;
 	case SO_RENDER_INTO_IMAGE: // 137, HE99+
-		_wizParams.processFlags |= kWPFDstResNum;
+		_wizParams.actionFlags |= kWAFDestImage;
 		_wizParams.dstResNum = pop();
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 139, HE99+
-		_wizParams.processFlags |= kWPFParams;
-		_wizParams.params1 = pop();
-		_wizParams.params2 = pop();
+		_wizParams.actionFlags |= kWAFProperty;
+		_wizParams.propertyValue = pop();
+		_wizParams.propertyNumber = pop();
 		break;
 	case SO_FONT_START: // 141, HE99+
-		_wizParams.processMode = 13;
+		_wizParams.actionMode = kWAFontStart;
 		break;
 	case SO_FONT_CREATE: // 142, HE99+
-		_wizParams.processMode = 15;
+		_wizParams.actionMode = kWAFontCreate;
 		_wizParams.fontProperties.bgColor = pop();
 		_wizParams.fontProperties.fgColor = pop();
 		_wizParams.fontProperties.size = pop();
@@ -293,13 +293,13 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		copyScriptString(_wizParams.fontProperties.fontName, sizeof(_wizParams.fontProperties.fontName));
 		break;
 	case SO_FONT_RENDER: // 143, HE99+
-		_wizParams.processMode = 16;
+		_wizParams.actionMode = kWAFontRender;
 		_wizParams.fontProperties.yPos = pop();
 		_wizParams.fontProperties.xPos = pop();
 		copyScriptString(_wizParams.fontProperties.string, sizeof(_wizParams.fontProperties.string));
 		break;
 	case SO_RENDER_ELLIPSE: // 189, HE99+
-		_wizParams.processMode = 17;
+		_wizParams.actionMode = kWARenderEllipse;
 		_wizParams.ellipseProperties.color = pop();
 		_wizParams.ellipseProperties.lod = pop();
 		_wizParams.ellipseProperties.ky = pop();
@@ -310,15 +310,15 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.ellipseProperties.px = pop();
 		break;
 	case SO_FONT_END: // 196, HE99+
-		_wizParams.processMode = 14;
+		_wizParams.actionMode = kWAFontEnd;
 		break;
 	case SO_NEW: // 217, HE99+
-		_wizParams.processMode = 8;
+		_wizParams.actionMode = kWANew;
 		break;
 	case SO_SET_POLYGON: // 246
-		_wizParams.processFlags |= kWPFNewFlags | kWPFSetPos | 2;
+		_wizParams.actionFlags |= kWAFFlags | kWAFSpot | kWAFPolygon;
 		_wizParams.img.flags |= kWIFIsPolygon;
-		_wizParams.polygonId1 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
+		_wizParams.polygon = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case SO_END: // 255
 		if (_wizParams.img.resNum)
@@ -2285,7 +2285,6 @@ void ScummEngine_v90he::o90_paletteOps() {
 
 void ScummEngine_v90he::o90_fontEnum() {
 	byte string[80];
-	int a;
 
 	byte subOp = fetchScriptByte();
 

@@ -79,38 +79,31 @@ struct EllipseProperties {
 };
 
 struct WizParameters {
-	int field_0;
+	int dwSize;
 	byte filename[260];
 	Common::Rect box;
-	int processFlags;
-	int processMode;
-	int field_11C;
-	int field_120;
-	int field_124;
-	int field_128;
-	int field_12C;
-	int field_130;
-	int field_134;
-	int field_138;
-	int compType;
-	int fileWriteMode;
+	int actionFlags;
+	int actionMode;
+	int params[8];
+	int compressionType;
+	int fileType;
 	int angle;
 	int scale;
-	int polygonId1;
-	int polygonId2;
+	int polygon;
+	int polygon2;
 	int resDefImgW;
 	int resDefImgH;
 	int sourceImage;
-	int params1;
-	int params2;
-	uint8 remapColor[256];
-	uint8 remapIndex[256];
+	int propertyValue;
+	int propertyNumber;
+	uint8 remapTable[256];
+	uint8 remapList[256];
 	int remapNum;
 	int dstResNum;
 	uint16 fillColor;
 	FontProperties fontProperties;
 	EllipseProperties ellipseProperties;
-	Common::Rect box2;
+	Common::Rect renderCoords;
 	int blendFlags;
 	int spriteId;
 	int spriteGroup;
@@ -118,38 +111,31 @@ struct WizParameters {
 	WizImage img;
 
 	void reset() {
-		field_0 = 0;
+		dwSize = 0;
 		memset(filename, 0, sizeof(filename));
 		box.top = box.left = box.bottom = box.right = 0;
-		processFlags = 0;
-		processMode = 0;
-		field_11C = 0;
-		field_120 = 0;
-		field_124 = 0;
-		field_128 = 0;
-		field_12C = 0;
-		field_130 = 0;
-		field_134 = 0;
-		field_138 = 0;
-		compType = 0;
-		fileWriteMode = 0;
+		actionFlags = 0;
+		actionMode = 0;
+		memset(params, 0, sizeof(params));
+		compressionType = 0;
+		fileType = 0;
 		angle = 0;
 		scale = 0;
-		polygonId1 = 0;
-		polygonId2 = 0;
+		polygon = 0;
+		polygon2 = 0;
 		resDefImgW = 0;
 		resDefImgH = 0;
 		sourceImage = 0;
-		params1 = 0;
-		params2 = 0;
-		memset(remapColor, 0, sizeof(remapColor));
-		memset(remapIndex, 0, sizeof(remapIndex));
+		propertyValue = 0;
+		propertyNumber = 0;
+		memset(remapTable, 0, sizeof(remapTable));
+		memset(remapList, 0, sizeof(remapList));
 		remapNum = 0;
 		dstResNum = 0;
 		fillColor = 0;
 		memset(&fontProperties, 0, sizeof(FontProperties));
 		memset(&ellipseProperties, 0, sizeof(EllipseProperties));
-		box2.left = box2.top = box2.bottom = box2.right = 0;
+		renderCoords.left = renderCoords.top = renderCoords.bottom = renderCoords.right = 0;
 		blendFlags = 0;
 		spriteId = 0;
 		spriteGroup = 0;
@@ -158,40 +144,66 @@ struct WizParameters {
 	}
 };
 
-enum WizImageFlags {
-	kWIFHasPalette = 0x1,
-	kWIFRemapPalette = 0x2,
-	kWIFPrint = 0x4,
-	kWIFBlitToFrontVideoBuffer = 0x8,
-	kWIFMarkBufferDirty = 0x10,
-	kWIFBlitToMemBuffer = 0x20,
-	kWIFIsPolygon = 0x40,
-	kWIFZPlaneOn = 0x80,
-	kWIFZPlaneOff = 0x100,
-	kWIFUseShadow = 0x200,
-	kWIFFlipX = 0x400,
-	kWIFFlipY = 0x800
+enum WizRenderingFlags {
+	kWRFUsePalette = 0x00000001,
+	kWRFRemap      = 0x00000002,
+	kWRFPrint      = 0x00000004,
+	kWRFBackground = 0x00000008,
+	kWRFForeground = 0x00000010,
+	kWRFAlloc      = 0x00000020,
+	kWIFIsPolygon  = 0x00000040,
+	kWIFZPlaneOn   = 0x00000080,
+	kWIFZPlaneOff  = 0x00000100,
+	kWIFUseShadow  = 0x00000200,
+	kWIFFlipX      = 0x00000400,
+	kWIFFlipY      = 0x00000800,
+	hWRFRotate90   = 0x00001000
 };
 
-enum WizProcessFlags {
-	kWPFSetPos = 0x1,
-	kWPFShadow = 0x4,
-	kWPFScaled = 0x8,
-	kWPFRotate = 0x10,
-	kWPFNewFlags = 0x20,
-	kWPFRemapPalette = 0x40,
-	kWPFClipBox = 0x200,
-	kWPFNewState = 0x400,
-	kWPFUseFile = 0x800,
-	kWPFUseDefImgWidth = 0x2000,
-	kWPFUseDefImgHeight = 0x4000,
-	kWPFPaletteNum = 0x8000,
-	kWPFDstResNum = 0x10000,
-	kWPFFillColor = 0x20000,
-	kWPFClipBox2 = 0x40000,
-	kWPFMaskImg = 0x80000,
-	kWPFParams = 0x100000,
-	kWPFZBuffer = 0x200000
+enum WizActions {
+	kWAUnknown = 0,
+	kWADraw = 1,
+	kWACapture = 2,
+	kWALoad = 3,
+	kWASave = 4,
+	kWAGlobalState = 5,
+	kWAModify = 6,
+	kWAPolyCapture = 7,
+	kWANew = 8,
+	kWARenderRectangle = 9,
+	kWARenderLine = 10,
+	kWARenderPixel = 11,
+	kWARenderFloodFill = 12,
+	kWAFontStart = 13,
+	kWAFontEnd = 14,
+	kWAFontCreate = 15,
+	kWAFontRender = 16,
+	kWARenderEllipse = 17,
+};
+
+enum WizActionFlags {
+	kWAFSpot            = 0x00000001,
+	kWAFPolygon         = 0x00000002,
+	kWAFShadow          = 0x00000004,
+	kWAFScaled          = 0x00000008,
+	kWAFRotate          = 0x00000010,
+	kWAFFlags           = 0x00000020,
+	kWAFRemapList       = 0x00000040,
+	kWAFFileType        = 0x00000080,
+	kWAFCompressionType = 0x00000100,
+	kWAFRect            = 0x00000200,
+	kWAFState           = 0x00000400,
+	kWAFFilename        = 0x00000800,
+	kWAFPolygon2        = 0x00001000,
+	kWAFWidth           = 0x00002000,
+	kWAFHeight          = 0x00004000,
+	kWAFPalette         = 0x00008000,
+	kWAFDestImage       = 0x00010000,
+	kWAFColor           = 0x00020000,
+	kWAFRenderCoords    = 0x00040000,
+	kWAFSourceImg       = 0x00080000,
+	kWAFProperty        = 0x00100000,
+	kWAFZBufferImage    = 0x00200000
 };
 
 enum WizCompositeFlags {
