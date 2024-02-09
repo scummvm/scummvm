@@ -1019,17 +1019,17 @@ void I3MSquareWaveSynthDriver::addTriplet(uint16 frequency, uint16 amplitude) {
 	if (_lastPara.amplitude == 0xffff)
 		_lastPara.amplitude = amplitude;
 
-	if ((_status & kStatusPlaying) && _tripletsQueue.size() < 177) {
+	if ((_status & kStatusPlaying) && _tripletsQueue.size() < 176) {
 		if (frequency >> 3 != _lastPara.count >> 3 || amplitude != _lastPara.amplitude) {
 			_tripletsQueue.push_back(_lastPara.fromScumm());
 			_lastPara = Triplet(frequency, amplitude, 0);
 			clearFlags(kStatusDone);
 		}
 		_lastPara.duration++;
-
-	} else {
-		setFlags(kStatusOverflow);
 	}
+
+	if (!(_status & kStatusPlaying) || _tripletsQueue.size() >= 176)
+		setFlags(kStatusOverflow);
 }
 
 Common::WeakPtr<I3MPlayer> *I3MPlayer::_inst = nullptr;
