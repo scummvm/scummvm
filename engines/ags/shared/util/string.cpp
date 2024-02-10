@@ -780,7 +780,7 @@ void String::TrimLeft(char c) {
 		if (c && t != c) {
 			break;
 		}
-		if (!c && !Common::isSpace(t)) {
+		if (!c && !Common::isSpace(static_cast<uint8_t>(t))) {
 			break;
 		}
 		trim_ptr++;
@@ -807,7 +807,7 @@ void String::TrimRight(char c) {
 		if (c && t != c) {
 			break;
 		}
-		if (!c && !Common::isSpace(t)) {
+		if (!c && !Common::isSpace(static_cast<uint8_t>(t))) {
 			break;
 		}
 		trim_ptr--;
