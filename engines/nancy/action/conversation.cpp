@@ -564,15 +564,31 @@ bool ConversationSound::ConversationFlags::isSatisfied() const {
 		if (conditionFlags[i].isSatisfied()) {
 			conditionsMet[i] = true;
 		}
+	}
 
-		if (conditionFlags[i].orFlag && i < conditionFlags.size() - 1) {
-			if (conditionsMet[i] == true) {
-				conditionsMet[i + 1] = true;
-				++i;
-			} else if (conditionFlags[i + 1].isSatisfied()) {
-				conditionsMet[i] = true;
-				conditionsMet[i + 1] = true;
-				++i;
+	for (uint i = 0; i < conditionsMet.size(); ++i) {
+		if (conditionFlags[i].orFlag) {
+			bool foundSatisfied = false;
+			for (uint j = 0; j < conditionFlags.size(); ++j) {
+				if (conditionsMet[j]) {
+					foundSatisfied = true;
+					break;
+				}
+
+				// Found end of orFlag chain
+				if (!conditionFlags[j].orFlag) {
+					break;
+				}
+			}
+
+			if (foundSatisfied) {
+				for (; i < conditionsMet.size(); ++i) {
+					conditionsMet[i] = true;
+					if (!conditionFlags[i].orFlag) {
+						// End of orFlag chain
+						break;
+					}
+				}
 			}
 		}
 	}
