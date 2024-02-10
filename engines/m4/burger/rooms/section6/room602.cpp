@@ -313,16 +313,16 @@ void Room602::init() {
 		if (_G(game).previous_room != 609)
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 
-		_val2 = 48;
+		_kibbleOffset = 48;
 	} else {
-		_val2 = 0;
+		_kibbleOffset = 0;
 	}
 
-	_G(flags)[V264] = 0;
+	_G(flags)[kStandingOnKibble] = 0;
 	if (_G(flags)[V255] == 1)
 		series_show("602spill", 0xf00);
 
-	if (_G(flags)[V255] && _G(flags)[V278])
+	if (_G(flags)[V255] && !_G(flags)[V278])
 		_G(kernel).call_daemon_every_loop = true;
 
 	if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1) {
@@ -800,7 +800,7 @@ void Room602::daemon() {
 			break;
 
 		case 3:
-			_G(flags)[V264] = 0;
+			_G(flags)[kStandingOnKibble] = 0;
 			ws_demand_location(367, 280, 5);
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
@@ -1090,7 +1090,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			ws_demand_location(314, 319, 3);
 			ws_hide_walker();
-			_G(flags)[V264] = 0;
+			_G(flags)[kStandingOnKibble] = 0;
 
 			intr_remove_no_walk_rect(_walk1);
 			_walk1 = intr_add_no_walk_rect(322, 304, 472, 329, 312, 320);
@@ -1260,20 +1260,21 @@ void Room602::daemon() {
 		if (_G(player).walker_in_this_scene) {
 			player_update_info();
 
-			if (_G(player_info).x >= (_val2 + 330) &&
-					_G(player_info).y > 289 && _G(player_info).y < 305) {
-				if (_G(flags)[V255] == 1 && _G(flags)[V278] == 0 &&
-						_G(player_info).facing > 2 && _G(player_info).facing < 7) {
-					if (_G(flags)[V264]) {
-						_G(flags)[V264] = 1;
-					} else {
-						_G(flags)[V264] = 1;
-						term_message("Wilbur now slips on kibble!");
-						intr_cancel_sentence();
-						_G(wilbur_should) = 20;
-						kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-					}
+			if (_G(player_info).x >= (_kibbleOffset + 330) && _G(player_info).x < 396 &&
+					_G(player_info).y > 289 && _G(player_info).y < 305 &&
+					_G(flags)[V255] == 1 && _G(flags)[V278] == 0 &&
+					_G(player_info).facing > 2 && _G(player_info).facing < 7) {
+				if (_G(flags)[kStandingOnKibble]) {
+					_G(flags)[kStandingOnKibble] = 1;
+				} else {
+					_G(flags)[kStandingOnKibble] = 1;
+					term_message("Wilbur now slips on kibble!");
+					intr_cancel_sentence();
+					_G(wilbur_should) = 20;
+					kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				}
+			} else {
+				_G(flags)[kStandingOnKibble] = 0;
 			}
 		}
 		break;

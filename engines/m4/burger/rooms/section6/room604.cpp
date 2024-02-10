@@ -176,7 +176,7 @@ void Room604::init() {
 		}
 	}
 
-	_G(flags)[V264] = 0;
+	_G(flags)[kStandingOnKibble] = 0;
 
 	if (_G(flags)[V273] == 1) {
 		series_show("602spill", 0x900);
@@ -648,16 +648,16 @@ void Room604::daemon() {
 				_G(player_info).y > 280 && _G(player_info).y < 305 &&
 				_G(player_info).facing > 2 && _G(player_info).facing < 7 &&
 				_G(flags)[V273] == 1) {
-			if (_G(flags)[V264]) {
-				_G(flags)[V264] = 1;
+			if (_G(flags)[kStandingOnKibble]) {
+				_G(flags)[kStandingOnKibble] = 1;
 			} else {
-				_G(flags)[V264] = 1;
+				_G(flags)[kStandingOnKibble] = 1;
 				intr_cancel_sentence();
 				_G(wilbur_should) = 14;
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 		} else {
-			_G(flags)[V264] = 0;
+			_G(flags)[kStandingOnKibble] = 0;
 		}
 		break;
 

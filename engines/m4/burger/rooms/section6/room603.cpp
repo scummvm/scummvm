@@ -178,11 +178,11 @@ Room603::Room603() : Section6Room() {
 void Room603::init() {
 	player_set_commands_allowed(false);
 	_G(flags)[V246] = 0;
-	_G(flags)[V264] = 0;
+	_G(flags)[kStandingOnKibble] = 0;
 
 	if (_G(flags)[V269] == 1)
 		series_show("602spill", 0x900, 0, -1, -1, 0, 100, 80, 0);
-	_G(kernel).continue_handling_trigger = _G(flags)[V269] == 1 ? 1 : 0;
+	_G(kernel).call_daemon_every_loop = _G(flags)[V269] == 1;
 
 	if (_G(flags)[V270] == 6000) {
 		hotspot_set_active("WATER", true);
@@ -564,16 +564,17 @@ void Room603::daemon() {
 				_G(player_info).y > 284 && _G(player_info).y < 305 &&
 				_G(player_info).facing > 2 && _G(player_info).facing < 7 &&
 				_G(flags)[V269] == 1) {
-			if (_G(flags)[V264]) {
-				_G(flags)[V264] = 1;
+			if (_G(flags)[kStandingOnKibble]) {
+				_G(flags)[kStandingOnKibble] = 1;
 			} else {
+				_G(flags)[kStandingOnKibble] = 1;
 				term_message("Wilbur now slips on kibble!");
 				intr_cancel_sentence();
 				_G(wilbur_should) = 12;
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 		} else {
-			_G(flags)[V264] = 0;
+			_G(flags)[kStandingOnKibble] = 0;
 		}
 		break;
 
