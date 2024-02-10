@@ -63,7 +63,7 @@ typedef TypedCodeError<TraFileErrorType, GetTraFileErrorText> TraFileError;
 
 struct Translation {
 	// Game identifiers, for matching the translation file with the game
-	int GameUid;
+	int GameUid = 0;
 	String GameName;
 	// Translation dictionary in source/dest pairs
 	StringMap Dict;
