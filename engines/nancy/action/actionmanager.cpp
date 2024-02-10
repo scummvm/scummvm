@@ -64,7 +64,7 @@ void ActionManager::handleInput(NancyInput &input) {
 			if (!setHoverCursor) {
 				// Hotspots may overlap, but we want the hover cursor for the first one we encounter
 				// This fixes the stairs in nancy3
-				g_nancy->_cursorManager->setCursorType(rec->getHoverCursor());
+				g_nancy->_cursor->setCursorType(rec->getHoverCursor());
 				setHoverCursor = true;
 			}
 
@@ -679,7 +679,7 @@ void ActionManager::debugDrawHotspots() {
 	// the smallest one available in the engine.
 	RenderObject &obj = NancySceneState._hotspotDebug;
 	if (ConfMan.getBool("debug_hotspots", Common::ConfigManager::kTransientDomain)) {
-		const Font *font = g_nancy->_graphicsManager->getFont(0);
+		const Font *font = g_nancy->_graphics->getFont(0);
 		assert(font);
 		uint16 yOffset = NancySceneState.getViewport().getCurVerticalScroll();
 		obj.setVisible(true);

@@ -69,8 +69,8 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 
 	_input = new InputManager();
 	_sound = new SoundManager();
-	_graphicsManager = new GraphicsManager();
-	_cursorManager = new CursorManager();
+	_graphics = new GraphicsManager();
+	_cursor = new CursorManager();
 
 	_resource = nullptr;
 
@@ -90,8 +90,8 @@ NancyEngine::~NancyEngine() {
 
 	delete _randomSource;
 
-	delete _graphicsManager;
-	delete _cursorManager;
+	delete _graphics;
+	delete _cursor;
 	delete _input;
 	delete _sound;
 
@@ -245,7 +245,7 @@ void NancyEngine::setToPreviousState() {
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
-	_cursorManager->showCursor(enabled); _input->setMouseInputEnabled(enabled);
+	_cursor->showCursor(enabled); _input->setMouseInputEnabled(enabled);
 }
 
 void NancyEngine::addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr) {
@@ -279,7 +279,7 @@ Common::Error NancyEngine::run() {
 		uint32 frameEndTime = _system->getMillis() + 16;
 
 		if (!graphicsWereSuppressed) {
-			_cursorManager->setCursorType(CursorManager::kNormalArrow);
+			_cursor->setCursorType(CursorManager::kNormalArrow);
 		}
 
 		State::State *s;
@@ -301,12 +301,12 @@ Common::Error NancyEngine::run() {
 			s->process();
 		}
 
-		graphicsWereSuppressed = _graphicsManager->_isSuppressed;
+		graphicsWereSuppressed = _graphics->_isSuppressed;
 
-		_graphicsManager->draw();
+		_graphics->draw();
 
 		if (_gameFlow.changingState) {
-			_graphicsManager->clearObjects();
+			_graphics->clearObjects();
 
 			s = getStateObject(_gameFlow.curState);
 			if (s) {
@@ -463,10 +463,10 @@ void NancyEngine::bootGameEngine() {
 		LOAD_BOOT_L(LOAD_v2, "LOAD")
 	}
 
-	_cursorManager->init(iff->getChunkStream("CURS"));
+	_cursor->init(iff->getChunkStream("CURS"));
 
-	_graphicsManager->init();
-	_graphicsManager->loadFonts(iff->getChunkStream("FONT"));
+	_graphics->init();
+	_graphics->loadFonts(iff->getChunkStream("FONT"));
 
 	preloadCals();
 

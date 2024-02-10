@@ -223,21 +223,21 @@ void ConversationSound::execute() {
 		NancySceneState.setNoHeldItem();
 
 		// Move the mouse to the default position defined in CURS
-		const Common::Point initialMousePos = g_nancy->_cursorManager->getPrimaryVideoInitialPos();
-		const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+		const Common::Point initialMousePos = g_nancy->_cursor->getPrimaryVideoInitialPos();
+		const Common::Point cursorHotspot = g_nancy->_cursor->getCurrentCursorHotspot();
 		Common::Point adjustedMousePos = g_nancy->_input->getInput().mousePos;
 		adjustedMousePos.x -= cursorHotspot.x;
 		adjustedMousePos.y -= cursorHotspot.y - 1;
-		if (g_nancy->_cursorManager->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
-			g_nancy->_cursorManager->warpCursor(Common::Point(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y));
-			g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		if (g_nancy->_cursor->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
+			g_nancy->_cursor->warpCursor(Common::Point(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y));
+			g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 		}
 
 		_state = kRun;
 		NancySceneState.setActiveConversation(this);
 
 		// Do not draw first frame since video won't be loaded yet
-		g_nancy->_graphicsManager->suppressNextDraw();
+		g_nancy->_graphics->suppressNextDraw();
 
 		if (g_nancy->getGameType() < kGameTypeNancy6) {
 			// Do not fall through to give the execution one loop for event flag changes
@@ -744,7 +744,7 @@ bool ConversationCelLoader::loadInner() {
 ConversationCel::~ConversationCel() {
 	// Make sure there isn't a single-frame gap between conversation scenes where
 	// the character is invisible
-	g_nancy->_graphicsManager->suppressNextDraw();
+	g_nancy->_graphics->suppressNextDraw();
 }
 
 void ConversationCel::init() {

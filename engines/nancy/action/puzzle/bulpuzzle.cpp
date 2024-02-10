@@ -37,8 +37,8 @@ namespace Action {
 
 void BulPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -326,7 +326,7 @@ void BulPuzzle::execute() {
 
 void BulPuzzle::handleInput(NancyInput &input) {
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -343,7 +343,7 @@ void BulPuzzle::handleInput(NancyInput &input) {
 	bool canClick = _currentAction == kNone && !g_nancy->_sound->isSoundPlaying(_moveSound);
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_rollButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _rollButtonSrc, _rollButtonDest);
@@ -358,7 +358,7 @@ void BulPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if ((_turn % _numRolls) && NancySceneState.getViewport().convertViewportToScreen(_passButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _passButtonSrc, _passButtonDest);
@@ -373,7 +373,7 @@ void BulPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_resetButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _resetButtonSrc, _resetButtonDest);

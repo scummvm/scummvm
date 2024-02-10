@@ -59,7 +59,7 @@ void Overlay::handleInput(NancyInput &input) {
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
 		if (_hasHotspot) {
 			if (NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					_state = kActionTrigger;

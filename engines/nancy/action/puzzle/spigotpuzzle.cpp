@@ -35,8 +35,8 @@ namespace Action {
 
 void SpigotPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -262,7 +262,7 @@ void SpigotPuzzle::handleInput(NancyInput &input) {
 	mousePos -= { vpScreenPos.left, vpScreenPos.top };
 
 	if (_exitHotspot.contains(mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -273,7 +273,7 @@ void SpigotPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _numSpigots; ++i) {
 		if (_spigotHotspots[i].contains(mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_spigotSound);
@@ -283,7 +283,7 @@ void SpigotPuzzle::handleInput(NancyInput &input) {
 		}
 
 		if (_numPulls[i] && _buttonDests[i].contains(mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_buttonSound);

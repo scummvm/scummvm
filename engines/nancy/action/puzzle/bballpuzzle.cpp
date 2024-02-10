@@ -35,8 +35,8 @@ namespace Action {
 
 void BBallPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -224,7 +224,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	localMousePos -= { vpPos.left, vpPos.top };
 
 	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (!_pressedButton &&input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -235,7 +235,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _angleSliderHotspots.size(); ++i) {
 		if (_curAngle != i && _angleSliderHotspots[i].contains(localMousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_pressedButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				_drawSurface.fillRect(_angleDest, _drawSurface.getTransparentColor());
@@ -253,7 +253,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_curPower > 0 && _minusButtonDest.contains(localMousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (!_pressedButton && input.input & NancyInput::kLeftMouseButtonUp) {
 			--_curPower;
@@ -267,7 +267,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if ((int)_curPower < _powers - 1 && _plusButtonDest.contains(localMousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (!_pressedButton && input.input & NancyInput::kLeftMouseButtonUp) {
 			++_curPower;
@@ -281,7 +281,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_shootButtonDest.contains(localMousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (!_pressedButton && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _shootButtonSrc, _shootButtonDest);

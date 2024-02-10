@@ -138,8 +138,8 @@ void Credits::drawTextSurface(uint id) {
 	Graphics::ManagedSurface image;
 	uint surfaceHeight = _textSurface.getBounds().height();
 	g_nancy->_resource->loadImage(_creditsData->textNames[id], image);
-	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphicsManager->getInputPixelFormat());
-	_fullTextSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphics->getInputPixelFormat());
+	_fullTextSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 	_fullTextSurface.clear(_fullTextSurface.getTransparentColor());
 	_fullTextSurface.blitFrom(image, Common::Point(0, surfaceHeight));
 

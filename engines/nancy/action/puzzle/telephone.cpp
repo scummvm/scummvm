@@ -34,8 +34,8 @@ namespace Nancy {
 namespace Action {
 
 void Telephone::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	setTransparent(true);
 
@@ -276,7 +276,7 @@ void Telephone::handleInput(NancyInput &input) {
 	// Cursor gets changed regardless of state
 	for (uint i = 0; i < 12; ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			buttonNr = i;
 			break;
 		}
@@ -287,7 +287,7 @@ void Telephone::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			g_nancy->_sound->loadSound(_hangUpSound);
@@ -334,7 +334,7 @@ void Telephone::undrawButton(uint id) {
 	Common::Rect bounds = _destRects[id];
 	bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
-	_drawSurface.fillRect(bounds, g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.fillRect(bounds, g_nancy->_graphics->getTransColor());
 	_needsRedraw = true;
 }
 

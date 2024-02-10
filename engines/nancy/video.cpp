@@ -152,7 +152,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 	if (comp != 1 && comp != 2)
 		error("Unknown compression type %d found in AVF", comp);
 
-	_pixelFormat = g_nancy->_graphicsManager->getInputPixelFormat();
+	_pixelFormat = g_nancy->_graphics->getInputPixelFormat();
 	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 
 	_chunkInfo.reserve(_frameCount);
@@ -349,7 +349,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 #ifdef SCUMM_BIG_ENDIAN
 				// Convert from BE back to LE so the decode step below works correctly
 				byte *buf = (byte *)frameInCache.getPixels();
-				if (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel == 2) {
+				if (g_nancy->_graphics->getInputPixelFormat().bytesPerPixel == 2) {
 					for (int i = 0; i < frameInCache.pitch * frameInCache.h / 2; ++i) {
 						((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
 					}
@@ -368,7 +368,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 
 #ifdef SCUMM_BIG_ENDIAN
 	byte *buf = (byte *)frameInCache.getPixels();
-	if (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel == 2) {
+	if (g_nancy->_graphics->getInputPixelFormat().bytesPerPixel == 2) {
 		for (int i = 0; i < frameInCache.pitch * frameInCache.h / 2; ++i) {
 			((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
 		}

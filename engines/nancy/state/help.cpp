@@ -100,7 +100,7 @@ void Help::begin() {
 	_button->registerGraphics();
 	_image.setVisible(true);
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 
 	_state = kRun;
 }

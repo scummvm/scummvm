@@ -35,8 +35,8 @@ namespace Action {
 
 void CollisionPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -564,7 +564,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 
 	if (_usesExitButton) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitButtonDest).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_drawSurface.blitFrom(_image, _exitButtonSrc, _exitButtonDest);
@@ -577,7 +577,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 		}
 	} else {
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;
@@ -628,7 +628,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (left.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallLeft);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveLeft);
+					g_nancy->_cursor->setCursorType(CursorManager::kMoveLeft);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -646,7 +646,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (right.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallRight);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveRight);
+					g_nancy->_cursor->setCursorType(CursorManager::kMoveRight);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -664,7 +664,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (up.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallUp);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
+					g_nancy->_cursor->setCursorType(CursorManager::kMoveUp);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -682,7 +682,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (down.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallDown);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveDown);
+					g_nancy->_cursor->setCursorType(CursorManager::kMoveDown);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;

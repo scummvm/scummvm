@@ -40,8 +40,8 @@ RiddlePuzzle::~RiddlePuzzle() {
 }
 
 void RiddlePuzzle::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	setTransparent(true);
 	setVisible(true);
@@ -276,7 +276,7 @@ void RiddlePuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -326,8 +326,8 @@ void RiddlePuzzle::handleInput(NancyInput &input) {
 }
 
 void RiddlePuzzle::drawText() {
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
-	const Graphics::Font *font = g_nancy->_graphicsManager->getFont(_viewportTextFontID);
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	const Graphics::Font *font = g_nancy->_graphics->getFont(_viewportTextFontID);
 
 	Common::Rect bounds = getBounds();
 	Common::Point destPoint(bounds.left, bounds.bottom - font->getFontHeight());

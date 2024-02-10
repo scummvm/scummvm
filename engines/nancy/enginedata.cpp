@@ -242,7 +242,7 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	tabWidth = chunkStream->readUint16LE();
 	pageScrollPercent = chunkStream->readUint16LE(); // Not implemented yet
 
-	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
+	Graphics::PixelFormat format = g_nancy->_graphics->getInputPixelFormat();
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		byte r, g, b;
 		r = chunkStream->readByte();

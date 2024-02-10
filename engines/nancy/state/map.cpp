@@ -93,7 +93,7 @@ bool Map::onStateExit(const NancyState::NancyState nextState) {
 			_viewport._decoder.pauseVideo(true);
 		}
 	} else {
-		g_nancy->_graphicsManager->clearObjects();
+		g_nancy->_graphics->clearObjects();
 		_viewport.unloadVideo();
 		_state = kLoad;
 	}
@@ -108,7 +108,7 @@ const SoundDescription &Map::getSound() {
 void Map::load() {
 	// Get a screenshot of the Scene state and set it as the background
 	// to allow the labels to clear when not hovered
-	const Graphics::ManagedSurface *screen = g_nancy->_graphicsManager->getScreen();
+	const Graphics::ManagedSurface *screen = g_nancy->_graphics->getScreen();
 	_background._drawSurface.create(screen->w, screen->h, screen->format);
 	_background._drawSurface.blitFrom(*screen);
 	_background.moveTo(_background._drawSurface.getBounds());
@@ -135,7 +135,7 @@ void Map::setLabel(int labelID) {
 		_closedLabel.setVisible(false);
 	} else {
 		_label.moveTo(_locationLabelDests[labelID]);
-		_label._drawSurface.create(g_nancy->_graphicsManager->_object0, _mapData->locations[labelID].labelSrc);
+		_label._drawSurface.create(g_nancy->_graphics->_object0, _mapData->locations[labelID].labelSrc);
 		_label.setVisible(true);
 		_label.setTransparent(true);
 
@@ -150,7 +150,7 @@ void Map::MapViewport::init() {
 	assert(viewportData);
 
 	moveTo(viewportData->screenPosition);
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	RenderObject::init();
 }
@@ -197,7 +197,7 @@ void TVDMap::init() {
 	assert(bootSummary);
 
 	Common::Rect textboxScreenPosition = bootSummary->textboxScreenPosition;
-	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, _mapData->closedLabelSrc);
+	_closedLabel._drawSurface.create(g_nancy->_graphics->_object0, _mapData->closedLabelSrc);
 
 	Common::Rect closedScreenRect;
 	closedScreenRect.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - _mapData->closedLabelSrc.width()) / 2);
@@ -242,7 +242,7 @@ void TVDMap::load() {
 
 	_viewport.loadVideo(_mapData->mapNames[_mapID], _mapData->mapPaletteNames[_mapID]);
 
-	g_nancy->_cursorManager->setCursorItemID(-1);
+	g_nancy->_cursor->setCursorItemID(-1);
 
 	_viewport.setVisible(false);
 	_globe.setOpen(true);
@@ -278,7 +278,7 @@ void TVDMap::run() {
 	}
 
 	setLabel(-1);
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormal);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormal);
 
 	if (!_globe.isPlaying()) {
 		NancyInput input = g_nancy->_input->getInput();
@@ -290,7 +290,7 @@ void TVDMap::run() {
 				setLabel(i);
 
 				if (_activeLocations[i]){
-					g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_pickedLocationID = i;
@@ -317,7 +317,7 @@ void TVDMap::MapGlobe::init() {
 	_frameTime = _owner->_mapData->globeFrameTime;
 	_srcRects = _owner->_mapData->globeSrcs;
 
-	_gargoyleEyes._drawSurface.create(g_nancy->_graphicsManager->_object0, _owner->_mapData->globeGargoyleSrc);
+	_gargoyleEyes._drawSurface.create(g_nancy->_graphics->_object0, _owner->_mapData->globeGargoyleSrc);
 	_gargoyleEyes.moveTo(_owner->_mapData->globeGargoyleDest);
 	_gargoyleEyes.setTransparent(true);
 	_gargoyleEyes.setVisible(false);
@@ -343,7 +343,7 @@ void TVDMap::MapGlobe::onTrigger() {
 		_gargoyleEyes.setVisible(true);
 		_owner->_viewport.setVisible(true);
 		_owner->_viewport.playVideo();
-		g_nancy->_cursorManager->warpCursor(_owner->_mapData->cursorPosition);
+		g_nancy->_cursor->warpCursor(_owner->_mapData->cursorPosition);
 		g_nancy->setMouseEnabled(true);
 	} else {
 		_owner->_state = kExit;
@@ -362,7 +362,7 @@ void Nancy1Map::init() {
 	_label.init();
 
 	Common::Rect textboxScreenPosition = NancySceneState.getTextbox().getScreenPosition();
-	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, _mapData->closedLabelSrc);
+	_closedLabel._drawSurface.create(g_nancy->_graphics->_object0, _mapData->closedLabelSrc);
 
 	Common::Rect closedScreenRect;
 	closedScreenRect.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - _mapData->closedLabelSrc.width()) / 2);
@@ -382,7 +382,7 @@ void Nancy1Map::init() {
 		_locationLabelDests[i].top = _locationLabelDests[i].bottom - _mapData->locations[i].labelSrc.height() + 1;
 	}
 
-	_button = new UI::Button(9, g_nancy->_graphicsManager->_object0, _mapData->buttonSrc, _mapData->buttonDest);
+	_button = new UI::Button(9, g_nancy->_graphics->_object0, _mapData->buttonSrc, _mapData->buttonDest);
 	_button->init();
 	_button->setVisible(true);
 
@@ -405,8 +405,8 @@ void Nancy1Map::load() {
 	_viewport.loadVideo(_mapData->mapNames[_mapID]);
 
 	setLabel(-1);
-	g_nancy->_cursorManager->setCursorItemID(-1);
-	g_nancy->_cursorManager->warpCursor(_mapData->cursorPosition);
+	g_nancy->_cursor->setCursorItemID(-1);
+	g_nancy->_cursor->warpCursor(_mapData->cursorPosition);
 
 	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
 		g_nancy->_sound->loadSound(getSound());
@@ -438,7 +438,7 @@ void Nancy1Map::run() {
 			setLabel(i);
 
 			if (_activeLocations[i]){
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					_pickedLocationID = i;

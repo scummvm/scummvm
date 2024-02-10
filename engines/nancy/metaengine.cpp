@@ -172,7 +172,7 @@ void NancyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 
 	// Make sure we always trigger a screen redraw to support second chance saves
 	Graphics::ManagedSurface screenshotSurf;
-	Nancy::g_nancy->_graphicsManager->screenshotScreen(screenshotSurf);
+	Nancy::g_nancy->_graphics->screenshotScreen(screenshotSurf);
 	if (!screenshotSurf.empty() && createThumbnail(&thumb, &screenshotSurf)) {
 		return;
 	}

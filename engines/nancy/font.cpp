@@ -29,7 +29,7 @@
 namespace Nancy {
 
 void Font::read(Common::SeekableReadStream &stream) {
-	_transColor = g_nancy->_graphicsManager->getTransColor();
+	_transColor = g_nancy->_graphics->getTransColor();
 	_maxCharWidth = 0;
 	_fontHeight = 0;
 	uint16 numCharacters = 78;
@@ -38,7 +38,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	readFilename(stream, imageName);
 
 	g_nancy->_resource->loadImage(imageName, _image);
-	_image.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	_image.setTransparentColor(g_nancy->_graphics->getTransColor());
 
 	char desc[31];
 	stream.read(desc, 30);

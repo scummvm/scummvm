@@ -35,8 +35,8 @@ namespace Action {
 
 void TowerPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -182,7 +182,7 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 	int hoveredPoleID = -1;
 	for (uint poleID = 0; poleID < 3; ++poleID) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[poleID]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			hoveredPoleID = poleID;
 			break;
 		}
@@ -193,7 +193,7 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 
 		// First, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit

@@ -51,7 +51,7 @@ void Button::handleInput(NancyInput &input) {
 	}
 	
 	if (_screenPosition.contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (!_hoverSrc.isEmpty() && !_isClicked) {
 			_drawSurface.create(surf, _hoverSrc);
@@ -100,7 +100,7 @@ void Toggle::handleInput(NancyInput &input) {
 	_stateChanged = false;
 
 	if (_screenPosition.contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			setState(!_toggleState);

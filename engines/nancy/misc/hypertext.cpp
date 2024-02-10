@@ -194,8 +194,8 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			currentLine += curToken;
 		}
 		
-		font = g_nancy->_graphicsManager->getFont(curFontID);
-		highlightFont = g_nancy->_graphicsManager->getFont(highlightFontID);
+		font = g_nancy->_graphics->getFont(curFontID);
+		highlightFont = g_nancy->_graphics->getFont(highlightFontID);
 		assert(font && highlightFont);
 
 		// Do word wrapping on the text, sans tokens. This assumes
@@ -277,7 +277,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					switch (change.type) {
 					case MetaInfo::kFont:
 						curFontID = change.index;
-						font = g_nancy->_graphicsManager->getFont(curFontID);
+						font = g_nancy->_graphics->getFont(curFontID);
 						break;
 					case MetaInfo::kColor:
 						colorID = change.index;
@@ -303,7 +303,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 								textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset - 4);
 
 						// For now we do not check if we need to go to new line; neither does the original
-						_fullSurface.blitFrom(g_nancy->_graphicsManager->_object0, markSrc, markDest);
+						_fullSurface.blitFrom(g_nancy->_graphics->_object0, markSrc, markDest);
 
 						horizontalOffset += markDest.width() + 2;
 					}

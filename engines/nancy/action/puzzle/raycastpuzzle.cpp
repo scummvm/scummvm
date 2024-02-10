@@ -901,7 +901,7 @@ bool RaycastDeferredLoader::loadInner() {
 		
 		Common::Rect viewport = viewportData->bounds;
 		_owner.moveTo(viewport);
-		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphics->getInputPixelFormat());
 		_owner.setTransparent(true);
 
 		_loadState = kInitPlayerLocationRotation;
@@ -1048,7 +1048,7 @@ bool RaycastDeferredLoader::loadInner() {
 		if (!shouldBreak) {
 			for (auto &a : _owner._specialWallTextures) {
 				for (auto &tex : a._value) {
-					tex.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+					tex.setTransparentColor(g_nancy->_graphics->getTransColor());
 				}
 			}
 
@@ -1369,8 +1369,8 @@ void RaycastPuzzle::drawMap() {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	_mapBaseSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
-	_map._drawSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
+	_mapBaseSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphics->getInputPixelFormat());
+	_map._drawSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphics->getInputPixelFormat());
 	Common::Rect mapPos(bootSummary->textboxScreenPosition);
 	mapPos.setWidth(_mapFullWidth * 2);
 	mapPos.setHeight(_mapFullHeight * 2);
@@ -1448,10 +1448,10 @@ void RaycastPuzzle::updateMap() {
 }
 
 void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::Path &textureName) {
-	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
+	Graphics::PixelFormat format = g_nancy->_graphics->getInputPixelFormat();
 	array->resize(8);
 
-	uint16 transColor = g_nancy->_graphicsManager->getTransColor();
+	uint16 transColor = g_nancy->_graphics->getTransColor();
 
 	g_nancy->_resource->loadImage(textureName, (*array)[0]);
 

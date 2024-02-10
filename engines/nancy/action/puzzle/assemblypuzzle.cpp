@@ -163,7 +163,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 	}
 	
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -173,7 +173,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_cwCursorDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kRotateCW);
+		g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
 			g_nancy->_sound->playSound(_rotateSound);
@@ -183,7 +183,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_ccwCursorDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kRotateCCW);
+		g_nancy->_cursor->setCursorType(CursorManager::kRotateCCW);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
 			g_nancy->_sound->playSound(_rotateSound);
@@ -202,7 +202,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 				return;
 			}
 
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if (_pickedUpPiece != -1) {
@@ -251,7 +251,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 
 		if (!otherIsPlaced && (!isWrong || (_allowWrongPieceHotspot && _layersAssembled + 1 == pickedUpPiece.layer))) {
 			if (NancySceneState.getViewport().convertViewportToScreen(pickedUpPiece.destRects[0]).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					if (!isWrong) {

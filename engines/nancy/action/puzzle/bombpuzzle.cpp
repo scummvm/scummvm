@@ -39,8 +39,8 @@ void BombPuzzle::init() {
 		_screenPosition.extend(r);
 	}
 
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	setTransparent(true);
 
@@ -253,7 +253,7 @@ void BombPuzzle::handleInput(NancyInput &input) {
 				}
 			}
 
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if (NancySceneState.getHeldItem() == _toolID) {

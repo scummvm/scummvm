@@ -35,7 +35,7 @@ namespace Action {
 
 void PeepholePuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
 	moveTo(screenBounds);
 
 	Common::Rect innerImageContentBounds;
@@ -106,7 +106,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 	bool justReleased = false;
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -119,7 +119,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 			if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[_pressedButton]).contains(input.mousePos)) {
 				if (!_disabledButtons[_pressedButton]) {
 					// Do not show hover cursor on disabled button
-					g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 				}
 
 				if (_pressStart == 0) {
@@ -136,7 +136,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 
 			// Avoid single frame with non-highlighted cursor
 			if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[_pressedButton]).contains(input.mousePos) && !_disabledButtons[_pressedButton]) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			}
 
 			_pressedButton = -1;
@@ -148,7 +148,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 		for (uint i = 0; i < 4; ++i) {
 			if (!_disabledButtons[i]) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[i]).contains(input.mousePos)) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 					if (input.input & NancyInput::kLeftMouseButtonDown) {
 						if (_pressedButton == -1) {

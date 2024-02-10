@@ -112,14 +112,14 @@ void NancyConsole::postEnter() {
 					const Graphics::Surface *frame = dec->decodeNextFrame();
 					if (frame) {
 						GraphicsManager::copyToManaged(*frame, surf, !_paletteFile.empty());
-						g_nancy->_graphicsManager->debugDrawToScreen(surf);
+						g_nancy->_graphics->debugDrawToScreen(surf);
 					}
 				}
 
 				g_system->delayMillis(10);
 			}
 
-			g_nancy->_graphicsManager->redrawAll();
+			g_nancy->_graphics->redrawAll();
 		}
 
 		_videoFile.clear();
@@ -134,7 +134,7 @@ void NancyConsole::postEnter() {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
 
-			g_nancy->_graphicsManager->debugDrawToScreen(surf);
+			g_nancy->_graphics->debugDrawToScreen(surf);
 
 			Common::EventManager *ev = g_system->getEventManager();
 			while (!g_nancy->shouldQuit()) {
@@ -150,7 +150,7 @@ void NancyConsole::postEnter() {
 				g_system->delayMillis(10);
 			}
 
-			g_nancy->_graphicsManager->redrawAll();
+			g_nancy->_graphics->redrawAll();
 		} else {
 			debugPrintf("Failed to load image '%s'\n", _imageFile.toString().c_str());
 		}

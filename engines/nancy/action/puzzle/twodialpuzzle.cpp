@@ -35,8 +35,8 @@ namespace Action {
 
 void TwoDialPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -141,7 +141,7 @@ void TwoDialPuzzle::handleInput(NancyInput &input) {
 	bool canClick = (_state == kRun) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[1]);
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -152,7 +152,7 @@ void TwoDialPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i <= 1; ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(_isClockwise[i] ? CursorManager::kRotateCW : CursorManager::kRotateCCW);
+			g_nancy->_cursor->setCursorType(_isClockwise[i] ? CursorManager::kRotateCW : CursorManager::kRotateCCW);
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 				_currentPositions[i] += _isClockwise[i] ? -1 : 1;

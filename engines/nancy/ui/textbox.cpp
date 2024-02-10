@@ -56,7 +56,7 @@ void Textbox::init() {
 
 	moveTo(bsum->textboxScreenPosition);
 	_highlightRObj.moveTo(bsum->textboxScreenPosition);
-	initSurfaces(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat(),
+	initSurfaces(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphics->getScreenPixelFormat(),
 		tbox->textBackground, tbox->highlightTextBackground);
 
 	Common::Rect outerBoundingBox = _screenPosition;
@@ -107,7 +107,7 @@ void Textbox::handleInput(NancyInput &input) {
 		hotspot.translate(0, -_drawSurface.getOffsetFromOwner().y);
 		Common::Rect hotspotOnScreen = convertToScreen(hotspot).findIntersectingRect(_screenPosition);
 		if (hotspotOnScreen.contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 			// Highlight the selected response
 			if (g_nancy->getGameType() >= kGameTypeNancy2) {
@@ -144,7 +144,7 @@ void Textbox::drawTextbox() {
 	textBounds.left += tbox->leftOffset;
 	textBounds.right -= tbox->rightOffset;
 
-	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID);
+	const Font *font = g_nancy->_graphics->getFont(_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID);
 	textBounds.top -= font->getFontHeight();
 
 	HypertextParser::drawAllText(	textBounds,	0,													// bounds of text within full surface

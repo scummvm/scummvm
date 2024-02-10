@@ -53,7 +53,7 @@ void OrderingPuzzle::init() {
 	}
 
 	g_nancy->_resource->loadImage(_imageName, _image);
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	if (_image.hasPalette()) {
 		uint8 palette[256 * 3];
@@ -447,7 +447,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -456,7 +456,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_needButtonToCheckSuccess && NancySceneState.getViewport().convertViewportToScreen(_checkButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_checkButtonPressed = true;
@@ -473,11 +473,11 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
 			// Set the custom cursor for nancy8+ PianoPuzzle
 			if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor1Dest).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType((CursorManager::CursorType)_specialCursor1Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor1Id);
 			} else if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor2Dest).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType((CursorManager::CursorType)_specialCursor2Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id);
 			} else {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			}
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {

@@ -42,8 +42,8 @@ SetPlayerClock::~SetPlayerClock() {
 
 void SetPlayerClock::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -186,7 +186,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 
 	// Cancel button is active in both time and alarm mode
 	if (NancySceneState.getViewport().convertViewportToScreen(_cancelButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 			// Cancel button pressed
@@ -203,7 +203,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 	if (_alarmState == kTimeMode) {
 		// Alarm button is active only in time mode
 		if (NancySceneState.getViewport().convertViewportToScreen(_alarmButtonDest).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Alarm button pressed
@@ -221,7 +221,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 	} else {
 		if (NancySceneState.getViewport().convertViewportToScreen(_timeButtonDest).contains(input.mousePos)) {
 			// Time button is active only in alarm mode
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Alarm button pressed
@@ -236,7 +236,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 			}
 		} else if (NancySceneState.getViewport().convertViewportToScreen(_upButtonDest).contains(input.mousePos)) {
 			// Up button is active only in alarm mode
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Up button pressed
@@ -251,7 +251,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 			}
 		} else if (NancySceneState.getViewport().convertViewportToScreen(_downButtonDest).contains(input.mousePos)) {
 			// Down button is active only in alarm mode
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Down button pressed
@@ -266,7 +266,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 			}
 		} else if (NancySceneState.getViewport().convertViewportToScreen(_setButtonDest).contains(input.mousePos)) {
 			// Set button is active only in alarm mode
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Down button pressed

@@ -54,7 +54,7 @@ void SpecialEffect::init() {
 		}
 	}
 
-	_drawSurface.create(_rect.width(), _rect.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_drawSurface.create(_rect.width(), _rect.height(), g_nancy->_graphics->getScreenPixelFormat());
 	moveTo(_rect);
 	setTransparent(false);
 
@@ -112,7 +112,7 @@ void SpecialEffect::updateGraphics() {
 				_throughBlackStarted2nd = true;
 				_fadeFrom.clear();
 				setVisible(false);
-				g_nancy->_graphicsManager->screenshotScreen(_fadeTo);
+				g_nancy->_graphics->screenshotScreen(_fadeTo);
 				setVisible(true);
 				_startTime = g_nancy->getTotalPlayTime();
 				_currentFrame = 0;
@@ -122,7 +122,7 @@ void SpecialEffect::updateGraphics() {
 }
 
 void SpecialEffect::onSceneChange() {
-	g_nancy->_graphicsManager->screenshotScreen(_fadeFrom);
+	g_nancy->_graphics->screenshotScreen(_fadeFrom);
 	_drawSurface.rawBlitFrom(_fadeFrom, _rect, Common::Point());
 }
 
@@ -132,7 +132,7 @@ void SpecialEffect::afterSceneChange() {
 	}
 
 	if (_type == kCrossDissolve) {
-		g_nancy->_graphicsManager->screenshotScreen(_fadeTo);
+		g_nancy->_graphics->screenshotScreen(_fadeTo);
 	} else {
 		_fadeTo.create(640, 480, _drawSurface.format);
 		_fadeTo.clear();
@@ -143,7 +143,7 @@ void SpecialEffect::afterSceneChange() {
 	// the two default values transBlitFrom uses for transColor. By doing this,
 	// transColor gets set to the one color guaranteed to not appear in any scene,
 	// and transparency works correctly
-	_fadeTo.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	_fadeTo.setTransparentColor(g_nancy->_graphics->getTransColor());
 
 	registerGraphics();
 	_nextFrameTime = g_nancy->getTotalPlayTime() + _frameTime;

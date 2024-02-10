@@ -181,10 +181,10 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 
 		_actionManager.onPause(false);
 
-		g_nancy->_graphicsManager->redrawAll();
+		g_nancy->_graphics->redrawAll();
 
 		if (getHeldItem() != -1) {
-			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
+			g_nancy->_cursor->setCursorItemID(getHeldItem());
 		}
 
 		if (prevState == NancyState::kPause) {
@@ -202,7 +202,7 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	if (_state == kRun) {
 		// Exiting the state outside the kRun state means we've encountered an error
-		g_nancy->_graphicsManager->screenshotScreen(_lastScreenshot);
+		g_nancy->_graphics->screenshotScreen(_lastScreenshot);
 	}
 
 	if (nextState != NancyState::kPause) {
@@ -354,7 +354,7 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 }
 
 void Scene::setHeldItem(int16 id) {
-	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
+	_flags.heldItem = id; g_nancy->_cursor->setCursorItemID(id);
 }
 
 void Scene::setNoHeldItem() {
@@ -662,7 +662,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	ser.syncArray(_flags.items.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
 	ser.syncAsSint16LE(_flags.heldItem);
-	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
+	g_nancy->_cursor->setCursorItemID(_flags.heldItem);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy7) {
 		ser.syncArray(_flags.disabledItems.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
@@ -751,7 +751,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	_isRunningAd = false;
 	ConfMan.removeKey("restore_after_ad", Common::ConfigManager::kTransientDomain);
 
-	g_nancy->_graphicsManager->suppressNextDraw();
+	g_nancy->_graphics->suppressNextDraw();
 }
 
 UI::Clock *Scene::getClock() {
@@ -823,12 +823,12 @@ void Scene::init() {
 	}
 
 	Common::Rect vpPos = _viewport.getScreenPosition();
-	_hotspotDebug._drawSurface.create(vpPos.width(), vpPos.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_hotspotDebug._drawSurface.create(vpPos.width(), vpPos.height(), g_nancy->_graphics->getScreenPixelFormat());
 	_hotspotDebug.moveTo(vpPos);
 	_hotspotDebug.setTransparent(true);
 
 	registerGraphics();
-	g_nancy->_graphicsManager->redrawAll();
+	g_nancy->_graphics->redrawAll();
 }
 
 void Scene::setActiveConversation(Action::ConversationSound *activeConversation) {
@@ -877,7 +877,7 @@ void Scene::load(bool fromSaveFile) {
 	}
 
 	clearSceneData();
-	g_nancy->_graphicsManager->suppressNextDraw();
+	g_nancy->_graphics->suppressNextDraw();
 
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
 	Common::Path sceneName(Common::String::format("S%u", _sceneState.nextScene.sceneID));
@@ -1022,7 +1022,7 @@ void Scene::run() {
 		if (_specialEffects.front().isInitialized()) {
 			if (_specialEffects.front().isDone()) {
 				_specialEffects.pop();
-				g_nancy->_graphicsManager->redrawAll();
+				g_nancy->_graphics->redrawAll();
 			}
 		} else {
 			_specialEffects.front().afterSceneChange();
@@ -1032,7 +1032,7 @@ void Scene::run() {
 	g_nancy->_sound->soundEffectMaintenance();
 
 	if (_state == kLoad) {
-		g_nancy->_graphicsManager->suppressNextDraw();
+		g_nancy->_graphics->suppressNextDraw();
 	}
 }
 
@@ -1041,21 +1041,21 @@ void Scene::handleInput() {
 
 	// Warp the mouse below the inactive zone during dialogue scenes
 	if (_activeConversation != nullptr) {
-		const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
+		const Common::Rect &inactiveZone = g_nancy->_cursor->getPrimaryVideoInactiveZone();
 
 		if (g_nancy->getGameType() == kGameTypeVampire) {
-			const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+			const Common::Point cursorHotspot = g_nancy->_cursor->getCurrentCursorHotspot();
 			Common::Point adjustedMousePos = input.mousePos;
 			adjustedMousePos.y -= cursorHotspot.y;
 
 			if (inactiveZone.bottom > adjustedMousePos.y) {
 				input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
-				g_nancy->_cursorManager->warpCursor(input.mousePos);
+				g_nancy->_cursor->warpCursor(input.mousePos);
 			}
 		} else {
 			if (inactiveZone.bottom > input.mousePos.y) {
 				input.mousePos.y = inactiveZone.bottom;
-				g_nancy->_cursorManager->warpCursor(input.mousePos);
+				g_nancy->_cursor->warpCursor(input.mousePos);
 			}
 		}
 	} else {
@@ -1076,7 +1076,7 @@ void Scene::handleInput() {
 	for (uint16 id : g_nancy->getStaticData().mapAccessSceneIDs) {
 		if ((int)_sceneState.currentScene.sceneID == id) {
 			if (_mapHotspot.contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(g_nancy->getGameType() == kGameTypeVampire ? CursorManager::kHotspot : CursorManager::kHotspotArrow);
+				g_nancy->_cursor->setCursorType(g_nancy->getGameType() == kGameTypeVampire ? CursorManager::kHotspot : CursorManager::kHotspotArrow);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					requestStateChange(NancyState::kMap);
@@ -1167,8 +1167,8 @@ void Scene::initStaticData() {
 		_mapHotspot = mapData->buttonDest;
 	}
 
-	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bootSummary->menuButtonSrc, bootSummary->menuButtonDest, bootSummary->menuButtonHighlightSrc);
-	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bootSummary->helpButtonSrc, bootSummary->helpButtonDest, bootSummary->helpButtonHighlightSrc);
+	_menuButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->menuButtonSrc, bootSummary->menuButtonDest, bootSummary->menuButtonHighlightSrc);
+	_helpButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->helpButtonSrc, bootSummary->helpButtonDest, bootSummary->helpButtonHighlightSrc);
 	g_nancy->setMouseEnabled(true);
 
 	// Init ornaments and clock (TVD only)

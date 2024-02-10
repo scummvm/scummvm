@@ -38,14 +38,14 @@ void MouseLightPuzzle::init() {
 	Graphics::ManagedSurface baseImage;
 	g_nancy->_resource->loadImage(_imageName, baseImage);
 
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getTransparentPixelFormat());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getTransparentPixelFormat());
 	_drawSurface.blitFrom(baseImage);
 	((Graphics::Surface)_drawSurface).setAlpha(0);
 
 	setVisible(true);
 	moveTo(screenBounds);
 
-	_maskCircle.create(_radius * 2, _radius * 2, g_nancy->_graphicsManager->getInputPixelFormat());
+	_maskCircle.create(_radius * 2, _radius * 2, g_nancy->_graphics->getInputPixelFormat());
 	_maskCircle.clear();
 
 	if (_smoothEdges) {

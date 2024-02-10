@@ -141,7 +141,7 @@ void SetupMenu::init() {
 
 	_background.registerGraphics();
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 	g_nancy->setMouseEnabled(true);
 
 	g_nancy->_sound->stopSound("MSND");
@@ -242,7 +242,7 @@ void SetupMenu::run() {
 		}
 	}
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 }
 
 void SetupMenu::stop() {

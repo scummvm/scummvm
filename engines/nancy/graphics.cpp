@@ -70,7 +70,7 @@ void GraphicsManager::draw(bool updateScreen) {
 		return;
 	}
 
-	g_nancy->_cursorManager->applyCursor();
+	g_nancy->_cursor->applyCursor();
 
 	// Update graphics for all RenderObjects and determine
 	// the areas of the screen that need to be redrawn

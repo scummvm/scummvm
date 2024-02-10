@@ -35,9 +35,9 @@ void ViewportOrnaments::init() {
 	Common::Rect viewportBounds = viewportData->bounds;
 	moveTo(viewportData->screenPosition);
 
-	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
+	Graphics::ManagedSurface &object0 = g_nancy->_graphics->_object0;
 
-	_drawSurface.create(viewportBounds.width(), viewportBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(viewportBounds.width(), viewportBounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	uint8 palette[256 * 3];
 	object0.grabPalette(palette, 0, 256);
@@ -53,7 +53,7 @@ void ViewportOrnaments::init() {
 		{ 33, 39, 40, 59 }
 	};
 
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 
 	// Top left
@@ -83,15 +83,15 @@ void TextboxOrnaments::init() {
 	Common::Rect textboxBounds = _screenPosition;
 	textboxBounds.moveTo(0, 0);
 
-	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
+	Graphics::ManagedSurface &object0 = g_nancy->_graphics->_object0;
 
-	_drawSurface.create(textboxBounds.width(), textboxBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(textboxBounds.width(), textboxBounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	uint8 palette[256 * 3];
 	object0.grabPalette(palette, 0, 256);
 	_drawSurface.setPalette(palette, 0, 256);
 
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 
 	for (uint i = 0; i < 14; ++i) {
@@ -114,15 +114,15 @@ void InventoryBoxOrnaments::init() {
 	Common::Rect invBoxBounds = _screenPosition;
 	invBoxBounds.moveTo(0, 0);
 
-	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
+	Graphics::ManagedSurface &object0 = g_nancy->_graphics->_object0;
 
-	_drawSurface.create(invBoxBounds.width(), invBoxBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(invBoxBounds.width(), invBoxBounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	uint8 palette[256 * 3];
 	object0.grabPalette(palette, 0, 256);
 	_drawSurface.setPalette(palette, 0, 256);
 
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 
 	for (uint i = 0; i < 6; ++i) {

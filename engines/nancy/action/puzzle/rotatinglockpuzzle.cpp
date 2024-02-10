@@ -36,8 +36,8 @@ namespace Nancy {
 namespace Action {
 
 void RotatingLockPuzzle::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	setTransparent(true);
 
@@ -167,7 +167,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -178,7 +178,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _upHotspots.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_upHotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);
@@ -193,7 +193,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < _downHotspots.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_downHotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);

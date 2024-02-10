@@ -114,8 +114,8 @@ public:
 
 	// Managers
 	ResourceManager *_resource;
-	GraphicsManager *_graphicsManager;
-	CursorManager *_cursorManager;
+	GraphicsManager *_graphics;
+	CursorManager *_cursor;
 	InputManager *_input;
 	SoundManager *_sound;
 

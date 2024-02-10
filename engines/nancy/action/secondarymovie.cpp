@@ -151,7 +151,7 @@ void PlaySecondaryMovie::execute() {
 		_state = kRun;
 
 		if (Common::Rect(_decoder->getWidth(), _decoder->getHeight()) == NancySceneState.getViewport().getBounds()) {
-			g_nancy->_graphicsManager->suppressNextDraw();
+			g_nancy->_graphics->suppressNextDraw();
 			break;
 		}
 

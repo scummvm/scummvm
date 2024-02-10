@@ -48,8 +48,8 @@ static const char *morseCodeTable[] = {
 
 void HamRadioPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -410,7 +410,7 @@ void HamRadioPuzzle::handleInput(NancyInput &input) {
 
 	// Handle exit button
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -428,7 +428,7 @@ void HamRadioPuzzle::handleInput(NancyInput &input) {
 	for (uint i = 0; i < _buttonDests.size(); ++i) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[i]).contains(input.mousePos)) {
 			if (i >= 10 || _pressedButton == kNone) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					_pressedButton = i;

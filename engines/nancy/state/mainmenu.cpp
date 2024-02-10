@@ -74,7 +74,7 @@ void MainMenu::registerGraphics() {
 		button->registerGraphics();
 	}
 
-	g_nancy->_graphicsManager->redrawAll();
+	g_nancy->_graphics->redrawAll();
 }
 
 void MainMenu::clearButtonState() {
@@ -90,7 +90,7 @@ void MainMenu::init() {
 	_background.init(_menuData->_imageName);
 	_background.registerGraphics();
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 	g_nancy->setMouseEnabled(true);
 
 	if (!g_nancy->_sound->isSoundPlaying("MSND")) {
@@ -163,7 +163,7 @@ void MainMenu::run() {
 		}
 	}
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 }
 
 void MainMenu::stop() {
@@ -212,7 +212,7 @@ void MainMenu::stop() {
 			} else {
 				// Dialog has returned
 				_destroyOnExit = true;
-				g_nancy->_graphicsManager->suppressNextDraw();
+				g_nancy->_graphics->suppressNextDraw();
 				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
 				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
 				switch (ret) {

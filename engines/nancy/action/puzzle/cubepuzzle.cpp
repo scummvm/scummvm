@@ -35,8 +35,8 @@ namespace Action {
 
 void CubePuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(screenBounds);
@@ -150,7 +150,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -160,7 +160,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_cwCursorDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kRotateCW);
+		g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
 			g_nancy->_sound->playSound(_rotateSound);
@@ -170,7 +170,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_ccwCursorDest).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kRotateCCW);
+		g_nancy->_cursor->setCursorType(CursorManager::kRotateCCW);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
 			g_nancy->_sound->playSound(_rotateSound);
@@ -185,7 +185,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 				return;
 			}
 			
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if (_pickedUpPiece != -1) {
@@ -239,7 +239,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 
 		if (canPlace) {
 			if (NancySceneState.getViewport().convertViewportToScreen(_placedDest).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					_placedPieces[_pickedUpPiece] = true;

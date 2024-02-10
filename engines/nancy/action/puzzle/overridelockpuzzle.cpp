@@ -38,8 +38,8 @@ namespace Action {
 void OverrideLockPuzzle::init() {
 	Common::Rect bounds = NancySceneState.getViewport().getBounds();
 
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	setTransparent(true);
 	setVisible(true);
@@ -171,7 +171,7 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 
 	// Check the exit hotspot
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -194,7 +194,7 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 		}
 
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (!g_nancy->_sound->isSoundPlaying(_buttonSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				drawButton(i, false);

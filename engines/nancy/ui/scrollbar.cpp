@@ -30,7 +30,7 @@ namespace Nancy {
 namespace UI {
 
 Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
-	Scrollbar(zOrder, srcBounds, g_nancy->_graphicsManager->_object0, topPosition, scrollDistance, isVertical) {}
+	Scrollbar(zOrder, srcBounds, g_nancy->_graphics->_object0, topPosition, scrollDistance, isVertical) {}
 
 Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, Graphics::ManagedSurface &srcSurf, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
 		RenderObject(zOrder),
@@ -61,7 +61,7 @@ void Scrollbar::handleInput(NancyInput &input) {
 	// the hotspot (happens if we remove the _isClicked check below). This doesn't make
 	// for great UX, however, so it has been fixed.
 	if (_screenPosition.contains(input.mousePos) || _isClicked) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonDown && !_isClicked) {
 			// Begin click and hold

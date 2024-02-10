@@ -147,23 +147,23 @@ void Autotext::execute() {
 		// Guesstimate the height of the surface
 		uint surfHeight = _textLines[0].size() / 144 * _surfWidth;
 		surfHeight = MAX<uint>(surfHeight, _surfHeight + 20);
-		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(_surfaceID);
-		Common::Rect &surfBounds = g_nancy->_graphicsManager->getAutotextSurfaceBounds(_surfaceID);
-		surf.create(_surfWidth + 1, surfHeight, g_nancy->_graphicsManager->getInputPixelFormat());
+		Graphics::ManagedSurface &surf = g_nancy->_graphics->getAutotextSurface(_surfaceID);
+		Common::Rect &surfBounds = g_nancy->_graphics->getAutotextSurfaceBounds(_surfaceID);
+		surf.create(_surfWidth + 1, surfHeight, g_nancy->_graphics->getInputPixelFormat());
 		if (_transparency) {
-			surf.clear(g_nancy->_graphicsManager->getTransColor());
+			surf.clear(g_nancy->_graphics->getTransColor());
 		}
 
 		_fullSurface.create(surf, surf.getBounds());
 		if(_transparency == kPlayOverlayTransparent) {
-			_fullSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+			_fullSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 		}
 
 		Common::Rect textBounds = surf.getBounds();
 		textBounds.left += _offset.x;
 		textBounds.top += _offset.y;
 
-		const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
+		const Font *font = g_nancy->_graphics->getFont(_fontID);
 		assert(font);
 		uint d = (font->getFontHeight() + 1) / 2 + 1;
 
