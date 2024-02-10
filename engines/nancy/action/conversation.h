@@ -69,9 +69,12 @@ protected:
 	};
 
 	struct ResponseStruct {
+		enum AddRule { kAddIfNotFound, kRemoveAndAddToEnd, kRemove };
+
 		ConversationFlags conditionFlags;
 		Common::String text;
 		Common::String soundName;
+		byte addRule = kAddIfNotFound;
 		SceneChangeDescription sceneChange;
 		FlagDescription flagDesc;
 

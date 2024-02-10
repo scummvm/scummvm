@@ -90,7 +90,7 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 		response.conditionFlags.read(stream);
 		readResponseText(stream, response);
 		readFilename(stream, response.soundName);
-		ser.skip(1); // RESPONSE_ADD_IF_NOT_FOUND, RESPONSE_REMOVE_AND_ADD_TO_END, or RESPONSE_REMOVE
+		ser.syncAsByte(response.addRule);
 		response.sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 		ser.syncAsSint16LE(response.flagDesc.label);
 		ser.syncAsByte(response.flagDesc.flag);
@@ -262,6 +262,44 @@ void ConversationSound::execute() {
 				NancySceneState.getTextbox().addTextLine(_text);
 			}
 
+			Common::Array<uint> responsesToAdd;
+			for (uint i = 0; i < _responses.size(); ++i) {
+				auto &res = _responses[i];
+
+				if (res.conditionFlags.isSatisfied()) {
+					int foundIndex = -1;
+					for (uint j = 0; j < responsesToAdd.size(); ++j) {
+						if (_responses[responsesToAdd[j]].text.compareToIgnoreCase(res.text) == 0) {
+							foundIndex = j;
+							break;
+						}
+					}
+					switch(res.addRule) {
+					case ResponseStruct::kAddIfNotFound:
+						if (foundIndex == -1) {
+							responsesToAdd.push_back(i);
+						}
+
+						break;
+					case ResponseStruct::kRemoveAndAddToEnd:
+						if (foundIndex != -1) {
+							responsesToAdd.remove_at(foundIndex);
+						}
+
+						responsesToAdd.push_back(i);
+						break;
+					case ResponseStruct::kRemove:
+						if (foundIndex != -1) {
+							responsesToAdd.remove_at(foundIndex);
+						}
+
+						break;
+					}
+				}
+			}
+
+			uint numRegularResponses = _responses.size();
+
 			// Add responses when conditions have been satisfied
 			if (_conditionalResponseCharacterID != _noResponse) {
 				addConditionalDialogue();
@@ -271,13 +309,14 @@ void ConversationSound::execute() {
 				addGoodbye();
 			}
 
-			for (uint i = 0; i < _responses.size(); ++i) {
-				auto &res = _responses[i];
+			// If conditionals/goodbyes added, make sure to send them to Textbox
+			for (uint i = numRegularResponses; i < _responses.size(); ++i) {
+				responsesToAdd.push_back(i);
+			}
 
-				if (res.conditionFlags.isSatisfied()) {
-					NancySceneState.getTextbox().addTextLine(res.text);
-					res.isOnScreen = true;
-				}
+			for (uint i : responsesToAdd) {
+				NancySceneState.getTextbox().addTextLine(_responses[responsesToAdd[i]].text);
+				_responses[responsesToAdd[i]].isOnScreen = true;
 			}
 		}
 
