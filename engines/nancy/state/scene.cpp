@@ -126,6 +126,7 @@ Scene::Scene() :
 		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
+		_activeMovie(nullptr),
 		_activeConversation(nullptr),
 		_lightning(nullptr),
 		_destroyOnExit(false),
@@ -831,6 +832,14 @@ void Scene::init() {
 	g_nancy->_graphics->redrawAll();
 }
 
+void Scene::setActiveMovie(Action::PlaySecondaryMovie *activeMovie) {
+	_activeMovie = activeMovie;
+}
+
+Action::PlaySecondaryMovie *Scene::getActiveMovie() {
+	return _activeMovie;
+}
+
 void Scene::setActiveConversation(Action::ConversationSound *activeConversation) {
 	_activeConversation = activeConversation;
 }
@@ -1225,6 +1234,9 @@ void Scene::clearSceneData() {
 		// Hopefully this doesn't cause issues with earlier games.
 		_textbox.clear();
 	}
+
+	_activeConversation = nullptr;
+	_activeMovie = nullptr;
 }
 
 void Scene::clearPuzzleData() {

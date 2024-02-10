@@ -11,6 +11,7 @@ MODULE_OBJS = \
   action/soundrecords.o \
   action/miscrecords.o \
   action/conversation.o \
+  action/interactivevideo.o \
   action/overlay.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \

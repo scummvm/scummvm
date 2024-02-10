@@ -27,6 +27,7 @@
 
 #include "engines/nancy/action/autotext.h"
 #include "engines/nancy/action/conversation.h"
+#include "engines/nancy/action/interactivevideo.h"
 #include "engines/nancy/action/overlay.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
@@ -119,6 +120,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		newRec->_isTerse = true;
 		return newRec;
 	}
+	case 26:
+		return new InteractiveVideo();
 	case 40:
 		if (g_nancy->getGameType() < kGameTypeNancy2) {
 			// Only used in TVD
