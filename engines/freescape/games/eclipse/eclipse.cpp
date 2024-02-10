@@ -92,6 +92,9 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_initialEnergy = 16;
 	_initialShield = 10; // TODO
+
+	_endArea = 1;
+	_endEntrance = 33;
 }
 
 void EclipseEngine::initGameState() {
@@ -104,32 +107,18 @@ void EclipseEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = _initialShield;
 }
 
+void EclipseEngine::loadAssets() {
+	FreescapeEngine::loadAssets();
+
+	_timeoutMessage = _messagesList[1];
+	_noShieldMessage = _messagesList[0];
+	//_noEnergyMessage = _messagesList[16];
+	_fallenMessage = _messagesList[3];
+	_crushedMessage = _messagesList[2];
+}
+
 bool EclipseEngine::checkIfGameEnded() {
-	if (_hasFallen) {
-		_hasFallen = false;
-		playSound(14, false);
-		insertTemporaryMessage(_messagesList[3], _countdown - 4);
-		drawBackground();
-		drawBorder();
-		drawUI();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
-		gotoArea(1, 33);
-	}
-
-	if (_currentArea->getAreaID() == 1 && _flyMode) {
-		// Draw a few frames
-		for (int i = 0; i < 10; i++) {
-			drawFrame();
-			_gfx->flipBuffer();
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-
-		g_system->delayMillis(5000);
-		return true;
-	}
+	FreescapeEngine::checkIfGameEnded();
 	return false;
 }
 
@@ -153,7 +142,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance)
 		playSound(9, true);
-	if (areaID == _startArea && entranceID == 33)
+	if (areaID == _endArea && entranceID == _endEntrance)
 		_flyMode = true;
 	else
 		playSound(5, false);

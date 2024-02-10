@@ -39,6 +39,7 @@ public:
 	void borderScreen() override;
 	void titleScreen() override;
 
+	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 
 	uint32 _initialEnergy;

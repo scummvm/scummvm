@@ -84,6 +84,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_gameStateControl = kFreescapeGameStateStart;
 	_startArea = 0;
 	_startEntrance = 0;
+	_endArea = 0;
+	_endEntrance = 0;
 	_currentArea = nullptr;
 	_gotoExecuted = false;
 	_rotation = Math::Vector3d(0, 0, 0);
@@ -389,8 +391,13 @@ void FreescapeEngine::processInput() {
 	}
 
 	while (_eventManager->pollEvent(event)) {
-		if (_demoMode) {
+		if (_gameStateControl != kFreescapeGameStatePlaying) {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
+				; // Allow event
+			else if (_gameStateControl == kFreescapeGameStateEnd && event.type == Common::EVENT_KEYDOWN) {
+				_endGameKeyPressed = true;
+				continue;
+			} else if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				; // Allow event
 			else if (event.customType != 0xde00)
 				continue;
@@ -623,7 +630,6 @@ Common::Error FreescapeEngine::run() {
 		gotoArea(_startArea, _startEntrance);
 
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
-	bool endGame = false;
 	// Draw first frame
 
 	g_system->showMouse(false);
@@ -636,11 +642,12 @@ Common::Error FreescapeEngine::run() {
 
 	while (!shouldQuit()) {
 		updateTimeVariables();
-		if (endGame) {
+		if (_gameStateControl == kFreescapeGameStateRestart) {
 			initGameState();
 			gotoArea(_startArea, _startEntrance);
-			endGame = false;
-		}
+		} else if (_gameStateControl == kFreescapeGameStateEnd)
+			endGame();
+
 		processInput();
 		if (_demoMode)
 			generateDemoInput();
@@ -654,11 +661,18 @@ Common::Error FreescapeEngine::run() {
 		_frameLimiter->startFrame();
 		if (_vsyncEnabled) // if vsync is enabled, the framelimiter will not work
 			g_system->delayMillis(15); // try to target ~60 FPS
-		endGame = checkIfGameEnded();
+
+		checkIfGameEnded();
 	}
 
 	_eventManager->clearExitEvents();
 	return Common::kNoError;
+}
+
+void FreescapeEngine::endGame() {
+	if (_endGameKeyPressed) {
+		_gameStateControl = kFreescapeGameStateRestart;
+	}
 }
 
 void FreescapeEngine::loadBorder() {
@@ -697,6 +711,42 @@ void FreescapeEngine::processBorder() {
 }
 
 bool FreescapeEngine::checkIfGameEnded() {
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return false;
+
+	if (_gameStateVars[k8bitVariableShield] == 0) {
+		if (!_noShieldMessage.empty())
+			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
+		_gameStateControl = kFreescapeGameStateEnd;
+	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
+		if (!_noEnergyMessage.empty())
+			insertTemporaryMessage(_noEnergyMessage, _countdown - 2);
+		_gameStateControl = kFreescapeGameStateEnd;
+	} else if (_hasFallen) {
+		_hasFallen = false;
+		playSound(14, false);
+		if (!_fallenMessage.empty())
+			insertTemporaryMessage(_fallenMessage, _countdown - 4);
+		_gameStateControl = kFreescapeGameStateEnd;
+	} else if (_countdown <= 0) {
+		if (!_timeoutMessage.empty())
+			insertTemporaryMessage(_timeoutMessage, _countdown - 4);
+		_gameStateControl = kFreescapeGameStateEnd;
+	} else if (_playerWasCrushed) {
+		_playerWasCrushed = false;
+		if (!_crushedMessage.empty())
+			insertTemporaryMessage(_crushedMessage, _countdown - 4);
+		_gameStateControl = kFreescapeGameStateEnd;
+	} else if (_forceEndGame) {
+		_forceEndGame = false;
+		if (!_forceEndGameMessage.empty())
+			insertTemporaryMessage(_forceEndGameMessage, _countdown - 4);
+		_gameStateControl = kFreescapeGameStateEnd;
+	}
+
+	if (_gameStateControl == kFreescapeGameStateEnd)
+		gotoArea(_endArea, _endEntrance);
+
 	return false; // TODO
 }
 
@@ -734,6 +784,7 @@ void FreescapeEngine::initGameState() {
 	_underFireFrames = 0;
 	_yaw = 0;
 	_pitch = 0;
+	_endGameKeyPressed = false;
 
 	_demoIndex = 0;
 	_demoEvents.clear();

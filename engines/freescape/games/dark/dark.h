@@ -50,6 +50,7 @@ public:
 	void initGameState() override;
 	void borderScreen() override;
 	bool checkIfGameEnded() override;
+	void endGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void pressedKey(const int keycode) override;
@@ -60,6 +61,7 @@ public:
 	void initZX();
 	void initCPC();
 
+	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaFullGame() override;

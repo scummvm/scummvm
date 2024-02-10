@@ -41,6 +41,7 @@ public:
 	void initKeymaps(Common::Keymap *engineKeyMap, const char *target) override;
 	void initGameState() override;
 	bool checkIfGameEnded() override;
+	void endGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
@@ -60,7 +61,7 @@ private:
 	void removeDrill(Area *area);
 	void addSkanner(Area *area);
 
-	void loadAssetsFullGame() override;
+	void loadAssets() override;
 	void loadAssetsAtariFullGame() override;
 	void loadAssetsAtariDemo() override;
 	void loadAssetsAmigaFullGame() override;

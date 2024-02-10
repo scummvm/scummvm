@@ -181,6 +181,19 @@ void DarkEngine::initGameState() {
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_exploredAreas.clear();
 	_exploredAreas[_startArea] = true;
+
+	_endArea = 1;
+	_endEntrance = 26;
+}
+
+void DarkEngine::loadAssets() {
+	FreescapeEngine::loadAssets();
+
+	_timeoutMessage = _messagesList[14];
+	_noShieldMessage = _messagesList[15];
+	_noEnergyMessage = _messagesList[16];
+	_fallenMessage = _messagesList[17];
+	_crushedMessage = _messagesList[10];
 }
 
 bool DarkEngine::tryDestroyECDFullGame(int index) {
@@ -353,6 +366,15 @@ void DarkEngine::addSkanner(Area *area) {
 }
 
 bool DarkEngine::checkIfGameEnded() {
+	if (_gameStateControl == kFreescapeGameStatePlaying) {
+		FreescapeEngine::checkIfGameEnded();
+
+		// If the game state changed to game over, then the player failed
+		if (_gameStateControl == kFreescapeGameStateEnd) {
+			_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
+		}
+	}
+
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		int index = _gameStateVars[kVariableDarkECD] - 1;
 		bool destroyed = tryDestroyECD(index);
@@ -367,59 +389,24 @@ bool DarkEngine::checkIfGameEnded() {
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 	}
-
-	if (_hasFallen) {
-		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
-		playSound(14, false);
-		insertTemporaryMessage(_messagesList[17], _countdown - 4);
-		drawBackground();
-		drawBorder();
-		drawUI();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
-		gotoArea(1, 26);
-	} else if (_playerWasCrushed) {
-		insertTemporaryMessage(_messagesList[10], _countdown - 2);
-		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(2000);
-		_playerWasCrushed = false;
-		gotoArea(1, 26);
-	} else if (_gameStateVars[k8bitVariableShield] == 0) {
-		insertTemporaryMessage(_messagesList[15], _countdown - 2);
-		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(2000);
-		gotoArea(1, 26);
-	} else if (_forceEndGame) {
-		_forceEndGame = false;
-		insertTemporaryMessage(_messagesList[18], _countdown - 2);
-		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(2000);
-		gotoArea(1, 26);
-	}
-
-	if (_currentArea->getAreaID() == 1) {
-		rotate(0, 10);
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(20);
-		executeLocalGlobalConditions(false, true, false);
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(200);
-		return true;
-	}
 	return false;
+}
+
+void DarkEngine::endGame() {
+	if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (true /*_countdown <= 0*/) {
+			if (_gameStateVars[kVariableDarkEnding]) {
+				executeLocalGlobalConditions(false, true, false);
+				_gameStateVars[kVariableDarkEnding] = 0;
+				insertTemporaryMessage(_messagesList[22], INT_MIN);
+			}
+		}
+	}
+
+	if (_endGameKeyPressed && _gameStateVars[kVariableDarkEnding] == 0) {
+		//_gameStateControl = kFreescapeGameStateRestart;
+	}
+	_endGameKeyPressed = false;
 }
 
 void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -509,6 +496,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		_yaw = 90;
 		_pitch = 0;
 		playSound(9, true);
+	} else if (areaID == _endArea && entranceID == _endEntrance) {
+		_pitch = 10;
 	} else
 		playSound(5, false);
 
@@ -552,6 +541,8 @@ void DarkEngine::pressedKey(const int keycode) {
 }
 
 void DarkEngine::updateTimeVariables() {
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return;
 	// This function only executes "on collision" room/global conditions
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);

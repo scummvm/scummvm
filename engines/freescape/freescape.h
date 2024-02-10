@@ -73,6 +73,7 @@ enum GameStateControl {
 	kFreescapeGameStatePlaying,
 	kFreescapeGameStateDemo,
 	kFreescapeGameStateEnd,
+	kFreescapeGameStateRestart,
 };
 
 struct CGAPaletteEntry {
@@ -161,7 +162,7 @@ public:
 
 	// Parsing assets
 	uint8 _binaryBits;
-	void loadAssets();
+	virtual void loadAssets();
 	virtual void loadAssetsDemo();
 	virtual void loadAssetsFullGame();
 
@@ -241,6 +242,7 @@ public:
 
 	// Areas
 	uint16 _startArea;
+	uint16 _endArea;
 	AreaMap _areaMap;
 	Area *_currentArea;
 	bool _gotoExecuted;
@@ -249,6 +251,7 @@ public:
 	virtual void gotoArea(uint16 areaID, int entranceID);
 	// Entrance
 	uint16 _startEntrance;
+	uint16 _endEntrance;
 	Common::HashMap<int, const struct entrancesTableEntry *> _entranceTable;
 
 	// Input
@@ -404,6 +407,12 @@ public:
 	Common::StringArray _temporaryMessages;
 	Common::Array<int> _temporaryMessageDeadlines;
 	Common::StringArray _messagesList;
+	Common::String _noShieldMessage;
+	Common::String _noEnergyMessage;
+	Common::String _fallenMessage;
+	Common::String _timeoutMessage;
+	Common::String _forceEndGameMessage;
+	Common::String _crushedMessage;
 
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
 	virtual void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
@@ -429,6 +438,8 @@ public:
 	StateVars _gameStateVars;
 	uint32 _gameStateBits;
 	virtual bool checkIfGameEnded();
+	virtual void endGame();
+	bool _endGameKeyPressed;
 	bool _forceEndGame;
 	bool _playerWasCrushed;
 	ObjectArray _sensors;
