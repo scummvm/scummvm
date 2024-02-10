@@ -1067,7 +1067,7 @@ void Scene::handleInput() {
 				g_nancy->_cursor->warpCursor(input.mousePos);
 			}
 		}
-	} else {
+	} else if (!_activeMovie) {
 		// Check if player has pressed esc
 		if (input.input & NancyInput::kOpenMainMenu) {
 			g_nancy->setState(NancyState::kMainMenu);
@@ -1118,38 +1118,41 @@ void Scene::handleInput() {
 
 	_actionManager.handleInput(input);
 
-	if (_menuButton) {
-		_menuButton->handleInput(input);
+	// Menu/help are disabled when a movie is active
+	if (!_activeMovie) {	
+		if (_menuButton) {
+			_menuButton->handleInput(input);
 
-		if (_menuButton->_isClicked) {
-			if (_buttonPressActivationTime == 0) {
-				auto *bootSummary = GetEngineData(BSUM);
-				assert(bootSummary);
+			if (_menuButton->_isClicked) {
+				if (_buttonPressActivationTime == 0) {
+					auto *bootSummary = GetEngineData(BSUM);
+					assert(bootSummary);
 
-				g_nancy->_sound->playSound("BUOK");
-				_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
-			} else if (g_system->getMillis() > _buttonPressActivationTime) {
-				_menuButton->_isClicked = false;
-				requestStateChange(NancyState::kMainMenu);
-				_buttonPressActivationTime = 0;
+					g_nancy->_sound->playSound("BUOK");
+					_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
+				} else if (g_system->getMillis() > _buttonPressActivationTime) {
+					_menuButton->_isClicked = false;
+					requestStateChange(NancyState::kMainMenu);
+					_buttonPressActivationTime = 0;
+				}
 			}
 		}
-	}
 
-	if (_helpButton) {
-		_helpButton->handleInput(input);
+		if (_helpButton) {
+			_helpButton->handleInput(input);
 
-		if (_helpButton->_isClicked) {
-			if (_buttonPressActivationTime == 0) {
-				auto *bootSummary = GetEngineData(BSUM);
-				assert(bootSummary);
+			if (_helpButton->_isClicked) {
+				if (_buttonPressActivationTime == 0) {
+					auto *bootSummary = GetEngineData(BSUM);
+					assert(bootSummary);
 
-				g_nancy->_sound->playSound("BUOK");
-				_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
-			} else if (g_system->getMillis() > _buttonPressActivationTime) {
-				_helpButton->_isClicked = false;
-				requestStateChange(NancyState::kHelp);
-				_buttonPressActivationTime = 0;
+					g_nancy->_sound->playSound("BUOK");
+					_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
+				} else if (g_system->getMillis() > _buttonPressActivationTime) {
+					_helpButton->_isClicked = false;
+					requestStateChange(NancyState::kHelp);
+					_buttonPressActivationTime = 0;
+				}
 			}
 		}
 	}
