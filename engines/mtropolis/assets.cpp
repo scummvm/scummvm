@@ -211,16 +211,29 @@ template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
 bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, bool isKeyFrame, uint hackFlags) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
+	size_t w = surface.w;
+	size_t h = surface.h;
+
 	size_t size = coefsArray.size();
-	if (size == 0)
-		return false;
+	if (size == 0) {
+		if (isKeyFrame) {
+			TNumber fillColor = 0;
+			if (surface.format.bytesPerPixel > 1)
+				fillColor = surface.format.RGBToColor(0, 0, 0);
+
+			for (size_t y = 0; y < h; y++) {
+				TNumber *rowData = static_cast<TNumber *>(surface.getBasePtr(0, y));
+				for (size_t x = 0; x < w; x++)
+					rowData[x] = fillColor;
+			}
+		}
+		return true;
+	}
 
 	const TNumber *coefs = &coefsArray[0];
 
 	size_t x = 0;
 	size_t y = 0;
-	size_t w = surface.w;
-	size_t h = surface.h;
 
 	if (w != frame.width || h != frame.height)
 		return false;
@@ -370,6 +383,11 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 		RleFrame &rleFrame = _rleData[i];
 
 		size_t baseOffset = frameDef.dataOffset;
+
+		if (frameDef.compressedSize == 0) {
+			rleFrame.isKeyframe = (i == 0);	// ???
+			continue;
+		}
 
 		if (frameDef.compressedSize < 20)
 			error("Invalid compressed data size");
