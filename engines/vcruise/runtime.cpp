@@ -549,7 +549,7 @@ void AD2044MapLoader::unload() {
 
 
 ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false), isEntryScript(false), puzzleWasSet(false),
-	panInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
+	panInteractionID(0), clickInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
 OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)), keymappedEvent(kKeymappedEventNone), timestamp(0) {
@@ -4154,7 +4154,9 @@ bool Runtime::dischargeIdleMouseMove() {
 			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
 			if (script) {
-				activateScript(script, false, ScriptEnvironmentVars());
+				ScriptEnvironmentVars envVars;
+				envVars.clickInteractionID = interactionID;
+				activateScript(script, false, envVars);
 				return true;
 			}
 		}
@@ -4186,6 +4188,7 @@ bool Runtime::dischargeIdleMouseDown() {
 		if (script) {
 			ScriptEnvironmentVars vars;
 			vars.lmbDrag = true;
+			vars.clickInteractionID = _idleInteractionID;
 
 			activateScript(script, false, vars);
 			return true;
@@ -4233,6 +4236,7 @@ bool Runtime::dischargeIdleClick() {
 			if (script) {
 				ScriptEnvironmentVars vars;
 				vars.lmb = true;
+				vars.clickInteractionID = _idleInteractionID;
 
 				activateScript(script, false, vars);
 				return true;

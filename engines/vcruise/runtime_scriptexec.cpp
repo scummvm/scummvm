@@ -34,6 +34,7 @@ struct AD2044UnusualAnimationRules {
 	enum Type {
 		kTypeLoop,	// Loop the animation
 		kTypePlayFirstFrameOnly,
+		kTypeSkip,
 	};
 
 	uint roomNumber;
@@ -44,7 +45,10 @@ struct AD2044UnusualAnimationRules {
 };
 
 AD2044UnusualAnimationRules g_unusualAnimationRules[] = {
-	{87, 0x69, 0xa3, 0xa5, AD2044UnusualAnimationRules::kTypePlayFirstFrameOnly},
+	// Room, screen, interaction, animation lookup ID, rule
+	{87, 0x24, 0xa4, 0xa7, AD2044UnusualAnimationRules::kTypePlayFirstFrameOnly},	// Taking cigarette, don't play box spin
+	{87, 0x68, 0xa3, 0xa5, AD2044UnusualAnimationRules::kTypeLoop},					// Loop lit cigarette animation
+	{87, 0x69, 0xa3, 0xa5, AD2044UnusualAnimationRules::kTypeSkip},					// Taking lit cigarette, don't play cycling animation
 };
 
 #ifdef PEEK_STACK
@@ -2119,6 +2123,19 @@ void Runtime::scriptOpAnimAD2044(bool isForward) {
 	animDef.animNum = animRangeIt->_value.animationNum;
 	animDef.firstFrame = animRangeIt->_value.firstFrame;
 	animDef.lastFrame = animRangeIt->_value.lastFrame;
+
+	for (const AD2044UnusualAnimationRules &unusualAnimRule : g_unusualAnimationRules) {
+		if (static_cast<StackInt_t>(unusualAnimRule.animLookupID) == stackArgs[0] && unusualAnimRule.interactionID == _scriptEnv.clickInteractionID && unusualAnimRule.roomNumber == _roomNumber && unusualAnimRule.screenNumber == _screenNumber) {
+			switch (unusualAnimRule.ruleType) {
+			case AD2044UnusualAnimationRules::kTypePlayFirstFrameOnly:
+				animDef.lastFrame = animDef.firstFrame;
+				break;
+			default:
+				error("Unknown unusual animation rule");
+			}
+			break;
+		}
+	}
 
 	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 

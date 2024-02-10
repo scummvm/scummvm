@@ -179,6 +179,7 @@ struct ScriptEnvironmentVars {
 	ScriptEnvironmentVars();
 
 	uint panInteractionID;
+	uint clickInteractionID;
 	uint fpsOverride;
 	uint lastHighlightedItem;
 	uint animChangeFrameOffset;
