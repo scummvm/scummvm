@@ -223,6 +223,7 @@ void Room701::daemon() {
 		digi_unload_stream_breaks(SERIES5);
 		digi_preload_stream_breaks(SERIES6);
 		series_stream_with_breaks(SERIES5, "703A", 6, 1, 14);
+		pal_fade_init(0, 255, 100, 30, -1);
 		break;
 
 	case 14:
