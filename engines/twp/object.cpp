@@ -299,8 +299,18 @@ void Object::setTouchable(bool value) {
 }
 
 void Object::setIcon(int fps, const Common::StringArray &icons) {
-	_icons = icons;
-	_iconFps = fps;
+	HSQUIRRELVM v = g_engine->getVm();
+	sq_newarray(v, 0);
+	sqpush(v, fps);
+	for (size_t i = 0; i < icons.size(); i++) {
+		sqpush(v, icons[i]);
+		sq_arrayappend(v, -2);
+	}
+	HSQOBJECT array;
+	sq_resetobject(&array);
+	sq_getstackobj(v, -1, &array);
+	sqsetf(_table, "icon", array);
+
 	_iconIndex = 0;
 	_iconElapsed = 0.f;
 }
@@ -332,28 +342,32 @@ private:
 	int _index = 0;
 };
 
-Common::String Object::getIcon() {
-	if (_icons.size() > 0)
-		return _icons[_iconIndex];
+ObjectIcons Object::getIcons() const {
+	ObjectIcons result;
 	HSQOBJECT iconTable;
 	sq_resetobject(&iconTable);
 	sqgetf(_table, "icon", iconTable);
 	if (iconTable._type == OT_NULL) {
-		return "";
+		return result;
 	}
 	if (iconTable._type == OT_STRING) {
-		Common::String result = sq_objtostring(&iconTable);
-		setIcon(result);
+		Common::String icons(sq_objtostring(&iconTable));
+		result.icons.push_back(icons);
 		return result;
 	}
 	if (iconTable._type == OT_ARRAY) {
-		int fps;
-		Common::StringArray icons;
-		sqgetitems(iconTable, GetIcons(fps, icons));
-		setIcon(fps, icons);
-		return getIcon();
+		sqgetitems(iconTable, GetIcons(result.fps, result.icons));
+		return result;
 	}
-	return "";
+	return result;
+}
+
+Common::String Object::getIcon() {
+	ObjectIcons result = getIcons();
+	if(result.icons.empty())
+		return "";
+	_iconIndex = _iconIndex % result.icons.size();
+	return result.icons[_iconIndex];
 }
 
 int Object::getFlags() {
@@ -565,11 +579,12 @@ void Object::update(float elapsedSec) {
 	if (_nodeAnim)
 		_nodeAnim->update(elapsedSec);
 
-	if ((_icons.size() > 1) && (_iconFps > 0)) {
+	ObjectIcons icons = getIcons();
+	if ((icons.icons.size() > 1) && (icons.fps > 0)) {
 		_iconElapsed += elapsedSec;
-		if (_iconElapsed > (1.f / _iconFps)) {
+		if (_iconElapsed > (1.f / icons.fps)) {
 			_iconElapsed = 0.f;
-			_iconIndex = (_iconIndex + 1) % _icons.size();
+			_iconIndex = (_iconIndex + 1) % icons.icons.size();
 		}
 	}
 

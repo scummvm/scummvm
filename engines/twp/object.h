@@ -100,6 +100,11 @@ struct LockFacing {
 	Facing value;
 };
 
+struct ObjectIcons {
+	int fps = 0;
+	Common::StringArray icons;
+};
+
 class Object {
 public:
 	Object();
@@ -156,6 +161,7 @@ public:
 	void setIcon(int fps, const Common::StringArray &icons);
 	void setIcon(const Common::String &icon);
 	Common::String getIcon();
+	ObjectIcons getIcons() const;
 	bool inInventory();
 	void removeInventory(Common::SharedPtr<Object> obj);
 
@@ -256,8 +262,6 @@ public:
 	Common::SharedPtr<Object> _owner;
 	Common::Array<Common::SharedPtr<Object> > _inventory;
 	int _inventoryOffset = 0;
-	Common::StringArray _icons;
-	int _iconFps = 0;
 	int _iconIndex = 0;
 	float _iconElapsed = 0.f;
 	HSQOBJECT _enter, _leave;
