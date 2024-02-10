@@ -198,12 +198,13 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::SharedPtr<Object> obj;
-	if (sq_gettop(v) == 3)
+	if (sq_gettop(v) == 3) {
 		obj = sqobj(v, 3);
-	if (!obj)
-		return sq_throwerror(v, "failed to get object");
-	else
+		if (!obj)
+			return sq_throwerror(v, "failed to get object");
+	} else {
 		obj = g_engine->_actor;
+	}
 	sqpush(v, distance((Vector2i)actor->_node->getPos(), (Vector2i)obj->getUsePos()));
 	return 1;
 }
