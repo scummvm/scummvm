@@ -248,7 +248,7 @@ static void gizmo_daemon(int trigger) {
 		break;
 
 	case 5003:
-		switch (imath_ranged_rand(1, 3)) {
+		switch (imath_ranged_rand(1, 2)) {
 		case 1:
 			digi_play("510b004a", 2, 255, -1);
 			break;
@@ -256,7 +256,6 @@ static void gizmo_daemon(int trigger) {
 			digi_play("510b004b", 2, 255, -1);
 			break;
 		default:
-			digi_play("510b004c", 2, 255, -1);
 			break;
 		}
 
