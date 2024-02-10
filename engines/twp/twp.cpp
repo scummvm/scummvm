@@ -1133,7 +1133,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 
 					if (obj->_objType == otNone)
 						obj->setTouchable(false);
-				} else if (obj->_objType == otNone) {
+				} else {
 					if (pseudo) {
 						// if it's a pseudo room we need to clone each object
 						sqgetf(result->_table, obj->_key, obj->_table);
@@ -1144,7 +1144,9 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 						sq_remove(v, -2);
 						sqsetf(result->_table, obj->_key, obj->_table);
 					}
-					obj->setTouchable(true);
+					if (obj->_objType == otNone) {
+						obj->setTouchable(true);
+					}
 				}
 
 				layerNode->addChild(obj->_node.get());
@@ -1484,7 +1486,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
 	ActorSlot *slot = _hud.actorSlot(actor);
 	Verb *verb = slot->getVerb(verbId.id);
-	Common::String verbFuncName = verb ? verb->fun : slot->getVerb(0)->fun;
+	Common::String verbFuncName = verb ? verb->fun : slot->verbs[0].fun;
 	debugC(kDebugGame, "callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable

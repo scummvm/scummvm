@@ -222,14 +222,9 @@ static void setAnimations(Common::SharedPtr<Object> actor, const Common::JSONArr
 }
 
 static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject &json) {
-	bool touchable = true;
-	if (json.contains("_untouchable"))
-		touchable = json["_untouchable"]->asIntegerNumber() == 0;
-	actor->setTouchable(touchable);
-	bool hidden = false;
-	if (json.contains("_hidden"))
-		hidden = json["_hidden"]->asIntegerNumber() == 1;
-	actor->_node->setVisible(!hidden);
+	actor->setTouchable(json.contains("_untouchable") ? json["_untouchable"]->asIntegerNumber() != 1 : true);
+	actor->_node->setVisible(json.contains("_hidden") ? json["_hidden"]->asIntegerNumber() != 1 : true);
+	actor->_volume = json.contains("_volume") ? json["_volume"]->asNumber() : 1.0f;
 	for (auto it = json.begin(); it != json.end(); it++) {
 		if (it->_key == "_animations") {
 			setAnimations(actor, it->_value->asArray());
@@ -258,9 +253,7 @@ static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject 
 			actor->_node->setRenderOffset(parseVec2(it->_value->asString()));
 		} else if (it->_key == "_roomKey") {
 			Object::setRoom(actor, room(it->_value->asString()));
-		} else if ((it->_key == "_hidden") || (it->_key == "_untouchable")) {
-		} else if (it->_key == "_volume") {
-			actor->_volume = it->_value->asNumber();
+		} else if ((it->_key == "_hidden") || (it->_key == "_untouchable") || (it->_key == "_volume")) {
 		} else {
 			if (!it->_key.hasPrefix("_")) {
 				HSQOBJECT tmp;
@@ -388,6 +381,12 @@ static int32_t computeHash(byte *data, size_t n) {
 }
 
 bool SaveGameManager::loadGame(const SaveGame &savegame) {
+	// dump savegame as json
+	// Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving("load.json", false);
+	// Common::String s = savegame.jSavegame->stringify(true);
+	// saveFile->write(s.c_str(), s.size());
+	// saveFile->finalize();
+
 	const Common::JSONObject &json = savegame.jSavegame->asObject();
 	long long int version = json["version"]->asIntegerNumber();
 	if (version != 2) {
@@ -589,14 +588,14 @@ void SaveGameManager::loadObjects(const Common::JSONObject &json) {
 struct JsonCallback {
 	bool skipObj;
 	bool pseudo;
-	HSQOBJECT* rootTable;
-	Common::JSONObject* jObj;
+	HSQOBJECT *rootTable;
+	Common::JSONObject *jObj;
 };
 
 static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false);
 
 static void fillMissingProperties(const Common::String &k, HSQOBJECT &oTable, void *data) {
-	JsonCallback* params = static_cast<JsonCallback*>(data);
+	JsonCallback *params = static_cast<JsonCallback *>(data);
 	if ((k.size() > 0) && (!k.hasPrefix("_"))) {
 		if (!(params->skipObj && isObject(getId(oTable)) && (params->pseudo || sqrawexists(*params->rootTable, k)))) {
 			Common::JSONValue *json = tojson(oTable, true);
@@ -639,11 +638,11 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 			int id = 0;
 			sqgetf(obj, "_id", id);
 			if (isActor(id)) {
-				Common::SharedPtr<Object> a = actor(id);
+				Common::SharedPtr<Object> a(actor(id));
 				jObj["_actorKey"] = new Common::JSONValue(a->_key);
 				return new Common::JSONValue(jObj);
 			} else if (isObject(id)) {
-				Common::SharedPtr<Object> o = sqobj(id);
+				Common::SharedPtr<Object> o(sqobj(id));
 				if (!o)
 					return new Common::JSONValue();
 				jObj["_objectKey"] = new Common::JSONValue(o->_key);
@@ -651,7 +650,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 					jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
 				return new Common::JSONValue(jObj);
 			} else if (isRoom(id)) {
-				Common::SharedPtr<Room> r = getRoom(id);
+				Common::SharedPtr<Room> r(getRoom(id));
 				jObj["_roomKey"] = new Common::JSONValue(r->_name);
 				return new Common::JSONValue(jObj);
 			}
@@ -712,7 +711,7 @@ static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
 		jActor["_untouchable"] = new Common::JSONValue(1LL);
 	if (!actor->_node->isVisible())
 		jActor["_hidden"] = new Common::JSONValue(1LL);
-	if (actor->_volume != 0.f)
+	if (actor->_volume != 1.f)
 		jActor["_volume"] = new Common::JSONValue(actor->_volume);
 	//   result.fields.sort(cmpKey);
 	return new Common::JSONValue(jActor);
@@ -899,7 +898,7 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 }
 
 static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
-	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
+	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
 	if (isObject(getId(v))) {
 		Common::SharedPtr<Object> obj = sqobj(v);
 		if (!obj || (obj->_objType == otNone)) {
@@ -916,13 +915,13 @@ static Common::JSONValue *createJObjects() {
 	return new Common::JSONValue(json);
 }
 
-static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void* data) {
-	Common::JSONObject* jObj = static_cast<Common::JSONObject*>(data);
+static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void *data) {
+	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
 	if (isObject(getId(v))) {
-			Common::SharedPtr<Object> obj = sqobj(v);
-			// info fmt"pseudoObj: createJObject({k})"
-			(*jObj)[k] = createJObject(v, obj);
-		}
+		Common::SharedPtr<Object> obj(sqobj(v));
+		// info fmt"pseudoObj: createJObject({k})"
+		(*jObj)[k] = createJObject(v, obj);
+	}
 }
 
 static Common::JSONValue *createJPseudoObjects(Common::SharedPtr<Room> room) {
@@ -981,7 +980,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	// dump savegame as json
 	// Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving("save.json", false);
 	// Common::String s = data->stringify(true);
-	// saveFile->write(s.c_str(),s.size());
+	// saveFile->write(s.c_str(), s.size());
 	// saveFile->finalize();
 
 	const uint32 fullSize = 500000;
