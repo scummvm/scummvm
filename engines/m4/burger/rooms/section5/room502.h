@@ -61,7 +61,7 @@ private:
 	machine *_series2 = nullptr;
 	bool _flag1 = false;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _purpleBorkShould = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _destTrigger = 0;

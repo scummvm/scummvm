@@ -28,6 +28,10 @@ namespace Burger {
 namespace Rooms {
 
 enum {
+	kCHANGE_PURPLE_BORK_ANIMATION = 10
+};
+
+enum {
 	kBORK_ON_FAN = 5000,
 	kBORK_SLIDING_DOWN = 5001,
 	kBORK_CLIMBING_STAIRS = 5002
@@ -437,56 +441,56 @@ void Room502::daemon() {
 		if (!_flag1 && !digi_play_state(1)) {
 			_flag1 = true;
 			_series1.terminate();
-			kernel_trigger_dispatch_now(10);
+			kernel_trigger_dispatch_now(kCHANGE_PURPLE_BORK_ANIMATION);
 		} else {
 			kernel_timing_trigger(15, 9);
 		}
 		break;
 
-	case 10:
-		switch (_val3) {
+	case kCHANGE_PURPLE_BORK_ANIMATION:
+		switch (_purpleBorkShould) {
 		case 20:
 			_flag1 = false;
-			_val3 = 21;
-			kernel_trigger_dispatch_now(10);
+			_purpleBorkShould = 21;
+			kernel_trigger_dispatch_now(kCHANGE_PURPLE_BORK_ANIMATION);
 			break;
 
 		case 21:
-			_val3 = imath_ranged_rand(22, 24);
-			kernel_timing_trigger(240, 360);
+			_purpleBorkShould = imath_ranged_rand(22, 24);
+			kernel_timing_trigger(imath_ranged_rand(240, 360), 9);
 			_series1.show("502bk01", 0x400);
 			break;
 
 		case 22:
 			_state1 = imath_ranged_rand(1, 9);
 			_state2 = imath_ranged_rand(1, 9);
-			_val3 = 20;
-			series_play_with_breaks(PLAY11, "502bk01", 0x400, 10, 3);
+			_purpleBorkShould = 20;
+			series_play_with_breaks(PLAY11, "502bk01", 0x400, kCHANGE_PURPLE_BORK_ANIMATION, 3);
 			break;
 
 		case 23:
 			_state1 = imath_ranged_rand(1, 5);
-			_val3 = 20;
-			series_play_with_breaks(PLAY12, "502bk02", 0x400, 10, 3);
+			_purpleBorkShould = 20;
+			series_play_with_breaks(PLAY12, "502bk02", 0x400, kCHANGE_PURPLE_BORK_ANIMATION, 3);
 			break;
 
 		case 24:
-			_val3 = 20;
-			series_play_with_breaks(PLAY15, "502bk01", 0x400, 10, 3);
+			_purpleBorkShould = 20;
+			series_play_with_breaks(PLAY15, "502bk01", 0x400, kCHANGE_PURPLE_BORK_ANIMATION, 3);
 			break;
 
 		case 25:
 			_series1.terminate();
 			_state1 = imath_ranged_rand(1, 2);
-			_val3 = 20;
-			series_play_with_breaks(PLAY13, "502bk03", 0x400, 10, 3);
+			_purpleBorkShould = 20;
+			series_play_with_breaks(PLAY13, "502bk03", 0x400, kCHANGE_PURPLE_BORK_ANIMATION, 3);
 			break;
 
 		case 26:
 			_val2 = 17;
 			_state1 = imath_ranged_rand(1, 3);
-			_val3 = 20;
-			series_play_with_breaks(PLAY14, "502bk04", 0x400, 10, 3);
+			_purpleBorkShould = 20;
+			series_play_with_breaks(PLAY14, "502bk04", 0x400, kCHANGE_PURPLE_BORK_ANIMATION, 3);
 			break;
 
 		default:
@@ -865,7 +869,7 @@ void Room502::parser() {
 			!player_said_any("GIZMO", "ROLLING PIN", "DIRTY SOCK", "SOAPY WATER", "RUBBER GLOVES") &&
 			!player_said("LAXATIVE")) {
 		player_set_commands_allowed(false);
-		_val3 = 26;
+		_purpleBorkShould = 26;
 		++_state4;
 	} else if (player_said("TAKE", "KINDLING ")) {
 		if (!_G(flags)[kFireplaceHasFire] && !inv_player_has("KINDLING")) {
@@ -934,12 +938,12 @@ void Room502::setup1() {
 			series_show("502bk01", 0x400);
 			_series1.show("502bk01", 0x400);
 			_flag1 = true;
-			_val3 = 25;
+			_purpleBorkShould = 25;
 			kernel_timing_trigger(120, 10);
 
 		} else {
-			_val3 = 20;
-			kernel_trigger_dispatch_now(10);
+			_purpleBorkShould = 20;
+			kernel_trigger_dispatch_now(kCHANGE_PURPLE_BORK_ANIMATION);
 		}
 	}
 }
