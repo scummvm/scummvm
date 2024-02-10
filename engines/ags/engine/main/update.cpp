@@ -266,7 +266,7 @@ void update_speech_and_messages() {
 			if (_GP(play).fast_forward > 0) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
 				_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
-			} else if (_GP(play).cant_skip_speech & SKIP_AUTOTIMER) {
+			} else if (_GP(play).speech_skip_style & SKIP_AUTOTIMER) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
 				_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
 				_GP(play).SetIgnoreInput(_GP(play).ignore_user_input_after_text_timeout_ms);

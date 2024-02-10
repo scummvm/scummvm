@@ -209,7 +209,7 @@ static void check_mouse_controls() {
 		} else if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
 			_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
 		} else if (_GP(play).text_overlay_on > 0) {
-			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK) {
+			if (_GP(play).speech_skip_style & SKIP_MOUSECLICK) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
 				_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
 			}
@@ -437,7 +437,7 @@ static void check_keyboard_controls() {
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
+	if ((_GP(play).text_overlay_on > 0) && (_GP(play).speech_skip_style & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress

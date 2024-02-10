@@ -79,7 +79,7 @@ void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const 
 		_GP(topBar).font = _GP(play).top_bar_font;
 
 	// DisplaySpeech normally sets this up, but since we're not going via it...
-	if (_GP(play).cant_skip_speech & SKIP_AUTOTIMER)
+	if (_GP(play).speech_skip_style & SKIP_AUTOTIMER)
 		_GP(play).messagetime = GetTextDisplayTime(text);
 
 	DisplayAtY(_GP(play).top_bar_ypos, text);
@@ -194,11 +194,11 @@ void SetSkipSpeech(SkipSpeechStyle newval) {
 		quit("!SetSkipSpeech: invalid skip mode specified");
 
 	debug_script_log("SkipSpeech style set to %d", newval);
-	_GP(play).cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)newval);
+	_GP(play).speech_skip_style = user_to_internal_skip_speech((SkipSpeechStyle)newval);
 }
 
 SkipSpeechStyle GetSkipSpeech() {
-	return internal_skip_speech_to_user(_GP(play).cant_skip_speech);
+	return internal_skip_speech_to_user(_GP(play).speech_skip_style);
 }
 
 } // namespace AGS3
