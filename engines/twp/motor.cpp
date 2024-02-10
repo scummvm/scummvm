@@ -425,7 +425,7 @@ void Talking::say(const Common::String &text) {
 
 	// modify state ?
 	Common::String state;
-	if (txt[0] == '{') {
+	if (!txt.empty() && txt[0] == '{') {
 		int i = txt.find('}');
 		if (i != -1) {
 			state = txt.substr(1, txt.size() - 2);
