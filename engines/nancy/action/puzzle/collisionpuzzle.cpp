@@ -129,43 +129,57 @@ void CollisionPuzzle::registerGraphics() {
 }
 
 void CollisionPuzzle::updateGraphics() {
-	if (_state == kRun && _currentlyAnimating != -1) {
-		// Framerate-dependent animation. Should be fine since we limit the engine to ~60fps
-		++_currentAnimFrame;
-		bool horizontal = _lastPosition.x != _pieces[_currentlyAnimating]._gridPos.x;
-		int diff = horizontal ?
-				_lastPosition.x - _pieces[_currentlyAnimating]._gridPos.x :
-				_lastPosition.y - _pieces[_currentlyAnimating]._gridPos.y;
+	if (_state == kRun) {
+		if (_timerSrcs.size()) {
+			uint32 currentTime = g_nancy->getTotalPlayTime() - _puzzleStartTime;
+			int graphicForTime = currentTime / ((_timerTime * 1000) / _timerSrcs.size());
+			if (graphicForTime != _currentTimerGraphic) {
+				_drawSurface.fillRect(_timerDest, _drawSurface.getTransparentColor());
+				_drawSurface.blitFrom(_image, _timerSrcs[graphicForTime], _timerDest);
+				_needsRedraw = true;
+				_currentTimerGraphic = graphicForTime;
+				NancySceneState.setEventFlag(_timerFlagIds[graphicForTime], g_nancy->_true);
+			}
+		}
 
-		int maxFrames = _framesPerMove * abs(diff);
-		if (_currentAnimFrame > maxFrames) {
-			if (_puzzleType == kCollision && _grid[_pieces[_currentlyAnimating]._gridPos.y][_pieces[_currentlyAnimating]._gridPos.x] == _currentlyAnimating + 1) {
-				g_nancy->_sound->playSound(_homeSound);
-			} else {
-				g_nancy->_sound->playSound(_wallHitSound);
+		if (_currentlyAnimating != -1) {
+			// Framerate-dependent animation. Should be fine since we limit the engine to ~60fps
+			++_currentAnimFrame;
+			bool horizontal = _lastPosition.x != _pieces[_currentlyAnimating]._gridPos.x;
+			int diff = horizontal ?
+					_lastPosition.x - _pieces[_currentlyAnimating]._gridPos.x :
+					_lastPosition.y - _pieces[_currentlyAnimating]._gridPos.y;
+
+			int maxFrames = _framesPerMove * abs(diff);
+			if (_currentAnimFrame > maxFrames) {
+				if (_puzzleType == kCollision && _grid[_pieces[_currentlyAnimating]._gridPos.y][_pieces[_currentlyAnimating]._gridPos.x] == _currentlyAnimating + 1) {
+					g_nancy->_sound->playSound(_homeSound);
+				} else {
+					g_nancy->_sound->playSound(_wallHitSound);
+				}
+
+				_currentlyAnimating = -1;
+				_currentAnimFrame = -1;
+				return;
 			}
 
-			_currentlyAnimating = -1;
-			_currentAnimFrame = -1;
-			return;
+			Common::Rect destRect = getScreenPosition(_lastPosition);
+			Common::Rect endPos = getScreenPosition(_pieces[_currentlyAnimating]._gridPos);
+
+			if (_lineWidth == 6) {
+				destRect.translate(-1, 0); // Improvement
+				endPos.translate(-1, 0); // Improvement
+			}
+
+			Common::Point dest(destRect.left, destRect.top);
+			if (horizontal) {
+				dest.x = destRect.left + (endPos.left - dest.x) * _currentAnimFrame / maxFrames;
+			} else {
+				dest.y = destRect.top + (endPos.top - dest.y) * _currentAnimFrame / maxFrames;
+			}
+
+			_pieces[_currentlyAnimating].moveTo(dest);
 		}
-
-		Common::Rect destRect = getScreenPosition(_lastPosition);
-		Common::Rect endPos = getScreenPosition(_pieces[_currentlyAnimating]._gridPos);
-
-		if (_lineWidth == 6) {
-			destRect.translate(-1, 0); // Improvement
-			endPos.translate(-1, 0); // Improvement
-		}
-
-		Common::Point dest(destRect.left, destRect.top);
-		if (horizontal) {
-			dest.x = destRect.left + (endPos.left - dest.x) * _currentAnimFrame / maxFrames;
-		} else {
-			dest.y = destRect.top + (endPos.top - dest.y) * _currentAnimFrame / maxFrames;
-		}
-
-		_pieces[_currentlyAnimating].moveTo(dest);
 	}
 }
 
@@ -210,6 +224,12 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, _blockSrc);
 	} else {
 		readRectArray(stream, _pieceSrcs, 6);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy8) {
+			_usesExitButton = stream.readByte();
+			readRect(stream, _exitButtonSrc);
+			readRect(stream, _exitButtonDest);
+		}
 	}
 
 	_gridPos.x = stream.readUint32LE();
@@ -218,13 +238,28 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	_lineWidth = stream.readUint16LE();
 	_framesPerMove = stream.readUint16LE();
 
-	stream.skip(3);
+	if (g_nancy->getGameType() <= kGameTypeNancy7) {
+		stream.skip(3);
+	} else if (_puzzleType == kTileMove) {
+		uint16 numTimerGraphics = stream.readUint16LE();
+		_timerTime = stream.readUint32LE();
+		readRectArray(stream, _timerSrcs, numTimerGraphics, 10);
+		_timerFlagIds.resize(numTimerGraphics);
+		for (uint i = 0; i < numTimerGraphics; ++i) {
+			_timerFlagIds[i] = stream.readSint16LE();
+		}
+		stream.skip((10 - numTimerGraphics) * 2);
+		readRect(stream, _timerDest);
+	}	
 
 	_moveSound.readNormal(stream);
 	if (_puzzleType == kCollision) {
 		_homeSound.readNormal(stream);
 	}
 	_wallHitSound.readNormal(stream);
+	if (_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy8) {
+		_exitButtonSound.readNormal(stream);
+	}
 
 	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
@@ -247,6 +282,14 @@ void CollisionPuzzle::execute() {
 	case kRun :
 		if (_currentlyAnimating != -1) {
 			return;
+		}
+
+		// Check timer
+		if (_timerSrcs.size()) {
+			if ((g_nancy->getTotalPlayTime() - _puzzleStartTime) > _timerTime * 1000) {
+				_state = kActionTrigger;
+				return;
+			}
 		}
 
 		if (_puzzleType == kCollision) {
@@ -292,6 +335,9 @@ void CollisionPuzzle::execute() {
 				NancySceneState.changeScene(_solveScene._sceneChange);
 			}			
 		} else {
+			if (g_nancy->_sound->isSoundPlaying(_exitButtonSound)) {
+				return;
+			}
 			_exitScene.execute();
 		}
 
@@ -516,13 +562,28 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+	if (_usesExitButton) {
+		if (NancySceneState.getViewport().convertViewportToScreen(_exitButtonDest).contains(input.mousePos)) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			_state = kActionTrigger;
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_drawSurface.blitFrom(_image, _exitButtonSrc, _exitButtonDest);
+				_needsRedraw = true;
+				g_nancy->_sound->loadSound(_exitButtonSound);
+				g_nancy->_sound->playSound(_exitButtonSound);
+				_state = kActionTrigger;
+			}
+			return;
 		}
-		return;
+	} else {
+		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+			g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_state = kActionTrigger;
+			}
+			return;
+		}
 	}
 
 	if (_currentlyAnimating != -1) {

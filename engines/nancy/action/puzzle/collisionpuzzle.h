@@ -88,14 +88,24 @@ protected:
 	Common::Point _tileMoveExitPos = Common::Point(-1, -1);
 	uint _tileMoveExitSize = 0;
 
+	bool _usesExitButton = false;
+	Common::Rect _exitButtonSrc;
+	Common::Rect _exitButtonDest;
+
 	Common::Point _gridPos;
 
 	uint16 _lineWidth = 0;
 	uint16 _framesPerMove = 0;
 
+	uint32 _timerTime = 0; // in seconds
+	Common::Array<Common::Rect> _timerSrcs;
+	Common::Array<int16> _timerFlagIds;
+	Common::Rect _timerDest;
+
 	SoundDescription _moveSound;
 	SoundDescription _homeSound;
 	SoundDescription _wallHitSound;
+	SoundDescription _exitButtonSound;
 
 	SceneChangeWithFlag _solveScene;
 	uint16 _solveSoundDelay = 0;
@@ -113,6 +123,9 @@ protected:
 
 	uint32 _solveSoundPlayTime = 0;
 	bool _solved = false;
+
+	uint32 _puzzleStartTime = 0;
+	int _currentTimerGraphic = -1;
 	
 	PuzzleType _puzzleType;
 };
