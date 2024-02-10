@@ -60,15 +60,11 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 
 	if (!success) {
 #if defined (USE_THEORADEC)
-		Common::Path theoraFilename(filename);
-
-		Common::String baseName(theoraFilename.baseName());
+		Common::String baseName(filename);
 		baseName.erase(baseName.size() - 4);
 		baseName += ".ogv";
 
-		theoraFilename = "MoviesHD";
-		theoraFilename.join(theoraFilename.getParent());
-		theoraFilename.appendComponent(baseName);
+		Common::Path theoraFilename(Common::Path("MoviesHD").appendComponent(baseName));
 
 		debug(2, "Trying to open %s", theoraFilename.toString().c_str());
 		success = _theoraDecoder->loadFile(theoraFilename);
