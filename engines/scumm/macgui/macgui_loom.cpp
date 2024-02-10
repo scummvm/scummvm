@@ -636,7 +636,7 @@ bool MacLoomGui::runOptionsDialog() {
 	int scrolling = _vm->_snapScroll == 0;
 	int fullAnimation = _vm->VAR(_vm->VAR_MACHINE_SPEED) == 1 ? 0 : 1;
 	int textSpeed = _vm->_defaultTextSpeed;
-	int musicQuality = _vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2;
+	int musicQuality = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 0 : (_vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2);
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -725,9 +725,9 @@ bool MacLoomGui::runOptionsDialog() {
 		// value for VAR_SOUNDCARD...
 		_vm->VAR(_vm->VAR_SOUNDCARD) = window->getWidgetValue(12) == 0 ? 10 : 11;
 		((Player_V3M *)_vm->_musicEngine)->overrideQuality(_vm->VAR(_vm->VAR_SOUNDCARD) == 10);
+		ConfMan.setBool("mac_v3_low_quality_music", _vm->VAR(_vm->VAR_SOUNDCARD) == 10);
 
 		debug(6, "MacLoomGui::runOptionsDialog(): music quality: %d - unimplemented!", window->getWidgetValue(12));
-
 
 		_vm->syncSoundSettings();
 		ConfMan.flushToDisk();
