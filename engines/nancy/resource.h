@@ -37,8 +37,8 @@ class ResourceManager {
 	friend class NancyConsole;
 	friend class NancyEngine;
 public:
-	ResourceManager() {}
-	~ResourceManager();
+	ResourceManager() = default;
+	~ResourceManager() = default;
 
 	// Load an image resource. Can be either external .bmp file, or raw image data embedded inside a ciftree
 	// Ciftree images may have additional data dictating how they need to be blitted on screen (see ConversationCel).

@@ -71,8 +71,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_sound = new SoundManager();
 	_graphics = new GraphicsManager();
 	_cursor = new CursorManager();
-
-	_resource = nullptr;
+	_resource = new ResourceManager();
 
 	_hasJustSaved = false;
 }
@@ -94,6 +93,7 @@ NancyEngine::~NancyEngine() {
 	delete _cursor;
 	delete _input;
 	delete _sound;
+	delete _resource;
 
 	for (auto &data : _engineData) {
 		delete data._value;
@@ -398,7 +398,6 @@ void NancyEngine::bootGameEngine() {
 		}
 	}
 
-	_resource = new ResourceManager();
 	_resource->readCifTree("ciftree", "dat", 1);
 	_resource->readCifTree("promotree", "dat", 1);
 
