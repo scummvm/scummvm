@@ -123,27 +123,31 @@ HError DataExtReader::Read() {
 
 // Generic function that saves a block and automatically adds its size into header
 void WriteExtBlock(int block, const String &ext_id, const PfnWriteExtBlock &writer, int flags, Stream *out) {
+	const bool is_id32 = (flags & kDataExt_NumID32) != 0;
+	// 64-bit file offsets are written for blocks with ext_id, OR File64 flag
+	const bool is_file64 = (block == 0) || ((flags & kDataExt_File64) != 0);
 	// Write block's header
-	(flags & kDataExt_NumID32) != 0 ?
+	is_id32 != 0 ?
 		out->WriteInt32(block) :
 		out->WriteInt8(static_cast<int8_t>(block));
 	if (block == 0) // new-style string id
 		ext_id.WriteCount(out, 16);
 	soff_t sz_at = out->GetPosition();
 	// block size placeholder
-	((flags & kDataExt_File64) != 0) ?
+	is_file64 ?
 		out->WriteInt64(0) :
 		out->WriteInt32(0);
+	soff_t start_at = out->GetPosition();
 
 	// Call writer to save actual block contents
 	writer(out);
 
 	// Now calculate the block's size...
 	soff_t end_at = out->GetPosition();
-	soff_t block_size = (end_at - sz_at) - sizeof(int64_t);
+	soff_t block_size = (end_at - start_at);
 	// ...return back and write block's size in the placeholder
 	out->Seek(sz_at, Shared::kSeekBegin);
-	((flags & kDataExt_File64) != 0) ?
+	is_file64 ?
 		out->WriteInt64(block_size) :
 		out->WriteInt32((int32_t)block_size);
 	// ...and get back to the end of the file
