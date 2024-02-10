@@ -436,7 +436,7 @@ void LB::b_power(int nargs) {
 	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum res(pow(d2.asFloat(), d1.asFloat()));
-	g_lingo->push(d1);
+	g_lingo->push(res);
 }
 
 void LB::b_random(int nargs) {
