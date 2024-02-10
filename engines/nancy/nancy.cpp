@@ -635,6 +635,8 @@ void NancyEngine::readDatFile() {
 	datFile->seek(thisGameOffset);
 
 	_staticData.readData(*datFile, _gameDescription->desc.language, nextGameOffset, major, minor);
+
+	delete datFile;
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
