@@ -48,6 +48,8 @@ Shared::Bitmap *create_textual_image(const char *text, int asspch, int isThought
 ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
 	int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer = false);
 void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);
+// Cleans up display message state
+void post_display_cleanup();
 // Tests the given string for the voice-over tags and plays cue clip for the given character;
 // will assign replacement string, which will be blank string if game is in "voice-only" mode
 // and clip was started, or string cleaned from voice-over tags which is safe to display on screen.
