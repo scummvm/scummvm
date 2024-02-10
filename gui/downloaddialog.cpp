@@ -160,7 +160,7 @@ bool DownloadDialog::selectDirectories() {
 
 	//make a local path
 	Common::Path localPath = dir.getPath();
-	localPath.appendComponent(remoteDirectory.name());
+	localPath = localPath.appendComponent(remoteDirectory.name());
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
 	CloudMan.setDownloadTarget(this);
