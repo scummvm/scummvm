@@ -599,7 +599,19 @@ void Object::update(float elapsedSec) {
 
 void Object::pickupObject(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	obj->_owner.reset(actor);
-	actor->_inventory.push_back(obj);
+	int inventory_slot = -1;
+	if(sqrawexists(obj->_table, "inventory_slot")) {
+		sqgetf(obj->_table, "inventory_slot", inventory_slot);
+		inventory_slot--;
+		if(inventory_slot >= actor->_inventory.size()) {
+			inventory_slot = -1;
+		}
+	}
+	if(inventory_slot == -1) {
+		actor->_inventory.push_back(obj);
+	} else {
+		actor->_inventory[inventory_slot] = obj;
+	}
 
 	sqcall("onPickup", obj->_table, actor->_table);
 

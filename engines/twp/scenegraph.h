@@ -158,7 +158,7 @@ struct ObjectAnimation;
 class Object;
 class Anim : public Node {
 public:
-	Anim(Object* obj);
+	Anim(Object *obj);
 
 	void clearFrames();
 	void setAnim(const ObjectAnimation *anim, float fps = 0.f, bool loop = false, bool instant = false);
@@ -176,7 +176,7 @@ public:
 private:
 	Common::String _sheet;
 	Common::Array<Common::String> _frames;
-    size_t _frameIndex = 0;
+	size_t _frameIndex = 0;
 	float _elapsed = 0.f;
 	float _frameDuration = 0.f;
 	bool _loop = false;
@@ -220,14 +220,13 @@ public:
 };
 
 enum class CursorShape {
-    Normal,
-    Front,
-    Back,
-    Left,
-    Right,
-    Pause
+	Normal,
+	Front,
+	Back,
+	Left,
+	Right,
+	Pause
 };
-
 
 enum InputStateFlag {
 	II_FLAGS_UI_INPUT_ON = 1,
@@ -271,11 +270,11 @@ private:
 
 public:
 	bool _inputHUD = false;
-    bool _inputActive = false;
-    bool _showCursor = false;
-    bool _inputVerbsActive = false;
-    CursorShape _cursorShape = CursorShape::Normal;
-    bool _hotspot = false;
+	bool _inputActive = false;
+	bool _showCursor = false;
+	bool _inputVerbsActive = false;
+	CursorShape _cursorShape = CursorShape::Normal;
+	bool _hotspot = false;
 };
 
 class OverlayNode final : public Node {
@@ -292,13 +291,13 @@ private:
 	Color _ovlColor;
 };
 
-class Inventory: public Node {
+class Inventory : public Node {
 public:
 	Inventory();
-	void update(float elapsed, Common::SharedPtr<Object>  actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
+	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
 
-	Common::SharedPtr<Object>  getObject() const { return _obj; }
-	Math::Vector2d getPos(Common::SharedPtr<Object>  inv) const;
+	Common::SharedPtr<Object> getObject() const { return _obj; }
+	Math::Vector2d getPos(Common::SharedPtr<Object> inv) const;
 
 	void setVisible(bool visible) override;
 
@@ -307,13 +306,13 @@ private:
 	void drawArrows(Math::Matrix4 trsf);
 	void drawBack(Math::Matrix4 trsf);
 	void drawItems(Math::Matrix4 trsf);
-	void drawSprite(SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
+	void drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 
 private:
-	Common::SharedPtr<Object>  _actor;
-    Color _backColor, _verbNormal;
-    bool _down = false;
-    Common::SharedPtr<Object>  _obj;
+	Common::SharedPtr<Object> _actor;
+	Color _backColor, _verbNormal;
+	bool _down = false;
+	Common::SharedPtr<Object> _obj;
 	Common::Rect _itemRects[NUMOBJECTS];
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;
@@ -322,12 +321,12 @@ private:
 	bool _fadeIn = false;
 };
 
-class SentenceNode: public Node {
+class SentenceNode : public Node {
 public:
 	SentenceNode();
 	virtual ~SentenceNode();
 
-	void setText(const Common::String& text);
+	void setText(const Common::String &text);
 
 private:
 	void drawCore(Math::Matrix4 trsf) override final;
@@ -336,12 +335,12 @@ private:
 	Common::String _text;
 };
 
-class SpriteNode: public Node {
+class SpriteNode : public Node {
 public:
 	SpriteNode();
 	virtual ~SpriteNode();
 
-	void setSprite(const Common::String& sheet, const Common::String& frame);
+	void setSprite(const Common::String &sheet, const Common::String &frame);
 
 private:
 	void drawCore(Math::Matrix4 trsf) override final;
@@ -351,7 +350,7 @@ private:
 	Common::String _frame;
 };
 
-class NoOverrideNode: public Node {
+class NoOverrideNode : public Node {
 public:
 	NoOverrideNode();
 	virtual ~NoOverrideNode();
@@ -364,13 +363,13 @@ private:
 	float _elapsed = 0.f;
 };
 
-class HotspotMarkerNode: public Node {
+class HotspotMarkerNode : public Node {
 public:
 	HotspotMarkerNode();
 	virtual ~HotspotMarkerNode();
 
 private:
-	void drawSprite(const SpriteSheetFrame& sf, Texture* texture, Color color, Math::Matrix4 trsf);
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 	void drawCore(Math::Matrix4 trsf) override final;
 };
 
