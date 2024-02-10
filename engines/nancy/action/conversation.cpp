@@ -856,6 +856,8 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 		// 4 unknown values
 		xsheet->skip(8);
 	}
+
+	delete xsheet;
 }
 
 bool ConversationCel::isVideoDonePlaying() {
