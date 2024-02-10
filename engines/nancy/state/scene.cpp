@@ -756,7 +756,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 UI::Clock *Scene::getClock() {
 	auto *clok = GetEngineData(CLOK);
-	if (clok->clockIsDisabled || clok->clockIsDay) {
+	if (!clok || clok->clockIsDisabled || clok->clockIsDay) {
 		return nullptr;
 	} else {
 		return (UI::Clock *)_clock;
