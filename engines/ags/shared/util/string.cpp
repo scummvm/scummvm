@@ -89,7 +89,7 @@ bool String::IsNullOrSpace() const {
 	if (_len == 0)
 		return true;
 	for (const char *ptr = _cstr; *ptr; ++ptr) {
-		if (!Common::isSpace(*ptr))
+		if (!Common::isSpace(static_cast<uint8_t>(*ptr)))
 			return false;
 	}
 	return true;
