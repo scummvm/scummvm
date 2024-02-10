@@ -194,7 +194,7 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 
 		filestream_printf(playlistFile, playlistElement.c_str(), separator, hookFilePath.c_str(), title.c_str());
 
-		if (isFirstEntry && !ConfMan.getInt("libretro_playlist_version", _domain) == kPlaylistFormat6lines) {
+		if (isFirstEntry && ConfMan.getInt("libretro_playlist_version", _domain) != kPlaylistFormat6lines) {
 			*separator = ',';
 			isFirstEntry = false;
 		}
