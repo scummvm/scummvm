@@ -554,7 +554,7 @@ void TwpEngine::update(float elapsed) {
 	// update tasks
 	Common::Array<Common::SharedPtr<Task> > tasks(_tasks);
 	Common::Array<Common::SharedPtr<Task> > tasksToRemove;
-	for (auto it = _tasks.begin(); it != _tasks.end();) {
+	for (auto it = tasks.begin(); it != tasks.end();) {
 		Common::SharedPtr<Task> task(*it);
 		if (task->update(elapsed)) {
 			tasksToRemove.push_back(task);
