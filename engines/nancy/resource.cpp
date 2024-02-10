@@ -171,6 +171,7 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 
 	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat());
 	delete[] buf;
+	delete stream;
 	return true;
 }
 
