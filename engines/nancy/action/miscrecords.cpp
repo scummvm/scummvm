@@ -102,19 +102,29 @@ void LightningOn::execute() {
 }
 
 void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
-	uint16 size = stream.readUint16LE();
+	int16 size = stream.readSint16LE();
 
 	if (size > 10000) {
 		error("Action Record atTextboxWrite has too many text box chars: %d", size);
 	}
+	
+	if (size == -1) {
+		Common::String stringID;
+		readFilename(stream, stringID);
+		
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		assert(autotext);
 
-	char *buf = new char[size];
-	stream.read(buf, size);
-	buf[size - 1] = '\0';
+		_text = autotext->texts[stringID];
+	} else {
+		char *buf = new char[size];
+		stream.read(buf, size);
+		buf[size - 1] = '\0';
 
-	assembleTextLine(buf, _text, size);
+		assembleTextLine(buf, _text, size);
 
-	delete[] buf;
+		delete[] buf;
+	}
 }
 
 void TextBoxWrite::execute() {
