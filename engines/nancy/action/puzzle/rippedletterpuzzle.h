@@ -59,6 +59,10 @@ public:
 	Common::Array<byte> _initRotations;
 	Common::Array<int8> _solveOrder;
 	Common::Array<byte> _solveRotations;
+	Common::Array<int8> _solveOrderAlt;
+	Common::Array<byte> _solveRotationsAlt;
+	Common::Array<Common::Array<byte>> _doubles;
+	bool _useAltSolution = false;
 
 	bool _useCustomPickUpTile = false;
 	Common::Rect _customPickUpTileSrc;
@@ -73,6 +77,8 @@ public:
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
+	int16 _customCursorID = -1;
+
 	Misc::MouseFollowObject _pickedUpPiece;
 	int8 _pickedUpPieceID = -1;
 	byte _pickedUpPieceRot = 0;
@@ -86,6 +92,7 @@ protected:
 	bool isViewportRelative() const override { return true; }
 
 	void drawPiece(const uint pos, const byte rotation, const int pieceID = -1);
+	bool checkOrder(bool useAlt);
 };
 
 } // End of namespace Action

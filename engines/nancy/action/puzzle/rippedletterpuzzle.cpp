@@ -76,15 +76,18 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 		height = stream.readByte();
 	}
 
+	// All the checks for whether width is greater than maxWidth are
+	// to account for nancy9 scene 2428, where the dimensions are 15x1
+
 	for (uint i = 0; i < height; ++i) {
 		readRectArray(stream, _srcRects, width, maxWidth);
 	}
-	stream.skip((maxHeight - height) * maxWidth * 16);
+	stream.skip((maxWidth >= width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * 16);
 
 	for (uint i = 0; i < height; ++i) {
 		readRectArray(stream, _destRects, width, maxWidth);
 	}
-	stream.skip((maxHeight - height) * maxWidth * 16);
+	stream.skip((maxWidth >= width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * 16);
 
 	readRect(stream, _rotateHotspot);
 	readRect(stream, _takeHotspot);
@@ -94,41 +97,79 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 		_rotationType = (RotationType)stream.readUint16LE();
 	}
 
+	uint elemSize = g_nancy->getGameType() <= kGameTypeNancy8 ? 1 : 2;
+
 	_initOrder.resize(width * height);
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
-			_initOrder[i * width + j] = stream.readByte();
+			_initOrder[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
 		}
-		stream.skip((maxWidth - width));
+		stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
 	}
-	stream.skip((maxHeight - height) * maxWidth);
+	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
 	_initRotations.resize(width * height);
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
-			_initRotations[i * width + j] = stream.readByte();
+			_initRotations[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
 		}
-		stream.skip((maxWidth - width));
+		stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
 	}
-	stream.skip((maxHeight - height) * maxWidth);
+	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy9) {
+		uint16 numDoubledElements = stream.readUint16LE();
+		_doubles.resize(numDoubledElements);
+		uint i = 0;
+		for (uint j = 0; j < 20; ++j) {
+			int16 id = stream.readSint16LE();
+			if (id == -1) {
+				++i;
+			} else {
+				_doubles[i].push_back(id);
+			}
+		}
+	}
 
 	_solveOrder.resize(width * height);
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
-			_solveOrder[i * width + j] = stream.readByte();
+			_solveOrder[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
 		}
-		stream.skip((maxWidth - width));
+		stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
 	}
-	stream.skip((maxHeight - height) * maxWidth);
+	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
 	_solveRotations.resize(width * height);
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
-			_solveRotations[i * width + j] = stream.readByte();
+			_solveRotations[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
 		}
-		stream.skip((maxWidth - width));
+		stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
 	}
-	stream.skip((maxHeight - height) * maxWidth);
+	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy9) {
+		_useAltSolution = stream.readByte();
+
+		_solveOrderAlt.resize(width * height);
+		for (uint i = 0; i < height; ++i) {
+			for (uint j = 0; j < width; ++j) {
+				_solveOrderAlt[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
+			}
+			stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
+		}
+		stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
+
+		_solveRotationsAlt.resize(width * height);
+		for (uint i = 0; i < height; ++i) {
+			for (uint j = 0; j < width; ++j) {
+				_solveRotationsAlt[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
+			}
+			stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
+		}
+		stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
+	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy7) {
 		_useCustomPickUpTile = stream.readByte();
@@ -144,6 +185,10 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy9) {
+		_customCursorID = stream.readSint16LE();
+	}
 }
 
 void RippedLetterPuzzle::execute() {
@@ -174,8 +219,14 @@ void RippedLetterPuzzle::execute() {
 		switch (_solveState) {
 		case kNotSolved :
 			for (uint i = 0; i < _puzzleState->order.size(); ++i) {
-				if (_puzzleState->order[i] != _solveOrder[i] || _puzzleState->rotations[i] != _solveRotations[i]) {
-					return;
+				if (_puzzleState->rotations[i] != _solveRotations[i] || !checkOrder(false)) {
+					if (_useAltSolution) {
+						if (!checkOrder(true)) {
+							return;
+						}
+					} else {
+						return;
+					}
 				}
 			}
 
@@ -199,6 +250,10 @@ void RippedLetterPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
+			if (_solveExitScene._sceneChange.sceneID == NancySceneState.getSceneInfo().sceneID) {
+				// nancy9 scene 2484 is auto-solved for you, but has a valid scene change back to itself
+				return;
+			}
 			_solveExitScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			break;
@@ -212,7 +267,7 @@ void RippedLetterPuzzle::execute() {
 }
 
 void RippedLetterPuzzle::handleInput(NancyInput &input) {
-	if (_state != kRun && _solveState != kNotSolved) {
+	if (_state == kBegin) {
 		return;
 	}
 
@@ -325,7 +380,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 	if (_pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+			g_nancy->_cursor->setCursorType(_customCursorID != -1 ? (CursorManager::CursorType)_customCursorID : g_nancy->_cursor->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit
@@ -349,6 +404,51 @@ void RippedLetterPuzzle::drawPiece(const uint pos, const byte rotation, const in
 	Graphics::ManagedSurface srcSurf(_image, _srcRects[pieceID]);
 	Graphics::ManagedSurface destSurf(_drawSurface, _destRects[pos]);
 	GraphicsManager::rotateBlit(srcSurf, destSurf, rotation);
+}
+
+bool RippedLetterPuzzle::checkOrder(bool useAlt) {
+	auto &current = _puzzleState->order;
+	auto &correct = useAlt ? _solveOrderAlt : _solveOrder;
+
+	if (!_doubles.size()) {
+		return current == correct;
+	}
+
+	for (uint i = 0; i < current.size(); ++i) {
+		bool foundCorrect = false;
+		bool isDoubled = false;
+		for (auto &d : _doubles) {
+			for (byte e : d) {
+				if (current[i] == e) {
+					isDoubled = true;
+					break;
+				}
+			}
+
+			if (isDoubled) {
+				for (byte e : d) {
+					if (correct[i] == e) {
+						foundCorrect = true;
+						break;
+					}
+				}
+
+				if (!foundCorrect) {
+					return false;
+				}
+
+				break;
+			}
+		}
+
+		if (!isDoubled) {
+			if (current[i] != correct[i]) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Action
