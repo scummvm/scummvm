@@ -470,6 +470,12 @@ void Macs2Engine::readResourceFile() {
 	// Load the stick
 	file.seek(0x00708410);
 	_stick.ReadFromeFile(file);
+
+	file.seek(0x000d4fbd);
+	// TODO: Figure out where the number comes from
+	byte *adlibData = new byte[15610];
+	file.read(adlibData, 15610);
+	_adlib->data = new Common::MemoryReadStream(adlibData, 15610);
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -763,7 +769,7 @@ void Macs2Engine::PlaySound() {
 	_opl->writeReg(0x388, 0x20);
 	_opl->writeReg(0x389, 0x20); */
 	// initialize();
-	_opl->writeReg(0x20, 0x01);
+	/* _opl->writeReg(0x20, 0x01);
 	_opl->writeReg(0x40, 0x10);
 	_opl->writeReg(0x60, 0xF0);
 	_opl->writeReg(0x80, 0x77);
@@ -771,7 +777,7 @@ void Macs2Engine::PlaySound() {
 	_opl->writeReg(0x23, 0x01);
 	_opl->writeReg(0x43, 0x00);
 	_opl->writeReg(0x63, 0xF0);
-	_opl->writeReg(0x83, 0x77);
+	_opl->writeReg(0x83, 0x77); */
 	// _opl->writeReg(0xB0, 0x31);
 
 	/*
@@ -829,7 +835,7 @@ void Macs2Engine::ScriptPrintString(Common::MemoryReadStream *stream) {
 }
 
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
-	PlaySound();
+	// PlaySound();
 
 	// Implements roughly 01E7:DB56 and friends
 	// TODO: Change to a proper end condition
