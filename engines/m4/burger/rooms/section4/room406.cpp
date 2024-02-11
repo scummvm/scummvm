@@ -1431,7 +1431,7 @@ void Room406::pre_parser() {
 			}
 
 			if (_hotspot->feet_x > _hotspot->feet_y ||
-					(_hotspot->feet_y == 0x7fff && _G(click_y) > tabooAreaY(_G(click_x))))
+					(_hotspot->feet_y == 0x7fff && tabooAreaY(_G(click_x)) > _G(click_y)))
 				player_walk_to(_hotspot->feet_x, tabooAreaY(_hotspot->feet_x) + 1);
 		}
 	}
@@ -1513,13 +1513,13 @@ void Room406::setHotspots2() {
 		hotspot_set_active("LOCK", false);
 		hotspot_set_active("CHAIN", false);
 		hotspot_set_active("RAZOR WIRE ", false);
-		hotspot_set_active("YARD", true);
+		hotspot_set_active("YARD ", true);
 	} else {
 		hotspot_set_active("GATE", true);
 		hotspot_set_active("LOCK", true);
 		hotspot_set_active("CHAIN", true);
 		hotspot_set_active("RAZOR WIRE ", true);
-		hotspot_set_active("YARD", false);
+		hotspot_set_active("YARD ", false);
 	}
 }
 
