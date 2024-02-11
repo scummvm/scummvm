@@ -162,19 +162,19 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int 
 
 					// Red component
 					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN(adjusted >> 8, 31U);
+					adjusted = MIN((uint)(adjusted >> 8), 31U);
 					total = adjusted << 10;
 
 					// Green component
 					rgb >>= 8;
 					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN(adjusted >> 8, 31U);
+					adjusted = MIN((uint)(adjusted >> 8), 31U);
 					total |= (adjusted << 5);
 
 					// Blue component
 					rgb >>= 8;
 					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN(adjusted >> 8, 31U);
+					adjusted = MIN((uint)(adjusted >> 8), 31U);
 					total |= adjusted;
 
 					// Write out pixel from inverse table
