@@ -26,8 +26,6 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
 
-Common::List<Common::Event> OSystem_libretro::_events;
-
 bool OSystem_libretro::pollEvent(Common::Event &event) {
 	_threadSwitchCaller = THREAD_SWITCH_POLL;
 	((LibretroTimerManager *)_timerManager)->checkThread();

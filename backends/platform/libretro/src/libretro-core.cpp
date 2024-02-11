@@ -110,6 +110,11 @@ static bool updating_variables = false;
 static int opt_frameskip_threshold_display = 0;
 static int opt_frameskip_no_display = 0;
 
+
+void process_key_event_wrapper(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
+	LIBRETRO_G_SYSTEM->processKeyEvent(down, keycode, character, key_modifiers);
+}
+
 static void log_scummvm_exit_code(void) {
 	if (retro_get_scummvm_res() == Common::kNoError)
 		retro_log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
@@ -830,7 +835,7 @@ void retro_init(void) {
 		retro_log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 -will use that instead of XRGB1555.\n");
 #endif
 
-	retro_keyboard_callback cb = {LIBRETRO_G_SYSTEM->processKeyEvent};
+	retro_keyboard_callback cb = {process_key_event_wrapper};
 	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
 	if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
