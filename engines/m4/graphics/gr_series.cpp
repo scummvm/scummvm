@@ -35,7 +35,9 @@ void Series::play(const char *seriesName, frac16 layer, uint32 flags,
 		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
 	_series = M4::series_play(seriesName, layer, flags, triggerNum, frameRate,
 		loopCount, s, x, y, firstFrame, lastFrame);
-	_seriesS = M4::series_play(seriesName, layer + 1, flags, -1, frameRate,
+
+	Common::String shadow = Common::String::format("%ss", seriesName);
+	_seriesS = M4::series_play(shadow.c_str(), layer + 1, flags, -1, frameRate,
 		loopCount, s, x, y, firstFrame, lastFrame);
 }
 
@@ -43,7 +45,9 @@ void Series::show(const char *seriesName, frac16 layer, uint32 flags,
 		int16 triggerNum, int32 duration, int32 index, int32 s, int32 x, int32 y) {
 	_series = M4::series_show(seriesName, layer, flags, triggerNum, duration,
 		index, s, x, y);
-	_seriesS = M4::series_show(seriesName, layer + 1, flags, -1, duration,
+
+	Common::String shadow = Common::String::format("%ss", seriesName);
+	_seriesS = M4::series_show(shadow.c_str(), layer + 1, flags, -1, duration,
 		index, s, x, y);
 }
 
