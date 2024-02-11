@@ -879,13 +879,22 @@ static SQInteger strsplit(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, delimiter)))
 		return sq_throwerror(v, "Failed to get delimiter");
 	sq_newarray(v, 0);
+	size_t delLen = strlen(delimiter);
+	if(delLen == 0)
+		return 1;
+
+	size_t len = str.size();
 	char *s = str.begin();
-	char *tok = strtok(s, delimiter);
-	while (tok) {
-		sq_pushstring(v, tok, -1);
+	size_t result = strcspn(s, delimiter);
+	while (result != len) {
+		sq_pushstring(v, s, result);
 		sq_arrayappend(v, -2);
-		tok = strtok(nullptr, delimiter);
+		s += (result + delLen);
+		len -= (result + delLen);
+		result = strcspn(s, delimiter);
 	}
+	sq_pushstring(v, s, result);
+	sq_arrayappend(v, -2);
 	return 1;
 }
 
