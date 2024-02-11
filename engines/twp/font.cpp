@@ -170,7 +170,7 @@ GGFont::~GGFont() {}
 void GGFont::load(const Common::String &path) {
 	SpriteSheet *spritesheet = g_engine->_resManager.spriteSheet(path);
 	int lineHeight = 0;
-	for (auto it = spritesheet->frameTable.begin(); it != spritesheet->frameTable.end(); it++) {
+	for (auto it = spritesheet->_frameTable.begin(); it != spritesheet->_frameTable.end(); it++) {
 		const SpriteSheetFrame &frame = it->_value;
 		Glyph glyph;
 		glyph.advance = MAX(frame.sourceSize.getX() - frame.spriteSourceSize.left - 4, 0.f);

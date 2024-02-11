@@ -26,16 +26,16 @@
 
 namespace Twp {
 
-Common::String getKey(const char *path) {
+static Common::String getKey(const char *path) {
 	int len = strlen(path);
 	Common::String p(path);
 	size_t i = p.findLastOf(".");
 	p = p.substr(0, i);
-	if ((len > 4) && scumm_strnicmp(p.c_str() + 4, "_en", 3) == 0) {
-		Common::String lang = ConfMan.get("language");
-		Common::String filename(path, len - 3);
+	if ((len > 4) && p.hasSuffixIgnoreCase("_en")) {
+		Common::String lang(ConfMan.get("language"));
+		Common::String filename(p.substr(0, p.size()-2));
 		const char *ext = path + i;
-		return Common::String::format("%s_%s%s", filename.c_str(), lang.c_str(), ext);
+		return Common::String::format("%s%s%s", filename.c_str(), lang.c_str(), ext);
 	}
 	return path;
 }
@@ -58,7 +58,7 @@ void ResManager::loadTexture(const Common::String &name) {
 }
 
 Texture *ResManager::texture(const Common::String &name) {
-	Common::String key = getKey(name.c_str());
+	Common::String key(getKey(name.c_str()));
 	if (!_textures.contains(key)) {
 		loadTexture(key.c_str());
 	}

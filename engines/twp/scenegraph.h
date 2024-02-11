@@ -306,7 +306,7 @@ private:
 	void drawArrows(Math::Matrix4 trsf);
 	void drawBack(Math::Matrix4 trsf);
 	void drawItems(Math::Matrix4 trsf);
-	void drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 
 private:
 	Common::SharedPtr<Object> _actor;

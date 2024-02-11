@@ -311,7 +311,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
 				SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
-				SpriteSheetFrame *verbFrame = &verbSheet->frameTable[Common::String::format("%s_en", vb.image.c_str())];
+				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
 				debugC(kDebugGenScript, "findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
 				sqpush(v, pos);
