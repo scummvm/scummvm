@@ -38,10 +38,10 @@ public:
 	}
 
 	bool running() {
-		if (swing || loop)
+		if (swing || loop) {
 			return true;
-		else
-			return elapsed < duration;
+		}
+		return elapsed < duration;
 	}
 
 	void update(float el) {
@@ -49,7 +49,7 @@ public:
 			elapsed += el;
 			float f = clamp(elapsed / duration, 0.0f, 1.0f);
 			if (!dir_forward)
-				f = 1.0 - f;
+				f = 1.0f - f;
 			if ((elapsed > duration) && (swing || loop)) {
 				elapsed = elapsed - duration;
 				if (swing)
@@ -95,7 +95,7 @@ class Object;
 class OffsetTo : public Motor {
 public:
 	virtual ~OffsetTo();
-	OffsetTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im);
+	OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
@@ -108,7 +108,7 @@ private:
 class MoveTo : public Motor {
 public:
 	virtual ~MoveTo();
-	MoveTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im);
+	MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
@@ -218,7 +218,8 @@ private:
 
 enum WalkToState {
 	kWalking,
-	kArrived
+	kArrived,
+	kReach
 };
 
 class WalkTo : public Motor {
