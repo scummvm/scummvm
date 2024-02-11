@@ -85,6 +85,7 @@ public:
 
 	void init() override;
 	void execute() override { PeepholePuzzle::execute(); }
+	void handleInput(NancyInput &input) override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 

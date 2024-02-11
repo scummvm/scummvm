@@ -406,6 +406,10 @@ void ModifyListEntry::readData(Common::SeekableReadStream &stream) {
 	_surfaceID = stream.readUint16LE();
 	readFilename(stream, _stringID);
 	_mark = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
+		_sceneID = stream.readUint16LE();
+	}
 }
 
 void ModifyListEntry::execute() {
@@ -425,7 +429,7 @@ void ModifyListEntry::execute() {
 	switch (_type) {
 	case kAdd:
 		if (!found) {
-			array.push_back(JournalData::Entry(_stringID, _mark));
+			array.push_back(JournalData::Entry(_stringID, _mark, _sceneID));
 		}
 
 		break;

@@ -23,6 +23,8 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 
+#include "engines/nancy/commontypes.h"
+
 #ifndef NANCY_PUZZLEDATA_H
 #define NANCY_PUZZLEDATA_H
 
@@ -112,10 +114,11 @@ struct JournalData : public PuzzleData {
 	virtual ~JournalData() {}
 
 	struct Entry {
-		Entry(const Common::String &s = Common::String(), int16 m = 0) : stringID(s), mark(m) {}
+		Entry(const Common::String &s = Common::String(), uint16 m = 0, uint16 sc = kNoScene) : stringID(s), mark(m), sceneID(sc) {}
 
 		Common::String stringID;
 		uint16 mark = 0;
+		uint16 sceneID = kNoScene;
 	};
 
 	static constexpr uint32 getTag() { return MKTAG('J', 'O', 'U', 'R'); }

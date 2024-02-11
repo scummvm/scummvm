@@ -61,7 +61,9 @@ protected:
 	Common::String _embeddedText;
 
 	uint16 _order = kListFIFO;
-	bool _shouldDrawMarks = false; // currently unused
+	bool _shouldDrawMarks = false;
+
+	Common::Array<uint16> _hotspotScenes;
 
 	Graphics::ManagedSurface _image;
 };

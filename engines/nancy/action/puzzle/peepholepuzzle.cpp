@@ -332,5 +332,31 @@ void TextScroll::readExtraData(Common::SeekableReadStream &stream) {
 	}
 }
 
+void TextScroll::handleInput(NancyInput &input) {
+	PeepholePuzzle::handleInput(input);
+
+	// Finally, check hotspots
+	for (uint i = 0; i < _hotspots.size(); ++i) {
+		Common::Rect hotspot = _hotspots[i];
+		hotspot.translate(_dest.left, _dest.top);
+		Common::Point innerOffset = _drawSurface.getOffsetFromOwner();
+		hotspot.translate(-innerOffset.x, -innerOffset.y);
+		hotspot.clip(_dest);
+		if (!hotspot.isEmpty() && NancySceneState.getViewport().convertViewportToScreen(hotspot).contains(input.mousePos)) {
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				// Clicked on a hotspot, change to corresponding scene
+				SceneChangeDescription sceneChange;
+				sceneChange.sceneID = _hotspotScenes[i];
+				sceneChange.continueSceneSound = kContinueSceneSound;
+				NancySceneState.changeScene(sceneChange);
+			}
+
+			break;
+		}
+	}
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

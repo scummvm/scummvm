@@ -97,14 +97,34 @@ void Autotext::execute() {
 		bool foundThisKey = false;
 		for (auto &entry : entriesForSurface) {
 			Common::String &stringID = entry.stringID;
-			Common::String markString = entry.mark ? Common::String::format("<%u>", entry.mark) : "";
+			Common::String withTags = autotext->texts[stringID];
+
+			if (entry.mark % 10) {
+				withTags = Common::String::format("<%u>", entry.mark % 10) + withTags;
+			}
+
+			bool hasHotspot = false;
+
+			if (entry.mark >= 10 && entry.sceneID != kNoScene) {
+				// The original engine uses tags <H#> and <L>
+				withTags = "<H>" + withTags + "<L>";
+				hasHotspot = true;
+			}
 
 			if (_order == kListFIFO) {
 				// Add to end of string
-				stringToPush += (markString + autotext->texts[stringID]);
+				stringToPush += withTags;
+
+				if (hasHotspot) {
+					_hotspotScenes.push_back(entry.sceneID);
+				}
 			} else {
 				// Add to front of string
-				stringToPush = markString + autotext->texts[stringID] + stringToPush;
+				stringToPush = withTags + stringToPush;
+
+				if (hasHotspot) {
+					_hotspotScenes.insert_at(0, entry.sceneID);
+				}
 			}
 			
 			if (!_textKey.empty() && stringID == _textKey) {

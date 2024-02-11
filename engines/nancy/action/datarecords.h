@@ -162,6 +162,7 @@ public:
 	uint16 _surfaceID = 0;
 	Common::String _stringID;
 	uint16 _mark = 0;
+	uint16 _sceneID = kNoScene;
 
 protected:
 	Common::String getRecordTypeName() const override;
