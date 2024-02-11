@@ -42,10 +42,13 @@ struct SpriteSheetFrame {
 };
 
 struct SpriteSheet {
-	Common::HashMap<Common::String, SpriteSheetFrame> frameTable;
-	SpriteSheetMetadata meta;
-
 	void parseSpriteSheet(const Common::String &contents);
+	const SpriteSheetFrame& getFrame(const Common::String& key) const;
+
+	static Common::String getKey(const Common::String& key);
+
+	SpriteSheetMetadata meta;
+	Common::HashMap<Common::String, SpriteSheetFrame> _frameTable;
 };
 
 } // namespace Twp

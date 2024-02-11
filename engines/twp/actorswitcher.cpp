@@ -71,9 +71,9 @@ float ActorSwitcher::getAlpha(size_t index) const {
 void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index) {
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	const SpriteSheetFrame &iconBackFrame = gameSheet->frameTable["icon_background"];
-	const SpriteSheetFrame &iconActorFrame = gameSheet->frameTable[icon];
-	const SpriteSheetFrame &iconFrame = gameSheet->frameTable["icon_frame"];
+	const SpriteSheetFrame &iconBackFrame = gameSheet->getFrame("icon_background");
+	const SpriteSheetFrame &iconActorFrame = gameSheet->getFrame(icon);
+	const SpriteSheetFrame &iconFrame = gameSheet->getFrame("icon_frame");
 	Math::Matrix4 t = transform(trsf, index);
 	float alpha = getAlpha(index);
 

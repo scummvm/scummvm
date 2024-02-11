@@ -280,7 +280,7 @@ void ParallaxNode::drawCore(Math::Matrix4 trsf) {
 	Math::Matrix4 t = trsf;
 	float x = 0.f;
 	for (size_t i = 0; i < _frames.size(); i++) {
-		const SpriteSheetFrame &frame = sheet->frameTable[_frames[i]];
+		const SpriteSheetFrame &frame = sheet->getFrame(_frames[i]);
 		g_engine->_lighting->setSpriteOffset({0.f, static_cast<float>(-frame.frame.height())});
 		g_engine->_lighting->setSpriteSheetFrame(frame, *texture, false);
 
@@ -397,7 +397,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			g_engine->getGfx().drawSprite(Common::Rect(texture->width, texture->height), *texture, getComputedColor(), trsf, flipX);
 		} else {
 			const SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
-			const SpriteSheetFrame &sf = sheet->frameTable[frame];
+			const SpriteSheetFrame &sf = sheet->getFrame(frame);
 			Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
 			if (_obj->_lit) {
 				g_engine->getGfx().use(g_engine->_lighting.get());
@@ -495,7 +495,7 @@ void InputState::drawCore(Math::Matrix4 trsf) {
 	if (ConfMan.getBool("hudSentence") && _hotspot) {
 		cursorName = "hotspot_" + cursorName;
 	}
-	const SpriteSheetFrame &sf = gameSheet->frameTable[cursorName];
+	const SpriteSheetFrame &sf = gameSheet->getFrame(cursorName);
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos * 2.f);
 	scale(trsf, Math::Vector2d(2.f, 2.f));
@@ -574,7 +574,7 @@ Math::Vector2d Inventory::getPos(Common::SharedPtr<Object> inv) const {
 	return {};
 }
 
-void Inventory::drawSprite(SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+void Inventory::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos);
 	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
@@ -584,8 +584,8 @@ void Inventory::drawArrows(Math::Matrix4 trsf) {
 	bool isRetro = ConfMan.getBool("retroVerbs");
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	SpriteSheetFrame *arrowUp = &gameSheet->frameTable[isRetro ? "scroll_up_retro" : "scroll_up"];
-	SpriteSheetFrame *arrowDn = &gameSheet->frameTable[isRetro ? "scroll_down_retro" : "scroll_down"];
+	const SpriteSheetFrame *arrowUp = &gameSheet->getFrame(isRetro ? "scroll_up_retro" : "scroll_up");
+	const SpriteSheetFrame *arrowDn = &gameSheet->getFrame(isRetro ? "scroll_down_retro" : "scroll_down");
 	float alphaUp = hasUpArrow(_actor) ? 1.f : 0.f;
 	float alphaDn = hasDownArrow(_actor) ? 1.f : 0.f;
 	Math::Matrix4 tUp(trsf);
@@ -600,7 +600,7 @@ void Inventory::drawArrows(Math::Matrix4 trsf) {
 void Inventory::drawBack(Math::Matrix4 trsf) {
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	SpriteSheetFrame *back = &gameSheet->frameTable["inventory_background"];
+	const SpriteSheetFrame *back = &gameSheet->getFrame("inventory_background");
 
 	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + back->sourceSize.getX() / 2.f;
 	float offsetX = startOffsetX;
@@ -633,8 +633,8 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 	for (int i = 0; i < count; i++) {
 		Common::SharedPtr<Object> obj = _actor->_inventory[_actor->_inventoryOffset * NUMOBJECTSBYROW + i];
 		Common::String icon = obj->getIcon();
-		if (itemsSheet->frameTable.contains(icon)) {
-			SpriteSheetFrame *itemFrame = &itemsSheet->frameTable[icon];
+		if (itemsSheet->_frameTable.contains(icon)) {
+			SpriteSheetFrame *itemFrame = &itemsSheet->_frameTable[icon];
 			Math::Vector2d pos(startOffsetX + ((float)(i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET)), startOffsetY - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET)));
 			Math::Matrix4 t(trsf);
 			t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
@@ -765,7 +765,7 @@ void SpriteNode::setSprite(const Common::String &sheet, const Common::String &fr
 
 void SpriteNode::drawCore(Math::Matrix4 trsf) {
 	SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
-	SpriteSheetFrame *frame = &sheet->frameTable[_frame];
+	const SpriteSheetFrame *frame = &sheet->getFrame(_frame);
 
 	Common::Rect rect = frame->frame;
 	setSize(Math::Vector2d(frame->frame.width(), frame->frame.height()));
@@ -823,7 +823,7 @@ void HotspotMarkerNode::drawSprite(const SpriteSheetFrame &sf, Texture *texture,
 void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
-	SpriteSheetFrame *frame = &gameSheet->frameTable["hotspot_marker"];
+	const SpriteSheetFrame *frame = &gameSheet->getFrame("hotspot_marker");
 	Color color = Color::create(255, 165, 0);
 	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];

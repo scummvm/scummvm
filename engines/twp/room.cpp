@@ -361,7 +361,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	int width = 0;
 	for (size_t i = 0; i < backNames.size(); i++) {
 		Common::String name = backNames[i];
-		width += g_engine->_resManager.spriteSheet(room->_sheet)->frameTable[name].sourceSize.getX();
+		width += g_engine->_resManager.spriteSheet(room->_sheet)->getFrame(name).sourceSize.getX();
 	}
 	room->_roomSize.setX(width);
 }

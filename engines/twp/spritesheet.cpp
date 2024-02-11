@@ -21,6 +21,8 @@
  */
 
 #include "common/formats/json.h"
+#include "common/config-manager.h"
+#include "twp/twp.h"
 #include "twp/spritesheet.h"
 
 namespace Twp {
@@ -48,11 +50,29 @@ void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
 	Common::ScopedPtr<Common::JSONValue> json(Common::JSON::parse(contents.c_str()));
 	const Common::JSONObject &obj = json->asObject()["frames"]->asObject();
 	for (auto it = obj.begin(); it != obj.end(); it++) {
-		parseFrame(it->_key, it->_value->asObject(), frameTable[it->_key]);
+		parseFrame(it->_key, it->_value->asObject(), _frameTable[it->_key]);
 	}
 
 	const Common::JSONObject& jMeta = json->asObject()["meta"]->asObject();
 	meta.image = jMeta["image"]->asString();
+}
+
+Common::String SpriteSheet::getKey(const Common::String& key) {
+	if(key.hasSuffixIgnoreCase("_en")) {
+		Common::String lang(ConfMan.get("language"));
+		Common::String newKey(Common::String::format("%s%s", key.substr(0, key.size()-2).c_str(), lang.c_str()));
+		return newKey;
+	}
+	return key;
+}
+
+const SpriteSheetFrame& SpriteSheet::getFrame(const Common::String& key) const {
+	if(key.hasSuffixIgnoreCase("_en")) {
+		Common::String newKey(getKey(key));
+		if(_frameTable.contains(newKey))
+			return _frameTable[newKey];
+	}
+	return _frameTable[key];
 }
 
 } // namespace Twp

@@ -142,7 +142,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	// draw HUD background
 	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
 	bool classic = ConfMan.getBool("hudSentence");
-	const SpriteSheetFrame &backingFrame = gameSheet->frameTable[classic ? "ui_backing_tall" : "ui_backing"];
+	const SpriteSheetFrame &backingFrame = gameSheet->getFrame(classic ? "ui_backing_tall" : "ui_backing");
 	Texture *gameTexture = g_engine->_resManager.texture(gameSheet->meta.image);
 	float alpha = 0.33f; // prefs(UiBackingAlpha);
 	g_engine->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha*getAlpha()), trsf);
@@ -168,7 +168,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	for (int i = 1; i < 22; i++) {
 		const Verb &verb = slot->verbs[i];
 		if (verb.image.size() > 0) {
-			const SpriteSheetFrame &verbFrame = verbSheet->frameTable[Common::String::format("%s%s_%s", verb.image.c_str(), verbSuffix.c_str(), lang.c_str())];
+			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
 			bool over = verbFrame.spriteSourceSize.contains(_mousePos.getX(), _mousePos.getY());
 			if (over)
 				isOver = true;
