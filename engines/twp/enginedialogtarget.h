@@ -28,13 +28,13 @@ namespace Twp {
 
 class EngineDialogTarget : public DialogTarget {
 public:
-	virtual Color actorColor(const Common::String &actor) override;
-	virtual Color actorColorHover(const Common::String &actor) override;
-	virtual Common::SharedPtr<Motor> say(const Common::String &actor, const Common::String &text) override;
-	virtual Common::SharedPtr<Motor> waitWhile(const Common::String &cond) override;
-	virtual void shutup() override;
-	virtual Common::SharedPtr<Motor> pause(float time) override;
-	virtual bool execCond(const Common::String &cond) override;
+	Color actorColor(const Common::String &actor) override;
+	Color actorColorHover(const Common::String &actor) override;
+	Common::SharedPtr<Motor> say(const Common::String &actor, const Common::String &text) override;
+	Common::SharedPtr<Motor> waitWhile(const Common::String &cond) override;
+	void shutup() override;
+	Common::SharedPtr<Motor> pause(float time) override;
+	bool execCond(const Common::String &cond) override;
 };
 
 } // namespace Twp

@@ -22,8 +22,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "twp/graph.h"
-#include "twp/util.h"
-#include "twp/clipper/clipper.hpp"
 
 namespace Twp {
 

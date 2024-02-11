@@ -21,18 +21,12 @@
 
 #include "twp/lighting.h"
 #include "twp/squtil.h"
-#include "twp/room.h"
-#include "twp/object.h"
 #include "twp/thread.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
-#include "squirrel/sqobject.h"
 #include "squirrel/sqstring.h"
 #include "squirrel/sqstate.h"
 #include "squirrel/sqtable.h"
-#include "squirrel/sqstdstring.h"
-#include "squirrel/sqstdmath.h"
-#include "squirrel/sqstdio.h"
 #include "squirrel/sqstdaux.h"
 #include "squirrel/sqfuncproto.h"
 #include "squirrel/sqclosure.h"
@@ -443,7 +437,7 @@ Light *sqlight(HSQUIRRELVM v, int i) {
 }
 
 struct GetThread {
-	GetThread(HSQUIRRELVM v) : _v(v) {}
+	explicit GetThread(HSQUIRRELVM v) : _v(v) {}
 	bool operator()(Common::SharedPtr<ThreadBase> t) {
 		return t->getThread() == _v;
 	}
@@ -482,7 +476,7 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundD
 	return result;
 }
 
-void sqgetpairs(HSQOBJECT obj, void func(const Common::String &key, HSQOBJECT &obj, void *data), void *data) {
+void sqgetpairs(HSQOBJECT obj, void func(const Common::String &k, HSQOBJECT &obj, void *data), void *data) {
 	HSQUIRRELVM v = g_engine->getVm();
 	sq_pushobject(v, obj);
 	sq_pushnull(v);

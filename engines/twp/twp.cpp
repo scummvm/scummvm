@@ -23,34 +23,16 @@
 #include "imgui_impl_sdl2_scummvm.h"
 #include "imgui_impl_opengl3_scummvm.h"
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
-#include "common/debug.h"
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/stream.h"
-#include "common/file.h"
-#include "common/config-manager.h"
-#include "common/events.h"
 #include "common/savefile.h"
 #include "image/png.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "graphics/opengl/system_headers.h"
 #include "twp/twp.h"
-#include "twp/detection.h"
 #include "twp/console.h"
-#include "twp/vm.h"
-#include "twp/ggpack.h"
-#include "twp/gfx.h"
 #include "twp/lighting.h"
-#include "twp/font.h"
 #include "twp/thread.h"
-#include "twp/scenegraph.h"
 #include "twp/squtil.h"
-#include "twp/object.h"
-#include "twp/ids.h"
 #include "twp/task.h"
-#include "twp/squirrel/squirrel.h"
-#include "twp/yack.h"
 #include "twp/enginedialogtarget.h"
 #include "twp/actions.h"
 #include "twp/debugtools.h"
@@ -307,7 +289,7 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 }
 
 struct InInventory {
-	InInventory(Common::SharedPtr<Object> &obj) : _obj(obj) { _obj = nullptr; }
+	explicit InInventory(Common::SharedPtr<Object> &obj) : _obj(obj) { _obj = nullptr; }
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->inInventory()) {
 			_obj = obj;
@@ -371,7 +353,7 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 }
 
 struct GetUseNoun2 {
-	GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+	explicit GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
 		_noun2 = nullptr;
 	}
 
@@ -388,7 +370,7 @@ public:
 };
 
 struct GetGiveableNoun2 {
-	GetGiveableNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+	explicit GetGiveableNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
 		_noun2 = nullptr;
 	}
 
@@ -1407,7 +1389,7 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 }
 
 struct GetByZorder {
-	GetByZorder(Common::SharedPtr<Object> &result) : _result(result) { result = nullptr; }
+	explicit GetByZorder(Common::SharedPtr<Object> &result) : _result(result) { result = nullptr; }
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {

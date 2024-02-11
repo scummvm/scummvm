@@ -21,12 +21,7 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
-#include "twp/room.h"
-#include "twp/object.h"
 #include "twp/squtil.h"
-#include "twp/util.h"
-#include "twp/scenegraph.h"
-#include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
@@ -86,7 +81,7 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get actor");
 		Common::SharedPtr<Object> spot = sqobj(v, 3);
 		if (spot) {
-			Math::Vector2d pos = spot->_node->getPos() + spot->_usePos;
+			Math::Vector2d pos(spot->_node->getPos() + spot->_usePos);
 			Object::setRoom(actor, spot->_room);
 			actor->stopWalking();
 			debugC(kDebugActScript, "actorAt %s at %s (%d, %d), room '%s'", actor->_key.c_str(), spot->_key.c_str(), (int)pos.getX(), (int)pos.getY(), spot->_room->_name.c_str());
@@ -334,9 +329,8 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 	Common::String name;
 	if (SQ_FAILED(sqget(v, 3, name)))
 		return sq_throwerror(v, "failed to get name");
-	for (size_t i = 0; i < g_engine->_room->_walkboxes.size(); i++) {
-		const Walkbox &walkbox = g_engine->_room->_walkboxes[i];
-		if (walkbox._name == name) {
+	for (const auto & walkbox : g_engine->_room->_walkboxes) {
+			if (walkbox._name == name) {
 			if (walkbox.contains((Vector2i)actor->_node->getAbsPos())) {
 				sqpush(v, true);
 				return 1;
@@ -750,14 +744,12 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
-		Facing *facing = nullptr;
-		int dir;
+		int facing = 0;
 		if (nArgs == 5) {
-			if (SQ_FAILED(sqget(v, 5, dir)))
+			if (SQ_FAILED(sqget(v, 5, facing)))
 				return sq_throwerror(v, "failed to get dir");
-			facing = (Facing *)&dir;
 		}
-		Object::walk(actor, Vector2i(x, y), facing ? *facing : 0);
+		Object::walk(actor, Vector2i(x, y), facing);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}
@@ -810,7 +802,7 @@ static SQInteger flashSelectableActor(HSQUIRRELVM v) {
 }
 
 struct GetStrings {
-	GetStrings(Common::StringArray &texts) : _texts(texts) {}
+	explicit GetStrings(Common::StringArray &texts) : _texts(texts) {}
 
 	void operator()(HSQOBJECT item) {
 		_texts.push_back(sq_objtostring(&item));
@@ -925,7 +917,7 @@ static SQInteger isActorSelectable(HSQUIRRELVM v) {
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	ActorSlot *slot = g_engine->_hud.actorSlot(actor);
-	bool selectable = !slot ? false : slot->selectable;
+	bool selectable = slot && slot->selectable;
 	sqpush(v, selectable);
 	return 1;
 }
@@ -941,8 +933,7 @@ static SQInteger is_actor(HSQUIRRELVM v) {
 // See also masterRoomArray.
 static SQInteger masterActorArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
+	for (auto actor : g_engine->_actors) {
 		sqpush(v, actor->_table);
 		sq_arrayappend(v, -2);
 	}
@@ -998,8 +989,7 @@ static SQInteger triggerActors(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sq_newarray(v, 0);
-	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
-		Common::SharedPtr<Object> actor = *it;
+	for (auto actor : g_engine->_actors) {
 		if (obj->contains(actor->_node->getPos())) {
 			sq_pushobject(v, actor->_table);
 			sq_arrayappend(v, -2);

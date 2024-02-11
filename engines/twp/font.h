@@ -65,7 +65,7 @@ struct Glyph {
 
 class Font {
 public:
-	virtual ~Font() {}
+	virtual ~Font() = default;
 
 	virtual int getLineHeight() = 0;
 	virtual float getKerning(CodePoint prev, CodePoint next) = 0;
@@ -76,13 +76,13 @@ public:
 // Represents a bitmap font from a spritesheet.
 class GGFont : public Font {
 public:
-	virtual ~GGFont();
+	~GGFont() override;
 	void load(const Common::String &path);
 
-	virtual int getLineHeight() override final { return _lineHeight; }
-	virtual float getKerning(CodePoint prev, CodePoint next) override final { return 0.f; }
-	virtual Glyph getGlyph(CodePoint chr) override final;
-	virtual Common::String getName() override final { return _name; }
+	int getLineHeight() final { return _lineHeight; }
+	float getKerning(CodePoint prev, CodePoint next) final { return 0.f; }
+	Glyph getGlyph(CodePoint chr) final;
+	Common::String getName() final { return _name; }
 
 private:
 	Common::HashMap<CodePoint, Glyph> _glyphs;
@@ -106,13 +106,13 @@ struct Char {
 
 class BmFont : public Font {
 public:
-	virtual ~BmFont();
+	~BmFont() override;
 	void load(const Common::String &path);
 
-	virtual int getLineHeight() override final { return _lnHeight; }
-	virtual float getKerning(CodePoint prev, CodePoint next) override final;
-	virtual Glyph getGlyph(CodePoint chr) override final;
-	virtual Common::String getName() override final { return _name; }
+	int getLineHeight() final { return _lnHeight; }
+	float getKerning(CodePoint prev, CodePoint next) final;
+	Glyph getGlyph(CodePoint chr) final;
+	Common::String getName() final { return _name; }
 
 private:
 	Common::HashMap<CodePoint, Glyph> _glyphs;

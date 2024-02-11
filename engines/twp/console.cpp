@@ -29,8 +29,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("!",   WRAP_METHOD(Console, Cmd_exec));
 }
 
-Console::~Console() {
-}
+Console::~Console() = default;
 
 bool Console::Cmd_exec(int argc, const char **argv) {
 	Common::String s;

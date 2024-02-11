@@ -23,14 +23,11 @@
 #include "common/config-manager.h"
 
 #include "twp/twp.h"
-#include "twp/motor.h"
-#include "twp/object.h"
-#include "twp/scenegraph.h"
 #include "twp/squtil.h"
 
 namespace Twp {
 
-OffsetTo::~OffsetTo() {}
+OffsetTo::~OffsetTo() = default;
 
 OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
 	: _obj(obj),
@@ -44,7 +41,7 @@ void OffsetTo::update(float elapsed) {
 		disable();
 }
 
-MoveTo::~MoveTo() {}
+MoveTo::~MoveTo() = default;
 
 MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
 	: _obj(obj),
@@ -58,7 +55,7 @@ void MoveTo::update(float elapsed) {
 		disable();
 }
 
-AlphaTo::~AlphaTo() {}
+AlphaTo::~AlphaTo() = default;
 
 AlphaTo::AlphaTo(float duration, Common::SharedPtr<Object> obj, float to, InterpolationMethod im)
 	: _obj(obj),
@@ -73,7 +70,7 @@ void AlphaTo::update(float elapsed) {
 		disable();
 }
 
-RotateTo::~RotateTo() {}
+RotateTo::~RotateTo() = default;
 
 RotateTo::RotateTo(float duration, Node *node, float to, InterpolationMethod im)
 	: _node(node),
@@ -87,7 +84,7 @@ void RotateTo::update(float elapsed) {
 		disable();
 }
 
-RoomRotateTo::~RoomRotateTo() {}
+RoomRotateTo::~RoomRotateTo() = default;
 
 RoomRotateTo::RoomRotateTo(Common::SharedPtr<Room> room, float to)
 	: _room(room),
@@ -101,7 +98,7 @@ void RoomRotateTo::update(float elapsed) {
 		disable();
 }
 
-ScaleTo::~ScaleTo() {}
+ScaleTo::~ScaleTo() = default;
 
 ScaleTo::ScaleTo(float duration, Node *node, float to, InterpolationMethod im)
 	: _node(node),
@@ -116,7 +113,7 @@ void ScaleTo::update(float elapsed) {
 		disable();
 }
 
-Shake::~Shake() {}
+Shake::~Shake() = default;
 
 Shake::Shake(Node *node, float amount)
 	: _node(node),
@@ -135,7 +132,7 @@ OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, Color to)
 	  _tween(g_engine->_room->getOverlay(), to, duration, InterpolationMethod()) {
 }
 
-OverlayTo::~OverlayTo() {}
+OverlayTo::~OverlayTo() = default;
 
 void OverlayTo::update(float elapsed) {
 	_tween.update(elapsed);
@@ -148,8 +145,7 @@ ReachAnim::ReachAnim(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> 
 	: _actor(actor), _obj(obj) {
 }
 
-ReachAnim::~ReachAnim() {
-}
+ReachAnim::~ReachAnim() = default;
 
 void ReachAnim::playReachAnim() {
 	Common::String anim = _actor->getAnimName(REACH_ANIMNAME + _obj->getReachAnim());
@@ -193,7 +189,7 @@ WalkTo::WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing)
 
 void WalkTo::disable() {
 	Motor::disable();
-	if (_path.size() != 0) {
+	if (!_path.empty()) {
 		debugC(kDebugGame, "actor walk cancelled");
 	}
 	if (_obj->isWalking())
@@ -409,7 +405,7 @@ void Talking::say(const Common::String &text) {
 		txt = text.substr(1);
 	}
 
-	// remove text in parenthesis
+	// remove text in parentheses
 	if (txt[0] == '(') {
 		int i = txt.find(')');
 		if (i != -1)
@@ -501,7 +497,7 @@ Common::String Talking::talkieKey() {
 Jiggle::Jiggle(Node *node, float amount) : _amount(amount), _node(node) {
 }
 
-Jiggle::~Jiggle() {}
+Jiggle::~Jiggle() = default;
 
 void Jiggle::update(float elapsed) {
 	_jiggleTime += 20.f * elapsed;

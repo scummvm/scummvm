@@ -21,10 +21,6 @@
 
 #include "twp/gfx.h"
 #include "twp/twp.h"
-#include "common/debug.h"
-#include "graphics/opengl/debug.h"
-#include "graphics/opengl/context.h"
-#include "graphics/opengl/system_headers.h"
 
 namespace Twp {
 

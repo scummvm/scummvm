@@ -22,27 +22,15 @@
 #include "twp/twp.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
-#include "twp/object.h"
-#include "twp/camera.h"
-#include "twp/motor.h"
-#include "twp/room.h"
-#include "twp/scenegraph.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
-#include "squirrel/sqobject.h"
 #include "squirrel/sqstring.h"
 #include "squirrel/sqstate.h"
 #include "squirrel/sqtable.h"
-#include "squirrel/sqstdstring.h"
-#include "squirrel/sqstdmath.h"
-#include "squirrel/sqstdio.h"
-#include "squirrel/sqstdaux.h"
 #include "squirrel/sqfuncproto.h"
 #include "squirrel/sqclosure.h"
 
 namespace Twp {
-
-extern TwpEngine *g_engine;
 
 // Creates a new, room local object using sheet as the sprite sheet and image as the image name.
 // This object is deleted when the room exits.

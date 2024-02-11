@@ -24,7 +24,6 @@
 #include "twp/squtil.h"
 #include "twp/btea.h"
 #include "twp/time.h"
-#include "common/file.h"
 #include "common/savefile.h"
 
 namespace Twp {
@@ -96,9 +95,9 @@ static DialogConditionState parseState(Common::String &dialog) {
 
 static Common::SharedPtr<Room> room(const Common::String &name) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
-		if (room->_name == name) {
-			return room;
+		Common::SharedPtr<Room> r(g_engine->_rooms[i]);
+		if (r->_name == name) {
+			return r;
 		}
 	}
 	return nullptr;
@@ -118,11 +117,11 @@ static Common::SharedPtr<Object> object(Common::SharedPtr<Room> room, const Comm
 
 static Common::SharedPtr<Object> object(const Common::String &key) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
-		for (size_t j = 0; j < room->_layers.size(); j++) {
-			Common::SharedPtr<Layer> layer = room->_layers[j];
+		Common::SharedPtr<Room> r(g_engine->_rooms[i]);
+		for (size_t j = 0; j < r->_layers.size(); j++) {
+			Common::SharedPtr<Layer> layer(r->_layers[j]);
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
-				Common::SharedPtr<Object> o = layer->_objects[k];
+				Common::SharedPtr<Object> o(layer->_objects[k]);
 				if (o->_key == key)
 					return o;
 			}
@@ -222,8 +221,8 @@ static void setAnimations(Common::SharedPtr<Object> actor, const Common::JSONArr
 }
 
 static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject &json) {
-	actor->setTouchable(json.contains("_untouchable") ? json["_untouchable"]->asIntegerNumber() != 1 : true);
-	actor->_node->setVisible(json.contains("_hidden") ? json["_hidden"]->asIntegerNumber() != 1 : true);
+	actor->setTouchable(!json.contains("_untouchable") || json["_untouchable"]->asIntegerNumber() != 1);
+	actor->_node->setVisible(!json.contains("_hidden") || json["_hidden"]->asIntegerNumber() != 1);
 	actor->_volume = json.contains("_volume") ? json["_volume"]->asNumber() : 1.0f;
 	for (auto it = json.begin(); it != json.end(); it++) {
 		if (it->_key == "_animations") {
@@ -484,7 +483,7 @@ void SaveGameManager::loadDialog(const Common::JSONObject &json) {
 }
 
 struct GetHObjects {
-	GetHObjects(Common::Array<HSQOBJECT> &objs) : _objs(objs) {}
+	explicit GetHObjects(Common::Array<HSQOBJECT> &objs) : _objs(objs) {}
 
 	void operator()(HSQOBJECT item) {
 		_objs.push_back(item);
@@ -543,13 +542,13 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 		const Common::JSONObject &jInventory = json->asObject();
 		const Common::JSONArray &jSlots = jInventory["slots"]->asArray();
 		for (int i = 0; i < NUMACTORS; i++) {
-			Common::SharedPtr<Object> actor = g_engine->_hud._actorSlots[i].actor;
-			if (actor) {
-				int jiggleCount = 0;
-				actor->_inventory.clear();
+			Common::SharedPtr<Object> a(g_engine->_hud._actorSlots[i].actor);
+			if (a) {
+				a->_inventory.clear();
 				const Common::JSONObject &jSlot = jSlots[i]->asObject();
 				if (jSlot.contains("objects")) {
 					if (jSlot["objects"]->isArray()) {
+						int jiggleCount = 0;
 						const Common::JSONArray &jSlotObjects = jSlot["objects"]->asArray();
 						for (size_t j = 0; j < jSlotObjects.size(); j++) {
 							const Common::JSONValue *jObj = jSlotObjects[j];
@@ -557,13 +556,13 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 							if (!obj)
 								warning("inventory obj '%s' not found", jObj->asString().c_str());
 							else {
-								Object::pickupObject(actor, obj);
+								Object::pickupObject(a, obj);
 								obj->_jiggle = jSlot.contains("jiggle") && jSlot["jiggle"]->isArray() && jSlot["jiggle"]->asArray()[jiggleCount++]->asIntegerNumber() != 0;
 							}
 						}
 					}
 				}
-				actor->_inventoryOffset = jSlot["scroll"]->asIntegerNumber();
+				a->_inventoryOffset = jSlot["scroll"]->asIntegerNumber();
 			}
 		}
 	}
@@ -607,7 +606,7 @@ static void fillMissingProperties(const Common::String &k, HSQOBJECT &oTable, vo
 }
 
 struct GetJArray {
-	GetJArray(Common::JSONArray &arr) : _arr(arr) {}
+	explicit GetJArray(Common::JSONArray &arr) : _arr(arr) {}
 
 	void operator()(HSQOBJECT item) {
 		_arr.push_back(tojson(item, true));
@@ -720,9 +719,9 @@ static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
 static Common::JSONValue *createJActors() {
 	Common::JSONObject jActors;
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
-		if (actor->_key.size() > 0) {
-			jActors[actor->_key] = createJActor(actor);
+		Common::SharedPtr<Object> a(g_engine->_actors[i]);
+		if (a->_key.size() > 0) {
+			jActors[a->_key] = createJActor(a);
 		}
 	}
 	// result.fields.sort(cmpKey);
@@ -943,9 +942,9 @@ static Common::JSONValue *createJRoom(Common::SharedPtr<Room> room) {
 static Common::JSONValue *createJRooms() {
 	Common::JSONObject json;
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
-		if (room)
-			json[room->_name] = createJRoom(room);
+		Common::SharedPtr<Room> r(g_engine->_rooms[i]);
+		if (r)
+			json[r->_name] = createJRoom(r);
 	}
 	//   result.fields.sort(cmpKey);
 	return new Common::JSONValue(json);
@@ -997,7 +996,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	byte marker = (8 - ((fullSize + 9) % 8));
 
 	// write at the end 16 bytes: hashdata (4 bytes) + savetime (4 bytes) + marker (8 bytes)
-	int32 *p = (int32 *)(buffer.data() + fullSize);
+	int32 *p = (int32*)(buffer.data() + fullSize);
 	p[0] = hash;
 	p[1] = savetime;
 	memset(&p[2], marker, 8);

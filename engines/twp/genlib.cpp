@@ -21,29 +21,19 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
-#include "twp/room.h"
-#include "twp/object.h"
-#include "twp/scenegraph.h"
 #include "twp/squtil.h"
-#include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
-#include "twp/squirrel/sqobject.h"
 #include "twp/squirrel/sqstring.h"
 #include "twp/squirrel/sqstate.h"
 #include "twp/squirrel/sqtable.h"
-#include "twp/squirrel/sqstdstring.h"
-#include "twp/squirrel/sqstdmath.h"
-#include "twp/squirrel/sqstdio.h"
-#include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
 #include "common/crc.h"
-#include "common/stream.h"
 
 namespace Twp {
 
 struct GetArray {
-	GetArray(Common::Array<HSQOBJECT> &objs) : _objs(objs) {}
+	explicit GetArray(Common::Array<HSQOBJECT> &objs) : _objs(objs) {}
 
 	void operator()(HSQOBJECT &o) {
 		_objs.push_back(o);
@@ -59,7 +49,7 @@ static void shuffle(Common::Array<T> &array) {
 		Common::RandomSource &rnd = g_engine->getRandomSource();
 		for (size_t i = 0; i < array.size() - 1; i++) {
 			size_t j = i + rnd.getRandomNumber(RAND_MAX) / (RAND_MAX / (array.size() - i) + 1);
-			T &t = array[j];
+			const T &t = array[j];
 			array[j] = array[i];
 			array[i] = t;
 		}
@@ -87,8 +77,8 @@ static SQInteger arrayShuffle(HSQUIRRELVM v) {
 	shuffle(arr);
 
 	sq_newarray(v, 0);
-	for (auto it = arr.begin(); it != arr.end(); it++) {
-		sqpush(v, *it);
+	for (auto & it : arr) {
+		sqpush(v, it);
 		sq_arrayappend(v, -2);
 	}
 	return 1;
@@ -423,9 +413,9 @@ static SQInteger in_array(HSQUIRRELVM v) {
 	}
 	sq_pop(v, 1); // pops the null iterator
 
-	for (auto it = objs.begin(); it != objs.end(); it++) {
+	for (auto & it : objs) {
 		sq_pushobject(v, obj);
-		sq_pushobject(v, *it);
+		sq_pushobject(v, it);
 		if (sq_cmp(v) == 0) {
 			sq_pop(v, 2);
 			sqpush(v, 1);
@@ -633,11 +623,13 @@ static SQInteger randomseed(HSQUIRRELVM v) {
 	}
 	case 2: {
 		int seed = 0;
-		if (sq_gettype(v, 2) == OT_NULL)
+		if (sq_gettype(v, 2) == OT_NULL) {
 			g_engine->getRandomSource().setSeed(g_engine->getRandomSource().generateNewSeed());
-		return 0;
-		if (SQ_FAILED(sqget(v, 2, seed)))
+			return 0;
+		}
+		if (SQ_FAILED(sqget(v, 2, seed))) {
 			return sq_throwerror(v, "failed to get seed");
+		}
 		g_engine->getRandomSource().setSeed(seed);
 		return 0;
 	}
@@ -695,7 +687,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get verb definitionTable");
 	if (!sq_istable(table))
 		return sq_throwerror(v, "verb definitionTable is not a table");
-	int id;
+	int id = 0;
 	Common::String image;
 	Common::String text;
 	Common::String fun;
@@ -739,10 +731,8 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	switch (nArgs) {
 	case 1: {
-		for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
-			Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
-			for (size_t j = 0; j < layer->_objects.size(); j++) {
-				Common::SharedPtr<Object> obj = layer->_objects[j];
+		for (auto layer : g_engine->_room->_layers) {
+			for (auto obj : layer->_objects) {
 				obj->_exec.enabled = false;
 			}
 		}
@@ -894,7 +884,7 @@ static SQInteger strsplit(HSQUIRRELVM v) {
 	while (tok) {
 		sq_pushstring(v, tok, -1);
 		sq_arrayappend(v, -2);
-		tok = strtok(NULL, delimiter);
+		tok = strtok(nullptr, delimiter);
 	}
 	return 1;
 }

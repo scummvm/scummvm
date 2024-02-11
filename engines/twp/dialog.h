@@ -78,7 +78,7 @@ enum DialogSelMode {
 struct DialogConditionState {
 	DialogConditionMode mode;
 	Common::String actorKey, dialog;
-	int line;
+	int line{};
 
     DialogConditionState();
 	DialogConditionState(DialogConditionMode mode, const Common::String& actorKey, const Common::String& dialog, int line);

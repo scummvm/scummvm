@@ -20,11 +20,6 @@
  */
 
 #include "twp/twp.h"
-#include "twp/camera.h"
-#include "twp/room.h"
-#include "twp/object.h"
-#include "twp/util.h"
-#include "twp/scenegraph.h"
 
 namespace Twp {
 

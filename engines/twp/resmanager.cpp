@@ -20,12 +20,9 @@
  */
 
 #include "common/config-manager.h"
-#include "common/str.h"
 #include "image/png.h"
 #include "twp/resmanager.h"
-#include "twp/gfx.h"
 #include "twp/twp.h"
-#include "twp/ggpack.h"
 
 namespace Twp {
 
@@ -54,6 +51,7 @@ void ResManager::loadTexture(const Common::String &name) {
 	const Graphics::Surface *surface = d.getSurface();
 	if(!surface) {
 		error("PNG %s not loaded, please check USE_PNG flag", name.c_str());
+		return;
 	}
 
 	_textures[name].load(*surface);

@@ -59,8 +59,8 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 	_pauseable = true;
 
 	HSQUIRRELVM v = g_engine->getVm();
-	for (size_t i = 0; i < _args.size(); i++) {
-		sq_addref(v, &_args[i]);
+	for (auto & _arg : _args) {
+		sq_addref(v, &_arg);
 	}
 	sq_addref(v, &_threadObj);
 	sq_addref(v, &_envObj);
@@ -70,8 +70,8 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 Thread::~Thread() {
 	debugC(kDebugGame, "delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
 	HSQUIRRELVM v = g_engine->getVm();
-	for (size_t i = 0; i < _args.size(); i++) {
-		sq_release(v, &_args[i]);
+	for (auto & _arg : _args) {
+		sq_release(v, &_arg);
 	}
 	sq_release(v, &_threadObj);
 	sq_release(v, &_envObj);
@@ -84,8 +84,8 @@ bool Thread::call() {
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, _closureObj);
 	sq_pushobject(v, _envObj);
-	for (size_t i = 0; i < _args.size(); i++) {
-		sq_pushobject(v, _args[i]);
+	for (auto _arg : _args) {
+		sq_pushobject(v, _arg);
 	}
 	if (SQ_FAILED(sq_call(v, 1 + _args.size(), SQFalse, SQTrue))) {
 		sq_settop(v, top);
@@ -131,9 +131,8 @@ Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, H
 	debugC(kDebugGame, "Create cutscene %d with input: 0x%X from parent thread: %d", _id, _inputState, _parentThreadId);
 	g_engine->_inputState.setInputActive(false);
 	g_engine->_inputState.setShowCursor(false);
-	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
-		Common::SharedPtr<ThreadBase> thread = g_engine->_threads[i];
-		if (thread->isGlobal())
+	for (auto thread : g_engine->_threads) {
+			if (thread->isGlobal())
 			thread->pause();
 	}
 	HSQUIRRELVM vm = g_engine->getVm();
@@ -175,8 +174,7 @@ void Cutscene::stop() {
 	debugC(kDebugGame, "Restore cutscene input: %X", _inputState);
 	g_engine->follow(g_engine->_actor);
 	Common::Array<Common::SharedPtr<ThreadBase> > threads(g_engine->_threads);
-	for (size_t i = 0; i < threads.size(); i++) {
-		Common::SharedPtr<ThreadBase> thread = threads[i];
+	for (auto thread : threads) {
 		if (thread->isGlobal())
 			thread->unpause();
 	}

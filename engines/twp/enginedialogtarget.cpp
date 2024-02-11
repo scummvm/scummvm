@@ -26,9 +26,9 @@ namespace Twp {
 
 class Pause : public Motor {
 public:
-	Pause(float time) : _time(time) {}
+	explicit Pause(float time) : _time(time) {}
 
-	virtual void update(float elapsed) override {
+	void update(float elapsed) override {
 		_time -= elapsed;
 		if (_time <= 0)
 			disable();
@@ -42,7 +42,7 @@ class WaitWhile : public Motor {
 public:
 	WaitWhile(EngineDialogTarget* target, const Common::String& cond) : _target(target), _cond(cond) {}
 
-	virtual void update(float elapsed) override {
+	void update(float elapsed) override {
 		if (!_target->execCond(_cond))
     		disable();
 	}
@@ -53,11 +53,9 @@ private:
 };
 
 static Common::SharedPtr<Object> actor(const Common::String &name) {
-	// for (actor in gEngine.actors) {
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
-		if (actor->_key == name)
-			return actor;
+	for (auto a : g_engine->_actors) {
+		if (a->_key == name)
+			return a;
 	}
 	return nullptr;
 }

@@ -29,8 +29,8 @@
 namespace Twp {
 
 struct LipItem {
-	float time;
-	char letter;
+	float time = 0.f;
+	char letter = '\0';
 };
 
 // This contains the lip animation for a specific text.

@@ -35,7 +35,7 @@ void Lip::load(Common::SeekableReadStream *stream) {
 }
 
 char Lip::letter(float time) {
-	if (_items.size() == 0)
+	if (_items.empty())
 		return 'A';
 	for (size_t i = 0; i < _items.size() - 1; i++) {
 		if (time < _items[i + 1].time) {

@@ -21,7 +21,6 @@
 
 #include "twp/actorswitcher.h"
 #include "twp/twp.h"
-#include "twp/util.h"
 
 #define DISABLE_ALPHA 0.f
 #define ENABLE_ALPHA 1.f
@@ -89,7 +88,7 @@ void ActorSwitcher::drawCore(Math::Matrix4 trsf) {
 			ActorSwitcherSlot &slot = _slots[i];
 			drawIcon(slot.icon, slot.back, slot.frame, trsf, i);
 		}
-	} else if (_slots.size() > 0) {
+	} else if (!_slots.empty()) {
 		ActorSwitcherSlot &slot = _slots[0];
 		drawIcon(slot.icon, slot.back, slot.frame, trsf, 0);
 	}
