@@ -63,7 +63,7 @@ Common::String TextDb::getText(const Common::String &text) {
 			Common::String txt;
 			SQInteger top = sq_gettop(v);
 			sq_pushroottable(v);
-			Common::String code = Common::String::format("return %s", text.substr(1, text.size() - 2).c_str());
+			Common::String code(Common::String::format("return %s", text.substr(1, text.size() - 1).c_str()));
 			if (SQ_FAILED(sq_compilebuffer(v, code.c_str(), code.size(), "execCode", SQTrue))) {
 				error("Error executing code %s", code.c_str());
 			} else {

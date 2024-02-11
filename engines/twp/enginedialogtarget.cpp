@@ -118,7 +118,7 @@ bool EngineDialogTarget::execCond(const Common::String &cond) {
 	sq_push(v, -2);
 	// call
 	if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
-		debugC(kDebugDialog, "Error calling code {code}");
+		debugC(kDebugDialog, "Error calling code %s", code.c_str());
 		return false;
 	}
 

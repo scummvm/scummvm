@@ -150,7 +150,8 @@ void ExpVisitor::visit(const YLimit &node) {
 }
 
 void ExpVisitor::visit(const YSay &node) {
-	_dialog->_action = _dialog->_tgt->say(node._actor, node._text);
+	Common::String text(g_engine->getTextDb().getText(node._text));
+	_dialog->_action = _dialog->_tgt->say(node._actor, text);
 }
 
 CondVisitor::CondVisitor(Dialog *dialog) : _dialog(dialog) {}
@@ -421,7 +422,7 @@ void Dialog::running(float dt) {
 }
 
 static Common::String text(const Common::String &txt) {
-	Common::String result = g_engine->getTextDb().getText(txt);
+	Common::String result(g_engine->getTextDb().getText(txt));
 	result = remove(result, '(', ')');
 	result = remove(result, '{', '}');
 	return result;
