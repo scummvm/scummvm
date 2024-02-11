@@ -254,6 +254,13 @@ void NancyEngine::addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr
 
 Common::Error NancyEngine::run() {
 	setDebugger(new NancyConsole());
+	
+	// Set the default number of saves for earlier games
+	if (!ConfMan.hasKey("nancy_max_saves", ConfMan.getActiveDomainName())) {
+		if (getGameType() <= kGameTypeNancy7) {
+			ConfMan.setInt("nancy_max_saves", 8, ConfMan.getActiveDomainName());
+		}
+	}
 
 	// Boot the engine
 	setState(NancyState::kBoot);
