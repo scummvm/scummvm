@@ -32,7 +32,7 @@ private:
 	DisposeAfterUse::Flag _disposeAfterUse = DisposeAfterUse::NO;
 
 	void drawInner(const Buffer &src, const byte *depthCodes, int x, int y,
-		bool forwards, int srcDepth, const byte *inverseColorTable);
+		bool forwards, int srcDepth, const byte *palette, const byte *inverseColorTable);
 
 public:
 	M4Surface() : Buffer() {}
@@ -53,7 +53,7 @@ public:
 	 */
 	void draw(const Buffer &src, int x, int y, bool forwards = true,
 		const byte *depthCodes = nullptr, int srcDepth = -1,
-		const byte *inverseColorTable = nullptr);
+		const byte *inverseColorTable = nullptr, const byte *palette = nullptr);
 };
 
 } // namespace M4

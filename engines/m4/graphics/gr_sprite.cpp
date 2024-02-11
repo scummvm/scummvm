@@ -163,7 +163,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	M4Surface dst(*drawReq->Dest);
 	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
 		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth,
-		shadow ? drawReq->ICT : nullptr);
+		shadow ? drawReq->ICT : nullptr,
+		drawReq->Pal);
 
 	if (shadowBuff)
 		mem_free(shadowBuff);

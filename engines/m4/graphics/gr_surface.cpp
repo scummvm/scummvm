@@ -102,7 +102,8 @@ void M4Surface::rleDraw(const byte *src, int x, int y) {
 }
 
 void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
-		const byte *depthCodes, int srcDepth, const byte *inverseColorTable) {
+		const byte *depthCodes, int srcDepth, const byte *inverseColorTable,
+		const byte *palette) {
 	if ((src.encoding & 0x7f) == RLE8) {
 		// The standard case of RLE sprite drawing onto screen can directly
 		// use RLE decompression for performance
@@ -114,16 +115,16 @@ void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
 			// All other RLE drawing first decompresses the sprite, and then does
 			// the various clipping, reverse, etc. on that
 			M4Surface tmp(src.data, src.w, src.h);
-			drawInner(tmp, depthCodes, x, y, forwards, srcDepth, inverseColorTable);
+			drawInner(tmp, depthCodes, x, y, forwards, srcDepth, palette, inverseColorTable);
 		}
 	} else {
 		// Uncompressed images get passed to inner drawing
-		drawInner(src, depthCodes, x, y, forwards, srcDepth, inverseColorTable);
+		drawInner(src, depthCodes, x, y, forwards, srcDepth, palette, inverseColorTable);
 	}
 }
 
-void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
-		int x, int y, bool forwards, int srcDepth, const byte *inverseColorTable) {
+void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int y,
+		bool forwards, int srcDepth, const byte *palette, const byte *inverseColorTable) {
 	assert((src.encoding & 0x7f) == NO_COMPRESS);
 
 	for (int srcY = 0; srcY < src.h; ++srcY, ++y) {
@@ -139,6 +140,7 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 		const byte *depthP = depthCodes ? depthCodes + y * w + x : nullptr;
 		int deltaX = forwards ? 1 : -1;
 		int destX = x;
+		uint32 adjusted, total;
 
 		for (int srcX = 0; srcX < src.w; ++srcX, srcP += deltaX, ++destX) {
 			if (destX >= w)
@@ -148,10 +150,40 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 			byte v = *srcP;
 			byte depth = depthP ? *depthP & 0xf : 0;
 			if (destX >= 0 && v != 0 && (!depthP || depth == 0 || srcDepth < depth)) {
-				if (inverseColorTable)
-					v = inverseColorTable[v];
+				if (inverseColorTable) {
+					// Handling for shadows
+					if (v == 128)
+						continue;
 
-				*destP = v;
+					const byte *palP = palette + *destP * 3;
+					uint rgb = (uint32)palP[0] | ((uint32)palP[1] << 8) |
+						((uint32)palP[2] << 16);
+					rgb >>= 2;
+
+					// Red component
+					adjusted = (rgb & 0xff) * v;
+					adjusted = MIN(adjusted >> 8, 31U);
+					total = adjusted << 10;
+
+					// Green component
+					rgb >>= 8;
+					adjusted = (rgb & 0xff) * v;
+					adjusted = MIN(adjusted >> 8, 31U);
+					total |= (adjusted << 5);
+
+					// Blue component
+					rgb >>= 8;
+					adjusted = (rgb & 0xff) * v;
+					adjusted = MIN(adjusted >> 8, 31U);
+					total |= adjusted;
+
+					// Write out pixel from inverse table
+					*destP = inverseColorTable[total];
+
+				} else {
+					// Normal pixel
+					*destP = v;
+				}
 			}
 
 			++destP;

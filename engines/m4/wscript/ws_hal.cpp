@@ -355,7 +355,7 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 		myCCB = myAnim8->myCCB;
 
 		if (myCCB && myCCB->source && (!(myCCB->flags & CCB_NO_DRAW))) {
-			if ((myCCB->flags & CCB_REDRAW) && (greyMode || !(myCCB->source->encoding & 0x80))) {
+			if ((myCCB->flags & CCB_REDRAW) && (!greyMode || !(myCCB->source->encoding & 0x80))) {
 				// Draw the sprite
 				drawSprite(myCCB, myAnim8, halScrnBuf, screenCodeBuff, myPalette, ICT);
 			}
