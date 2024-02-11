@@ -315,8 +315,8 @@ void ConversationSound::execute() {
 			}
 
 			for (uint i : responsesToAdd) {
-				NancySceneState.getTextbox().addTextLine(_responses[responsesToAdd[i]].text);
-				_responses[responsesToAdd[i]].isOnScreen = true;
+				NancySceneState.getTextbox().addTextLine(_responses[i].text);
+				_responses[i].isOnScreen = true;
 			}
 		}
 
