@@ -94,6 +94,10 @@ private:
 	Common::Array<Common::SharedPtr<Image>> _icons;
 	DgdsDetailLevel _detailLevel;
 
+	// Clock is shown if both are true;
+	bool _showClockUser;
+	bool _showClockScript;
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
@@ -117,6 +121,7 @@ public:
 	Globals *getGameGlobals() { return _gameGlobals; }
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
+	void setShowClock(bool val) { _showClockScript = val; }
 
 private:
 	void loadCorners(const Common::String &filename);

@@ -59,7 +59,7 @@ Common::String Rect::dump(const Common::String &indent) const {
 
 
 Common::String SceneConditions::dump(const Common::String &indent) const {
-	return Common::String::format("%sSceneCondition<%d flg 0x%02x %d>", indent.c_str(), _num, _flags, _val);
+	return Common::String::format("%sSceneCondition<flg 0x%02x %d  %d>", indent.c_str(), _flags, _num, _val);
 }
 
 
@@ -82,8 +82,16 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpChangeScene: return "changeScene";
 	case kSceneOpNoop:		  return "noop";
 	case kSceneOpGlobal:		return "global";
+	case kSceneOp4MetaScript:   return "sceneOp4(metascript?)";
+	case kSceneOpSetItemAttr:   return "setitemattr?";
+	case kSceneOpGiveItem:      return "giveitem?";
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
+	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
+	case kSceneOpShowClock:		return "sceneOpShowClock";
+	case kSceneOpHideClock:		return "sceneOpHideClock";
+	case kSceneOp18Menu:		return "sceneOp18(menu1?)";
+	case kSceneOp19Menu:		return "sceneOp18(menu0?)";
 	case kSceneOpMeanwhile:   return "meanwhile";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
@@ -115,9 +123,9 @@ Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = SceneStruct2::dump(indent + "  ");
 
 	Common::String str = Common::String::format(
-			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d unk13 %d unk14 %d",
+			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
 			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
-			_iconNum, field12_0x28, field13_0x2a, field14_0x2c);
+			_iconNum, field12_0x28, _flags, field14_0x2c);
 	str += _dumpStructList(indent, "oplist5", opList5);
 	str += _dumpStructList(indent, "oplist6", opList6);
 	str += "\n";
@@ -509,7 +517,7 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 		dst.field12_0x28 = s->readUint16LE();
 		dst.field14_0x2c = s->readUint16LE();
 		if (!isVersionUnder(" 1.211"))
-			dst.field13_0x2a = s->readUint16LE() & 0xfffe;
+			dst._flags = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
 			dst.field10_0x24 = s->readUint16LE();
 			readOpList(s, dst.opList5);
@@ -517,7 +525,6 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 		}
 	}
 	return !s->err();
-
 }
 
 
@@ -673,6 +680,16 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpEnableTrigger:
 			enableTrigger(op._args[0]);
+			break;
+		case kSceneOpChangeSceneToStored: {
+			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
+			engine->changeScene(sceneNo, true);
+		}
+		case kSceneOpShowClock:
+			engine->setShowClock(true);
+			break;
+		case kSceneOpHideClock:
+			engine->setShowClock(false);
 			break;
 		case kSceneOpMeanwhile:
 			warning("TODO: Implement meanwhile screen");

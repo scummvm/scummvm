@@ -66,7 +66,8 @@ namespace Dgds {
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
-	_resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr), _detailLevel(kDgdsDetailHigh) {
+	_resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr), _detailLevel(kDgdsDetailHigh),
+	_showClockUser(false), _showClockScript(false) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -218,6 +219,7 @@ Common::Error DgdsEngine::run() {
 
 	if (getGameId() == GID_DRAGON) {
 		_gameGlobals = new DragonGlobals();
+		_showClockUser = true;
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 

@@ -79,22 +79,22 @@ enum SceneOpCode {
 	kSceneOpChangeScene = 1,  	// args: scene num
 	kSceneOpNoop = 2,		 	// args: none. Maybe should close dialogue?
 	kSceneOpGlobal = 3,			// args: array of uints
-	kSceneOp4 = 4,				// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
-	kSceneOp5 = 5,				// args: [item num, ??, ??]. give item?
-	kSceneOp6 = 6,				// args: item num?
+	kSceneOp4MetaScript = 4,	// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
+	kSceneOpSetItemAttr = 5,	// args: [item num, item param 0x28, item param 0x2c]. set item attrs?
+	kSceneOpGiveItem = 6,		// args: item num. give item?
 	kSceneOp7 = 7,				// args: none.
 	kSceneOpShowDlg = 8,		// args: dialogue number. show dialogue?
 	kSceneOp9 = 9,				// args: none.
 	kSceneOp10 = 10,			// args: none. Looks through the struct2 list for something.
 	kSceneOpEnableTrigger = 11,	// args: trigger num
-	kSceneOp12 = 12,			// args: none. Change scene to stored number (previous?)
+	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
 	kSceneOp13 = 13,			// args: none.
 	kSceneOp14 = 14,			// args: none.
 	kSceneOp15 = 15,			// args: none.
-	kSceneOp16 = 16,			// args: none.
-	kSceneOp17 = 17,			// args: none.
-	kSceneOp18 = 18,			// args: none.
-	kSceneOp19 = 19,			// args: none.
+	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
+	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
+	kSceneOp18Menu = 18,		// args: none.  set menu-related globals to 1
+	kSceneOp19Menu = 19,		// args: none.  set menu-related globals to 0
 	kSceneOp100 = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOp102 = 102,			// args: none.
@@ -120,7 +120,7 @@ struct GameItem : public SceneStruct2 {
 	uint16 field10_0x24;
 	uint16 _iconNum;
 	uint16 field12_0x28;
-	uint16 field13_0x2a;
+	uint16 _flags;
 	uint16 field14_0x2c;
 
 	Common::String dump(const Common::String &indent) const override;
