@@ -44,9 +44,6 @@ void SliderPuzzle::init() {
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
-	_spuzData = GetEngineData(SPUZ);
-	assert(_spuzData);
-
 	_puzzleState = (SliderPuzzleData *)NancySceneState.getPuzzleData(SliderPuzzleData::getTag());
 	assert(_puzzleState);
 
@@ -74,18 +71,32 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_correctTileOrder.reserve(_height);
-	for (uint y = 0; y < _height; ++y) {
-		_correctTileOrder.push_back(Common::Array<int16>());
-		_correctTileOrder.back().reserve(_width);
+	if (g_nancy->getGameType() >= kGameTypeNancy9) {
+		_retainState = stream.readByte();
 
-		for (uint x = 0; x < _width; ++x) {
-			_correctTileOrder.back().push_back(stream.readSint16LE());
+		_startTileOrder.resize(_height);
+		for (uint y = 0; y < _height; ++y) {
+			_startTileOrder[y].resize(_width);
+			for (uint x = 0; x < _width; ++x) {
+				_startTileOrder[y][x] = stream.readSint16LE();
+			}
+			stream.skip((6 - _width) * 2);
 		}
-
-		stream.skip((6 - _width) * 2);
+		stream.skip((6 - _height) * 6 * 2);
+	} else {
+		auto *spuzData = GetEngineData(SPUZ);
+		assert(spuzData);
+		_startTileOrder = spuzData->tileOrder;
 	}
 
+	_correctTileOrder.resize(_height);
+	for (uint y = 0; y < _height; ++y) {
+		_correctTileOrder[y].resize(_width);
+		for (uint x = 0; x < _width; ++x) {
+			_correctTileOrder[y][x] = stream.readSint16LE();
+		}
+		stream.skip((6 - _width) * 2);
+	}
 	stream.skip((6 - _height) * 6 * 2);
 
 	_clickSound.readNormal(stream);
@@ -100,16 +111,8 @@ void SliderPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
-		if (!_puzzleState->playerHasTriedPuzzle) {
-			_puzzleState->playerTileOrder.clear();
-			_puzzleState->playerTileOrder.resize(_height);
-			for (uint y = 0; y < _height; ++y) {
-				_puzzleState->playerTileOrder[y].resize(_width);
-				for (uint x = 0; x < _width; ++x) {
-					_puzzleState->playerTileOrder[y][x] = _spuzData->tileOrder[NancySceneState.getDifficulty()][y * 6 + x];
-				}
-			}
-
+		if (!_puzzleState->playerHasTriedPuzzle || !_retainState) {
+			_puzzleState->playerTileOrder = _startTileOrder;
 			_puzzleState->playerHasTriedPuzzle = true;
 		}
 
@@ -166,7 +169,7 @@ void SliderPuzzle::execute() {
 }
 
 void SliderPuzzle::handleInput(NancyInput &input) {
-	if (_solveState != kNotSolved) {
+	if (_state != kRun || _solveState != kNotSolved) {
 		return;
 	}
 
