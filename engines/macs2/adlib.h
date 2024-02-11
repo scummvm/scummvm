@@ -24,6 +24,10 @@
 
 #include "common/scummsys.h"
 
+namespace Common {
+class MemoryReadStream;
+}
+
 namespace OPL {
 	class OPL;
 }
@@ -35,12 +39,28 @@ namespace Macs2 {
 	private:
 		OPL::OPL *_opl;
 
+
 		// TODO: Maybe we need to add the caller, fn0017_24FD proc
 		void Func2686();
 		void Func2792(byte registerIndex, byte value);
+		void Func2792r(byte value, byte registerIndex) {
+			Func2792(registerIndex, value);
+		}
+		// TODO: Maybe need to add the caller
+		void Func24FD();
+		// TODO: Consider adding the caller
+		void Func2839();
+
+		// 01D7:1AA7
+		void OnTimer();
+
+		// 	[2254h] and [2256h]
+		uint32 _nextEventTimer;
 
 	public:
 	void Init();
+
+		Common::MemoryReadStream *data = nullptr;
 	};
 
 } // namespace Macs2
