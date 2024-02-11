@@ -466,6 +466,7 @@ public:
 	int _initialCountdown;
 	int _countdown;
 	int _ticks;
+	int _ticksFromEnd;
 	int _lastTick;
 	int _lastMinute;
 

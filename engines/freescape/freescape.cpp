@@ -155,6 +155,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_initialCountdown = 0;
 	_countdown = 0;
 	_ticks = 0;
+	_ticksFromEnd = 0;
 	_lastTick = -1;
 	_lastMinute = -1;
 	_frameLimiter = nullptr;

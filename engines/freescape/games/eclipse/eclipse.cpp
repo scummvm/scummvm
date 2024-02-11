@@ -142,9 +142,10 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance)
 		playSound(9, true);
-	if (areaID == _endArea && entranceID == _endEntrance)
+	if (areaID == _endArea && entranceID == _endEntrance) {
 		_flyMode = true;
-	else
+		_pitch = 20;
+	} else
 		playSound(5, false);
 
 	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {

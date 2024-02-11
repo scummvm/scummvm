@@ -394,17 +394,21 @@ bool DarkEngine::checkIfGameEnded() {
 
 void DarkEngine::endGame() {
 	if (_gameStateControl == kFreescapeGameStateEnd) {
-		if (true /*_countdown <= 0*/) {
+		if (!_ticksFromEnd)
+			_ticksFromEnd = _ticks;
+		else if ((_ticks - _ticksFromEnd) / 15 >= 15) {
 			if (_gameStateVars[kVariableDarkEnding]) {
 				executeLocalGlobalConditions(false, true, false);
 				_gameStateVars[kVariableDarkEnding] = 0;
 				insertTemporaryMessage(_messagesList[22], INT_MIN);
+				_currentArea->_colorRemaps.clear();
+				_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 			}
 		}
 	}
 
 	if (_endGameKeyPressed && _gameStateVars[kVariableDarkEnding] == 0) {
-		//_gameStateControl = kFreescapeGameStateRestart;
+		_gameStateControl = kFreescapeGameStateRestart;
 	}
 	_endGameKeyPressed = false;
 }
@@ -597,6 +601,17 @@ void DarkEngine::executePrint(FCLInstruction &instruction) {
 
 void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int yPosition, uint32 front, uint32 back) {
 	int number = _ticks / 2;
+
+	if (_gameStateControl == kFreescapeGameStatePlaying)
+		number = _ticks / 2;
+	else if (_gameStateControl == kFreescapeGameStateEnd)
+		number = 1 << (_ticks - _ticksFromEnd) / 15;
+	else
+		return;
+
+	if (number >= 1 << 15)
+		number = (1 << 15) - 1;
+
 	int bits = 0;
 	while (bits <= 15) {
 		int y = yPosition - (7 * bits);
