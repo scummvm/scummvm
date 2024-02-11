@@ -1,8 +1,6 @@
 #include "twp/lighting.h"
 #include "twp/room.h"
 #include "twp/twp.h"
-#include "graphics/opengl/debug.h"
-#include "graphics/opengl/system_headers.h"
 #include "common/math.h"
 
 namespace Twp {
@@ -160,7 +158,7 @@ Lighting::Lighting() {
 	init("lighting", vshader, fshader);
 }
 
-Lighting::~Lighting() {}
+Lighting::~Lighting() = default;
 
 void Lighting::setSpriteOffset(const Math::Vector2d &offset) {
 	_spriteOffset = offset;

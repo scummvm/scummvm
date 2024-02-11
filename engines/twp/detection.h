@@ -53,7 +53,7 @@ class TwpMetaEngineDetection : public AdvancedMetaEngineDetection {
 
 public:
 	TwpMetaEngineDetection();
-	~TwpMetaEngineDetection() override {}
+	~TwpMetaEngineDetection() override = default;
 
 	const char *getName() const override {
 		return "twp";
@@ -72,7 +72,7 @@ public:
 	}
 
 private:
-	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra = nullptr) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
 #endif // TWP_DETECTION_H

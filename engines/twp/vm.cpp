@@ -20,18 +20,10 @@
  */
 
 #include "twp/twp.h"
-#include "twp/vm.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
-#include "twp/thread.h"
-#include "common/array.h"
-#include "common/algorithm.h"
-#include "common/debug.h"
-#include "common/random.h"
-#include "image/png.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
-#include "squirrel/sqobject.h"
 #include "squirrel/sqstring.h"
 #include "squirrel/sqstate.h"
 #include "squirrel/sqtable.h"
@@ -46,7 +38,7 @@ namespace Twp {
 
 static HSQUIRRELVM gVm = nullptr;
 
-static void errorHandler(HSQUIRRELVM v, const SQChar *desc, const SQChar *source, SQInteger line,
+static void errorHandler(HSQUIRRELVM, const SQChar *desc, const SQChar *source, SQInteger line,
 						 SQInteger column) {
 	debugN("TWP: desc %s, source: %s (%lld,%lld)", desc, source, line, column);
 }
@@ -69,7 +61,7 @@ static SQInteger aux_printerror(HSQUIRRELVM v) {
 	return 0;
 }
 
-static void printfunc(HSQUIRRELVM v, const SQChar *s, ...) {
+static void printfunc(HSQUIRRELVM, const SQChar *s, ...) {
 	char buf[1024 * 1024];
 	va_list vl;
 	va_start(vl, s);

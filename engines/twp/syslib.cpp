@@ -21,25 +21,15 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
-#include "twp/ids.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/task.h"
-#include "twp/callback.h"
-#include "twp/scenegraph.h"
-#include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
-#include "twp/squirrel/sqobject.h"
 #include "twp/squirrel/sqstring.h"
 #include "twp/squirrel/sqstate.h"
 #include "twp/squirrel/sqtable.h"
-#include "twp/squirrel/sqstdstring.h"
-#include "twp/squirrel/sqstdmath.h"
-#include "twp/squirrel/sqstdio.h"
-#include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
-#include "common/debug.h"
 
 namespace Twp {
 
@@ -96,11 +86,11 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 }
 
 static SQInteger breakfunc(HSQUIRRELVM v, void func(Common::SharedPtr<ThreadBase> t, void *data), void *data) {
-	Common::SharedPtr<ThreadBase> t = sqthread(v);
-	if (!t)
+	Common::SharedPtr<ThreadBase> thread(sqthread(v));
+	if (!thread)
 		return sq_throwerror(v, "failed to get thread");
-	t->suspend();
-	func(t, data);
+	thread->suspend();
+	func(thread, data);
 	return -666;
 }
 
@@ -240,7 +230,7 @@ static bool isAnimating(Common::SharedPtr<Object> obj) {
 }
 
 struct ObjAnimating {
-	ObjAnimating(Common::SharedPtr<Object> obj) : _obj(obj) {}
+	explicit ObjAnimating(Common::SharedPtr<Object> obj) : _obj(obj) {}
 	bool operator()() {
 		return isAnimating(_obj);
 	}
@@ -377,7 +367,7 @@ struct SomeoneTalking {
 };
 
 struct ActorTalking {
-	ActorTalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
+	explicit ActorTalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
 
 	bool operator()() {
 		return _obj->getTalking() && _obj->getTalking()->isEnabled();
@@ -415,7 +405,7 @@ static SQInteger breakwhiletalking(HSQUIRRELVM v) {
 }
 
 struct ActorWalking {
-	ActorWalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
+	explicit ActorWalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
 
 	bool operator()() {
 		return _obj->getWalkTo() && _obj->getWalkTo()->isEnabled();
@@ -443,7 +433,7 @@ static SQInteger breakwhilewalking(HSQUIRRELVM v) {
 }
 
 struct SoundPlaying {
-	SoundPlaying(int soundId) : _soundId(soundId) {}
+	explicit SoundPlaying(int soundId) : _soundId(soundId) {}
 
 	bool operator()() {
 		return g_engine->_audio.playing(_soundId);
@@ -608,8 +598,8 @@ static SQInteger inputOff(HSQUIRRELVM v) {
 }
 
 static SQInteger inputOn(HSQUIRRELVM v) {
-	Common::SharedPtr<Cutscene> cutscene = g_engine->_cutscene;
-	if (!cutscene || cutscene->isStopped()) {
+	Common::SharedPtr<Cutscene> scene(g_engine->_cutscene);
+	if (!scene || scene->isStopped()) {
 		g_engine->_inputState.setInputActive(true);
 		g_engine->_inputState.setShowCursor(true);
 	} else {
@@ -618,8 +608,8 @@ static SQInteger inputOn(HSQUIRRELVM v) {
 		state &= (~UI_INPUT_OFF);
 		state |= UI_CURSOR_ON;
 		state &= (~UI_CURSOR_OFF);
-		cutscene->setInputState((InputStateFlag)state);
-		cutscene->setShowCursor(true);
+		scene->setInputState((InputStateFlag)state);
+		scene->setShowCursor(true);
 	}
 	return 0;
 }

@@ -20,13 +20,7 @@
  */
 
 #include "twp/twp.h"
-#include "twp/ids.h"
-#include "twp/object.h"
-#include "twp/scenegraph.h"
 #include "twp/squtil.h"
-#include "twp/util.h"
-#include "twp/ggpack.h"
-#include "twp/motor.h"
 
 #define MIN_TALK_DIST 60
 #define MIN_USE_DIST 15
@@ -404,9 +398,7 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 				layer->_node->addChild(object->_node.get());
 			}
 		}
-		if (object->_room != room) {
-			object->_room = room;
-		}
+		object->_room = room;
 	}
 }
 
@@ -714,7 +706,7 @@ static void cantReach(Common::SharedPtr<Object> self, Common::SharedPtr<Object> 
 	} else {
 		HSQOBJECT nilTbl;
 		sq_resetobject(&nilTbl);
-		sqcall(g_engine->_defaultObj, "verbCantReach", self->_table, !noun2 ? nilTbl : noun2->_table);
+		sqcall(g_engine->_defaultObj, "verbCantReach", self->_table, nilTbl);
 	}
 }
 
@@ -753,7 +745,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 			}
 			float dist = distance((Vector2i)obj->getUsePos(), (Vector2i)noun2->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
-			debugC(kDebugGame, "actorArrived: noun2 min_dist: {dist} > {min_dist} ?");
+			debugC(kDebugGame, "actorArrived: noun2 min_dist: %f > %f ?", dist, min_dist);
 			if (dist > min_dist) {
 				cantReach(noun1, noun2);
 				return;
@@ -807,7 +799,7 @@ void Object::inventoryScrollDown() {
 }
 
 void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Object> obj) {
-	Talking *talking = static_cast<Talking *>(obj->getTalking().get());
+	Talking *talking = dynamic_cast<Talking *>(obj->getTalking().get());
 	if (!talking) {
 		obj->setTalking(Common::SharedPtr<Talking>(new Talking(obj, texts, _color)));
 	} else {

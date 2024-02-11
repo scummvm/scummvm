@@ -21,9 +21,6 @@
 
 #include "twp/font.h"
 #include "twp/twp.h"
-#include "twp/ggpack.h"
-#include "common/str.h"
-#include "graphics/opengl/system_headers.h"
 
 namespace Twp {
 
@@ -54,7 +51,7 @@ typedef struct Line {
 
 class TokenReader {
 public:
-	TokenReader(const Common::U32String &text);
+	explicit TokenReader(const Common::U32String &text);
 	Common::U32String substr(Token tok);
 	bool readToken(Token &token);
 

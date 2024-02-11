@@ -21,7 +21,6 @@
 
 #include "twp/yack.h"
 #include "twp/detection.h"
-#include "common/util.h"
 
 namespace Twp {
 

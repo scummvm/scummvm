@@ -55,7 +55,7 @@ struct Verb {
 	Common::String fun;
 	Common::String text;
 	Common::String key;
-	int flags;
+	int flags{};
 
 	Verb();
 	Verb(VerbId id, const Common::String& image, const Common::String& fun, const Common::String& text, const Common::String& key, int flags = 0);
@@ -72,9 +72,9 @@ public:
 	ActorSlot();
 
 	Verb *getVerb(int id) {
-		for (int i = 0; i < MAX_VERBS; i++) {
-			if (verbs[i].id.id == id) {
-				return &verbs[i];
+		for (auto & verb : verbs) {
+			if (verb.id.id == id) {
+				return &verb;
 			}
 		}
 		return nullptr;
@@ -90,12 +90,12 @@ struct VerbRect {
 class HudShader : public Shader {
 public:
 	HudShader();
-	virtual ~HudShader() override;
+	~HudShader() override;
 
 	void init();
 
 private:
-	virtual void applyUniforms() final;
+	void applyUniforms() final;
 
 public:
 	Color _shadowColor;
@@ -115,13 +115,12 @@ public:
 	void setVisible(bool visible) override;
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	void drawCore(Math::Matrix4 trsf) final;
 	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];
 	Common::SharedPtr<Object> _actor;
-	VerbRect _verbRects[NUMVERBS];
 	Verb _verb;
 	HudShader _shader;
 	Math::Vector2d _mousePos;

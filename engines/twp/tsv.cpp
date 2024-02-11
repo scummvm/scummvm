@@ -20,10 +20,7 @@
  */
 
 #include "twp/twp.h"
-#include "twp/tsv.h"
 #include "twp/squtil.h"
-#include "twp/squirrel/squirrel.h"
-#include "twp/detection.h"
 
 namespace Twp {
 

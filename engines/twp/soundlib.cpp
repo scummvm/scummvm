@@ -21,12 +21,7 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
-#include "twp/room.h"
-#include "twp/object.h"
 #include "twp/squtil.h"
-#include "twp/audio.h"
-#include "twp/squirrel/squirrel.h"
-#include "audio/mixer.h"
 
 namespace Twp {
 
@@ -357,7 +352,7 @@ static SQInteger soundVolume(HSQUIRRELVM v) {
 	return 0;
 }
 
-static SQInteger stopAllSounds(HSQUIRRELVM v) {
+static SQInteger stopAllSounds(HSQUIRRELVM) {
 	g_engine->_mixer->stopAll();
 	return 0;
 }

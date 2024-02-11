@@ -30,10 +30,10 @@ namespace Twp {
 class TwpOptionsContainerWidget : public GUI::OptionsContainerWidget {
 public:
 	TwpOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
-	~TwpOptionsContainerWidget() override {}
+	~TwpOptionsContainerWidget() override = default;
 
-	virtual void load() override;
-	virtual bool save() override;
+	void load() override;
+	bool save() override;
 
 private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;

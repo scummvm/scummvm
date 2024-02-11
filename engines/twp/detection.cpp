@@ -20,12 +20,8 @@
  */
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
 #include "common/file.h"
-#include "common/md5.h"
-#include "common/str-array.h"
 #include "common/translation.h"
-#include "common/util.h"
 #include "twp/detection.h"
 #include "twp/detection_tables.h"
 
@@ -48,8 +44,8 @@ TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(T
 }
 
 ADDetectedGame TwpMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
-	for (auto it = allFiles.begin(); it != allFiles.end(); it++) {
-		if (it->_key.toString().hasSuffixIgnoreCase(".ggpack1")) {
+	for (const auto & allFile : allFiles) {
+		if (allFile._key.toString().hasSuffixIgnoreCase(".ggpack1")) {
 			return ADDetectedGame(Twp::gameDescriptions);
 		}
 	}

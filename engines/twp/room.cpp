@@ -22,16 +22,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "twp/twp.h"
-#include "twp/room.h"
-#include "twp/ggpack.h"
 #include "twp/squtil.h"
-#include "twp/font.h"
-#include "twp/scenegraph.h"
-#include "twp/ids.h"
-#include "twp/object.h"
-#include "twp/util.h"
 #include "twp/clipper/clipper.hpp"
-#include "common/algorithm.h"
 
 namespace Twp {
 

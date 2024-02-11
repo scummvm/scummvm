@@ -20,7 +20,6 @@
  */
 
 #include "gui/gui-manager.h"
-#include "gui/widget.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
@@ -34,7 +33,6 @@
 #include "twp/metaengine.h"
 #include "twp/detection.h"
 #include "twp/twp.h"
-#include "twp/savegame.h"
 #include "twp/time.h"
 #include "twp/actions.h"
 #include "twp/dialogs.h"
@@ -171,8 +169,6 @@ GUI::OptionsContainerWidget *TwpMetaEngine::buildEngineOptionsWidget(GUI::GuiObj
 Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, target, "Thimbleweed Park keymap");
 
-	Common::Action *act;
-
 	struct {
 		Common::String name;
 		const Common::U32String desc;
@@ -198,6 +194,7 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SHOWHOTSPOTS", _("Show hotspots"), Twp::kShowHotspots, "TAB"},
 	};
 
+	Common::Action *act;
 	for (int i = 0; i < ARRAYSIZE(actions); i++) {
 		act = new Common::Action(actions[i].name.c_str(), actions[i].desc);
 		act->setCustomEngineActionEvent(actions[i].action);

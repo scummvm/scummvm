@@ -20,20 +20,17 @@
  */
 
 #include "twp/twp.h"
-#include "twp/util.h"
 #include "twp/squtil.h"
-#include "twp/dialog.h"
-#include "common/debug.h"
 
 namespace Twp {
 
 class SerialMotors : public Motor {
 public:
 	SerialMotors(const std::initializer_list<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
-	SerialMotors(const Common::Array<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
+	explicit SerialMotors(const Common::Array<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
 
-	virtual void update(float elapsed) override {
-		if (_motors.size() > 0) {
+	void update(float elapsed) override {
+		if (!_motors.empty()) {
 			_motors[0]->update(elapsed);
 			if (!_motors[0]->isEnabled()) {
 				debugC(kDebugDialog, "SerialMotors next");
@@ -55,7 +52,7 @@ public:
 		: _dlg(dlg), _line(line), _name(name) {
 	}
 
-	virtual void update(float elapsed) override {
+	void update(float elapsed) override {
 		_dlg->selectLabel(_line, _name);
 		disable();
 	}
@@ -73,7 +70,7 @@ DialogConditionState CondStateVisitor::createState(int line, DialogConditionMode
 	return DialogConditionState(mode, _dlg->_context.actor, _dlg->_context.dialogName, line);
 }
 
-DialogConditionState::DialogConditionState() {}
+DialogConditionState::DialogConditionState() = default;
 
 DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String& k, const Common::String& dlg, int ln)
 : mode(m), actorKey(k), dialog(dlg), line(ln) {
@@ -100,7 +97,7 @@ void CondStateVisitor::visit(const YTempOnce &node) {
 }
 
 ExpVisitor::ExpVisitor(Dialog *dialog) : _dialog(dialog) {}
-ExpVisitor::~ExpVisitor() {}
+ExpVisitor::~ExpVisitor() = default;
 
 void ExpVisitor::visit(const YCodeExp &node) {
 	debugC(kDebugDialog, "execute code %s", node._code.c_str());
@@ -157,7 +154,7 @@ void ExpVisitor::visit(const YSay &node) {
 }
 
 CondVisitor::CondVisitor(Dialog *dialog) : _dialog(dialog) {}
-CondVisitor::~CondVisitor() {}
+CondVisitor::~CondVisitor() = default;
 
 void CondVisitor::visit(const YCodeCond &node) {
 	_accepted = _dialog->isCond(node._code);
@@ -182,7 +179,7 @@ void CondVisitor::visit(const YTempOnce &node) {
 DialogSlot::DialogSlot() : Node("DialogSlot") {}
 
 Dialog::Dialog() : Node("Dialog") {}
-Dialog::~Dialog() {}
+Dialog::~Dialog() = default;
 
 static YChoice *getChoice(DialogSlot *slot) {
 	return (YChoice *)(slot->_stmt->_exp.get());
@@ -268,8 +265,7 @@ void Dialog::update(float dt) {
 }
 
 bool Dialog::isOnce(int line) const {
-	for (size_t i = 0; i < _states.size(); i++) {
-		const DialogConditionState &state = _states[i];
+	for (const auto & state : _states) {
 		if (state.mode == Once && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isOnce %d: false", line);
 			return false;
@@ -280,8 +276,7 @@ bool Dialog::isOnce(int line) const {
 }
 
 bool Dialog::isShowOnce(int line) const {
-	for (size_t i = 0; i < _states.size(); i++) {
-		const DialogConditionState &state = _states[i];
+	for (const auto & state : _states) {
 		if (state.mode == ShowOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isShowOnce %d: false", line);
 			return false;
@@ -292,8 +287,7 @@ bool Dialog::isShowOnce(int line) const {
 }
 
 bool Dialog::isOnceEver(int line) const {
-	for (size_t i = 0; i < _states.size(); i++) {
-		const DialogConditionState &state = _states[i];
+	for (const auto & state : _states) {
 		if (state.mode == OnceEver && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isOnceEver %d: false", line);
 			return false;
@@ -304,8 +298,7 @@ bool Dialog::isOnceEver(int line) const {
 }
 
 bool Dialog::isTempOnce(int line) const {
-	for (size_t i = 0; i < _states.size(); i++) {
-		const DialogConditionState &state = _states[i];
+	for (const auto & state : _states) {
 		if (state.mode == TempOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isTempOnce %d: false", line);
 			return false;
@@ -322,15 +315,13 @@ bool Dialog::isCond(const Common::String &cond) const {
 }
 
 Common::SharedPtr<YLabel> Dialog::label(int line, const Common::String &name) const {
-	for (size_t i = 0; i < _cu->_labels.size(); i++) {
-		Common::SharedPtr<YLabel> label = _cu->_labels[i];
+	for (auto label : _cu->_labels) {
 		if ((label->_name == name) && (label->_line >= line)) {
 			return label;
 		}
 	}
 	line = 0;
-	for (size_t i = 0; i < _cu->_labels.size(); i++) {
-		Common::SharedPtr<YLabel> label = _cu->_labels[i];
+	for (auto label : _cu->_labels) {
 		if ((label->_name == name) && (label->_line >= line)) {
 			return label;
 		}
@@ -360,11 +351,10 @@ void Dialog::gotoNextLabel() {
 
 void Dialog::updateChoiceStates() {
 	_state = WaitingForChoice;
-	for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
-		DialogSlot *slot = &_slots[i];
+	for (auto & _slot : _slots) {
+		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
-			for (size_t j = 0; j < slot->_stmt->_conds.size(); j++) {
-				Common::SharedPtr<YCond> cond = slot->_stmt->_conds[j];
+			for (auto cond : slot->_stmt->_conds) {
 				CondStateVisitor v(this, DialogSelMode::Show);
 				cond->accept(v);
 			}
@@ -386,8 +376,7 @@ void Dialog::run(Common::SharedPtr<YStatement> stmt) {
 
 bool Dialog::acceptConditions(Common::SharedPtr<YStatement> stmt) {
 	CondVisitor vis(this);
-	for (size_t i = 0; i < stmt->_conds.size(); i++) {
-		Common::SharedPtr<YCond> cond = stmt->_conds[i];
+	for (auto cond : stmt->_conds) {
 		cond->accept(vis);
 		if (!vis._accepted) {
 			return false;
@@ -453,22 +442,22 @@ void Dialog::addSlot(Common::SharedPtr<YStatement> stmt) {
 
 int Dialog::numSlots() const {
 	int num = 0;
-	for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
-		if (_slots[i]._isValid)
+	for (const auto & _slot : _slots) {
+		if (_slot._isValid)
 			num++;
 	}
 	return num;
 }
 
 void Dialog::clearSlots() {
-	for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
-		_slots[i]._isValid = false;
+	for (auto & _slot : _slots) {
+		_slot._isValid = false;
 	}
 }
 
 void Dialog::drawCore(Math::Matrix4 trsf) {
-	for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
-		DialogSlot *slot = &_slots[i];
+	for (auto & _slot : _slots) {
+		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
 			Math::Matrix4 t(trsf);
 			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY(), 0.f));

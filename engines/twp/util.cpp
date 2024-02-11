@@ -20,7 +20,6 @@
  */
 
 #include "twp/object.h"
-#include "twp/util.h"
 #include "twp/scenegraph.h"
 
 namespace Twp {

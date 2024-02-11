@@ -20,7 +20,6 @@
  */
 
 #include "twp/twp.h"
-#include "twp/walkboxnode.h"
 #include "twp/lighting.h"
 
 namespace Twp {
@@ -214,7 +213,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 }
 
 LightingNode::LightingNode() : Node("Lighting") {
-	setVisible(false);
+	_visible = false;
 }
 
 void LightingNode::drawCore(Math::Matrix4 trsf) {

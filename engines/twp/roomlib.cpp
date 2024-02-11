@@ -21,11 +21,7 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
-#include "twp/room.h"
-#include "twp/object.h"
 #include "twp/squtil.h"
-#include "twp/scenegraph.h"
-#include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
@@ -210,7 +206,7 @@ static SQInteger lightTurnOn(HSQUIRRELVM v) {
 }
 
 static SQInteger lightZRange(HSQUIRRELVM v) {
-	Light *light = sqlight(v, 2);
+	const Light *light = sqlight(v, 2);
 	if (light) {
 		int nearY, farY;
 		if (SQ_FAILED(sqget(v, 3, nearY)))

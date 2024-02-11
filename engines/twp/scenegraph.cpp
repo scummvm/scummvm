@@ -20,14 +20,10 @@
  */
 
 #include "math/matrix3.h"
-#include "math/vector3d.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "twp/scenegraph.h"
 #include "twp/twp.h"
-#include "twp/gfx.h"
-#include "twp/object.h"
-#include "twp/util.h"
 #include "twp/lighting.h"
 
 namespace Twp {

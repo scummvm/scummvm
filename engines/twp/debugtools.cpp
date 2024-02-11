@@ -1,8 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include "twp/debugtools.h"
 #include "imgui/imgui.h"
 #include "twp/twp.h"
 #include "twp/thread.h"
-#include "twp/dialog.h"
 #include "twp/lighting.h"
 #include "common/debug-channels.h"
 
@@ -86,7 +106,7 @@ static void drawObjects() {
 					obj->_node->setVisible(visible);
 				}
 				ImGui::SameLine();
-				Common::String name = obj->_key == "" ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
+				Common::String name = obj->_key.empty() ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
 				bool selected = false;
 				if (ImGui::Selectable(name.c_str(), &selected)) {
 					// gObject = obj;

@@ -21,29 +21,25 @@
 
 #include "twp/hud.h"
 #include "twp/twp.h"
-#include "math/vector2d.h"
-#include "graphics/opengl/debug.h"
-#include "graphics/opengl/system_headers.h"
 #include "common/config-manager.h"
 
 namespace Twp {
 
-Verb::Verb() {}
+Verb::Verb() = default;
 
 Verb::Verb(VerbId verbId, const Common::String& img, const Common::String& f, const Common::String& t, const Common::String& k, int fl)
 : id(verbId), image(img), fun(f), text(t), key(k), flags(fl) {
 }
 
-VerbUiColors::VerbUiColors() {}
+VerbUiColors::VerbUiColors() = default;
 
 VerbUiColors::VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt)
 : sentence(s), verbNormal(vbNormal), verbNormalTint(vbNormalTint), verbHighlight(vbHiglight), verbHighlightTint(vbHiglightTint), dialogNormal(dlgNormal), dialogHighlight(dlgHighlt), inventoryFrame(invFrame), inventoryBackground(inventoryBack), retroNormal(retroNml), retroHighlight(retroHighlt) {
 }
 
-ActorSlot::ActorSlot() {}
+ActorSlot::ActorSlot() = default;
 
-HudShader::HudShader() {
-}
+HudShader::HudShader() = default;
 
 void HudShader::init() {
 	const char *vsrc = R"(#version 110
@@ -101,7 +97,7 @@ void HudShader::init() {
 	Shader::init("hud", v_source, f_source);
 }
 
-HudShader::~HudShader() {}
+HudShader::~HudShader() = default;
 
 void HudShader::applyUniforms() {
 	setUniform("u_ranges", Math::Vector2d(0.8f, 0.8f));
@@ -112,8 +108,8 @@ void HudShader::applyUniforms() {
 
 Hud::Hud() : Node("hud") {
 	_zOrder = 100;
-	for (int i = 0; i < NUMACTORS; i++) {
-		ActorSlot *slot = &_actorSlots[i];
+	for (auto & _actorSlot : _actorSlots) {
+		ActorSlot *slot = &_actorSlot;
 		slot->actor = nullptr;
 	}
 }
@@ -123,8 +119,8 @@ void Hud::init() {
 }
 
 ActorSlot *Hud::actorSlot(Common::SharedPtr<Object> actor) {
-	for (int i = 0; i < NUMACTORS; i++) {
-		ActorSlot *slot = &_actorSlots[i];
+	for (auto & _actorSlot : _actorSlots) {
+		ActorSlot *slot = &_actorSlot;
 		if (slot->actor == actor) {
 			return slot;
 		}
