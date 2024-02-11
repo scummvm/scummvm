@@ -29,7 +29,7 @@ namespace Twp {
 
 OffsetTo::~OffsetTo() = default;
 
-OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
+OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getOffset(), pos, duration, im) {
 }
@@ -43,7 +43,7 @@ void OffsetTo::update(float elapsed) {
 
 MoveTo::~MoveTo() = default;
 
-MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, Math::Vector2d pos, InterpolationMethod im)
+MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getPos(), pos, duration, im) {
 }
@@ -276,8 +276,19 @@ void WalkTo::update(float elapsed) {
 		Common::SharedPtr<Motor> reach = _obj->getReach();
 		if (reach && reach->isEnabled()) {
 			reach->update(elapsed);
-			if (!reach->isEnabled())
+			_state =  kReach;
+			return;
+		}
+	}
+
+	if(_state == kReach) {
+		Common::SharedPtr<Motor> reach = _obj->getReach();
+		if (reach) {
+			if (reach->isEnabled()) {
+				reach->update(elapsed);
+			} else {
 				disable();
+			}
 		}
 	}
 }
@@ -329,7 +340,7 @@ void Talking::update(float elapsed) {
 			debugC(kDebugGame, "talking %s audio stopped", _obj->_key.c_str());
 			_obj->_sound = 0;
 		} else {
-			float e = g_engine->_audio.getElapsed(_obj->_sound) / 1000.f;
+			float e = static_cast<float>(g_engine->_audio.getElapsed(_obj->_sound)) / 1000.f;
 			char letter = _lip.letter(e);
 			_obj->setHeadIndex(letterToIndex(letter));
 		}
@@ -366,7 +377,7 @@ int Talking::loadActorSpeech(const Common::String &name) {
 			int duration = g_engine->_audio.getDuration(id);
 			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
 			if (duration)
-				_duration = duration / 1000.f;
+				_duration = static_cast<float>(duration) / 1000.f;
 			return id;
 		}
 	}
@@ -407,8 +418,8 @@ void Talking::say(const Common::String &text) {
 
 	// remove text in parentheses
 	if (txt[0] == '(') {
-		int i = txt.find(')');
-		if (i != -1)
+		uint32 i = txt.find(')');
+		if (i != Common::String::npos)
 			txt = txt.substr(i + 1);
 	}
 
@@ -422,8 +433,8 @@ void Talking::say(const Common::String &text) {
 	// modify state ?
 	Common::String state;
 	if (!txt.empty() && txt[0] == '{') {
-		int i = txt.find('}');
-		if (i != -1) {
+		uint32 i = txt.find('}');
+		if (i != Common::String::npos) {
 			state = txt.substr(1, txt.size() - 2);
 			debugC(kDebugGame, "Set state from anim '%s'", state.c_str());
 			if (state != "notalk") {
@@ -481,7 +492,7 @@ void Talking::setDuration(const Common::String &text) {
 	float sayLineMinTime = 0.2f;
 	//   let sayLineSpeed = prefs(SayLineSpeed);
 	float sayLineSpeed = 0.5f;
-	float duration = (sayLineBaseTime + sayLineCharTime * text.size()) / (0.2f + sayLineSpeed);
+	float duration = (sayLineBaseTime + sayLineCharTime * static_cast<float>(text.size())) / (0.2f + sayLineSpeed);
 	_duration = MAX(duration, sayLineMinTime);
 }
 
