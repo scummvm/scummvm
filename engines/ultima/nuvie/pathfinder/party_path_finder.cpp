@@ -26,6 +26,8 @@
 #include "ultima/nuvie/pathfinder/seek_path.h"
 #include "ultima/nuvie/pathfinder/actor_path_finder.h"
 #include "ultima/nuvie/pathfinder/party_path_finder.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/u6_objects.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -64,15 +66,25 @@ bool PartyPathFinder::is_at_target(uint32 p) {
  * (is_contiguous(member, member_loc) == "is member adjacent to another member
  * whose following position is lower-numbered?") */
 bool PartyPathFinder::is_contiguous(uint32 member_num, const MapCoord &from) {
+	const bool isU6 = Game::get_game()->get_game_type() == NUVIE_GAME_U6;
+	const Actor *inActor = get_member(member_num).actor;
+	const bool isMouse = isU6 && inActor->get_obj_n() == OBJ_U6_MOUSE;
+	bool retVal = false;
+
 	for (uint32 q = 0; q < member_num; q++) { // check lower-numbered members
 		const Actor *actor = get_member(q).actor;
+		const bool otherIsMouse = isU6 && actor->get_obj_n() == OBJ_U6_MOUSE;
 		if (actor && actor->is_immobile() == true) continue;
 
 		MapCoord loc = party->get_location(q);
-		if (from.distance(loc) <= 1)
-			return true;
+		if (!isMouse && !otherIsMouse && from.distance(loc) == 0)
+			return false; // Do not allow stacking (except for Sherry)
+		if (from.distance(loc) <= 1) {
+			retVal = true;
+			continue; // Stay in the loop to check if other party members are on the same tile
+		}
 	}
-	return false;
+	return retVal;
 }
 
 /* Is member adjacent to another member whose following position is lower-numbered? */
@@ -413,7 +425,7 @@ bool PartyPathFinder::move_member(uint32 member_num, sint16 relx, sint16 rely, b
 	MapCoord target(member_loc);
 	target = member_loc.abs_coords(relx, rely);
 	Actor *actor = get_member(member_num).actor;
-	ActorMoveFlags flags = ACTOR_IGNORE_MOVES;
+	ActorMoveFlags flags = ACTOR_IGNORE_MOVES | ACTOR_IGNORE_PARTY_MEMBERS;
 	if (!avoid_danger_tiles)
 		flags = flags | ACTOR_IGNORE_DANGER;
 
@@ -422,19 +434,22 @@ bool PartyPathFinder::move_member(uint32 member_num, sint16 relx, sint16 rely, b
 			actor->set_direction(relx, rely);
 			return true;
 		}
-		if (actor->get_error()->err == ACTOR_BLOCKED_BY_ACTOR) {
-			const Actor *blocking_actor = actor->get_error()->blocking_actor;
-			sint8 blocking_member_num = -1;
-			if (blocking_actor)
-				blocking_member_num = party->get_member_num(blocking_actor);
-			if (blocking_member_num < sint32(member_num))
-				return false; // blocked by an actor not in the party
-			if (bump_member(uint32(blocking_member_num), member_num)
-			        && actor->move(target.x, target.y, target.z, flags | ACTOR_IGNORE_MOVES)) {
-				actor->set_direction(relx, rely);
-				return true;
-			}
-		}
+		// Block commented out: It seems that, at least in Ultima 6, party members do not
+		// bump each other, so we now ignore them via ACTOR_IGNORE_PARTY_MEMBERS.
+		// Instead, is_contiguous() prevents them from stacking.
+		// if (actor->get_error()->err == ACTOR_BLOCKED_BY_ACTOR) {
+		// 	const Actor *blocking_actor = actor->get_error()->blocking_actor;
+		// 	sint8 blocking_member_num = -1;
+		// 	if (blocking_actor)
+		// 		blocking_member_num = party->get_member_num(blocking_actor);
+		// 	if (blocking_member_num < sint32(member_num))
+		// 		return false; // blocked by an actor not in the party
+		// 	if (bump_member(uint32(blocking_member_num), member_num)
+		// 	        && actor->move(target.x, target.y, target.z, flags | ACTOR_IGNORE_MOVES)) {
+		// 		actor->set_direction(relx, rely);
+		// 		return true;
+		// 	}
+		// }
 	}
 	return false; // target is not contiguous, or move is blocked
 }
