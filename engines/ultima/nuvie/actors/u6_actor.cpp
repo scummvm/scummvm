@@ -1504,11 +1504,45 @@ bool U6Actor::can_twitch() {
 	        && !is_paralyzed());
 }
 
-bool U6Actor::can_be_passed(const Actor *other) const {
+bool U6Actor::can_be_passed(const Actor *other, bool ignoreParty) const {
+	// FIXME: Original U6 instead uses a function that checks if a game object (actor or object)
+	// can occupy a world location:
+	// Figure out which of the remaining tests are relevant to actors and add them here.
+
 	const U6Actor *other_ = static_cast<const U6Actor *>(other);
-	// Sherry the mouse can pass others if they are in a party with her.
-	bool is_sherry = is_in_party() && other_->is_in_party() && other_->obj_n == OBJ_U6_MOUSE;
-	return (Actor::can_be_passed(other_) || other_->current_movetype != current_movetype || is_sherry);
+
+	if (other_->ethereal)
+		return true;
+
+	if (other_ == this)
+		return true;
+
+	if (!other_->isFlying() && is_passable())
+		goto FinalTest;
+
+	// Flying actors can not pass each other unless both are in the party
+	if (other_->isFlying() && !isFlying())
+		goto FinalTest;
+
+	// If the ignoreParty flag is set and we are in the party and not immobilized,
+	// other members can pass us.
+	if (ignoreParty && is_in_party() && other_->is_in_party() && !is_immobile()
+			&& this != Game::get_game()->get_player()->get_actor())
+		return true;
+
+	return false; // default
+
+	FinalTest:
+
+	// Same type can not pass us
+	if (obj_n == other_->get_obj_n())
+		return false;
+
+	// Some actors do not block others (e.g. mice, rabbits etc.)
+	if (!isNonBlocking())
+		return false;
+
+	return true;
 }
 
 void U6Actor::print() {
