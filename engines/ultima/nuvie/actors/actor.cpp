@@ -1929,5 +1929,30 @@ void Actor::set_custom_tile_num(uint16 obj_num, uint16 tile_num) {
 	(*custom_tile_tbl)[obj_num] = tile_num;
 }
 
+bool Actor::doesOccupyLocation(uint16 lx, uint16 ly, uint8 lz, bool incDoubleTile, bool incSurroundingObjs) const {
+	if (z != lz)
+		return false;
+
+	const Tile *const tile = get_tile();
+
+	// If actor has double height, also check tile S of location.
+	// If actor has double width, also check tile E of location.
+	for (int relX = 0; relX < 2 && (tile->dbl_width || !relX); ++relX)
+		for (int relY = 0; relY < 2 && (tile->dbl_height || !relY); ++relY)
+			if (relY && !incDoubleTile)
+				goto NotFound;
+			else if (WRAPPED_COORD(lx + relX, lz) == x && WRAPPED_COORD(ly + relY, lz) == y)
+				return true;
+
+	NotFound:
+
+	if (incSurroundingObjs)
+		for (const Obj *obj : surrounding_objects)
+			if (obj && obj->x == WRAPPED_COORD(lx, lz) && obj->y == WRAPPED_COORD(ly, lz) && obj->z == lz)
+				return true;
+
+	return false;
+}
+
 } // End of namespace Nuvie
 } // End of namespace Ultima

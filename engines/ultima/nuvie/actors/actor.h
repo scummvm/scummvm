@@ -332,6 +332,16 @@ public:
 	bool is_temp() const {
 		return temp_actor;
 	}
+	/**
+	 * @brief Does any tile of this actor occupy the given world location?
+	 * @param lx world coordinate
+	 * @param ly world coordinate
+	 * @param lz level
+	 * @param incDoubleTile include all tiles of double width/height actors
+	 * @param incSurroundingObjs include surrounding actor objects
+	 * @return true if actor occupies location, false otherwise
+	 */
+	virtual bool doesOccupyLocation(uint16 lx, uint16 ly, uint8 lz, bool incDoubleTile = true, bool incSurroundingObjs = true) const;
 
 //for lack of a better name:
 	bool is_met() const {
