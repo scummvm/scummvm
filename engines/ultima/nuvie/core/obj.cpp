@@ -245,7 +245,7 @@ bool Obj::remove(Obj *obj) {
 	return true;
 }
 
-Obj *Obj::find_in_container(uint16 objN, uint8 quality_, bool match_quality, uint8 frameN, bool match_frame_n, Obj **prev_obj) {
+Obj *Obj::find_in_container(uint16 objN, uint8 quality_, bool match_quality, uint8 frameN, bool match_frame_n, Obj **prev_obj) const {
 	U6Link *link;
 	Obj *obj;
 
@@ -306,7 +306,7 @@ uint32 Obj::get_total_qty(uint16 match_obj_n) {
 	return total_qty;
 }
 
-uint32 Obj::container_count_objects() {
+uint32 Obj::container_count_objects() const {
 	uint32 count = 0;
 	U6Link *link;
 

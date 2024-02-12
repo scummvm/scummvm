@@ -1308,7 +1308,7 @@ bool Script::call_actor_use_effect(Obj *effect_obj, Actor *actor) {
 	return call_function("actor_use_effect", 2, 0);
 }
 
-bool Script::call_can_get_obj_override(Obj *obj) {
+bool Script::call_can_get_obj_override(Obj *obj) const {
 	lua_getglobal(L, "can_get_obj_override");
 	nscript_obj_new(L, obj);
 
@@ -1349,7 +1349,7 @@ bool Script::call_is_ranged_select(UseCodeType operation) {
 	return lua_toboolean(L, -1);
 }
 
-bool Script::call_function(const char *func_name, int num_args, int num_return, bool print_stacktrace) {
+bool Script::call_function(const char *func_name, int num_args, int num_return, bool print_stacktrace) const{
 	int start_idx = lua_gettop(L);
 	int error_index = 0;
 

@@ -156,12 +156,12 @@ public:
 
 	bool call_magic_get_spell_list(Spell **spell_list);
 	bool call_actor_use_effect(Obj *effect_obj, Actor *actor);
-	bool call_function(const char *func_name, int num_args, int num_return, bool print_stacktrace = true);
+	bool call_function(const char *func_name, int num_args, int num_return, bool print_stacktrace = true) const;
 	ScriptThread *call_function_in_thread(const char *function_name);
 	bool run_lua_file(const char *filename);
 	bool call_moonstone_set_loc(uint8 phase, MapCoord location); //this is a hack until we have 'use' moonstone in script.
 	bool call_advance_time(uint16 minutes);
-	bool call_can_get_obj_override(Obj *obj);
+	bool call_can_get_obj_override(Obj *obj) const;
 	bool call_out_of_ammo(Actor *attacker, Obj *weapon, bool print_message);
 	bool call_is_avatar_dead();
 	bool call_is_ranged_select(UseCodeType operation);

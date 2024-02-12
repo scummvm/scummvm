@@ -478,7 +478,7 @@ bool MapWindow::can_display_obj(uint16 x, uint16 y, Obj *obj) {
 	return true;
 }
 
-bool MapWindow::tile_is_black(uint16 x, uint16 y, Obj *obj) {
+bool MapWindow::tile_is_black(uint16 x, uint16 y, const Obj *obj) const {
 	if (game->using_hackmove())
 		return false;
 	if (!MapCoord(x, y, cur_level).is_visible()) // tmpBufTileIsBlack will crash if called (doesn't happen in gdb)
@@ -1565,7 +1565,7 @@ void MapWindow::reshapeBoundary() {
 	}
 }
 
-inline bool MapWindow::tmpBufTileIsBlack(uint16 x, uint16 y) {
+inline bool MapWindow::tmpBufTileIsBlack(uint16 x, uint16 y) const {
 	if (tmp_map_buf[y * tmp_map_width + x] == 0)
 		return true;
 
