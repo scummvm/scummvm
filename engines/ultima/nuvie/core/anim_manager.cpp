@@ -614,12 +614,9 @@ bool TossAnim::update() {
 			Obj *hitObj = obj_manager->get_obj(new_loc.x, new_loc.y, mapwindow_level);
 
 			// blocking tile
-			if (!map->is_passable(new_loc.x, new_loc.y, mapwindow_level)) {
-				if (!hitActor) // NOTE: no effect if actor is also at location
-					hit_blocking(MapCoord(new_loc.x, new_loc.y, mapwindow_level));
-				else
-					stop(); // this mimics U6 in appearance and results in no effect
-			} else if (hitActor)
+			if (!map->is_passable(new_loc.x, new_loc.y, mapwindow_level))
+				hit_blocking(MapCoord(new_loc.x, new_loc.y, mapwindow_level));
+			else if (hitActor)
 				hit_actor(hitActor);
 			else if (hitObj)
 				hit_object(hitObj);
