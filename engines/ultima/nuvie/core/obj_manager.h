@@ -142,15 +142,15 @@ public:
 	bool is_damaging(uint16 x, uint16 y, uint8 level);
 	uint8 is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_forced_passable(uint16 x, uint16 y, uint8 level);
-	bool is_stackable(const Obj *obj);
+	bool is_stackable(const Obj *obj) const;
 	bool is_breakable(const Obj *obj);
-	bool can_store_obj(Obj *target, Obj *src); // Bag, open chest, spellbook.
-	bool can_get_obj(Obj *obj);
-	bool has_reduced_weight(uint16 obj_n);
-	bool has_reduced_weight(const Obj *obj) {
+	bool can_store_obj(const Obj *target, Obj *src) const; // Bag, open chest, spellbook.
+	bool can_get_obj(Obj *obj) const;
+	bool has_reduced_weight(uint16 obj_n) const;
+	bool has_reduced_weight(const Obj *obj) const {
 		return has_reduced_weight(obj->obj_n);
 	}
-	bool has_toptile(const Obj *obj);
+	bool has_toptile(const Obj *obj) const;
 	bool obj_is_damaging(const Obj *obj, Actor *actor = nullptr); // if actor, it will damage and display text
 	bool is_door(uint16 x, uint16 y, uint8 level);
 
@@ -167,9 +167,9 @@ public:
 	Obj *get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, bool include_ignored_objects = true, Obj *excluded_obj = nullptr);
 	Obj *get_tile_obj(uint16 obj_n);
 
-	uint16 get_obj_tile_num(uint16 obj_num);
-	inline bool is_corpse(const Obj *obj);
-	uint16 get_obj_tile_num(const Obj *obj);
+	uint16 get_obj_tile_num(uint16 obj_num) const;
+	inline bool is_corpse(const Obj *obj) const;
+	uint16 get_obj_tile_num(const Obj *obj) const;
 	void set_obj_tile_num(uint16 obj_num, uint16 tile_num);
 
 	U6LList *get_actor_inventory(uint16 actor_num);
@@ -194,11 +194,11 @@ public:
 	const char *get_obj_name(uint16 obj_n);
 	const char *get_obj_name(uint16 obj_n, uint8 frame_n);
 
-	float get_obj_weight(Obj *obj, bool include_container_items = OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, bool scale = true, bool include_qty = true);
-	uint8 get_obj_weight_unscaled(uint16 obj_n) {
+	float get_obj_weight(const Obj *obj, bool include_container_items = OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, bool scale = true, bool include_qty = true) const;
+	uint8 get_obj_weight_unscaled(uint16 obj_n) const {
 		return obj_weight[obj_n];
 	}
-	float get_obj_weight(uint16 obj_n);
+	float get_obj_weight(uint16 obj_n) const;
 
 	void animate_forwards(Obj *obj, uint32 loop_count = 1);
 	void animate_backwards(Obj *obj, uint32 loop_count = 1);

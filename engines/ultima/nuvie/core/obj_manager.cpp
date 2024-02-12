@@ -559,7 +559,7 @@ bool ObjManager::is_damaging(uint16 x, uint16 y, uint8 level) {
 	return false;
 }
 
-bool ObjManager::is_stackable(const Obj *obj) {
+bool ObjManager::is_stackable(const Obj *obj) const {
 	if (obj == nullptr)
 		return false;
 	if (obj->is_readied()) // readied objects cannot be stacked --SB-X
@@ -734,7 +734,7 @@ bool ObjManager::is_breakable(const Obj *obj) {
 	return false;
 }
 
-bool ObjManager::can_store_obj(Obj *target, Obj *src) {
+bool ObjManager::can_store_obj(const Obj *target, Obj *src) const {
 	if (target == src || !can_get_obj(src) || target == nullptr)
 		return false;
 
@@ -831,7 +831,7 @@ bool ObjManager::can_store_obj(Obj *target, Obj *src) {
 	return false;
 }
 
-bool ObjManager::can_get_obj(Obj *obj) {
+bool ObjManager::can_get_obj(Obj *obj) const {
 	// objects with 0 weight aren't gettable.
 	//255 is the max weight and means an object is movable but not getable.
 	//we can't get object that contains toptiles either. This makes dragon bits ungettable etc.
@@ -852,7 +852,7 @@ bool ObjManager::can_get_obj(Obj *obj) {
 	return false;
 }
 
-bool ObjManager::has_reduced_weight(uint16 obj_n) {
+bool ObjManager::has_reduced_weight(uint16 obj_n) const {
 	// FIXME: HERE BE HARDCODED VALUES! FIXME: not sure if this list is complete!
 	if (game_type == NUVIE_GAME_U6) { // luteijn: I only know about U6...
 		if ((obj_n == OBJ_U6_GOLD)
@@ -916,7 +916,7 @@ bool ObjManager::has_reduced_weight(uint16 obj_n) {
 	return false;
 }
 
-bool ObjManager::has_toptile(const Obj *obj) {
+bool ObjManager::has_toptile(const Obj *obj) const {
 	uint8 i = 1;
 
 	Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
@@ -1258,7 +1258,7 @@ const char *ObjManager::get_obj_name(uint16 obj_n, uint8 frame_n) {
 	return tile_manager->lookAtTile(get_obj_tile_num(obj_n) + frame_n, 0, false);
 }
 
-float ObjManager::get_obj_weight(uint16 obj_n) {
+float ObjManager::get_obj_weight(uint16 obj_n) const {
 	float weight = (float)get_obj_weight_unscaled(obj_n);
 	if (has_reduced_weight(obj_n)) {
 		weight /= 10;
@@ -1267,14 +1267,12 @@ float ObjManager::get_obj_weight(uint16 obj_n) {
 	return weight / 10;
 }
 
-float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool scale, bool include_qty) {
+float ObjManager::get_obj_weight(const Obj *obj, bool include_container_items, bool scale, bool include_qty) const {
 	float weight = obj_weight[obj->obj_n];
 
 	if (is_stackable(obj)) {
 		if (include_qty) {
-			if (obj->qty == 0)
-				obj->qty = 1;
-			weight *= obj->qty;
+			weight *= obj->qty ? obj->qty : 1;
 		}
 		/* luteijn: only some need to be divided by an extra 10 for a total of 100.
 		 * unfortunately can't seem to find a tileflag that controls this so would have to be hardcoded!
@@ -1297,11 +1295,11 @@ float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool sc
 	return weight;
 }
 
-uint16 ObjManager::get_obj_tile_num(uint16 obj_num) { //assume obj_num is < 1024 :)
+uint16 ObjManager::get_obj_tile_num(uint16 obj_num) const { //assume obj_num is < 1024 :)
 	return obj_to_tile[obj_num];
 }
 
-inline bool ObjManager::is_corpse(const Obj *obj) {
+inline bool ObjManager::is_corpse(const Obj *obj) const {
 	if (game_type == NUVIE_GAME_U6) {
 		switch (obj->obj_n) {
 		case OBJ_U6_DEAD_BODY:
@@ -1332,7 +1330,7 @@ inline bool ObjManager::is_corpse(const Obj *obj) {
 	return false;
 }
 
-uint16 ObjManager::get_obj_tile_num(const Obj *obj) { //assume obj_num is < 1024 :)
+uint16 ObjManager::get_obj_tile_num(const Obj *obj) const { //assume obj_num is < 1024 :)
 	if (custom_actor_tiles && is_corpse(obj)) {
 		return Game::get_game()->get_actor_manager()->get_actor(obj->quality)->get_custom_tile_num(obj->obj_n);
 	}

@@ -153,7 +153,7 @@ public:
 	}
 	void make_container();
 	Obj *get_container_obj(bool recursive = false);
-	uint32 container_count_objects();
+	uint32 container_count_objects() const;
 
 	uint8 get_engine_loc() const;
 	Actor *get_actor_holding_obj();
@@ -177,7 +177,7 @@ public:
 
 	bool remove(Obj *obj);
 
-	Obj *find_in_container(uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint8 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N, Obj **prev_obj = nullptr);
+	Obj *find_in_container(uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint8 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N, Obj **prev_obj = nullptr) const;
 
 	uint32 get_total_qty(uint16 match_obj_n);
 
