@@ -1343,7 +1343,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 			                         to.x,
 			                         to.y,
 			                         to.z,
-			                         LT_HitActors | LT_HitUnpassable,
+			                         LT_HitUnpassable,
 			                         lt,
 			                         0,
 			                         game->get_game_type() == NUVIE_GAME_U6 ? nullptr
@@ -1366,9 +1366,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 				}
 			} else {
 				Obj *obj = obj_manager->get_obj(to.x, to.y, to.z);
-				if (map_window->get_interface() == INTERFACE_IGNORE_BLOCK
-				        && map->get_actor(to.x, to.y, to.z)) {} // don't allow moving under actor
-				else if (obj && obj_manager->can_store_obj(obj, push_obj)) { //if we are moving onto a container.
+				if (obj && obj_manager->can_store_obj(obj, push_obj)) { //if we are moving onto a container.
 					can_move = obj_manager->moveto_container(push_obj, obj);
 				} else {
 					/* do normal move if no usecode or return from usecode was true */
