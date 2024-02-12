@@ -1252,18 +1252,19 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 	pushrel_x = to.x - from.x;
 	pushrel_y = to.y - from.y;
 
+	sint8 wrappedXDir = get_wrapped_rel_dir(to.x, from.x, to.z);
+	sint8 wrappedYDir = get_wrapped_rel_dir(to.y, from.y, to.z);
+
 	if (map_window->get_interface() == INTERFACE_NORMAL || push_actor) {
 		// you can only push one space at a time
-		pushrel_x = (pushrel_x == 0) ? 0 : (pushrel_x < 0) ? -1 : 1;
-		pushrel_y = (pushrel_y == 0) ? 0 : (pushrel_y < 0) ? -1 : 1;
+		pushrel_x = wrappedXDir;
+		pushrel_y = wrappedYDir;
 	}
 	to.x = from.x + pushrel_x;
 	to.y = from.y + pushrel_y;
 	to.z = from.z;
 
 	// Use wrapped direction since we could have crossed a map boundary
-	sint8 wrappedXDir = get_wrapped_rel_dir(to.x, from.x, to.z);
-	sint8 wrappedYDir = get_wrapped_rel_dir(to.y, from.y, to.z);
 	scroll->display_string(get_direction_name(wrappedXDir, wrappedYDir));
 	scroll->display_string(".\n\n");
 
