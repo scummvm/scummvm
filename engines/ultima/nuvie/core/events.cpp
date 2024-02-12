@@ -1213,15 +1213,9 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 		return false;
 	}
 
-	if (push_actor) {
-		if (!push_actor->can_be_moved() || push_actor->get_tile_type() != ACTOR_ST) {
-			scroll->display_string("Not possible\n\n");
-			scroll->display_prompt();
-			endAction();
-			return false;
-		}
+	if (push_actor)
 		from = push_actor->get_location();
-	} else {
+	else {
 		if (push_obj->is_on_map()) {
 			from = MapCoord(push_obj->x, push_obj->y, push_obj->z);
 		} else {
@@ -1269,6 +1263,22 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 		scroll->display_prompt();
 		endAction();
 		return true;
+	}
+
+	if (push_actor || push_obj->is_on_map()) {
+		const uint16 pushObjN = push_obj ? push_obj->obj_n : push_actor->get_obj_n();
+		// Objects/Actors with a base weight of 0 are not movable
+		bool isUnmovable = obj_manager->get_obj_weight_unscaled(pushObjN) == 0;
+		// U6 does not allow pushing dragons
+		if (game->get_game_type() == NUVIE_GAME_U6)
+			isUnmovable = isUnmovable || pushObjN == OBJ_U6_DRAGON;
+
+		if (isUnmovable || (push_actor && !push_actor->can_be_moved())) {
+			scroll->display_string("Not possible\n\n");
+			scroll->display_prompt();
+			endAction();
+			return false;
+		}
 	}
 	CanDropOrMoveMsg can_move_check;
 	if (push_obj && (can_move_check = map_window->can_drop_or_move_obj(to.x, to.y, player->get_actor(), push_obj))
@@ -1399,9 +1409,6 @@ bool Events::pushFrom(const MapCoord &target) {
 		endAction(true);
 		return false;
 	}
-	if (push_obj
-	        && (obj_manager->get_obj_weight(push_obj, OBJ_WEIGHT_EXCLUDE_CONTAINER_ITEMS) == 0))
-		push_obj = nullptr;
 
 	if (push_actor && push_actor->is_visible()) {
 		scroll->display_string(push_actor->get_name());
