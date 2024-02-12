@@ -1653,7 +1653,9 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	}
 
 	MapCoord actor_loc = actor->get_location();
-	if (actor_manager->get_actor(x, y, actor_loc.z))
+
+	// Can only drop onto non-blocking actors
+	if (actor_manager->findActorAt(x, y, actor_loc.z, [](const Actor *a) {return !a->isNonBlocking();}, true, false))
 		return MSG_NOT_POSSIBLE;
 
 	Obj *dest_obj = nullptr;
