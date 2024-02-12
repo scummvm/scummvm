@@ -1682,37 +1682,28 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	if (actor_loc.distance(target_loc) > 5 && get_interface() == INTERFACE_NORMAL)
 		return MSG_OUT_OF_RANGE;
 
+	bool blocked = false;
 	uint8 lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
 	if (map->lineTest(actor_loc.x, actor_loc.y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
 		MapCoord hit_loc = MapCoord(lt.hit_x, lt.hit_y, lt.hit_level);
-		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1) {
-			if (lt.hitObj && target_loc == hit_loc) {
-				if (obj_manager->can_store_obj(lt.hitObj, obj)) //if we are moving onto a container.
-					return MSG_SUCCESS;
-			}
-			return MSG_BLOCKED;
-		}
-		// trying to push object one tile away from actor
-		if (map->lineTest(obj->x, obj->y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
-			if (lt.hitObj) {
-				if (obj_manager->can_store_obj(lt.hitObj, obj)) //if we are moving onto a container.
-					return MSG_SUCCESS;
-				/*                else // I don't think these are needed
-				                {
-				                    // We can place an object on a bench or table. Or on any other object if
-				                    // the object is passable and not on a boundary.
-
-				                    Tile *obj_tile = obj_manager->get_obj_tile(lt.hitObj->obj_n, lt.hitObj->frame_n);
-				                    if(!obj_tile) // shouldn't happen
-				                        return MSG_NO_TILE;
-				                    if((obj_tile->flags3 & TILEFLAG_CAN_PLACE_ONTOP)
-				                       || (obj_tile->passable && !map->is_boundary(lt.hit_x, lt.hit_y, lt.hit_level)) )
-				                        return MSG_SUCCESS;
-				                }*/
-			}
-			return MSG_BLOCKED;
-		}
+		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1)
+			blocked = true;  // Just set a bool and don't return yet: blocker might be a suitable container.
+		else // trying to push object one tile away from actor
+			blocked = map->lineTest(obj->x, obj->y, x, y, actor_loc.z, lt_flags, lt, 0, obj);
 	}
+
+	const Obj* potentialContainer = nullptr;
+	if (blocked) {
+		if (lt.hitObj && MapCoord(lt.hitObj) == target_loc)
+			potentialContainer = lt.hitObj;
+	} else
+		potentialContainer = dest_obj;
+
+	if (potentialContainer && obj_manager->can_store_obj(potentialContainer, obj)) //if we are moving onto a container.
+		return MSG_SUCCESS;
+
+	if (blocked)
+		return MSG_BLOCKED;
 
 	const Tile *tile;
 	if (dest_obj)
