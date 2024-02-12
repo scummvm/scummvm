@@ -1542,7 +1542,10 @@ iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) const {
 		x >>= 7; // x = floor(x / 128)   128 = superchunk width
 		y >>= 7; // y = floor(y / 128)   128 = superchunk height
 
-		return surface[x + y * 8];
+		const int idx = x + y * 8;
+		assert(idx < ARRAYSIZE(surface));
+
+		return surface[idx];
 	}
 
 	if (level > 5)
