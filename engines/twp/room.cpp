@@ -115,8 +115,6 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 			const Walkbox &wb = walkboxes[i];
 			if (wb.isVisible()) {
 				subjects.push_back(toPolygon(wb));
-			} else {
-				clips.push_back(toPolygon(wb));
 			}
 		}
 
@@ -458,7 +456,7 @@ void Room::walkboxHidden(const Common::String &name, bool hidden) {
 		Walkbox &wb = _walkboxes[i];
 		if (wb._name == name) {
 			wb.setVisible(!hidden);
-			// 1 walkbox has change so update merged polygon
+			// 1 walkbox has changed so update merged polygon
 			_pathFinder.setDirty(true);
 			return;
 		}
