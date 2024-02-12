@@ -122,8 +122,10 @@ void Section::global_room_init() {
 		}
 	}
 
-	kernel_timing_trigger(900, kAdvanceHour, nullptr);
-	kernel_timing_trigger(300, kAdvanceTime, nullptr);
+	if (_G(executing) == WHOLE_GAME) {
+		kernel_timing_trigger(900, kAdvanceHour, nullptr);
+		kernel_timing_trigger(300, kAdvanceTime, nullptr);
+	}
 }
 
 void Section::init_series_players() {

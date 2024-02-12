@@ -129,7 +129,7 @@ void Flags::schedule_boonsville_time() {
 
 	term_message("************  Schedule  ************");
 
-	for (const auto& te : EVENTS) {
+	for (const auto &te : EVENTS) {
 		int teHours = te._time / 216000;
 		int teMinutes = (te._time % 216000) / 3600;
 		int teSeconds = (te._time % 3600) / 60;
