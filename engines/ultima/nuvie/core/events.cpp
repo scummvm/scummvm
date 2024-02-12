@@ -1289,23 +1289,24 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 		return true;
 	}
 	DEBUG(0, LEVEL_WARNING, "deduct moves from player\n");
-	// FIXME: the random chance here is just made up, I don't know what
-	//        kind of check U6 did ("Failed.\n\n")
+
 	if (push_actor) {
-		// if actor can take a step, do so; else 50% chance of pushing them
-		if (push_actor == player->get_actor()) {
-			if (player->check_walk_delay() && !view_manager->gumps_are_active()) {
-				player->moveRelative(pushrel_x, pushrel_y);
-				game->time_changed();
-			}
-		} else if (map->lineTest(to.x, to.y, to.x, to.y, to.z, LT_HitActors | LT_HitUnpassable, lt))
+		const auto playerActor = player->get_actor();
+		auto strengthCheckFailed = [=]() {
+			// Using adjusted strength here, which takes cursed status into account
+			const uint playerStr = script->call_actor_str_adj(playerActor);
+			const uint pushedActorStr = script->call_actor_str_adj(push_actor);
+			return (pushedActorStr / 2 + 30 - playerStr) / 2 > getRandom(29) + 1;
+		};
+
+		// Can not push self and must pass strength test
+		if (push_actor == playerActor || strengthCheckFailed())
+			scroll->display_string("Failed.\n\n");
+		else if (map->lineTest(to.x, to.y, to.x, to.y, to.z, LT_HitActors | LT_HitUnpassable, lt))
 			scroll->display_string("Blocked.\n\n");
-		else if (!push_actor->moveRelative(pushrel_x, pushrel_y)) {
-			if (NUVIE_RAND() % 2) { // already checked if target is passable
-				push_actor->move(to.x, to.y, from.z, ACTOR_FORCE_MOVE | ACTOR_IGNORE_DANGER);
-				player->subtract_movement_points(5);
-			} else
-				scroll->display_string("Failed.\n\n");
+		else {
+			push_actor->move(to.x, to.y, from.z, ACTOR_FORCE_MOVE | ACTOR_IGNORE_DANGER);
+			player->subtract_movement_points(5);
 		}
 	} else {
 		if (map_window->get_interface() != INTERFACE_IGNORE_BLOCK
