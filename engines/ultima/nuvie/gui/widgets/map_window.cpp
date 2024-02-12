@@ -543,11 +543,11 @@ Actor *MapWindow::get_actorAtCursor() {
 	if (tmp_map_buf[(cursor_y + TMP_MAP_BORDER) * tmp_map_width + (cursor_x + TMP_MAP_BORDER)] == 0) //black area
 		return nullptr; // nothing to see here. ;)
 
-	return actor_manager->get_actor(WRAPPED_COORD(cur_x + cursor_x, cur_level), cur_y + cursor_y, cur_level);
+	return actor_manager->get_actor(WRAPPED_COORD(cur_x + cursor_x, cur_level), WRAPPED_COORD(cur_y + cursor_y, cur_level), cur_level);
 }
 
 MapCoord MapWindow::get_cursorCoord() {
-	return (MapCoord(WRAPPED_COORD(cur_x + cursor_x, cur_level), cur_y + cursor_y, cur_level));
+	return MapCoord(WRAPPED_COORD(cur_x + cursor_x, cur_level), WRAPPED_COORD(cur_y + cursor_y, cur_level), cur_level);
 }
 
 void MapWindow::get_level(uint8 *level) const {
@@ -1864,8 +1864,8 @@ void MapWindow::drag_perform_drop(int x, int y, int message, void *data) {
 	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
-		x = (cur_x + x / 16) % mapWidth;
-		y = (cur_y + y / 16) % mapWidth;
+		x = (uint)(cur_x + x / 16) % mapWidth;
+		y = (uint)(cur_y + y / 16) % mapWidth;
 		Obj *obj = (Obj *)data;
 
 		if (obj->obj_n == OBJ_U6_LOCK_PICK && game_type == NUVIE_GAME_U6)
@@ -2257,7 +2257,7 @@ void MapWindow::teleport_to_cursor() {
 void MapWindow::select_target(int x, int y) {
 	int wx, wy;
 	mouseToWorldCoords(x, y, wx, wy);
-	moveCursor(WRAP_VIEWP(cur_x, wx, map_width), wy - cur_y);
+	moveCursor(WRAPPED_COORD(wx - cur_x, cur_level), WRAPPED_COORD(wy - cur_y, cur_level));
 	game->get_event()->select_target(uint16(wx), uint16(wy), cur_level);
 }
 
@@ -2267,8 +2267,8 @@ void MapWindow::mouseToWorldCoords(int mx, int my, int &wx, int &wy) {
 
 	int mapWidth = map->get_width(cur_level);
 
-	wx = (cur_x + x / 16) % mapWidth;
-	wy = (cur_y + y / 16) % mapWidth;
+	wx = (uint)(cur_x + x / 16) % mapWidth;
+	wy = (uint)(cur_y + y / 16) % mapWidth;
 }
 
 void MapWindow::drag_draw(int x, int y, int message, void *data) {
