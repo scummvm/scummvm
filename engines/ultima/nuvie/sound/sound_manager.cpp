@@ -623,7 +623,7 @@ void SoundManager::musicStop() {
 	musicPause();
 	m_pCurrentSong = nullptr;
 	if (_musicData) {
-		delete _musicData;
+		free(_musicData);
 		_musicData = nullptr;
 	}
 }
