@@ -1686,7 +1686,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	uint8 lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
 	if (map->lineTest(actor_loc.x, actor_loc.y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
 		MapCoord hit_loc = MapCoord(lt.hit_x, lt.hit_y, lt.hit_level);
-		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1)
+		if (in_inventory || obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1)
 			blocked = true;  // Just set a bool and don't return yet: blocker might be a suitable container.
 		else // trying to push object one tile away from actor
 			blocked = map->lineTest(obj->x, obj->y, x, y, actor_loc.z, lt_flags, lt, 0, obj);
