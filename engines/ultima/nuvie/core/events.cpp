@@ -1312,7 +1312,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 			return (pushedActorStr / 2 + 30 - playerStr) / 2 > getRandom(29) + 1;
 		};
 
-		const ActorMoveFlags moveFlags = ACTOR_IGNORE_MOVES | ACTOR_IGNORE_DANGER;
+		const ActorMoveFlags moveFlags = ACTOR_IGNORE_MOVES | ACTOR_IGNORE_DANGER | ACTOR_IGNORE_PARTY_MEMBERS;
 
 		// Can not push self and must pass strength test
 		if (push_actor == playerActor || !push_actor->can_be_moved() || strengthCheckFailed())
