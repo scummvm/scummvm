@@ -358,15 +358,17 @@ struct GetUseNoun2 {
 	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
-		if ((obj != g_engine->_actor) && (g_engine->_noun1 != obj)) {
-			_noun2 = obj;
-			return true;
+		if (obj->_node->getZSort() <= _zOrder) {
+			if ((obj != g_engine->_actor) && (g_engine->_noun2 != obj)) {
+				_noun2 = obj;
+			}
 		}
 		return false;
 	}
 
 public:
 	Common::SharedPtr<Object> &_noun2;
+	int _zOrder = INT_MAX;
 };
 
 struct GetGiveableNoun2 {
