@@ -407,8 +407,8 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	g_engine->setTotalPlayTime(savegame.gameTime * 1000);
 	g_engine->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
 	loadObjects(json["objects"]->asObject());
-	setActor(json["selectedActor"]->asString());
 	g_engine->setRoom(room(json["currentRoom"]->asString()));
+	setActor(json["selectedActor"]->asString());
 	g_engine->cameraAt(g_engine->_actor->_node->getPos());
 
 	HSQUIRRELVM v = g_engine->getVm();
