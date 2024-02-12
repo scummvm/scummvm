@@ -1415,6 +1415,7 @@ Common::SharedPtr<Object> TwpEngine::objAt(Math::Vector2d pos) {
 void TwpEngine::setActor(Common::SharedPtr<Object> actor, bool userSelected) {
 	_actor = actor;
 	_hud._actor = actor;
+	resetVerb();
 	if (!_hud.getParent() && actor) {
 		_screenScene.addChild(&_hud);
 	} else if (_hud.getParent() && !actor) {
