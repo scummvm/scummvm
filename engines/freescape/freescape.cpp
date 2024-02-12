@@ -472,7 +472,10 @@ void FreescapeEngine::processInput() {
 				decreaseStepSize();
 				break;
 			case Common::KEYCODE_r:
-				rise();
+				if (isEclipse())
+					pressedKey(Common::KEYCODE_r);
+				else
+					rise();
 				break;
 			case Common::KEYCODE_f:
 				lower();

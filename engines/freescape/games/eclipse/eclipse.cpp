@@ -264,6 +264,20 @@ void EclipseEngine::drawInfoMenu() {
 	pauseToken.clear();
 }
 
+void EclipseEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_r) {
+		if (_currentArea->getAreaID() == 1) {
+			playSoundFx(3, false);
+			if (_temporaryMessages.empty())
+				insertTemporaryMessage(_messagesList[6], _countdown - 2);
+		} else {
+			if (_temporaryMessages.empty())
+				insertTemporaryMessage(_messagesList[7], _countdown - 2);
+			_countdown = _countdown - 5;
+		}
+	}
+}
+
 void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack) {
 	// These calls will cover the pixels of the hardcoded clock image
 	drawAnalogClockHand(surface, x, y, 6 * 6 - 90, 12, colorBack);
