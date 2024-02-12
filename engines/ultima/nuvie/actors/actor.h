@@ -335,6 +335,9 @@ public:
 	virtual bool isFlying() const {
 		return false;
 	}
+	virtual bool isNonBlocking() const {
+		return false;
+	}
 	/**
 	 * @brief Does any tile of this actor occupy the given world location?
 	 * @param lx world coordinate

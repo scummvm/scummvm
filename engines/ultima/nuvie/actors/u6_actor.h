@@ -144,6 +144,17 @@ public:
 				return true;
 		return false;
 	}
+	bool isNonBlocking() const override {
+		// These are hard-coded in original U6
+		const uint16 u6NonBlockingObjs[] = {
+				OBJ_U6_INSECTS, OBJ_U6_MOUSE, OBJ_U6_BIRD, OBJ_U6_CORPSER,
+				OBJ_U6_RABBIT };
+
+		for (const auto nonBlockingObj : u6NonBlockingObjs)
+			if (obj_n == nonBlockingObj)
+				return true;
+		return false;
+	}
 
 protected:
 	bool init_ship();
