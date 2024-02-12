@@ -71,8 +71,8 @@ public: /* saves using dumb get / set functions */
 		reagents = new_reagents;
 	};
 	~Spell() {
-		delete[] name;
-		delete[] invocation;
+		free(name);
+		free(invocation);
 	}
 };
 
