@@ -90,7 +90,7 @@ void Sections::m4SceneLoad() {
 	_cameraShift_vert_Amount = 0;
 	_G(art_base_override) = nullptr;
 	_G(use_alternate_attribute_file) = true;
-	shut_down_digi_tracks_between_rooms = true;
+	_G(shut_down_digi_tracks_between_rooms) = true;
 	camera_pan_step = 10;
 	_G(camera_reacts_to_player) = true;
 
@@ -204,7 +204,7 @@ void Sections::m4EndScene() {
 
 	pal_cycle_stop();
 
-	if (shut_down_digi_tracks_between_rooms) {
+	if (_G(shut_down_digi_tracks_between_rooms)) {
 		_G(digi).stop(1);
 		_G(digi).stop(2);
 		_G(digi).stop(3);
