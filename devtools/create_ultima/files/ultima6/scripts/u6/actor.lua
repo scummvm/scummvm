@@ -1619,7 +1619,7 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapo
 
       Actor.inv_remove_obj_qty(attacker, 0x53, 1)
 
-      if map_is_water(target_x,target_y,target_z) == false then
+      if map_is_water(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z, true) == false then
 	      local obj = Obj.new(317); --fire field
           obj.temporary = true
 	      Obj.moveToMap(obj, pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z)
