@@ -75,4 +75,15 @@ const SpriteSheetFrame& SpriteSheet::getFrame(const Common::String& key) const {
 	return _frameTable[key];
 }
 
+const SpriteSheetFrame* SpriteSheet::frame(const Common::String& key) const {
+	if(key.hasSuffixIgnoreCase("_en")) {
+		Common::String newKey(getKey(key));
+		if(_frameTable.contains(newKey))
+			return &_frameTable[newKey];
+	}
+	if(_frameTable.contains(key))
+		return &_frameTable[key];
+	return nullptr;
+}
+
 } // namespace Twp

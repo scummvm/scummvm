@@ -43,6 +43,7 @@ struct SpriteSheetFrame {
 
 struct SpriteSheet {
 	void parseSpriteSheet(const Common::String &contents);
+	const SpriteSheetFrame* frame(const Common::String& key) const;
 	const SpriteSheetFrame& getFrame(const Common::String& key) const;
 
 	static Common::String getKey(const Common::String& key);
