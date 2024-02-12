@@ -351,9 +351,8 @@ bool Actor::moveRelative(sint16 rel_x, sint16 rel_y, ActorMoveFlags flags) {
 
 
 bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
-	Actor *a;
-	bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
-	bool ignore_danger = (flags & ACTOR_IGNORE_DANGER);
+	const bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
+	const bool ignore_danger = flags & ACTOR_IGNORE_DANGER;
 // bool ignore_danger = true;
 	/*
 	    uint16 pitch = map->get_width(new_z);
@@ -363,13 +362,15 @@ bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags f
 	        return(false);
 	*/
 	if (!ignore_actors) {
-		a = map->get_actor(new_x, new_y, new_z, false);
-		if (a /*&& a->is_visible()*/) {
-			bool ignore_party_members = (flags & ACTOR_IGNORE_PARTY_MEMBERS);
-			if (ignore_party_members && a->is_in_party())
-				return true;
-			return a->can_be_passed(this); // we can move over or under some actors. eg mice, dragons etc.
-		}
+		const bool ignore_party_members = flags & ACTOR_IGNORE_PARTY_MEMBERS;
+
+		auto isBlocker = [=](const Actor *a) {
+			// we can move over or under some actors. eg mice, dragons etc.
+			return !(a->can_be_passed(this) || (ignore_party_members && a->is_in_party()));
+		};
+
+		if (Game::get_game()->get_actor_manager()->findActorAt(new_x, new_y, new_z, isBlocker, true, false))
+			return false;
 	}
 
 //    if(map->is_passable(new_x,new_y,new_z) == false)
@@ -456,12 +457,19 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 		}
 	}
 	Game *game = Game::get_game();
-	Actor *other = map->get_actor(new_x, new_y, new_z, false);
-	if (!ignore_actors && !force_move && other && !other->can_be_passed(this)
-	        && (!game->get_party()->get_autowalk() || other->is_visible())) {
-		set_error(ACTOR_BLOCKED_BY_ACTOR);
-		error_struct.blocking_actor = other;
-		return false; // blocked by actor
+
+	if (!ignore_actors && !force_move) {
+		auto isBlocker = [=](const Actor *a) {
+			return !a->can_be_passed(this) && (!game->get_party()->get_autowalk() || a->is_visible());
+		};
+
+		Actor *const other = game->get_actor_manager()->findActorAt(new_x, new_y, new_z, isBlocker, true, false);
+
+		if (other) {
+			set_error(ACTOR_BLOCKED_BY_ACTOR);
+			error_struct.blocking_actor = other;
+			return false; // blocked by actor
+		}
 	}
 
 // move
