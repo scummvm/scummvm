@@ -519,7 +519,7 @@ ActorList *ActorManager::get_actor_list() {
 	return _actors;
 }
 
-Actor *ActorManager::get_actor(uint8 actor_num) {
+Actor *ActorManager::get_actor(uint8 actor_num) const {
 	return actors[actor_num];
 }
 

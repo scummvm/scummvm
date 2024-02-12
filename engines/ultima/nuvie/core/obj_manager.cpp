@@ -943,7 +943,7 @@ bool ObjManager::has_toptile(const Obj *obj) const {
 
 //gets the linked list of objects at a particular location.
 
-U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) {
+U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) const {
 	WRAP_COORD(x, level); // wrap on map edge
 	WRAP_COORD(y, level);
 
@@ -1537,7 +1537,7 @@ Obj *ObjManager::loadObj(NuvieIO *buf) {
 }
 
 
-iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) {
+iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) const {
 	if (level == 0) {
 		x >>= 7; // x = floor(x / 128)   128 = superchunk width
 		y >>= 7; // y = floor(y / 128)   128 = superchunk height
@@ -1551,11 +1551,11 @@ iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) {
 	return dungeon[level - 1];
 }
 
-inline iAVLKey ObjManager::get_obj_tree_key(Obj *obj) {
+inline iAVLKey ObjManager::get_obj_tree_key(Obj *obj) const {
 	return get_obj_tree_key(obj->x, obj->y, obj->z);
 }
 
-iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) {
+iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) const {
 	iAVLKey key;
 	if (level == 0)
 		key._int = y * 1024 + x;
