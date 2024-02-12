@@ -152,11 +152,11 @@ void SpellViewGump::loadCircleString(const Common::Path &datadir) {
 	Common::sprintf_s(filename, "%d.bmp", level);
 	build_path(datadir, filename, imagefile);
 
-	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
-	if (s != nullptr) {
+	Common::ScopedPtr<Graphics::ManagedSurface> s(bmp.getSdlSurface32(imagefile));
+	if (s) {
 		Common::Rect dst;
 		dst = Common::Rect(70, 7, 74, 13);
-		SDL_BlitSurface(s, nullptr, bg_image, &dst);
+		SDL_BlitSurface(s.get(), nullptr, bg_image, &dst);
 	}
 
 	switch (level) {
@@ -178,11 +178,11 @@ void SpellViewGump::loadCircleSuffix(const Common::Path &datadir, const Std::str
 	Common::Path imagefile;
 
 	build_path(datadir, image, imagefile);
-	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
-	if (s != nullptr) {
+	Common::ScopedPtr<Graphics::ManagedSurface> s(bmp.getSdlSurface32(imagefile));
+	if (s) {
 		Common::Rect dst;
 		dst = Common::Rect(75, 7, 82, 13);
-		SDL_BlitSurface(s, nullptr, bg_image, &dst);
+		SDL_BlitSurface(s.get(), nullptr, bg_image, &dst);
 	}
 }
 
