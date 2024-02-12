@@ -154,7 +154,7 @@ public:
 	bool obj_is_damaging(const Obj *obj, Actor *actor = nullptr); // if actor, it will damage and display text
 	bool is_door(uint16 x, uint16 y, uint8 level);
 
-	U6LList *get_obj_list(uint16 x, uint16 y, uint8 level);
+	U6LList *get_obj_list(uint16 x, uint16 y, uint8 level) const;
 
 	Tile *get_obj_tile(uint16 obj_n, uint8 frame_n);
 	const Tile *get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj = true);
@@ -222,10 +222,10 @@ protected:
 
 	bool addObjToContainer(U6LList *list, Obj *obj);
 	Obj *loadObj(NuvieIO *buf);
-	iAVLTree *get_obj_tree(uint16 x, uint16 y, uint8 level);
+	iAVLTree *get_obj_tree(uint16 x, uint16 y, uint8 level) const;
 
-	iAVLKey get_obj_tree_key(Obj *obj);
-	iAVLKey get_obj_tree_key(uint16 x, uint16 y, uint8 level);
+	iAVLKey get_obj_tree_key(Obj *obj) const;
+	iAVLKey get_obj_tree_key(uint16 x, uint16 y, uint8 level) const;
 //inline U6LList *ObjManager::get_schunk_list(uint16 x, uint16 y, uint8 level);
 
 	bool temp_obj_list_add(Obj *obj);
