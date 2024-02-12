@@ -1261,8 +1261,15 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 	to.y = from.y + pushrel_y;
 	to.z = from.z;
 
-	scroll->display_string(get_direction_name(pushrel_x, pushrel_y));
+	// Use wrapped direction since we could have crossed a map boundary
+	sint8 wrappedXDir = get_wrapped_rel_dir(to.x, from.x, to.z);
+	sint8 wrappedYDir = get_wrapped_rel_dir(to.y, from.y, to.z);
+	scroll->display_string(get_direction_name(wrappedXDir, wrappedYDir));
 	scroll->display_string(".\n\n");
+
+	// Coordinates could be out of the map's bounds now, make them wrap around
+	WRAP_COORD(to.x, to.z);
+	WRAP_COORD(to.y, to.z);
 
 	if (pushrel_x == 0 && pushrel_y == 0) {
 		scroll->display_prompt();
