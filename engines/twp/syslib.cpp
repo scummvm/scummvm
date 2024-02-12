@@ -507,6 +507,17 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, cmd)))
 		return sq_throwerror(v, "Failed to get command");
 	switch (cmd) {
+	case EX_AUTOSAVE_STATE: {
+		int enabled;
+		if (SQ_FAILED(sqget(v, 3, enabled)))
+			return sq_throwerror(v, "Failed to get enabled");
+		g_engine->_saveGameManager._autoSave = enabled != 0;
+	} break;
+	case EX_AUTOSAVE: {
+		if (g_engine->_saveGameManager._autoSave) {
+			g_engine->saveGameState(0, "", true);
+		}
+	} break;
 	case EX_ALLOW_SAVEGAMES: {
 		int enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
@@ -548,7 +559,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		warning("exCommand EX_FORCE_TALKIE_TEXT: not implemented");
 		break;
 	default:
-		warning("exCommand(%dd) not implemented", cmd);
+		warning("exCommand(%d) not implemented", cmd);
 		break;
 	}
 	return 0;
