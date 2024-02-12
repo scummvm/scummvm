@@ -1643,8 +1643,26 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapo
          end
          if removal_candidate ~= nil then
             Actor.inv_remove_obj(attacker, removal_candidate)
+
+            local function can_place_at(x, y, z)
+               -- Helper function to check if thrown weapon can be placed at target coordinates
+
+               local dest_tile_num = map_get_tile_num(x, y, z, true)
+
+               -- Tile flags: water and impassable
+               local bool is_impassable_water = tile_get_flag(dest_tile_num, 1, 0) and tile_get_flag(dest_tile_num, 1, 1)
+               -- Ethereal void tile
+               local bool is_ethereal_void = dest_tile_num >= 252 and dest_tile_num <= 255
+
+               -- Do not place on impassable water or ethereal void
+               -- unless there already is an object at the destination
+               -- (passable water is OK, e.g. shore tiles)
+               return not ((is_impassable_water or is_ethereal_void) and map_get_obj(x, y, z) == nil)
+            end
+
             -- Do not place thrown weapon if target is an actor
-            if (coll_tiles[1].foe == mil or coll_tiles[1].foe.luatype ~= "actor") and map_is_water(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z) == false then
+            if (coll_tiles[1].foe == mil or coll_tiles[1].foe.luatype ~= "actor")
+                  and can_place_at(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z) then
                local obj = Obj.new(weapon_obj_n);
                obj.ok_to_take = true
                obj.temporary = true
