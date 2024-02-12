@@ -362,11 +362,11 @@ bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags f
 	        return(false);
 	*/
 	if (!ignore_actors) {
-		const bool ignore_party_members = flags & ACTOR_IGNORE_PARTY_MEMBERS;
+		const bool ignoreParty = flags & ACTOR_IGNORE_PARTY_MEMBERS;
 
 		auto isBlocker = [=](const Actor *a) {
 			// we can move over or under some actors. eg mice, dragons etc.
-			return !(a->can_be_passed(this) || (ignore_party_members && a->is_in_party()));
+			return !(a->can_be_passed(this, ignoreParty));
 		};
 
 		if (Game::get_game()->get_actor_manager()->findActorAt(new_x, new_y, new_z, isBlocker, true, false))
@@ -392,7 +392,7 @@ bool Actor::can_be_moved() {
 	return can_move;
 }
 
-bool Actor::can_be_passed(const Actor *other) const {
+bool Actor::can_be_passed(const Actor *other, bool ignoreParty) const {
 	// ethereal actors can always pass us
 	return other->ethereal || is_passable();
 }
@@ -459,8 +459,10 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	Game *game = Game::get_game();
 
 	if (!ignore_actors && !force_move) {
+		const bool ignoreParty = flags & ACTOR_IGNORE_PARTY_MEMBERS;
+
 		auto isBlocker = [=](const Actor *a) {
-			return !a->can_be_passed(this) && (!game->get_party()->get_autowalk() || a->is_visible());
+			return !a->can_be_passed(this, ignoreParty) && (!game->get_party()->get_autowalk() || a->is_visible());
 		};
 
 		Actor *const other = game->get_actor_manager()->findActorAt(new_x, new_y, new_z, isBlocker, true, false);

@@ -117,7 +117,7 @@ public:
 	bool get_corpser_flag() const override {
 		return (movement_flags & ACTOR_MOVEMENT_FLAGS_CORPSER);
 	}
-	bool can_be_passed(const Actor *other) const override;
+	bool can_be_passed(const Actor *other, bool ignoreParty) const override;
 	bool will_not_talk() const override;
 
 	void set_actor_obj_n(uint16 new_obj_n);

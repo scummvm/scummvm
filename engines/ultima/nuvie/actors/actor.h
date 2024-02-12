@@ -592,7 +592,7 @@ public:
 	bool check_moveRelative(sint16 rel_x, sint16 rel_y, ActorMoveFlags flags = 0);
 
 	virtual bool can_be_moved();
-	virtual bool can_be_passed(const Actor *other) const;
+	virtual bool can_be_passed(const Actor *other, bool ignoreParty = false) const;
 	virtual void update();
 	void set_in_party(bool state);
 	void set_pathfinder(ActorPathFinder *new_pf, Path *path_type = 0);
