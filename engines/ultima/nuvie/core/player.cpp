@@ -275,7 +275,8 @@ bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 		if (ret->err == ACTOR_BLOCKED_BY_ACTOR
 		        && party->contains_actor(ret->blocking_actor) && ret->blocking_actor->is_immobile() == false)
 			ret->blocking_actor->push(actor, ACTOR_PUSH_HERE);
-		if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) /**MOVE**/
+		// There could be more party members at the destination, but U6 ignores them - hence the ACTOR_IGNORE_PARTY_MEMBERS.
+		if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER | ACTOR_IGNORE_PARTY_MEMBERS)) /**MOVE**/
 			return false;
 	}
 	return true;
