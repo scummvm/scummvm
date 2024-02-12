@@ -1273,7 +1273,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 		if (game->get_game_type() == NUVIE_GAME_U6)
 			isUnmovable = isUnmovable || pushObjN == OBJ_U6_DRAGON;
 
-		if (isUnmovable || (push_actor && !push_actor->can_be_moved())) {
+		if (isUnmovable) {
 			scroll->display_string("Not possible\n\n");
 			scroll->display_prompt();
 			endAction();
@@ -1300,7 +1300,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 		};
 
 		// Can not push self and must pass strength test
-		if (push_actor == playerActor || strengthCheckFailed())
+		if (push_actor == playerActor || !push_actor->can_be_moved() || strengthCheckFailed())
 			scroll->display_string("Failed.\n\n");
 		else if (map->lineTest(to.x, to.y, to.x, to.y, to.z, LT_HitActors | LT_HitUnpassable, lt))
 			scroll->display_string("Blocked.\n\n");
