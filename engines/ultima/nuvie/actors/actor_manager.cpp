@@ -1190,5 +1190,35 @@ Std::set<Std::string> ActorManager::getCustomTileFilenames(const Common::Path &d
 	return files;
 }
 
+Actor *ActorManager::findActorAtImpl(uint16 x, uint16 y, uint8 z, bool (*predicateWrapper)(void *predicate, const Actor *), bool incDoubleTile, bool incSurroundingObjs, void *predicate) const {
+
+	for (uint16 i = 0; i < ACTORMANAGER_MAX_ACTORS; ++i)
+		// Exclude surrounding objects here since we can get them directly via the AVL tree instead of going through earch actor's surrounding objects list
+		if (actors[i] && actors[i]->doesOccupyLocation(x, y, z, incDoubleTile, false) && predicateWrapper(predicate, actors[i]))
+			return actors[i];
+
+	if (incSurroundingObjs) {
+		// Look for actor objects (e.g. Silver Serpent body, Hydra parts, etc.)
+		const U6LList *const obj_list = obj_manager->get_obj_list(x, y, z);
+
+		if (obj_list) {
+			for (const U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+				const Obj *obj = (Obj *)link->data;
+
+				if (obj->is_actor_obj()) {
+					const uint8 actorNum = obj->obj_n == OBJ_U6_SILVER_SERPENT
+							&& Game::get_game()->get_game_type() == NUVIE_GAME_U6 ? obj->qty : obj->quality;
+					Actor *actor = get_actor(actorNum);
+					if (actor && predicateWrapper(predicate, actor))
+						return actor;
+				}
+			}
+		}
+	}
+
+	// No match
+	return nullptr;
+}
+
 } // End of namespace Nuvie
 } // End of namespace Ultima
