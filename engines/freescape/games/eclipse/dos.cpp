@@ -54,7 +54,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
-		loadSoundsFx(&file, 0xecb4, 1);
+		loadSoundsFx(&file, 0xd670, 1);
 		loadSpeakerFx(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
@@ -158,11 +158,12 @@ soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) 
 }
 
 void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 5; i++) {
 		_soundsFx[i] = load1bPCM(file, offset);
 		offset += (_soundsFx[i]->size / 8) + 4;
 	}
 }
+
 
 void EclipseEngine::playSoundFx(int index, bool sync) {
 	if (_soundsFx.size() == 0) {

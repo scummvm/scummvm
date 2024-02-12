@@ -92,6 +92,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_position = Math::Vector3d(0, 0, 0);
 	_lastPosition = Math::Vector3d(0, 0, 0);
 	_hasFallen = false;
+	_maxFallingDistance = 64;
 	_velocity = Math::Vector3d(0, 0, 0);
 	_cameraFront = Math::Vector3d(0, 0, 0);
 	_cameraRight = Math::Vector3d(0, 0, 0);
@@ -334,8 +335,10 @@ void FreescapeEngine::drawFrame() {
 	}
 
 	drawBackground();
-	if (!_playerWasCrushed) // Avoid rendering inside objects
+	if (_avoidRenderingFrames == 0) // Avoid rendering inside objects
 		_currentArea->draw(_gfx, _ticks / 10);
+	else
+		_avoidRenderingFrames--;
 
 	if (_underFireFrames > 0) {
 		for (auto &it : _sensors) {
@@ -406,7 +409,7 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_JOYBUTTON_DOWN:
-			if (_hasFallen)
+			if (_hasFallen || _playerWasCrushed)
 				break;
 			switch (event.joystick.button) {
 			case Common::JOYSTICK_BUTTON_B:
@@ -715,6 +718,9 @@ bool FreescapeEngine::checkIfGameEnded() {
 	if (_gameStateControl != kFreescapeGameStatePlaying)
 		return false;
 
+	if (_avoidRenderingFrames > 0)
+		return false;
+
 	if (_gameStateVars[k8bitVariableShield] == 0) {
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
@@ -783,6 +789,7 @@ void FreescapeEngine::initGameState() {
 	_playerWasCrushed = false;
 	_shootingFrames = 0;
 	_underFireFrames = 0;
+	_avoidRenderingFrames = 0;
 	_yaw = 0;
 	_pitch = 0;
 	_endGameKeyPressed = false;

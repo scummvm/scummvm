@@ -280,6 +280,7 @@ public:
 	bool tryStepUp(Math::Vector3d currentPosition);
 	bool tryStepDown(Math::Vector3d currentPosition);
 	bool _hasFallen;
+	int _maxFallingDistance;
 	int _maxShield;
 	int _maxEnergy;
 
@@ -392,6 +393,7 @@ public:
 	Common::RenderMode _renderMode;
 	ColorMap _colorMap;
 	int _underFireFrames;
+	int _avoidRenderingFrames;
 	int _shootingFrames;
 	void drawFrame();
 	void flashScreen(int backgroundColor);

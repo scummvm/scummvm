@@ -118,6 +118,19 @@ void EclipseEngine::loadAssets() {
 }
 
 bool EclipseEngine::checkIfGameEnded() {
+	if (_hasFallen && _avoidRenderingFrames == 0) {
+		_hasFallen = false;
+		playSoundFx(4, false);
+
+		if (_gameStateVars[k8bitVariableShield] > 4) {
+			_gameStateVars[k8bitVariableShield] -= 4;
+			return false; // Game can continue
+		}
+		if (!_fallenMessage.empty())
+			insertTemporaryMessage(_fallenMessage, _countdown - 4);
+		_gameStateControl = kFreescapeGameStateEnd;
+	}
+
 	FreescapeEngine::checkIfGameEnded();
 	return false;
 }
@@ -169,7 +182,7 @@ void EclipseEngine::drawBackground() {
 
 void EclipseEngine::titleScreen() {
 	if (isDOS())
-		playSoundFx(0, true);
+		playSoundFx(2, true);
 	FreescapeEngine::titleScreen();
 }
 

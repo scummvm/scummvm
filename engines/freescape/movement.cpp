@@ -387,8 +387,12 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
 	int fallen = lastPosition.y() - newPosition.y();
 
-	if (fallen > 64)
+	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
+		_avoidRenderingFrames = 60 * 3;
+		if (isEclipse())
+			playSoundFx(0, true);
+	}
 
 	if (!_hasFallen && fallen > 0) {
 		playSound(3, false);
