@@ -38,6 +38,7 @@ public:
 
 	void borderScreen() override;
 	void titleScreen() override;
+	void drawInfoMenu() override;
 
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;

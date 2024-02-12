@@ -27,27 +27,6 @@
 
 namespace Freescape {
 
-static const char *rawMessagesTable[] = {
-	"HEART  FAILURE",
-	"SUN ECLIPSED",
-	"CRUSHED TO DEATH",
-	"FATAL FALL",
-	"CURSE OVERCOME",
-	"TOTAL ECLIPSE",
-	"TOO HOT TO REST!",
-	"RESTING...",
-	" ANKH FOUND ",
-	"WAY  BLOCKED",
-	"5 ANKHS REQUIRED",
-	"$2M REWARD",
-	"MAKE THE MATCH",
-	"TOUCH TO COLLECT",
-	"NO ENTRY",
-	"REMOVE LID",
-	"POISON AIR",
-	"MATCH MADE",
-	NULL};
-
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	if (isDOS())
 		initDOS();
@@ -64,17 +43,6 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerWidth = 8;
 	_playerDepth = 8;
 	_stepUpDistance = 32;
-
-	const char **messagePtr = rawMessagesTable;
-	if (isDOS()) {
-		debugC(1, kFreescapeDebugParser, "String table:");
-		while (*messagePtr) {
-			Common::String message(*messagePtr);
-			_messagesList.push_back(message);
-			debugC(1, kFreescapeDebugParser, "%s", message.c_str());
-			messagePtr++;
-		}
-	}
 
 	_playerStepIndex = 2;
 	_playerSteps.clear();
@@ -206,6 +174,94 @@ void EclipseEngine::borderScreen() {
 			FreescapeEngine::borderScreen();
 		}
 	}
+}
+
+void EclipseEngine::drawInfoMenu() {
+	PauseToken pauseToken = pauseEngine();
+	_savedScreen = _gfx->getScreenshot();
+	uint32 color = 0;
+	switch (_renderMode) {
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		default:
+			color = 14;
+	}
+	uint8 r, g, b;
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+
+	surface->fillRect(Common::Rect(88, 48, 231, 103), black);
+	surface->frameRect(Common::Rect(88, 48, 231, 103), front);
+
+	surface->frameRect(Common::Rect(90, 50, 229, 101), front);
+
+	drawStringInSurface("L-LOAD S-SAVE", 105, 56, front, black, surface);
+	if (isSpectrum())
+		drawStringInSurface("1-TERMINATE", 105, 64, front, black, surface);
+	else
+		drawStringInSurface("ESC-TERMINATE", 105, 64, front, black, surface);
+
+	drawStringInSurface("T-TOGGLE", 128, 81, front, black, surface);
+	drawStringInSurface("SOUND ON/OFF", 113, 88, front, black, surface);
+
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (_eventManager->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_l) {
+					_gfx->setViewport(_fullscreenViewArea);
+					_eventManager->purgeKeyboardEvents();
+					loadGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+					_gfx->setViewport(_fullscreenViewArea);
+					_eventManager->purgeKeyboardEvents();
+					saveGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+					playSound(6, true);
+				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_forceEndGame = true;
+					cont = false;
+				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+					_forceEndGame = true;
+					cont = false;
+				} else
+					cont = false;
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+
+			default:
+				break;
+			}
+		}
+		drawFrame();
+		drawFullscreenSurface(surface);
+
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	_savedScreen->free();
+	delete _savedScreen;
+	surface->free();
+	delete surface;
+	pauseToken.clear();
 }
 
 void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack) {

@@ -54,6 +54,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
+		loadMessagesFixedSize(&file, 0x710f, 16, 17);
 		loadSoundsFx(&file, 0xd670, 1);
 		loadSpeakerFx(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403);
