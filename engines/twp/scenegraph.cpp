@@ -328,7 +328,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 }
 
 void Anim::trigSound() {
-	if ((_anim->triggers.size() > 0) && _frameIndex < _anim->triggers.size()) {
+	if (_anim && (_anim->triggers.size() > 0) && (_frameIndex < _anim->triggers.size())) {
 		const Common::String &trigger = _anim->triggers[_frameIndex];
 		if ((trigger.size() > 0) && trigger != "null") {
 			_obj->trig(trigger);
@@ -355,7 +355,7 @@ void Anim::update(float elapsed) {
 				disable();
 			}
 		}
-		if (_anim->offsets.size() > 0) {
+		if (_anim && _anim->offsets.size() > 0) {
 			Math::Vector2d off = _frameIndex < _anim->offsets.size() ? _anim->offsets[_frameIndex] : Math::Vector2d();
 			if (_obj->getFacing() == FACE_LEFT) {
 				off.setX(-off.getX());
@@ -397,24 +397,25 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			g_engine->getGfx().drawSprite(Common::Rect(texture->width, texture->height), *texture, getComputedColor(), trsf, flipX);
 		} else {
 			const SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
-			const SpriteSheetFrame &sf = sheet->getFrame(frame);
+			const SpriteSheetFrame *sf = sheet->frame(frame);
+			if(!sf) return;
 			Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
 			if (_obj->_lit) {
 				g_engine->getGfx().use(g_engine->_lighting.get());
 				Math::Vector2d p = getAbsPos() + _obj->_node->getRenderOffset();
-				const float left = flipX ? (-1.f + sf.sourceSize.getX()) / 2.f - sf.spriteSourceSize.left : sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f;
-				const float top = -sf.sourceSize.getY() / 2.f + sf.spriteSourceSize.top;
+				const float left = flipX ? (-1.f + sf->sourceSize.getX()) / 2.f - sf->spriteSourceSize.left : sf->spriteSourceSize.left - sf->sourceSize.getX() / 2.f;
+				const float top = -sf->sourceSize.getY() / 2.f + sf->spriteSourceSize.top;
 
 				g_engine->_lighting->setSpriteOffset({p.getX() + left, -p.getY() + top});
-				g_engine->_lighting->setSpriteSheetFrame(sf, *texture, flipX);
+				g_engine->_lighting->setSpriteSheetFrame(*sf, *texture, flipX);
 			} else {
 				g_engine->getGfx().use(nullptr);
 			}
-			const float x = flipX ? (1.f - sf.sourceSize.getX()) / 2.f + sf.frame.width() + sf.spriteSourceSize.left : sf.sourceSize.getX() / 2.f - sf.spriteSourceSize.left;
-			const float y = sf.sourceSize.getY() / 2.f - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
+			const float x = flipX ? (1.f - sf->sourceSize.getX()) / 2.f + sf->frame.width() + sf->spriteSourceSize.left : sf->sourceSize.getX() / 2.f - sf->spriteSourceSize.left;
+			const float y = sf->sourceSize.getY() / 2.f - sf->spriteSourceSize.height() - sf->spriteSourceSize.top;
 			Math::Vector3d pos(int(-x), int(y), 0.f);
 			trsf.translate(pos);
-			g_engine->getGfx().drawSprite(sf.frame, *texture, getComputedColor(), trsf, flipX);
+			g_engine->getGfx().drawSprite(sf->frame, *texture, getComputedColor(), trsf, flipX);
 			g_engine->getGfx().use(nullptr);
 		}
 	}
