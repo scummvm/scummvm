@@ -742,6 +742,10 @@ bool ObjManager::can_store_obj(const Obj *target, Obj *src) const {
 		if (src->obj_n == OBJ_U6_TRAP)
 			return false;
 
+		if (!target->is_in_inventory() && (src->obj_n == OBJ_U6_CHEST
+				|| src->obj_n == OBJ_U6_BARREL || src->obj_n == OBJ_U6_CRATE))
+			return false;
+
 		if (target->obj_n == OBJ_U6_BAG
 		        || target->obj_n == OBJ_U6_BACKPACK
 		        || target->obj_n == OBJ_U6_BASKET
