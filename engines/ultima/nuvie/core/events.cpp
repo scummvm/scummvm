@@ -430,6 +430,11 @@ bool Events::select_obj(Obj *obj, Actor *actor) {
 bool Events::select_actor(Actor *actor) {
 	assert(mode == INPUT_MODE);
 
+	if (last_mode == PUSH_MODE && !move_in_inventory && (push_actor || push_obj)) {
+		// Prevent selecting an actor as target when pushing on the map
+		cancelAction();
+		return false;
+	}
 	input.type = EVENTINPUT_MAPCOORD;
 	input.actor = actor;
 	input.set_loc(actor->get_location());
