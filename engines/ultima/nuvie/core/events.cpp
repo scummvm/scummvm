@@ -1304,15 +1304,15 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 			return (pushedActorStr / 2 + 30 - playerStr) / 2 > getRandom(29) + 1;
 		};
 
+		const ActorMoveFlags moveFlags = ACTOR_IGNORE_MOVES | ACTOR_IGNORE_DANGER;
+
 		// Can not push self and must pass strength test
 		if (push_actor == playerActor || !push_actor->can_be_moved() || strengthCheckFailed())
 			scroll->display_string("Failed.\n\n");
-		else if (map->lineTest(to.x, to.y, to.x, to.y, to.z, LT_HitActors | LT_HitUnpassable, lt))
+		else if (!push_actor->move(to.x, to.y, to.z, moveFlags))
 			scroll->display_string("Blocked.\n\n");
-		else {
-			push_actor->move(to.x, to.y, from.z, ACTOR_FORCE_MOVE | ACTOR_IGNORE_DANGER);
+		else
 			player->subtract_movement_points(5);
-		}
 	} else {
 		if (map_window->get_interface() != INTERFACE_IGNORE_BLOCK
 		        && map_window->blocked_by_wall(player->get_actor(), push_obj)) {
