@@ -1655,8 +1655,9 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	MapCoord actor_loc = actor->get_location();
 
 	// Can only drop onto non-blocking actors
+	// Message: "Blocked" if pushing, "Not possible" if dropping
 	if (actor_manager->findActorAt(x, y, actor_loc.z, [](const Actor *a) {return !a->isNonBlocking();}, true, false))
-		return MSG_NOT_POSSIBLE;
+		return in_inventory ? MSG_NOT_POSSIBLE : MSG_BLOCKED;
 
 	Obj *dest_obj = nullptr;
 	if (game_type == NUVIE_GAME_U6) {
