@@ -24,39 +24,19 @@
 
 #include "scumm/music.h"
 
-namespace Audio {
-class Mixer;
-}
-
 namespace Scumm {
 
 class ScummEngine;
-class I3MPlayer;
 
-class Player_Mac_Indy3 : public MusicEngine {
-public:
-	enum Quality {
-		kQualAuto = 0,
-		kQualHi,
-		kQualLo
-	};
-
-	Player_Mac_Indy3(ScummEngine *vm, Audio::Mixer *mixer);
-	~Player_Mac_Indy3() override;
-	void setMusicVolume(int vol) override;
-	void setSfxVolume(int vol) override;
-	void startSound(int id) override;
-	void stopSound(int id) override;
-	void stopAllSounds() override;
-	int getMusicTimer() override;
-	int getSoundStatus(int id) const override;
-	void setQuality(int qual) override;
-	void saveLoadWithSerializer(Common::Serializer &ser) override;
-	void restoreAfterLoad() override;
-
-private:
-	Common::SharedPtr<I3MPlayer> _player;
+namespace MacSound {
+enum {
+	kQualityAuto = 0,
+	kQualityHigh,
+	kQualityLow,
+	kQualityMedium
 };
+MusicEngine *createPlayer(ScummEngine *vm);
+} // end of namespace MacSound
 
 } // End of namespace Scumm
 
