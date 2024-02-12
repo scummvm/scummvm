@@ -145,6 +145,10 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		close_dialog();
 	} else if (caller == save_button) {
 		close_dialog();
+		// Redraw so the dialog does not show in the save thumbnail
+		gui->force_full_redraw();
+		gui->Display();
+		gui->get_screen()->update();
 		g_engine->saveGameDialog();
 	} else if (caller == load_button) {
 		g_engine->loadGameDialog();
