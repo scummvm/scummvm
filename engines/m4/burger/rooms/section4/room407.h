@@ -69,7 +69,7 @@ private:
 	void loadSeries();
 	void conv87();
 	void conv88();
-	int getRandomState() const;
+	int getDrumzShould() const;
 	void freeDz();
 	void playConvSound();
 

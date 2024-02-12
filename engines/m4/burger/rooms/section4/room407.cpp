@@ -286,7 +286,7 @@ void Room407::daemon() {
 			if (!digi_play_state(2))
 				digi_play_loop("407_001", 2);
 
-			_drumzShould = getRandomState();
+			_drumzShould = getDrumzShould();
 			series_play_with_breaks(PLAY1, "407dz01", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
@@ -307,14 +307,14 @@ void Room407::daemon() {
 			break;
 
 		case 14:
-			_drumzShould = getRandomState();
+			_drumzShould = getDrumzShould();
 			kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			kernel_trigger_dispatch_now(10001);
 			break;
 
 		case 15:
 			digi_stop(2);
-			_drumzShould = getRandomState();
+			_drumzShould = getDrumzShould();
 			series_play_with_breaks(PLAY5, "407dz05", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
@@ -322,14 +322,14 @@ void Room407::daemon() {
 			digi_stop(2);
 			_dzS1 = series_load("407dz06");
 			_dzS2 = series_load("407dz06s");
-			_dz.show("407dz06", 0xa01, 18);
+			_dz.play("407dz06", 0xa01, 18, -1, 6, 0, 100, 0, 0, 2, 7);
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 17:
 			_flag1 = false;
 			freeDz();
-			_drumzShould = getRandomState();
+			_drumzShould = getDrumzShould();
 			series_play_with_breaks(PLAY6, "407dz06", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
@@ -688,7 +688,7 @@ void Room407::conv88() {
 	}
 }
 
-int Room407::getRandomState() const {
+int Room407::getDrumzShould() const {
 	switch (imath_ranged_rand(1, 10)) {
 	case 1:
 		return 15;
