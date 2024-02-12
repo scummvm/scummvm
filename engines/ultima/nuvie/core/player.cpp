@@ -272,7 +272,9 @@ const char *Player::get_gender_title() const {
 bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 	if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) { /**MOVE**/
 		ActorError *ret = actor->get_error();
+		// FIXME: When in combat, U6 attempts to move party members with role "front" forward instead of swapping.
 		if (ret->err == ACTOR_BLOCKED_BY_ACTOR
+		        && (game_type != NUVIE_GAME_U6 || actor->obj_n != OBJ_U6_MOUSE) // Only exchange positions if player is not U6 mouse
 		        && party->contains_actor(ret->blocking_actor) && ret->blocking_actor->is_immobile() == false)
 			ret->blocking_actor->push(actor, ACTOR_PUSH_HERE);
 		// There could be more party members at the destination, but U6 ignores them - hence the ACTOR_IGNORE_PARTY_MEMBERS.
