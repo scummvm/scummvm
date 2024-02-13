@@ -192,10 +192,12 @@ void SoundDriver::playFX(uint effectId, const byte *data) {
 	debugC(1, kDebugSound, "Starting FX %d", effectId);
 }
 
-void SoundDriver::stopFX() {
-	resetFX();
-	_streams[stFX]._playing = false;
-	_streams[stFX]._startPtr = _streams[stFX]._dataPtr = nullptr;
+void SoundDriver::stopFX(bool force) {
+	if (force || !_streams[stFX]._playing) {
+		resetFX();
+		_streams[stFX]._playing = false;
+		_streams[stFX]._startPtr = _streams[stFX]._dataPtr = nullptr;
+	}
 }
 
 void SoundDriver::playSong(const byte *data) {

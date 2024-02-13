@@ -180,7 +180,7 @@ public:
 	/**
 	 * Stop any playing FX
 	 */
-	void stopFX();
+	void stopFX(bool force = false);
 
 	/**
 	 * Plays a song

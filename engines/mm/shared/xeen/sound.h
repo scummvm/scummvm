@@ -74,7 +74,7 @@ public:
 	/**
 	 * Stops any currently playing FX
 	 */
-	void stopFX();
+	void stopFX(bool force = false);
 
 	/**
 	 * Executes special music command
