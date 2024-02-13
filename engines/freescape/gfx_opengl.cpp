@@ -326,12 +326,11 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	glPopMatrix();
 }
 
-void OpenGLRenderer::drawEclipse(byte color1, byte color2) {
+void OpenGLRenderer::drawEclipse(byte color1, byte color2, float progress) {
 	Math::Vector3d sunPosition(-5000, 2000, 500);
 	float radius = 500.0;
 	drawCelestialBody(sunPosition, radius, color1);
-
-	Math::Vector3d moonPosition(-5000, 2000, 1000);
+	Math::Vector3d moonPosition(-5000, 2000, 500 + 500 * progress);
 	drawCelestialBody(moonPosition, radius, color2);
 }
 

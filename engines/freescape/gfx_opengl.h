@@ -107,7 +107,7 @@ public:
 
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
-	virtual void drawEclipse(uint8 color1, uint8 color2) override;
+	virtual void drawEclipse(uint8 color1, uint8 color2, float difference) override;
 	void drawCelestialBody(Math::Vector3d position, float radius, uint8 color);
 
 	virtual Graphics::Surface *getScreenshot() override;

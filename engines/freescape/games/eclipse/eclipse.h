@@ -66,6 +66,7 @@ public:
 	soundFx *load1bPCM(Common::SeekableReadStream *file, int offset);
 
 	bool checkIfGameEnded() override;
+	void endGame() override;
 	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) override;
 	void playSoundFx(int index, bool sync) override;
 

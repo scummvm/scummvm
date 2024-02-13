@@ -103,6 +103,21 @@ bool EclipseEngine::checkIfGameEnded() {
 	return false;
 }
 
+void EclipseEngine::endGame() {
+	if (_gameStateControl == kFreescapeGameStateEnd) {
+		removeTimers();
+		if (_countdown > 0)
+			_countdown -= 10;
+		else
+			_countdown = 0;
+	}
+
+	if (_endGameKeyPressed && _countdown == 0) {
+		_gameStateControl = kFreescapeGameStateRestart;
+	}
+	_endGameKeyPressed = false;
+}
+
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
@@ -144,7 +159,16 @@ void EclipseEngine::drawBackground() {
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 	if (_currentArea && _currentArea->getAreaID() == 1) {
-		_gfx->drawEclipse(15, 10);
+		if (_countdown <= 15 * 60) // Last 15 minutes
+			_gfx->drawBackground(5);
+		if (_countdown <= 10) // Last 10 seconds
+			_gfx->drawBackground(1);
+
+		float progress = 0;
+		if (_countdown >= 0)
+			progress = float(_countdown) / _initialCountdown;
+
+		_gfx->drawEclipse(15, 10, progress);
 	}
 }
 

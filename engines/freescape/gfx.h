@@ -98,7 +98,7 @@ public:
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) = 0;
 	virtual void drawFloor(uint8 color) = 0;
 	virtual void drawBackground(uint8 color);
-	virtual void drawEclipse(uint8 color1, uint8 color2) {};
+	virtual void drawEclipse(uint8 color1, uint8 color2, float difference) {};
 
 	Common::Rect viewport() const;
 	virtual Common::Point nativeResolution() { return Common::Point(_screenW, _screenH); }
