@@ -75,7 +75,7 @@ void Map::loadOverlay() {
 	f.readUint16LE();	// extras size
 	f.readUint16LE();	// code entry-point
 
-	if (magicId != 0xF2 || codePtr != 0xF48F)
+	if (magicId != 0xF2 || (codePtr != 0xF48F && codePtr != 0xF47C))
 		error("Invalid map overlay header");
 
 	// Skip over code segment, since each map's
