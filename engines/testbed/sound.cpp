@@ -179,6 +179,7 @@ TestExitStatus SoundSubsystem::mixSounds() {
 const char *music[] = {
 	"music0167.xm",
 	"music0360.xm",
+	"music0038.mo3",
 	"music0077.it",
 	"music0078.it",
 	0
@@ -188,7 +189,7 @@ TestExitStatus SoundSubsystem::modPlayback() {
 	Testsuite::clearScreen();
 	TestExitStatus passed = kTestPassed;
 	Common::String info = "Testing Module Playback\n"
-			"You should hear 4 melodies\n";
+			"You should hear 5 melodies\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mod Playback\n");
