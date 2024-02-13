@@ -569,6 +569,41 @@ void Adlib::OnTimer() {
 	// l0017_1B1A - Start of the large loop
 }
 
+uint16 Adlib::Func19BE(uint8 offset) {
+	uint16 pos = data->pos();
+	if (offset > 0xF8) {
+		// l0017_19D8:
+		// TODO: Confirm that this works as expected
+		pos &= 0xF;
+	}
+	// l0017_19EA
+	pos += offset;
+	return pos;
+}
+
+void Adlib::Func1A03() {
+
+	_nextEventTimer = 0;
+	uint8 bp1;
+	// l0017_1A0F:
+	do {
+	
+	bp1 = data->readByte();
+
+	uint32 timer = _nextEventTimer;
+	// TODO: Not sure what this does in practice
+	timer << 7;
+	_nextEventTimer = timer;
+	_nextEventTimer += bp1;
+	// TODO: Check if this can also change the segment address
+	uint16 newPos = Func19BE(1);
+	data->seek(newPos, SEEK_SET);
+	// TODO: Not yet implemented
+	// add	word ptr [225Ah],1h
+	// adc word ptr[225Ch], 0h
+	} while ((bp1 & 0x80) != 0);
+}
+
 void Adlib::Init() {
 	_opl = OPL::Config::create();
 	int status = _opl->init();
