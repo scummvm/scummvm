@@ -42,7 +42,7 @@ ActorSlot::ActorSlot() = default;
 HudShader::HudShader() = default;
 
 void HudShader::init() {
-	const char *vsrc = R"(#version 110
+	const char *v_source = R"(
 	attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
@@ -71,7 +71,7 @@ void HudShader::init() {
 		v_ranges = u_ranges;
 	})";
 
-	const char* fsrc = R"(#version 110
+	const char* f_source = R"(
 	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	varying vec4 v_shadowColor;

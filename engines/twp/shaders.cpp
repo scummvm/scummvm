@@ -24,7 +24,7 @@
 
 namespace Twp {
 
-const char *vsrc = R"(#version 110
+const char *vsrc = R"(
 	uniform mat4 u_transform;
 attribute vec2 a_position;
 attribute vec4 a_color;
@@ -37,7 +37,7 @@ void main() {
 	v_texCoords = a_texCoords;
 })";
 
-	const char* bwShader = R"(#version 110
+	const char* bwShader = R"(
 varying vec2 v_texCoords;
 varying vec4 v_color;
 uniform sampler2D u_texture;
@@ -48,7 +48,7 @@ void main() {
 	gl_FragColor = vec4(gray, gray, gray, col.a);
 })";
 
-const char* ghostShader = R"(#version 110
+const char* ghostShader = R"(
 // Work in progress ghost shader.. Too over the top at the moment, it'll make you sick.
 
 varying vec4 v_color;
@@ -221,7 +221,7 @@ void main(void) {
 	gl_FragColor = v_color * vec4(col, texture2D(u_texture, c1).a);
 })";
 
-const char* sepiaShader = R"(#version 110
+const char* sepiaShader = R"(
 
 varying vec4 v_color;
 varying vec2 v_texCoords;
@@ -315,7 +315,7 @@ void main(void) {
 })";
 
 FadeShader::FadeShader() {
-	const char *fadeShader = R"(#version 110
+	const char *fadeShader = R"(
 #ifdef GL_ES
 		precision highp float;
 #endif

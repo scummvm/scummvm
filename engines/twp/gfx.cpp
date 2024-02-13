@@ -137,7 +137,7 @@ Shader::~Shader() {
 
 void Shader::init(const char *name, const char *vertex, const char *fragment) {
 	const char *attributes[] = {"a_position", "a_color", "a_texCoords", nullptr};
-	_shader.loadFromStrings(name, vertex, fragment, attributes);
+	_shader.loadFromStrings(name, vertex, fragment, attributes, 110);
 
 	uint32 vbo = g_engine->getGfx()._vbo;
 	_shader.enableVertexAttribute("a_position", vbo, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)0);
@@ -199,7 +199,7 @@ void Gfx::init() {
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
 
-	const char *fragmentSrc = R"(#version 110
+	const char *fragmentSrc = R"(
 	varying vec4 v_color;
 	varying vec2 v_texCoords;
 	uniform sampler2D u_texture;
