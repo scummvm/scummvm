@@ -53,7 +53,7 @@ inline void ScriptExecutor::FuncA3D2() {
 		}
 		// Do the skipping
 		_stream->seek(length, SEEK_CUR);
-		debug("A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
+		debug("- A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
 
 		// TODO: Add a log here
 		if (skipValue != 0) {
@@ -809,6 +809,9 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 	void Script::ScriptExecutor::ExecuteScript() {
 		debug("----- Scripting function entered");
+
+		// [bp-12h]
+	bool shouldSkip = false;
 	// Not yet implemented - seems to signal that the script is empty?
 	/*
 	l0037_DB6A:
@@ -946,24 +949,37 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	l0037_DC5C:
 		jmp	0E3BAh
 			*/
-		} else {
-			ScriptNoEntry
-			// TODO: Breaking for now to be able to see the log until this point
-			break;
-		}
+		} else if (opcode1 == 0x5) {
+			// l0037_DC66:
+			// [bp-3h]
+			uint8 opcode2 = ReadByte();
+			// [bp-7h]
+			uint16 v1;
+			// [bp-5h]
+			uint16 v2;
+			Func9F4D(v1, v2);
+			// [bp-0Bh]
+			uint16 v3;
+			// [bp-9h]
+			uint16 v4;
+			Func9F4D(v3, v4);
+
+			shouldSkip = false;
+			// TODO: Figure out if we handle opcodes differently here
+			if (opcode2 == 0x1) {
+				// l0037_DC8F:
+				shouldSkip = !((v1 == v2) && (v3 == v4));
+			} else {
+				ScriptNoEntry;
+				break;
+			}
+			// TODO Find the proper place
+			if (shouldSkip) {
+				FuncA3D2();
+			}
 		}
 		// 0E3BDh
-		
-	
-
-	
 	/*
-	
-	
-	
-		
-	
-
 	l0037_DC5F:
 		;; #path We know that AL needs to be 0Ah already
 		cmp	al,5h
@@ -2155,7 +2171,8 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 */
-debug("----- Scripting function left");
+		debug("----- Scripting function left");
+	}
 	}
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {

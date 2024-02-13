@@ -51,6 +51,11 @@ namespace Macs2 {
 		// TODO: Consider adding the caller
 		void Func2839();
 
+		uint16 Func19BE(uint8 offset);
+
+		void Func1A03();
+
+
 		// 01D7:1AA7
 		void OnTimer();
 
@@ -60,6 +65,8 @@ namespace Macs2 {
 	public:
 	void Init();
 
+		// TODO: Check where these contents live
+		// Memory pointed to by [2250] global
 		Common::MemoryReadStream *data = nullptr;
 	};
 
