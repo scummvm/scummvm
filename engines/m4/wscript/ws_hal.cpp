@@ -180,22 +180,6 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 	dr.ICT = ICT;
 	dr.srcDepth = myCCB->layer >> 8;
 
-// FIXME: Unused Code. Remove?
-#if 0
-	RendCell Frame;
-	Frame.hot_x = myCCB->source->xOffset;
-	Frame.hot_y = myCCB->source->yOffset;
-	Frame.Width = source->w;
-	Frame.Height = source->h;
-
-	if ((!myPalette) || (!ICT)) {
-		Frame.Comp = (uint32)(source->encoding & 0x7f);
-	} else {
-		Frame.Comp = (uint32)source->encoding;
-	}
-	Frame.data = source->data;
-#endif
-
 	// And draw the sprite
 	gr_sprite_draw(&dr);
 	myCCB->flags &= ~CCB_REDRAW;
