@@ -27,8 +27,6 @@ namespace MM {
 namespace Shared {
 namespace Xeen {
 
-#define CALLBACKS_PER_SECOND 73
-
 const byte SoundDriverAdlib::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
 	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
 };
@@ -425,6 +423,29 @@ byte SoundDriverAdlib::calculateLevel(byte level, bool isFx) {
 
 	return scaling | (0x3f - totalLevel);
 }
+
+bool SoundDriverAdlib::cmdFreezeFrequency(const byte *&srcP, byte param) {
+	debugC(3, kDebugSound, "cmdFreezeFrequency %d", param);
+	_channels[param]._changeFrequency = false;
+	return false;
+}
+
+bool SoundDriverAdlib::cmdChangeFrequency(const byte *&srcP, byte param) {
+	debugC(3, kDebugSound, "cmdChangeFrequency %d", param);
+
+	_channels[param]._freqCtrChange = (int8)*srcP++;
+	_channels[param]._freqCtr = 0xFF;
+	_channels[param]._changeFrequency = true;
+	_channels[param]._freqChange = (int16)READ_BE_UINT16(srcP);
+	srcP += 2;
+
+	return false;
+}
+
+void SoundDriverAdlib::sysExMessage(const byte *&data) {
+	// not used in ad adlib
+}
+
 
 } // namespace Xeen
 } // namespace Shared

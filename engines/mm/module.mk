@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	shared/xeen/sound.o \
 	shared/xeen/sound_driver.o \
 	shared/xeen/sound_driver_adlib.o \
+	shared/xeen/sound_driver_mt32.o \
 	shared/xeen/sprites.o \
 	shared/xeen/xsurface.o
 

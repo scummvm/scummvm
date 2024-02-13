@@ -19,59 +19,52 @@
  *
  */
 
-#ifndef MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
-#define MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
+#ifndef MM_SHARED_XEEN_SOUND_DRIVER_MT32_H
+#define MM_SHARED_XEEN_SOUND_DRIVER_MT32_H
+
 
 #include "audio/mididrv.h"
 #include "mm/shared/xeen/sound_driver.h"
-
-namespace OPL {
-	class OPL;
-}
 
 namespace MM {
 namespace Shared {
 namespace Xeen {
 
-class SoundDriverAdlib : public SoundDriver {
-	struct RegisterValue {
-		uint8 _regNum;
-		uint8 _value;
+class SoundDriverMT32 : public SoundDriver {
+	struct MidiValue {
+		uint32 _val;
 
-		RegisterValue(int regNum, int value) {
-			_regNum = regNum; _value = value;
+		MidiValue(uint8 command, uint8 op1, uint8 op2) {
+			_val = (command) | ((uint32)op2 << 16) | ((uint32)op1 << 8);
 		}
 	};
+public:
+	MidiDriver *_midiDriver;
+	uint32 _timerCount;
 private:
-	static const byte OPERATOR1_INDEXES[CHANNEL_COUNT];
-	static const byte OPERATOR2_INDEXES[CHANNEL_COUNT];
-	static const uint WAVEFORMS[24];
+	static const uint8 MIDI_NOTE_MAP[24];
 private:
-	OPL::OPL *_opl;
-	Common::Queue<RegisterValue> _queue;
+	MidiChannel *_midiChannels[CHANNEL_COUNT];
+	Common::Queue<MidiValue> _queue;
 	Common::Mutex _driverMutex;
 	const byte *_musInstrumentPtrs[16];
 	const byte *_fxInstrumentPtrs[16];
+	byte _expressions[16];
 	int _field180;
 	int _field181;
 	int _field182;
 	int _musicVolume, _sfxVolume;
 private:
 	/**
-	 * Initializes the state of the Adlib OPL driver
+	 * Initializes the state of the MT32 driver
 	 */
 	void initialize();
 
 	/**
 	 * Adds a register write to the pending queue that will be flushed
-	 * out to the OPL on the next timer call
+	 * out to the MT32 on the next timer call
 	 */
-	void write(int reg, int val);
-
-	/**
-	 * Timer function for OPL
-	 */
-	void onTimer();
+	void write(uint8 command, uint8 op1, uint8 op2);
 
 	/**
 	 * Flushes any pending writes to the OPL
@@ -84,21 +77,6 @@ private:
 	void resetFrequencies();
 
 	/**
-	 * Sets the frequency for an operator
-	 */
-	void setFrequency(byte operatorNum, uint frequency);
-
-	/**
-	 * Calculates the frequency for a note
-	 */
-	uint calcFrequency(byte note);
-
-	/**
-	 * Sets the output level for a channel
-	 */
-	void setOutputLevel(byte channelNum, uint level);
-
-	/**
 	 * Starts playing an instrument
 	 */
 	void playInstrument(byte channelNum, const byte *data, bool isFx);
@@ -108,6 +86,10 @@ private:
 	 */
 	byte calculateLevel(byte level, bool isFx);
 
+	/**
+	 * Maps note using hardcoded notes table
+	 */
+	byte noteMap(byte note);
 protected:
 	bool musSetInstrument(const byte *&srcP, byte param) override;
 	bool musSetPitchWheel(const byte *&srcP, byte param) override;
@@ -149,12 +131,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	SoundDriverAdlib();
+	SoundDriverMT32();
 
 	/**
 	 * Destructor
 	 */
-	~SoundDriverAdlib() override;
+	~SoundDriverMT32() override;
 
 	/**
 	 * Starts a special effect playing
@@ -170,6 +152,11 @@ public:
 	 * Executes special music command
 	 */
 	int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0) override;
+
+	/**
+	 * Timer function for MT32
+	 */
+	void onTimer();
 };
 
 } // namespace Xeen

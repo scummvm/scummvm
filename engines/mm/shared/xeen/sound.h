@@ -22,6 +22,7 @@
 #ifndef MM_SHARED_XEEN_SOUND_H
 #define MM_SHARED_XEEN_SOUND_H
 
+#include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "mm/shared/xeen/file.h"
@@ -36,6 +37,7 @@ private:
 	SoundDriver *_SoundDriver;
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
+	Common::Array<uint16> _patchesOffsetsMT32;
 	const byte *_songData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -62,6 +64,7 @@ public:
 	Common::Path _currentMusic;
 	int _musicSide;
 	bool _subtitles;
+	MusicType musicType;
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
