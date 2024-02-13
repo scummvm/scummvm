@@ -25,6 +25,8 @@
 #include "m4/gui/gui_sys.h"
 #include "m4/adv_r/other.h"
 #include "m4/platform/keys.h"
+#include "m4/burger/rooms/section3/mine.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
@@ -57,6 +59,8 @@ void Hotkeys::add_hot_keys() {
 
 	AddSystemHotkey('F', a_cb);
 	AddSystemHotkey('f', a_cb);
+
+	AddSystemHotkey('x', testMine);
 }
 
 void Hotkeys::toggle_through_cursors(CursorChange cursChange) {
@@ -163,6 +167,14 @@ void Hotkeys::l_cb(void *, void *) {
 
 void Hotkeys::a_cb(void *, void *) {
 	g_vars->_interface.a_cb();
+}
+
+void Hotkeys::testMine(void *, void *) {
+	Rooms::Mine *mine = dynamic_cast<Rooms::Mine *>(g_engine->_activeRoom);
+
+	if (mine) {
+		mine->testMine();
+	}
 }
 
 void Hotkeys::show_version(void *a, void *b) {

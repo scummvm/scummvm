@@ -489,6 +489,21 @@ void Mine::set_fade_down_rect(MineDoors exit_door) {
 	_fade_down_rect.y2 = FADE_DOWN_INFO[_presentSceneID][exit_door].y2;
 }
 
+void Mine::testMine() {
+	auto &mineCtr = _G(mineTestCtr);
+
+	// Find the next door to test
+	do {
+		if (mineCtr >= 0 && MINE_INFO[mineCtr / 4].scene_id == NO_SCENE)
+			return;
+
+		++mineCtr;
+
+	} while (MINE_INFO[mineCtr / 4].door[mineCtr % 4] == NONE);
+
+	_G(flags)[kMineRoomIndex] = mineCtr / 4;
+	mine_travel_link(mineCtr % 4);
+}
 
 } // namespace Rooms
 } // namespace Burger
