@@ -400,14 +400,6 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 			}
 		}
 		object->_room = room;
-
-		if(roomChanged && isActor(object->getId())) {
-			if(room == g_engine->_room) {
-				g_engine->actorEnter(object);
-			} else if(oldRoom == g_engine->_room) {
-				g_engine->actorExit(object);
-			}
-		}
 	}
 }
 
@@ -431,7 +423,6 @@ void Object::stopObjectMotors() {
 	_node->setRotationOffset(0);
 	_node->setOffset({0.f, 0.f});
 	_node->setShakeOffset({0.f, 0.f});
-	_node->setAlpha(1);
 	_node->setScale({1.f,1.f});
 }
 
