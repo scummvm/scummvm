@@ -113,7 +113,7 @@ bool Sound::isSoundPlaying() const {
 
 void Sound::stopAllAudio() {
 	stopSong();
-	stopFX();
+	stopFX(true);
 	stopSound();
 	setMusicPercent(100);
 }
@@ -172,8 +172,8 @@ void Sound::playFX(uint effectId) {
 	}
 }
 
-void Sound::stopFX() {
-	_SoundDriver->stopFX();
+void Sound::stopFX(bool force) {
+	_SoundDriver->stopFX(force);
 }
 
 int Sound::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
