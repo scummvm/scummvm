@@ -105,7 +105,7 @@ enum CutsceneState {
 class Object;
 class Cutscene final : public ThreadBase {
 public:
-	Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
+	Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
 	~Cutscene() override final;
 
 	void start();

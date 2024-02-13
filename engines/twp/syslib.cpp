@@ -483,7 +483,8 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	}
 
 	Common::SharedPtr<ThreadBase> parentThread = sqthread(v);
-	Common::SharedPtr<Cutscene> cutscene(new Cutscene(parentThread->getId(), threadObj, closure, closureOverride, envObj));
+	Common::String cutsceneName = Common::String::format("%s (%lld)", _stringval(_closure(closure)->_function->_sourcename), _closure(closure)->_function->_lineinfos->_line);
+	Common::SharedPtr<Cutscene> cutscene(new Cutscene(cutsceneName, parentThread->getId(), threadObj, closure, closureOverride, envObj));
 	g_engine->_cutscene = cutscene;
 
 	// call the closure in the thread
@@ -892,6 +893,7 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "SLOW_EASE_OUT", SLOW_EASE_OUT);
 	regConst(v, "LOOPING", LOOPING);
 	regConst(v, "SWING", SWING);
+	regConst(v, "STOP_LOOPING", STOP_LOOPING);
 	regConst(v, "ALIGN_LEFT", ALIGN_LEFT);
 	regConst(v, "ALIGN_CENTER", ALIGN_CENTER);
 	regConst(v, "ALIGN_RIGHT", ALIGN_RIGHT);

@@ -509,9 +509,10 @@ void TwpEngine::update(float elapsed) {
 	Common::Array<Common::SharedPtr<ThreadBase> > threads(_threads);
 	Common::Array<Common::SharedPtr<ThreadBase> > threadsToRemove;
 
+	bool isNotInDialog = _dialog.getState() == DialogState::None;
 	for (auto it = threads.begin(); it != threads.end(); it++) {
 		Common::SharedPtr<ThreadBase> thread(*it);
-		if (thread->update(elapsed)) {
+		if ((isNotInDialog || !thread->isGlobal()) && thread->update(elapsed)) {
 			threadsToRemove.push_back(thread);
 		}
 	}
@@ -1212,8 +1213,9 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	_camera.setRoom(room);
 	_camera.setAt(camPos);
 
+	stopTalking();
+
 	// call actor enter function and objects enter function
-	actorEnter();
 	for (size_t i = 0; i < room->_layers.size(); i++) {
 		Common::SharedPtr<Layer> layer = room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
@@ -1225,7 +1227,9 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 					_room->_scalingTriggers.push_back(ScalingTrigger(obj, scaling));
 				}
 			}
-			if (sqrawexists(obj->_table, "enter"))
+			if(isActor(obj->getId())) {
+				actorEnter(_actor);
+			} else if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
 		}
 	}
@@ -1248,14 +1252,12 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	sqcall("enteredRoom", room->_table);
 }
 
-void TwpEngine::actorEnter() {
-	if (_actor) {
-		sqcall(_actor->_table, "actorEnter");
-		if (_room) {
-			if (sqrawexists(_room->_table, "actorEnter")) {
-				sqcall(_room->_table, "actorEnter", _actor->_table);
-			}
-		}
+void TwpEngine::actorEnter(Common::SharedPtr<Object> actor) {
+	if(!actor) return;
+	if(sqrawexists(g_engine->_room->_table, "actorEnter")) {
+		sqcall(g_engine->_room->_table, "actorEnter", actor->_table);
+	} else {
+		sqcall("actorEnter", actor->_table);
 	}
 }
 
@@ -1266,7 +1268,16 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 		_room->_triggers.clear();
 		_room->_scalingTriggers.clear();
 
-		actorExit();
+		for (size_t i = 0; i < _room->_layers.size(); i++) {
+			Common::SharedPtr<Layer> layer(_room->_layers[i]);
+			for (size_t j = 0; j < layer->_objects.size(); j++) {
+				Common::SharedPtr<Object> obj = layer->_objects[j];
+				obj->stopObjectMotors();
+				if(isActor(obj->getId())) {
+					actorExit(obj);
+				}
+			}
+		}
 
 		// call room exit function with the next room as a parameter if requested
 		int nparams = sqparamCount(v, _room->_table, "exit");
@@ -1312,8 +1323,8 @@ void TwpEngine::setRoom(Common::SharedPtr<Room> room) {
 		enterRoom(room);
 }
 
-void TwpEngine::actorExit() {
-	if (_actor && _room) {
+void TwpEngine::actorExit(Common::SharedPtr<Object> actor) {
+	if (actor && _room) {
 		if (sqrawexists(_room->_table, "actorExit")) {
 			sqcall(_room->_table, "actorExit", _actor->_table);
 		}
@@ -1625,7 +1636,8 @@ void TwpEngine::updateTriggers() {
 }
 
 void TwpEngine::stopTalking() {
-	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
+	if(!_room) return;
+	for (auto it = _room->_layers.begin(); it != _room->_layers.end(); it++) {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			(*it2)->stopTalking();

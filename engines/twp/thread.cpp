@@ -115,14 +115,14 @@ void Thread::stop() {
 	suspend();
 }
 
-Cutscene::Cutscene(int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
+Cutscene::Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
 	: _parentThreadId(parentThreadId),
 	  _threadObj(threadObj),
 	  _closure(closure),
 	  _closureOverride(closureOverride),
 	  _envObj(envObj) {
 
-	_name = "cutscene";
+	_name = name;
 	_id = newThreadId();
 	_inputState = g_engine->_inputState.getState();
 	_actor = g_engine->_followActor;

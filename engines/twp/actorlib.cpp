@@ -207,31 +207,36 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 3) {
-		Common::SharedPtr<Object> actor1 = g_engine->_actor;
-		Common::SharedPtr<Object> actor2 = sqactor(v, 2);
+		Common::SharedPtr<Object> actor1(g_engine->_actor);
+		Common::SharedPtr<Object> actor2(sqactor(v, 2));
 		if (!actor2)
 			return sq_throwerror(v, "failed to get actor");
 		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot");
+		if(actor1->_room != actor2->_room)
+			return false;
 		// not sure about this, needs to be check one day ;)
 		sqpush(v, distance((Vector2i)actor1->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < distance((Vector2i)actor2->_node->getAbsPos(), (Vector2i)obj->getUsePos()));
 		return 1;
-	} else if (nArgs == 4) {
-		Common::SharedPtr<Object> actor = sqactor(v, 2);
+	}
+
+	if (nArgs == 4) {
+		Common::SharedPtr<Object> actor(sqactor(v, 2));
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		Common::SharedPtr<Object> obj = sqobj(v, 3);
+		Common::SharedPtr<Object> obj(sqobj(v, 3));
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 		int dist;
 		if (SQ_FAILED(sqget(v, 4, dist)))
 			return sq_throwerror(v, "failed to get distance");
+		if(actor->_room != obj->_room)
+			return false;
 		sqpush(v, distance((Vector2i)actor->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < dist);
 		return 1;
-	} else {
-		return sq_throwerror(v, "actorDistanceWithin not implemented");
 	}
+	return sq_throwerror(v, "actorDistanceWithin not implemented");
 }
 
 // Makes the actor face a given direction.
@@ -439,7 +444,10 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 		int facing = 0;
 		if (SQ_FAILED(sqget(v, 3, facing)))
 			return sq_throwerror(v, "failed to get facing");
-		actor->lockFacing(facing);
+		if (facing == 0)
+			actor->resetLockFacing();
+		else
+			actor->lockFacing(facing);
 	} break;
 	case OT_TABLE: {
 		HSQOBJECT obj;
