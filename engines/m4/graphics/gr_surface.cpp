@@ -152,34 +152,32 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int 
 			if (destX >= 0 && v != 0 && (!depthP || depth == 0 || srcDepth < depth)) {
 				if (inverseColorTable) {
 					// Handling for shadows
-					if (v == 128)
-						continue;
+					if (v != 128) {
+						const byte *palP = palette + *destP * 3;
+						uint rgb = (uint32)palP[0] | ((uint32)palP[1] << 8) |
+							((uint32)palP[2] << 16);
+						rgb >>= 2;
 
-					const byte *palP = palette + *destP * 3;
-					uint rgb = (uint32)palP[0] | ((uint32)palP[1] << 8) |
-						((uint32)palP[2] << 16);
-					rgb >>= 2;
+						// Red component
+						adjusted = (rgb & 0xff) * v;
+						adjusted = MIN((uint)(adjusted >> 8), 31U);
+						total = adjusted << 10;
 
-					// Red component
-					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN((uint)(adjusted >> 8), 31U);
-					total = adjusted << 10;
+						// Green component
+						rgb >>= 8;
+						adjusted = (rgb & 0xff) * v;
+						adjusted = MIN((uint)(adjusted >> 8), 31U);
+						total |= (adjusted << 5);
 
-					// Green component
-					rgb >>= 8;
-					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN((uint)(adjusted >> 8), 31U);
-					total |= (adjusted << 5);
+						// Blue component
+						rgb >>= 8;
+						adjusted = (rgb & 0xff) * v;
+						adjusted = MIN((uint)(adjusted >> 8), 31U);
+						total |= adjusted;
 
-					// Blue component
-					rgb >>= 8;
-					adjusted = (rgb & 0xff) * v;
-					adjusted = MIN((uint)(adjusted >> 8), 31U);
-					total |= adjusted;
-
-					// Write out pixel from inverse table
-					*destP = inverseColorTable[total];
-
+						// Write out pixel from inverse table
+						*destP = inverseColorTable[total];
+					}
 				} else {
 					// Normal pixel
 					*destP = v;
