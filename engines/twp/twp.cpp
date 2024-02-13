@@ -1326,7 +1326,7 @@ void TwpEngine::setRoom(Common::SharedPtr<Room> room) {
 void TwpEngine::actorExit(Common::SharedPtr<Object> actor) {
 	if (actor && _room) {
 		if (sqrawexists(_room->_table, "actorExit")) {
-			sqcall(_room->_table, "actorExit", _actor->_table);
+			sqcall(_room->_table, "actorExit", actor->_table);
 		}
 	}
 }
