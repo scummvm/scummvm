@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
 #include "mm/shared/xeen/sound.h"
 #include "mm/shared/xeen/sound_driver_adlib.h"
+#include "mm/shared/xeen/sound_driver_mt32.h"
 #include "mm/xeen/xeen.h"
 #include "mm/mm.h"
 
@@ -33,9 +33,28 @@ namespace Shared {
 namespace Xeen {
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true), _subtitles(false),
-_songData(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100),
+_songData(nullptr), _SoundDriver(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100),
 _musicVolume(0), _sfxVolume(0) {
-	_SoundDriver = new SoundDriverAdlib();
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
+	musicType = MidiDriver::getMusicType(dev);
+
+	switch (musicType) {
+	case MT_MT32:
+		_SoundDriver = new SoundDriverMT32();
+		debugC(1, "Selected mt32 sound driver\n");
+		break;
+	case MT_ADLIB:
+	default:
+		_SoundDriver = new SoundDriverAdlib();
+		debugC(1, "Selected adlib sound driver\n");
+		break;
+	}
+
+	// force load effects early so custom instruments for mt32 are loaded before sound is played.
+	loadEffectsData();
+
+	assert(_SoundDriver);
+
 	if (g_engine->getIsCD())
 		g_system->getAudioCDManager()->open();
 }
@@ -131,8 +150,13 @@ void Sound::loadEffectsData() {
 	// Stop any prior FX
 	stopFX();
 
-	if (!_effectsData) {
+	// Skip if we doesn't loaded sound driver or already loaded effects
+	if (!_SoundDriver || _effectsData)
+		return;
+
+	if (musicType == MT_ADLIB) {
 		// Load in an entire driver so we have quick access to the effects data that's hardcoded within it
+
 		const char *name = "blastmus";
 		File file(name);
 		size_t size = file.size();
@@ -157,6 +181,50 @@ void Sound::loadEffectsData() {
 		_effectsOffsets.resize(numEffects);
 		for (uint idx = 0; idx < numEffects; ++idx)
 			_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
+	} else if (musicType == MT_MT32) {
+		// Load in an entire driver so we have quick access to the effects data that's hardcoded within it
+		const char *name = "rolmus";
+		File file(name);
+		size_t size = file.size();
+		byte *effectsData = new byte[size];
+
+		if (file.read(effectsData, size) != size) {
+			delete[] effectsData;
+			error("Failed to read %zu bytes from '%s'", size, name);
+		}
+
+		_effectsData = effectsData;
+		// Locate the playFX routine
+		const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
+		assert(READ_BE_UINT16(fx + 36) == 0x81FB);
+		// TODO: investigate, there are seems additional 11 effects in the table beside base 180
+		uint numEffects = READ_LE_UINT16(fx + 38);
+
+		assert(READ_BE_UINT16(fx + 80) == 0x8B87);
+		const byte *table = effectsData + READ_LE_UINT16(fx + 82);
+
+		// Extract the effects offsets
+		_effectsOffsets.resize(numEffects);
+		for (uint idx = 0; idx < numEffects; ++idx)
+			_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
+
+		// rolmus in intro.cc
+		if (effectsData[1] == 0xBD) {
+			_patchesOffsetsMT32 = {0x0A86, 0x0ABC, 0x10A3, 0x0BC1, 0x10AF, 0x0CBB, 0x10BB, 0x0DB5, 0x10C7, 0x0EAF, 0x10D3, 0x0FA9, 0x10DF};
+			debugC(3, "intro rolmus");
+		// rolmus in xeen.cc
+		} else if (effectsData[1] == 0xB9) {
+			_patchesOffsetsMT32 = {0x09A7, 0x09DD, 0x0FC4, 0x0AE2, 0x0FD0, 0x0BDC, 0x0FDC, 0x0CD6, 0x0FE8, 0x0DD0, 0x0FF4, 0x0ECA, 0x1000};
+			debugC(3, "xeen rolmus");
+		}
+
+		assert(_patchesOffsetsMT32.size() == 13);
+
+		for (uint idx = 0; idx < 13; idx++) {
+			const byte *ptr = &effectsData[_patchesOffsetsMT32[idx]];
+
+			_SoundDriver->sysExMessage(ptr);
+		}
 	}
 }
 
@@ -166,18 +234,23 @@ void Sound::playFX(uint effectId) {
 		return;
 	loadEffectsData();
 
-	if (effectId < _effectsOffsets.size()) {
+	if (_SoundDriver && effectId < _effectsOffsets.size()) {
 		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
 		_SoundDriver->playFX(effectId, dataP);
 	}
 }
 
 void Sound::stopFX(bool force) {
-	_SoundDriver->stopFX(force);
+	if (_SoundDriver)
+		_SoundDriver->stopFX(force);
 }
 
 int Sound::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
-	int result = _SoundDriver->songCommand(commandId, musicVolume, sfxVolume);
+	int result = 0;
+
+	if (_SoundDriver)
+		result = _SoundDriver->songCommand(commandId, musicVolume, sfxVolume);
+
 	if (commandId == STOP_SONG) {
 		delete[] _songData;
 		_songData = nullptr;
@@ -205,7 +278,8 @@ void Sound::playSong(Common::SeekableReadStream &stream) {
 	assert(!_songData);
 	_songData = songData;
 
-	_SoundDriver->playSong(_songData);
+	if (_SoundDriver)
+		_SoundDriver->playSong(_songData);
 }
 
 void Sound::playSong(const Common::String &name, int param) {
@@ -237,7 +311,7 @@ void Sound::setMusicOn(bool isOn) {
 }
 
 bool Sound::isMusicPlaying() const {
-	return _SoundDriver->isPlaying();
+	return _SoundDriver && _SoundDriver->isPlaying();
 }
 
 void Sound::setMusicPercent(byte percent) {
@@ -259,8 +333,13 @@ void Sound::updateSoundSettings() {
 		playSong(_currentMusic);
 
 	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
-	_musicVolume = CLIP(ConfMan.getInt("music_volume"), 0, 255);
-	_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	if (ConfMan.getBool("mute")) {
+		_musicVolume = 0;
+		_sfxVolume = 0;
+	} else {
+		_musicVolume = CLIP(ConfMan.getInt("music_volume"), 0, 255);
+		_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	}
 	updateVolume();
 }
 

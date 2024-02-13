@@ -62,6 +62,8 @@ void SoundDriver::execute() {
 	// Main loop
 	bool breakFlag = false;
 	while (!breakFlag) {
+		if (!stream->_dataPtr || !stream->_startPtr)
+			break;
 		debugCN(3, kDebugSound, "MUSCODE %.4x - %.2x  ", (uint)(stream->_dataPtr - stream->_startPtr), (uint)*stream->_dataPtr);
 		byte nextByte = *stream->_dataPtr++;
 		int cmd = (nextByte >> 4) & 15;
@@ -106,24 +108,6 @@ bool SoundDriver::cmdNoOperation(const byte *&srcP, byte param) {
 bool SoundDriver::musSkipWord(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musSkipWord");
 	srcP += 2;
-	return false;
-}
-
-bool SoundDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
-	debugC(3, kDebugSound, "cmdFreezeFrequency %d", param);
-	_channels[param]._changeFrequency = false;
-	return false;
-}
-
-bool SoundDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
-	debugC(3, kDebugSound, "cmdChangeFrequency %d", param);
-
-	_channels[param]._freqCtrChange = (int8)*srcP++;
-	_channels[param]._freqCtr = 0xFF;
-	_channels[param]._changeFrequency = true;
-	_channels[param]._freqChange = (int16)READ_BE_UINT16(srcP);
-	srcP += 2;
-
 	return false;
 }
 
