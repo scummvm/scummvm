@@ -24,6 +24,7 @@
 #include "twp/twp.h"
 #include "twp/thread.h"
 #include "twp/lighting.h"
+#include "twp/squtil.h"
 #include "common/debug-channels.h"
 
 namespace Twp {
@@ -35,12 +36,15 @@ static struct {
 	bool _showAudio = false;
 	bool _showResources = false;
 	bool _showScenegraph = false;
+	bool _showActor = false;
 	Node* _node = nullptr;
 	ImGuiTextFilter _objFilter;
+	ImGuiTextFilter _actorFilter;
 	int _fadeEffect = 0;
 	float _fadeDuration = 0.f;
 	bool _fadeToSepia = false;
 	Common::String _textureSelected;
+	int _selectedActor = 0;
 } state;
 
 ImVec4 gray(0.6f, 0.6f, 0.6f, 1.f);
@@ -63,6 +67,26 @@ static void drawThreads() {
 			ImGui::TableSetupColumn("Src");
 			ImGui::TableSetupColumn("Line");
 			ImGui::TableHeadersRow();
+
+			if(g_engine->_cutscene) {
+				Common::SharedPtr<ThreadBase> thread(g_engine->_cutscene);
+				SQStackInfos infos;
+				sq_stackinfos(thread->getThread(), 0, &infos);
+
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::Text("%5d", thread->getId());
+				ImGui::TableNextColumn();
+				ImGui::Text("%-56s", thread->getName().c_str());
+				ImGui::TableNextColumn();
+				ImGui::Text("%-6s", "cutscene");
+				ImGui::TableNextColumn();
+				ImGui::Text("%-9s", infos.funcname);
+				ImGui::TableNextColumn();
+				ImGui::Text("%-9s", infos.source);
+				ImGui::TableNextColumn();
+				ImGui::Text("%5lld", infos.line);
+			}
 
 			for (const auto &thread : threads) {
 				SQStackInfos infos;
@@ -145,6 +169,52 @@ static ImVec4 getCategoryColor(Audio::Mixer::SoundType type) {
 		return ImVec4(1.f, 1.f, 0.f, 1.f);
 	}
 	return ImVec4(1.f, 1.f, 1.f, 1.f);
+}
+
+static void drawActors() {
+	if (!state._showActor)
+		return;
+
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Actors", &state._showStack);
+	state._actorFilter.Draw();
+	ImGui::BeginChild("Actor_List");
+	for(auto& actor : g_engine->_actors) {
+		bool selected = actor->getId() == state._selectedActor;
+		Common::String key(actor->_key);
+		if (state._actorFilter.PassFilter(actor->_key.c_str())) {
+			if (key.empty()) {
+				key = "??";
+			}
+			if (ImGui::Selectable(key.c_str(), &selected)) {
+				state._selectedActor = actor->getId();
+			}
+		}
+	}
+	ImGui::EndChild();
+	ImGui::End();
+}
+
+static void drawActor() {
+	if (!state._showActor)
+		return;
+
+	Common::SharedPtr<Object> actor(sqobj(state._selectedActor));
+	if (!actor)
+		return;
+
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Actor", &state._showStack);
+	ImGui::Text("Name: %s", actor->_key.c_str());
+	ImGui::Text("Costume: %s (%s)", actor->_costumeName.c_str(), actor->_costumeSheet.c_str());
+	ImGui::Text("Animation: %s", actor->_animName.c_str());
+	Common::String hiddenLayers(Twp::join(actor->_hiddenLayers, ", "));
+	ImGui::Text("Hidden Layers: %s", hiddenLayers.c_str());
+	ImGui::Text("Facing: %d", actor->_facing);
+	ImGui::Text("Facing Lock: %d", actor->_facingLockValue);
+	ImGui::ColorEdit3("Talk color", actor->_talkColor.v);
+	ImGui::DragFloat2("Talk offset", actor->_talkOffset.getData());
+	ImGui::End();
 }
 
 static void drawStack() {
@@ -275,9 +345,9 @@ static void drawGeneral() {
 	ImGui::TextColored(gray, "Stack:");
 	ImGui::SameLine();
 	ImGui::Text("%lld", size);
-	ImGui::TextColored(gray, "In cutscene:");
+	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	ImGui::Text("%s", g_engine->_cutscene ? "yes" : "no");
+	ImGui::Text("%s", g_engine->_cutscene ? g_engine->_cutscene->getName().c_str() : "no");
 	DialogState dialogState = g_engine->_dialog.getState();
 	ImGui::TextColored(gray, "In dialog:");
 	ImGui::SameLine();
@@ -415,10 +485,11 @@ static void drawGeneral() {
 	if (ImGui::CollapsingHeader("Windows")) {
 		ImGui::Checkbox("Threads", &state._showThreads);
 		ImGui::Checkbox("Objects", &state._showObjects);
+		ImGui::Checkbox("Actor", &state._showActor);
 		ImGui::Checkbox("Stack", &state._showStack);
 		ImGui::Checkbox("Audio", &state._showAudio);
 		ImGui::Checkbox("Resources", &state._showResources);
-		ImGui::Checkbox("Scenegraph", &state._showScenegraph);
+		ImGui::Checkbox("Scene graph", &state._showScenegraph);
 	}
 	ImGui::Separator();
 
@@ -523,6 +594,8 @@ void onImGuiRender() {
 	drawAudio();
 	drawResources();
 	drawScenegraph();
+	drawActors();
+	drawActor();
 }
 
 } // namespace Twp

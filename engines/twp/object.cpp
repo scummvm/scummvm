@@ -372,8 +372,9 @@ int Object::getFlags() {
 }
 
 void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> room) {
-	if ((object->_room != room) || !object->_node->getParent()) {
-		if (object->_room != room) {
+	bool roomChanged = object->_room != room;
+	if (roomChanged || !object->_node->getParent()) {
+		if (roomChanged) {
 			object->stopObjectMotors();
 		}
 		Common::SharedPtr<Room> oldRoom = object->_room;
@@ -399,6 +400,14 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 			}
 		}
 		object->_room = room;
+
+		if(roomChanged && isActor(object->getId())) {
+			if(room == g_engine->_room) {
+				g_engine->actorEnter(object);
+			} else if(oldRoom == g_engine->_room) {
+				g_engine->actorExit(object);
+			}
+		}
 	}
 }
 
@@ -418,6 +427,12 @@ void Object::stopObjectMotors() {
 	disableMotor(_shakeTo);
 	disableMotor(_jiggleTo);
 	disableMotor(_scaleTo);
+	_node->setRotation(0);
+	_node->setRotationOffset(0);
+	_node->setOffset({0.f, 0.f});
+	_node->setShakeOffset({0.f, 0.f});
+	_node->setAlpha(1);
+	_node->setScale({1.f,1.f});
 }
 
 void Object::setFacing(Facing facing) {
@@ -537,10 +552,8 @@ void Object::stand() {
 void Object::setAlphaTo(Common::SharedPtr<Motor> alphaTo) { SET_MOTOR(alphaTo); }
 void Object::setRotateTo(Common::SharedPtr<Motor> rotateTo) { SET_MOTOR(rotateTo); }
 void Object::setMoveTo(Common::SharedPtr<Motor> moveTo) { SET_MOTOR(moveTo); }
-void Object::setWalkTo(Common::SharedPtr<Motor> walkTo) { SET_MOTOR(walkTo); }
 void Object::setReach(Common::SharedPtr<Motor> reach) { SET_MOTOR(reach); }
 void Object::setTalking(Common::SharedPtr<Motor> talking) { SET_MOTOR(talking); }
-void Object::setTurnTo(Common::SharedPtr<Motor> turnTo) { SET_MOTOR(turnTo); }
 void Object::setShakeTo(Common::SharedPtr<Motor> shakeTo) { SET_MOTOR(shakeTo); }
 void Object::setScaleTo(Common::SharedPtr<Motor> scaleTo) { SET_MOTOR(scaleTo); }
 
@@ -629,6 +642,7 @@ void Object::say(Common::SharedPtr<Object> obj, const Common::StringArray &texts
 
 void Object::resetLockFacing() {
 	_facingMap.clear();
+	_facingLockValue = 0;
 }
 
 void Object::lockFacing(int facing) {

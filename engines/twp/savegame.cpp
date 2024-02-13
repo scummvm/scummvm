@@ -397,7 +397,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
-	loadDialog(json["gameScene"]->asObject());
+	loadDialog(json["dialog"]->asObject());
 	loadCallbacks(json["callbacks"]->asObject());
 	loadGlobals(json["globals"]->asObject());
 	loadActors(json["actors"]->asObject());

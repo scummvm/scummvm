@@ -129,6 +129,8 @@ public:
 	void stopTalking();
 	void walkFast(bool state = true);
 
+	void actorEnter(Common::SharedPtr<Object> actor);
+	void actorExit(Common::SharedPtr<Object> actor);
 	Common::SharedPtr<Room> defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Common::SharedPtr<Room> room);
 	void enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door = nullptr);
@@ -151,8 +153,6 @@ private:
 	void update(float elapsedMs);
 	void draw(RenderTexture *texture = nullptr);
 	void exitRoom(Common::SharedPtr<Room> nextRoom);
-	void actorEnter();
-	void actorExit();
 	void cancelSentence(Common::SharedPtr<Object> actor = nullptr);
 	void clickedAt(Math::Vector2d scrPos);
 	bool clickedAtHandled(Math::Vector2d roomPos);

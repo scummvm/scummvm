@@ -140,9 +140,7 @@ public:
 	void setUniform2(const char * name, float* value, size_t count);
 	void setUniform3(const char * name, float* value, size_t count);
 
-	void setUniform(const char *name, Math::Matrix4 value);
 	void setUniform(const char * name, Math::Vector2d value);
-	void setUniform(const char * name, Math::Vector3d value);
 	void setUniform3(const char * name, Color value);
 	void setUniform4(const char * name, Color value);
 

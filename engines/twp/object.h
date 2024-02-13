@@ -170,7 +170,6 @@ public:
 
 	bool contains(Math::Vector2d pos);
 	static void setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> room);
-	void delObject();
 	void stopObjectMotors();
 	void dependentOn(Common::SharedPtr<Object> dependentObj, int state);
 
@@ -190,7 +189,6 @@ public:
 	void setAlphaTo(Common::SharedPtr<Motor> alphaTo);
 	void setRotateTo(Common::SharedPtr<Motor> rotateTo);
 	void setMoveTo(Common::SharedPtr<Motor> moveTo);
-	void setWalkTo(Common::SharedPtr<Motor> walkTo);
 	void setReach(Common::SharedPtr<Motor> reach);
 	Common::SharedPtr<Motor> getWalkTo() { return _walkTo; }
 	Common::SharedPtr<Motor> getReach() { return _reach; }
@@ -198,8 +196,6 @@ public:
 	static void walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 	void setTalking(Common::SharedPtr<Motor> talking);
-	void setBlink(Common::SharedPtr<Motor> blink);
-	void setTurnTo(Common::SharedPtr<Motor> turnTo);
 	void setShakeTo(Common::SharedPtr<Motor> shakeTo);
 	void setScaleTo(Common::SharedPtr<Motor> scaleTo);
 
