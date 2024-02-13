@@ -202,8 +202,10 @@ void AudioSystem::setVolume(int id, float vol) {
 void AudioSystem::update(float) {
 	for (auto & _slot : _slots) {
 		if (_slot.busy && !g_engine->_mixer->isSoundHandleActive(_slot.handle)) {
-			if(_slot.loopTimes > 0) {
-				_slot.loopTimes--;
+			if((_slot.loopTimes == -1) || _slot.loopTimes > 0) {
+				if(_slot.loopTimes != -1) {
+					_slot.loopTimes--;
+				}
 				Audio::SeekableAudioStream *audioStream;
 				Common::String name = _slot.sndDef->getName();
 				_slot.stream.seek(0);
