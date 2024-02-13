@@ -51,11 +51,6 @@ class RewindableAudioStream;
  */
 RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate = 48000);
 
-/**
- * Check if the stream is one of the supported formats
- */
-bool probeUniversalTracker(Common::SeekableReadStream *stream);
-
 } // End of namespace Audio
 
 #endif // #ifndef AUDIO_UNIVERSALTRACKER_H

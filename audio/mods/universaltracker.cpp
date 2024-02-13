@@ -382,47 +382,12 @@ UniversalTrackerMod::~UniversalTrackerMod() {
 
 namespace Audio {
 
-bool probeUniversalTracker(Common::SeekableReadStream *st) {
-#ifdef USE_MIKMOD
-
-	int32 setPos = st->pos();
-
-	// xm file
-	char sigIt[4] = { 0 };
-	st->read(sigIt, 4);
-	st->seek(setPos);
-	if (!memcmp(sigIt, "IMPM", 4)) {
-		return true;
-	}
-
-#elif defined(USE_OPENMPT)
-
-	openmpt_stream_callbacks stream_callbacks;
-	stream_callbacks.read = &memoryReaderRead;
-	stream_callbacks.seek = &memoryReaderSeek;
-	stream_callbacks.tell = &memoryReaderTell;
-
-	uint result = openmpt_probe_file_header_from_stream(OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT, stream_callbacks, st, NULL, NULL, NULL, NULL, NULL, NULL);
-
-	if (result == OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS) {
-		return true;
-	}
-
-#endif
-
-	return false;
-}
-
 RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
 
 #if !defined(USE_OPENMPT) && !defined(USE_MIKMOD)
 	warning("Modplayer Support not compiled in");
 	return nullptr;
 #else
-
-	if (!probeUniversalTracker(stream)) {
-		return nullptr;
-	}
 
 	UniversalTrackerMod *impulseTrackerMod = new UniversalTrackerMod(stream, disposeAfterUse, rate);
 
