@@ -244,6 +244,7 @@ void WalkTo::actorArrived() {
 }
 
 void WalkTo::update(float elapsed) {
+	if(!_enabled) return;
 	if (_state == kWalking && !_path.empty()) {
 		Vector2i dest = _path[0];
 		float d = distance(dest, (Vector2i)_obj->_node->getAbsPos());

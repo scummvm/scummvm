@@ -127,7 +127,7 @@ void Graph::addEdge(GraphEdge e) {
 	}
 	if (!edge(e.to, e.start)) {
 		GraphEdge e2(e.to, e.start, e.cost);
-		_edges[e.to].push_back(e);
+		_edges[e.to].push_back(e2);
 	}
 }
 
@@ -313,11 +313,12 @@ Common::SharedPtr<Graph> PathFinder::createGraph() {
 
 Common::Array<Vector2i> PathFinder::calculatePath(Vector2i start, Vector2i to) {
 	Common::Array<Vector2i> result;
-	if (_walkboxes.size() > 0) {
+	if (!_walkboxes.empty()) {
 		// find the walkbox where the actor is and put it first
 		for (uint i = 0; i < _walkboxes.size(); i++) {
 			const Walkbox &wb = _walkboxes[i];
 			if (wb.contains(start) && (i != 0)) {
+				_graph.reset();
 				SWAP(_walkboxes[0], _walkboxes[i]);
 				break;
 			}
@@ -332,8 +333,10 @@ Common::Array<Vector2i> PathFinder::calculatePath(Vector2i start, Vector2i to) {
 			}
 
 			const uint index = minIndex(dists);
-			if (index != 0)
+			if (index != 0) {
+				_graph.reset();
 				SWAP(_walkboxes[0], _walkboxes[index]);
+			}
 		}
 
 		if (!_graph)
@@ -352,7 +355,7 @@ Common::Array<Vector2i> PathFinder::calculatePath(Vector2i start, Vector2i to) {
 			to = wb.getClosestPointOnEdge(to);
 		}
 		// we don't want the actor to walk in a different walkbox
-		// then check if endpoint is inside one of the other walkboxes and find closest point on edge
+		// then check if endpoint is inside one of the other walkboxes and find the closest point on edge
 		for (uint i = 1; i < _walkboxes.size(); i++) {
 			if (_walkboxes[i].contains(to)) {
 				to = _walkboxes[i].getClosestPointOnEdge(to);

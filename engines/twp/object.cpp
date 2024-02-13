@@ -424,6 +424,8 @@ void Object::stopObjectMotors() {
 	_node->setOffset({0.f, 0.f});
 	_node->setShakeOffset({0.f, 0.f});
 	_node->setScale({1.f,1.f});
+	if(isActor(getId()))
+		stand();
 }
 
 void Object::setFacing(Facing facing) {
