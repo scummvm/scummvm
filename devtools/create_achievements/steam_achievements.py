@@ -15,7 +15,12 @@ import sys
 import codecs
 import argparse
 import requests
-from requests_html import HTMLSession
+import logging
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import requests
+from selenium.webdriver.common.by import By
+from lxml import etree
 
 # For Stats only English strings exists on Steam side.
 #   - stats info is collected from SteamDB, we collect lists of <id, [comment], initial value>
@@ -24,7 +29,7 @@ from requests_html import HTMLSession
 # This script is currently using various sources of information for Steam achievements:
 #   - achievements info collection starts from SteamDB, we collect lists of <id, title, [comment], hidden flag>
 #   - if there are hidden achievements, we look up their English "comment" values on 3rd party site (achievementstats.com)
-#   - there is an additional call to SteamDB to collect list of achivements translations
+#   - there is an additional call to SteamDB to collect list of achievements translations
 #   - if there are no hidden achievements, we use Global Statistics at steamcommunity.com to collect non-English strings
 #   - if there are hidden achievements, we use User Statistics at steamcommunity.com to collect non-English strings
 
@@ -66,7 +71,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--steamid", required=True, default="631570", type=int, help="Steam game id")
 parser.add_argument("--saveasgalaxyid", type=int, help="GOG Galaxy game id")
 parser.add_argument("-v", "--verbose", action="store_true")
+parser.add_argument("-d", "--debug", action="store_true")
 args = parser.parse_args()
+service = Service("/usr/bin/chromedriver")
+driver = webdriver.Chrome(service=service)
+stringify = etree.XPath("string()")
+
+if args.debug:
+	logging.basicConfig(level=logging.DEBUG)
 
 def log(msg):
 	global args
@@ -77,16 +89,31 @@ def err(msg):
 	sys.stderr.write(msg + "\n")
 	sys.exit(127)
 
+def create_xpath_object(html_body):
+	tree = etree.HTML(html_body)
+	return etree.XPathEvaluator(tree)
+
+def get(url):
+	driver.get(url)
+	return driver.page_source
+
+def xpath(response, xpath):
+	x = create_xpath_object(response)
+	return x(xpath)
+
+def html(response):
+	return repr(response)
+
 def parse_steamdb_info(url):
 	log("query {0}".format(url))
-	response = HTMLSession().get(url)
+	response = get(url)
 
-	info_rows = response.html.xpath("//div[@id='info']/table/tbody/tr/td")
+	info_rows = xpath(response, "//div[@id='info']/table/tbody/tr/td")
 	info_columns = 2 # id, text,
 	info_entries = int(len(info_rows) / info_columns)
 	if info_entries == 0:
-		log(repr(response.html.raw_html))
-		err("found NO information data")
+		log(html(response))
+		err("found NO information data for {0}".format(url))
 
 	FORMAT_CHECKER_STRING = "Store Release Date"
 	is_format_ok = False
@@ -94,31 +121,31 @@ def parse_steamdb_info(url):
 	langs = "English"
 	for i in range(info_entries):
 		idx        = info_columns * i
-		info_key   = info_rows[idx + 0].text.strip()
-		info_value = info_rows[idx + 1].text.strip()
-		if info_key == FORMAT_CHECKER_STRING:
+		info_key   = stringify(info_rows[idx + 0]).strip()
+		info_value = stringify(info_rows[idx + 1]).strip()
+		if info_key == FORMAT_CHECKER_STRING or info_key == "Steam Release Date":
 			is_format_ok = True
 		if info_key == "Achievement Languages":
 			langs = info_value
 
 	if not is_format_ok:
-		log(repr(response.html.raw_html))
+		log(html(response))
 		err("found NO {0}\nEntries: {1}".format(FORMAT_CHECKER_STRING, [i.text for i in info_rows][::2]))
 
 	return langs.split(", ")
 
 def parse_steamdb_stats(url):
 	log("query {0}".format(url))
-	response = HTMLSession().get(url)
+	response = get(url)
 
-	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
+	achievements_rows = xpath(response, "//tr[starts-with(@id, 'achievement-')]/td")
 	achievements_columns = 3 # name, text, img
 	achievements_entries = int(len(achievements_rows) / achievements_columns)
 	if achievements_entries == 0:
-		log(repr(response.html.raw_html))
-		err("found NO achievements")
+		log(html(response))
+		err("found NO achievements for {0}".format(url))
 
-	stats_rows = response.html.xpath("//tr[starts-with(@id, 'stat-')]/td")
+	stats_rows = xpath(response, "//tr[starts-with(@id, 'stat-')]/td")
 	stats_columns = 3 # name, text, default value
 	stats_entries = int(len(stats_rows) / stats_columns)
 
@@ -136,10 +163,10 @@ def parse_steamdb_stats(url):
 	for i in range(achievements_entries):
 		idx   = achievements_columns * i
 		name  = achievements_rows[idx + 0].text.strip()
-		texts = achievements_rows[idx + 1].text.strip().split("\n")
+		texts = stringify(achievements_rows[idx + 1]).strip().replace("\n\n", "\n").split("\n")
 
 		if len(texts) != 2:
-			log(repr(response.html.raw_html))
+			log(html(response))
 			err("Unexpected description format: {0}".format(texts))
 
 		title = texts[0]
@@ -153,13 +180,13 @@ def parse_steamdb_stats(url):
 
 def parse_steamcommunity_stats(url):
 	log("query {0}".format(url))
-	response = HTMLSession().get(url)
+	response = get(url)
 
-	achievements_rows = response.html.xpath("//div[@class='achieveRow']")
+	achievements_rows = xpath(response, "//div[@class='achieveRow']")
 	achievements_entries = len(achievements_rows)
 	if achievements_entries == 0:
-		log(repr(response.html.raw_html))
-		err("found NO achievements")
+		log(html(response))
+		err("found NO achievements for {0}".format(url))
 
 	translation = {}
 	for idx in range(achievements_entries):
@@ -168,13 +195,13 @@ def parse_steamcommunity_stats(url):
 		descrs = achievements_rows[idx].xpath(".//div[@class='achieveTxt']/h5/text()")
 
 		if len(imgs) != 1:
-			log(repr(response.html.raw_html))
+			log(html(response))
 			err("Unexpected xpath result: expected exactly one img tag per achievement")
 		if len(titles) != 1:
-			log(repr(response.html.raw_html))
+			log(html(response))
 			err("Unexpected xpath result: expected exactly one h3 tag per achievement")
 		if len(descrs) > 1:
-			log(repr(response.html.raw_html))
+			log(html(response))
 			err("Unexpected xpath result: expected zero or one h5 tag per achievement")
 
 		translation[imgs[0]] = (titles[0].strip(), descrs[0].strip() if descrs else None)
@@ -183,18 +210,18 @@ def parse_steamcommunity_stats(url):
 
 def parse_achievementstats_stats(url):
 	log("query {0}".format(url))
-	response = HTMLSession().get(url)
+	response = get(url)
 
-	tables = response.html.xpath("//table")
+	tables = xpath(response, "//table")
 	if len(tables) != 1:
-		log(repr(response.html.raw_html))
+		log(html(response))
 		err("Unexpected xpath result: expected exactly one table tag on page")
 
-	achievements_rows = response.html.xpath("//tbody/tr/td")
+	achievements_rows = xpath(response, "//tbody/tr/td")
 	achievements_columns = 6 # icon, name, text, date, point, report
 	achievements_entries = int(len(achievements_rows) / achievements_columns)
 	if achievements_entries == 0:
-		log(repr(response.html.raw_html))
+		log(html(response))
 		err("found NO achievements")
 
 	result = {}
@@ -303,7 +330,9 @@ try:
 	else:
 		FNAME = "steam-{0}.ini".format(args.steamid)
 	write_ini(os.path.join("gen", FNAME), achievements, stats)
+	driver.quit()
 
 except requests.exceptions.RequestException as e:
 	print(e)
+	driver.quit()
 	sys.exit(127)
