@@ -158,6 +158,7 @@ add_steam 1900280
 add_steamlike_gog 1902850 1123332294
 add_steam 2118540
 add_steam 2217060
+add_steam 2664930
 
 #TWINE games:
 add_steam 397330
