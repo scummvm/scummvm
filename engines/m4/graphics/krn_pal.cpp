@@ -165,11 +165,10 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 	grey_fade(pal, TO_GREY, 21, 255, steps, delay);
 
-	// make _GP(translation) table
-	// to translate colors using entries 59-255 into 21-58 range
+	// Make translation table to translate colors using entries 59-255 into 21-58 range
 
-	for (i = 0; i < 64; i++) {
-		bestMatch = 63;
+	for (i = 0; i < 32; i++) {
+		bestMatch = 65;
 		minDist = 255;
 
 		if (!(i & 0x3ff)) {
@@ -183,20 +182,22 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 				bestMatch = j;
 			}
 			if (minDist == 0)
-				break;        // no need to continue searching if we found a perfect match
+				// No need to continue searching if we found a perfect match
+				break;
 		}
 
 		_GP(translation)[i] = (uint8)bestMatch;
 	}
 
-	// palette now grey scale. Remap any pixels which are in the range 21-58 to the range 53-255
+	// Palette now grey scale. Remap any pixels which are in the range 21-58 to the range 53-255
 	// because we need to use those palette entries soon
 
 	tempPtr = grey_screen->data;
-	// note: this loop should be y0 to y1, x0 to x1, not a stride*h loop.
+
+	// Note: this loop should be y0 to y1, x0 to x1, not a stride*h loop.
 	for (i = 0; i < (grey_screen->stride * grey_screen->h); i++) {
 		if ((*tempPtr >= GREY_START) && (*tempPtr <= GREY_END)) {
-			// must move the pixel index to the best match in FREE_START-FREE_END range with _GP(translation) table
+			// Must move the pixel index to the best match in FREE_START-FREE_END range with _GP(translation) table
 			*tempPtr = _GP(translation)[*tempPtr - GREY_START];
 		}
 		tempPtr++;
@@ -207,9 +208,10 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 		}
 
 	}
+
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 
-	// make new trickPal with grey-scale ramp entries and load it into VGA registers
+	// Make new trickPal with grey-scale ramp entries and load it into VGA registers
 	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// trick pal is the greyed version plus the grey ramp overlayed on top
 	int8 grey_step = 256 / NUM_GREYS;
 	int8 grey_ramp = 0;
@@ -218,9 +220,10 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 		_GP(trick)[i].r = _GP(trick)[i].b = 0;
 		grey_ramp += grey_step;
 	}
-	gr_pal_set_range(_GP(trick), GREY_START, NUM_GREYS);   ///set pal GREY_START-GREY_END
 
+	gr_pal_set_range(_GP(trick), GREY_START, NUM_GREYS);
 	remap_buffer_with_luminance_map(grey_screen, 0, 0, grey_screen->w - 1, screen_height(grey_screen) - 1);
+
 	_G(gameDrawBuff)->release();
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 }
