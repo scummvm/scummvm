@@ -1388,6 +1388,7 @@ void LB::b_xtra(int nargs) {
 		Datum var = g_lingo->_globalvars[name];
 		if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
 			g_lingo->push(var);
+			return;
 		}
 	}
 	g_lingo->lingoError("Xtra not found: %s", name.c_str());

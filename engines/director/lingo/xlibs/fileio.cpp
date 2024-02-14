@@ -27,6 +27,8 @@
  *************************************/
 
 /*
+ * -- XObject version
+ *
  * --FileIO, Tool, 1.5.0 , 31mar92
  * --© 1989-1992 MacroMind, Inc.
  * --by John Thompson and Al McNeil
@@ -85,6 +87,37 @@
  * --  -65 :: No disk in drive
  * --  -120 :: Directory not found
  * V     mReadPICT
+ * II     +mSetOverrideDrive, driveLetter --Set override drive letter ('A' - 'Z') to use when loading linked castmembers.  Use 0x00 to clear override.
+ *
+ * -- Xtra version
+-- xtra fileio -- CH May96
+new object me -- create a new child instance
+-- FILEIO --
+fileName object me -- return fileName string of the open file
+status object me -- return the error code of the last method called
+error object me, int error -- return the error string of the error
+setFilterMask me, string mask -- set the filter mask for dialogs
+openFile object me, string fileName, int mode -- opens named file. valid modes: 0=r/w 1=r 2=w
+closeFile object me -- close the file
+displayOpen object me -- displays an open dialog and returns the selected fileName to lingo
+displaySave object me, string title, string defaultFileName -- displays save dialog and returns selected fileName to lingo
+createFile object me, string fileName -- creates a new file called fileName
+setPosition object me, int position -- set the file position
+getPosition object me -- get the file position
+getLength object me -- get the length of the open file
+writeChar object me, string theChar -- write a single character (by ASCII code) to the file
+writeString object me, string theString -- write a null-terminated string to the file
+readChar object me -- read the next character of the file and return it as an ASCII code value
+readLine object me -- read the next line of the file (including the next RETURN) and return as a string
+readFile object me -- read from current position to EOF and return as a string
+readWord object me -- read the next word of the file and return it as a string
+readToken object me, string skip, string break -- read the next token and return it as a string
+getFinderInfo object me -- get the finder info for the open file (Mac Only)
+setFinderInfo object me, string attributes -- set the finder info for the open file (Mac Only)
+delete object me -- deletes the open file
++ version xtraRef -- display fileIO version and build information in the message window
+* getOSDirectory -- returns the full path to the Mac System Folder or Windows Directory
+
  */
 
 #include "gui/filebrowser-dialog.h"
@@ -98,6 +131,7 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "savestate.h"
 
 namespace Director {
 
@@ -109,13 +143,14 @@ const char *FileIO::fileNames[] = {
 };
 
 static MethodProto xlibMethods[] = {
+	// XObject
 	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2
 	{ "error",					FileIO::m_error,			 1, 1,	200 },	// D2
 	{ "fileName",				FileIO::m_fileName,			 0, 0,	200 },	// D2
 	{ "getFinderInfo",			FileIO::m_getFinderInfo,	 0, 0,	200 },	// D2
 	{ "getLength",				FileIO::m_getLength,		 0, 0,	200 },	// D2
 	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	200 },	// D2
-	{ "new",					FileIO::m_new,				 2, 2,	200 },	// D2
+	{ "new",					FileIO::m_new,				 0, 2,	200 },	// D2
 	{ "readChar",				FileIO::m_readChar,			 0, 0,	200 },	// D2
 	{ "readFile",				FileIO::m_readFile,			 0, 0,	200 },	// D2
 	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
@@ -127,32 +162,34 @@ static MethodProto xlibMethods[] = {
 	{ "status",					FileIO::m_status,			 0, 0,	200 },	// D2
 	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
 	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
-
-	// Non-standard extensions
-	// - Used by Maniac Sports
-	// II     +mSetOverrideDrive, driveLetter --Set override drive letter ('A' - 'Z') to use when loading linked castmembers.  Use 0x00 to clear override.
+	// Windows only?
 	{ "setOverrideDrive",		FileIO::m_setOverrideDrive,	 1, 1,	300 },	// D3
-
+	// Xtra
+	{ "closeFile",				FileIO::m_closeFile,		 0, 0,	500 },	// D5
+	{ "createFile",				FileIO::m_createFile,		 1, 1,	500 },	// D5
+	{ "displayOpen",			FileIO::m_displayOpen,		 0, 0,	500 },	// D5
+	{ "displaySave",			FileIO::m_displaySave,		 2, 2,	500 },	// D5
+	{ "openFile",				FileIO::m_openFile,			 2, 2,	500 },	// D5
+	{ "setFilterMask",			FileIO::m_setFilterMask,	 1, 1,	500 },  // D5
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
+static BuiltinProto xlibBuiltins[] = {
+	{ "getOSDirectory", FileIO::m_getOSDirectory, 0, 0, 500, HBLTIN },
+	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
+};
+
+
 void FileIO::open(ObjectType type) {
-	if (type == kXObj) {
-		FileObject::initMethods(xlibMethods);
-		FileObject *xobj = new FileObject(kXObj);
-		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
-	}
+	FileObject::initMethods(xlibMethods);
+	FileObject *xobj = new FileObject(type);
+	g_lingo->exposeXObject(xlibName, xobj);
+	g_lingo->initBuiltIns(xlibBuiltins);
 }
 
 void FileIO::close(ObjectType type) {
-	if (type == kXObj) {
-		FileObject::cleanupMethods();
-		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
-	}
+	FileObject::cleanupMethods();
+	g_lingo->_globalvars[xlibName] = Datum();
 }
 
 // Initialization/disposal
@@ -174,6 +211,85 @@ FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 
 FileObject::~FileObject() {
 	clear();
+}
+
+FileIOError FileObject::open(const Common::String &origpath, const Common::String &mode) {
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	Common::String path = origpath;
+	Common::String option = mode;
+	char dirSeparator = g_director->_dirSeparator;
+
+	Common::String prefix = g_director->getTargetName() + '-';
+
+	if (option.hasPrefix("?")) {
+		option = option.substr(1);
+		Common::String mask = prefix + "*.txt";
+		dirSeparator = '/';
+
+		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), origpath.c_str());
+		if (browser.runModal() <= 0) {
+			return kErrorFileNotFound;
+		}
+		path = browser.getResult();
+	} else if (!path.hasSuffixIgnoreCase(".txt")) {
+		path += ".txt";
+	}
+
+	// Enforce target to the created files so they do not mix up
+	Common::String filenameOrig = lastPathComponent(path, dirSeparator);
+
+	Common::String filename = filenameOrig;
+	if (!filename.hasPrefixIgnoreCase(prefix))
+		filename = prefix + filenameOrig;
+
+	if (option.equalsIgnoreCase("read")) {
+		_inStream = saves->openForLoading(filename);
+		if (!_inStream) {
+			// Maybe we're trying to read one of the game files
+			Common::File *f = new Common::File;
+			Common::Path location = findPath(origpath);
+			if (location.empty() || !f->open(location)) {
+				delete f;
+				return saveFileError();
+			}
+			_inStream = f;
+		}
+	} else if (option.equalsIgnoreCase("write")) {
+		// OutSaveFile is not seekable so create a separate seekable stream
+		// which will be written to the _outFile upon disposal
+		_outFile = saves->openForSaving(filename, false);
+		_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		if (!_outFile) {
+			return saveFileError();
+		}
+	} else if (option.equalsIgnoreCase("append")) {
+		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
+		if (!inFile) {
+			Common::File *f = new Common::File;
+
+			if (!f->open(Common::Path(origpath, g_director->_dirSeparator))) {
+				delete f;
+				return saveFileError();
+			}
+			inFile = f;
+		}
+		_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		byte b = inFile->readByte();
+		while (!inFile->eos() && !inFile->err()) {
+			_outStream->writeByte(b);
+			b = inFile->readByte();
+		}
+		delete inFile;
+		_outFile = saves->openForSaving(filename, false);
+		if (!_outFile) {
+			return saveFileError();
+		}
+	} else {
+		error("Unsupported FileIO option: '%s'", option.c_str());
+	}
+
+	_filename = new Common::String(filename);
+	return kErrorNone;
 }
 
 void FileObject::clear() {
@@ -200,110 +316,94 @@ void FileObject::dispose() {
 	clear();
 }
 
-void FileIO::saveFileError() {
+FileIOError FileObject::saveFileError() {
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	if (saves->getError().getCode()) {
 		warning("SaveFileManager error %d: %s", saves->getError().getCode(), saves->getErrorDesc().c_str());
-		g_lingo->push(Datum(kErrorIO));
+		return kErrorIO;
 	} else {
-		g_lingo->push(Datum(kErrorFileNotFound));
+		return kErrorFileNotFound;
 	}
 }
 
 void FileIO::m_new(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+	if (nargs == 2) {
+		Datum d2 = g_lingo->pop();
+		Datum d1 = g_lingo->pop();
 
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
-
-	Common::SaveFileManager *saves = g_system->getSavefileManager();
-	Common::String option = d1.asString();
-	Common::String path = d2.asString();
-	Common::String origpath = path;
-	char dirSeparator = g_director->_dirSeparator;
-
-	Common::String prefix = g_director->getTargetName() + '-';
-
-	if (option.hasPrefix("?")) {
-		option = option.substr(1);
-		Common::String mask = prefix + "*.txt";
-		dirSeparator = '/';
-
-		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), origpath.c_str());
-		if (browser.runModal() <= 0) {
-			g_lingo->push(Datum(kErrorFileNotFound));
-			return;
-		}
-		path = browser.getResult();
-	} else if (!path.hasSuffixIgnoreCase(".txt")) {
-		path += ".txt";
-	}
-
-	// Enforce target to the created files so they do not mix up
-	Common::String filenameOrig = lastPathComponent(path, dirSeparator);
-
-	Common::String filename = filenameOrig;
-	if (!filename.hasPrefixIgnoreCase(prefix))
-		filename = prefix + filenameOrig;
-
-	if (option.equalsIgnoreCase("read")) {
-		me->_inStream = saves->openForLoading(filename);
-		if (!me->_inStream) {
-			// Maybe we're trying to read one of the game files
-			Common::File *f = new Common::File;
-			Common::Path location = findPath(origpath);
-			if (location.empty() || !f->open(location)) {
-				delete f;
-				saveFileError();
-				me->dispose();
-				return;
-			}
-			me->_inStream = f;
-		}
-	} else if (option.equalsIgnoreCase("write")) {
-		// OutSaveFile is not seekable so create a separate seekable stream
-		// which will be written to the _outFile upon disposal
-		me->_outFile = saves->openForSaving(filename, false);
-		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-		if (!me->_outFile) {
-			saveFileError();
+		Common::String option = d1.asString();
+		Common::String path = d2.asString();
+		FileIOError result = me->open(path, option);
+		if (result != kErrorNone) {
 			me->dispose();
+			g_lingo->push(Datum(result));
 			return;
 		}
-	} else if (option.equalsIgnoreCase("append")) {
-		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
-		if (!inFile) {
-			Common::File *f = new Common::File;
-
-			if (!f->open(Common::Path(origpath, g_director->_dirSeparator))) {
-				delete f;
-				saveFileError();
-				me->dispose();
-				return;
-			}
-			inFile = f;
-		}
-		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-		byte b = inFile->readByte();
-		while (!inFile->eos() && !inFile->err()) {
-			me->_outStream->writeByte(b);
-			b = inFile->readByte();
-		}
-		delete inFile;
-		me->_outFile = saves->openForSaving(filename, false);
-		if (!me->_outFile) {
-			saveFileError();
-			me->dispose();
-			return;
-		}
-	} else {
-		error("Unsupported FileIO option: '%s'", option.c_str());
 	}
-
-	me->_filename = new Common::String(filename);
-
 	g_lingo->push(g_lingo->_state->me);
 }
+
+void FileIO::m_openFile(int nargs) {
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+	Datum d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+
+	int mode = d1.asInt();
+	Common::String option;
+	switch (mode) {
+	case 1:
+		option = "read";
+		break;
+	case 2:
+		option = "write";
+		break;
+	case 0:
+	default:
+		warning("FIXME: Mode %d not supported, falling back to read", mode);
+		option = "read";
+		break;
+	}
+	Common::String path = d2.asString();
+	FileIOError result = me->open(path, option);
+	g_lingo->push(Datum(result));
+}
+
+void FileIO::m_closeFile(int nargs) {
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+
+	me->clear();
+	g_lingo->push(Datum(kErrorNone));
+}
+
+// FIXME: split out filename-to-savegame logic from open() so we can implement createFile
+XOBJSTUB(FileIO::m_createFile, 0);
+
+void FileIO::m_displayOpen(int nargs) {
+	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String mask = prefix + "*.txt";
+
+	GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeLoad, mask.c_str());
+	Datum result("");
+	if (browser.runModal() > 0) {
+		result = browser.getResult();
+	}
+	g_lingo->push(result);
+}
+
+void FileIO::m_displaySave(int nargs) {
+	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String mask = prefix + "*.txt";
+
+	GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeSave, mask.c_str());
+	Datum result("");
+	if (browser.runModal() > 0) {
+		result = browser.getResult();
+	}
+	g_lingo->push(result);
+}
+
+XOBJSTUB(FileIO::m_setFilterMask, 0)
 
 // Read
 
@@ -535,5 +635,7 @@ void FileIO::m_delete(int nargs) {
 
 // Non-standard extensions
 XOBJSTUBNR(FileIO::m_setOverrideDrive)
+
+XOBJSTUB(FileIO::m_getOSDirectory, "")
 
 } // End of namespace Director

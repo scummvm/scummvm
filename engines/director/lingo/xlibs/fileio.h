@@ -62,7 +62,9 @@ public:
 	FileObject(const FileObject &obj);
 	~FileObject() override;
 
+	FileIOError open(const Common::String &origpath, const Common::String &mode);
 	void clear();
+	FileIOError saveFileError();
 	void dispose() override;
 };
 
@@ -74,7 +76,6 @@ namespace FileIO {
 	void close(ObjectType type);
 
 	bool charInMatchString(char ch, const Common::String &matchString);
-	void saveFileError();
 	void m_delete(int nargs);
 	void m_dispose(int nargs);
 	void m_error(int nargs);
@@ -96,6 +97,14 @@ namespace FileIO {
 	void m_writeString(int nards);
 
 	void m_setOverrideDrive(int nargs);
+
+	void m_closeFile(int nargs);
+	void m_createFile(int nargs);
+	void m_displayOpen(int nargs);
+	void m_displaySave(int nargs);
+	void m_openFile(int nargs);
+	void m_setFilterMask(int nargs);
+	void m_getOSDirectory(int nargs);
 
 } // End of namespace FileIO
 
