@@ -33,7 +33,7 @@ convbdf
 
 
 create_japanesemacfonts.sh
-_____________________________________________________
+--------------------------
     Script for extracting fonts from Classic Japanese MacOS images
     freely available from apple.com (used in Director, MacVenture,
     SCUMM and WAGE engines).
@@ -169,7 +169,7 @@ docker.sh
 
 
 dumper_companion.py
-___________________
+-------------------
     Tool for dumping HFS/HFS+ volumes and game files with non-ASCII
     characters in names, as well as extracting fonts from Classic
     MacOS images freely available from apple.com (used in Director,
@@ -179,20 +179,20 @@ ___________________
 
 generate-android-i18n-strings.py
 --------------------------------
-    This script generates translated strings.xml files 
-    in dists/android/res/values-<qualifier> directory as per the specs: 
+    This script generates translated strings.xml files
+    in dists/android/res/values-<qualifier> directory as per the specs:
     https://developer.android.com/guide/topics/resources/providing-resources#AlternativeResources
     It considers the dists/android/res/values/strings.xml file as a base template to generate
     those translated files.
     Additionally, this script generates a fake cpp file (dists/android.strings.xml.cpp) with strings
-    from dists/android/res/values/strings.xml wrapped inside _() to be picked up by 
-    gettext for weblate translations. You can run it like this: 
+    from dists/android/res/values/strings.xml wrapped inside _() to be picked up by
+    gettext for weblate translations. You can run it like this:
 
     cd devtools && python3 generate-android-i18n-strings.py
 
 
 gog_gameid.py, steam_gameid.py
-______________________________
+------------------------------
     Tools for obtaining gameids from GOG and Steam used when preparing the
     Achievements lists.
 
