@@ -50,7 +50,7 @@ private:
 	int _room = 0;
 	int _vol = 0;
 	int32 _trigger = 0;
-	bool _flag = false;
+	bool _animateLips = false;
 	int _wilburPoof = -1;
 
 	/**

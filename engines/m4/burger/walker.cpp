@@ -216,7 +216,7 @@ void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, 
 	_room = room;
 	_vol = vol;
 	_trigger = kernel_trigger_create(trigger);
-	_flag = (flags & 1) != 0;
+	_animateLips = (flags & 1) == 0;
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	kernel_trigger_dispatch_now(kWILBURS_SPEECH_START);
@@ -226,7 +226,7 @@ void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, 
 void Walker::wilbur_say() {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
-	if (_flag && _G(player).walker_in_this_scene && _G(player).walker_visible)
+	if (_animateLips && _G(player).walker_in_this_scene && _G(player).walker_visible)
 		sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilbur_say:  wilburs_talk_trigger = %d", _trigger);
@@ -264,7 +264,7 @@ bool Walker::wilbur_said(const char *list[][4]) {
 }
 
 void Walker::wilburs_speech_finished() {
-	if (_flag && !_G(player).walker_in_this_scene && !_G(player).walker_visible)
+	if (_animateLips && _G(player).walker_in_this_scene && _G(player).walker_visible)
 		sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilburs_speech_finished: dispatching wilburs_talk_trigger = %d", _trigger);
