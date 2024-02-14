@@ -71,22 +71,18 @@ MemCheckXObject::MemCheckXObject(ObjectType ObjectType) :Object<MemCheckXObject>
 	_objType = ObjectType;
 }
 
-void MemCheckXObj::open(int type) {
+void MemCheckXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MemCheckXObject::initMethods(xlibMethods);
 		MemCheckXObject *xobj = new MemCheckXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MemCheckXObj::close(int type) {
+void MemCheckXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MemCheckXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

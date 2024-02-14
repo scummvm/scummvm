@@ -62,22 +62,18 @@ ColorCursorXObject::ColorCursorXObject(ObjectType ObjectType) :Object<ColorCurso
 	_objType = ObjectType;
 }
 
-void ColorCursorXObj::open(int type) {
+void ColorCursorXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ColorCursorXObject::initMethods(xlibMethods);
 		ColorCursorXObject *xobj = new ColorCursorXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void ColorCursorXObj::close(int type) {
+void ColorCursorXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ColorCursorXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

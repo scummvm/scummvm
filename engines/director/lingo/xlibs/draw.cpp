@@ -116,7 +116,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DrawXObj::open(int type) {
+void DrawXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		DrawXObject::initMethods(xlibMethods);
 		DrawXObject *xobj = new DrawXObject(kXObj);
@@ -124,7 +124,7 @@ void DrawXObj::open(int type) {
 	}
 }
 
-void DrawXObj::close(int type) {
+void DrawXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		DrawXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

@@ -51,7 +51,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PrefPath::open(int type) {
+void PrefPath::open(ObjectType type) {
 	if (type == kXObj) {
 		PrefPathObject::initMethods(xlibMethods);
 		PrefPathObject *xobj = new PrefPathObject(kXObj);
@@ -59,7 +59,7 @@ void PrefPath::open(int type) {
 	}
 }
 
-void PrefPath::close(int type) {
+void PrefPath::close(ObjectType type) {
 	if (type == kXObj) {
 		PrefPathObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

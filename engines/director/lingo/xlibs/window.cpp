@@ -107,22 +107,18 @@ WindowXObject::WindowXObject(ObjectType ObjectType) :Object<WindowXObject>("Wind
 	_objType = ObjectType;
 }
 
-void WindowXObj::open(int type) {
+void WindowXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		WindowXObject::initMethods(xlibMethods);
 		WindowXObject *xobj = new WindowXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void WindowXObj::close(int type) {
+void WindowXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		WindowXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

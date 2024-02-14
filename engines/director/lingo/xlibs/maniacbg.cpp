@@ -62,22 +62,18 @@ ManiacBgXObject::ManiacBgXObject(ObjectType ObjectType) :Object<ManiacBgXObject>
 	_objType = ObjectType;
 }
 
-void ManiacBgXObj::open(int type) {
+void ManiacBgXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ManiacBgXObject::initMethods(xlibMethods);
 		ManiacBgXObject *xobj = new ManiacBgXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void ManiacBgXObj::close(int type) {
+void ManiacBgXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ManiacBgXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

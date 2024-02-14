@@ -61,22 +61,18 @@ CursorXObject::CursorXObject(ObjectType ObjectType) :Object<CursorXObject>("Curs
 	_objType = ObjectType;
 }
 
-void CursorXObj::open(int type) {
+void CursorXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		CursorXObject::initMethods(xlibMethods);
 		CursorXObject *xobj = new CursorXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void CursorXObj::close(int type) {
+void CursorXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		CursorXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

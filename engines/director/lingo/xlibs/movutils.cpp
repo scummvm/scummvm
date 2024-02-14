@@ -120,7 +120,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MovUtilsXObj::open(int type) {
+void MovUtilsXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MovieUtilsXObject::initMethods(xlibMethods);
 		MovieUtilsXObject *xobj = new MovieUtilsXObject(kXObj);
@@ -130,7 +130,7 @@ void MovUtilsXObj::open(int type) {
 	}
 }
 
-void MovUtilsXObj::close(int type) {
+void MovUtilsXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MovieUtilsXObject::cleanupMethods();
 		for (uint i = 0; xlibNames[i]; i++) {

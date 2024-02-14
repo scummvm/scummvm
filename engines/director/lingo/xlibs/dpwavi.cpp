@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DPwAVI::open(int type) {
+void DPwAVI::open(ObjectType type) {
 	if (type == kXObj) {
 		DPwAVIXObject::initMethods(xlibMethods);
 		DPwAVIXObject *xobj = new DPwAVIXObject(kXObj);
@@ -68,7 +68,7 @@ void DPwAVI::open(int type) {
 	}
 }
 
-void DPwAVI::close(int type) {
+void DPwAVI::close(ObjectType type) {
 	if (type == kXObj) {
 		DPwAVIXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

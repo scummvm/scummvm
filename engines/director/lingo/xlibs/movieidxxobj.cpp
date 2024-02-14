@@ -68,22 +68,18 @@ MovieIdxXObject::MovieIdxXObject(ObjectType ObjectType) :Object<MovieIdxXObject>
 	_objType = ObjectType;
 }
 
-void MovieIdxXObj::open(int type) {
+void MovieIdxXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MovieIdxXObject::initMethods(xlibMethods);
 		MovieIdxXObject *xobj = new MovieIdxXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MovieIdxXObj::close(int type) {
+void MovieIdxXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MovieIdxXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

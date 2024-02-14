@@ -65,7 +65,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void ValkyrieXObj::open(int type) {
+void ValkyrieXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ValkyrieXObject::initMethods(xlibMethods);
 		ValkyrieXObject *xobj = new ValkyrieXObject(kXObj);
@@ -73,7 +73,7 @@ void ValkyrieXObj::open(int type) {
 	}
 }
 
-void ValkyrieXObj::close(int type) {
+void ValkyrieXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ValkyrieXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

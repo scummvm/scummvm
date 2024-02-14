@@ -58,22 +58,18 @@ MoveMouseXObject::MoveMouseXObject(ObjectType ObjectType) :Object<MoveMouseXObje
 	_objType = ObjectType;
 }
 
-void MoveMouseXObj::open(int type) {
+void MoveMouseXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MoveMouseXObject::initMethods(xlibMethods);
 		MoveMouseXObject *xobj = new MoveMouseXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MoveMouseXObj::close(int type) {
+void MoveMouseXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MoveMouseXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

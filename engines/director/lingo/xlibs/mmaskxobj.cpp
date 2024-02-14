@@ -59,22 +59,18 @@ MMaskXObject::MMaskXObject(ObjectType ObjectType) :Object<MMaskXObject>("MMaskXO
 	_objType = ObjectType;
 }
 
-void MMaskXObj::open(int type) {
+void MMaskXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MMaskXObject::initMethods(xlibMethods);
 		MMaskXObject *xobj = new MMaskXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MMaskXObj::close(int type) {
+void MMaskXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MMaskXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

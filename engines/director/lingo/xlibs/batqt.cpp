@@ -96,7 +96,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BatQT::open(int type) {
+void BatQT::open(ObjectType type) {
 	if (type == kXObj) {
 		BatQTXObject::initMethods(xlibMethods);
 		BatQTXObject *xobj = new BatQTXObject(kXObj);
@@ -104,7 +104,7 @@ void BatQT::open(int type) {
 	}
 }
 
-void BatQT::close(int type) {
+void BatQT::close(ObjectType type) {
 	if (type == kXObj) {
 		BatQTXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

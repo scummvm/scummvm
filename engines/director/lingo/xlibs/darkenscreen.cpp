@@ -50,11 +50,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void DarkenScreen::open(int type) {
+void DarkenScreen::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void DarkenScreen::close(int type) {
+void DarkenScreen::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

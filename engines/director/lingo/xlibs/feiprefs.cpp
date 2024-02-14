@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FEIPrefsXObj::open(int type) {
+void FEIPrefsXObj::open(ObjectType type) {
    if (type == kXObj) {
 		FEIPrefsXObject::initMethods(xlibMethods);
 		FEIPrefsXObject *xobj = new FEIPrefsXObject(kXObj);
@@ -68,7 +68,7 @@ void FEIPrefsXObj::open(int type) {
    }
 }
 
-void FEIPrefsXObj::close(int type) {
+void FEIPrefsXObj::close(ObjectType type) {
    if (type == kXObj) {
 		FEIPrefsXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

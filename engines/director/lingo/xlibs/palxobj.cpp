@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PalXObj::open(int type) {
+void PalXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		PalXObject::initMethods(xlibMethods);
 		PalXObject *xobj = new PalXObject(kXObj);
@@ -78,7 +78,7 @@ void PalXObj::open(int type) {
 	}
 }
 
-void PalXObj::close(int type) {
+void PalXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		PalXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
