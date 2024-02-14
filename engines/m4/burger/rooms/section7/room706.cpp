@@ -27,6 +27,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_ASTRAL_ANIMATION = 33
+};
+
 static const seriesStreamBreak SERIES1[] = {
 	{   0, "706F001",  1, 255, -1, 0, nullptr, 0 },
 	{  31, "706W001",  1, 255, -1, 0, nullptr, 0 }, 
@@ -428,14 +432,14 @@ void Room706::daemon() {
 		kernel_timing_trigger(6, 42);
 		break;
 
-	case 33:
-		switch (_val1) {
+	case kCHANGE_ASTRAL_ANIMATION:
+		switch (_astralShould) {
 		case 1:
-			_val1 = 21;
+			_astralShould = 21;
 			_flag7 = true;
-			_series7 = series_play("706AST01", 0x300);
-			_series8 = series_play("706AST02", 0x300);
-			digi_play(conv_sound_to_play(), 1, 255, 33);
+			_series7 = series_play("706AST01", 0x300, 0, -1, 6, -1);
+			_series8 = series_play("706AST02", 0x300, 0, -1, 6, -1);
+			digi_play(conv_sound_to_play(), 1, 255, kCHANGE_ASTRAL_ANIMATION);
 			break;
 
 		case 21:
@@ -518,7 +522,7 @@ void Room706::daemon() {
 		case 1:
 			_G(wilbur_should) = 21;
 			_flag6 = true;
-			_series6 = series_play("706WIT01", 0x200);
+			_series6 = series_play("706WIT01", 0x200, 0, -1, 6, -1);
 			digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 			break;
 
@@ -555,8 +559,8 @@ void Room706::conv83() {
 		int who = conv_whos_talking();
 
 		if (who <= 0) {
-			_val1 = 1;
-			kernel_trigger_dispatch_now(33);
+			_astralShould = 1;
+			kernel_trigger_dispatch_now(kCHANGE_ASTRAL_ANIMATION);
 
 		} else if (who == 1) {
 			_G(wilbur_should) = 1;
