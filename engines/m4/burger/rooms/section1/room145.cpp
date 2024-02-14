@@ -836,7 +836,7 @@ void Room145::conv21() {
 			case 9:
 				if (entry <= 0) {
 					roxySpeaking();
-				} else if (entry == 2) {
+				} else if (entry <= 2) {
 					viperSpeaking();
 				}
 				break;
