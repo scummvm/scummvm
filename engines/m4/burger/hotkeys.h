@@ -39,7 +39,6 @@ private:
 	static void u_cb(void *, void *);
 	static void l_cb(void *, void *);
 	static void a_cb(void *, void *);
-	static void testMine(void *, void *);
 
 	/**
 	 * Show version dialog

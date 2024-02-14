@@ -118,8 +118,6 @@ public:
 	int _player_dest_x = 0, _player_dest_y = 0;
 	int _player_trigger = 0;
 
-	int _mineTestCtr = -1;
-
 public:
 	Vars();
 	virtual ~Vars();
