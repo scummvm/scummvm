@@ -28,9 +28,9 @@ namespace Shared {
 namespace Xeen {
 
 const uint8 SoundDriverMT32::MIDI_NOTE_MAP[24] = {
-    0x00, 0x0C, 0x0E, 0x10, 0x11, 0x13, 0x15, 0x17,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18,
-    0x00, 0x0B, 0x0D, 0x0F, 0x10, 0x12, 0x14, 0x16
+	0x00, 0x0C, 0x0E, 0x10, 0x11, 0x13, 0x15, 0x17,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18,
+	0x00, 0x0B, 0x0D, 0x0F, 0x10, 0x12, 0x14, 0x16
 };
 
 static byte last_notes[16] = {
@@ -43,6 +43,9 @@ static byte last_notes[16] = {
 /*------------------------------------------------------------------------*/
 static void timerCallback(void *param) {
 	SoundDriverMT32 *_driver = (SoundDriverMT32*)param;
+	if (!_driver || !_driver->_midiDriver)
+		return;
+
 	_driver->_timerCount += _driver->_midiDriver->getBaseTempo();
 	if (_driver->_timerCount > ((float)1000000 / CALLBACKS_PER_SECOND)) {
 		_driver->_timerCount -= (float)1000000 / CALLBACKS_PER_SECOND;
@@ -51,7 +54,7 @@ static void timerCallback(void *param) {
 }
 
 SoundDriverMT32::SoundDriverMT32() : _field180(0), _field181(0), _field182(0),
-_musicVolume(0), _sfxVolume(0), _timerCount(0) {
+_musicVolume(0), _sfxVolume(0), _timerCount(0), _midiDriver(nullptr) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
 
@@ -67,6 +70,11 @@ _musicVolume(0), _sfxVolume(0), _timerCount(0) {
 }
 
 SoundDriverMT32::~SoundDriverMT32() {
+	if (_midiDriver) {
+		_midiDriver->close();
+		delete _midiDriver;
+		_midiDriver = nullptr;
+	}
 }
 
 void SoundDriverMT32::onTimer() {
@@ -87,11 +95,6 @@ void SoundDriverMT32::initialize() {
 
 void SoundDriverMT32::playFX(uint effectId, const byte *data) {
 	Common::StackLock slock(_driverMutex);
-
-	// notes off on 8ch
-	write(0xB8, 0x7B, 0x00);
-	// pitch bend on 8 ch
-	write(0xE8, 0x00, 0x40);
 
 	SoundDriver::playFX(effectId, data);
 }
@@ -442,7 +445,7 @@ void SoundDriverMT32::sysExMessage(const byte *&data) {
 	memset(&sysExMessage, 0, sizeof(sysExMessage));
 
 	sysExMessage[0] = 0x41; // Roland
-	sysExMessage[1] = 0x10;
+	sysExMessage[1] = 0x10; // Device ID
 	sysExMessage[2] = 0x16; // Model MT32
 	sysExMessage[3] = 0x12; // Command DT1
 
