@@ -150,7 +150,7 @@ void Sound::loadEffectsData() {
 	// Stop any prior FX
 	stopFX();
 
-	// Skip if we doesn't loaded sound driver or already loaded effects
+	// Skip if the sound driver hasn't been loaded, or effects have already been loaded
 	if (!_SoundDriver || _effectsData)
 		return;
 
@@ -197,7 +197,7 @@ void Sound::loadEffectsData() {
 		// Locate the playFX routine
 		const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
 		assert(READ_BE_UINT16(fx + 36) == 0x81FB);
-		// TODO: investigate, there are seems additional 11 effects in the table beside base 180
+		// TODO: Investigate, additional 10 effects seem to exist in the table beyond the base 180. Not unique to rolmus as at least admus, blastmus and canmus have them too.
 		uint numEffects = READ_LE_UINT16(fx + 38);
 
 		assert(READ_BE_UINT16(fx + 80) == 0x8B87);
