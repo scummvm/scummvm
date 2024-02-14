@@ -530,19 +530,19 @@ void Room145::daemon() {
 	case kCHANGE_VIPE_ANIMATION:
 		switch (_vipeState) {
 		case 39:
-			_viper.terminate();
+			_vipe.terminate();
 			_vipeState = 40;
 			kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 			kernel_trigger_dispatch_now(10001);
 			break;
 
 		case 40:
-			_viper.show("145vp04", 0x300);
+			_vipe.show("145vp04", 0x300);
 			break;
 
 		case 43:
 			player_set_commands_allowed(true);
-			_viper.show("145vp02", 0x300);
+			_vipe.show("145vp02", 0x300);
 			break;
 
 		case 44:
@@ -552,7 +552,7 @@ void Room145::daemon() {
 			if (_roxyTalkTo == 101) {
 				_roxyTalkTo = 100;
 				resetRoxy();
-				_viper.terminate();
+				_vipe.terminate();
 				_vipeState = 45;
 				series_play_with_breaks(PLAY21, "145vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			} else {
@@ -572,7 +572,7 @@ void Room145::daemon() {
 			break;
 
 		case 47:
-			_viper.terminate();
+			_vipe.terminate();
 			_vipeState = 43;
 			series_play_with_breaks(PLAY23, "145vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			break;
@@ -821,7 +821,7 @@ void Room145::conv21() {
 			case 2:
 			case 7:
 			case 12:
-				viperSpeaking();
+				vipeSpeaking();
 				break;
 
 			case 3:
@@ -837,13 +837,13 @@ void Room145::conv21() {
 				if (entry <= 0) {
 					roxySpeaking();
 				} else if (entry <= 2) {
-					viperSpeaking();
+					vipeSpeaking();
 				}
 				break;
 
 			case 10:
 				if (entry <= 0) {
-					viperSpeaking();
+					vipeSpeaking();
 				} else if (entry == 1) {
 					roxySpeaking();
 				}
@@ -919,11 +919,11 @@ void Room145::conv23() {
 	}
 }
 
-void Room145::viperSpeaking() {
-	_viper.terminate();
+void Room145::vipeSpeaking() {
+	_vipe.terminate();
 	_vipeState = 39;
 	digi_play(conv_sound_to_play(), 1, 255, 5);
-	_viper.play("145vp04", 0x300, 4, -1., 6, -1);
+	_vipe.play("145vp04", 0x300, 4, -1., 6, -1);
 }
 
 void Room145::roxySpeaking() {
