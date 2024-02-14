@@ -42,7 +42,7 @@ public:
 
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
-	void pressedKey(const int keycode);
+	void pressedKey(const int keycode) override;
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
