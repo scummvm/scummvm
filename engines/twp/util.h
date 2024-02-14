@@ -97,6 +97,16 @@ size_t find(const Common::Array<T> &array, const T &o) {
 	return (size_t)-1;
 }
 
+template<typename T, typename Pred>
+size_t find_if(const Common::Array<T> &array, Pred p) {
+	for (size_t i = 0; i < array.size(); i++) {
+		if (p(array[i])) {
+			return i;
+		}
+	}
+	return (size_t)-1;
+}
+
 template<typename T>
 size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T* o) {
 	for (size_t i = 0; i < array.size(); i++) {
