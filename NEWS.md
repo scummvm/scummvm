@@ -12,6 +12,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Enabled engine, allowing MM1 and Xeen to be compiled.
+   - Added MT32/LAPC-1 support for Xeen engine.
+   - Fixed Xeen regression which caused some sound effects to stop abruptly.
 
  MTROPOLIS:
    - Fixed crash in Muppet Treasure Island on some platforms.
