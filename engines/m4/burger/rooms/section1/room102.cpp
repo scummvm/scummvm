@@ -949,7 +949,7 @@ void Room102::daemon() {
 			kernel_timing_trigger(60, 1037);
 		break;
 
-	case 10013:
+	case kWILBUR_SPEECH_STARTED:
 		break;
 
 	case 10014:

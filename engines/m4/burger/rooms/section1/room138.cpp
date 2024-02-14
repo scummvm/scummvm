@@ -613,7 +613,7 @@ void Room138::daemon() {
 		player_set_commands_allowed(false);
 		break;
 
-	case kWILBURS_SPEECH_FINISHED:
+	case kWILBUR_SPEECH_FINISHED:
 		_wilburShould = 1;
 		player_set_commands_allowed(true);
 		_G(kernel).continue_handling_trigger = true;
