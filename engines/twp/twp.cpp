@@ -1228,7 +1228,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 				}
 			}
 			if(isActor(obj->getId())) {
-				actorEnter(_actor);
+				actorEnter(obj);
 			} else if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
 		}
@@ -1401,19 +1401,27 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 	_fadeShader->_elapsed = 0.f;
 }
 
-struct GetByZorder {
-	explicit GetByZorder(Common::SharedPtr<Object> &result) : _result(result) { result = nullptr; }
+struct GetByZOrder {
+	explicit GetByZOrder(Common::SharedPtr<Object> &result) : _result(result) {
+		result = nullptr;
+		_isTalkVerb = g_engine->_hud._verb.id.id == VERB_TALKTO;
+		_isGiveVerb = g_engine->_hud._verb.id.id == VERB_GIVE;
+	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {
-			_result = obj;
-			_zOrder = obj->_node->getZSort();
+			if(!isActor(obj->getId()) || (_isTalkVerb && (obj->getFlags() & TALKABLE)) || (_isGiveVerb && (obj->getFlags() & GIVEABLE))) {
+				_result = obj;
+				_zOrder = obj->_node->getZSort();
+			}
 		}
 		return false;
 	}
 
 public:
 	Common::SharedPtr<Object> &_result;
+	bool _isTalkVerb;
+	bool _isGiveVerb;
 
 private:
 	int _zOrder = INT_MAX;
@@ -1421,7 +1429,7 @@ private:
 
 Common::SharedPtr<Object> TwpEngine::objAt(Math::Vector2d pos) {
 	Common::SharedPtr<Object> result;
-	objsAt(pos, GetByZorder(result));
+	objsAt(pos, GetByZOrder(result));
 	return result;
 }
 
