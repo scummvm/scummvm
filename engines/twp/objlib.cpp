@@ -995,8 +995,12 @@ static SQInteger removeInventory(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	if (obj->_owner)
+	if(isActor(obj->getId())) {
+		obj->_inventory.clear();
+		obj->_inventoryOffset = 0;
+	} else if (obj->_owner) {
 		obj->_owner->removeInventory(obj);
+	}
 	return 0;
 }
 
