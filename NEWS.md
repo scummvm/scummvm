@@ -9,6 +9,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms
 
+ MM:
+   - Added MT32/LAPC-1 support for Xeen engine.
+   - Fixed Xeen regression which caused some sound effects to stop abruptly.
+
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
 
