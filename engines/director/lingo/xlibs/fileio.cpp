@@ -136,7 +136,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FileIO::open(int type) {
+void FileIO::open(ObjectType type) {
 	if (type == kXObj) {
 		FileObject::initMethods(xlibMethods);
 		FileObject *xobj = new FileObject(kXObj);
@@ -146,7 +146,7 @@ void FileIO::open(int type) {
 	}
 }
 
-void FileIO::close(int type) {
+void FileIO::close(ObjectType type) {
 	if (type == kXObj) {
 		FileObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

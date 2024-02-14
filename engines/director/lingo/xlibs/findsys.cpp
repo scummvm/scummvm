@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FindSys::open(int type) {
+void FindSys::open(ObjectType type) {
 	if (type == kXObj) {
 		FindSysXObject::initMethods(xlibMethods);
 		FindSysXObject *xobj = new FindSysXObject(kXObj);
@@ -68,7 +68,7 @@ void FindSys::open(int type) {
 	}
 }
 
-void FindSys::close(int type) {
+void FindSys::close(ObjectType type) {
 	if (type == kXObj) {
 		FindSysXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

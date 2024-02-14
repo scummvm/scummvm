@@ -76,22 +76,18 @@ DirUtilXObject::DirUtilXObject(ObjectType ObjectType) :Object<DirUtilXObject>("D
 	_objType = ObjectType;
 }
 
-void DirUtilXObj::open(int type) {
+void DirUtilXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		DirUtilXObject::initMethods(xlibMethods);
 		DirUtilXObject *xobj = new DirUtilXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void DirUtilXObj::close(int type) {
+void DirUtilXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		DirUtilXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

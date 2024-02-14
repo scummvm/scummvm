@@ -124,7 +124,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void AppleCDXObj::open(int type) {
+void AppleCDXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		AppleCDXObject::initMethods(xlibMethods);
 		AppleCDXObject *xobj = new AppleCDXObject(kXObj);
@@ -132,7 +132,7 @@ void AppleCDXObj::open(int type) {
 	}
 }
 
-void AppleCDXObj::close(int type) {
+void AppleCDXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		AppleCDXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

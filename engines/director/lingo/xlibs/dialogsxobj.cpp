@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DialogsXObj::open(int type) {
+void DialogsXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		DialogsXObject::initMethods(xlibMethods);
 		DialogsXObject *xobj = new DialogsXObject(kXObj);
@@ -80,7 +80,7 @@ void DialogsXObj::open(int type) {
 	}
 }
 
-void DialogsXObj::close(int type) {
+void DialogsXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		DialogsXObject::cleanupMethods();
 		for (uint i = 0; xlibNames[i]; i++) {

@@ -50,11 +50,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void QTMovie::open(int type) {
+void QTMovie::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void QTMovie::close(int type) {
+void QTMovie::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

@@ -71,22 +71,18 @@ XCMDGlueXObject::XCMDGlueXObject(ObjectType ObjectType) :Object<XCMDGlueXObject>
 	_objType = ObjectType;
 }
 
-void XCMDGlueXObj::open(int type) {
+void XCMDGlueXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		XCMDGlueXObject::initMethods(xlibMethods);
 		XCMDGlueXObject *xobj = new XCMDGlueXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void XCMDGlueXObj::close(int type) {
+void XCMDGlueXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		XCMDGlueXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

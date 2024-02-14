@@ -82,22 +82,18 @@ ColorXObject::ColorXObject(ObjectType ObjectType) :Object<ColorXObject>("Color")
 	_objType = ObjectType;
 }
 
-void ColorXObj::open(int type) {
+void ColorXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ColorXObject::initMethods(xlibMethods);
 		ColorXObject *xobj = new ColorXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void ColorXObj::close(int type) {
+void ColorXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ColorXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

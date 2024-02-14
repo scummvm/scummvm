@@ -49,7 +49,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void Misc::open(int type) {
+void Misc::open(ObjectType type) {
     if (type == kXObj) {
         MiscObject::initMethods(xlibMethods);
         MiscObject *xobj = new MiscObject(kXObj);
@@ -57,7 +57,7 @@ void Misc::open(int type) {
     }
 }
 
-void Misc::close(int type) {
+void Misc::close(ObjectType type) {
     if (type == kXObj) {
         MiscObject::cleanupMethods();
         g_lingo->_globalvars[xlibName] = Datum();

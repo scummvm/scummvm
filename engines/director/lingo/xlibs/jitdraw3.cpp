@@ -90,7 +90,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void JITDraw3XObj::open(int type) {
+void JITDraw3XObj::open(ObjectType type) {
 	if (type == kXObj) {
 		JITDraw3XObject::initMethods(xlibMethods);
 		JITDraw3XObject *xobj = new JITDraw3XObject(kXObj);
@@ -98,7 +98,7 @@ void JITDraw3XObj::open(int type) {
 	}
 }
 
-void JITDraw3XObj::close(int type) {
+void JITDraw3XObj::close(ObjectType type) {
 	if (type == kXObj) {
 		JITDraw3XObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

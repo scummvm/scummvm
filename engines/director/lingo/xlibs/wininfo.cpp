@@ -63,22 +63,18 @@ WinInfoXObject::WinInfoXObject(ObjectType ObjectType) : Object<WinInfoXObject>("
 	_objType = ObjectType;
 }
 
-void WinInfoXObj::open(int type) {
+void WinInfoXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		WinInfoXObject::initMethods(xlibMethods);
 		WinInfoXObject *xobj = new WinInfoXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void WinInfoXObj::close(int type) {
+void WinInfoXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		WinInfoXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

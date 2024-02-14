@@ -210,7 +210,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void CDROMXObj::open(int type) {
+void CDROMXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		CDROMXObject::initMethods(xlibMethods);
 		CDROMXObject *xobj = new CDROMXObject(kXObj);
@@ -218,7 +218,7 @@ void CDROMXObj::open(int type) {
 	}
 }
 
-void CDROMXObj::close(int type) {
+void CDROMXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		CDROMXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

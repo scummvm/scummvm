@@ -103,22 +103,18 @@ MiscXObject::MiscXObject(ObjectType ObjectType) :Object<MiscXObject>("MiscX") {
 	_objType = ObjectType;
 }
 
-void MiscX::open(int type) {
+void MiscX::open(ObjectType type) {
 	if (type == kXObj) {
 		MiscXObject::initMethods(xlibMethods);
 		MiscXObject *xobj = new MiscXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MiscX::close(int type) {
+void MiscX::close(ObjectType type) {
 	if (type == kXObj) {
 		MiscXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

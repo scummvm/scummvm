@@ -50,7 +50,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void Quicktime::open(int type) {
+void Quicktime::open(ObjectType type) {
     if (type == kXObj) {
         QuicktimeObject::initMethods(xlibMethods);
         QuicktimeObject *xobj = new QuicktimeObject(kXObj);
@@ -58,7 +58,7 @@ void Quicktime::open(int type) {
     }
 }
 
-void Quicktime::close(int type) {
+void Quicktime::close(ObjectType type) {
     if (type == kXObj) {
         QuicktimeObject::cleanupMethods();
         g_lingo->_globalvars[xlibName] = Datum();

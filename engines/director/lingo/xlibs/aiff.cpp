@@ -67,7 +67,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void AiffXObj::open(int type) {
+void AiffXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		AiffXObject::initMethods(xlibMethods);
 		AiffXObject *xobj = new AiffXObject(kXObj);
@@ -75,7 +75,7 @@ void AiffXObj::open(int type) {
 	}
 }
 
-void AiffXObj::close(int type) {
+void AiffXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		AiffXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

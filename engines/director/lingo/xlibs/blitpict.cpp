@@ -76,22 +76,18 @@ BlitPictXObject::BlitPictXObject(ObjectType ObjectType) :Object<BlitPictXObject>
 	_objType = ObjectType;
 }
 
-void BlitPictXObj::open(int type) {
+void BlitPictXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		BlitPictXObject::initMethods(xlibMethods);
 		BlitPictXObject *xobj = new BlitPictXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void BlitPictXObj::close(int type) {
+void BlitPictXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		BlitPictXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

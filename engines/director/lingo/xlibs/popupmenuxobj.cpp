@@ -136,7 +136,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PopUpMenuXObj::open(int type) {
+void PopUpMenuXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		PopUpMenuXObject::initMethods(xlibMethods);
 		PopUpMenuXObject *xobj = new PopUpMenuXObject(kXObj);
@@ -144,7 +144,7 @@ void PopUpMenuXObj::open(int type) {
 	}
 }
 
-void PopUpMenuXObj::close(int type) {
+void PopUpMenuXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		PopUpMenuXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

@@ -53,11 +53,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void FileExists::open(int type) {
+void FileExists::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void FileExists::close(int type) {
+void FileExists::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

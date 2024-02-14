@@ -94,22 +94,18 @@ PanelXObject::PanelXObject(ObjectType ObjectType) :Object<PanelXObject>("PanelXO
 	_objType = ObjectType;
 }
 
-void PanelXObj::open(int type) {
+void PanelXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		PanelXObject::initMethods(xlibMethods);
 		PanelXObject *xobj = new PanelXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void PanelXObj::close(int type) {
+void PanelXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		PanelXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

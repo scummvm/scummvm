@@ -61,7 +61,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void HitMap::open(int type) {
+void HitMap::open(ObjectType type) {
 	if (type == kXObj) {
 		HitMapObject::initMethods(xlibMethods);
 		HitMapObject *xobj = new HitMapObject(kXObj);
@@ -69,7 +69,7 @@ void HitMap::open(int type) {
 	}
 }
 
-void HitMap::close(int type) {
+void HitMap::close(ObjectType type) {
 	if (type == kXObj) {
 		HitMapObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

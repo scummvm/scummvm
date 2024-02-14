@@ -45,11 +45,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void IsCD::open(int type) {
+void IsCD::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void IsCD::close(int type) {
+void IsCD::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 
