@@ -167,6 +167,7 @@ void b_offsetRect(int nargs);
 void b_rect(int nargs);
 void b_union(int nargs);
 
+void b_member(int nargs);
 void b_window(int nargs);
 
 void b_beep(int nargs);
