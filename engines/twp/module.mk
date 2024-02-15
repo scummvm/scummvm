@@ -1,38 +1,6 @@
 MODULE := engines/twp
 
-SQUIRREL_OBJS = \
-	squirrel/sqapi.o \
-	squirrel/sqbaselib.o \
-	squirrel/sqfuncstate.o \
-	squirrel/sqdebug.o \
-	squirrel/sqlexer.o \
-	squirrel/sqobject.o \
-	squirrel/sqcompiler.o \
-	squirrel/sqstate.o \
-	squirrel/sqtable.o \
-	squirrel/sqmem.o \
-	squirrel/sqvm.o \
-	squirrel/sqclass.o \
-	squirrel/sqstdio.o \
-	squirrel/sqstdmath.o \
-	squirrel/sqstdstring.o \
-	squirrel/sqstdstream.o \
-	squirrel/sqstdblob.o \
-	squirrel/sqstdrex.o \
-	squirrel/sqstdaux.o
-
-CLIPPER_OBJS = clipper/clipper.o
-IMGUI_OBJS = imgui/imgui.o \
-	imgui/imgui_draw.o \
-	imgui/imgui_widgets.o \
-	imgui/imgui_tables.o \
-	imgui_impl_opengl3_scummvm.o \
-	imgui_impl_sdl2_scummvm.o
-
 MODULE_OBJS = \
-	$(SQUIRREL_OBJS) \
-	$(CLIPPER_OBJS) \
-	$(IMGUI_OBJS) \
 	twp.o \
 	console.o \
 	metaengine.o \
@@ -78,6 +46,32 @@ MODULE_OBJS = \
 	time.o \
 	dialogs.o \
 	debugtools.o \
+	squirrel/sqapi.o \
+	squirrel/sqbaselib.o \
+	squirrel/sqfuncstate.o \
+	squirrel/sqdebug.o \
+	squirrel/sqlexer.o \
+	squirrel/sqobject.o \
+	squirrel/sqcompiler.o \
+	squirrel/sqstate.o \
+	squirrel/sqtable.o \
+	squirrel/sqmem.o \
+	squirrel/sqvm.o \
+	squirrel/sqclass.o \
+	squirrel/sqstdio.o \
+	squirrel/sqstdmath.o \
+	squirrel/sqstdstring.o \
+	squirrel/sqstdstream.o \
+	squirrel/sqstdblob.o \
+	squirrel/sqstdrex.o \
+	squirrel/sqstdaux.o \
+	clipper/clipper.o \
+	imgui/imgui.o \
+	imgui/imgui_draw.o \
+	imgui/imgui_widgets.o \
+	imgui/imgui_tables.o \
+	imgui_impl_opengl3_scummvm.o \
+	imgui_impl_sdl2_scummvm.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
