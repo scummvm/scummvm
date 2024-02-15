@@ -46,12 +46,9 @@ private:
 template<typename T>
 static void shuffle(Common::Array<T> &array) {
 	if (array.size() > 1) {
-		Common::RandomSource &rnd = g_engine->getRandomSource();
-		for (size_t i = 0; i < array.size() - 1; i++) {
-			size_t j = i + rnd.getRandomNumber(RAND_MAX) / (RAND_MAX / (array.size() - i) + 1);
-			const T &t = array[j];
-			array[j] = array[i];
-			array[i] = t;
+		for (size_t i = 0; i < array.size(); i++) {
+			size_t j = g_engine->getRandomSource().getRandomNumberRng(0, array.size() - 1);
+			SWAP(array[j], array[i]);
 		}
 	}
 }
