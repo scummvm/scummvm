@@ -49,7 +49,7 @@ private:
 	Common::Mutex _driverMutex;
 	const byte *_musInstrumentPtrs[16];
 	const byte *_fxInstrumentPtrs[16];
-	byte _expressions[16];
+	byte _last_notes[16];
 	int _field180;
 	int _field181;
 	int _field182;

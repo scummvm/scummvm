@@ -129,6 +129,8 @@ int ControlPanel::execute() {
 
 		} else if (Res.KeyConstants.DialogsControlPanel.KEY_FXON == _buttonValue) {
 			sound.setFxOn(!sound._fxOn);
+			if (sound._fxOn)
+				sound.playFX(20);
 
 		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MUSICON == _buttonValue) {
 			sound.setMusicOn(!sound._musicOn);
