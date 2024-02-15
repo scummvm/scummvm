@@ -345,7 +345,7 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 // local spotters = roomActors(currentRoom)
 // foreach(actor in spotters) { ...}
 static SQInteger roomActors(HSQUIRRELVM v) {
-	Common::SharedPtr<Room> room = sqroom(v, 2);
+	Common::SharedPtr<Room> room(sqroom(v, 2));
 	if (!room)
 		return sq_throwerror(v, "failed to get room");
 

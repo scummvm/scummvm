@@ -1192,7 +1192,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	_room->_lights._numLights = 0;
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
-	if (_actor)
+	if (_actor && _hud.actorSlot(_actor))
 		_hud._verb = _hud.actorSlot(_actor)->verbs[0];
 
 	// move current actor to the new room
@@ -1404,13 +1404,11 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 struct GetByZOrder {
 	explicit GetByZOrder(Common::SharedPtr<Object> &result) : _result(result) {
 		result = nullptr;
-		_isTalkVerb = g_engine->_hud._verb.id.id == VERB_TALKTO;
-		_isGiveVerb = g_engine->_hud._verb.id.id == VERB_GIVE;
 	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {
-			if(!isActor(obj->getId()) || (_isTalkVerb && (obj->getFlags() & TALKABLE)) || (_isGiveVerb && (obj->getFlags() & GIVEABLE))) {
+			if(!isActor(obj->getId()) || !obj->_key.empty()) {
 				_result = obj;
 				_zOrder = obj->_node->getZSort();
 			}
@@ -1420,8 +1418,6 @@ struct GetByZOrder {
 
 public:
 	Common::SharedPtr<Object> &_result;
-	bool _isTalkVerb;
-	bool _isGiveVerb;
 
 private:
 	int _zOrder = INT_MAX;

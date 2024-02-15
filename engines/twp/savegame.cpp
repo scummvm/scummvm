@@ -362,6 +362,7 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 }
 
 static void setActor(const Common::String &key) {
+	if(key.empty()) return;
 	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
 		Common::SharedPtr<Object> a = g_engine->_actors[i];
 		if (a->_key == key) {
@@ -393,7 +394,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 		return false;
 	}
 
-	debugC(kDebugGame, "%s", savegame.jSavegame->stringify().c_str());
+	debugC(kDebugGame, "load game: %s", savegame.jSavegame->stringify().c_str());
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
@@ -409,7 +410,8 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	loadObjects(json["objects"]->asObject());
 	g_engine->setRoom(room(json["currentRoom"]->asString()));
 	setActor(json["selectedActor"]->asString());
-	g_engine->cameraAt(g_engine->_actor->_node->getPos());
+	if(g_engine->_actor)
+		g_engine->cameraAt(g_engine->_actor->_node->getPos());
 
 	HSQUIRRELVM v = g_engine->getVm();
 	sqsetf(sqrootTbl(v), "SAVEBUILD", json["savebuild"]->asIntegerNumber());
@@ -576,7 +578,7 @@ void SaveGameManager::loadRooms(const Common::JSONObject &json) {
 
 void SaveGameManager::loadObjects(const Common::JSONObject &json) {
 	for (auto it = json.begin(); it != json.end(); it++) {
-		Common::SharedPtr<Object> o = object(it->_key);
+		Common::SharedPtr<Object> o(object(it->_key));
 		if (o)
 			loadObject(o, it->_value->asObject());
 		else
@@ -899,7 +901,7 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
 	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
 	if (isObject(getId(v))) {
-		Common::SharedPtr<Object> obj = sqobj(v);
+		Common::SharedPtr<Object> obj(sqobj(v));
 		if (!obj || (obj->_objType == otNone)) {
 			// info fmt"obj: createJObject({k})"
 			(*jObj)[k] = createJObject(v, obj);
@@ -975,6 +977,8 @@ static Common::JSONValue *createSaveGame() {
 void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	sqcall("preSave");
 	Common::JSONValue *data = createSaveGame();
+
+	debugC(kDebugGame, "save game: %s", data->stringify().c_str());
 
 	// dump savegame as json
 	// Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving("save.json", false);

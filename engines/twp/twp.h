@@ -105,10 +105,10 @@ public:
 	}
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return !_cutscene;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return _saveGameManager._allowSaveGame;
+		return _saveGameManager._allowSaveGame && !_cutscene;
 	}
 
 	virtual Common::String getSaveStateName(int slot) const override;
