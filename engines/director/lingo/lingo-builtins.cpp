@@ -114,6 +114,7 @@ static BuiltinProto builtins[] = {
 	{ "showResFile",	LB::b_showResFile,	0, 1, 200, CBLTIN },	// D2 c
 	{ "showXlib",		LB::b_showXlib,		0, 1, 200, CBLTIN },	// D2 c
 	{ "xFactoryList",	LB::b_xFactoryList,	1, 1, 300, FBLTIN },	//		D3 f
+	{ "xtra",			LB::b_xtra,			1, 1, 500, FBLTIN },	//				D5 f
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
@@ -1379,6 +1380,17 @@ void LB::b_xFactoryList(int nargs) {
 	for (auto &it : g_lingo->_openXLibs)
 		*d.u.s += it._key + "\n";
 	g_lingo->push(d);
+}
+
+void LB::b_xtra(int nargs) {
+	Common::String name = g_lingo->pop().asString();
+	if (g_lingo->_globalvars.contains(name)) {
+		Datum var = g_lingo->_globalvars[name];
+		if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+			g_lingo->push(var);
+		}
+	}
+	g_lingo->lingoError("Xtra not found: %s", name.c_str());
 }
 
 ///////////////////
