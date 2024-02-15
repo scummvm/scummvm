@@ -276,7 +276,7 @@ Common::SharedPtr<Room> sqroom(HSQOBJECT table) {
 
 Common::SharedPtr<Room> getRoom(int id) {
 	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
+		Common::SharedPtr<Room> room(g_engine->_rooms[i]);
 		if (getId(room->_table) == id)
 			return room;
 	}
