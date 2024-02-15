@@ -44,7 +44,7 @@ void release_trigger_digi_check() {
 
 	// Set channel bits in digi_state that a sound is presently busy in each channel
 	for (i = 0; i < 3; ++i) {
-		if (digi_play_state(i)) 	 	// Check if a sound is playing
+		if (digi_play_state(i + 1))	 	// Check if a sound is playing
 			digi_state |= (1 << i); 	// Set the bit that corresponds with this channel 
 	}
 
