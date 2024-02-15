@@ -131,6 +131,7 @@ static BuiltinProto builtins[] = {
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
+	{ "preLoadMember",	LB::b_preLoadCast,	-1,0, 500, CBLTIN },	//				D5 c
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
@@ -188,6 +189,7 @@ static BuiltinProto builtins[] = {
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
+	{ "unLoadMember",	LB::b_unLoadCast,	0, 2, 500, CBLTIN },	//				D5 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, 200, CBLTIN },	// D2 c
 	{"immediateSprite", LB::b_immediateSprite, -1, 0, 200, CBLTIN}, // D2 c
@@ -216,6 +218,7 @@ static BuiltinProto builtins[] = {
 	{ "version",		LB::b_version,		0, 0, 300, KBLTIN },	//		D3 k
 	// References
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
 	// Chunk operations
@@ -3213,6 +3216,38 @@ void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res = d.asMemberID();
 	res.type = CASTREF;
+	g_lingo->push(res);
+}
+
+void LB::b_member(int nargs) {
+	Movie *movie = g_director->getCurrentMovie();
+	CastMemberID res;
+	if (nargs == 1) {
+		Datum member = g_lingo->pop();
+		if (member.isNumeric()) {
+			res = movie->getCastMemberIDByMember(member.asInt());
+		} else {
+			res = movie->getCastMemberIDByName(member.asString());
+		}
+	} else if (nargs == 2) {
+		Datum library = g_lingo->pop();
+		Datum member = g_lingo->pop();
+		int libId = -1;
+		if (library.isNumeric()) {
+			libId = library.asInt();
+		} else {
+			libId = movie->getCastLibIDByName(library.asString());
+		}
+		if (member.isNumeric()) {
+			res = CastMemberID(member.asInt(), libId);
+		} else {
+			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
+		}
+	}
+	if (!movie->getCastMember(res)) {
+		g_lingo->lingoError("No match found for cast member");
+		return;
+	}
 	g_lingo->push(res);
 }
 
