@@ -24,7 +24,6 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
-#define SCE_TOUCH_PORT_MAX_NUM 1
 #define TOUCHSCREEN_WIDTH 1280
 #define TOUCHSCREEN_HEIGHT 720
 
@@ -56,7 +55,7 @@ private:
 		float lastDownY; // SDL touch coordinates when last pressed down
 	} Touch;
 
-	Touch _finger[SCE_TOUCH_PORT_MAX_NUM][MAX_NUM_FINGERS]; // keep track of finger status
+	Touch _finger[MAX_NUM_FINGERS]; // keep track of finger status
 
 	typedef enum DraggingType {
 		DRAG_NONE = 0,
@@ -64,9 +63,9 @@ private:
 		DRAG_THREE_FINGER,
 	} DraggingType;
 
-	DraggingType _multiFingerDragging[SCE_TOUCH_PORT_MAX_NUM]; // keep track whether we are currently drag-and-dropping
+	DraggingType _multiFingerDragging; // keep track whether we are currently drag-and-dropping
 
-	unsigned int _simulatedClickStartTime[SCE_TOUCH_PORT_MAX_NUM][2]; // initiation time of last simulated left or right click (zero if no click)
+	unsigned int _simulatedClickStartTime[2]; // initiation time of last simulated left or right click (zero if no click)
 
 	void preprocessFingerDown(SDL_Event *event);
 	void preprocessFingerUp(SDL_Event *event);
