@@ -587,8 +587,11 @@ void Adlib::Func1A03() {
 	uint8 bp1;
 	// l0017_1A0F:
 	do {
-	
+
 	bp1 = data->readByte();
+	// Go back to allow 19BE below to handle it properly
+	data->seek(-1, SEEK_CUR);
+
 
 	uint32 timer = _nextEventTimer;
 	// TODO: Not sure what this does in practice
@@ -610,6 +613,10 @@ void Adlib::Init() {
 
 	#define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
+
+	// Hardcoded test to see if I got the logic right
+	data->seek(0x06DE, SEEK_SET);
+	Func1A03();
 
 	/* _opl->writeReg(0x20, 0x01);
 	_opl->writeReg(0x40, 0x10);

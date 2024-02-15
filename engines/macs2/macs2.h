@@ -184,7 +184,9 @@ public:
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
 	void RunScriptExecutor() {
-		_scriptExecutor->ExecuteScript();
+		do {
+			_scriptExecutor->ExecuteScript();
+		} while (_scriptExecutor->requestCallback);
 	}
 
 	int MeasureString(Common::String &s);
