@@ -27,7 +27,18 @@ namespace Macs2 {
 namespace Script {
 
 #define ScriptNoEntry debug("Unhandled case in script handling.");
-#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: " "opcode" ".");
+#define STR_HELPER(x) #x
+#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: " STR_HELPER(opcode) ".");
+
+ScriptExecutor::ScriptExecutor() {
+	// TODO: Hardcoded values for testing
+	for (int i = 0; i != 10000; i++) {
+		_variables[i].a = 0;
+		_variables[i].b = 0;
+	}
+	_variables[0xb].a = 0x3;
+	_interactedObjectID = 0x080a;
+}
 
 inline void ScriptExecutor::FuncA3D2() {
 	// TODO: Quality is not at the level of the rest - consider
@@ -84,15 +95,12 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	uint16 value = ReadWord(); // [bp-7h]
 
 	if (opcode1 == 0x0) {
-		ScriptUnimplementedOpcode(0x0)
-		/*
-		l0037_9F67:
-	;; This handles opcode == 0
-	mov	ax,[bp-7h]
-	xor	dx,dx
-	mov	[bp-4h],ax
-	mov	[bp-2h],dx
-	*/
+		// l0037_9F67:
+		out1 = value;
+		out2 = 0;
+		// TODO: Do we need to do something to exit?
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 	// l0037_9F72:
 	if (opcode1 > 0) {
@@ -111,17 +119,14 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 				return;
 			}
 			else {
+				// l0037_9F94:
 				// value between 1 and 0x800
-				// TODO: Implement
-			/*
-				l0037_9F94:
-				mov	ax,[bp-7h]
-				shl	ax,2h
-				les	di,[06C6h]
-				add	di,ax
-				mov	ax,es:[di-4h]
-				mov	dx,es:[di-2h]
-				mov	[bp-4h],ax mov[bp - 2h], dx */
+				const ScriptVariable& var = _variables[value];
+				out1 = var.a;
+				out2 = var.b;
+				// TODO: Centralized return handling
+				debug("- 9F4D results: %.4x %.4x", out1, out2);
+				return;
 			}
 		}
 	}
@@ -134,7 +139,29 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// We are starting to execute opcode FFh here
 	// l0037_9FB7:
 	if (value == 0x1) {
-		ScriptUnimplementedOpcode(0x1)
+		// l0037_9FBF:
+		if (_mouseMode == MouseMode::Use) {
+			// l0037_9FC7:
+			out1 = _interactedObjectID;
+			out2 = 0;
+			debug("- 9F4D results: %.4x %.4x", out1, out2);
+			return;
+		}
+	// l0037_A050:
+	} else if (value == 0x4) {
+
+		/*
+		mov	di,[0776h]
+	shl	di,2h
+	les	di,[di+77Ch]
+	push	word ptr es:[di]
+	push	word ptr es:[di+2h]
+	call	far 0037h:101Dh
+	cwd
+	mov	[bp-4h],ax
+	mov	[bp-2h],dx
+	jmp	0A32Ch*/
+
 	}
 
 	// l0037_A008:
@@ -442,8 +469,11 @@ l0037_A1B9:
 		return;
 	}
 	
-
-/*
+	else {
+		// TODO: Handle others
+		ScriptUnimplementedOpcode(opcode);
+	}
+	/*
 l0037_A1BC:
 	cmp	ax,27h
 	jnz	0A1E9h
@@ -672,6 +702,44 @@ l0037_A32C:
 	// debug("-- Leaving 94FD");
 }
 
+void ScriptExecutor::FuncC991() {
+
+	uint16 objectID1;
+	uint16 objectID2;
+	Func9F4D(objectID1, objectID2);
+	// [bp-2h]
+	uint16 offset1 = objectID1 - 0x400;
+	// TODO: Should handle this as a double word
+	objectID1 -= 0x400;
+
+	// {[bp-0Dh]
+	uint16 out1;
+	uint16 out2;
+	Func9F4D(out1, out2);
+
+	
+}
+
+void ScriptExecutor::FuncC8E4() {
+
+}
+
+void ScriptExecutor::FuncB6BE() {
+	// TODO: This is a very simplistic implementation, there's a lot
+	// to be discovered how this works exaclty
+	uint16 id1;
+	uint16 id2;
+	// TODO: Should handle this as a 32 bit number
+	Func9F4D(id1, id2);
+	uint16 animFrame;
+	uint16 throwaway;
+	Func9F4D(animFrame, throwaway);
+
+	// TODO: Access the animation based on the ID
+	// Can do it hardcoded for now, but will need to figure out the relationship
+	// further down the road
+}
+
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
@@ -685,7 +753,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	debug("Script read (word): %.4x at location %.4x", result, pos);
 	return result;
 }
-
+	
 /*  void Script::ScriptExecutor::ExecuteScript(Common::MemoryReadStream *stream) {
 	_stream = stream;
 
@@ -807,9 +875,9 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	*/
 
 
-	void Script::ScriptExecutor::ExecuteScript() {
-		debug("----- Scripting function entered");
-
+void Script::ScriptExecutor::ExecuteScript() {
+	debug("----- Scripting function entered");
+	requestCallback = false;
 		// [bp-12h]
 	bool shouldSkip = false;
 	// Not yet implemented - seems to signal that the script is empty?
@@ -838,7 +906,10 @@ uint16 Script::ScriptExecutor::ReadWord() {
 		// The loop comprises the first labels in the file
 		// l0037_DB73:
 		for (;;) {
-
+		// TODO: Just for breaking out at the moment when end conditions fail to work
+		if (_stream->eos()) {
+			break;
+		}
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
@@ -953,6 +1024,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 			// l0037_DC66:
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
+			debug("- Second block opcode: %.2x", opcode2);
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -968,16 +1040,97 @@ uint16 Script::ScriptExecutor::ReadWord() {
 			// TODO: Figure out if we handle opcodes differently here
 			if (opcode2 == 0x1) {
 				// l0037_DC8F:
-				shouldSkip = !((v1 == v2) && (v3 == v4));
-			} else {
-				ScriptNoEntry;
+				shouldSkip = !((v1 == v3) && (v2 == v4));
+			} else if (opcode2 <= 0x5) {
+				ScriptUnimplementedOpcode(opcode2)
 				break;
 			}
 			// TODO Find the proper place
 			if (shouldSkip) {
 				FuncA3D2();
+				// TODO: Check end condition
+				continue;
 			}
+			// TODO: Temporary code until I figure out a cleaner way
+			opcode1 = opcode2;
 		}
+
+		if (opcode1 == 0x0E) {
+			FuncB6BE();
+		} else if (opcode1 == 0x0F) {
+			// TBC: This should be disabling the mouse cursor again
+			// TODO: Mocked reads to advance the file correctly
+			// TODO: These might be conditional so they might break
+			// for another example
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			// TODO: Check how this suspension is really handled
+			requestCallback = true;
+
+		} else if (opcode1 == 0x10) {
+			// l0037_DE72:
+			// call	far 0037h:0B843h
+			// TBC: This should be the walk to
+			// TODO: Mocked reads to advance the file correctly
+			// TODO: These might be conditional so they might break
+			// for another example
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+
+			requestCallback = true;
+		} else if (opcode1 == 0x11) {
+			// l0037_DE81:
+			// TODO: Probably setting the mouse cursor mode
+			// But also some data written - make a note to review it
+			// TODO: Mocked reads to advance the file correctly
+			// TODO: These might be conditional so they might break
+			// for another example
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			// TBC That we stop execution here
+			break;
+		} else if (opcode1 == 0x22) {
+			// TODO: Properly implement fn0037_C2C4 proc
+			// Based on previous experimentation, this will play the fumbling animation
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+		} else if (opcode1 == 0x26) {
+			// TODO: This handles some bookkeeping and loading, but we skip this for now
+			// Only do the right amount of reads
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			ReadByte();
+		} else if (opcode1 == 0x27) {
+			// TODO: Implement 0037h:0C858h
+			// TODO: Again, seems to be about writing a variable to an object
+			// TODO: Try doing a read for that data to see how it is being used
+			// Note: This is issued right after the fumbling animation starts playing
+			// and it seems to write the same data just to a different address relative
+			// to the object
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+		} else if (opcode1 == 0x28) {
+			// TODO: Figure out what this does - it seems to again write data to a
+			// hotspot's data
+			FuncC8E4();
+		}
+		else {
+			ScriptUnimplementedOpcode(opcode1)
+			break;
+		}
+
+
 		// 0E3BDh
 	/*
 	l0037_DC5F:
@@ -2171,14 +2324,15 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 */
+		
+	}
 		debug("----- Scripting function left");
 	}
-	}
-
-	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
+	
+	void ScriptExecutor::SetScript(Common::MemoryReadStream * stream) {
 		_stream = stream;
 	}
 
-} // namespace Script 
-} // namespace Macs2
+} // namespace Script
 
+} // namespace Macs2

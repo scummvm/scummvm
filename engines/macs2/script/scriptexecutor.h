@@ -31,6 +31,16 @@ namespace Common {
 
 namespace Macs2 {
 	namespace Script {
+
+		struct ScriptVariable {
+			uint32 a;
+			uint32 b;
+		};
+
+		enum class MouseMode {
+			Use = 0x15
+		};
+
 		class ScriptExecutor {
 
 			private:
@@ -41,10 +51,35 @@ namespace Macs2 {
 			Common::MemoryReadStream * _stream;
 
 			void FuncA3D2();
+
+			// void Func101D(uint16 x, uint16 y);
 			
 			void Func9F4D(uint16 &out1, uint16 &out2);
 
+			// fn0037_C991 proc
+			// Implements a walk to
+			void FuncC991();
+
+			// Implements opcode 28 - TODO: What exactly?
+			void FuncC8E4();
+
+			// Implements opcode 0e - changing scene animations
+			void FuncB6BE();
+
+			// TODO: Identify number of variables and default values
+			ScriptVariable _variables[10000];
+
+			MouseMode _mouseMode = MouseMode::Use;
+
+			uint16 _interactedObjectID = 0;
+
 			public:
+
+			// TODO: Mockup variable to simulate conditions where the scripting
+			// function would be called again, like after a walk to event
+			bool requestCallback = false;
+
+			ScriptExecutor();
 		
 			void ExecuteScript();
 			void SetScript(Common::MemoryReadStream *stream);
