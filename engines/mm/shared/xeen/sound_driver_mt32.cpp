@@ -33,11 +33,6 @@ const uint8 SoundDriverMT32::MIDI_NOTE_MAP[24] = {
 	0x00, 0x0B, 0x0D, 0x0F, 0x10, 0x12, 0x14, 0x16
 };
 
-static byte last_notes[16] = {
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-};
-
 #define MT32_ADJUST_VOLUME
 
 /*------------------------------------------------------------------------*/
@@ -57,6 +52,7 @@ SoundDriverMT32::SoundDriverMT32() : _field180(0), _field181(0), _field182(0),
 _musicVolume(0), _sfxVolume(0), _timerCount(0), _midiDriver(nullptr) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
+	Common::fill(&_last_notes[0], &_last_notes[16], 0xFF);
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_MT32);
 	_midiDriver = MidiDriver::createMidi(dev);
@@ -85,6 +81,8 @@ void SoundDriverMT32::onTimer() {
 
 void SoundDriverMT32::initialize() {
 	_midiDriver->sendMT32Reset();
+
+	// set volume
 	for (int idx = 0; idx < CHANNEL_COUNT; idx++)
 	 	write(0xB1 + idx, 0x07, idx == 8 ? 0x7F : 0x4F);
 
@@ -119,7 +117,7 @@ int SoundDriverMT32::songCommand(uint commandId, byte musicVolume, byte sfxVolum
 	} else if (commandId < 0x100) {
 		if (_streams[stMUSIC]._playing) {
 			_field180 = commandId;
-			_field182 = 63;
+			_field182 = 0x7F;
 		}
 	} else if (commandId == SET_VOLUME) {
 		_musicVolume = musicVolume;
@@ -161,7 +159,25 @@ void SoundDriverMT32::pausePostProcess() {
 			_streams[stMUSIC]._playing = false;
 			_field180 = 0;
 			resetFrequencies();
+		} else {
+			for (int channelNum = 8; channelNum >= 0; --channelNum) {
+				if (channelNum == 7)
+					return;
+
+				if (_channels[channelNum]._volume >= 40) {
+					_channels[channelNum]._volume--;
+					// set volume expression
+					write(0xB1 + channelNum, 0x0B, _channels[channelNum]._volume);
+				}
+			}
 		}
+	}
+
+	byte channelNum = 7;
+	if (_channels[channelNum]._freqChange) {
+		_channels[channelNum]._frequency += _channels[channelNum]._freqChange;
+		// pitch bend
+		write(0xE1 + channelNum, _channels[channelNum]._frequency & 0x7F, (_channels[channelNum]._frequency >> 8) & 0x7F);
 	}
 }
 
@@ -174,17 +190,14 @@ void SoundDriverMT32::resetFX() {
 
 void SoundDriverMT32::resetFrequencies() {
 	// set pitch
-	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--) {
+	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--)
 		write(0xE1 + idx, 0x00, 0x40);
-	}
 	// set pan
-	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--) {
+	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--)
 		write(0xB1 + idx, 0x0A, 0x3F);
-	}
 	// notes off
-	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--) {
+	for (int idx = CHANNEL_COUNT - 1; idx >= 0; idx--)
 		write(0xB1 + idx, 0x7B, 0x00);
-	}
 }
 
 void SoundDriverMT32::playInstrument(byte channelNum, const byte *data, bool isFx) {
@@ -228,7 +241,7 @@ bool SoundDriverMT32::musFade(const byte *&srcP, byte param) {
 		note = noteMap(note);
 
 	write(0x81 + param, note & 0x7F, 0x40);
-	last_notes[param] = 0xFF;
+	_last_notes[param] = 0xFF;
 
 	return false;
 }
@@ -244,7 +257,7 @@ bool SoundDriverMT32::musStartNote(const byte *&srcP, byte param) {
 
 	if (param != 8) {
 		if (param != 7)
-			write(0x81 + param, last_notes[param] & 0x7F, 0x7F);
+			write(0x81 + param, _last_notes[param] & 0x7F, 0x7F);
 		else
 			write(0x81 + param, note & 0x7F, 0x7F);
 	}
@@ -256,7 +269,7 @@ bool SoundDriverMT32::musStartNote(const byte *&srcP, byte param) {
 #else
 	write(0x91 + param, note & 0x7F, fade);
 #endif
-	last_notes[param] = note & 0x7F;
+	_last_notes[param] = note & 0x7F;
 
 	return false;
 }
@@ -268,7 +281,6 @@ bool SoundDriverMT32::musSetVolume(const byte *&srcP, byte param) {
 	uint8 volume = *srcP++;
 
 	if (status == 0 && !_field180) {
-		// TODO: this is used in fxEndSubroutine in rolmus
 		_channels[param]._volume = volume;
 #if defined(MT32_ADJUST_VOLUME)
 		byte level = calculateLevel(volume, true);
@@ -314,7 +326,6 @@ bool SoundDriverMT32::fxSetVolume(const byte *&srcP, byte param) {
 	uint8 volume = *srcP++;
 
 	if (!_field180) {
-		// TODO: this is used in fxEndSubroutine in rolmus
 		_channels[param]._volume = volume;
 #if defined(MT32_ADJUST_VOLUME)
 		byte level = calculateLevel(volume, true);
@@ -330,16 +341,17 @@ bool SoundDriverMT32::fxSetVolume(const byte *&srcP, byte param) {
 bool SoundDriverMT32::fxMidiReset(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxMidiReset");
 
+	_channels[param]._freqChange = 0;
+
 	return false;
 }
 
 bool SoundDriverMT32::fxMidiDword(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxMidiDword");
 
- 	// First two bytes seems used in rolmus
+	_channels[param]._freqChange = READ_LE_UINT16(*&srcP);
 	srcP += 2;
-	// TODO: this is used in fxEndSubroutine in rolmus
-	_channels[param]._freqCtrChange = READ_LE_UINT16(*&srcP);
+	_channels[param]._frequency = READ_LE_UINT16(*&srcP);
 	srcP += 2;
 
 	return false;
@@ -367,11 +379,11 @@ bool SoundDriverMT32::fxFade(const byte *&srcP, byte param) {
 	note = noteMap(note);
 
 	if (param == 7)
-		write(0x81 + param, last_notes[param] & 0x7F, 0x7F);
+		write(0x81 + param, _last_notes[param] & 0x7F, 0x7F);
 	else
 		write(0x81 + param, note & 0x7F, 0x7F);
 	
-	last_notes[param] = 0xFF;
+	_last_notes[param] = 0xFF;
 
 	return false;
 }
@@ -394,7 +406,7 @@ bool SoundDriverMT32::fxStartNote(const byte *&srcP, byte param) {
 #else
 		write(0x91 + param, note & 0x7F, fade);
 #endif
-	last_notes[param] = note & 0x7F;
+	_last_notes[param] = note & 0x7F;
 	
 	return false;
 }
