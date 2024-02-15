@@ -6278,10 +6278,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("gadgetpaf",	"",		 "GADGET -Past as Future- (Disc1)", "3b96e0a903130cf68e6f8362bb4d096c", 178907, 501),
 	MACGAME1_l("gadgetpaf", "",		 "GADGET -Past as Future- (Disc1)", "4b2213a9fb04f390ec074c54b916370d", 113169, Common::JA_JPN, 501),
-	WINGAME2("gadgetpaf",	"",		 "GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
-									 "TEXT_E.Cxt", "5f14330705974a22deb9a12cd8ae6e79", 691046, 501),
-	WINGAME2_l("gadgetpaf", "",		 "GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
-									 "TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501),
+	WINGAME2("gadgetpaf",	"",		 "GADGET/GADGET.EXE", "t:c8a85e9a0eda2b7dd7974197c02d6469", 1411507,
+									 "DATA/TEXT_E.Cxt", "f:e74119685db701dea9f31f91521fd078", 2457643, 501),
+	WINGAME2("gadgetpaf",	"",		 "GADGET/GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
+									 "DATA/TEXT_E.Cxt", "5f14330705974a22deb9a12cd8ae6e79", 691046, 501),
+	WINGAME2_l("gadgetpaf", "",		 "GADGET/GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
+									 "DATA/TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501),
 	WINDEMO2f_l("gadgetpaf", "Demo", "GADGET.exe", "t:7e393434e06153a6413baf1b448f440e", 1647502,
 									 "TEXT_E.Cxt", "h:f2efb64dc4e3e1ea705309426fff7824", 152776, Common::ES_ESP, 501, GF_32BPP),
 
