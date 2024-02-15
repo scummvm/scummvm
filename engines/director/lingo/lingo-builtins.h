@@ -157,6 +157,7 @@ void b_saveMovie(int nargs);
 void b_showResFile(int nargs);
 void b_showXlib(int nargs);
 void b_xFactoryList(int nargs);
+void b_xtra(int nargs);
 
 void b_point(int nargs);
 void b_inside(int nargs);
