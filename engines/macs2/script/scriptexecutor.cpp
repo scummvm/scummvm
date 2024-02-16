@@ -28,7 +28,7 @@ namespace Script {
 
 #define ScriptNoEntry debug("Unhandled case in script handling.");
 #define STR_HELPER(x) #x
-#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: " STR_HELPER(opcode) ".");
+#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: %u.", (opcode));
 
 ScriptExecutor::ScriptExecutor() {
 	// TODO: Hardcoded values for testing
@@ -162,6 +162,11 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	mov	[bp-2h],dx
 	jmp	0A32Ch*/
 
+	} else if (value == 0x7) {
+		// l0037_A095:
+		out1 = out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 
 	// l0037_A008:
@@ -471,7 +476,7 @@ l0037_A1B9:
 	
 	else {
 		// TODO: Handle others
-		ScriptUnimplementedOpcode(opcode);
+		ScriptUnimplementedOpcode(value);
 	}
 	/*
 l0037_A1BC:
@@ -721,7 +726,10 @@ void ScriptExecutor::FuncC991() {
 }
 
 void ScriptExecutor::FuncC8E4() {
-
+	// TODO: Throwaway reads here for mocking
+	uint16 throwaway1;
+	uint16 throwaway2;
+	Func9F4D(throwaway1, throwaway2);
 }
 
 void ScriptExecutor::FuncB6BE() {
@@ -997,6 +1005,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// If any bit is set in the result, we skip, otherwise we fall through and continue the loop
 			if ((result1 | result2) == 0) {
 				FuncA3D2();
+				// TODO: Handle end condition
+				continue;
 			} else {
 				// Making it explicit with a continue
 				continue;
@@ -1049,6 +1059,10 @@ void Script::ScriptExecutor::ExecuteScript() {
 			if (shouldSkip) {
 				FuncA3D2();
 				// TODO: Check end condition
+				continue;
+			}
+			// TODO: Need a cleaner way of mapping the assembler loop continue
+			if (opcode2 == 0x1) {
 				continue;
 			}
 			// TODO: Temporary code until I figure out a cleaner way
