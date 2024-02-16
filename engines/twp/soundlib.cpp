@@ -282,6 +282,7 @@ static SQInteger loopSound(HSQUIRRELVM v) {
 		}
 	}
 	int soundId = g_engine->_audio.play(sound, Audio::Mixer::kPlainSoundType, loopTimes, fadeInTime);
+	debugC(kDebugSndScript, "loopSound %s: %d", sound->getName().c_str(), soundId);
 	sqpush(v, soundId);
 	return 1;
 }
