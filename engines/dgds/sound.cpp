@@ -205,7 +205,7 @@ void Sound::playMusic(const Common::String &filename) {
 		if (chunk.isContainer()) {
 			continue;
 		}
-		
+
 		chunk.readContent(_decompressor);
 
 		Common::SeekableReadStream *stream = chunk.getContent();

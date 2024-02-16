@@ -44,26 +44,22 @@ namespace Dgds {
 
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
-bool TTMInterpreter::load(const Common::String &filename) {
+bool TTMInterpreter::load(const Common::String &filename, TTMData &scriptData) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
-	bool parseResult = dgds.parse(&_scriptData, filename);
+	bool parseResult = dgds.parse(&scriptData, filename);
 
-	_state._delay = 0;
-	_state.scene = 0;
-	_scriptData.scr->seek(0);
+	scriptData.scr->seek(0);
 
 	return parseResult;
 }
 
 void TTMInterpreter::unload() {
-	delete _scriptData.scr;
-	_scriptData.scr = nullptr;
 }
 
-void TTMInterpreter::updateScreen() {
+void TTMInterpreter::updateScreen(struct TTMSeq &state) {
 	g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	if (_state._setupFinished && _vm->getScene()->checkDialogActive()) {
+	if (state._runFlag && _vm->getScene()->checkDialogActive()) {
 		Graphics::Surface *screen = g_system->lockScreen();
 		_vm->getScene()->drawActiveDialog(screen, 1);
 		_vm->getScene()->drawActiveDialog(screen, 4);
@@ -73,7 +69,7 @@ void TTMInterpreter::updateScreen() {
 	g_system->updateScreen();
 }
 
-void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common::String &sval) {
+void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	switch (op) {
@@ -88,7 +84,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0x0110: // PURGE void
 		// .. shouldn't actually clear the bmps, what should it do?
-		_state._currentBmpId = 0;
+		state._currentBmpId = 0;
 		break;
 	case 0x0ff0: {
 		// REFRESH:	void
@@ -98,20 +94,19 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
-		_state._delay += ivals[0] * 10;
-		_state._delayStart = g_system->getMillis();
+		state._timeNext = g_system->getMillis() + ivals[0] * 10;
 		break;
 	case 0x1030: {
 		// SET BMP:	id:int [-1:n]
 		int bk = ivals[0];
 		if (bk != -1) {
-			_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], bk);
+			_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], bk);
 		}
 		break;
 	}
 	case 0x1050:
 		// SELECT BMP:	    id:int [0:n]
-		_state._currentBmpId = ivals[0];
+		state._currentBmpId = ivals[0];
 		break;
 	case 0x1060:
 		// SELECT PAL:  id:int [0]
@@ -122,26 +117,24 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
 		debug("SCENE SETUP DONE: %u", ivals[0]);
-		_state._setupFinished = true;
 		break;
 	case 0x1110: { // SET_SCENE:  i:int   [1..n]
 		// DESCRIPTION IN TTM TAGS.
 		debug("SET SCENE: %u", ivals[0]);
-		_state.scene = ivals[0];
-		_state._setupFinished = false;
+		state._currentFrame = ivals[0];
 		break;
 	}
 	case 0x1200: // GOTO? How different to SET SCENE??
 		debug("GOTO SCENE: %u", ivals[0]);
-		_state.scene = ivals[0];
+		state._currentFrame = ivals[0];
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
-		_state._drawColFG = static_cast<byte>(ivals[0]);
-		_state._drawColBG = static_cast<byte>(ivals[1]);
+		state._drawColFG = static_cast<byte>(ivals[0]);
+		state._drawColBG = static_cast<byte>(ivals[1]);
 		break;
 	case 0x4000:
 		// SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
-		_state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+		state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110:
 		// FADE OUT:	colorno,ncolors,targetcol,speed:byte
@@ -153,7 +146,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen();
+				updateScreen(state);
 				g_system->delayMillis(5);
 			}
 		}
@@ -166,7 +159,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
 
-	
+
 		// FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -174,7 +167,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 			for (int i = 320; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen();
+				updateScreen(state);
 				g_system->delayMillis(5);
 			}
 		}
@@ -189,7 +182,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	}
 	case 0xa000: // DRAW PIXEL x,y:int
-		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], _state._drawColFG);
+		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], state._drawColFG);
 		break;
 	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l]
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
@@ -198,19 +191,19 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		_vm->getTopBuffer().copyFrom(_vm->_resData);
 		break;
 	case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
-		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], _state._drawColFG);
+		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], state._drawColFG);
 		break;
 	case 0xa100:
 		// DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
 		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-		_vm->getTopBuffer().fillRect(bmpArea, _state._drawColFG);
+		_vm->getTopBuffer().fillRect(bmpArea, state._drawColFG);
 		break;
 	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
 		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, _state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, _state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, _state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, _state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, state._drawColFG);
 		break;
 	case 0xa520:
 		// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
@@ -221,25 +214,25 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		// FALL THROUGH
 	case 0xa500:
-		debug("DRAW \"%s\"", _state.bmpNames[_state._currentBmpId].c_str());
+		debug("DRAW \"%s\"", env._bmpNames[state._currentBmpId].c_str());
 
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		// This is kind of file system intensive, will likely have to change to store all the BMPs.
 		if (count == 4) {
 			int tileId = ivals[2];
-			_state._currentBmpId = ivals[3];
+			state._currentBmpId = ivals[3];
 			if (tileId != -1) {
-				_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], tileId);
+				_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], tileId);
 			}
 		} else if (!_vm->_image->isLoaded()) {
 			// load on demand?
-			warning("trying to load bmp %d (%s) on demand", _state._currentBmpId, _state.bmpNames[_state._currentBmpId].c_str());
-			_vm->_image->loadBitmap(_state.bmpNames[_state._currentBmpId], 0);
+			warning("trying to load bmp %d (%s) on demand", state._currentBmpId, env._bmpNames[state._currentBmpId].c_str());
+			_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], 0);
 		}
 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
 		if (_vm->_image->isLoaded())
-			_vm->_image->drawBitmap(ivals[0], ivals[1], _state._drawWin, _vm->getTopBuffer());
+			_vm->_image->drawBitmap(ivals[0], ivals[1], state._drawWin, _vm->getTopBuffer());
 		else
 			warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 		break;
@@ -249,7 +242,7 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 		break;
 	case 0xf020:
 		// LOAD BMP:	filename:str
-		_state.bmpNames[_state._currentBmpId] = sval;
+		env._bmpNames[state._currentBmpId] = sval;
 		break;
 	case 0xf050:
 		// LOAD PAL:	filename:str
@@ -299,18 +292,17 @@ void TTMInterpreter::handleOperation(uint16 op, byte count, int16 *ivals, Common
 	}
 }
 
-bool TTMInterpreter::run() {
-	Common::SeekableReadStream *scr = _scriptData.scr;
+bool TTMInterpreter::run(TTMData &env, struct TTMSeq &seq) {
+	Common::SeekableReadStream *scr = env.scr;
 	if (!scr)
 		return false;
 	if (scr->pos() >= scr->size())
 		return false;
 
-	if (_state._delayStart + _state._delay > g_system->getMillis()) {
+	if (seq._timeNext > g_system->getMillis()) {
 		return true;
 	}
-	_state._delay = 0;
-	_state._delayStart = 0;
+	seq._timeNext = 0;
 
 	uint16 code = scr->readUint16LE();
 	uint16 op = code & 0xFFF0;
@@ -345,14 +337,73 @@ bool TTMInterpreter::run() {
 	}
 	debug(" ");
 
-	handleOperation(op, count, ivals, sval);
+	handleOperation(env, seq, op, count, ivals, sval);
 
-	updateScreen();
+	updateScreen(seq);
 
 	return true;
 }
 
-ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm) {
+void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &seqArray) {
+	int16 envno = env._enviro;
+	env.scr->seek(0);
+	uint16 op = 0;
+	for (uint page = 0; page < env._pages; page++) {
+		while (op != 0xff0 && !env.scr->eos()) {
+			op = env.scr->readUint16LE();
+			switch (op & 0xf) {
+			case 0:
+				break;
+			case 1:
+				if (op == 0x1111) {
+					TTMSeq newseq;
+					newseq._enviro = envno;
+					newseq._seqNum = env.scr->readUint16LE();
+					newseq._startFrame = page;
+					newseq._currentFrame = page;
+					newseq._lastFrame = -1;
+					seqArray.push_back(newseq);
+				} else {
+					env.scr->skip(2);
+				}
+				break;
+			case 0xf: {
+				byte ch[2];
+				do {
+					ch[0] = env.scr->readByte();
+					ch[1] = env.scr->readByte();
+				} while (ch[0] != 0 && ch[1] != 0);
+				break;
+			}
+			default:
+				env.scr->skip((op & 0xf) * 2);
+				break;
+			}
+		}
+	}
+	env.scr->seek(0);
+}
+
+void TTMSeq::reset() {
+	ARRAYCLEAR(_slot);
+    _currentFrame = _startFrame;
+    _gotoFrame = -1;
+    _drawColBG = 0xf;
+    _drawColFG = 0xf;
+    //_brush_num = 0;
+    _currentBmpId = 0;
+    _timeCut = 0;
+    _timeNext = 0;
+    _runCount = 0;
+    _runPlayed = 0;
+    _executed = 0;
+    _runFlag = kRunTypeStopped;
+    _scriptFlag = 0;
+    _selfLoop = 0;
+    _drawWin = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _currentTTMSeq(nullptr) {
 	_ttmInterpreter = new TTMInterpreter(_vm);
 }
 
@@ -375,44 +426,85 @@ bool ADSInterpreter::load(const Common::String &filename) {
 		detailfile = filename;
 
 	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
-	dgds.parse(&_scriptData, detailfile);
+	dgds.parse(&_adsData, detailfile);
 
-	_state.scene = 0;
-	_state.subIdx = 0;
-	_state.subMax = 0;
-	_scriptData.scr->seek(0);
-	_scriptData.filename = filename;
+	for (const auto &file : _adsData._scriptNames) {
+		_adsData._scriptEnvs.resize(_adsData._scriptEnvs.size() + 1);
+		TTMData &data = _adsData._scriptEnvs.back();
+		data._enviro = _adsData._scriptEnvs.size();
+		_ttmInterpreter->load(file, data);
+		_ttmInterpreter->findAndAddSequences(data, _adsData._ttmSeqs);
+	}
 
-	_state._subsPlayed.resize(_scriptData.names.size());
-	_state._subsRunning.resize(_scriptData.names.size());
+	_adsData.scr->seek(0);
+
+	uint16 opcode = 0;
+	int segcount = 0;
+	while (_adsData.scr->pos() < _adsData.scr->eos()) {
+		opcode = _adsData.scr->readUint16LE();
+		if (opcode == 0xffff) {
+			findUsedSequencesForSegment(segcount);
+			segcount++;
+		} else {
+			_adsData.scr->skip(numArgs(opcode) * 2);
+		}
+	}
+
+	_adsData._maxSegments = segcount + 1;
+
+	_adsData.filename = filename;
+
 	return true;
 }
 
-void ADSInterpreter::unload() {
-	_scriptData.names.clear();
-	delete _scriptData.scr;
-	_scriptData.scr = nullptr;
-	_state = ADSState();
-}
+static const uint16 ADS_SEQ_OPCODES[] = {
+	0x2000, 0x2005, 0x2010, 0x2015, 0x4000, 0x4010, 0x1330,
+	0x1340, 0x1360, 0x1370, 0x1320, 0x1310, 0x1350
+};
 
-void ADSInterpreter::playScene() {
-	// This is the main scene player loop, which will run
-	// after the first time the ADS script is loaded below
-	// TODO/FIXME: Rewrite this
-	if (_state.subMax != 0) {
-		if (!_ttmInterpreter->run()) {
-			_state._subsRunning[_state.subIdx - 1] = false;
-			_state._subsPlayed[_state.subIdx - 1] = true;
-			const uint16 id = _state.subIdx - 1;
-			if (id + 1 < _scriptData.names.size()) {
-				_state.subIdx++;
-				_ttmInterpreter->load(_scriptData.names[_state.subIdx - 1]);
-				_state._subsRunning[_state.subIdx - 1] = true;
-			} else {
-				_state.subMax = 0; // continue ADS script execution
+void ADSInterpreter::findUsedSequencesForSegment(int segno) {
+	_adsData._usedSeqs[segno].clear();
+	int64 startoff = _adsData.scr->pos();
+	uint16 opcode = 0;
+	while (opcode != 0xffff && _adsData.scr->pos() < _adsData.scr->size()) {
+		opcode = _adsData.scr->readUint16LE();
+		for (uint16 o : ADS_SEQ_OPCODES) {
+			if (opcode == o) {
+				TTMSeq *seq = findTTMSeq(_adsData.scr->readUint16LE(), _adsData.scr->readUint16LE());
+				_adsData._usedSeqs[segno].push_back(seq);
+				_adsData.scr->seek(-4, SEEK_CUR);
+				break;
 			}
 		}
+		_adsData.scr->skip(numArgs(opcode) * 2);
 	}
+	_adsData.scr->seek(startoff);
+}
+
+
+void ADSInterpreter::unload() {
+	_adsData._scriptNames.clear();
+	_adsData._scriptEnvs.clear();
+	delete _adsData.scr;
+	_adsData.scr = nullptr;
+	_currentTTMSeq = nullptr;
+	_adsData._ttmSeqs.clear();
+}
+
+bool ADSInterpreter::playScene() {
+	if (!_currentTTMSeq)
+		return false;
+
+	TTMData *env = findTTMEnviro(_currentTTMSeq->_enviro);
+	if (!env)
+		error("Couldn't find environment num %d", _currentTTMSeq->_enviro);
+
+	if (!_ttmInterpreter->run(*env, *_currentTTMSeq)) {
+		_currentTTMSeq->_runCount++;
+		// TODO: Continue or load next???
+		_currentTTMSeq = findTTMSeq(_currentTTMSeq->_enviro, _currentTTMSeq->_seqNum + 1);
+	}
+	return true;
 }
 
 void ADSInterpreter::skipToEndIf(Common::SeekableReadStream *scr) {
@@ -428,59 +520,124 @@ void ADSInterpreter::skipToEndIf(Common::SeekableReadStream *scr) {
 	}
 }
 
+TTMData *ADSInterpreter::findTTMEnviro(int16 enviro) {
+	for (auto & env : _adsData._scriptEnvs) {
+		if (env._enviro == enviro)
+			return &env;
+	}
+	return nullptr;
+}
+
+TTMSeq *ADSInterpreter::findTTMSeq(int16 enviro, int16 seq) {
+	for (auto & ttm : _adsData._ttmSeqs) {
+		if (ttm._enviro == enviro && ttm._seqNum == seq)
+			return &ttm;
+	}
+	return nullptr;
+}
+
+
+void ADSInterpreter::segmentOrState(int16 seg, uint16 val) {
+	seg -= 1;
+	if (seg >= 0) {
+		_adsData._charWhile[seg] = 0;
+		if (_adsData._state[seg] != 8)
+			_adsData._state[seg] = (_adsData._state[seg] & 8) | val;
+	}
+}
+
+
+void ADSInterpreter::segmentSetState(int16 seg, uint16 val) {
+	seg -= 1;
+	if (seg >= 0) {
+		_adsData._charWhile[seg] = 0;
+		if (_adsData._state[seg] != 8)
+			_adsData._state[seg] = val;
+	}
+}
+
+void ADSInterpreter::findEndOrInitOp() {
+	Common::SeekableReadStream *scr = _adsData.scr;
+	while (true && scr->pos() < scr->size()) {
+		uint16 opcode = scr->readUint16LE();
+		if (opcode == 0xffff || opcode == 0x0000) {
+			scr->seek(-4, SEEK_CUR);
+			return;
+		}
+		if (opcode == 0x0005)
+			return;
+		scr->skip(numArgs(opcode) * 2);
+	}
+}
 
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
-	uint16 subIdx, subMax;
+	uint16 enviro, seqnum;
 
 	switch (code) {
 	case 0x0001:
 	case 0x0005:
-		// Seems to be "enter" or "label", does nothing.  0x0005 can be used for searching..
+		// "init".  0x0005 can be used for searching for next thing.
 		break;
-	case 0x2005: { // ADD SCENE TO QUEUE
-		subIdx = scr->readUint16LE();
-		subMax = scr->readUint16LE();
-		// TODO: We only add the first scene here, ignoring the rest
-		if (_state.subMax == 0) {
-			_state.scene = subIdx;
-			_state.subIdx = subIdx;
-			_state.subMax = subMax;
-			_ttmInterpreter->load(_scriptData.names[subIdx - 1]);
+	case 0x2000: // ADD sequence and reset frame
+	case 0x2005: { // ADD sequence
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		int16 runCount = scr->readSint16LE();
+
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (!state)
+			error("ADS invalid seq requested %d %d", enviro, seqnum);
+
+		if (code == 0x2000)
+			state->_currentFrame = state->_startFrame;
+
+		_currentTTMSeq = state;
+		if (runCount == 0) {
+			state->_runFlag = kRunType1;
+		} else if (runCount < 0) {
+			// Negative run count sets the cut time
+			state->_timeCut = g_system->getMillis() + runCount;
+			// Should this be *10 like delays?
+			warning("TODO: checkhandling of negative runcount %d", runCount);
+			state->_runFlag = kRunTypeTimeLimited;
+		} else {
+			state->_runFlag = kRunTypeMulti;
+			state->_runCount++;
 		}
-		uint16 unk1 = scr->readUint16LE();
-		uint16 unk2 = scr->readUint16LE();
-		debug("ADSInterpreter add scene - subIdx: %d, subMax: %d, unk1: %d, unk2: %d", subIdx, subMax, unk1, unk2);
+		state->_runPlayed++;
+		uint16 unk = scr->readUint16LE();
+		debug("ADSInterpreter add scene - enviro: %d, seqNum: %d, runCount: %d, unk: %d", enviro, seqnum, runCount, unk);
 		break;
 	}
 	case 0x1330: { // IF_NOT_PLAYED, 2 params
-		subIdx = scr->readUint16LE();
-		subMax = scr->readUint16LE();
-		warning("Unimplemented ADS opcode: IF_NOT_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
-		if (_state._subsPlayed[subIdx - 1])
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && !state->_runPlayed)
 			skipToEndIf(scr);
 		break;
 	}
 	case 0x1350: { // IF_PLAYED, 2 params
-		subIdx = scr->readUint16LE();
-		subMax = scr->readUint16LE();
-		warning("Unimplemented ADS opcode: IF_PLAYED subIdx: %d, subMax: %d", subIdx, subMax);
-		if (!_state._subsPlayed[subIdx - 1])
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && state->_runPlayed)
 			skipToEndIf(scr);
 		break;
 	}
 	case 0x1360: { // IF_NOT_RUNNING, 2 params
-		subIdx = scr->readUint16LE();
-		subMax = scr->readUint16LE();
-		warning("Unimplemented ADS opcode: IF_NOT_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
-		if (_state._subsRunning[subIdx - 1])
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && state->_runFlag == 0)
 			skipToEndIf(scr);
 		break;
 	}
 	case 0x1370: { // IF_RUNNING, 2 params
-		subIdx = scr->readUint16LE();
-		subMax = scr->readUint16LE();
-		warning("Unimplemented ADS opcode: IF_RUNNING subIdx: %d, subMax: %d", subIdx, subMax);
-		if (!_state._subsRunning[subIdx - 1])
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && (state->_runFlag == 1 || state->_runFlag == 2 || state->_runFlag == 3))
 			skipToEndIf(scr);
 		break;
 	}
@@ -491,23 +648,27 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xffff:	// END
 		return false;
 
+	case 0xF010: {// FADE_OUT, 1 param
+		uint16 segment = scr->readUint16LE();
+		debug("ADS FADE OUT?? segment param %x", segment);
+
+	}
 	//// unknown / to-be-implemented
 	case 0x0190:
 	case 0x1070: // unknown, 2 params
+	case 0x1080: // unknown if-related, 1 param
 	case 0x1340:
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
-	case 0x1500:
+	case 0x1500: // ? IF ?
 	case 0x1520: // PLAY_SCENE_ENDIF, 5 params
-	case 0x2000:
 	case 0x2010: // STOP_SCENE, 3 params
 	case 0x2020: // RESET SCENE, 2 params (scene, subScene)
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params
-	case 0x4000: // unknown, 3 params
-	case 0x4010:
-	case 0xF010: // FADE_OUT, 0 params
+	case 0x4000: // MOVE TO FRONT?, 3 params
+	case 0x4010: // MOVE TO BACK??, 3 params
 	case 0xF200: // RUN_SCRIPT, 1 param
 	case 0xFDA8:
 	case 0xFE98:
@@ -522,20 +683,92 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 	}
 	}
-	
+
 	return true;
 }
 
 bool ADSInterpreter::run() {
-	if (_state.subMax > 0) {
-		playScene();
-		return true;
+	if (_adsData._ttmSeqs.empty())
+		return false;
+
+	for (int i = 0; i < _adsData._maxSegments; i++) {
+		int16 flag = _adsData._state[i] & 0xfff7;
+		for (auto seq : _adsData._usedSeqs[i]) {
+			if (flag == 3) {
+				seq->reset();
+			} else {
+				seq->_scriptFlag = flag;
+			}
+		}
 	}
 
-	Common::SeekableReadStream *scr = _scriptData.scr;
-	if (!scr)
-		return false;
-	if (scr->pos() >= scr->size())
+	for (int i = 0; i < _adsData._maxSegments; i++) {
+		int16 state = _adsData._state[i];
+		int32 offset = _adsData._segments[i];
+		_adsData.scr->seek(offset);
+		if (state & 8) {
+			_adsData._state[i] &= 0xfff7;
+		} else {
+			findEndOrInitOp();
+		}
+
+		if (_adsData._charWhile[i])
+			offset = _adsData._charWhile[i];
+
+		if (state == 3 || state == 4) {
+			_adsData._state[i] = 1;
+			state = 1;
+		}
+
+		if (_adsData.scr && state == 1) {
+			_adsData.scr->seek(offset);
+			runUntilScenePlayedOrEnd();
+		}
+	}
+
+	bool result = false;
+	for (auto &seq : _adsData._ttmSeqs) {
+		_currentTTMSeq = &seq;
+		seq._lastFrame = -1;
+		int sflag = seq._scriptFlag;
+		TTMRunType rflag = seq._runFlag;
+		if (sflag == 6 || (rflag != kRunType1 && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunType5)) {
+			if (sflag != 6 && sflag != 5 && rflag == kRunType4) {
+			  seq._runFlag = kRunTypeStopped;
+			}
+		} else {
+			int16 curframe = seq._currentFrame;
+			TTMData *env = findTTMEnviro(seq._enviro);
+			bool scriptresult = false;
+			if (curframe < env->_pages && curframe > -1 && env->_pageOffsets[curframe] > -1) {
+				env->scr->seek(env->_pageOffsets[curframe]);
+				_currentTTMSeq = &seq;
+				scriptresult = playScene();
+			}
+
+			if (scriptresult) {
+				seq._executed = 1;
+				seq._lastFrame = seq._currentFrame;
+				result = true;
+				warning("TODO: ADSInterpreter::run Finish script result true section");
+				// TODO: set script delay here
+				// TODO: Finish lines 118 to 149 of disasm.
+			} else if (sflag != 5) {
+				seq._gotoFrame = seq._startFrame;
+				seq._runFlag = kRunType4;
+			}
+		}
+
+		if (rflag == kRunTypeTimeLimited && seq._timeCut > g_system->getMillis()) {
+			seq._runFlag = kRunTypeStopped;
+		}
+	}
+	return result;
+}
+
+bool ADSInterpreter::runUntilScenePlayedOrEnd() {
+	Common::SeekableReadStream *scr = _adsData.scr;
+	if (!scr || scr->pos() >= scr->size())
 		return false;
 
 	bool more = true;

@@ -121,6 +121,7 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	return false;
 }
 
+
 bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 	ADSData *scriptData = static_cast<ADSData *>(data);
 	Common::SeekableReadStream *chunkStream = chunk.getContent();
@@ -136,7 +137,7 @@ bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 			assert(idx == (i + 1));
 
 			Common::String string = chunkStream->readString();
-			scriptData->names.push_back(string);
+			scriptData->_scriptNames.push_back(string);
 		}
 	} break;
 	case ID_SCR:

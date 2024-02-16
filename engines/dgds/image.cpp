@@ -171,7 +171,7 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 int Image::frameCount(const Common::String &filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
-		error("Couldn't get bitmap resource %s", filename.c_str());
+		error("Couldn't get bitmap resource '%s'", filename.c_str());
 
 	int tileCount = -1;
 	DgdsChunkReader chunk(fileStream);
@@ -191,7 +191,7 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 	uint16 *mtx;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
-		error("Couldn't get bitmap resource %s", filename.c_str());
+		error("Couldn't get bitmap resource '%s'", filename.c_str());
 
 	_bmpData.free();
 

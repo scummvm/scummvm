@@ -34,6 +34,7 @@
 #include "dgds/resource.h"
 #include "dgds/request.h"
 #include "dgds/scene.h"
+#include "dgds/scripts.h"
 #include "dgds/font.h"
 #include "dgds/globals.h"
 
@@ -82,7 +83,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpChangeScene: return "changeScene";
 	case kSceneOpNoop:		  return "noop";
 	case kSceneOpGlobal:		return "global";
-	case kSceneOp4MetaScript:   return "sceneOp4(metascript?)";
+	case kSceneOpSegmentStateOps:   return "sceneOpSegmentStateOps";
 	case kSceneOpSetItemAttr:   return "setitemattr?";
 	case kSceneOpGiveItem:      return "giveitem?";
 	case kSceneOpShowDlg:		return "showdlg";
@@ -663,6 +664,50 @@ void SDSScene::enableTrigger(uint16 num) {
 }
 
 
+void Scene::segmentStateOps(const Common::Array<uint16> &args) {
+	ADSInterpreter *interp = static_cast<DgdsEngine *>(g_engine)->adsInterpreter();
+
+	for (uint i = 0; i < args.size(); i+= 2) {
+		uint16 subop = args[i];
+		uint16 arg = args[i + 1];
+		if (!subop && !arg)
+			return;
+		switch (subop) {
+		case 1:
+			interp->segmentOrState(arg, 3);
+			break;
+		case 2:
+			interp->segmentOrState(arg, 4);
+			break;
+		case 3:
+			interp->segmentSetState(arg, 6);
+			break;
+		case 4:
+			interp->segmentSetState(arg, 5);
+			break;
+		case 9:
+			warning("TODO: Apply segment state 3 to all loaded ADS texts");
+			interp->segmentOrState(arg, 3);
+			break;
+		case 10:
+			warning("TODO: Apply segment state 4 to all loaded ADS texts");
+			interp->segmentOrState(arg, 4);
+			break;
+		case 11:
+			warning("TODO: Apply segment state 6 to all loaded ADS texts");
+			interp->segmentSetState(arg, 6);
+			break;
+		case 12:
+			warning("TODO: Apply segment state 5 to all loaded ADS texts");
+			interp->segmentSetState(arg, 5);
+			break;
+		default:
+			error("Unknown scene op 4 sub-opcode %d", subop);
+		}
+	}
+}
+
+
 void Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
@@ -674,6 +719,9 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpGlobal:
 			globalOps(op._args);
+			break;
+		case kSceneOpSegmentStateOps:
+			segmentStateOps(op._args);
 			break;
 		case kSceneOpShowDlg:
 			showDialog(op._args[0]);
@@ -705,9 +753,9 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 	if (conds.empty())
 		return true;
 	uint truecount = 0;
-	
+
 	Globals *globals = static_cast<DgdsEngine *>(g_engine)->getGameGlobals();
-	
+
 	for (const auto & c : conds) {
 		uint16 refval = c._val;
 		uint16 checkval;
