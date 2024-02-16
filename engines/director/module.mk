@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	movie.o \
 	picture.o \
 	resource.o \
+	rte.o \
 	score.o \
 	sound.o \
 	sprite.o \
