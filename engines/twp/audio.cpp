@@ -120,6 +120,7 @@ void AudioSystem::stop(int id) {
 	// sound definition ID ?
 	for (auto & _slot : _slots) {
 		if (_slot.busy && _slot.sndDef->getId() == id) {
+			_slot.loopTimes = 0;
 			g_engine->_mixer->stopHandle(_slot.handle);
 		}
 	}
@@ -154,6 +155,7 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 			vol *= (1.f - progress);
 		}
 		if (progress > 1.0f) {
+			slot->loopTimes = 0;
 			g_engine->_mixer->stopHandle(slot->handle);
 			return;
 		}
@@ -260,12 +262,11 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 	if(!audioStream)
 		error("Failed to load audio: %s", name.c_str());
 
-	byte vol = (byte)(volume * 255);
 	int id = newSoundId();
 	if (fadeInTimeMs > 0.f) {
-		vol = 0;
+		volume = 0;
 	}
-	g_engine->_mixer->playStream(cat, &slot->handle, audioStream, id, vol * _masterVolume);
+	g_engine->_mixer->playStream(cat, &slot->handle, audioStream, id, volume * _masterVolume);
 	slot->id = id;
 	slot->objId = objId;
 	slot->sndDef = sndDef;
