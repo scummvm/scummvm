@@ -277,6 +277,7 @@ _endian=unknown
 _need_memalign=yes
 _have_x86=no
 _have_amd64=no
+_imgui=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -301,6 +302,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature imgui "imgui" "_imgui"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1282,6 +1284,8 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
+	--disable-imgui)              _imgui=no              ;;
+	--enable-imgui)               _imgui=yes             ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -6764,6 +6768,13 @@ if test "$_discord" = yes ; then
 fi
 define_in_config_if_yes "$_discord" 'USE_DISCORD'
 echo "$_discord"
+
+
+#
+# Check for Imgui
+#
+define_in_config_if_yes "$_imgui" 'USE_IMGUI'
+echo "$_imgui"
 
 #
 # Enable vkeybd / event recorder
