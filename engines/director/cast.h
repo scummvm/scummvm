@@ -40,6 +40,9 @@ class Lingo;
 struct LingoArchive;
 struct Resource;
 class Stxt;
+class RTE0;
+class RTE1;
+class RTE2;
 class BitmapCastMember;
 class FilmLoopCastMember;
 class ScriptCastMember;
@@ -143,7 +146,10 @@ public:
 	bool _isProtected;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
-	Common::HashMap<int, const Stxt *> *_loadedStxts;
+	Common::HashMap<int, const Stxt *> _loadedStxts;
+	Common::HashMap<int, const RTE0 *> _loadedRTE0s;
+	Common::HashMap<int, const RTE1 *> _loadedRTE1s;
+	Common::HashMap<int, const RTE2 *> _loadedRTE2s;
 	uint16 _castIDoffset;
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;

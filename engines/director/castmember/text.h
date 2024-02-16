@@ -103,6 +103,7 @@ public:
 	RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	void loadChunks();
+	void load() override;
 };
 
 } // End of namespace Director
