@@ -77,8 +77,9 @@ int MoviePlayer::load(const Common::Path &filename, int flags, int image) {
 
 	debug(1, "Playing video %s", filename.toString().c_str());
 
+	int bitsPerPixel = (_vm->_game.features & GF_16BIT_COLOR) ? 16 : 8;
 	if (flags & vfImageSurface)
-		_vm->_wiz->createWizEmptyImage(image, 0, 0, _video->getWidth(), _video->getHeight());
+		_vm->_wiz->dwCreateRawWiz(image, _video->getWidth(), _video->getHeight(), kCWFDefault, bitsPerPixel, 0, 0);
 
 	_flags = flags;
 	_wizResNum = image;

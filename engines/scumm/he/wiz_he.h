@@ -26,6 +26,30 @@
 
 namespace Scumm {
 
+#define WIZBLOCK_WIZH_DATA_SIZE (4 * 3)
+#define WIZBLOCK_RGBS_DATA_SIZE (768)
+#define WIZBLOCK_SPOT_DATA_SIZE (4 * 2)
+#define WIZBLOCK_RMAP_DATA_SIZE (256 + 4)
+
+#define WIZBLOCK_WIZH_SIZE    (8 + (WIZBLOCK_WIZH_DATA_SIZE))
+#define WIZBLOCK_RGBS_SIZE    (8 + (WIZBLOCK_RGBS_DATA_SIZE))
+#define WIZBLOCK_SPOT_SIZE    (8 + (WIZBLOCK_SPOT_DATA_SIZE))
+#define WIZBLOCK_RMAP_SIZE    (8 + (WIZBLOCK_RMAP_DATA_SIZE))
+
+#define DW_LOAD_SUCCESS          0
+#define DW_LOAD_NOT_TYPE        -1
+#define DW_LOAD_READ_FAILURE    -2
+#define DW_LOAD_OPEN_FAILURE    -3
+
+#define DW_SAVE_SUCCESS            0
+#define DW_SAVE_NOT_TYPE          -1
+#define DW_SAVE_WRITE_FAILURE     -2
+#define DW_SAVE_CREATE_FAILURE    -3
+
+#define DW_SAVE_WIZ_FORMAT    0
+#define DW_SAVE_PCX_FORMAT    1
+#define DW_SAVE_RAW_FORMAT    2
+
 struct WizPolygon {
 	Common::Point vert[5];
 	Common::Rect bound;
@@ -44,11 +68,11 @@ struct WizPolygon {
 	}
 };
 
-struct WizImage {
-	int resNum;
-	int x1;
-	int y1;
-	int zorder;
+struct WizBufferElement {
+	int image;
+	int x;
+	int y;
+	int z;
 	int state;
 	int flags;
 	int shadow;
@@ -56,7 +80,7 @@ struct WizImage {
 	int palette;
 };
 
-struct FontProperties {
+struct WizFontProperties {
 	byte string[4096];
 	byte fontName[4096];
 	int fgColor;
@@ -67,7 +91,7 @@ struct FontProperties {
 	int yPos;
 };
 
-struct EllipseProperties {
+struct WizEllipseProperties {
 	int px;
 	int py;
 	int qx;
@@ -78,37 +102,49 @@ struct EllipseProperties {
 	int color;
 };
 
-struct WizParameters {
+struct WizExtendedRenderInfo {
+	int32 blendFlags;
+	int32 sprite;
+	int32 group;
+	int32 conditionBits;
+};
+
+struct WizImageCommand {
 	int dwSize;
 	byte filename[260];
 	Common::Rect box;
 	int actionFlags;
 	int actionMode;
 	int params[8];
+	int flags;
+	int xPos;
+	int yPos;
+	int zPos;
 	int compressionType;
 	int fileType;
 	int angle;
+	int state;
 	int scale;
+	int shadow;
 	int polygon;
 	int polygon2;
-	int resDefImgW;
-	int resDefImgH;
+	int image;
+	int width;
+	int height;
+	int palette;
 	int sourceImage;
 	int propertyValue;
 	int propertyNumber;
 	uint8 remapTable[256];
 	uint8 remapList[256];
-	int remapNum;
-	int dstResNum;
-	uint16 fillColor;
-	FontProperties fontProperties;
-	EllipseProperties ellipseProperties;
+	int remapCount;
+	int destImageNumber;
+	int zbufferImage;
+	uint16 colorValue;
+	WizFontProperties fontProperties;
+	WizEllipseProperties ellipseProperties;
 	Common::Rect renderCoords;
-	int blendFlags;
-	int spriteId;
-	int spriteGroup;
-	int conditionBits;
-	WizImage img;
+	WizExtendedRenderInfo extendedRenderInfo;
 
 	void reset() {
 		dwSize = 0;
@@ -117,76 +153,98 @@ struct WizParameters {
 		actionFlags = 0;
 		actionMode = 0;
 		memset(params, 0, sizeof(params));
+		image = 0;
+		xPos = 0;
+		yPos = 0;
+		zPos = 0;
+		state = 0;
+		flags = 0;
+		shadow = 0;
+		zbufferImage = 0;
+		palette = 0;
 		compressionType = 0;
 		fileType = 0;
 		angle = 0;
 		scale = 0;
 		polygon = 0;
 		polygon2 = 0;
-		resDefImgW = 0;
-		resDefImgH = 0;
+		width = 0;
+		height = 0;
 		sourceImage = 0;
 		propertyValue = 0;
 		propertyNumber = 0;
 		memset(remapTable, 0, sizeof(remapTable));
 		memset(remapList, 0, sizeof(remapList));
-		remapNum = 0;
-		dstResNum = 0;
-		fillColor = 0;
-		memset(&fontProperties, 0, sizeof(FontProperties));
-		memset(&ellipseProperties, 0, sizeof(EllipseProperties));
+		remapCount = 0;
+		destImageNumber = 0;
+		colorValue = 0;
+		memset(&fontProperties, 0, sizeof(WizFontProperties));
+		memset(&ellipseProperties, 0, sizeof(WizEllipseProperties));
 		renderCoords.left = renderCoords.top = renderCoords.bottom = renderCoords.right = 0;
-		blendFlags = 0;
-		spriteId = 0;
-		spriteGroup = 0;
-		conditionBits = 0;
-		memset(&img, 0, sizeof(WizImage));
+		memset(&extendedRenderInfo, 0, sizeof(WizExtendedRenderInfo));
+
 	}
 };
 
 enum WizRenderingFlags {
+	// Standard rendering flags
 	kWRFUsePalette = 0x00000001,
 	kWRFRemap      = 0x00000002,
 	kWRFPrint      = 0x00000004,
 	kWRFBackground = 0x00000008,
 	kWRFForeground = 0x00000010,
 	kWRFAlloc      = 0x00000020,
-	kWIFIsPolygon  = 0x00000040,
-	kWIFZPlaneOn   = 0x00000080,
-	kWIFZPlaneOff  = 0x00000100,
-	kWIFUseShadow  = 0x00000200,
-	kWIFFlipX      = 0x00000400,
-	kWIFFlipY      = 0x00000800,
-	hWRFRotate90   = 0x00001000
+	kWRFIsPolygon  = 0x00000040,
+	kWRFZPlaneOn   = 0x00000080,
+	kWRFZPlaneOff  = 0x00000100,
+	kWRFUseShadow  = 0x00000200,
+	kWRFFlipX      = 0x00000400,
+	kWRFFlipY      = 0x00000800,
+	kWRFRotate90   = 0x00001000,
+
+	// Special rendering flags
+	kWRFSpecialRenderBitMask         = 0xfff00000,
+	kWRFAdditiveBlend                = 0x00100000,
+	kWRFSubtractiveBlend             = 0x00200000,
+	kWRF5050Blend                    = 0x00400000,
+	kWRFAreaSampleDuringWarp         = 0x00800000,
+	kWRFUseSourceImageAsAlphaChannel = 0x01000000,
+	kWRFBooleanAlpha                 = 0x02000000,
+	kWRFInverseAlpha                 = 0x04000000,
+	kWRFUseImageAsAlphaChannel       = 0x08000000,
+	kWRFUseBlendPrimitives           = 0x10000000,
+	kWRFFutureExpansionBit1          = 0x20000000,
+	kWRFFutureExpansionBit2          = 0x40000000,
+	kWRFFutureExpansionBit3          = 0x80000000,
 };
 
 enum WizActions {
-	kWAUnknown = 0,
-	kWADraw = 1,
-	kWACapture = 2,
-	kWALoad = 3,
-	kWASave = 4,
-	kWAGlobalState = 5,
-	kWAModify = 6,
-	kWAPolyCapture = 7,
-	kWANew = 8,
+	kWAUnknown         = 0,
+	kWADraw            = 1,
+	kWACapture         = 2,
+	kWALoad            = 3,
+	kWASave            = 4,
+	kWAGlobalState     = 5,
+	kWAModify          = 6,
+	kWAPolyCapture     = 7,
+	kWANew             = 8,
 	kWARenderRectangle = 9,
-	kWARenderLine = 10,
-	kWARenderPixel = 11,
+	kWARenderLine      = 10,
+	kWARenderPixel     = 11,
 	kWARenderFloodFill = 12,
-	kWAFontStart = 13,
-	kWAFontEnd = 14,
-	kWAFontCreate = 15,
-	kWAFontRender = 16,
-	kWARenderEllipse = 17,
+	kWAFontStart       = 13,
+	kWAFontEnd         = 14,
+	kWAFontCreate      = 15,
+	kWAFontRender      = 16,
+	kWARenderEllipse   = 17,
 };
 
 enum WizActionFlags {
 	kWAFSpot            = 0x00000001,
 	kWAFPolygon         = 0x00000002,
 	kWAFShadow          = 0x00000004,
-	kWAFScaled          = 0x00000008,
-	kWAFRotate          = 0x00000010,
+	kWAFScale           = 0x00000008,
+	kWAFAngle           = 0x00000010,
 	kWAFFlags           = 0x00000020,
 	kWAFRemapList       = 0x00000040,
 	kWAFFileType        = 0x00000080,
@@ -207,12 +265,36 @@ enum WizActionFlags {
 };
 
 enum WizCompositeFlags {
-	kWCFConditionBits = 0x01,
-	kWCFSubState = 0x02,
-	kWCFXDelta = 0x04,
-	kWCFYDelta = 0x08,
-	kWCFDrawFlags = 0x10,
-	kWCFSubConditionBits = 0x20
+	kWCFConditionBits    = 0x00000001,
+	kWCFSubState         = 0x00000002,
+	kWCFXDelta           = 0x00000004,
+	kWCFYDelta           = 0x00000008,
+	kWCFDrawFlags        = 0x00000010,
+	kWCFSubConditionBits = 0x00000020
+};
+
+enum WizCompressionTypes {
+	kWCTNone                      = 0x00000000,
+	kWCTTRLE                      = 0x00000001,
+	kWCTNone16Bpp                 = 0x00000002,
+	kWCTNone32Bpp                 = 0x00000003,
+	kWCTComposite                 = 0x00000004,
+	kWCTTRLE16Bpp                 = 0x00000005,
+	kWCTTRLE32Bpp                 = 0x00000006,
+	kWCTMRLEWithLineSizePrefix    = 0x00000007,
+	kWCTMRLEWithoutLineSizePrefix = 0x00000008,
+	kWCTDataBlockDependent        = 0x00000009,
+	kWCTNone16BppBigEndian        = 0x0000000A,
+	kWCTNone32BppBigEndian        = 0x0000000B,
+	kWCTTRLE16BppBigEndian        = 0x0000000C,
+	kWCTTRLE32BppBigEndian        = 0x0000000D
+};
+
+enum CreateWizFlags {
+	kCWFPalette    = 0x00000001,
+	kCWFSpot       = 0x00000002,
+	kCWFRemapTable = 0x00000008,
+	kCWFDefault    = ((kCWFPalette) | (kCWFSpot) | (kCWFRemapTable))
 };
 
 enum WizSpcConditionTypes : uint {
@@ -251,8 +333,8 @@ public:
 		NUM_IMAGES   = 255
 	};
 
-	WizImage _images[NUM_IMAGES];
-	uint16 _imagesNum;
+	WizBufferElement _wizBuffer[NUM_IMAGES];
+	uint16 _wizBufferIndex;
 	WizPolygon _polygons[NUM_POLYGONS];
 
 	Wiz(ScummEngine_v71he *vm);
@@ -273,12 +355,24 @@ public:
 	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
 	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 
-	void createWizEmptyImage(int resNum, int x1, int y1, int width, int height);
-	void fillWizRect(const WizParameters *params);
-	void fillWizLine(const WizParameters *params);
-	void fillWizPixel(const WizParameters *params);
-	void fillWizFlood(const WizParameters *params);
-	void remapWizImagePal(const WizParameters *params);
+	void dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY);
+	void processWizImageCmd(const WizImageCommand *params);
+	void processWizImageCaptureCmd(const WizImageCommand *params);
+	void processWizImagePolyCaptureCmd(const WizImageCommand *params);
+	void processWizImageDrawCmd(const WizImageCommand *params);
+	void processWizImageRenderRectCmd(const WizImageCommand *params);
+	void processWizImageRenderLineCmd(const WizImageCommand *params);
+	void processWizImageRenderPixelCmd(const WizImageCommand *params);
+	void processWizImageRenderFloodFillCmd(const WizImageCommand *params);
+	void processWizImageModifyCmd(const WizImageCommand *params);
+	void processWizImageRenderEllipseCmd(const WizImageCommand *params);
+	void processWizImageFontStartCmd(const WizImageCommand *params);
+	void processWizImageFontEndCmd(const WizImageCommand *params);
+	void processWizImageFontCreateCmd(const WizImageCommand *params);
+	void processWizImageFontRenderCmd(const WizImageCommand *params);
+	void processNewWizImageCmd(const WizImageCommand *params);
+	void processWizImageLoadCmd(const WizImageCommand *params);
+	void processWizImageSaveCmd(const WizImageCommand *params);
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
 	void getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h);
@@ -296,12 +390,11 @@ public:
 	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId, int palette);
 
-	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
 	void captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType);
-	void captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType);
-	void displayWizComplexImage(const WizParameters *params);
-	void displayWizImage(WizImage *pwi);
-	void processWizImage(const WizParameters *params);
+	void takeAWiz(int resNum, const Common::Rect &r, bool backBuffer, int compType);
+
+	void simpleDrawAWiz(int image, int state, int x, int y, int flags);
+	void bufferAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, int whichPalette);
 
 	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits);
 	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);

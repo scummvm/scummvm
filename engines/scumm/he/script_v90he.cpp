@@ -112,217 +112,225 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 	switch (subOp) {
 	case SO_WIDTH: // 32, HE99+
-		_wizParams.actionFlags |= kWAFWidth;
-		_wizParams.resDefImgW = pop();
+		_wizImageCommand.actionFlags |= kWAFWidth;
+		_wizImageCommand.width = pop();
 		break;
 	case SO_HEIGHT: // 33, HE99+
-		_wizParams.actionFlags |= kWAFHeight;
-		_wizParams.resDefImgH = pop();
+		_wizImageCommand.actionFlags |= kWAFHeight;
+		_wizImageCommand.height = pop();
 		break;
 	case SO_GENERAL_CLIP_STATE: // 46
 		// Dummy case
 		pop();
 		break;
 	case SO_GENERAL_CLIP_RECT: // 47
-		_wizParams.box.bottom = pop();
-		_wizParams.box.right = pop();
-		_wizParams.box.top = pop();
-		_wizParams.box.left = pop();
+		_wizImageCommand.box.bottom = pop();
+		_wizImageCommand.box.right = pop();
+		_wizImageCommand.box.top = pop();
+		_wizImageCommand.box.left = pop();
 		break;
 	case SO_DRAW: // 48
-		_wizParams.actionMode = kWADraw;
+		_wizImageCommand.actionMode = kWADraw;
 		break;
 	case SO_LOAD: // 49
-		_wizParams.actionFlags |= kWAFFilename;
-		_wizParams.actionMode = kWALoad;
-		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
+		_wizImageCommand.actionFlags |= kWAFFilename;
+		_wizImageCommand.actionMode = kWALoad;
+		copyScriptString(_wizImageCommand.filename, sizeof(_wizImageCommand.filename));
 		break;
 	case SO_SAVE: // 50
-		_wizParams.actionFlags |= kWAFFilename;
-		_wizParams.actionMode = kWASave;
-		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
-		_wizParams.fileType = pop();
+		_wizImageCommand.actionFlags |= kWAFFilename;
+		_wizImageCommand.actionMode = kWASave;
+		copyScriptString(_wizImageCommand.filename, sizeof(_wizImageCommand.filename));
+		_wizImageCommand.fileType = pop();
 		break;
 	case SO_CAPTURE: // 51
-		_wizParams.actionFlags |= kWAFRect | kWAFCompressionType;
-		_wizParams.actionMode = kWACapture;
-		_wizParams.box.bottom = pop();
-		_wizParams.box.right = pop();
-		_wizParams.box.top = pop();
-		_wizParams.box.left = pop();
-		_wizParams.compressionType = pop();
-		adjustRect(_wizParams.box);
+		_wizImageCommand.actionFlags |= kWAFRect | kWAFCompressionType;
+		_wizImageCommand.actionMode = kWACapture;
+		_wizImageCommand.box.bottom = pop();
+		_wizImageCommand.box.right = pop();
+		_wizImageCommand.box.top = pop();
+		_wizImageCommand.box.left = pop();
+		_wizImageCommand.compressionType = pop();
+		adjustRect(_wizImageCommand.box);
 		break;
 	case SO_STATE: // 52
-		_wizParams.actionFlags |= kWAFState;
-		_wizParams.img.state = pop();
+		_wizImageCommand.actionFlags |= kWAFState;
+		_wizImageCommand.state = pop();
 		break;
 	case SO_ANGLE: // 53
-		_wizParams.actionFlags |= kWAFRotate;
-		_wizParams.angle = pop();
+		_wizImageCommand.actionFlags |= kWAFAngle;
+		_wizImageCommand.angle = pop();
 		break;
 	case SO_SET_FLAGS: // 54
-		_wizParams.actionFlags |= kWAFFlags;
-		_wizParams.img.flags |= pop();
+		_wizImageCommand.actionFlags |= kWAFFlags;
+		_wizImageCommand.flags |= pop();
 		break;
 	case SO_NOW: // 56
-		_wizParams.img.flags = pop();
-		_wizParams.img.state = pop();
-		_wizParams.img.y1 = pop();
-		_wizParams.img.x1 = pop();
-		_wizParams.img.resNum = pop();
-		_wiz->displayWizImage(&_wizParams.img);
+		_wizImageCommand.flags = pop();
+		_wizImageCommand.state = pop();
+		_wizImageCommand.yPos = pop();
+		_wizImageCommand.xPos = pop();
+		_wizImageCommand.image = pop();
+
+		_wiz->simpleDrawAWiz(
+			_wizImageCommand.image,
+			_wizImageCommand.state,
+			_wizImageCommand.xPos,
+			_wizImageCommand.yPos,
+			_wizImageCommand.flags
+		);
+
 		break;
 	case SO_INIT: // 57
-		_wizParams.img.resNum = pop();
-		_wizParams.actionMode = kWAUnknown;
-		_wizParams.actionFlags = 0;
-		_wizParams.remapNum = 0;
-		_wizParams.img.flags = 0;
-		_wizParams.propertyValue = 0;
-		_wizParams.propertyNumber = 0;
-		_wizParams.spriteId = 0;
-		_wizParams.spriteGroup = 0;
+		_wizImageCommand.image = pop();
+		_wizImageCommand.actionMode = kWAUnknown;
+		_wizImageCommand.actionFlags = 0;
+		_wizImageCommand.remapCount = 0;
+		_wizImageCommand.flags = 0;
+		_wizImageCommand.propertyValue = 0;
+		_wizImageCommand.propertyNumber = 0;
+		_wizImageCommand.extendedRenderInfo.sprite = 0;
+		_wizImageCommand.extendedRenderInfo.group = 0;
 		break;
 	case SO_AT_IMAGE: // 62, HE99+
-		_wizParams.actionFlags |= kWAFSourceImg;
-		_wizParams.sourceImage = pop();
+		_wizImageCommand.actionFlags |= kWAFSourceImg;
+		_wizImageCommand.sourceImage = pop();
 		break;
 	case SO_AT: // 65
 	case SO_CURSOR_HOTSPOT: // 154
-		_wizParams.actionFlags |= kWAFSpot;
-		_wizParams.img.y1 = pop();
-		_wizParams.img.x1 = pop();
+		_wizImageCommand.actionFlags |= kWAFSpot;
+		_wizImageCommand.yPos = pop();
+		_wizImageCommand.xPos = pop();
 		break;
 	case SO_COLOR: // 66
 		// TODO: I haven't found SO_COLOR in any executable, recheck later...
 	case SO_COLOR_LIST: // 249, HE98+
 		b = pop();
 		a = pop();
-		_wizParams.actionFlags |= kWAFRemapList;
-		_wizParams.actionMode = kWAModify;
-		if (_wizParams.remapNum == 0) {
-			memset(_wizParams.remapList, 0, sizeof(_wizParams.remapList));
+		_wizImageCommand.actionFlags |= kWAFRemapList;
+		_wizImageCommand.actionMode = kWAModify;
+		if (_wizImageCommand.remapCount == 0) {
+			memset(_wizImageCommand.remapList, 0, sizeof(_wizImageCommand.remapList));
 		}
-		assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapList));
-		_wizParams.remapList[_wizParams.remapNum] = a;
-		_wizParams.remapTable[a] = b;
-		_wizParams.remapNum++;
+		assert(_wizImageCommand.remapCount < ARRAYSIZE(_wizImageCommand.remapList));
+		_wizImageCommand.remapList[_wizImageCommand.remapCount] = a;
+		_wizImageCommand.remapTable[a] = b;
+		_wizImageCommand.remapCount++;
 		break;
 	case SO_CLIPPED: // 67
-		_wizParams.actionFlags |= kWAFRect;
-		_wizParams.box.bottom = pop();
-		_wizParams.box.right = pop();
-		_wizParams.box.top = pop();
-		_wizParams.box.left = pop();
-		adjustRect(_wizParams.box);
+		_wizImageCommand.actionFlags |= kWAFRect;
+		_wizImageCommand.box.bottom = pop();
+		_wizImageCommand.box.right = pop();
+		_wizImageCommand.box.top = pop();
+		_wizImageCommand.box.left = pop();
+		adjustRect(_wizImageCommand.box);
 		break;
 	case SO_PALETTE: // 86, HE99+
-		_wizParams.actionFlags |= kWAFPalette;
-		_wizParams.img.palette = pop();
+		_wizImageCommand.actionFlags |= kWAFPalette;
+		_wizImageCommand.palette = pop();
 		break;
 	case SO_SCALE: // 92
-		_wizParams.actionFlags |= kWAFScaled;
-		_wizParams.scale = pop();
+		_wizImageCommand.actionFlags |= kWAFScale;
+		_wizImageCommand.scale = pop();
 		break;
 	case SO_SHADOW: // 98
-		_wizParams.actionFlags |= kWAFShadow;
-		_wizParams.img.shadow = pop();
+		_wizImageCommand.actionFlags |= kWAFShadow;
+		_wizImageCommand.shadow = pop();
 		break;
 	case SO_POLY_POLYGON: // 131, HE99+
-		_wizParams.actionFlags |= kWAFPolygon2 | kWAFCompressionType | kWAFPolygon;
-		_wizParams.actionMode = kWAPolyCapture;
-		_wizParams.polygon2 = pop();
-		_wizParams.polygon = pop();
-		_wizParams.compressionType = pop();
+		_wizImageCommand.actionFlags |= kWAFPolygon2 | kWAFCompressionType | kWAFPolygon;
+		_wizImageCommand.actionMode = kWAPolyCapture;
+		_wizImageCommand.polygon2 = pop();
+		_wizImageCommand.polygon = pop();
+		_wizImageCommand.compressionType = pop();
 		break;
 	case SO_RENDER_RECTANGLE: // 133, HE99+
-		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizParams.actionMode = kWARenderRectangle;
-		_wizParams.fillColor = pop();
-		_wizParams.renderCoords.bottom = pop();
-		_wizParams.renderCoords.right = pop();
-		_wizParams.renderCoords.top = pop();
-		_wizParams.renderCoords.left = pop();
-		adjustRect(_wizParams.renderCoords);
+		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizImageCommand.actionMode = kWARenderRectangle;
+		_wizImageCommand.colorValue = pop();
+		_wizImageCommand.renderCoords.bottom = pop();
+		_wizImageCommand.renderCoords.right = pop();
+		_wizImageCommand.renderCoords.top = pop();
+		_wizImageCommand.renderCoords.left = pop();
+		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_LINE: // 134, HE99+
-		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizParams.actionMode = kWARenderLine;
-		_wizParams.fillColor = pop();
-		_wizParams.renderCoords.bottom = pop();
-		_wizParams.renderCoords.right = pop();
-		_wizParams.renderCoords.top = pop();
-		_wizParams.renderCoords.left = pop();
-		adjustRect(_wizParams.renderCoords);
+		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizImageCommand.actionMode = kWARenderLine;
+		_wizImageCommand.colorValue = pop();
+		_wizImageCommand.renderCoords.bottom = pop();
+		_wizImageCommand.renderCoords.right = pop();
+		_wizImageCommand.renderCoords.top = pop();
+		_wizImageCommand.renderCoords.left = pop();
+		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_PIXEL: // 135, HE99+
-		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizParams.actionMode = kWARenderPixel;
-		_wizParams.fillColor = pop();
-		_wizParams.renderCoords.top = _wizParams.renderCoords.bottom = pop();
-		_wizParams.renderCoords.left = _wizParams.renderCoords.right = pop();
-		adjustRect(_wizParams.renderCoords);
+		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizImageCommand.actionMode = kWARenderPixel;
+		_wizImageCommand.colorValue = pop();
+		_wizImageCommand.renderCoords.top = _wizImageCommand.renderCoords.bottom = pop();
+		_wizImageCommand.renderCoords.left = _wizImageCommand.renderCoords.right = pop();
+		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_FLOOD_FILL: // 136, HE99+
-		_wizParams.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizParams.actionMode = kWARenderFloodFill;
-		_wizParams.fillColor = pop();
-		_wizParams.renderCoords.top = _wizParams.renderCoords.bottom = pop();
-		_wizParams.renderCoords.left = _wizParams.renderCoords.right = pop();
-		adjustRect(_wizParams.renderCoords);
+		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
+		_wizImageCommand.actionMode = kWARenderFloodFill;
+		_wizImageCommand.colorValue = pop();
+		_wizImageCommand.renderCoords.top = _wizImageCommand.renderCoords.bottom = pop();
+		_wizImageCommand.renderCoords.left = _wizImageCommand.renderCoords.right = pop();
+		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_INTO_IMAGE: // 137, HE99+
-		_wizParams.actionFlags |= kWAFDestImage;
-		_wizParams.dstResNum = pop();
+		_wizImageCommand.actionFlags |= kWAFDestImage;
+		_wizImageCommand.destImageNumber = pop();
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 139, HE99+
-		_wizParams.actionFlags |= kWAFProperty;
-		_wizParams.propertyValue = pop();
-		_wizParams.propertyNumber = pop();
+		_wizImageCommand.actionFlags |= kWAFProperty;
+		_wizImageCommand.propertyValue = pop();
+		_wizImageCommand.propertyNumber = pop();
 		break;
 	case SO_FONT_START: // 141, HE99+
-		_wizParams.actionMode = kWAFontStart;
+		_wizImageCommand.actionMode = kWAFontStart;
 		break;
 	case SO_FONT_CREATE: // 142, HE99+
-		_wizParams.actionMode = kWAFontCreate;
-		_wizParams.fontProperties.bgColor = pop();
-		_wizParams.fontProperties.fgColor = pop();
-		_wizParams.fontProperties.size = pop();
-		_wizParams.fontProperties.style = pop();
-		copyScriptString(_wizParams.fontProperties.fontName, sizeof(_wizParams.fontProperties.fontName));
+		_wizImageCommand.actionMode = kWAFontCreate;
+		_wizImageCommand.fontProperties.bgColor = pop();
+		_wizImageCommand.fontProperties.fgColor = pop();
+		_wizImageCommand.fontProperties.size = pop();
+		_wizImageCommand.fontProperties.style = pop();
+		copyScriptString(_wizImageCommand.fontProperties.fontName, sizeof(_wizImageCommand.fontProperties.fontName));
 		break;
 	case SO_FONT_RENDER: // 143, HE99+
-		_wizParams.actionMode = kWAFontRender;
-		_wizParams.fontProperties.yPos = pop();
-		_wizParams.fontProperties.xPos = pop();
-		copyScriptString(_wizParams.fontProperties.string, sizeof(_wizParams.fontProperties.string));
+		_wizImageCommand.actionMode = kWAFontRender;
+		_wizImageCommand.fontProperties.yPos = pop();
+		_wizImageCommand.fontProperties.xPos = pop();
+		copyScriptString(_wizImageCommand.fontProperties.string, sizeof(_wizImageCommand.fontProperties.string));
 		break;
 	case SO_RENDER_ELLIPSE: // 189, HE99+
-		_wizParams.actionMode = kWARenderEllipse;
-		_wizParams.ellipseProperties.color = pop();
-		_wizParams.ellipseProperties.lod = pop();
-		_wizParams.ellipseProperties.ky = pop();
-		_wizParams.ellipseProperties.kx = pop();
-		_wizParams.ellipseProperties.qy = pop();
-		_wizParams.ellipseProperties.qx = pop();
-		_wizParams.ellipseProperties.py = pop();
-		_wizParams.ellipseProperties.px = pop();
+		_wizImageCommand.actionMode = kWARenderEllipse;
+		_wizImageCommand.ellipseProperties.color = pop();
+		_wizImageCommand.ellipseProperties.lod = pop();
+		_wizImageCommand.ellipseProperties.ky = pop();
+		_wizImageCommand.ellipseProperties.kx = pop();
+		_wizImageCommand.ellipseProperties.qy = pop();
+		_wizImageCommand.ellipseProperties.qx = pop();
+		_wizImageCommand.ellipseProperties.py = pop();
+		_wizImageCommand.ellipseProperties.px = pop();
 		break;
 	case SO_FONT_END: // 196, HE99+
-		_wizParams.actionMode = kWAFontEnd;
+		_wizImageCommand.actionMode = kWAFontEnd;
 		break;
 	case SO_NEW: // 217, HE99+
-		_wizParams.actionMode = kWANew;
+		_wizImageCommand.actionMode = kWANew;
 		break;
 	case SO_SET_POLYGON: // 246
-		_wizParams.actionFlags |= kWAFFlags | kWAFSpot | kWAFPolygon;
-		_wizParams.img.flags |= kWIFIsPolygon;
-		_wizParams.polygon = _wizParams.img.y1 = _wizParams.img.x1 = pop();
+		_wizImageCommand.actionFlags |= kWAFFlags | kWAFSpot | kWAFPolygon;
+		_wizImageCommand.flags |= kWRFIsPolygon;
+		_wizImageCommand.polygon = _wizImageCommand.yPos = _wizImageCommand.xPos = pop();
 		break;
 	case SO_END: // 255
-		if (_wizParams.img.resNum)
-			_wiz->processWizImage(&_wizParams);
+		if (_wizImageCommand.image)
+			_wiz->processWizImageCmd(&_wizImageCommand);
 		break;
 	default:
 		error("o90_wizImageOps: unhandled case %d", subOp);
