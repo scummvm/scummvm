@@ -122,6 +122,7 @@ public:
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 	void setShowClock(bool val) { _showClockScript = val; }
+	ADSInterpreter *adsInterpreter() { return _adsInterp; }
 
 private:
 	void loadCorners(const Common::String &filename);

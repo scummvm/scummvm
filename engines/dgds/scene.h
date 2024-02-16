@@ -79,7 +79,7 @@ enum SceneOpCode {
 	kSceneOpChangeScene = 1,  	// args: scene num
 	kSceneOpNoop = 2,		 	// args: none. Maybe should close dialogue?
 	kSceneOpGlobal = 3,			// args: array of uints
-	kSceneOp4MetaScript = 4,	// args: array of uint pairs [op arg, op arg], term with 0,0. a script within a script (see disasm at 1f1a:4b51)
+	kSceneOpSegmentStateOps = 4,	// args: array of uint pairs [op seg, op seg], term with 0,0 that modify segment states
 	kSceneOpSetItemAttr = 5,	// args: [item num, item param 0x28, item param 0x2c]. set item attrs?
 	kSceneOpGiveItem = 6,		// args: item num. give item?
 	kSceneOp7 = 7,				// args: none.
@@ -175,7 +175,7 @@ public:
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
-	
+
 	uint _hideTime;
 
  	void draw(Graphics::Surface *dst, int mode);
@@ -267,6 +267,11 @@ protected:
 	virtual void enableTrigger(uint16 num) {}
 	virtual void showDialog(uint16 num) {}
 	virtual void globalOps(const Common::Array<uint16> &args) {}
+	virtual void segmentStateOps(const Common::Array<uint16> &args);
+	void segmentStateOp9(uint16 arg);
+	void segmentStateOp10(uint16 arg);
+	void segmentStateOp11(uint16 arg);
+	void segmentStateOp12(uint16 arg);
 
 	uint32 _magic;
 	Common::String _version;

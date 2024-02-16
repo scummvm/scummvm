@@ -48,7 +48,7 @@ public:
 	~MidiParser_DGDS();
 
 	void sendInitCommands();
-	
+
 	bool loadMusic(byte *data, uint32 size);
 
 	bool validateNextRead(uint i, uint16 *_curPos);

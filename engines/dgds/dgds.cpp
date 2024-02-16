@@ -334,7 +334,7 @@ Common::Error DgdsEngine::run() {
 			}
 			_scene->checkTriggers();
 		} else if (getGameId() == GID_BEAMISH) {
-			if (_adsInterp->run())
+			if (!_adsInterp->run())
 				return Common::kNoError;
 		}
 
