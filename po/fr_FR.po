@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-02-16 02:55+0000\n"
+"POT-Creation-Date: 2024-02-16 10:20+0000\n"
 "PO-Revision-Date: 2024-01-25 17:37+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -335,7 +335,7 @@ msgstr "Les contenus du code JSON sont malformés."
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
-#: engines/director/lingo/lingo-builtins.cpp:1885
+#: engines/director/lingo/lingo-builtins.cpp:1886
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
@@ -2966,7 +2966,7 @@ msgstr ""
 "Répétez les étapes 1 et 6 pour chaque jeu."
 
 #: base/main.cpp:670 base/main.cpp:695
-#: engines/director/lingo/lingo-builtins.cpp:1269
+#: engines/director/lingo/lingo-builtins.cpp:1271
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
 msgid "Ok"

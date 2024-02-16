@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-02-16 02:55+0000\n"
+"POT-Creation-Date: 2024-02-16 10:20+0000\n"
 "PO-Revision-Date: 2024-01-25 19:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -333,7 +333,7 @@ msgstr "Содержимое кода JSON имеет неверный форм�
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
-#: engines/director/lingo/lingo-builtins.cpp:1885
+#: engines/director/lingo/lingo-builtins.cpp:1886
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
@@ -2931,7 +2931,7 @@ msgstr ""
 "Повторите шаги 1 и 6 для каждой игры."
 
 #: base/main.cpp:670 base/main.cpp:695
-#: engines/director/lingo/lingo-builtins.cpp:1269
+#: engines/director/lingo/lingo-builtins.cpp:1271
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
 msgid "Ok"
