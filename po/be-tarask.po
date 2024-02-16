@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-02-11 15:35+0000\n"
+"POT-Creation-Date: 2024-02-16 02:55+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5455,7 +5455,7 @@ msgstr "Заўжды выкарыстоўваць выразны манахро�
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 
-#: engines/agi/detection_tables.h:314
+#: engines/agi/detection_tables.h:316
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
 
@@ -5469,7 +5469,7 @@ msgstr ""
 "Калі вы маеце такі ж файл у іншай гульні AGI (Sierra), вы можаце скапіяваць "
 "яго ў тэчку з гульнёй"
 
-#: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
+#: engines/agi/metaengine.cpp:115 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/crab/metaengine.cpp:34
 #: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:36
 #: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
@@ -5479,7 +5479,7 @@ msgstr ""
 msgid "Use original save/load screens"
 msgstr "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня"
 
-#: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
+#: engines/agi/metaengine.cpp:116 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/crab/metaengine.cpp:35
 #: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:37
 #: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
@@ -5491,11 +5491,11 @@ msgstr ""
 "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
 "ScummVM"
 
-#: engines/agi/metaengine.cpp:131
+#: engines/agi/metaengine.cpp:127
 msgid "Use an alternative palette"
 msgstr "Выкарыстоўваць альтэрнатыўную палітру"
 
-#: engines/agi/metaengine.cpp:132
+#: engines/agi/metaengine.cpp:128
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
@@ -5503,31 +5503,31 @@ msgstr ""
 "Выкарыстоўваць альтэрнатыўную палітру для ўсіх гульняў Amiga. Гэта старая "
 "функцыя"
 
-#: engines/agi/metaengine.cpp:143
+#: engines/agi/metaengine.cpp:139
 msgid "Mouse support"
 msgstr "Падтрыманьне мышы"
 
-#: engines/agi/metaengine.cpp:144
+#: engines/agi/metaengine.cpp:140
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 "Далучае падтыманьне мышы. Дазваляе карыстаць мыш для руху ды ў мэню гульняў."
 
-#: engines/agi/metaengine.cpp:155
+#: engines/agi/metaengine.cpp:151
 msgid "Use Hercules hires font"
 msgstr "Выкарыстоўваць HD шрыфт Hercules"
 
-#: engines/agi/metaengine.cpp:156
+#: engines/agi/metaengine.cpp:152
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
 "Выкарыстоўваецца шрыфт Hercules вялікай разрознасьці, калі ё даступны файл "
 "шрыфту."
 
-#: engines/agi/metaengine.cpp:167
+#: engines/agi/metaengine.cpp:163
 msgid "Pause when entering commands"
 msgstr "Перапынак падчас уводу загадаў"
 
-#: engines/agi/metaengine.cpp:168
+#: engines/agi/metaengine.cpp:164
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
@@ -5535,15 +5535,15 @@ msgstr ""
 "Паказваць загаднае акно ўводу й перапыняць гульню (як у SCI) замест ўводу ў "
 "цяперашнім часе."
 
-#: engines/agi/metaengine.cpp:179
+#: engines/agi/metaengine.cpp:175
 msgid "Add speed menu"
 msgstr "Дадаць хуткае мэню"
 
-#: engines/agi/metaengine.cpp:180
+#: engines/agi/metaengine.cpp:176
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 
-#: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
+#: engines/agi/metaengine.cpp:415 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5551,7 +5551,7 @@ msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 msgid "This game does not support loading"
 msgstr "Гэтая гульня не падтрымліваецца."
 
-#: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
+#: engines/agi/metaengine.cpp:437 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 #, fuzzy
