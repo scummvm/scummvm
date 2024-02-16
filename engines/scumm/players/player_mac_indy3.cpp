@@ -39,7 +39,7 @@ extern const uint32 g_pv2ModTblSize;
 
 class LegacyMusicDriver : public MacSoundDriver {
 public:
-	LegacyMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool canInterpolate, bool internal16Bit) : MacSoundDriver(mutex, ASC_DEVICE_RATE, canInterpolate, internal16Bit), _numChan(numChannels) {}
+	LegacyMusicDriver(uint16 numChannels, Common::Mutex &mutex, bool canInterpolate, bool internal16Bit) : MacSoundDriver(mutex, ASC_DEVICE_RATE, internal16Bit ? numChannels : 1, canInterpolate, internal16Bit), _numChan(numChannels) {}
 	virtual void start() = 0;
 	virtual void stop() = 0;
 
@@ -57,17 +57,17 @@ protected:
 	void putSample(int8 *&dst, int16 smp, bool expectStereo) {
 		if (_smpSize == 2) {
 			smp = CLIP<int16>(smp, _smpMin, _smpMax);
-			*reinterpret_cast<int16*>(dst) = smp;
+			*reinterpret_cast<int16*>(dst) += smp;
 			dst += _smpSize;
 			if (expectStereo) {
-				*reinterpret_cast<int16*>(dst) = smp;
+				*reinterpret_cast<int16*>(dst) += smp;
 				dst += _smpSize;
 			}
 		} else {
-			smp = CLIP<int8>(smp >> 2, _smpMin, _smpMax);
-			*dst++ = smp;
+			smp = CLIP<int16>(smp / _numChan, _smpMin, _smpMax);
+			*dst++ += smp;
 			if (expectStereo)
-				*dst++ = smp;
+				*dst++ += smp;
 		}
 	}
 	const uint16 _numChan;
@@ -168,9 +168,6 @@ void FourToneSynthDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundTy
 				setFlags(kStatusDone);
 		}
 	}
-
-	if (end > dst)
-		memset(dst, 0, end - dst);
 }
 
 void FourToneSynthDriver::start() {
@@ -209,7 +206,7 @@ void FourToneSynthDriver::send(int dataType, ...)  {
 		break;
 	}
 
-	_status |= kStatusOverflow;
+	_status.flags |= kStatusOverflow;
 
 	va_end(arg);
 }
@@ -241,7 +238,6 @@ void FourToneSynthDriver::setRate(uint8 chan, uint16 rate) {
 
 SquareWaveSynthDriver::SquareWaveSynthDriver(Common::Mutex &mutex, bool internal16Bit) :
 	LegacyMusicDriver(1, mutex, false, internal16Bit), _count(0xffff), _duration(0), _amplitude(0), _phase(0), _pos(0) {
-
 }
 
 void SquareWaveSynthDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) {
@@ -271,9 +267,6 @@ void SquareWaveSynthDriver::feed(int8 *dst, uint32 byteSize, Audio::Mixer::Sound
 		if (++_pos == 370)
 			_pos = 0;
 	}
-
-	if (dst < end)
-		memset(dst, 0, end - dst);
 }
 
 void SquareWaveSynthDriver::start() {
@@ -310,7 +303,7 @@ void SquareWaveSynthDriver::send(int dataType, ...)  {
 }
 
 void SquareWaveSynthDriver::addTriplet(uint16 frequency, uint16 amplitude) {
-	if ((_status & kStatusStartup) && frequency < 3)
+	if ((_status.flags & kStatusStartup) && frequency < 3)
 		return;
 
 	clearFlags(kStatusStartup);
@@ -320,7 +313,7 @@ void SquareWaveSynthDriver::addTriplet(uint16 frequency, uint16 amplitude) {
 	if (_lastPara.amplitude == 0xffff)
 		_lastPara.amplitude = amplitude;
 
-	if ((_status & kStatusPlaying) && _tripletsQueue.size() < 176) {
+	if ((_status.flags & kStatusPlaying) && _tripletsQueue.size() < 176) {
 		if (frequency >> 3 != _lastPara.count >> 3 || amplitude != _lastPara.amplitude) {
 			_tripletsQueue.push_back(_lastPara.fromScumm());
 			_lastPara = Triplet(frequency, amplitude, 0);
@@ -329,7 +322,7 @@ void SquareWaveSynthDriver::addTriplet(uint16 frequency, uint16 amplitude) {
 		_lastPara.duration++;
 	}
 
-	if (!(_status & kStatusPlaying) || _tripletsQueue.size() >= 176)
+	if (!(_status.flags & kStatusPlaying) || _tripletsQueue.size() >= 176)
 		setFlags(kStatusOverflow);
 }
 
@@ -339,7 +332,7 @@ Indy3MacSnd::Indy3MacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTaskClientDr
 	_vm(vm), _mixer(mixer), _musicChannels(nullptr), _curSound(0), _curSong(0), _lastSoundEffectPrio(0), _idRangeMax(86), _soundEffectNumLoops(-1),
 	_musicIDTable(nullptr), _macstr(nullptr), _musicIDTableLen(0), _soundUsage(0), _mdrv(nullptr), _sdrv(nullptr), _nextTickProc(this, &VblTaskClientDriver::callback),
 	_soundEffectPlaying(false), _songTimer(0), _songTimerInternal(0), _qmode(0), _16bit(false), _qualHi(false),	_mixerThread(false), _activeChanCount(0),
-	_songUnfinished(false), _numMusicChannels(8), _numMusicTracks(4) {
+	_songUnfinished(false), _numMusicChannels(8), _numMusicTracks(4), _handle(0) {
 	assert(_vm);
 	assert(_mixer);
 
@@ -361,6 +354,8 @@ Indy3MacSnd::~Indy3MacSnd() {
 	_mixer->stopHandle(_soundHandle);
 	delete _macstr;
 	delete[] _soundUsage;
+
+	_sdrv->disposeChannel(_handle);
 
 	for (Common::Array<MacSoundDriver*>::const_iterator i = _drivers.begin(); i != _drivers.end(); ++i)
 		delete *i;
@@ -396,7 +391,7 @@ bool Indy3MacSnd::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 f
 	if (!_macstr || !_mixer)
 		return false;
 
-	_sdrv = new MacLowLevelPCMDriver(_mixer->mutex(), pcmDeviceRate, enableInterpolation, internal16Bit);
+	_sdrv = new MacLowLevelPCMDriver(_mixer->mutex(), pcmDeviceRate, internal16Bit);
 	FourToneSynthDriver *mdrv = new FourToneSynthDriver(_mixer->mutex(), internal16Bit);
 	if (!mdrv || !_sdrv)
 		return false;
@@ -406,6 +401,8 @@ bool Indy3MacSnd::startDevices(uint32 outputRate, uint32 pcmDeviceRate, uint32 f
 	_qualHi = true;
 	_16bit = internal16Bit;
 	_mdrv = mdrv;
+
+	_handle = _sdrv->createChannel(Audio::Mixer::kSFXSoundType, MacLowLevelPCMDriver::kSampledSynth, enableInterpolation);
 
 	_drivers.push_back(_mdrv);
 	_drivers.push_back(_sdrv);
@@ -534,25 +531,27 @@ void Indy3MacSnd::nextTick() {
 
 	_mixerThread = true;
 
-	if (!_curSong && (_sdrv->getStatus() & MacSoundDriver::kStatusDone))
+	if (!_curSong && (_sdrv->getChannelStatus(_handle) & MacSoundDriver::kStatusDone))
 		updateSoundEffect();
 	else if (_curSong)
 		updateSong();
-	else if (_songUnfinished && (_mdrv->getStatus() & MacSoundDriver::kStatusDone))
+	else if (_songUnfinished && (_mdrv->getStatus().flags & MacSoundDriver::kStatusDone))
 		stopSong();
 
 	_mixerThread = false;
 }
 
 void Indy3MacSnd::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const {
+	assert(dst);
+	memset(dst, 0, len);
 	for (Common::Array<MacSoundDriver*>::const_iterator i = _drivers.begin(); i != _drivers.end(); ++i)
 		(*i)->feed(dst, len, type, expectStereo);
 }
 
-const MacSoundDriver::Caps &Indy3MacSnd::getDriverCaps(uint8 drvID) const {
+const MacSoundDriver::Status &Indy3MacSnd::getDriverStatus(uint8 drvID) const {
 	if (drvID >= _drivers.size())
 		error(" Indy3MacSnd::getDriverCaps(): Invalid driver id %d", drvID);
-	return _drivers[drvID]->getCaps();
+	return _drivers[drvID]->getStatus();
 }
 
 void Indy3MacSnd::startSong(int id) {
@@ -656,7 +655,7 @@ void Indy3MacSnd::startSoundEffect(int id) {
 	_pcmSnd.loopend = numSamples - 1;
 	_pcmSnd.baseFreq = 60;
 
-	_sdrv->play(&_pcmSnd);
+	_sdrv->playSamples(_handle, &_pcmSnd);
 
 	_curSound = id;
 	_soundUsage[id]++;
@@ -671,7 +670,7 @@ void Indy3MacSnd::stopSong() {
 
 void Indy3MacSnd::stopSoundEffect() {
 	Common::StackLock lock(_mixer->mutex());
-	_sdrv->stop();
+	_sdrv->stop(_handle);
 	_soundEffectPlaying = false;
 	_lastSoundEffectPrio = 0;
 	_curSound = 0;
@@ -689,13 +688,13 @@ void Indy3MacSnd::finishSong() {
 	if (_soundUsage[_curSong])
 		--_soundUsage[_curSong];
 	_curSong = 0;
-	_songUnfinished = !(_mdrv->getStatus() & MacSoundDriver::kStatusDone);
+	_songUnfinished = !(_mdrv->getStatus().flags & MacSoundDriver::kStatusDone);
 }
 
 void Indy3MacSnd::updateSong() {
-	if (_curSong && (_qualHi || (_mdrv->getStatus() & MacSoundDriver::kStatusDone))) {
+	if (_curSong && (_qualHi || (_mdrv->getStatus().flags & MacSoundDriver::kStatusDone))) {
 		_mdrv->clearFlags(MacSoundDriver::kStatusOverflow);
-		while (_curSong && !(_mdrv->getStatus() & MacSoundDriver::kStatusOverflow)) {
+		while (_curSong && !(_mdrv->getStatus().flags & MacSoundDriver::kStatusOverflow)) {
 			for (int i = 4; i; --i) {
 				for (int ii = 0; ii < _numMusicTracks && _curSong; ++ii)
 					_musicChannels[ii]->nextTick();
@@ -728,7 +727,7 @@ void Indy3MacSnd::updateSoundEffect() {
 		if (_soundEffectNumLoops > 0)
 			--_soundEffectNumLoops;
 		if (_soundEffectNumLoops)
-			_sdrv->play(&_pcmSnd);
+			_sdrv->playSamples(_handle, &_pcmSnd);
 		else
 			--_soundUsage[_curSound];
 		chkRestart = (_soundEffectNumLoops == 0);

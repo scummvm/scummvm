@@ -29,17 +29,19 @@ namespace Scumm {
 
 class MacSoundDriver {
 public:
-	MacSoundDriver(Common::Mutex &mutex, uint32 deviceRate, bool canInterpolate, bool internal16Bit) : _mutex(mutex), _caps(deviceRate, canInterpolate),
-		_smpSize(internal16Bit ? 2 : 1), _smpMin(internal16Bit ? -32768 : -128), _smpMax(internal16Bit ? 32767 : 127), _status(0) {}
+	MacSoundDriver(Common::Mutex &mutex, uint32 deviceRate, int activeChannels, bool canInterpolate, bool internal16Bit) : _mutex(mutex), _status(deviceRate, canInterpolate, activeChannels),
+		_smpSize(internal16Bit ? 2 : 1), _smpMin(internal16Bit ? -32768 : -128), _smpMax(internal16Bit ? 32767 : 127) {}
 	virtual ~MacSoundDriver() {}
 	virtual void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) = 0;
 
-	struct Caps {
-		Caps(uint32 rate, bool interp) :deviceRate(rate), allowInterPolation(interp) {}
-		const uint32 deviceRate;
-		const bool allowInterPolation;
+	struct Status {
+		Status(uint32 rate, bool interp, int actChan) :deviceRate(rate), allowInterPolation(interp), numExternalMixChannels(actChan), flags(0) {}
+		uint32 deviceRate;
+		int numExternalMixChannels;
+		bool allowInterPolation;
+		uint8 flags;
 	};
-	const Caps &getCaps() const { return _caps; }
+	const Status &getStatus() const { return _status; }
 
 	enum StatusFlag : uint8 {
 		kStatusPlaying =		1	<<		0,
@@ -47,18 +49,17 @@ public:
 		kStatusStartup =		1	<<		2,
 		kStatusDone =			1	<<		3
 	};
-	uint8 getStatus() const { return _status; }
-	void clearFlags(uint8 flags) { _status &= ~flags; }
+
+	void clearFlags(uint8 flags) { _status.flags &= ~flags; }
 
 protected:
-	void setFlags(uint8 flags) { _status |= flags; }
+	void setFlags(uint8 flags) { _status.flags |= flags; }
 
 	Common::Mutex &_mutex;
 	const int _smpSize;
 	const int16 _smpMin;
 	const int16 _smpMax;
-	const Caps _caps;
-	uint8 _status;
+	Status _status;
 };
 
 class MacLowLevelPCMDriver final : public MacSoundDriver {
@@ -73,34 +74,71 @@ public:
 		byte baseFreq;
 		bool stereo;
 	};
+
+	enum SynthType {
+		kSquareWaveSynth = 1,
+		kWaveTableSynth = 3,
+		kSampledSynth = 5
+	};
+
+	typedef int ChanHandle;
 public:
-	MacLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool enableInterpolation, bool internal16Bit);
+	MacLowLevelPCMDriver(Common::Mutex &mutex, uint32 deviceRate, bool internal16Bit);
+	~MacLowLevelPCMDriver() override;
+
 	void feed(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) override;
-	void play(PCMSound *snd);
-	void stop();
+
+	ChanHandle createChannel(Audio::Mixer::SoundType sndType, SynthType synthType, bool interpolate);
+	void disposeChannel(ChanHandle handle);
+
+	void playSamples(ChanHandle handle, PCMSound *snd);
+	void stop(ChanHandle handle);
+
+	uint8 getChannelStatus(ChanHandle handle) const { Channel *ch = findChannel(handle); return ch ? ch->_flags : 0; }
 private:
 	uint32 calcRate(uint32 outRate, uint32 factor, uint32 dataRate);
+	void updateStatus();
 
-	Common::SharedPtr<const int8> _res;
-	const int8 *_data;
-	const bool _interp;
-	int8 _lastSmp[2];
-	uint32 _len;
-	uint16 _rmH;
-	uint16 _rmL;
-	uint32 _loopSt;
-	uint32 _loopEnd;
-	byte _baseFreq;
-	uint32 _rcPos;
-	uint32 _smpWtAcc;
-	uint16 _frameSize;
+private:
+	class Channel {
+	public:
+		Channel(Audio::Mixer::SoundType sndtp, int synth, bool interp);
+		ChanHandle getHandle() const;
+		void stop();
+
+		const Audio::Mixer::SoundType _sndType;
+		const int _synth;
+		const bool _interpolate;
+
+		Common::SharedPtr<const int8> _res;
+		const int8 *_data;
+		int8 _lastSmp[2];
+		uint32 _len;
+		uint16 _rmH;
+		uint16 _rmL;
+		uint32 _loopSt;
+		uint32 _loopEnd;
+		byte _baseFreq;
+		uint32 _rcPos;
+		uint32 _smpWtAcc;
+		uint16 _frameSize;
+		uint8 _flags;
+	};
+
+	void setChanFlags(Channel *ch, uint8 flags) { if (ch) ch->_flags |= flags; }
+	void clearChanFlags(Channel *ch, uint8 flags) { if (ch) ch->_flags &= ~flags; }
+	Channel *findChannel(ChanHandle h) const;
+	Common::Array<Channel*> _channels;
+	int _numInternalMixChannels;
+	int32 *_mixBuffer = 0;
+	uint32 _mixBufferSize;
 };
 
 class VblTaskClientDriver {
 public:
 	virtual void callback() = 0;
 	virtual void generateData(int8 *dst, uint32 len, Audio::Mixer::SoundType type, bool expectStereo) const = 0;
-	virtual const MacSoundDriver::Caps &getDriverCaps(uint8 drvID) const = 0;
+	virtual const MacSoundDriver::Status &getDriverStatus(uint8 drvID) const = 0;
 };
 
 class MacPlayerAudioStream : public Audio::AudioStream {
@@ -135,7 +173,7 @@ private:
 	const CallbackProc *_vblCbProc;
 
 	struct SmpBuffer {
-		SmpBuffer() : start(0), pos(0), end(0), volume(0x10000), lastL(0), lastR(0), size(0), rateConvInt(0), rateConvFrac(0), rateConvAcc(-1), interpolate(false) {}
+		SmpBuffer() : start(0), pos(0), end(0), volume(0x10000), lastL(0), lastR(0), size(0), rateConvInt(0), rateConvFrac(0), rateConvAcc(-1) {}
 		int8 *start;
 		int8 *pos;
 		const int8 *end;
@@ -146,14 +184,12 @@ private:
 		uint32 rateConvInt;
 		uint32 rateConvFrac;
 		int32 rateConvAcc;
-		bool interpolate;
 	} _buffers[2];
 
 	const uint32 _outputRate;
 	const uint8 _frameSize;
 	const bool _interp;
 	const int _smpInternalSize;
-	const int _volDown;
 
 	const bool _isStereo;
 };
@@ -181,7 +217,7 @@ public:
 	void nextTick();
 	void callback() override { nextTick(); }
 	void generateData(int8 *dst, uint32 byteSize, Audio::Mixer::SoundType type, bool expectStereo) const override;
-	const MacSoundDriver::Caps &getDriverCaps(uint8 drvID) const override;
+	const MacSoundDriver::Status &getDriverStatus(uint8 drvID) const override;
 
 private:
 	void startSong(int id);
@@ -216,6 +252,7 @@ private:
 	bool _mixerThread;
 
 	MacLowLevelPCMDriver::PCMSound _pcmSnd;
+	MacLowLevelPCMDriver::ChanHandle _handle;
 
 	MacPlayerAudioStream *_macstr;
 	Audio::SoundHandle _soundHandle;
