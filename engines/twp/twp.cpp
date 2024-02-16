@@ -19,14 +19,22 @@
  *
  */
 
-#include "imgui/imgui.h"
-#include "imgui_impl_sdl2_scummvm.h"
-#include "imgui_impl_opengl3_scummvm.h"
-#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+#include "config.h"
+
+#ifdef USE_IMGUI
+	#include "imgui/imgui.h"
+	#include "imgui_impl_sdl2_scummvm.h"
+	#include "imgui_impl_opengl3_scummvm.h"
+	#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+#endif
+
+#include "common/config-manager.h"
+#include "common/events.h"
 #include "common/savefile.h"
 #include "image/png.h"
 #include "engines/util.h"
 #include "graphics/opengl/system_headers.h"
+
 #include "twp/twp.h"
 #include "twp/console.h"
 #include "twp/lighting.h"
@@ -40,7 +48,10 @@
 namespace Twp {
 
 TwpEngine *g_engine;
-SDL_Window *g_window = nullptr;
+
+#ifdef USE_IMGUI
+	SDL_Window *g_window = nullptr;
+#endif
 
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst),
@@ -695,8 +706,11 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// imgui render
 	_gfx.use(nullptr);
+
+#ifdef USE_IMGUI
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 
 	g_system->updateScreen();
 }
@@ -705,6 +719,7 @@ Common::Error TwpEngine::run() {
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+#ifdef USE_IMGUI
 	// Setup Dear ImGui
 	OpenGLSdlGraphics3dManager *manager = dynamic_cast<OpenGLSdlGraphics3dManager *>(g_system->getPaletteManager());
 	IMGUI_CHECKVERSION();
@@ -714,6 +729,7 @@ Common::Error TwpEngine::run() {
 	ImGui_ImplSDL2_InitForOpenGL(g_window, glContext);
 	ImGui_ImplOpenGL3_Init("#version 110");
 	ImGui::StyleColorsDark();
+#endif
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -762,10 +778,12 @@ Common::Error TwpEngine::run() {
 	while (!shouldQuit()) {
 		Math::Vector2d camPos = _gfx.cameraPos();
 		while (g_system->getEventManager()->pollEvent(e)) {
+#ifdef USE_IMGUI
 			ImGui_ImplSDL2_ProcessEvent(&e);
 			ImGuiIO &io = ImGui::GetIO();
 			if (io.WantTextInput || io.WantCaptureMouse)
 				continue;
+#endif
 
 			switch (e.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
@@ -921,11 +939,13 @@ Common::Error TwpEngine::run() {
 		time = newTime;
 		update(speed * delta / 1000.f);
 
+#ifdef USE_IMGUI
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(g_window);
 		ImGui::NewFrame();
 
 		onImGuiRender();
+#endif
 
 		draw();
 		_cursor.update();
@@ -938,9 +958,11 @@ Common::Error TwpEngine::run() {
 	}
 
 	// Cleanup
+#ifdef USE_IMGUI
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+#endif
 
 	return Common::kNoError;
 }

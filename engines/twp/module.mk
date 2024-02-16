@@ -45,7 +45,6 @@ MODULE_OBJS = \
 	btea.o \
 	time.o \
 	dialogs.o \
-	debugtools.o \
 	squirrel/sqapi.o \
 	squirrel/sqbaselib.o \
 	squirrel/sqfuncstate.o \
@@ -66,12 +65,17 @@ MODULE_OBJS = \
 	squirrel/sqstdrex.o \
 	squirrel/sqstdaux.o \
 	clipper/clipper.o \
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugtools.o \
 	imgui/imgui.o \
 	imgui/imgui_draw.o \
 	imgui/imgui_widgets.o \
 	imgui/imgui_tables.o \
 	imgui_impl_opengl3_scummvm.o \
 	imgui_impl_sdl2_scummvm.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
