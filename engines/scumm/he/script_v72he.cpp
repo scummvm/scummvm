@@ -533,7 +533,9 @@ void ScummEngine_v72he::o72_captureWizImage() {
 	grab.right = pop() + 1;
 	grab.top = pop();
 	grab.left = pop();
-	_wiz->captureWizImage(pop(), grab, false, true);
+	int image = pop();
+
+	_wiz->takeAWiz(image, grab, false, true);
 }
 
 void ScummEngine_v72he::o72_getTimer() {
@@ -636,12 +638,13 @@ void ScummEngine_v72he::o72_drawObject() {
 }
 
 void ScummEngine_v72he::o72_printWizImage() {
-	WizImage wi;
-	wi.resNum = pop();
-	wi.x1 = wi.y1 = 0;
+	WizBufferElement wi;
+	wi.image = pop();
+	wi.x = wi.y = 0;
 	wi.state = 0;
 	wi.flags = kWRFPrint;
-	_wiz->displayWizImage(&wi);
+
+	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
@@ -1478,13 +1481,13 @@ void ScummEngine_v72he::o72_kernelGetFunctions() {
 }
 
 void ScummEngine_v72he::o72_drawWizImage() {
-	WizImage wi;
+	WizBufferElement wi;
 	wi.flags = pop();
-	wi.y1 = pop();
-	wi.x1 = pop();
-	wi.resNum = pop();
+	wi.y = pop();
+	wi.x = pop();
+	wi.image = pop();
 	wi.state = 0;
-	_wiz->displayWizImage(&wi);
+	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 }
 
 void ScummEngine_v72he::debugInput(byte* string) {

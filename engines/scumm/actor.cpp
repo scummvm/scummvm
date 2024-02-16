@@ -1621,7 +1621,7 @@ void Actor_v7::turnToDirection(int newdir) {
 	newdir = remapDirection((newdir + 360) % 360, false);
 	_moving &= ~MF_TURN;
 
-	if (isInCurrentRoom() && !_ignoreBoxes) { 
+	if (isInCurrentRoom() && !_ignoreBoxes) {
 		byte flags = _vm->getBoxFlags(_walkbox);
 		if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip))
 			newdir = 360 - newdir;
@@ -2353,31 +2353,31 @@ void ScummEngine_v6::processActors() {
 
 #ifdef ENABLE_HE
 void ScummEngine_v71he::processActors() {
-	preProcessAuxQueue();
+	heFlushAuxEraseQueue();
 
 	if (!_skipProcessActors)
 		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
 
-	postProcessAuxQueue();
+	heFlushAuxQueues();
 }
 
 void ScummEngine_v90he::processActors() {
-	preProcessAuxQueue();
+	heFlushAuxEraseQueue();
 
-	_sprite->setRedrawFlags(false);
-	_sprite->processImages(true);
+	_sprite->checkForForcedRedraws(false);
+	_sprite->renderSprites(true);
 
 	if (!_skipProcessActors)
 		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
 
-	postProcessAuxQueue();
+	heFlushAuxQueues();
 
-	_sprite->setRedrawFlags(true);
-	_sprite->processImages(false);
+	_sprite->checkForForcedRedraws(true);
+	_sprite->renderSprites(false);
 }
 #endif
 
@@ -3510,7 +3510,7 @@ bool ActorHE::isTalkConditionSet(int slot) const {
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v71he::preProcessAuxQueue() {
+void ScummEngine_v71he::heFlushAuxEraseQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
@@ -3522,7 +3522,7 @@ void ScummEngine_v71he::preProcessAuxQueue() {
 	_auxBlocksNum = 0;
 }
 
-void ScummEngine_v71he::postProcessAuxQueue() {
+void ScummEngine_v71he::heFlushAuxQueues() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxEntriesNum; ++i) {
 			AuxEntry *ae = &_auxEntries[i];

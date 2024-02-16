@@ -27,23 +27,25 @@
 namespace Scumm {
 
 enum SpriteFlags {
-	kSFChanged           = 0x1,
-	kSFNeedRedraw        = 0x2,
-	kSFScaled            = 0x10,
-	kSFRotated           = 0x20,
-	kSFDoubleBuffered    = 0x1000,
-	kSFYFlipped          = 0x2000,
-	kSFXFlipped          = 0x4000,
-	kSFActive            = 0x8000,
-	kSFRemapPalette      = 0x80000,
-	kSFAutoAnim          = 0x200000,
-	kSFMarkDirty         = 0x400000,
-	kSFBlitDirectly      = 0x2000000,
-	kSFImageless         = 0x40000000
+	kSFErase             = 0x00000001,
+	kSFRender            = 0x00000002,
+	kSFScaleSpecified    = 0x00000010,
+	kSFAngleSpecified    = 0x00000020,
+	kSFBackgroundRender  = 0x00001000,
+	kSFVFlip             = 0x00002000,
+	kSFHFlip             = 0x00004000,
+	kSFActive            = 0x00008000,
+	kSFUseImageRemap     = 0x00080000,
+	kSFAutoAnimate       = 0x00200000,
+	kSFSmartRender       = 0x00400000,
+	kSFDontAnimImageList = 0x01000000,
+	kSFDontCombineErase  = 0x02000000,
+	kSFIgnoreRender      = 0x20000000,
+	kSFIgnoreErase       = 0x40000000
 };
 
 enum SpriteGroupFlags {
-	kSGFClipBox     = (1 << 0)
+	kSGFUseClipRect     = (1 << 0)
 };
 
 enum SpritePropertySubOps {
@@ -87,74 +89,74 @@ enum PolygonOverlapSubOps {
 
 struct SpriteInfo {
 	int32 id;
-	int32 zorder;
+	int32 combinedPriority;
 	int32 flags;
 	int32 image;
-	int32 imageState;
+	int32 state;
 	int32 group;
 	int32 palette;
 	int32 priority;
-	Common::Rect bbox;
-	int32 dx;
-	int32 dy;
-	Common::Point pos;
-	int32 tx;
-	int32 ty;
+	Common::Rect lastRect;
+	int32 deltaPosX;
+	int32 deltaPosY;
+	Common::Point lastSpot;
+	int32 posX;
+	int32 posY;
 	int32 userValue;
-	int32 curImageState;
-	int32 curImage;
-	int32 imglistNum;
+	int32 lastState;
+	int32 lastImage;
+	int32 imageList;
 	int32 shadow;
-	int32 imageStateCount;
+	int32 maxStates;
 	int32 angle;
 	int32 scale;
-	int32 animProgress;
-	int32 curAngle;
-	int32 curScale;
-	int32 curImgFlags;
+	int32 animState;
+	int32 lastAngle;
+	int32 lastScale;
+	int32 lastRenderFlags;
 	int32 animIndex;
 	int32 animSpeed;
 	int32 sourceImage;
 	int32 maskImage;
 	int32 zbufferImage;
 	int32 classFlags;
-	int32 imgFlags;
+	int32 specialRenderFlags;
 	int32 conditionBits;
 
 	void reset() {
 		id = 0;
-		zorder = 0;
+		combinedPriority = 0;
 		flags = 0;
 		image = 0;
-		imageState = 0;
+		state = 0;
 		group = 0;
 		palette = 0;
 		priority = 0;
-		bbox.top = bbox.left = bbox.bottom = bbox.right = 0;
-		dx = 0;
-		dy = 0;
-		pos.x = pos.y = 0;
-		tx = 0;
-		ty = 0;
+		lastRect.top = lastRect.left = lastRect.bottom = lastRect.right = 0;
+		deltaPosX = 0;
+		deltaPosY = 0;
+		lastSpot.x = lastSpot.y = 0;
+		posX = 0;
+		posY = 0;
 		userValue = 0;
-		curImageState = 0;
-		curImage = 0;
-		imglistNum = 0;
+		lastState = 0;
+		lastImage = 0;
+		imageList = 0;
 		shadow = 0;
-		imageStateCount = 0;
+		maxStates = 0;
 		angle = 0;
 		scale = 0;
-		animProgress = 0;
-		curAngle = 0;
-		curScale = 0;
-		curImgFlags = 0;
+		animState = 0;
+		lastAngle = 0;
+		lastScale = 0;
+		lastRenderFlags = 0;
 		animIndex = 0;
 		animSpeed = 0;
 		sourceImage = 0;
 		maskImage = 0;
 		zbufferImage = 0;
 		classFlags = 0;
-		imgFlags = 0;
+		specialRenderFlags = 0;
 		conditionBits = 0;
 	}
 };
@@ -205,9 +207,9 @@ public:
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void resetBackground();
-	void setRedrawFlags(bool checkZOrder);
+	void checkForForcedRedraws(bool checkZOrder);
 	void sortActiveSprites();
-	void processImages(bool arg);
+	void renderSprites(bool arg);
 	void updateImages();
 
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);

@@ -327,12 +327,12 @@ void ScummEngine_v80he::o80_setState() {
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {
-	WizImage wi;
-	wi.x1 = wi.y1 = pop();
-	wi.resNum = pop();
+	WizBufferElement wi;
+	wi.x = wi.y = pop();
+	wi.image = pop();
 	wi.state = 0;
-	wi.flags = kWIFIsPolygon;
-	_wiz->displayWizImage(&wi);
+	wi.flags = kWRFIsPolygon;
+	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 }
 
 /**
@@ -371,13 +371,13 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
 		a->drawActorToBackBuf(x, y);
 	} else if (type == 3) {
-		WizImage wi;
+		WizBufferElement wi;
 		wi.flags = 0;
-		wi.y1 = y;
-		wi.x1 = x;
-		wi.resNum = id;
+		wi.y = y;
+		wi.x = x;
+		wi.image = id;
 		wi.state = 0;
-		_wiz->displayWizImage(&wi);
+		_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 	} else {
 		drawPixel(x, y, id);
 	}
@@ -422,13 +422,13 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 			ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
 			a->drawActorToBackBuf(x, y);
 		} else if (type == 3) {
-			WizImage wi;
+			WizBufferElement wi;
 			wi.flags = 0;
-			wi.y1 = y;
-			wi.x1 = x;
-			wi.resNum = id;
+			wi.y = y;
+			wi.x = x;
+			wi.image = id;
 			wi.state = 0;
-			_wiz->displayWizImage(&wi);
+			_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 		} else {
 			drawPixel(x, y, id);
 		}

@@ -230,15 +230,15 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	}
 }
 
-void Wiz::fillWizFlood(const WizParameters *params) {
+void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFRenderCoords) {
 		int px = params->renderCoords.left;
 		int py = params->renderCoords.top;
-		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
+		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->image);
 		if (dataPtr) {
 			int state = 0;
 			if (params->actionFlags & kWAFState) {
-				state = params->img.state;
+				state = params->state;
 			}
 			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 			assert(wizh);
@@ -255,7 +255,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			}
 			uint8 color = _vm->VAR(93);
 			if (params->actionFlags & kWAFColor) {
-				color = params->fillColor;
+				color = params->colorValue;
 			}
 			if (imageRect.contains(px, py)) {
 				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
@@ -289,7 +289,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			}
 		}
 	}
-	_vm->_res->setModified(rtImage, params->img.resNum);
+	_vm->_res->setModified(rtImage, params->image);
 }
 
 } // End of namespace Scumm

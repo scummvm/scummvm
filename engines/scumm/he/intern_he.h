@@ -298,8 +298,8 @@ protected:
 	void redrawBGAreas() override;
 
 	void processActors() override;
-	void preProcessAuxQueue();
-	void postProcessAuxQueue();
+	void heFlushAuxEraseQueue();
+	void heFlushAuxQueues();
 
 	void clearDrawQueues() override;
 
@@ -383,7 +383,7 @@ protected:
 	int _stringLength = 1;
 	byte _stringBuffer[4096];
 
-	WizParameters _wizParams;
+	WizImageCommand _wizImageCommand;
 
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);

@@ -1982,7 +1982,7 @@ void ScummEngine_v90he::resetScumm() {
 	_hePaletteNum = 0;
 
 	_sprite->resetTables(0);
-	_wizParams.reset();
+	_wizImageCommand.reset();
 
 	if (_game.heversion >= 98)
 		_logicHE = LogicHE::makeLogicHE(this);
