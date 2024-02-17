@@ -152,6 +152,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Add support for Ultima VIII Spanish fan translation.
    - Support Pentagram save game files.
    - Added configurable double-click time for Ultima VIII.
+   - Original behaviour fix for placement of thrown weapons
+   - Original behaviour fix for pushing actors and objects
+   - Original behaviour fix for dropping objects
+   - Original behaviour fix for actor passability
+   - Fix cases of co-ordinates not wrapping around when a map boundary is crossed
+   - Hide menu when creating save thumbnails
+   - Fix some alloctor/deleter mismatches
 
  Voyeur:
    - Added support for German fan translation.
