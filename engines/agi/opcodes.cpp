@@ -31,7 +31,7 @@ namespace Agi {
 // the parameter count for parsing.
 // Consult the opcode functions for the real parameter types.
 
-const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
+static const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
 	{ "",                   "",         &condUnknown },     // 00
 	{ "equaln",             "vn",       &condEqual },       // 01
 	{ "equalv",             "vv",       &condEqualV },      // 02
@@ -51,7 +51,7 @@ const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
 	{ "bit",                "nv",       &condBit },         // 10
 };
 
-const AgiOpCodeDefinitionEntry opCodesV1[] = {
+static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "return",             "",         nullptr },              // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
@@ -86,7 +86,7 @@ const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "move.obj",           "nnnnn",    &cmdMoveObj },          // 1F
 	{ "set.view",           "nn",       &cmdSetView },          // 20
 	{ "follow.ego",         "nnn",      &cmdFollowEgo },        // 21
-	{ "block",              "",         &cmdBlock },            // 22
+	{ "block",              "nnnn",     &cmdBlock },            // 22
 	{ "unblock",            "",         &cmdUnblock },          // 23
 	{ "ignore.blocks",      "n",        &cmdIgnoreBlocks },     // 24
 	{ "observe.blocks",     "n",        &cmdObserveBlocks },    // 25
@@ -130,7 +130,7 @@ const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "distance",           "nnv",      &cmdDistance },         // 4B
 	{ "object.on.land",     "n",        &cmdObjectOnLand },     // 4C
 	{ "...",                "nv",       &cmdUnknown },          // 4D # set.priority.f
-	{ "...",                "",         &cmdUnknown },          // 4E  # show.obj
+	{ "show.obj",           "n",        &cmdShowObj },          // 4E # show.obj (KQ2)
 	{ "load.logics",        "n",        &cmdLoadLogic },        // 4F # load.global.logics
 	{ "display",            "nnns",     &cmdDisplay },          // 50 TODO: 4 vs 3 args
 	{ "prevent.input???",   "",         &cmdUnknown },          // 51
@@ -152,7 +152,7 @@ const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit
 };
 
-AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
+static const AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
 	{ "",                   "",         &condUnknown },         // 00
 	{ "equaln",             "vn",       &condEqual },           // 01
 	{ "equalv",             "vv",       &condEqualV },          // 02
@@ -175,7 +175,7 @@ AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
 	{ "in.motion.using.mouse", "",      &condUnknown13 }        // 13
 };
 
-AgiOpCodeDefinitionEntry opCodesV2[] = {
+static const AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "return",             "",         nullptr },              // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
