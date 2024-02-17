@@ -2710,7 +2710,7 @@ void Wiz::processNewWizImageCmd(const WizImageCommand *params) {
 		propertyValue = params->propertyValue;
 	}
 
-	int pixelDepth = 8;
+	int pixelDepth = (_vm->_game.features & GF_16BIT_COLOR) ? 16 : 8;
 	if (propertyNumber == 1) {
 		pixelDepth = propertyValue;
 
