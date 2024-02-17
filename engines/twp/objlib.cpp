@@ -457,7 +457,7 @@ static SQInteger objectIcon(HSQUIRRELVM v) {
 	case OT_ARRAY: {
 		Common::String icon;
 		Common::StringArray icons;
-		int fps;
+		int fps = 10;
 		sq_push(v, 3);
 		sq_pushnull(v); // null iterator
 		if (SQ_SUCCEEDED(sq_next(v, -2)))
