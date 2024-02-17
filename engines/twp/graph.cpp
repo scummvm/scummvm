@@ -171,7 +171,7 @@ void PathFinder::setWalkboxes(const Common::Array<Walkbox> &walkboxes) {
 }
 
 static Vector2i toVector2i(float x, float y) {
-	return Vector2i(round(x), round(y));
+	return Vector2i(roundf(x), roundf(y));
 }
 
 Vector2i Walkbox::getClosestPointOnEdge(Vector2i p) const {
