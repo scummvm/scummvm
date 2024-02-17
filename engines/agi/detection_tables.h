@@ -619,7 +619,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Leisure Suit Larry 1 (Mac) 1.05 6/26/87
 	GAME_P("lsl1", "1.05 1987-06-26", "8a0076429890531832f0dc113285e31e", 0x2440, GID_LSL1, Common::kPlatformMacintosh),
 
-	// Leisure Suit Larry 1 (CoCo3 158k/360k) [AGI 2.072]
+	// Leisure Suit Larry 1 (CoCo3 158k/360k) 1.0C [AGI 2.072]
 	// Official port by Sierra
 	GAME_PS("lsl1", "", "a2de1fe76565c3e8b40c9d036b5e5612", 198, 0x2440, GID_LSL1, Common::kPlatformCoCo3),
 
@@ -632,11 +632,16 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter NY (Amiga) 1.06 3/18/89 # 2.328
 	GAME3_PO("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, 0, GID_MH1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// reported by Filippos (thebluegr) in bugreport #3048
-	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
+	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.102 or 3.002.107]
+	// There are two 5.25" versions with the same resources but different interpreters.
 	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
 
 	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
+	// About box says 8/30/88, QA file says 8/31/88
+	// This version has different resources than the three other PC 1.22 versions.
+	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "f96e31316eab8fc5b3b7928611354541", 2141, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
+
+	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.107]
 	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
 
 	// Manhunter NY (CoCo3 720k) [AGI 2.023]
@@ -721,12 +726,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Mixed-Up Mother Goose (PC) [AGI 2.915]
 	GAME("mixedup", "1987-11-10", "e524655abf9b96a3b179ffcd1d0f79af", 0x2917, GID_MIXEDUP),
 
+	// Mixed-Up Mother Goose (Mac)
+	GAME_P("mixedup", "", "45bd58c59a744f61a435287f96142f7e", 0x2917, GID_MIXEDUP, Common::kPlatformMacintosh),
+
 	// Mixed-Up Mother Goose (CoCo3 360k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
 	GAME_PS("mixedup", "", "44e63e9b4d4822a31edea0e8a7e7eac4", 606, 0x2440, GID_MIXEDUP, Common::kPlatformCoCo3),
-
-	// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
-	GAME("pq1", "2.0E 1987-11-17", "2fd992a92df6ab0461d5a2cd83c72139", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (Mac) 2.0G 12/3/87
 	GAME_P("pq1", "2.0G 1987-12-03", "805750b66c1c5b88a214e67bfdca17a1", 0x2440, GID_PQ1, Common::kPlatformMacintosh),
@@ -743,8 +748,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Police Quest 1 (PC) 2.0A 10/23/87 [AGI 2.903/2.911]
 	GAME("pq1", "2.0A 1987-10-23", "b9dbb305092851da5e34d6a9f00240b1", 0x2917, GID_PQ1),
 
-	// Police Quest 1 (Russian)
-	GAME_LPS("pq1", "", "604cc8041d24c4c7e5fa8baf386ef76e", 360, Common::RU_RUS, 0x2917, GID_PQ1, Common::kPlatformDOS),
+	// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
+	GAME("pq1", "2.0E 1987-11-17", "2fd992a92df6ab0461d5a2cd83c72139", 0x2917, GID_PQ1),
+	
+	// Police Quest 1 (PC 720k) 2.0E 11/17/87 [AGI 2.915]
+	GAME("pq1", "2.0E 1987-11-17", "e2f94216357d07ecd93d75f1ff4a3338", 0x2917, GID_PQ1),
 
 	// Police Quest 1 2.0G 12/3/87
 	GAME("pq1", "2.0G 1987-12-03 5.25\"/ST", "231f3e28170d6e982fc0ced4c98c5c1c", 0x2440, GID_PQ1),
@@ -758,6 +766,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Spanish translation (TRAC #14369)
 	GAME_LPS("pq1", "2.0G 1987-12-03", "5d151f2f4c4e0675534d49b13529da3f", 360, Common::ES_ESP, 0x2917, GID_PQ1, Common::kPlatformDOS),
+
+	// Police Quest 1 (Russian)
+	GAME_LPS("pq1", "", "604cc8041d24c4c7e5fa8baf386ef76e", 360, Common::RU_RUS, 0x2917, GID_PQ1, Common::kPlatformDOS),
 
 	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
@@ -814,9 +825,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "updated", "7fa54e6bb7ffeb4cf20eca39d86f5fb2", 387, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
-	// Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
-	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
-
 	// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
 	// We have to see this as AGI < 2.936, because otherwise a set.pri.base call would somewhat break
 	// priority in SQ2, when entering Vohaul's vault.
@@ -852,13 +860,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
 	GAME_PS("sq2", "2.0A 1987-11-06 5.25\"", "ad7ce8f800581ecc536f3e8021d7a74d", 423, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
-	// reported by RadG (radg123) in bug report #5617
-	// Space Quest 2 (Spanish)
-	GAME_LPS("sq2", "", "1ae7640dd4d253c3ac2d708d61a35379", 426, Common::ES_ESP, 0x2917, GID_SQ2, Common::kPlatformDOS),
-
-	// Space Quest 2 (Russian)
-	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
-
 	// Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
 	GAME_PS("sq2", "2.0A 1987-11-06 3.5\"", "6c25e33d23b8bed42a5c7fa63d588e5c", 423, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
@@ -874,15 +875,25 @@ static const AGIGameDescription gameDescriptions[] = {
 	// TRAC #14286
 	GAME_PS("sq2", "2.0C 5.25\"", "7d29fccae8765ae298cfe720a6d771b1", 426, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
+	// Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
+	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
+
 	// Space Quest 2 (PC 5.25") 2.0D [AGI 2.936]
 	// TRAC #13274
-	GAME_LPS("sq2", "2.0D 1988-03-14 5.25\"", "0884ea4e127e333986568775fb21600b", 426, Common::EN_USA, 0x2936, GID_SQ2, Common::kPlatformDOS),
+	GAME_PS("sq2", "2.0D 1988-03-14 5.25\"", "0884ea4e127e333986568775fb21600b", 426, 0x2936, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
 	GAME("sq2", "2.0F 1989-01-05 3.5\"", "28add5125484302d213911df60d2aded", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (PC 5.25") 2.0F [AGI 2.936]
 	GAME("sq2", "2.0F 1989-01-05 5.25\"", "bb5a44d0bea416f2cd4c3385eaa21af4", 0x2936, GID_SQ2),
+
+	// Space Quest 2 (Spanish)
+	// reported by RadG (radg123) in bug report #5617
+	GAME_LPS("sq2", "", "1ae7640dd4d253c3ac2d708d61a35379", 426, Common::ES_ESP, 0x2917, GID_SQ2, Common::kPlatformDOS),
+
+	// Space Quest 2 (Russian)
+	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
