@@ -94,7 +94,8 @@ void Preferences::savePrefs() {
 }
 
 Common::String Preferences::getKey(const Common::String &path) {
-	Common::String t = Twp::replace(path, "_en", "_" + ConfMan.get("language"));
+	Common::String t(path);
+	replace(t, "_en", "_" + ConfMan.get("language"));
 	return t;
 }
 

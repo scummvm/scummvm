@@ -29,10 +29,15 @@
 #include "twp/ggpack.h"
 
 namespace Audio {
+
 class SeekableAudioStream;
 }
 
 namespace Twp {
+
+enum {
+	NUM_AUDIO_SLOTS = 32
+};
 
 class AudioChannel;
 class SoundDefinition;
@@ -106,7 +111,7 @@ public:
 	void update(float elapsed);
 
 	Common::Array<Common::SharedPtr<SoundDefinition> > _soundDefs;
-	AudioSlot _slots[32];
+	AudioSlot _slots[NUM_AUDIO_SLOTS];
 	Common::SharedPtr<SoundDefinition> _soundHover; // not used yet, should be used in the GUI
 
 private:

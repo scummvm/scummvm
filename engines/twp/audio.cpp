@@ -70,13 +70,13 @@ void SoundDefinition::load() {
 
 bool AudioSystem::playing(int id) const {
 	// channel ID ?
-	if (id >= 1 && id <= 32) {
+	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return false;
 		id = g_engine->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID ?
-	for (const auto & _slot : _slots) {
+	for (const auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef->getId() == id) {
 			return g_engine->_mixer->isSoundHandleActive(_slot.handle);
 		}
@@ -86,7 +86,7 @@ bool AudioSystem::playing(int id) const {
 }
 
 bool AudioSystem::playing(Common::SharedPtr<SoundDefinition> soundDef) const {
-	for (const auto & _slot : _slots) {
+	for (const auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef == soundDef) {
 			return g_engine->_mixer->isSoundHandleActive(_slot.handle);
 		}
@@ -98,7 +98,7 @@ void AudioSystem::fadeOut(int id, float fadeTime) {
 	if (fadeTime < 0.01f) {
 		stop(id);
 	} else {
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
 			if (_slots[i].busy && _slots[i].id == id) {
 				_slots[i].fadeOutTimeMs = fadeTime;
 			}
@@ -108,13 +108,13 @@ void AudioSystem::fadeOut(int id, float fadeTime) {
 
 void AudioSystem::stop(int id) {
 	// channel ID ?
-	if (id >= 1 && id <= 32) {
+	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return;
 		id = g_engine->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID ?
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef->getId() == id) {
 			_slot.loopTimes = 0;
 			g_engine->_mixer->stopHandle(_slot.handle);
@@ -128,7 +128,7 @@ void AudioSystem::setMasterVolume(float vol) {
 	_masterVolume = Twp::clamp(vol, 0.f, 1.f);
 
 	// update sounds
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		if (_slot.busy && g_engine->_mixer->isSoundHandleActive(_slot.handle)) {
 			g_engine->_mixer->setChannelVolume(_slot.handle, _slot.volume * _masterVolume);
 		}
@@ -183,13 +183,13 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 
 void AudioSystem::setVolume(int id, float vol) {
 	// channel ID ?
-	if (id >= 1 && id <= 32) {
+	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return;
 		id = g_engine->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID or sound ID ?
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		if (_slot.busy && ((_slot.sndDef->getId() == id) || (g_engine->_mixer->getSoundID(_slot.handle) == id))) {
 			_slot.volume = vol;
 			updateVolume(&_slot);
@@ -198,10 +198,10 @@ void AudioSystem::setVolume(int id, float vol) {
 }
 
 void AudioSystem::update(float) {
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		if (_slot.busy && !g_engine->_mixer->isSoundHandleActive(_slot.handle)) {
-			if((_slot.loopTimes == -1) || _slot.loopTimes > 0) {
-				if(_slot.loopTimes != -1) {
+			if ((_slot.loopTimes == -1) || _slot.loopTimes > 0) {
+				if (_slot.loopTimes != -1) {
 					_slot.loopTimes--;
 				}
 				Audio::SeekableAudioStream *audioStream;
@@ -212,7 +212,7 @@ void AudioSystem::update(float) {
 				} else if (name.hasSuffixIgnoreCase(".wav")) {
 					audioStream = Audio::makeWAVStream(&_slot.stream, DisposeAfterUse::NO);
 				} else {
-					error("Unexpected audio format: %s", name.c_str());
+					error("AudioSystem::update(): Unexpected audio format: %s", name.c_str());
 				}
 				g_engine->_mixer->playStream(_slot.soundType, &_slot.handle, audioStream, _slot.id, _slot.volume);
 			} else {
@@ -221,7 +221,7 @@ void AudioSystem::update(float) {
 		}
 	}
 	// sound definition ID or sound ID ?
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		if (_slot.busy) {
 			updateVolume(&_slot);
 		}
@@ -229,7 +229,7 @@ void AudioSystem::update(float) {
 }
 
 AudioSlot *AudioSystem::getFreeSlot() {
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		AudioSlot *slot = &_slot;
 		if (!slot->busy || !g_engine->_mixer->isSoundHandleActive(slot->handle)) {
 			slot->busy = false;
@@ -255,7 +255,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 	} else {
 		error("Unexpected audio format: %s", name.c_str());
 	}
-	if(!audioStream)
+	if (!audioStream)
 		error("Failed to load audio: %s", name.c_str());
 
 	int id = newSoundId();
@@ -276,7 +276,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 }
 
 int AudioSystem::getElapsed(int id) const {
-	for (const auto & _slot : _slots) {
+	for (const auto &_slot : _slots) {
 		if (_slot.id == id) {
 			Audio::Timestamp t = g_engine->_mixer->getElapsedTime(_slot.handle);
 			return t.msecs();
@@ -286,7 +286,7 @@ int AudioSystem::getElapsed(int id) const {
 }
 
 int AudioSystem::getDuration(int id) const {
-	for (const auto & _slot : _slots) {
+	for (const auto &_slot : _slots) {
 		if (_slot.id == id) {
 			return _slot.total;
 		}
