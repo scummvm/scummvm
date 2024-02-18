@@ -4578,6 +4578,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "275e81b2ba532d12399b6329fa484ed4", 658932547), // En-Es
 	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "6cf383309d1e937d5e44b6e41789d3d0", 658933667), // En-Es
 	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "e75216cf3d23c452e2b0689d9fc78c56", 658936316), // En-Es
+	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "2122f502b77ac24c3e8ffdbdeaa5eae1", 658936978), // En-Es
+	GAME_ENTRY_STEAM("theadventuresoftheblackhawk", "The Adventures of The Black Hawk.ags", "1a8a63f2ced9c70755a7b615d85e31e5", 658942614), // En-Es
 	GAME_ENTRY_EN("theantidote", "The Antidote.exe", "4017d881af6467d6aad9183e6e38a261", 325819947),
 	GAME_ENTRY_EN_STEAM("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501),
 	GAME_ENTRY_STEAM("thecastle", "maniac.exe", "3b96c2143d927f005715be73344e456c", 22362337),  // En-Es-It
