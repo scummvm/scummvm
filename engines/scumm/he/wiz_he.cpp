@@ -40,6 +40,7 @@ Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	memset(&_polygons, 0, sizeof(_polygons));
 	_cursorImage = false;
 	_rectOverrideEnabled = false;
+	_uses16BitColor = (_vm->_game.features & GF_16BIT_COLOR);
 }
 
 void Wiz::clearWizBuffer() {
@@ -2484,6 +2485,7 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	int compType, imageWidth, imageHeight;
 	byte *wizHeader;
 	byte *dataPtr;
+	int blockHeaderSize = 8;
 
 	// Get the image header
 	wizHeader = (byte *)getWizStateHeaderPrim(imageNum, imageState);
@@ -2493,14 +2495,14 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	}
 
 	// Double check the image header compression type
-	compType = READ_LE_UINT32(wizHeader);
+	compType = READ_LE_UINT32(wizHeader + blockHeaderSize);
 
 	if (!isUncompressedFormatTypeID(compType)) {
 		return false;
 	}
 
-	imageWidth = READ_LE_UINT32(wizHeader + 4);
-	imageHeight = READ_LE_UINT32(wizHeader + 8);
+	imageWidth = READ_LE_UINT32(wizHeader + blockHeaderSize + 4);
+	imageHeight = READ_LE_UINT32(wizHeader + blockHeaderSize + 8);
 
 	// Do some fun stuff
 	dataPtr = (byte *)getWizStateDataPrim(imageNum, imageState);
@@ -2510,7 +2512,7 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	}
 
 	// Hook up the image info to the simple bitmap info
-	destBM->bufferPtr = (int32 *)(dataPtr);
+	destBM->bufferPtr = (RAWPIXEL *)(dataPtr + blockHeaderSize);
 	destBM->bitmapWidth = imageWidth;
 	destBM->bitmapHeight = imageHeight;
 
@@ -2521,7 +2523,7 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	Common::Rect renderRect, clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	int32 whatColor;
+	RAWPIXEL whatColor;
 
 	// What state is going to rendered into?
 	if (params->actionFlags & kWAFState) {
@@ -2558,7 +2560,6 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	// What is the rendering color
 	if (params->actionFlags & kWAFColor) {
 		whatColor = params->colorValue;
-
 	} else {
 		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
 	}
@@ -2579,7 +2580,7 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	int32 whatColor;
+	RAWPIXEL whatColor;
 	int iPropertyNumber = 0, iPropertyValue = 0;
 
 	if (!(params->actionFlags & kWAFRenderCoords)) {
@@ -2655,7 +2656,7 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	int32 whatColor;
+	RAWPIXEL whatColor;
 	Common::Point pt;
 
 	if (params->actionFlags & kWAFRenderCoords) {
@@ -3054,13 +3055,13 @@ int Wiz::getWizImageStates(const uint8 *dataPtr) {
 void *Wiz::getWizStateHeaderPrim(int resNum, int state) {
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, false);
+	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, false) - 8;
 }
 
 void *Wiz::getWizStateDataPrim(int resNum, int state) {
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, false);
+	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, false) - 8;
 }
 
 int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
@@ -3079,7 +3080,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 	int h = READ_LE_UINT32(wizh + 0x8);
 
 	if (_vm->_game.id == GID_MOONBASE) {
-		uint16 color = 0xffff;
+		RAWPIXEL color = 0xffff;
 		drawWizImageEx((byte *)&color, data, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
 
 		return color != 0xffff;
