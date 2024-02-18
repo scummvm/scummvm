@@ -792,6 +792,8 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	actor->_key = key;
 
 	debugC(kDebugActScript, "Create actor %s %d", key.c_str(), actor->getId());
+	actor->_nodeAnim->remove();
+	actor->_node->remove();
 	actor->_node = Common::SharedPtr<Node>(new ActorNode(actor));
 	actor->_nodeAnim = Common::SharedPtr<Anim>(new Anim(actor.get()));
 	actor->_node->addChild(actor->_nodeAnim.get());
