@@ -50,7 +50,7 @@ void ResManager::loadTexture(const Common::String &name) {
 	d.loadStream(r);
 	const Graphics::Surface *surface = d.getSurface();
 	if(!surface) {
-		error("PNG %s not loaded, please check USE_PNG flag", name.c_str());
+		error("PNG %s not loaded", name.c_str());
 		return;
 	}
 
