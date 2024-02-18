@@ -1557,9 +1557,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::Path &filename) con
 	if (sdlPalette) {
 		Graphics::Palette palette(256);
 		for (int i = 0; i < sdlPalette->ncolors; i++) {
-			palette.data[(i * 3) + 0] = sdlPalette->colors[i].r;
-			palette.data[(i * 3) + 1] = sdlPalette->colors[i].g;
-			palette.data[(i * 3) + 2] = sdlPalette->colors[i].b;
+			palette.set(i, sdlPalette->colors[i].r, sdlPalette->colors[i].g, sdlPalette->colors[i].b);
 		}
 
 #ifdef USE_PNG

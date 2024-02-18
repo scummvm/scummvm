@@ -141,6 +141,20 @@ struct Palette {
 
 	bool contains(const Palette &p) const;
 
+	void set(uint entry, byte r, byte g, byte b) {
+		assert(entry < size);
+		data[entry * 3 + 0] = r;
+		data[entry * 3 + 1] = g;
+		data[entry * 3 + 2] = b;
+	}
+
+	void get(uint entry, byte &r, byte &g, byte &b) const {
+		assert(entry < size);
+		r = data[entry * 3 + 0];
+		g = data[entry * 3 + 1];
+		b = data[entry * 3 + 2];
+	}
+
 	void clear();
 
 	/**

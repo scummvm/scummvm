@@ -194,9 +194,8 @@ NinePatchBitmap::NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap
 		white = (uint32)-1;
 
 		for (int j = 0; j < 256; j++) {
-			byte r = palette.data[(j * 3) + 0];
-			byte g = palette.data[(j * 3) + 1];
-			byte b = palette.data[(j * 3) + 2];
+			byte r, g, b;
+			palette.get(j, r, g, b);
 
 			if (black == uint32(-1) && r == 0 && g == 0 && b == 0)
 				black = j;
@@ -313,9 +312,8 @@ void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int
 				for (int j = 0; j < srf->h; ++j) {
 					byte color = *(byte*)srf->getBasePtr(i, j);
 					if (color != transColor) {
-						byte r = palette.data[(color * 3) + 0];
-						byte g = palette.data[(color * 3) + 1];
-						byte b = palette.data[(color * 3) + 2];
+						byte r, g, b;
+						palette.get(color, r, g, b);
 						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
 					}
 				}

@@ -1393,10 +1393,7 @@ void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, by
 
 template <>
 void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte& b) {
-	const Palette &palette = _paletteLookup.getPalette();
-	r = *(palette.data + 3 * (byte)color + 0);
-	g = *(palette.data + 3 * (byte)color + 1);
-	b = *(palette.data + 3 * (byte)color + 2);
+	_paletteLookup.getPalette().get(color, r, g, b);
 }
 
 uint32 MacWindowManager::findBestColor(uint32 color) {

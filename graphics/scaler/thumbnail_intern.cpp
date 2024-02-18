@@ -193,9 +193,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 			if (screenFormat.bytesPerPixel == 1) {
 				uint8 pixel = *(uint8 *)screen->getBasePtr(x, y);
-				r = palette->data[pixel * 3 + 0];
-				g = palette->data[pixel * 3 + 1];
-				b = palette->data[pixel * 3 + 2];
+				palette->get(pixel, r, g, b);
 			} else if (screenFormat.bytesPerPixel == 2) {
 				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
 				screenFormat.colorToRGB(col, r, g, b);
