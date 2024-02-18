@@ -101,7 +101,7 @@ ExpVisitor::~ExpVisitor() = default;
 
 void ExpVisitor::visit(const YCodeExp &node) {
 	debugC(kDebugDialog, "execute code %s", node._code.c_str());
-	sqexec(g_engine->getVm(), node._code.c_str(), "dialog");
+	sqexec(g_twp->getVm(), node._code.c_str(), "dialog");
 }
 
 void ExpVisitor::visit(const YGoto &node) {
@@ -150,7 +150,7 @@ void ExpVisitor::visit(const YLimit &node) {
 }
 
 void ExpVisitor::visit(const YSay &node) {
-	Common::String text(g_engine->getTextDb().getText(node._text));
+	Common::String text(g_twp->getTextDb().getText(node._text));
 	_dialog->_action = _dialog->_tgt->say(node._actor, text);
 }
 
@@ -219,7 +219,7 @@ void Dialog::start(const Common::String &actor, const Common::String &name, cons
 	Common::String path = name + ".byack";
 	debugC(kDebugDialog, "start dialog %s", path.c_str());
 	GGPackEntryReader reader;
-	reader.open(g_engine->_pack, path);
+	reader.open(g_twp->_pack, path);
 	YackParser parser;
 	_cu.reset(parser.parse(&reader));
 	selectLabel(0, node);
@@ -257,7 +257,7 @@ void Dialog::update(float dt) {
 					}
 				}
 				slot->_text.setColor(over ? colorHover : color);
-				if (over && g_engine->_cursor.isLeftDown())
+				if (over && g_twp->_cursor.isLeftDown())
 					choose(i);
 			}
 		}
@@ -422,7 +422,7 @@ void Dialog::running(float dt) {
 }
 
 static Common::String text(const Common::String &txt) {
-	Common::String result(g_engine->getTextDb().getText(txt));
+	Common::String result(g_twp->getTextDb().getText(txt));
 	result = remove(result, '(', ')');
 	result = remove(result, '{', '}');
 	return result;
@@ -462,7 +462,7 @@ void Dialog::drawCore(Math::Matrix4 trsf) {
 		if (slot->_isValid) {
 			Math::Matrix4 t(trsf);
 			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY(), 0.f));
-			slot->_text.draw(g_engine->getGfx(), t);
+			slot->_text.draw(g_twp->getGfx(), t);
 		}
 	}
 }

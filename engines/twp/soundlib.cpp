@@ -31,8 +31,8 @@ public:
 	virtual ~SoundTrigger() {}
 
 	virtual void trig() override {
-		int i = g_engine->getRandomSource().getRandomNumber(_sounds.size() - 1);
-		g_engine->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType, 0, 0.f, 1.f, _objId);
+		int i = g_twp->getRandomSource().getRandomNumber(_sounds.size() - 1);
+		g_twp->_audio.play(_sounds[i], Audio::Mixer::SoundType::kPlainSoundType, 0, 0.f, 1.f, _objId);
 	}
 
 private:
@@ -85,7 +85,7 @@ static SQInteger defineSound(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, filename)))
 		return sq_throwerror(v, "failed to get filename");
 	Common::SharedPtr<SoundDefinition> sound(new SoundDefinition(filename));
-	g_engine->_audio._soundDefs.push_back(sound);
+	g_twp->_audio._soundDefs.push_back(sound);
 	debugC(kDebugSndScript, "defineSound(%s)-> %d", filename.c_str(), sound->getId());
 	sqpush(v, sound->getId());
 	return 1;
@@ -101,7 +101,7 @@ static SQInteger fadeOutSound(HSQUIRRELVM v) {
 	float t;
 	if (SQ_FAILED(sqget(v, 3, t)))
 		return sq_throwerror(v, "failed to get fadeOut time");
-	g_engine->_audio.fadeOut(sound, t);
+	g_twp->_audio.fadeOut(sound, t);
 	return 0;
 }
 
@@ -113,7 +113,7 @@ static SQInteger isSoundPlaying(HSQUIRRELVM v) {
 	int soundId;
 	if (SQ_FAILED(sqget(v, 2, soundId)))
 		return sq_throwerror(v, "failed to get sound");
-	sqpush(v, g_engine->_audio.playing(soundId));
+	sqpush(v, g_twp->_audio.playing(soundId));
 	return 1;
 }
 
@@ -134,10 +134,10 @@ static SQInteger playObjectSound(HSQUIRRELVM v) {
 	}
 
 	if (obj->_sound) {
-		g_engine->_audio.stop(obj->_sound);
+		g_twp->_audio.stop(obj->_sound);
 	}
 
-	int soundId = g_engine->_audio.play(soundDef, Audio::Mixer::SoundType::kPlainSoundType, loopTimes, fadeInTime, 1.f, obj->getId());
+	int soundId = g_twp->_audio.play(soundDef, Audio::Mixer::SoundType::kPlainSoundType, loopTimes, fadeInTime, 1.f, obj->getId());
 	obj->_sound = soundId;
 	sqpush(v, soundId);
 	return 1;
@@ -157,7 +157,7 @@ static SQInteger playSound(HSQUIRRELVM v) {
 		sqget(v, 2, soundId);
 		return sq_throwerror(v, Common::String::format("failed to get sound: %d", soundId).c_str());
 	}
-	int soundId = g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
+	int soundId = g_twp->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	sqpush(v, soundId);
 	return 1;
 }
@@ -178,7 +178,7 @@ static SQInteger playSoundVolume(HSQUIRRELVM v) {
 	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
 	if (!sound)
 		return sq_throwerror(v, "failed to get sound");
-	int soundId = g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
+	int soundId = g_twp->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	sqpush(v, soundId);
 	return 1;
 }
@@ -216,7 +216,7 @@ static SQInteger loopMusic(HSQUIRRELVM v) {
 	if (numArgs == 4) {
 		sqget(v, 4, fadeInTime);
 	}
-	int soundId = g_engine->_audio.play(sound, Audio::Mixer::kMusicSoundType, loopTimes, fadeInTime);
+	int soundId = g_twp->_audio.play(sound, Audio::Mixer::kMusicSoundType, loopTimes, fadeInTime);
 	sqpush(v, soundId);
 	return 1;
 }
@@ -241,7 +241,7 @@ static SQInteger loopObjectSound(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get fadeInTime");
 		}
 	}
-	int soundId = g_engine->_audio.play(sound, Audio::Mixer::kPlainSoundType, loopTimes, fadeInTime, 1.f, obj->getId());
+	int soundId = g_twp->_audio.play(sound, Audio::Mixer::kPlainSoundType, loopTimes, fadeInTime, 1.f, obj->getId());
 	sqpush(v, soundId);
 	return 1;
 }
@@ -281,7 +281,7 @@ static SQInteger loopSound(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get fadeInTime");
 		}
 	}
-	int soundId = g_engine->_audio.play(sound, Audio::Mixer::kPlainSoundType, loopTimes, fadeInTime);
+	int soundId = g_twp->_audio.play(sound, Audio::Mixer::kPlainSoundType, loopTimes, fadeInTime);
 	debugC(kDebugSndScript, "loopSound %s: %d", sound->getName().c_str(), soundId);
 	sqpush(v, soundId);
 	return 1;
@@ -294,10 +294,10 @@ static SQInteger soundVolume(HSQUIRRELVM v, Audio::Mixer::SoundType soundType) {
 			return sq_throwerror(v, "failed to get volume");
 		}
 		int vol = volume * Audio::Mixer::kMaxMixerVolume;
-		g_engine->_mixer->setVolumeForSoundType(soundType, vol);
+		g_twp->_mixer->setVolumeForSoundType(soundType, vol);
 		return 0;
 	}
-	volume = (float)g_engine->_mixer->getVolumeForSoundType(soundType) / Audio::Mixer::kMaxMixerVolume;
+	volume = (float)g_twp->_mixer->getVolumeForSoundType(soundType) / Audio::Mixer::kMaxMixerVolume;
 	sqpush(v, volume);
 	return 1;
 }
@@ -308,10 +308,10 @@ static SQInteger masterSoundVolume(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 2, volume))) {
 			return sq_throwerror(v, "failed to get volume");
 		}
-		g_engine->_audio.setMasterVolume(volume);
+		g_twp->_audio.setMasterVolume(volume);
 		return 0;
 	}
-	volume = g_engine->_audio.getMasterVolume();
+	volume = g_twp->_audio.getMasterVolume();
 	sqpush(v, volume);
 	return 1;
 }
@@ -324,7 +324,7 @@ static SQInteger playMusic(HSQUIRRELVM v) {
 	Common::SharedPtr<SoundDefinition> soundDef = sqsounddef(v, 2);
 	if (!soundDef)
 		return sq_throwerror(v, "failed to get music");
-	int soundId = g_engine->_audio.play(soundDef, Audio::Mixer::SoundType::kMusicSoundType);
+	int soundId = g_twp->_audio.play(soundDef, Audio::Mixer::SoundType::kMusicSoundType);
 	sqpush(v, soundId);
 	return 1;
 }
@@ -349,12 +349,12 @@ static SQInteger soundVolume(HSQUIRRELVM v) {
 	float volume = 1.0f;
 	if (SQ_FAILED(sqget(v, 3, volume)))
 		return sq_throwerror(v, "failed to get volume");
-	g_engine->_audio.setVolume(soundId, volume);
+	g_twp->_audio.setVolume(soundId, volume);
 	return 0;
 }
 
 static SQInteger stopAllSounds(HSQUIRRELVM) {
-	g_engine->_mixer->stopAll();
+	g_twp->_mixer->stopAll();
 	return 0;
 }
 
@@ -368,7 +368,7 @@ static SQInteger stopSound(HSQUIRRELVM v) {
 	int soundId;
 	if (SQ_FAILED(sqget(v, 2, soundId)))
 		return sq_throwerror(v, "failed to get sound");
-	g_engine->_audio.stop(soundId);
+	g_twp->_audio.stop(soundId);
 	return 0;
 }
 

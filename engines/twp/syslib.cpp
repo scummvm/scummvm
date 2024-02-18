@@ -34,7 +34,7 @@
 namespace Twp {
 
 static SQInteger _startthread(HSQUIRRELVM v, bool global) {
-	HSQUIRRELVM vm = g_engine->getVm();
+	HSQUIRRELVM vm = g_twp->getVm();
 	SQInteger size = sq_gettop(v);
 	HSQOBJECT envObj, threadObj, closureObj;
 
@@ -73,7 +73,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 		sq_pop(v, 1); // pop name
 	sq_pop(v, 1);     // pop closure
 
-	g_engine->_threads.push_back(t);
+	g_twp->_threads.push_back(t);
 
 	debugC(kDebugSysScript, "create thread %s", t->getName().c_str());
 
@@ -141,7 +141,7 @@ static SQInteger addCallback(HSQUIRRELVM v) {
 	}
 
 	Common::SharedPtr<Callback> callback(new Callback(newCallbackId(), duration, methodName, args));
-	g_engine->_callbacks.push_back(callback);
+	g_twp->_callbacks.push_back(callback);
 
 	sqpush(v, callback->getId());
 	return 1;
@@ -221,7 +221,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
 	debugC(kDebugSysScript, "add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
-	g_engine->_tasks.push_back(Common::SharedPtr<Task>(new BreakWhileCond<Predicate>(curThread->getId(), name, pred)));
+	g_twp->_tasks.push_back(Common::SharedPtr<Task>(new BreakWhileCond<Predicate>(curThread->getId(), name, pred)));
 	return -666;
 }
 
@@ -258,7 +258,7 @@ static SQInteger breakwhileanimating(HSQUIRRELVM v) {
 
 struct CameraMoving {
 	bool operator()() {
-		return g_engine->_camera.isMoving();
+		return g_twp->_camera.isMoving();
 	}
 };
 
@@ -271,7 +271,7 @@ static SQInteger breakwhilecamera(HSQUIRRELVM v) {
 
 struct CutsceneRunning {
 	bool operator()() {
-		return g_engine->_cutscene != nullptr;
+		return g_twp->_cutscene != nullptr;
 	}
 };
 
@@ -284,7 +284,7 @@ static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 
 struct DialogRunning {
 	bool operator()() {
-		return g_engine->_dialog.getState() != DialogState::None;
+		return g_twp->_dialog.getState() != DialogState::None;
 	}
 };
 
@@ -297,7 +297,7 @@ static SQInteger breakwhiledialog(HSQUIRRELVM v) {
 
 struct InputOff {
 	bool operator()() {
-		return !g_engine->_inputState.getInputActive();
+		return !g_twp->_inputState.getInputActive();
 	}
 };
 
@@ -336,7 +336,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 			return 0;
 		}
 		return breakwhilecond(
-			v, [id] { return g_engine->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
+			v, [id] { return g_twp->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
 	}
 	return breakwhilecond(
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
@@ -344,12 +344,12 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 
 // Returns true if at least 1 actor is talking.
 static bool isSomeoneTalking() {
-	for (auto it = g_engine->_actors.begin(); it != g_engine->_actors.end(); it++) {
+	for (auto it = g_twp->_actors.begin(); it != g_twp->_actors.end(); it++) {
 		Common::SharedPtr<Object> obj = *it;
 		if (obj->getTalking() && obj->getTalking()->isEnabled())
 			return true;
 	}
-	for (auto it = g_engine->_room->_layers.begin(); it != g_engine->_room->_layers.end(); it++) {
+	for (auto it = g_twp->_room->_layers.begin(); it != g_twp->_room->_layers.end(); it++) {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			Common::SharedPtr<Object> obj = *it2;
@@ -436,7 +436,7 @@ struct SoundPlaying {
 	explicit SoundPlaying(int soundId) : _soundId(soundId) {}
 
 	bool operator()() {
-		return g_engine->_audio.playing(_soundId);
+		return g_twp->_audio.playing(_soundId);
 	}
 
 private:
@@ -453,7 +453,7 @@ static SQInteger breakwhilesound(HSQUIRRELVM v) {
 }
 
 static SQInteger cutscene(HSQUIRRELVM v) {
-	HSQUIRRELVM vm = g_engine->getVm();
+	HSQUIRRELVM vm = g_twp->getVm();
 	SQInteger nArgs = sq_gettop(v);
 
 	HSQOBJECT envObj;
@@ -485,7 +485,7 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	Common::SharedPtr<ThreadBase> parentThread = sqthread(v);
 	Common::String cutsceneName = Common::String::format("%s (%lld)", _stringval(_closure(closure)->_function->_sourcename), _closure(closure)->_function->_lineinfos->_line);
 	Common::SharedPtr<Cutscene> cutscene(new Cutscene(cutsceneName, parentThread->getId(), threadObj, closure, closureOverride, envObj));
-	g_engine->_cutscene = cutscene;
+	g_twp->_cutscene = cutscene;
 
 	// call the closure in the thread
 	cutscene->update(0.f);
@@ -494,7 +494,7 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 
 static SQInteger cutsceneOverride(HSQUIRRELVM v) {
 	debugC(kDebugSysScript, "cutsceneOverride");
-	g_engine->_cutscene->cutsceneOverride();
+	g_twp->_cutscene->cutsceneOverride();
 	return 0;
 }
 
@@ -512,18 +512,18 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		int enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
-		g_engine->_saveGameManager._autoSave = enabled != 0;
+		g_twp->_saveGameManager._autoSave = enabled != 0;
 	} break;
 	case EX_AUTOSAVE: {
-		if (g_engine->_saveGameManager._autoSave) {
-			g_engine->saveGameState(0, "", true);
+		if (g_twp->_saveGameManager._autoSave) {
+			g_twp->saveGameState(0, "", true);
 		}
 	} break;
 	case EX_ALLOW_SAVEGAMES: {
 		int enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
-		g_engine->_saveGameManager._allowSaveGame = enabled != 0;
+		g_twp->_saveGameManager._allowSaveGame = enabled != 0;
 	} break;
 	case EX_POP_CHARACTER_SELECTION:
 		// seems not to be used
@@ -536,7 +536,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 3);
 		if (!sound)
 			return sq_throwerror(v, "failed to get sound for EX_BUTTON_HOVER_SOUND");
-		g_engine->_audio._soundHover = sound;
+		g_twp->_audio._soundHover = sound;
 	} break;
 	case EX_RESTART:
 		warning("TODO: exCommand EX_RESTART: not implemented");
@@ -550,7 +550,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		warning("exCommand EX_DISABLE_SAVESYSTEM: not implemented");
 		break;
 	case EX_SHOW_OPTIONS:
-    	g_engine->openMainMenuDialog();
+    	g_twp->openMainMenuDialog();
 		break;
 	case EX_OPTIONS_MUSIC:
 		warning("TODO: exCommand EX_OPTIONS_MUSIC: not implemented");
@@ -575,7 +575,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 // if (gameTime() > (time+testerTronTimeOut)) { // Do something
 // }
 static SQInteger gameTime(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_time);
+	sqpush(v, g_twp->_time);
 	return 1;
 }
 
@@ -584,7 +584,7 @@ static SQInteger sysInclude(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, filename))) {
 		return sq_throwerror(v, "failed to get filename");
 	}
-	g_engine->execNutEntry(v, filename);
+	g_twp->execNutEntry(v, filename);
 	return 0;
 }
 
@@ -597,25 +597,25 @@ static SQInteger inputHUD(HSQUIRRELVM v) {
 	bool on;
 	if (SQ_FAILED(sqget(v, 2, on)))
 		return sq_throwerror(v, "failed to get on");
-	g_engine->_inputState.setInputHUD(on);
+	g_twp->_inputState.setInputHUD(on);
 	return 0;
 }
 
 static SQInteger inputOff(HSQUIRRELVM v) {
-	if (!g_engine->_cutscene || g_engine->_cutscene->isStopped()) {
-		g_engine->_inputState.setInputActive(false);
-		g_engine->_inputState.setShowCursor(false);
+	if (!g_twp->_cutscene || g_twp->_cutscene->isStopped()) {
+		g_twp->_inputState.setInputActive(false);
+		g_twp->_inputState.setShowCursor(false);
 	}
 	return 0;
 }
 
 static SQInteger inputOn(HSQUIRRELVM v) {
-	Common::SharedPtr<Cutscene> scene(g_engine->_cutscene);
+	Common::SharedPtr<Cutscene> scene(g_twp->_cutscene);
 	if (!scene || scene->isStopped()) {
-		g_engine->_inputState.setInputActive(true);
-		g_engine->_inputState.setShowCursor(true);
+		g_twp->_inputState.setInputActive(true);
+		g_twp->_inputState.setShowCursor(true);
 	} else {
-		int state = g_engine->_inputState.getState();
+		int state = g_twp->_inputState.getState();
 		state |= UI_INPUT_ON;
 		state &= (~UI_INPUT_OFF);
 		state |= UI_CURSOR_ON;
@@ -627,14 +627,14 @@ static SQInteger inputOn(HSQUIRRELVM v) {
 }
 
 static SQInteger inputSilentOff(HSQUIRRELVM v) {
-	g_engine->_inputState.setInputActive(false);
+	g_twp->_inputState.setInputActive(false);
 	return 0;
 }
 
 static SQInteger sysInputState(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	if (numArgs == 1) {
-		int state = (int)g_engine->_inputState.getState();
+		int state = (int)g_twp->_inputState.getState();
 		sqpush(v, state);
 		return 1;
 	}
@@ -642,7 +642,7 @@ static SQInteger sysInputState(HSQUIRRELVM v) {
 		int state;
 		if (SQ_FAILED(sqget(v, 2, state)))
 			return sq_throwerror(v, "failed to get state");
-		g_engine->_inputState.setState((InputStateFlag)state);
+		g_twp->_inputState.setState((InputStateFlag)state);
 		return 0;
 	}
 	return sq_throwerror(v, Common::String::format("inputState with %lld arguments not implemented", numArgs).c_str());
@@ -653,12 +653,12 @@ static SQInteger inputVerbs(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, on)))
 		return sq_throwerror(v, "failed to get isActive");
 	debugC(kDebugSysScript, "inputVerbs: %s", on ? "yes" : "no");
-	g_engine->_inputState.setInputVerbsActive(on);
+	g_twp->_inputState.setInputVerbsActive(on);
 	return 1;
 }
 
 static SQInteger isInputOn(HSQUIRRELVM v) {
-	bool isActive = g_engine->_inputState.getInputActive();
+	bool isActive = g_twp->_inputState.getInputActive();
 	sqpush(v, isActive);
 	return 1;
 }
@@ -700,7 +700,7 @@ static SQInteger logWarning(HSQUIRRELVM v) {
 // Based on when the machine is booted and runs all the time (not paused or saved).
 // See also gameTime, which is in seconds.
 static SQInteger microTime(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_time * 1000.0f);
+	sqpush(v, g_twp->_time * 1000.0f);
 	return 1;
 }
 
@@ -714,7 +714,7 @@ static SQInteger moveCursorTo(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 4, t)))
 		return sq_throwerror(v, "Failed to get time");
 
-	g_engine->_cursor.pos = Math::Vector2d(x, y);
+	g_twp->_cursor.pos = Math::Vector2d(x, y);
 	// TODO: use time
 	return 0;
 }
@@ -724,8 +724,8 @@ static SQInteger removeCallback(HSQUIRRELVM v) {
 	int id = 0;
 	if (SQ_FAILED(sqget(v, 2, id)))
 		return sq_throwerror(v, "failed to get callback");
-	for (size_t i = 0; i < g_engine->_callbacks.size(); i++) {
-		Common::SharedPtr<Callback> cb = g_engine->_callbacks[i];
+	for (size_t i = 0; i < g_twp->_callbacks.size(); i++) {
+		Common::SharedPtr<Callback> cb = g_twp->_callbacks[i];
 		if (cb->getId() == id) {
 			cb->remove();
 			return 0;

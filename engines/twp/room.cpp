@@ -148,7 +148,7 @@ Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const 
 	Common::SharedPtr<Object> obj(new Object());
 	obj->_temporary = true;
 
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 
 	// create a table for this object
 	sq_newtable(v);
@@ -187,7 +187,7 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 	Common::SharedPtr<Object> obj(new Object());
 	obj->_temporary = true;
 
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 
 	// create a table for this object
 	sq_newtable(v);
@@ -357,7 +357,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	int width = 0;
 	for (size_t i = 0; i < backNames.size(); i++) {
 		Common::String name = backNames[i];
-		width += g_engine->_resManager.spriteSheet(room->_sheet)->getFrame(name).sourceSize.getX();
+		width += g_twp->_resManager.spriteSheet(room->_sheet)->getFrame(name).sourceSize.getX();
 	}
 	room->_roomSize.setX(width);
 }

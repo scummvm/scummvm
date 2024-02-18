@@ -219,7 +219,7 @@ void setId(HSQOBJECT &o, int id) {
 }
 
 bool sqrawexists(HSQOBJECT obj, const Common::String &name) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sqpush(v, obj);
 	sq_pushstring(v, name.c_str(), -1);
@@ -233,7 +233,7 @@ bool sqrawexists(HSQOBJECT obj, const Common::String &name) {
 }
 
 void sqsetdelegate(HSQOBJECT obj, HSQOBJECT del) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sqpush(v, obj);
 	sqpush(v, del);
 	sq_setdelegate(v, -2);
@@ -250,7 +250,7 @@ HSQOBJECT sqrootTbl(HSQUIRRELVM v) {
 }
 
 void sqcall(const char *name, const Common::Array<HSQOBJECT> &args) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT o = sqrootTbl(v);
 	SQInteger top = sq_gettop(v);
 	sqpushfunc(v, o, name);
@@ -275,8 +275,8 @@ Common::SharedPtr<Room> sqroom(HSQOBJECT table) {
 }
 
 Common::SharedPtr<Room> getRoom(int id) {
-	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room(g_engine->_rooms[i]);
+	for (size_t i = 0; i < g_twp->_rooms.size(); i++) {
+		Common::SharedPtr<Room> room(g_twp->_rooms[i]);
 		if (getId(room->_table) == id)
 			return room;
 	}
@@ -292,14 +292,14 @@ Common::SharedPtr<Room> sqroom(HSQUIRRELVM v, int i) {
 }
 
 Common::SharedPtr<Object> sqobj(int id) {
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
+	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
+		Common::SharedPtr<Object> actor = g_twp->_actors[i];
 		if (getId(actor->_table) == id)
 			return actor;
 	}
 
-	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
+	for (size_t i = 0; i < g_twp->_rooms.size(); i++) {
+		Common::SharedPtr<Room> room = g_twp->_rooms[i];
 		for (size_t j = 0; j < room->_layers.size(); j++) {
 			Common::SharedPtr<Layer> layer = room->_layers[j];
 			for (size_t k = 0; k < layer->_objects.size(); k++) {
@@ -325,8 +325,8 @@ Common::SharedPtr<Object> sqobj(HSQUIRRELVM v, int i) {
 
 Common::SharedPtr<Object> sqactor(HSQOBJECT table) {
 	int id = getId(table);
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
+	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
+		Common::SharedPtr<Object> actor = g_twp->_actors[i];
 		if (actor->getId() == id)
 			return actor;
 	}
@@ -341,8 +341,8 @@ Common::SharedPtr<Object> sqactor(HSQUIRRELVM v, int i) {
 }
 
 Common::SharedPtr<SoundDefinition> sqsounddef(int id) {
-	for (size_t i = 0; i < g_engine->_audio._soundDefs.size(); i++) {
-		Common::SharedPtr<SoundDefinition> sound = g_engine->_audio._soundDefs[i];
+	for (size_t i = 0; i < g_twp->_audio._soundDefs.size(); i++) {
+		Common::SharedPtr<SoundDefinition> sound = g_twp->_audio._soundDefs[i];
 		if (sound->getId() == id)
 			return sound;
 	}
@@ -401,14 +401,14 @@ Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v, int i) {
 }
 
 Common::SharedPtr<ThreadBase> sqthread(int id) {
-	if (g_engine->_cutscene) {
-		if (g_engine->_cutscene->getId() == id) {
-			return g_engine->_cutscene;
+	if (g_twp->_cutscene) {
+		if (g_twp->_cutscene->getId() == id) {
+			return g_twp->_cutscene;
 		}
 	}
 
-	for (size_t i = 0; i < g_engine->_threads.size(); i++) {
-		Common::SharedPtr<ThreadBase> t = g_engine->_threads[i];
+	for (size_t i = 0; i < g_twp->_threads.size(); i++) {
+		Common::SharedPtr<ThreadBase> t = g_twp->_threads[i];
 		if (t->getId() == id) {
 			return t;
 		}
@@ -417,11 +417,11 @@ Common::SharedPtr<ThreadBase> sqthread(int id) {
 }
 
 Light *sqlight(int id) {
-	if(!g_engine->_room)
+	if(!g_twp->_room)
 		return nullptr;
 
 	for (size_t i = 0; i < MAX_LIGHTS; i++) {
-		Light *light = &g_engine->_room->_lights._lights[i];
+		Light *light = &g_twp->_room->_lights._lights[i];
 		if (light->id == id) {
 			return light;
 		}
@@ -447,14 +447,14 @@ private:
 };
 
 Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v) {
-	if (g_engine->_cutscene) {
-		if (g_engine->_cutscene->getThread() == v) {
-			return g_engine->_cutscene;
+	if (g_twp->_cutscene) {
+		if (g_twp->_cutscene->getThread() == v) {
+			return g_twp->_cutscene;
 		}
 	}
 
-	auto it = Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), GetThread(v));
-	if(it != g_engine->_threads.end())
+	auto it = Common::find_if(g_twp->_threads.begin(), g_twp->_threads.end(), GetThread(v));
+	if(it != g_twp->_threads.end())
 		return *it;
 	return nullptr;
 }
@@ -477,7 +477,7 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundD
 }
 
 void sqgetpairs(HSQOBJECT obj, void func(const Common::String &k, HSQOBJECT &obj, void *data), void *data) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sq_pushobject(v, obj);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {

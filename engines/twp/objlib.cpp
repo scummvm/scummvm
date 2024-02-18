@@ -68,8 +68,8 @@ static SQInteger createObject(HSQUIRRELVM v) {
 	}
 
 	debugC(kDebugObjScript, "Create object: %s, %u", sheet.c_str(), frames.size());
-	Common::SharedPtr<Object> obj = g_engine->_room->createObject(sheet, frames);
-	obj->_room = g_engine->_room;
+	Common::SharedPtr<Object> obj = g_twp->_room->createObject(sheet, frames);
+	obj->_room = g_twp->_room;
 	sq_pushobject(v, obj->_table);
 
 	return 1;
@@ -123,7 +123,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 		}
 	}
 	debugC(kDebugObjScript, "Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
-	Common::SharedPtr<Object> obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
+	Common::SharedPtr<Object> obj = g_twp->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
 	sqpush(v, obj->_table);
 	return 1;
 }
@@ -169,7 +169,7 @@ static SQInteger findObjectAt(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 3, y)))
 		return sq_throwerror(v, "failed to get y");
-	Common::SharedPtr<Object> obj = g_engine->objAt(Math::Vector2d(x, y));
+	Common::SharedPtr<Object> obj = g_twp->objAt(Math::Vector2d(x, y));
 	if (!obj)
 		sq_pushnull(v);
 	else
@@ -181,7 +181,7 @@ static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	if (!obj->_owner || (obj->_owner != g_engine->_actor)) {
+	if (!obj->_owner || (obj->_owner != g_twp->_actor)) {
 		debugC(kDebugObjScript, "Is '%s(%s)' in inventory: no", obj->_name.c_str(), obj->_key.c_str());
 		sqpush(v, false);
 		return 1;
@@ -591,7 +591,7 @@ static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
 	int layer = 0;
 	if (SQ_FAILED(sqget(v, 3, layer)))
 		return sq_throwerror(v, "failed to get parallax layer");
-	g_engine->_room->objectParallaxLayer(obj, layer);
+	g_twp->_room->objectParallaxLayer(obj, layer);
 	return 0;
 }
 
@@ -733,7 +733,7 @@ static SQInteger objectScreenSpace(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	g_engine->_screenScene.addChild(obj->_node.get());
+	g_twp->_screenScene.addChild(obj->_node.get());
 	return 0;
 }
 
@@ -887,8 +887,8 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, verb)))
 		return sq_throwerror(v, "failed to get verb");
 
-	if (g_engine->_actor) {
-		ActorSlot *slot = g_engine->_hud.actorSlot(g_engine->_actor);
+	if (g_twp->_actor) {
+		ActorSlot *slot = g_twp->_hud.actorSlot(g_twp->_actor);
 		for (int i = 0; i < MAX_VERBS; i++) {
 			Verb *vb = &slot->verbs[i];
 			if (vb->id.id == verb) {
@@ -915,7 +915,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		sq_getstackobj(v, 2, &o);
 		Common::String name;
 		sqgetf(o, "name", name);
-		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_engine->_textDb.getText(name).c_str()).c_str());
+		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_twp->_textDb.getText(name).c_str()).c_str());
 	}
 	Common::SharedPtr<Object> actor;
 	if (sq_gettop(v) >= 3) {
@@ -924,7 +924,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get actor");
 	}
 	if (!actor)
-		actor = g_engine->_actor;
+		actor = g_twp->_actor;
 	Object::pickupObject(actor, obj);
 	return 0;
 }
@@ -1009,12 +1009,12 @@ static SQInteger removeInventory(HSQUIRRELVM v) {
 // it will call the default object's verbOpen as a fallback, allowing for common failure phrase like "I can't open that.".
 // The default object can be changed at anytime, so different selectable characters can have different default responses.
 static SQInteger setDefaultObject(HSQUIRRELVM v) {
-	HSQUIRRELVM vm = g_engine->getVm();
-	if (g_engine->_defaultObj._type != OT_NULL)
-		sq_release(vm, &g_engine->_defaultObj);
-	if (SQ_FAILED(sq_getstackobj(v, 2, &g_engine->_defaultObj)))
+	HSQUIRRELVM vm = g_twp->getVm();
+	if (g_twp->_defaultObj._type != OT_NULL)
+		sq_release(vm, &g_twp->_defaultObj);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &g_twp->_defaultObj)))
 		return sq_throwerror(v, "failed to get default object");
-	sq_addref(vm, &g_engine->_defaultObj);
+	sq_addref(vm, &g_twp->_defaultObj);
 	return 0;
 }
 

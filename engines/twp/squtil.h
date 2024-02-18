@@ -52,7 +52,7 @@ void sqpush(HSQUIRRELVM v, T first, Args... args) {
 // set field
 template<typename T>
 void sqsetf(HSQOBJECT o, const Common::String &key, T obj) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, o);
 	sq_pushstring(v, key.c_str(), -1);
@@ -75,13 +75,13 @@ void sqgetf(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, T &value) {
 
 template<typename T>
 void sqgetf(HSQOBJECT o, const Common::String &name, T &value) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sqgetf(v, o, name, value);
 }
 
 template<typename T>
 void sqgetf(const Common::String &name, T &value) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sqgetf(v, sqrootTbl(v), name, value);
 }
 
@@ -93,7 +93,7 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundD
 
 template<typename TFunc>
 void sqgetitems(HSQOBJECT o, TFunc func) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sq_pushobject(v, o);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
@@ -109,7 +109,7 @@ void sqgetpairs(HSQOBJECT obj, void func(const Common::String& key, HSQOBJECT& o
 
 template<typename TFunc>
 void sqgetpairs(HSQOBJECT obj, TFunc func) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sq_pushobject(v, obj);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
@@ -125,7 +125,7 @@ void sqgetpairs(HSQOBJECT obj, TFunc func) {
 
 template<typename T>
 void sqnewf(HSQOBJECT o, const Common::String &key, T obj) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, o);
 	sq_pushstring(v, key.c_str(), -1);
@@ -192,7 +192,7 @@ void sqcall(HSQUIRRELVM v, HSQOBJECT o, const char *name, T... args) {
 template<typename... T>
 void sqcall(HSQOBJECT o, const char *name, T... args) {
 	constexpr size_t n = sizeof...(T);
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sqpushfunc(v, o, name);
 
@@ -207,7 +207,7 @@ void sqcall(HSQOBJECT o, const char *name, T... args) {
 template<typename... T>
 void sqcall(const char *name, T... args) {
 	constexpr size_t n = sizeof...(T);
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT o = sqrootTbl(v);
 	SQInteger top = sq_gettop(v);
 	sqpushfunc(v, o, name);
@@ -223,7 +223,7 @@ void sqcall(const char *name, T... args) {
 template<typename TResult, typename... T>
 void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
 	constexpr size_t n = sizeof...(T);
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sqpush(v, o);
 	sq_pushstring(v, _SC(name), -1);
@@ -249,7 +249,7 @@ void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
 template<typename TResult, typename... T>
 void sqcallfunc(TResult &result, const char *name, T... args) {
 	constexpr size_t n = sizeof...(T);
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT o = sqrootTbl(v);
 	SQInteger top = sq_gettop(v);
 	sqpush(v, o);

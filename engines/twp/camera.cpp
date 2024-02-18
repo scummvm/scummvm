@@ -39,7 +39,7 @@ void Camera::setAtCore(Math::Vector2d at) {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	_pos = at;
 	clamp(_pos);
-	g_engine->getGfx().cameraPos(_pos - screenSize / 2.f);
+	g_twp->getGfx().cameraPos(_pos - screenSize / 2.f);
 }
 
 void Camera::setAt(Math::Vector2d at) {

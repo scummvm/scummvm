@@ -54,7 +54,7 @@ static void drawThreads() {
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	const auto &threads = g_engine->_threads;
+	const auto &threads = g_twp->_threads;
 	if (ImGui::Begin("Threads", &state._showThreads)) {
 		ImGui::Text("# threads: %u", threads.size());
 		ImGui::Separator();
@@ -68,8 +68,8 @@ static void drawThreads() {
 			ImGui::TableSetupColumn("Line");
 			ImGui::TableHeadersRow();
 
-			if (g_engine->_cutscene) {
-				Common::SharedPtr<ThreadBase> thread(g_engine->_cutscene);
+			if (g_twp->_cutscene) {
+				Common::SharedPtr<ThreadBase> thread(g_twp->_cutscene);
 				SQStackInfos infos;
 				sq_stackinfos(thread->getThread(), 0, &infos);
 
@@ -121,7 +121,7 @@ static void drawObjects() {
 	state._objFilter.Draw();
 
 	// show object list
-	for (auto &layer : g_engine->_room->_layers) {
+	for (auto &layer : g_twp->_room->_layers) {
 		for (auto &obj : layer->_objects) {
 			if (state._objFilter.PassFilter(obj->_key.c_str())) {
 				ImGui::PushID(obj->getId());
@@ -179,7 +179,7 @@ static void drawActors() {
 	ImGui::Begin("Actors", &state._showStack);
 	state._actorFilter.Draw();
 	ImGui::BeginChild("Actor_List");
-	for (auto &actor : g_engine->_actors) {
+	for (auto &actor : g_twp->_actors) {
 		bool selected = actor->getId() == state._selectedActor;
 		Common::String key(actor->_key);
 		if (state._actorFilter.PassFilter(actor->_key.c_str())) {
@@ -224,11 +224,11 @@ static void drawStack() {
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Stack", &state._showStack);
 	ImGui::BeginChild("ScrollingRegion");
-	SQInteger size = sq_gettop(g_engine->getVm());
+	SQInteger size = sq_gettop(g_twp->getVm());
 	ImGui::Text("size: %lld", size);
 	HSQOBJECT obj;
 	for (SQInteger i = 1; i < size; i++) {
-		sq_getstackobj(g_engine->getVm(), -i, &obj);
+		sq_getstackobj(g_twp->getVm(), -i, &obj);
 		ImGui::Text("obj type: 0x%X", obj._type);
 	}
 	ImGui::EndChild();
@@ -247,7 +247,7 @@ static void drawResources() {
 		ImGui::TableSetupColumn("Resolution");
 		ImGui::TableHeadersRow();
 
-		for (auto &res : g_engine->_resManager._textures) {
+		for (auto &res : g_twp->_resManager._textures) {
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 			bool selected = state._textureSelected == res._key;
@@ -266,7 +266,7 @@ static void drawResources() {
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 10.f));
 	ImGui::Text("Preview:");
 	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
-	for (auto &res : g_engine->_resManager._textures) {
+	for (auto &res : g_twp->_resManager._textures) {
 		if (state._textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
 			break;
@@ -283,7 +283,7 @@ static void drawAudio() {
 
 	// count the number of active sounds
 	int count = 0;
-	for (auto &s : g_engine->_audio._slots) {
+	for (auto &s : g_twp->_audio._slots) {
 		if (s.busy)
 			count++;
 	}
@@ -304,13 +304,13 @@ static void drawAudio() {
 		ImGui::TableHeadersRow();
 
 		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
-			auto &sound = g_engine->_audio._slots[i];
+			auto &sound = g_twp->_audio._slots[i];
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 			ImGui::Text("#%d", i);
 			if (sound.busy) {
-				float pan = g_engine->_mixer->getChannelBalance(sound.handle) / 128.f;
-				float vol = g_engine->_mixer->getChannelVolume(sound.handle) / 255.f;
+				float pan = g_twp->_mixer->getChannelBalance(sound.handle) / 128.f;
+				float vol = g_twp->_mixer->getChannelVolume(sound.handle) / 255.f;
 				ImGui::TableNextColumn();
 				ImGui::Text("%d", sound.id);
 				ImGui::TableNextColumn();
@@ -325,7 +325,7 @@ static void drawAudio() {
 				ImGui::Text("%0.1f", pan);
 				ImGui::SameLine();
 				if (ImGui::SmallButton("STOP")) {
-					g_engine->_audio.stop(sound.id);
+					g_twp->_audio.stop(sound.id);
 				}
 			}
 		}
@@ -341,58 +341,58 @@ static void drawGeneral() {
 
 	ImGui::Begin("General");
 
-	SQInteger size = sq_gettop(g_engine->getVm());
+	SQInteger size = sq_gettop(g_twp->getVm());
 	ImGui::TextColored(gray, "Stack:");
 	ImGui::SameLine();
 	ImGui::Text("%lld", size);
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	ImGui::Text("%s", g_engine->_cutscene ? g_engine->_cutscene->getName().c_str() : "no");
-	DialogState dialogState = g_engine->_dialog.getState();
+	ImGui::Text("%s", g_twp->_cutscene ? g_twp->_cutscene->getName().c_str() : "no");
+	DialogState dialogState = g_twp->_dialog.getState();
 	ImGui::TextColored(gray, "In dialog:");
 	ImGui::SameLine();
 	ImGui::Text("%s", ((dialogState == Active) ? "yes" : (dialogState == WaitingForChoice ? "waiting for choice" : "no")));
 	ImGui::TextColored(gray, "Verb:");
 	ImGui::SameLine();
-	Common::String verb = g_engine->getTextDb().getText(g_engine->_hud._verb.text);
-	ImGui::Text("%s %d", verb.c_str(), g_engine->_hud._verb.id.id);
+	Common::String verb = g_twp->getTextDb().getText(g_twp->_hud._verb.text);
+	ImGui::Text("%s %d", verb.c_str(), g_twp->_hud._verb.id.id);
 
-	auto mousePos = g_engine->_cursor.pos;
+	auto mousePos = g_twp->_cursor.pos;
 	ImGui::TextColored(gray, "Pos (screen):");
 	ImGui::SameLine();
 	ImGui::Text("(%.0f, %0.f)", mousePos.getX(), mousePos.getY());
-	if (g_engine->_room) {
-		auto pos = g_engine->screenToRoom(mousePos);
+	if (g_twp->_room) {
+		auto pos = g_twp->screenToRoom(mousePos);
 		ImGui::TextColored(gray, "Pos (room):");
 		ImGui::SameLine();
 		ImGui::Text("(%.0f, %0.f)", pos.getX(), pos.getY());
 	}
 	ImGui::Separator();
-	ImGui::Checkbox("HUD", &g_engine->_inputState._inputHUD);
+	ImGui::Checkbox("HUD", &g_twp->_inputState._inputHUD);
 	ImGui::SameLine();
-	ImGui::Checkbox("Input", &g_engine->_inputState._inputActive);
+	ImGui::Checkbox("Input", &g_twp->_inputState._inputActive);
 	ImGui::SameLine();
-	ImGui::Checkbox("Cursor", &g_engine->_inputState._showCursor);
+	ImGui::Checkbox("Cursor", &g_twp->_inputState._showCursor);
 	ImGui::SameLine();
-	ImGui::Checkbox("Verbs", &g_engine->_inputState._inputVerbsActive);
+	ImGui::Checkbox("Verbs", &g_twp->_inputState._inputVerbsActive);
 	ImGui::SameLine();
-	ImGui::Checkbox("Allow SaveGame", &g_engine->_saveGameManager._allowSaveGame);
+	ImGui::Checkbox("Allow SaveGame", &g_twp->_saveGameManager._allowSaveGame);
 
 	ImGui::Separator();
-	bool isSwitcherOn = g_engine->_actorSwitcher._mode == asOn;
+	bool isSwitcherOn = g_twp->_actorSwitcher._mode == asOn;
 	if (ImGui::Checkbox("Switcher ON", &isSwitcherOn)) {
 		if (isSwitcherOn) {
-			g_engine->_actorSwitcher._mode |= asOn;
+			g_twp->_actorSwitcher._mode |= asOn;
 		} else {
-			g_engine->_actorSwitcher._mode &= ~asOn;
+			g_twp->_actorSwitcher._mode &= ~asOn;
 		}
 	}
-	bool isTemporaryUnselectable = g_engine->_actorSwitcher._mode & asTemporaryUnselectable;
+	bool isTemporaryUnselectable = g_twp->_actorSwitcher._mode & asTemporaryUnselectable;
 	if (ImGui::Checkbox("Switcher Temp. Unselectable", &isTemporaryUnselectable)) {
 		if (isTemporaryUnselectable) {
-			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
+			g_twp->_actorSwitcher._mode |= asTemporaryUnselectable;
 		} else {
-			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
+			g_twp->_actorSwitcher._mode &= ~asTemporaryUnselectable;
 		}
 	}
 	ImGui::Separator();
@@ -425,24 +425,24 @@ static void drawGeneral() {
 	if (ImGui::CollapsingHeader("Camera")) {
 		ImGui::TextColored(gray, "follow:");
 		ImGui::SameLine();
-		ImGui::Text("%s", !g_engine->_followActor ? "(none)" : g_engine->_followActor->_key.c_str());
+		ImGui::Text("%s", !g_twp->_followActor ? "(none)" : g_twp->_followActor->_key.c_str());
 		ImGui::TextColored(gray, "moving:");
 		ImGui::SameLine();
-		ImGui::Text("%s", g_engine->_camera.isMoving() ? "yes" : "no");
-		auto halfScreenSize = g_engine->_room->getScreenSize() / 2.0f;
-		auto camPos = g_engine->cameraPos() - halfScreenSize;
+		ImGui::Text("%s", g_twp->_camera.isMoving() ? "yes" : "no");
+		auto halfScreenSize = g_twp->_room->getScreenSize() / 2.0f;
+		auto camPos = g_twp->cameraPos() - halfScreenSize;
 		if (ImGui::DragFloat2("Camera pos", camPos.getData())) {
-			g_engine->follow(nullptr);
-			g_engine->cameraAt(camPos);
+			g_twp->follow(nullptr);
+			g_twp->cameraAt(camPos);
 		}
-		auto bounds = g_engine->_camera.getBounds();
+		auto bounds = g_twp->_camera.getBounds();
 		if (ImGui::DragFloat4("Bounds", bounds.v)) {
-			g_engine->_camera.setBounds(bounds);
+			g_twp->_camera.setBounds(bounds);
 		}
 	}
 
 	// Room
-	Common::SharedPtr<Room> room = g_engine->_room;
+	Common::SharedPtr<Room> room = g_twp->_room;
 	if (room) {
 		if (ImGui::CollapsingHeader("Room")) {
 			ImGui::TextColored(gray, "Sheet:");
@@ -460,7 +460,7 @@ static void drawGeneral() {
 			Color overlay = room->_overlayNode.getOverlayColor();
 			if (ImGui::ColorEdit4("Overlay", overlay.v))
 				room->_overlayNode.setOverlayColor(overlay);
-			ImGui::Checkbox("Debug Lights", &g_engine->_lighting->_debug);
+			ImGui::Checkbox("Debug Lights", &g_twp->_lighting->_debug);
 			ImGui::ColorEdit4("Ambient Light", room->_lights._ambientLight.v);
 			for (int i = 0; i < room->_lights._numLights; ++i) {
 				Common::String ss = Common::String::format("Light %d", i + 1);
@@ -499,11 +499,11 @@ static void drawGeneral() {
 		int effect = static_cast<int>(room->_effect);
 		if (ImGui::Combo("effect", &effect, RoomEffects))
 			room->_effect = (RoomEffect)effect;
-		ImGui::DragFloat("iFade", &g_engine->_shaderParams.iFade, 0.01f, 0.f, 1.f);
-		ImGui::DragFloat("wobbleIntensity", &g_engine->_shaderParams.wobbleIntensity, 0.01f, 0.f, 1.f);
-		ImGui::DragFloat3("shadows", g_engine->_shaderParams.shadows.v, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat3("midtones", g_engine->_shaderParams.midtones.v, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat3("highlights", g_engine->_shaderParams.highlights.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat("iFade", &g_twp->_shaderParams.iFade, 0.01f, 0.f, 1.f);
+		ImGui::DragFloat("wobbleIntensity", &g_twp->_shaderParams.wobbleIntensity, 0.01f, 0.f, 1.f);
+		ImGui::DragFloat3("shadows", g_twp->_shaderParams.shadows.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat3("midtones", g_twp->_shaderParams.midtones.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat3("highlights", g_twp->_shaderParams.highlights.v, 0.01f, -1.f, 1.f);
 	}
 
 	// Fade Effects
@@ -513,10 +513,10 @@ static void drawGeneral() {
 		ImGui::Combo("Fade effect", &state._fadeEffect, FadeEffects);
 		ImGui::DragFloat("Duration", &state._fadeDuration, 0.1f, 0.f, 10.f);
 		ImGui::Checkbox("Fade to sepia", &state._fadeToSepia);
-		ImGui::Text("Elapsed %f", g_engine->_fadeShader->_elapsed);
-		ImGui::Text("Fade %f", g_engine->_fadeShader->_fade);
+		ImGui::Text("Elapsed %f", g_twp->_fadeShader->_elapsed);
+		ImGui::Text("Fade %f", g_twp->_fadeShader->_fade);
 		if (ImGui::Button("GO")) {
-			g_engine->fadeTo((FadeEffect)state._fadeEffect, state._fadeDuration, state._fadeToSepia);
+			g_twp->fadeTo((FadeEffect)state._fadeEffect, state._fadeDuration, state._fadeToSepia);
 		}
 	}
 	ImGui::Separator();
@@ -559,7 +559,7 @@ static void drawScenegraph() {
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Scenegraph", &state._showScenegraph);
-	drawNode(&g_engine->_scene);
+	drawNode(&g_twp->_scene);
 	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);

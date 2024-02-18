@@ -37,7 +37,7 @@ public:
 	Blink(Common::SharedPtr<Object> obj, float min, float max) : _obj(obj), _min(min), _max(max) {
 		_obj->showLayer("blink", false);
 		_state = BlinkState::Closed;
-		_duration = g_engine->getRandom(min, max);
+		_duration = g_twp->getRandom(min, max);
 	}
 
 	virtual void update(float elapsed) override {
@@ -54,7 +54,7 @@ public:
 			_elapsed += elapsed;
 			if (_elapsed > 0.25) {
 				_obj->showLayer("blink", false);
-				_duration = g_engine->getRandom(_min, _max);
+				_duration = g_twp->getRandom(_min, _max);
 				_elapsed = 0;
 				_state = BlinkState::Closed;
 			}
@@ -218,12 +218,12 @@ void Object::trig(const Common::String &name) {
 		}
 	} else {
 		int id = 0;
-		sqgetf(sqrootTbl(g_engine->getVm()), name.substr(1), id);
+		sqgetf(sqrootTbl(g_twp->getVm()), name.substr(1), id);
 		Common::SharedPtr<SoundDefinition> sound = sqsounddef(id);
 		if (!sound)
 			warning("Cannot trig sound '%s', sound not found (id=%d, %s)", name.c_str(), id, _key.c_str());
 		else
-			g_engine->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
+			g_twp->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	}
 }
 
@@ -293,7 +293,7 @@ void Object::setTouchable(bool value) {
 }
 
 void Object::setIcon(int fps, const Common::StringArray &icons) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	sq_newarray(v, 0);
 	sqpush(v, fps);
 	for (size_t i = 0; i < icons.size(); i++) {
@@ -402,10 +402,10 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 		object->_room = room;
 
 		if(roomChanged && isActor(object->getId())) {
-			if(room == g_engine->_room) {
-				g_engine->actorEnter(object);
-			} else if(oldRoom == g_engine->_room) {
-				g_engine->actorExit(object);
+			if(room == g_twp->_room) {
+				g_twp->actorEnter(object);
+			} else if(oldRoom == g_twp->_room) {
+				g_twp->actorExit(object);
 			}
 		}
 	}
@@ -519,7 +519,7 @@ void Object::blinkRate(Common::SharedPtr<Object> obj, float min, float max) {
 
 void Object::setCostume(const Common::String &name, const Common::String &sheet) {
 	GGPackEntryReader entry;
-	entry.open(g_engine->_pack, name + ".json");
+	entry.open(g_twp->_pack, name + ".json");
 
 	GGHashMapDecoder dec;
 	Common::ScopedPtr<Common::JSONValue> json(dec.open(&entry));
@@ -693,7 +693,7 @@ static bool verbNotClose(VerbId id) {
 
 static void cantReach(Common::SharedPtr<Object> self, Common::SharedPtr<Object> noun2) {
 	if (sqrawexists(self->_table, "verbCantReach")) {
-		int nParams = sqparamCount(g_engine->getVm(), self->_table, "verbCantReach");
+		int nParams = sqparamCount(g_twp->getVm(), self->_table, "verbCantReach");
 		debugC(kDebugGame, "verbCantReach found in obj '%s' with %d params", self->_key.c_str(), nParams);
 		if (nParams == 1) {
 			sqcall(self->_table, "verbCantReach");
@@ -709,7 +709,7 @@ static void cantReach(Common::SharedPtr<Object> self, Common::SharedPtr<Object> 
 	} else {
 		HSQOBJECT nilTbl;
 		sq_resetobject(&nilTbl);
-		sqcall(g_engine->_defaultObj, "verbCantReach", self->_table, nilTbl);
+		sqcall(g_twp->_defaultObj, "verbCantReach", self->_table, nilTbl);
 	}
 }
 
@@ -757,7 +757,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 
 		debugC(kDebugGame, "actorArrived: callVerb");
 		obj->_exec.enabled = false;
-		g_engine->callVerb(obj, verb, noun1, noun2);
+		g_twp->callVerb(obj, verb, noun1, noun2);
 	}
 }
 
