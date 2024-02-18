@@ -55,6 +55,7 @@ private:
 	void drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
+	void drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s);
 
 	void renderString(uint16 x, uint16 y, Common::String s);
 

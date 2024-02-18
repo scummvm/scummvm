@@ -130,6 +130,12 @@ namespace Macs2 {
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
 			AnimFrame &currentFrame = current.Frames[current.FrameIndex];
 			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s);
+		}
+	}
+
+	void View1::drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s) {
+		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+			BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 			renderString(current.X, current.Y, Common::String::format("%u", i));
 		}
 	}
@@ -379,6 +385,7 @@ void View1::draw() {
 
 	drawPathfindingPoints(s);
 	drawPath(s);
+	drawBackgroundAnimationNumbers(s);
 }
 
 bool View1::tick() {
@@ -412,7 +419,8 @@ bool View1::tick() {
 		// TODO: Check if this is necessary
 
 		// Proper update of the background anims
-		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+		// TODO: Hardcoding start to 2 to have the manually flipped animations not change automatically
+		for (int i = 2; i < g_engine->_numBackgroundAnimations; i++) {
 			BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 			current.FrameIndex++;
 			current.FrameIndex = current.FrameIndex % current.numFrames;

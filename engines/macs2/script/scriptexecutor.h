@@ -30,6 +30,8 @@ namespace Common {
 
 
 namespace Macs2 {
+class Macs2Engine;
+
 	namespace Script {
 
 		struct ScriptVariable {
@@ -66,6 +68,9 @@ namespace Macs2 {
 			// Implements opcode 0e - changing scene animations
 			void FuncB6BE();
 
+			// Implements a lookup in the "areas" map
+			uint16 Func101D(uint16 x, uint16 y);
+
 			// TODO: Identify number of variables and default values
 			ScriptVariable _variables[10000];
 
@@ -78,6 +83,8 @@ namespace Macs2 {
 			// TODO: Mockup variable to simulate conditions where the scripting
 			// function would be called again, like after a walk to event
 			bool requestCallback = false;
+
+			Macs2::Macs2Engine* _engine;
 
 			ScriptExecutor();
 		

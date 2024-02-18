@@ -105,7 +105,9 @@ public:
 
 	struct Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
+	// Note: This is used both for pathfinding as well as for area IDs
 	Graphics::ManagedSurface _pathfindingMap;
+
 	byte _pal[256 * 3] = { 0 };
 	byte _palVanilla[256 * 3] = { 0 };
 
