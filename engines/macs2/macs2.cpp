@@ -150,6 +150,7 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 		// Skip ahead to the number of frames (?)
 		// file.seek(20, SEEK_CUR);
 		current.numFrames = file.readUint16LE();
+		current.FrameIndex = 0; 
 		current.Frames = new AnimFrame[current.numFrames];
 		for (int j = 0; j < current.numFrames; j++) {
 			// Skip to width and height
@@ -419,6 +420,8 @@ void Macs2Engine::readResourceFile() {
 
 	// This is the walkability map - TBC if that's really it and how it works
 	_pathfindingMap = readRLEImage(0x00249CC1, file);
+
+	
 	
 
 	// Load the data for the mouse cursor
@@ -482,6 +485,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_gameDescription(gameDesc), _randomSource("Macs2") {
 	g_engine = this;
 	_scriptExecutor = new Script::ScriptExecutor();
+	_scriptExecutor->_engine = this;
 	_adlib = new Adlib();
 }
 
