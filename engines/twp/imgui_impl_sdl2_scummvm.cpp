@@ -481,6 +481,8 @@ bool ImGui_ImplSDL2_ProcessEvent(const Common::Event *event) {
 	case Common::EVENT_FOCUS_LOST:
 		io.AddFocusEvent(false);
 		return true;
+	default:
+		return false;
 	}
 	return false;
 }
