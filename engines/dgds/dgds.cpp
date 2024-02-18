@@ -181,7 +181,7 @@ void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		_adsInterp->load(_scene->getAdsFile());
 
 	_scene->runEnterSceneOps();
-	debug("%s", _scene->dump("").c_str());
+	//debug("%s", _scene->dump("").c_str());
 }
 
 Common::Error DgdsEngine::run() {
@@ -223,7 +223,7 @@ Common::Error DgdsEngine::run() {
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
-		debug("%s", _gdsScene->dump("").c_str());
+		//debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
@@ -264,8 +264,8 @@ Common::Error DgdsEngine::run() {
 
 	//getDebugger()->attach();
 
-	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
-	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
+	//debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	//debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
@@ -321,6 +321,7 @@ Common::Error DgdsEngine::run() {
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 
+				/*
 				if (!creditsShown) {
 					creditsShown = true;
 					if (getGameId() == GID_DRAGON) {
@@ -330,7 +331,7 @@ Common::Error DgdsEngine::run() {
 					}
 				} else {
 					return Common::kNoError;
-				}
+				}*/
 			}
 			_scene->checkTriggers();
 		} else if (getGameId() == GID_BEAMISH) {

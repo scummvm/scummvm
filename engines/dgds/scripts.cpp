@@ -83,8 +83,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
 		break;
 	case 0x0110: // PURGE void
-		// .. shouldn't actually clear the bmps, what should it do?
-		state._currentBmpId = 0;
+		_vm->adsInterpreter()->setHitTTMOp0110();
 		break;
 	case 0x0ff0: {
 		// REFRESH:	void
@@ -114,19 +113,23 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		break;
 	case 0x1090:
 		// SELECT SONG:	    id:int [0]
+		state._currentSongId = ivals[0];
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
 		debug("SCENE SETUP DONE: %u", ivals[0]);
 		break;
+	case 0x1100:   // SET_SCENE:  i:int   [1..n]
 	case 0x1110: { // SET_SCENE:  i:int   [1..n]
 		// DESCRIPTION IN TTM TAGS.
 		debug("SET SCENE: %u", ivals[0]);
-		state._currentFrame = ivals[0];
 		break;
 	}
 	case 0x1200: // GOTO? How different to SET SCENE??
 		debug("GOTO SCENE: %u", ivals[0]);
 		state._currentFrame = ivals[0];
+		break;
+	case 0x1300: // PLAY SFX?    i:int - eg [72], found in Dragon + HoC intro
+		debug("TODO: PLAY SFX?: %u", ivals[0]);
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
 		state._drawColFG = static_cast<byte>(ivals[0]);
@@ -264,9 +267,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 	case 0x0220: // STOP CURRENT MUSIC
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1070: // SELECT FONT  i:int
-	case 0x1100: // ?	    i:int   [9]
 	case 0x1120: // SET_BACKGROUND
-	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
 	case 0x1310: // STOP SFX    i:int   eg [107]
 	case 0x2010: // SET FRAME
 	case 0x2020: // SET TIMER
@@ -304,43 +305,45 @@ bool TTMInterpreter::run(TTMData &env, struct TTMSeq &seq) {
 	}
 	seq._timeNext = 0;
 
-	uint16 code = scr->readUint16LE();
-	uint16 op = code & 0xFFF0;
-	byte count = code & 0x000F;
-	int16 ivals[8];
-	Common::String sval;
+	uint16 code = 0;
+	while (code != 0xff0 && scr->pos() < scr->size()) {
+		code = scr->readUint16LE();
+		uint16 op = code & 0xFFF0;
+		byte count = code & 0x000F;
+		int16 ivals[8];
+		Common::String sval;
 
-	if (count > 8 && count != 0x0f)
-		error("Invalid TTM opcode %04x requires %d locals", code, count);
+		if (count > 8 && count != 0x0f)
+			error("Invalid TTM opcode %04x requires %d locals", code, count);
 
-	debugN("\tOP: 0x%4.4x %2u ", op, count);
-	if (count == 0x0F) {
-		byte ch[2];
+		debugN("\tOP: 0x%4.4x %2u ", op, count);
+		if (count == 0x0F) {
+			byte ch[2];
 
-		do {
-			ch[0] = scr->readByte();
-			ch[1] = scr->readByte();
-			if (ch[0])
-				sval += ch[0];
-			if (ch[1])
-				sval += ch[1];
-		} while (ch[0] != 0 && ch[1] != 0);
+			do {
+				ch[0] = scr->readByte();
+				ch[1] = scr->readByte();
+				if (ch[0])
+					sval += ch[0];
+				if (ch[1])
+					sval += ch[1];
+			} while (ch[0] != 0 && ch[1] != 0);
 
-		debugN("\"%s\"", sval.c_str());
-	} else {
-		for (byte i = 0; i < count; i++) {
-			ivals[i] = scr->readSint16LE();
-			if (i > 0)
-				debugN(", ");
-			debugN("%d", ivals[i]);
+			debugN("\"%s\"", sval.c_str());
+		} else {
+			for (byte i = 0; i < count; i++) {
+				ivals[i] = scr->readSint16LE();
+				if (i > 0)
+					debugN(", ");
+				debugN("%d", ivals[i]);
+			}
 		}
-	}
-	debug(" ");
+		debug(" ");
 
-	handleOperation(env, seq, op, count, ivals, sval);
+		handleOperation(env, seq, op, count, ivals, sval);
+	}
 
 	updateScreen(seq);
-
 	return true;
 }
 
@@ -349,7 +352,7 @@ void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &se
 	env.scr->seek(0);
 	uint16 op = 0;
 	for (uint page = 0; page < env._pages; page++) {
-		while (op != 0xff0 && !env.scr->eos()) {
+		while (op != 0xff0 && env.scr->pos() < env.scr->size()) {
 			op = env.scr->readUint16LE();
 			switch (op & 0xf) {
 			case 0:
@@ -396,10 +399,10 @@ void TTMSeq::reset() {
     _timeNext = 0;
     _runCount = 0;
     _runPlayed = 0;
-    _executed = 0;
+    _executed = false;
     _runFlag = kRunTypeStopped;
     _scriptFlag = 0;
-    _selfLoop = 0;
+    _selfLoop = false;
     _drawWin = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
@@ -440,19 +443,29 @@ bool ADSInterpreter::load(const Common::String &filename) {
 
 	uint16 opcode = 0;
 	int segcount = 0;
-	while (_adsData.scr->pos() < _adsData.scr->eos()) {
+	findUsedSequencesForSegment(0);
+	_adsData._segments[0] = 0;
+	while (_adsData.scr->pos() < _adsData.scr->size()) {
 		opcode = _adsData.scr->readUint16LE();
 		if (opcode == 0xffff) {
-			findUsedSequencesForSegment(segcount);
 			segcount++;
+			_adsData._segments[segcount] = _adsData.scr->pos();
+			findUsedSequencesForSegment(segcount);
 		} else {
 			_adsData.scr->skip(numArgs(opcode) * 2);
 		}
 	}
 
-	_adsData._maxSegments = segcount + 1;
+	for (uint i = segcount + 1; i < ARRAYSIZE(_adsData._segments); i++)
+		_adsData._segments[i] = 0;
 
+	_adsData._maxSegments = segcount + 1;
 	_adsData.filename = filename;
+
+	for (uint i = 0; i < ARRAYSIZE(_adsData._state); i++)
+		_adsData._state[i] = 8;
+	for (auto &seq : _adsData._ttmSeqs)
+		seq.reset();
 
 	return true;
 }
@@ -462,6 +475,25 @@ static const uint16 ADS_SEQ_OPCODES[] = {
 	0x1340, 0x1360, 0x1370, 0x1320, 0x1310, 0x1350
 };
 
+bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
+	if (seq._timeInterval != 0) {
+		uint32 now = g_system->getMillis();
+		if (now < seq._timeNext)
+			return false;
+		seq._timeNext = now + seq._timeInterval;
+	}
+
+	seq._executed = false;
+	if (seq._gotoFrame == -1) {
+		seq._currentFrame++;
+	} else {
+		seq._currentFrame = seq._gotoFrame;
+		seq._gotoFrame = -1;
+	}
+
+	return true;
+}
+
 void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 	_adsData._usedSeqs[segno].clear();
 	int64 startoff = _adsData.scr->pos();
@@ -470,8 +502,14 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 		opcode = _adsData.scr->readUint16LE();
 		for (uint16 o : ADS_SEQ_OPCODES) {
 			if (opcode == o) {
-				TTMSeq *seq = findTTMSeq(_adsData.scr->readUint16LE(), _adsData.scr->readUint16LE());
-				_adsData._usedSeqs[segno].push_back(seq);
+				int16 envno = _adsData.scr->readSint16LE();
+				int16 seqno = _adsData.scr->readSint16LE();
+				TTMSeq *seq = findTTMSeq(envno, seqno);
+				if (!seq)
+					warning("ADS references unknown seq %d %d", envno, seqno);
+				else
+					_adsData._usedSeqs[segno].push_back(seq);
+				// Go back as we will go forward again outside this loop.
 				_adsData.scr->seek(-4, SEEK_CUR);
 				break;
 			}
@@ -558,10 +596,10 @@ void ADSInterpreter::segmentSetState(int16 seg, uint16 val) {
 
 void ADSInterpreter::findEndOrInitOp() {
 	Common::SeekableReadStream *scr = _adsData.scr;
-	while (true && scr->pos() < scr->size()) {
+	while (scr->pos() < scr->size()) {
 		uint16 opcode = scr->readUint16LE();
 		if (opcode == 0xffff || opcode == 0x0000) {
-			scr->seek(-4, SEEK_CUR);
+			scr->seek(-2, SEEK_CUR);
 			return;
 		}
 		if (opcode == 0x0005)
@@ -578,7 +616,50 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x0005:
 		// "init".  0x0005 can be used for searching for next thing.
 		break;
-	case 0x2000: // ADD sequence and reset frame
+	case 0x1330: { // IF_NOT_PLAYED, 2 params
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && !state->_runPlayed)
+			skipToEndIf(scr);
+		break;
+	}
+	case 0x1350: { // IF_PLAYED, 2 params
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *state = findTTMSeq(enviro, seqnum);
+		if (state && state->_runPlayed)
+			skipToEndIf(scr);
+		break;
+	}
+	case 0x1360: { // IF_NOT_RUNNING, 2 params
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *seq = findTTMSeq(enviro, seqnum);
+		if (seq && seq->_runFlag == kRunTypeStopped)
+			skipToEndIf(scr);
+		break;
+	}
+	case 0x1370: { // IF_RUNNING, 2 params
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		TTMSeq *seq = findTTMSeq(enviro, seqnum);
+		if (seq && (seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited))
+			skipToEndIf(scr);
+		break;
+	}
+	case 0x1500: // ? IF ?, 0 params
+		debug("Unimplemented ADS branch logic opcode 0x1500");
+		//sceneLogicOps();
+		_adsData._hitBranchOp = true;
+		return true;
+	case 0x1510: // PLAY_SCENE? 0 params
+		return false;
+	case 0x1520: // PLAY_SCENE_ENDIF?, 0 params
+		_adsData._hitBranchOp = true;
+		return false;
+
+	case 0x2000:
 	case 0x2005: { // ADD sequence
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
@@ -602,48 +683,22 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			state->_runFlag = kRunTypeTimeLimited;
 		} else {
 			state->_runFlag = kRunTypeMulti;
-			state->_runCount++;
+			state->_runCount = runCount - 1;
 		}
 		state->_runPlayed++;
 		uint16 unk = scr->readUint16LE();
 		debug("ADSInterpreter add scene - enviro: %d, seqNum: %d, runCount: %d, unk: %d", enviro, seqnum, runCount, unk);
 		break;
 	}
-	case 0x1330: { // IF_NOT_PLAYED, 2 params
+	case 0x2020: { // RESET SEQ, 2 params (env, seq)
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
-		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && !state->_runPlayed)
-			skipToEndIf(scr);
+		uint16 unk = scr->readUint16LE();
+		TTMSeq *seq = findTTMSeq(enviro, seqnum);
+		if (seq)
+			seq->reset();
 		break;
 	}
-	case 0x1350: { // IF_PLAYED, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && state->_runPlayed)
-			skipToEndIf(scr);
-		break;
-	}
-	case 0x1360: { // IF_NOT_RUNNING, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && state->_runFlag == 0)
-			skipToEndIf(scr);
-		break;
-	}
-	case 0x1370: { // IF_RUNNING, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && (state->_runFlag == 1 || state->_runFlag == 2 || state->_runFlag == 3))
-			skipToEndIf(scr);
-		break;
-	}
-	case 0x1510: // PLAY_SCENE, 0 params
-		debug("ADS PLAY SCENE");
-		return false;
 
 	case 0xffff:	// END
 		return false;
@@ -651,28 +706,28 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xF010: {// FADE_OUT, 1 param
 		uint16 segment = scr->readUint16LE();
 		debug("ADS FADE OUT?? segment param %x", segment);
-
+		break;
 	}
+
 	//// unknown / to-be-implemented
-	case 0x0190:
+	case 0x1010: // unknown, 2 params
+	case 0x1020: // unknown, 2 params
+	case 0x1030: // unknown, 2 params
+	case 0x1040: // unknown, 2 params
+	case 0x1050: // unknown, 2 params
+	case 0x1060: // unknown, 2 params
 	case 0x1070: // unknown, 2 params
 	case 0x1080: // unknown if-related, 1 param
 	case 0x1340:
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
-	case 0x1500: // ? IF ?
-	case 0x1520: // PLAY_SCENE_ENDIF, 5 params
 	case 0x2010: // STOP_SCENE, 3 params
-	case 0x2020: // RESET SCENE, 2 params (scene, subScene)
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params
 	case 0x4000: // MOVE TO FRONT?, 3 params
 	case 0x4010: // MOVE TO BACK??, 3 params
 	case 0xF200: // RUN_SCRIPT, 1 param
-	case 0xFDA8:
-	case 0xFE98:
-	case 0xFF88:
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
 	default: {
@@ -710,6 +765,7 @@ bool ADSInterpreter::run() {
 			_adsData._state[i] &= 0xfff7;
 		} else {
 			findEndOrInitOp();
+			offset = _adsData.scr->pos();
 		}
 
 		if (_adsData._charWhile[i])
@@ -722,7 +778,7 @@ bool ADSInterpreter::run() {
 
 		if (_adsData.scr && state == 1) {
 			_adsData.scr->seek(offset);
-			runUntilScenePlayedOrEnd();
+			runUntilBrancOpOrEnd();
 		}
 	}
 
@@ -739,6 +795,7 @@ bool ADSInterpreter::run() {
 		} else {
 			int16 curframe = seq._currentFrame;
 			TTMData *env = findTTMEnviro(seq._enviro);
+			_adsData._hitTTMOp0110 = false;
 			bool scriptresult = false;
 			if (curframe < env->_pages && curframe > -1 && env->_pageOffsets[curframe] > -1) {
 				env->scr->seek(env->_pageOffsets[curframe]);
@@ -747,10 +804,42 @@ bool ADSInterpreter::run() {
 			}
 
 			if (scriptresult) {
-				seq._executed = 1;
+				seq._executed = true;
 				seq._lastFrame = seq._currentFrame;
 				result = true;
-				warning("TODO: ADSInterpreter::run Finish script result true section");
+				if (_adsData._scriptDelay != -1 && seq._timeInterval != _adsData._scriptDelay) {
+					uint32 now = g_system->getMillis();
+					seq._timeNext = now + _adsData._scriptDelay;
+					seq._timeInterval = _adsData._scriptDelay;
+				}
+
+				// TODO: What is global 4804?
+				if (!_adsData._hitTTMOp0110) {
+					warning("TODO: ADSInterpreter::run Finish script result true section");
+					// if (global4806 != -1) {
+					// 	seq._gotoFrame = global4806;
+					// 	if (seq._currentFrame == global4806)
+					// 		seq._selfLoop = 1;
+					// }
+					if (seq._runFlag != kRunType5)
+						updateSeqTimeAndFrame(seq);
+				} else {
+					seq._gotoFrame = seq._startFrame;
+					if (seq._runFlag == kRunTypeMulti && seq._runCount != 0) {
+						bool updated = updateSeqTimeAndFrame(seq);
+						if (updated) {
+							seq._runCount--;
+						}
+					} else if (seq._runFlag == kRunTypeTimeLimited && seq._timeCut != 0) {
+						updateSeqTimeAndFrame(seq);
+					} else {
+						bool updated = updateSeqTimeAndFrame(seq);
+						if (updated) {
+							seq._runFlag = kRunType4;
+							seq._timeInterval = 0;
+						}
+					}
+				}
 				// TODO: set script delay here
 				// TODO: Finish lines 118 to 149 of disasm.
 			} else if (sflag != 5) {
@@ -766,7 +855,7 @@ bool ADSInterpreter::run() {
 	return result;
 }
 
-bool ADSInterpreter::runUntilScenePlayedOrEnd() {
+bool ADSInterpreter::runUntilBrancOpOrEnd() {
 	Common::SeekableReadStream *scr = _adsData.scr;
 	if (!scr || scr->pos() >= scr->size())
 		return false;
@@ -775,9 +864,15 @@ bool ADSInterpreter::runUntilScenePlayedOrEnd() {
 	do {
 		uint16 code = scr->readUint16LE();
 		more = handleOperation(code, scr);
-	} while (more && scr->pos() < scr->size());
+	} while (!_adsData._hitBranchOp && more && scr->pos() < scr->size());
+
+	_adsData._hitBranchOp = false;
 
 	return true;
+}
+
+void ADSInterpreter::setHitTTMOp0110() {
+	_adsData._hitTTMOp0110 = true;
 }
 
 int ADSInterpreter::numArgs(uint16 opcode) const {

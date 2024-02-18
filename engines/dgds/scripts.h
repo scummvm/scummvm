@@ -61,7 +61,7 @@ enum TTMRunType {
 
 
 struct TTMSeq {
-	TTMSeq() : _enviro(0), _seqNum(0), _currentFrame(0), _currentPalId(0), _startFrame(0) {
+	TTMSeq() : _enviro(0), _seqNum(0), _currentFrame(0), _currentPalId(0), _startFrame(0), _currentSongId(-1) {
 		reset();
 	}
 
@@ -73,25 +73,27 @@ struct TTMSeq {
 	int16 _gotoFrame;
 	int16 _currentFrame;
 	int16 _lastFrame;
-	int16 _selfLoop;
-	int16 _executed;
+	bool _selfLoop;
+	bool _executed;
 	int16 _slot[6];
 	uint32 _timeNext;
 	uint32 _timeCut;
 	Common::Rect _drawWin;
-	int _currentBmpId;
-	int _currentPalId;
+	int16 _currentBmpId;
+	int16 _currentSongId;
+	int16 _currentPalId;
 	byte _drawColFG;
 	byte _drawColBG;
-	int _runPlayed;
-	int _runCount;
+	int16 _runPlayed;
+	int16 _runCount;
+	int16 _timeInterval;
 	TTMRunType _runFlag;
-	int _scriptFlag;
+	int16 _scriptFlag;
 };
 
 class ADSData : public ScriptParserData {
 public:
-	ADSData() : _initFlag(0), _maxSegments(0) {
+	ADSData() : _initFlag(0), _maxSegments(0), _scriptDelay(-1), _hitTTMOp0110(false), _hitBranchOp(false) {
 		for (int i = 0; i < ARRAYSIZE(_state); i++) {
 			_state[i] = 8;
 		}
@@ -111,6 +113,9 @@ public:
 	int32 _segments[80];
 	int32 _charWhile[80];
 	Common::Array<struct TTMSeq *> _usedSeqs[80];
+	int32 _scriptDelay;
+	bool _hitTTMOp0110;
+	bool _hitBranchOp;
 };
 
 class TTMInterpreter {
@@ -140,6 +145,8 @@ public:
 	int numArgs(uint16 opcode) const;
 	void segmentOrState(int16 seg, uint16 val);
 	void segmentSetState(int16 seg, uint16 val);
+	
+	void setHitTTMOp0110(); // TODO: What is this global?
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
@@ -147,10 +154,10 @@ protected:
 	void skipToEndIf(Common::SeekableReadStream *scr);
 	TTMSeq *findTTMSeq(int16 enviro, int16 seq);
 	TTMData *findTTMEnviro(int16 enviro);
-	bool runUntilScenePlayedOrEnd();
+	bool runUntilBrancOpOrEnd();
 	void findUsedSequencesForSegment(int segno);
 	void findEndOrInitOp();
-
+	bool updateSeqTimeAndFrame(TTMSeq &seq);
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
 
