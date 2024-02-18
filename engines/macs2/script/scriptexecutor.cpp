@@ -22,13 +22,14 @@
 
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "macs2/macs2.h"
 
 namespace Macs2 {
 namespace Script {
 
 #define ScriptNoEntry debug("Unhandled case in script handling.");
 #define STR_HELPER(x) #x
-#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: %u.", (opcode));
+#define ScriptUnimplementedOpcode(opcode) debug("Unimplemented opcode: %.2x.", (opcode));
 
 ScriptExecutor::ScriptExecutor() {
 	// TODO: Hardcoded values for testing
@@ -36,8 +37,15 @@ ScriptExecutor::ScriptExecutor() {
 		_variables[i].a = 0;
 		_variables[i].b = 0;
 	}
-	_variables[0xb].a = 0x3;
-	_interactedObjectID = 0x080a;
+	/* _variables[0xb].a = 0x3;
+	// TODO: This needs to be set for opening the box to work
+	_variables[0xe].a = 0x1;
+	_interactedObjectID = 0x080a; 
+	// Hardcoding for the box to start open for testing
+	*/
+	// Hardcoded values for failed throw at leopard below
+	_interactedObjectID = 0x409;
+	_variables[0xa].a = 0x1;
 }
 
 inline void ScriptExecutor::FuncA3D2() {
@@ -106,6 +114,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	if (opcode1 > 0) {
 		// l0037_9F78:
 		if (opcode1 < 0xFF) {
+			// TODO: This still feels off since it should not be possible
 			if ((value < 1) || (value > 0x800))  {
 				/*
 				We reach this by value being less than 1 or more than 800
@@ -473,6 +482,23 @@ l0037_A1B9:
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
+	else if (value == 0x27) {
+		// TODO: Handle this part
+		/*
+		l0037_A1C1:
+	cmp	byte ptr [1032h],0h
+	jz	0A1E6h
+		*/
+
+		// TODO: Expose the position of the character sprite (or his feet)
+		uint16 charX = 100;
+		uint16 charY = 100;
+		out1 = Func101D(charX, charY);
+		// TODO: In the logs there is also a value out2 (DX) returned - where
+		// does that come from?
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
 	
 	else {
 		// TODO: Handle others
@@ -746,6 +772,18 @@ void ScriptExecutor::FuncB6BE() {
 	// TODO: Access the animation based on the ID
 	// Can do it hardcoded for now, but will need to figure out the relationship
 	// further down the road
+
+	uint16 id = id1 - 0x1000;
+	// TODO: Figure out the animations and the frame indices
+	_engine->_backgroundAnimations[id].FrameIndex = (animFrame + 1) % _engine->_backgroundAnimations[id].numFrames;
+
+}
+
+uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
+	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
+	// TODO: There is another condition and some more code for a second lookup,
+	// TBC if I need that in practice
+	return result;
 }
 
 byte Script::ScriptExecutor::ReadByte() {
@@ -885,6 +923,10 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 void Script::ScriptExecutor::ExecuteScript() {
 	debug("----- Scripting function entered");
+
+	// TODO: Hardcoded to test the box closing
+	_engine->_backgroundAnimations[1].FrameIndex = 1;
+
 	requestCallback = false;
 		// [bp-12h]
 	bool shouldSkip = false;
@@ -929,6 +971,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 		// TODO: Check if a switch would do it
 		if (opcode1 == 0x01) {
 			ScriptUnimplementedOpcode(0x01)
+			// This writes to a script variable
+			// TODO: Needs to be implemented for being able to switch between
+			// box open and close to work
 			/*
 			l0037_DBA0:
 			call	far 0037h:9F07h
@@ -1067,6 +1112,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 			}
 			// TODO: Temporary code until I figure out a cleaner way
 			opcode1 = opcode2;
+		} else if (opcode1 == 0x06) {
+			// TODO: Properly document and test out - there are two handler codes
+			// for opcode6
+			// TODO: Just mocking these calls, they are there for deciding if we
+			// skip the following. TBC if this is the difference between a successful and
+			// a failed throw
+
 		}
 
 		if (opcode1 == 0x0E) {
