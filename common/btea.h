@@ -19,22 +19,40 @@
  *
  */
 
-#ifndef TWP_BTEA_H
-#define TWP_BTEA_H
+#ifndef COMMON_BTEA_H
+#define COMMON_BTEA_H
 
 #include "common/system.h"
 
-namespace Twp {
+namespace Common {
 
+/**
+ * Corrected Block TEA (aka XXTEA) class for ScummVM.
+ *
+ * In cryptography, Corrected Block TEA (often referred to as XXTEA)
+ * is a block cipher designed to correct weaknesses in the original Block TEA.
+ */
 class BTEACrypto {
 public:
-  static void encrypt(uint32 *v, int n, const uint32 *k);
-  static void decrypt(uint32 *v, int n, const uint32 *k);
+	/**
+	 * Encrypt data with a specified key.
+	 * @param[in,out] data    the data to encrypt
+	 * @param[in] n	          the size of the data
+	 * @param[in] key         the key to use to encrypt the data
+	 */
+	static void encrypt(uint32 *data, int n, const uint32 *key);
+	/**
+	 * Decrypt data encrypted before with btea with a specified key.
+	 * @param[in,out] data    the data to decrypt
+	 * @param[in] n	          the size of the data
+	 * @param[in] key         the key to use to decrypt the data
+	 */
+	static void decrypt(uint32 *data, int n, const uint32 *key);
 
 private:
-  static void btea(uint32 *v, int n, const uint32 *k);
+	static void btea(uint32 *v, int n, const uint32 *k);
 };
 
-} // End of namespace Twp
+} // End of namespace Common
 
-#endif // TWP_BTEA_H
+#endif // COMMON_BTEA_H

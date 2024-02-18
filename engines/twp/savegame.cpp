@@ -19,12 +19,12 @@
  *
  */
 
+#include "common/btea.h"
+#include "common/savefile.h"
 #include "twp/ggpack.h"
 #include "twp/savegame.h"
 #include "twp/squtil.h"
-#include "twp/btea.h"
 #include "twp/time.h"
-#include "common/savefile.h"
 
 namespace Twp {
 
@@ -424,7 +424,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &savegame) {
 	Common::Array<byte> data(stream->size());
 	stream->read(data.data(), data.size());
-	BTEACrypto::decrypt((uint32 *)data.data(), data.size() / 4, savegameKey);
+	Common::BTEACrypto::decrypt((uint32 *)data.data(), data.size() / 4, savegameKey);
 	savegame.hashData = *(int32_t *)(&data[data.size() - 16]);
 	savegame.time = *(int32_t *)&data[data.size() - 12];
 	int32_t hashCheck = computeHash(data.data(), data.size() - 16);
@@ -1006,7 +1006,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	memset(&p[2], marker, 8);
 
 	// then encode data
-	BTEACrypto::encrypt((uint32 *)buffer.data(), buffer.size() / 4, savegameKey);
+	Common::BTEACrypto::encrypt((uint32 *)buffer.data(), buffer.size() / 4, savegameKey);
 
 	// and write data
 	ws->write(buffer.data(), buffer.size());
