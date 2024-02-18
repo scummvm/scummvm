@@ -49,15 +49,7 @@
 //use_deprecated: Enables temporary support for the obsolete functions
 //#define use_deprecated
 
-#include <vector>
-#include <list>
-#include <set>
-#include <stdexcept>
-#include <cstring>
-#include <cstdlib>
-#include <ostream>
-#include <functional>
-#include <queue>
+#include "common/array.h"
 
 namespace ClipperLib {
 
@@ -70,17 +62,83 @@ enum PolyType { ptSubject, ptClip };
 enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
 
 #ifdef use_int32
-typedef int cInt;
+typedef int32 cInt;
 static cInt const loRange = 0x7FFF;
 static cInt const hiRange = 0x7FFF;
 #else
-typedef signed long long cInt;
+typedef int64 cInt;
 static cInt const loRange = 0x3FFFFFFF;
 static cInt const hiRange = 0x3FFFFFFFFFFFFFFFLL;
-typedef signed long long long64;     //used by Int128 class
-typedef unsigned long long ulong64;
+typedef int64 long64;     //used by Int128 class
+typedef uint64 ulong64;
 
 #endif
+
+/**
+ * Queue ordered by a provided priority function
+ * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
+ * the array so that the smallest priority comes last
+ */
+template <class _Ty, class _Container = Common::Array<_Ty>, class _Pr = Common::Less<_Ty>>
+class priority_queue {
+public:
+	typedef const _Ty& const_reference;
+
+public:
+	priority_queue() : c(), comp() {}
+
+	explicit priority_queue(const _Pr &_Pred) : c(), comp(_Pred) {}
+
+	priority_queue(const _Pr &_Pred, const _Container &_Cont) : c(_Cont), comp(_Pred) {
+		make_heap(c.begin(), c.end(), comp);
+	}
+
+	template <class _InIt>
+	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred, const _Container &_Cont) : c(_Cont), comp(_Pred) {
+		c.insert(c.end(), _First, _Last);
+		make_heap(c.begin(), c.end(), comp);
+	}
+
+	template <class _InIt>
+	priority_queue(_InIt _First, _InIt _Last) : c(_First, _Last), comp() {
+		make_heap(c.begin(), c.end(), comp);
+	}
+
+	template <class _InIt>
+	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred) : c(_First, _Last), comp(_Pred) {
+		make_heap(c.begin(), c.end(), comp);
+	}
+
+	bool empty() const {
+		return c.empty();
+	}
+
+	size_t size() const {
+		return c.size();
+	}
+
+	const_reference top() const {
+		return c.back();
+	}
+
+	void push(const typename _Container::value_type &_Val) {
+		c.push_back(_Val);
+		Common::sort(c.begin(), c.end(), comp);
+	}
+
+	void pop() {
+		c.pop_back();
+	}
+
+	void swap(priority_queue &_Right) {
+		SWAP(c, _Right.c);
+		SWAP(comp, _Right.comp);
+	}
+
+protected:
+	_Container c;
+	_Pr comp;
+};
 
 struct IntPoint {
   cInt X;
@@ -101,8 +159,8 @@ struct IntPoint {
 };
 //------------------------------------------------------------------------------
 
-typedef std::vector<IntPoint> Path;
-typedef std::vector<Path> Paths;
+typedef Common::Array<IntPoint> Path;
+typedef Common::Array<Path> Paths;
 
 inline Path &operator<<(Path &poly, const IntPoint &p) {
   poly.push_back(p);
@@ -112,10 +170,6 @@ inline Paths &operator<<(Paths &polys, const Path &p) {
   polys.push_back(p);
   return polys;
 }
-
-std::ostream &operator<<(std::ostream &s, const IntPoint &p);
-std::ostream &operator<<(std::ostream &s, const Path &p);
-std::ostream &operator<<(std::ostream &s, const Paths &p);
 
 struct DoublePoint {
   double X;
@@ -134,7 +188,7 @@ enum JoinType { jtSquare, jtRound, jtMiter };
 enum EndType { etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRound };
 
 class PolyNode;
-typedef std::vector<PolyNode *> PolyNodes;
+typedef Common::Array<PolyNode *> PolyNodes;
 
 class PolyNode {
 public:
@@ -208,10 +262,10 @@ struct OutPt;
 struct OutRec;
 struct Join;
 
-typedef std::vector<OutRec *> PolyOutList;
-typedef std::vector<TEdge *> EdgeList;
-typedef std::vector<Join *> JoinList;
-typedef std::vector<IntersectNode *> IntersectList;
+typedef Common::Array<OutRec *> PolyOutList;
+typedef Common::Array<TEdge *> EdgeList;
+typedef Common::Array<Join *> JoinList;
+typedef Common::Array<IntersectNode *> IntersectList;
 
 //------------------------------------------------------------------------------
 
@@ -244,7 +298,7 @@ protected:
   void DeleteFromAEL(TEdge *e);
   void UpdateEdgeIntoAEL(TEdge *&e);
 
-  typedef std::vector<LocalMinimum> MinimaList;
+  typedef Common::Array<LocalMinimum> MinimaList;
   MinimaList::iterator m_CurrentLM;
   MinimaList m_MinimaList;
 
@@ -255,7 +309,7 @@ protected:
   PolyOutList m_PolyOuts;
   TEdge *m_ActiveEdges;
 
-  typedef std::priority_queue<cInt> ScanbeamList;
+  typedef priority_queue<cInt> ScanbeamList;
   ScanbeamList m_Scanbeam;
 };
 //------------------------------------------------------------------------------
@@ -292,7 +346,7 @@ private:
   JoinList m_GhostJoins;
   IntersectList m_IntersectList;
   ClipType m_ClipType;
-  typedef std::list<cInt> MaximaList;
+  typedef Common::Array<cInt> MaximaList;
   MaximaList m_Maxima;
   TEdge *m_SortedEdges;
   bool m_ExecuteLocked;
@@ -371,7 +425,7 @@ private:
   Paths m_destPolys;
   Path m_srcPoly;
   Path m_destPoly;
-  std::vector<DoublePoint> m_normals;
+  Common::Array<DoublePoint> m_normals;
   double m_delta, m_sinA, m_sin, m_cos;
   double m_miterLim, m_StepsPerRad;
   IntPoint m_lowest;
@@ -383,16 +437,6 @@ private:
   void DoSquare(int j, int k);
   void DoMiter(int j, int k, double r);
   void DoRound(int j, int k);
-};
-//------------------------------------------------------------------------------
-
-class clipperException : public std::exception {
-public:
-  clipperException(const char *description) : m_descr(description) {}
-  virtual ~clipperException() throw() {}
-  virtual const char *what() const throw() { return m_descr.c_str(); }
-private:
-  std::string m_descr;
 };
 //------------------------------------------------------------------------------
 
