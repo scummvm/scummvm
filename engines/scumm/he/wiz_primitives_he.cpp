@@ -36,32 +36,40 @@
 namespace Scumm {
 
 int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValue) {
-	// RECHECK RAWPIXEL
 	if ((x < 0) || (y < 0) || (x >= srcBM->bitmapWidth) || (y >= srcBM->bitmapHeight)) {
 		return defaultValue;
 	} else {
-		return *(srcBM->bufferPtr + y * srcBM->bitmapWidth + x);
+		if (_uses16BitColor) {
+			return *(srcBM->bufferPtr + y * srcBM->bitmapWidth + x);
+		} else {
+			return *(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
+		}
 	}
 }
 
-void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, int32 value) {
-	// RECHECK RAWPIXEL
+void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, RAWPIXEL value) {
 	if ((x >= 0) && (y >= 0) && (x < srcBM->bitmapWidth) && (y < srcBM->bitmapHeight)) {
-		*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+		if (_uses16BitColor) {
+			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+		} else {
+			*(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+		}
 	}
 }
 
-void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, int32 value) {
-	// RECHECK RAWPIXEL
+void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, RAWPIXEL value) {
 	if ((x >= clipRectPtr->left) && (y >= clipRectPtr->top) && (x <= clipRectPtr->right) && (y <= clipRectPtr->bottom)) {
-		*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+		if (_uses16BitColor) {
+			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+		} else {
+			*(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+		}
 	}
 }
 
 #define GET_SIGN(x) ((x) > 0 ? 1 : ((x) == 0 ? 0 : (-1)))
 
-void Wiz::pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int32 value) {
-	// RECHECK RAWPIXEL
+void Wiz::pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, RAWPIXEL value) {
 	int x1, y1, x2, y2, d, dx, dy, sx, sy, incrA, incrB;
 
 	x1 = asx;
@@ -147,8 +155,7 @@ int scanEdge(WizScanLine *aScanLines, int iScanLineStart, bool bLeftSide, int iX
 	return iCurScanLine;
 }
 
-void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, int32 value) {
-	// RECHECK RAWPIXEL
+void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, RAWPIXEL value) {
 	int iDX = aex - asx;
 	int iDY = aey - asy;
 	double fDistance = sqrt((iDX * iDX) + (iDY * iDY));
@@ -263,8 +270,7 @@ int convertFromFixed(int iFixedNumber) {
 	return (iFixedNumber >> kWECFixedSize);
 }
 
-void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, int32 aColor) {
-	// RECHECK RAWPIXEL
+void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, RAWPIXEL aColor) {
 	// since this is fixed point, limit the LOD to 14 bits precision
 	if (iLOD > kWECFixedSize - 2) {
 		iLOD = kWECFixedSize - 2;
@@ -387,8 +393,9 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 	}
 }
 
-void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, int32 color) {
-	int32 *d; // RECHECK RAWPIXEL
+void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, RAWPIXEL color) {
+	RAWPIXEL *d;
+	uint8 *d8bit;
 	int cw, dw, ch;
 	int x1 = rectPtr->left, y1 = rectPtr->top, x2 = rectPtr->right, y2 = rectPtr->bottom;
 
@@ -398,15 +405,28 @@ void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, 
 	ch = y2 - y1 + 1;
 	d = destBM->bufferPtr + y1 * dw + x1;
 
+	d8bit = ((uint8 *)destBM->bufferPtr) + y1 * dw + x1;
+
 	if (cw > 1) {
 		while (--ch >= 0) {
-			memset(d, color, cw); // RECHECK RAWPIXEL
-			d += dw;
+			if (_uses16BitColor) {
+				for (int i = 0; i < dw; i++)
+					WRITE_LE_UINT16(&d[i], color);
+				d += dw;
+			} else {
+				memset(d8bit, color, cw);
+				d8bit += dw;
+			}
 		}
 	} else {
 		while (--ch >= 0) {
-			*d = color;
-			d += dw;
+			if (_uses16BitColor) {
+				*d = color;
+				d += dw;
+			} else {
+				*d8bit = color;
+				d8bit += dw;
+			}
 		}
 	}
 }
