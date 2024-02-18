@@ -320,7 +320,7 @@ protected:
 	void o71_polygonOps();
 	void o71_polygonHit();
 
-	byte VAR_WIZ_TCOLOR;
+	byte VAR_WIZ_TRANSPARENT_COLOR;
 public:
 	/* Actor AuxQueue stuff (HE) */
 	AuxBlock _auxBlocks[16];

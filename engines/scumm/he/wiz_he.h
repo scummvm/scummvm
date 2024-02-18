@@ -186,6 +186,13 @@ struct WizImageCommand {
 	}
 };
 
+struct WizSimpleBitmap {
+	int32 *bufferPtr;
+	int bitmapWidth;
+	int bitmapHeight;
+};
+
+
 enum WizRenderingFlags {
 	// Standard rendering flags
 	kWRFUsePalette = 0x00000001,
@@ -311,6 +318,12 @@ enum WizMoonSystemBits {
 	kWMSBRopParamRShift = 8
 };
 
+enum WizEclipseConstants {
+	kWECFixedSize = 16,
+	kWECPiOver2 = 102944, // Fixed point PI/2
+	kWECHalf = 32768      // Fixed point 1/2
+};
+
 enum {
 	kWizXMap = 0,
 	kWizRMap,
@@ -356,6 +369,8 @@ public:
 	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 
 	void dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY);
+	bool dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM);
+
 	void processWizImageCmd(const WizImageCommand *params);
 	void processWizImageCaptureCmd(const WizImageCommand *params);
 	void processWizImagePolyCaptureCmd(const WizImageCommand *params);
@@ -378,11 +393,15 @@ public:
 	void getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
 	int getWizImageStates(const uint8 *ptr);
+	void *getWizStateHeaderPrim(int resNum, int state);
+	void *getWizStateDataPrim(int resNum, int state);
+
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	int isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags);
 	int isPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
 	uint16 getWizPixelColor(int resnum, int state, int x, int y);
 	int getWizImageData(int resNum, int state, int type);
+	bool isUncompressedFormatTypeID(int id);
 
 	void flushWizBuffer();
 
@@ -438,6 +457,28 @@ public:
 
 private:
 	ScummEngine_v71he *_vm;
+
+	/* Wiz Drawing Primitives
+	 *
+	 * These primitives are slightly different and less precise
+	 * than the ones available in our Graphics subsystem.
+	 * But they are more accurate in the context of SCUMM HE graphics.
+	 * So leave them be and resist the urge to replace them with our own
+	 * primitives, please :-P
+	 */
+
+	int  pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValue);
+	void pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, int32 value);
+	void pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, int32 value);
+	void pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int32 value);
+	void pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, int32 value);
+	void pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, int32 aColor);
+	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, int32 color);
+
+	bool findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr);
+	bool isPointInRect(Common::Rect *r, Common::Point *pt);
+	void makeSizedRectAt(Common::Rect *rectPtr, int x, int y, int width, int height);
+	void makeSizedRect(Common::Rect *rectPtr, int width, int height);
 };
 
 } // End of namespace Scumm
