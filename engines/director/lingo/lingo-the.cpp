@@ -212,6 +212,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
 	{ kTheCast,		"size",			kTheSize,		300 },//		D3.1 p
+	{ kTheCast,		"type",			kTheType,		500 },//					D5 p
 	{ kTheCast,		"width",		kTheWidth,		400 },//				D4 p
 
 	// Digital video fields
@@ -1995,6 +1996,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 				emptyAllowed = true;
 				switch (_theEntityFields[key]->field) {
 				case kTheCastType:
+				case kTheType:
 					d = Datum("empty");
 					d.type = SYMBOL;
 					break;
