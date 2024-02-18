@@ -43,13 +43,4 @@ TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(T
 																			   sizeof(ADGameDescription), Twp::twpGames) {
 }
 
-ADDetectedGame TwpMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
-	for (const auto & allFile : allFiles) {
-		if (allFile._key.toString().hasSuffixIgnoreCase(".ggpack1")) {
-			return ADDetectedGame(Twp::gameDescriptions);
-		}
-	}
-	return ADDetectedGame();
-}
-
 REGISTER_PLUGIN_STATIC(TWP_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwpMetaEngineDetection);
