@@ -108,13 +108,13 @@ bool Vars::init() {
 void Vars::game_systems_initialize(byte flags) {
 	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
 
-	size_t totalMem = _G(kernel).mem_avail();
+	int totalMem = _G(kernel).mem_avail();
 	if (_G(kernel).suppress_cache == CACHE_NOT_OVERRIDE_BY_FLAG_PARSE)
 		_G(kernel).suppress_cache = totalMem < 8000000;
 
 	debugC(kDebugCore, _G(kernel).suppress_cache ?
 		"Cache System Disabled" : "Cache System Enabled");
-	debugC(kDebugCore, "Available memory: %ld", totalMem);
+	debugC(kDebugCore, "Available memory: %d", totalMem);
 
 	mem_stash_init(32);
 

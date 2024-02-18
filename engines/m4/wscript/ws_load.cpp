@@ -447,13 +447,6 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Fall through
 
 		case CHUNK_CELS: {
-#if defined(SCUMM_BIG_ENDIAN)
-			uint32 *index = (uint32 *)mainAssetPtr;
-			uint count = CELS_OFFSETS + READ_LE_UINT32(index + CELS_COUNT);
-			for (i = 0; i < count; ++i, ++index)
-				*index = SWAP_INT32(*index);
-#endif
-
 			// Check the validity of the cels hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
 				error_show(FL, 'WSLA', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
@@ -525,7 +518,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
-	numCels = celsPtr[CELS_COUNT];
+	numCels = FROM_LE_32(celsPtr[CELS_COUNT]);
 	if (index >= (int)numCels) {
 		ws_LogErrorMsg(FL, "CreateSprite: Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
@@ -536,7 +529,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((intptr)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + FROM_LE_32(offsets[index]));
 
 	// Set the stream boolean
 	if (streamSeries) {
@@ -549,10 +542,10 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	// Initialize the sprite struct and return it
 	mySprite->next = mySprite->prev = nullptr;
 	mySprite->sourceHandle = resourceHandle;
-	mySprite->xOffset = myCelSource[CELS_X];
-	mySprite->yOffset = myCelSource[CELS_Y];
-	mySprite->w = myCelSource[CELS_W];
-	mySprite->h = myCelSource[CELS_H];
+	mySprite->xOffset = FROM_LE_32(myCelSource[CELS_X]);
+	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
+	mySprite->w = FROM_LE_32(myCelSource[CELS_W]);
+	mySprite->h = FROM_LE_32(myCelSource[CELS_H]);
 	mySprite->encoding = (uint8)myCelSource[CELS_COMP];
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
@@ -668,11 +661,11 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Return the values
 	if (maxW) {
-		*maxW = celsPtr[CELS_SS_MAX_W];
+		*maxW = FROM_LE_32(celsPtr[CELS_SS_MAX_W]);
 	}
 
 	if (maxH) {
-		*maxH = celsPtr[CELS_SS_MAX_H];
+		*maxH = FROM_LE_32(celsPtr[CELS_SS_MAX_H]);
 	}
 
 	// unlock the handle
