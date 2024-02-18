@@ -62,7 +62,7 @@ SoundDefinition::SoundDefinition(const Common::String &name) : _name(name), _id(
 void SoundDefinition::load() {
 	if (!_loaded) {
 		GGPackEntryReader entry;
-		entry.open(g_engine->_pack, _name);
+		entry.open(g_twp->_pack, _name);
 		_buffer.resize(entry.size());
 		entry.read(_buffer.data(), entry.size());
 	}
@@ -73,22 +73,22 @@ bool AudioSystem::playing(int id) const {
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return false;
-		id = g_engine->_mixer->getSoundID(_slots[id].handle);
+		id = g_twp->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID ?
 	for (const auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef->getId() == id) {
-			return g_engine->_mixer->isSoundHandleActive(_slot.handle);
+			return g_twp->_mixer->isSoundHandleActive(_slot.handle);
 		}
 	}
 	// sound ID ?
-	return g_engine->_mixer->isSoundIDActive(id);
+	return g_twp->_mixer->isSoundIDActive(id);
 }
 
 bool AudioSystem::playing(Common::SharedPtr<SoundDefinition> soundDef) const {
 	for (const auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef == soundDef) {
-			return g_engine->_mixer->isSoundHandleActive(_slot.handle);
+			return g_twp->_mixer->isSoundHandleActive(_slot.handle);
 		}
 	}
 	return false;
@@ -111,17 +111,17 @@ void AudioSystem::stop(int id) {
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return;
-		id = g_engine->_mixer->getSoundID(_slots[id].handle);
+		id = g_twp->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID ?
 	for (auto &_slot : _slots) {
 		if (_slot.busy && _slot.sndDef->getId() == id) {
 			_slot.loopTimes = 0;
-			g_engine->_mixer->stopHandle(_slot.handle);
+			g_twp->_mixer->stopHandle(_slot.handle);
 		}
 	}
 	// sound ID ?
-	g_engine->_mixer->stopID(id);
+	g_twp->_mixer->stopID(id);
 }
 
 void AudioSystem::setMasterVolume(float vol) {
@@ -129,8 +129,8 @@ void AudioSystem::setMasterVolume(float vol) {
 
 	// update sounds
 	for (auto &_slot : _slots) {
-		if (_slot.busy && g_engine->_mixer->isSoundHandleActive(_slot.handle)) {
-			g_engine->_mixer->setChannelVolume(_slot.handle, _slot.volume * _masterVolume);
+		if (_slot.busy && g_twp->_mixer->isSoundHandleActive(_slot.handle)) {
+			g_twp->_mixer->setChannelVolume(_slot.handle, _slot.volume * _masterVolume);
 		}
 	}
 }
@@ -142,17 +142,17 @@ float AudioSystem::getMasterVolume() const {
 void AudioSystem::updateVolume(AudioSlot *slot) {
 	float vol = _masterVolume * slot->volume;
 	if (slot->fadeInTimeMs) {
-		vol *= (g_engine->_mixer->getElapsedTime(slot->handle).msecs() / slot->total);
+		vol *= (g_twp->_mixer->getElapsedTime(slot->handle).msecs() / slot->total);
 	}
 	if (slot->fadeOutTimeMs) {
 		float startFade = slot->total - slot->fadeOutTimeMs;
-		float progress = (g_engine->_mixer->getElapsedTime(slot->handle).msecs() - startFade) / slot->fadeOutTimeMs;
+		float progress = (g_twp->_mixer->getElapsedTime(slot->handle).msecs() - startFade) / slot->fadeOutTimeMs;
 		if ((progress >= 0) && (progress <= 1.f)) {
 			vol *= (1.f - progress);
 		}
 		if (progress > 1.0f) {
 			slot->loopTimes = 0;
-			g_engine->_mixer->stopHandle(slot->handle);
+			g_twp->_mixer->stopHandle(slot->handle);
 			return;
 		}
 	}
@@ -160,9 +160,9 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 		Common::SharedPtr<Object> obj = sqobj(slot->objId);
 		if (obj) {
 			float volObj = 0.f;
-			if (obj->_room == g_engine->_room) {
-				float width = g_engine->_room->getScreenSize().getX();
-				float x = g_engine->cameraPos().getX();
+			if (obj->_room == g_twp->_room) {
+				float width = g_twp->_room->getScreenSize().getX();
+				float x = g_twp->cameraPos().getX();
 				float diff = abs(x - obj->_node->getAbsPos().getX());
 				if (diff > (1.5f * width)) {
 					volObj = 0.f;
@@ -173,12 +173,12 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 				}
 
 				float pan = clamp((obj->_node->getAbsPos().getX() - x) / (width / 2), -1.0f, 1.0f);
-				g_engine->_mixer->setChannelBalance(slot->handle, (int8)(pan * 127));
+				g_twp->_mixer->setChannelBalance(slot->handle, (int8)(pan * 127));
 			}
 			vol *= volObj;
 		}
 	}
-	g_engine->_mixer->setChannelVolume(slot->handle, vol * Audio::Mixer::kMaxChannelVolume);
+	g_twp->_mixer->setChannelVolume(slot->handle, vol * Audio::Mixer::kMaxChannelVolume);
 }
 
 void AudioSystem::setVolume(int id, float vol) {
@@ -186,11 +186,11 @@ void AudioSystem::setVolume(int id, float vol) {
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return;
-		id = g_engine->_mixer->getSoundID(_slots[id].handle);
+		id = g_twp->_mixer->getSoundID(_slots[id].handle);
 	}
 	// sound definition ID or sound ID ?
 	for (auto &_slot : _slots) {
-		if (_slot.busy && ((_slot.sndDef->getId() == id) || (g_engine->_mixer->getSoundID(_slot.handle) == id))) {
+		if (_slot.busy && ((_slot.sndDef->getId() == id) || (g_twp->_mixer->getSoundID(_slot.handle) == id))) {
 			_slot.volume = vol;
 			updateVolume(&_slot);
 		}
@@ -199,7 +199,7 @@ void AudioSystem::setVolume(int id, float vol) {
 
 void AudioSystem::update(float) {
 	for (auto &_slot : _slots) {
-		if (_slot.busy && !g_engine->_mixer->isSoundHandleActive(_slot.handle)) {
+		if (_slot.busy && !g_twp->_mixer->isSoundHandleActive(_slot.handle)) {
 			if ((_slot.loopTimes == -1) || _slot.loopTimes > 0) {
 				if (_slot.loopTimes != -1) {
 					_slot.loopTimes--;
@@ -214,7 +214,7 @@ void AudioSystem::update(float) {
 				} else {
 					error("AudioSystem::update(): Unexpected audio format: %s", name.c_str());
 				}
-				g_engine->_mixer->playStream(_slot.soundType, &_slot.handle, audioStream, _slot.id, _slot.volume);
+				g_twp->_mixer->playStream(_slot.soundType, &_slot.handle, audioStream, _slot.id, _slot.volume);
 			} else {
 				_slot.busy = false;
 			}
@@ -231,7 +231,7 @@ void AudioSystem::update(float) {
 AudioSlot *AudioSystem::getFreeSlot() {
 	for (auto &_slot : _slots) {
 		AudioSlot *slot = &_slot;
-		if (!slot->busy || !g_engine->_mixer->isSoundHandleActive(slot->handle)) {
+		if (!slot->busy || !g_twp->_mixer->isSoundHandleActive(slot->handle)) {
 			slot->busy = false;
 			return slot;
 		}
@@ -262,7 +262,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 	if (fadeInTimeMs > 0.f) {
 		volume = 0;
 	}
-	g_engine->_mixer->playStream(cat, &slot->handle, audioStream, id, volume * _masterVolume);
+	g_twp->_mixer->playStream(cat, &slot->handle, audioStream, id, volume * _masterVolume);
 	slot->id = id;
 	slot->objId = objId;
 	slot->sndDef = sndDef;
@@ -278,7 +278,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 int AudioSystem::getElapsed(int id) const {
 	for (const auto &_slot : _slots) {
 		if (_slot.id == id) {
-			Audio::Timestamp t = g_engine->_mixer->getElapsedTime(_slot.handle);
+			Audio::Timestamp t = g_twp->_mixer->getElapsedTime(_slot.handle);
 			return t.msecs();
 		}
 	}

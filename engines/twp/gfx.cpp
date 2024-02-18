@@ -139,7 +139,7 @@ void Shader::init(const char *name, const char *vertex, const char *fragment) {
 	const char *attributes[] = {"a_position", "a_color", "a_texCoords", nullptr};
 	_shader.loadFromStrings(name, vertex, fragment, attributes, 110);
 
-	uint32 vbo = g_engine->getGfx()._vbo;
+	uint32 vbo = g_twp->getGfx()._vbo;
 	_shader.enableVertexAttribute("a_position", vbo, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)0);
 	_shader.enableVertexAttribute("a_color", vbo, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)(2 * sizeof(float)));
 	_shader.enableVertexAttribute("a_texCoords", vbo, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (uint32)(6 * sizeof(float)));
@@ -384,8 +384,8 @@ void Gfx::use(Shader *shader) {
 void Gfx::setRenderTarget(RenderTexture *target) {
 	if (!target) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _oldFbo);
-		int w = g_engine->_system->getWidth();
-		int h = g_engine->_system->getHeight();
+		int w = g_twp->_system->getWidth();
+		int h = g_twp->_system->getHeight();
 		glViewport(0, 0, w, h);
 	} else {
 		glBindFramebuffer(GL_FRAMEBUFFER, target->fbo);

@@ -129,7 +129,7 @@ void Shake::update(float elapsed) {
 OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, Color to)
 	: _room(room),
 	  _to(to),
-	  _tween(g_engine->_room->getOverlay(), to, duration, InterpolationMethod()) {
+	  _tween(g_twp->_room->getOverlay(), to, duration, InterpolationMethod()) {
 }
 
 OverlayTo::~OverlayTo() = default;
@@ -337,11 +337,11 @@ void Talking::update(float elapsed) {
 
 	_elapsed += elapsed;
 	if (_obj->_sound) {
-		if (!g_engine->_audio.playing(_obj->_sound)) {
+		if (!g_twp->_audio.playing(_obj->_sound)) {
 			debugC(kDebugGame, "talking %s audio stopped", _obj->_key.c_str());
 			_obj->_sound = 0;
 		} else {
-			float e = static_cast<float>(g_engine->_audio.getElapsed(_obj->_sound)) / 1000.f;
+			float e = static_cast<float>(g_twp->_audio.getElapsed(_obj->_sound)) / 1000.f;
 			char letter = _lip.letter(e);
 			_obj->setHeadIndex(letterToIndex(letter));
 		}
@@ -368,14 +368,14 @@ int Talking::loadActorSpeech(const Common::String &name) {
 	Common::String filename(name);
 	filename.toUppercase();
 	filename += ".ogg";
-	if (g_engine->_pack.assetExists(filename.c_str())) {
+	if (g_twp->_pack.assetExists(filename.c_str())) {
 		Common::SharedPtr<SoundDefinition> soundDefinition(new SoundDefinition(filename));
 		if (!soundDefinition) {
 			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
 		} else {
-			g_engine->_audio._soundDefs.push_back(soundDefinition);
-			int id = g_engine->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
-			int duration = g_engine->_audio.getDuration(id);
+			g_twp->_audio._soundDefs.push_back(soundDefinition);
+			int id = g_twp->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
+			int duration = g_twp->_audio.getDuration(id);
 			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
 			if (duration)
 				_duration = static_cast<float>(duration) / 1000.f;
@@ -392,7 +392,7 @@ void Talking::say(const Common::String &text) {
 	Common::String txt(text);
 	if (text[0] == '@') {
 		int id = atoi(text.c_str() + 1);
-		txt = g_engine->_textDb.getText(id);
+		txt = g_twp->_textDb.getText(id);
 
 		id = onTalkieId(id);
 		Common::String key = talkieKey();
@@ -401,15 +401,15 @@ void Talking::say(const Common::String &text) {
 		Common::String path = name + ".lip";
 
 		debugC(kDebugGame, "Load lip %s", path.c_str());
-		if (g_engine->_pack.assetExists(path.c_str())) {
+		if (g_twp->_pack.assetExists(path.c_str())) {
 			GGPackEntryReader entry;
-			entry.open(g_engine->_pack, path);
+			entry.open(g_twp->_pack, path);
 			_lip.load(&entry);
 			debugC(kDebugGame, "Lip %s loaded", path.c_str());
 		}
 
 		if (_obj->_sound) {
-			g_engine->_audio.stop(_obj->_sound);
+			g_twp->_audio.stop(_obj->_sound);
 		}
 
 		_obj->_sound = loadActorSpeech(name);
@@ -456,7 +456,7 @@ void Talking::say(const Common::String &text) {
 	_obj->_sayNode->setText(text2);
 	_obj->_sayNode->setColor(_color);
 	_node = _obj->_sayNode;
-	Math::Vector2d pos = g_engine->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
+	Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
 
 	// clamp position to keep it on screen
 	pos.setX(Twp::clamp(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
@@ -464,7 +464,7 @@ void Talking::say(const Common::String &text) {
 
 	_obj->_sayNode->setPos(pos);
 	_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
-	g_engine->_screenScene.addChild(_obj->_sayNode.get());
+	g_twp->_screenScene.addChild(_obj->_sayNode.get());
 	_elapsed = 0.f;
 }
 

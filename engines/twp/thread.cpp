@@ -58,7 +58,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 	_args = args;
 	_pauseable = true;
 
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	for (auto & _arg : _args) {
 		sq_addref(v, &_arg);
 	}
@@ -69,7 +69,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 
 Thread::~Thread() {
 	debugC(kDebugGame, "delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	for (auto & _arg : _args) {
 		sq_release(v, &_arg);
 	}
@@ -124,18 +124,18 @@ Cutscene::Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT thr
 
 	_name = name;
 	_id = newThreadId();
-	_inputState = g_engine->_inputState.getState();
-	_actor = g_engine->_followActor;
-	_showCursor = g_engine->_inputState.getShowCursor();
+	_inputState = g_twp->_inputState.getState();
+	_actor = g_twp->_followActor;
+	_showCursor = g_twp->_inputState.getShowCursor();
 	_state = csStart;
 	debugC(kDebugGame, "Create cutscene %d with input: 0x%X from parent thread: %d", _id, _inputState, _parentThreadId);
-	g_engine->_inputState.setInputActive(false);
-	g_engine->_inputState.setShowCursor(false);
-	for (auto thread : g_engine->_threads) {
+	g_twp->_inputState.setInputActive(false);
+	g_twp->_inputState.setShowCursor(false);
+	for (auto thread : g_twp->_threads) {
 			if (thread->isGlobal())
 			thread->pause();
 	}
-	HSQUIRRELVM vm = g_engine->getVm();
+	HSQUIRRELVM vm = g_twp->getVm();
 	sq_addref(vm, &_threadObj);
 	sq_addref(vm, &_closure);
 	sq_addref(vm, &_closureOverride);
@@ -144,7 +144,7 @@ Cutscene::Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT thr
 
 Cutscene::~Cutscene() {
 	debugC(kDebugGame, "destroy cutscene %d", _id);
-	HSQUIRRELVM vm = g_engine->getVm();
+	HSQUIRRELVM vm = g_twp->getVm();
 	sq_release(vm, &_threadObj);
 	sq_release(vm, &_closure);
 	sq_release(vm, &_closureOverride);
@@ -167,13 +167,13 @@ void Cutscene::start() {
 void Cutscene::stop() {
 	_state = csQuit;
 	debugC(kDebugGame, "End cutscene: %d", getId());
-	g_engine->_inputState.setState(_inputState);
-	g_engine->_inputState.setShowCursor(_showCursor);
+	g_twp->_inputState.setState(_inputState);
+	g_twp->_inputState.setShowCursor(_showCursor);
 	if (_showCursor)
-		g_engine->_inputState.setInputActive(true);
+		g_twp->_inputState.setInputActive(true);
 	debugC(kDebugGame, "Restore cutscene input: %X", _inputState);
-	g_engine->follow(g_engine->_actor);
-	Common::Array<Common::SharedPtr<ThreadBase> > threads(g_engine->_threads);
+	g_twp->follow(g_twp->_actor);
+	Common::Array<Common::SharedPtr<ThreadBase> > threads(g_twp->_threads);
 	for (auto thread : threads) {
 		if (thread->isGlobal())
 			thread->unpause();

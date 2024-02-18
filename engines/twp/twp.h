@@ -239,8 +239,8 @@ private:
 	Shader _sepiaShader;
 };
 
-extern TwpEngine *g_engine;
-#define SHOULD_QUIT ::Twp::g_engine->shouldQuit()
+extern TwpEngine *g_twp;
+#define SHOULD_QUIT ::Twp::g_twp->shouldQuit()
 
 } // End of namespace Twp
 

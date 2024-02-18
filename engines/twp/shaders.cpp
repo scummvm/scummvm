@@ -385,17 +385,17 @@ int FadeShader::getTextureLoc(int index) { return _textureLoc[index]; }
 
 void ShaderParams::updateShader() {
 	if (effect == RoomEffect::Sepia) {
-		Shader *shader = g_engine->getGfx().getShader();
+		Shader *shader = g_twp->getGfx().getShader();
 		shader->setUniform("RandomValue", randomValue, 5);
 		shader->setUniform("TimeLapse", timeLapse);
 	}
 	//   } else if (effect == RoomEffect::Vhs) {
-	//     Shader* shader = g_engine->getGfx().getShader();
+	//     Shader* shader = g_twp->getGfx().getShader();
 	//     shader->setUniform("iGlobalTime", iGlobalTime);
 	//     shader->setUniform("iNoiseThreshold", iNoiseThreshold);
 	//   } else
 	else if (effect == RoomEffect::Ghost) {
-		Shader *shader = g_engine->getGfx().getShader();
+		Shader *shader = g_twp->getGfx().getShader();
 		shader->setUniform("iGlobalTime", iGlobalTime);
 		shader->setUniform("iFade", iFade);
 		shader->setUniform("wobbleIntensity", wobbleIntensity);

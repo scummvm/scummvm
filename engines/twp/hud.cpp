@@ -131,7 +131,7 @@ ActorSlot *Hud::actorSlot(Common::SharedPtr<Object> actor) {
 void Hud::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
 	Math::Vector3d pos(sf.spriteSourceSize.left, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY(), 0.f);
 	trsf.translate(pos);
-	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
 void Hud::drawCore(Math::Matrix4 trsf) {
@@ -140,26 +140,26 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 		return;
 
 	// draw HUD background
-	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
+	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
 	bool classic = ConfMan.getBool("hudSentence");
 	const SpriteSheetFrame &backingFrame = gameSheet->getFrame(classic ? "ui_backing_tall" : "ui_backing");
-	Texture *gameTexture = g_engine->_resManager.texture(gameSheet->meta.image);
+	Texture *gameTexture = g_twp->_resManager.texture(gameSheet->meta.image);
 	float alpha = 0.33f; // prefs(UiBackingAlpha);
-	g_engine->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha*getAlpha()), trsf);
+	g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha*getAlpha()), trsf);
 
 	bool verbHlt = ConfMan.getBool("invertVerbHighlight");
 	Color verbHighlight = verbHlt ? Color() : slot->verbUiColors.verbHighlight;
 	Color verbColor = verbHlt ? slot->verbUiColors.verbHighlight : Color();
 
 	// draw actor's verbs
-	SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
-	Texture *verbTexture = g_engine->_resManager.texture(verbSheet->meta.image);
+	SpriteSheet *verbSheet = g_twp->_resManager.spriteSheet("VerbSheet");
+	Texture *verbTexture = g_twp->_resManager.texture(verbSheet->meta.image);
 	Common::String lang = ConfMan.get("language");
 	bool retroVerbs = ConfMan.getBool("retroVerbs");
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 
-	Shader *saveShader = g_engine->getGfx().getShader();
-	g_engine->getGfx().use(&_shader);
+	Shader *saveShader = g_twp->getGfx().getShader();
+	g_twp->getGfx().use(&_shader);
 	_shader._shadowColor = slot->verbUiColors.verbNormalTint;
 	_shader._normalColor = slot->verbUiColors.verbHighlight;
 	_shader._highlightColor = slot->verbUiColors.verbHighlightTint;
@@ -179,7 +179,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 			drawSprite(verbFrame, verbTexture, Color::withAlpha(color, getAlpha()), trsf);
 		}
 	}
-	g_engine->getGfx().use(saveShader);
+	g_twp->getGfx().use(saveShader);
 	_over = isOver;
 }
 

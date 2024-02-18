@@ -49,7 +49,7 @@
 
 namespace Twp {
 
-TwpEngine *g_engine;
+TwpEngine *g_twp;
 
 #ifdef USE_IMGUI
 	SDL_Window *g_window = nullptr;
@@ -59,7 +59,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
 	  _randomSource("Twp") {
-	g_engine = this;
+	g_twp = this;
 	_dialog._tgt.reset(new EngineDialogTarget());
 	sq_resetobject(&_defaultObj);
 	_screenScene.setName("Screen");
@@ -154,7 +154,7 @@ bool TwpEngine::execSentence(Common::SharedPtr<Object> actor, VerbId verbId, Com
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
 	debugC(kDebugGame, "exec(%s,%d,%s,%s)", name.c_str(), verbId.id, noun1name.c_str(), noun2name.c_str());
-	actor = !actor ? g_engine->_actor : actor;
+	actor = !actor ? g_twp->_actor : actor;
 	if ((verbId.id <= 0) || (verbId.id > MAX_VERBS) || (!noun1) || (!actor))
 		return false;
 
@@ -288,13 +288,13 @@ Common::String TwpEngine::cursorText() {
 
 template<typename TFunc>
 void objsAt(Math::Vector2d pos, TFunc func) {
-	if (g_engine->_uiInv.getObject() && g_engine->_room->_fullscreen == FULLSCREENROOM)
-		func(g_engine->_uiInv.getObject());
-	for (size_t i = 0; i < g_engine->_room->_layers.size(); i++) {
-		Common::SharedPtr<Layer> layer = g_engine->_room->_layers[i];
+	if (g_twp->_uiInv.getObject() && g_twp->_room->_fullscreen == FULLSCREENROOM)
+		func(g_twp->_uiInv.getObject());
+	for (size_t i = 0; i < g_twp->_room->_layers.size(); i++) {
+		Common::SharedPtr<Layer> layer = g_twp->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Common::SharedPtr<Object> obj = layer->_objects[j];
-			if ((obj != g_engine->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
+			if ((obj != g_twp->_actor) && (obj->isTouchable() || obj->inInventory()) && (obj->_node->isVisible()) && (obj->_objType == otNone) && (obj->contains(pos)))
 				if (func(obj))
 					return;
 		}
@@ -322,10 +322,10 @@ Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
 }
 
 static void selectSlotActor(int id) {
-	if(g_engine->_actorSwitcher._mode == asOn) {
-		for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-			if (g_engine->_actors[i]->getId() == id) {
-				g_engine->setActor(g_engine->_actors[i]);
+	if(g_twp->_actorSwitcher._mode == asOn) {
+		for (size_t i = 0; i < g_twp->_actors.size(); i++) {
+			if (g_twp->_actors[i]->getId() == id) {
+				g_twp->setActor(g_twp->_actors[i]);
 				break;
 			}
 		}
@@ -333,8 +333,8 @@ static void selectSlotActor(int id) {
 }
 
 static void showOptions(int id) {
-	if (g_engine && !g_engine->isPaused())
-		g_engine->openMainMenuDialog();
+	if (g_twp && !g_twp->isPaused())
+		g_twp->openMainMenuDialog();
 }
 
 ActorSwitcherSlot TwpEngine::actorSwitcherSlot(ActorSlot *slot) {
@@ -372,7 +372,7 @@ struct GetUseNoun2 {
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {
-			if ((obj != g_engine->_actor) && (g_engine->_noun2 != obj)) {
+			if ((obj != g_twp->_actor) && (g_twp->_noun2 != obj)) {
 				_noun2 = obj;
 			}
 		}
@@ -390,7 +390,7 @@ struct GetGiveableNoun2 {
 	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
-		if ((obj != g_engine->_actor) && (obj->getFlags() & GIVEABLE) && (g_engine->_noun2 != obj)) {
+		if ((obj != g_twp->_actor) && (obj->getFlags() & GIVEABLE) && (g_twp->_noun2 != obj)) {
 			_noun2 = obj;
 			return true;
 		}
@@ -633,7 +633,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 		setShaderEffect(_room->_effect);
 		_lighting->update(_room->_lights);
 	}
-	_shaderParams.randomValue[0] = g_engine->getRandom();
+	_shaderParams.randomValue[0] = g_twp->getRandom();
 	_shaderParams.timeLapse = fmodf(_time, 1000.f);
 	_shaderParams.iGlobalTime = _shaderParams.timeLapse;
 	_shaderParams.updateShader();
@@ -799,7 +799,7 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectActor4:
 				case TwpAction::kSelectActor5:
 				case TwpAction::kSelectActor6:
-					if(g_engine->_actorSwitcher._mode == asOn) {
+					if(g_twp->_actorSwitcher._mode == asOn) {
 						int index = (TwpAction)e.customType - kSelectActor1;
 						ActorSlot *slot = &_hud._actorSlots[index];
 						if (slot->selectable && slot->actor && (slot->actor->_room->_name != "Void")) {
@@ -808,7 +808,7 @@ Common::Error TwpEngine::run() {
 					}
 					break;
 				case TwpAction::kSelectPreviousActor:
-					if ((g_engine->_actorSwitcher._mode == asOn) && _actor) {
+					if ((g_twp->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
@@ -823,7 +823,7 @@ Common::Error TwpEngine::run() {
 					}
 					break;
 				case TwpAction::kSelectNextActor:
-					if ((g_engine->_actorSwitcher._mode == asOn) && _actor) {
+					if ((g_twp->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
 							ActorSlot *slot = &_hud._actorSlots[i];
@@ -1007,7 +1007,7 @@ Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, boo
 	if (result.getCode() == Common::kNoError) {
 		name = changeFileExt(name, ".png");
 		Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(name, false);
-		g_engine->capture(*thumbnail, Math::Vector2d(320, 180));
+		g_twp->capture(*thumbnail, Math::Vector2d(320, 180));
 		thumbnail->finalize();
 
 		saveFile->finalize();
@@ -1278,8 +1278,8 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 
 void TwpEngine::actorEnter(Common::SharedPtr<Object> actor) {
 	if(!actor) return;
-	if(sqrawexists(g_engine->_room->_table, "actorEnter")) {
-		sqcall(g_engine->_room->_table, "actorEnter", actor->_table);
+	if(sqrawexists(g_twp->_room->_table, "actorEnter")) {
+		sqcall(g_twp->_room->_table, "actorEnter", actor->_table);
 	} else {
 		sqcall("actorEnter", actor->_table);
 	}
@@ -1618,7 +1618,7 @@ void TwpEngine::callTrigger(Common::SharedPtr<Object> obj, HSQOBJECT trigger) {
 		Common::SharedPtr<Thread> thread(new Thread("Trigger", false, threadObj, obj->_table, trigger, args));
 
 		debugC(kDebugGame, "create triggerthread id: %d}", thread->getId());
-		g_engine->_threads.push_back(thread);
+		g_twp->_threads.push_back(thread);
 
 		// call the closure in the thread
 		if (!thread->call()) {
@@ -1674,7 +1674,7 @@ void TwpEngine::stopTalking() {
 }
 
 float TwpEngine::getRandom() const {
-	return g_engine->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
+	return g_twp->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
 }
 
 float TwpEngine::getRandom(float min, float max) const {

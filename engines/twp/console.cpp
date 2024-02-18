@@ -40,7 +40,7 @@ bool Console::Cmd_exec(int argc, const char **argv) {
 			s += argv[i];
 		}
 	}
-	sqexec(g_engine->getVm(), s.c_str(), "console");
+	sqexec(g_twp->getVm(), s.c_str(), "console");
 	return true;
 }
 

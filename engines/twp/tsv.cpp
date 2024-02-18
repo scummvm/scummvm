@@ -52,7 +52,7 @@ Common::String TextDb::getText(int id) {
 }
 
 Common::String TextDb::getText(const Common::String &text) {
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	if (text.size() > 0) {
 		if (text[0] == '@') {
 			int id = atoi(text.c_str() + 1);

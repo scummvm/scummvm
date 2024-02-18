@@ -198,7 +198,7 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
 	} else {
-		obj = g_engine->_actor;
+		obj = g_twp->_actor;
 	}
 	sqpush(v, distance((Vector2i)actor->_node->getPos(), (Vector2i)obj->getUsePos()));
 	return 1;
@@ -207,7 +207,7 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 3) {
-		Common::SharedPtr<Object> actor1(g_engine->_actor);
+		Common::SharedPtr<Object> actor1(g_twp->_actor);
 		Common::SharedPtr<Object> actor2(sqactor(v, 2));
 		if (!actor2)
 			return sq_throwerror(v, "failed to get actor");
@@ -281,8 +281,8 @@ static SQInteger actorHidden(HSQUIRRELVM v) {
 	int hidden = 0;
 	if (SQ_FAILED(sqget(v, 3, hidden)))
 		return sq_throwerror(v, "failed to get hidden");
-	if (hidden && (g_engine->_actor == actor)) {
-		g_engine->follow(nullptr);
+	if (hidden && (g_twp->_actor == actor)) {
+		g_twp->follow(nullptr);
 	}
 	actor->_node->setVisible(hidden == 0);
 	return 0;
@@ -334,7 +334,7 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 	Common::String name;
 	if (SQ_FAILED(sqget(v, 3, name)))
 		return sq_throwerror(v, "failed to get name");
-	for (const auto &walkbox : g_engine->_room->_walkboxes) {
+	for (const auto &walkbox : g_twp->_room->_walkboxes) {
 		if (walkbox._name == name) {
 			if (walkbox.contains((Vector2i)actor->_node->getAbsPos())) {
 				sqpush(v, true);
@@ -387,16 +387,16 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get selectable");
 		switch (selectable) {
 		case OFF:
-			g_engine->_actorSwitcher._mode &= (~asOn);
+			g_twp->_actorSwitcher._mode &= (~asOn);
 			break;
 		case ON:
-			g_engine->_actorSwitcher._mode |= asOn;
+			g_twp->_actorSwitcher._mode |= asOn;
 			break;
 		case TEMP_UNSELECTABLE:
-			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
+			g_twp->_actorSwitcher._mode |= asTemporaryUnselectable;
 			break;
 		case TEMP_SELECTABLE:
-			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
+			g_twp->_actorSwitcher._mode &= ~asTemporaryUnselectable;
 			break;
 		default:
 			return sq_throwerror(v, "invalid selectable value");
@@ -411,7 +411,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			int slot;
 			if (SQ_FAILED(sqget(v, 2, slot)))
 				return sq_throwerror(v, "failed to get slot");
-			g_engine->_hud._actorSlots[slot - 1].selectable = selectable;
+			g_twp->_hud._actorSlots[slot - 1].selectable = selectable;
 		} else {
 			Common::SharedPtr<Object> actor = sqactor(v, 2);
 			if (!actor)
@@ -419,7 +419,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			Common::String key;
 			sqgetf(actor->_table, "_key", key);
 			debugC(kDebugActScript, "actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
-			ActorSlot *slot = g_engine->_hud.actorSlot(actor);
+			ActorSlot *slot = g_twp->_hud.actorSlot(actor);
 			if (!slot)
 				warning("slot for actor %s not found", key.c_str());
 			else
@@ -569,7 +569,7 @@ static SQInteger actorTalking(HSQUIRRELVM v) {
 	if (sq_gettop(v) == 2) {
 		actor = sqobj(v, 2);
 	} else {
-		actor = g_engine->_actor;
+		actor = g_twp->_actor;
 	}
 	bool isTalking = actor && actor->getTalking() && actor->getTalking()->isEnabled();
 	sqpush(v, isTalking);
@@ -709,7 +709,7 @@ static SQInteger actorWalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	Common::SharedPtr<Object> actor;
 	if (nArgs == 1) {
-		actor = g_engine->_actor;
+		actor = g_twp->_actor;
 	} else if (nArgs == 2) {
 		actor = sqactor(v, 2);
 	}
@@ -769,7 +769,7 @@ static SQInteger addSelectableActor(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, slot)))
 		return sq_throwerror(v, "failed to get slot");
 	Common::SharedPtr<Object> actor = sqactor(v, 3);
-	g_engine->_hud._actorSlots[slot - 1].actor = actor;
+	g_twp->_hud._actorSlots[slot - 1].actor = actor;
 	return 0;
 }
 
@@ -780,7 +780,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	if (sq_gettype(v, 2) != OT_TABLE)
 		return sq_throwerror(v, "failed to get a table");
 
-	HSQUIRRELVM vm = g_engine->getVm();
+	HSQUIRRELVM vm = g_twp->getVm();
 	Common::SharedPtr<Object> actor = Object::createActor();
 	sq_resetobject(&actor->_table);
 	sq_getstackobj(v, 2, &actor->_table);
@@ -795,7 +795,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	actor->_node = Common::SharedPtr<Node>(new ActorNode(actor));
 	actor->_nodeAnim = Common::SharedPtr<Anim>(new Anim(actor.get()));
 	actor->_node->addChild(actor->_nodeAnim.get());
-	g_engine->_actors.push_back(actor);
+	g_twp->_actors.push_back(actor);
 
 	sq_pushobject(v, actor->_table);
 	return 1;
@@ -805,7 +805,7 @@ static SQInteger flashSelectableActor(HSQUIRRELVM v) {
 	int time = 0;
 	if (SQ_FAILED(sqget(v, 2, time)))
 		return sq_throwerror(v, "failed to get time");
-	g_engine->flashSelectableActor(time);
+	g_twp->flashSelectableActor(time);
 	return 0;
 }
 
@@ -829,7 +829,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 		index = 3;
 	} else {
 		index = 2;
-		obj = g_engine->_actor;
+		obj = g_twp->_actor;
 	}
 
 	if (sq_gettype(v, index) == OT_ARRAY) {
@@ -859,7 +859,7 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 // See also:
 // - `mumbleLine method`
 static SQInteger sayLine(HSQUIRRELVM v) {
-	g_engine->stopTalking();
+	g_twp->stopTalking();
 	return sayOrMumbleLine(v);
 }
 
@@ -891,7 +891,7 @@ static SQInteger sayLineAt(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> actor = sqactor(v, 4);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		Math::Vector2d pos = g_engine->roomToScreen(actor->_node->getAbsPos());
+		Math::Vector2d pos = g_twp->roomToScreen(actor->_node->getAbsPos());
 		x = pos.getX();
 		y = pos.getY();
 		color = actor->_talkColor;
@@ -909,11 +909,11 @@ static SQInteger isActorOnScreen(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get actor/object");
 
-	if (obj->_room != g_engine->_room) {
+	if (obj->_room != g_twp->_room) {
 		sqpush(v, false);
 	} else {
-		Math::Vector2d pos = obj->_node->getPos() - g_engine->getGfx().cameraPos();
-		Math::Vector2d size = g_engine->getGfx().camera();
+		Math::Vector2d pos = obj->_node->getPos() - g_twp->getGfx().cameraPos();
+		Math::Vector2d size = g_twp->getGfx().camera();
 		bool isOnScreen = Common::Rect(0.0f, 0.0f, size.getX(), size.getY()).contains(pos.getX(), pos.getY());
 		sqpush(v, isOnScreen);
 	}
@@ -924,7 +924,7 @@ static SQInteger isActorSelectable(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	ActorSlot *slot = g_engine->_hud.actorSlot(actor);
+	ActorSlot *slot = g_twp->_hud.actorSlot(actor);
 	bool selectable = slot && slot->selectable;
 	sqpush(v, selectable);
 	return 1;
@@ -941,7 +941,7 @@ static SQInteger is_actor(HSQUIRRELVM v) {
 // See also masterRoomArray.
 static SQInteger masterActorArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
-	for (auto actor : g_engine->_actors) {
+	for (auto actor : g_twp->_actors) {
 		sqpush(v, actor->_table);
 		sq_arrayappend(v, -2);
 	}
@@ -964,7 +964,7 @@ static SQInteger stopTalking(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (nArgs == 2) {
 		if (sq_gettype(v, 2) == OT_INTEGER) {
-			g_engine->stopTalking();
+			g_twp->stopTalking();
 		} else {
 			Common::SharedPtr<Object> actor = sqobj(v, 2);
 			if (!actor)
@@ -972,7 +972,7 @@ static SQInteger stopTalking(HSQUIRRELVM v) {
 			actor->stopTalking();
 		}
 	} else if (nArgs == 1) {
-		g_engine->_actor->stopTalking();
+		g_twp->_actor->stopTalking();
 	}
 	return 0;
 }
@@ -982,7 +982,7 @@ static SQInteger stopTalking(HSQUIRRELVM v) {
 // If they are in a different room, the camera will cut to the new room.
 // The UI will change to reflect the new actor and their inventory.
 static SQInteger selectActor(HSQUIRRELVM v) {
-	g_engine->setActor(sqobj(v, 2));
+	g_twp->setActor(sqobj(v, 2));
 	return 0;
 }
 
@@ -997,7 +997,7 @@ static SQInteger triggerActors(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	sq_newarray(v, 0);
-	for (auto actor : g_engine->_actors) {
+	for (auto actor : g_twp->_actors) {
 		if (obj->contains(actor->_node->getPos())) {
 			sq_pushobject(v, actor->_table);
 			sq_arrayappend(v, -2);
@@ -1043,7 +1043,7 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	sqgetf(table, "dialogNormal", dialogNormal);
 	sqgetf(table, "dialogHighlight", dialogHighlight);
 
-	g_engine->_hud._actorSlots[actorSlot - 1].verbUiColors =
+	g_twp->_hud._actorSlots[actorSlot - 1].verbUiColors =
 		VerbUiColors(
 			Color::rgb(sentence),
 			Color::rgb(verbNormal),

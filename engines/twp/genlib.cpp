@@ -47,14 +47,14 @@ template<typename T>
 static void shuffle(Common::Array<T> &array) {
 	if (array.size() > 1) {
 		for (size_t i = 0; i < array.size(); i++) {
-			size_t j = g_engine->getRandomSource().getRandomNumberRng(0, array.size() - 1);
+			size_t j = g_twp->getRandomSource().getRandomNumberRng(0, array.size() - 1);
 			SWAP(array[j], array[i]);
 		}
 	}
 }
 
 static SQInteger activeVerb(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_hud._verb.id.id);
+	sqpush(v, g_twp->_hud._verb.id.id);
 	return 1;
 }
 
@@ -86,7 +86,7 @@ static SQInteger assetExists(HSQUIRRELVM v) {
 	const SQChar *filename;
 	if (SQ_FAILED(sq_getstring(v, 2, &filename)))
 		return sq_throwerror(v, "failed to get filename");
-	sqpush(v, g_engine->_pack.assetExists(filename));
+	sqpush(v, g_twp->_pack.assetExists(filename));
 	return 1;
 }
 
@@ -113,14 +113,14 @@ static SQInteger cameraAt(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot or actor");
-		g_engine->follow(nullptr);
-		g_engine->setRoom(obj->_room);
+		g_twp->follow(nullptr);
+		g_twp->setRoom(obj->_room);
 		pos = obj->getUsePos();
 	} else {
 		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
-	g_engine->follow(nullptr);
-	g_engine->cameraAt(pos);
+	g_twp->follow(nullptr);
+	g_twp->cameraAt(pos);
 	return 0;
 }
 
@@ -135,19 +135,19 @@ static SQInteger cameraBounds(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get yMin");
 	if (SQ_FAILED(sqget(v, 5, yMax)))
 		return sq_throwerror(v, "failed to get yMax");
-	g_engine->_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(xMin, yMin), Math::Vector2d(xMax, yMax)));
+	g_twp->_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(xMin, yMin), Math::Vector2d(xMax, yMax)));
 	return 0;
 }
 
 static SQInteger cameraFollow(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
-	g_engine->follow(actor);
+	g_twp->follow(actor);
 	Math::Vector2d pos = actor->_node->getPos();
-	Common::SharedPtr<Room> oldRoom = g_engine->_room;
+	Common::SharedPtr<Room> oldRoom = g_twp->_room;
 	if (actor->_room)
-		g_engine->setRoom(actor->_room);
+		g_twp->setRoom(actor->_room);
 	if (oldRoom != actor->_room)
-		g_engine->cameraAt(pos);
+		g_twp->cameraAt(pos);
 	return 0;
 }
 
@@ -167,13 +167,13 @@ static SQInteger cameraFollow(HSQUIRRELVM v) {
 static SQInteger cameraInRoom(HSQUIRRELVM v) {
 	Common::SharedPtr<Room> room = sqroom(v, 2);
 	if (room) {
-		g_engine->setRoom(room);
+		g_twp->setRoom(room);
 	} else {
 		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj || !obj->_room) {
 			return sq_throwerror(v, "failed to get room");
 		}
-		g_engine->setRoom(obj->_room);
+		g_twp->setRoom(obj->_room);
 	}
 	return 0;
 }
@@ -209,7 +209,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 			int im;
 			if (SQ_FAILED(sqget(v, 4, im)))
 				return sq_throwerror(v, "failed to get interpolation method");
-			pos = Math::Vector2d(x, g_engine->getGfx().cameraPos().getY());
+			pos = Math::Vector2d(x, g_twp->getGfx().cameraPos().getY());
 			interpolation = (InterpolationKind)im;
 		} else {
 			Common::SharedPtr<Object> obj = sqobj(v, 2);
@@ -237,16 +237,16 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 	} else {
 		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
-	Math::Vector2d halfScreen(g_engine->_room->getScreenSize() / 2.f);
+	Math::Vector2d halfScreen(g_twp->_room->getScreenSize() / 2.f);
 	debugC(kDebugGenScript, "cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
-	g_engine->follow(nullptr);
-	g_engine->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
+	g_twp->follow(nullptr);
+	g_twp->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
 	return 0;
 }
 
 // Returns the current camera position x, y.
 static SQInteger cameraPos(HSQUIRRELVM v) {
-	sqpush(v, g_engine->cameraPos());
+	sqpush(v, g_twp->cameraPos());
 	return 1;
 }
 
@@ -262,13 +262,13 @@ static SQInteger sqChr(HSQUIRRELVM v) {
 
 // Returns x coordinates of the mouse in screen coordinates.
 static SQInteger cursorPosX(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_cursor.pos.getX());
+	sqpush(v, g_twp->_cursor.pos.getX());
 	return 1;
 }
 
 // Returns y coordinates of the mouse in screen coordinates.
 static SQInteger cursorPosY(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_cursor.pos.getY());
+	sqpush(v, g_twp->_cursor.pos.getY());
 	return 1;
 }
 
@@ -301,13 +301,13 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		int verb;
 		if (SQ_FAILED(sqget(v, 2, verb)))
 			return sq_throwerror(v, "failed to get verb");
-		ActorSlot *actorSlot = g_engine->_hud.actorSlot(g_engine->_actor);
+		ActorSlot *actorSlot = g_twp->_hud.actorSlot(g_twp->_actor);
 		if (!actorSlot)
 			return 0;
 		for (int i = 1; i < MAX_VERBS; i++) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
-				SpriteSheet *verbSheet = g_engine->_resManager.spriteSheet("VerbSheet");
+				SpriteSheet *verbSheet = g_twp->_resManager.spriteSheet("VerbSheet");
 				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
 				debugC(kDebugGenScript, "findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
@@ -321,11 +321,11 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
 	if (obj->inInventory()) {
-		sqpush(v, g_engine->_uiInv.getPos(obj));
+		sqpush(v, g_twp->_uiInv.getPos(obj));
 		return 1;
 	}
 
-	Math::Vector2d rPos = g_engine->roomToScreen(obj->_node->getAbsPos());
+	Math::Vector2d rPos = g_twp->roomToScreen(obj->_node->getAbsPos());
 	Math::Vector2d pos(rPos.getX() + obj->_node->getSize().getX() / 2.f, rPos.getY() + obj->_node->getSize().getY() / 2.f);
 	debugC(kDebugGenScript, "findScreenPosition(%s) => (%f,%f)", obj->_name.c_str(), pos.getX(), pos.getY());
 	sqpush(v, pos);
@@ -333,7 +333,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 }
 
 static SQInteger frameCounter(HSQUIRRELVM v) {
-	return sqpush(v, g_engine->_frameCounter);
+	return sqpush(v, g_twp->_frameCounter);
 }
 
 static SQInteger getUserPref(HSQUIRRELVM v) {
@@ -341,8 +341,8 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, "failed to get key");
 	}
-	if (g_engine->getPrefs().hasPrefs(key)) {
-		sqpush(v, g_engine->getPrefs().prefsAsJson(key));
+	if (g_twp->getPrefs().hasPrefs(key)) {
+		sqpush(v, g_twp->getPrefs().prefsAsJson(key));
 		return 1;
 	}
 	int numArgs = sq_gettop(v);
@@ -359,8 +359,8 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 	Common::String key;
 	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, "failed to get key");
-	// } else if (g_engine->getPrefs().hasPrivPref(key)) {
-	// 	return sqpush(v, g_engine->getPrefs().privPrefAsJson(key));
+	// } else if (g_twp->getPrefs().hasPrivPref(key)) {
+	// 	return sqpush(v, g_twp->getPrefs().privPrefAsJson(key));
 	} else if (sq_gettop(v) == 3) {
 		HSQOBJECT obj;
 		sq_getstackobj(v, 3, &obj);
@@ -372,12 +372,12 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 }
 
 static SQInteger incutscene(HSQUIRRELVM v) {
-	sqpush(v, g_engine->_cutscene != nullptr);
+	sqpush(v, g_twp->_cutscene != nullptr);
 	return 1;
 }
 
 static SQInteger indialog(HSQUIRRELVM v) {
-	sqpush(v, (int)g_engine->_dialog.getState());
+	sqpush(v, (int)g_twp->_dialog.getState());
 	return 1;
 }
 
@@ -454,7 +454,7 @@ static SQInteger sqrandom(HSQUIRRELVM v) {
 		sq_getfloat(v, 3, &max);
 		if (min > max)
 			SWAP(min, max);
-		SQFloat value = g_engine->getRandom(min, max);
+		SQFloat value = g_twp->getRandom(min, max);
 		sq_pushfloat(v, value);
 	} else {
 		SQInteger min, max;
@@ -462,7 +462,7 @@ static SQInteger sqrandom(HSQUIRRELVM v) {
 		sq_getinteger(v, 3, &max);
 		if (min > max)
 			SWAP(min, max);
-		SQInteger value = g_engine->getRandomSource().getRandomNumberRngSigned(min, max);
+		SQInteger value = g_twp->getRandomSource().getRandomNumberRngSigned(min, max);
 		sq_pushinteger(v, value);
 	}
 	return 1;
@@ -474,9 +474,9 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, orgFilename)))
 		return sq_throwerror(v, "failed to get filename");
 	debugC(kDebugGenScript, "loadArray: %s", orgFilename);
-	Common::String filename = g_engine->getPrefs().getKey(orgFilename);
+	Common::String filename = g_twp->getPrefs().getKey(orgFilename);
 	GGPackEntryReader entry;
-	entry.open(g_engine->_pack, g_engine->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
+	entry.open(g_twp->_pack, g_twp->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
 	sq_newarray(v, 0);
 	while (!entry.eos()) {
 		Common::String line = entry.readLine();
@@ -531,7 +531,7 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 3, choice)))
 			return sq_throwerror(v, "Failed to get choice");
 		// use pushSentence with VERB_DIALOG
-		g_engine->_dialog.choose(choice);
+		g_twp->_dialog.choose(choice);
 		return 0;
 	}
 
@@ -549,7 +549,7 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 	}
 	VerbId verb;
 	verb.id = id;
-	g_engine->execSentence(nullptr, verb, obj1, obj2);
+	g_twp->execSentence(nullptr, verb, obj1, obj2);
 	return 0;
 }
 
@@ -567,7 +567,7 @@ static SQInteger randomFrom(HSQUIRRELVM v) {
 		HSQOBJECT obj;
 		sq_resetobject(&obj);
 		SQInteger size = sq_getsize(v, 2);
-		int index = g_engine->getRandomSource().getRandomNumber(size - 1);
+		int index = g_twp->getRandomSource().getRandomNumber(size - 1);
 		int i = 0;
 		sq_push(v, 2);  // array
 		sq_pushnull(v); // null iterator
@@ -585,7 +585,7 @@ static SQInteger randomFrom(HSQUIRRELVM v) {
 		sq_pushobject(v, obj);
 	} else {
 		SQInteger size = sq_gettop(v);
-		int index = g_engine->getRandomSource().getRandomNumber(size - 3);
+		int index = g_twp->getRandomSource().getRandomNumber(size - 3);
 		sq_push(v, 2 + index);
 	}
 	return 1;
@@ -602,7 +602,7 @@ static SQInteger randomOdds(HSQUIRRELVM v) {
 	float value = 0.0f;
 	if (SQ_FAILED(sqget(v, 2, value)))
 		return sq_throwerror(v, "failed to get value");
-	float rnd = g_engine->getRandom();
+	float rnd = g_twp->getRandom();
 	bool res = rnd <= value;
 	sq_pushbool(v, res);
 	return 1;
@@ -615,19 +615,19 @@ static SQInteger randomseed(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	switch (nArgs) {
 	case 1: {
-		sqpush(v, (int)g_engine->getRandomSource().getSeed());
+		sqpush(v, (int)g_twp->getRandomSource().getSeed());
 		return 1;
 	}
 	case 2: {
 		int seed = 0;
 		if (sq_gettype(v, 2) == OT_NULL) {
-			g_engine->getRandomSource().setSeed(g_engine->getRandomSource().generateNewSeed());
+			g_twp->getRandomSource().setSeed(g_twp->getRandomSource().generateNewSeed());
 			return 0;
 		}
 		if (SQ_FAILED(sqget(v, 2, seed))) {
 			return sq_throwerror(v, "failed to get seed");
 		}
-		g_engine->getRandomSource().setSeed(seed);
+		g_twp->getRandomSource().setSeed(seed);
 		return 0;
 	}
 	}
@@ -649,7 +649,7 @@ static SQInteger refreshUI(HSQUIRRELVM v) {
 //     if (y > exitButtonB) { ... }
 // }
 static SQInteger screenSize(HSQUIRRELVM v) {
-	Math::Vector2d screen = g_engine->_room->getScreenSize();
+	Math::Vector2d screen = g_twp->_room->getScreenSize();
 	sqpush(v, screen);
 	return 1;
 }
@@ -703,7 +703,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 	debugC(kDebugGenScript, "setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
-	g_engine->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
+	g_twp->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
 	return 0;
 }
 
@@ -719,8 +719,8 @@ static SQInteger startDialog(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get node");
 		}
 	}
-	Common::String actor = g_engine->_actor ? g_engine->_actor->_key : "";
-	g_engine->_dialog.start(actor, dialog, node);
+	Common::String actor = g_twp->_actor ? g_twp->_actor->_key : "";
+	g_twp->_dialog.start(actor, dialog, node);
 	return 0;
 }
 
@@ -728,7 +728,7 @@ static SQInteger stopSentence(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	switch (nArgs) {
 	case 1: {
-		for (auto layer : g_engine->_room->_layers) {
+		for (auto layer : g_twp->_room->_layers) {
 			for (auto obj : layer->_objects) {
 				obj->_exec.enabled = false;
 			}
@@ -899,7 +899,7 @@ static SQInteger translate(HSQUIRRELVM v) {
 	const SQChar *text;
 	if (SQ_FAILED(sqget(v, 2, text)))
 		return sq_throwerror(v, "Failed to get text");
-	Common::String newText = g_engine->getTextDb().getText(text);
+	Common::String newText = g_twp->getTextDb().getText(text);
 	debugC(kDebugGenScript, "translate(%s): %s", text, newText.c_str());
 	sqpush(v, newText);
 	return 1;

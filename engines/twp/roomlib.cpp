@@ -34,12 +34,12 @@ static SQInteger addTrigger(HSQUIRRELVM v) {
 	sq_resetobject(&obj->_leave);
 	if (SQ_FAILED(sqget(v, 3, obj->_enter)))
 		return sq_throwerror(v, "failed to get enter");
-	sq_addref(g_engine->getVm(), &obj->_enter);
+	sq_addref(g_twp->getVm(), &obj->_enter);
 	if (nArgs == 4)
 		if (SQ_FAILED(sqget(v, 4, obj->_leave)))
 			return sq_throwerror(v, "failed to get leave");
-	sq_addref(g_engine->getVm(), &obj->_leave);
-	g_engine->_room->_triggers.push_back(obj);
+	sq_addref(g_twp->getVm(), &obj->_leave);
+	g_twp->_room->_triggers.push_back(obj);
 	return 0;
 }
 
@@ -73,7 +73,7 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 	} else {
 		return sq_throwerror(v, "Invalid argument number in clampInWalkbox");
 	}
-	const Common::Array<Walkbox> &walkboxes = g_engine->_room->_walkboxes;
+	const Common::Array<Walkbox> &walkboxes = g_twp->_room->_walkboxes;
 	for (size_t i = 0; i < walkboxes.size(); i++) {
 		const Walkbox &walkbox = walkboxes[i];
 		if (walkbox.contains(pos1)) {
@@ -96,7 +96,7 @@ static SQInteger createLight(HSQUIRRELVM v) {
 	int y;
 	if (SQ_FAILED(sqget(v, 4, y)))
 		return sq_throwerror(v, "failed to get y");
-	Light *light = g_engine->_room->createLight(Color::rgb(color), Math::Vector2d(x, y));
+	Light *light = g_twp->_room->createLight(Color::rgb(color), Math::Vector2d(x, y));
 	debugC(kDebugRoomScript, "createLight(%d) -> %d", color, light->id);
 	sqpush(v, light->id);
 	return 1;
@@ -110,11 +110,11 @@ static SQInteger enableTrigger(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 3, enabled)))
 		return sq_throwerror(v, "failed to get enabled");
 	if (enabled) {
-		g_engine->_room->_triggers.push_back(obj);
+		g_twp->_room->_triggers.push_back(obj);
 	} else {
-		int index = find(g_engine->_room->_triggers, obj);
+		int index = find(g_twp->_room->_triggers, obj);
 		if (index != -1)
-			g_engine->_room->_triggers.remove_at(index);
+			g_twp->_room->_triggers.remove_at(index);
 	}
 	return 0;
 }
@@ -123,7 +123,7 @@ static SQInteger enterRoomFromDoor(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	g_engine->enterRoom(obj->_room, obj);
+	g_twp->enterRoom(obj->_room, obj);
 	return 0;
 }
 
@@ -231,9 +231,9 @@ static SQInteger defineRoom(HSQUIRRELVM v) {
 	sqgetf(v, table, "name", name);
 	if (name.size() == 0)
 		sqgetf(v, table, "background", name);
-	Common::SharedPtr<Room> room = g_engine->defineRoom(name, table);
+	Common::SharedPtr<Room> room = g_twp->defineRoom(name, table);
 	debugC(kDebugRoomScript, "Define room: %s", name.c_str());
-	g_engine->_rooms.push_back(room);
+	g_twp->_rooms.push_back(room);
 	sqpush(v, room->_table);
 	return 1;
 }
@@ -259,9 +259,9 @@ static SQInteger definePseudoRoom(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstackobj(v, -1, &table)))
 		return sq_throwerror(v, "failed to get room table");
 
-	Common::SharedPtr<Room> room(g_engine->defineRoom(name, table, true));
+	Common::SharedPtr<Room> room(g_twp->defineRoom(name, table, true));
 	debugC(kDebugRoomScript, "Define pseudo room: %s", name);
-	g_engine->_rooms.push_back(room);
+	g_twp->_rooms.push_back(room);
 	sqpush(v, room->_table);
 	return 1;
 }
@@ -275,8 +275,8 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 	Common::String name;
 	if (SQ_FAILED(sqget(v, 2, name)))
 		return sq_throwerror(v, "failed to get name");
-	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
+	for (size_t i = 0; i < g_twp->_rooms.size(); i++) {
+		Common::SharedPtr<Room> room = g_twp->_rooms[i];
 		if (room->_name == name) {
 			sqpush(v, room->_table);
 			return 1;
@@ -299,8 +299,8 @@ static SQInteger findRoom(HSQUIRRELVM v) {
 // }
 static SQInteger masterRoomArray(HSQUIRRELVM v) {
 	sq_newarray(v, 0);
-	for (size_t i = 0; i < g_engine->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_engine->_rooms[i];
+	for (size_t i = 0; i < g_twp->_rooms.size(); i++) {
+		Common::SharedPtr<Room> room = g_twp->_rooms[i];
 		sq_pushobject(v, room->_table);
 		sq_arrayappend(v, -2);
 	}
@@ -308,17 +308,17 @@ static SQInteger masterRoomArray(HSQUIRRELVM v) {
 }
 
 static SQInteger removeTrigger(HSQUIRRELVM v) {
-	if (!g_engine->_room)
+	if (!g_twp->_room)
 		return 0;
 	if (sq_gettype(v, 2) == OT_CLOSURE) {
 		HSQOBJECT closure;
 		sq_resetobject(&closure);
 		if (SQ_FAILED(sqget(v, 3, closure)))
 			return sq_throwerror(v, "failed to get closure");
-		for (size_t i = 0; i < g_engine->_room->_triggers.size(); i++) {
-			Common::SharedPtr<Object> trigger = g_engine->_room->_triggers[i];
+		for (size_t i = 0; i < g_twp->_room->_triggers.size(); i++) {
+			Common::SharedPtr<Object> trigger = g_twp->_room->_triggers[i];
 			if ((trigger->_enter._unVal.pClosure == closure._unVal.pClosure) || (trigger->_leave._unVal.pClosure == closure._unVal.pClosure)) {
-				g_engine->_room->_triggers.remove_at(i);
+				g_twp->_room->_triggers.remove_at(i);
 				return 0;
 			}
 		}
@@ -326,10 +326,10 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> obj = sqobj(v, 2);
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
-		size_t i = find(g_engine->_room->_triggers, obj);
+		size_t i = find(g_twp->_room->_triggers, obj);
 		if (i != (size_t)-1) {
 			debugC(kDebugRoomScript, "Remove room trigger: %s(%s)", obj->_name.c_str(), obj->_key.c_str());
-			g_engine->_room->_triggers.remove_at(find(g_engine->_room->_triggers, obj));
+			g_twp->_room->_triggers.remove_at(find(g_twp->_room->_triggers, obj));
 		}
 		return 0;
 	}
@@ -350,8 +350,8 @@ static SQInteger roomActors(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get room");
 
 	sq_newarray(v, 0);
-	for (size_t i = 0; i < g_engine->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_engine->_actors[i];
+	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
+		Common::SharedPtr<Object> actor = g_twp->_actors[i];
 		if (actor->_room == room) {
 			sqpush(v, actor->_table);
 			sq_arrayappend(v, -2);
@@ -368,26 +368,26 @@ static SQInteger roomEffect(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (roomEffect == RoomEffect::Ghost) {
 		if (nArgs == 14) {
-			sqget(v, 3, g_engine->_shaderParams.iFade);
-			sqget(v, 4, g_engine->_shaderParams.wobbleIntensity);
-			sqget(v, 6, g_engine->_shaderParams.shadows.rgba.r);
-			sqget(v, 7, g_engine->_shaderParams.shadows.rgba.g);
-			sqget(v, 8, g_engine->_shaderParams.shadows.rgba.b);
-			sqget(v, 9, g_engine->_shaderParams.midtones.rgba.r);
-			sqget(v, 10, g_engine->_shaderParams.midtones.rgba.g);
-			sqget(v, 11, g_engine->_shaderParams.midtones.rgba.b);
-			sqget(v, 12, g_engine->_shaderParams.highlights.rgba.r);
-			sqget(v, 13, g_engine->_shaderParams.highlights.rgba.g);
-			sqget(v, 14, g_engine->_shaderParams.highlights.rgba.b);
+			sqget(v, 3, g_twp->_shaderParams.iFade);
+			sqget(v, 4, g_twp->_shaderParams.wobbleIntensity);
+			sqget(v, 6, g_twp->_shaderParams.shadows.rgba.r);
+			sqget(v, 7, g_twp->_shaderParams.shadows.rgba.g);
+			sqget(v, 8, g_twp->_shaderParams.shadows.rgba.b);
+			sqget(v, 9, g_twp->_shaderParams.midtones.rgba.r);
+			sqget(v, 10, g_twp->_shaderParams.midtones.rgba.g);
+			sqget(v, 11, g_twp->_shaderParams.midtones.rgba.b);
+			sqget(v, 12, g_twp->_shaderParams.highlights.rgba.r);
+			sqget(v, 13, g_twp->_shaderParams.highlights.rgba.g);
+			sqget(v, 14, g_twp->_shaderParams.highlights.rgba.b);
 		} else {
-			g_engine->_shaderParams.iFade = 1.f;
-			g_engine->_shaderParams.wobbleIntensity = 1.f;
-			g_engine->_shaderParams.shadows = Color(-0.3f, 0.f, 0.f);
-			g_engine->_shaderParams.midtones = Color(-0.2f, 0.f, 0.1f);
-			g_engine->_shaderParams.highlights = Color(0.f, 0.f, 0.2f);
+			g_twp->_shaderParams.iFade = 1.f;
+			g_twp->_shaderParams.wobbleIntensity = 1.f;
+			g_twp->_shaderParams.shadows = Color(-0.3f, 0.f, 0.f);
+			g_twp->_shaderParams.midtones = Color(-0.2f, 0.f, 0.1f);
+			g_twp->_shaderParams.highlights = Color(0.f, 0.f, 0.2f);
 		}
 	}
-	g_engine->_room->_effect = (RoomEffect)effect;
+	g_twp->_room->_effect = (RoomEffect)effect;
 	return 0;
 }
 
@@ -427,7 +427,7 @@ static SQInteger roomFade(HSQUIRRELVM v) {
 	default:
 		break;
 	}
-	g_engine->fadeTo(effect, t, sepia);
+	g_twp->fadeTo(effect, t, sepia);
 	return 0;
 }
 
@@ -472,7 +472,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	if (SQ_FAILED(sqget(v, 2, startColor)))
 		return sq_throwerror(v, "failed to get startColor");
-	Common::SharedPtr<Room> room = g_engine->_room;
+	Common::SharedPtr<Room> room = g_twp->_room;
 	if (room->_overlayTo)
 		room->_overlayTo->disable();
 	room->setOverlay(Color::fromRgba(startColor));
@@ -484,7 +484,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
 		debugC(kDebugRoomScript, "start overlay from {rgba(startColor)} to {rgba(endColor)} in {duration}s");
-		g_engine->_room->_overlayTo = Common::SharedPtr<OverlayTo>(new OverlayTo(duration, room, Color::fromRgba(endColor)));
+		g_twp->_room->_overlayTo = Common::SharedPtr<OverlayTo>(new OverlayTo(duration, room, Color::fromRgba(endColor)));
 	}
 	return 0;
 }
@@ -493,7 +493,7 @@ static SQInteger roomRotateTo(HSQUIRRELVM v) {
 	float rotation;
 	if (SQ_FAILED(sqget(v, 2, rotation)))
 		return sq_throwerror(v, "failed to get rotation");
-	g_engine->_room->_rotateTo = Common::SharedPtr<RoomRotateTo>(new RoomRotateTo(g_engine->_room, rotation));
+	g_twp->_room->_rotateTo = Common::SharedPtr<RoomRotateTo>(new RoomRotateTo(g_twp->_room, rotation));
 	return 0;
 }
 
@@ -509,7 +509,7 @@ static SQInteger setAmbientLight(HSQUIRRELVM v) {
 	int c = 0;
 	if (SQ_FAILED(sqget(v, 2, c)))
 		return sq_throwerror(v, "failed to get color");
-	g_engine->_room->_lights._ambientLight = Color::rgb(c);
+	g_twp->_room->_lights._ambientLight = Color::rgb(c);
 	return 0;
 }
 
@@ -523,7 +523,7 @@ static SQInteger walkboxHidden(HSQUIRRELVM v) {
 	int hidden = 0;
 	if (SQ_FAILED(sqget(v, 3, hidden)))
 		return sq_throwerror(v, "failed to get object or hidden");
-	g_engine->_room->walkboxHidden(walkbox, hidden != 0);
+	g_twp->_room->walkboxHidden(walkbox, hidden != 0);
 	return 0;
 }
 

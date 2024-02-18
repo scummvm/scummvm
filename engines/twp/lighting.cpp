@@ -174,7 +174,7 @@ void Lighting::update(const Lights &lights) {
 	if (_currentDebug != _debug) {
 		init("lighting", vshader, _debug ? debug_fshader : fshader);
 		_currentDebug = _debug;
-		g_engine->_lightingNode.setVisible(_debug);
+		g_twp->_lightingNode.setVisible(_debug);
 	}
 	_ambientLight = lights._ambientLight;
 	u_numberLights = 0;

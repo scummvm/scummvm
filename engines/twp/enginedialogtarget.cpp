@@ -53,7 +53,7 @@ private:
 };
 
 static Common::SharedPtr<Object> actor(const Common::String &name) {
-	for (auto a : g_engine->_actors) {
+	for (auto a : g_twp->_actors) {
 		if (a->_key == name)
 			return a;
 	}
@@ -63,18 +63,18 @@ static Common::SharedPtr<Object> actor(const Common::String &name) {
 static Common::SharedPtr<Object> actorOrCurrent(const Common::String &name) {
 	Common::SharedPtr<Object> result = actor(name);
 	if (!result)
-		result = g_engine->_actor;
+		result = g_twp->_actor;
 	return result;
 }
 
 Color EngineDialogTarget::actorColor(const Common::String &actor) {
 	Common::SharedPtr<Object> act = actorOrCurrent(actor);
-	return g_engine->_hud.actorSlot(act)->verbUiColors.dialogNormal;
+	return g_twp->_hud.actorSlot(act)->verbUiColors.dialogNormal;
 }
 
 Color EngineDialogTarget::actorColorHover(const Common::String &actor) {
 	Common::SharedPtr<Object> act = actorOrCurrent(actor);
-	return g_engine->_hud.actorSlot(act)->verbUiColors.dialogHighlight;
+	return g_twp->_hud.actorSlot(act)->verbUiColors.dialogHighlight;
 }
 
 Common::SharedPtr<Motor> EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
@@ -89,7 +89,7 @@ Common::SharedPtr<Motor> EngineDialogTarget::waitWhile(const Common::String &con
 }
 
 void EngineDialogTarget::shutup() {
-	g_engine->stopTalking();
+	g_twp->stopTalking();
 }
 
 Common::SharedPtr<Motor> EngineDialogTarget::pause(float time) {
@@ -101,11 +101,11 @@ bool EngineDialogTarget::execCond(const Common::String &cond) {
 	Common::SharedPtr<Object> act = actor(cond);
 	if (act) {
 		// yes, so we check if the current actor is the given actor name
-		Common::SharedPtr<Object> curActor = g_engine->_actor;
+		Common::SharedPtr<Object> curActor = g_twp->_actor;
 		return curActor && curActor->_key == act->_key;
 	}
 
-	HSQUIRRELVM v = g_engine->getVm();
+	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	// compile
 	sq_pushroottable(v);

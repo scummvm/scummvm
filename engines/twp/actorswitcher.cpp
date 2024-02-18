@@ -69,8 +69,8 @@ float ActorSwitcher::getAlpha(size_t index) const {
 }
 
 void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index) {
-	SpriteSheet *gameSheet = g_engine->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_engine->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
 	const SpriteSheetFrame &iconBackFrame = gameSheet->getFrame("icon_background");
 	const SpriteSheetFrame &iconActorFrame = gameSheet->getFrame(icon);
 	const SpriteSheetFrame &iconFrame = gameSheet->getFrame("icon_frame");
@@ -97,7 +97,7 @@ void ActorSwitcher::drawCore(Math::Matrix4 trsf) {
 void ActorSwitcher::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos);
-	g_engine->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
 float ActorSwitcher::height() const {
@@ -132,7 +132,7 @@ void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float 
 	}
 
 	// check if mouse is over actor icons or gear icon
-	Math::Vector2d scrPos = g_engine->winToScreen(g_engine->_cursor.pos);
+	Math::Vector2d scrPos = g_twp->winToScreen(g_twp->_cursor.pos);
 	bool oldMouseOver = _mouseOver;
 	_mouseOver = !_down && rect().contains(scrPos.getX(), scrPos.getY());
 
@@ -150,7 +150,7 @@ void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float 
 	_animPos = MIN(1.f, _animElapsed / ANIM_DURATION);
 
 	// check if we select an actor or gear icon
-	if (_mouseOver && (g_engine->_cursor.leftDown) && !_down) {
+	if (_mouseOver && (g_twp->_cursor.leftDown) && !_down) {
 		_down = true;
 		// check if we allow to select an actor
 		size_t iconIdx = iconIndex(scrPos);
@@ -159,7 +159,7 @@ void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float 
 				_slots[iconIdx].select();
 		}
 	}
-	if (!g_engine->_cursor.leftDown)
+	if (!g_twp->_cursor.leftDown)
 		_down = false;
 }
 
