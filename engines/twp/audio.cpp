@@ -29,10 +29,6 @@
 #include "twp/twp.h"
 #include "twp/squtil.h"
 
-#ifndef USE_VORBIS
-	#error TWP engine requires USE_VORBIS flag
-#endif
-
 namespace Twp {
 
 void SoundStream::open(Common::SharedPtr<SoundDefinition> sndDef) {
