@@ -19,9 +19,9 @@
  *
  */
 
-#include "twp/btea.h"
+#include "common/btea.h"
 
-namespace Twp {
+namespace Common {
 
 #define DELTA 0x9e3779b9
 #define MX (((z >> 5 ^ y << 2) + (y >> 3 ^ z << 4)) ^ ((sum ^ y) + (key[(p & 3) ^ e] ^ z)))
@@ -37,7 +37,7 @@ void BTEACrypto::decrypt(uint32 *v, int n, const uint32 *key) {
 // This method comes from https://en.wikipedia.org/wiki/XXTEA
 void BTEACrypto::btea(uint32 *v, int n, const uint32 *key) {
 	uint32 y, z, sum;
-	unsigned p, rounds, e;
+	unsigned int p, rounds, e;
 	if (n > 1) { /* Coding Part */
 		rounds = 6 + 52 / n;
 		sum = 0;
@@ -69,4 +69,4 @@ void BTEACrypto::btea(uint32 *v, int n, const uint32 *key) {
 		} while (--rounds);
 	}
 }
-} // namespace Twp
+} // namespace Common

@@ -1,50 +1,49 @@
 MODULE := engines/twp
 
 MODULE_OBJS = \
-	twp.o \
-	console.o \
-	metaengine.o \
-	vm.o \
-	ggpack.o \
-	gfx.o \
-	resmanager.o \
-	spritesheet.o \
-	room.o \
-	lighting.o \
-	font.o \
-	sqgame.o \
-	syslib.o \
-	objlib.o \
-	genlib.o \
-	squtil.o \
-	thread.o \
-	rectf.o \
-	scenegraph.o \
-	object.o \
-	ids.o \
-	camera.o \
 	actorlib.o \
-	roomlib.o \
-	soundlib.o \
-	prefs.o \
-	tsv.o \
-	util.o \
-	motor.o \
-	yack.o \
-	dialog.o \
-	shaders.o \
-	hud.o \
-	lip.o \
-	callback.o \
-	graph.o \
-	walkboxnode.o \
 	actorswitcher.o \
-	enginedialogtarget.o \
 	audio.o \
-	savegame.o \
-	btea.o \
-	time.o \
+	callback.o \
+	camera.o \
+	console.o \
+	dialog.o \
 	dialogs.o \
+	enginedialogtarget.o \
+	font.o \
+	genlib.o \
+	gfx.o \
+	ggpack.o \
+	graph.o \
+	hud.o \
+	ids.o \
+	lighting.o \
+	lip.o \
+	metaengine.o \
+	motor.o \
+	object.o \
+	objlib.o \
+	prefs.o \
+	resmanager.o \
+	rectf.o \
+	room.o \
+	roomlib.o \
+	scenegraph.o \
+	shaders.o \
+	soundlib.o \
+	savegame.o \
+	spritesheet.o \
+	sqgame.o \
+	squtil.o \
+	syslib.o \
+	thread.o \
+	time.o \
+	tsv.o \
+	twp.o \
+	util.o \
+	vm.o \
+	walkboxnode.o \
+	yack.o \
 	squirrel/sqapi.o \
 	squirrel/sqbaselib.o \
 	squirrel/sqfuncstate.o \
