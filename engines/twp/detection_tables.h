@@ -27,14 +27,25 @@ const PlainGameDescriptor twpGames[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
+	// Thimbleweed Park - GOG version
 	{
 		"twp",
-		nullptr,
-		AD_ENTRY1("ThimbleweedPark.ggpack1", nullptr),
+		"",
+		AD_ENTRY1s("ThimbleweedPark.ggpack1", "6180145221d18e9e9caac6459e840579", 502661439),
 		Common::UNK_LANG,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOMIDI)
+	},
+	// Thimbleweed Park - EPIC Games version
+	{
+		"twp",
+		"",
+		AD_ENTRY1s("ThimbleweedPark.ggpack1", "a97546ee2d9e19aab59714a267009a31", 502540584),
+		Common::UNK_LANG,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
