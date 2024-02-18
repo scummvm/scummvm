@@ -216,10 +216,10 @@ void Sound::playMusic(const Common::String &filename) {
 			stream->read(_musicData, _musicSize);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
-			//debug("        [%u]", count);
+			debug("        [%u]", count);
 			for (uint32 k = 0; k < count; k++) {
-				/*uint16 idx = */stream->readUint16LE();
-				//debug("        %2u: %u", k, idx);
+				uint16 idx = stream->readUint16LE();
+				debug("        %2u: %u", k, idx);
 			}
 		}
 	}
