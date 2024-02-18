@@ -36,6 +36,10 @@ static char treePrefix[] = "_tree_";
 namespace Nancy {
 
 bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurface &surf, const Common::String &treeName, Common::Rect *outSrc, Common::Rect *outDest) {
+	if (name.empty()) {
+		return false;
+	}
+
 	// Detect and load autotext surfaces
 	Common::String baseName(name.baseName());
 	if (baseName.hasPrefixIgnoreCase("USE_")) {

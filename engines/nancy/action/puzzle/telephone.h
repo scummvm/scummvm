@@ -25,6 +25,9 @@
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
+
+class Font;
+
 namespace Action {
 
 class Telephone : public RenderActionRecord {
@@ -34,16 +37,23 @@ public:
 		Common::String soundName;
 		Common::String text;
 		SceneChangeWithFlag sceneChange;
+
+		// NewPhone members
+		int16 eventFlagCondition = -1;
+		Common::Rect displaySrc;
 	};
 
-	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
+	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kPreCall, kCall, kHangUp };
 
-	Telephone() :
+	Telephone(bool isNewPhone) :
 		RenderActionRecord(7),
 		_callState(kWaiting),
 		_buttonLastPushed(-1),
 		_selected(-1),
-		_checkNumbers(false) {}
+		_checkNumbers(false),
+		_font(nullptr),
+		_animIsStopped(false),
+		_isNewPhone(isNewPhone) {}
 	virtual ~Telephone() {}
 
 	void init() override;
@@ -51,6 +61,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return _isNewPhone ? "NewPhone" : "Telephone"; }
+	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
@@ -69,19 +83,45 @@ public:
 	Common::Rect _exitHotspot;
 	Common::Array<PhoneCall> _calls;
 
+	// NewPhone properties
+	bool _hasDisplay = false;
+	uint16 _displayFont = 0;
+	Common::Path _displayAnimName;
+	uint32 _displayAnimFrameTime = 0;
+	Common::Array<Common::Rect> _displaySrcs;
+	Common::Rect _displayDest;
+
+	bool _dialAutomatically = true;
+
+	Common::Rect _dirHighlightSrc;
+	Common::Rect _dialHighlightSrc;
+
+	int16 _upDirButtonID = -1;
+	int16 _downDirButtonID = -1;
+	int16 _dialButtonID = -1;
+	int16 _dirButtonID = -1;
+
+	Common::Rect _displayDialingSrc;
+
+	SoundDescription _preCallSound;
+
 	Common::Array<byte> _calledNumber;
 	Graphics::ManagedSurface _image;
+	Graphics::ManagedSurface _animImage;
 	CallState _callState;
 	int _buttonLastPushed;
 	int _selected;
 	bool _checkNumbers;
+	bool _animIsStopped;
 
-protected:
-	Common::String getRecordTypeName() const override { return "Telephone"; }
-	bool isViewportRelative() const override { return true; }
+	uint32 _displayAnimEnd = 0;
+	uint16 _displayAnimFrame = 0;
+	int16 _displayedDirectory = 0;
+	bool _isShowingDirectory = false;
 
-	void drawButton(uint id);
-	void undrawButton(uint id);
+	const Font *_font;
+
+	bool _isNewPhone;
 };
 
 } // End of namespace Action

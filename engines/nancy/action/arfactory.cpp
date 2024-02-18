@@ -253,7 +253,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 115:
 		return new LeverPuzzle();
 	case 116:
-		return new Telephone();
+		return new Telephone(false);
 	case 117:
 		return new SliderPuzzle();
 	case 118:
@@ -360,6 +360,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	case 225:
 		return new SpigotPuzzle();
+	case 230:
+		return new Telephone(true);
 	default:
 		return nullptr;
 	}
