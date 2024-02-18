@@ -87,7 +87,7 @@ void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("language", "en");
 }
 
-static Common::String getDesc(const Twp::SaveGame& savegame) {
+static Common::String getDesc(const Twp::SaveGame &savegame) {
 	Common::String desc = Twp::formatTime(savegame.time, "%b %d at %H:%M");
 	if (savegame.easyMode)
 		desc += " (casual)";
@@ -170,33 +170,34 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, target, "Thimbleweed Park keymap");
 
 	struct {
-		Common::String name;
-		const Common::U32String desc;
+		const char *name;
+		const char *desc;
 		Twp::TwpAction action;
-		Common::String input;
+		const char *input;
 	} actions[] = {
-		{"SKIPCUTSCENE", _("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE"},
-		{"SELECTACTOR1", _("Select Actor 1"), Twp::kSelectActor1, "1"},
-		{"SELECTACTOR2", _("Select Actor 2"), Twp::kSelectActor2, "2"},
-		{"SELECTACTOR3", _("Select Actor 3"), Twp::kSelectActor3, "3"},
-		{"SELECTACTOR4", _("Select Actor 4"), Twp::kSelectActor4, "4"},
-		{"SELECTACTOR5", _("Select Actor 5"), Twp::kSelectActor5, "5"},
-		{"SELECTACTOR6", _("Select Actor 6"), Twp::kSelectActor6, "6"},
-		{"SELECTCHOICE1", _("Select Choice 1"), Twp::kSelectChoice1, "1"},
-		{"SELECTCHOICE2", _("Select Choice 2"), Twp::kSelectChoice2, "2"},
-		{"SELECTCHOICE3", _("Select Choice 3"), Twp::kSelectChoice3, "3"},
-		{"SELECTCHOICE4", _("Select Choice 4"), Twp::kSelectChoice4, "4"},
-		{"SELECTCHOICE5", _("Select Choice 5"), Twp::kSelectChoice5, "5"},
-		{"SELECTCHOICE6", _("Select Choice 6"), Twp::kSelectChoice6, "6"},
-		{"SELECTNEXTACTOR", _("Select Next Actor"), Twp::kSelectNextActor, "0"},
-		{"SELECTPREVACTOR", _("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
-		{"SKIPTEXT", _("Skip Text"), Twp::kSkipText, "."},
-		{"SHOWHOTSPOTS", _("Show hotspots"), Twp::kShowHotspots, "TAB"},
+		{"SKIPCUTSCENE", _s("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE"},
+		{"SELECTACTOR1", _s("Select Actor 1"), Twp::kSelectActor1, "1"},
+		{"SELECTACTOR2", _s("Select Actor 2"), Twp::kSelectActor2, "2"},
+		{"SELECTACTOR3", _s("Select Actor 3"), Twp::kSelectActor3, "3"},
+		{"SELECTACTOR4", _s("Select Actor 4"), Twp::kSelectActor4, "4"},
+		{"SELECTACTOR5", _s("Select Actor 5"), Twp::kSelectActor5, "5"},
+		{"SELECTACTOR6", _s("Select Actor 6"), Twp::kSelectActor6, "6"},
+		{"SELECTCHOICE1", _s("Select Choice 1"), Twp::kSelectChoice1, "1"},
+		{"SELECTCHOICE2", _s("Select Choice 2"), Twp::kSelectChoice2, "2"},
+		{"SELECTCHOICE3", _s("Select Choice 3"), Twp::kSelectChoice3, "3"},
+		{"SELECTCHOICE4", _s("Select Choice 4"), Twp::kSelectChoice4, "4"},
+		{"SELECTCHOICE5", _s("Select Choice 5"), Twp::kSelectChoice5, "5"},
+		{"SELECTCHOICE6", _s("Select Choice 6"), Twp::kSelectChoice6, "6"},
+		{"SELECTNEXTACTOR", _s("Select Next Actor"), Twp::kSelectNextActor, "0"},
+		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
+		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "."},
+		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB"},
+		{0, 0, Twp::kSkipCutscene, 0},
 	};
 
 	Common::Action *act;
-	for (int i = 0; i < ARRAYSIZE(actions); i++) {
-		act = new Common::Action(actions[i].name.c_str(), actions[i].desc);
+	for (int i = 0; actions[i].name; i++) {
+		act = new Common::Action(actions[i].name, _(actions[i].desc));
 		act->setCustomEngineActionEvent(actions[i].action);
 		act->addDefaultInputMapping(actions[i].input);
 		engineKeyMap->addAction(act);
