@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "twp/twp.h"
 #include "twp/squtil.h"
 #include "twp/clipper/clipper.hpp"
