@@ -22,12 +22,11 @@
 #ifndef TWP_SQGAME_H
 #define TWP_SQGAME_H
 
-#include <stddef.h>
 #include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
-void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger nparamscheck = 0, const SQChar *typemask = NULL);
+void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger nparamscheck = 0, const SQChar *typemask = nullptr);
 void sqgame_register_constants(HSQUIRRELVM v);
 void sqgame_register_syslib(HSQUIRRELVM v);
 void sqgame_register_objlib(HSQUIRRELVM v);

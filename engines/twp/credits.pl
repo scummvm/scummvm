@@ -1,3 +1,3 @@
-begin_section("Twp");
-	add_person("Name 1", "Handle 1", "");
+begin_section("Thimbleweed Park");
+	add_person("Valéry Sablonnière", "Scemino", "");
 end_section();

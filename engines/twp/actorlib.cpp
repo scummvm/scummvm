@@ -214,7 +214,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> obj = sqobj(v, 3);
 		if (!obj)
 			return sq_throwerror(v, "failed to get spot");
-		if(actor1->_room != actor2->_room)
+		if (actor1->_room != actor2->_room)
 			return false;
 		// not sure about this, needs to be check one day ;)
 		sqpush(v, distance((Vector2i)actor1->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < distance((Vector2i)actor2->_node->getAbsPos(), (Vector2i)obj->getUsePos()));
@@ -231,7 +231,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		int dist;
 		if (SQ_FAILED(sqget(v, 4, dist)))
 			return sq_throwerror(v, "failed to get distance");
-		if(actor->_room != obj->_room)
+		if (actor->_room != obj->_room)
 			return false;
 		sqpush(v, distance((Vector2i)actor->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < dist);
 		return 1;
@@ -334,8 +334,8 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 	Common::String name;
 	if (SQ_FAILED(sqget(v, 3, name)))
 		return sq_throwerror(v, "failed to get name");
-	for (const auto & walkbox : g_engine->_room->_walkboxes) {
-			if (walkbox._name == name) {
+	for (const auto &walkbox : g_engine->_room->_walkboxes) {
+		if (walkbox._name == name) {
 			if (walkbox.contains((Vector2i)actor->_node->getAbsPos())) {
 				sqpush(v, true);
 				return 1;
@@ -932,7 +932,7 @@ static SQInteger isActorSelectable(HSQUIRRELVM v) {
 
 // If an actor is specified, returns true otherwise returns false.
 static SQInteger is_actor(HSQUIRRELVM v) {
-	Common::SharedPtr<Object> actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor(sqactor(v, 2));
 	sqpush(v, actor != nullptr);
 	return 1;
 }

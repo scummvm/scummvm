@@ -31,16 +31,16 @@
 
 namespace Twp {
 
-ActorSwitcherSlot::ActorSwitcherSlot(const Common::String &icon, Color back, Color frame, SelectFunc *selectFunc, int id) {
-	this->icon = icon;
-	this->back = back;
-	this->frame = frame;
-	this->selectFunc = selectFunc;
-	this->id = id;
+ActorSwitcherSlot::ActorSwitcherSlot(const Common::String &icon_, Color back_, Color frame_, SelectFunc *selectFunc_, int id_) {
+	icon = icon_;
+	this->back = back_;
+	this->frame = frame_;
+	this->selectFunc = selectFunc_;
+	this->id = id_;
 }
 
 void ActorSwitcherSlot::select() {
-	if(selectFunc) {
+	if (selectFunc) {
 		selectFunc(id);
 	}
 }
@@ -101,7 +101,7 @@ void ActorSwitcher::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Col
 }
 
 float ActorSwitcher::height() const {
-	float n = _mouseOver ? _slots.size() : 1;
+	float n = _mouseOver ? _slots.size() : 1.0f;
 	return n * ACTOR_SEP;
 }
 
@@ -116,50 +116,51 @@ Common::Rect ActorSwitcher::rect() const {
 }
 
 void ActorSwitcher::update(const Common::Array<ActorSwitcherSlot> &slots, float elapsed) {
-	if (_visible) {
-		_slots = slots;
+	if (!_visible)
+		return;
 
-		// update flash icon
-		if ((_flash != 0) && ((_flash == -1) || (_flashElapsed < _flash))) {
-			_flashElapsed = _flashElapsed + elapsed;
-			_alpha = 0.6f + 0.4f * sin(M_PI * 2.f * _flashElapsed);
-		} else {
-			_flash = 0;
-			_flashElapsed = 0.f;
-			_alpha = INACTIVE_ALPHA;
-		}
+	_slots = slots;
 
-		// check if mouse is over actor icons or gear icon
-		Math::Vector2d scrPos = g_engine->winToScreen(g_engine->_cursor.pos);
-		bool oldMouseOver = _mouseOver;
-		_mouseOver = !_down && rect().contains(scrPos.getX(), scrPos.getY());
-
-		// update anim
-		_animElapsed = _animElapsed + elapsed;
-
-		// stop anim or flash if necessary
-		if (oldMouseOver != _mouseOver) {
-			_animElapsed = 0.f;
-			if (_mouseOver)
-				_flash = 0;
-		}
-
-		// update anim pos
-		_animPos = MIN(1.f, _animElapsed / ANIM_DURATION);
-
-		// check if we select an actor or gear icon
-		if (_mouseOver && (g_engine->_cursor.leftDown) && !_down) {
-			_down = true;
-			// check if we allow to select an actor
-            size_t iconIdx = iconIndex(scrPos);
-			if ((_mode == asOn) || (iconIdx == (_slots.size() - 1))) {
-				if (_slots[iconIdx].selectFunc != nullptr)
-					_slots[iconIdx].select();
-			}
-		}
-		if (!g_engine->_cursor.leftDown)
-			_down = false;
+	// update flash icon
+	if ((_flash != 0) && ((_flash == -1) || (_flashElapsed < _flash))) {
+		_flashElapsed = _flashElapsed + elapsed;
+		_alpha = 0.6f + 0.4f * sin(M_PI * 2.f * _flashElapsed);
+	} else {
+		_flash = 0;
+		_flashElapsed = 0.f;
+		_alpha = INACTIVE_ALPHA;
 	}
+
+	// check if mouse is over actor icons or gear icon
+	Math::Vector2d scrPos = g_engine->winToScreen(g_engine->_cursor.pos);
+	bool oldMouseOver = _mouseOver;
+	_mouseOver = !_down && rect().contains(scrPos.getX(), scrPos.getY());
+
+	// update anim
+	_animElapsed = _animElapsed + elapsed;
+
+	// stop anim or flash if necessary
+	if (oldMouseOver != _mouseOver) {
+		_animElapsed = 0.f;
+		if (_mouseOver)
+			_flash = 0;
+	}
+
+	// update anim pos
+	_animPos = MIN(1.f, _animElapsed / ANIM_DURATION);
+
+	// check if we select an actor or gear icon
+	if (_mouseOver && (g_engine->_cursor.leftDown) && !_down) {
+		_down = true;
+		// check if we allow to select an actor
+		size_t iconIdx = iconIndex(scrPos);
+		if ((_mode == asOn) || (iconIdx == (_slots.size() - 1))) {
+			if (_slots[iconIdx].selectFunc != nullptr)
+				_slots[iconIdx].select();
+		}
+	}
+	if (!g_engine->_cursor.leftDown)
+		_down = false;
 }
 
 } // namespace Twp

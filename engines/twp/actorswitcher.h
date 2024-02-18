@@ -22,8 +22,8 @@
 #ifndef TWP_ACTORSWITCHER_H
 #define TWP_ACTORSWITCHER_H
 
-#include "twp/scenegraph.h"
 #include "common/func.h"
+#include "twp/scenegraph.h"
 
 namespace Twp {
 

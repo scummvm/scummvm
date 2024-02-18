@@ -1,23 +1,23 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "twp/debugtools.h"
 #include "imgui/imgui.h"
@@ -37,7 +37,7 @@ static struct {
 	bool _showResources = false;
 	bool _showScenegraph = false;
 	bool _showActor = false;
-	Node* _node = nullptr;
+	Node *_node = nullptr;
 	ImGuiTextFilter _objFilter;
 	ImGuiTextFilter _actorFilter;
 	int _fadeEffect = 0;
@@ -68,7 +68,7 @@ static void drawThreads() {
 			ImGui::TableSetupColumn("Line");
 			ImGui::TableHeadersRow();
 
-			if(g_engine->_cutscene) {
+			if (g_engine->_cutscene) {
 				Common::SharedPtr<ThreadBase> thread(g_engine->_cutscene);
 				SQStackInfos infos;
 				sq_stackinfos(thread->getThread(), 0, &infos);
@@ -179,7 +179,7 @@ static void drawActors() {
 	ImGui::Begin("Actors", &state._showStack);
 	state._actorFilter.Draw();
 	ImGui::BeginChild("Actor_List");
-	for(auto& actor : g_engine->_actors) {
+	for (auto &actor : g_engine->_actors) {
 		bool selected = actor->getId() == state._selectedActor;
 		Common::String key(actor->_key);
 		if (state._actorFilter.PassFilter(actor->_key.c_str())) {
@@ -290,7 +290,7 @@ static void drawAudio() {
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Sounds", &state._showAudio);
-	ImGui::Text("# sounds: %d/32", count);
+	ImGui::Text("# sounds: %d/%d", count, NUM_AUDIO_SLOTS);
 	ImGui::Separator();
 
 	if (ImGui::BeginTable("Threads", 7, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
@@ -303,7 +303,7 @@ static void drawAudio() {
 		ImGui::TableSetupColumn("Pan");
 		ImGui::TableHeadersRow();
 
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
 			auto &sound = g_engine->_audio._slots[i];
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
@@ -380,16 +380,16 @@ static void drawGeneral() {
 
 	ImGui::Separator();
 	bool isSwitcherOn = g_engine->_actorSwitcher._mode == asOn;
-	if(ImGui::Checkbox("Switcher ON", &isSwitcherOn)) {
-		if(isSwitcherOn) {
+	if (ImGui::Checkbox("Switcher ON", &isSwitcherOn)) {
+		if (isSwitcherOn) {
 			g_engine->_actorSwitcher._mode |= asOn;
 		} else {
 			g_engine->_actorSwitcher._mode &= ~asOn;
 		}
 	}
 	bool isTemporaryUnselectable = g_engine->_actorSwitcher._mode & asTemporaryUnselectable;
-	if(ImGui::Checkbox("Switcher Temp. Unselectable", &isTemporaryUnselectable)) {
-		if(isTemporaryUnselectable) {
+	if (ImGui::Checkbox("Switcher Temp. Unselectable", &isTemporaryUnselectable)) {
+		if (isTemporaryUnselectable) {
 			g_engine->_actorSwitcher._mode |= asTemporaryUnselectable;
 		} else {
 			g_engine->_actorSwitcher._mode &= ~asTemporaryUnselectable;
@@ -525,27 +525,27 @@ static void drawGeneral() {
 	ImGui::End();
 }
 
-static void drawNode(Node* node) {
+static void drawNode(Node *node) {
 	auto children = node->getChildren();
 	bool selected = state._node == node;
-	if(children.empty()) {
-		if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+	if (children.empty()) {
+		if (ImGui::Selectable(node->getName().c_str(), &selected)) {
 			state._node = node;
 		}
 	} else {
 		ImGui::PushID(node->getName().c_str());
-		if(ImGui::TreeNode("")) {
+		if (ImGui::TreeNode("")) {
 			ImGui::SameLine();
-			if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+			if (ImGui::Selectable(node->getName().c_str(), &selected)) {
 				state._node = node;
 			}
-			for(auto& child : children) {
+			for (auto &child : children) {
 				drawNode(child);
 			}
 			ImGui::TreePop();
 		} else {
 			ImGui::SameLine();
-			if(ImGui::Selectable(node->getName().c_str(), &selected)) {
+			if (ImGui::Selectable(node->getName().c_str(), &selected)) {
 				state._node = node;
 			}
 		}
@@ -563,23 +563,23 @@ static void drawScenegraph() {
 	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	if(state._node != nullptr) {
+	if (state._node != nullptr) {
 		ImGui::Begin("Node");
 		state._node->isVisible();
 		bool visible = state._node->isVisible();
-		if(ImGui::Checkbox(state._node->getName().c_str(), &visible)) {
+		if (ImGui::Checkbox(state._node->getName().c_str(), &visible)) {
 			state._node->setVisible(visible);
 		}
 		int zsort = state._node->getZSort();
-		if(ImGui::DragInt("Z-Sort", &zsort)) {
+		if (ImGui::DragInt("Z-Sort", &zsort)) {
 			state._node->setZSort(zsort);
 		}
 		Math::Vector2d pos = state._node->getPos();
-		if(ImGui::DragFloat2("Pos", pos.getData())) {
+		if (ImGui::DragFloat2("Pos", pos.getData())) {
 			state._node->setPos(pos);
 		}
 		Math::Vector2d offset = state._node->getOffset();
-		if(ImGui::DragFloat2("Offset", offset.getData())) {
+		if (ImGui::DragFloat2("Offset", offset.getData())) {
 			state._node->setOffset(offset);
 		}
 		ImGui::End();
