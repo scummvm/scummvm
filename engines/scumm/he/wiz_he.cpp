@@ -1342,7 +1342,7 @@ void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum,
 
 		int w = rCapt.width();
 		int h = rCapt.height();
-		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+		int transColor = (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) : 5;
 
 		if (_vm->_game.features & GF_16BIT_COLOR)
 			compType = 2;
@@ -1507,7 +1507,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	int32 dstPitch, dstType, cw, ch;
 	if (flags & kWRFAlloc) {
 		dst = (uint8 *)malloc(width * height * _vm->_bytesPerPixel);
-		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TCOLOR)) : 5;
+		int transColor = (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR)) : 5;
 
 		if (_vm->_bytesPerPixel == 2) {
 			uint8 *tmpPtr = dst;
@@ -1578,9 +1578,9 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	}
 
 	int transColor = -1;
-	if (_vm->VAR_WIZ_TCOLOR != 0xFF) {
+	if (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) {
 		uint8 *trns = _vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0);
-		transColor = (trns == nullptr) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
+		transColor = (trns == nullptr) ? _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) : -1;
 	}
 
 	if (_vm->_game.id == GID_MOONBASE &&
@@ -1974,7 +1974,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bytesPerPixel);
 	assert(imageBuffer);
 
-	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	const uint16 transColor = (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) : 5;
 	if (_vm->_bytesPerPixel == 2) {
 		uint8 *tmpPtr = imageBuffer;
 		for (i = 0; i < dsth; i++) {
@@ -2095,7 +2095,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 }
 
 void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstpitch, int dstType, int dstw, int dsth, int wizW, int wizH, Common::Rect &bound, Common::Point *wp, uint8 bitDepth) {
-	int i, transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	int i, transColor = (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) : 5;
 
 	Common::Point bbox[4];
 	bbox[0].x = 0;
@@ -2348,7 +2348,7 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 	// TODO:
 	//if (params->actionFlags & kWAFDestImage) {
 	//	// Get the rendering surface for this image
-	//	if (!DW_SetSimpleBitmapStructFromImage(params->destImageNumber, 0, &fakeBitmap)) {
+	//	if (!dwSetSimpleBitmapStructFromImage(params->destImageNumber, 0, &fakeBitmap)) {
 	//		error("Image %d is invalid for rendering into", params->destImageNumber);
 	//	}
 	//
@@ -2480,161 +2480,228 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	WRITE_BE_UINT32(writePtr, 8 + wizdSize); writePtr += 4;
 }
 
-void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
-	int state = 0;
-	if (params->actionFlags & kWAFState) {
-		state = params->state;
+bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM) {
+	int compType, imageWidth, imageHeight;
+	byte *wizHeader;
+	byte *dataPtr;
+
+	// Get the image header
+	wizHeader = (byte *)getWizStateHeaderPrim(imageNum, imageState);
+
+	if (!wizHeader) {
+		return false;
 	}
-	uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->image);
-	if (dataPtr) {
-		uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
-		assert(wizh);
-		int c = READ_LE_UINT32(wizh + 0x0);
-		int w = READ_LE_UINT32(wizh + 0x4);
-		int h = READ_LE_UINT32(wizh + 0x8);
-		assert(c == 0 || c == 2);
-		uint8 bitDepth = (c == 2) ? 2 : 1;
-		Common::Rect areaRect, imageRect(w, h);
-		if (params->actionFlags & kWAFRect) {
-			if (!imageRect.intersects(params->box)) {
-				return;
-			}
-			imageRect.clip(params->box);
-		}
-		if (params->actionFlags & kWAFRenderCoords) {
-			areaRect = params->renderCoords;
-		} else {
-			areaRect = imageRect;
-		}
-		uint16 color = _vm->VAR(93);
-		if (params->actionFlags & kWAFColor) {
-			color = params->colorValue;
-		}
-		if (areaRect.intersects(imageRect)) {
-			areaRect.clip(imageRect);
-			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
-			assert(wizd);
-			int dx = areaRect.width();
-			int dy = areaRect.height();
-			wizd += (areaRect.top * w + areaRect.left) * bitDepth;
-			while (dy--) {
-				if (bitDepth == 2) {
-					for (int i = 0; i < dx; i++)
-						WRITE_LE_UINT16(wizd + i * 2, color);
-				} else {
-					memset(wizd, color, dx);
-				}
-				wizd += w * bitDepth;
-			}
-		}
+
+	// Double check the image header compression type
+	compType = READ_LE_UINT32(wizHeader);
+
+	if (!isUncompressedFormatTypeID(compType)) {
+		return false;
 	}
-	_vm->_res->setModified(rtImage, params->image);
+
+	imageWidth = READ_LE_UINT32(wizHeader + 4);
+	imageHeight = READ_LE_UINT32(wizHeader + 8);
+
+	// Do some fun stuff
+	dataPtr = (byte *)getWizStateDataPrim(imageNum, imageState);
+
+	if (!dataPtr) {
+		return false;
+	}
+
+	// Hook up the image info to the simple bitmap info
+	destBM->bufferPtr = (int32 *)(dataPtr);
+	destBM->bitmapWidth = imageWidth;
+	destBM->bitmapHeight = imageHeight;
+
+	return true;
 }
 
-struct drawProcP {
-	Common::Rect *imageRect;
-	uint8 *wizd;
-	int pitch;
-	int depth;
-};
+void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
+	Common::Rect renderRect, clipRect, workClipRect;
+	int whichState, w, h, whichImage;
+	WizSimpleBitmap renderBitmap;
+	int32 whatColor;
 
-static void drawProc(int x, int y, int c, void *data) {
-	drawProcP *param = (drawProcP *)data;
+	// What state is going to rendered into?
+	if (params->actionFlags & kWAFState) {
+		whichState = params->state;
+	} else {
+		whichState = 0;
+	}
 
-	if (param->imageRect->contains(x, y)) {
-		uint32 offs = y * param->pitch + x * param->depth;
-		if (param->depth == 2)
-			WRITE_LE_UINT16(param->wizd + offs, c);
-		else
-			*(param->wizd + offs) = c;
+	whichImage = params->image;
+
+	// Make the clipping rect for this image / state
+	getWizImageDim(whichImage, whichState, w, h);
+	makeSizedRectAt(&clipRect, 0, 0, w, h);
+
+	if (params->actionFlags & kWAFRect) {
+		workClipRect.left = params->box.left;
+		workClipRect.top = params->box.top;
+		workClipRect.right = params->box.right;
+		workClipRect.bottom = params->box.bottom;
+
+		// Bail out if there isn't overlap between the clipping rects
+		if (!findRectOverlap(&clipRect, &workClipRect)) {
+			return;
+		}
+	}
+
+	// Get the rendering coords or assume the entire
+	if (params->actionFlags & kWAFRenderCoords) {
+		renderRect = params->renderCoords;
+	} else {
+		renderRect = clipRect;
+	}
+
+	// What is the rendering color
+	if (params->actionFlags & kWAFColor) {
+		whatColor = params->colorValue;
+
+	} else {
+		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
+	}
+
+	// Get the simple bitmap
+	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
+		error("Wiz::processWizImageRenderRectCmd(): Image %d state %d invalid for rendering", whichImage, whichState);
+	}
+
+	// If we're here we must be able to render into the image (clipped)...
+	if (findRectOverlap(&renderRect, &clipRect)) {
+		pgDrawSolidRect(&renderBitmap, &renderRect, whatColor);
+		_vm->_res->setModified(rtImage, params->image);
 	}
 }
 
 void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
-	if (params->actionFlags & kWAFRenderCoords) {
-		int state = 0;
-		if (params->actionFlags & kWAFState) {
-			state = params->state;
-		}
-		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->image);
-		if (dataPtr) {
-			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
-			assert(wizh);
-			int c = READ_LE_UINT32(wizh + 0x0);
-			int w = READ_LE_UINT32(wizh + 0x4);
-			int h = READ_LE_UINT32(wizh + 0x8);
-			assert(c == 0 || c == 2);
-			uint8 bitDepth = (c == 2) ? 2 : 1;
-			Common::Rect imageRect(w, h);
-			if (params->actionFlags & kWAFRect) {
-				if (!imageRect.intersects(params->box)) {
-					return;
-				}
-				imageRect.clip(params->box);
-			}
-			uint16 color = _vm->VAR(93);
-			if (params->actionFlags & kWAFColor) {
-				color = params->colorValue;
-			}
-			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
-			assert(wizd);
-			int x1 = params->renderCoords.left;
-			int y1 = params->renderCoords.top;
-			int x2 = params->renderCoords.right;
-			int y2 = params->renderCoords.bottom;
+	Common::Rect clipRect, workClipRect;
+	int whichState, w, h, whichImage;
+	WizSimpleBitmap renderBitmap;
+	int32 whatColor;
+	int iPropertyNumber = 0, iPropertyValue = 0;
 
-			drawProcP lineP;
+	if (!(params->actionFlags & kWAFRenderCoords)) {
+		return;
+	}
 
-			lineP.imageRect = &imageRect;
-			lineP.wizd = wizd;
-			lineP.pitch = w * bitDepth;
-			lineP.depth = bitDepth;
+	if (params->actionFlags & kWAFState) {
+		whichState = params->state;
+	} else {
+		whichState = 0;
+	}
 
-			if (params->actionFlags & kWAFProperty) {
-				Graphics::drawThickLine(x1, y1, x2, y2, params->propertyValue, params->propertyNumber, color, drawProc, &lineP);
-			} else {
-				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
-			}
+	if (params->actionFlags & kWAFProperty) {
+		iPropertyNumber = params->propertyNumber;
+		iPropertyValue = params->propertyValue;
+	}
+
+	whichImage = params->image;
+
+	getWizImageDim(whichImage, whichState, w, h);
+	makeSizedRectAt(&clipRect, 0, 0, w, h);
+
+	if (params->actionFlags & kWAFRect) {
+		workClipRect.left = params->box.left;
+		workClipRect.top = params->box.top;
+		workClipRect.right = params->box.right;
+		workClipRect.bottom = params->box.bottom;
+
+		// Bail out if there isn't overlap between the clipping rects
+		if (!findRectOverlap(&clipRect, &workClipRect)) {
+			return;
 		}
 	}
+
+	// What is the rendering color
+	if (params->actionFlags & kWAFColor) {
+		whatColor = params->colorValue;
+	} else {
+		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
+	}
+
+	// Get the simple bitmap
+	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
+		error("Wiz::processWizImageRenderLineCmd(): Image %d state %d invalid for rendering", whichImage, whichState);
+	}
+
+	// If we're here we must be able to render into the image (clipped)...
+	switch (iPropertyNumber) {
+	case 0:
+		pgClippedLineDraw(
+			&renderBitmap,
+			params->renderCoords.left, params->renderCoords.top,
+			params->renderCoords.right, params->renderCoords.bottom,
+			&clipRect, whatColor);
+
+		break;
+	case 1:
+		pgClippedThickLineDraw(
+			&renderBitmap,
+			params->renderCoords.left, params->renderCoords.top,
+			params->renderCoords.right, params->renderCoords.bottom,
+			&clipRect,
+			iPropertyValue,
+			whatColor);
+
+		break;
+	}
+
 	_vm->_res->setModified(rtImage, params->image);
 }
 
 void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
+	Common::Rect clipRect, workClipRect;
+	int whichState, w, h, whichImage;
+	WizSimpleBitmap renderBitmap;
+	int32 whatColor;
+	Common::Point pt;
+
 	if (params->actionFlags & kWAFRenderCoords) {
-		int px = params->renderCoords.left;
-		int py = params->renderCoords.top;
-		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->image);
-		if (dataPtr) {
-			int state = 0;
-			if (params->actionFlags & kWAFState) {
-				state = params->state;
-			}
-			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
-			assert(wizh);
-			int c = READ_LE_UINT32(wizh + 0x0);
-			int w = READ_LE_UINT32(wizh + 0x4);
-			int h = READ_LE_UINT32(wizh + 0x8);
-			assert(c == 0);
-			Common::Rect imageRect(w, h);
-			if (params->actionFlags & kWAFRect) {
-				if (!imageRect.intersects(params->box)) {
-					return;
-				}
-				imageRect.clip(params->box);
-			}
-			uint16 color = _vm->VAR(93);
-			if (params->actionFlags & kWAFColor) {
-				color = params->colorValue;
-			}
-			if (imageRect.contains(px, py)) {
-				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
-				assert(wizd);
-				*(wizd + py * w + px) = color;
-			}
+		pt.x = params->renderCoords.left;
+		pt.y = params->renderCoords.top;
+	} else {
+		return;
+	}
+
+	if (params->actionFlags & kWAFState) {
+		whichState = params->state;
+	} else {
+		whichState = 0;
+	}
+
+	whichImage = params->image;
+
+	getWizImageDim(whichImage, whichState, w, h);
+	makeSizedRectAt(&clipRect, 0, 0, w, h);
+
+	if (params->actionFlags & kWAFRect) {
+		workClipRect.left = params->box.left;
+		workClipRect.top = params->box.top;
+		workClipRect.right = params->box.right;
+		workClipRect.bottom = params->box.bottom;
+
+		// Bail out if there isn't overlap between the clipping rects
+		if (!findRectOverlap(&clipRect, &workClipRect)) {
+			return;
 		}
 	}
-	_vm->_res->setModified(rtImage, params->image);
+
+	if (params->actionFlags & kWAFColor) {
+		whatColor = params->colorValue;
+	} else {
+		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
+	}
+
+	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
+		error("Wiz::processWizImageRenderPixelCmd(): Image %d state %d invalid for rendering.", whichImage, whichState);
+	}
+
+	if (isPointInRect(&clipRect,&pt)) {
+		pgWritePixel(&renderBitmap, pt.x, pt.y, whatColor);
+		_vm->_res->setModified(rtImage, params->image);
+	}
 }
 
 void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
@@ -2654,8 +2721,43 @@ void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
-	// Used in to draw circles in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Ellipse
+	int iWhichState = 0, iPropertyNumber = 0, iPropertyValue = 0;
+	int iWidth = 0, iHeight = 0;
+
+	if (params->actionFlags & kWAFProperty) {
+		iPropertyNumber = params->propertyNumber;
+		iPropertyValue = params->propertyValue;
+	}
+
+	// What state is going to rendered into?
+	if (params->actionFlags & kWAFState) {
+		iWhichState = params->state;
+	}
+
+	int iWhichImage = params->image;
+
+	// Make the clipping rect for this image / state
+	getWizImageDim(iWhichImage, iWhichState, iWidth, iHeight);
+
+	Common::Rect clipRect;
+	makeSizedRectAt(&clipRect, 0, 0, iWidth, iHeight);
+
+	// Get the simple bitmap
+	WizSimpleBitmap renderBitmap;
+
+	if (!dwSetSimpleBitmapStructFromImage(iWhichImage, iWhichState, &renderBitmap)) {
+		error("Wiz::processWizImageRenderEllipseCmd(): Image %d state %d invalid for rendering.", iWhichImage, iWhichState);
+	}
+
+	pgDrawClippedEllipse(&renderBitmap,
+						 params->ellipseProperties.px, params->ellipseProperties.py,
+						 params->ellipseProperties.qx, params->ellipseProperties.qy,
+						 params->ellipseProperties.kx, params->ellipseProperties.ky,
+						 params->ellipseProperties.lod,
+						 &clipRect,
+						 iPropertyValue,
+						 params->ellipseProperties.color);
+
 	_vm->_res->setModified(rtImage, params->image);
 }
 
@@ -2864,6 +2966,12 @@ void Wiz::processWizImageCmd(const WizImageCommand *params) {
 	}
 }
 
+bool Wiz::isUncompressedFormatTypeID(int id) {
+	return ((kWCTNone == id) || (kWCTNone16Bpp == id) ||
+			(kWCTNone32Bpp == id) || (kWCTNone16BppBigEndian == id) ||
+			(kWCTNone32BppBigEndian == id));
+}
+
 void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
@@ -2943,6 +3051,18 @@ int Wiz::getWizImageStates(const uint8 *dataPtr) {
 	}
 }
 
+void *Wiz::getWizStateHeaderPrim(int resNum, int state) {
+	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
+	assert(data);
+	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, false);
+}
+
+void *Wiz::getWizStateDataPrim(int resNum, int state) {
+	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
+	assert(data);
+	return _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, false);
+}
+
 int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
@@ -2977,7 +3097,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 		switch (c) {
 		case 0:
 			if (_vm->_game.heversion >= 99) {
-				ret = getRawWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
+				ret = getRawWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR)) != _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) ? 1 : 0;
 			} else {
 				ret = 0;
 			}
@@ -2987,7 +3107,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 			break;
 #ifdef USE_RGB_COLOR
 		case 2:
-			ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
+			ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR)) != _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) ? 1 : 0;
 			break;
 		case 4: {
 			uint16 color = 0xffff;
@@ -3028,23 +3148,23 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	switch (c) {
 	case 0:
 		if (_vm->_game.heversion >= 99) {
-			color = getRawWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+			color = getRawWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 		} else {
-			color = _vm->VAR(_vm->VAR_WIZ_TCOLOR);
+			color = _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR);
 		}
 		break;
 	case 1:
-		color = getWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		color = getWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 		break;
 #ifdef USE_RGB_COLOR
 	case 2:
-		color = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		color = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 		break;
 	case 4:
 		copyCompositeWizImage((byte *)&color, data, wizd, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
 		break;
 	case 5:
-		color = getWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		color = getWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 		break;
 #endif
 	default:

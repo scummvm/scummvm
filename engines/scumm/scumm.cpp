@@ -714,7 +714,7 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 
 	_skipProcessActors = 0;
 
-	VAR_WIZ_TCOLOR = 0xFF;
+	VAR_WIZ_TRANSPARENT_COLOR = 0xFF;
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {

@@ -1845,6 +1845,8 @@ public:
 	byte VAR_ERROR_FLAG = 0xFF; // HE70-90
 	byte VAR_OPERATION_FAILURE = 0xFF; // HE99+
 
+	byte VAR_COLOR_BLACK = 0xFF;
+
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS = 0xFF;
 
