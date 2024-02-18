@@ -138,7 +138,7 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 		sqpush(v, json->asString());
 		sqget(v, -1, obj);
 	} else if (json->isIntegerNumber()) {
-		sqpush(v, json->asIntegerNumber());
+		sqpush(v, static_cast<int>(json->asIntegerNumber()));
 		sqget(v, -1, obj);
 	} else if (json->isBool()) {
 		sqpush(v, json->asBool());
@@ -414,7 +414,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 		g_twp->cameraAt(g_twp->_actor->_node->getPos());
 
 	HSQUIRRELVM v = g_twp->getVm();
-	sqsetf(sqrootTbl(v), "SAVEBUILD", json["savebuild"]->asIntegerNumber());
+	sqsetf(sqrootTbl(v), "SAVEBUILD", static_cast<int>(json["savebuild"]->asIntegerNumber()));
 
 	sqcall("postLoad");
 
@@ -621,7 +621,7 @@ private:
 static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj, bool pseudo) {
 	switch (obj._type) {
 	case OT_INTEGER:
-		return new Common::JSONValue(sq_objtointeger(&obj));
+		return new Common::JSONValue(static_cast<long long>(sq_objtointeger(&obj)));
 	case OT_FLOAT:
 		return new Common::JSONValue(sq_objtofloat(&obj));
 	case OT_STRING:

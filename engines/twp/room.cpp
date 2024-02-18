@@ -309,12 +309,8 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 			Common::SharedPtr<Object> obj(new Object());
 			Twp::setId(obj->_table, newObjId());
 			obj->_key = jObject["name"]->asString();
-			Common::SharedPtr<Node> objNode(new Node(obj->_key));
-			objNode->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
-			objNode->setZSort(jObject["zsort"]->asIntegerNumber());
-			obj->_node = objNode;
-			obj->_nodeAnim.reset(new Anim(obj.get()));
-			obj->_node->addChild(obj->_nodeAnim.get());
+			obj->_node->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
+			obj->_node->setZSort(jObject["zsort"]->asIntegerNumber());
 			obj->_usePos = parseVec2(jObject["usepos"]->asString());
 			if (jObject.contains("usedir")) {
 				obj->_useDir = parseUseDir(jObject["usedir"]->asString());

@@ -33,6 +33,10 @@
 
 namespace Twp {
 
+SQInteger sqpush(HSQUIRRELVM v) {
+	return 0;
+}
+
 template<>
 SQInteger sqpush(HSQUIRRELVM v, int value) {
 	sq_pushinteger(v, value);
