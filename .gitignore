@@ -297,3 +297,6 @@ dists/emscripten/emsdk-*
 #Ignore Atari/FreeMiNT files
 scummvm.gtp
 scummvm.ttp
+
+#Ignore Dear imgui file
+imgui.ini
