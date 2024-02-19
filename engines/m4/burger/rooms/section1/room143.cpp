@@ -197,7 +197,7 @@ void Room143::init() {
 	}
 
 	if (_G(flags)[V000] == 1004) {
-		loadMoney();
+		showEmptyPlates();
 		series_play("143money", 0xf02, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 	} else {
 		hotspot_set_active("money ", false);
@@ -855,7 +855,7 @@ void Room143::daemon() {
 				Series::series_play("143bu11", 0xa00, 0, kCHANGE_BURL_ANIMATION);
 				break;
 
-			case kCHANGE_BURL_ANIMATION:
+			case 45:
 				series_load("143money");
 				series_play_with_breaks(PLAY8, "143bu24", 0xe00, 1, 3);
 				break;
@@ -872,7 +872,7 @@ void Room143::daemon() {
 			_G(flags)[V063] = 0;
 
 			_burlMode = 31;
-			loadMoney();
+			showEmptyPlates();
 			Series::series_play("143bu25", 0xa00, 2, kCHANGE_BURL_ANIMATION);
 			break;
 
@@ -1014,6 +1014,7 @@ void Room143::daemon() {
 				break;
 
 			default:
+				_burlMode = 42;
 				Series::series_play("143bu20", 0xa00, 2, kCHANGE_BURL_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
 				break;
 			}
@@ -1021,7 +1022,7 @@ void Room143::daemon() {
 
 		case 46:
 			digi_stop(3);
-			loadMoney();
+			showEmptyPlates();
 			series_load("143money");
 			series_play_with_breaks(PLAY8, "143bu24", 0xe00, 1, 3);
 			break;
@@ -1122,7 +1123,7 @@ void Room143::daemon() {
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			_burlShould = 31;
 		} else {
-			kernel_timing_trigger(60, 10030);
+			kernel_timing_trigger(60, kBurlStopsEating);
 		}
 		break;
 
@@ -1142,7 +1143,7 @@ void Room143::daemon() {
 			_burlShould = 45;
 			hotspot_set_active("burl", false);
 		} else {
-			kernel_timing_trigger(60, 10031);
+			kernel_timing_trigger(60, kBurlLeavesTown);
 		}
 		break;
 
@@ -1496,7 +1497,7 @@ void Room143::loadCheese() {
 	_cheese = series_play("143CHES", 0xf00, 0, -1, 600, -1, 100, 35, -5, 0, 0);
 }
 
-void Room143::loadMoney() {
+void Room143::showEmptyPlates() {
 	Series::series_play("143pl01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 }
 

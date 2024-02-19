@@ -68,7 +68,7 @@ private:
 	void talkToVera();
 	void talkToBurl();
 	void loadCheese();
-	void loadMoney();
+	void showEmptyPlates();
 	void playDigi1();
 	void playDigi2();
 
