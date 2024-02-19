@@ -6693,10 +6693,13 @@ echo "$_discord"
 #
 # Check for ImGui
 #
+echocheck "ImGui"
+
 if test "$_opengl" = yes ; then
-	echocheck "ImGui"
-	define_in_config_if_yes "$_imgui" 'USE_IMGUI'
-	echo "$_imgui"
+  define_in_config_if_yes "$_imgui" 'USE_IMGUI'
+  echo "$_imgui"
+else
+  echo "no (requires OpenGL)"
 fi
 
 #
