@@ -45,8 +45,6 @@ private:
 	GUI::CheckboxWidget *_enableRetroFontsGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableRetroVerbsGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableClassicSentenceGUICheckbox = nullptr;
-	GUI::CheckboxWidget *_enableDisplayTextGUICheckbox = nullptr;
-	GUI::CheckboxWidget *_enableHearVoiceGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableDLC = nullptr;
 	GUI::PopUpWidget *_langGUIDropdown = nullptr;
 };

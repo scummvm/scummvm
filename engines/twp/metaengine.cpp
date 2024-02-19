@@ -81,8 +81,6 @@ void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("retroFonts", false);
 	ConfMan.registerDefault("retroVerbs", false);
 	ConfMan.registerDefault("hudSentence", false);
-	ConfMan.registerDefault("talkiesShowText", true);
-	ConfMan.registerDefault("talkiesHearVoice", true);
 	ConfMan.registerDefault("language", "en");
 }
 
