@@ -409,7 +409,7 @@ Common::JSONValue *GGHashMapDecoder::readValue() {
 		return ggType == GGP_INTEGER ? new Common::JSONValue((long long int)atol(num_str.c_str())) : new Common::JSONValue(atof(num_str.c_str()));
 	}
 	default:
-		error("Not Implemented: value type {ggType}");
+		error("Not Implemented: value type: %d", ggType);
 		return new Common::JSONValue();
 	}
 }
