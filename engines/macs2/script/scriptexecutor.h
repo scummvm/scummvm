@@ -71,6 +71,10 @@ class Macs2Engine;
 			// Implements a lookup in the "areas" map
 			uint16 Func101D(uint16 x, uint16 y);
 
+			// 01E7:A903
+			void ScriptPrintString();
+
+
 			// TODO: Identify number of variables and default values
 			ScriptVariable _variables[10000];
 
