@@ -26,7 +26,7 @@ const PlainGameDescriptor twpGames[] = {
 	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
-	// Thimbleweed Park - GOG version
+	// Thimbleweed Park - GOG/1.0.958
 	{
 		"twp",
 		"",
@@ -35,7 +35,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)},
-	// Thimbleweed Park - EPIC Games version
+	// Thimbleweed Park - EPIC Games/1.0.955
 	{
 		"twp",
 		"",

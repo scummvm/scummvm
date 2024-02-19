@@ -158,14 +158,6 @@ SQRESULT sqget(HSQUIRRELVM v, int i, SQInteger &value) {
 }
 
 template<>
-SQRESULT sqget(HSQUIRRELVM v, int i, int &value) {
-	SQInteger itg;
-	SQRESULT result = sq_getinteger(v, i, &itg);
-	value = static_cast<int>(itg);
-	return result;
-}
-
-template<>
 SQRESULT sqget(HSQUIRRELVM v, int i, bool &value) {
 	SQInteger itg;
 	SQRESULT result = sq_getinteger(v, i, &itg);
@@ -354,7 +346,7 @@ Common::SharedPtr<SoundDefinition> sqsounddef(int id) {
 }
 
 Common::SharedPtr<SoundDefinition> sqsounddef(HSQUIRRELVM v, int i) {
-	int id;
+	SQInteger id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqsounddef(id);
 	return nullptr;
@@ -398,7 +390,7 @@ void sqexec(HSQUIRRELVM v, const char *code, const char *filename) {
 }
 
 Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v, int i) {
-	int id;
+	SQInteger id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqthread(id);
 	return nullptr;
@@ -434,7 +426,7 @@ Light *sqlight(int id) {
 }
 
 Light *sqlight(HSQUIRRELVM v, int i) {
-	int id;
+	SQInteger id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqlight(id);
 	return nullptr;

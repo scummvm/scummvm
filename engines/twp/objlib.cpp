@@ -91,7 +91,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 	TextVAlignment tvAlign = tvCenter;
 	float maxWidth = 0.0f;
 	if (sq_gettop(v) == 4) {
-		int align;
+		SQInteger align;
 		if (SQ_FAILED(sqget(v, 4, align)))
 			return sq_throwerror(v, "failed to get align");
 		uint64 hAlign = align & 0x0000000070000000;
@@ -164,7 +164,7 @@ static SQInteger deleteObject(HSQUIRRELVM v) {
 //     if (button == Phone.phoneReceiver) {    ... }
 // }
 static SQInteger findObjectAt(HSQUIRRELVM v) {
-	int x, y;
+	SQInteger x, y;
 	if (SQ_FAILED(sqget(v, 2, x)))
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 3, y)))
@@ -245,7 +245,7 @@ static SQInteger loopObjectState(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	if (sq_gettype(v, 3) == OT_INTEGER) {
-		int index;
+		SQInteger index;
 		if (SQ_FAILED(sqget(v, 3, index)))
 			return sq_throwerror(v, "failed to get state");
 		obj->play(index, true);
@@ -293,7 +293,7 @@ static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 		float t = 0.0f;
 		if (SQ_FAILED(sqget(v, 4, t)))
 			return sq_throwerror(v, "failed to get time");
-		int interpolation = 0;
+		SQInteger interpolation = 0;
 		if ((sq_gettop(v) >= 5) && (SQ_FAILED(sqget(v, 5, interpolation))))
 			interpolation = 0;
 		obj->setAlphaTo(Common::SharedPtr<AlphaTo>(new AlphaTo(t, obj, alpha, intToInterpolationMethod(interpolation))));
@@ -351,7 +351,7 @@ static SQInteger objectCenter(HSQUIRRELVM v) {
 static SQInteger objectColor(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		int color = 0;
+		SQInteger color = 0;
 		if (SQ_FAILED(sqget(v, 3, color)))
 			return sq_throwerror(v, "failed to get color");
 		obj->_node->setColor(Color::fromRgba(color));
@@ -366,7 +366,7 @@ static SQInteger objectDependentOn(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> parent = sqobj(v, 3);
 	if (!parent)
 		return sq_throwerror(v, "failed to get parent object");
-	int state = 0;
+	SQInteger state = 0;
 	if (SQ_FAILED(sqget(v, 4, state)))
 		return sq_throwerror(v, "failed to get state");
 	child->dependentOn(parent, state);
@@ -395,7 +395,7 @@ static SQInteger objectFPS(HSQUIRRELVM v) {
 static SQInteger objectHidden(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		int hidden = 0;
+		SQInteger hidden = 0;
 		sqget(v, 3, hidden);
 		debugC(kDebugObjScript, "Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(), hidden == 0 ? "true" : "false");
 		obj->_node->setVisible(hidden == 0);
@@ -419,10 +419,10 @@ static SQInteger objectHotspot(HSQUIRRELVM v) {
 		sqpush(v, Rectf::fromPosAndSize(Math::Vector2d(obj->_hotspot.left + pos.getX(), obj->_hotspot.bottom + pos.getY()), Math::Vector2d(obj->_hotspot.width(), obj->_hotspot.height())));
 		return 1;
 	}
-	int left = 0;
-	int top = 0;
-	int right = 0;
-	int bottom = 0;
+	SQInteger left = 0;
+	SQInteger top = 0;
+	SQInteger right = 0;
+	SQInteger bottom = 0;
 	if (SQ_FAILED(sqget(v, 3, left)))
 		return sq_throwerror(v, "failed to get left");
 	if (SQ_FAILED(sqget(v, 4, top)))
@@ -457,7 +457,7 @@ static SQInteger objectIcon(HSQUIRRELVM v) {
 	case OT_ARRAY: {
 		Common::String icon;
 		Common::StringArray icons;
-		int fps = 10;
+		SQInteger fps = 10;
 		sq_push(v, 3);
 		sq_pushnull(v); // null iterator
 		if (SQ_SUCCEEDED(sq_next(v, -2)))
@@ -506,8 +506,8 @@ static SQInteger objectLit(HSQUIRRELVM v) {
 static SQInteger objectMoveTo(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		int x = 0;
-		int y = 0;
+		SQInteger x = 0;
+		SQInteger y = 0;
 		if (SQ_FAILED(sqget(v, 3, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
@@ -515,7 +515,7 @@ static SQInteger objectMoveTo(HSQUIRRELVM v) {
 		float duration = 0.0f;
 		if (SQ_FAILED(sqget(v, 5, duration)))
 			return sq_throwerror(v, "failed to get duration");
-		int interpolation = 0;
+		SQInteger interpolation = 0;
 		if ((sq_gettop(v) >= 6) && SQ_FAILED(sqget(v, 6, interpolation)))
 			interpolation = 0;
 		Math::Vector2d destPos = Math::Vector2d(x, y);
@@ -532,8 +532,8 @@ static SQInteger objectMoveTo(HSQUIRRELVM v) {
 static SQInteger objectOffset(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		int x = 0;
-		int y = 0;
+		SQInteger x = 0;
+		SQInteger y = 0;
 		if (SQ_FAILED(sqget(v, 3, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
@@ -547,8 +547,8 @@ static SQInteger objectOffset(HSQUIRRELVM v) {
 static SQInteger objectOffsetTo(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
-		int x = 0;
-		int y = 0;
+		SQInteger x = 0;
+		SQInteger y = 0;
 		if (SQ_FAILED(sqget(v, 3, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
@@ -588,7 +588,7 @@ static SQInteger objectParallaxLayer(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	int layer = 0;
+	SQInteger layer = 0;
 	if (SQ_FAILED(sqget(v, 3, layer)))
 		return sq_throwerror(v, "failed to get parallax layer");
 	g_twp->_room->objectParallaxLayer(obj, layer);
@@ -690,7 +690,7 @@ static SQInteger objectRotateTo(HSQUIRRELVM v) {
 		float duration = 0.0f;
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
-		int interpolation = 0;
+		SQInteger interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
 		obj->setRotateTo(Common::SharedPtr<RotateTo>(new RotateTo(duration, obj->_node.get(), rotation, intToInterpolationMethod(interpolation))));
@@ -719,7 +719,7 @@ static SQInteger objectScaleTo(HSQUIRRELVM v) {
 		float duration = 0.0f;
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
-		int interpolation = 0;
+		SQInteger interpolation = 0;
 		if ((sq_gettop(v) >= 5) && SQ_FAILED(sqget(v, 5, interpolation)))
 			interpolation = 0;
 		obj->setScaleTo(Common::SharedPtr<ScaleTo>(new ScaleTo(duration, obj->_node.get(), scale, intToInterpolationMethod(interpolation))));
@@ -768,7 +768,7 @@ static SQInteger objectState(HSQUIRRELVM v) {
 		return 1;
 	}
 	if (nArgs == 3) {
-		int state;
+		SQInteger state;
 		if (SQ_FAILED(sqget(v, 3, state)))
 			return sq_throwerror(v, "failed to get state");
 		obj->setState(state);
@@ -807,7 +807,7 @@ static SQInteger objectSort(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	int zsort;
+	SQInteger zsort;
 	if (SQ_FAILED(sqget(v, 3, zsort)))
 		return sq_throwerror(v, "failed to get zsort");
 	obj->_node->setZSort(zsort);
@@ -823,7 +823,7 @@ static SQInteger objectUsePos(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	int x, y, dir;
+	SQInteger x, y, dir;
 	if (SQ_FAILED(sqget(v, 3, x)))
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 4, y)))
@@ -883,7 +883,7 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object or actor");
-	int verb;
+	SQInteger verb;
 	if (SQ_FAILED(sqget(v, 3, verb)))
 		return sq_throwerror(v, "failed to get verb");
 
@@ -982,7 +982,7 @@ static SQInteger popInventory(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	int count;
+	SQInteger count;
 	if (SQ_FAILED(sqget(v, 3, count)))
 		return sq_throwerror(v, "failed to get count");
 	obj->setPop(count);

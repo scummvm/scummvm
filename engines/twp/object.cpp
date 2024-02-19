@@ -218,11 +218,11 @@ void Object::trig(const Common::String &name) {
 			warning("Trigger #%d not found in object #%i (%s)", trigNum, getId(), _key.c_str());
 		}
 	} else {
-		int id = 0;
+		SQInteger id = 0;
 		sqgetf(sqrootTbl(g_twp->getVm()), name.substr(1), id);
 		Common::SharedPtr<SoundDefinition> sound = sqsounddef(id);
 		if (!sound)
-			warning("Cannot trig sound '%s', sound not found (id=%d, %s)", name.c_str(), id, _key.c_str());
+			warning("Cannot trig sound '%s', sound not found (id=%lld, %s)", name.c_str(), id, _key.c_str());
 		else
 			g_twp->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	}
@@ -252,7 +252,7 @@ float Object::popScale() const {
 }
 
 int Object::defaultVerbId() {
-	int result = VERB_LOOKAT;
+	SQInteger result = VERB_LOOKAT;
 	if (sqrawexists(_table, "defaultVerb"))
 		sqgetf(_table, "defaultVerb", result);
 	else if (isActor(getId())) {
@@ -366,7 +366,7 @@ Common::String Object::getIcon() {
 }
 
 int Object::getFlags() {
-	int result = 0;
+	SQInteger result = 0;
 	if (sqrawexists(_table, "flags"))
 		sqgetf(_table, "flags", result);
 	return result;
@@ -647,7 +647,7 @@ void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
 }
 
 int Object::flags() {
-	int result = 0;
+	SQInteger result = 0;
 	if (sqrawexists(_table, "flags"))
 		sqgetf(_table, "flags", result);
 	return result;

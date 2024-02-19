@@ -101,12 +101,12 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> actor = sqactor(v, 2);
 		if (!actor)
 			return sq_throwerror(v, "failed to get actor");
-		int x, y;
+		SQInteger x, y;
 		if (SQ_FAILED(sqget(v, 3, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
-		debugC(kDebugActScript, "actorAt %s room %d, %d", actor->_key.c_str(), x, y);
+		debugC(kDebugActScript, "actorAt %s room %lld, %lld", actor->_key.c_str(), x, y);
 		actor->stopWalking();
 		actor->_node->setPos(Math::Vector2d(x, y));
 		return 0;
@@ -119,15 +119,15 @@ static SQInteger actorAt(HSQUIRRELVM v) {
 		Common::SharedPtr<Room> room = sqroom(v, 3);
 		if (!room)
 			return sq_throwerror(v, "failed to get room");
-		int x, y;
+		SQInteger x, y;
 		if (SQ_FAILED(sqget(v, 4, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 5, y)))
 			return sq_throwerror(v, "failed to get y");
-		int dir = 0;
+		SQInteger dir = 0;
 		if ((numArgs == 6) && SQ_FAILED(sqget(v, 6, dir)))
 			return sq_throwerror(v, "failed to get direction");
-		debugC(kDebugActScript, "actorAt %s, pos = (%d,%d), dir = %d", actor->_key.c_str(), x, y, dir);
+		debugC(kDebugActScript, "actorAt %s, pos = (%lld,%lld), dir = %lld", actor->_key.c_str(), x, y, dir);
 		actor->stopWalking();
 		actor->_node->setPos(Math::Vector2d(x, y));
 		actor->setFacing(getFacing(dir, actor->getFacing()));
@@ -161,7 +161,7 @@ static SQInteger actorColor(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int c;
+	SQInteger c;
 	if (SQ_FAILED(sqget(v, 3, c)))
 		return sq_throwerror(v, "failed to get color");
 	actor->_node->setColor(Color::fromRgba(c));
@@ -228,7 +228,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		Common::SharedPtr<Object> obj(sqobj(v, 3));
 		if (!obj)
 			return sq_throwerror(v, "failed to get object");
-		int dist;
+		SQInteger dist;
 		if (SQ_FAILED(sqget(v, 4, dist)))
 			return sq_throwerror(v, "failed to get distance");
 		if (actor->_room != obj->_room)
@@ -254,7 +254,7 @@ static SQInteger actorFace(HSQUIRRELVM v) {
 	}
 
 	if (sq_gettype(v, 3) == OT_INTEGER) {
-		int dir = 0;
+		SQInteger dir = 0;
 		if (SQ_FAILED(sqget(v, 3, dir)))
 			return sq_throwerror(v, "failed to get direction");
 		// FACE_FLIP ?
@@ -278,7 +278,7 @@ static SQInteger actorHidden(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int hidden = 0;
+	SQInteger hidden = 0;
 	if (SQ_FAILED(sqget(v, 3, hidden)))
 		return sq_throwerror(v, "failed to get hidden");
 	if (hidden && (g_twp->_actor == actor)) {
@@ -382,7 +382,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	switch (nArgs) {
 	case 2: {
-		int selectable;
+		SQInteger selectable;
 		if (SQ_FAILED(sqget(v, 2, selectable)))
 			return sq_throwerror(v, "failed to get selectable");
 		switch (selectable) {
@@ -408,7 +408,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 3, selectable)))
 			return sq_throwerror(v, "failed to get selectable");
 		if (sq_gettype(v, 2) == OT_INTEGER) {
-			int slot;
+			SQInteger slot;
 			if (SQ_FAILED(sqget(v, 2, slot)))
 				return sq_throwerror(v, "failed to get slot");
 			g_twp->_hud._actorSlots[slot - 1].selectable = selectable;
@@ -441,7 +441,7 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get actor");
 	switch (sq_gettype(v, 3)) {
 	case OT_INTEGER: {
-		int facing = 0;
+		SQInteger facing = 0;
 		if (SQ_FAILED(sqget(v, 3, facing)))
 			return sq_throwerror(v, "failed to get facing");
 		if (facing == 0)
@@ -451,11 +451,11 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 	} break;
 	case OT_TABLE: {
 		HSQOBJECT obj;
-		int back = FACE_BACK;
-		int front = FACE_FRONT;
-		int left = FACE_LEFT;
-		int right = FACE_RIGHT;
-		int reset = 0;
+		SQInteger back = FACE_BACK;
+		SQInteger front = FACE_FRONT;
+		SQInteger left = FACE_LEFT;
+		SQInteger right = FACE_RIGHT;
+		SQInteger reset = 0;
 		sq_getstackobj(v, 3, &obj);
 		sqgetf(v, obj, "back", back);
 		sqgetf(v, obj, "front", front);
@@ -498,7 +498,7 @@ static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
 	Common::String animation;
 	if (SQ_FAILED(sqget(v, 3, animation)))
 		return sq_throwerror(v, "failed to get animation");
-	int loop = 0;
+	SQInteger loop = 0;
 	if ((sq_gettop(v) >= 4) && (SQ_FAILED(sqget(v, 4, loop))))
 		return sq_throwerror(v, "failed to get loop");
 	debugC(kDebugActScript, "Play anim %s %s loop=%s", actor->_key.c_str(), animation.c_str(), loop ? "yes" : "no");
@@ -515,7 +515,7 @@ static SQInteger actorRenderOffset(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int x, y;
+	SQInteger x, y;
 	if (SQ_FAILED(sqget(v, 3, x)))
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 4, y)))
@@ -551,7 +551,7 @@ static SQInteger actorTalkColors(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int color;
+	SQInteger color;
 	if (SQ_FAILED(sqget(v, 3, color)))
 		return sq_throwerror(v, "failed to get talk color");
 	actor->_talkColor = Color::rgb(color);
@@ -582,7 +582,7 @@ static SQInteger actorTurnTo(HSQUIRRELVM v) {
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	if (sq_gettype(v, 3) == OT_INTEGER) {
-		int facing = 0;
+		SQInteger facing = 0;
 		if (SQ_FAILED(sqget(v, 3, facing)))
 			return sq_throwerror(v, "failed to get facing");
 		actor->turn((Facing)facing);
@@ -600,7 +600,7 @@ static SQInteger actorTalkOffset(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int x, y;
+	SQInteger x, y;
 	if (SQ_FAILED(sqget(v, 3, x)))
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 4, y)))
@@ -620,7 +620,7 @@ static SQInteger actorUsePos(HSQUIRRELVM v) {
 	else
 		usePos = obj->_usePos;
 	if (sq_gettop(v) == 4) {
-		int dir;
+		SQInteger dir;
 		if (SQ_FAILED(sqget(v, 4, dir)))
 			return sq_throwerror(v, "failed to get direction");
 		else
@@ -638,7 +638,7 @@ static SQInteger actorUseWalkboxes(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int useWalkboxes = 1;
+	SQInteger useWalkboxes = 1;
 	if (SQ_FAILED(sqget(v, 3, useWalkboxes)))
 		return sq_throwerror(v, "failed to get useWalkboxes");
 	actor->_useWalkboxes = useWalkboxes != 0;
@@ -670,7 +670,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int dist;
+	SQInteger dist;
 	if (SQ_FAILED(sqget(v, 3, dist)))
 		return sq_throwerror(v, "failed to get dist");
 	Math::Vector2d dir;
@@ -725,7 +725,7 @@ static SQInteger actorWalkSpeed(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	int x, y;
+	SQInteger x, y;
 	if (SQ_FAILED(sqget(v, 3, x)))
 		return sq_throwerror(v, "failed to get x");
 	if (SQ_FAILED(sqget(v, 4, y)))
@@ -747,17 +747,17 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 		else
 			Object::walk(actor, obj);
 	} else if ((nArgs == 4) || (nArgs == 5)) {
-		int x, y;
+		SQInteger x, y;
 		if (SQ_FAILED(sqget(v, 3, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 4, y)))
 			return sq_throwerror(v, "failed to get y");
-		int facing = 0;
+		SQInteger facing = 0;
 		if (nArgs == 5) {
 			if (SQ_FAILED(sqget(v, 5, facing)))
 				return sq_throwerror(v, "failed to get dir");
 		}
-		Object::walk(actor, Vector2i(x, y), facing);
+		Object::walk(actor, Vector2i(static_cast<int>(x), static_cast<int>(y)), facing);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}
@@ -765,7 +765,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 }
 
 static SQInteger addSelectableActor(HSQUIRRELVM v) {
-	int slot;
+	SQInteger slot;
 	if (SQ_FAILED(sqget(v, 2, slot)))
 		return sq_throwerror(v, "failed to get slot");
 	Common::SharedPtr<Object> actor = sqactor(v, 3);
@@ -804,7 +804,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 }
 
 static SQInteger flashSelectableActor(HSQUIRRELVM v) {
-	int time = 0;
+	SQInteger time = 0;
 	if (SQ_FAILED(sqget(v, 2, time)))
 		return sq_throwerror(v, "failed to get time");
 	g_twp->flashSelectableActor(time);
@@ -872,7 +872,7 @@ static SQInteger sayLine(HSQUIRRELVM v) {
 // See also:
 // - `mumbleLine method`
 static SQInteger sayLineAt(HSQUIRRELVM v) {
-	int x, y;
+	SQInteger x, y;
 	Common::String text;
 	float duration = -1.0f;
 	if (SQ_FAILED(sqget(v, 2, x)))
@@ -881,7 +881,7 @@ static SQInteger sayLineAt(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get y");
 	Color color;
 	if (sq_gettype(v, 4) == OT_INTEGER) {
-		int c;
+		SQInteger c;
 		if (SQ_FAILED(sqget(v, 4, c)))
 			return sq_throwerror(v, "failed to get color");
 		color = Color::rgb(c);
@@ -901,7 +901,7 @@ static SQInteger sayLineAt(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get text");
 	}
 
-	warning("TODO: saylineAt: (%d,%d) text=%s color=%s duration=%f", x, y, text.c_str(), color.toStr().c_str(), duration);
+	warning("TODO: saylineAt: (%lld,%lld) text=%s color=%s duration=%f", x, y, text.c_str(), color.toStr().c_str(), duration);
 	return 0;
 }
 
@@ -1009,7 +1009,7 @@ static SQInteger triggerActors(HSQUIRRELVM v) {
 }
 
 static SQInteger verbUIColors(HSQUIRRELVM v) {
-	int actorSlot;
+	SQInteger actorSlot;
 	if (SQ_FAILED(sqget(v, 2, actorSlot)))
 		return sq_throwerror(v, "failed to get actorSlot");
 	HSQOBJECT table;
@@ -1019,7 +1019,7 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get verb definitionTable");
 
 	// get mandatory colors
-	int
+	SQInteger
 		sentence = 0,
 		verbNormal = 0,
 		verbNormalTint = 0,
@@ -1036,10 +1036,10 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	sqgetf(table, "inventoryBackground", inventoryBackground);
 
 	// get optional colors
-	int retroNormal = verbNormal;
-	int retroHighlight = verbNormalTint;
-	int dialogNormal = verbNormal;
-	int dialogHighlight = verbHighlight;
+	SQInteger retroNormal = verbNormal;
+	SQInteger retroHighlight = verbNormalTint;
+	SQInteger dialogNormal = verbNormal;
+	SQInteger dialogHighlight = verbHighlight;
 	sqgetf(table, "retroNormal", retroNormal);
 	sqgetf(table, "retroHighlight", retroHighlight);
 	sqgetf(table, "dialogNormal", dialogNormal);

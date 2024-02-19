@@ -103,7 +103,7 @@ static SQInteger cameraAt(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	Math::Vector2d pos;
 	if (numArgs == 3) {
-		int x, y;
+		SQInteger x, y;
 		if (SQ_FAILED(sqget(v, 2, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 3, y)))
@@ -126,7 +126,7 @@ static SQInteger cameraAt(HSQUIRRELVM v) {
 
 // Sets how far the camera can pan.
 static SQInteger cameraBounds(HSQUIRRELVM v) {
-	int xMin, xMax, yMin, yMax;
+	SQInteger xMin, xMax, yMin, yMax;
 	if (SQ_FAILED(sqget(v, 2, xMin)))
 		return sq_throwerror(v, "failed to get xMin");
 	if (SQ_FAILED(sqget(v, 3, xMax)))
@@ -201,12 +201,12 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get duration");
 	} else if (numArgs == 4) {
 		if (sq_gettype(v, 2) == OT_INTEGER) {
-			int x;
+			SQInteger x;
 			if (SQ_FAILED(sqget(v, 2, x)))
 				return sq_throwerror(v, "failed to get x");
 			if (SQ_FAILED(sqget(v, 3, duration)))
 				return sq_throwerror(v, "failed to get duration");
-			int im;
+			SQInteger im;
 			if (SQ_FAILED(sqget(v, 4, im)))
 				return sq_throwerror(v, "failed to get interpolation method");
 			pos = Math::Vector2d(x, g_twp->getGfx().cameraPos().getY());
@@ -215,21 +215,21 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 			Common::SharedPtr<Object> obj = sqobj(v, 2);
 			if (SQ_FAILED(sqget(v, 3, duration)))
 				return sq_throwerror(v, "failed to get duration");
-			int im;
+			SQInteger im;
 			if (SQ_FAILED(sqget(v, 4, im)))
 				return sq_throwerror(v, "failed to get interpolation method");
 			pos = obj->_node->getAbsPos();
 			interpolation = (InterpolationKind)im;
 		}
 	} else if (numArgs == 5) {
-		int x, y;
+		SQInteger x, y;
 		if (SQ_FAILED(sqget(v, 2, x)))
 			return sq_throwerror(v, "failed to get x");
 		if (SQ_FAILED(sqget(v, 3, y)))
 			return sq_throwerror(v, "failed to get y");
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
-		int im;
+		SQInteger im;
 		if (SQ_FAILED(sqget(v, 5, im)))
 			return sq_throwerror(v, "failed to get interpolation method");
 		pos = Math::Vector2d(x, y);
@@ -252,7 +252,7 @@ static SQInteger cameraPos(HSQUIRRELVM v) {
 
 // Converts an integer to a char.
 static SQInteger sqChr(HSQUIRRELVM v) {
-	int value;
+	SQInteger value;
 	sqget(v, 2, value);
 	Common::String s;
 	s += char(value);
@@ -274,10 +274,10 @@ static SQInteger cursorPosY(HSQUIRRELVM v) {
 
 static SQInteger distance(HSQUIRRELVM v) {
 	if (sq_gettype(v, 2) == OT_INTEGER) {
-		int num1;
+		SQInteger num1;
 		if (SQ_FAILED(sqget(v, 2, num1)))
 			return sq_throwerror(v, "failed to get num1");
-		int num2;
+		SQInteger num2;
 		if (SQ_FAILED(sqget(v, 3, num2)))
 			return sq_throwerror(v, "failed to get num2");
 		float d = abs(num1 - num2);
@@ -298,7 +298,7 @@ static SQInteger distance(HSQUIRRELVM v) {
 
 static SQInteger findScreenPosition(HSQUIRRELVM v) {
 	if (sq_gettype(v, 2) == OT_INTEGER) {
-		int verb;
+		SQInteger verb;
 		if (SQ_FAILED(sqget(v, 2, verb)))
 			return sq_throwerror(v, "failed to get verb");
 		ActorSlot *actorSlot = g_twp->_hud.actorSlot(g_twp->_actor);
@@ -522,12 +522,12 @@ static SQInteger ord(HSQUIRRELVM v) {
 // They will execute in reverse order (it's a stack).
 static SQInteger pushSentence(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
-	int id;
+	SQInteger id;
 	if (SQ_FAILED(sqget(v, 2, id)))
 		return sq_throwerror(v, "Failed to get verb id");
 
 	if (id == VERB_DIALOG) {
-		int choice;
+		SQInteger choice;
 		if (SQ_FAILED(sqget(v, 3, choice)))
 			return sq_throwerror(v, "Failed to get choice");
 		// use pushSentence with VERB_DIALOG
@@ -619,7 +619,7 @@ static SQInteger randomseed(HSQUIRRELVM v) {
 		return 1;
 	}
 	case 2: {
-		int seed = 0;
+		SQInteger seed = 0;
 		if (sq_gettype(v, 2) == OT_NULL) {
 			g_twp->getRandomSource().setSeed(g_twp->getRandomSource().generateNewSeed());
 			return 0;
@@ -673,10 +673,10 @@ static SQInteger setUserPref(HSQUIRRELVM v) {
 }
 
 static SQInteger setVerb(HSQUIRRELVM v) {
-	int actorSlot;
+	SQInteger actorSlot;
 	if (SQ_FAILED(sqget(v, 2, actorSlot)))
 		return sq_throwerror(v, "failed to get actor slot");
-	int verbSlot;
+	SQInteger verbSlot;
 	if (SQ_FAILED(sqget(v, 3, verbSlot)))
 		return sq_throwerror(v, "failed to get verb slot");
 	HSQOBJECT table;
@@ -684,12 +684,12 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get verb definitionTable");
 	if (!sq_istable(table))
 		return sq_throwerror(v, "verb definitionTable is not a table");
-	int id = 0;
+	SQInteger id = 0;
 	Common::String image;
 	Common::String text;
 	Common::String fun;
 	Common::String key;
-	int flags = 0;
+	SQInteger flags = 0;
 	sqgetf(table, "verb", id);
 	sqgetf(table, "text", text);
 	if (sqrawexists(table, "image"))

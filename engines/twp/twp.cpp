@@ -1074,7 +1074,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 
 			if (sqrawexists(obj->_table, "initState")) {
 				// info fmt"initState {obj.key}"
-				int state;
+				SQInteger state;
 				sqgetf(obj->_table, "initState", state);
 				obj->setState(state, true);
 			} else {
