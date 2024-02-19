@@ -46,4 +46,20 @@
 	0, 0, 0
 },
 
+// -- French: Adibou presente Cuisine --
+
+{
+	{
+		"adiboucuisine",
+		_s("Missing game code"), // Adibou presente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
+		AD_ENTRY1s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
