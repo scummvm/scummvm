@@ -33,14 +33,14 @@ namespace Twp {
 
 struct XorKey {
 	Common::Array<int> magicBytes;
-    int multiplier;
+	int multiplier;
 };
 
-class MemStream: public Common::SeekableReadStream {
+class MemStream : public Common::SeekableReadStream {
 public:
 	MemStream();
 
-	bool open(const byte* buf, int64 bufSize);
+	bool open(const byte *buf, int64 bufSize);
 	uint32 read(void *dataPtr, uint32 dataSize);
 	bool eos() const;
 
@@ -49,33 +49,33 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    const byte* _buf = nullptr;
+	const byte *_buf = nullptr;
 	int64 _bufSize = 0;
 	int64 _pos = 0;
 };
 
-class OutMemStream: public Common::SeekableWriteStream {
+class OutMemStream : public Common::SeekableWriteStream {
 public:
 	OutMemStream();
 
-	bool open(byte* buf, int64 bufSize);
+	bool open(byte *buf, int64 bufSize);
 	uint32 write(const void *dataPtr, uint32 dataSize) override;
 
-	int64 pos() const  override;
-	int64 size() const  override;
-	bool seek(int64 offset, int whence = SEEK_SET)  override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 
 private:
-    byte* _buf = nullptr;
+	byte *_buf = nullptr;
 	int64 _bufSize = 0;
 	int64 _pos = 0;
 };
 
-class XorStream: public Common::SeekableReadStream {
+class XorStream : public Common::SeekableReadStream {
 public:
 	XorStream();
 
-	bool open(Common::SeekableReadStream *stream, int len, const XorKey& key);
+	bool open(Common::SeekableReadStream *stream, int len, const XorKey &key);
 	uint32 read(void *dataPtr, uint32 dataSize);
 	bool eos() const;
 
@@ -84,14 +84,14 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    Common::SeekableReadStream *_s = nullptr;
-    int _previous = 0;
-    int _start = 0;
-    int _size = 0;
-    XorKey _key;
+	Common::SeekableReadStream *_s = nullptr;
+	int _previous = 0;
+	int _start = 0;
+	int _size = 0;
+	XorKey _key;
 };
 
-class RangeStream: public Common::SeekableReadStream {
+class RangeStream : public Common::SeekableReadStream {
 public:
 	RangeStream();
 
@@ -104,22 +104,22 @@ public:
 	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
-    Common::SeekableReadStream *_s = nullptr;
-    int64 _start = 0;
-    int64 _size = 0;
+	Common::SeekableReadStream *_s = nullptr;
+	int64 _start = 0;
+	int64 _size = 0;
 };
 
 class GGHashMapDecoder {
 public:
 	GGHashMapDecoder();
 
-	Common::JSONValue* open(Common::SeekableReadStream *stream);
+	Common::JSONValue *open(Common::SeekableReadStream *stream);
 
 private:
-	Common::JSONValue* readHash();
+	Common::JSONValue *readHash();
 	Common::String readString(uint32 i);
-	Common::JSONValue* readValue();
-	Common::JSONValue* readArray();
+	Common::JSONValue *readValue();
+	Common::JSONValue *readArray();
 
 private:
 	Common::SeekableReadStream *_stream = nullptr;
@@ -130,29 +130,29 @@ class GGHashMapEncoder {
 public:
 	GGHashMapEncoder();
 
-	void open(Common::SeekableWriteStream* stream);
-	void write(const Common::JSONObject& obj);
+	void open(Common::SeekableWriteStream *stream);
+	void write(const Common::JSONObject &obj);
 
 private:
 	void writeMarker(byte marker);
-	void writeString(const Common::String& s);
-	void writeRawString(const Common::String& s);
+	void writeString(const Common::String &s);
+	void writeRawString(const Common::String &s);
 	void writeNull();
 	void writeInt(int value);
 	void writeFloat(float value);
-	void writeArray(const Common::JSONArray& arr);
-	void writeValue(const Common::JSONValue* obj);
+	void writeArray(const Common::JSONArray &arr);
+	void writeValue(const Common::JSONValue *obj);
 	void writeMap(const Common::JSONObject &obj);
 	void writeKeys();
-	void writeKey(const Common::String& key);
+	void writeKey(const Common::String &key);
 
 private:
-	Common::SeekableWriteStream* _s = nullptr;
+	Common::SeekableWriteStream *_s = nullptr;
 	Common::StableMap<Common::String, uint32> _strings;
 };
 
 struct GGPackEntry {
-    int offset, size;
+	int offset, size;
 };
 
 typedef Common::HashMap<Common::String, GGPackEntry, Common::IgnoreCase_Hash> GGPackEntries;
@@ -160,12 +160,13 @@ typedef Common::HashMap<Common::String, GGPackEntry, Common::IgnoreCase_Hash> GG
 class GGPackDecoder {
 public:
 	friend class GGPackEntryReader;
+
 public:
 	GGPackDecoder();
 
-	bool open(Common::SeekableReadStream *s, const XorKey& key);
+	bool open(Common::SeekableReadStream *s, const XorKey &key);
 
-	bool assetExists(const char* asset) { return _entries.contains(asset); }
+	bool assetExists(const char *asset) { return _entries.contains(asset); }
 
 private:
 	XorKey _key;
@@ -176,15 +177,15 @@ private:
 class GGPackSet {
 public:
 	void init();
-	bool assetExists(const char* asset);
+	bool assetExists(const char *asset);
 
 	bool containsDLC() const;
 
 public:
-	Common::StableMap<long, GGPackDecoder, Common::Greater<long>> _packs;
+	Common::StableMap<long, GGPackDecoder, Common::Greater<long> > _packs;
 };
 
-class GGBnutReader: public Common::ReadStream {
+class GGBnutReader : public Common::ReadStream {
 public:
 	GGBnutReader();
 
@@ -198,12 +199,12 @@ private:
 	int _cursor = 0;
 };
 
-class GGPackEntryReader: public Common::SeekableReadStream {
+class GGPackEntryReader : public Common::SeekableReadStream {
 public:
 	GGPackEntryReader();
 
-	bool open(GGPackDecoder& pack, const Common::String& entry);
-	bool open(GGPackSet& packs, const Common::String& entry);
+	bool open(GGPackDecoder &pack, const Common::String &entry);
+	bool open(GGPackSet &packs, const Common::String &entry);
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 	bool eos() const override;

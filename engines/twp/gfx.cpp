@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/gfx.h"
 #include "twp/twp.h"
+#include "twp/gfx.h"
 
 namespace Twp {
 

@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/sqgame.h"
 #include "twp/twp.h"
+#include "twp/sqgame.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/task.h"
@@ -550,7 +550,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		warning("exCommand EX_DISABLE_SAVESYSTEM: not implemented");
 		break;
 	case EX_SHOW_OPTIONS:
-    	g_twp->openMainMenuDialog();
+		g_twp->openMainMenuDialog();
 		break;
 	case EX_OPTIONS_MUSIC:
 		warning("TODO: exCommand EX_OPTIONS_MUSIC: not implemented");

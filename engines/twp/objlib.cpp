@@ -22,13 +22,13 @@
 #include "twp/twp.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
-#include "squirrel/squirrel.h"
-#include "squirrel/sqvm.h"
-#include "squirrel/sqstring.h"
-#include "squirrel/sqstate.h"
-#include "squirrel/sqtable.h"
-#include "squirrel/sqfuncproto.h"
-#include "squirrel/sqclosure.h"
+#include "twp/squirrel/squirrel.h"
+#include "twp/squirrel/sqvm.h"
+#include "twp/squirrel/sqstring.h"
+#include "twp/squirrel/sqstate.h"
+#include "twp/squirrel/sqtable.h"
+#include "twp/squirrel/sqfuncproto.h"
+#include "twp/squirrel/sqclosure.h"
 
 namespace Twp {
 
@@ -206,15 +206,15 @@ static SQInteger isObject(HSQUIRRELVM v) {
 
 static SQInteger jiggleInventory(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
-    if (!obj) {
-      return sq_throwerror(v, "failed to get object");
-    }
-    SQInteger enabled = 0;
-    if (SQ_FAILED(sq_getinteger(v, 3, &enabled))) {
-      return sq_throwerror(v, "failed to get enabled");
-    }
-    obj->_jiggle = enabled != 0;
-    return 0;
+	if (!obj) {
+		return sq_throwerror(v, "failed to get object");
+	}
+	SQInteger enabled = 0;
+	if (SQ_FAILED(sq_getinteger(v, 3, &enabled))) {
+		return sq_throwerror(v, "failed to get enabled");
+	}
+	obj->_jiggle = enabled != 0;
+	return 0;
 }
 
 // Rotate the object around its origin back and forth by the specified amount of pixels.
@@ -995,7 +995,7 @@ static SQInteger removeInventory(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	if(isActor(obj->getId())) {
+	if (isActor(obj->getId())) {
 		obj->_inventory.clear();
 		obj->_inventoryOffset = 0;
 	} else if (obj->_owner) {

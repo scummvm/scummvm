@@ -27,21 +27,21 @@
 namespace Twp {
 
 struct TempPref {
-    float gameSpeedFactor = 1.f;
-    bool forceTalkieText = false;
+	float gameSpeedFactor = 1.f;
+	bool forceTalkieText = false;
 };
 
 class Preferences {
 public:
 	Preferences();
 
-    bool hasPrefs(const Common::String& name);
-	Common::JSONValue* prefsAsJson(const Common::String& name);
+	bool hasPrefs(const Common::String &name);
+	Common::JSONValue *prefsAsJson(const Common::String &name);
 
-	Common::String prefs(const Common::String name, const Common::String& def) const;
-	float prefs(const Common::String& name, float def) const;
-	bool prefs(const Common::String& name, bool def) const;
-	int prefs(const Common::String& name, int def) const;
+	Common::String prefs(const Common::String name, const Common::String &def) const;
+	float prefs(const Common::String &name, float def) const;
+	bool prefs(const Common::String &name, bool def) const;
+	int prefs(const Common::String &name, int def) const;
 
 	void setPrefs(const Common::String &name, const Common::String &value);
 	void setPrefs(const Common::String &name, float value);
@@ -50,13 +50,13 @@ public:
 
 	void savePrefs();
 
-	Common::String getKey(const Common::String& path);
+	Common::String getKey(const Common::String &path);
 
 private:
-	Common::JSONValue* _node = nullptr;
-    TempPref _tmp;
+	Common::JSONValue *_node = nullptr;
+	TempPref _tmp;
 };
 
-}
+} // namespace Twp
 
 #endif

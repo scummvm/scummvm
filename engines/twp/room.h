@@ -33,8 +33,8 @@
 #include "twp/scenegraph.h"
 #include "twp/graph.h"
 
-#define FULLSCREENCLOSEUP	1
-#define FULLSCREENROOM		2
+#define FULLSCREENCLOSEUP 1
+#define FULLSCREENROOM 2
 
 namespace Twp {
 
@@ -95,10 +95,10 @@ struct Lights {
 };
 
 struct ScalingTrigger {
-	ScalingTrigger(Common::SharedPtr<Object>  obj, Scaling* scaling);
+	ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling);
 
-	Common::SharedPtr<Object>  _obj;
-	Scaling* _scaling = nullptr;
+	Common::SharedPtr<Object> _obj;
+	Scaling *_scaling = nullptr;
 };
 
 class PathFinder;
@@ -130,24 +130,24 @@ public:
 	Common::Array<Vector2i> calculatePath(Vector2i frm, Vector2i to);
 
 public:
-	Common::String _name;              // Name of the room
-	Common::String _sheet;             // Name of the spritesheet to use
-	Math::Vector2d _roomSize;          // Size of the room
-	int _fullscreen = 0;               // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
-	int _height = 0;                   // Height of the room (what else ?)
-	Common::Array<Common::SharedPtr<Layer> > _layers;    // Parallax layers of a room
-	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
+	Common::String _name;                             // Name of the room
+	Common::String _sheet;                            // Name of the spritesheet to use
+	Math::Vector2d _roomSize;                         // Size of the room
+	int _fullscreen = 0;                              // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
+	int _height = 0;                                  // Height of the room (what else ?)
+	Common::Array<Common::SharedPtr<Layer> > _layers; // Parallax layers of a room
+	Common::Array<Walkbox> _walkboxes;                // Represents the areas where an actor can or cannot walk
 	Common::Array<Walkbox> _mergedPolygon;
-	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room
-	Scaling _scaling;                  // Defines the scaling of the actor in the room
-	HSQOBJECT _table;                  // Squirrel table representing this room
-	bool _entering = false;            // Indicates whether or not an actor is entering this room
-	Lights _lights;                    // Lights of the room
+	Common::Array<Scaling> _scalings;                    // Defines the scaling of the actor in the room
+	Scaling _scaling;                                    // Defines the scaling of the actor in the room
+	HSQOBJECT _table;                                    // Squirrel table representing this room
+	bool _entering = false;                              // Indicates whether or not an actor is entering this room
+	Lights _lights;                                      // Lights of the room
 	Common::Array<Common::SharedPtr<Object> > _triggers; // Triggers currently enabled in the room
-	Common::Array<ScalingTrigger> _scalingTriggers; // Scaling Triggers of the room
+	Common::Array<ScalingTrigger> _scalingTriggers;      // Scaling Triggers of the room
 	bool _pseudo = false;
 	Common::SharedPtr<Scene> _scene;
-	OverlayNode _overlayNode;	// Represents an overlay
+	OverlayNode _overlayNode; // Represents an overlay
 	RoomEffect _effect = RoomEffect::None;
 	Common::SharedPtr<Motor> _overlayTo;
 	Common::SharedPtr<Motor> _rotateTo;

@@ -40,7 +40,7 @@ struct LipItem {
 // have additional information about the mouth shapes.
 class Lip {
 public:
-	void load(Common::SeekableReadStream* stream);
+	void load(Common::SeekableReadStream *stream);
 	// Gets the letter corresponding to a mouth shape at a spcific time.
 	char letter(float time);
 
@@ -48,6 +48,6 @@ private:
 	Common::Array<LipItem> _items;
 };
 
-}
+} // namespace Twp
 
 #endif

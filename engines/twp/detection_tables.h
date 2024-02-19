@@ -22,9 +22,8 @@
 namespace Twp {
 
 const PlainGameDescriptor twpGames[] = {
-	{ "twp", "Thimbleweed Park" },
-	{ 0, 0 }
-};
+	{"twp", "Thimbleweed Park"},
+	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
 	// Thimbleweed Park - GOG version
@@ -35,8 +34,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+		GUIO1(GUIO_NOMIDI)},
 	// Thimbleweed Park - EPIC Games version
 	{
 		"twp",
@@ -45,10 +43,8 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+		GUIO1(GUIO_NOMIDI)},
 
-	AD_TABLE_END_MARKER
-};
+	AD_TABLE_END_MARKER};
 
 } // End of namespace Twp

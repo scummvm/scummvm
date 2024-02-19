@@ -113,7 +113,7 @@ private:
 
 private:
 	Math::Vector2d _pos;
-	Rectf _bounds = Rectf::fromMinMax(Math::Vector2d(-10000,-10000), Math::Vector2d(10000,10000));
+	Rectf _bounds = Rectf::fromMinMax(Math::Vector2d(-10000, -10000), Math::Vector2d(10000, 10000));
 	bool _moving = false;
 	Math::Vector2d _init, _target;
 	float _elapsed = 0.f;

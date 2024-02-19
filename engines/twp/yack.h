@@ -52,7 +52,7 @@ enum class YackTokenId {
 // enumeration that lists all errors that can occur
 enum YackError {
 	ERR_NONE,              // no error
-	ERR_INVALIDYackToken,      // invalid YackToken
+	ERR_INVALIDYackToken,  // invalid YackToken
 	ERR_STRINGEXPECTED,    // string expected
 	ERR_COLONEXPECTED,     // `:` expected
 	ERR_COMMAEXPECTED,     // `,` expected
@@ -384,7 +384,7 @@ private:
 class YackParser {
 public:
 	YackParser() {}
-	YCompilationUnit* parse(Common::SeekableReadStream *stream);
+	YCompilationUnit *parse(Common::SeekableReadStream *stream);
 
 private:
 	bool match(const std::initializer_list<YackTokenId> &ids);

@@ -22,17 +22,18 @@
 #ifndef TWP_FONT_H
 #define TWP_FONT_H
 
-#include "twp/spritesheet.h"
-#include "twp/gfx.h"
 #include "common/rect.h"
 #include "common/hashmap.h"
 #include "common/str.h"
+#include "twp/spritesheet.h"
+#include "twp/gfx.h"
 
 namespace Common {
-template<> struct Hash<Common::u32char_type_t> : public UnaryFunction<Common::u32char_type_t, uint> {
+template<>
+struct Hash<Common::u32char_type_t> : public UnaryFunction<Common::u32char_type_t, uint> {
 	uint operator()(Common::u32char_type_t val) const { return (uint)val; }
 };
-}
+} // namespace Common
 
 namespace Twp {
 

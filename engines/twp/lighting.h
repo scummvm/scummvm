@@ -36,10 +36,10 @@ public:
 	Lighting();
 	virtual ~Lighting();
 
-	void setSpriteOffset(const Math::Vector2d& offset);
+	void setSpriteOffset(const Math::Vector2d &offset);
 	void setSpriteSheetFrame(const SpriteSheetFrame &frame, const Texture &getNumTextures, bool flipX);
 
-	void update(const Lights& lights);
+	void update(const Lights &lights);
 
 private:
 	virtual void applyUniforms() final;

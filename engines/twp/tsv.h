@@ -29,14 +29,14 @@ namespace Twp {
 
 class TextDb {
 public:
-	void parseTsv(Common::SeekableReadStream& stream);
-	Common::String getText(const Common::String& text);
+	void parseTsv(Common::SeekableReadStream &stream);
+	Common::String getText(const Common::String &text);
 	Common::String getText(int id);
 
 private:
-  Common::HashMap<int, Common::String> _texts;
+	Common::HashMap<int, Common::String> _texts;
 };
 
-}
+} // namespace Twp
 
 #endif

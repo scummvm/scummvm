@@ -19,14 +19,14 @@
  *
  */
 
-#include "twp/console.h"
 #include "twp/twp.h"
+#include "twp/console.h"
 #include "twp/squtil.h"
 
 namespace Twp {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("!",   WRAP_METHOD(Console, Cmd_exec));
+	registerCmd("!", WRAP_METHOD(Console, Cmd_exec));
 }
 
 Console::~Console() = default;

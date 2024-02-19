@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/ids.h"
 #include "twp/twp.h"
+#include "twp/ids.h"
 #include "twp/thread.h"
 #include "twp/squtil.h"
 
@@ -59,7 +59,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 	_pauseable = true;
 
 	HSQUIRRELVM v = g_twp->getVm();
-	for (auto & _arg : _args) {
+	for (auto &_arg : _args) {
 		sq_addref(v, &_arg);
 	}
 	sq_addref(v, &_threadObj);
@@ -70,7 +70,7 @@ Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQ
 Thread::~Thread() {
 	debugC(kDebugGame, "delete thread %d, %s, global: %s", _id, _name.c_str(), _global ? "yes" : "no");
 	HSQUIRRELVM v = g_twp->getVm();
-	for (auto & _arg : _args) {
+	for (auto &_arg : _args) {
 		sq_release(v, &_arg);
 	}
 	sq_release(v, &_threadObj);
@@ -115,7 +115,7 @@ void Thread::stop() {
 	suspend();
 }
 
-Cutscene::Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
+Cutscene::Cutscene(const Common::String &name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj)
 	: _parentThreadId(parentThreadId),
 	  _threadObj(threadObj),
 	  _closure(closure),
@@ -132,7 +132,7 @@ Cutscene::Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT thr
 	g_twp->_inputState.setInputActive(false);
 	g_twp->_inputState.setShowCursor(false);
 	for (auto thread : g_twp->_threads) {
-			if (thread->isGlobal())
+		if (thread->isGlobal())
 			thread->pause();
 	}
 	HSQUIRRELVM vm = g_twp->getVm();

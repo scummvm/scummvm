@@ -362,7 +362,8 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 }
 
 static void setActor(const Common::String &key) {
-	if(key.empty()) return;
+	if (key.empty())
+		return;
 	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
 		Common::SharedPtr<Object> a = g_twp->_actors[i];
 		if (a->_key == key) {
@@ -410,7 +411,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	loadObjects(json["objects"]->asObject());
 	g_twp->setRoom(room(json["currentRoom"]->asString()));
 	setActor(json["selectedActor"]->asString());
-	if(g_twp->_actor)
+	if (g_twp->_actor)
 		g_twp->cameraAt(g_twp->_actor->_node->getPos());
 
 	HSQUIRRELVM v = g_twp->getVm();
@@ -1000,7 +1001,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	byte marker = (8 - ((fullSize + 9) % 8));
 
 	// write at the end 16 bytes: hashdata (4 bytes) + savetime (4 bytes) + marker (8 bytes)
-	int32 *p = (int32*)(buffer.data() + fullSize);
+	int32 *p = (int32 *)(buffer.data() + fullSize);
 	p[0] = hash;
 	p[1] = savetime;
 	memset(&p[2], marker, 8);

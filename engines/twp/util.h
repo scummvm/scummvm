@@ -22,12 +22,12 @@
 #ifndef TWP_UTIL_H
 #define TWP_UTIL_H
 
-#include "twp/ids.h"
-#include "twp/objectanimation.h"
-#include "math/vector2d.h"
-#include "math/matrix4.h"
 #include "common/formats/json.h"
 #include "common/rect.h"
+#include "math/vector2d.h"
+#include "math/matrix4.h"
+#include "twp/ids.h"
+#include "twp/objectanimation.h"
 
 namespace Twp {
 
@@ -108,7 +108,7 @@ size_t find_if(const Common::Array<T> &array, Pred p) {
 }
 
 template<typename T>
-size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T* o) {
+size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T *o) {
 	for (size_t i = 0; i < array.size(); i++) {
 		if (array[i].get() == o) {
 			return i;

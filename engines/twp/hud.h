@@ -58,7 +58,7 @@ struct Verb {
 	int flags{};
 
 	Verb();
-	Verb(VerbId id, const Common::String& image, const Common::String& fun, const Common::String& text, const Common::String& key, int flags = 0);
+	Verb(VerbId id, const Common::String &image, const Common::String &fun, const Common::String &text, const Common::String &key, int flags = 0);
 };
 
 struct ActorSlot {
@@ -72,7 +72,7 @@ public:
 	ActorSlot();
 
 	Verb *getVerb(int id) {
-		for (auto & verb : verbs) {
+		for (auto &verb : verbs) {
 			if (verb.id.id == id) {
 				return &verb;
 			}

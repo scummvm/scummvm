@@ -22,14 +22,14 @@
 #include "twp/lighting.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
-#include "squirrel/squirrel.h"
-#include "squirrel/sqvm.h"
-#include "squirrel/sqstring.h"
-#include "squirrel/sqstate.h"
-#include "squirrel/sqtable.h"
-#include "squirrel/sqstdaux.h"
-#include "squirrel/sqfuncproto.h"
-#include "squirrel/sqclosure.h"
+#include "twp/squirrel/squirrel.h"
+#include "twp/squirrel/sqvm.h"
+#include "twp/squirrel/sqstring.h"
+#include "twp/squirrel/sqstate.h"
+#include "twp/squirrel/sqtable.h"
+#include "twp/squirrel/sqstdaux.h"
+#include "twp/squirrel/sqfuncproto.h"
+#include "twp/squirrel/sqclosure.h"
 
 namespace Twp {
 
@@ -421,7 +421,7 @@ Common::SharedPtr<ThreadBase> sqthread(int id) {
 }
 
 Light *sqlight(int id) {
-	if(!g_twp->_room)
+	if (!g_twp->_room)
 		return nullptr;
 
 	for (size_t i = 0; i < MAX_LIGHTS; i++) {
@@ -458,7 +458,7 @@ Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v) {
 	}
 
 	auto it = Common::find_if(g_twp->_threads.begin(), g_twp->_threads.end(), GetThread(v));
-	if(it != g_twp->_threads.end())
+	if (it != g_twp->_threads.end())
 		return *it;
 	return nullptr;
 }
