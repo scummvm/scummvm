@@ -85,20 +85,18 @@ void Texture::bind(const Texture *texture) {
 	}
 }
 
-void Texture::capture(Graphics::Surface &surface) {
-	Common::Array<byte> pixels(width * height * 4);
+void Texture::capture(Common::Array<byte> &data) {
+	data.resize(width * height * 4);
 	GLint boundFrameBuffer;
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
 	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	}
-	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 	if (boundFrameBuffer != (int)fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
 	}
-	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	surface.init(width, height, 4 * width, pixels.data(), fmt);
 }
 
 RenderTexture::RenderTexture(Math::Vector2d size) {
@@ -200,13 +198,13 @@ void Gfx::init() {
 	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
 
 	const char *fragmentSrc = R"(
-	varying vec4 v_color;
-	varying vec2 v_texCoords;
-	uniform sampler2D u_texture;
-	void main() {
-		vec4 tex_color = texture2D(u_texture, v_texCoords);
-		gl_FragColor = v_color * tex_color;
-	})";
+		varying vec4 v_color;
+		varying vec2 v_texCoords;
+		uniform sampler2D u_texture;
+		void main() {
+			vec4 tex_color = texture2D(u_texture, v_texCoords);
+			gl_FragColor = v_color * tex_color;
+		})";
 	_defaultShader.init("default", vsrc, fragmentSrc);
 	_shader = &_defaultShader;
 	_mvp = ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);

@@ -300,7 +300,7 @@ void Text::update() {
 		float y = -lineHeight;
 		for (size_t i = 0; i < lines.size(); i++) {
 			Line &line = lines[i];
-			CodePoint prevChar;
+			CodePoint prevChar = 0;
 			x = 0;
 			for (size_t j = 0; j < line.tokens.size(); j++) {
 				tok = line.tokens[j];

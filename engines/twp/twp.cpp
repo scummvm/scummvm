@@ -24,10 +24,10 @@
 #endif
 
 #ifdef USE_IMGUI
-	#include "imgui/imgui.h"
-	#include "imgui_impl_sdl2_scummvm.h"
-	#include "imgui_impl_opengl3_scummvm.h"
-	#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+#include "imgui/imgui.h"
+#include "imgui_impl_sdl2_scummvm.h"
+#include "imgui_impl_opengl3_scummvm.h"
+#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #endif
 
 #include "common/config-manager.h"
@@ -52,7 +52,7 @@ namespace Twp {
 TwpEngine *g_twp;
 
 #ifdef USE_IMGUI
-	SDL_Window *g_window = nullptr;
+SDL_Window *g_window = nullptr;
 #endif
 
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -250,7 +250,7 @@ Verb TwpEngine::verb() {
 	Verb result = _hud._verb;
 	if (result.id.id == VERB_WALKTO && _noun1 && _noun1->inInventory())
 		result = *_hud.actorSlot(_actor)->getVerb(_noun1->defaultVerbId());
-	else if(_actor) {
+	else if (_actor) {
 		result = *_hud.actorSlot(_actor)->getVerb(_hud._verb.id.id);
 	}
 	return result;
@@ -322,7 +322,7 @@ Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
 }
 
 static void selectSlotActor(int id) {
-	if(g_twp->_actorSwitcher._mode == asOn) {
+	if (g_twp->_actorSwitcher._mode == asOn) {
 		for (size_t i = 0; i < g_twp->_actors.size(); i++) {
 			if (g_twp->_actors[i]->getId() == id) {
 				g_twp->setActor(g_twp->_actors[i]);
@@ -799,7 +799,7 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectActor4:
 				case TwpAction::kSelectActor5:
 				case TwpAction::kSelectActor6:
-					if(g_twp->_actorSwitcher._mode == asOn) {
+					if (g_twp->_actorSwitcher._mode == asOn) {
 						int index = (TwpAction)e.customType - kSelectActor1;
 						ActorSlot *slot = &_hud._actorSlots[index];
 						if (slot->selectable && slot->actor && (slot->actor->_room->_name != "Void")) {
@@ -1251,7 +1251,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 					_room->_scalingTriggers.push_back(ScalingTrigger(obj, scaling));
 				}
 			}
-			if(isActor(obj->getId())) {
+			if (isActor(obj->getId())) {
 				actorEnter(obj);
 			} else if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
@@ -1277,8 +1277,9 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 }
 
 void TwpEngine::actorEnter(Common::SharedPtr<Object> actor) {
-	if(!actor) return;
-	if(sqrawexists(g_twp->_room->_table, "actorEnter")) {
+	if (!actor)
+		return;
+	if (sqrawexists(g_twp->_room->_table, "actorEnter")) {
 		sqcall(g_twp->_room->_table, "actorEnter", actor->_table);
 	} else {
 		sqcall("actorEnter", actor->_table);
@@ -1297,7 +1298,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Common::SharedPtr<Object> obj = layer->_objects[j];
 				obj->stopObjectMotors();
-				if(isActor(obj->getId())) {
+				if (isActor(obj->getId())) {
 					actorExit(obj);
 				}
 			}
@@ -1432,7 +1433,7 @@ struct GetByZOrder {
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {
-			if(!isActor(obj->getId()) || !obj->_key.empty()) {
+			if (!isActor(obj->getId()) || !obj->_key.empty()) {
 				_result = obj;
 				_zOrder = obj->_node->getZSort();
 			}
@@ -1664,7 +1665,8 @@ void TwpEngine::updateTriggers() {
 }
 
 void TwpEngine::stopTalking() {
-	if(!_room) return;
+	if (!_room)
+		return;
 	for (auto it = _room->_layers.begin(); it != _room->_layers.end(); it++) {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
@@ -1703,14 +1705,22 @@ Scaling *TwpEngine::getScaling(const Common::String &name) {
 }
 
 void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
+	// render scene into texture
+	Common::Array<byte> data;
 	RenderTexture rt(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	draw(&rt);
 
+	// get the data from it
+	rt.capture(data);
+
+	// flip it (due to opengl) and scale it to the desired size
+	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface s;
-	rt.capture(s);
+	s.init(SCREEN_WIDTH, SCREEN_HEIGHT, 4 * SCREEN_WIDTH, data.data(), fmt);
 	s.flipVertical(Common::Rect(s.w, s.h));
 	s.scale(size.getX(), size.getY());
 
+	// and save to stream
 	Image::writePNG(stream, s);
 }
 
