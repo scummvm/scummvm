@@ -23,19 +23,19 @@
 #include "config.h"
 #endif
 
-#ifdef USE_IMGUI
-#include "imgui/imgui.h"
-#include "imgui_impl_sdl2_scummvm.h"
-#include "imgui_impl_opengl3_scummvm.h"
-#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
-#endif
-
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "image/png.h"
 #include "engines/util.h"
 #include "graphics/opengl/system_headers.h"
+
+#ifdef USE_IMGUI
+#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+#include "imgui/imgui.h"
+#include "imgui_impl_sdl2_scummvm.h"
+#include "imgui_impl_opengl3_scummvm.h"
+#endif
 
 #include "twp/twp.h"
 #include "twp/console.h"

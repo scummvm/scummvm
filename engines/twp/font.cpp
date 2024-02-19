@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/font.h"
 #include "twp/twp.h"
+#include "twp/font.h"
 
 namespace Twp {
 
@@ -61,7 +61,7 @@ private:
 
 private:
 	Common::U32String _text;
-    size_t _off;
+	size_t _off;
 };
 
 static Math::Vector2d normalize(Texture *texture, Math::Vector2d v) {
@@ -90,7 +90,7 @@ static void addGlyphQuad(Texture *texture, Common::Array<Vertex> &vertices, Char
 
 // Skips all characters while one char from the set `token` is found.
 // Returns number of characters skipped.
-static int skipWhile(const Common::U32String& s, const char *toSkip, int start = 0) {
+static int skipWhile(const Common::U32String &s, const char *toSkip, int start = 0) {
 	int result = 0;
 	int len = s.size();
 	while ((start + result < len) && strchr(toSkip, s[result + start]))
@@ -98,7 +98,7 @@ static int skipWhile(const Common::U32String& s, const char *toSkip, int start =
 	return result;
 }
 
-static int skipUntil(const Common::U32String& s, const char *until, int start = 0) {
+static int skipUntil(const Common::U32String &s, const char *until, int start = 0) {
 	int result = 0;
 	int len = s.size();
 	while ((start + result < len) && !strchr(until, s[result + start]))

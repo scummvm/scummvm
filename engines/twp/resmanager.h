@@ -35,8 +35,8 @@ public:
 	ResManager() {}
 
 	Texture *texture(const Common::String &name);
-	SpriteSheet *spriteSheet(const Common::String& name);
-	Common::SharedPtr<Font> font(const Common::String& name);
+	SpriteSheet *spriteSheet(const Common::String &name);
+	Common::SharedPtr<Font> font(const Common::String &name);
 
 private:
 	void loadTexture(const Common::String &name);

@@ -72,8 +72,8 @@ DialogConditionState CondStateVisitor::createState(int line, DialogConditionMode
 
 DialogConditionState::DialogConditionState() = default;
 
-DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String& k, const Common::String& dlg, int ln)
-: mode(m), actorKey(k), dialog(dlg), line(ln) {
+DialogConditionState::DialogConditionState(DialogConditionMode m, const Common::String &k, const Common::String &dlg, int ln)
+	: mode(m), actorKey(k), dialog(dlg), line(ln) {
 }
 
 void CondStateVisitor::visit(const YOnce &node) {
@@ -266,7 +266,7 @@ void Dialog::update(float dt) {
 }
 
 bool Dialog::isOnce(int line) const {
-	for (const auto & state : _states) {
+	for (const auto &state : _states) {
 		if (state.mode == Once && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isOnce %d: false", line);
 			return false;
@@ -277,7 +277,7 @@ bool Dialog::isOnce(int line) const {
 }
 
 bool Dialog::isShowOnce(int line) const {
-	for (const auto & state : _states) {
+	for (const auto &state : _states) {
 		if (state.mode == ShowOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isShowOnce %d: false", line);
 			return false;
@@ -288,7 +288,7 @@ bool Dialog::isShowOnce(int line) const {
 }
 
 bool Dialog::isOnceEver(int line) const {
-	for (const auto & state : _states) {
+	for (const auto &state : _states) {
 		if (state.mode == OnceEver && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isOnceEver %d: false", line);
 			return false;
@@ -299,7 +299,7 @@ bool Dialog::isOnceEver(int line) const {
 }
 
 bool Dialog::isTempOnce(int line) const {
-	for (const auto & state : _states) {
+	for (const auto &state : _states) {
 		if (state.mode == TempOnce && state.actorKey == _context.actor && state.dialog == _context.dialogName && state.line == line) {
 			debugC(kDebugDialog, "isTempOnce %d: false", line);
 			return false;
@@ -340,7 +340,7 @@ void Dialog::selectLabel(int line, const Common::String &name) {
 
 void Dialog::gotoNextLabel() {
 	if (_lbl) {
-        size_t i = Twp::find(_cu->_labels, _lbl);
+		size_t i = Twp::find(_cu->_labels, _lbl);
 		if ((i != (size_t)-1) && (i != _cu->_labels.size() - 1)) {
 			Common::SharedPtr<YLabel> label = _cu->_labels[i + 1];
 			selectLabel(label->_line, label->_name);
@@ -352,7 +352,7 @@ void Dialog::gotoNextLabel() {
 
 void Dialog::updateChoiceStates() {
 	_state = WaitingForChoice;
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
 			for (auto cond : slot->_stmt->_conds) {
@@ -443,7 +443,7 @@ void Dialog::addSlot(Common::SharedPtr<YStatement> stmt) {
 
 int Dialog::numSlots() const {
 	int num = 0;
-	for (const auto & _slot : _slots) {
+	for (const auto &_slot : _slots) {
 		if (_slot._isValid)
 			num++;
 	}
@@ -451,13 +451,13 @@ int Dialog::numSlots() const {
 }
 
 void Dialog::clearSlots() {
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		_slot._isValid = false;
 	}
 }
 
 void Dialog::drawCore(Math::Matrix4 trsf) {
-	for (auto & _slot : _slots) {
+	for (auto &_slot : _slots) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
 			Math::Matrix4 t(trsf);

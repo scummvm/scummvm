@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/enginedialogtarget.h"
 #include "twp/twp.h"
+#include "twp/enginedialogtarget.h"
 
 namespace Twp {
 
@@ -40,15 +40,15 @@ private:
 
 class WaitWhile : public Motor {
 public:
-	WaitWhile(EngineDialogTarget* target, const Common::String& cond) : _target(target), _cond(cond) {}
+	WaitWhile(EngineDialogTarget *target, const Common::String &cond) : _target(target), _cond(cond) {}
 
 	void update(float elapsed) override {
 		if (!_target->execCond(_cond))
-    		disable();
+			disable();
 	}
 
 private:
-	EngineDialogTarget* _target = nullptr;
+	EngineDialogTarget *_target = nullptr;
 	Common::String _cond;
 };
 

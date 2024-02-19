@@ -125,7 +125,7 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 		ClipperLib::Clipper c2;
 		c2.AddPaths(solutions, ClipperLib::ptSubject, true);
 		c2.AddPaths(clips, ClipperLib::ptClip, true);
-        c2.Execute(ClipperLib::ClipType::ctDifference, solutions2, ClipperLib::pftEvenOdd);
+		c2.Execute(ClipperLib::ClipType::ctDifference, solutions2, ClipperLib::pftEvenOdd);
 
 		for (size_t i = 0; i < solutions2.size(); i++) {
 			result.push_back(toWalkbox(solutions2[i]));
@@ -262,7 +262,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	}
 
 	{
-		 Common::SharedPtr<Layer> layer(new Layer(backNames, Math::Vector2d(1, 1), 0));
+		Common::SharedPtr<Layer> layer(new Layer(backNames, Math::Vector2d(1, 1), 0));
 		room->_layers.push_back(layer);
 	}
 

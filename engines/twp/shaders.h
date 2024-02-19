@@ -27,27 +27,26 @@
 
 namespace Twp {
 
-extern const char* vsrc;
-extern const char* bwShader;
-extern const char* ghostShader;
-extern const char* sepiaShader;
+extern const char *vsrc;
+extern const char *bwShader;
+extern const char *ghostShader;
+extern const char *sepiaShader;
 
 struct ShaderParams {
-    RoomEffect effect = RoomEffect::None;
-    float sepiaFlicker = 1.f;
-    float randomValue[5];
-    float timeLapse;
-    float iGlobalTime;
-    float iNoiseThreshold = 1.f;
-    float iFade = 1.f;
-    float wobbleIntensity = 1.f;
-    Color shadows = Color(-0.3f, 0.f, 0.f);
-    Color midtones = Color(-0.2f, 0.f, 0.1f);
-    Color highlights = Color(0.f, 0.f, 0.2f);
+	RoomEffect effect = RoomEffect::None;
+	float sepiaFlicker = 1.f;
+	float randomValue[5];
+	float timeLapse;
+	float iGlobalTime;
+	float iNoiseThreshold = 1.f;
+	float iFade = 1.f;
+	float wobbleIntensity = 1.f;
+	Color shadows = Color(-0.3f, 0.f, 0.f);
+	Color midtones = Color(-0.2f, 0.f, 0.1f);
+	Color highlights = Color(0.f, 0.f, 0.2f);
 
 	void updateShader();
 };
-
 
 enum class FadeEffect {
 	None,
@@ -56,7 +55,7 @@ enum class FadeEffect {
 	Wobble
 };
 
-class FadeShader: public Shader {
+class FadeShader : public Shader {
 public:
 	FadeShader();
 	virtual ~FadeShader() override;
@@ -76,14 +75,14 @@ public:
 	Math::Vector2d _cameraPos;
 	float _duration = 0.f;
 	float _elapsed = 0.f;
-	float _movement = 0.f;		// movement for wobble effect
-	float _fade = 0.f;			// fade value between [0.f,1.f]
-	bool _fadeToSepia = false;	// true to fade to sepia
+	float _movement = 0.f;     // movement for wobble effect
+	float _fade = 0.f;         // fade value between [0.f,1.f]
+	bool _fadeToSepia = false; // true to fade to sepia
 
 private:
 	int _textureLoc[2];
 };
 
-}
+} // namespace Twp
 
 #endif

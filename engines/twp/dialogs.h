@@ -51,6 +51,6 @@ private:
 	GUI::PopUpWidget *_langGUIDropdown = nullptr;
 };
 
-}
+} // namespace Twp
 
 #endif

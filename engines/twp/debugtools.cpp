@@ -19,13 +19,13 @@
  *
  */
 
-#include "twp/debugtools.h"
+#include "common/debug-channels.h"
 #include "imgui/imgui.h"
 #include "twp/twp.h"
+#include "twp/debugtools.h"
 #include "twp/thread.h"
 #include "twp/lighting.h"
 #include "twp/squtil.h"
-#include "common/debug-channels.h"
 
 namespace Twp {
 

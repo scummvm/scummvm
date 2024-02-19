@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/actorswitcher.h"
 #include "twp/twp.h"
+#include "twp/actorswitcher.h"
 
 #define DISABLE_ALPHA 0.f
 #define ENABLE_ALPHA 1.f
@@ -33,10 +33,10 @@ namespace Twp {
 
 ActorSwitcherSlot::ActorSwitcherSlot(const Common::String &icon_, Color back_, Color frame_, SelectFunc *selectFunc_, int id_) {
 	icon = icon_;
-	this->back = back_;
-	this->frame = frame_;
-	this->selectFunc = selectFunc_;
-	this->id = id_;
+	back = back_;
+	frame = frame_;
+	selectFunc = selectFunc_;
+	id = id_;
 }
 
 void ActorSwitcherSlot::select() {

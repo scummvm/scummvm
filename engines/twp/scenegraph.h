@@ -23,10 +23,10 @@
 #ifndef TWP_SCENEGRAPH_H
 #define TWP_SCENEGRAPH_H
 
-#include "math/vector2d.h"
-#include "math/matrix4.h"
 #include "common/array.h"
 #include "common/str.h"
+#include "math/vector2d.h"
+#include "math/matrix4.h"
 #include "twp/gfx.h"
 #include "twp/rectf.h"
 #include "twp/font.h"

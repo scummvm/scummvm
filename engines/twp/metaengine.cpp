@@ -23,7 +23,6 @@
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
-
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "backends/keymapper/keymapper.h"

@@ -23,7 +23,7 @@
 #define TWP_DEBUGTOOLS_H
 
 namespace Twp {
-	void onImGuiRender();
+void onImGuiRender();
 }
 
 #endif

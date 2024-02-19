@@ -395,7 +395,7 @@ static ImGuiKey ImGui_ImplSDL2_KeycodeToImGuiKey(int keycode) {
 	return ImGuiKey_None;
 }
 
-static void ImGui_ImplSDL2_UpdateKeyModifiers(const Common::KeyState& keyState) {
+static void ImGui_ImplSDL2_UpdateKeyModifiers(const Common::KeyState &keyState) {
 	ImGuiIO &io = ImGui::GetIO();
 	io.AddKeyEvent(ImGuiMod_Ctrl, keyState.hasFlags(Common::KBD_CTRL));
 	io.AddKeyEvent(ImGuiMod_Shift, keyState.hasFlags(Common::KBD_SHIFT));
@@ -463,18 +463,18 @@ bool ImGui_ImplSDL2_ProcessEvent(const Common::Event *event) {
 		bd->MouseButtonsDown = mouse_down ? (bd->MouseButtonsDown | (1 << mouse_button)) : (bd->MouseButtonsDown & ~(1 << mouse_button));
 		return true;
 	}
-    case Common::EVENT_KEYDOWN:
-    case Common::EVENT_KEYUP: {
+	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_KEYUP: {
 
-		    ImGui_ImplSDL2_UpdateKeyModifiers(event->kbd);
-		    ImGuiKey key = ImGui_ImplSDL2_KeycodeToImGuiKey(event->kbd.keycode);
-		    io.AddKeyEvent(key, (event->type == Common::EVENT_KEYDOWN));
-			io.SetKeyEventNativeData(key, event->kbd.keycode, event->kbd.keycode);
-			if(event->type == Common::EVENT_KEYUP) {
-				io.AddInputCharacter(event->kbd.ascii);
-			}
-		    return true;
+		ImGui_ImplSDL2_UpdateKeyModifiers(event->kbd);
+		ImGuiKey key = ImGui_ImplSDL2_KeycodeToImGuiKey(event->kbd.keycode);
+		io.AddKeyEvent(key, (event->type == Common::EVENT_KEYDOWN));
+		io.SetKeyEventNativeData(key, event->kbd.keycode, event->kbd.keycode);
+		if (event->type == Common::EVENT_KEYUP) {
+			io.AddInputCharacter(event->kbd.ascii);
 		}
+		return true;
+	}
 	case Common::EVENT_FOCUS_GAINED:
 		io.AddFocusEvent(true);
 		return true;

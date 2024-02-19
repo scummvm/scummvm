@@ -35,13 +35,13 @@ typedef void SelectFunc(int id);
 
 // This is where all the information about the actor icon stands
 struct ActorSwitcherSlot {
-	ActorSwitcherSlot(const Common::String& icon, Color back, Color frame, SelectFunc* selectFunc, int id = 0);
+	ActorSwitcherSlot(const Common::String &icon_, Color back_, Color frame_, SelectFunc *selectFunc_, int id_ = 0);
 
 	void select();
 
 	Common::String icon;
 	Color back, frame;
-	SelectFunc* selectFunc;
+	SelectFunc *selectFunc;
 	int id;
 };
 
@@ -50,7 +50,7 @@ class ActorSwitcher : public Node {
 public:
 	ActorSwitcher();
 
-	void update(const Common::Array<ActorSwitcherSlot>& slots, float elapsed);
+	void update(const Common::Array<ActorSwitcherSlot> &slots, float elapsed);
 	bool isMouseOver() const { return _mouseOver; }
 	void setFlash(int flash) { _flash = flash; }
 
@@ -65,7 +65,7 @@ protected:
 	Common::Rect rect() const;
 
 public:
-	int _mode = asNone;        // current mode
+	int _mode = asNone; // current mode
 
 private:
 	bool _mouseOver = false;                  // true when mouse is over the icons

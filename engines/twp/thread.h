@@ -44,7 +44,7 @@ public:
 		resume();
 	}
 
-	void setName(const Common::String& name) { _name = name; }
+	void setName(const Common::String &name) { _name = name; }
 	Common::String getName() const { return _name; }
 
 	int getId() const { return _id; }
@@ -61,7 +61,6 @@ public:
 	virtual void stop() = 0;
 
 protected:
-
 public:
 	float _waitTime = 0.f;
 	int _numFrames = 0;
@@ -77,7 +76,7 @@ protected:
 
 class Thread final : public ThreadBase {
 public:
-	Thread(const Common::String& name, bool global, HSQOBJECT threadObj, HSQOBJECT envObj, HSQOBJECT closureObj, const Common::Array<HSQOBJECT> args);
+	Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQOBJECT envObj, HSQOBJECT closureObj, const Common::Array<HSQOBJECT> args);
 	virtual ~Thread() override final;
 
 	virtual bool isGlobal() override final { return _global; }
@@ -105,7 +104,7 @@ enum CutsceneState {
 class Object;
 class Cutscene final : public ThreadBase {
 public:
-	Cutscene(const Common::String& name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
+	Cutscene(const Common::String &name, int parentThreadId, HSQOBJECT threadObj, HSQOBJECT closure, HSQOBJECT closureOverride, HSQOBJECT envObj);
 	~Cutscene() override final;
 
 	void start();

@@ -19,22 +19,22 @@
  *
  */
 
-#include "twp/hud.h"
-#include "twp/twp.h"
 #include "common/config-manager.h"
+#include "twp/twp.h"
+#include "twp/hud.h"
 
 namespace Twp {
 
 Verb::Verb() = default;
 
-Verb::Verb(VerbId verbId, const Common::String& img, const Common::String& f, const Common::String& t, const Common::String& k, int fl)
-: id(verbId), image(img), fun(f), text(t), key(k), flags(fl) {
+Verb::Verb(VerbId verbId, const Common::String &img, const Common::String &f, const Common::String &t, const Common::String &k, int fl)
+	: id(verbId), image(img), fun(f), text(t), key(k), flags(fl) {
 }
 
 VerbUiColors::VerbUiColors() = default;
 
 VerbUiColors::VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt)
-: sentence(s), verbNormal(vbNormal), verbNormalTint(vbNormalTint), verbHighlight(vbHiglight), verbHighlightTint(vbHiglightTint), dialogNormal(dlgNormal), dialogHighlight(dlgHighlt), inventoryFrame(invFrame), inventoryBackground(inventoryBack), retroNormal(retroNml), retroHighlight(retroHighlt) {
+	: sentence(s), verbNormal(vbNormal), verbNormalTint(vbNormalTint), verbHighlight(vbHiglight), verbHighlightTint(vbHiglightTint), dialogNormal(dlgNormal), dialogHighlight(dlgHighlt), inventoryFrame(invFrame), inventoryBackground(inventoryBack), retroNormal(retroNml), retroHighlight(retroHighlt) {
 }
 
 ActorSlot::ActorSlot() = default;
@@ -108,7 +108,7 @@ void HudShader::applyUniforms() {
 
 Hud::Hud() : Node("hud") {
 	_zOrder = 100;
-	for (auto & _actorSlot : _actorSlots) {
+	for (auto &_actorSlot : _actorSlots) {
 		ActorSlot *slot = &_actorSlot;
 		slot->actor = nullptr;
 	}
@@ -119,7 +119,7 @@ void Hud::init() {
 }
 
 ActorSlot *Hud::actorSlot(Common::SharedPtr<Object> actor) {
-	for (auto & _actorSlot : _actorSlots) {
+	for (auto &_actorSlot : _actorSlots) {
 		ActorSlot *slot = &_actorSlot;
 		if (slot->actor == actor) {
 			return slot;
@@ -135,7 +135,7 @@ void Hud::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, 
 }
 
 void Hud::drawCore(Math::Matrix4 trsf) {
-	ActorSlot *slot = this->actorSlot(_actor);
+	ActorSlot *slot = actorSlot(_actor);
 	if (!slot)
 		return;
 
@@ -145,7 +145,7 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	const SpriteSheetFrame &backingFrame = gameSheet->getFrame(classic ? "ui_backing_tall" : "ui_backing");
 	Texture *gameTexture = g_twp->_resManager.texture(gameSheet->meta.image);
 	float alpha = 0.33f; // prefs(UiBackingAlpha);
-	g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha*getAlpha()), trsf);
+	g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha * getAlpha()), trsf);
 
 	bool verbHlt = ConfMan.getBool("invertVerbHighlight");
 	Color verbHighlight = verbHlt ? Color() : slot->verbUiColors.verbHighlight;
@@ -215,6 +215,5 @@ void Hud::setVisible(bool visible) {
 		_fadeTime = 0;
 	}
 }
-
 
 } // namespace Twp

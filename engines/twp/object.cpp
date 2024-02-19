@@ -83,7 +83,8 @@ Object::Object(HSQOBJECT o, const Common::String &key)
 }
 
 Object::~Object() {
-	if(_nodeAnim) _nodeAnim->remove();
+	if (_nodeAnim)
+		_nodeAnim->remove();
 	_node->remove();
 
 	if (_layer) {
@@ -358,7 +359,7 @@ ObjectIcons Object::getIcons() const {
 
 Common::String Object::getIcon() {
 	ObjectIcons result = getIcons();
-	if(result.icons.empty())
+	if (result.icons.empty())
 		return "";
 	_iconIndex = _iconIndex % result.icons.size();
 	return result.icons[_iconIndex];
@@ -401,10 +402,10 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 		}
 		object->_room = room;
 
-		if(roomChanged && isActor(object->getId())) {
-			if(room == g_twp->_room) {
+		if (roomChanged && isActor(object->getId())) {
+			if (room == g_twp->_room) {
 				g_twp->actorEnter(object);
-			} else if(oldRoom == g_twp->_room) {
+			} else if (oldRoom == g_twp->_room) {
 				g_twp->actorExit(object);
 			}
 		}
@@ -431,8 +432,8 @@ void Object::stopObjectMotors() {
 	_node->setRotationOffset(0);
 	_node->setOffset({0.f, 0.f});
 	_node->setShakeOffset({0.f, 0.f});
-	_node->setScale({1.f,1.f});
-	if(isActor(getId()))
+	_node->setScale({1.f, 1.f});
+	if (isActor(getId()))
 		stand();
 }
 

@@ -19,8 +19,8 @@
  *
  */
 
-#include "twp/sqgame.h"
 #include "twp/twp.h"
+#include "twp/sqgame.h"
 #include "twp/squtil.h"
 
 namespace Twp {

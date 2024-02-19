@@ -80,8 +80,8 @@ struct DialogConditionState {
 	Common::String actorKey, dialog;
 	int line{};
 
-    DialogConditionState();
-	DialogConditionState(DialogConditionMode mode, const Common::String& actorKey, const Common::String& dialog, int line);
+	DialogConditionState();
+	DialogConditionState(DialogConditionMode mode, const Common::String &actorKey, const Common::String &dialog, int line);
 };
 
 class DialogTarget {
@@ -193,7 +193,7 @@ public:
 	bool isCond(const Common::String &cond) const;
 
 private:
-	void choose(DialogSlot* slot);
+	void choose(DialogSlot *slot);
 	Common::SharedPtr<YLabel> label(int line, const Common::String &name) const;
 	void gotoNextLabel();
 	bool choicesReady() const { return numSlots() > 0; }
@@ -216,7 +216,7 @@ public:
 
 private:
 	DialogState _state = DialogState::None;
-    size_t _currentStatement = 0;
+	size_t _currentStatement = 0;
 	unique_ptr<YCompilationUnit> _cu;
 	Common::SharedPtr<YLabel> _lbl;
 	DialogSlot _slots[MAXDIALOGSLOTS];

@@ -53,35 +53,35 @@ void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
 		parseFrame(it->_key, it->_value->asObject(), _frameTable[it->_key]);
 	}
 
-	const Common::JSONObject& jMeta = json->asObject()["meta"]->asObject();
+	const Common::JSONObject &jMeta = json->asObject()["meta"]->asObject();
 	meta.image = jMeta["image"]->asString();
 }
 
-Common::String SpriteSheet::getKey(const Common::String& key) {
-	if(key.hasSuffixIgnoreCase("_en")) {
+Common::String SpriteSheet::getKey(const Common::String &key) {
+	if (key.hasSuffixIgnoreCase("_en")) {
 		Common::String lang(ConfMan.get("language"));
-		Common::String newKey(Common::String::format("%s%s", key.substr(0, key.size()-2).c_str(), lang.c_str()));
+		Common::String newKey(Common::String::format("%s%s", key.substr(0, key.size() - 2).c_str(), lang.c_str()));
 		return newKey;
 	}
 	return key;
 }
 
-const SpriteSheetFrame& SpriteSheet::getFrame(const Common::String& key) const {
-	if(key.hasSuffixIgnoreCase("_en")) {
+const SpriteSheetFrame &SpriteSheet::getFrame(const Common::String &key) const {
+	if (key.hasSuffixIgnoreCase("_en")) {
 		Common::String newKey(getKey(key));
-		if(_frameTable.contains(newKey))
+		if (_frameTable.contains(newKey))
 			return _frameTable[newKey];
 	}
 	return _frameTable[key];
 }
 
-const SpriteSheetFrame* SpriteSheet::frame(const Common::String& key) const {
-	if(key.hasSuffixIgnoreCase("_en")) {
+const SpriteSheetFrame *SpriteSheet::frame(const Common::String &key) const {
+	if (key.hasSuffixIgnoreCase("_en")) {
 		Common::String newKey(getKey(key));
-		if(_frameTable.contains(newKey))
+		if (_frameTable.contains(newKey))
 			return &_frameTable[newKey];
 	}
-	if(_frameTable.contains(key))
+	if (_frameTable.contains(key))
 		return &_frameTable[key];
 	return nullptr;
 }

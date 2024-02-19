@@ -25,8 +25,8 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
-#include "twp/audio.h"
 #include "twp/twp.h"
+#include "twp/audio.h"
 #include "twp/squtil.h"
 
 namespace Twp {

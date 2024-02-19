@@ -22,8 +22,8 @@
 #include "math/matrix3.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
-#include "twp/scenegraph.h"
 #include "twp/twp.h"
+#include "twp/scenegraph.h"
 #include "twp/lighting.h"
 
 namespace Twp {
@@ -201,7 +201,7 @@ void Node::onDrawChildren(Math::Matrix4 trsf) {
 	for (size_t i = 0; i < children.size(); i++) {
 		_children.push_back(children[i].node);
 	}
-	for (auto& child : _children) {
+	for (auto &child : _children) {
 		child->draw(trsf);
 	}
 }
@@ -398,7 +398,8 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 		} else {
 			const SpriteSheet *sheet = g_twp->_resManager.spriteSheet(_sheet);
 			const SpriteSheetFrame *sf = sheet->frame(frame);
-			if(!sf) return;
+			if (!sf)
+				return;
 			Texture *texture = g_twp->_resManager.texture(sheet->meta.image);
 			if (_obj->_lit) {
 				g_twp->getGfx().use(g_twp->_lighting.get());
@@ -776,7 +777,7 @@ void SpriteNode::drawCore(Math::Matrix4 trsf) {
 	setAnchor(anchor);
 
 	Texture *texture = g_twp->_resManager.texture(sheet->meta.image);
-	g_twp->getGfx().drawSprite(rect, *texture, this->getComputedColor(), trsf);
+	g_twp->getGfx().drawSprite(rect, *texture, getComputedColor(), trsf);
 }
 
 NoOverrideNode::NoOverrideNode() : Node("NoOverride") {

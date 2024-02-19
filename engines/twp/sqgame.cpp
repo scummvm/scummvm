@@ -33,4 +33,4 @@ void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger 
 	sq_pop(v, 1); // pops the root table
 }
 
-}
+} // namespace Twp

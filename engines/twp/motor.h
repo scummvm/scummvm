@@ -95,7 +95,7 @@ class Object;
 class OffsetTo : public Motor {
 public:
 	virtual ~OffsetTo();
-	OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im);
+	OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;
@@ -108,7 +108,7 @@ private:
 class MoveTo : public Motor {
 public:
 	virtual ~MoveTo();
-	MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im);
+	MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im);
 
 private:
 	virtual void update(float elasped) override;

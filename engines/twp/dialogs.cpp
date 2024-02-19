@@ -20,12 +20,10 @@
  */
 
 #include "common/translation.h"
-
 #include "gui/gui-manager.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
-
 #include "twp/dialogs.h"
 
 namespace Twp {

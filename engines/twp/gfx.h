@@ -23,12 +23,12 @@
 #define TWP_GFX_H
 
 #include "common/array.h"
-#include "graphics/surface.h"
 #include "common/hashmap.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
+#include "graphics/opengl/shader.h"
 #include "math/vector2d.h"
 #include "math/matrix4.h"
-#include "graphics/opengl/shader.h"
 
 namespace Twp {
 

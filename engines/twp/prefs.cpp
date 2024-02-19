@@ -19,9 +19,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "twp/prefs.h"
 #include "twp/util.h"
-#include "common/config-manager.h"
 
 namespace Twp {
 

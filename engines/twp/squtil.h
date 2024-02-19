@@ -22,11 +22,12 @@
 #ifndef TWP_SQUTIL_H
 #define TWP_SQUTIL_H
 
-#include "squirrel/squirrel.h"
+#include "common/util.h"
 #include "common/str.h"
 #include "common/util.h"
 #include "twp/twp.h"
 #include "twp/vm.h"
+#include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
@@ -89,7 +90,7 @@ void setId(HSQOBJECT &o, int id);
 
 void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<Common::String> &arr);
 SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::String> &arr);
-SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundDefinition> >&  arr);
+SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundDefinition> > &arr);
 
 template<typename TFunc>
 void sqgetitems(HSQOBJECT o, TFunc func) {
@@ -105,7 +106,7 @@ void sqgetitems(HSQOBJECT o, TFunc func) {
 	sq_pop(v, 2);
 }
 
-void sqgetpairs(HSQOBJECT obj, void func(const Common::String& key, HSQOBJECT& obj, void* data), void* data);
+void sqgetpairs(HSQOBJECT obj, void func(const Common::String &key, HSQOBJECT &obj, void *data), void *data);
 
 template<typename TFunc>
 void sqgetpairs(HSQOBJECT obj, TFunc func) {

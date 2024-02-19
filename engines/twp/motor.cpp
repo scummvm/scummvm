@@ -21,7 +21,6 @@
  */
 
 #include "common/config-manager.h"
-
 #include "twp/twp.h"
 #include "twp/squtil.h"
 
@@ -29,7 +28,7 @@ namespace Twp {
 
 OffsetTo::~OffsetTo() = default;
 
-OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im)
+OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getOffset(), pos, duration, im) {
 }
@@ -43,7 +42,7 @@ void OffsetTo::update(float elapsed) {
 
 MoveTo::~MoveTo() = default;
 
-MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d& pos, InterpolationMethod im)
+MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im)
 	: _obj(obj),
 	  _tween(obj->_node->getPos(), pos, duration, im) {
 }
@@ -244,7 +243,8 @@ void WalkTo::actorArrived() {
 }
 
 void WalkTo::update(float elapsed) {
-	if(!_enabled) return;
+	if (!_enabled)
+		return;
 	if (_state == kWalking && !_path.empty()) {
 		Vector2i dest = _path[0];
 		float d = distance(dest, (Vector2i)_obj->_node->getAbsPos());
@@ -273,16 +273,16 @@ void WalkTo::update(float elapsed) {
 		}
 	}
 
-	if(_state == kArrived) {
+	if (_state == kArrived) {
 		Common::SharedPtr<Motor> reach = _obj->getReach();
 		if (reach && reach->isEnabled()) {
 			reach->update(elapsed);
-			_state =  kReach;
+			_state = kReach;
 			return;
 		}
 	}
 
-	if(_state == kReach) {
+	if (_state == kReach) {
 		Common::SharedPtr<Motor> reach = _obj->getReach();
 		if (reach) {
 			if (reach->isEnabled()) {

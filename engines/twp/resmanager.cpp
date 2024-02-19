@@ -21,8 +21,8 @@
 
 #include "common/config-manager.h"
 #include "image/png.h"
-#include "twp/resmanager.h"
 #include "twp/twp.h"
+#include "twp/resmanager.h"
 
 namespace Twp {
 
@@ -33,7 +33,7 @@ static Common::String getKey(const char *path) {
 	p = p.substr(0, i);
 	if ((len > 4) && p.hasSuffixIgnoreCase("_en")) {
 		Common::String lang(ConfMan.get("language"));
-		Common::String filename(p.substr(0, p.size()-2));
+		Common::String filename(p.substr(0, p.size() - 2));
 		const char *ext = path + i;
 		return Common::String::format("%s%s%s", filename.c_str(), lang.c_str(), ext);
 	}
@@ -43,13 +43,13 @@ static Common::String getKey(const char *path) {
 void ResManager::loadTexture(const Common::String &name) {
 	debugC(kDebugRes, "Load texture %s", name.c_str());
 	GGPackEntryReader r;
-	if(!r.open(g_twp->_pack, name)) {
+	if (!r.open(g_twp->_pack, name)) {
 		error("Texture %s not found", name.c_str());
 	}
 	Image::PNGDecoder d;
 	d.loadStream(r);
 	const Graphics::Surface *surface = d.getSurface();
-	if(!surface) {
+	if (!surface) {
 		error("PNG %s not loaded", name.c_str());
 		return;
 	}
@@ -80,7 +80,7 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 void ResManager::loadFont(const Common::String &name) {
 	if (name == "sayline") {
 		debugC(kDebugRes, "Load font %s", name.c_str());
-		Common::String resName = ConfMan.getBool("retroFonts") ? "FontRetroSheet": "FontModernSheet";
+		Common::String resName = ConfMan.getBool("retroFonts") ? "FontRetroSheet" : "FontModernSheet";
 		Common::SharedPtr<GGFont> fontModernSheet(new GGFont());
 		fontModernSheet->load(resName);
 		_fonts[name] = fontModernSheet;

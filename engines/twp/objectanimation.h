@@ -43,4 +43,3 @@ struct ObjectAnimation {
 } // namespace Twp
 
 #endif
-

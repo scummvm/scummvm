@@ -19,13 +19,13 @@
  *
  */
 
-#include "twp/shaders.h"
 #include "twp/twp.h"
+#include "twp/shaders.h"
 
 namespace Twp {
 
 const char *vsrc = R"(
-	uniform mat4 u_transform;
+uniform mat4 u_transform;
 attribute vec2 a_position;
 attribute vec4 a_color;
 attribute vec2 a_texCoords;
