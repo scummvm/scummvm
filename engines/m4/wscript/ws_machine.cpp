@@ -179,7 +179,6 @@ static void op_ON_END_SEQ(machine *m, int32 *pcOffset) {
 	if (!_GWS(myArg1)) {
 		ws_Error(m, ERR_MACH, 0x0260, "on_seq_end() failed.");
 	}
-
 	ws_OnEndSeqRequest(m->myAnim8, *pcOffset, *_GWS(myArg1) >> 14);
 	*pcOffset += (int32)*_GWS(myArg1) >> 14;
 }
@@ -456,7 +455,6 @@ static bool op_REPLY_MSG(machine *m, int32 *pcOffset) {
 }
 
 static bool op_SYSTEM_MSG(machine *m, int32 *pcOffset) {
-
 	if (!_GWS(myArg1)) {
 		ws_Error(m, ERR_MACH, 0x0263, "functionality: send to 'C' callback function with msg arg1");
 	}
@@ -684,6 +682,10 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
 static void cancelAllEngineReqs(machine *m) {
 	globalMsgReq *myGMsg, *tempGMsg;
 
+	if (m->machID == 0xdeaddead) {
+		return;
+	}
+
 	//---- CANCEL CRUNCHER REQS
 	if (m->myAnim8) {
 		ws_CancelOnEndSeq(m->myAnim8);
@@ -713,6 +715,10 @@ static void cancelAllEngineReqs(machine *m) {
 
 
 static void shutdownMachine(machine *m) {
+	if (m->machID == 0xdeaddead) {
+		return;
+	}
+
 	dbg_RemoveWSMach(m);
 
 	if (m->myAnim8) {
@@ -731,26 +737,26 @@ static void shutdownMachine(machine *m) {
 	// Clear any existing walk path
 	DisposePath(m->walkPath);
 
-	// If there is no previous machine, the next machine becomes the first one
-	if (m->prev) {
-		m->prev->next = m->next;
-	} else {
-		_GWS(firstMachine) = m->next;
-	}
-
-	if (m->next) {
-		m->next->prev = m->prev;
-	}
-
 	m->machID = 0xdeaddead;
 
 	if (m->machName) {
+		m->machName[0] = '\0';
 		mem_free((void *)m->machName);
+		m->machName = nullptr;
 	}
-
-	mem_free((void *)m);
 }
 
+static machine *getValidNext(machine *currMachine) {
+	machine *iterMachine = currMachine;
+	if (iterMachine) {
+		while ((iterMachine = iterMachine->next) != nullptr) {
+			if (iterMachine->machID != 0xdeaddead) {
+				return iterMachine;
+			}
+		}
+	}
+	return nullptr;
+}
 
 void terminateMachinesByHash(uint32 machHash) {
 	machine *curr, *next;
@@ -795,7 +801,7 @@ bool verifyMachineExists(machine *m) {
 	// Loop through the active machine list, looking for m
 	tempM = _GWS(firstMachine);
 	while (tempM && (tempM != m)) {
-		tempM = tempM->next;
+		tempM = getValidNext(tempM);
 	}
 
 	// If the end of the list was reached, and m was not found, false
@@ -815,10 +821,13 @@ int32 ws_KillMachines() {
 	// Deallocate all machines
 	myMachine = _GWS(firstMachine);
 	while (myMachine) {
+		// get any next Machine here, not validNext
 		_GWS(firstMachine) = _GWS(firstMachine)->next;
 
-		clear_msg_list(myMachine);
-		clear_persistent_msg_list(myMachine);
+		if (myMachine->machID != 0xdeaddead) {
+			cancelAllEngineReqs(myMachine);
+			shutdownMachine(myMachine);
+		}
 
 		mem_free((void *)myMachine);
 		myBytes += sizeof(machine);
@@ -1221,7 +1230,7 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 		while (currMachine && more_to_send) {
 			// Set nextXM up in case this machine is deleted during the ws_StepWhile
 			// nextXM will be maintained by ShutDownMachine()
-			_GWS(nextXM) = currMachine->next;
+			_GWS(nextXM) = getValidNext(currMachine);
 
 			// Have we got a machine of the specified hash
 			if (currMachine->myHash == _GWS(myGlobalMessages)->machHash) {
