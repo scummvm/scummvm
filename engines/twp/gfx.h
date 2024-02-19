@@ -190,7 +190,7 @@ private:
 
 private:
 	Texture _emptyTexture;
-	uint32 _vbo = 0, _ebo = 0;
+	GLuint _vbo = 0, _ebo = 0;
 	Shader _defaultShader;
 	Shader *_shader = nullptr;
 	Math::Matrix4 _mvp;
@@ -198,7 +198,7 @@ private:
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture *_texture = nullptr;
-	int32 _oldFbo = 0;
+	GLint _oldFbo = 0;
 };
 } // namespace Twp
 
