@@ -72,16 +72,16 @@ struct Color {
 		return Common::String::format("rgba(%f,%f,%f,%f)", rgba.r, rgba.g, rgba.b, rgba.a);
 	}
 
-	Color operator-(const Color& c) {
+	Color operator-(const Color &c) {
 		return Color(rgba.r - c.rgba.r, rgba.g - c.rgba.g, rgba.b - c.rgba.b, rgba.a - c.rgba.a);
 	}
 
-	Color operator+(const Color& c) {
+	Color operator+(const Color &c) {
 		return Color(rgba.r + c.rgba.r, rgba.g + c.rgba.g, rgba.b + c.rgba.b, rgba.a + c.rgba.a);
 	}
 
 	Color operator*(float f) {
-  		return Color(rgba.r * f, rgba.g * f, rgba.b * f, rgba.a * f);
+		return Color(rgba.r * f, rgba.g * f, rgba.b * f, rgba.a * f);
 	}
 
 	int toInt() const;
@@ -102,20 +102,21 @@ class Texture {
 public:
 	Texture() {}
 	virtual ~Texture() {}
+
 	void load(const Graphics::Surface &surface);
 	static void bind(const Texture *texture);
-	void capture(Graphics::Surface &surface);
+	void capture(Common::Array<byte> &data);
 
 public:
-	uint32 id;
-	int width, height;
-	uint fbo;
+	uint32 id = 0;
+	int width = 0, height = 0;
+	uint fbo = 0;
 };
 
 class RenderTexture : public Texture {
 public:
-	RenderTexture(Math::Vector2d size);
-	virtual ~RenderTexture() override;
+	explicit RenderTexture(Math::Vector2d size);
+	~RenderTexture() override;
 };
 
 struct TextureSlot {
@@ -125,7 +126,8 @@ struct TextureSlot {
 
 class Shader {
 public:
-friend class Gfx;
+	friend class Gfx;
+
 public:
 	Shader();
 	virtual ~Shader();
@@ -134,20 +136,20 @@ public:
 
 	int getUniformLocation(const char *name) const;
 
-	void setUniform(const char * name, int value);
-	void setUniform(const char * name, float value);
-	void setUniform(const char * name, float* value, size_t count);
-	void setUniform2(const char * name, float* value, size_t count);
-	void setUniform3(const char * name, float* value, size_t count);
+	void setUniform(const char *name, int value);
+	void setUniform(const char *name, float value);
+	void setUniform(const char *name, float *value, size_t count);
+	void setUniform2(const char *name, float *value, size_t count);
+	void setUniform3(const char *name, float *value, size_t count);
 
-	void setUniform(const char * name, Math::Vector2d value);
-	void setUniform3(const char * name, Color value);
-	void setUniform4(const char * name, Color value);
+	void setUniform(const char *name, Math::Vector2d value);
+	void setUniform3(const char *name, Color value);
+	void setUniform4(const char *name, Color value);
 
 	virtual void applyUniforms() {}
-	virtual int getNumTextures() { return 0;};
-	virtual int getTexture(int index) { return 0;};
-	virtual int getTextureLoc(int index) { return 0;};
+	virtual int getNumTextures() { return 0; };
+	virtual int getTexture(int index) { return 0; };
+	virtual int getTextureLoc(int index) { return 0; };
 
 private:
 	Common::HashMap<int, TextureSlot> _textures;
