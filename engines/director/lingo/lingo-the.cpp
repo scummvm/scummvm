@@ -126,6 +126,7 @@ TheEntity entities[] = {
 	{ kTheResult,			"result",			false, 200, true },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false, 500, true },	//					D5 f
 	{ kTheRightMouseUp,		"rightMouseUp",		false, 500, true },	//					D5 f
+	{ kTheRollOver,			"rollOver",			false, 500, true },	//					D5 f, undocumented
 	{ kTheRomanLingo,		"romanLingo",		false, 300, false },	//		D3.1 p
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
@@ -768,6 +769,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheRightMouseUp:
 		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		break;
+	case kTheRollOver:
+		d = score->getSpriteIDFromPos(g_director->getCurrentWindow()->getMousePos());
 		break;
 	case kTheRomanLingo:
 		d = g_lingo->_romanLingo;
