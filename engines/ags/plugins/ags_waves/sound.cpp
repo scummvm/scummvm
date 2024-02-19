@@ -47,7 +47,7 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	_mixer->stopHandle(effect._soundHandle);
 
 	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
-		"sounds").getChild(Common::String::format("sound%d.sfx", sfxNum));
+		"Sounds").getChild(Common::String::format("sound%d.sfx", sfxNum));
 
 	Audio::AudioStream *sound = loadOGG(fsNode);
 
