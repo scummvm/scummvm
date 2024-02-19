@@ -35,26 +35,28 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	_enableToiletPaperOverGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoCheck1",
+																// I18N: Setting to switch toiled paper to be shown as "over".
 																_("Toilet paper over"),
 																_("The toilet paper in some toilets will be shown “over”.\nIt’s a joke option that has no effects on the gameplay.."));
 	_enableAnnoyingInJokesGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoCheck2",
+																// I18N: Setting to enable or disable additional jokes in the game.
 																_("Annoying in-jokes"),
 																_("The game will include in-jokes and references to past adventure games, in the form of both dialogues and objects.\nThere is a game achievement that can be obtained only if the in-jokes option is switched on."));
 
-	text = new GUI::StaticTextWidget(widgetsBoss(), "TwpGameOptionsDialog.ConrolsLabel", _("Conrols:"));
+	text = new GUI::StaticTextWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsLabel", _("Controls:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
+	// I18N: Setting to invert verb colors or keep the original verb colors.
 	_enableInvertVerbColorsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck1", _("Invert verb colors"), _(""));
+	// I18N: Setting to use retro or modern fonts.
 	_enableRetroFontsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck2", _("Retro Fonts"), _(""));
+	// I18N: Setting to use retro or modern verbs.
 	_enableRetroVerbsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck3", _("Retro Verbs"), _(""));
+	// I18N: Setting to use classic sentence or modern sentence.
 	_enableClassicSentenceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck4", _("Classic Sentence"), _(""));
 
-	text = new GUI::StaticTextWidget(widgetsBoss(), "TwpGameOptionsDialog.TextAndSpeechLabel", _("Text and Speech:"));
-	text->setAlign(Graphics::TextAlign::kTextAlignStart);
-
-	_enableDisplayTextGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Display Text"), _(""));
-	_enableHearVoiceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck2", _("Hear Voice"), _(""));
-	_enableDLC = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck3", _("Ransome *unbeeped* (DLC)"), _(""));
+	// I18N: Settings to enable or disable Ransome unbeeped DLC.
+	_enableDLC = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Ransome *unbeeped* (DLC)"), _(""));
 
 	_langGUIDropdown = new GUI::PopUpWidget(widgetsBoss(), "TwpGameOptionsDialog.LangDropDown");
 	_langGUIDropdown->appendEntry(_("English"));
@@ -73,16 +75,13 @@ void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Comm
 		.addWidget("VideoLabel", "OptionsLabel")
 		.addWidget("VideoCheck1", "Checkbox")
 		.addWidget("VideoCheck2", "Checkbox")
-		.addWidget("ConrolsLabel", "OptionsLabel")
+		.addWidget("ControlsLabel", "OptionsLabel")
 		.addWidget("ControlsCheck1", "Checkbox")
 		.addWidget("ControlsCheck2", "Checkbox")
 		.addWidget("ControlsCheck3", "Checkbox")
 		.addWidget("ControlsCheck4", "Checkbox")
-		.addWidget("TextAndSpeechLabel", "OptionsLabel")
 		.addWidget("LangDropDown", "PopUp")
-		.addWidget("TextCheck1", "Checkbox")
-		.addWidget("TextCheck2", "Checkbox")
-		.addWidget("TextCheck3", "Checkbox");
+		.addWidget("TextCheck1", "Checkbox");
 
 	layouts.closeLayout().closeDialog();
 }
@@ -94,8 +93,6 @@ void TwpOptionsContainerWidget::load() {
 	_enableRetroFontsGUICheckbox->setState(ConfMan.getBool("retroFonts", _domain));
 	_enableRetroVerbsGUICheckbox->setState(ConfMan.getBool("retroVerbs", _domain));
 	_enableClassicSentenceGUICheckbox->setState(ConfMan.getBool("hudSentence", _domain));
-	_enableDisplayTextGUICheckbox->setState(ConfMan.getBool("talkiesShowText", _domain));
-	_enableHearVoiceGUICheckbox->setState(ConfMan.getBool("talkiesHearVoice", _domain));
 	_enableDLC->setState(ConfMan.getBool("ransomeUnbeeped", _domain));
 	Common::String lang = ConfMan.get("language", _domain);
 	int index = 0;
@@ -115,8 +112,6 @@ bool TwpOptionsContainerWidget::save() {
 	ConfMan.setBool("retroFonts", _enableRetroFontsGUICheckbox->getState(), _domain);
 	ConfMan.setBool("retroVerbs", _enableRetroVerbsGUICheckbox->getState(), _domain);
 	ConfMan.setBool("hudSentence", _enableClassicSentenceGUICheckbox->getState(), _domain);
-	ConfMan.setBool("talkiesShowText", _enableDisplayTextGUICheckbox->getState(), _domain);
-	ConfMan.setBool("talkiesHearVoice", _enableHearVoiceGUICheckbox->getState(), _domain);
 	ConfMan.setBool("ransomeUnbeeped", _enableDLC->getState(), _domain);
 	ConfMan.set("language", lang_items[_langGUIDropdown->getSelected()], _domain);
 	return true;

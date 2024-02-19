@@ -359,8 +359,8 @@ void Talking::update(float elapsed) {
 }
 
 int Talking::loadActorSpeech(const Common::String &name) {
-	if (!ConfMan.getBool("talkiesHearVoice")) {
-		debugC(kDebugGame, "talking %s: talkiesHearVoice: false", _obj->_key.c_str());
+	if (ConfMan.getBool("speech_mute")) {
+		debugC(kDebugGame, "talking %s: speech_mute: true", _obj->_key.c_str());
 		return 0;
 	}
 
@@ -451,20 +451,24 @@ void Talking::say(const Common::String &text) {
 	if (_obj->_sayNode) {
 		_obj->_sayNode->remove();
 	}
-	Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
-	_obj->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
-	_obj->_sayNode->setText(text2);
-	_obj->_sayNode->setColor(_color);
-	_node = _obj->_sayNode;
-	Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
 
-	// clamp position to keep it on screen
-	pos.setX(Twp::clamp(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
-	pos.setY(Twp::clamp(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
+	if (ConfMan.getBool("subtitles")) {
+		Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
+		_obj->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
+		_obj->_sayNode->setText(text2);
+		_obj->_sayNode->setColor(_color);
+		_node = _obj->_sayNode;
+		Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
 
-	_obj->_sayNode->setPos(pos);
-	_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
-	g_twp->_screenScene.addChild(_obj->_sayNode.get());
+		// clamp position to keep it on screen
+		pos.setX(Twp::clamp(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
+		pos.setY(Twp::clamp(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
+
+		_obj->_sayNode->setPos(pos);
+		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
+		g_twp->_screenScene.addChild(_obj->_sayNode.get());
+	}
+
 	_elapsed = 0.f;
 }
 
@@ -472,7 +476,8 @@ void Talking::disable() {
 	Motor::disable();
 	_texts.clear();
 	_obj->setHeadIndex(1);
-	_node->remove();
+	if(_node)
+		_node->remove();
 }
 
 int Talking::onTalkieId(int id) {
