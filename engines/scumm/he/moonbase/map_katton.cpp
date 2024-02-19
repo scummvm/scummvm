@@ -760,7 +760,12 @@ int KattonGenerator::randomflip(int numberofplaces, int inWater) {
 		x = getRandomNumber() % size;
 		y = getRandomNumber() % size;
 		if (board[x][y] == 0) {
-			temp = getRandomNumber() % inWater;
+			if (inWater == 0) {
+				temp = 0;
+			} else {
+				temp = getRandomNumber() % inWater;
+			}
+
 			if (temp <= 50) {
 				board[x][y] = 1;
 			}
