@@ -255,7 +255,7 @@ struct SET : public EngineData {
 	Common::Array<SoundDescription> _sounds;
 };
 
-// Contains data for the Save/Load screen. Used up to nancy7 
+// Contains data for the Save/Load screen. Used up to nancy7
 struct LOAD : public EngineData {
 	LOAD(Common::SeekableReadStream *chunkStream);
 
@@ -297,7 +297,7 @@ struct LOAD : public EngineData {
 	// Common::Rect _gameSavedBounds
 };
 
-// Contains data for the new Save/Load screen. Used in nancy8 and up 
+// Contains data for the new Save/Load screen. Used in nancy8 and up
 struct LOAD_v2 : public EngineData {
 	LOAD_v2(Common::SeekableReadStream *chunkStream);
 
@@ -329,7 +329,7 @@ struct LOAD_v2 : public EngineData {
 struct SDLG : public EngineData {
 	struct Dialog {
 		Dialog(Common::SeekableReadStream *chunkStream);
-		
+
 		Common::Path imageName;
 
 		Common::Rect yesDest;
@@ -472,7 +472,7 @@ struct ImageChunk : public EngineData {
 // Contains text data. Every string is tagged with a key via which
 // it can be accessed. Used to store dialogue and journal (autotext) strings.
 // NOT found inside BOOT; these are stored in their own cifs, the names of which
-// can be found inside BSUM. Introduced in nancy6. 
+// can be found inside BSUM. Introduced in nancy6.
 struct CVTX : public EngineData {
 	CVTX(Common::SeekableReadStream *chunkStream);
 

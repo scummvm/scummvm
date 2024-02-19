@@ -27,7 +27,7 @@
 namespace Nancy {
 namespace Misc {
 
-MouseFollowObject::MouseFollowObject() 
+MouseFollowObject::MouseFollowObject()
 		: RenderObject(8) {
 	_viewportData = GetEngineData(VIEW);
 }

@@ -250,7 +250,7 @@ void Scene::pushScene(int16 itemID) {
 			// the player will never be able to exit
 			_sceneState.pushedInvScene = _sceneState.currentScene;
 		}
-		
+
 		_sceneState.isInvScenePushed = true;
 		_sceneState.pushedInvItemID = itemID;
 	}
@@ -327,7 +327,7 @@ void Scene::addItemToInventory(int16 id) {
 		if (_flags.heldItem == id) {
 			setHeldItem(-1);
 		}
-		
+
 		g_nancy->_sound->playSound("BUOK");
 
 		_inventoryBox.addItem(id);
@@ -347,7 +347,7 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 		} else if (getHeldItem() == id) {
 			setHeldItem(-1);
 		}
-		
+
 		g_nancy->_sound->playSound("BUOK");
 
 		_inventoryBox.removeItem(id);
@@ -628,7 +628,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint16LE(_sceneState.pushedInvScene.frameID);
 		ser.syncAsUint16LE(_sceneState.pushedInvScene.verticalOffset);
 		ser.syncAsByte(_sceneState.isInvScenePushed);
-		ser.syncAsUint16LE(_sceneState.pushedInvItemID);		
+		ser.syncAsUint16LE(_sceneState.pushedInvItemID);
 	}
 
 	// hardcoded number of logic conditions, check if there can ever be more/less
@@ -1119,7 +1119,7 @@ void Scene::handleInput() {
 	_actionManager.handleInput(input);
 
 	// Menu/help are disabled when a movie is active
-	if (!_activeMovie) {	
+	if (!_activeMovie) {
 		if (_menuButton) {
 			_menuButton->handleInput(input);
 

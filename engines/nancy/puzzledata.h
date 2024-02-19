@@ -141,7 +141,7 @@ struct TableData : public PuzzleData {
 
 	void setSingleValue(uint16 index, int16 value);
 	int16 getSingleValue(uint16 index) const;
-	
+
 	void setComboValue(uint16 index, float value);
 	float getComboValue(uint16 index) const;
 

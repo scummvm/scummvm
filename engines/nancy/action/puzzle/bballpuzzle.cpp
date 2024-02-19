@@ -74,7 +74,7 @@ void BBallPuzzle::init() {
 			NancySceneState.setEventFlag(_playerPositionFlags[i], g_nancy->_false);
 		}
 	}
-	
+
 	// Reset shot type flags
 	for (uint i = 0; i < _badShootFlags.size(); ++i) {
 		NancySceneState.setEventFlag(_badShootFlags[i], g_nancy->_false);
@@ -110,7 +110,7 @@ void BBallPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _angleDest);
 
 	readRectArray(stream, _angleSliderHotspots, 3);
-	
+
 	readRect(stream, _shootButtonSrc);
 	readRect(stream, _minusButtonSrc);
 	readRect(stream, _plusButtonSrc);

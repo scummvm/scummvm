@@ -65,7 +65,7 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 			return true;
 		}
 	}
-	
+
 	CifInfo info;
 	Common::SeekableReadStream *stream = nullptr;
 
@@ -85,7 +85,7 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 		// .cifs/ciftrees were introduced with nancy1. We also don't need to flip endianness, since the BMP decoder should handle that by itself
 		return false;
 	}
-	
+
 	// Check for loose .cif images. This bypasses tree search even with a provided treeName
 	if (!stream) {
 		stream = SearchMan.createReadStreamForMember(name.append(".cif"));
@@ -201,7 +201,7 @@ IFF *ResourceManager::loadIFF(const Common::Path &name) {
 	if (stream) {
 		return new IFF(stream);
 	}
-	
+
 	return nullptr;
 }
 

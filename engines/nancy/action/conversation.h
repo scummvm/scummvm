@@ -103,7 +103,7 @@ protected:
 	// Functions for reading captions are virtual to allow easier support for the terse Conversation variants
 	virtual void readCaptionText(Common::SeekableReadStream &stream);
 	virtual void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response);
-	
+
 	// Used in subclasses
 	void readTerseData(Common::SeekableReadStream &stream);
 	void readTerseCaptionText(Common::SeekableReadStream &stream);
@@ -174,7 +174,7 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "ConversationCel"; }
-	
+
 	struct Cel {
 		Graphics::ManagedSurface surf;
 		Common::Rect src;
@@ -241,7 +241,7 @@ protected:
 class ConversationSoundTerse : public ConversationSound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	
+
 protected:
 	Common::String getRecordTypeName() const override { return "ConversationSoundTerse"; }
 };
@@ -250,7 +250,7 @@ protected:
 class ConversationCelTerse : public ConversationCel {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	
+
 protected:
 	Common::String getRecordTypeName() const override { return "ConversationCelTerse"; }
 };

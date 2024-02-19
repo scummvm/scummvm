@@ -183,7 +183,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new ConversationCelTerse(); // nancy8 and up
 		}
 	case 63:
-		return new ConversationSoundTerse();		
+		return new ConversationSoundTerse();
 	case 65:
 		return new TableIndexOverlay();
 	case 66:
@@ -287,7 +287,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new PlaySound(); // PlayStreamSound
 		} else {
 			return new PlayRandomSoundTerse();
-		}		
+		}
 	case 152:
 		return new PlaySoundFrameAnchor();
 	case 153:

@@ -148,7 +148,7 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 	if (!newRecord) {
 		newRecord = new Unimplemented();
 	}
-	
+
 	newRecord->_description = descBuf;
 	newRecord->_type = ARType;
 	newRecord->_execType = (ActionRecord::ExecutionType)execType;
@@ -168,7 +168,7 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 				newRecord->_description.c_str());
 
 				delete newRecord;
-				
+
 				newRecord = new Unimplemented();
 				newRecord->_description = descBuf;
 				newRecord->_type = ARType;
@@ -256,7 +256,7 @@ void ActionManager::processActionRecords() {
 			if(record->_state == ActionRecord::kBegin) {
 				_activatedRecordsThisFrame.push_back(record);
 			}
-			
+
 			record->execute();
 			_recordsWereExecuted = true;
 		}
@@ -309,7 +309,6 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 					}
 				}
 			}
-			
 		}
 
 		// If all children are satisfied, so is the parent

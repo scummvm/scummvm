@@ -169,7 +169,7 @@ void SetPlayerClock::execute() {
 					finishExecution();
 				}
 			}
-			
+
 		} else {
 			// Cancel button pressed, go to exit scene
 			g_nancy->_sound->stopSound(_buttonSound);

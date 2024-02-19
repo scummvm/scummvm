@@ -39,7 +39,7 @@ static void syncCifInfo(Common::Serializer &ser, CifInfo &info, bool tree) {
 	readRect(ser, info.src, kGameTypeNancy2);
 	readRect(ser, info.dest, kGameTypeNancy2);
 	ser.setVersion(ver);
-	
+
 	ser.syncAsUint16LE(info.width);
 	ser.syncAsUint16LE(info.pitch);
 	ser.syncAsUint16LE(info.height);
@@ -70,7 +70,7 @@ static void syncCiftreeInfo(Common::Serializer &ser, CifInfo &info) {
 		memcpy(name, info.name.toString('/').c_str(), nameSize);
 		name[nameSize] = 0;
 	}
-	
+
 	ser.syncBytes(name, nameSize);
 	name[nameSize] = 0;
 	info.name = (char *)name;
@@ -124,14 +124,14 @@ Common::SeekableReadStream *CifFile::createReadStream() const {
 			success = false;
 		}
 	}
-	
+
 	if (!success) {
 		warning("Failed to read data for CifFile '%s'", _info.name.toString().c_str());
 		delete[] buf;
 		_stream->clearErr();
 		return nullptr;
 	}
-	
+
 	return new Common::MemoryReadStream(buf, _info.size, DisposeAfterUse::YES);
 }
 
@@ -142,7 +142,7 @@ Common::SeekableReadStream *CifFile::createReadStreamRaw() const {
 	if (!_stream->seek(_info.dataOffset) || _stream->read(buf, size) < size) {
 		warning("Failed to read data for CifFile '%s'", _info.name.toString().c_str());
 	}
-	
+
 	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
@@ -234,14 +234,14 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 			success = false;
 		}
 	}
-	
+
 	if (!success) {
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.toString().c_str(), _name.toString().c_str());
 		delete[] buf;
 		_stream->clearErr();
 		return nullptr;
 	}
-	
+
 	return new Common::MemoryReadStream(buf, info.size, DisposeAfterUse::YES);
 }
 
@@ -257,7 +257,7 @@ Common::SeekableReadStream *CifTree::createReadStreamRaw(const Common::Path &pat
 	if (!_stream->seek(info.dataOffset) || _stream->read(buf, size) < size) {
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.toString().c_str(), _name.toString().c_str());
 	}
-	
+
 	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
@@ -306,7 +306,7 @@ bool CifTree::sync(Common::Serializer &ser) {
 	if (g_nancy->getGameType() >= kGameTypeNancy6) {
 		++ver; // nancy6 made changes to the CifTree structure, but didn't bump the file version
 	}
-	
+
 	ser.setVersion(ver);
 
 	uint16 infoBlockCount = _writeFileMap.size();
@@ -325,7 +325,7 @@ bool CifTree::sync(Common::Serializer &ser) {
 			}
 		} else {
 			syncCiftreeInfo(ser, _writeFileMap[i]);
-		}		
+		}
 	}
 
 	return true;
@@ -344,7 +344,7 @@ bool PatchTree::hasFile(const Common::Path &path) const {
 					bool satisfied = true;
 
 					for (uint i = 0; i < confManProps.size(); ++i) {
-						// Check all 
+						// Check all
 						if (ConfMan.get(confManProps[i].first, ConfMan.getActiveDomainName()) != confManProps[i].second) {
 							satisfied = false;
 							break;

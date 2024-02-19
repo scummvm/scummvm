@@ -73,7 +73,7 @@ void TurningPuzzle::updateGraphics() {
 
 				drawObject(i, faceID, _turnFrameID);
 			}
-			
+
 			if ((int)_solveAnimFace >= _numFaces - 1) {
 				_solveAnimFace = 0;
 				++_solveAnimLoop;
@@ -94,7 +94,7 @@ void TurningPuzzle::updateGraphics() {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
 			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
 			++_turnFrameID;
-			
+
 			uint faceID = _currentOrder[_objectCurrentlyTurning];
 			uint frameID = _turnFrameID;
 
@@ -132,7 +132,7 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint numSpindles = stream.readUint16LE();
 	_numFaces = stream.readUint16LE();
 	_numFramesPerTurn = stream.readUint16LE();
-	
+
 	_startPositions.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
 		_startPositions[i] = stream.readUint16LE();
@@ -148,7 +148,7 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	_startPos.y = stream.readSint32LE();
 	_srcIncrement.x = stream.readSint16LE();
 	_srcIncrement.y = stream.readSint16LE();
-	
+
 	_links.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
 		for (uint j = 0; j < 4; ++j) {
@@ -236,7 +236,7 @@ void TurningPuzzle::execute() {
 				NancySceneState.setEventFlag(_solveScene._flag);
 				_solveState = kWaitForSound;
 			}
-			
+
 			return;
 		case kWaitForSound :
 			if (g_nancy->_sound->isSoundPlaying(_solveSound) || g_nancy->_sound->isSoundPlaying(_turnSound)) {
@@ -278,7 +278,7 @@ void TurningPuzzle::handleInput(NancyInput &input) {
 				g_nancy->_sound->playSound(_turnSound);
 				_objectCurrentlyTurning = i;
 			}
-			
+
 			// fixes nancy4 scene 4308
 			input.eatMouseInput();
 
@@ -293,7 +293,7 @@ void TurningPuzzle::drawObject(uint objectID, uint faceID, uint frameID) {
 	Common::Point inc(_srcIncrement.x == 1 ? srcRect.width() : _srcIncrement.x, _srcIncrement.y == -2 ? srcRect.height() : _srcIncrement.y);
 	srcRect.translate(	inc.x * frameID + inc.x * _numFramesPerTurn * faceID,
 						_separateRows ? inc.y * objectID : 0);
-	
+
 	_drawSurface.blitFrom(_image, srcRect, _destRects[objectID]);
 	_needsRedraw = true;
 }

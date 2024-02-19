@@ -75,7 +75,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	if (_isNewPhone) {
 		readRect(stream, _dirHighlightSrc);
 		readRect(stream, _dialHighlightSrc);
-		
+
 		_upDirButtonID = stream.readUint16LE();
 		_downDirButtonID = stream.readUint16LE();
 		_dialButtonID = stream.readUint16LE();
@@ -110,11 +110,11 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	} else {
 		_dialAgainSound.readNormal(stream);
 	}
-	
+
 	stream.read(textBuf, 200);
 	textBuf[199] = '\0';
 	_dialAgainString = textBuf;
-	
+
 	_reloadScene.readData(stream);
 	stream.skip(1);
 	_exitScene.readData(stream);
@@ -144,7 +144,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		} else {
 			readRect(stream, call.displaySrc);
 		}
-		
+
 		call.sceneChange.readData(stream);
 		stream.skip(1);
 	}
@@ -245,7 +245,7 @@ void Telephone::execute() {
 							NancySceneState.getTextbox().clear();
 							NancySceneState.getTextbox().addTextLine(g_nancy->getStaticData().ringingText);
 						}
-						
+
 						g_nancy->_sound->loadSound(_ringSound);
 						g_nancy->_sound->playSound(_ringSound);
 					}
@@ -286,7 +286,7 @@ void Telephone::execute() {
 						// Old phone, go directly to call
 						NancySceneState.getTextbox().clear();
 						NancySceneState.getTextbox().addTextLine(_calls[_selected].text);
-						
+
 						_genericDialogueSound.name = _calls[_selected].soundName;
 						g_nancy->_sound->loadSound(_genericDialogueSound);
 						g_nancy->_sound->playSound(_genericDialogueSound);
@@ -331,7 +331,7 @@ void Telephone::execute() {
 					NancySceneState.getTextbox().clear();
 					NancySceneState.getTextbox().addTextLine(_calls[_selected].text);
 				}
-				
+
 				_genericDialogueSound.name = _calls[_selected].soundName;
 				g_nancy->_sound->loadSound(_genericDialogueSound);
 				g_nancy->_sound->playSound(_genericDialogueSound);
@@ -496,7 +496,7 @@ void Telephone::handleInput(NancyInput &input) {
 
 				if (_calledNumber.size() > 11) {
 					_calledNumber.clear();
-					
+
 					if (_hasDisplay) {
 						_drawSurface.fillRect(_displayDest, _drawSurface.getTransparentColor());
 					} else if (_isNewPhone) {
@@ -550,7 +550,7 @@ void Telephone::handleInput(NancyInput &input) {
 					_displayedDirectory += dirEntryDelta;
 				} while (_displayedDirectory != start);
 			}
-			
+
 			_genericButtonSound.name = _buttonSoundNames[buttonNr];
 			g_nancy->_sound->loadSound(_genericButtonSound);
 			g_nancy->_sound->playSound(_genericButtonSound);

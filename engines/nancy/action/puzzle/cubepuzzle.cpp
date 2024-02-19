@@ -63,7 +63,7 @@ void CubePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRect(stream, _cwCursorDest);
 	readRect(stream, _ccwCursorDest);
-	
+
 	readRect(stream, _placedDest);
 
 	// four pieces on the side, 1 on top
@@ -106,14 +106,14 @@ void CubePuzzle::execute() {
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);
 		g_nancy->_sound->loadSound(_placeDownSound);
-		
+
 		_state = kRun;
 		// fall through
 	case kRun:
 		for (uint i = 0; i < 5; ++i) {
 			if (!_placedPieces[i]) {
 				return;
-			}	
+			}
 		}
 
 		g_nancy->_sound->loadSound(_solveSound);
@@ -184,7 +184,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 			if (_pickedUpPiece == -1 && _placedPieces[i]) {
 				return;
 			}
-			
+
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {

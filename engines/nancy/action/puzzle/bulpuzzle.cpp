@@ -89,7 +89,7 @@ void BulPuzzle::updateGraphics() {
 		} else {
 			_drawSurface.fillRect(_passButtonDest, _drawSurface.getTransparentColor());
 		}
-		
+
 		_changeLight = false;
 		_needsRedraw = true;
 	}
@@ -218,9 +218,9 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRectArray(stream, _diceDestsPlayer, 4);
 	readRectArray(stream, _diceDestsEnemy, 4);
-	
+
 	readRectArray(stream, _cellDests, _numCells, 15);
-	
+
 	readRectArray(stream, _playerBarracksDests, 6);
 	readRectArray(stream, _playerJailDests, 6);
 	readRectArray(stream, _enemyBarracksDests, 6);
@@ -301,7 +301,7 @@ void BulPuzzle::execute() {
 		if (_state == kRun) {
 			break;
 		}
-		
+
 		// fall through
 	case kActionTrigger:
 		SoundDescription &sound = _playerWon ? _solveSound : _loseSound;
@@ -449,7 +449,7 @@ void BulPuzzle::reset(bool capture) {
 			_drawSurface.blitFrom(_image, _enemyJailSrc, _playerJailDests[i - _enemyPieces + 1]);
 		}
 	}
-	
+
 	// Draw disabled pass button
 	_drawSurface.blitFrom(_image, _passButtonDisabledSrc, _passButtonDest);
 

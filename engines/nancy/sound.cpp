@@ -324,7 +324,7 @@ void SoundManager::playSound(uint16 channelID) {
 	// Init 3D sound
 	if (chan.playCommands & ~kPlaySequential && chan.effectData) {
 		uint16 playCommands = chan.playCommands;
-		
+
 		if (playCommands & kPlayRandomPosition) {
 			auto *rand = g_nancy->_randomSource;
 			chan.position.set(
@@ -351,12 +351,12 @@ void SoundManager::playSound(uint16 channelID) {
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinX, chan.effectData->randomMoveMaxX),
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinY, chan.effectData->randomMoveMaxY),
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinZ, chan.effectData->randomMoveMaxZ));
-			
+
 			chan.positionDelta.set(
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinX, chan.effectData->randomMoveMaxX),
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinY, chan.effectData->randomMoveMaxY),
 				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinZ, chan.effectData->randomMoveMaxZ));
-			
+
 			chan.positionDelta -= chan.position;
 			chan.positionDelta /= chan.effectData->numMoveSteps;
 			chan.nextStepTime = g_nancy->getTotalPlayTime() + chan.effectData->moveStepTime;
@@ -502,7 +502,7 @@ byte SoundManager::getVolume(const SoundDescription &description) {
 	if (description.name != "NO SOUND") {
 		return getVolume(description.channelID);
 	}
-	
+
 	return 0;
 }
 
@@ -530,7 +530,7 @@ void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
 uint32 SoundManager::getRate(uint16 channelID) {
 	if (channelID >= _channels.size())
 		return 0;
-	
+
 	return _mixer->getChannelRate(_channels[channelID].handle);
 }
 
@@ -549,7 +549,7 @@ uint32 SoundManager::getRate(const Common::String &chunkName) {
 uint32 SoundManager::getBaseRate(uint16 channelID) {
 	if (channelID >= _channels.size() || !_channels[channelID].stream)
 		return 0;
-	
+
 	return _channels[channelID].stream->getRate();
 }
 
@@ -621,7 +621,7 @@ void SoundManager::recalculateSoundEffects() {
 		quat.transform(rotatedFrontVector);
 
 		_orientation = rotatedFrontVector;
-		
+
 		for (uint i = 0; i < 3; ++i) {
 			if (abs(_orientation.getValue(i)) < Math::epsilon) {
 				_orientation.setValue(i, 0);
@@ -737,7 +737,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 						channelID,
 						chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
-				
+
 				--chan.numLoops;
 				chan.nextRepeatTime = 0;
 			}
@@ -762,7 +762,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 				case kRotateAroundZ:
 					quat = Math::Quaternion::zAxis(360.0 / chan.effectData->numMoveSteps);
 					break;
-				} 
+				}
 
 				quat.transform(chan.position);
 			} else {
@@ -776,7 +776,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 	if (!State::Scene::hasInstance() || (!_shouldRecalculate && !hasStepped && _positionLerp == 0)) {
 		return;
 	}
-	
+
 	uint16 viewportFrameID = NancySceneState.getSceneInfo().frameID;
 
 	// Old panning algorithm, used in The Vampire Diaries
@@ -834,7 +834,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 	if (g_nancy->getGameType() >= 3 && chan.effectData &&
 			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
 
-		// Interpolate position when we've changed scenes				
+		// Interpolate position when we've changed scenes
 		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, NancySceneState.getSceneSummary().listenerPosition, (float)_positionLerp / 10.0);
 		float dist = listenerPos.getDistanceTo(chan.position);
 		float volume;

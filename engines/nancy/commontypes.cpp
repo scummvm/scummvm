@@ -95,7 +95,7 @@ void HotspotDescription::readData(Common::SeekableReadStream &stream) {
 
 void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool longFormat) {
 	frameID = stream.readUint16LE();
-	
+
 	if (longFormat) {
 		// In static mode Overlays, this is the id of the _srcRect to be used
 		staticRectID = stream.readUint16LE();
@@ -178,7 +178,7 @@ void SoundDescription::readNormal(Common::SeekableReadStream &stream) {
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 
 	s.syncAsUint32LE(numLoops);
-	
+
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 
 	s.syncAsUint16LE(volume);
@@ -389,7 +389,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 				numCursorTypes /= (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3);
 				stream.skip(2);
 			}
-			
+
 			logoEndAfter = stream.readUint32LE();
 			if (minorVersion == 1) {
 				wonGameFlagID = stream.readUint16LE();
@@ -409,7 +409,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			soundChannelInfo.readData(stream);
 
 			break;
-		case MKTAG('L', 'A', 'N', 'G') : 
+		case MKTAG('L', 'A', 'N', 'G') :
 			// Order of languages inside game data
 			num = stream.readUint16LE();
 			languageID = -1;

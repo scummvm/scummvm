@@ -61,7 +61,7 @@ protected:
 		Common::Point _gridPos;
 		uint _w = 1;
 		uint _h = 1;
-	
+
 	protected:
 		bool isViewportRelative() const override { return true; }
 	};
@@ -126,7 +126,7 @@ protected:
 
 	uint32 _puzzleStartTime = 0;
 	int _currentTimerGraphic = -1;
-	
+
 	PuzzleType _puzzleType;
 };
 

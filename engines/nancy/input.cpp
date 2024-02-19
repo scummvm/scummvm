@@ -229,7 +229,7 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target)
 	mainKeymap->addAction(act);
 
 	keymaps.push_back(mainKeymap);
-	
+
 	if (gameId == "nancy3" || gameId == "nancy6") {
 		Keymap *mazeKeymap = new Keymap(Keymap::kKeymapTypeGame, _mazeKeymapID, _("Nancy Drew - Maze"));
 

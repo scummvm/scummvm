@@ -898,7 +898,7 @@ bool RaycastDeferredLoader::loadInner() {
 	case kInitDrawSurface : {
 		auto *viewportData = GetEngineData(VIEW);
 		assert(viewportData);
-		
+
 		Common::Rect viewport = viewportData->bounds;
 		_owner.moveTo(viewport);
 		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphics->getInputPixelFormat());
@@ -998,7 +998,7 @@ bool RaycastDeferredLoader::loadInner() {
 			if (_x >= _owner._mapFullWidth) {
 				_x = 0;
 			}
-			
+
 			for (; _x < _owner._mapFullWidth && !shouldBreak; ++_x) {
 				uint32 wallMapVal = _owner._wallMap[_y * _owner._mapFullHeight + _x];
 
@@ -1052,7 +1052,7 @@ bool RaycastDeferredLoader::loadInner() {
 				}
 			}
 
-			_owner.validateMap();			
+			_owner.validateMap();
 			_isDone = true;
 		}
 
@@ -1144,7 +1144,7 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 	if (input.input & NancyInput::kRaycastMap) {
 		_map.setVisible(!_map.isVisible());
 	}
-	
+
 	uint32 time = g_nancy->getTotalPlayTime();
 	uint32 deltaTime = time - _lastMovementTime;
 	_lastMovementTime = time;
@@ -1312,7 +1312,7 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 
 		// Make sure the player doesn't clip diagonally into a wall
 		// Improvement: in the original engine the player just gets stuck when hitting a corner;
-		// instead, we move along smoothly 
+		// instead, we move along smoothly
 		if (cellTopLeft && !cellLeft && !cellTop && (yCell < collisionSize) && (xCell < collisionSize)) {
 			if (yCell > xCell) {
 				newX = (((int32)newX) & 0xFF80) + collisionSize;
@@ -1486,7 +1486,7 @@ void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSu
 					((uint16 *)(*array)[i].getPixels())[offset] = format.RGBToColor(r, g, b);
 				}
 			}
-			
+
 		}
 	}
 }

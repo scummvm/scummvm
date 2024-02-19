@@ -64,7 +64,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		// Parner logos were introduced with nancy4, but at least one nancy3 release
 		// had one as well. For some reason they didn't port over the code from the
 		// later games, but implemented it the same way the other BSUM images work.
-		// Hence, we skip an extra byte indicating the number of partner logos. 
+		// Hence, we skip an extra byte indicating the number of partner logos.
 		s.skip(1);
 	}
 
@@ -408,7 +408,7 @@ SET::SET(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		readRect(*chunkStream, _doneButtonHighlightSrc);
 	}
-	
+
 	readRectArray(*chunkStream, _scrollbarSrcs, 3);
 
 	_scrollbarsCenterYPos.resize(3);
@@ -514,7 +514,7 @@ LOAD_v2::LOAD_v2(Common::SeekableReadStream *chunkStream) :
 	_highlightFontID = chunkStream->readSint16LE();
 	_fontXOffset = chunkStream->readSint16LE();
 	_fontYOffset = chunkStream->readSint16LE();
-	
+
 	chunkStream->skip(16); // src rect for dash in font
 	_blinkingTimeDelay = chunkStream->readUint16LE();
 

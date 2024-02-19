@@ -195,7 +195,7 @@ void SafeDialPuzzle::execute() {
 		g_nancy->_sound->stopSound(_resetSound);
 
 		finishExecution();
-		
+
 		break;
 	}
 }
@@ -264,7 +264,7 @@ void SafeDialPuzzle::handleInput(NancyInput &input) {
 	if (g_nancy->_sound->isSoundPlaying(_selectSound) || _animState == kReset || _animState == kResetAnim || _nextAnim > g_nancy->getTotalPlayTime()) {
 		return;
 	}
-	
+
 	if (NancySceneState.getViewport().convertViewportToScreen(_arrowDest).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
@@ -292,7 +292,7 @@ void SafeDialPuzzle::handleInput(NancyInput &input) {
 		}
 
 		return;
-	}	
+	}
 }
 
 void SafeDialPuzzle::drawDialFrame(uint frame) {

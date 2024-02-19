@@ -43,7 +43,7 @@ class MouseFollowObject : public RenderObject {
 public:
 	MouseFollowObject();
 	virtual ~MouseFollowObject() {}
-	
+
 	virtual void pickUp() { _isPickedUp = true; }
 	virtual void putDown() { _isPickedUp = false; }
 
@@ -56,7 +56,7 @@ protected:
 	bool _isPickedUp = false;
 	byte _rotation = 0;
 
-	const VIEW *_viewportData = nullptr; 
+	const VIEW *_viewportData = nullptr;
 };
 
 } // End of namespace Misc

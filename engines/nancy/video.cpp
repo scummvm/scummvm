@@ -328,7 +328,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 			if (info.type != 0) {
 				delete[] decompBuf;
 			}
-			
+
 			return nullptr;
 		}
 	} else {
@@ -339,7 +339,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	if (info.type != 0) {
 		if (info.type == 2 && frameNr != 0) {
 			// Type 2 frames are incomplete, and only contain the pixels
-			// that are different from the last valid frame. Thus, we need 
+			// that are different from the last valid frame. Thus, we need
 			// to decode the previous frame and copy its contents to the new one's
 			const Graphics::Surface *refFrame = decodeFrame(frameNr - 1);
 			if (refFrame) {

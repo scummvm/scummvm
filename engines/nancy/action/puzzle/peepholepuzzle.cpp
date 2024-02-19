@@ -93,7 +93,7 @@ void PeepholePuzzle::execute() {
 	case kRun:
 		break;
 	case kActionTrigger:
-		
+
 		finishExecution();
 	}
 }
@@ -270,7 +270,7 @@ void PeepholePuzzle::checkButtons() {
 		if (!_buttonDisabledSrcs[0].isEmpty()) {
 			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[0], _buttonDests[0]);
 		}
-		
+
 		if (!_buttonDisabledSrcs[1].isEmpty()) {
 			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[1], _buttonDests[1]);
 		}
@@ -278,7 +278,7 @@ void PeepholePuzzle::checkButtons() {
 
 	if (_innerBounds.width() <= _dest.width()) {
 		_disabledButtons[2] = _disabledButtons[3] = true;
-		
+
 		if (!_buttonDisabledSrcs[2].isEmpty()) {
 			_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[2], _buttonDests[2]);
 		}

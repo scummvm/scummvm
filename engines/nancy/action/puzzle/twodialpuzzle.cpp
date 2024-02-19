@@ -99,7 +99,7 @@ void TwoDialPuzzle::execute() {
 		if (g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) || g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
 			return;
 		}
-		
+
 		if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
 			_state = kActionTrigger;
 			_isSolved = true;
@@ -156,7 +156,7 @@ void TwoDialPuzzle::handleInput(NancyInput &input) {
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 				_currentPositions[i] += _isClockwise[i] ? -1 : 1;
-				
+
 				if (_currentPositions[i] < 0) {
 					_currentPositions[i] = _srcs[i].size() - 1;
 				} else if ((uint)_currentPositions[i] >= _srcs[i].size()) {

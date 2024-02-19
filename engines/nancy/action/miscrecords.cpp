@@ -92,7 +92,7 @@ void SpecialEffect::execute() {
 	} else {
 		NancySceneState.specialEffect(_type, _totalTime, _fadeToBlackTime, _rect);
 	}
-	
+
 	_isDone = true;
 }
 
@@ -107,11 +107,11 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	if (size > 10000) {
 		error("Action Record atTextboxWrite has too many text box chars: %d", size);
 	}
-	
+
 	if (size == -1) {
 		Common::String stringID;
 		readFilename(stream, stringID);
-		
+
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 

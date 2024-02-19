@@ -82,7 +82,7 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
-	
+
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
 
 	HotspotDescription _hotspotDesc;

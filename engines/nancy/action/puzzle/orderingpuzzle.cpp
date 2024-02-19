@@ -507,7 +507,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 						// Later games added an array of sound names
 						_pushDownSound.name = _pianoSoundNames[i];
 					}
-					
+
 					g_nancy->_sound->loadSound(_pushDownSound);
 				}
 

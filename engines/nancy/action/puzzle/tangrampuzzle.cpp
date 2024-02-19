@@ -192,7 +192,7 @@ void TangramPuzzle::execute() {
 		g_nancy->_sound->stopSound(_rotateSound);
 
 		finishExecution();
-		
+
 		break;
 	}
 }
@@ -253,7 +253,7 @@ void TangramPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_putDownSound);
 			return;
 		}
-		
+
 		tileHolding.handleInput(input);
 		bool rotated = false;
 
@@ -315,7 +315,7 @@ void TangramPuzzle::pickUpTile(uint id) {
 void TangramPuzzle::putDownTile(uint id) {
 	Tile &tile = _tiles[id];
 	_pickedUpTile = -1;
-	
+
 	drawToBuffer(tile);
 	tile.putDown();
 
@@ -330,7 +330,7 @@ void TangramPuzzle::rotateTile(uint id) {
 	assert(id < _tiles.size() && id != 0);
 
 	Tile &tileToRotate = _tiles[id];
-	
+
 	if (tileToRotate._rotation == 3) {
 		tileToRotate._rotation = 0;
 	} else {
@@ -346,7 +346,7 @@ void TangramPuzzle::rotateTile(uint id) {
 	} else {
 		tileToRotate.setHighlighted(false);
 	}
-	
+
 	Common::Rect newPos = tileToRotate._drawSurface.getBounds();
 	newPos.moveTo(oldPos.left + oldPos.width() / 2 - newPos.width() / 2, oldPos.top + oldPos.height() / 2 - newPos.height() / 2);
 	tileToRotate.moveTo(newPos);
@@ -370,7 +370,7 @@ void TangramPuzzle::moveToTop(uint id) {
 			tile.registerGraphics();
 		}
 	}
-	
+
 	_tiles[id].setZ(_z + _tiles.size());
 	_tiles[id].registerGraphics();
 }

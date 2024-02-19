@@ -64,7 +64,7 @@ void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 		frame.triggerOnNoHotspot = ivFile->readByte();
 		frame.noHSFlagID = ivFile->readSint16LE();
 		frame.noHSCursorID = ivFile->readSint16LE();
-		
+
 		frame.hotspots.resize(numHotspots);
 		for (uint j = 0; j < numHotspots; ++j) {
 			ivFile->skip(4);

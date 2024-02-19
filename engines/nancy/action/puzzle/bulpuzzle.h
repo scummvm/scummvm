@@ -60,12 +60,12 @@ protected:
 
 	Common::Array<Common::Rect> _diceDestsPlayer;
 	Common::Array<Common::Rect> _diceDestsEnemy;
-	
+
 	Common::Array<Common::Rect> _cellDests;
-	
+
 	Common::Array<Common::Rect> _playerBarracksDests;
 	Common::Array<Common::Rect> _playerJailDests;
-	
+
 	Common::Array<Common::Rect> _enemyBarracksDests;
 	Common::Array<Common::Rect> _enemyJailDests;
 

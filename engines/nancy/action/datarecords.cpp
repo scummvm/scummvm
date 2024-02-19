@@ -79,7 +79,7 @@ void TableIndexSetValueHS::execute() {
 			if (playerTable->singleValues[_tableIndex - 1] == 0) {
 				playerTable->singleValues[_tableIndex - 1] = playerTable->singleValues.size();
 			}
-			
+
 			break;
 		}
 
@@ -149,7 +149,7 @@ void SetValue::execute() {
 
 void SetValueCombo::readData(Common::SeekableReadStream &stream) {
 	_valueIndex = stream.readByte();
-	
+
 	_indices.resize(10);
 	_percentages.resize(10);
 	for (uint i = 0; i < 10; ++i) {

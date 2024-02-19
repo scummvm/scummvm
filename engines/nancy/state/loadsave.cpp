@@ -229,7 +229,7 @@ void LoadSaveMenu::init() {
 	_cancelButton = new UI::Button(3, _background._drawSurface,
 		_loadSaveData->_cancelButtonDownSrc, Common::Rect(),
 		_loadSaveData->_cancelButtonHighlightSrc, _loadSaveData->_cancelButtonDisabledSrc);
-	
+
 	// Load the blinking cursor graphic that appears while typing a filename
 	_blinkingCursorOverlay._drawSurface.create(_loadSaveData->_blinkingCursorSrc.width(),
 		_loadSaveData->_blinkingCursorSrc.height(),
@@ -245,7 +245,7 @@ void LoadSaveMenu::init() {
 		g_nancy->_resource->loadImage(_loadSaveData->_gameSavedPopup, _successOverlay._drawSurface);
 		Common::Rect destBounds = Common::Rect(0,0, _successOverlay._drawSurface.w, _successOverlay._drawSurface.h);
 		destBounds.moveTo(640 / 2 - destBounds.width() / 2,
-			480 / 2 - destBounds.height() / 2);		
+			480 / 2 - destBounds.height() / 2);
 		_successOverlay.moveTo(destBounds);
 		_successOverlay.setVisible(false);
 	}
@@ -282,7 +282,7 @@ void LoadSaveMenu::run() {
 		_exitButton->setDisabled(false);
 		_enteredString.clear();
 		_successOverlay.setVisible(false);
-		
+
 		_selectedSave = -1;
 		_enteringNewState = false;
 	}
@@ -305,7 +305,7 @@ void LoadSaveMenu::run() {
 				g_nancy->_sound->playSound("BUDE");
 				_enteringNewState = true;
 			}
-			
+
 			return;
 		}
 	}
@@ -325,7 +325,7 @@ void LoadSaveMenu::run() {
 				g_nancy->_sound->playSound("BUDE");
 				_enteringNewState = true;
 			}
-			
+
 			return;
 		}
 	}
@@ -441,7 +441,7 @@ void LoadSaveMenu::enterFilename() {
 		_blinkingCursorOverlay.moveTo(Common::Point(tbPosition.left + textWidthInPixels,
 			tbPosition.bottom - _blinkingCursorOverlay._drawSurface.h + _loadSaveData->_fontYOffset));
 	}
-	
+
 	_cancelButton->handleInput(input);
 	if (_cancelButton->_isClicked) {
 		_state = kRun;
@@ -497,7 +497,7 @@ void LoadSaveMenu::save() {
 			}
 		}
 	}
-	
+
 	// Improvement: not providing a name doesn't result in the
 	// savefile being named "--- Empty ---" or "Nothing Saved Here".
 	// Instead, we use ScummVM's built-in save name generator
@@ -524,7 +524,7 @@ void LoadSaveMenu::save() {
 						}
 					}
 				}
-				
+
 				finalDesc = _loadSaveData->_defaultSaveNamePrefix + ('0' + suffixNum);
 			} else {
 				finalDesc = _filenameStrings[_selectedSave];

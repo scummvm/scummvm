@@ -110,7 +110,7 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 		_onTrue.readData(stream, true);
 		_onFalse.readData(stream, true);
 	}
-	
+
 	_condType = stream.readByte();
 	_conditionID = stream.readUint16LE();
 	_conditionPayload = stream.readByte();
@@ -182,7 +182,7 @@ void HotMultiframeMultisceneCursorTypeSceneChange::readData(Common::SeekableRead
 
 	stream.skip(2);
 	_defaultScene.readData(stream);
-	
+
 	uint16 numHotspots = stream.readUint16LE();
 	_hotspots.resize(numHotspots);
 	for (uint i = 0; i < numHotspots; ++i) {

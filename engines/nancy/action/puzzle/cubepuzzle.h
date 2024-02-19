@@ -74,7 +74,7 @@ protected:
 	uint16 _startRotation = 0;
 
 	SoundDescription _rotateSound;
-	SoundDescription _pickUpSound;	
+	SoundDescription _pickUpSound;
 	SoundDescription _placeDownSound;
 
 	// Multiple solve scenes, one for each cube orientation

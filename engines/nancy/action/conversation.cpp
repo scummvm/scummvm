@@ -244,7 +244,7 @@ void ConversationSound::execute() {
 			// This fixes TVD scene 750
 			break;
 		}
-		
+
 		// However, nancy6 scene 1299 requires us to fall through in order to get the correct caption.
 		// By that point Conversation scenes weren't the tangled mess they were in earlier games,
 		// so hopefully this won't break anything
@@ -457,7 +457,7 @@ void ConversationSound::addConditionalDialogue() {
 
 				newResponse.text = convo->texts[res.soundID];
 			}
-			
+
 			newResponse.sceneChange.sceneID = res.sceneID;
 			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
 			newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
@@ -799,7 +799,7 @@ void ConversationCel::updateGraphics() {
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	Common::String xsheetName;
 	readFilename(stream, xsheetName);
-	
+
 	readFilenameArray(stream, _treeNames, 4);
 	readXSheet(stream, xsheetName);
 

@@ -42,7 +42,7 @@ public:
 		_type(type),
 		_fadeToBlackTime(fadeToBlackTime),
 		_frameTime(frameTime) {}
-	
+
 	SpecialEffect(byte type, uint32 totalTime, uint16 fadeToBlackTime, Common::Rect rect) :
 		RenderObject(16),
 		_type(type),

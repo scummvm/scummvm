@@ -60,7 +60,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	// The only frame cursors used are the first two: the classic arrow cursor, and its hotspot variant, which is slightly shorter
 	// The same applies to the menu cursors; however, we completely ignore those (technically the arrow cursor has sliiiiightly
 	// different shading from the one in the frame array, but I don't care enough to implement it).
-	
+
 	// Following those are the ITEM arrays; these cursors are used to indicate that the player is holding an item.
 	// Their number is the same as the number of items described in INV, and their size is also _numCursorTypes.
 	// Out of those arrays, the only cursors that get used are the kNormal and kHotspot ones. The first few games also
@@ -138,7 +138,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = kInvertedRotateLeft;
 			return;
 		}
-		
+
 		// fall through
 	case kRotateLeft:
 		// Only valid for nancy6 and up

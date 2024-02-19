@@ -81,11 +81,11 @@ public:
 		// Default values set to match those applied when loading from a TSUM chunk
 		Common::String description;
 		Common::Path videoFile;
-		
+
 		uint16 videoFormat = kLargeVideoFormat;
 		Common::Array<Common::Path> palettes;
 		SoundDescription sound;
-		
+
 		byte panningType = kPan360;
 		uint16 numberOfVideoFrames = 0;
 		uint16 degreesPerRotation = 18;
@@ -96,7 +96,7 @@ public:
 		uint16 verticalEdgeSize = 15;
 		Time slowMoveTimeDelta = 400;
 		Time fastMoveTimeDelta = 66;
-		
+
 		// Sound start vectors, used in nancy3 and up
 		Math::Vector3d listenerPosition;
 
@@ -120,7 +120,7 @@ public:
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);
 	void popScene(bool inventory = false);
-	
+
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }

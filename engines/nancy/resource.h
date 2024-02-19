@@ -44,7 +44,7 @@ public:
 	// Ciftree images may have additional data dictating how they need to be blitted on screen (see ConversationCel).
 	// This is accessed via the outSrc/outDest parameters.
 	bool loadImage(const Common::Path &name, Graphics::ManagedSurface &surf, const Common::String &treeName = Common::String(), Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
-	
+
 	// Loads a single IFF file. These can either be inside standalone .cif files, or embedded inside a ciftree
 	IFF *loadIFF(const Common::Path &name);
 

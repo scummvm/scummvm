@@ -102,7 +102,7 @@ void MainMenu::init() {
 			_menuData->_buttonDownSrcs[i], _menuData->_buttonDests[i],
 			_menuData->_buttonHighlightSrcs.size() ? _menuData->_buttonHighlightSrcs[i] : Common::Rect(),
 			_menuData->_buttonDisabledSrcs.size() ? _menuData->_buttonDisabledSrcs[i] : Common::Rect()));
-		
+
 		_buttons.back()->init();
 		_buttons.back()->setVisible(false);
 	}
@@ -223,7 +223,7 @@ void MainMenu::stop() {
 				case 1 :
 					// "No" quits the game
 					g_nancy->quitGame();
-					
+
 					// fall through
 				case 2 :
 					// "Cancel" keeps us in the main menu
@@ -250,7 +250,7 @@ void MainMenu::stop() {
 			_state = kRun;
 			break;
 		}
-		
+
 		break;
 	case 7:
 		// Help

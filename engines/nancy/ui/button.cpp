@@ -49,7 +49,7 @@ void Button::handleInput(NancyInput &input) {
 	if (_isDisabled && !_disabledSrc.isEmpty()) {
 		return;
 	}
-	
+
 	if (_screenPosition.contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 

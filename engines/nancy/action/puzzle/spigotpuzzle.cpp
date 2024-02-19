@@ -108,7 +108,7 @@ void SpigotPuzzle::updateGraphics() {
 			g_nancy->_sound->playSound(_letterSound);
 			_drawSurface.blitFrom(_image, _letterSrcs[_animatingLetterID][_currentAnimOrder[_animatingLetterID]], _letterDests[_animatingLetterID]);
 			_needsRedraw = true;
-			
+
 			--_frameID;
 		} else {
 			// Clear the number
@@ -205,7 +205,7 @@ void SpigotPuzzle::execute() {
 		g_nancy->_sound->loadSound(_buttonSound);
 		g_nancy->_sound->loadSound(_letterSound);
 		g_nancy->_sound->loadSound(_spigotSound);
-		
+
 		_currentOrder = _startOrder;
 		_currentAnimOrder.resize(_currentOrder.size());
 		for (uint i = 0; i < _currentAnimOrder.size(); ++i) {

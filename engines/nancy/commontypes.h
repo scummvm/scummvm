@@ -313,7 +313,7 @@ struct SoundChannelInfo {
 	Common::Array<byte> speechChannels;
 	Common::Array<byte> musicChannels;
 	Common::Array<byte> sfxChannels;
-	
+
 	void readData(Common::SeekableReadStream &stream);
 };
 

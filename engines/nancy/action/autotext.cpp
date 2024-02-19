@@ -126,7 +126,7 @@ void Autotext::execute() {
 					_hotspotScenes.insert_at(0, entry.sceneID);
 				}
 			}
-			
+
 			if (!_textKey.empty() && stringID == _textKey) {
 				foundThisKey = true;
 			}

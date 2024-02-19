@@ -314,7 +314,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 							_pickedUpPiece._drawSurface.clear(g_nancy->_graphics->getTransColor());
 							_pickedUpPiece._drawSurface.blitFrom(_drawSurface, _destRects[i], Common::Point());
 						}
-						
+
 						_pickedUpPiece.setVisible(true);
 						_pickedUpPiece.setTransparent(true);
 						_pickedUpPiece.pickUp();
@@ -355,7 +355,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 								_pickedUpPiece._drawSurface.clear(g_nancy->_graphics->getTransColor());
 								_pickedUpPiece._drawSurface.blitFrom(_drawSurface, _destRects[i], Common::Point());
 							}
-							
+
 							_pickedUpPiece.setVisible(true);
 							_pickedUpPiece.setTransparent(true);
 						}

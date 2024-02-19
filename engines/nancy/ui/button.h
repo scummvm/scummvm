@@ -47,7 +47,7 @@ public:
 	Common::Rect _clickSrc;
 	Common::Rect _hoverSrc;
 	Common::Rect _disabledSrc;
-	
+
 	bool _isClicked;
 	bool _isDisabled;
 };

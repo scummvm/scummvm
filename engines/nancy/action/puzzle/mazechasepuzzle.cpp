@@ -126,7 +126,7 @@ void MazeChasePuzzle::updateGraphics() {
 					enemyMovement(_currentAnimFrame);
 				}
 			}
-			
+
 			if (_currentAnimFrame == 1) {
 				// Clear the buttons
 				Common::Rect fill = _upButtonDest;
@@ -138,14 +138,14 @@ void MazeChasePuzzle::updateGraphics() {
 				_needsRedraw = true;
 			} else if (_currentAnimFrame >= _framesPerMove + 1) {
 				_currentAnimFrame = -1;
-			}		
+			}
 		}
 	}
 }
 
 void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
-	
+
 	uint width = stream.readUint16LE();
 	uint height = stream.readUint16LE();
 	uint numEnemies = stream.readUint16LE();
@@ -358,7 +358,7 @@ void MazeChasePuzzle::handleInput(NancyInput &input) {
 
 	buttonHotspot = _resetButtonDest;
 	buttonHotspot.grow(-10);
-	
+
 	if (NancySceneState.getViewport().convertViewportToScreen(buttonHotspot).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
@@ -378,7 +378,7 @@ Common::Rect MazeChasePuzzle::getScreenPosition(Common::Point gridPos) {
 	Common::Rect dest = _playerSrc;
 
 	dest.moveTo(0, 0);
-	 
+
 	dest.right -= 1;
 	dest.bottom -= 1;
 
@@ -507,7 +507,7 @@ bool MazeChasePuzzle::canMove(uint pieceID, WallType direction) {
 				}
 			}
 		}
-		
+
 		return true;
 	case kWallUp :
 		if (	piece._gridPos.y == 0 ||

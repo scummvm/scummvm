@@ -62,7 +62,7 @@ protected:
 		byte _id;
 		byte _rotation;
 		bool _isHighlighted;
-	
+
 	protected:
 		bool isViewportRelative() const override { return true; }
 	};

@@ -47,7 +47,7 @@ class PlaySound : public ActionRecord {
 public:
 	PlaySound() {}
 	~PlaySound() { delete _soundEffect; }
-	
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
@@ -165,7 +165,7 @@ public:
 	uint _selectedSound = 0;
 
 protected:
-	Common::String getRecordTypeName() const override { return "PlayRandomSoundTerse"; }	
+	Common::String getRecordTypeName() const override { return "PlayRandomSoundTerse"; }
 };
 
 // Same as PlaySound, except it discards the filename provided in the data.

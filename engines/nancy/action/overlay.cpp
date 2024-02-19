@@ -41,7 +41,7 @@ void Overlay::init() {
 	if (_imageName.baseName().hasPrefix("USE_")) {
 		_usesAutotext = true;
 	}
-	
+
 	g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
 	_currentFrame = _firstFrame;
@@ -347,7 +347,7 @@ void Overlay::execute() {
 		if (_hasSceneChange == kPlayOverlaySceneChange) {
 			NancySceneState.changeScene(_sceneChange);
 		}
-		
+
 		finishExecution();
 
 		break;
@@ -429,7 +429,7 @@ void TableIndexOverlay::execute() {
 		_lastIndexVal = playerTable->singleValues[_tableIndex - 1];
 		_srcRects.clear();
 		_srcRects.push_back(tabl->srcRects[_lastIndexVal - 1]);
-		_currentViewportFrame = -1; // Force redraw 
+		_currentViewportFrame = -1; // Force redraw
 	}
 
 	if (_state != kBegin) {

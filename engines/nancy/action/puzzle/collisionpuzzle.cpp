@@ -197,7 +197,7 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		_tileMoveExitPos.x = stream.readUint16LE();
 		_tileMoveExitSize = stream.readUint16LE();
 		numPieces = 6;
-	}	
+	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
 	for (uint y = 0; y < height; ++y) {
@@ -211,14 +211,14 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (_puzzleType == kCollision) {
 		_startLocations.resize(numPieces);
 		for (uint i = 0; i < numPieces; ++i) {
-			_startLocations[i].x = stream.readUint16LE(); 
+			_startLocations[i].x = stream.readUint16LE();
 			_startLocations[i].y = stream.readUint16LE();
 		}
 		stream.skip((5 - numPieces) * 4);
 
 		readRectArray(stream, _pieceSrcs, numPieces, 5);
 		readRectArray(stream, _homeSrcs, numPieces, 5);
-		
+
 		readRect(stream, _verticalWallSrc);
 		readRect(stream, _horizontalWallSrc);
 		readRect(stream, _blockSrc);
@@ -250,7 +250,7 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 		stream.skip((10 - numTimerGraphics) * 2);
 		readRect(stream, _timerDest);
-	}	
+	}
 
 	_moveSound.readNormal(stream);
 	if (_puzzleType == kCollision) {
@@ -321,7 +321,7 @@ void CollisionPuzzle::execute() {
 				if (g_nancy->getTotalPlayTime() < _solveSoundPlayTime) {
 					return;
 				}
-				
+
 				g_nancy->_sound->loadSound(_solveSound);
 				g_nancy->_sound->playSound(_solveSound);
 				NancySceneState.setEventFlag(_solveScene._flag);
@@ -333,7 +333,7 @@ void CollisionPuzzle::execute() {
 				}
 
 				NancySceneState.changeScene(_solveScene._sceneChange);
-			}			
+			}
 		} else {
 			if (g_nancy->_sound->isSoundPlaying(_exitButtonSound)) {
 				return;
@@ -438,7 +438,7 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 				} else {
 					newPos.y = i;
 				}
-				
+
 				break;
 			} else if (evalVal == preStopWallType || evalVal == kBlock) {
 				break;
@@ -471,7 +471,7 @@ Common::Rect CollisionPuzzle::getScreenPosition(Common::Point gridPos) {
 	Common::Rect dest = _pieceSrcs[0];
 
 	dest.moveTo(0, 0);
-	 
+
 	dest.right -= 1;
 	dest.bottom -= 1;
 

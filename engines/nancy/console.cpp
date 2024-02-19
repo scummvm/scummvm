@@ -699,7 +699,7 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 			} else {
 				vals.push_back(insertVal + 0x32);
 			}
-			
+
 		} else {
 			debugPrintf("Invalid input: %s\n", argv[i]);
 			return true;
@@ -879,7 +879,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
-	
+
 	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
@@ -1010,7 +1010,7 @@ bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 	Common::Array<byte> channelIDs;
 	if (argc == 1) {
 		debugPrintf("Currently playing sounds:\n\n");
-		
+
 		for (uint i = 0; i < g_nancy->getStaticData().soundChannelInfo.numChannels; ++i) {
 			channelIDs.push_back(i);
 		}
@@ -1027,7 +1027,7 @@ bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 			debugPrintf("Channel %u, filename %s\n", channelID, chan.name.c_str());
 			debugPrintf("Source rate %i, playing at %i\n", chan.stream->getRate(), g_nancy->_sound->_mixer->getChannelRate(chan.handle));
 			debugPrintf("Volume: %u, pan: %i, numLoops: %u\n\n", chan.volume, g_nancy->_sound->_mixer->getChannelBalance(chan.handle), chan.numLoops);
-			
+
 			if (chan.playCommands != SoundManager::kPlaySequential) {
 				debugPrintf("\tPlay commands 0x%08x\n", chan.playCommands);
 

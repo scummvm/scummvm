@@ -73,7 +73,7 @@ protected:
 	Common::Array<Piece> _pieces;
 
 	SoundDescription _rotateSound;
-	SoundDescription _pickUpSound;	
+	SoundDescription _pickUpSound;
 	SoundDescription _placeDownSound;
 
 	bool _allowWrongPieceHotspot = false;
@@ -94,7 +94,7 @@ protected:
 	int _curRotation = 0;
 	uint _layersAssembled = 0;
 	bool _completed = false;
-	
+
 	AssemblyPuzzleData *_puzzleState = nullptr;
 };
 

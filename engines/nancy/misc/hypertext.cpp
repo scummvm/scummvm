@@ -101,7 +101,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					if (curToken.size() != 1) {
 						break;
 					}
-					
+
 					continue;
 				case 'e' :
 					// End conversation. Originally used for quickly ending dialogue when debugging, but
@@ -165,7 +165,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					if (curToken.size() != 2) {
 						break;
 					}
-					
+
 					metaInfo.push({MetaInfo::kColor, numNonSpaceChars, (byte)(curToken[1] - '0')});
 					continue;
 				case 'f' :
@@ -209,7 +209,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 			currentLine += curToken;
 		}
-		
+
 		font = g_nancy->_graphics->getFont(curFontID);
 		highlightFont = g_nancy->_graphics->getFont(highlightFontID);
 		assert(font && highlightFont);
@@ -310,7 +310,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						Common::Rect markSrc = mark->_markSrcs[change.index];
 						Common::Rect markDest = markSrc;
 						markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
-							lineNumber == 0 ? 
+							lineNumber == 0 ?
 								textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
 								textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset - 4);
 
@@ -385,7 +385,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						++totalCharsDrawn;
 					}
 				}
-				
+
 				// Add to the width/height of the hotspot
 				if (hasHotspot) {
 					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(stringToDraw)));
@@ -451,7 +451,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		_drawnTextHeight += font->getFontHeight();
 	}
 
-	// Add a line's height at end of text to replicate original behavior 
+	// Add a line's height at end of text to replicate original behavior
 	if (font) {
 		_drawnTextHeight += font->getFontHeight();
 	}

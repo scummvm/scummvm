@@ -124,7 +124,7 @@ void AssemblyPuzzle::execute() {
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);
 		g_nancy->_sound->loadSound(_placeDownSound);
-		
+
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -151,7 +151,7 @@ void AssemblyPuzzle::execute() {
 			NancySceneState.changeScene(_solveScene._sceneChange);
 		} else {
 			_exitScene.execute();
-		}		
+		}
 
 		break;
 	}
@@ -161,7 +161,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 	if (_state == kActionTrigger && _completed && g_nancy->_sound->isSoundPlaying(_solveSound)) {
 		return;
 	}
-	
+
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
@@ -224,7 +224,7 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 							piece.registerGraphics();
 						}
 					}
-					
+
 					_pieces[i].setZ(_z + _pieces.size() * 2);
 					_pieces[i].registerGraphics();
 				} else {
@@ -316,7 +316,7 @@ void AssemblyPuzzle::rotateBase(bool ccw) {
 			} else if (piece.curRotation == 1 || piece.curRotation == 3) {
 				base = 1;
 			}
-			
+
 			piece.setZ(_z + base + 4 * (piece.layer - 1));
 			piece.registerGraphics();
 

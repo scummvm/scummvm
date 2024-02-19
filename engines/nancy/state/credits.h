@@ -52,7 +52,7 @@ protected:
 	void drawTextSurface(uint id);
 
 	const CRED *_creditsData;
-	
+
 	State _state;
 	UI::FullScreenImage _background;
 	RenderObject _textSurface;

@@ -338,7 +338,7 @@ void HamRadioPuzzle::execute() {
 					NancySceneState.getTextbox().addTextLine(_curCharString);
 					NancySceneState.getTextbox().drawTextbox();
 				}
-				
+
 				if (_isOnCorrectFrequency) {
 					// When transmitting on right frequency, check password/code word
 					if (!_solvedPassword) {
@@ -459,7 +459,7 @@ void HamRadioPuzzle::handleInput(NancyInput &input) {
 					g_nancy->_sound->playSound(soundToPlay->sound);
 				}
 			}
-			
+
 			break;
 		}
 	}

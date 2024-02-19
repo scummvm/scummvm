@@ -39,7 +39,7 @@ void SpecialEffect::init() {
 		// We use the type definitions in nancy7, which are 1-indexed
 		++_type;
 	}
-	
+
 	// nancy7 got rid of the SPEC chunk, and the data now contains the total amount of time
 	// that the effect should run for instead.
 	if (_rect.isEmpty()) {
@@ -49,7 +49,7 @@ void SpecialEffect::init() {
 		} else {
 			const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
 			assert(viewportData);
-			
+
 			_rect = viewportData->screenPosition;
 		}
 	}
