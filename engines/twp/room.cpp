@@ -100,7 +100,7 @@ static Walkbox toWalkbox(const ClipperLib::Path &path) {
 	Common::Array<Vector2i> pts;
 	for (size_t i = 0; i < path.size(); i++) {
 		const ClipperLib::IntPoint &pt = path[i];
-		pts.push_back(Vector2i{pt.X, pt.Y});
+		pts.push_back(Vector2i(static_cast<int>(pt.X), static_cast<int>(pt.Y)));
 	}
 	return Walkbox(pts, ClipperLib::Orientation(path));
 }

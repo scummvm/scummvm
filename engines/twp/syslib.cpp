@@ -176,7 +176,7 @@ static void threadTime(Common::SharedPtr<ThreadBase> tb, void *data) {
 static SQInteger breakhere(HSQUIRRELVM v) {
 	SQObjectType t = sq_gettype(v, 2);
 	if (t == OT_INTEGER) {
-		int numFrames;
+		SQInteger numFrames;
 		if (SQ_FAILED(sqget(v, 2, numFrames)))
 			return sq_throwerror(v, "failed to get numFrames");
 		return breakfunc(v, threadFrames, &numFrames);
@@ -324,15 +324,15 @@ static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
 //     // Continue executing other code
 // }
 static SQInteger breakwhilerunning(HSQUIRRELVM v) {
-	int id = 0;
+	SQInteger id = 0;
 	if (sq_gettype(v, 2) == OT_INTEGER)
 		sqget(v, 2, id);
-	debugC(kDebugSysScript, "breakwhilerunning: %d", id);
+	debugC(kDebugSysScript, "breakwhilerunning: %lld", id);
 
 	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (!t) {
 		if (!isSound(id)) {
-			warning("thread and sound not found: %d", id);
+			warning("thread and sound not found: %lld", id);
 			return 0;
 		}
 		return breakwhilecond(
@@ -446,7 +446,7 @@ private:
 // Breaks until specified sound has finished playing.
 // Once sound finishes, the method will continue running.
 static SQInteger breakwhilesound(HSQUIRRELVM v) {
-	int soundId = 0;
+	SQInteger soundId = 0;
 	if (SQ_FAILED(sqget(v, 2, soundId)))
 		return sq_throwerror(v, "failed to get sound");
 	return breakwhilecond(v, SoundPlaying(soundId), "breakwhilesound(%d)", soundId);
@@ -504,12 +504,12 @@ static SQInteger dumpvar(HSQUIRRELVM v) {
 }
 
 static SQInteger exCommand(HSQUIRRELVM v) {
-	int cmd;
+	SQInteger cmd;
 	if (SQ_FAILED(sqget(v, 2, cmd)))
 		return sq_throwerror(v, "Failed to get command");
 	switch (cmd) {
 	case EX_AUTOSAVE_STATE: {
-		int enabled;
+		SQInteger enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
 		g_twp->_saveGameManager._autoSave = enabled != 0;
@@ -520,7 +520,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		}
 	} break;
 	case EX_ALLOW_SAVEGAMES: {
-		int enabled;
+		SQInteger enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
 		g_twp->_saveGameManager._allowSaveGame = enabled != 0;
@@ -560,7 +560,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		warning("exCommand EX_FORCE_TALKIE_TEXT: not implemented");
 		break;
 	default:
-		warning("exCommand(%d) not implemented", cmd);
+		warning("exCommand(%lld) not implemented", cmd);
 		break;
 	}
 	return 0;
@@ -639,7 +639,7 @@ static SQInteger sysInputState(HSQUIRRELVM v) {
 		return 1;
 	}
 	if (numArgs == 2) {
-		int state;
+		SQInteger state;
 		if (SQ_FAILED(sqget(v, 2, state)))
 			return sq_throwerror(v, "failed to get state");
 		g_twp->_inputState.setState((InputStateFlag)state);
@@ -705,7 +705,7 @@ static SQInteger microTime(HSQUIRRELVM v) {
 }
 
 static SQInteger moveCursorTo(HSQUIRRELVM v) {
-	int x, y;
+	SQInteger x, y;
 	if (SQ_FAILED(sqget(v, 2, x)))
 		return sq_throwerror(v, "Failed to get x");
 	if (SQ_FAILED(sqget(v, 3, y)))
@@ -721,7 +721,7 @@ static SQInteger moveCursorTo(HSQUIRRELVM v) {
 
 // removeCallback(id: int) remove the given callback
 static SQInteger removeCallback(HSQUIRRELVM v) {
-	int id = 0;
+	SQInteger id = 0;
 	if (SQ_FAILED(sqget(v, 2, id)))
 		return sq_throwerror(v, "failed to get callback");
 	for (size_t i = 0; i < g_twp->_callbacks.size(); i++) {
@@ -750,7 +750,7 @@ static SQInteger startglobalthread(HSQUIRRELVM v) {
 // * `startthread`
 // * `startglobalthread`
 static SQInteger stopthread(HSQUIRRELVM v) {
-	int id = 0;
+	SQInteger id = 0;
 	if (SQ_FAILED(sqget(v, 2, id))) {
 		sqpush(v, 0);
 		return 1;
@@ -798,7 +798,7 @@ static SQInteger threadpauseable(HSQUIRRELVM v) {
 	Common::SharedPtr<ThreadBase> t = sqthread(v, 2);
 	if (!t)
 		return sq_throwerror(v, "failed to get thread");
-	int pauseable = 0;
+	SQInteger pauseable = 0;
 	if (SQ_FAILED(sqget(v, 3, pauseable)))
 		return sq_throwerror(v, "failed to get pauseable");
 	t->_pauseable = pauseable != 0;

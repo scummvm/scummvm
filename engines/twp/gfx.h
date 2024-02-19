@@ -108,9 +108,9 @@ public:
 	void capture(Common::Array<byte> &data);
 
 public:
-	uint32 id = 0;
+	GLuint id = 0;
 	int width = 0, height = 0;
-	uint fbo = 0;
+	GLuint fbo = 0;
 };
 
 class RenderTexture : public Texture {

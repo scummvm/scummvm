@@ -232,7 +232,7 @@ void WalkTo::actorArrived() {
 				n2Table = noun2->_table;
 			else
 				sq_resetobject(&n2Table);
-			sqcall(_obj->_table, funcName.c_str(), verb.id, noun1->_table, n2Table);
+			sqcall(_obj->_table, funcName.c_str(), (SQInteger)verb.id, noun1->_table, n2Table);
 		}
 
 		if (needsReach)
@@ -476,7 +476,7 @@ void Talking::disable() {
 }
 
 int Talking::onTalkieId(int id) {
-	int result = 0;
+	SQInteger result = 0;
 	sqcallfunc(result, "onTalkieID", _obj->_table, id);
 	if (result == 0)
 		result = id;

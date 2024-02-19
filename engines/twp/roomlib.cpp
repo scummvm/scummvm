@@ -47,29 +47,29 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 	SQInteger numArgs = sq_gettop(v);
 	Vector2i pos1, pos2;
 	if (numArgs == 3) {
-		int x = 0;
+		SQInteger x = 0;
 		if (SQ_FAILED(sqget(v, 2, x)))
 			return sq_throwerror(v, "failed to get x");
-		int y = 0;
+		SQInteger y = 0;
 		if (SQ_FAILED(sqget(v, 3, y)))
 			return sq_throwerror(v, "failed to get y");
-		pos1 = Vector2i(x, y);
+		pos1 = Vector2i(static_cast<int>(x), static_cast<int>(y));
 		pos2 = pos1;
 	} else if (numArgs == 5) {
-		int x1 = 0;
+		SQInteger x1 = 0;
 		if (SQ_FAILED(sqget(v, 2, x1)))
 			return sq_throwerror(v, "failed to get x1");
-		int y1 = 0;
+		SQInteger y1 = 0;
 		if (SQ_FAILED(sqget(v, 3, y1)))
 			return sq_throwerror(v, "failed to get y1");
-		pos1 = Vector2i(x1, y1);
-		int x2 = 0;
+		pos1 = Vector2i(static_cast<int>(x1), static_cast<int>(y1));
+		SQInteger x2 = 0;
 		if (SQ_FAILED(sqget(v, 4, x2)))
 			return sq_throwerror(v, "failed to get x2");
-		int y2 = 0;
+		SQInteger y2 = 0;
 		if (SQ_FAILED(sqget(v, 5, y1)))
 			return sq_throwerror(v, "failed to get y2");
-		pos2 = Vector2i(x2, y2);
+		pos2 = Vector2i(static_cast<int>(x2), static_cast<int>(y2));
 	} else {
 		return sq_throwerror(v, "Invalid argument number in clampInWalkbox");
 	}
@@ -87,17 +87,17 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 }
 
 static SQInteger createLight(HSQUIRRELVM v) {
-	int color;
+	SQInteger color;
 	if (SQ_FAILED(sqget(v, 2, color)))
 		return sq_throwerror(v, "failed to get color");
-	int x;
+	SQInteger x;
 	if (SQ_FAILED(sqget(v, 3, x)))
 		return sq_throwerror(v, "failed to get x");
-	int y;
+	SQInteger y;
 	if (SQ_FAILED(sqget(v, 4, y)))
 		return sq_throwerror(v, "failed to get y");
 	Light *light = g_twp->_room->createLight(Color::rgb(color), Math::Vector2d(x, y));
-	debugC(kDebugRoomScript, "createLight(%d) -> %d", color, light->id);
+	debugC(kDebugRoomScript, "createLight(%lld) -> %d", color, light->id);
 	sqpush(v, light->id);
 	return 1;
 }
@@ -208,7 +208,7 @@ static SQInteger lightTurnOn(HSQUIRRELVM v) {
 static SQInteger lightZRange(HSQUIRRELVM v) {
 	const Light *light = sqlight(v, 2);
 	if (light) {
-		int nearY, farY;
+		SQInteger nearY, farY;
 		if (SQ_FAILED(sqget(v, 3, nearY)))
 			return sq_throwerror(v, "failed to get nearY");
 		if (SQ_FAILED(sqget(v, 4, farY)))
@@ -361,7 +361,7 @@ static SQInteger roomActors(HSQUIRRELVM v) {
 }
 
 static SQInteger roomEffect(HSQUIRRELVM v) {
-	int effect = 0;
+	SQInteger effect = 0;
 	if (SQ_FAILED(sqget(v, 2, effect)))
 		return sq_throwerror(v, "failed to get effect");
 	RoomEffect roomEffect = (RoomEffect)effect;
@@ -438,7 +438,7 @@ static SQInteger roomFade(HSQUIRRELVM v) {
 // roomLayer(GrateEntry, -2, NO)  // Make lights out layer invisible
 static SQInteger roomLayer(HSQUIRRELVM v) {
 	Common::SharedPtr<Room> r = sqroom(v, 2);
-	int layer;
+	SQInteger layer;
 	SQInteger enabled;
 	if (SQ_FAILED(sqget(v, 3, layer)))
 		return sq_throwerror(v, "failed to get layer");
@@ -468,7 +468,7 @@ static SQInteger roomLayer(HSQUIRRELVM v) {
 //     roomOverlayColor(0x800040AA)
 // }
 static SQInteger roomOverlayColor(HSQUIRRELVM v) {
-	int startColor;
+	SQInteger startColor;
 	SQInteger numArgs = sq_gettop(v);
 	if (SQ_FAILED(sqget(v, 2, startColor)))
 		return sq_throwerror(v, "failed to get startColor");
@@ -477,7 +477,7 @@ static SQInteger roomOverlayColor(HSQUIRRELVM v) {
 		room->_overlayTo->disable();
 	room->setOverlay(Color::fromRgba(startColor));
 	if (numArgs == 4) {
-		int endColor;
+		SQInteger endColor;
 		if (SQ_FAILED(sqget(v, 3, endColor)))
 			return sq_throwerror(v, "failed to get endColor");
 		float duration;
@@ -506,7 +506,7 @@ static SQInteger roomSize(HSQUIRRELVM v) {
 }
 
 static SQInteger setAmbientLight(HSQUIRRELVM v) {
-	int c = 0;
+	SQInteger c = 0;
 	if (SQ_FAILED(sqget(v, 2, c)))
 		return sq_throwerror(v, "failed to get color");
 	g_twp->_room->_lights._ambientLight = Color::rgb(c);
@@ -520,7 +520,7 @@ static SQInteger walkboxHidden(HSQUIRRELVM v) {
 	Common::String walkbox;
 	if (SQ_FAILED(sqget(v, 2, walkbox)))
 		return sq_throwerror(v, "failed to get object or walkbox");
-	int hidden = 0;
+	SQInteger hidden = 0;
 	if (SQ_FAILED(sqget(v, 3, hidden)))
 		return sq_throwerror(v, "failed to get object or hidden");
 	g_twp->_room->walkboxHidden(walkbox, hidden != 0);

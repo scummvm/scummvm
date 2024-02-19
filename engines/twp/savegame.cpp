@@ -637,7 +637,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 	case OT_TABLE: {
 		Common::JSONObject jObj;
 		if (checkId) {
-			int id = 0;
+			SQInteger id = 0;
 			sqgetf(obj, "_id", id);
 			if (isActor(id)) {
 				Common::SharedPtr<Object> a(actor(id));
@@ -801,7 +801,7 @@ static Common::JSONValue *createJDialog() {
 static Common::JSONValue *createJEasyMode() {
 	HSQOBJECT g;
 	sqgetf("g", g);
-	int easyMode;
+	SQInteger easyMode;
 	sqgetf(g, "easy_mode", easyMode);
 	return new Common::JSONValue((long long int)easyMode);
 }
