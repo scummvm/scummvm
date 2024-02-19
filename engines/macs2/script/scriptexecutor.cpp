@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "macs2/macs2.h"
+#include <macs2/view1.h>
 
 namespace Macs2 {
 namespace Script {
@@ -786,6 +787,30 @@ uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
 	return result;
 }
 
+void ScriptExecutor::ScriptPrintString() {
+
+	// TODO: Labels above not handled yet
+	// TODO: Lots of details not handled
+	// l0037_A94E:
+
+	uint16 v1;
+	uint16 v2;
+	Func9F4D(v1, v2);
+	uint16 v3;
+	uint16 v4;
+	Func9F4D(v3, v4);
+	// TODO: Several globals writes around this code
+	uint16 bp2 = ReadWord();
+	uint16 bp4 = ReadWord();
+
+	// TODO: Implement naive string printing here, refine later
+	
+	Common::StringArray strings = _engine->DecodeStrings(engine->_stringsStream, bp2, bp4);
+	// TODO: Look for good pattern for the view, this feels like it is not intended this way
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	currentView->setStringBox(strings);
+}
+
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
@@ -1118,9 +1143,21 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Just mocking these calls, they are there for deciding if we
 			// skip the following. TBC if this is the difference between a successful and
 			// a failed throw
-
+			ReadByte();
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			// TODO: This one might also do a skip
+			continue;
 		}
 
+		if (opcode1 == 0x0a) {
+			ScriptPrintString();
+			// TODO: Proper end handling
+			break;
+		} else
 		if (opcode1 == 0x0E) {
 			FuncB6BE();
 		} else if (opcode1 == 0x0F) {
