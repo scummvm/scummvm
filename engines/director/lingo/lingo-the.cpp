@@ -183,6 +183,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"loc",			kTheLoc,		400 },//				D4 p ???
 	{ kTheSprite,	"locH",			kTheLocH,		200 },// D2 p
 	{ kTheSprite,	"locV",			kTheLocV,		200 },// D2 p
+	{ kTheSprite,	"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,400 },//			D4 p
 	{ kTheSprite,	"pattern",		kThePattern,	200 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		200 },// D2 p
@@ -1311,7 +1312,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = channel->getBbox().bottom;
 		break;
 	case kTheCastNum:
-		// TODO: How is this handled with multiple casts in D5?
+	case kTheMemberNum:
 		d = sprite->_castId.member;
 		break;
 	case kTheConstraint:
@@ -1474,6 +1475,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCastNum:
+	case kTheMemberNum:
 		{
 			CastMemberID castId = d.asMemberID();
 			CastMember *castMember = movie->getCastMember(castId);
