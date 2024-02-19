@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TWP_ENGINEDIALOG_TARGET_H
-#define TWP_ENGINEDIALOG_TARGET_H
+#ifndef TWP_ENGINEDIALOGTARGET_H
+#define TWP_ENGINEDIALOGTARGET_H
 
 #include "twp/dialog.h"
 
