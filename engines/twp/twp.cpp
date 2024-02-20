@@ -28,7 +28,22 @@
 #include "graphics/imgui/imgui.h"
 #include "graphics/imgui/backends/imgui_impl_sdl2_scummvm.h"
 #include "graphics/imgui/backends/imgui_impl_opengl3_scummvm.h"
+#undef FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+// here I undefined these symbols because of the <X11/Xlib.h> defining them
+// and messing with all classes or structure using the same names
+#undef Bool
+#undef CursorShape
+#undef Expose
+#undef KeyPress
+#undef KeyRelease
+#undef FocusIn
+#undef FocusOut
+#undef FontChange
+#undef None
+#undef Status
+#undef Unsorted
+
 #endif
 
 #include "common/config-manager.h"
