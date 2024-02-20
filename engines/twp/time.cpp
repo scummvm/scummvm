@@ -25,7 +25,7 @@
 
 namespace Twp {
 
-Common::String formatTime(int64_t t, const char *format) {
+Common::String formatTime(int64 t, const char *format) {
 	time_t time = (time_t)t;
 	struct tm *tm = localtime(&time);
 	char buf[64];
@@ -33,7 +33,7 @@ Common::String formatTime(int64_t t, const char *format) {
 	return Common::String(buf);
 }
 
-DateTime toDateTime(int64_t t) {
+DateTime toDateTime(int64 t) {
 	time_t time = (time_t)t;
 	struct tm *tm = localtime(&time);
 	DateTime dateTime;
@@ -45,8 +45,8 @@ DateTime toDateTime(int64_t t) {
 	return dateTime;
 }
 
-int64_t getTime() {
-	return (int64_t)time(NULL);
+int64 getTime() {
+	return (int64)time(NULL);
 }
 
 } // namespace Twp

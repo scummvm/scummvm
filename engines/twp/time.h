@@ -31,9 +31,9 @@ struct DateTime {
 	int hour, min;
 };
 
-Common::String formatTime(int64_t time, const char *format);
-DateTime toDateTime(int64_t time);
-int64_t getTime();
+Common::String formatTime(int64 time, const char *format);
+DateTime toDateTime(int64 time);
+int64 getTime();
 
 } // namespace Twp
 
