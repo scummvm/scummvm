@@ -328,7 +328,7 @@ void Room602::init() {
 
 	if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1) {
 		_mouseWheel = series_play("612wheel", 0x5ff, 0, -1, 0, -1);
-
+		_series10 = series_play("612magnt", 0x600, 1, -1, 1, -1);
 	} else if (_G(game).room_id == 602) {
 		_mouseWheel = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
 
