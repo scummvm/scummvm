@@ -38,6 +38,7 @@ enum TwpDebugChannels {
 	kDebugActScript,
 	kDebugSndScript,
 	kDebugGame,
+	kDebugConsole
 };
 
 extern const PlainGameDescriptor twpGames[];
