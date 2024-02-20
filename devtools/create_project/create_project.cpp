@@ -348,7 +348,7 @@ int main(int argc, char *argv[]) {
 	// HACK: These features depend on OpenGL
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game_classic", setup.features, false);
-		setFeatureBuildState("opengl_shaders", setup.features, false);
+		setFeatureBuildState("opengl_game_shaders", setup.features, false);
 	}
 
 	// Disable engines for which we are missing dependencies
@@ -357,7 +357,8 @@ int main(int argc, char *argv[]) {
 			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
 				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
 				if (feature == setup.features.end()) {
-					std::cerr << "WARNING: Missing feature " << *ef << " from engine " << i->name << '\n';
+					std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
+					return -1;
 				} else if (!feature->enable) {
 					setEngineBuildState(i->name, setup.engines, false);
 					break;
@@ -1113,10 +1114,10 @@ const Feature s_features[] = {
 	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
-	{     "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
+	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
-	{               "enet",                       "USE_ENET", false, true,  "ENet networking support" },
+	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
 	{      "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
