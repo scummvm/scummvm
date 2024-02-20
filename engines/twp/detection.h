@@ -70,6 +70,9 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+
+	/** Convert an AD game description into the shared game description format. */
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
 };
 
 #endif // TWP_DETECTION_H

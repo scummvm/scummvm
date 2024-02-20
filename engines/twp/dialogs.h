@@ -46,7 +46,6 @@ private:
 	GUI::CheckboxWidget *_enableRetroVerbsGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableClassicSentenceGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableDLC = nullptr;
-	GUI::PopUpWidget *_langGUIDropdown = nullptr;
 };
 
 } // namespace Twp

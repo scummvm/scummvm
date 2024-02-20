@@ -39,8 +39,20 @@ const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
 	{Twp::kDebugGame, "Game", "Game debug level"},
 	DEBUG_CHANNEL_END};
 
-TwpMetaEngineDetection::TwpMetaEngineDetection() : AdvancedMetaEngineDetection(Twp::gameDescriptions,
-																			   sizeof(ADGameDescription), Twp::twpGames) {
+TwpMetaEngineDetection::TwpMetaEngineDetection()
+	: AdvancedMetaEngineDetection(Twp::gameDescriptions,
+								  sizeof(ADGameDescription), Twp::twpGames) {
+}
+
+DetectedGame TwpMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame, extraInfo);
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+	return game;
 }
 
 REGISTER_PLUGIN_STATIC(TWP_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwpMetaEngineDetection);
