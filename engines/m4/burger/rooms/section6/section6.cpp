@@ -317,7 +317,6 @@ void Section6::daemon() {
 					_G(wilbur_should) = 6002;
 					series_play_with_breaks(PLAY1, "604melt", 0x999, kCHANGE_WILBUR_ANIMATION,
 						_G(executing) == WHOLE_GAME ? WITH_SHADOW | PRELOAD_SOUNDS : PRELOAD_SOUNDS);
-
 				}
 				break;
 
@@ -344,7 +343,14 @@ void Section6::daemon() {
 			break;
 
 		case 10015:
-			_G(game).new_room = 608;
+			if (_G(executing) == INTERACTIVE_DEMO) {
+				// After having clicked the teleporter/"failed normally" button we end up here
+				// In the DEMO this click leads to the main menu (it does not restart the test sequence)
+				_G(game).new_section = 9;
+				_G(game).new_room = 901;
+			} else {
+				_G(game).new_room = 608;
+			}
 			break;
 
 		default:
