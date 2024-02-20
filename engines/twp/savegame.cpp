@@ -373,10 +373,10 @@ static void setActor(const Common::String &key) {
 	}
 }
 
-static int32_t computeHash(byte *data, size_t n) {
-	int32_t result = 0x6583463;
+static int32 computeHash(byte *data, size_t n) {
+	int32 result = 0x6583463;
 	for (size_t i = 0; i < n; i++) {
-		result += (int32_t)data[i];
+		result += (int32)data[i];
 	}
 	return result;
 }
@@ -426,9 +426,9 @@ bool SaveGameManager::getSaveGame(Common::SeekableReadStream *stream, SaveGame &
 	Common::Array<byte> data(stream->size());
 	stream->read(data.data(), data.size());
 	Common::BTEACrypto::decrypt((uint32 *)data.data(), data.size() / 4, savegameKey);
-	savegame.hashData = *(int32_t *)(&data[data.size() - 16]);
-	savegame.time = *(int32_t *)&data[data.size() - 12];
-	int32_t hashCheck = computeHash(data.data(), data.size() - 16);
+	savegame.hashData = *(int32 *)(&data[data.size() - 16]);
+	savegame.time = *(int32 *)&data[data.size() - 12];
+	int32 hashCheck = computeHash(data.data(), data.size() - 16);
 	if (savegame.hashData != hashCheck)
 		return false;
 

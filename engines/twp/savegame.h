@@ -28,9 +28,9 @@
 namespace Twp {
 
 struct SaveGame {
-	int32_t hashData = 0;
-	int64_t time = 0;
-	int64_t gameTime = 0;
+	int32 hashData = 0;
+	int64 time = 0;
+	int64 gameTime = 0;
 	bool easyMode = false;
 	Common::ScopedPtr<Common::JSONValue> jSavegame;
 };
