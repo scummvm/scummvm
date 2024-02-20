@@ -250,6 +250,13 @@ void Flags::reset2() {
 	if (_G(executing) != WHOLE_GAME) {
 		inv_give_to_player("BLOCK OF ICE");
 		inv_give_to_player("PANTYHOSE");
+		if (inv_player_has("KIBBLE")) {
+			inv_move_object("KIBBLE", NOWHERE);
+		}
+	}
+
+	if (_G(executing) == INTERACTIVE_DEMO) {
+		(*this)[kFirstTestPassed] = 1;
 	}
 }
 
