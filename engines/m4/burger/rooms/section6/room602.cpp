@@ -502,7 +502,7 @@ void Room602::daemon() {
 			break;
 
 		case 58:
-			digi_play_loop("602_004", 3, 255, 6, 602);
+			digi_play("602_004", 3, 255, 6, 602);
 			term_message("*** Play wheel... 1");
 			_G(flags)[V279] = 2;
 			term_message("Run with push.");
