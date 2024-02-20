@@ -310,7 +310,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 				SpriteSheet *verbSheet = g_twp->_resManager.spriteSheet("VerbSheet");
 				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
-				debugC(kDebugGenScript, "findScreenPosition(%d) => %f,%f", verb, pos.getX(), pos.getY());
+				debugC(kDebugGenScript, "findScreenPosition(%lld) => %f,%f", verb, pos.getX(), pos.getY());
 				sqpush(v, pos);
 				return 1;
 			}
@@ -699,7 +699,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 		sqgetf(table, "key", key);
 	if (sqrawexists(table, "flags"))
 		sqgetf(table, "flags", flags);
-	debugC(kDebugGenScript, "setVerb %d, %d, %d, %s", actorSlot, verbSlot, id, text.c_str());
+	debugC(kDebugGenScript, "setVerb %lld, %lld, %lld, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
 	g_twp->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
