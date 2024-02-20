@@ -21,6 +21,7 @@
 
 #include "twp/twp.h"
 #include "twp/enginedialogtarget.h"
+#include "twp/squtil.h"
 
 namespace Twp {
 
@@ -53,11 +54,10 @@ private:
 };
 
 static Common::SharedPtr<Object> actor(const Common::String &name) {
-	for (auto a : g_twp->_actors) {
-		if (a->_key == name)
-			return a;
-	}
-	return nullptr;
+	HSQOBJECT obj;
+	sq_resetobject(&obj);
+	sqgetf(name, obj);
+	return sqactor(obj);
 }
 
 static Common::SharedPtr<Object> actorOrCurrent(const Common::String &name) {
