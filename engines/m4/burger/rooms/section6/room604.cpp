@@ -471,6 +471,7 @@ void Room604::daemon() {
 				Section6::_state4 = 5;
 				kernel_trigger_dispatch_now(6014);
 				Section6::_gerbilState = 6004;
+				_G(wilbur_should) = 18;
 				series_stream("604mg06", 4, 0xc80, kCHANGE_GERBILS_ANIMATION);
 				series_play("604mg06s", 4, 0xc80, 0, -1);
 				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, kCHANGE_WILBUR_ANIMATION, 3);
