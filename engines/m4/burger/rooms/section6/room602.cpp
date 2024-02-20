@@ -1131,7 +1131,7 @@ void Room602::daemon() {
 			break;
 
 		case 31:
-			player_set_commands_allowed(false);
+			player_set_commands_allowed(true);
 			ws_unhide_walker();
 			_G(wilbur_should) = 10002;
 			wilbur_speech("602w044");
