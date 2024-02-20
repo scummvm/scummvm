@@ -1140,6 +1140,7 @@ void Room143::daemon() {
 			if (_G(player_info).y < 300)
 				ws_walk(213, 287, 0, -1, 2);
 
+			showEmptyPlates();
 			_burlShould = 45;
 			hotspot_set_active("burl", false);
 		} else {
@@ -1498,7 +1499,8 @@ void Room143::loadCheese() {
 }
 
 void Room143::showEmptyPlates() {
-	Series::series_play("143pl01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	_emptyPlates.terminate();
+	_emptyPlates.play("143pl01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 }
 
 void Room143::playDigi1() {

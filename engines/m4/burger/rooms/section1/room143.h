@@ -50,6 +50,7 @@ private:
 	machine *_wi03S = nullptr;
 	machine *_ve03 = nullptr, *_ve03S = nullptr;
 	Series _cat;
+	Series _emptyPlates;
 	noWalkRect *_walk1 = nullptr;
 	const char *_digiName = nullptr;
 	bool _flag1 = false;
