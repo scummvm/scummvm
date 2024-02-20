@@ -92,6 +92,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 TwpEngine::~TwpEngine() {
+	_mixer->stopAll();
 	delete _screen;
 }
 
