@@ -34,6 +34,7 @@ class ResManager {
 public:
 	ResManager() {}
 
+	static Common::String getKey(const Common::String &path);
 	Texture *texture(const Common::String &name);
 	SpriteSheet *spriteSheet(const Common::String &name);
 	Common::SharedPtr<Font> font(const Common::String &name);

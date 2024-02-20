@@ -23,7 +23,6 @@ MODULE_OBJS = \
 	motor.o \
 	object.o \
 	objlib.o \
-	prefs.o \
 	resmanager.o \
 	rectf.o \
 	room.o \

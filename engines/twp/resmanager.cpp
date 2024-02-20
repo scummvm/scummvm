@@ -26,18 +26,10 @@
 
 namespace Twp {
 
-static Common::String getKey(const char *path) {
-	int len = strlen(path);
-	Common::String p(path);
-	size_t i = p.findLastOf(".");
-	p = p.substr(0, i);
-	if ((len > 4) && p.hasSuffixIgnoreCase("_en")) {
-		Common::String lang(ConfMan.get("language"));
-		Common::String filename(p.substr(0, p.size() - 2));
-		const char *ext = path + i;
-		return Common::String::format("%s%s%s", filename.c_str(), lang.c_str(), ext);
-	}
-	return path;
+Common::String ResManager::getKey(const Common::String &path) {
+	Common::String t(path);
+	replace(t, "_en", "_" + ConfMan.get("language"));
+	return t;
 }
 
 void ResManager::loadTexture(const Common::String &name) {
@@ -97,7 +89,7 @@ void ResManager::loadFont(const Common::String &name) {
 }
 
 SpriteSheet *ResManager::spriteSheet(const Common::String &name) {
-	Common::String key = getKey(name.c_str());
+	Common::String key(getKey(name.c_str()));
 	if (!_spriteSheets.contains(key)) {
 		loadSpriteSheet(key.c_str());
 	}
@@ -105,7 +97,7 @@ SpriteSheet *ResManager::spriteSheet(const Common::String &name) {
 }
 
 Common::SharedPtr<Font> ResManager::font(const Common::String &name) {
-	Common::String key = getKey(name.c_str());
+	Common::String key(getKey(name.c_str()));
 	if (!_fonts.contains(key)) {
 		loadFont(key.c_str());
 	}

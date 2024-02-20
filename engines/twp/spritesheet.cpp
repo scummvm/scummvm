@@ -57,18 +57,9 @@ void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
 	meta.image = jMeta["image"]->asString();
 }
 
-Common::String SpriteSheet::getKey(const Common::String &key) {
-	if (key.hasSuffixIgnoreCase("_en")) {
-		Common::String lang(ConfMan.get("language"));
-		Common::String newKey(Common::String::format("%s%s", key.substr(0, key.size() - 2).c_str(), lang.c_str()));
-		return newKey;
-	}
-	return key;
-}
-
 const SpriteSheetFrame &SpriteSheet::getFrame(const Common::String &key) const {
 	if (key.hasSuffixIgnoreCase("_en")) {
-		Common::String newKey(getKey(key));
+		Common::String newKey(ResManager::getKey(key));
 		if (_frameTable.contains(newKey))
 			return _frameTable[newKey];
 	}
@@ -77,7 +68,7 @@ const SpriteSheetFrame &SpriteSheet::getFrame(const Common::String &key) const {
 
 const SpriteSheetFrame *SpriteSheet::frame(const Common::String &key) const {
 	if (key.hasSuffixIgnoreCase("_en")) {
-		Common::String newKey(getKey(key));
+		Common::String newKey(ResManager::getKey(key));
 		if (_frameTable.contains(newKey))
 			return &_frameTable[newKey];
 	}
