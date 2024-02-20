@@ -275,7 +275,7 @@ _endian=unknown
 _need_memalign=yes
 _have_x86=no
 _have_amd64=no
-_imgui=no
+_imgui=yes
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"

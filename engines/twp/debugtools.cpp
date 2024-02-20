@@ -19,8 +19,10 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "graphics/imgui/imgui.h"
+
 #include "common/debug-channels.h"
-#include "imgui/imgui.h"
 #include "twp/twp.h"
 #include "twp/debugtools.h"
 #include "twp/thread.h"
