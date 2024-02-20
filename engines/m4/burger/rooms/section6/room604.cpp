@@ -243,7 +243,7 @@ void Room604::init() {
 	case 603:
 	case 612:
 		if (Section6::_state2) {
-			_G(wilbur_should) = 2;
+			_G(wilbur_should) = 7;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			_G(wilbur_should) = 6;

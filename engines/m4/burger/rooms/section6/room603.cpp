@@ -404,6 +404,7 @@ void Room603::daemon() {
 			ws_demand_facing(8);
 			ws_hide_walker();
 			Section6::_state2 = 1;
+			_G(roomVal7) = 1;
 
 			if (_G(flags)[kHampsterState] == 6007) {
 				series_play_with_breaks(PLAY4, "603wi01", 0xdff, 6010, 3);
@@ -589,7 +590,7 @@ void Room603::daemon() {
 void Room603::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (_G(flags)[kHampsterState] == 6000 && (player_said("TUBE ") || player_said("TUBE  "))) {
+	if (_G(flags)[kHampsterState] == 6006 && (player_said("TUBE ") || player_said("TUBE  "))) {
 		term_message("Can't leave through back tube as gerbils are in the way.");
 		wilbur_speech("600w003");
 		intr_cancel_sentence();

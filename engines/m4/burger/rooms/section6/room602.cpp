@@ -384,6 +384,7 @@ void Room602::init() {
 	case 603:
 		ws_hide_walker();
 		if (_G(roomVal7) == 1) {
+			_G(roomVal7) = 0;
 			_G(wilbur_should) = 2;
 			kernel_timing_trigger(30, kCHANGE_WILBUR_ANIMATION);
 		} else {
