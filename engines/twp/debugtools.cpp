@@ -589,6 +589,9 @@ static void drawScenegraph() {
 }
 
 void onImGuiRender() {
+	if (!debugChannelSet(-1, kDebugConsole))
+		return;
+
 	drawGeneral();
 	drawThreads();
 	drawObjects();
