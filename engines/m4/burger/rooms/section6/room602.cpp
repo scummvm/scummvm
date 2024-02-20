@@ -336,7 +336,7 @@ void Room602::init() {
 	}
 
 	_series3 = series_show("602door", 0xf00, 1, -1, -1, 0, 100,
-		_G(flags)[V257] / 21, _G(flags)[V257]);
+		-_G(flags)[V257] / 21, _G(flags)[V257]);
 
 	if (_G(flags)[kGerbilCageDoor] == 1) {
 		_doorShould = 63;
