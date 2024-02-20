@@ -46,8 +46,6 @@ struct SpriteSheet {
 	const SpriteSheetFrame *frame(const Common::String &key) const;
 	const SpriteSheetFrame &getFrame(const Common::String &key) const;
 
-	static Common::String getKey(const Common::String &key);
-
 	SpriteSheetMetadata meta;
 	Common::HashMap<Common::String, SpriteSheetFrame> _frameTable;
 };

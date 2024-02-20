@@ -341,10 +341,9 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, "failed to get key");
 	}
-	if (g_twp->getPrefs().hasPrefs(key)) {
-		sqpush(v, g_twp->getPrefs().prefsAsJson(key));
-		return 1;
-	}
+	// TODO: use ConfMan to search for key
+
+	// if configuration
 	int numArgs = sq_gettop(v);
 	if (numArgs == 3) {
 		HSQOBJECT obj;
@@ -474,7 +473,7 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, orgFilename)))
 		return sq_throwerror(v, "failed to get filename");
 	debugC(kDebugGenScript, "loadArray: %s", orgFilename);
-	Common::String filename = g_twp->getPrefs().getKey(orgFilename);
+	Common::String filename = ResManager::getKey(orgFilename);
 	GGPackEntryReader entry;
 	entry.open(g_twp->_pack, g_twp->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
 	sq_newarray(v, 0);

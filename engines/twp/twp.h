@@ -39,7 +39,6 @@
 #include "twp/ggpack.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/camera.h"
-#include "twp/prefs.h"
 #include "twp/tsv.h"
 #include "twp/scenegraph.h"
 #include "twp/dialog.h"
@@ -92,7 +91,6 @@ public:
 	 * Gets the random source
 	 */
 	Common::RandomSource &getRandomSource() { return _randomSource; }
-	Preferences &getPrefs() { return _prefs; }
 
 	HSQUIRRELVM getVm() { return _vm.get(); }
 	inline Gfx &getGfx() { return _gfx; }
@@ -230,7 +228,6 @@ public:
 
 private:
 	Gfx _gfx;
-	Preferences _prefs;
 	SentenceNode _sentence;
 	WalkboxNode _walkboxNode;
 	PathNode _pathNode;
