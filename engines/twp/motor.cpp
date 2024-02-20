@@ -390,8 +390,11 @@ void Talking::say(const Common::String &text) {
 		return;
 
 	Common::String txt(text);
-	if (text[0] == '@') {
-		int id = atoi(text.c_str() + 1);
+	if (txt[0] == '$') {
+		txt = g_twp->getTextDb().getText(txt);
+	}
+	if (txt[0] == '@') {
+		int id = atoi(txt.c_str() + 1);
 		txt = g_twp->_textDb.getText(id);
 
 		id = onTalkieId(id);
@@ -413,8 +416,8 @@ void Talking::say(const Common::String &text) {
 		}
 
 		_obj->_sound = loadActorSpeech(name);
-	} else if (text[0] == '^') {
-		txt = text.substr(1);
+	} else if (txt[0] == '^') {
+		txt = txt.substr(1);
 	}
 
 	// remove text in parentheses
@@ -476,7 +479,7 @@ void Talking::disable() {
 	Motor::disable();
 	_texts.clear();
 	_obj->setHeadIndex(1);
-	if(_node)
+	if (_node)
 		_node->remove();
 }
 

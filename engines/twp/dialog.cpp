@@ -150,8 +150,7 @@ void ExpVisitor::visit(const YLimit &node) {
 }
 
 void ExpVisitor::visit(const YSay &node) {
-	Common::String text(g_twp->getTextDb().getText(node._text));
-	_dialog->_action = _dialog->_tgt->say(node._actor, text);
+	_dialog->_action = _dialog->_tgt->say(node._actor, node._text);
 }
 
 CondVisitor::CondVisitor(Dialog *dialog) : _dialog(dialog) {}
