@@ -125,12 +125,16 @@ const seriesPlayBreak Room604::PLAY9[] = {
 	PLAY_BREAK_END
 };
 
-const seriesPlayBreak Room604::PLAY10[] = {
+const seriesPlayBreak Room604::PLAY10Demo[] = {
 	{  0,  3, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
 	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
-	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
-	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
-	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 15, 23, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{ 24, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY10[] = {
+	{  0,  3, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
 	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
 	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
 	{ 24, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
@@ -422,7 +426,6 @@ void Room604::daemon() {
 		case 3:
 			ws_unhide_walker();
 			player_set_commands_allowed(true);
-
 			switch (_G(flags)[V242]) {
 			case 0:
 				wilbur_speech("604w001");
@@ -507,9 +510,15 @@ void Room604::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(false);
-			series_play_with_breaks(PLAY10, "604wi11", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
+			if (_G(executing) == INTERACTIVE_DEMO) {
+				series_play_with_breaks(PLAY10Demo, "604wi11", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
+			} else {
+				series_play_with_breaks(PLAY10, "604wi11", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
+			}
+			// Remove Kibble from inventory
+			kernel_trigger_dispatch_now(2);
 
-			if (_G(flags)[V274] == 0 && _G(flags)[kHampsterState] == 600) {
+			if (_G(flags)[V274] == 0 && _G(flags)[kHampsterState] == 6000) {
 				_G(flags)[kHampsterState] = 6006;
 				_G(flags)[V248] = 1;
 				term_message("The gerbils awaken");

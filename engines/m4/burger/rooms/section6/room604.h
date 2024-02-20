@@ -40,6 +40,7 @@ private:
 	static const seriesPlayBreak PLAY8[];
 	static const seriesPlayBreak PLAY9[];
 	static const seriesPlayBreak PLAY10[];
+	static const seriesPlayBreak PLAY10Demo[];
 	static const seriesPlayBreak PLAY11[];
 	static const seriesPlayBreak PLAY12[];
 	static int32 _state1;
