@@ -260,6 +260,8 @@ void Room603::daemon() {
 				_val1 = 24;
 				series_play_with_breaks(PLAY14, "603hole", 0xfff, -1, 6);
 			} else {
+				_G(wilbur_should) = 20;
+				_val1 = 27;
 				series_play_with_breaks(PLAY15, "603hole", 0xfff, kCHANGE_WILBUR_ANIMATION, 2);
 			}
 
