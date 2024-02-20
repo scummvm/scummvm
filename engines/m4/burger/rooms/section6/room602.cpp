@@ -643,9 +643,9 @@ void Room602::daemon() {
 		case 16:
 			if (!_G(flags)[V265]) {
 				if (_G(game).room_id == 602) {
-					_series10 = series_play("602magnt", 0x600, 1, -1, 1);
+					_series10 = series_play("602magnt", 0x600, 1, -1, 1, -1);
 				} else {
-					_series10 = series_play("612magnt", 0x600, 1, -1, 1);
+					_series10 = series_play("612magnt", 0x600, 1, -1, 1, -1);
 				}
 			}
 
