@@ -645,11 +645,23 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	return id;
 }
 
-int MacFontManager::registerTTFFont(const Common::Array<TTFMap>& ttfList) {
+int MacFontManager::registerTTFFont(const Common::Array<TTFMap> &ttfList) {
 	int defaultValue = 1;
+	int realId = 100;
+	auto checkId = [&](int id) {
+		for (auto &&i : ttfList) {
+			if (_fontInfo.contains(id + i.slant)) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	while (checkId(realId))
+		realId++;
 
 	for (auto &&i : ttfList) {
-		int id = 1000;
+		int id = realId;
 		Common::String name = i.ttfName;
 
 		if (name.empty()) {
@@ -658,9 +670,9 @@ int MacFontManager::registerTTFFont(const Common::Array<TTFMap>& ttfList) {
 			continue;
 		}
 
-		if (_fontIds.contains(name)){
+		if (_fontIds.contains(name)) {
 			if (defaultValue == 1)
-				defaultValue = id;
+				defaultValue = _fontIds[name];
 			continue;
 		}
 
@@ -678,12 +690,12 @@ int MacFontManager::registerTTFFont(const Common::Array<TTFMap>& ttfList) {
 	return defaultValue;
 }
 
-int MacFontManager::getFamilyId(int newId, int newSlant){
+int MacFontManager::getFamilyId(int newId, int newSlant) {
 	if (_fontInfo.contains(newId + newSlant)) {
 		return newId + newSlant;
 	}
-	warning("MacFontManager::getFamilyId(): No font with slant %d found, setting to kMacFontBold | kMacFontItalic", newSlant);
-	return newId + (kMacFontBold | kMacFontItalic);
+	warning("MacFontManager::getFamilyId(): No font with slant %d found, setting to kMacFontRegular", newSlant);
+	return newId;
 }
 
 void MacFont::setName(const char *name) {
