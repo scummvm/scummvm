@@ -130,6 +130,7 @@ const seriesPlayBreak Room602::PLAY6[] = {
 const seriesPlayBreak Room602::PLAY7[] = {
 	{  0, 17, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
 	{ 18, -1, "602_010", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room602::PLAY8[] = {
