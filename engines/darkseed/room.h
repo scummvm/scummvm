@@ -83,6 +83,7 @@ public:
 	bool exitRoom();
 	Common::String getRoomFilenameBase(int roomNumber);
 	bool canWalkAtLocation(int x, int y);
+	bool canWalkInLineToTarget(int x,int y,int targetX,int targetY);
 	void printRoomDescriptionText() const;
 	void calculateScaledSpriteDimensions(int width, int height, int curYPosition);
 private:
