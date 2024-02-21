@@ -456,9 +456,8 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			get_local_name_from_hagfile(local_name, current_hash_record_ptr->hagfile);
 			local_hag_name = f_extension_new(local_name, "HAG");
 			local_name = local_hag_name;
-			//			sprintf(local_name, "%s%s", exec_path, local_hag_name);
 
-			if (Common::File::exists(Common::Path(local_name))) {
+			if (!Common::File::exists(Common::Path(local_name))) {
 				finded = 1;
 				find_offset = offset;
 				break;
@@ -472,7 +471,8 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			} else {
 				find_offset = offset;
 			}
-			if (next_record == offset) { // only one record of fname in hash table
+			if (next_record == offset) {
+				// only one record of fname in hash table
 				finded = 1;
 			} else {
 				offset = next_record;
