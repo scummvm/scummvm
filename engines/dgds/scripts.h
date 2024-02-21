@@ -147,6 +147,7 @@ public:
 	void segmentSetState(int16 seg, uint16 val);
 	
 	void setHitTTMOp0110(); // TODO: What is this global?
+	int16 getStateForSceneOp(uint16 segnum);
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);

@@ -354,6 +354,9 @@ void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &se
 	for (uint page = 0; page < env._pages; page++) {
 		while (op != 0xff0 && env.scr->pos() < env.scr->size()) {
 			op = env.scr->readUint16LE();
+			//debug("findAndAddSequences: check ttm op %04x", op);
+			if (op == 0xaf1f || op == 0xaf2f)
+				warning("TODO: Fix findAndAddSequences for opcode %x which has variable length arg", op);
 			switch (op & 0xf) {
 			case 0:
 				break;
@@ -365,6 +368,7 @@ void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &se
 					newseq._startFrame = page;
 					newseq._currentFrame = page;
 					newseq._lastFrame = -1;
+					debug("findAndAddSequences: found env %d seq %d", newseq._enviro, newseq._seqNum);
 					seqArray.push_back(newseq);
 				} else {
 					env.scr->skip(2);
@@ -505,11 +509,21 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 				int16 envno = _adsData.scr->readSint16LE();
 				int16 seqno = _adsData.scr->readSint16LE();
 				TTMSeq *seq = findTTMSeq(envno, seqno);
-				if (!seq)
-					warning("ADS references unknown seq %d %d", envno, seqno);
-				else
-					_adsData._usedSeqs[segno].push_back(seq);
-				// Go back as we will go forward again outside this loop.
+				if (!seq) {
+					warning("ADS opcode %04x at offset %d references unknown seq %d %d",
+							opcode, (int)_adsData.scr->pos(), envno, seqno);
+				} else {
+					bool already_added = false;
+					for (TTMSeq *s : _adsData._usedSeqs[segno]) {
+						if (s == seq) {
+							already_added = true;
+							break;
+						}
+					}
+					if (!already_added)
+						_adsData._usedSeqs[segno].push_back(seq);
+				}
+				// Rewind as we will go forward again outside this loop.
 				_adsData.scr->seek(-4, SEEK_CUR);
 				break;
 			}
@@ -741,6 +755,21 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 	return true;
 }
+
+int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
+	if (segnum > _adsData._maxSegments)
+		return 0;
+	if (!(_adsData._state[segnum] & 4)) {
+		for (auto *seq : _adsData._usedSeqs[segnum]) {
+			if (!seq)
+				return 0;
+			if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
+				return 1;
+		}
+	}
+	return 0;
+}
+
 
 bool ADSInterpreter::run() {
 	if (_adsData._ttmSeqs.empty())
