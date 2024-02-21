@@ -5823,9 +5823,9 @@ define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 #
 # Check for libopenmpt to be present
 #
-if test "$_libopenmpt" != "no"; then
-	echocheck "libopenmpt"
+echocheck "libopenmpt"
 
+if test "$_libopenmpt" != "no"; then
 	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libopenmpt; then
 		append_var LIBOPENMPT_LIBS "`$_pkgconfig --libs libopenmpt`"
 		append_var LIBOPENMPT_CFLAGS "`$_pkgconfig --cflags libopenmpt`"
@@ -5855,20 +5855,16 @@ EOF
 	if test "$_libopenmpt" = "yes"; then
 		append_var LIBS "$LIBOPENMPT_LIBS"
 		append_var INCLUDES "$LIBOPENMPT_CFLAGS"
-
-		# Skip mikmod detection if openmpt is detected
-		_libmikmod=no
 	fi
-
-	define_in_config_if_yes "$_libopenmpt" "USE_OPENMPT"
-	echo "$_libopenmpt"
 fi
+
+define_in_config_if_yes "$_libopenmpt" "USE_OPENMPT"
+echo "$_libopenmpt"
 
 #
 # Check for libmikmod to be present
 #
-if test "$_libmikmod" != "no"; then
-
+if test "$_libmikmod" != no && test "$_libopenmpt" = no; then
 	# Look for the mikmod-config script
 	find_libmikmodconfig
 
@@ -5899,9 +5895,14 @@ EOF
 			append_var INCLUDES "$LIBMIKMOD_CFLAGS"
 		fi
 	fi
-	echo "$_libmikmod"
+else
+	echocheck "libmikmod"
+
+	# Skip mikmod detection if openmpt is detected
+	_libmikmod="no (OpenMPT/MikMod support is mutually exclusive)"
 fi
 
+echo "$_libmikmod"
 define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
 
 #
