@@ -537,8 +537,11 @@ void Interface::a_cb() {
 	if (player_commands_allowed() && INTERFACE_VISIBLE) {
 		Common::strcpy_s(_verbText, "<><><><><><><><>");
 		mouse_set_sprite(_arrow);
-		_iconSelected = true;
+		_iconSelected = false;
 		_G(cursor_state) = kARROW;
+
+		if (_hotspot && !mouse_set_sprite(_hotspot->cursor_number))
+			mouse_set_sprite(kArrowCursor);
 	}
 }
 
