@@ -2655,7 +2655,6 @@ void cb_Game_Main(void *, void *) {
 	DestroyGameMenu();
 
 	if (!_GM(gameMenuFromMain)) {
-
 		// Save the game so we can resume from here if possible
 		if (_GM(interfaceWasVisible) && player_commands_allowed()) {
 			other_save_game_for_resurrection();
@@ -2670,9 +2669,8 @@ void cb_Game_Main(void *, void *) {
 		menu_Shutdown(true);
 	}
 
-	// Go to the main menu in room 494
-	_G(game).new_section = 4;
-	_G(game).new_room = 494;
+	// Go to the main menu
+	_G(game).setRoom(_G(executing) == WHOLE_GAME ? 903 : 901);
 }
 
 void cb_Game_Options(void *, void *) {
