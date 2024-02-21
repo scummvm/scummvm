@@ -279,6 +279,11 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	analogStepX = modifyNubAxisMotion(analogStepX);
 	analogStepY = modifyNubAxisMotion(analogStepY);
 
+	if (analogStepX == 0)
+		_hiresX = 0;
+	if (analogStepY == 0)
+		_hiresY = 0;
+
 	int32 speedFactor = 25;
 	switch (ConfMan.getInt("kbdmouse_speed")) {
 	// 0.25 keyboard pointer speed
