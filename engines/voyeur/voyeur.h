@@ -94,6 +94,8 @@ private:
 	void initStamp();
 	void closeStamp();
 
+	void showLogo8Intro();
+
 	/**
 	 * Shows the game ending title animation
 	 */

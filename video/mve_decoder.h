@@ -46,6 +46,7 @@ namespace Video {
  *
  * Video decoder used in engines:
  *  - kingdom
+ *  - voyeur
  */
 class MveDecoder : public VideoDecoder {
 	bool _done;
