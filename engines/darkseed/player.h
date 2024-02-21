@@ -66,6 +66,7 @@ public:
 	int getWidth();
 	int getHeight();
 	void updatePlayerPositionAfterRoomChange();
+	void updateBedAutoWalkSequence();
 };
 
 } // namespace Darkseed

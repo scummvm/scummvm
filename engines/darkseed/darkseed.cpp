@@ -328,7 +328,7 @@ void DarkseedEngine::handleInput() {
 //											  (lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long),
 //											   lVar10 = CONCAT22(playerSpriteY_long._2_2_,(uint)playerSpriteY_long), previousRoomNumber != 0x3d ))))
 //										{
-//											FUN_2022_7508();
+//											_player->updateBedAutoWalkSequence();
 //											uVar4 = playerSpriteX_maybe;
 //											uVar3 = playerSpriteY_maybe;
 //											lVar9 = CONCAT22(playerSpriteX_long._2_2_,(uint)playerSpriteX_long);
@@ -353,6 +353,8 @@ void DarkseedEngine::handleInput() {
 					// TODO complete at final destination logic. 2022:879d
 				}
 				if (!isPlayingAnimation_maybe) {
+					// walk to destination point
+					Common::Point origPlayerPosition = _player->_position;
 					int walkXDelta = 0;
 					int walkYDelta = 0;
 					int local_a = scaledWalkSpeed_maybe * 16;
@@ -384,7 +386,92 @@ void DarkseedEngine::handleInput() {
 						walkYDelta = walkYDelta / 1000;
 					}
 					if (!_room->canWalkAtLocation(_player->_walkTarget.x, _player->_walkTarget.y) || _player->isAtWalkTarget()) {
-						// TODO 2022:8b62
+						bool bVar1 = false;
+						bool bVar2 = false;
+						if ((walkYDelta == 0 && _player->_position.y != _player->_walkTarget.y) ||
+							_player->_position.y == _player->_walkTarget.y) {
+							bVar2 = true;
+						}
+						if ((walkXDelta == 0 && _player->_position.x != _player->_walkTarget.x) ||
+							_player->_position.x == _player->_walkTarget.x) {
+							bVar1 = true;
+						}
+						int local_6 = 0;
+						int local_4 = 0;
+						if (_player->_walkTarget.x < _player->_position.x) {
+							if (_player->_position.x - _player->_walkTarget.x <= walkXDelta) {
+								local_6 = _player->_position.x - _player->_walkTarget.x;
+							} else {
+								local_6 = walkXDelta;
+							}
+							while (!bVar1 && local_6 > 0) {
+								if (!_room->canWalkAtLocation(_player->_position.x - local_6 - 1, _player->_position.y)) {
+									local_6--;
+								} else {
+									_player->_position.x -= local_6;
+									_player->BoolEnum_2c85_811c = true;
+									bVar1 = true;
+								}
+							}
+						} else if (_player->_position.x < _player->_walkTarget.x) {
+							if (_player->_walkTarget.x - _player->_position.x <= walkXDelta) {
+								local_6 = _player->_walkTarget.x - _player->_position.x;
+							} else {
+								local_6 = walkXDelta;
+							}
+							while (!bVar1 && local_6 > 0) {
+								if (!_room->canWalkAtLocation(_player->_position.x + local_6 + 1, _player->_position.y)) {
+									local_6--;
+								} else {
+									_player->_position.x += local_6;
+									_player->BoolEnum_2c85_811c = true;
+									bVar1 = true;
+								}
+							}
+						}
+						if (_player->_walkTarget.y < _player->_position.y) {
+							if (_player->_position.y - _player->_walkTarget.y <= walkYDelta) {
+								local_4 = _player->_position.y - _player->_walkTarget.y;
+							} else {
+								local_4 = walkYDelta;
+							}
+							while (!bVar2 && local_4 > 0) {
+								int local_34 = (_player->_position.y - local_4) - 1;
+								if (local_34 > 0xee) {
+									local_34 = 0xee;
+								}
+								if (!_room->canWalkAtLocation(_player->_position.x, (local_34 - local_4) - 2)) {
+									local_4--;
+								} else {
+									_player->_position.y -= local_4;
+									_player->BoolEnum_2c85_811c = true;
+									bVar2 = true;
+								}
+							}
+						} else if (_player->_position.y < _player->_walkTarget.y) {
+							if (_player->_walkTarget.y - _player->_position.y <= walkYDelta) {
+								local_4 = _player->_walkTarget.y - _player->_position.y;
+							} else {
+								local_4 = walkYDelta;
+							}
+							while (!bVar2 && local_4 > 0) {
+								if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y + local_4 + 2)) {
+									local_4--;
+								} else {
+									_player->_position.y += local_4;
+									_player->BoolEnum_2c85_811c = true;
+									bVar2 = true;
+								}
+							}
+						}
+
+						if (!bVar1 || !bVar2) {
+							_player->_walkTarget = _player->_position;
+						}
+						BoolByteEnum_2c85_8324 = false;
+						if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
+							_player->updateBedAutoWalkSequence();
+						}
 					} else {
 						if (_player->_walkTarget.x < _player->_position.x) {
 							if (_player->_position.x - _player->_walkTarget.x < walkXDelta) {
@@ -408,6 +495,10 @@ void DarkseedEngine::handleInput() {
 							}
 							_player->_position.y += walkYDelta;
 						}
+						if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y)) {
+							_player->_position = origPlayerPosition;
+							_player->_walkTarget = origPlayerPosition;
+						}
 					}
 				}
 //				else if (_isLeftMouseClicked) {
@@ -426,13 +517,9 @@ void DarkseedEngine::handleInput() {
 		}
 	} else {
 		updateAnimation();
-//		uVar7 = playerSpriteX_maybe;
-//		uVar5 = playerSpriteY_maybe;
-//		if ((isPlayingAnimation_maybe == False) && (DAT_2c85_6b17 != '\0')) {
-//			FUN_2022_7508();
-//			uVar7 = playerSpriteX_maybe;
-//			uVar5 = playerSpriteY_maybe;
-//		}
+		if (!isPlayingAnimation_maybe && _player->_isAutoWalkingToBed) {
+			_player->updateBedAutoWalkSequence();
+		}
 	}
 }
 
@@ -730,7 +817,7 @@ void DarkseedEngine::updateAnimation() {
 				changeToRoom(5);
 			}
 //			if (isAutoWalkingToBed != False) {
-//				FUN_2022_7508();
+//				_player->updateBedAutoWalkSequence();
 //			}
 		}
 		break;

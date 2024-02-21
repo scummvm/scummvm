@@ -258,6 +258,48 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 	return (walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
 }
 
+bool Darkseed::Room::canWalkInLineToTarget(int x, int y, int targetX, int targetY) {
+	int iVar2 = targetX - x;
+	int iVar3 = targetY - y;
+
+	if (iVar2 < 0 || iVar3 > 0) {
+		if (iVar2 < 1 && iVar3 < 1) {
+			if (-iVar2 <= -iVar3) {
+				int iVar4 = 0;
+				do {
+					if (x == targetX) {
+						return true;
+					}
+					iVar4 -= iVar2;
+					if (-iVar4 == iVar3 || -iVar3 < iVar4) {
+						iVar4 += iVar3;
+						x--;
+					}
+					y--;
+				} while (canWalkAtLocation(x, y));
+			}
+		} else {
+			int iVar4 = 0;
+			do {
+				if (x == targetX) {
+					return true;
+				}
+				iVar4 -= iVar3;
+				if (-iVar4 == iVar2 || -iVar2 < iVar4) {
+					iVar4 += iVar2;
+					y--;
+				}
+				x--;
+			} while (canWalkAtLocation(x, y));
+		}
+	} else if (-iVar3 < iVar2) {
+
+	} else {
+
+	}
+	return false;
+}
+
 void Darkseed::Room::printRoomDescriptionText() const {
 	int textId = roomDescriptionTextTbl[_roomNumber];
 	if (textId != 0) {

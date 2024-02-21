@@ -273,3 +273,7 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 		}
 	}
 }
+
+void Darkseed::Player::updateBedAutoWalkSequence() {
+	// TODO updateBedAutoWalkSequence.
+}
