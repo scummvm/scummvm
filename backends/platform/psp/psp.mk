@@ -36,7 +36,7 @@ pack_pbp: psp_fixup_elf $(PSP_EBOOT_SFO)
 	$(PSP_EXE_STRIPPED) \
 	NULL
 
-psp_release: pack_pbp $(PSP_EBOOT)
+psp_release: pack_pbp
 	rm -rf ./psp_release
 	mkdir -p ./psp_release/scummvm/doc
 	cp $(PSP_EBOOT) ./psp_release/scummvm/
