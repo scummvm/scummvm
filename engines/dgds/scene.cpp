@@ -732,6 +732,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 		case kSceneOpChangeSceneToStored: {
 			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
 			engine->changeScene(sceneNo, true);
+			break;
 		}
 		case kSceneOpShowClock:
 			engine->setShowClock(true);
@@ -741,6 +742,12 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpMeanwhile:
 			warning("TODO: Implement meanwhile screen");
+			break;
+		case kSceneOp10:
+			warning("TODO: Implement scene op 10 (find SDS hot spot?)");
+			break;
+		case kSceneOp107:
+			warning("TODO: Implement scene op 107 (inject key code 0xfc)");
 			break;
 		default:
 			warning("TODO: Implement scene op %d", op._opCode);
@@ -754,7 +761,8 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		return true;
 	uint truecount = 0;
 
-	Globals *globals = static_cast<DgdsEngine *>(g_engine)->getGameGlobals();
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Globals *globals = engine->getGameGlobals();
 
 	for (const auto & c : conds) {
 		uint16 refval = c._val;
@@ -765,12 +773,12 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 
 		if (cflag & kSceneCond80) {
 			refval = 1;
-			// TODO: check something about current ADS script?
-			checkval = 0;  // ADS_2642_38f6(c._num);
-
+			uint16 segnum = c._num - 1;
+			checkval = engine->adsInterpreter()->getStateForSceneOp(segnum);
 			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
 			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
 				refval = 0;
+			cflag = kSceneCondEqual;
 		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemField12) {
 			// TODO: Get game item c._num and check value from item attributes
 			checkval = 0;

@@ -318,6 +318,7 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
+			_scene->runPreTickOps();
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 
@@ -333,6 +334,7 @@ Common::Error DgdsEngine::run() {
 					return Common::kNoError;
 				}*/
 			}
+			_scene->runPostTickOps();
 			_scene->checkTriggers();
 		} else if (getGameId() == GID_BEAMISH) {
 			if (!_adsInterp->run())
