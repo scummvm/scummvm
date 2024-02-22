@@ -28,7 +28,7 @@
 #include "backends/dialogs/amigaos/amigaos-dialogs.h"
 
 void OSystem_AmigaOS::init() {
-	// Initialze File System Factory
+	// Initialize File System Factory
 	_fsFactory = new AmigaOSFilesystemFactory();
 
 	// Invoke parent implementation of this method
