@@ -169,7 +169,7 @@ void Flags::reset1() {
 	(*this)[V017] = 0;
 	(*this)[V018] = 0;
 	(*this)[V019] = 0;
-	(*this)[V023] = 0;
+	(*this)[kHarryComingToRoof] = 0;
 	(*this)[WAKE_UP_STOLIE_COUNT] = 0;
 	(*this)[V028] = 0;
 	(*this)[V031] = 0;

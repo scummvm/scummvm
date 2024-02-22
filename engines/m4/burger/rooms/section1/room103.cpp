@@ -126,6 +126,9 @@ void Room103::init() {
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
+		// WORKAROUND: If you save a game after moving the satellite dish, but before Harry arrives,
+		// restoring the save wouldn't have Harry arrive, and you'd softlock trying to leave the roof
+		_G(flags)[kHarryComingToRoof] = 0;
 		break;
 
 	case 101:
@@ -145,7 +148,7 @@ void Room103::init() {
 		break;
 	}
 
-	if (_G(flags)[V023]) {
+	if (_G(flags)[kHarryComingToRoof]) {
 		_series1 = series_play("103wi06", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	} else {
 		_series1 = series_play("103wi05", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
@@ -229,7 +232,7 @@ void Room103::daemon() {
 		break;
 
 	case 7:
-		_G(flags)[V023] = 0;
+		_G(flags)[kHarryComingToRoof] = 0;
 		_G(flags)[GLB_TEMP_3] = _G(flags).get_boonsville_time_and_display() + 1800;
 		_G(flags)[V012] = 2;
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
@@ -460,7 +463,7 @@ void Room103::daemon() {
 			wilbur_speech("103w003", 15);
 		}
 
-		_G(flags)[V023] = 1;
+		_G(flags)[kHarryComingToRoof] = 1;
 		_G(flags)[V024] = 1;
 		_flag1 = true;
 		_val7 = 0;
@@ -477,7 +480,7 @@ void Room103::daemon() {
 		break;
 
 	case 17:
-		_G(flags)[V023] = 0;
+		_G(flags)[kHarryComingToRoof] = 0;
 		_G(wilbur_should) = 6;
 		_G(flags)[kDisableFootsteps] = 0;
 		ws_walk(325, 173, 0, 10016);
@@ -611,7 +614,7 @@ void Room103::daemon() {
 		case 8:
 			_val2 = 2;
 
-			if (!_G(flags)[V023])
+			if (!_G(flags)[kHarryComingToRoof])
 				pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 			break;
 
@@ -639,7 +642,7 @@ void Room103::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (!_G(walker).wilbur_said(SAID)) {
-		if (player_said("gear", "satellite dish") && _G(flags)[V023] == 0) {
+		if (player_said("gear", "satellite dish") && _G(flags)[kHarryComingToRoof] == 0) {
 			_G(wilbur_should) = 4;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
