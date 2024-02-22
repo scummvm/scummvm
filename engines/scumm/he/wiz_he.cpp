@@ -1315,7 +1315,12 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 }
 
 void Wiz::processWizImageCaptureCmd(const WizImageCommand *params) {
-	takeAWiz(params->image, params->box, (params->flags & kWRFBackground) != 0, params->compressionType);
+	bool compressIt = (params->compressionType == kWCTTRLE);
+	bool background = (params->flags & kWRFBackground) != 0;
+
+	takeAWiz(params->image, params->box, background, params->compressionType);
+
+	_vm->_res->setModified(rtImage, params->image);
 }
 
 void Wiz::takeAWiz(int resNum, const Common::Rect &r, bool backBuffer, int compType) {
@@ -1415,7 +1420,6 @@ void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum,
 			break;
 		}
 	}
-	_vm->_res->setModified(rtImage, resNum);
 }
 
 void Wiz::simpleDrawAWiz(int image, int state, int x, int y, int flags) {
@@ -1494,7 +1498,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	if (flags & kWRFRemap) {
 		rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0);
 		assert(rmap);
-		if (_vm->_game.heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
+		if (_vm->_game.heversion <= 80 || READ_BE_UINT32(rmap) != WIZ_MAGIC_REMAP_NUMBER) {
 			uint8 *rgbs = _vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0);
 			assert(rgbs);
 			_vm->remapHEPalette(rgbs, rmap + 4);
@@ -2391,8 +2395,9 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 
 void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY) {
 	int compressionType, wizdSize;
-	int globSize = 8; // AWIZ header size
 
+	int blockHeaderSize = 8;
+	int globSize = blockHeaderSize; // AWIZ header size
 	globSize += WIZBLOCK_WIZH_SIZE;
 
 	if (flags & kCWFPalette) {
@@ -2407,16 +2412,9 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 		globSize += WIZBLOCK_RMAP_SIZE;
 	}
 
-	globSize += 8; // WIZD header size
-	wizdSize = w * h * (bitsPerPixel / 8);
+	globSize += blockHeaderSize; // WIZD header size
+	wizdSize = (w * h * (bitsPerPixel / 8));
 	globSize += wizdSize;
-
-	const uint8 *palPtr;
-	if (_vm->_game.heversion >= 99) {
-		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
-	} else {
-		palPtr = _vm->_currentPalette;
-	}
 
 	uint8 *writePtr = _vm->_res->createResource(rtImage, imageNum, globSize);
 
@@ -2451,6 +2449,13 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	WRITE_LE_UINT32(writePtr, h); writePtr += 4;
 
 	if (flags & kCWFPalette) {
+		const uint8 *palPtr;
+		if (_vm->_game.heversion >= 99) {
+			palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
+		} else {
+			palPtr = _vm->_currentPalette;
+		}
+
 		WRITE_BE_UINT32(writePtr, 'RGBS'); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RGBS_SIZE); writePtr += 4;
 		memcpy(writePtr, palPtr, WIZBLOCK_RGBS_DATA_SIZE);
@@ -2512,18 +2517,44 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	}
 
 	// Hook up the image info to the simple bitmap info
-	destBM->bufferPtr = (RAWPIXEL *)(dataPtr + blockHeaderSize);
+	destBM->bufferPtr = (WizRawPixel *)(dataPtr + blockHeaderSize);
 	destBM->bitmapWidth = imageWidth;
 	destBM->bitmapHeight = imageHeight;
 
 	return true;
 }
 
+int Wiz::dwTryToLoadWiz(Common::SeekableReadStream *inFile, const WizImageCommand *params) {
+	uint32 blockSize;
+	uint32 blockId;
+	byte *ptr;
+
+	inFile->seek(0, SEEK_SET);
+	blockId = inFile->readUint32BE();
+
+	if ((blockId != MKTAG('A', 'W', 'I', 'Z')) && (blockId != MKTAG('M', 'U', 'L', 'T'))) {
+		return DW_LOAD_NOT_TYPE;
+	}
+
+	blockSize = inFile->readUint32BE();
+	inFile->seek(-8, SEEK_CUR);
+
+	ptr = _vm->_res->createResource(rtImage, params->image, blockSize);
+
+	if (inFile->read(ptr, blockSize) != blockSize) {
+		_vm->_res->nukeResource(rtImage, params->image);
+		return DW_LOAD_READ_FAILURE;
+	}
+
+	_vm->_res->setModified(rtImage, params->image);
+	return DW_LOAD_SUCCESS;
+}
+
 void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	Common::Rect renderRect, clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	RAWPIXEL whatColor;
+	WizRawPixel whatColor;
 
 	// What state is going to rendered into?
 	if (params->actionFlags & kWAFState) {
@@ -2580,7 +2611,7 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	RAWPIXEL whatColor;
+	WizRawPixel whatColor;
 	int iPropertyNumber = 0, iPropertyValue = 0;
 
 	if (!(params->actionFlags & kWAFRenderCoords)) {
@@ -2656,7 +2687,7 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
-	RAWPIXEL whatColor;
+	WizRawPixel whatColor;
 	Common::Point pt;
 
 	if (params->actionFlags & kWAFRenderCoords) {
@@ -2705,20 +2736,38 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 	}
 }
 
-void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
-	int st = (params->actionFlags & kWAFState) ? params->state : 0;
-	int num = params->remapCount;
-	const uint8 *index = params->remapList;
-	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->image);
-	assert(iwiz);
-	uint8 *rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), iwiz, st, 0);
-	assert(rmap);
-	WRITE_BE_UINT32(rmap, 0x01234567);
-	while (num--) {
-		uint8 idx = *index++;
-		rmap[4 + idx] = params->remapTable[idx];
+void Wiz::remapImage(int image, int state, int tableCount, const uint8 *remapList, const uint8 *remapTable) {
+	int tableIndex;
+	uint8 *resAddr, *basePtr, *tablePtr;
+
+	resAddr = _vm->getResourceAddress(rtImage, image);
+	assert(resAddr);
+	basePtr = _vm->findWrappedBlock(MKTAG('R', 'M', 'A', 'P'), resAddr, state, 0);
+	assert(basePtr);
+
+	tablePtr = basePtr + 4;
+
+	_vm->_res->setModified(rtImage, image);
+	WRITE_BE_UINT32(basePtr, WIZ_MAGIC_REMAP_NUMBER);
+
+	for (int i = 0; i < tableCount; i++) {
+		tableIndex = *remapList++;
+		tablePtr[tableIndex] = remapTable[tableIndex];
 	}
-	_vm->_res->setModified(rtImage, params->image);
+}
+
+void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
+	int state;
+
+	if (params->actionFlags & kWAFState) {
+		state = params->state;
+	} else {
+		state = 0;
+	}
+
+	if (params->actionFlags & kWAFRemapList) {
+		remapImage(params->image, state, params->remapCount, params->remapList, params->remapTable);
+	}
 }
 
 void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
@@ -2828,40 +2877,31 @@ void Wiz::processNewWizImageCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageLoadCmd(const WizImageCommand *params) {
+	Common::SeekableReadStream *inFile;
+	int result;
+
 	if (params->actionFlags & kWAFFilename) {
-		Common::SeekableReadStream *f = _vm->openFileForReading(params->filename);
+		inFile = _vm->openFileForReading(params->filename);
 
-		if (f) {
-			uint32 id = f->readUint32BE();
-
-			if (id == MKTAG('A', 'W', 'I', 'Z') || id == MKTAG('M', 'U', 'L', 'T')) {
-				uint32 size = f->readUint32BE();
-				f->seek(0, SEEK_SET);
-
-				byte *p = _vm->_res->createResource(rtImage, params->image, size);
-
-				if (f->read(p, size) != size) {
-					_vm->_res->nukeResource(rtImage, params->image);
-					error("i/o error when reading '%s'", params->filename);
-					_vm->VAR(_vm->VAR_GAME_LOADED) = DW_LOAD_READ_FAILURE;
-					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_LOAD_READ_FAILURE;
-				} else {
-					_vm->_res->setModified(rtImage, params->image);
-					_vm->VAR(_vm->VAR_GAME_LOADED) = DW_LOAD_SUCCESS;
-					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_LOAD_SUCCESS;
-				}
-
-			} else {
-				_vm->VAR(_vm->VAR_GAME_LOADED) = DW_LOAD_NOT_TYPE;
-				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_LOAD_NOT_TYPE;
-			}
-
-			delete f;
-		} else {
+		if (!inFile) {
 			_vm->VAR(_vm->VAR_GAME_LOADED) = DW_LOAD_OPEN_FAILURE;
 			_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_LOAD_OPEN_FAILURE;
-			debug(0, "Unable to open for read '%s'", params->filename);
+
+			debug(0, "Wiz::processWizImageLoadCmd(): Unable to open for read '%s'", params->filename);
+			return;
 		}
+
+		result = dwTryToLoadWiz(inFile, params);
+		_vm->VAR(_vm->VAR_GAME_LOADED) = result;
+		_vm->VAR(_vm->VAR_OPERATION_FAILURE) = result;
+
+		if (result == DW_LOAD_SUCCESS) {
+			debug(7, "Wiz::processWizImageLoadCmd(): Correctly loaded file '%s'", params->filename);
+		} else if (result == DW_LOAD_READ_FAILURE) {
+			debug(0, "Wiz::processWizImageLoadCmd(): Got DW_LOAD_READ_FAILURE for file '%s'", params->filename);
+		}
+
+		delete inFile;
 	}
 }
 
@@ -3080,7 +3120,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 	int h = READ_LE_UINT32(wizh + 0x8);
 
 	if (_vm->_game.id == GID_MOONBASE) {
-		RAWPIXEL color = 0xffff;
+		WizRawPixel color = 0xffff;
 		drawWizImageEx((byte *)&color, data, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
 
 		return color != 0xffff;

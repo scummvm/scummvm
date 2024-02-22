@@ -47,7 +47,7 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 	}
 }
 
-void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, RAWPIXEL value) {
+void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) {
 	if ((x >= 0) && (y >= 0) && (x < srcBM->bitmapWidth) && (y < srcBM->bitmapHeight)) {
 		if (_uses16BitColor) {
 			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
@@ -57,7 +57,7 @@ void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, RAWPIXEL value) {
 	}
 }
 
-void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, RAWPIXEL value) {
+void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value) {
 	if ((x >= clipRectPtr->left) && (y >= clipRectPtr->top) && (x <= clipRectPtr->right) && (y <= clipRectPtr->bottom)) {
 		if (_uses16BitColor) {
 			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
@@ -69,7 +69,7 @@ void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common
 
 #define GET_SIGN(x) ((x) > 0 ? 1 : ((x) == 0 ? 0 : (-1)))
 
-void Wiz::pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, RAWPIXEL value) {
+void Wiz::pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, WizRawPixel value) {
 	int x1, y1, x2, y2, d, dx, dy, sx, sy, incrA, incrB;
 
 	x1 = asx;
@@ -155,7 +155,7 @@ int scanEdge(WizScanLine *aScanLines, int iScanLineStart, bool bLeftSide, int iX
 	return iCurScanLine;
 }
 
-void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, RAWPIXEL value) {
+void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, WizRawPixel value) {
 	int iDX = aex - asx;
 	int iDY = aey - asy;
 	double fDistance = sqrt((iDX * iDX) + (iDY * iDY));
@@ -270,7 +270,7 @@ int convertFromFixed(int iFixedNumber) {
 	return (iFixedNumber >> kWECFixedSize);
 }
 
-void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, RAWPIXEL aColor) {
+void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, WizRawPixel aColor) {
 	// since this is fixed point, limit the LOD to 14 bits precision
 	if (iLOD > kWECFixedSize - 2) {
 		iLOD = kWECFixedSize - 2;
@@ -393,8 +393,8 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 	}
 }
 
-void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, RAWPIXEL color) {
-	RAWPIXEL *d;
+void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color) {
+	WizRawPixel *d;
 	uint8 *d8bit;
 	int cw, dw, ch;
 	int x1 = rectPtr->left, y1 = rectPtr->top, x2 = rectPtr->right, y2 = rectPtr->bottom;

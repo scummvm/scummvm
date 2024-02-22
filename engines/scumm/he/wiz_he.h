@@ -50,7 +50,9 @@ namespace Scumm {
 #define DW_SAVE_PCX_FORMAT    1
 #define DW_SAVE_RAW_FORMAT    2
 
-typedef uint16 RAWPIXEL;
+#define WIZ_MAGIC_REMAP_NUMBER  0x76543210
+
+typedef uint16 WizRawPixel;
 
 struct WizPolygon {
 	Common::Point vert[5];
@@ -101,7 +103,7 @@ struct WizEllipseProperties {
 	int kx;
 	int ky;
 	int lod;
-	RAWPIXEL color;
+	WizRawPixel color;
 };
 
 struct WizExtendedRenderInfo {
@@ -142,7 +144,7 @@ struct WizImageCommand {
 	int remapCount;
 	int destImageNumber;
 	int zbufferImage;
-	RAWPIXEL colorValue;
+	WizRawPixel colorValue;
 	WizFontProperties fontProperties;
 	WizEllipseProperties ellipseProperties;
 	Common::Rect renderCoords;
@@ -189,7 +191,7 @@ struct WizImageCommand {
 };
 
 struct WizSimpleBitmap {
-	RAWPIXEL *bufferPtr;
+	WizRawPixel *bufferPtr;
 	int bitmapWidth;
 	int bitmapHeight;
 };
@@ -373,6 +375,7 @@ public:
 
 	void dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY);
 	bool dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM);
+	int  dwTryToLoadWiz(Common::SeekableReadStream *inFile, const WizImageCommand *params);
 
 	void processWizImageCmd(const WizImageCommand *params);
 	void processWizImageCaptureCmd(const WizImageCommand *params);
@@ -451,14 +454,15 @@ public:
 	template<int type> static void write16BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *xmapPtr);
 #endif
 	template<int type> static void write8BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
-	static void writeColor(uint8 *dstPtr, int dstType, RAWPIXEL color);
+	static void writeColor(uint8 *dstPtr, int dstType, WizRawPixel color);
 
-	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, RAWPIXEL color);
-	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, RAWPIXEL color);
-	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);
-	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
+	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, WizRawPixel color);
+	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, WizRawPixel color);
+	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect &rCapt);
+	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect &rCapt);
+	void remapImage(int image, int state, int tableCount, const uint8 *remapList, const uint8 *remapTable);
 
-private:
+	private:
 	ScummEngine_v71he *_vm;
 
 	/* Wiz Drawing Primitives
@@ -471,12 +475,12 @@ private:
 	 */
 
 	int  pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValue);
-	void pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, RAWPIXEL value);
-	void pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, RAWPIXEL value);
-	void pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, RAWPIXEL value);
-	void pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, RAWPIXEL value);
-	void pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, RAWPIXEL aColor);
-	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, RAWPIXEL color);
+	void pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value);
+	void pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value);
+	void pgClippedLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, WizRawPixel value);
+	void pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, WizRawPixel value);
+	void pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, WizRawPixel aColor);
+	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color);
 
 	bool findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr);
 	bool isPointInRect(Common::Rect *r, Common::Point *pt);
