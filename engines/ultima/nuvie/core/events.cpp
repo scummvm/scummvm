@@ -3213,6 +3213,7 @@ void Events::doAction() {
 			get_inventory_obj(magic->get_actor_from_script());
 		} else if (magic->is_waiting_for_spell()) {
 			get_spell_num(player->get_actor(), magic->get_spellbook_obj());
+			gui->lock_input(view_manager->get_spell_view());
 		} else {
 			endAction(true);
 		}
@@ -3500,6 +3501,10 @@ void Events::endAction(bool prompt) {
 	if (mode == KEYINPUT_MODE)
 		// Leaving KEYINPUT_MODE: restore keymapper state.
 		g_system->getEventManager()->getKeymapper()->setEnabled(_keymapperStateBeforeKEYINPUT);
+
+	// Finished selecting a spell for enchant: undo spellbook input locking.
+	if (mode == CAST_MODE && gui->get_locked_widget() && gui->get_locked_widget() == view_manager->get_spell_view())
+		gui->unlock_input();
 
 	if (prompt) {
 		scroll->display_string("\n");
