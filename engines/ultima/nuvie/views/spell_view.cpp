@@ -431,7 +431,7 @@ GUI_status SpellView::MouseDown(int x, int y, Shared::MouseButton button) {
 	if (button == Shared::BUTTON_RIGHT)
 		return cancel_spell();
 
-	if (selecting_spell_target) { // cast selected spell on the map
+	if (selecting_spell_target && !event_mode) { // cast selected spell on the map
 		if (event->is_looking_at_spellbook()) {
 			close_look();
 			return GUI_YUM;
