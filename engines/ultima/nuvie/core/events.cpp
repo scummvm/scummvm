@@ -55,6 +55,7 @@
 #include "ultima/nuvie/script/script.h"
 
 #include "common/system.h"
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -165,6 +166,7 @@ bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic
 	gui->AddWidget(fps_counter_widget);
 	fps_counter_widget->Hide();
 	scriptThread = nullptr;
+	_keymapperStateBeforeKEYINPUT = true;
 
 	return true;
 }
@@ -3495,6 +3497,10 @@ bool Events::newAction(EventMode new_mode) {
  * This clears visible cursors, and resets all variables used by actions.
  */
 void Events::endAction(bool prompt) {
+	if (mode == KEYINPUT_MODE)
+		// Leaving KEYINPUT_MODE: restore keymapper state.
+		g_system->getEventManager()->getKeymapper()->setEnabled(_keymapperStateBeforeKEYINPUT);
+
 	if (prompt) {
 		scroll->display_string("\n");
 		scroll->display_prompt();
@@ -3554,6 +3560,18 @@ void Events::set_mode(EventMode new_mode) {
 	      print_mode(new_mode),
 	      print_mode(mode),
 	      print_mode(last_mode));
+
+	Common::Keymapper *const keymapper = g_system->getEventManager()->getKeymapper();
+	if (mode == KEYINPUT_MODE)
+		// Switching away from KEYINPUT_MODE: restore keymapper state.
+		keymapper->setEnabled(_keymapperStateBeforeKEYINPUT);
+
+	if (new_mode == KEYINPUT_MODE) {
+		// Switching to KEYINPUT_MODE: save keymapper state and disable.
+		_keymapperStateBeforeKEYINPUT = keymapper->isEnabled();
+		keymapper->setEnabled(false);
+	}
+
 	if (new_mode == WAIT_MODE && (last_mode == EQUIP_MODE || last_mode == REST_MODE))
 		last_mode = mode;
 	else if ((new_mode == INPUT_MODE || new_mode == KEYINPUT_MODE))
