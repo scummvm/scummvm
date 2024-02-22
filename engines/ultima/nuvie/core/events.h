@@ -225,6 +225,7 @@ private:
 	bool in_control_cheat;
 	bool looking_at_spellbook;
 	bool direction_selects_target;
+	bool _keymapperStateBeforeKEYINPUT;
 
 	uint32 fps_timestamp;
 	uint16 fps_counter;
