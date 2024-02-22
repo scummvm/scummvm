@@ -694,13 +694,14 @@ Common::String Cast::getVideoPath(int castId) {
 
 		Common::String filename = _castsInfo[castId]->fileName;
 		Common::String directory = _castsInfo[castId]->directory;
-
-		res = directory + g_director->_dirSeparator + filename;
+		if (directory.lastChar() != g_director->_dirSeparator)
+			directory += g_director->_dirSeparator;
+		res = directory + filename;
 	} else {
 		Video::QuickTimeDecoder qt;
 		qt.loadStream(videoData);
 		videoData = nullptr;
-		res = qt.getAliasPath();
+		res = decodeString(qt.getAliasPath());
 		if (res.empty()) {
 			warning("STUB: Cast::getVideoPath(%d): unsupported non-alias MooV block found", castId);
 		}
