@@ -101,7 +101,6 @@ void OSystem_AmigaOS::initBackend() {
 	}
 	// First time user defaults
 	ConfMan.registerDefault("audio_buffer_size", "2048");
-	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("gfx_mode", "surfacesdl");
 	ConfMan.registerDefault("stretch_mode", "stretch");
@@ -113,9 +112,6 @@ void OSystem_AmigaOS::initBackend() {
 	// First time .ini defaults
 	if (!ConfMan.hasKey("audio_buffer_size")) {
 		ConfMan.set("audio_buffer_size", "2048");
-	}
-	if (!ConfMan.hasKey("aspect_ratio")) {
-		ConfMan.setBool("aspect_ratio", true);
 	}
 	if (!ConfMan.hasKey("fullscreen")) {
 		ConfMan.setBool("fullscreen", true);
