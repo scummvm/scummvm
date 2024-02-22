@@ -326,6 +326,9 @@ GUI_status SpellViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
 }
 
 GUI_status SpellViewGump::MouseUp(int x, int y, Shared::MouseButton button) {
+	if (button == Shared::BUTTON_RIGHT)
+		return GUI_YUM;
+
 	sint16 spell = getSpell(x, y);
 
 	if (spell != -1 && spell == selected_spell) {

@@ -3340,8 +3340,8 @@ void Events::cancelAction() {
 		else {
 
 			scroll->display_string("nothing\n");
-			view_manager->close_spell_mode();
 		}
+		view_manager->close_spell_mode();
 	} else if (mode == USE_MODE) {
 		if (usecode->is_script_running()) {
 			usecode->get_running_script()->resume_with_nil();
