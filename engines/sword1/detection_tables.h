@@ -282,6 +282,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // German version of "Revolution Classic Adventures"
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "40a2106393c2a749304de0545ddcb7f6", 11542280),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"",
