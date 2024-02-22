@@ -71,31 +71,34 @@ GUI::~GUI() {
    The widget will be automatically deleted when the GUI is deleted.
  */
 int GUI::AddWidget(GUI_Widget *widget) {
-	int i;
+	int i = numwidgets;
 
+	// This is commented out because it makes it unsafe to call AddWidget
+	// from a widget's event handler: It could delete the calling widget
+	// if it was marked for deletion during event handling.
 	/* Look for deleted widgets */
-	for (i = 0; i < numwidgets; ++i) {
-		if (widgets[i]->Status() == WIDGET_DELETED) {
-			delete widgets[i];
-			break;
-		}
-	}
-	if (i == numwidgets) {
-		/* Expand the widgets array if necessary */
-		if (numwidgets == maxwidgets) {
-			GUI_Widget **newarray;
-			int maxarray;
+	// for (i = 0; i < numwidgets; ++i) {
+	// 	if (widgets[i]->Status() == WIDGET_DELETED) {
+	// 		delete widgets[i];
+	// 		break;
+	// 	}
+	// }
+	// if (i == numwidgets) {
+	/* Expand the widgets array if necessary */
+	if (numwidgets == maxwidgets) {
+		GUI_Widget **newarray;
+		int maxarray;
 
-			maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
-			if ((newarray = (GUI_Widget **)realloc(widgets,
-			                                       maxarray * sizeof(*newarray))) == nullptr) {
-				return -1;
-			}
-			widgets = newarray;
-			maxwidgets = maxarray;
+		maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
+		if ((newarray = (GUI_Widget **)realloc(widgets,
+		                                       maxarray * sizeof(*newarray))) == nullptr) {
+			return -1;
 		}
-		++numwidgets;
+		widgets = newarray;
+		maxwidgets = maxarray;
 	}
+	++numwidgets;
+	// }
 	widgets[i] = widget;
 	widget->PlaceOnScreen(screen, gui_drag_manager, 0, 0);
 
