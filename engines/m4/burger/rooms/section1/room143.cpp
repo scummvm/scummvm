@@ -1011,6 +1011,7 @@ void Room143::daemon() {
 			case 44:
 				frame = imath_ranged_rand(0, 4);
 				Series::series_play("143bu22", 0xa00, 0, kCHANGE_BURL_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
+				playDigi1();
 				break;
 
 			default:
