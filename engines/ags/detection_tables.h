@@ -5038,6 +5038,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("patchesspazcat", "CatGame.exe", "0736c98683a5ee6179edd886ca674909", 45161300),
 	DEMO_ENTRY_EN("pengaobcster", "PAO.exe", "f45c6354507e154938bdb0f55f9f9d7a", 294757192),
 	DEMO_ENTRY_EN("perfecttidess2s", "s2s.exe", "95ffa47057b9906869a04cf95d264629", 531651451),
+	DEMO_ENTRY_EN("perfecttidess2s", "game.ags", "1be40c752a39ae37d7a9f5420139ea14", 528389246), // Mac Steam demo
 	DEMO_ENTRY_EN("persephonediary", "royce.exe", "a524cbb1c51589903c4043b98917f1d9", 4972848),
 	DEMO_ENTRY_EN("personalrocket", "personalrocket-demo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 25732293),  // Windows
 	DEMO_ENTRY_EN("personalrocket", "PersonalRocket-DemoEng.exe", "0564de07d3fd5c16e6947a647061913c", 30780417),  // Windows
