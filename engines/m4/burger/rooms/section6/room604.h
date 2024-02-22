@@ -45,9 +45,10 @@ private:
 	static int32 _state1;
 
 private:
-	machine *_series1 = nullptr;
-	int32 _series2 = 0;
-	int _val1 = 0;
+	machine *_woodchips = nullptr;
+	int32 _woodchipSeries = 0;
+	int _woodchipsShould = 0;
+
 public:
 	Room604();
 	~Room604() override {}

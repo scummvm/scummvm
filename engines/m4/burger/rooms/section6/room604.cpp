@@ -28,7 +28,8 @@ namespace Burger {
 namespace Rooms {
 
 enum {
-	kCHANGE_GERBILS_ANIMATION = 6011
+	kCHANGE_GERBILS_ANIMATION = 6011,
+	kCHANGE_WOODCHIPS_ANIMATION = 6012
 };
 
 static const char *SAID[][4] = {
@@ -163,16 +164,16 @@ void Room604::init() {
 	if (_G(flags)[V274]) {
 		hotspot_set_active("WOOD SHAVINGS", false);
 		hotspot_set_active("ASHES", true);
-		_val1 = 27;
-		kernel_trigger_dispatch_now(6012);
+		_woodchipsShould = 27;
+		kernel_trigger_dispatch_now(kCHANGE_WOODCHIPS_ANIMATION);
 
 	} else {
 		hotspot_set_active("WOOD SHAVINGS", true);
 		hotspot_set_active("ASHES", false);
 
 		if (_G(game).previous_room != 601) {
-			_val1 = 25;
-			kernel_trigger_dispatch_now(6012);
+			_woodchipsShould = 25;
+			kernel_trigger_dispatch_now(kCHANGE_WOODCHIPS_ANIMATION);
 		}
 	}
 
@@ -270,8 +271,8 @@ void Room604::daemon() {
 	case 1:
 		digi_unload_stream_breaks(SERIES1);
 		_roomSeries1.show("604wi04", 1);
-		_val1 = 25;
-		kernel_trigger_dispatch_now(6012);
+		_woodchipsShould = 25;
+		kernel_trigger_dispatch_now(kCHANGE_WOODCHIPS_ANIMATION);
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -360,29 +361,30 @@ void Room604::daemon() {
 		}
 		break;
 
-	case 6012:
-		switch (_val1) {
+	case kCHANGE_WOODCHIPS_ANIMATION:
+		switch (_woodchipsShould) {
 		case 25:
-			_series1 = series_show("604chips", 0xcc0);
+			_woodchips = series_show("604chips", 0xcc0);
 			break;
 
 		case 26:
-			_val1 = 28;
+			_woodchipsShould = 28;
 			hotspot_set_active("WOOD SHAVINGS", false);
 			hotspot_set_active("ASHES", true);
 
-			terminateMachineAndNull(_series1);
-			_series1 = series_play("604chips", 0xb00, 0, 6012);
+			terminateMachineAndNull(_woodchips);
+			digi_play("604_002", 2, 255, -1, 604);
+			_woodchips = series_play("604chips", 0xb00, 0, kCHANGE_WOODCHIPS_ANIMATION);
 			break;
 
 		case 27:
-			_series1 = series_show("604chips", 0xcc0);
+			_woodchips = series_show("604chips", 0xcc0, 0, -1, -1, 41, 100, 0, 0);
 			break;
 
 		case 28:
-			_val1 = 27;
-			series_unload(_series2);
-			kernel_trigger_dispatch_now(6012);
+			_woodchipsShould = 27;
+			series_unload(_woodchipSeries);
+			kernel_trigger_dispatch_now(kCHANGE_WOODCHIPS_ANIMATION);
 			break;
 
 		default:
@@ -518,7 +520,7 @@ void Room604::daemon() {
 			player_set_commands_allowed(false);
 			_G(flags)[V247] = 1;
 			_G(flags)[V274] = 1;
-			_series2 = series_load("604chips");
+			_woodchipSeries = series_load("604chips");
 			_G(wilbur_should) = 12;
 
 			series_play_with_breaks(PLAY11, "604wi12", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
@@ -532,8 +534,8 @@ void Room604::daemon() {
 			}
 
 			_G(wilbur_should) = 10001;
-			_val1 = 26;
-			kernel_trigger_dispatch_now(6012);
+			_woodchipsShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_WOODCHIPS_ANIMATION);
 			break;
 
 		case 13:
