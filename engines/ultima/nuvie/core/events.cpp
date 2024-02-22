@@ -1020,6 +1020,7 @@ bool Events::look(Obj *obj) {
 					reader = player->get_actor();
 				view_manager->close_all_gumps();
 				view_manager->set_spell_mode(reader, obj, false);
+				gui->lock_input(view_manager->get_current_view());
 				view_manager->get_current_view()->grab_focus();
 				return false;
 			}
@@ -3502,9 +3503,12 @@ void Events::endAction(bool prompt) {
 		// Leaving KEYINPUT_MODE: restore keymapper state.
 		g_system->getEventManager()->getKeymapper()->setEnabled(_keymapperStateBeforeKEYINPUT);
 
-	// Finished selecting a spell for enchant: undo spellbook input locking.
-	if (mode == CAST_MODE && gui->get_locked_widget() && gui->get_locked_widget() == view_manager->get_spell_view())
-		gui->unlock_input();
+	// Finished selecting a spell for enchant or looking at spellbook: undo spellbook input locking.
+	if (mode == CAST_MODE || (mode == LOOK_MODE && !is_looking_at_spellbook())) {
+		const GUI_Widget *const lockedWidget = gui->get_locked_widget();
+		if (lockedWidget && lockedWidget == view_manager->get_spell_view())
+			gui->unlock_input();
+	}
 
 	if (prompt) {
 		scroll->display_string("\n");
