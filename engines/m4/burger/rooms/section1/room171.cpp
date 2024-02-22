@@ -264,7 +264,7 @@ void Room171::init() {
 	_series3 = series_show("171pills", 0x700);
 
 	if (_val1 || _G(flags)[V092]) {
-		_chair.show("171chair", 0x900);
+		_chair.show("171chair", "171chars", 0x900);
 	}
 
 	hotspot_set_active("PIANO STOOL", false);
