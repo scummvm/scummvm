@@ -38,6 +38,8 @@
 #include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/player.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Ultima {
 namespace Nuvie {
 
@@ -1629,12 +1631,17 @@ uint16 PauseEffect::callback(uint16 msg, CallBack *caller, void *data) {
 }
 
 WizardEyeEffect::WizardEyeEffect(const MapCoord &location, uint16 duration) {
+	// Disable keymapper so Wizard Eye can receive keyboard input.
+	// FIXME: Remove this once the effect can use keymapper-bound keys.
+	g_system->getEventManager()->getKeymapper()->setEnabled(false);
 	game->get_map_window()->wizard_eye_start(location, duration, this);
 }
 
 uint16 WizardEyeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == MESG_EFFECT_COMPLETE) {
 		delete_self();
+		// FIXME: Remove this once the effect can use keymapper-bound keys.
+		g_system->getEventManager()->getKeymapper()->setEnabled(true);
 	}
 
 	return 0;
