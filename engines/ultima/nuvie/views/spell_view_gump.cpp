@@ -347,7 +347,9 @@ GUI_status SpellViewGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	}
 
 
-	return DraggableView::MouseUp(x, y, button);
+	auto ret = DraggableView::MouseUp(x, y, button);
+	grab_focus(); // Dragging releases focus, grab it again
+	return ret;
 }
 
 } // End of namespace Nuvie
