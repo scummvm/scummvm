@@ -125,6 +125,11 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
+	 * Return the keymapper's enabled state
+	 */
+	bool isEnabled() const { return _enabled; }
+
+	/**
 	 * Clear all the keymaps and hardware input sets
 	 */
 	void clear();
