@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
 #include "graphics/surface.h"
 #include "graphics/primitives.h"
@@ -79,9 +80,9 @@ Common::String SceneStruct2::dump(const Common::String &indent) const {
 
 static Common::String _sceneOpCodeName(SceneOpCode code) {
 	switch (code) {
-	case kSceneOpNone: 		  return "none";
-	case kSceneOpChangeScene: return "changeScene";
-	case kSceneOpNoop:		  return "noop";
+	case kSceneOpNone: 		  	return "none";
+	case kSceneOpChangeScene: 	return "changeScene";
+	case kSceneOpNoop:		  	return "noop";
 	case kSceneOpGlobal:		return "global";
 	case kSceneOpSegmentStateOps:   return "sceneOpSegmentStateOps";
 	case kSceneOpSetItemAttr:   return "setitemattr?";
@@ -91,9 +92,9 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
-	case kSceneOp18Menu:		return "sceneOp18(menu1?)";
-	case kSceneOp19Menu:		return "sceneOp18(menu0?)";
-	case kSceneOpMeanwhile:   return "meanwhile";
+	case kSceneOpShowMouse:		return "sceneOpShowMouse";
+	case kSceneOpHideMouse:		return "sceneOpHideMouse";
+	case kSceneOpMeanwhile:   	return "meanwhile";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
 	}
@@ -739,6 +740,12 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpHideClock:
 			engine->setShowClock(false);
+			break;
+		case kSceneOpShowMouse:
+			CursorMan.showMouse(true);
+			break;
+		case kSceneOpHideMouse:
+			CursorMan.showMouse(false);
 			break;
 		case kSceneOpMeanwhile:
 			warning("TODO: Implement meanwhile screen");

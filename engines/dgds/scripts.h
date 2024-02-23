@@ -41,13 +41,16 @@ public:
 	Common::HashMap<uint16, Common::String> _tags;
 };
 
-class TTMData : public ScriptParserData {
+class TTMEnviro : public ScriptParserData {
 public:
-	TTMData() : _pages(330), ScriptParserData() {}
+	TTMEnviro() : _totalFrames(330), ScriptParserData() {
+		ARRAYCLEAR(_scriptPals);
+	}
 	uint16 _enviro;
-	uint16 _pages;
-	Common::Array<int> _pageOffsets;
-	Common::String _bmpNames[16];
+	uint16 _totalFrames;
+	Common::Array<int> _frameOffsets;
+	Common::String _scriptShapes[6];
+	int _scriptPals[6];
 };
 
 enum TTMRunType {
@@ -102,7 +105,7 @@ public:
 		ARRAYCLEAR(_charWhile);
 	}
 	Common::Array<Common::String> _scriptNames;
-	Common::Array<TTMData> _scriptEnvs;
+	Common::Array<TTMEnviro> _scriptEnvs;
 	Common::Array<TTMSeq> _ttmSeqs;
 	int _initFlag;
 	int _maxSegments;
@@ -122,13 +125,13 @@ class TTMInterpreter {
 public:
 	TTMInterpreter(DgdsEngine *vm);
 
-	bool load(const Common::String &filename, TTMData &env);
+	bool load(const Common::String &filename, TTMEnviro &env);
 	void unload();
-	bool run(TTMData &env, struct TTMSeq &seq);
-	void findAndAddSequences(TTMData &scriptData, Common::Array<TTMSeq> &seqArray);
+	bool run(TTMEnviro &env, struct TTMSeq &seq);
+	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<TTMSeq> &seqArray);
 
 protected:
-	void handleOperation(TTMData &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
+	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 	void updateScreen(struct TTMSeq &seq);
 
 	DgdsEngine *_vm;
@@ -154,8 +157,8 @@ protected:
 	bool playScene();
 	void skipToEndIf(Common::SeekableReadStream *scr);
 	TTMSeq *findTTMSeq(int16 enviro, int16 seq);
-	TTMData *findTTMEnviro(int16 enviro);
-	bool runUntilBrancOpOrEnd();
+	TTMEnviro *findTTMEnviro(int16 enviro);
+	bool runUntilBranchOpOrEnd();
 	void findUsedSequencesForSegment(int segno);
 	void findEndOrInitOp();
 	bool updateSeqTimeAndFrame(TTMSeq &seq);

@@ -91,7 +91,7 @@ Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableRea
 
 
 bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
-	TTMData *scriptData = static_cast<TTMData *>(data);
+	TTMEnviro *scriptData = static_cast<TTMEnviro *>(data);
 
 	switch (chunk.getId()) {
 	case ID_TTI: // Ignore containers
@@ -110,8 +110,8 @@ bool TTMParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 			warning("unspected PAG chunk size %d in %s", chunk.getSize(), _filename.c_str());
 			break;
 		}
-		scriptData->_pages = chunk.getContent()->readUint16LE();
-		scriptData->_pageOffsets.resize(scriptData->_pages + 1);
+		scriptData->_totalFrames = chunk.getContent()->readUint16LE();
+		scriptData->_frameOffsets.resize(scriptData->_totalFrames + 1, -1);
 		break;
 	default:
 		warning("Unexpected chunk '%s' of size %d found in file '%s'", tag2str(chunk.getId()), chunk.getSize(), _filename.c_str());

@@ -44,7 +44,7 @@ namespace Dgds {
 
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
-bool TTMInterpreter::load(const Common::String &filename, TTMData &scriptData) {
+bool TTMInterpreter::load(const Common::String &filename, TTMEnviro &scriptData) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	bool parseResult = dgds.parse(&scriptData, filename);
 
@@ -69,7 +69,7 @@ void TTMInterpreter::updateScreen(struct TTMSeq &state) {
 	g_system->updateScreen();
 }
 
-void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
+void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	switch (op) {
@@ -79,8 +79,14 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 	case 0x0020: // SAVE BACKGROUND
 		_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 		break;
+	case 0x0070: // FREE PALETTE
+		error("TODO: Implement me: free palette (current pal)");
+		break;
 	case 0x0080: // DRAW BACKGROUND
 		_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
+		break;
+	case 0x0090: // FREE FONT
+		error("TODO: Implement me: free font (current one)");
 		break;
 	case 0x0110: // PURGE void
 		_vm->adsInterpreter()->setHitTTMOp0110();
@@ -99,7 +105,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		// SET BMP:	id:int [-1:n]
 		int bk = ivals[0];
 		if (bk != -1) {
-			_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], bk);
+			_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], bk);
 		}
 		break;
 	}
@@ -109,7 +115,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		break;
 	case 0x1060:
 		// SELECT PAL:  id:int [0]
-		_vm->getGamePals()->selectPalNum(ivals[0]);
+		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
 		break;
 	case 0x1090:
 		// SELECT SONG:	    id:int [0]
@@ -217,7 +223,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		// FALL THROUGH
 	case 0xa500:
-		debug("DRAW \"%s\"", env._bmpNames[state._currentBmpId].c_str());
+		debug("DRAW \"%s\"", env._scriptShapes[state._currentBmpId].c_str());
 
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		// This is kind of file system intensive, will likely have to change to store all the BMPs.
@@ -225,12 +231,12 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 			int tileId = ivals[2];
 			state._currentBmpId = ivals[3];
 			if (tileId != -1) {
-				_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], tileId);
+				_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], tileId);
 			}
 		} else if (!_vm->_image->isLoaded()) {
 			// load on demand?
-			warning("trying to load bmp %d (%s) on demand", state._currentBmpId, env._bmpNames[state._currentBmpId].c_str());
-			_vm->_image->loadBitmap(env._bmpNames[state._currentBmpId], 0);
+			warning("trying to load bmp %d (%s) on demand", state._currentBmpId, env._scriptShapes[state._currentBmpId].c_str());
+			_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], 0);
 		}
 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
@@ -245,12 +251,19 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		break;
 	case 0xf020:
 		// LOAD BMP:	filename:str
-		env._bmpNames[state._currentBmpId] = sval;
+		env._scriptShapes[state._currentBmpId] = sval;
 		break;
-	case 0xf050:
+	case 0xf040: {
+		// LOAD FONT:	filename:str
+		error("TODO: Implement opcode 0xf040 load font");
+		break;
+	}
+	case 0xf050: {
 		// LOAD PAL:	filename:str
-		_vm->getGamePals()->loadPalette(sval);
+		int newPalNum = _vm->getGamePals()->loadPalette(sval);
+		env._scriptPals[state._currentPalId] = newPalNum;
 		break;
+	}
 	case 0xf060:
 		// LOAD SONG:	filename:str
 		if (_vm->_platform == Common::kPlatformAmiga) {
@@ -263,7 +276,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 		break;
 
 	// Unimplemented / unknown
-	case 0x0070: // ? (0 args)
+	case 0x00C0: // does something with slot 5?
 	case 0x0220: // STOP CURRENT MUSIC
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1070: // SELECT FONT  i:int
@@ -293,7 +306,7 @@ void TTMInterpreter::handleOperation(TTMData &env, struct TTMSeq &state, uint16 
 	}
 }
 
-bool TTMInterpreter::run(TTMData &env, struct TTMSeq &seq) {
+bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	Common::SeekableReadStream *scr = env.scr;
 	if (!scr)
 		return false;
@@ -347,13 +360,15 @@ bool TTMInterpreter::run(TTMData &env, struct TTMSeq &seq) {
 	return true;
 }
 
-void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &seqArray) {
+void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &seqArray) {
 	int16 envno = env._enviro;
 	env.scr->seek(0);
 	uint16 op = 0;
-	for (uint page = 0; page < env._pages; page++) {
+	for (uint frame = 0; frame < env._totalFrames; frame++) {
+		env._frameOffsets[frame] = env.scr->pos();
+		//debug("findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
+		op = env.scr->readUint16LE();
 		while (op != 0xff0 && env.scr->pos() < env.scr->size()) {
-			op = env.scr->readUint16LE();
 			//debug("findAndAddSequences: check ttm op %04x", op);
 			if (op == 0xaf1f || op == 0xaf2f)
 				warning("TODO: Fix findAndAddSequences for opcode %x which has variable length arg", op);
@@ -365,10 +380,10 @@ void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &se
 					TTMSeq newseq;
 					newseq._enviro = envno;
 					newseq._seqNum = env.scr->readUint16LE();
-					newseq._startFrame = page;
-					newseq._currentFrame = page;
+					newseq._startFrame = frame;
+					newseq._currentFrame = frame;
 					newseq._lastFrame = -1;
-					debug("findAndAddSequences: found env %d seq %d", newseq._enviro, newseq._seqNum);
+					//debug("findAndAddSequences: found env %d seq %d at %d", newseq._enviro, newseq._seqNum, (int)env.scr->pos());
 					seqArray.push_back(newseq);
 				} else {
 					env.scr->skip(2);
@@ -386,6 +401,7 @@ void TTMInterpreter::findAndAddSequences(TTMData &env, Common::Array<TTMSeq> &se
 				env.scr->skip((op & 0xf) * 2);
 				break;
 			}
+			op = env.scr->readUint16LE();
 		}
 	}
 	env.scr->seek(0);
@@ -437,7 +453,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 
 	for (const auto &file : _adsData._scriptNames) {
 		_adsData._scriptEnvs.resize(_adsData._scriptEnvs.size() + 1);
-		TTMData &data = _adsData._scriptEnvs.back();
+		TTMEnviro &data = _adsData._scriptEnvs.back();
 		data._enviro = _adsData._scriptEnvs.size();
 		_ttmInterpreter->load(file, data);
 		_ttmInterpreter->findAndAddSequences(data, _adsData._ttmSeqs);
@@ -547,7 +563,7 @@ bool ADSInterpreter::playScene() {
 	if (!_currentTTMSeq)
 		return false;
 
-	TTMData *env = findTTMEnviro(_currentTTMSeq->_enviro);
+	TTMEnviro *env = findTTMEnviro(_currentTTMSeq->_enviro);
 	if (!env)
 		error("Couldn't find environment num %d", _currentTTMSeq->_enviro);
 
@@ -563,16 +579,14 @@ void ADSInterpreter::skipToEndIf(Common::SeekableReadStream *scr) {
 	while (scr->pos() < scr->size()) {
 		uint16 op = scr->readUint16LE();
 		if (op == 0x1520)
-			scr->seek(-2);
+			scr->seek(-2, SEEK_CUR);
 		if (op == 0 || op == 0x1520)
 			return;
-		int nargs = numArgs(op);
-		for (int i = 0; i < nargs; i++)
-			scr->readUint16LE();
+		scr->skip(numArgs(op) * 2);
 	}
 }
 
-TTMData *ADSInterpreter::findTTMEnviro(int16 enviro) {
+TTMEnviro *ADSInterpreter::findTTMEnviro(int16 enviro) {
 	for (auto & env : _adsData._scriptEnvs) {
 		if (env._enviro == enviro)
 			return &env;
@@ -610,20 +624,26 @@ void ADSInterpreter::segmentSetState(int16 seg, uint16 val) {
 
 void ADSInterpreter::findEndOrInitOp() {
 	Common::SeekableReadStream *scr = _adsData.scr;
+	int32 startoff = scr->pos();
 	while (scr->pos() < scr->size()) {
 		uint16 opcode = scr->readUint16LE();
-		if (opcode == 0xffff || opcode == 0x0000) {
-			scr->seek(-2, SEEK_CUR);
+		// on FFFF return the original offset
+		if (opcode == 0xffff) {
+			scr->seek(startoff);
 			return;
 		}
+		// on 5 (init) return the next offset (don't rewind)
 		if (opcode == 0x0005)
 			return;
+		// everything else just go forward.
 		scr->skip(numArgs(opcode) * 2);
 	}
 }
 
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
+	
+	//debug("ADSOP: 0x%04x", code);
 
 	switch (code) {
 	case 0x0001:
@@ -634,7 +654,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && !state->_runPlayed)
+		if (state && state->_runPlayed)
 			skipToEndIf(scr);
 		break;
 	}
@@ -642,7 +662,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (state && state->_runPlayed)
+		if (state && !state->_runPlayed)
 			skipToEndIf(scr);
 		break;
 	}
@@ -708,6 +728,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
+		debug("ADSInterpreter reset scene - enviro: %d, seqNum: %d, unk: %d", enviro, seqnum, unk);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq)
 			seq->reset();
@@ -807,7 +828,7 @@ bool ADSInterpreter::run() {
 
 		if (_adsData.scr && state == 1) {
 			_adsData.scr->seek(offset);
-			runUntilBrancOpOrEnd();
+			runUntilBranchOpOrEnd();
 		}
 	}
 
@@ -823,11 +844,11 @@ bool ADSInterpreter::run() {
 			}
 		} else {
 			int16 curframe = seq._currentFrame;
-			TTMData *env = findTTMEnviro(seq._enviro);
+			TTMEnviro *env = findTTMEnviro(seq._enviro);
 			_adsData._hitTTMOp0110 = false;
 			bool scriptresult = false;
-			if (curframe < env->_pages && curframe > -1 && env->_pageOffsets[curframe] > -1) {
-				env->scr->seek(env->_pageOffsets[curframe]);
+			if (curframe < env->_totalFrames && curframe > -1 && env->_frameOffsets[curframe] > -1) {
+				env->scr->seek(env->_frameOffsets[curframe]);
 				_currentTTMSeq = &seq;
 				scriptresult = playScene();
 			}
@@ -884,7 +905,7 @@ bool ADSInterpreter::run() {
 	return result;
 }
 
-bool ADSInterpreter::runUntilBrancOpOrEnd() {
+bool ADSInterpreter::runUntilBranchOpOrEnd() {
 	Common::SeekableReadStream *scr = _adsData.scr;
 	if (!scr || scr->pos() >= scr->size())
 		return false;
