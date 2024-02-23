@@ -106,6 +106,19 @@ static const M4GameDescription gameDescriptions[] = {
 	{
 		{
 			"burger",
+			"Demo",
+			AD_ENTRY1s("burger.has", "eee638f804c53b640218fbbb8c681fdc", 88137),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_TESTING,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_Burger,
+		kFeaturesDemo
+	},
+	{
+		{
+			"burger",
 			"Non-Interactive Demo",
 			AD_ENTRY1s("overview.has", "57aa43a3ef88a934a43e9b1890ef5e17", 10519),
 			Common::EN_ANY,
