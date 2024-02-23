@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	vm.o \
 	walkboxnode.o \
 	yack.o \
+	clipper/clipper.o \
 	squirrel/sqapi.o \
 	squirrel/sqbaselib.o \
 	squirrel/sqfuncstate.o \
@@ -62,7 +63,6 @@ MODULE_OBJS = \
 	squirrel/sqstdblob.o \
 	squirrel/sqstdrex.o \
 	squirrel/sqstdaux.o \
-	clipper/clipper.o \
 
 ifdef USE_IMGUI
 MODULE_OBJS += \
