@@ -2631,22 +2631,18 @@ void cb_Game_Resume(void *, void *) {
 void cb_Game_Save(void *, void *) {
 	// Destroy the game menu
 	DestroyGameMenu();
+	menu_Shutdown(true);
 
 	// Create the save game menu
-//	CreateSaveMenu(nullptr);
-	if (!g_engine->useOriginalSaveLoad())
-		menu_Shutdown(true);
 	g_engine->showSaveScreen();
 }
 
 void cb_Game_Load(void *, void *) {
 	// Destroy the game menu
 	DestroyGameMenu();
+	menu_Shutdown(true);
 
 	// Create the save game menu
-//	CreateLoadMenu(nullptr);
-	if (!g_engine->useOriginalSaveLoad())
-		menu_Shutdown(true);
 	g_engine->showLoadScreen();
 }
 
