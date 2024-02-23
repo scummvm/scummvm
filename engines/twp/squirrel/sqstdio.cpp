@@ -9,11 +9,7 @@
 //basic API
 SQFILE sqstd_fopen(const SQChar *filename ,const SQChar *mode)
 {
-#ifndef SQUNICODE
     return (SQFILE)fopen(filename,mode);
-#else
-    return (SQFILE)_wfopen(filename,mode);
-#endif
 }
 
 SQInteger sqstd_fread(void* buffer, SQInteger size, SQInteger count, SQFILE file)
@@ -265,46 +261,6 @@ static SQInteger _io_file_lexfeed_PLAIN(SQUserPointer iobuf)
 
 }
 
-#ifdef SQUNICODE
-static SQInteger _io_file_lexfeed_UTF8(SQUserPointer iobuf)
-{
-    IOBuffer *iobuffer = (IOBuffer *)iobuf;
-#define READ(iobuf) \
-    if((inchar = (unsigned char)_read_byte(iobuf)) == 0) \
-        return 0;
-
-    static const SQInteger utf8_lengths[16] =
-    {
-        1,1,1,1,1,1,1,1,        /* 0000 to 0111 : 1 byte (plain ASCII) */
-        0,0,0,0,                /* 1000 to 1011 : not valid */
-        2,2,                    /* 1100, 1101 : 2 bytes */
-        3,                      /* 1110 : 3 bytes */
-        4                       /* 1111 :4 bytes */
-    };
-    static const unsigned char byte_masks[5] = {0,0,0x1f,0x0f,0x07};
-    unsigned char inchar;
-    SQInteger c = 0;
-    READ(iobuffer);
-    c = inchar;
-    //
-    if(c >= 0x80) {
-        SQInteger tmp;
-        SQInteger codelen = utf8_lengths[c>>4];
-        if(codelen == 0)
-            return 0;
-            //"invalid UTF-8 stream";
-        tmp = c&byte_masks[codelen];
-        for(SQInteger n = 0; n < codelen-1; n++) {
-            tmp<<=6;
-            READ(iobuffer);
-            tmp |= inchar & 0x3F;
-        }
-        c = tmp;
-    }
-    return c;
-}
-#endif
-
 static SQInteger _io_file_lexfeed_UCS2_LE(SQUserPointer iobuf)
 {
     SQInteger ret;
@@ -374,11 +330,8 @@ SQRESULT sqstd_loadfile(HSQUIRRELVM v,const SQChar *filename,SQBool printerror)
                         sqstd_fclose(file);
                         return sq_throwerror(v,_SC("Unrecognized encoding"));
                     }
-#ifdef SQUNICODE
-                    func = _io_file_lexfeed_UTF8;
-#else
+
                     func = _io_file_lexfeed_PLAIN;
-#endif
                     break;//UTF-8 ;
                 default: sqstd_fseek(file,0,SQ_SEEK_SET); break; // ascii
             }

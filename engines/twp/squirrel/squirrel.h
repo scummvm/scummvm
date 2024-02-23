@@ -59,10 +59,6 @@ struct SQInstance;
 struct SQDelegable;
 struct SQOuter;
 
-#ifdef _UNICODE
-//#define SQUNICODE
-#endif
-
 #include "sqconfig.h"
 
 #define SQUIRREL_VERSION    _SC("Squirrel 3.1 stable")

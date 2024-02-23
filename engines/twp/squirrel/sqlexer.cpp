@@ -293,24 +293,6 @@ SQInteger SQLexer::GetIDType(const SQChar *s,SQInteger len)
     return TK_IDENTIFIER;
 }
 
-#ifdef SQUNICODE
-#if WCHAR_SIZE == 2
-SQInteger SQLexer::AddUTF16(SQUnsignedInteger ch)
-{
-    if (ch >= 0x10000)
-    {
-        SQUnsignedInteger code = (ch - 0x10000);
-        APPEND_CHAR((SQChar)(0xD800 | (code >> 10)));
-        APPEND_CHAR((SQChar)(0xDC00 | (code & 0x3FF)));
-        return 2;
-    }
-    else {
-        APPEND_CHAR((SQChar)ch);
-        return 1;
-    }
-}
-#endif
-#else
 SQInteger SQLexer::AddUTF8(SQUnsignedInteger ch)
 {
     if (ch < 0x80) {
@@ -337,7 +319,6 @@ SQInteger SQLexer::AddUTF8(SQUnsignedInteger ch)
     }
     return 0;
 }
-#endif
 
 SQInteger SQLexer::ProcessStringHexEscape(SQChar *dest, SQInteger maxdigits)
 {
@@ -391,15 +372,8 @@ SQInteger SQLexer::ReadString(SQInteger ndelim,bool verbatim)
                         SQChar temp[8 + 1];
                         ProcessStringHexEscape(temp, maxdigits);
                         SQChar *stemp;
-#ifdef SQUNICODE
-#if WCHAR_SIZE == 2
-                        AddUTF16(scstrtoul(temp, &stemp, 16));
-#else
-                        APPEND_CHAR((SQChar)scstrtoul(temp, &stemp, 16));
-#endif
-#else
+
                         AddUTF8(scstrtoul(temp, &stemp, 16));
-#endif
                     }
                     break;
                     case _SC('t'): APPEND_CHAR(_SC('\t')); NEXT(); break;
