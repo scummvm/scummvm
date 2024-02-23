@@ -23,19 +23,13 @@
 
 namespace Common {
 
+namespace BTEACrypto {
+
 #define DELTA 0x9e3779b9
 #define MX (((z >> 5 ^ y << 2) + (y >> 3 ^ z << 4)) ^ ((sum ^ y) + (key[(p & 3) ^ e] ^ z)))
 
-void BTEACrypto::encrypt(uint32 *v, int n, const uint32 *key) {
-	btea(v, n, key);
-}
-
-void BTEACrypto::decrypt(uint32 *v, int n, const uint32 *key) {
-	btea(v, -n, key);
-}
-
 // This method comes from https://en.wikipedia.org/wiki/XXTEA
-void BTEACrypto::btea(uint32 *v, int n, const uint32 *key) {
+void btea(uint32 *v, int n, const uint32 *key) {
 	uint32 y, z, sum;
 	unsigned int p, rounds, e;
 	if (n > 1) { /* Coding Part */
@@ -69,4 +63,14 @@ void BTEACrypto::btea(uint32 *v, int n, const uint32 *key) {
 		} while (--rounds);
 	}
 }
+
+void encrypt(uint32 *v, int n, const uint32 *key) {
+	btea(v, n, key);
+}
+
+void decrypt(uint32 *v, int n, const uint32 *key) {
+	btea(v, -n, key);
+}
+
+} // namespace BTEACrypto
 } // namespace Common
