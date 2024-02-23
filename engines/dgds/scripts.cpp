@@ -82,7 +82,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 	case 0x0070: // FREE PALETTE
 		error("TODO: Implement me: free palette (current pal)");
 		break;
-	case 0x0080: // DRAW BACKGROUND
+	case 0x0080: // FREE SHAPE // DRAW BACKGROUND??
 		_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
 		break;
 	case 0x0090: // FREE FONT
@@ -102,7 +102,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		state._timeNext = g_system->getMillis() + ivals[0] * 10;
 		break;
 	case 0x1030: {
-		// SET BMP:	id:int [-1:n]
+		// SET BRUSH:	id:int [-1:n]
 		int bk = ivals[0];
 		if (bk != -1) {
 			_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], bk);
@@ -115,6 +115,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		break;
 	case 0x1060:
 		// SELECT PAL:  id:int [0]
+		state._currentPalId = ivals[0];
 		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
 		break;
 	case 0x1090:
@@ -142,7 +143,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		state._drawColBG = static_cast<byte>(ivals[1]);
 		break;
 	case 0x4000:
-		// SET DRAW WINDOW? x,y,w,h:int	[0..320,0..200]
+		// SET CLIP WINDOW x,y,w,h:int	[0..320,0..200]
 		state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110:
@@ -276,11 +277,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		break;
 
 	// Unimplemented / unknown
-	case 0x00C0: // does something with slot 5?
+	case 0x00C0: // FREE BACKGROUND (probably, does something with slot 5)
 	case 0x0220: // STOP CURRENT MUSIC
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1070: // SELECT FONT  i:int
-	case 0x1120: // SET_BACKGROUND
+	case 0x1120: // SET_BACKGROUND - set slot 5 (background
 	case 0x1310: // STOP SFX    i:int   eg [107]
 	case 0x2010: // SET FRAME
 	case 0x2020: // SET TIMER
@@ -319,7 +320,7 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	seq._timeNext = 0;
 
 	uint16 code = 0;
-	while (code != 0xff0 && scr->pos() < scr->size()) {
+	while (code != 0x0ff0 && scr->pos() < scr->size()) {
 		code = scr->readUint16LE();
 		uint16 op = code & 0xFFF0;
 		byte count = code & 0x000F;
@@ -368,7 +369,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 		env._frameOffsets[frame] = env.scr->pos();
 		//debug("findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
 		op = env.scr->readUint16LE();
-		while (op != 0xff0 && env.scr->pos() < env.scr->size()) {
+		while (op != 0x0ff0 && env.scr->pos() < env.scr->size()) {
 			//debug("findAndAddSequences: check ttm op %04x", op);
 			if (op == 0xaf1f || op == 0xaf2f)
 				warning("TODO: Fix findAndAddSequences for opcode %x which has variable length arg", op);
@@ -465,8 +466,8 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	int segcount = 0;
 	findUsedSequencesForSegment(0);
 	_adsData._segments[0] = 0;
+	opcode = _adsData.scr->readUint16LE();
 	while (_adsData.scr->pos() < _adsData.scr->size()) {
-		opcode = _adsData.scr->readUint16LE();
 		if (opcode == 0xffff) {
 			segcount++;
 			_adsData._segments[segcount] = _adsData.scr->pos();
@@ -474,6 +475,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 		} else {
 			_adsData.scr->skip(numArgs(opcode) * 2);
 		}
+		opcode = _adsData.scr->readUint16LE();
 	}
 
 	for (uint i = segcount + 1; i < ARRAYSIZE(_adsData._segments); i++)
@@ -646,6 +648,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	//debug("ADSOP: 0x%04x", code);
 
 	switch (code) {
+	case 0x0002: // FIXME: Is this ok? seen in dragon intro.
 	case 0x0001:
 	case 0x0005:
 		// "init".  0x0005 can be used for searching for next thing.
@@ -899,7 +902,7 @@ bool ADSInterpreter::run() {
 		}
 
 		if (rflag == kRunTypeTimeLimited && seq._timeCut > g_system->getMillis()) {
-			seq._runFlag = kRunTypeStopped;
+			seq._runFlag = kRunType4;
 		}
 	}
 	return result;
