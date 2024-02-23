@@ -106,6 +106,7 @@ int newLightId() {
 
 Facing getOppositeFacing(Facing facing) {
 	switch (facing) {
+	default:
 	case FACE_FRONT:
 		return FACE_BACK;
 	case FACE_BACK:

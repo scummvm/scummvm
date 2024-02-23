@@ -40,8 +40,8 @@ Rectf Rectf::fromMinMax(Math::Vector2d min, Math::Vector2d max) {
 	return {min.getX(), min.getY(), max.getX() - min.getX() + 1, max.getY() - min.getY() + 1};
 }
 
-Rectf Rectf::operator/(Math::Vector2d v) {
-	return Rectf(r.x / v.getX(), r.y / v.getY(), r.w / v.getX(), r.h / v.getY());
+Rectf Rectf::operator/(Math::Vector2d nv) {
+	return Rectf(r.x / nv.getX(), r.y / nv.getY(), r.w / nv.getX(), r.h / nv.getY());
 }
 
 } // namespace Twp

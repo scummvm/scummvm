@@ -164,6 +164,7 @@ static SQInteger sqstd_rex_charnode(SQRex *exp,SQBool isclass)
                     exp->_p++;
                     return node;
                 } //else default
+                // fallthrough
             default:
                 t = *exp->_p; exp->_p++;
                 return sqstd_rex_newnode(exp,t);

@@ -213,7 +213,10 @@ void Dialog::choose(DialogSlot *slot) {
 }
 
 void Dialog::start(const Common::String &actor, const Common::String &name, const Common::String &node) {
-	_context = DialogContext{.actor = actor, .dialogName = name, .parrot = true, .limit = MAXCHOICES};
+	_context.actor = actor;
+	_context.dialogName = name;
+	_context.parrot = true;
+	_context.limit = MAXCHOICES;
 	// keepIf(self.states, proc(x: DialogConditionState): bool = x.mode != TempOnce);
 	Common::String path = name + ".byack";
 	debugC(kDebugDialog, "start dialog %s", path.c_str());

@@ -40,6 +40,7 @@ Facing flip(Facing facing) {
 	switch (facing) {
 	case FACE_BACK:
 		return FACE_FRONT;
+	default:
 	case FACE_FRONT:
 		return FACE_BACK;
 	case FACE_LEFT:

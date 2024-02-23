@@ -232,6 +232,7 @@ Common::String Object::suffix() const {
 	switch (getFacing()) {
 	case FACE_BACK:
 		return "_back";
+	default:
 	case FACE_FRONT:
 		return "_front";
 	case FACE_LEFT:
