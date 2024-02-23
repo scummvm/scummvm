@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TWP_WALKBOXMODE_H
-#define TWP_WALKBOXMODE_H
+#ifndef TWP_WALKBOXNODE_H
+#define TWP_WALKBOXNODE_H
 
 #include "twp/scenegraph.h"
 
