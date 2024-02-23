@@ -93,8 +93,8 @@ enum SceneOpCode {
 	kSceneOp15 = 15,			// args: none.
 	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
 	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
-	kSceneOp18Menu = 18,		// args: none.  set menu-related globals to 1
-	kSceneOp19Menu = 19,		// args: none.  set menu-related globals to 0
+	kSceneOpShowMouse = 18,		// args: none.
+	kSceneOpHideMouse = 19,		// args: none.
 	kSceneOp100 = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOp102 = 102,			// args: none.

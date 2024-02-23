@@ -46,7 +46,7 @@ public:
 class GamePalettes {
 public:
 	GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor);
-	void loadPalette(Common::String filename);
+	int loadPalette(Common::String filename);
 	void selectPalNum(int num);
 	void setPalette();
 	void clearPalette();

@@ -47,12 +47,12 @@ GamePalettes::GamePalettes(ResourceManager *resourceMan, Decompressor *decompres
 _resourceMan(resourceMan), _decompressor(decompressor) {
 }
 
-void GamePalettes::loadPalette(Common::String filename) {
+int GamePalettes::loadPalette(Common::String filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream) {
 		// Happens in the Amiga version of Dragon
 		warning("Couldn't load palette resource %s", filename.c_str());
-		return;
+		return 0;
 	}
 
 	_palettes.resize(_palettes.size() + 1);
@@ -75,8 +75,9 @@ void GamePalettes::loadPalette(Common::String filename) {
 	}
 
 	delete fileStream;
+	selectPalNum(_palettes.size() - 1);
 
-	selectPalNum(0);
+	return _palettes.size() - 1;
 }
 
 void GamePalettes::selectPalNum(int num) {
