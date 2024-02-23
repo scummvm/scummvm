@@ -51,57 +51,6 @@ typedef void* SQUserPointer;
 typedef SQUnsignedInteger SQBool;
 typedef SQInteger SQRESULT;
 
-#ifdef SQUNICODE
-#include <wchar.h>
-#include <wctype.h>
-
-
-typedef wchar_t SQChar;
-
-
-#define scstrcmp    wcscmp
-#ifdef _WIN32
-#define scsprintf   _snwprintf
-#else
-#define scsprintf   swprintf
-#endif
-#define scstrlen    wcslen
-#define scstrtod    wcstod
-#ifdef _SQ64
-#define scstrtol    wcstoll
-#else
-#define scstrtol    wcstol
-#endif
-#define scstrtoul   wcstoul
-#define scvsprintf  vswprintf
-#define scstrstr    wcsstr
-#define scprintf    wprintf
-
-#ifdef _WIN32
-#define WCHAR_SIZE 2
-#define WCHAR_SHIFT_MUL 1
-#define MAX_CHAR 0xFFFF
-#else
-#define WCHAR_SIZE 4
-#define WCHAR_SHIFT_MUL 2
-#define MAX_CHAR 0xFFFFFFFF
-#endif
-
-#define _SC(a) L##a
-
-
-#define scisspace   iswspace
-#define scisdigit   iswdigit
-#define scisprint   iswprint
-#define scisxdigit  iswxdigit
-#define scisalpha   iswalpha
-#define sciscntrl   iswcntrl
-#define scisalnum   iswalnum
-
-
-#define sq_rsl(l) ((l)<<WCHAR_SHIFT_MUL)
-
-#else
 typedef char SQChar;
 #define _SC(a) a
 #define scstrcmp    strcmp
@@ -135,8 +84,6 @@ typedef char SQChar;
 #define MAX_CHAR 0xFF
 
 #define sq_rsl(l) (l)
-
-#endif
 
 #ifdef _SQ64
 #define _PRINT_INT_PREC _SC("ll")

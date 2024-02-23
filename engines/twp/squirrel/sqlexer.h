@@ -2,11 +2,7 @@
 #ifndef _SQLEXER_H_
 #define _SQLEXER_H_
 
-#ifdef SQUNICODE
-typedef SQChar LexChar;
-#else
 typedef unsigned char LexChar;
-#endif
 
 struct SQLexer
 {
@@ -24,13 +20,8 @@ private:
     void LexLineComment();
     SQInteger ReadID();
     void Next();
-#ifdef SQUNICODE
-#if WCHAR_SIZE == 2
-    SQInteger AddUTF16(SQUnsignedInteger ch);
-#endif
-#else
+
     SQInteger AddUTF8(SQUnsignedInteger ch);
-#endif
     SQInteger ProcessStringHexEscape(SQChar *dest, SQInteger maxdigits);
     SQInteger _curtoken;
     SQTable *_keywords;

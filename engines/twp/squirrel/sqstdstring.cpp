@@ -274,18 +274,8 @@ static SQInteger _string_escape(HSQUIRRELVM v)
         sq_push(v,2);
         return 1;
     }
-#ifdef SQUNICODE
-#if WCHAR_SIZE == 2
-    const SQChar *escpat = _SC("\\x%04x");
-    const SQInteger maxescsize = 6;
-#else //WCHAR_SIZE == 4
-    const SQChar *escpat = _SC("\\x%08x");
-    const SQInteger maxescsize = 10;
-#endif
-#else
     const SQChar *escpat = _SC("\\x%02x");
     const SQInteger maxescsize = 4;
-#endif
     SQInteger destcharsize = (size * maxescsize); //assumes every char could be escaped
     resstr = dest = (SQChar *)sq_getscratchpad(v,destcharsize * sizeof(SQChar));
     SQChar c;
