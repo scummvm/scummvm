@@ -20,6 +20,10 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/object.h"
+#include "twp/room.h"
+#include "twp/shaders.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 
@@ -368,23 +372,23 @@ static SQInteger roomEffect(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (roomEffect == RoomEffect::Ghost) {
 		if (nArgs == 14) {
-			sqget(v, 3, g_twp->_shaderParams.iFade);
-			sqget(v, 4, g_twp->_shaderParams.wobbleIntensity);
-			sqget(v, 6, g_twp->_shaderParams.shadows.rgba.r);
-			sqget(v, 7, g_twp->_shaderParams.shadows.rgba.g);
-			sqget(v, 8, g_twp->_shaderParams.shadows.rgba.b);
-			sqget(v, 9, g_twp->_shaderParams.midtones.rgba.r);
-			sqget(v, 10, g_twp->_shaderParams.midtones.rgba.g);
-			sqget(v, 11, g_twp->_shaderParams.midtones.rgba.b);
-			sqget(v, 12, g_twp->_shaderParams.highlights.rgba.r);
-			sqget(v, 13, g_twp->_shaderParams.highlights.rgba.g);
-			sqget(v, 14, g_twp->_shaderParams.highlights.rgba.b);
+			sqget(v, 3, g_twp->_shaderParams->iFade);
+			sqget(v, 4, g_twp->_shaderParams->wobbleIntensity);
+			sqget(v, 6, g_twp->_shaderParams->shadows.rgba.r);
+			sqget(v, 7, g_twp->_shaderParams->shadows.rgba.g);
+			sqget(v, 8, g_twp->_shaderParams->shadows.rgba.b);
+			sqget(v, 9, g_twp->_shaderParams->midtones.rgba.r);
+			sqget(v, 10, g_twp->_shaderParams->midtones.rgba.g);
+			sqget(v, 11, g_twp->_shaderParams->midtones.rgba.b);
+			sqget(v, 12, g_twp->_shaderParams->highlights.rgba.r);
+			sqget(v, 13, g_twp->_shaderParams->highlights.rgba.g);
+			sqget(v, 14, g_twp->_shaderParams->highlights.rgba.b);
 		} else {
-			g_twp->_shaderParams.iFade = 1.f;
-			g_twp->_shaderParams.wobbleIntensity = 1.f;
-			g_twp->_shaderParams.shadows = Color(-0.3f, 0.f, 0.f);
-			g_twp->_shaderParams.midtones = Color(-0.2f, 0.f, 0.1f);
-			g_twp->_shaderParams.highlights = Color(0.f, 0.f, 0.2f);
+			g_twp->_shaderParams->iFade = 1.f;
+			g_twp->_shaderParams->wobbleIntensity = 1.f;
+			g_twp->_shaderParams->shadows = Color(-0.3f, 0.f, 0.f);
+			g_twp->_shaderParams->midtones = Color(-0.2f, 0.f, 0.1f);
+			g_twp->_shaderParams->highlights = Color(0.f, 0.f, 0.2f);
 		}
 	}
 	g_twp->_room->_effect = (RoomEffect)effect;

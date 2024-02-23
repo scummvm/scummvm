@@ -20,6 +20,9 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/squtil.h"
 
 #define MIN_TALK_DIST 60
@@ -224,7 +227,7 @@ void Object::trig(const Common::String &name) {
 		if (!sound)
 			warning("Cannot trig sound '%s', sound not found (id=%lld, %s)", name.c_str(), id, _key.c_str());
 		else
-			g_twp->_audio.play(sound, Audio::Mixer::SoundType::kPlainSoundType);
+			g_twp->_audio->play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	}
 }
 
@@ -521,7 +524,7 @@ void Object::blinkRate(Common::SharedPtr<Object> obj, float min, float max) {
 
 void Object::setCostume(const Common::String &name, const Common::String &sheet) {
 	GGPackEntryReader entry;
-	entry.open(g_twp->_pack, name + ".json");
+	entry.open(*g_twp->_pack, name + ".json");
 
 	GGHashMapDecoder dec;
 	Common::ScopedPtr<Common::JSONValue> json(dec.open(&entry));
@@ -657,12 +660,12 @@ int Object::flags() {
 UseFlag Object::useFlag() {
 	int flags = getFlags();
 	if (flags & USE_WITH)
-		return ufUseWith;
+		return UseFlag::ufUseWith;
 	if (flags & USE_ON)
-		return ufUseOn;
+		return UseFlag::ufUseOn;
 	if (flags & USE_IN)
-		return ufUseIn;
-	return ufNone;
+		return UseFlag::ufUseIn;
+	return UseFlag::ufNone;
 }
 
 float Object::getScale() {

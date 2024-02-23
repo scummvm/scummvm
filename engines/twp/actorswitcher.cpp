@@ -21,6 +21,8 @@
 
 #include "twp/twp.h"
 #include "twp/actorswitcher.h"
+#include "twp/resmanager.h"
+#include "twp/util.h"
 
 #define DISABLE_ALPHA 0.f
 #define ENABLE_ALPHA 1.f
@@ -69,8 +71,8 @@ float ActorSwitcher::getAlpha(size_t index) const {
 }
 
 void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index) {
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame &iconBackFrame = gameSheet->getFrame("icon_background");
 	const SpriteSheetFrame &iconActorFrame = gameSheet->getFrame(icon);
 	const SpriteSheetFrame &iconFrame = gameSheet->getFrame("icon_frame");

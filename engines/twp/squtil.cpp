@@ -19,7 +19,10 @@
  *
  */
 
+#include "twp/detection.h"
 #include "twp/lighting.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/squirrel/squirrel.h"
@@ -337,8 +340,8 @@ Common::SharedPtr<Object> sqactor(HSQUIRRELVM v, int i) {
 }
 
 Common::SharedPtr<SoundDefinition> sqsounddef(int id) {
-	for (size_t i = 0; i < g_twp->_audio._soundDefs.size(); i++) {
-		Common::SharedPtr<SoundDefinition> sound = g_twp->_audio._soundDefs[i];
+	for (size_t i = 0; i < g_twp->_audio->_soundDefs.size(); i++) {
+		Common::SharedPtr<SoundDefinition> sound = g_twp->_audio->_soundDefs[i];
 		if (sound->getId() == id)
 			return sound;
 	}

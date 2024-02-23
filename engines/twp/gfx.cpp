@@ -19,8 +19,10 @@
  *
  */
 
+#include "common/system.h"
 #include "twp/twp.h"
 #include "twp/gfx.h"
+#include "twp/shaders.h"
 
 namespace Twp {
 

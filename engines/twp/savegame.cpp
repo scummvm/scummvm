@@ -21,7 +21,13 @@
 
 #include "common/btea.h"
 #include "common/savefile.h"
+#include "twp/callback.h"
+#include "twp/detection.h"
+#include "twp/dialog.h"
 #include "twp/ggpack.h"
+#include "twp/hud.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/savegame.h"
 #include "twp/squtil.h"
 #include "twp/time.h"
@@ -74,7 +80,7 @@ static DialogConditionState parseState(Common::String &dialog) {
 		i++;
 	}
 
-	while (!g_twp->_pack.assetExists((dialogName + ".byack").c_str()) && (i < dialog.size())) {
+	while (!g_twp->_pack->assetExists((dialogName + ".byack").c_str()) && (i < dialog.size())) {
 		dialogName += dialog[i];
 		i++;
 	}
@@ -460,14 +466,14 @@ void SaveGameManager::loadGameScene(const Common::JSONObject &json) {
 	for (size_t i = 0; i < jSelectableActors.size(); i++) {
 		const Common::JSONObject &jSelectableActor = jSelectableActors[i]->asObject();
 		Common::SharedPtr<Object> act = jSelectableActor.contains("_actorKey") ? actor(jSelectableActor["_actorKey"]->asString()) : nullptr;
-		g_twp->_hud._actorSlots[i].actor = act;
-		g_twp->_hud._actorSlots[i].selectable = jSelectableActor["selectable"]->asIntegerNumber() != 0;
+		g_twp->_hud->_actorSlots[i].actor = act;
+		g_twp->_hud->_actorSlots[i].selectable = jSelectableActor["selectable"]->asIntegerNumber() != 0;
 	}
 }
 
 void SaveGameManager::loadDialog(const Common::JSONObject &json) {
 	debugC(kDebugGame, "loadDialog");
-	g_twp->_dialog._states.clear();
+	g_twp->_dialog->_states.clear();
 	for (auto it = json.begin(); it != json.end(); it++) {
 		Common::String dialog(it->_key);
 		// dialog format: mode dialog number actor
@@ -479,7 +485,7 @@ void SaveGameManager::loadDialog(const Common::JSONObject &json) {
 		// $: showonceever
 		// ^: temponce
 		DialogConditionState state = parseState(dialog);
-		g_twp->_dialog._states.push_back(state);
+		g_twp->_dialog->_states.push_back(state);
 		// TODO: what to do with this dialog value ?
 		// let value = property.second.getInt()
 	}
@@ -545,7 +551,7 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 		const Common::JSONObject &jInventory = json->asObject();
 		const Common::JSONArray &jSlots = jInventory["slots"]->asArray();
 		for (int i = 0; i < NUMACTORS; i++) {
-			Common::SharedPtr<Object> a(g_twp->_hud._actorSlots[i].actor);
+			Common::SharedPtr<Object> a(g_twp->_hud->_actorSlots[i].actor);
 			if (a) {
 				a->_inventory.clear();
 				const Common::JSONObject &jSlot = jSlots[i]->asObject();
@@ -788,8 +794,8 @@ Common::String createJDlgStateKey(const DialogConditionState &state) {
 
 static Common::JSONValue *createJDialog() {
 	Common::JSONObject json;
-	for (size_t i = 0; i < g_twp->_dialog._states.size(); i++) {
-		const DialogConditionState &state = g_twp->_dialog._states[i];
+	for (size_t i = 0; i < g_twp->_dialog->_states.size(); i++) {
+		const DialogConditionState &state = g_twp->_dialog->_states[i];
 		if (state.mode != TempOnce) {
 			// TODO: value should be 1 or another value ?
 			json[createJDlgStateKey(state)] = new Common::JSONValue(state.mode == ShowOnce ? 2LL : 1LL);
@@ -822,7 +828,7 @@ static Common::JSONValue *createJSelectableActor(const ActorSlot &slot) {
 static Common::JSONValue *createJSelectableActors() {
 	Common::JSONArray json;
 	for (int i = 0; i < NUMACTORS; i++) {
-		const ActorSlot &slot = g_twp->_hud._actorSlots[i];
+		const ActorSlot &slot = g_twp->_hud->_actorSlots[i];
 		json.push_back(createJSelectableActor(slot));
 	}
 	return new Common::JSONValue(json);
@@ -875,7 +881,7 @@ static Common::JSONValue *createJInventory(const ActorSlot &slot) {
 static Common::JSONValue *createJInventory() {
 	Common::JSONArray slots;
 	for (int i = 0; i < NUMACTORS; i++) {
-		const ActorSlot &slot = g_twp->_hud._actorSlots[i];
+		const ActorSlot &slot = g_twp->_hud->_actorSlots[i];
 		slots.push_back(createJInventory(slot));
 	}
 	Common::JSONObject json;

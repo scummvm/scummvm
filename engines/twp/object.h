@@ -54,7 +54,7 @@ enum Direction {
 	dBack = 8
 };
 
-enum UseFlag {
+enum class UseFlag {
 	ufNone,
 	ufUseWith,
 	ufUseOn,

@@ -23,7 +23,6 @@
 #include "twp/object.h"
 #include "twp/scenegraph.h"
 
-#define NUMVERBS 9
 #define MAX_VERBS 22
 #define NUMACTORS 6
 

@@ -20,6 +20,7 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
 #include "twp/ids.h"
 #include "twp/thread.h"
 #include "twp/squtil.h"

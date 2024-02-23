@@ -20,6 +20,10 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/hud.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 
@@ -411,7 +415,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			SQInteger slot;
 			if (SQ_FAILED(sqget(v, 2, slot)))
 				return sq_throwerror(v, "failed to get slot");
-			g_twp->_hud._actorSlots[slot - 1].selectable = selectable;
+			g_twp->_hud->_actorSlots[slot - 1].selectable = selectable;
 		} else {
 			Common::SharedPtr<Object> actor = sqactor(v, 2);
 			if (!actor)
@@ -419,7 +423,7 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			Common::String key;
 			sqgetf(actor->_table, "_key", key);
 			debugC(kDebugActScript, "actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
-			ActorSlot *slot = g_twp->_hud.actorSlot(actor);
+			ActorSlot *slot = g_twp->_hud->actorSlot(actor);
 			if (!slot)
 				warning("slot for actor %s not found", key.c_str());
 			else
@@ -769,7 +773,7 @@ static SQInteger addSelectableActor(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 2, slot)))
 		return sq_throwerror(v, "failed to get slot");
 	Common::SharedPtr<Object> actor = sqactor(v, 3);
-	g_twp->_hud._actorSlots[slot - 1].actor = actor;
+	g_twp->_hud->_actorSlots[slot - 1].actor = actor;
 	return 0;
 }
 
@@ -926,7 +930,7 @@ static SQInteger isActorSelectable(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
-	ActorSlot *slot = g_twp->_hud.actorSlot(actor);
+	ActorSlot *slot = g_twp->_hud->actorSlot(actor);
 	bool selectable = slot && slot->selectable;
 	sqpush(v, selectable);
 	return 1;
@@ -1045,7 +1049,7 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 	sqgetf(table, "dialogNormal", dialogNormal);
 	sqgetf(table, "dialogHighlight", dialogHighlight);
 
-	g_twp->_hud._actorSlots[actorSlot - 1].verbUiColors =
+	g_twp->_hud->_actorSlots[actorSlot - 1].verbUiColors =
 		VerbUiColors(
 			Color::rgb(sentence),
 			Color::rgb(verbNormal),

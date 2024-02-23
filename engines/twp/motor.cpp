@@ -22,7 +22,11 @@
 
 #include "common/config-manager.h"
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/squtil.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -337,11 +341,11 @@ void Talking::update(float elapsed) {
 
 	_elapsed += elapsed;
 	if (_obj->_sound) {
-		if (!g_twp->_audio.playing(_obj->_sound)) {
+		if (!g_twp->_audio->playing(_obj->_sound)) {
 			debugC(kDebugGame, "talking %s audio stopped", _obj->_key.c_str());
 			_obj->_sound = 0;
 		} else {
-			float e = static_cast<float>(g_twp->_audio.getElapsed(_obj->_sound)) / 1000.f;
+			float e = static_cast<float>(g_twp->_audio->getElapsed(_obj->_sound)) / 1000.f;
 			char letter = _lip.letter(e);
 			_obj->setHeadIndex(letterToIndex(letter));
 		}
@@ -368,14 +372,14 @@ int Talking::loadActorSpeech(const Common::String &name) {
 	Common::String filename(name);
 	filename.toUppercase();
 	filename += ".ogg";
-	if (g_twp->_pack.assetExists(filename.c_str())) {
+	if (g_twp->_pack->assetExists(filename.c_str())) {
 		Common::SharedPtr<SoundDefinition> soundDefinition(new SoundDefinition(filename));
 		if (!soundDefinition) {
 			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
 		} else {
-			g_twp->_audio._soundDefs.push_back(soundDefinition);
-			int id = g_twp->_audio.play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
-			int duration = g_twp->_audio.getDuration(id);
+			g_twp->_audio->_soundDefs.push_back(soundDefinition);
+			int id = g_twp->_audio->play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
+			int duration = g_twp->_audio->getDuration(id);
 			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
 			if (duration)
 				_duration = static_cast<float>(duration) / 1000.f;
@@ -395,7 +399,7 @@ void Talking::say(const Common::String &text) {
 	}
 	if (txt[0] == '@') {
 		int id = atoi(txt.c_str() + 1);
-		txt = g_twp->_textDb.getText(id);
+		txt = g_twp->_textDb->getText(id);
 
 		id = onTalkieId(id);
 		Common::String key = talkieKey();
@@ -404,15 +408,15 @@ void Talking::say(const Common::String &text) {
 		Common::String path = name + ".lip";
 
 		debugC(kDebugGame, "Load lip %s", path.c_str());
-		if (g_twp->_pack.assetExists(path.c_str())) {
+		if (g_twp->_pack->assetExists(path.c_str())) {
 			GGPackEntryReader entry;
-			entry.open(g_twp->_pack, path);
+			entry.open(*g_twp->_pack, path);
 			_lip.load(&entry);
 			debugC(kDebugGame, "Lip %s loaded", path.c_str());
 		}
 
 		if (_obj->_sound) {
-			g_twp->_audio.stop(_obj->_sound);
+			g_twp->_audio->stop(_obj->_sound);
 		}
 
 		_obj->_sound = loadActorSpeech(name);
@@ -469,7 +473,7 @@ void Talking::say(const Common::String &text) {
 
 		_obj->_sayNode->setPos(pos);
 		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
-		g_twp->_screenScene.addChild(_obj->_sayNode.get());
+		g_twp->_screenScene->addChild(_obj->_sayNode.get());
 	}
 
 	_elapsed = 0.f;

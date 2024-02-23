@@ -27,6 +27,8 @@
 #include "audio/decoders/wave.h"
 #include "twp/twp.h"
 #include "twp/audio.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/squtil.h"
 
 namespace Twp {
@@ -62,7 +64,7 @@ SoundDefinition::SoundDefinition(const Common::String &name) : _name(name), _id(
 void SoundDefinition::load() {
 	if (!_loaded) {
 		GGPackEntryReader entry;
-		entry.open(g_twp->_pack, _name);
+		entry.open(*g_twp->_pack, _name);
 		_buffer.resize(entry.size());
 		entry.read(_buffer.data(), entry.size());
 	}

@@ -20,6 +20,10 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/hud.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 #include "twp/squirrel/squirrel.h"
@@ -29,6 +33,7 @@
 #include "twp/squirrel/sqtable.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -733,7 +738,7 @@ static SQInteger objectScreenSpace(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	g_twp->_screenScene.addChild(obj->_node.get());
+	g_twp->_screenScene->addChild(obj->_node.get());
 	return 0;
 }
 
@@ -888,7 +893,7 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get verb");
 
 	if (g_twp->_actor) {
-		ActorSlot *slot = g_twp->_hud.actorSlot(g_twp->_actor);
+		ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
 		for (int i = 0; i < MAX_VERBS; i++) {
 			Verb *vb = &slot->verbs[i];
 			if (vb->id.id == verb) {
@@ -915,7 +920,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		sq_getstackobj(v, 2, &o);
 		Common::String name;
 		sqgetf(o, "name", name);
-		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_twp->_textDb.getText(name).c_str()).c_str());
+		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_twp->_textDb->getText(name).c_str()).c_str());
 	}
 	Common::SharedPtr<Object> actor;
 	if (sq_gettop(v) >= 3) {

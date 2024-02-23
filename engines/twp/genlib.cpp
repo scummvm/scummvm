@@ -21,6 +21,11 @@
 
 #include "common/crc.h"
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/dialog.h"
+#include "twp/hud.h"
+#include "twp/resmanager.h"
+#include "twp/room.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 #include "twp/squirrel/sqvm.h"
@@ -29,6 +34,7 @@
 #include "twp/squirrel/sqtable.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -54,7 +60,7 @@ static void shuffle(Common::Array<T> &array) {
 }
 
 static SQInteger activeVerb(HSQUIRRELVM v) {
-	sqpush(v, g_twp->_hud._verb.id.id);
+	sqpush(v, g_twp->_hud->_verb.id.id);
 	return 1;
 }
 
@@ -86,7 +92,7 @@ static SQInteger assetExists(HSQUIRRELVM v) {
 	const SQChar *filename;
 	if (SQ_FAILED(sq_getstring(v, 2, &filename)))
 		return sq_throwerror(v, "failed to get filename");
-	sqpush(v, g_twp->_pack.assetExists(filename));
+	sqpush(v, g_twp->_pack->assetExists(filename));
 	return 1;
 }
 
@@ -135,7 +141,7 @@ static SQInteger cameraBounds(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get yMin");
 	if (SQ_FAILED(sqget(v, 5, yMax)))
 		return sq_throwerror(v, "failed to get yMax");
-	g_twp->_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(xMin, yMin), Math::Vector2d(xMax, yMax)));
+	g_twp->_camera->setBounds(Rectf::fromMinMax(Math::Vector2d(xMin, yMin), Math::Vector2d(xMax, yMax)));
 	return 0;
 }
 
@@ -240,7 +246,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 	Math::Vector2d halfScreen(g_twp->_room->getScreenSize() / 2.f);
 	debugC(kDebugGenScript, "cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
 	g_twp->follow(nullptr);
-	g_twp->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
+	g_twp->_camera->panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
 	return 0;
 }
 
@@ -301,13 +307,13 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		SQInteger verb;
 		if (SQ_FAILED(sqget(v, 2, verb)))
 			return sq_throwerror(v, "failed to get verb");
-		ActorSlot *actorSlot = g_twp->_hud.actorSlot(g_twp->_actor);
+		ActorSlot *actorSlot = g_twp->_hud->actorSlot(g_twp->_actor);
 		if (!actorSlot)
 			return 0;
 		for (int i = 1; i < MAX_VERBS; i++) {
 			Verb vb = actorSlot->verbs[i];
 			if (vb.id.id == verb) {
-				SpriteSheet *verbSheet = g_twp->_resManager.spriteSheet("VerbSheet");
+				SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
 				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
 				debugC(kDebugGenScript, "findScreenPosition(%lld) => %f,%f", verb, pos.getX(), pos.getY());
@@ -376,7 +382,7 @@ static SQInteger incutscene(HSQUIRRELVM v) {
 }
 
 static SQInteger indialog(HSQUIRRELVM v) {
-	sqpush(v, (int)g_twp->_dialog.getState());
+	sqpush(v, (int)g_twp->_dialog->getState());
 	return 1;
 }
 
@@ -475,7 +481,7 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 	debugC(kDebugGenScript, "loadArray: %s", orgFilename);
 	Common::String filename = ResManager::getKey(orgFilename);
 	GGPackEntryReader entry;
-	entry.open(g_twp->_pack, g_twp->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
+	entry.open(*g_twp->_pack, g_twp->_pack->assetExists(filename.c_str()) ? filename : orgFilename);
 	sq_newarray(v, 0);
 	while (!entry.eos()) {
 		Common::String line = entry.readLine();
@@ -530,7 +536,7 @@ static SQInteger pushSentence(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 3, choice)))
 			return sq_throwerror(v, "Failed to get choice");
 		// use pushSentence with VERB_DIALOG
-		g_twp->_dialog.choose(choice);
+		g_twp->_dialog->choose(choice);
 		return 0;
 	}
 
@@ -702,7 +708,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 	debugC(kDebugGenScript, "setVerb %lld, %lld, %lld, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
-	g_twp->_hud._actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
+	g_twp->_hud->_actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
 	return 0;
 }
 
@@ -719,7 +725,7 @@ static SQInteger startDialog(HSQUIRRELVM v) {
 		}
 	}
 	Common::String actor = g_twp->_actor ? g_twp->_actor->_key : "";
-	g_twp->_dialog.start(actor, dialog, node);
+	g_twp->_dialog->start(actor, dialog, node);
 	return 0;
 }
 

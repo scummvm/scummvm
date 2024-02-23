@@ -22,6 +22,8 @@
 #include "common/config-manager.h"
 #include "image/png.h"
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/ggpack.h"
 #include "twp/resmanager.h"
 
 namespace Twp {
@@ -35,7 +37,7 @@ Common::String ResManager::getKey(const Common::String &path) {
 void ResManager::loadTexture(const Common::String &name) {
 	debugC(kDebugRes, "Load texture %s", name.c_str());
 	GGPackEntryReader r;
-	if (!r.open(g_twp->_pack, name)) {
+	if (!r.open(*g_twp->_pack, name)) {
 		error("Texture %s not found", name.c_str());
 	}
 	Image::PNGDecoder d;
@@ -59,7 +61,7 @@ Texture *ResManager::texture(const Common::String &name) {
 
 void ResManager::loadSpriteSheet(const Common::String &name) {
 	GGPackEntryReader r;
-	r.open(g_twp->_pack, name + ".json");
+	r.open(*g_twp->_pack, name + ".json");
 
 	// read all contents
 	Common::Array<char> data(r.size());

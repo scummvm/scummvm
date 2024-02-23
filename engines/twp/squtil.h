@@ -26,6 +26,7 @@
 #include "common/str.h"
 #include "common/util.h"
 #include "twp/twp.h"
+#include "twp/audio.h"
 #include "twp/vm.h"
 #include "twp/squirrel/squirrel.h"
 

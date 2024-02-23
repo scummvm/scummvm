@@ -20,6 +20,8 @@
  */
 
 #include "twp/twp.h"
+#include "twp/object.h"
+#include "twp/room.h"
 
 namespace Twp {
 
