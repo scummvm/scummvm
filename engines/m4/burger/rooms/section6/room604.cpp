@@ -324,7 +324,8 @@ void Room604::daemon() {
 
 		case 23:
 			_G(flags)[kHampsterState] = 6006;
-			_sectionMachine1 = series_play("604mg04", 0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 0, 50);
+			_sectionMachine1 = series_play(_G(executing) == WHOLE_GAME ? "604mg04" : "604mg04a",
+				0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 0, 50);
 			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 0, 50);
 			Section6::_state4 = 3;
 			kernel_trigger_dispatch_now(6014);
@@ -335,7 +336,8 @@ void Room604::daemon() {
 			Section6::_gerbilState = 6003;
 			Section6::_state4 = 4;
 			kernel_trigger_dispatch_now(6014);
-			_sectionMachine1 = series_play("604mg04", 0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 51, -1);
+			_sectionMachine1 = series_play(_G(executing) == WHOLE_GAME ? "604mg04" : "604mg04a",
+				0xcff, 0, kCHANGE_GERBILS_ANIMATION, 8, 0, 100, 0, 0, 51, -1);
 			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 51, -1);
 			break;
 
@@ -469,6 +471,7 @@ void Room604::daemon() {
 			if (_G(flags)[kHampsterState] == 6006) {
 				Section6::_state4 = 5;
 				kernel_trigger_dispatch_now(6014);
+				_G(wilbur_should) = 18;
 				Section6::_gerbilState = 6004;
 				series_stream("604mg06", 4, 0xc80, kCHANGE_GERBILS_ANIMATION);
 				series_play("604mg06s", 4, 0xc80, 0, -1);
@@ -579,10 +582,10 @@ void Room604::daemon() {
 				if (_G(flags)[V248]) {
 					_G(wilbur_should) = 11;
 					player_set_commands_allowed(false);
-					wilbur_speech("604w028");
+					wilbur_speech("604w028", kCHANGE_WILBUR_ANIMATION);
 				} else {
 					_G(wilbur_should) = 10001;
-					wilbur_speech("604w027");
+					wilbur_speech("604w027", kCHANGE_WILBUR_ANIMATION);
 				}
 			} else {
 				_G(wilbur_should) = 11;
@@ -595,7 +598,7 @@ void Room604::daemon() {
 			ws_unhide_walker();
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 21;
-			wilbur_speech("604w006");
+			wilbur_speech("604w006", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 19:
