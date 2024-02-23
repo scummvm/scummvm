@@ -760,6 +760,12 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	g_system->updateScreen();
 }
 
+void TwpEngine::updateSettingVars() {
+	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
+	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
+	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped"));
+}
+
 Common::Error TwpEngine::run() {
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -816,9 +822,7 @@ Common::Error TwpEngine::run() {
 		_vm->exec(code);
 	}
 
-	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
-	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
-	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped"));
+	updateSettingVars();
 
 	static int speed = 1;
 	static bool control = false;
@@ -1778,6 +1782,12 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 }
 
 HSQUIRRELVM TwpEngine::getVm() { return _vm->get(); }
+
+int TwpEngine::runDialog(GUI::Dialog &dialog) {
+	int result = Engine::runDialog(dialog);
+	updateSettingVars();
+	return result;
+}
 
 ScalingTrigger::ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
 
