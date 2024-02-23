@@ -811,7 +811,7 @@ bool NoOverrideNode::update(float elapsed) {
 		return false;
 	}
 	_elapsed += elapsed;
-	setAlpha(clamp((2.f - _elapsed) / 2.f, 0.f, 1.f));
+	setAlpha(CLIP((2.f - _elapsed) / 2.f, 0.f, 1.f));
 	debugC(kDebugGame, "no override: %.2f, %.2f", _elapsed, getAlpha());
 	return true;
 }

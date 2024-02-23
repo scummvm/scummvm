@@ -261,7 +261,7 @@ void WalkTo::update(float elapsed) {
 		} else {
 			Math::Vector2d delta = (Math::Vector2d)dest - _obj->_node->getAbsPos();
 			float duration = d / _wsd;
-			float factor = Twp::clamp(elapsed / duration, 0.f, 1.f);
+			float factor = CLIP(elapsed / duration, 0.f, 1.f);
 
 			Math::Vector2d dd = delta * factor;
 			_obj->_node->setPos(_obj->_node->getPos() + dd);
@@ -464,8 +464,8 @@ void Talking::say(const Common::String &text) {
 		Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
 
 		// clamp position to keep it on screen
-		pos.setX(Twp::clamp(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
-		pos.setY(Twp::clamp(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
+		pos.setX(CLIP(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
+		pos.setY(CLIP(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
 
 		_obj->_sayNode->setPos(pos);
 		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
