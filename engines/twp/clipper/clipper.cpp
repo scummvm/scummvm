@@ -38,7 +38,7 @@
  *                                                                              *
  *******************************************************************************/
 
-#include "clipper.hpp"
+#include "twp/clipper/clipper.hpp"
 #include "common/debug.h"
 
 namespace ClipperLib {
