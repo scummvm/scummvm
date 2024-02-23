@@ -43,7 +43,7 @@ private:
 	machine *_series11 = nullptr;
 	machine *_series12 = nullptr;
 	int _wilburMode = 10;
-	int _val3 = 0;
+	int _zlargShould = 0;
 
 	int getWilburShould() const;
 	void loadSeries1();
