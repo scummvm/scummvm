@@ -23,6 +23,7 @@
 #define TWP_TASK_H
 
 #include "common/str.h"
+#include "twp/detection.h"
 #include "twp/thread.h"
 
 namespace Twp {

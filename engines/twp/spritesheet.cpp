@@ -23,6 +23,7 @@
 #include "common/formats/json.h"
 #include "common/config-manager.h"
 #include "twp/twp.h"
+#include "twp/resmanager.h"
 #include "twp/spritesheet.h"
 
 namespace Twp {

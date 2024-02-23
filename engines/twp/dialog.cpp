@@ -20,7 +20,11 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/dialog.h"
+#include "twp/motor.h"
 #include "twp/squtil.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -221,7 +225,7 @@ void Dialog::start(const Common::String &actor, const Common::String &name, cons
 	Common::String path = name + ".byack";
 	debugC(kDebugDialog, "start dialog %s", path.c_str());
 	GGPackEntryReader reader;
-	reader.open(g_twp->_pack, path);
+	reader.open(*g_twp->_pack, path);
 	YackParser parser;
 	_cu.reset(parser.parse(&reader));
 	selectLabel(0, node);

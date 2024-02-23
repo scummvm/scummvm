@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "twp/twp.h"
 #include "twp/hud.h"
+#include "twp/resmanager.h"
 
 namespace Twp {
 
@@ -140,10 +141,10 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 		return;
 
 	// draw HUD background
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
 	bool classic = ConfMan.getBool("hudSentence");
 	const SpriteSheetFrame &backingFrame = gameSheet->getFrame(classic ? "ui_backing_tall" : "ui_backing");
-	Texture *gameTexture = g_twp->_resManager.texture(gameSheet->meta.image);
+	Texture *gameTexture = g_twp->_resManager->texture(gameSheet->meta.image);
 	float alpha = 0.33f; // prefs(UiBackingAlpha);
 	g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha * getAlpha()), trsf);
 
@@ -152,8 +153,8 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	Color verbColor = verbHlt ? slot->verbUiColors.verbHighlight : Color();
 
 	// draw actor's verbs
-	SpriteSheet *verbSheet = g_twp->_resManager.spriteSheet("VerbSheet");
-	Texture *verbTexture = g_twp->_resManager.texture(verbSheet->meta.image);
+	SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
+	Texture *verbTexture = g_twp->_resManager->texture(verbSheet->meta.image);
 	Common::String lang = ConfMan.get("language");
 	bool retroVerbs = ConfMan.getBool("retroVerbs");
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";

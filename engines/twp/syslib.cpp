@@ -20,10 +20,15 @@
  */
 
 #include "twp/twp.h"
+#include "twp/callback.h"
+#include "twp/dialog.h"
+#include "twp/object.h"
+#include "twp/room.h"
+#include "twp/savegame.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
-#include "twp/thread.h"
 #include "twp/task.h"
+#include "twp/thread.h"
 #include "twp/squirrel/sqvm.h"
 #include "twp/squirrel/sqstring.h"
 #include "twp/squirrel/sqstate.h"
@@ -258,7 +263,7 @@ static SQInteger breakwhileanimating(HSQUIRRELVM v) {
 
 struct CameraMoving {
 	bool operator()() {
-		return g_twp->_camera.isMoving();
+		return g_twp->_camera->isMoving();
 	}
 };
 
@@ -284,7 +289,7 @@ static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
 
 struct DialogRunning {
 	bool operator()() {
-		return g_twp->_dialog.getState() != DialogState::None;
+		return g_twp->_dialog->getState() != DialogState::None;
 	}
 };
 
@@ -336,7 +341,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 			return 0;
 		}
 		return breakwhilecond(
-			v, [id] { return g_twp->_audio.playing(id); }, "breakwhilerunningsound(%d)", id);
+			v, [id] { return g_twp->_audio->playing(id); }, "breakwhilerunningsound(%d)", id);
 	}
 	return breakwhilecond(
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
@@ -436,7 +441,7 @@ struct SoundPlaying {
 	explicit SoundPlaying(int soundId) : _soundId(soundId) {}
 
 	bool operator()() {
-		return g_twp->_audio.playing(_soundId);
+		return g_twp->_audio->playing(_soundId);
 	}
 
 private:
@@ -512,10 +517,10 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		SQInteger enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
-		g_twp->_saveGameManager._autoSave = enabled != 0;
+		g_twp->_saveGameManager->_autoSave = enabled != 0;
 	} break;
 	case EX_AUTOSAVE: {
-		if (g_twp->_saveGameManager._autoSave) {
+		if (g_twp->_saveGameManager->_autoSave) {
 			g_twp->saveGameState(0, "", true);
 		}
 	} break;
@@ -523,7 +528,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		SQInteger enabled;
 		if (SQ_FAILED(sqget(v, 3, enabled)))
 			return sq_throwerror(v, "Failed to get enabled");
-		g_twp->_saveGameManager._allowSaveGame = enabled != 0;
+		g_twp->_saveGameManager->_allowSaveGame = enabled != 0;
 	} break;
 	case EX_POP_CHARACTER_SELECTION:
 		// seems not to be used
@@ -536,7 +541,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 3);
 		if (!sound)
 			return sq_throwerror(v, "failed to get sound for EX_BUTTON_HOVER_SOUND");
-		g_twp->_audio._soundHover = sound;
+		g_twp->_audio->_soundHover = sound;
 	} break;
 	case EX_RESTART:
 		warning("TODO: exCommand EX_RESTART: not implemented");

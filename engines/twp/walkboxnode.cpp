@@ -20,7 +20,10 @@
  */
 
 #include "twp/twp.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/lighting.h"
+#include "twp/walkboxnode.h"
 
 namespace Twp {
 

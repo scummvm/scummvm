@@ -133,7 +133,7 @@ public:
 
 class ExpVisitor : public YackVisitor {
 public:
-	ExpVisitor(Dialog *dialog);
+	explicit ExpVisitor(Dialog *dialog);
 	virtual ~ExpVisitor() override;
 
 private:

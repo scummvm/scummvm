@@ -23,8 +23,12 @@
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "twp/twp.h"
-#include "twp/scenegraph.h"
+#include "twp/detection.h"
 #include "twp/lighting.h"
+#include "twp/object.h"
+#include "twp/resmanager.h"
+#include "twp/room.h"
+#include "twp/scenegraph.h"
 
 namespace Twp {
 
@@ -274,8 +278,8 @@ void ParallaxNode::onDrawChildren(Math::Matrix4 trsf) {
 
 void ParallaxNode::drawCore(Math::Matrix4 trsf) {
 	Gfx &gfx = g_twp->getGfx();
-	SpriteSheet *sheet = g_twp->_resManager.spriteSheet(_sheet);
-	Texture *texture = g_twp->_resManager.texture(sheet->meta.image);
+	SpriteSheet *sheet = g_twp->_resManager->spriteSheet(_sheet);
+	Texture *texture = g_twp->_resManager->texture(sheet->meta.image);
 
 	// enable debug lighting ?
 	if (_zOrder == 0 && g_twp->_lighting->_debug) {
@@ -398,16 +402,16 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 			}
 		}
 		if (_sheet == "raw") {
-			Texture *texture = g_twp->_resManager.texture(frame);
+			Texture *texture = g_twp->_resManager->texture(frame);
 			Math::Vector3d pos(-texture->width / 2.f, -texture->height / 2.f, 0.f);
 			trsf.translate(pos);
 			g_twp->getGfx().drawSprite(Common::Rect(texture->width, texture->height), *texture, getComputedColor(), trsf, flipX);
 		} else {
-			const SpriteSheet *sheet = g_twp->_resManager.spriteSheet(_sheet);
+			const SpriteSheet *sheet = g_twp->_resManager->spriteSheet(_sheet);
 			const SpriteSheetFrame *sf = sheet->frame(frame);
 			if (!sf)
 				return;
-			Texture *texture = g_twp->_resManager.texture(sheet->meta.image);
+			Texture *texture = g_twp->_resManager->texture(sheet->meta.image);
 			if (_obj->_lit) {
 				g_twp->getGfx().use(g_twp->_lighting.get());
 				Math::Vector2d p = getAbsPos() + _obj->_node->getRenderOffset();
@@ -499,8 +503,8 @@ Common::String InputState::getCursorName() const {
 void InputState::drawCore(Math::Matrix4 trsf) {
 	Common::String cursorName = getCursorName();
 	// draw cursor
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	if (ConfMan.getBool("hudSentence") && _hotspot) {
 		cursorName = "hotspot_" + cursorName;
 	}
@@ -591,8 +595,8 @@ void Inventory::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color c
 
 void Inventory::drawArrows(Math::Matrix4 trsf) {
 	bool isRetro = ConfMan.getBool("retroVerbs");
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame *arrowUp = &gameSheet->getFrame(isRetro ? "scroll_up_retro" : "scroll_up");
 	const SpriteSheetFrame *arrowDn = &gameSheet->getFrame(isRetro ? "scroll_down_retro" : "scroll_down");
 	float alphaUp = hasUpArrow(_actor) ? 1.f : 0.f;
@@ -607,8 +611,8 @@ void Inventory::drawArrows(Math::Matrix4 trsf) {
 }
 
 void Inventory::drawBack(Math::Matrix4 trsf) {
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame *back = &gameSheet->getFrame("inventory_background");
 
 	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + back->sourceSize.getX() / 2.f;
@@ -635,8 +639,8 @@ void Inventory::drawBack(Math::Matrix4 trsf) {
 void Inventory::drawItems(Math::Matrix4 trsf) {
 	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + BACKWIDTH / 2.f;
 	float startOffsetY = MARGINBOTTOM + 1.5f * BACKHEIGHT + BACKOFFSET;
-	SpriteSheet *itemsSheet = g_twp->_resManager.spriteSheet("InventoryItems");
-	Texture *texture = g_twp->_resManager.texture(itemsSheet->meta.image);
+	SpriteSheet *itemsSheet = g_twp->_resManager->spriteSheet("InventoryItems");
+	Texture *texture = g_twp->_resManager->texture(itemsSheet->meta.image);
 	int count = MIN(NUMOBJECTS, (int)(_actor->_inventory.size() - _actor->_inventoryOffset * NUMOBJECTSBYROW));
 
 	for (int i = 0; i < count; i++) {
@@ -773,7 +777,7 @@ void SpriteNode::setSprite(const Common::String &sheet, const Common::String &fr
 }
 
 void SpriteNode::drawCore(Math::Matrix4 trsf) {
-	SpriteSheet *sheet = g_twp->_resManager.spriteSheet(_sheet);
+	SpriteSheet *sheet = g_twp->_resManager->spriteSheet(_sheet);
 	const SpriteSheetFrame *frame = &sheet->getFrame(_frame);
 
 	Common::Rect rect = frame->frame;
@@ -783,7 +787,7 @@ void SpriteNode::drawCore(Math::Matrix4 trsf) {
 	Math::Vector2d anchor((int)(x), (int)(y));
 	setAnchor(anchor);
 
-	Texture *texture = g_twp->_resManager.texture(sheet->meta.image);
+	Texture *texture = g_twp->_resManager->texture(sheet->meta.image);
 	g_twp->getGfx().drawSprite(rect, *texture, getComputedColor(), trsf);
 }
 
@@ -830,8 +834,8 @@ void HotspotMarkerNode::drawSprite(const SpriteSheetFrame &sf, Texture *texture,
 }
 
 void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
-	SpriteSheet *gameSheet = g_twp->_resManager.spriteSheet("GameSheet");
-	Texture *texture = g_twp->_resManager.texture(gameSheet->meta.image);
+	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame *frame = &gameSheet->getFrame("hotspot_marker");
 	Color color = Color::create(255, 165, 0);
 	for (size_t i = 0; i < g_twp->_room->_layers.size(); i++) {

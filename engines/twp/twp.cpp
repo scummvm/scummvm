@@ -49,19 +49,31 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
-#include "image/png.h"
 #include "engines/util.h"
+#include "graphics/screen.h"
 #include "graphics/opengl/system_headers.h"
+#include "image/png.h"
 
 #include "twp/twp.h"
+#include "twp/actions.h"
+#include "twp/callback.h"
 #include "twp/console.h"
+#include "twp/debugtools.h"
+#include "twp/detection.h"
+#include "twp/enginedialogtarget.h"
+#include "twp/hud.h"
 #include "twp/lighting.h"
-#include "twp/thread.h"
+#include "twp/resmanager.h"
+#include "twp/room.h"
+#include "twp/savegame.h"
+#include "twp/scenegraph.h"
+#include "twp/shaders.h"
 #include "twp/squtil.h"
 #include "twp/task.h"
-#include "twp/enginedialogtarget.h"
-#include "twp/actions.h"
-#include "twp/debugtools.h"
+#include "twp/thread.h"
+#include "twp/tsv.h"
+#include "twp/vm.h"
+#include "twp/walkboxnode.h"
 
 namespace Twp {
 
@@ -76,19 +88,33 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _gameDescription(gameDesc),
 	  _randomSource("Twp") {
 	g_twp = this;
-	_dialog._tgt.reset(new EngineDialogTarget());
+	_dialog.reset(new Dialog());
+	_dialog->_tgt.reset(new EngineDialogTarget());
 	sq_resetobject(&_defaultObj);
-	_screenScene.setName("Screen");
-	_scene.addChild(&_walkboxNode);
-	_screenScene.addChild(&_pathNode);
-	_screenScene.addChild(&_lightingNode);
-	_screenScene.addChild(&_hotspotMarker);
-	_screenScene.addChild(&_inputState);
-	_screenScene.addChild(&_sentence);
-	_screenScene.addChild(&_dialog);
-	_screenScene.addChild(&_uiInv);
-	_screenScene.addChild(&_actorSwitcher);
-	_screenScene.addChild(&_noOverride);
+
+	_audio.reset(new AudioSystem());
+	_scene.reset(new Scene());
+	_screenScene.reset(new Scene());
+	_walkboxNode.reset(new WalkboxNode());
+	_pathNode.reset(new PathNode());
+	_hotspotMarker.reset(new HotspotMarkerNode());
+	_lightingNode.reset(new LightingNode());
+	_noOverride.reset(new NoOverrideNode());
+	_hud.reset(new Hud());
+	_pack.reset(new GGPackSet());
+	_saveGameManager.reset(new SaveGameManager());
+
+	_screenScene->setName("Screen");
+	_scene->addChild(_walkboxNode.get());
+	_screenScene->addChild(_pathNode.get());
+	_screenScene->addChild(_lightingNode.get());
+	_screenScene->addChild(_hotspotMarker.get());
+	_screenScene->addChild(&_inputState);
+	_screenScene->addChild(&_sentence);
+	_screenScene->addChild(_dialog.get());
+	_screenScene->addChild(&_uiInv);
+	_screenScene->addChild(&_actorSwitcher);
+	_screenScene->addChild(_noOverride.get());
 }
 
 TwpEngine::~TwpEngine() {
@@ -247,7 +273,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 					cancelSentence(_actor);
 					if (_actor->_room == _room)
 						Object::walk(_actor, (Vector2i)roomPos);
-					_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+					_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
 					_holdToMove = true;
 				}
 			}
@@ -264,40 +290,40 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 }
 
 Verb TwpEngine::verb() {
-	Verb result = _hud._verb;
+	Verb result = _hud->_verb;
 	if (result.id.id == VERB_WALKTO && _noun1 && _noun1->inInventory())
-		result = *_hud.actorSlot(_actor)->getVerb(_noun1->defaultVerbId());
+		result = *_hud->actorSlot(_actor)->getVerb(_noun1->defaultVerbId());
 	else if (_actor) {
-		result = *_hud.actorSlot(_actor)->getVerb(_hud._verb.id.id);
+		result = *_hud->actorSlot(_actor)->getVerb(_hud->_verb.id.id);
 	}
 	return result;
 }
 
 Common::String TwpEngine::cursorText() {
 	Common::String result;
-	if (_dialog.getState() == DialogState::None && _inputState.getInputActive()) {
-		if (_hud.isVisible() && _hud._over) {
-			return _hud._verb.id.id > 1 ? _textDb.getText(verb().text) : "";
+	if (_dialog->getState() == DialogState::None && _inputState.getInputActive()) {
+		if (_hud->isVisible() && _hud->_over) {
+			return _hud->_verb.id.id > 1 ? _textDb->getText(verb().text) : "";
 		}
 
 		// give can be used only on inventory and talkto to talkable objects (actors)
-		result = !_noun1 || (_hud._verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud._verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb.getText(_noun1->getName());
+		result = !_noun1 || (_hud->_verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud->_verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb->getText(_noun1->getName());
 
 		// add verb if not walk to or if noun1 is present
-		if ((_hud._verb.id.id > 1) || (result.size() > 0)) {
+		if ((_hud->_verb.id.id > 1) || (result.size() > 0)) {
 			// if inventory, use default verb instead of walkto
 			Common::String verbText = verb().text;
-			result = result.size() > 0 ? Common::String::format("%s %s", _textDb.getText(verbText).c_str(), result.c_str()) : _textDb.getText(verbText);
-			if (_useFlag == ufUseWith)
-				result += " " + _textDb.getText(10000);
-			else if (_useFlag == ufUseOn)
-				result += " " + _textDb.getText(10001);
-			else if (_useFlag == ufUseIn)
-				result += " " + _textDb.getText(10002);
-			else if (_useFlag == ufGiveTo)
-				result += " " + _textDb.getText(10003);
+			result = result.size() > 0 ? Common::String::format("%s %s", _textDb->getText(verbText).c_str(), result.c_str()) : _textDb->getText(verbText);
+			if (_useFlag == UseFlag::ufUseWith)
+				result += " " + _textDb->getText(10000);
+			else if (_useFlag == UseFlag::ufUseOn)
+				result += " " + _textDb->getText(10001);
+			else if (_useFlag == UseFlag::ufUseIn)
+				result += " " + _textDb->getText(10002);
+			else if (_useFlag == UseFlag::ufGiveTo)
+				result += " " + _textDb->getText(10003);
 			if (_noun2)
-				result += " " + _textDb.getText(_noun2->getName());
+				result += " " + _textDb->getText(_noun2->getName());
 		}
 	}
 	return result;
@@ -365,13 +391,13 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	if (_actor) {
 		// add current actor first
 		{
-			ActorSlot *slot = _hud.actorSlot(_actor);
+			ActorSlot *slot = _hud->actorSlot(_actor);
 			result.push_back(actorSwitcherSlot(slot));
 		}
 
 		// then other selectable actors
 		for (int i = 0; i < NUMACTORS; i++) {
-			ActorSlot *slot = &_hud._actorSlots[i];
+			ActorSlot *slot = &_hud->_actorSlots[i];
 			if (slot->selectable && slot->actor && (slot->actor != _actor) && (slot->actor->_room->_name != "Void"))
 				result.push_back(actorSwitcherSlot(slot));
 		}
@@ -422,26 +448,26 @@ void TwpEngine::update(float elapsed) {
 	_time += elapsed;
 	_frameCounter++;
 
-	_audio.update(elapsed);
-	_noOverride.update(elapsed);
+	_audio->update(elapsed);
+	_noOverride->update(elapsed);
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
-	_inputState.setVisible(_inputState.getShowCursor() || _dialog.getState() == WaitingForChoice);
+	_inputState.setVisible(_inputState.getShowCursor() || _dialog->getState() == WaitingForChoice);
 	_inputState.setPos(scrPos);
 	_sentence.setPos(scrPos);
-	_dialog.setMousePos(scrPos);
+	_dialog->setMousePos(scrPos);
 
 	if (_room) {
 		// update nouns and useFlag
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		if (_room->_fullscreen == FULLSCREENROOM) {
-			if ((_hud._verb.id.id == VERB_USE) && (_useFlag != ufNone)) {
+			if ((_hud->_verb.id.id == VERB_USE) && (_useFlag != UseFlag::ufNone)) {
 				objsAt(roomPos, GetUseNoun2(_noun2));
-			} else if (_hud._verb.id.id == VERB_GIVE) {
-				if (_useFlag != ufGiveTo) {
+			} else if (_hud->_verb.id.id == VERB_GIVE) {
+				if (_useFlag != UseFlag::ufGiveTo) {
 					_noun1 = inventoryAt(roomPos);
-					_useFlag = ufNone;
+					_useFlag = UseFlag::ufNone;
 					_noun2 = nullptr;
 				} else {
 					objsAt(roomPos, GetGiveableNoun2(_noun2));
@@ -450,7 +476,7 @@ void TwpEngine::update(float elapsed) {
 				}
 			} else {
 				_noun1 = objAt(roomPos);
-				_useFlag = ufNone;
+				_useFlag = UseFlag::ufNone;
 				_noun2 = nullptr;
 			}
 
@@ -480,17 +506,17 @@ void TwpEngine::update(float elapsed) {
 			}
 
 			_inputState.setHotspot(_noun1 != nullptr);
-			bool hudVisible = _inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog.getState() == DialogState::None && !_cutscene;
-			_hud.setVisible(hudVisible);
-			_sentence.setVisible(_hud.isVisible());
+			bool hudVisible = _inputState.getInputActive() && _inputState.getInputVerbsActive() && _dialog->getState() == DialogState::None && !_cutscene;
+			_hud->setVisible(hudVisible);
+			_sentence.setVisible(_hud->isVisible());
 			_uiInv.setVisible(hudVisible);
-			_actorSwitcher.setVisible((_dialog.getState() == DialogState::None) && !_cutscene);
+			_actorSwitcher.setVisible((_dialog->getState() == DialogState::None) && !_cutscene);
 			// Common::String cursortxt = Common::String::format("%s (%d, %d) - (%d, %d)", cursorText().c_str(), (int)roomPos.getX(), (int)roomPos.getY(), (int)scrPos.getX(), (int)scrPos.getY());
 			//_sentence.setText(cursortxt.c_str());
 			_sentence.setText(cursorText());
 
 			// call clickedAt if any button down
-			if ((_inputState.getInputActive() && _dialog.getState() == DialogState::None) && !_hud.isOver()) {
+			if ((_inputState.getInputActive() && _dialog->getState() == DialogState::None) && !_hud->isOver()) {
 				if (_cursor.isLeftDown() || _cursor.isRightDown()) {
 					clickedAt(scrPos);
 				} else if (_cursor.leftDown || _cursor.rightDown) {
@@ -508,10 +534,10 @@ void TwpEngine::update(float elapsed) {
 				}
 			}
 		} else {
-			_hud.setVisible(false);
+			_hud->setVisible(false);
 			_uiInv.setVisible(false);
 			_noun1 = objAt(roomPos);
-			Common::String cText = !_noun1 ? "" : _textDb.getText(_noun1->getName());
+			Common::String cText = !_noun1 ? "" : _textDb->getText(_noun1->getName());
 			_sentence.setText(cText);
 			_inputState.setCursorShape(CursorShape::Normal);
 			if (_cursor.leftDown)
@@ -519,11 +545,11 @@ void TwpEngine::update(float elapsed) {
 		}
 	}
 
-	_dialog.update(elapsed);
+	_dialog->update(elapsed);
 	_fadeShader->_elapsed += elapsed;
 
 	// update camera
-	_camera.update(_room, _followActor, elapsed);
+	_camera->update(_room, _followActor, elapsed);
 
 	// update actorswitcher
 	_actorSwitcher.update(actorSwitcherSlots(), elapsed);
@@ -539,7 +565,7 @@ void TwpEngine::update(float elapsed) {
 	Common::Array<Common::SharedPtr<ThreadBase> > threads(_threads);
 	Common::Array<Common::SharedPtr<ThreadBase> > threadsToRemove;
 
-	bool isNotInDialog = _dialog.getState() == DialogState::None;
+	bool isNotInDialog = _dialog->getState() == DialogState::None;
 	for (auto it = threads.begin(); it != threads.end(); it++) {
 		Common::SharedPtr<ThreadBase> thread(*it);
 		if ((isNotInDialog || !thread->isGlobal()) && thread->update(elapsed)) {
@@ -595,8 +621,8 @@ void TwpEngine::update(float elapsed) {
 	if (!_actor) {
 		_uiInv.update(elapsed);
 	} else {
-		_hud.update(elapsed, scrPos, _noun1, _cursor.isLeftDown());
-		VerbUiColors *verbUI = &_hud.actorSlot(_actor)->verbUiColors;
+		_hud->update(elapsed, scrPos, _noun1, _cursor.isLeftDown());
+		VerbUiColors *verbUI = &_hud->actorSlot(_actor)->verbUiColors;
 		_uiInv.update(elapsed, _actor, verbUI->inventoryBackground, verbUI->verbNormal);
 	}
 
@@ -604,17 +630,17 @@ void TwpEngine::update(float elapsed) {
 }
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
-	_shaderParams.effect = effect;
+	_shaderParams->effect = effect;
 	switch (effect) {
 	case RoomEffect::None:
 		_gfx.use(nullptr);
 		break;
 	case RoomEffect::Sepia: {
-		_gfx.use(&_sepiaShader);
-		_sepiaShader.setUniform("sepiaFlicker", _shaderParams.sepiaFlicker);
+		_gfx.use(_sepiaShader.get());
+		_sepiaShader->setUniform("sepiaFlicker", _shaderParams->sepiaFlicker);
 	} break;
 	case RoomEffect::BlackAndWhite:
-		_gfx.use(&_bwShader);
+		_gfx.use(_bwShader.get());
 		break;
 	case RoomEffect::Ega:
 		// TODO: _gfx.use(&_egaShader);
@@ -623,7 +649,7 @@ void TwpEngine::setShaderEffect(RoomEffect effect) {
 		// TODO:_gfx.use(&_vhsShader);
 		break;
 	case RoomEffect::Ghost:
-		_gfx.use(&_ghostShader);
+		_gfx.use(_ghostShader.get());
 		break;
 	}
 }
@@ -642,7 +668,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	_gfx.setRenderTarget(&renderTexture);
 	_gfx.clear(Color(0, 0, 0));
 	_gfx.use(nullptr);
-	_scene.draw();
+	_scene->draw();
 
 	// then render this texture with room effect to another texture
 	_gfx.setRenderTarget(&renderTexture2);
@@ -650,10 +676,10 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 		setShaderEffect(_room->_effect);
 		_lighting->update(_room->_lights);
 	}
-	_shaderParams.randomValue[0] = g_twp->getRandom();
-	_shaderParams.timeLapse = fmodf(_time, 1000.f);
-	_shaderParams.iGlobalTime = _shaderParams.timeLapse;
-	_shaderParams.updateShader();
+	_shaderParams->randomValue[0] = g_twp->getRandom();
+	_shaderParams->timeLapse = fmodf(_time, 1000.f);
+	_shaderParams->iGlobalTime = _shaderParams->timeLapse;
+	_shaderParams->updateShader();
 
 	_gfx.camera(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
 	Math::Vector2d camPos = _gfx.cameraPos();
@@ -721,7 +747,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// draw UI
 	_gfx.cameraPos(camPos);
-	_screenScene.draw();
+	_screenScene->draw();
 
 	// imgui render
 	_gfx.use(nullptr);
@@ -754,23 +780,29 @@ Common::Error TwpEngine::run() {
 	setDebugger(new Console());
 
 	_gfx.init();
-	_hud.init();
+	_hud->init();
 
-	_bwShader.init("black&white", vsrc, bwShader);
-	_ghostShader.init("ghost", vsrc, ghostShader);
-	_sepiaShader.init("sepia", vsrc, sepiaShader);
+	_camera.reset(new Camera());
+	_shaderParams.reset(new ShaderParams());
+	_bwShader.reset(new Shader());
+	_bwShader->init("black&white", vsrc, bwShader);
+	_ghostShader.reset(new Shader());
+	_ghostShader->init("ghost", vsrc, ghostShader);
+	_sepiaShader.reset(new Shader());
+	_sepiaShader->init("sepia", vsrc, sepiaShader);
 	_fadeShader.reset(new FadeShader());
+	_lighting.reset(new Lighting());
+	_resManager.reset(new ResManager());
+	_pack->init();
 
-	_lighting = Common::SharedPtr<Lighting>(new Lighting());
-
-	_pack.init();
-
-	Common::String lang = Common::String::format("ThimbleweedText_%s.tsv", ConfMan.get("language").c_str());
+	Common::String lang(Common::String::format("ThimbleweedText_%s.tsv", ConfMan.get("language").c_str()));
 	GGPackEntryReader entry;
-	entry.open(_pack, lang);
-	_textDb.parseTsv(entry);
+	entry.open(*_pack, lang);
+	_textDb.reset(new TextDb());
+	_textDb->parseTsv(entry);
 
-	HSQUIRRELVM v = _vm.get();
+	_vm.reset(new Vm());
+	HSQUIRRELVM v = _vm->get();
 	execNutEntry(v, "Defines.nut");
 	execBnutEntry(v, "Boot.bnut");
 
@@ -781,7 +813,7 @@ Common::Error TwpEngine::run() {
 	else {
 		// const SQChar *code = "cameraInRoom(StartScreen)";
 		const SQChar *code = "start(1)";
-		_vm.exec(code);
+		_vm->exec(code);
 	}
 
 	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
@@ -818,7 +850,7 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectActor6:
 					if (g_twp->_actorSwitcher._mode == asOn) {
 						int index = (TwpAction)e.customType - kSelectActor1;
-						ActorSlot *slot = &_hud._actorSlots[index];
+						ActorSlot *slot = &_hud->_actorSlots[index];
 						if (slot->selectable && slot->actor && (slot->actor->_room->_name != "Void")) {
 							setActor(slot->actor, true);
 						}
@@ -828,7 +860,7 @@ Common::Error TwpEngine::run() {
 					if ((g_twp->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
-							ActorSlot *slot = &_hud._actorSlots[i];
+							ActorSlot *slot = &_hud->_actorSlots[i];
 							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
 								actors.push_back(slot->actor);
 							}
@@ -843,7 +875,7 @@ Common::Error TwpEngine::run() {
 					if ((g_twp->_actorSwitcher._mode == asOn) && _actor) {
 						Common::Array<Common::SharedPtr<Object> > actors;
 						for (int i = 0; i < NUMACTORS; i++) {
-							ActorSlot *slot = &_hud._actorSlots[i];
+							ActorSlot *slot = &_hud->_actorSlots[i];
 							if (slot->selectable && (slot->actor->_room->_name != "Void")) {
 								actors.push_back(slot->actor);
 							}
@@ -863,13 +895,13 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectChoice4:
 				case TwpAction::kSelectChoice5:
 				case TwpAction::kSelectChoice6:
-					if (_dialog.getState() == DialogState::None) {
+					if (_dialog->getState() == DialogState::None) {
 						int index = (TwpAction)e.customType - kSelectChoice1;
-						_dialog.choose(index);
+						_dialog->choose(index);
 					}
 					break;
 				case TwpAction::kShowHotspots:
-					_hotspotMarker.setVisible(!_hotspotMarker.isVisible());
+					_hotspotMarker->setVisible(!_hotspotMarker->isVisible());
 					break;
 				}
 				break;
@@ -896,18 +928,18 @@ Common::Error TwpEngine::run() {
 					break;
 				case Common::KEYCODE_w:
 					if (control) {
-						WalkboxMode mode = (WalkboxMode)(((int)_walkboxNode.getMode() + 1) % 3);
+						WalkboxMode mode = (WalkboxMode)(((int)_walkboxNode->getMode() + 1) % 3);
 						debugC(kDebugGame, "set walkbox mode to: %s", (mode == WalkboxMode::Merged ? "merged" : mode == WalkboxMode::All ? "all"
 																																		 : "none"));
-						_walkboxNode.setMode(mode);
+						_walkboxNode->setMode(mode);
 					}
 					break;
 				case Common::KEYCODE_g:
 					if (control) {
-						PathMode mode = (PathMode)(((int)_pathNode.getMode() + 1) % 3);
+						PathMode mode = (PathMode)(((int)_pathNode->getMode() + 1) % 3);
 						debugC(kDebugGame, "set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
 																																  : "none"));
-						_pathNode.setMode(mode);
+						_pathNode->setMode(mode);
 					}
 					break;
 				default:
@@ -996,14 +1028,18 @@ Common::Error TwpEngine::loadGameState(int slot) {
 
 Common::Error TwpEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	SaveGame savegame;
-	if (_saveGameManager.getSaveGame(stream, savegame)) {
-		_saveGameManager.loadGame(savegame);
+	if (_saveGameManager->getSaveGame(stream, savegame)) {
+		_saveGameManager->loadGame(savegame);
 	}
 	return Common::kNoError;
 }
 
 Common::String TwpEngine::getSaveStateName(int slot) const {
 	return Common::String::format("twp%02d.save", slot);
+}
+
+bool TwpEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return _saveGameManager->_allowSaveGame && !_cutscene;
 }
 
 static Common::String changeFileExt(const Common::String &s, const Common::String &ext) {
@@ -1035,7 +1071,7 @@ Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, boo
 }
 
 Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	_saveGameManager.saveGame(stream);
+	_saveGameManager->saveGame(stream);
 	return Common::kNoError;
 }
 
@@ -1110,7 +1146,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 }
 
 Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo) {
-	HSQUIRRELVM v = _vm.get();
+	HSQUIRRELVM v = _vm->get();
 	debugC(kDebugGame, "Load room: %s", name.c_str());
 	Common::SharedPtr<Room> result;
 	if (name == "Void") {
@@ -1126,7 +1162,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 		Common::String background;
 		sqgetf(table, "background", background);
 		GGPackEntryReader entry;
-		entry.open(_pack, background + ".wimpy");
+		entry.open(*_pack, background + ".wimpy");
 		Room::load(result, entry);
 		result->_name = name;
 		result->_pseudo = pseudo;
@@ -1229,12 +1265,12 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 		_room->_scene->remove();
 	_room = room;
 	room->_effect = RoomEffect::None;
-	_scene.addChild(_room->_scene.get());
+	_scene->addChild(_room->_scene.get());
 	_room->_lights._numLights = 0;
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
-	_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
-	if (_actor && _hud.actorSlot(_actor))
-		_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+	_camera->setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
+	if (_actor && _hud->actorSlot(_actor))
+		_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -1251,8 +1287,8 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 		}
 	}
 
-	_camera.setRoom(room);
-	_camera.setAt(camPos);
+	_camera->setRoom(room);
+	_camera->setAt(camPos);
 
 	stopTalking();
 
@@ -1383,7 +1419,7 @@ void TwpEngine::cancelSentence(Common::SharedPtr<Object> actor) {
 
 void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
 	GGPackEntryReader reader;
-	reader.open(_pack, entry);
+	reader.open(*_pack, entry);
 	GGBnutReader nut;
 	nut.open(&reader);
 	Common::String code = nut.readString();
@@ -1391,17 +1427,17 @@ void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
 }
 
 void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
-	if (_pack.assetExists(entry.c_str())) {
+	if (_pack->assetExists(entry.c_str())) {
 		GGPackEntryReader reader;
 		debugC(kDebugGame, "read existing '%s'", entry.c_str());
-		reader.open(_pack, entry);
+		reader.open(*_pack, entry);
 		Common::String code = reader.readString();
 		// debugC(kDebugGame, "%s", code.c_str());
 		sqexec(v, code.c_str(), entry.c_str());
 	} else {
 		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
 		debugC(kDebugGame, "read existing '%s'", newEntry.c_str());
-		if (_pack.assetExists(newEntry.c_str())) {
+		if (_pack->assetExists(newEntry.c_str())) {
 			execBnutEntry(v, newEntry);
 		} else {
 			error("'%s' and '%s' have not been found", entry.c_str(), newEntry.c_str());
@@ -1410,16 +1446,16 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 }
 
 void TwpEngine::cameraAt(Math::Vector2d at) {
-	_camera.setRoom(_room);
-	_camera.setAt(at);
+	_camera->setRoom(_room);
+	_camera->setAt(at);
 }
 
 Math::Vector2d TwpEngine::cameraPos() {
 	if (_room) {
 		Math::Vector2d screenSize = _room->getScreenSize();
-		return _camera.getAt() + screenSize / 2.0f;
+		return _camera->getAt() + screenSize / 2.0f;
 	}
-	return _camera.getAt();
+	return _camera->getAt();
 }
 
 void TwpEngine::follow(Common::SharedPtr<Object> actor) {
@@ -1473,12 +1509,12 @@ Common::SharedPtr<Object> TwpEngine::objAt(Math::Vector2d pos) {
 
 void TwpEngine::setActor(Common::SharedPtr<Object> actor, bool userSelected) {
 	_actor = actor;
-	_hud._actor = actor;
+	_hud->_actor = actor;
 	resetVerb();
-	if (!_hud.getParent() && actor) {
-		_screenScene.addChild(&_hud);
-	} else if (_hud.getParent() && !actor) {
-		_screenScene.removeChild(&_hud);
+	if (!_hud->getParent() && actor) {
+		_screenScene->addChild(_hud.get());
+	} else if (_hud->getParent() && !actor) {
+		_screenScene->removeChild(_hud.get());
 	}
 
 	// call onActorSelected callbacks
@@ -1496,7 +1532,7 @@ void TwpEngine::setActor(Common::SharedPtr<Object> actor, bool userSelected) {
 
 bool TwpEngine::selectable(Common::SharedPtr<Object> actor) {
 	for (int i = 0; i < NUMACTORS; i++) {
-		ActorSlot *slot = &_hud._actorSlots[i];
+		ActorSlot *slot = &_hud->_actorSlots[i];
 		if (slot->actor == actor)
 			return slot->selectable;
 	}
@@ -1515,8 +1551,8 @@ void TwpEngine::resetVerb() {
 	debugC(kDebugGame, "reset nouns");
 	_noun1 = nullptr;
 	_noun2 = nullptr;
-	_useFlag = ufNone;
-	_hud._verb = _hud.actorSlot(_actor)->verbs[0];
+	_useFlag = UseFlag::ufNone;
+	_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
 }
 
 bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
@@ -1526,7 +1562,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	Common::String name = !actor ? "currentActor" : actor->_key;
 	Common::String noun1name = !noun1 ? "null" : noun1->_key;
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
-	ActorSlot *slot = _hud.actorSlot(actor);
+	ActorSlot *slot = _hud->actorSlot(actor);
 	Verb *verb = slot->getVerb(verbId.id);
 	Common::String verbFuncName = verb ? verb->fun : slot->verbs[0].fun;
 	debugC(kDebugGame, "callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
@@ -1540,7 +1576,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	// check if verb is use and object can be used with or in or on
 	if ((verbId.id == VERB_USE) && !noun2) {
 		_useFlag = noun1->useFlag();
-		if (_useFlag != ufNone) {
+		if (_useFlag != UseFlag::ufNone) {
 			_noun1 = noun1;
 			return false;
 		}
@@ -1549,7 +1585,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	if (verbId.id == VERB_GIVE) {
 		if (!noun2) {
 			debugC(kDebugGame, "set use flag to ufGiveTo");
-			_useFlag = ufGiveTo;
+			_useFlag = UseFlag::ufGiveTo;
 			_noun1 = noun1;
 		} else {
 			bool handled = false;
@@ -1740,6 +1776,8 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 	// and save to stream
 	Image::writePNG(stream, s);
 }
+
+HSQUIRRELVM TwpEngine::getVm() { return _vm->get(); }
 
 ScalingTrigger::ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
 

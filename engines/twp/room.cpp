@@ -20,6 +20,10 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
+#include "twp/resmanager.h"
+#include "twp/object.h"
+#include "twp/room.h"
 #include "twp/squtil.h"
 #include "twp/clipper/clipper.hpp"
 
@@ -353,7 +357,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 	int width = 0;
 	for (size_t i = 0; i < backNames.size(); i++) {
 		Common::String name = backNames[i];
-		width += g_twp->_resManager.spriteSheet(room->_sheet)->getFrame(name).sourceSize.getX();
+		width += g_twp->_resManager->spriteSheet(room->_sheet)->getFrame(name).sourceSize.getX();
 	}
 	room->_roomSize.setX(width);
 }

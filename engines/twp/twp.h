@@ -22,50 +22,62 @@
 #ifndef TWP_H
 #define TWP_H
 
-#include "common/system.h"
-#include "common/error.h"
-#include "common/fs.h"
 #include "common/random.h"
-#include "common/serializer.h"
-#include "common/util.h"
 #include "common/ptr.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/screen.h"
-#include "twp/detection.h"
-#include "twp/vm.h"
-#include "twp/shaders.h"
-#include "twp/resmanager.h"
-#include "twp/ggpack.h"
-#include "twp/squirrel/squirrel.h"
-#include "twp/camera.h"
-#include "twp/tsv.h"
-#include "twp/scenegraph.h"
-#include "twp/dialog.h"
-#include "twp/hud.h"
-#include "twp/callback.h"
-#include "twp/walkboxnode.h"
-#include "twp/audio.h"
 #include "twp/actorswitcher.h"
-#include "twp/savegame.h"
+#include "twp/squirrel/squirrel.h"
 
 #define SCREEN_MARGIN 100.f
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 #define VERBDEFAULT "verbDefault"
 
+template<typename T, class DL = Common::DefaultDeleter<T> >
+using unique_ptr = Common::ScopedPtr<T, DL>;
+
+namespace Graphics {
+class Screen;
+}
+
+struct ADGameDescription;
+
 namespace Twp {
 
-class Lighting;
-class Task;
-class ThreadBase;
+struct ActorSlot;
+class AudioSystem;
+class Callback;
+class Camera;
 class Cutscene;
-class Scene;
-class Room;
-class InputState;
-class Object;
 class Dialog;
+class FadeShader;
+class GGPackSet;
+class Hud;
+class InputState;
+struct Light;
+class Lighting;
+class LightingNode;
+class NoOverrideNode;
+class Object;
+class PathNode;
+class ResManager;
+class Room;
+class SaveGameManager;
+struct Scaling;
+class Scene;
+struct ShaderParams;
+class Task;
+class TextDb;
+class ThreadBase;
 struct TwpGameDescription;
+struct Verb;
+struct VerbId;
+class Vm;
+class WalkboxNode;
+
+enum class FadeEffect;
+enum class RoomEffect;
+enum class UseFlag;
 
 class TwpEngine : public Engine {
 private:
@@ -92,9 +104,9 @@ public:
 	 */
 	Common::RandomSource &getRandomSource() { return _randomSource; }
 
-	HSQUIRRELVM getVm() { return _vm.get(); }
+	HSQUIRRELVM getVm();
 	inline Gfx &getGfx() { return _gfx; }
-	inline TextDb &getTextDb() { return _textDb; }
+	inline TextDb &getTextDb() { return *_textDb; }
 
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
@@ -105,9 +117,7 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return !_cutscene;
 	}
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return _saveGameManager._allowSaveGame && !_cutscene;
-	}
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	virtual Common::String getSaveStateName(int slot) const override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -168,12 +178,12 @@ private:
 	void skipCutscene();
 
 private:
-	Vm _vm;
+	unique_ptr<Vm> _vm;
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	GGPackSet _pack;
-	ResManager _resManager;
+	unique_ptr<GGPackSet> _pack;
+	unique_ptr<ResManager> _resManager;
 	Common::Array<Common::SharedPtr<Room> > _rooms;
 	Common::Array<Common::SharedPtr<Object> > _actors;
 	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
@@ -193,13 +203,13 @@ public:
 	int _frameCounter = 0;
 	Common::SharedPtr<Lighting> _lighting;
 	Common::SharedPtr<Cutscene> _cutscene;
-	Scene _scene;
-	Scene _screenScene;
-	NoOverrideNode _noOverride;
+	unique_ptr<Scene> _scene;
+	unique_ptr<Scene> _screenScene;
+	unique_ptr<NoOverrideNode> _noOverride;
 	InputState _inputState;
-	Camera _camera;
-	TextDb _textDb;
-	Dialog _dialog;
+	unique_ptr<Camera> _camera;
+	unique_ptr<TextDb> _textDb;
+	unique_ptr<Dialog> _dialog;
 	struct Cursor {
 		Math::Vector2d pos;
 		bool oldLeftDown = false;
@@ -216,24 +226,24 @@ public:
 		bool isLeftDown() { return !oldLeftDown && leftDown; }
 		bool isRightDown() { return !oldRightDown && rightDown; }
 	} _cursor;
-	Hud _hud;
+	unique_ptr<Hud> _hud;
 	Inventory _uiInv;
 	ActorSwitcher _actorSwitcher;
-	AudioSystem _audio;
-	SaveGameManager _saveGameManager;
-	ShaderParams _shaderParams;
-	HotspotMarkerNode _hotspotMarker;
+	unique_ptr<AudioSystem> _audio;
+	unique_ptr<SaveGameManager> _saveGameManager;
+	unique_ptr<ShaderParams> _shaderParams;
+	unique_ptr<HotspotMarkerNode> _hotspotMarker;
 	unique_ptr<FadeShader> _fadeShader;
-	LightingNode _lightingNode;
+	unique_ptr<LightingNode> _lightingNode;
 
 private:
 	Gfx _gfx;
 	SentenceNode _sentence;
-	WalkboxNode _walkboxNode;
-	PathNode _pathNode;
-	Shader _bwShader;
-	Shader _ghostShader;
-	Shader _sepiaShader;
+	unique_ptr<WalkboxNode> _walkboxNode;
+	unique_ptr<PathNode> _pathNode;
+	unique_ptr<Shader> _bwShader;
+	unique_ptr<Shader> _ghostShader;
+	unique_ptr<Shader> _sepiaShader;
 };
 
 extern TwpEngine *g_twp;

@@ -25,9 +25,18 @@
 #include "common/debug-channels.h"
 #include "twp/twp.h"
 #include "twp/debugtools.h"
-#include "twp/thread.h"
+#include "twp/detection.h"
+#include "twp/dialog.h"
+#include "twp/hud.h"
 #include "twp/lighting.h"
+#include "twp/object.h"
+#include "twp/resmanager.h"
+#include "twp/room.h"
+#include "twp/savegame.h"
+#include "twp/shaders.h"
 #include "twp/squtil.h"
+#include "twp/thread.h"
+#include "twp/tsv.h"
 
 namespace Twp {
 
@@ -249,7 +258,7 @@ static void drawResources() {
 		ImGui::TableSetupColumn("Resolution");
 		ImGui::TableHeadersRow();
 
-		for (auto &res : g_twp->_resManager._textures) {
+		for (auto &res : g_twp->_resManager->_textures) {
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 			bool selected = state._textureSelected == res._key;
@@ -268,7 +277,7 @@ static void drawResources() {
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 10.f));
 	ImGui::Text("Preview:");
 	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
-	for (auto &res : g_twp->_resManager._textures) {
+	for (auto &res : g_twp->_resManager->_textures) {
 		if (state._textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
 			break;
@@ -285,7 +294,7 @@ static void drawAudio() {
 
 	// count the number of active sounds
 	int count = 0;
-	for (auto &s : g_twp->_audio._slots) {
+	for (auto &s : g_twp->_audio->_slots) {
 		if (s.busy)
 			count++;
 	}
@@ -306,7 +315,7 @@ static void drawAudio() {
 		ImGui::TableHeadersRow();
 
 		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
-			auto &sound = g_twp->_audio._slots[i];
+			auto &sound = g_twp->_audio->_slots[i];
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 			ImGui::Text("#%d", i);
@@ -327,7 +336,7 @@ static void drawAudio() {
 				ImGui::Text("%0.1f", pan);
 				ImGui::SameLine();
 				if (ImGui::SmallButton("STOP")) {
-					g_twp->_audio.stop(sound.id);
+					g_twp->_audio->stop(sound.id);
 				}
 			}
 		}
@@ -350,14 +359,14 @@ static void drawGeneral() {
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
 	ImGui::Text("%s", g_twp->_cutscene ? g_twp->_cutscene->getName().c_str() : "no");
-	DialogState dialogState = g_twp->_dialog.getState();
+	DialogState dialogState = g_twp->_dialog->getState();
 	ImGui::TextColored(gray, "In dialog:");
 	ImGui::SameLine();
 	ImGui::Text("%s", ((dialogState == Active) ? "yes" : (dialogState == WaitingForChoice ? "waiting for choice" : "no")));
 	ImGui::TextColored(gray, "Verb:");
 	ImGui::SameLine();
-	Common::String verb = g_twp->getTextDb().getText(g_twp->_hud._verb.text);
-	ImGui::Text("%s %d", verb.c_str(), g_twp->_hud._verb.id.id);
+	Common::String verb = g_twp->getTextDb().getText(g_twp->_hud->_verb.text);
+	ImGui::Text("%s %d", verb.c_str(), g_twp->_hud->_verb.id.id);
 
 	auto mousePos = g_twp->_cursor.pos;
 	ImGui::TextColored(gray, "Pos (screen):");
@@ -378,7 +387,7 @@ static void drawGeneral() {
 	ImGui::SameLine();
 	ImGui::Checkbox("Verbs", &g_twp->_inputState._inputVerbsActive);
 	ImGui::SameLine();
-	ImGui::Checkbox("Allow SaveGame", &g_twp->_saveGameManager._allowSaveGame);
+	ImGui::Checkbox("Allow SaveGame", &g_twp->_saveGameManager->_allowSaveGame);
 
 	ImGui::Separator();
 	bool isSwitcherOn = g_twp->_actorSwitcher._mode == asOn;
@@ -430,16 +439,16 @@ static void drawGeneral() {
 		ImGui::Text("%s", !g_twp->_followActor ? "(none)" : g_twp->_followActor->_key.c_str());
 		ImGui::TextColored(gray, "moving:");
 		ImGui::SameLine();
-		ImGui::Text("%s", g_twp->_camera.isMoving() ? "yes" : "no");
+		ImGui::Text("%s", g_twp->_camera->isMoving() ? "yes" : "no");
 		auto halfScreenSize = g_twp->_room->getScreenSize() / 2.0f;
 		auto camPos = g_twp->cameraPos() - halfScreenSize;
 		if (ImGui::DragFloat2("Camera pos", camPos.getData())) {
 			g_twp->follow(nullptr);
 			g_twp->cameraAt(camPos);
 		}
-		auto bounds = g_twp->_camera.getBounds();
+		auto bounds = g_twp->_camera->getBounds();
 		if (ImGui::DragFloat4("Bounds", bounds.v)) {
-			g_twp->_camera.setBounds(bounds);
+			g_twp->_camera->setBounds(bounds);
 		}
 	}
 
@@ -501,11 +510,11 @@ static void drawGeneral() {
 		int effect = static_cast<int>(room->_effect);
 		if (ImGui::Combo("effect", &effect, RoomEffects))
 			room->_effect = (RoomEffect)effect;
-		ImGui::DragFloat("iFade", &g_twp->_shaderParams.iFade, 0.01f, 0.f, 1.f);
-		ImGui::DragFloat("wobbleIntensity", &g_twp->_shaderParams.wobbleIntensity, 0.01f, 0.f, 1.f);
-		ImGui::DragFloat3("shadows", g_twp->_shaderParams.shadows.v, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat3("midtones", g_twp->_shaderParams.midtones.v, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat3("highlights", g_twp->_shaderParams.highlights.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat("iFade", &g_twp->_shaderParams->iFade, 0.01f, 0.f, 1.f);
+		ImGui::DragFloat("wobbleIntensity", &g_twp->_shaderParams->wobbleIntensity, 0.01f, 0.f, 1.f);
+		ImGui::DragFloat3("shadows", g_twp->_shaderParams->shadows.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat3("midtones", g_twp->_shaderParams->midtones.v, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat3("highlights", g_twp->_shaderParams->highlights.v, 0.01f, -1.f, 1.f);
 	}
 
 	// Fade Effects
@@ -561,7 +570,7 @@ static void drawScenegraph() {
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Scenegraph", &state._showScenegraph);
-	drawNode(&g_twp->_scene);
+	drawNode(g_twp->_scene.get());
 	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);

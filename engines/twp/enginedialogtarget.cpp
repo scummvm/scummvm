@@ -20,7 +20,9 @@
  */
 
 #include "twp/twp.h"
+#include "twp/detection.h"
 #include "twp/enginedialogtarget.h"
+#include "twp/hud.h"
 #include "twp/squtil.h"
 
 namespace Twp {
@@ -69,12 +71,12 @@ static Common::SharedPtr<Object> actorOrCurrent(const Common::String &name) {
 
 Color EngineDialogTarget::actorColor(const Common::String &actor) {
 	Common::SharedPtr<Object> act = actorOrCurrent(actor);
-	return g_twp->_hud.actorSlot(act)->verbUiColors.dialogNormal;
+	return g_twp->_hud->actorSlot(act)->verbUiColors.dialogNormal;
 }
 
 Color EngineDialogTarget::actorColorHover(const Common::String &actor) {
 	Common::SharedPtr<Object> act = actorOrCurrent(actor);
-	return g_twp->_hud.actorSlot(act)->verbUiColors.dialogHighlight;
+	return g_twp->_hud->actorSlot(act)->verbUiColors.dialogHighlight;
 }
 
 Common::SharedPtr<Motor> EngineDialogTarget::say(const Common::String &actor, const Common::String &text) {
