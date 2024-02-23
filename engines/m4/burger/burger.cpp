@@ -767,7 +767,8 @@ void BurgerEngine::wilburTeleported() {
 	}
 
 	if (_G(executing) != WHOLE_GAME) {
-		_G(game).setRoom(901);
+		_G(flags).reset2();
+		_G(game).setRoom(604);
 	} else {
 		if (_G(flags)[kFifthTestPassed]) {
 			testDone5();

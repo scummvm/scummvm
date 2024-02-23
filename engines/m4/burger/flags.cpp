@@ -248,6 +248,7 @@ void Flags::reset2() {
 	(*this)[V278] = 0;
 
 	if (_G(executing) != WHOLE_GAME) {
+		inv_move_object("RAY GUN", NOWHERE);
 		inv_give_to_player("BLOCK OF ICE");
 		inv_give_to_player("PANTYHOSE");
 	}
