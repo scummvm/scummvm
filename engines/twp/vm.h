@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TWPVM_H
-#define TWPVM_H
+#ifndef TWP_VM_H
+#define TWP_VM_H
 
 #include "twp/squirrel/squirrel.h"
 
@@ -40,4 +40,4 @@ private:
 };
 } // End of namespace Twp
 
-#endif // TWPVM_H
+#endif // TWP_VM_H
