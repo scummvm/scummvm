@@ -66,15 +66,6 @@ struct Vector2i {
 template<typename T, class DL = Common::DefaultDeleter<T> >
 using unique_ptr = Common::ScopedPtr<T, DL>;
 
-template<typename T>
-T clamp(T x, T a, T b) {
-	if (x < a)
-		return a;
-	if (x > b)
-		return b;
-	return x;
-}
-
 // game util
 Facing getFacing(int dir, Facing facing);
 Facing flip(Facing facing);

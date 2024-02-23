@@ -672,7 +672,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 			_fadeShader->_room->_scene->draw();
 		}
 
-		_fadeShader->_fade = clamp(_fadeShader->_elapsed / _fadeShader->_duration, 0.f, 1.f);
+		_fadeShader->_fade = CLIP(_fadeShader->_elapsed / _fadeShader->_duration, 0.f, 1.f);
 
 		// draw fade
 		Texture *texture1 = nullptr;

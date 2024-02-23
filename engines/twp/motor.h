@@ -47,7 +47,7 @@ public:
 	void update(float el) {
 		if (enabled && running()) {
 			elapsed += el;
-			float f = clamp(elapsed / duration, 0.0f, 1.0f);
+			float f = CLIP(elapsed / duration, 0.0f, 1.0f);
 			if (!dir_forward)
 				f = 1.0f - f;
 			if ((elapsed > duration) && (swing || loop)) {

@@ -289,7 +289,7 @@ static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 		float alpha = 0.0f;
 		if (SQ_FAILED(sqget(v, 3, alpha)))
 			return sq_throwerror(v, "failed to get alpha");
-		alpha = clamp(alpha, 0.0f, 1.0f);
+		alpha = CLIP(alpha, 0.0f, 1.0f);
 		float t = 0.0f;
 		if (SQ_FAILED(sqget(v, 4, t)))
 			return sq_throwerror(v, "failed to get time");

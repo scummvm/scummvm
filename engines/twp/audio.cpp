@@ -125,7 +125,7 @@ void AudioSystem::stop(int id) {
 }
 
 void AudioSystem::setMasterVolume(float vol) {
-	_masterVolume = Twp::clamp(vol, 0.f, 1.f);
+	_masterVolume = CLIP(vol, 0.f, 1.f);
 
 	// update sounds
 	for (auto &_slot : _slots) {
@@ -172,7 +172,7 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 					volObj = (width - (diff - (0.25f * width))) / width;
 				}
 
-				float pan = clamp((obj->_node->getAbsPos().getX() - x) / (width / 2), -1.0f, 1.0f);
+				float pan = CLIP((obj->_node->getAbsPos().getX() - x) / (width / 2), -1.0f, 1.0f);
 				g_twp->_mixer->setChannelBalance(slot->handle, (int8)(pan * 127));
 			}
 			vol *= volObj;
