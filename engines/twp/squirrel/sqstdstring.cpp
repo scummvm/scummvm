@@ -121,6 +121,7 @@ SQRESULT sqstd_format(HSQUIRRELVM v,SQInteger nformatstringidx,SQInteger *outlen
                 fmt[fpos++] = _SC('\0');
                 }
 #endif
+                // fallthrough
             case 'c':
                 if(SQ_FAILED(sq_getinteger(v,nparam,&ti)))
                     return sq_throwerror(v,_SC("integer expected for the specified format"));

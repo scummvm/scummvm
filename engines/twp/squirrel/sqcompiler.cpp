@@ -978,6 +978,7 @@ public:
                     Expect(_SC(':')); Expression();
                     break;
                 }
+                // fallthrough
             default :
                 _fs->AddInstruction(_OP_LOAD, _fs->PushTarget(), _fs->GetConstant(Expect(TK_IDENTIFIER)));
                 Expect(_SC('=')); Expression();

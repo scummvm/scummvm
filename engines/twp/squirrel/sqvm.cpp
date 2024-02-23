@@ -236,6 +236,7 @@ bool SQVM::ObjCmp(const SQObjectPtr &o1,const SQObjectPtr &o2,SQInteger &result)
                     return false;
                 }
             }
+            // fallthrough
             //continues through (no break needed)
         default:
             _RET_SUCCEED( _userpointer(o1) < _userpointer(o2)?-1:1 );
@@ -314,6 +315,7 @@ bool SQVM::ToString(const SQObjectPtr &o,SQObjectPtr &res)
                 }
             }
         }
+        // fallthrough
     default:
         scsprintf(_sp(sq_rsl((sizeof(void*)*2)+NUMBER_MAX_CHAR)),sq_rsl((sizeof(void*)*2)+NUMBER_MAX_CHAR),_SC("(%s : 0x%p)"),GetTypeName(o),(void*)_rawval(o));
     }
@@ -573,6 +575,7 @@ bool SQVM::FOREACH_OP(SQObjectPtr &o1,SQObjectPtr &o2,SQObjectPtr
             _generator(o1)->Resume(this, o3);
             _FINISH(0);
         }
+        // fallthrough
     default:
         Raise_Error(_SC("cannot iterate %s"), GetTypeName(o1));
     }
@@ -740,6 +743,7 @@ exception_restore:
                     continue;
                 }
                               }
+                // fallthrough
             case _OP_CALL: {
                     SQObjectPtr clo = STK(arg1);
                     switch (sq_type(clo)) {
@@ -748,7 +752,7 @@ exception_restore:
                         continue;
                     case OT_NATIVECLOSURE: {
                         bool suspend;
-						bool tailcall;
+                        bool tailcall;
                         _GUARD(CallNative(_nativeclosure(clo), arg3, _stackbase+arg2, clo, (SQInt32)sarg0, suspend, tailcall));
                         if(suspend){
                             _suspended = SQTrue;
@@ -789,20 +793,18 @@ exception_restore:
                     case OT_TABLE:
                     case OT_USERDATA:
                     case OT_INSTANCE:{
-                        SQObjectPtr closure;
-                        if(_delegable(clo)->_delegate && _delegable(clo)->GetMetaMethod(this,MT_CALL,closure)) {
+                        SQObjectPtr objclosure;
+                        if(_delegable(clo)->_delegate && _delegable(clo)->GetMetaMethod(this,MT_CALL,objclosure)) {
                             Push(clo);
                             for (SQInteger i = 0; i < arg3; i++) Push(STK(arg2 + i));
-                            if(!CallMetaMethod(closure, MT_CALL, arg3+1, clo)) SQ_THROW();
+                            if(!CallMetaMethod(objclosure, MT_CALL, arg3+1, clo)) SQ_THROW();
                             if(sarg0 != -1) {
                                 STK(arg0) = clo;
                             }
                             break;
                         }
-
-                        //Raise_Error(_SC("attempt to call '%s'"), GetTypeName(clo));
-                        //SQ_THROW();
                       }
+                      // fallthrough
                     default:
                         Raise_Error(_SC("attempt to call '%s'"), GetTypeName(clo));
                         SQ_THROW();
@@ -1076,11 +1078,11 @@ exception_trap:
 
         while( ci ) {
             if(ci->_etraps > 0) {
-                SQExceptionTrap &et = _etraps.top();
-                ci->_ip = et._ip;
-                _top = et._stacksize;
-                _stackbase = et._stackbase;
-                _stack._vals[_stackbase + et._extarget] = currerror;
+                SQExceptionTrap &extrap = _etraps.top();
+                ci->_ip = extrap._ip;
+                _top = extrap._stacksize;
+                _stackbase = extrap._stackbase;
+                _stack._vals[_stackbase + extrap._extarget] = currerror;
                 _etraps.pop_back(); traps--; ci->_etraps--;
                 while(last_top >= _top) _stack._vals[last_top--].Null();
                 goto exception_restore;
@@ -1135,10 +1137,10 @@ void SQVM::CallDebugHook(SQInteger type,SQInteger forcedline)
         _debughook_native(this,type,src,line,fname);
     }
     else {
-        SQObjectPtr temp_reg;
+        SQObjectPtr tmp_reg;
         SQInteger nparams=5;
         Push(_roottable); Push(type); Push(func->_sourcename); Push(forcedline?forcedline:func->GetLine(ci->_ip)); Push(func->_name);
-        Call(_debughook_closure,nparams,_top-nparams,temp_reg,SQFalse);
+        Call(_debughook_closure,nparams,_top-nparams,tmp_reg,SQFalse);
         Pop(nparams);
     }
     _debughook = true;
@@ -1320,7 +1322,7 @@ SQInteger SQVM::FallBackGet(const SQObjectPtr &self,const SQObjectPtr &key,SQObj
         else {
             return FALLBACK_NO_MATCH;
         }
-        //go through
+        // fallthrough
     case OT_INSTANCE: {
         SQObjectPtr closure;
         if(_delegable(self)->GetMetaMethod(this, MT_GET, closure)) {
@@ -1388,7 +1390,7 @@ SQInteger SQVM::FallBackSet(const SQObjectPtr &self,const SQObjectPtr &key,const
         if(_table(self)->_delegate) {
             if(Set(_table(self)->_delegate,key,val,DONT_FALL_BACK)) return FALLBACK_OK;
         }
-        //keps on going
+        // fallthrough
     case OT_INSTANCE:
     case OT_USERDATA:{
         SQObjectPtr closure;
@@ -1418,7 +1420,7 @@ SQInteger SQVM::FallBackSet(const SQObjectPtr &self,const SQObjectPtr &key,const
 
 bool SQVM::Clone(const SQObjectPtr &self,SQObjectPtr &target)
 {
-    SQObjectPtr temp_reg;
+    SQObjectPtr tmp_reg;
     SQObjectPtr newobj;
     switch(sq_type(self)){
     case OT_TABLE:
@@ -1431,7 +1433,7 @@ cloned_mt:
         if(_delegable(newobj)->_delegate && _delegable(newobj)->GetMetaMethod(this,MT_CLONED,closure)) {
             Push(newobj);
             Push(self);
-            if(!CallMetaMethod(closure,MT_CLONED,2,temp_reg))
+            if(!CallMetaMethod(closure,MT_CLONED,2,tmp_reg))
                 return false;
         }
         }
@@ -1740,7 +1742,7 @@ SQObjectPtr &SQVM::GetUp(SQInteger n) { CheckStackAccess(_top+n); return _stack[
 SQObjectPtr &SQVM::GetAt(SQInteger n) { CheckStackAccess(n); return _stack[n]; }
 
 void SQVM::CheckStackAccess(SQInteger n) {
-    if(n < 0 || n >= _stack.size()){
+    if(n < 0 || n >= (SQInteger)_stack.size()){
         //std::ostringstream s;
         //s << "Stack of the VM accessed with n=" << n << " and stacksize=" << _stack.size();
         //throw std::out_of_range(s.str());

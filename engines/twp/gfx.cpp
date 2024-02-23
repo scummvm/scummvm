@@ -258,7 +258,6 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
-		GL_CALL(glUniform1i(0, 0));
 
 		Math::Matrix4 m = getFinalTransform(trsf);
 		_shader->_shader.setUniform("u_transform", m);
