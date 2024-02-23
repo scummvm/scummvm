@@ -111,8 +111,11 @@ public:
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||
-			   (f == kSupportsReturnToLauncher);
+			   (f == kSupportsReturnToLauncher) ||
+			   (f == kSupportsChangingOptionsDuringRuntime);
 	}
+
+	void updateSettingVars();
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return !_cutscene;
@@ -156,6 +159,8 @@ public:
 
 	float getRandom() const;
 	float getRandom(float min, float max) const;
+
+	int runDialog(GUI::Dialog &dialog) override;
 
 private:
 	void update(float elapsedMs);
