@@ -780,6 +780,11 @@ Common::Error TwpEngine::run() {
 	ImGui_ImplSDL2_InitForOpenGL(g_window, glContext);
 	ImGui_ImplOpenGL3_Init("#version 110");
 	ImGui::StyleColorsDark();
+
+	ImGuiIO &io = ImGui::GetIO();
+	Common::Path initPath(ConfMan.getPath("savepath"));
+	initPath = initPath.appendComponent("twp_imgui.ini");
+	io.IniFilename = initPath.toString().c_str();
 #endif
 
 	// Set the engine's debugger console
@@ -835,7 +840,6 @@ Common::Error TwpEngine::run() {
 		while (g_system->getEventManager()->pollEvent(e)) {
 #ifdef USE_IMGUI
 			ImGui_ImplSDL2_ProcessEvent(&e);
-			ImGuiIO &io = ImGui::GetIO();
 			if (io.WantTextInput || io.WantCaptureMouse)
 				continue;
 #endif
