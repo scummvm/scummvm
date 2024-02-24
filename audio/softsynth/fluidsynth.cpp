@@ -285,11 +285,11 @@ Common::String MidiDriver_FluidSynth::getSoundFontPath() const {
 	if (path.empty())
 		return path;
 
-	// First check if this is a full path
-	Common::String fullPath = g_system->getFilesystemFactory()->getSystemFullPath(path);
-	Common::FSNode fileNode(fullPath);
-	if (fileNode.exists())
-		return fullPath;
+	Common::FSNode fileNode(path);
+	if (fileNode.exists()) {
+		// Return the full system path to the soundfont
+		return g_system->getFilesystemFactory()->getSystemFullPath(path) ;
+	}
 
 	// Then check with soundfontpath
 	if (ConfMan.hasKey("soundfontpath")) {
