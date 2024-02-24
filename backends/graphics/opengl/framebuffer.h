@@ -42,9 +42,15 @@ public:
 	enum BlendMode {
 		/**
 		 * Newly drawn pixels overwrite the existing contents of the framebuffer
-		 * without mixing with them
+		 * without mixing with them.
 		 */
 		kBlendModeDisabled,
+
+		/**
+		 * Newly drawn pixels overwrite the existing contents of the framebuffer
+		 * without mixing with them. Alpha channel is discarded.
+		 */
+		kBlendModeOpaque,
 
 		/**
 		 * Newly drawn pixels mix with the framebuffer based on their alpha value
