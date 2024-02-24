@@ -5,12 +5,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+   - Es wird nun nicht mehr versucht, Shader unter alten OpenGL-Versionen zu nutzen.
 
  SWORD2:
    - Absturz behoben, der dann auftritt, wenn das Spiel beendet wird, während es pausiert ist.
 
  MM:
    - Engine ist jetzt aktiviert, sodass MM1 und Xeen kompiliert werden kann.
+   - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
+   - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
 
  MTROPOLIS:
    - Absturz in Muppet Treasure Island auf einigen Plattformen behoben.
