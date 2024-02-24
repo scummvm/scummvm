@@ -270,19 +270,19 @@ void Room602::init() {
 
 		switch (_G(flags)[V277]) {
 		case 6001:
-			_val1 = 55;
+			_motorShould = 55;
 			break;
 
 		case 6002:
-			_val1 = _G(flags)[V278] ? 56 : 55;
+			_motorShould = _G(flags)[V278] ? 56 : 55;
 			break;
 
 		case 6003:
 			if (_G(flags)[V278]) {
 				digi_preload("602_005");
-				_val1 = 58;
+				_motorShould = 58;
 			} else {
-				_val1 = 57;
+				_motorShould = 57;
 			}
 			break;
 
@@ -407,7 +407,7 @@ void Room602::init() {
 		hotspot_set_active("FLOOR  ", true);
 
 		_series8 = series_play("612mot02", 0x700, 0, -1, 0, -1);
-		_val1 = 53;
+		_motorShould = 53;
 		kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 		break;
 
@@ -421,7 +421,7 @@ void Room602::init() {
 			_G(flags)[V244] = 6004;
 			_G(flags)[V245] = 10031;
 			_G(flags)[V248] = 1;
-			_val1 = 53;
+			_motorShould = 53;
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 		}
 		break;
@@ -440,7 +440,7 @@ void Room602::init() {
 void Room602::daemon() {
 	switch (_G(kernel).trigger) {
 	case kCHANGE_MOTOR_ANIMATION:
-		switch (_val1) {
+		switch (_motorShould) {
 		case 53:
 			player_set_commands_allowed(false);
 			digi_preload("612_001b");
@@ -449,14 +449,14 @@ void Room602::daemon() {
 			series_play("602mg03", 1);
 			wilbur_speech("602w004");
 			terminateMachineAndNull(_series8);
-			_val1 = 54;
+			_motorShould = 54;
 			_series8 = series_play("612mot01", 0x600, 0, 1, 0, 8, 100, 0, 0, 0, 7);
 			break;
 
 		case 54:
 			_G(flags)[V249] = 1;
 			digi_play("612_001b", 3, 255, 12, 612);
-			_val1 = 55;
+			_motorShould = 55;
 			wilbur_speech("602w005");
 			_series8 = series_play("612mot01", 0x400, 0, 1, 0, 0, 100, 0, 0, 8, 18);
 			_G(wilbur_should) = 10001;
@@ -518,7 +518,7 @@ void Room602::daemon() {
 		case 59:
 			_G(flags)[V260] = 1;
 			_G(flags)[V279] = 2;
-			_val1 = 60;
+			_motorShould = 60;
 
 			if (_G(flags)[V278]) {
 				series_play_with_breaks(PLAY11, "612wi17", 0x700, 1, 3, 6, 100, 114, -2);
@@ -530,7 +530,7 @@ void Room602::daemon() {
 		case 60:
 			_G(flags)[V280] = 1;
 			kernel_trigger_dispatch_now(3);
-			_val1 = 58;
+			_motorShould = 58;
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 
 			_G(wilbur_should) = (_G(flags)[V280] == 1) ? 10001 : 35;
@@ -541,7 +541,7 @@ void Room602::daemon() {
 			_G(flags)[V260] = 1;
 			_G(flags)[V279] = 2;
 			_G(wilbur_should) = 10001;
-			_val1 = 58;
+			_motorShould = 58;
 			break;
 
 		default:
@@ -749,7 +749,7 @@ void Room602::daemon() {
 			_G(flags)[V244] = 6004;
 			_G(flags)[V245] = 10031;
 			player_set_commands_allowed(false);
-			_val1 = 53;
+			_motorShould = 53;
 			kernel_trigger_dispatch_now(6008);
 			break;
 
@@ -1037,7 +1037,7 @@ void Room602::daemon() {
 			terminateMachineAndNull(_series8);
 
 			if (_G(flags)[V278]) {
-				_val1 = 59;
+				_motorShould = 59;
 				series_play_with_breaks(PLAY10, "612wi17", 0x700, 1, 3, 6, 100, 114, -2);
 			} else {
 				_G(wilbur_should) = 24;
@@ -1046,7 +1046,7 @@ void Room602::daemon() {
 			break;
 
 		case 24:
-			_val1 = 57;
+			_motorShould = 57;
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 
 			if (_G(flags)[V280] == 1) {
@@ -1099,7 +1099,7 @@ void Room602::daemon() {
 			if (_G(flags)[V277] == 6003) {
 				digi_preload("602_004");
 				digi_preload("602_005");
-				_val1 = 58;
+				_motorShould = 58;
 				_G(wilbur_should) = 29;
 				series_play_with_breaks(PLAY22, "612wi18", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			} else {
@@ -1110,14 +1110,14 @@ void Room602::daemon() {
 
 		case 28:
 			_G(wilbur_should) = 41;
-			_val1 = 56;
+			_motorShould = 56;
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 29:
 			_G(wilbur_should) = 41;
-			_val1 = 58;
+			_motorShould = 58;
 			kernel_trigger_dispatch_now(kCHANGE_MOTOR_ANIMATION);
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
