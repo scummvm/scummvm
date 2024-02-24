@@ -504,7 +504,7 @@ private:
 		void deallocate();
 
 		SourceChannelState _sourceChannelState[MidiDriver_BASE::MIDI_CHANNEL_COUNT];
-		uint16 _root4MasterVolume;
+		uint16 _sqrtMasterVolume;
 		bool _isAllocated;
 	};
 
@@ -637,7 +637,8 @@ void MidiCombinerDynamic::deallocateSource(uint sourceID) {
 
 void MidiCombinerDynamic::setSourceVolume(uint sourceID, uint8 volume) {
 	SourceState &src = _sources[sourceID];
-	src._root4MasterVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * 16400.0));
+	//src._root4MasterVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * 16400.0));
+	src._sqrtMasterVolume = static_cast<uint16>(floor(sqrt(volume) * 4104.0));
 
 	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
 		OutputChannelState &ch = _outputChannels[i];
@@ -1271,7 +1272,7 @@ void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChann
 		// This means linear scale is (volume/0x3f80)^4
 		// To modulate the volume linearly, we must multiply the volume by the 4th root
 		// of the volume.
-		uint32 effectiveValueScaled = static_cast<uint32>(srcState._root4MasterVolume) * static_cast<uint32>(effectiveValue);
+		uint32 effectiveValueScaled = static_cast<uint32>(srcState._sqrtMasterVolume) * static_cast<uint32>(effectiveValue);
 		effectiveValueScaled += (effectiveValueScaled >> 16) + 1u;
 		effectiveValue = static_cast<uint16>(effectiveValueScaled >> 16);
 	}
@@ -1381,7 +1382,7 @@ MidiCombinerDynamic::SourceChannelState::SourceChannelState() {
 void MidiCombinerDynamic::SourceChannelState::reset() {
 }
 
-MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _root4MasterVolume(0xffffu) {
+MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _sqrtMasterVolume(0xffffu) {
 }
 
 void MidiCombinerDynamic::SourceState::allocate() {
