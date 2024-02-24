@@ -19,33 +19,6 @@
  *
  */
 
-#if defined(HAVE_CONFIG_H)
-#include "config.h"
-#endif
-
-#ifdef USE_IMGUI
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "graphics/imgui/imgui.h"
-#include "graphics/imgui/backends/imgui_impl_sdl2_scummvm.h"
-#include "graphics/imgui/backends/imgui_impl_opengl3_scummvm.h"
-#undef FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
-// here I undefined these symbols because of the <X11/Xlib.h> defining them
-// and messing with all classes or structure using the same names
-#undef Bool
-#undef CursorShape
-#undef Expose
-#undef KeyPress
-#undef KeyRelease
-#undef FocusIn
-#undef FocusOut
-#undef FontChange
-#undef None
-#undef Status
-#undef Unsorted
-
-#endif
-
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
@@ -72,16 +45,13 @@
 #include "twp/task.h"
 #include "twp/thread.h"
 #include "twp/tsv.h"
+#include "twp/twpimgui.h"
 #include "twp/vm.h"
 #include "twp/walkboxnode.h"
 
 namespace Twp {
 
 TwpEngine *g_twp;
-
-#ifdef USE_IMGUI
-SDL_Window *g_window = nullptr;
-#endif
 
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst),
@@ -103,6 +73,7 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_hud.reset(new Hud());
 	_pack.reset(new GGPackSet());
 	_saveGameManager.reset(new SaveGameManager());
+	_imgui.reset(new TwpImGui());
 
 	_screenScene->setName("Screen");
 	_scene->addChild(_walkboxNode.get());
@@ -751,11 +722,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// imgui render
 	_gfx.use(nullptr);
-
-#ifdef USE_IMGUI
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
+	_imgui->render();
 
 	g_system->updateScreen();
 }
@@ -769,23 +736,7 @@ void TwpEngine::updateSettingVars() {
 Common::Error TwpEngine::run() {
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-#ifdef USE_IMGUI
-	// Setup Dear ImGui
-	OpenGLSdlGraphics3dManager *manager = dynamic_cast<OpenGLSdlGraphics3dManager *>(g_system->getPaletteManager());
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	g_window = manager->getWindow()->getSDLWindow();
-	SDL_GLContext glContext = SDL_GL_GetCurrentContext();
-	ImGui_ImplSDL2_InitForOpenGL(g_window, glContext);
-	ImGui_ImplOpenGL3_Init("#version 110");
-	ImGui::StyleColorsDark();
-
-	ImGuiIO &io = ImGui::GetIO();
-	Common::Path initPath(ConfMan.getPath("savepath"));
-	initPath = initPath.appendComponent("twp_imgui.ini");
-	io.IniFilename = initPath.toString().c_str();
-#endif
+	_imgui->init();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -838,11 +789,8 @@ Common::Error TwpEngine::run() {
 	while (!shouldQuit()) {
 		Math::Vector2d camPos = _gfx.cameraPos();
 		while (g_system->getEventManager()->pollEvent(e)) {
-#ifdef USE_IMGUI
-			ImGui_ImplSDL2_ProcessEvent(&e);
-			if (io.WantTextInput || io.WantCaptureMouse)
+			if(_imgui->processEvent(&e))
 				continue;
-#endif
 
 			switch (e.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
@@ -998,14 +946,6 @@ Common::Error TwpEngine::run() {
 		time = newTime;
 		update(speed * delta / 1000.f);
 
-#ifdef USE_IMGUI
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(g_window);
-		ImGui::NewFrame();
-
-		onImGuiRender();
-#endif
-
 		draw();
 		_cursor.update();
 
@@ -1017,11 +957,7 @@ Common::Error TwpEngine::run() {
 	}
 
 	// Cleanup
-#ifdef USE_IMGUI
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-#endif
+	_imgui->cleanup();
 
 	return Common::kNoError;
 }

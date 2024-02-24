@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "graphics/imgui/imgui.h"
 
 #include "common/debug-channels.h"
