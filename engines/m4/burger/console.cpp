@@ -29,6 +29,7 @@ namespace Burger {
 Console::Console() : M4::Console() {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("test", WRAP_METHOD(Console, cmdTest));
+	registerCmd("time", WRAP_METHOD(Console, cmdTime));
 }
 
 bool Console::cmdGlobal(int argc, const char **argv) {
@@ -56,6 +57,18 @@ bool Console::cmdTest(int argc, const char **argv) {
 
 	debugPrintf("Tests passed = %d\n", tests);
 	return true;
+}
+
+bool Console::cmdTime(int argc, const char **argv) {
+	if (argc == 2) {
+		int newTime = atol(argv[1]);
+		_G(flags).set_boonsville_time(newTime - 1);
+		return false;
+
+	} else {
+		debugPrintf("Current time is %d\n", _G(flags)[kBoonsvilleTime]);
+		return true;
+	}
 }
 
 } // End of namespace Burger
