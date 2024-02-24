@@ -700,7 +700,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	bool drawCursor = _cursorVisible && _cursor;
 
 	// Alpha blending is disabled when drawing the screen
-	_targetBuffer->enableBlend(Framebuffer::kBlendModeDisabled);
+	_targetBuffer->enableBlend(Framebuffer::kBlendModeOpaque);
 
 	// First step: Draw the (virtual) game screen.
 	_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
