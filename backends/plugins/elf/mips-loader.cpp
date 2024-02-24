@@ -77,6 +77,8 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
+		case R_MIPS_NONE:
+			break; // No relocation
 		case R_MIPS_HI16:							// Absolute addressing.
 			if (sym->st_shndx < SHN_LOPROC &&		// Only shift for plugin section (ie. has a real section index)
 				firstHi16 < 0) {					// Only process first in block of HI16s
