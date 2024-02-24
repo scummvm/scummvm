@@ -167,10 +167,11 @@ public:
 	 */
 	virtual void showSaveScreen();
 
+	enum LoadDialogSource { kLoadFromMainMenu, kLoadFromGameDialog, kLoadFromHotkey };
 	/**
 	 * Show restore game dialog
 	 */
-	virtual void showLoadScreen(bool fromMainMenu = false);
+	virtual void showLoadScreen(LoadDialogSource fromMainMenu);
 
 	/**
 	 * Show the engine information

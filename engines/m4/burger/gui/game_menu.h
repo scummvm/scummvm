@@ -150,10 +150,11 @@ menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 
 	const char *prompt = nullptr, int32 specialtag = 0, CALLBACK callback = nullptr, bool transparent = false);
 
 //GAME MENU FUNCTIONS
-void CreateGameMenu(RGB8 *myPalette);
-void CreateOptionsMenu(RGB8 *myPalette);
-void CreateF2SaveMenu(RGB8 *myPalette);
-void CreateF3LoadMenu(RGB8 *myPalette);
+extern void CreateGameMenu(RGB8 *myPalette);
+extern void CreateOptionsMenu(RGB8 *myPalette);
+extern void CreateF2SaveMenu(RGB8 *myPalette);
+extern void CreateLoadMenu(RGB8 *myPalette);
+extern void CreateF3LoadMenu(RGB8 *myPalette);
 
 //routines used by the main menu
 void CreateLoadMenuFromMain(RGB8 *myPalette);

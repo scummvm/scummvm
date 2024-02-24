@@ -807,15 +807,21 @@ void BurgerEngine::showSaveScreen() {
 	}
 }
 
-void BurgerEngine::showLoadScreen(bool fromMainMenu) {
+void BurgerEngine::showLoadScreen(LoadDialogSource source) {
 	if (_useOriginalSaveLoad) {
-		if (fromMainMenu)
+		switch (source) {
+		case kLoadFromMainMenu:
 			GUI::CreateLoadMenuFromMain(_G(master_palette));
-		else
+			break;
+		case kLoadFromGameDialog:
+			GUI::CreateLoadMenu(_G(master_palette));
+			break;
+		case kLoadFromHotkey:
 			GUI::CreateF3LoadMenu(_G(master_palette));
-
+			break;
+		}
 	} else {
-		M4Engine::showLoadScreen(fromMainMenu);
+		M4Engine::showLoadScreen(source);
 	}
 }
 

@@ -151,7 +151,7 @@ void Hotkeys::saveGame(void *, void *) {
 }
 
 void Hotkeys::loadGame(void *, void *) {
-	g_engine->showLoadScreen();
+	g_engine->showLoadScreen(M4Engine::kLoadFromHotkey);
 }
 
 void Hotkeys::adv_hyperwalk_to_final_destination(void *a, void *b) {

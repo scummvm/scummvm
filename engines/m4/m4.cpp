@@ -149,7 +149,7 @@ void M4Engine::showSaveScreen() {
 	saveGameDialog();
 }
 
-void M4Engine::showLoadScreen(bool fromMainMenu) {
+void M4Engine::showLoadScreen(LoadDialogSource source) {
 	loadGameDialog();
 }
 

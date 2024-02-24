@@ -127,7 +127,7 @@ void Room903::daemon() {
 		break;
 
 	case 7:
-		g_engine->showLoadScreen(true);
+		g_engine->showLoadScreen(M4Engine::kLoadFromMainMenu);
 		break;
 
 	case 8:
