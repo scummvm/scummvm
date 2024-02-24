@@ -332,13 +332,13 @@ void MidiNotePlayerImpl::play(uint8 volume, uint8 channel, uint8 program, uint8 
 	_note = note;
 	_volume = volume;
 
-	// GM volume scale to linear is x^4 so we need the 4th root of the volume, and need to rescale it from 0-100 to 0-0x3f80
-	// = 0x3f80 / sqrt(sqrt(100))
-	const double volumeMultiplier = 5140.5985643697174420974013458299;
+	// GM volume scale to linear is x^2 so we need the square root of the volume, and need to rescale it from 0-100 to 0-0x3f80
+	// = 0x3f80 / sqrt(100)
+	const double volumeMultiplier = 1625.6;
 
 	if (volume > 100)
 		volume = 100;
-	uint16 hpVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * volumeMultiplier));
+	uint16 hpVolume = static_cast<uint16>(floor(sqrt(volume) * volumeMultiplier));
 
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE | _channel, program, 0);
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE | _channel, MidiDriver_BASE::MIDI_CONTROLLER_EXPRESSION, 127);
@@ -1270,7 +1270,7 @@ void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChann
 	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME) {
 		// GM volume to gain control is 40*log10(V/127)
 		// This means linear scale is (volume/0x3f80)^4
-		// To modulate the volume linearly, we must multiply the volume by the 4th root
+		// To modulate the volume linearly, we must multiply the volume by the square root
 		// of the volume.
 		uint32 effectiveValueScaled = static_cast<uint32>(srcState._sqrtMasterVolume) * static_cast<uint32>(effectiveValue);
 		effectiveValueScaled += (effectiveValueScaled >> 16) + 1u;
