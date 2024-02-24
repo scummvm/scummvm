@@ -87,6 +87,7 @@ int M4Engine::isDemo() const {
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
+	syncSoundSettings();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
