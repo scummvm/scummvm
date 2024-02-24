@@ -423,7 +423,6 @@ void Room405::daemon() {
 		break;
 
 	case kCHANGE_VERA_ANIMATION:
-		warning("%d %d", _veraMode, _veraShould);
 		switch (_veraMode) {
 		case 4:
 			switch (_veraShould) {
