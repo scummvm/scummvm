@@ -213,6 +213,8 @@ void Sections::m4EndScene() {
 
 	conv_unload(conv_get_handle());
 
+	ws_KillDeadMachines();
+
 	//-------------------- DUMP ASSETS AND MINI-ENGINES ------------------
 	// Note machines should always be cleared before anything else
 	ClearWSAssets(_WS_ASSET_MACH, 0, 255);

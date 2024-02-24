@@ -682,7 +682,7 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
 static void cancelAllEngineReqs(machine *m) {
 	globalMsgReq *myGMsg, *tempGMsg;
 
-	if (m->machID == 0xdeaddead) {
+	if (m->machID == DEAD_MACHINE_ID) {
 		return;
 	}
 
@@ -715,7 +715,7 @@ static void cancelAllEngineReqs(machine *m) {
 
 
 static void shutdownMachine(machine *m) {
-	if (m->machID == 0xdeaddead) {
+	if (m->machID == DEAD_MACHINE_ID) {
 		return;
 	}
 
@@ -737,7 +737,7 @@ static void shutdownMachine(machine *m) {
 	// Clear any existing walk path
 	DisposePath(m->walkPath);
 
-	m->machID = 0xdeaddead;
+	m->machID = DEAD_MACHINE_ID;
 
 	if (m->machName) {
 		m->machName[0] = '\0';
@@ -750,7 +750,7 @@ static machine *getValidNext(machine *currMachine) {
 	machine *iterMachine = currMachine;
 	if (iterMachine) {
 		while ((iterMachine = iterMachine->next) != nullptr) {
-			if (iterMachine->machID != 0xdeaddead) {
+			if (iterMachine->machID != DEAD_MACHINE_ID) {
 				return iterMachine;
 			}
 		}
@@ -824,7 +824,7 @@ int32 ws_KillMachines() {
 		// get any next Machine here, not validNext
 		_GWS(firstMachine) = _GWS(firstMachine)->next;
 
-		if (myMachine->machID != 0xdeaddead) {
+		if (myMachine->machID != DEAD_MACHINE_ID) {
 			cancelAllEngineReqs(myMachine);
 			shutdownMachine(myMachine);
 		}
@@ -845,6 +845,23 @@ int32 ws_KillMachines() {
 	return myBytes;
 }
 
+void ws_KillDeadMachines() {
+	machine *myMachine;
+	machine **priorNext = &_GWS(firstMachine);
+
+	// Deallocate all machines that are dead
+	while ((myMachine = *priorNext) != nullptr) {
+		if (myMachine->machID == DEAD_MACHINE_ID) {
+			// Shutdown the dead machine, and unlink it from the machine chain
+			*priorNext = myMachine->next;
+			mem_free(myMachine);
+
+		} else {
+			// Valid machine, skip over
+			priorNext = &myMachine->next;
+		}
+	}
+}
 
 // This is the proc designed to evaluate the instructions of the state machine
 
@@ -981,7 +998,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 
 	// Initialize the identification fields
 	_GWS(machineIDCount)++;
-	if (_GWS(machineIDCount) == 0xdeaddead) {
+	if (_GWS(machineIDCount) == DEAD_MACHINE_ID) {
 		_GWS(machineIDCount)++;
 	}
 

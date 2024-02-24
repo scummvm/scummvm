@@ -29,6 +29,8 @@
 
 namespace M4 {
 
+#define DEAD_MACHINE_ID 0xdeaddead
+
 enum {
 	NOSEPICK = 0,
 	STARTWALK = 1,
@@ -193,6 +195,7 @@ void terminateMachinesByHash(uint32 machHash);
 void terminateMachineAndNull(machine *&m);
 bool verifyMachineExists(machine *m);
 int32 ws_KillMachines();
+void ws_KillDeadMachines();
 void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);
 void IntoTheState(machine *m);
 machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName);
