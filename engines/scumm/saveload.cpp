@@ -2260,15 +2260,16 @@ void ScummEngine_v71he::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncArray(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), syncWithSerializer);
 }
 
-void syncWithSerializer(Common::Serializer &s, FloodFillParameters &ffp) {
-	s.syncAsSint32LE(ffp.box.left, VER(51));
-	s.syncAsSint32LE(ffp.box.top, VER(51));
-	s.syncAsSint32LE(ffp.box.right, VER(51));
-	s.syncAsSint32LE(ffp.box.bottom, VER(51));
-	s.syncAsSint32LE(ffp.x, VER(51));
-	s.syncAsSint32LE(ffp.y, VER(51));
-	s.syncAsSint32LE(ffp.flags, VER(51));
-	s.skip(4, VER(51), VER(62)); // unk1C
+void syncWithSerializer(Common::Serializer &s, FloodFillCommand &ffc) {
+	s.syncAsSint32LE(ffc.box.left, VER(51));
+	s.syncAsSint32LE(ffc.box.top, VER(51));
+	s.syncAsSint32LE(ffc.box.right, VER(51));
+	s.syncAsSint32LE(ffc.box.bottom, VER(51));
+	s.syncAsSint32LE(ffc.x, VER(51));
+	s.syncAsSint32LE(ffc.y, VER(51));
+	s.syncAsSint32LE(ffc.flags, VER(51));
+	s.skip(4, VER(51), VER(62)); // color
+	s.syncAsSint32LE(ffc.color, VER(114));
 }
 
 void ScummEngine_v90he::saveLoadWithSerializer(Common::Serializer &s) {
@@ -2276,7 +2277,7 @@ void ScummEngine_v90he::saveLoadWithSerializer(Common::Serializer &s) {
 
 	_sprite->saveLoadWithSerializer(s);
 
-	syncWithSerializer(s, _floodFillParams);
+	syncWithSerializer(s, _floodFillCommand);
 
 	s.syncAsSint32LE(_curMaxSpriteId, VER(51));
 	s.syncAsSint32LE(_curSpriteId, VER(51));

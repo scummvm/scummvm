@@ -166,7 +166,7 @@ void MoviePlayer::handleNextFrame() {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
 		Common::Rect imageRect(_video->getWidth(), _video->getHeight());
-		_vm->restoreBackgroundHE(imageRect);
+		_vm->backgroundToForegroundBlit(imageRect);
 	} else {
 		copyFrameToBuffer(pvs->getPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 

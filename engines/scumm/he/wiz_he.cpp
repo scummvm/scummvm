@@ -1608,7 +1608,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 				++rImage.bottom;
 				_vm->markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
-				_vm->restoreBackgroundHE(rImage);
+				_vm->backgroundToForegroundBlit(rImage);
 			}
 		}
 	}
@@ -2090,9 +2090,10 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	drawWizPolygonImage(dst, srcWizBuf, 0, dstpitch, dstType, dstw, dsth, wizW, wizH, bound, wp, _vm->_bytesPerPixel);
 
 	if (flags & kWRFForeground) {
+		++bound.bottom;
 		_vm->markRectAsDirty(kMainVirtScreen, bound);
 	} else {
-		_vm->restoreBackgroundHE(bound);
+		_vm->backgroundToForegroundBlit(bound);
 	}
 
 	if (freeBuffer)
@@ -2829,6 +2830,68 @@ void Wiz::processWizImageFontCreateCmd(const WizImageCommand *params) {
 void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
 	// TODO: Render Font String
 	error("Wiz::processWizImageFontRenderCmd(): Render Font String");
+}
+
+void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
+	Common::Rect renderRect, clipRect, workClipRect;
+	int whichState, w, h, whichImage;
+	WizSimpleBitmap renderBitmap;
+	WizRawPixel whatColor;
+	Common::Point pt;
+
+	// Get the rendering coords or bail if none...
+	if (params->actionFlags & kWAFRenderCoords) {
+		pt.x = params->renderCoords.left;
+		pt.y = params->renderCoords.top;
+	} else {
+		return;
+	}
+
+	// What state is going to rendered into?
+	if (params->actionFlags & kWAFState) {
+		whichState = params->state;
+	} else {
+		whichState = 0;
+	}
+
+	whichImage = params->image;
+
+	// Make the clipping rect for this image / state
+	getWizImageDim(whichImage, whichState, w, h);
+	makeSizedRectAt(&clipRect, 0, 0, w, h);
+
+	if (params->actionFlags & kWAFRect) {
+		workClipRect.left = params->box.left;
+		workClipRect.top = params->box.top;
+		workClipRect.right = params->box.right;
+		workClipRect.bottom = params->box.bottom;
+
+		// Bail out if there isn't overlap between the clipping rects
+		if (!findRectOverlap(&clipRect, &workClipRect)) {
+			return;
+		}
+	}
+
+	// What is the rendering color
+	if (params->actionFlags & kWAFColor) {
+		whatColor = params->colorValue;
+	} else {
+		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
+	}
+
+	// Get the simple bitmap
+	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
+		error("Image %d state %d invalid for rendering.", whichImage, whichState);
+	}
+
+	// If we're here we must be able to render into the image (clipped)...
+	if (isPointInRect(&clipRect, &pt)) {
+		floodSimpleFill(&renderBitmap, pt.x, pt.y, whatColor, &clipRect, &renderRect);
+
+		if (_vm->_game.heversion > 99) {
+			_vm->_res->setModified(rtImage, params->image);
+		}
+	}
 }
 
 void Wiz::processNewWizImageCmd(const WizImageCommand *params) {

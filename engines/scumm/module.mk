@@ -143,7 +143,7 @@ ifdef ENABLE_HE
 MODULE_OBJS += \
 	he/animation_he.o \
 	he/cup_player_he.o \
-	he/floodfill_he.o \
+	he/gfx_primitives_he.o \
 	he/logic_he.o \
 	he/palette_he.o \
 	he/script_v71he.o \
@@ -153,7 +153,6 @@ MODULE_OBJS += \
 	he/script_v100he.o \
 	he/sprite_he.o \
 	he/wiz_he.o \
-	he/wiz_primitives_he.o \
 	he/localizer.o \
 	he/logic/baseball2001.o \
 	he/logic/basketball.o \

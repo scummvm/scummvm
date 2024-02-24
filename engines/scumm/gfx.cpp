@@ -2502,7 +2502,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		debug(0, "Gdi::drawBMAPBg: default case %d", code);
 	}
 
-	((ScummEngine_v71he *)_vm)->restoreBackgroundHE(Common::Rect(vs->w, vs->h));
+	((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(Common::Rect(vs->w, vs->h));
 
 	int numzbuf = getZPlanes(ptr, zplane_list, true);
 	if (numzbuf <= 1)
@@ -2569,11 +2569,11 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
 
-		((ScummEngine_v71he *)_vm)->restoreBackgroundHE(rect1);
+		((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(rect1);
 	}
 }
 
-void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
+void ScummEngine_v70he::backgroundToForegroundBlit(Common::Rect rect, int dirtybit) {
 	byte *src, *dst;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
@@ -2587,16 +2587,16 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	rect.left = MIN((int)rect.left, (int)vs->w - 1);
 
 	rect.right = MAX(0, (int)rect.right);
-	rect.right = MIN((int)rect.right, (int)vs->w);
+	rect.right = MIN((int)rect.right, (int)vs->w - 1);
 
 	rect.top = MAX(0, (int)rect.top);
 	rect.top = MIN((int)rect.top, (int)vs->h - 1);
 
 	rect.bottom = MAX(0, (int)rect.bottom);
-	rect.bottom = MIN((int)rect.bottom, (int)vs->h);
+	rect.bottom = MIN((int)rect.bottom, (int)vs->h - 1);
 
-	const int rw = rect.width();
-	const int rh = rect.height();
+	const int rw = rect.width() + 1;
+	const int rh = rect.height() + 1;
 
 	if (rw == 0 || rh == 0)
 		return;
@@ -2607,6 +2607,8 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	assert(rw <= _screenWidth && rw > 0);
 	assert(rh <= _screenHeight && rh > 0);
 	blit(dst, _virtscr[kMainVirtScreen].pitch, src, _virtscr[kMainVirtScreen].pitch, rw, rh, vs->format.bytesPerPixel);
+
+	rect.bottom++;
 	markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
 #endif

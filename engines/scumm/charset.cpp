@@ -1226,7 +1226,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 
 		if (_blitAlso && vs->hasTwoBuffers) {
 			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
-			((ScummEngine_v71he *)_vm)->restoreBackgroundHE(dst);
+			((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(dst);
 		}
 #endif
 	} else {
