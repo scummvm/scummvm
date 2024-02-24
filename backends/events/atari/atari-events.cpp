@@ -29,18 +29,22 @@
 #include "backends/platform/atari/osystem_atari.h"
 #include "common/rect.h"
 
-//! bit 0: rmb
-//! bit 1: lmb
-volatile uint8	g_atari_ikbd_mouse_buttons_state = 0;
-volatile int16	g_atari_ikbd_mouse_delta_x = 0;
-volatile int16	g_atari_ikbd_mouse_delta_y = 0;
-
 #define SCANCODES_SIZE 256
 volatile uint8	g_atari_ikbd_scancodes[SCANCODES_SIZE];
 uint16			g_atari_ikbd_scancodes_mask = SCANCODES_SIZE-1;
-volatile uint16	g_atari_ikbb_scancodes_head = 0;
-static uint16	g_atari_ikbb_scancodes_tail = 0;
+volatile uint16	g_atari_ikbd_scancodes_head = 0;
+static uint16	g_atari_ikbd_scancodes_tail = 0;
 
+//! bit 0: rmb
+//! bit 1: lmb
+#define MOUSEBUTTONS_SIZE 4
+volatile uint8	g_atari_ikbd_mousebuttons[MOUSEBUTTONS_SIZE];
+uint16			g_atari_ikbd_mousebuttons_mask = MOUSEBUTTONS_SIZE-1;
+volatile uint16	g_atari_ikbd_mousebuttons_head = 0;
+static uint16	g_atari_ikbd_mousebuttons_tail = 0;
+
+volatile int16	g_atari_ikbd_mouse_delta_x = 0;
+volatile int16	g_atari_ikbd_mouse_delta_y = 0;
 
 AtariEventSource::AtariEventSource() {
 	_system = dynamic_cast<OSystem_Atari*>(g_system);
@@ -108,32 +112,33 @@ bool AtariEventSource::pollEvent(Common::Event &event) {
 
 	_system->update();
 
-	if ((g_atari_ikbd_mouse_buttons_state & 0x01) && !_oldRmbDown) {
-		event.type = Common::EVENT_RBUTTONDOWN;
-		event.mouse = _graphicsManager->getMousePosition();
-		_oldRmbDown = true;
-		return true;
-	}
+	if (g_atari_ikbd_mousebuttons_head != g_atari_ikbd_mousebuttons_tail) {
+		byte buttonState = g_atari_ikbd_mousebuttons[g_atari_ikbd_mousebuttons_tail++];
+		g_atari_ikbd_mousebuttons_tail &= MOUSEBUTTONS_SIZE-1;
 
-	if (!(g_atari_ikbd_mouse_buttons_state & 0x01) && _oldRmbDown) {
-		event.type = Common::EVENT_RBUTTONUP;
-		event.mouse = _graphicsManager->getMousePosition();
-		_oldRmbDown = false;
-		return true;
-	}
+		if (buttonState & 0x01) {
+			_rmbDown = true;
+			event.type = Common::EVENT_RBUTTONDOWN;
+			event.mouse = _graphicsManager->getMousePosition();
+			return true;
+		} else if (_rmbDown) {
+			_rmbDown = false;
+			event.type = Common::EVENT_RBUTTONUP;
+			event.mouse = _graphicsManager->getMousePosition();
+			return true;
+		}
 
-	if ((g_atari_ikbd_mouse_buttons_state & 0x02) && !_oldLmbDown) {
-		event.type = Common::EVENT_LBUTTONDOWN;
-		event.mouse = _graphicsManager->getMousePosition();
-		_oldLmbDown = true;
-		return true;
-	}
-
-	if (!(g_atari_ikbd_mouse_buttons_state & 0x02) && _oldLmbDown) {
-		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse = _graphicsManager->getMousePosition();
-		_oldLmbDown = false;
-		return true;
+		if (buttonState & 0x02) {
+			_lmbDown = true;
+			event.type = Common::EVENT_LBUTTONDOWN;
+			event.mouse = _graphicsManager->getMousePosition();
+			return true;
+		} else if (_lmbDown) {
+			_lmbDown = false;
+			event.type = Common::EVENT_LBUTTONUP;
+			event.mouse = _graphicsManager->getMousePosition();
+			return true;
+		}
 	}
 
 	if (g_atari_ikbd_mouse_delta_x != 0 || g_atari_ikbd_mouse_delta_y != 0) {
@@ -150,9 +155,9 @@ bool AtariEventSource::pollEvent(Common::Event &event) {
 		return true;
 	}
 
-	if (g_atari_ikbb_scancodes_head != g_atari_ikbb_scancodes_tail) {
-		byte scancode = g_atari_ikbd_scancodes[g_atari_ikbb_scancodes_tail++];
-		g_atari_ikbb_scancodes_tail &= SCANCODES_SIZE-1;
+	if (g_atari_ikbd_scancodes_head != g_atari_ikbd_scancodes_tail) {
+		byte scancode = g_atari_ikbd_scancodes[g_atari_ikbd_scancodes_tail++];
+		g_atari_ikbd_scancodes_tail &= SCANCODES_SIZE-1;
 
 		bool pressed = !(scancode & 0x80);
 		scancode &= 0x7f;

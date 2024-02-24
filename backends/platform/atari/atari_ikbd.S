@@ -27,13 +27,16 @@
 	.global	SYM(atari_old_kbdvec)
 	.global	SYM(atari_old_mousevec)
 
-	.extern	SYM(g_atari_ikbd_mouse_buttons_state)
+	.extern	SYM(g_atari_ikbd_mousebuttons)
+	.extern	SYM(g_atari_ikbd_mousebuttons_mask)
+	.extern	SYM(g_atari_ikbd_mousebuttons_head)
+
 	.extern	SYM(g_atari_ikbd_mouse_delta_x)
-	.extern	SYM(_atari_ikbd_mouse_delta_y)
+	.extern	SYM(g_atari_ikbd_mouse_delta_y)
 
 	.extern	SYM(g_atari_ikbd_scancodes)
 	.extern	SYM(g_atari_ikbd_scancodes_mask)
-	.extern	SYM(g_atari_ikbb_scancodes_head)
+	.extern	SYM(g_atari_ikbd_scancodes_head)
 
 	.text
 
@@ -42,21 +45,39 @@
 SYM(atari_old_kbdvec):
 	dc.l	0
 SYM(atari_kbdvec):
-	movem.l	d1/a0,-(sp)
+	lea	pressed_keys,a0
+	clr.l	d1
+	move.b	d0,d1
+	bpl.b	key_pressed				| bit 7 cleared
 
+key_released:
+	and.b	#0x7f,d1
+	tst.b	(a0,d1.l)				| pressed before?
+	bne.b	key_released_ok
+
+	| if we get a sudden release key event,
+	| let the original handler process it
+	move.l	(atari_old_kbdvec,pc),a0
+	jmp	(a0)
+
+key_released_ok:
+	clr.b	(a0,d1.l)				| mark as released
+	bra.b	kbdvec_process
+
+key_pressed:
+	addq.b	#1,(a0,d1.l)				| mark as pressed
+
+kbdvec_process:
 	lea	SYM(g_atari_ikbd_scancodes),a0
-	move.w	SYM(g_atari_ikbb_scancodes_head),d1
+	move.w	SYM(g_atari_ikbd_scancodes_head),d1
 
-	| g_atari_ikbd_scancodes[g_atari_ikbb_scancodes_head] = scancode
+	| g_atari_ikbd_scancodes[g_atari_ikbd_scancodes_head] = scancode
 
 	move.b	d0,(0.b,a0,d1.w)
 
 	addq.l	#1,d1
 	and.w	SYM(g_atari_ikbd_scancodes_mask),d1
-	move.w	d1,SYM(g_atari_ikbb_scancodes_head)
-
-	movem.l	(sp)+,d1/a0
-	move.l	(atari_old_kbdvec,pc),-(sp)
+	move.w	d1,SYM(g_atari_ikbd_scancodes_head)
 	rts
 
 
@@ -65,10 +86,24 @@ SYM(atari_kbdvec):
 SYM(atari_old_mousevec):
 	dc.l	0
 SYM(atari_mousevec):
-	movem.l	d0/a0,-(sp)
+	move.b	(a0)+,d0
+	cmp.b	old_buttons,d0
+	beq.b	no_buttons
 
-	move.b	(a0)+,SYM(g_atari_ikbd_mouse_buttons_state)
+	move.b	d0,old_buttons
 
+	lea	SYM(g_atari_ikbd_mousebuttons),a1
+	move.w	SYM(g_atari_ikbd_mousebuttons_head),d1
+
+	| g_atari_ikbd_mousebuttons[g_atari_ikbd_mousebuttons_head] = buttons
+
+	move.b	d0,(0.b,a1,d1.w)
+
+	addq.w	#1,d1
+	and.w	SYM(g_atari_ikbd_mousebuttons_mask),d1
+	move.w	d1,SYM(g_atari_ikbd_mousebuttons_head)
+
+no_buttons:
 	move.b	(a0)+,d0
 	ext.w	d0
 	add.w	d0,SYM(g_atari_ikbd_mouse_delta_x)
@@ -76,7 +111,11 @@ SYM(atari_mousevec):
 	move.b	(a0)+,d0
 	ext.w	d0
 	add.w	d0,SYM(g_atari_ikbd_mouse_delta_y)
-
-	movem.l	(sp)+,d0/a0
-	move.l	(atari_old_mousevec,pc),-(sp)
 	rts
+
+	.bss
+
+pressed_keys:
+	ds.b	128
+old_buttons:
+	ds.b	1

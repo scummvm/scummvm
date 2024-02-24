@@ -44,8 +44,8 @@ private:
 	OSystem_Atari *_system = nullptr;
 	AtariGraphicsManager *_graphicsManager = nullptr;
 
-	bool _oldLmbDown = false;
-	bool _oldRmbDown = false;
+	bool _lmbDown = false;
+	bool _rmbDown = false;
 
 	bool _lshiftActive = false;
 	bool _rshiftActive = false;
