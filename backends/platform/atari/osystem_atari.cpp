@@ -66,7 +66,9 @@
 
 extern "C" void atari_kbdvec(void *);
 extern "C" void atari_mousevec(void *);
-extern "C" void atari_vkbderr(void);
+typedef void (*KBDVEC)(void *);
+extern "C" KBDVEC atari_old_kbdvec;
+extern "C" KBDVEC atari_old_mousevec;
 
 extern "C" void atari_200hz_init();
 extern "C" void atari_200hz_shutdown();
@@ -77,11 +79,6 @@ extern void nf_print(const char* msg);
 
 static bool s_tt = false;
 static int s_app_id = -1;
-
-typedef void (*KBDVEC)(void *);
-KBDVEC g_atari_old_kbdvec = nullptr;
-static void (*s_vkbderr)(void) = nullptr;
-static KBDVEC s_mousevec = nullptr;
 
 static bool exit_already_called = false;
 
@@ -98,12 +95,11 @@ static void critical_restore() {
 		Supexec(asm_screen_falcon_restore);
 	Supexec(atari_200hz_shutdown);
 
-	if (g_atari_old_kbdvec && s_vkbderr && s_mousevec) {
+	if (atari_old_kbdvec && atari_old_mousevec) {
 		_KBDVECS *kbdvecs = Kbdvbase();
-		((uintptr *)kbdvecs)[-1] = (uintptr)g_atari_old_kbdvec;
-		kbdvecs->vkbderr = s_vkbderr;
-		kbdvecs->mousevec = s_mousevec;
-		g_atari_old_kbdvec = s_mousevec = nullptr;
+		((uintptr *)kbdvecs)[-1] = (uintptr)atari_old_kbdvec;
+		kbdvecs->mousevec = atari_old_mousevec;
+		atari_old_kbdvec = atari_old_mousevec = nullptr;
 	}
 
 	// don't call GEM cleanup in the critical handler: it seems that v_clsvwk()
@@ -166,12 +162,10 @@ OSystem_Atari::OSystem_Atari() {
 	}
 
 	_KBDVECS *kbdvecs = Kbdvbase();
-	g_atari_old_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
-	s_vkbderr = kbdvecs->vkbderr;
-	s_mousevec = kbdvecs->mousevec;
+	atari_old_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
+	atari_old_mousevec = kbdvecs->mousevec;
 
 	((uintptr *)kbdvecs)[-1] = (uintptr)atari_kbdvec;
-	kbdvecs->vkbderr = atari_vkbderr;
 	kbdvecs->mousevec = atari_mousevec;
 
 	Supexec(atari_200hz_init);
@@ -231,12 +225,11 @@ OSystem_Atari::~OSystem_Atari() {
 		_timerInitialized = false;
 	}
 
-	if (g_atari_old_kbdvec && s_vkbderr && s_mousevec) {
+	if (atari_old_kbdvec && atari_old_mousevec) {
 		_KBDVECS *kbdvecs = Kbdvbase();
-		((uintptr *)kbdvecs)[-1] = (uintptr)g_atari_old_kbdvec;
-		kbdvecs->vkbderr = s_vkbderr;
-		kbdvecs->mousevec = s_mousevec;
-		g_atari_old_kbdvec = s_mousevec = nullptr;
+		((uintptr *)kbdvecs)[-1] = (uintptr)atari_old_kbdvec;
+		kbdvecs->mousevec = atari_old_mousevec;
+		atari_old_kbdvec = atari_old_mousevec = nullptr;
 	}
 
 	if (s_app_id != -1) {

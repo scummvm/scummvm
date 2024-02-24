@@ -23,7 +23,9 @@
 
 	.global	SYM(atari_kbdvec)
 	.global	SYM(atari_mousevec)
-	.global	SYM(atari_vkbderr)
+
+	.global	SYM(atari_old_kbdvec)
+	.global	SYM(atari_old_mousevec)
 
 	.extern	SYM(g_atari_ikbd_mouse_buttons_state)
 	.extern	SYM(g_atari_ikbd_mouse_delta_x)
@@ -33,39 +35,15 @@
 	.extern	SYM(g_atari_ikbd_scancodes_mask)
 	.extern	SYM(g_atari_ikbb_scancodes_head)
 
-	.extern	SYM(g_atari_old_kbdvec)
-
 	.text
 
+	.ascii	"XBRA"
+	.ascii	"SCUM"
+SYM(atari_old_kbdvec):
+	dc.l	0
 SYM(atari_kbdvec):
-	tst.w	(vkbderr_count,pc)
-	bne.b	kbdvec_end
+	movem.l	d1/a0,-(sp)
 
-	lea	pressed_keys,a0
-	clr.l	d1
-	move.b	d0,d1
-	bpl.b	key_pressed				| bit 7 cleared
-
-key_released:
-	and.b	#0x7f,d1
-	tst.b	(a0,d1.l)				| pressed before?
-	bne.b	key_released_ok
-
-	| if we get a sudden release key event,
-	| let the original handler process it
-	move.l	SYM(g_atari_old_kbdvec),a0
-	tst.l	a0
-	beq.b	kbdvec_end
-	jmp	(a0)
-
-key_released_ok:
-	clr.b	(a0,d1.l)				| mark as released
-	bra.b	kbdvec_process
-
-key_pressed:
-	addq.b	#1,(a0,d1.l)				| mark as pressed
-
-kbdvec_process:
 	lea	SYM(g_atari_ikbd_scancodes),a0
 	move.w	SYM(g_atari_ikbb_scancodes_head),d1
 
@@ -77,17 +55,17 @@ kbdvec_process:
 	and.w	SYM(g_atari_ikbd_scancodes_mask),d1
 	move.w	d1,SYM(g_atari_ikbb_scancodes_head)
 
-kbdvec_end:
+	movem.l	(sp)+,d1/a0
+	move.l	(atari_old_kbdvec,pc),-(sp)
 	rts
 
 
-SYM(atari_vkbderr):
-	addq.w	#1,vkbderr_count
-	rts
-
-
+	.ascii	"XBRA"
+	.ascii	"SCUM"
+SYM(atari_old_mousevec):
+	dc.l	0
 SYM(atari_mousevec):
-	clr.w	vkbderr_count
+	movem.l	d0/a0,-(sp)
 
 	move.b	(a0)+,SYM(g_atari_ikbd_mouse_buttons_state)
 
@@ -98,14 +76,7 @@ SYM(atari_mousevec):
 	move.b	(a0)+,d0
 	ext.w	d0
 	add.w	d0,SYM(g_atari_ikbd_mouse_delta_y)
+
+	movem.l	(sp)+,d0/a0
+	move.l	(atari_old_mousevec,pc),-(sp)
 	rts
-
-// place it within reach of 32K (PC relative)
-vkbderr_count:
-	dc.w	0
-
-
-	.bss
-
-pressed_keys:
-	ds.b	128
