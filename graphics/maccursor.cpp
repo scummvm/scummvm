@@ -158,15 +158,9 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 
 	// Find black so that Macintosh black (255) can be remapped.
 	// This is necessary because we use 255 for the color key.
-	byte black = 0;
-	for (byte c = 0; c < 255; c++) {
-		byte r, g, b;
-		_palette.get(c, r, g, b);
-		if (r == 0 && g == 0 && b == 0) {
-			black = c;
-			break;
-		}
-	}
+	uint black = _palette.find(0, 0, 0);
+	if (black == Palette::npos || black == 255)
+		black = 0;
 
 	int pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
 	int bpp           = 8 / pixelsPerByte;

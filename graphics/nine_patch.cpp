@@ -190,20 +190,10 @@ NinePatchBitmap::NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap
 		Palette palette(256);
 		bmp->grabPalette(palette, 0, 256);
 
-		black = (uint32)-1;
-		white = (uint32)-1;
+		black = palette.find(0, 0, 0);
+		white = palette.find(255, 255, 255);
 
-		for (int j = 0; j < 256; j++) {
-			byte r, g, b;
-			palette.get(j, r, g, b);
-
-			if (black == uint32(-1) && r == 0 && g == 0 && b == 0)
-				black = j;
-			else if (white == uint32(-1) && r == 255 && g == 255 && b == 255)
-				white = j;
-		}
-
-		if (black == uint32(-1) || white == uint32(-1))
+		if (black == Palette::npos || white == Palette::npos)
 			goto bad_bitmap;
 	} else {
 		black = bmp->format.RGBToColor(0, 0, 0);

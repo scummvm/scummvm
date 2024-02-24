@@ -122,8 +122,9 @@ namespace Graphics {
  * looks like this: R1-G1-B1-R2-G2-B2-R3-...
  */
 struct Palette {
+	static const uint16 npos = 0xFFFF;
 	byte data[256 * 3];
-	uint size;
+	uint16 size;
 
 	/**
 	 * @brief Construct a new Palette object
@@ -153,6 +154,19 @@ struct Palette {
 		r = data[entry * 3 + 0];
 		g = data[entry * 3 + 1];
 		b = data[entry * 3 + 2];
+	}
+
+	/**
+	 * Finds the index of an exact color from the palette.
+	 *
+	 * @return the palette index or npos if not found
+	 */
+	uint find(byte r, byte g, byte b) const {
+		for (uint i = 0; i < size; i++) {
+			if (data[i * 3 + 0] == r && data[i * 3 + 1] == g && data[i * 3 + 2] == b)
+				return i;
+		}
+		return npos;
 	}
 
 	void clear();
