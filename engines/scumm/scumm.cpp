@@ -2168,14 +2168,19 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 #endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
-	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_INDY3) {
-		_musicEngine = MacSound::createPlayer(this);
-		if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
-			_musicEngine->setQuality(MacSound::kQualityLow);
-		_sound->_musicType = MDT_MACINTOSH;
-	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
-		_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
-		((Player_V3M *)_musicEngine)->init(macInstrumentFile);
+	} else if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_INDY3 || _game.id == GID_LOOM)) {
+#if 0
+		if (_game.id == GID_LOOM) {
+			_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
+			((Player_V3M *)_musicEngine)->init(macInstrumentFile);
+		} else
+#endif
+		{
+			_musicEngine = MacSound::createPlayer(this);
+			if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
+				_musicEngine->setQuality(MacSound::kQualityLowest);
+			_sound->_musicType = MDT_MACINTOSH;
+		}
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
 		_musicEngine = new Player_V5M(this, _mixer);
 		((Player_V5M *)_musicEngine)->init(macInstrumentFile);

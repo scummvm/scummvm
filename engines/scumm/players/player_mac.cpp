@@ -119,8 +119,20 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 		uint32 mixerSampleRate = _sampleRate;
 		int i;
 
-		s.syncAsUint32LE(_sampleRate, VER(94));
-		s.syncAsSint16LE(_soundPlaying, VER(94));
+		if (s.getVersion() > VER(113)) {
+			if (s.isLoading())
+				warning ("Player_Mac::saveLoadWithSerializer(): Incompatible savegame version. Sound may glitch");
+			byte tmp[200];
+			s.syncBytes(tmp, 200);
+			_soundPlaying = 0;
+			for (i = 1; !_soundPlaying && i < 200; ++i) {
+				if (tmp[i])
+					_soundPlaying = i;
+			}
+		}
+
+		s.syncAsUint32LE(_sampleRate, VER(94), VER(113));
+		s.syncAsSint16LE(_soundPlaying, VER(94), VER(113));
 
 		if (s.isLoading() && _soundPlaying != -1) {
 			const byte *ptr = _vm->getResourceAddress(rtSound, _soundPlaying);
@@ -128,9 +140,9 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 			loadMusic(ptr);
 		}
 
-		s.syncArray(_channel, _numberOfChannels, syncWithSerializer);
+		s.syncArray(_channel, _numberOfChannels, syncWithSerializer, VER(94), VER(113));
 		for (i = 0; i < _numberOfChannels; i++) {
-			if (s.getVersion() >= 94 && s.getVersion() <= 103) {
+			if (s.getVersion() >= VER(94) && s.getVersion() <= VER(103)) {
 				// It was always the intention to save the instrument entries
 				// here. Unfortunately there was a regression in late 2017 that
 				// caused the channel data to be saved a second time, instead
@@ -139,7 +151,7 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 
 				_channel[i]._instrument._pos = 0;
 				_channel[i]._instrument._subPos = 0;
-			} else {
+			} else if (s.getVersion() < VER(114)) {
 				syncWithSerializer(s, _channel[i]._instrument);
 			}
 		}

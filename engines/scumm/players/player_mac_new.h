@@ -31,10 +31,10 @@ class ScummEngine;
 namespace MacSound {
 enum {
 	kQualityAuto = 0,
-	kQualityHigh,
-	kQualityLow,
-	kQualityMedium
+	kQualityLowest = 1,
+	kQualityHighest = 9
 };
+
 MusicEngine *createPlayer(ScummEngine *vm);
 } // end of namespace MacSound
 
