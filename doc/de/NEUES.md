@@ -8,6 +8,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+   - libopenmpt wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt. 
+
+ MM:
+   - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
+   - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
 
  TsAGE:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
