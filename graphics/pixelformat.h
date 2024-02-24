@@ -142,10 +142,11 @@ struct PixelFormat {
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
 
 	/** Default constructor that creates a null pixel format. */
-	constexpr PixelFormat() :
-		bytesPerPixel(0),
-		rLoss(0), gLoss(0), bLoss(0), aLoss(0),
-		rShift(0), gShift(0), bShift(0), aShift(0) {}
+	inline PixelFormat() {
+		bytesPerPixel =
+		rLoss = gLoss = bLoss = aLoss =
+		rShift = gShift = bShift = aShift = 0;
+	}
 
 	/** Construct a pixel format based on the provided arguments.
 	 *
@@ -165,18 +166,19 @@ struct PixelFormat {
 	 *  @endcode
 	 */
 
-	constexpr PixelFormat(byte BytesPerPixel,
+	inline PixelFormat(byte BytesPerPixel,
 						byte RBits, byte GBits, byte BBits, byte ABits,
-						byte RShift, byte GShift, byte BShift, byte AShift) :
-		bytesPerPixel(BytesPerPixel),
-		rLoss(8 - RBits),
-		gLoss(8 - GBits),
-		bLoss(8 - BBits),
-		aLoss(8 - ABits),
-		rShift(RShift),
-		gShift(GShift),
-		bShift(BShift),
-		aShift(AShift) {}
+						byte RShift, byte GShift, byte BShift, byte AShift) {
+		bytesPerPixel = BytesPerPixel;
+		rLoss = 8 - RBits;
+		gLoss = 8 - GBits;
+		bLoss = 8 - BBits;
+		aLoss = 8 - ABits;
+		rShift = RShift;
+		gShift = GShift;
+		bShift = BShift;
+		aShift = AShift;
+	}
 
 	/** Define a CLUT8 pixel format. */
 	static inline PixelFormat createFormatCLUT8() {
