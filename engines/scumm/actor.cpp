@@ -3515,7 +3515,7 @@ void ScummEngine_v71he::heFlushAuxEraseQueue() {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
 			if (ab->r.top <= ab->r.bottom) {
-				restoreBackgroundHE(ab->r);
+				backgroundToForegroundBlit(ab->r);
 			}
 		}
 	}

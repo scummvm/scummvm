@@ -904,32 +904,30 @@ void ScummEngine_v100he::o100_floodFill() {
 
 	switch (subOp) {
 	case SO_INIT:
-		_floodFillParams.reset();
-		_floodFillParams.box.left = 0;
-		_floodFillParams.box.top = 0;
-		_floodFillParams.box.right = 639;
-		_floodFillParams.box.bottom = 479;
-		adjustRect(_floodFillParams.box);
+		_floodFillCommand.reset();
+		_floodFillCommand.box.left = 0;
+		_floodFillCommand.box.top = 0;
+		_floodFillCommand.box.right = 639;
+		_floodFillCommand.box.bottom = 479;
 		break;
 	case SO_AT:
-		_floodFillParams.y = pop();
-		_floodFillParams.x = pop();
+		_floodFillCommand.y = pop();
+		_floodFillCommand.x = pop();
 		break;
 	case SO_CLIPPED:
-		_floodFillParams.box.bottom = pop();
-		_floodFillParams.box.right = pop();
-		_floodFillParams.box.top = pop();
-		_floodFillParams.box.left = pop();
-		adjustRect(_floodFillParams.box);
+		_floodFillCommand.box.bottom = pop();
+		_floodFillCommand.box.right = pop();
+		_floodFillCommand.box.top = pop();
+		_floodFillCommand.box.left = pop();
 		break;
 	case SO_COLOR:
-		_floodFillParams.flags = pop();
+		_floodFillCommand.color = pop();
 		break;
 	case SO_SET_FLAGS:
-		pop();
+		_floodFillCommand.flags |= pop();
 		break;
 	case SO_END:
-		floodFill(&_floodFillParams, this);
+		_wiz->pgFloodFillCmd(_floodFillCommand.x, _floodFillCommand.y, _floodFillCommand.color, &_floodFillCommand.box);
 		break;
 	default:
 		error("o100_floodFill: Unknown case %d", subOp);
@@ -2197,7 +2195,7 @@ void ScummEngine_v100he::o100_systemOps() {
 		debug(0, "Start executable (%s)", string);
 		break;
 	case SO_UPDATE_SCREEN:
-		restoreBackgroundHE(Common::Rect(_screenWidth, _screenHeight));
+		backgroundToForegroundBlit(Common::Rect(_screenWidth, _screenHeight));
 		updatePalette();
 		break;
 	default:

@@ -1096,7 +1096,7 @@ void Sprite::resetTables(bool refreshScreen) {
 		resetGroup(curGrp);
 
 	if (refreshScreen) {
-		_vm->restoreBackgroundHE(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
+		_vm->backgroundToForegroundBlit(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
 	}
 	_numSpritesToProcess = 0;
 }
@@ -1114,7 +1114,7 @@ void Sprite::resetBackground() {
 			spi->flags &= ~kSFErase;
 			if (spi->lastRect.left <= spi->lastRect.right && spi->lastRect.top <= spi->lastRect.bottom) {
 				if (spi->flags & kSFDontCombineErase) {
-					_vm->restoreBackgroundHE(spi->lastRect, USAGE_BIT_RESTORED);
+					_vm->backgroundToForegroundBlit(spi->lastRect, USAGE_BIT_RESTORED);
 				} else if (firstLoop) {
 					xmin = spi->lastRect.left;
 					ymin = spi->lastRect.top;
@@ -1143,7 +1143,7 @@ void Sprite::resetBackground() {
 		}
 	}
 	if (refreshScreen) {
-		_vm->restoreBackgroundHE(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
+		_vm->backgroundToForegroundBlit(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
 	}
 }
 

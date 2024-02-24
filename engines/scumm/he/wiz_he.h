@@ -190,10 +190,43 @@ struct WizImageCommand {
 	}
 };
 
+struct FloodFillCommand {
+	Common::Rect box;
+	int32 x;
+	int32 y;
+	int32 flags;
+	int32 color;
+
+	void reset() {
+		box.top = box.left = box.bottom = box.right = 0;
+		x = 0;
+		y = 0;
+		flags = 0;
+		color = 0;
+	}
+};
+
 struct WizSimpleBitmap {
 	WizRawPixel *bufferPtr;
 	int bitmapWidth;
 	int bitmapHeight;
+};
+
+struct WizFloodSegment {
+	int y, xl, xr, dy;
+};
+
+struct WizFloodState {
+	WizFloodSegment *stack;
+	WizFloodSegment *top;
+	WizFloodSegment *sp;
+	Common::Rect updateRect;
+	Common::Rect clipping;
+	WizSimpleBitmap *bitmapPtr;
+	int writeOverColor;
+	int colorToWrite;
+	int boundryColor;
+	int numStackElements;
 };
 
 
@@ -465,7 +498,7 @@ public:
 	private:
 	ScummEngine_v71he *_vm;
 
-	/* Wiz Drawing Primitives
+	/* Drawing Primitives
 	 *
 	 * These primitives are slightly different and less precise
 	 * than the ones available in our Graphics subsystem.
@@ -474,6 +507,8 @@ public:
 	 * primitives, please :-P
 	 */
 
+	// Primitives
+public:
 	int  pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValue);
 	void pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value);
 	void pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value);
@@ -481,11 +516,30 @@ public:
 	void pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int aex, int aey, const Common::Rect *clipRectPtr, int iLineThickness, WizRawPixel value);
 	void pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, WizRawPixel aColor);
 	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color);
+	void pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalClipRect);
+	void pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background);
 
+	// Rectangles
 	bool findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr);
 	bool isPointInRect(Common::Rect *r, Common::Point *pt);
+	bool isRectValid(Common::Rect r);
 	void makeSizedRectAt(Common::Rect *rectPtr, int x, int y, int width, int height);
 	void makeSizedRect(Common::Rect *rectPtr, int width, int height);
+	void combineRects(Common::Rect *destRect, Common::Rect *ra, Common::Rect *rb);
+
+	// Flood fill
+	void floodInitFloodState(WizFloodState *statePtr, WizSimpleBitmap *bitmapPtr, int colorToWrite, const Common::Rect *optionalClippingRect);
+	WizFloodState *floodCreateFloodState(int numStackElements);
+	void floodDestroyFloodState(WizFloodState *state);
+	//bool floodSimpleFloodCheckPixel(int x, int y, WizFloodState *state);
+	bool floodBoundryColorFloodCheckPixel(int x, int y, WizFloodState *state);
+	void floodFloodFillPrim(int x, int y, WizFloodState *statePtr, bool (*checkPixelFnPtr)(Wiz *w, int x, int y, WizFloodState *state));
+	void floodPerformOpOnRect(WizFloodState *statePtr, Common::Rect *rectPtr);
+	bool floodSimpleFill(WizSimpleBitmap *bitmapPtr, int x, int y, int colorToWrite, const Common::Rect *optionalClipRect, Common::Rect *updateRectPtr);
+
+	// Utils
+	int getRawPixel(int color);
+
 };
 
 } // End of namespace Scumm

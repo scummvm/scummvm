@@ -24,7 +24,6 @@
 
 #include "scumm/scumm_v6.h"
 #ifdef ENABLE_HE
-#include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
 #endif
 #include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
@@ -210,7 +209,7 @@ public:
 
 	Common::Path generateFilename(const int room) const override;
 
-	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
+	void backgroundToForegroundBlit(Common::Rect rect, int dirtybit = 0);
 
 protected:
 	void allocateArrays() override;
@@ -384,6 +383,7 @@ protected:
 	byte _stringBuffer[4096];
 
 	WizImageCommand _wizImageCommand;
+	FloodFillCommand _floodFillCommand;
 
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);
@@ -561,7 +561,6 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class Sprite;
 
 protected:
-	FloodFillParameters _floodFillParams;
 	enum SubOpType {
 		SO_COORD_2D = 28,
 		SO_COORD_3D = 29,

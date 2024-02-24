@@ -1332,7 +1332,7 @@ void ScummEngine_v72he::o72_systemOps() {
 		clearDrawObjectQueue();
 		break;
 	case SO_UPDATE_SCREEN: // HE80+
-		restoreBackgroundHE(Common::Rect(_screenWidth, _screenHeight));
+		backgroundToForegroundBlit(Common::Rect(_screenWidth, _screenHeight));
 		updatePalette();
 		break;
 	case SO_RESTART:

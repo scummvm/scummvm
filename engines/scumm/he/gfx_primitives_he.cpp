@@ -431,6 +431,48 @@ void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, 
 	}
 }
 
+void Wiz::pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalClipRect) {
+	Common::Rect updateRect;
+	WizSimpleBitmap fakeBitmap;
+	int colorToWrite;
+
+	// Setup the bitmap...
+	int32 colorBackMask = _vm->_game.heversion > 99 ? 0x01000000 : 0x8000;
+	pgSimpleBitmapFromDrawBuffer(&fakeBitmap, (color & colorBackMask) != 0);
+
+	// Strip the color info down...
+	colorToWrite = getRawPixel(color);
+
+	// Call the primitive
+	updateRect.left = updateRect.top = 12345;
+	updateRect.right = updateRect.bottom = -12345;
+
+	_vm->VAR(_vm->VAR_OPERATION_FAILURE) = floodSimpleFill(
+		&fakeBitmap, x, y, colorToWrite, optionalClipRect, &updateRect);
+
+	if (isRectValid(updateRect)) {
+		if (color & colorBackMask) {
+			_vm->backgroundToForegroundBlit(updateRect);
+		} else {
+			updateRect.bottom++;
+			_vm->markRectAsDirty(kMainVirtScreen, updateRect);
+		}
+	}
+}
+
+void Wiz::pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background) {
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+
+	bitmapPtr->bitmapWidth = vs->w;
+	bitmapPtr->bitmapHeight = vs->h;
+
+	if (background) {
+		bitmapPtr->bufferPtr = (WizRawPixel *)vs->getBackPixels(0, vs->topline);
+	} else {
+		bitmapPtr->bufferPtr = (WizRawPixel *)vs->getPixels(0, vs->topline);
+	}
+}
+
 bool Wiz::findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr) {
 	// Make sure only points inside the viewPort are being set...
 	if ((destRectPtr->left > sourceRectPtr->right) || (destRectPtr->top > sourceRectPtr->bottom) ||
@@ -458,8 +500,12 @@ bool Wiz::findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceR
 	return true;
 }
 
-bool Wiz::isPointInRect(Common::Rect* r, Common::Point* pt) {
+bool Wiz::isPointInRect(Common::Rect *r, Common::Point *pt) {
 	return (pt->x >= r->left) && (pt->x <= r->right) && (pt->y >= r->top) && (pt->y <= r->bottom);
+}
+
+bool Wiz::isRectValid(Common::Rect r) {
+	return r.left <= r.right && r.top <= r.bottom;
 }
 
 void Wiz::makeSizedRectAt(Common::Rect *rectPtr, int x, int y, int width, int height) {
@@ -471,6 +517,204 @@ void Wiz::makeSizedRectAt(Common::Rect *rectPtr, int x, int y, int width, int he
 
 void Wiz::makeSizedRect(Common::Rect *rectPtr, int width, int height) {
 	makeSizedRectAt(rectPtr, 0, 0, width, height);
+}
+
+void Wiz::combineRects(Common::Rect *destRect, Common::Rect *ra, Common::Rect *rb) {
+	destRect->left =   MIN<int16>(ra->left,   rb->left);
+	destRect->top =    MIN<int16>(ra->top,    rb->top);
+	destRect->right =  MAX<int16>(ra->right,  rb->right);
+	destRect->bottom = MAX<int16>(ra->bottom, rb->bottom);
+}
+
+void Wiz::floodInitFloodState(WizFloodState *statePtr, WizSimpleBitmap *bitmapPtr, int colorToWrite, const Common::Rect *optionalClippingRect) {
+	statePtr->colorToWrite = colorToWrite;
+	statePtr->bitmapPtr = bitmapPtr;
+
+	if (!optionalClippingRect) {
+		if (bitmapPtr) {
+			makeSizedRect(&statePtr->clipping, bitmapPtr->bitmapWidth, bitmapPtr->bitmapHeight);
+		} else {
+			makeSizedRect(&statePtr->clipping, 1, 1);
+		}
+	} else {
+		statePtr->clipping = *optionalClippingRect;
+	}
+
+	statePtr->sp = statePtr->stack;
+	statePtr->top = statePtr->stack + statePtr->numStackElements;
+}
+
+WizFloodState *Wiz::floodCreateFloodState(int numStackElements) {
+	WizFloodState *statePtr;
+
+	statePtr = (WizFloodState *)malloc(sizeof(WizFloodState));
+
+	if (!statePtr) {
+		return nullptr;
+	}
+
+	statePtr->numStackElements = numStackElements;
+	statePtr->stack = (WizFloodSegment *)malloc(numStackElements * sizeof(WizFloodSegment));
+
+	if (!statePtr->stack) {
+		floodDestroyFloodState(statePtr);
+		return nullptr;
+	}
+
+	floodInitFloodState(statePtr, nullptr, 0, nullptr);
+	return statePtr;
+}
+
+void Wiz::floodDestroyFloodState(WizFloodState *statePtr) {
+	if (statePtr->stack) {
+		free(statePtr->stack);
+		statePtr->stack = nullptr;
+	}
+
+	free(statePtr);
+	statePtr = nullptr;
+}
+
+static bool floodSimpleFloodCheckPixel(Wiz *w, int x, int y, WizFloodState *state) {
+	return (w->pgReadPixel(state->bitmapPtr, x, y, state->colorToWrite) == state->writeOverColor);
+}
+
+bool Wiz::floodBoundryColorFloodCheckPixel(int x, int y, WizFloodState *state) {
+	int pixel = pgReadPixel(state->bitmapPtr, x, y, state->colorToWrite);
+	return (pixel != state->boundryColor) && (pixel != state->colorToWrite);
+}
+
+#define FLOOD_PUSH(Y, XL, XR, DY, SS)                                                                  \
+	if ((SS)->sp < (SS)->top && Y + (DY) >= (SS)->clipping.top && Y + (DY) <= (SS)->clipping.bottom) { \
+		(SS)->sp->y = Y;                                                                               \
+		(SS)->sp->xl = XL;                                                                             \
+		(SS)->sp->xr = XR;                                                                             \
+		(SS)->sp->dy = DY;                                                                             \
+		(SS)->sp++;                                                                                    \
+	}
+
+#define FLOOD_POP(Y, XL, XR, DY, SS) {         \
+		(SS)->sp--;                            \
+		Y = (SS)->sp->y + (DY = (SS)->sp->dy); \
+		XL = (SS)->sp->xl;                     \
+		XR = (SS)->sp->xr;                     \
+	}
+
+
+void Wiz::floodFloodFillPrim(int x, int y, WizFloodState *statePtr, bool (*checkPixelFnPtr)(Wiz *w, int x, int y, WizFloodState *state)) {
+	Common::Rect fillRect;
+
+	int l, x1, x2, dy;
+
+	// Make the initial update invalid...
+	statePtr->updateRect.left = statePtr->updateRect.top = 12345;
+	statePtr->updateRect.right = statePtr->updateRect.bottom = -12345;
+
+	FLOOD_PUSH(y, x, x, 1, statePtr);
+	FLOOD_PUSH(y + 1, x, x, -1, statePtr);
+
+	while (statePtr->sp > statePtr->stack) {
+		FLOOD_POP(y, x1, x2, dy, statePtr);
+
+		// Fill the left span from this point!
+		fillRect.left = x1 + 1;
+		fillRect.top = y;
+		fillRect.right = x1;
+		fillRect.bottom = y;
+
+		for (x = x1; (x >= statePtr->clipping.left) && (*checkPixelFnPtr)(this, x, y, statePtr); x--) {
+			fillRect.left = x;
+		}
+
+		if (isRectValid(fillRect)) {
+			floodPerformOpOnRect(statePtr, &fillRect);
+		}
+
+		// This goto, while ugly, allows me to avoid rewriting
+		// a second version of the do-while loop below... Have mercy :-)
+		if (x >= x1)
+			goto skip;
+
+		l = x + 1;
+
+		if (l < x1) {
+			FLOOD_PUSH(y, l, x1 - 1, -dy, statePtr);
+		}
+
+		x = x1 + 1;
+
+		do {
+			// Fill the right span from this point!
+			fillRect.left = x;
+			fillRect.top = y;
+			fillRect.right = x - 1;
+			fillRect.bottom = y;
+
+			for (; (x <= statePtr->clipping.right) && (*checkPixelFnPtr)(this, x, y, statePtr); x++) {
+				fillRect.right = x;
+			}
+
+			if (isRectValid(fillRect)) {
+				floodPerformOpOnRect(statePtr, &fillRect);
+			}
+
+			FLOOD_PUSH(y, l, x - 1, dy, statePtr);
+
+			if (x > (x2 + 1)) {
+				FLOOD_PUSH(y, x2 + 1, x - 1, -dy, statePtr);
+			}
+
+		skip:
+			for (x++; (x <= x2) && (!(*checkPixelFnPtr)(this, x, y, statePtr)); x++)
+				;
+
+			l = x;
+
+		} while (x <= x2);
+	}
+}
+
+#undef FLOOD_POP
+#undef FLOOD_PUSH
+
+void Wiz::floodPerformOpOnRect(WizFloodState *statePtr, Common::Rect *rectPtr) {
+	pgDrawSolidRect(statePtr->bitmapPtr, rectPtr, (WizRawPixel)statePtr->colorToWrite);
+
+	if (isRectValid(statePtr->updateRect)) {
+		combineRects(&statePtr->updateRect, &statePtr->updateRect, rectPtr);
+	} else {
+		statePtr->updateRect = *rectPtr;
+	}
+}
+
+bool Wiz::floodSimpleFill(WizSimpleBitmap *bitmapPtr, int x, int y, int colorToWrite, const Common::Rect *optionalClipRect, Common::Rect *updateRectPtr) {
+	WizFloodState *statePtr;
+
+	statePtr = floodCreateFloodState(bitmapPtr->bitmapHeight * 2);
+
+	if (!statePtr) {
+		return false;
+	}
+
+	floodInitFloodState(statePtr, bitmapPtr, colorToWrite, optionalClipRect);
+
+	statePtr->writeOverColor = pgReadPixel(bitmapPtr, x, y, colorToWrite);
+
+	if (colorToWrite != statePtr->writeOverColor) {
+		floodFloodFillPrim(x, y, statePtr, floodSimpleFloodCheckPixel);
+		*updateRectPtr = statePtr->updateRect;
+	}
+
+	floodDestroyFloodState(statePtr);
+	return true;
+}
+
+int Wiz::getRawPixel(int color) {
+	if (_uses16BitColor) {
+		return color & 0xFFFF;
+	} else {
+		return color & 0xFF;
+	}
 }
 
 } // End of namespace Scumm

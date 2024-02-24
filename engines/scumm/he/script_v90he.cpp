@@ -1527,32 +1527,30 @@ void ScummEngine_v90he::o90_floodFill() {
 
 	switch (subOp) {
 	case SO_SET_FLAGS: // 54
-		_floodFillParams.flags |= pop();
-		pop();
+		_floodFillCommand.flags |= pop();
 		break;
 	case SO_INIT: // 57
-		_floodFillParams.reset();
-		_floodFillParams.box.left = 0;
-		_floodFillParams.box.top = 0;
-		_floodFillParams.box.right = 639;
-		_floodFillParams.box.bottom = 479;
+		_floodFillCommand.reset();
+		_floodFillCommand.box.left = 0;
+		_floodFillCommand.box.top = 0;
+		_floodFillCommand.box.right = 639;
+		_floodFillCommand.box.bottom = 479;
 		break;
 	case SO_AT: // 65
-		_floodFillParams.y = pop();
-		_floodFillParams.x = pop();
+		_floodFillCommand.y = pop();
+		_floodFillCommand.x = pop();
 		break;
 	case SO_COLOR: // 66
-		_floodFillParams.color = pop();
+		_floodFillCommand.color = pop();
 		break;
 	case SO_CLIPPED: // 67
-		_floodFillParams.box.bottom = pop();
-		_floodFillParams.box.right = pop();
-		_floodFillParams.box.top = pop();
-		_floodFillParams.box.left = pop();
-		adjustRect(_floodFillParams.box);
+		_floodFillCommand.box.bottom = pop();
+		_floodFillCommand.box.right = pop();
+		_floodFillCommand.box.top = pop();
+		_floodFillCommand.box.left = pop();
 		break;
 	case SO_END: // 255
-		floodFill(&_floodFillParams, this);
+		_wiz->pgFloodFillCmd(_floodFillCommand.x, _floodFillCommand.y, _floodFillCommand.color, &_floodFillCommand.box);
 		break;
 	default:
 		error("o90_floodFill: Unknown case %d", subOp);
