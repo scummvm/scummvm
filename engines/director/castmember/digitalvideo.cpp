@@ -269,8 +269,8 @@ uint DigitalVideoCastMember::getDuration() {
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
-
-	int stamp = MIN<int>(_video->getTime() * 60 / 1000, getMovieTotalTime());
+	int ticks = 1 + ((_video->getTime() * 60 - 1)/1000);
+	int stamp = MIN<int>(ticks, getMovieTotalTime());
 
 	return stamp;
 }
@@ -279,9 +279,8 @@ uint DigitalVideoCastMember::getMovieTotalTime() {
 	if (!_video)
 		return 0;
 
-	int stamp = _video->getDuration().msecs() * 60 / 1000;
-
-	return stamp;
+	int ticks = 1 + ((_video->getDuration().msecs() * 60 - 1)/1000);
+	return ticks;
 }
 
 void DigitalVideoCastMember::seekMovie(int stamp) {
