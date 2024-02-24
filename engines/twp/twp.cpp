@@ -146,7 +146,7 @@ bool TwpEngine::preWalk(Common::SharedPtr<Object> actor, VerbId verbId, Common::
 		sqcallfunc(result, actor->_table, "actorPreWalk", verbId.id, noun1->_table, n2Table);
 	}
 	if (!result) {
-		Common::String funcName = isActor(noun1->getId()) ? "actorPreWalk" : "objectPreWalk";
+		Common::String funcName = g_twp->_resManager->isActor(noun1->getId()) ? "actorPreWalk" : "objectPreWalk";
 		if (sqrawexists(noun1->_table, funcName)) {
 			sqcallfunc(result, noun1->_table, funcName.c_str(), verbId.id, noun1->_table, n2Table);
 			debugC(kDebugGame, "%s %d n1=%s(%s) n2=%s -> %s", funcName.c_str(), verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str(), result ? "yes" : "no");
@@ -1040,7 +1040,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			if (!sqrawexists(oTable, "flags"))
 				sqsetf(oTable, "flags", 0);
 			Common::SharedPtr<Object> obj(new Object(oTable, k));
-			setId(obj->_table, newObjId());
+			setId(obj->_table, g_twp->_resManager->newObjId());
 			obj->_node = Common::SharedPtr<Node>(new Node(k));
 			obj->_nodeAnim = Common::SharedPtr<Anim>(new Anim(obj.get()));
 			obj->_node->addChild(obj->_nodeAnim.get());
@@ -1062,7 +1062,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			}
 
 			sqgetf(params->room->_table, k, obj->_table);
-			setId(obj->_table, newObjId());
+			setId(obj->_table, g_twp->_resManager->newObjId());
 			debugC(kDebugGame, "Create object: %s #%d", k.c_str(), obj->getId());
 
 			// add it to the root table if not a pseudo room
@@ -1129,7 +1129,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 					sq_pop(v, 1);
 
 					// assign an id
-					setId(obj->_table, newObjId());
+					setId(obj->_table, g_twp->_resManager->newObjId());
 					// info fmt"Create object with new table: {obj.name} #{obj.id}"
 
 					// adds the object to the room table
@@ -1183,7 +1183,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	sqgetpairs(result->_table, onGetPairs, &params);
 
 	// declare the room in the root table
-	setId(result->_table, newRoomId());
+	setId(result->_table, g_twp->_resManager->newRoomId());
 	sqsetf(sqrootTbl(v), name, result->_table);
 
 	return result;
@@ -1221,7 +1221,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	if (_actor) {
 		cancelSentence();
 		if (door) {
-			Facing facing = getOppositeFacing(door->getDoorFacing());
+			Facing facing = flip(door->getDoorFacing());
 			Object::setRoom(_actor, room);
 			if (door) {
 				_actor->setFacing(facing);
@@ -1248,7 +1248,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 					_room->_scalingTriggers.push_back(ScalingTrigger(obj, scaling));
 				}
 			}
-			if (isActor(obj->getId())) {
+			if (g_twp->_resManager->isActor(obj->getId())) {
 				actorEnter(obj);
 			} else if (sqrawexists(obj->_table, "enter"))
 				sqcall(obj->_table, "enter");
@@ -1295,7 +1295,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 			for (size_t j = 0; j < layer->_objects.size(); j++) {
 				Common::SharedPtr<Object> obj = layer->_objects[j];
 				obj->stopObjectMotors();
-				if (isActor(obj->getId())) {
+				if (g_twp->_resManager->isActor(obj->getId())) {
 					actorExit(obj);
 				}
 			}
@@ -1317,7 +1317,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 				if (obj->_temporary) {
 					it = layer->_objects.erase(it);
 					continue;
-				} else if (isActor(obj->getId()) && _actor != obj) {
+				} else if (g_twp->_resManager->isActor(obj->getId()) && _actor != obj) {
 					obj->stopObjectMotors();
 				}
 				it++;
@@ -1430,7 +1430,7 @@ struct GetByZOrder {
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (obj->_node->getZSort() <= _zOrder) {
-			if (!isActor(obj->getId()) || !obj->_key.empty()) {
+			if (!g_twp->_resManager->isActor(obj->getId()) || !obj->_key.empty()) {
 				_result = obj;
 				_zOrder = obj->_node->getZSort();
 			}

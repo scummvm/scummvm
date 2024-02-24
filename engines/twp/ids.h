@@ -22,25 +22,6 @@
 #ifndef TWP_IDS_H
 #define TWP_IDS_H
 
-#include "common/hashmap.h"
-
-#define START_ACTORID 1000
-#define END_ACTORID 2000
-#define START_ROOMID 2000
-#define END_ROOMID 3000
-#define START_OBJECTID 3000
-#define END_OBJECTID 100000
-#define START_LIGHTID 100000
-#define END_LIGHTID 200000
-#define START_SOUNDDEFID 200000
-#define END_SOUNDDEFID 250000
-#define START_SOUNDID 250000
-#define END_SOUNDID 300000
-#define START_THREADID 300000
-#define END_THREADID 8000000
-#define START_CALLBACKID 8000000
-#define END_CALLBACKID 10000000
-
 #define ALL 1
 #define HERE 0
 #define GONE 4
@@ -228,48 +209,5 @@
 #define BUTTON_BACK 0x3EC
 #define BUTTON_MOUSE_LEFT 0x3ED
 #define BUTTON_MOUSE_RIGHT 0x3EE
-
-namespace Twp {
-
-enum Facing {
-	FACE_RIGHT = 1,
-	FACE_LEFT = 2,
-	FACE_FRONT = 4,
-	FACE_BACK = 8
-};
-
-}
-
-namespace Common {
-template<>
-struct Hash<Twp::Facing> : public UnaryFunction<Twp::Facing, uint> {
-	uint operator()(Twp::Facing val) const { return (uint)val; }
-};
-} // namespace Common
-
-namespace Twp {
-
-bool isThread(int id);
-bool isRoom(int id);
-bool isActor(int id);
-bool isObject(int id);
-bool isSound(int id);
-bool isLight(int id);
-bool isCallback(int id);
-
-int newRoomId();
-int newObjId();
-int newActorId();
-int newSoundDefId();
-int newSoundId();
-int newThreadId();
-int newCallbackId();
-int newLightId();
-void setCallbackId(int id);
-int getCallbackId();
-
-Facing getOppositeFacing(Facing facing);
-
-} // namespace Twp
 
 #endif

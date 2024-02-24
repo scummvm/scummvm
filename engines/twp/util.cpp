@@ -32,30 +32,30 @@ Facing getFacing(int dir, Facing facing) {
 	if (dir == 0)
 		return facing;
 	if (dir == 0x10)
-		return getOppositeFacing(facing);
+		return flip(facing);
 	return (Facing)dir;
 }
 
 Facing flip(Facing facing) {
 	switch (facing) {
-	case FACE_BACK:
-		return FACE_FRONT;
+	case Facing::FACE_BACK:
+		return Facing::FACE_FRONT;
 	default:
-	case FACE_FRONT:
-		return FACE_BACK;
-	case FACE_LEFT:
-		return FACE_RIGHT;
-	case FACE_RIGHT:
-		return FACE_LEFT;
+	case Facing::FACE_FRONT:
+		return Facing::FACE_BACK;
+	case Facing::FACE_LEFT:
+		return Facing::FACE_RIGHT;
+	case Facing::FACE_RIGHT:
+		return Facing::FACE_LEFT;
 	}
 }
 
 Facing getFacingToFaceTo(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	Math::Vector2d d = obj->_node->getPos() + obj->_node->getOffset() - (actor->_node->getPos() + actor->_node->getOffset());
 	if (abs(d.getY()) > abs(d.getX())) {
-		return d.getY() > 0 ? FACE_BACK : FACE_FRONT;
+		return d.getY() > 0 ? Facing::FACE_BACK : Facing::FACE_FRONT;
 	}
-	return d.getX() > 0 ? FACE_RIGHT : FACE_LEFT;
+	return d.getX() > 0 ? Facing::FACE_RIGHT : Facing::FACE_LEFT;
 }
 
 static float parseFps(const Common::JSONValue &jFps) {

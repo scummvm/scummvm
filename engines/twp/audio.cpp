@@ -28,6 +28,7 @@
 #include "twp/twp.h"
 #include "twp/audio.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/squtil.h"
 
@@ -58,7 +59,7 @@ bool SoundStream::seek(int64 offset, int whence) {
 	return _stream.seek(offset, whence);
 }
 
-SoundDefinition::SoundDefinition(const Common::String &name) : _name(name), _id(newSoundDefId()) {
+SoundDefinition::SoundDefinition(const Common::String &name) : _name(name), _id(g_twp->_resManager->newSoundDefId()) {
 }
 
 void SoundDefinition::load() {
@@ -260,7 +261,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 	if (!audioStream)
 		error("Failed to load audio: %s", name.c_str());
 
-	int id = newSoundId();
+	int id = g_twp->_resManager->newSoundId();
 	if (fadeInTimeMs > 0.f) {
 		volume = 0;
 	}

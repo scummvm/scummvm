@@ -22,8 +22,9 @@
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/ids.h"
-#include "twp/thread.h"
+#include "twp/resmanager.h"
 #include "twp/squtil.h"
+#include "twp/thread.h"
 
 namespace Twp {
 
@@ -50,7 +51,7 @@ void ThreadBase::resume() {
 }
 
 Thread::Thread(const Common::String &name, bool global, HSQOBJECT threadObj, HSQOBJECT envObj, HSQOBJECT closureObj, const Common::Array<HSQOBJECT> args) {
-	_id = newThreadId();
+	_id = g_twp->_resManager->newThreadId();
 	_name = name;
 	_global = global;
 	_threadObj = threadObj;
@@ -124,7 +125,7 @@ Cutscene::Cutscene(const Common::String &name, int parentThreadId, HSQOBJECT thr
 	  _envObj(envObj) {
 
 	_name = name;
-	_id = newThreadId();
+	_id = g_twp->_resManager->newThreadId();
 	_inputState = g_twp->_inputState.getState();
 	_actor = g_twp->_followActor;
 	_showCursor = g_twp->_inputState.getShowCursor();

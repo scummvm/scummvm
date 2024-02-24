@@ -23,11 +23,23 @@
 #define TWP_UTIL_H
 
 #include "common/formats/json.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "math/vector2d.h"
 #include "math/matrix4.h"
 #include "twp/ids.h"
 #include "twp/objectanimation.h"
+
+namespace Twp {
+enum class Facing;
+}
+
+namespace Common {
+template<>
+struct Hash<Twp::Facing> : public UnaryFunction<Twp::Facing, uint> {
+	uint operator()(Twp::Facing val) const { return (uint)val; }
+};
+} // namespace Common
 
 namespace Twp {
 
