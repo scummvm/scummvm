@@ -434,13 +434,11 @@ void CDToonsDecoder::setPalette(byte *data) {
 
 	// A lovely QuickTime palette
 	for (uint i = 0; i < 256; i++) {
-		_palette.data[i * 3]     = *data;
-		_palette.data[i * 3 + 1] = *(data + 2);
-		_palette.data[i * 3 + 2] = *(data + 4);
+		_palette.set(i, *data, *(data + 2), *(data + 4));
 		data += 6;
 	}
 
-	_palette.data[0] = _palette.data[1] = _palette.data[2] = 0;
+	_palette.set(0, 0, 0, 0);
 }
 
 } // End of namespace Image
