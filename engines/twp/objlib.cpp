@@ -23,6 +23,7 @@
 #include "twp/detection.h"
 #include "twp/hud.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
@@ -205,7 +206,7 @@ static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
 // if (isObject(obj) && objectValidUsePos(obj) && objectTouchable(obj)) {
 static SQInteger isObject(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
-	sqpush(v, obj && isObject(obj->getId()));
+	sqpush(v, obj && g_twp->_resManager->isObject(obj->getId()));
 	return 1;
 }
 
@@ -1000,7 +1001,7 @@ static SQInteger removeInventory(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-	if (isActor(obj->getId())) {
+	if (g_twp->_resManager->isActor(obj->getId())) {
 		obj->_inventory.clear();
 		obj->_inventoryOffset = 0;
 	} else if (obj->_owner) {

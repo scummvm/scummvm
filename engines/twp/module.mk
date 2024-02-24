@@ -16,7 +16,6 @@ MODULE_OBJS = \
 	ggpack.o \
 	graph.o \
 	hud.o \
-	ids.o \
 	lighting.o \
 	lip.o \
 	metaengine.o \

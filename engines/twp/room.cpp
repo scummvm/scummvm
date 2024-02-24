@@ -139,7 +139,7 @@ static Common::Array<Walkbox> merge(const Common::Array<Walkbox> &walkboxes) {
 }
 
 Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
-	setId(_table, newRoomId());
+	setId(_table, g_twp->_resManager->newRoomId());
 	_name = name;
 	_scene = Common::SharedPtr<Scene>(new Scene());
 	_scene->addChild(&_overlayNode);
@@ -161,7 +161,7 @@ Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const 
 	sq_pop(v, 1);
 
 	// assign an id
-	setId(obj->_table, newObjId());
+	setId(obj->_table, g_twp->_resManager->newObjId());
 	Common::String name = frames.size() > 0 ? frames[0] : "noname";
 	sqsetf(obj->_table, "name", name);
 	obj->_key = name;
@@ -200,7 +200,7 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 	sq_pop(v, 1);
 
 	// assign an id
-	setId(obj->_table, newObjId());
+	setId(obj->_table, g_twp->_resManager->newObjId());
 	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
 
@@ -311,7 +311,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 		for (auto it = jobjects.begin(); it != jobjects.end(); it++) {
 			const Common::JSONObject &jObject = (*it)->asObject();
 			Common::SharedPtr<Object> obj(new Object());
-			Twp::setId(obj->_table, newObjId());
+			Twp::setId(obj->_table, g_twp->_resManager->newObjId());
 			obj->_key = jObject["name"]->asString();
 			obj->_node->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
 			obj->_node->setZSort(jObject["zsort"]->asIntegerNumber());

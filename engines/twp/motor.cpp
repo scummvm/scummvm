@@ -24,6 +24,7 @@
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/squtil.h"
 #include "twp/tsv.h"
@@ -228,7 +229,7 @@ void WalkTo::actorArrived() {
 		Common::SharedPtr<Object> noun1 = _obj->_exec.noun1;
 		Common::SharedPtr<Object> noun2 = _obj->_exec.noun2;
 		// call `postWalk`callback
-		Common::String funcName = isActor(noun1->getId()) ? "actorPostWalk" : "objectPostWalk";
+		Common::String funcName = g_twp->_resManager->isActor(noun1->getId()) ? "actorPostWalk" : "objectPostWalk";
 		if (sqrawexists(_obj->_table, funcName)) {
 			debugC(kDebugGame, "call %s callback", funcName.c_str());
 			HSQOBJECT n2Table;
@@ -270,9 +271,9 @@ void WalkTo::update(float elapsed) {
 			Math::Vector2d dd = delta * factor;
 			_obj->_node->setPos(_obj->_node->getPos() + dd);
 			if (abs(delta.getX()) >= abs(delta.getY())) {
-				_obj->setFacing(delta.getX() >= 0 ? FACE_RIGHT : FACE_LEFT);
+				_obj->setFacing(delta.getX() >= 0 ? Facing::FACE_RIGHT : Facing::FACE_LEFT);
 			} else {
-				_obj->setFacing(delta.getY() > 0 ? FACE_BACK : FACE_FRONT);
+				_obj->setFacing(delta.getY() > 0 ? Facing::FACE_BACK : Facing::FACE_FRONT);
 			}
 		}
 	}

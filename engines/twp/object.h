@@ -54,6 +54,13 @@ enum Direction {
 	dBack = 8
 };
 
+enum class Facing {
+	FACE_RIGHT = 1,
+	FACE_LEFT = 2,
+	FACE_FRONT = 4,
+	FACE_BACK = 8
+};
+
 enum class UseFlag {
 	ufNone,
 	ufUseWith,
@@ -243,7 +250,7 @@ public:
 	int _animFlags = 0;
 	bool _animLoop = false;
 	Common::Array<LockFacing> _facingMap;
-	Facing _facing = FACE_FRONT;
+	Facing _facing = Facing::FACE_FRONT;
 	int _facingLockValue = 0;
 	float _fps = 0.f;
 	Common::HashMap<int, Common::SharedPtr<Trigger> > _triggers;

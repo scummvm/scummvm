@@ -27,6 +27,7 @@
 #include "twp/ggpack.h"
 #include "twp/hud.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/savegame.h"
 #include "twp/squtil.h"
@@ -521,7 +522,7 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 			g_twp->_callbacks.push_back(Common::SharedPtr<Callback>(new Callback(id, time, name, args)));
 		}
 	}
-	setCallbackId(json["nextGuid"]->asIntegerNumber());
+	g_twp->_resManager->resetIds(json["nextGuid"]->asIntegerNumber());
 }
 
 void SaveGameManager::loadGlobals(const Common::JSONObject &json) {
@@ -605,7 +606,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 static void fillMissingProperties(const Common::String &k, HSQOBJECT &oTable, void *data) {
 	JsonCallback *params = static_cast<JsonCallback *>(data);
 	if ((k.size() > 0) && (!k.hasPrefix("_"))) {
-		if (!(params->skipObj && isObject(getId(oTable)) && (params->pseudo || sqrawexists(*params->rootTable, k)))) {
+		if (!(params->skipObj && g_twp->_resManager->isObject(getId(oTable)) && (params->pseudo || sqrawexists(*params->rootTable, k)))) {
 			Common::JSONValue *json = tojson(oTable, true);
 			if (json) {
 				(*params->jObj)[k] = json;
@@ -645,11 +646,11 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 		if (checkId) {
 			SQInteger id = 0;
 			sqgetf(obj, "_id", id);
-			if (isActor(id)) {
+			if (g_twp->_resManager->isActor(id)) {
 				Common::SharedPtr<Object> a(actor(id));
 				jObj["_actorKey"] = new Common::JSONValue(a->_key);
 				return new Common::JSONValue(jObj);
-			} else if (isObject(id)) {
+			} else if (g_twp->_resManager->isObject(id)) {
 				Common::SharedPtr<Object> o(sqobj(id));
 				if (!o)
 					return new Common::JSONValue();
@@ -657,7 +658,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 				if (o->_room && o->_room->_pseudo)
 					jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
 				return new Common::JSONValue(jObj);
-			} else if (isRoom(id)) {
+			} else if (g_twp->_resManager->isRoom(id)) {
 				Common::SharedPtr<Room> r(getRoom(id));
 				jObj["_roomKey"] = new Common::JSONValue(r->_name);
 				return new Common::JSONValue(jObj);
@@ -763,7 +764,7 @@ static Common::JSONValue *createJCallbackArray() {
 static Common::JSONValue *createJCallbacks() {
 	Common::JSONObject json;
 	json["callbacks"] = createJCallbackArray();
-	json["nextGuid"] = new Common::JSONValue((long long int)getCallbackId());
+	json["nextGuid"] = new Common::JSONValue((long long int)g_twp->_resManager->getCallbackId());
 	return new Common::JSONValue(json);
 }
 
@@ -907,7 +908,7 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 
 static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
 	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
-	if (isObject(getId(v))) {
+	if (g_twp->_resManager->isObject(getId(v))) {
 		Common::SharedPtr<Object> obj(sqobj(v));
 		if (!obj || (obj->_objType == otNone)) {
 			// info fmt"obj: createJObject({k})"
@@ -925,7 +926,7 @@ static Common::JSONValue *createJObjects() {
 
 static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void *data) {
 	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
-	if (isObject(getId(v))) {
+	if (g_twp->_resManager->isObject(getId(v))) {
 		Common::SharedPtr<Object> obj(sqobj(v));
 		// info fmt"pseudoObj: createJObject({k})"
 		(*jObj)[k] = createJObject(v, obj);

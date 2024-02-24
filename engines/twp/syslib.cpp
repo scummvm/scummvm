@@ -23,6 +23,7 @@
 #include "twp/callback.h"
 #include "twp/dialog.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/savegame.h"
 #include "twp/sqgame.h"
@@ -145,7 +146,7 @@ static SQInteger addCallback(HSQUIRRELVM v) {
 		args.push_back(arg);
 	}
 
-	Common::SharedPtr<Callback> callback(new Callback(newCallbackId(), duration, methodName, args));
+	Common::SharedPtr<Callback> callback(new Callback(g_twp->_resManager->newCallbackId(), duration, methodName, args));
 	g_twp->_callbacks.push_back(callback);
 
 	sqpush(v, callback->getId());
@@ -336,7 +337,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 
 	Common::SharedPtr<ThreadBase> t = sqthread(id);
 	if (!t) {
-		if (!isSound(id)) {
+		if (!g_twp->_resManager->isSound(id)) {
 			warning("thread and sound not found: %lld", id);
 			return 0;
 		}
@@ -881,10 +882,10 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "FADE_OUT", FADE_OUT);
 	regConst(v, "FADE_WOBBLE", FADE_WOBBLE);
 	regConst(v, "FADE_WOBBLE_TO_SEPIA", FADE_WOBBLE_TO_SEPIA);
-	regConst(v, "FACE_FRONT", FACE_FRONT);
-	regConst(v, "FACE_BACK", FACE_BACK);
-	regConst(v, "FACE_LEFT", FACE_LEFT);
-	regConst(v, "FACE_RIGHT", FACE_RIGHT);
+	regConst(v, "FACE_FRONT", static_cast<int>(Facing::FACE_FRONT));
+	regConst(v, "FACE_BACK", static_cast<int>(Facing::FACE_BACK));
+	regConst(v, "FACE_LEFT", static_cast<int>(Facing::FACE_LEFT));
+	regConst(v, "FACE_RIGHT", static_cast<int>(Facing::FACE_RIGHT));
 	regConst(v, "FACE_FLIP", FACE_FLIP);
 	regConst(v, "DIR_FRONT", DIR_FRONT);
 	regConst(v, "DIR_BACK", DIR_BACK);

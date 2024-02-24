@@ -368,7 +368,7 @@ void Anim::update(float elapsed) {
 		}
 		if (_anim && _anim->offsets.size() > 0) {
 			Math::Vector2d off = _frameIndex < _anim->offsets.size() ? _anim->offsets[_frameIndex] : Math::Vector2d();
-			if (_obj->getFacing() == FACE_LEFT) {
+			if (_obj->getFacing() == Facing::FACE_LEFT) {
 				off.setX(-off.getX());
 			}
 			_offset = off;
@@ -394,7 +394,7 @@ void Anim::drawCore(Math::Matrix4 trsf) {
 		if (frame == "null")
 			return;
 
-		bool flipX = _obj->getFacing() == FACE_LEFT;
+		bool flipX = _obj->getFacing() == Facing::FACE_LEFT;
 		if (_sheet.size() == 0) {
 			_sheet = _obj->_sheet;
 			if (_sheet.size() == 0 && _obj->_room) {
@@ -842,7 +842,7 @@ void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
 		Common::SharedPtr<Layer> layer = g_twp->_room->_layers[i];
 		for (size_t j = 0; j < layer->_objects.size(); j++) {
 			Common::SharedPtr<Object> obj = layer->_objects[j];
-			if (isObject(obj->getId()) && (obj->_objType == otNone) && obj->isTouchable()) {
+			if (g_twp->_resManager->isObject(obj->getId()) && (obj->_objType == otNone) && obj->isTouchable()) {
 				Math::Vector2d pos = g_twp->roomToScreen(obj->_node->getAbsPos());
 				Math::Matrix4 t;
 				t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));

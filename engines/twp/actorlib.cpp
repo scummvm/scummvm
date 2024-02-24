@@ -23,6 +23,7 @@
 #include "twp/detection.h"
 #include "twp/hud.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
@@ -455,10 +456,10 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 	} break;
 	case OT_TABLE: {
 		HSQOBJECT obj;
-		SQInteger back = FACE_BACK;
-		SQInteger front = FACE_FRONT;
-		SQInteger left = FACE_LEFT;
-		SQInteger right = FACE_RIGHT;
+		SQInteger back = static_cast<SQInteger>(Facing::FACE_BACK);
+		SQInteger front = static_cast<SQInteger>(Facing::FACE_FRONT);
+		SQInteger left = static_cast<SQInteger>(Facing::FACE_LEFT);
+		SQInteger right = static_cast<SQInteger>(Facing::FACE_RIGHT);
 		SQInteger reset = 0;
 		sq_getstackobj(v, 3, &obj);
 		sqgetf(v, obj, "back", back);
@@ -679,16 +680,16 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get dist");
 	Math::Vector2d dir;
 	switch (actor->getFacing()) {
-	case FACE_FRONT:
+	case Facing::FACE_FRONT:
 		dir = Math::Vector2d(0, -dist);
 		break;
-	case FACE_BACK:
+	case Facing::FACE_BACK:
 		dir = Math::Vector2d(0, dist);
 		break;
-	case FACE_LEFT:
+	case Facing::FACE_LEFT:
 		dir = Math::Vector2d(-dist, 0);
 		break;
-	case FACE_RIGHT:
+	case Facing::FACE_RIGHT:
 		dir = Math::Vector2d(dist, 0);
 		break;
 	}
@@ -789,7 +790,7 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	sq_resetobject(&actor->_table);
 	sq_getstackobj(v, 2, &actor->_table);
 	sq_addref(vm, &actor->_table);
-	setId(actor->_table, newActorId());
+	setId(actor->_table, g_twp->_resManager->newActorId());
 
 	Common::String key;
 	sqgetf(actor->_table, "_key", key);

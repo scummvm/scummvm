@@ -106,4 +106,82 @@ Common::SharedPtr<Font> ResManager::font(const Common::String &name) {
 	return _fonts[key];
 }
 
+static inline bool isBetween(int id, int startId, int endId) {
+	return id >= startId && id < endId;
+}
+
+bool ResManager::isThread(int id) const {
+	return isBetween(id, START_THREADID, END_THREADID);
+}
+
+bool ResManager::isRoom(int id) const {
+	return isBetween(id, START_ROOMID, END_THREADID);
+}
+
+bool ResManager::isActor(int id) const {
+	return isBetween(id, START_ACTORID, END_ACTORID);
+}
+
+bool ResManager::isObject(int id) const {
+	return isBetween(id, START_OBJECTID, END_OBJECTID);
+}
+
+bool ResManager::isSound(int id) const {
+	return isBetween(id, START_SOUNDID, END_SOUNDID);
+}
+
+bool ResManager::isLight(int id) const {
+	return isBetween(id, START_LIGHTID, END_LIGHTID);
+}
+
+bool ResManager::isCallback(int id) const {
+	return isBetween(id, START_CALLBACKID, END_CALLBACKID);
+}
+
+int ResManager::newRoomId() {
+	return _roomId++;
+}
+
+int ResManager::newObjId() {
+	return _objId++;
+}
+
+int ResManager::newActorId() {
+	return _actorId++;
+}
+
+int ResManager::newSoundDefId() {
+	return _soundDefId++;
+}
+
+int ResManager::newSoundId() {
+	return _soundId++;
+}
+
+int ResManager::newThreadId() {
+	return _threadId++;
+}
+
+int ResManager::newCallbackId() {
+	return _callbackId++;
+}
+
+void ResManager::resetIds(int callbackId) {
+	// don't reset _roomId and _actorId because there are not dynamically created
+	_objId = START_OBJECTID;
+	_soundDefId = START_SOUNDDEFID;
+	_soundId = START_SOUNDID;
+	_threadId = START_THREADID;
+	_lightId = START_LIGHTID;
+	_callbackId = callbackId;
+}
+
+int ResManager::getCallbackId() const {
+	return _callbackId;
+}
+
+int ResManager::newLightId() {
+	return _lightId++;
+}
+
 } // namespace Twp

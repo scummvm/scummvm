@@ -22,6 +22,7 @@
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/squtil.h"
 
@@ -101,7 +102,7 @@ Object::~Object() {
 Common::SharedPtr<Object> Object::createActor() {
 	Common::SharedPtr<Object> result(new Object());
 	result->_hotspot = Common::Rect(-18, 0, 37, 71);
-	result->_facing = FACE_FRONT;
+	result->_facing = Facing::FACE_FRONT;
 	result->_useWalkboxes = true;
 	result->showLayer("blink", false);
 	result->showLayer("eyes_left", false);
@@ -167,7 +168,7 @@ bool Object::playCore(const Common::String &state, bool loop, bool instant) {
 	}
 
 	// if not found, clear the previous animation
-	if (!isActor(getId())) {
+	if (!g_twp->_resManager->isActor(getId())) {
 		_nodeAnim->clearFrames();
 		_nodeAnim->clear();
 	}
@@ -233,15 +234,15 @@ void Object::trig(const Common::String &name) {
 
 Common::String Object::suffix() const {
 	switch (getFacing()) {
-	case FACE_BACK:
+	case Facing::FACE_BACK:
 		return "_back";
 	default:
-	case FACE_FRONT:
+	case Facing::FACE_FRONT:
 		return "_front";
-	case FACE_LEFT:
+	case Facing::FACE_LEFT:
 		// there is no animation with `left` suffix but use left and flip the sprite
 		return "_right";
-	case FACE_RIGHT:
+	case Facing::FACE_RIGHT:
 		return "_right";
 	}
 }
@@ -259,14 +260,14 @@ int Object::defaultVerbId() {
 	SQInteger result = VERB_LOOKAT;
 	if (sqrawexists(_table, "defaultVerb"))
 		sqgetf(_table, "defaultVerb", result);
-	else if (isActor(getId())) {
+	else if (g_twp->_resManager->isActor(getId())) {
 		result = sqrawexists(_table, "verbTalkTo") ? VERB_TALKTO : VERB_WALKTO;
 	}
 	return result;
 }
 
 Math::Vector2d Object::getUsePos() {
-	return isActor(getId()) ? _node->getPos() + _node->getOffset() : _node->getPos() + _node->getOffset() + _usePos;
+	return g_twp->_resManager->isActor(getId()) ? _node->getPos() + _node->getOffset() : _node->getPos() + _node->getOffset() + _usePos;
 }
 
 bool Object::isTouchable() {
@@ -406,7 +407,7 @@ void Object::setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> r
 		}
 		object->_room = room;
 
-		if (roomChanged && isActor(object->getId())) {
+		if (roomChanged && g_twp->_resManager->isActor(object->getId())) {
 			if (room == g_twp->_room) {
 				g_twp->actorEnter(object);
 			} else if (oldRoom == g_twp->_room) {
@@ -437,14 +438,14 @@ void Object::stopObjectMotors() {
 	_node->setOffset({0.f, 0.f});
 	_node->setShakeOffset({0.f, 0.f});
 	_node->setScale({1.f, 1.f});
-	if (isActor(getId()))
+	if (g_twp->_resManager->isActor(getId()))
 		stand();
 }
 
 void Object::setFacing(Facing facing) {
 	if (_facing != facing) {
 		debugC(kDebugGame, "set facing: %d", facing);
-		bool update = !(((_facing == FACE_LEFT) && (facing == FACE_RIGHT)) || ((_facing == FACE_RIGHT) && (facing == FACE_LEFT)));
+		bool update = !(((_facing == Facing::FACE_LEFT) && (facing == Facing::FACE_RIGHT)) || ((_facing == Facing::FACE_RIGHT) && (facing == Facing::FACE_LEFT)));
 		_facing = facing;
 		if (update && _nodeAnim)
 			play(_animName, _animLoop);
@@ -454,17 +455,17 @@ void Object::setFacing(Facing facing) {
 Facing Object::getDoorFacing() {
 	int flags = getFlags();
 	if (flags & DOOR_LEFT)
-		return FACE_LEFT;
+		return Facing::FACE_LEFT;
 	else if (flags & DOOR_RIGHT)
-		return FACE_RIGHT;
+		return Facing::FACE_RIGHT;
 	else if (flags & DOOR_FRONT)
-		return FACE_FRONT;
+		return Facing::FACE_FRONT;
 	else
-		return FACE_BACK;
+		return Facing::FACE_BACK;
 }
 
 bool Object::inInventory() {
-	return isObject(getId()) && getIcon().size() > 0;
+	return g_twp->_resManager->isObject(getId()) && getIcon().size() > 0;
 }
 
 bool Object::contains(Math::Vector2d pos) {
@@ -644,10 +645,10 @@ void Object::lockFacing(int facing) {
 }
 
 void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
-	_facingMap.push_back({FACE_LEFT, left});
-	_facingMap.push_back({FACE_RIGHT, right});
-	_facingMap.push_back({FACE_FRONT, front});
-	_facingMap.push_back({FACE_BACK, back});
+	_facingMap.push_back({Facing::FACE_LEFT, left});
+	_facingMap.push_back({Facing::FACE_RIGHT, right});
+	_facingMap.push_back({Facing::FACE_FRONT, front});
+	_facingMap.push_back({Facing::FACE_BACK, back});
 }
 
 int Object::flags() {
@@ -778,7 +779,7 @@ void Object::walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing) {
 // Walks an actor to the `obj` and then faces it.
 void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	debugC(kDebugGame, "walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
-	Facing facing = (Facing)obj->_useDir;
+	int facing = static_cast<int>(obj->_useDir);
 	walk(actor, (Vector2i)obj->getUsePos(), facing);
 }
 
