@@ -63,6 +63,9 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
+		case R_ARM_NONE:
+//		        debug(8, "elfloader: R_ARM_NONE: No relocation.");
+			break;
 		case R_ARM_ABS32:
 		case R_ARM_TARGET1:
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
