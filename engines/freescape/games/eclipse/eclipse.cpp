@@ -150,11 +150,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	} else
 		playSound(5, false);
 
-	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
-		_gfx->_keyColor = 0;
-	} else
-		_gfx->_keyColor = 255;
-
+	_gfx->_keyColor = 0;
 	swapPalette(areaID);
 	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
 
