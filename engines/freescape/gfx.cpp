@@ -996,6 +996,14 @@ void Renderer::drawBackground(uint8 color) {
 	clear(r1, g1, b1);
 }
 
+void Renderer::drawEclipse(byte color1, byte color2, float progress) {
+	Math::Vector3d sunPosition(-5000, 1200, 0);
+	float radius = 500.0;
+	drawCelestialBody(sunPosition, radius, color1);
+	Math::Vector3d moonPosition(-5000, 1200, 0 + 500 * progress);
+	drawCelestialBody(moonPosition, radius, color2);
+}
+
 Graphics::RendererType determinateRenderType() {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
