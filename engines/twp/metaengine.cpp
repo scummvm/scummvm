@@ -37,6 +37,7 @@
 #include "twp/savegame.h"
 #include "twp/time.h"
 #include "twp/actions.h"
+#include "twp/debugtools.h"
 #include "twp/dialogs.h"
 
 #define MAX_SAVES 99
@@ -186,6 +187,12 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 	}
 
 	return Common::Keymap::arrayOf(engineKeyMap);
+}
+
+void TwpMetaEngine::renderImGui() {
+#ifdef USE_IMGUI
+	Twp::onImGuiRender();
+#endif
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TWP)

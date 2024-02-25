@@ -564,6 +564,8 @@ public:
 	 * Read the extended savegame header from the given savegame file.
 	 */
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
+
+	virtual void renderImGui() {}
 };
 
 /**

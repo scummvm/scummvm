@@ -38,7 +38,6 @@ MODULE_OBJS = \
 	time.o \
 	tsv.o \
 	twp.o \
-	twpimgui.o \
 	util.o \
 	vm.o \
 	walkboxnode.o \
