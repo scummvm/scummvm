@@ -52,8 +52,6 @@ namespace GUI {
 static bool buttonClosesDialog;
 
 void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu);
-void CreateSaveMenu(RGB8 *myPalette);
-void CreateLoadMenu(RGB8 *myPalette);
 
 Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 	Sprite *thumbNailSprite;
