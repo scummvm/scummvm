@@ -55,6 +55,7 @@ public:
 	Texture *texture(const Common::String &name);
 	SpriteSheet *spriteSheet(const Common::String &name);
 	Common::SharedPtr<Font> font(const Common::String &name);
+	void resetSaylineFont();
 
 	bool isThread(int id) const;
 	bool isRoom(int id) const;
