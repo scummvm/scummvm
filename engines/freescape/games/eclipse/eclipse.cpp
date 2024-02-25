@@ -56,10 +56,10 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_angleRotations.push_back(15);
 
 	_maxEnergy = 27;
-	_maxShield = 10; // TODO
+	_maxShield = 50;
 
 	_initialEnergy = 16;
-	_initialShield = 10; // TODO
+	_initialShield = 50;
 
 	_endArea = 1;
 	_endEntrance = 33;
@@ -90,8 +90,9 @@ bool EclipseEngine::checkIfGameEnded() {
 		_hasFallen = false;
 		playSoundFx(4, false);
 
-		if (_gameStateVars[k8bitVariableShield] > 4) {
-			_gameStateVars[k8bitVariableShield] -= 4;
+		// If shield is less than 11 after a fall, the game ends
+		if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
+			_gameStateVars[k8bitVariableShield] -= 15;
 			return false; // Game can continue
 		}
 		if (!_fallenMessage.empty())
