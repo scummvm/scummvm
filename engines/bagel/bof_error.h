@@ -57,7 +57,7 @@ enum ERROR_CODE {
 
 extern const char *const g_errList[];
 
-class BofError {
+class CBofError {
 protected:
 	static ERROR_CODE m_errGlobal;
 	static int m_nErrorCount;
@@ -68,7 +68,7 @@ protected:
 	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {}
 
 public:
-	BofError();
+	CBofError();
 
 	/**
 	 * Logs specified error to log file.
