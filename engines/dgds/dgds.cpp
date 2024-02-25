@@ -210,7 +210,6 @@ Common::Error DgdsEngine::run() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
-	bool creditsShown = false;
 	REQFileData invRequestData;
 	REQFileData vcrRequestData;
 	RequestParser reqParser(_resource, _decompressor);
@@ -321,18 +320,6 @@ Common::Error DgdsEngine::run() {
 			_scene->runPreTickOps();
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
-
-				/*
-				if (!creditsShown) {
-					creditsShown = true;
-					if (getGameId() == GID_DRAGON) {
-						// TODO: This will be done by the trigger once we know how to do it.
-						// It's trigger number 3 in scene 3.
-						changeScene(55, false);
-					}
-				} else {
-					return Common::kNoError;
-				}*/
 			}
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
