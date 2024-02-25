@@ -184,6 +184,11 @@ void DarkEngine::initGameState() {
 
 	_endArea = 1;
 	_endEntrance = 26;
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	_lastMinute = minutes;
+	_lastTenSeconds = seconds / 10;
 }
 
 void DarkEngine::loadAssets() {
