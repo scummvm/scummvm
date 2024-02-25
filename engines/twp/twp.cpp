@@ -31,7 +31,6 @@
 #include "twp/actions.h"
 #include "twp/callback.h"
 #include "twp/console.h"
-#include "twp/debugtools.h"
 #include "twp/detection.h"
 #include "twp/enginedialogtarget.h"
 #include "twp/hud.h"
@@ -45,7 +44,6 @@
 #include "twp/task.h"
 #include "twp/thread.h"
 #include "twp/tsv.h"
-#include "twp/twpimgui.h"
 #include "twp/vm.h"
 #include "twp/walkboxnode.h"
 
@@ -73,7 +71,6 @@ TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_hud.reset(new Hud());
 	_pack.reset(new GGPackSet());
 	_saveGameManager.reset(new SaveGameManager());
-	_imgui.reset(new TwpImGui());
 
 	_screenScene->setName("Screen");
 	_scene->addChild(_walkboxNode.get());
@@ -722,7 +719,6 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// imgui render
 	_gfx.use(nullptr);
-	_imgui->render();
 
 	g_system->updateScreen();
 }
@@ -736,7 +732,6 @@ void TwpEngine::updateSettingVars() {
 Common::Error TwpEngine::run() {
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_imgui->init();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -789,9 +784,6 @@ Common::Error TwpEngine::run() {
 	while (!shouldQuit()) {
 		Math::Vector2d camPos = _gfx.cameraPos();
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if(_imgui->processEvent(&e))
-				continue;
-
 			switch (e.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
 				switch ((TwpAction)e.customType) {
@@ -955,9 +947,6 @@ Common::Error TwpEngine::run() {
 			g_system->delayMillis(10 - delta);
 		}
 	}
-
-	// Cleanup
-	_imgui->cleanup();
 
 	return Common::kNoError;
 }

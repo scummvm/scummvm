@@ -46,6 +46,11 @@
 #include "image/bmp.h"
 #endif
 
+#ifdef USE_IMGUI
+#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
+#include "backends/imgui/backends/imgui_impl_opengl3_scummvm.h"
+#endif
+
 OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
 	: SdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -145,6 +150,12 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 }
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+#endif
+
 	closeOverlay();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
@@ -307,7 +318,7 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 		int currentSamples = 0;
 
 		#if defined(__EMSCRIPTEN__)
-		// SDL_GL_MULTISAMPLESAMPLES isn't available on a  WebGL 1.0 context 
+		// SDL_GL_MULTISAMPLESAMPLES isn't available on a  WebGL 1.0 context
 		// (or not bridged in Emscripten?). This forces a windows reset.
 		currentSamples = -1;
 		#else
@@ -462,6 +473,21 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
+
+#ifdef USE_IMGUI
+	if(!_imguiInit) {
+		// Setup Dear ImGui
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
+		ImGui_ImplOpenGL3_Init("#version 110");
+		ImGui::StyleColorsDark();
+		ImGuiIO &io = ImGui::GetIO();
+		Common::Path initPath(ConfMan.getPath("savepath"));
+		initPath = initPath.appendComponent("imgui.ini");
+		io.IniFilename = initPath.toString().c_str();
+	}
+#endif
 #endif
 }
 
@@ -591,6 +617,12 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 		return false;
 
 	initializeOpenGLContext();
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	_imguiInit = true;
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	plugin = PluginMan.getEngineFromMetaEngine(plugin);
+	_metaEngine = &plugin->get<MetaEngine>();
+#endif
 
 	if (clear)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -632,6 +664,17 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 }
 
 void OpenGLSdlGraphics3dManager::updateScreen() {
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
+
+	ImGui::NewFrame();
+	_metaEngine->renderImGui();
+	ImGui::Render();
+
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
+
 	GLint prevStateViewport[4];
 	glGetIntegerv(GL_VIEWPORT, prevStateViewport);
 	if (_frameBuffer) {
