@@ -47,17 +47,17 @@ const char *const g_errList[] = {
 
 // Static members
 //
-int BofError::m_nErrorCount;
-ERROR_CODE BofError::m_errGlobal;
+int CBofError::m_nErrorCount;
+ERROR_CODE CBofError::m_errGlobal;
 
 
-BofError::BofError() {
+CBofError::CBofError() {
 	m_errCode = ERR_NONE;
 	m_nErrorCount = 0;
 	m_errGlobal = ERR_NONE;
 }
 
-void BofError::ReportError(ERROR_CODE errCode, const char *format, ...) {
+void CBofError::ReportError(ERROR_CODE errCode, const char *format, ...) {
 	if ((m_errCode = errCode) != ERR_NONE) {
 		Common::String buf;
 

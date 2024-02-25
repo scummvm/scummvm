@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	bagel.o \
 	bof_error.o \
 	console.o \
-	metaengine.o
+	metaengine.o \
+	boflib/bof_list.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
