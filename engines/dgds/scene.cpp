@@ -787,6 +787,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 				refval = 0;
 			cflag = kSceneCondEqual;
 		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemField12) {
+			debug("TODO: Check game item attribute for scene condition");
 			// TODO: Get game item c._num and check value from item attributes
 			checkval = 0;
 		} else {

@@ -58,7 +58,7 @@ enum TTMRunType {
 	kRunType1 = 1,
 	kRunTypeMulti = 2,
 	kRunTypeTimeLimited = 3,
-	kRunType4 = 4,
+	kRunTypeFinished = 4,
 	kRunType5 = 5,
 };
 
@@ -66,8 +66,8 @@ enum TTMRunType {
 struct TTMSeq {
 	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _currentFrame(0),
 	_lastFrame(0), _selfLoop(false), _executed(false), _timeNext(0),
-	_timeCut(0), _currentBmpId(0), _currentSongId(-1), _currentPalId(0),
-	_timeInterval(0) {
+	_timeCut(0), _currentBmpId(0), _brushNum(0), _currentSongId(-1),
+	_currentPalId(0), _currentGetPutId(0), _timeInterval(0) {
 		reset();
 	}
 
@@ -86,8 +86,10 @@ struct TTMSeq {
 	uint32 _timeCut;
 	Common::Rect _drawWin;
 	int16 _currentBmpId;
+	int16 _brushNum;
 	int16 _currentSongId;
 	int16 _currentPalId;
+	int16 _currentGetPutId;
 	byte _drawColFG;
 	byte _drawColBG;
 	int16 _runPlayed;
@@ -99,7 +101,8 @@ struct TTMSeq {
 
 class ADSData : public ScriptParserData {
 public:
-	ADSData() : _initFlag(0), _maxSegments(0), _scriptDelay(-1), _hitTTMOp0110(false), _hitBranchOp(false) {
+	ADSData() : _initFlag(0), _maxSegments(0), _scriptDelay(-1),
+			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1) {
 		for (int i = 0; i < ARRAYSIZE(_state); i++) {
 			_state[i] = 8;
 		}
@@ -120,6 +123,7 @@ public:
 	int32 _charWhile[80];
 	Common::Array<struct TTMSeq *> _usedSeqs[80];
 	int32 _scriptDelay;
+	int32 _gotoTarget;
 	bool _hitTTMOp0110;
 	bool _hitBranchOp;
 };
@@ -136,6 +140,7 @@ public:
 protected:
 	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 	void updateScreen(struct TTMSeq &seq);
+	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq);
 
 	DgdsEngine *_vm;
 };
