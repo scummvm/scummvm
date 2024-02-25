@@ -71,6 +71,11 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 	_spriteSheets[name].parseSpriteSheet(s);
 }
 
+void ResManager::resetSaylineFont() {
+	if(_fonts.contains("sayline"))
+		_fonts.erase("sayline");
+}
+
 void ResManager::loadFont(const Common::String &name) {
 	if (name == "sayline") {
 		debugC(kDebugRes, "Load font %s", name.c_str());
