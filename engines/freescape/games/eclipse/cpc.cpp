@@ -65,13 +65,11 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	}
 	loadColorPalette();
 	swapPalette(1);
-	//_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
-	//_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
-	//_indicators.push_back(loadBundledImage("dark_walk_indicator"));
-	//_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
-	//for (auto &it : _indicators)
-	//	it->convertToInPlace(_gfx->_texturePixelFormat);
+	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
@@ -111,6 +109,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 		drawStringInSurface("<", 240, 135, back, front, surface, 'Z' - '$' + 1);
 	}
 	drawAnalogClock(surface, 90, 172, back, other, front);
+	drawIndicator(surface, 45, 4, 12);
 }
 
 } // End of namespace Freescape

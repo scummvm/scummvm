@@ -30,6 +30,10 @@ enum EclipseReleaseFlags {
 	GF_ZX_DEMO_MICROHOBBY = (1 << 1),
 };
 
+enum {
+	kVariableEclipseAnkhs = 32,
+};
+
 class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
@@ -39,6 +43,7 @@ public:
 	void borderScreen() override;
 	void titleScreen() override;
 	void drawInfoMenu() override;
+	void drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation);
 
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;

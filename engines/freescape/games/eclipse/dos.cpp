@@ -66,6 +66,12 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		}
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
+
+		_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
+
+		for (auto &it : _indicators)
+			it->convertToInPlace(_gfx->_texturePixelFormat);
+
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
@@ -135,6 +141,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
 	surface->fillRect(jarWater, blue);
 
+	drawIndicator(surface, 41, 4, 16);
 }
 
 soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) {

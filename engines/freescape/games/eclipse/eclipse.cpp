@@ -335,6 +335,17 @@ void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
 }
 
+void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation) {
+	if (_indicators.size() == 0)
+		return;
+
+	for (int i = 0; i < 5; i++) {
+		if (_gameStateVars[kVariableEclipseAnkhs] > i)
+			continue;
+		surface->copyRectToSurface(*_indicators[0], xPosition + separation * i, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+	}
+}
+
 void EclipseEngine::updateTimeVariables() {
 	if (_gameStateControl != kFreescapeGameStatePlaying)
 		return;
