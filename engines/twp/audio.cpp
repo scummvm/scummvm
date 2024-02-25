@@ -272,6 +272,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 	slot->busy = true;
 	slot->volume = volume;
 	slot->fadeInTimeMs = fadeInTimeMs;
+	slot->fadeOutTimeMs = 0;
 	slot->total = audioStream->getLength().msecs();
 	slot->loopTimes = loopTimes;
 	slot->soundType = cat;
@@ -279,9 +280,9 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 }
 
 int AudioSystem::getElapsed(int id) const {
-	for (const auto &_slot : _slots) {
-		if (_slot.id == id) {
-			Audio::Timestamp t = g_twp->_mixer->getElapsedTime(_slot.handle);
+	for (const auto &slot : _slots) {
+		if (slot.id == id) {
+			Audio::Timestamp t = g_twp->_mixer->getElapsedTime(slot.handle);
 			return t.msecs();
 		}
 	}
