@@ -843,14 +843,6 @@ static SQInteger strlines(HSQUIRRELVM v) {
 	return 1;
 }
 
-static void replaceAll(Common::String &text, const Common::String &search, const Common::String &replace) {
-	auto pos = text.find(search);
-	while (pos != Common::String::npos) {
-		text.replace(pos, search.size(), replace);
-		pos = text.find(search, pos + replace.size());
-	}
-}
-
 static SQInteger strreplace(HSQUIRRELVM v) {
 	const SQChar *input;
 	const SQChar *search;
@@ -867,7 +859,7 @@ static SQInteger strreplace(HSQUIRRELVM v) {
 	Common::String strInput(input);
 	Common::String strSearch(search);
 	Common::String strReplace(replace);
-	replaceAll(strInput, strSearch, strReplace);
+	strInput = replaceAll(strInput, strSearch, strReplace);
 	sq_pushstring(v, strInput.c_str(), strInput.size());
 	return 1;
 }
