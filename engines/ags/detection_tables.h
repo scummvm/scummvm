@@ -2086,7 +2086,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mmm89", "Maniac Mansion Mania Ep. 089: Der Weltrettungsalgorithmus - Die neue Version" },
 	{ "mmm90", "Maniac Mansion Mania Ep. 090: Packing the suitcase / Kofferpacken" },
 	{ "mmm91", "Maniac Mansion Mania Ep. 091: Fels in der Brandung" },
-	{ "mmm92", "Maniac Mansion Mania Ep. 092: Project False Start" },
 	{ "mmm93", "Maniac Mansion Mania Ep. 093: Murder at the Moonshine Mansion" },
 	{ "mmm94", "Maniac Mansion Mania Ep. 094: Maniac on the Mississippi" },
 	{ "mmm95", "Maniac Mansion Mania Ep. 095: Britney's Escape / Britney's Flucht" },
@@ -2738,6 +2737,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sepulchre", "Sepulchre" },
 	{ "serina", "Serina's Transylvanian Trip" },
 	{ "serum", "Serum" },
+	{ "sesari", "Sesari" },
 	{ "sevendoors", "The Seven Doors" },
 	{ "sevgilim","Sevgilim Olur musun?" },
 	{ "shadesofgrey", "Shades of Grey" },
@@ -7239,7 +7239,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm90", "mmm90.exe", "f1d98b6c9f4fb300181a927948ec8ef5", 8606394),  //v1.4 En-De-It
 	GAME_ENTRY("mmm90", "mmm90.exe", "5097c2dbd1ca671fc889d11abe55e5b2", 8993690),  //v1.4 En-De-It + De speech
 	GAME_ENTRY_LANG("mmm91", "MMM-FidB.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6345594, Common::DE_DEU),
-	GAME_ENTRY_LANG("mmm92", "PROJECT.EXE", "a17444d5b2fb8130dfce6da7ec35ae01", 15171584, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm93", "Moonshine.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 9184631, Common::DE_DEU),
 	GAME_ENTRY("mmm94", "Mississippi.exe", "311cf286b596ed7c68d5505424dea1bc", 19670283),  // En-De-It
 	GAME_ENTRY("mmm95", "BritneysEscape.exe", "37a096932a37607b8115f57d269229b9", 16216498),  // En-De-It
@@ -7988,6 +7987,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sepulchre", "sepulchre.exe", "38dce17f7f7b96badf3a88e11e7a9797", 28412866),
 	GAME_ENTRY_EN("serina", "Serinas Transylvanian Trip.exe", "8fd84e9331691d9fd1c393a383807b64", 11447796),
 	GAME_ENTRY_EN("serum", "Infected.exe", "06a03fe35791b0578068ab1873455463", 2226020),
+	GAME_ENTRY_EN("sesari", "sesari.exe", "8d1ff95c16500befbdc72260d461d73f", 8721127),  // Win
+	GAME_ENTRY_EN("sesari", "ac2game.dat", "8d1ff95c16500befbdc72260d461d73f", 8721127),  // Mac
 	GAME_ENTRY_EN("sevendoors", "7DOORS.exe", "18b284c22010850f79bc5c20054a70c4", 113716886),
 	GAME_ENTRY_LANG("sevgilim", "sevgilim.exe", "49c3b4aa0287206f199e7bbf19d5600e", 6585836, Common::TR_TUR),
 	GAME_ENTRY_EN("shadesofgrey", "Shades of Grey.exe", "5f6db89bead4f55f32d0a4bd81df6dd3", 90761711),
