@@ -23,16 +23,17 @@ namespace Bagel {
 
 const PlainGameDescriptor bagelGames[] = {
 	{ "bagel", "Bagel" },
+	{ "spacebar", "The Space Bar" },
 	{ 0, 0 }
 };
 
 const ADGameDescription gameDescriptions[] = {
 	{
-		"bagel",
+		"spacebar",
 		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
+		AD_ENTRY1s("disk1", "81051bcc2cf1bedf378224b0a93e2877", 2),
 		Common::EN_ANY,
-		Common::kPlatformDOS,
+		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
