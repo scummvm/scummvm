@@ -43,9 +43,14 @@ public:
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void pressedKey(const int keycode) override;
+	void releasedKey(const int keycode) override;
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
+
+	bool _resting;
+	int _lastThirtySeconds;
+	void updateTimeVariables() override;
 
 	void initDOS();
 	void initCPC();

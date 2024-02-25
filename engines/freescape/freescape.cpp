@@ -370,6 +370,8 @@ void FreescapeEngine::drawFrame() {
 
 void FreescapeEngine::pressedKey(const int keycode) {}
 
+void FreescapeEngine::releasedKey(const int keycode) {}
+
 void FreescapeEngine::resetInput() {
 	_shootMode = false;
 	centerCrossair();
@@ -511,6 +513,13 @@ void FreescapeEngine::processInput() {
 				pressedKey(event.kbd.keycode);
 				break;
 			}
+			break;
+
+		case Common::EVENT_KEYUP:
+			if (_hasFallen)
+				break;
+
+			releasedKey(event.kbd.keycode);
 			break;
 
 		case Common::EVENT_QUIT:

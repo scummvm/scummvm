@@ -73,6 +73,11 @@ void EclipseEngine::initGameState() {
 
 	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	_lastThirtySeconds = seconds / 30;
+	_resting = false;
 }
 
 void EclipseEngine::loadAssets() {
@@ -296,11 +301,17 @@ void EclipseEngine::pressedKey(const int keycode) {
 			if (_temporaryMessages.empty())
 				insertTemporaryMessage(_messagesList[6], _countdown - 2);
 		} else {
+			_resting = true;
 			if (_temporaryMessages.empty())
 				insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			_countdown = _countdown - 5;
 		}
 	}
+}
+
+void EclipseEngine::releasedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_r)
+		_resting = false;
 }
 
 void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack) {
@@ -326,6 +337,27 @@ void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y
 	double w = magnitude * cos(degrees * degtorad);
 	double h = magnitude * sin(degrees * degtorad);
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+}
+
+void EclipseEngine::updateTimeVariables() {
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return;
+	// This function only executes "on collision" room/global conditions
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	if (_lastThirtySeconds != seconds / 30) {
+		_lastThirtySeconds = seconds / 30;
+
+		if (!_resting && _gameStateVars[k8bitVariableEnergy] > 0) {
+			_gameStateVars[k8bitVariableEnergy] -= 1;
+		}
+
+		if (_gameStateVars[k8bitVariableShield] < _maxShield) {
+			_gameStateVars[k8bitVariableShield] += 1;
+		}
+
+		executeLocalGlobalConditions(false, false, true);
+	}
 }
 
 void EclipseEngine::executePrint(FCLInstruction &instruction) {
