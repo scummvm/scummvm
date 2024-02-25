@@ -35,8 +35,8 @@ class Macs2Engine;
 	namespace Script {
 
 		struct ScriptVariable {
-			uint32 a;
-			uint32 b;
+			uint16 a;
+			uint16 b;
 		};
 
 		enum class MouseMode {
@@ -81,6 +81,10 @@ class Macs2Engine;
 			MouseMode _mouseMode = MouseMode::Use;
 
 			uint16 _interactedObjectID = 0;
+
+			// TODO: Expose in a better place
+			uint16 _charPosX = 276;
+			uint16 _charPosY = 140;
 
 			public:
 
