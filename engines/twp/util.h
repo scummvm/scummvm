@@ -113,6 +113,7 @@ size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T *o) {
 // string util
 Common::String join(const Common::Array<Common::String> &array, const Common::String &sep);
 Common::String remove(const Common::String &txt, char startC, char endC);
+Common::String replaceAll(const Common::String &s, const Common::String &what, const Common::String &by);
 
 // math util
 void scale(Math::Matrix4 &m, const Math::Vector2d &v);
