@@ -159,7 +159,14 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		}
 	// l0037_A050:
 	} else if (value == 0x4) {
-
+		// TODO: What's the difference to 0x27?
+		// TODO: Expose the position of the character sprite (or his feet)
+		out1 = Func101D(_charPosX, _charPosY);
+		out2 = 0;
+		// TODO: In the logs there is also a value out2 (DX) returned - where
+		// does that come from?
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 		/*
 		mov	di,[0776h]
 	shl	di,2h
@@ -492,9 +499,7 @@ l0037_A1B9:
 		*/
 
 		// TODO: Expose the position of the character sprite (or his feet)
-		uint16 charX = 100;
-		uint16 charY = 100;
-		out1 = Func101D(charX, charY);
+		out1 = Func101D(_charPosX, _charPosY);
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
@@ -805,7 +810,7 @@ void ScriptExecutor::ScriptPrintString() {
 
 	// TODO: Implement naive string printing here, refine later
 	
-	Common::StringArray strings = _engine->DecodeStrings(engine->_stringsStream, bp2, bp4);
+	Common::StringArray strings = _engine->DecodeStrings(_engine->_stringsStream, bp2, bp4);
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	currentView->setStringBox(strings);
@@ -995,26 +1000,15 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 		// TODO: Check if a switch would do it
 		if (opcode1 == 0x01) {
-			ScriptUnimplementedOpcode(0x01)
+			// l0037_DBA0:
+
 			// This writes to a script variable
-			// TODO: Needs to be implemented for being able to switch between
-			// box open and close to work
-			/*
-			l0037_DBA0:
-			call	far 0037h:9F07h
-			call	far 0037h:9F23h
-			mov	[bp-11h],ax
-			call	far 0037h:9F4Dh
-			mov	cx,ax
-			mov	bx,dx
-			mov	ax,[bp-11h]
-			shl	ax,2h
-			les	di,[06C6h]
-			add	di,ax
-			mov	es:[di-4h],cx
-			mov	es:[di-2h],bx
-			jmp	0E3BAh
-			*/
+			ReadByte();
+			uint16 variableIndex = ReadWord();
+			ScriptVariable var;
+			Func9F4D(var.a, var.b);
+			_variables[variableIndex] = var;
+			continue;
 		} // l0037_DBCD:
 		else if (opcode1 == 0x02) {
 			ScriptUnimplementedOpcode(0x02)
@@ -1157,7 +1151,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 			ScriptPrintString();
 			// TODO: Proper end handling
 			break;
-		} else
+		} else if (opcode1 == 0x0b) {
+			// TODO: Document - this one crashes the game if skipped
+		}
+
+		else
 		if (opcode1 == 0x0E) {
 			FuncB6BE();
 		} else if (opcode1 == 0x0F) {
@@ -1197,6 +1195,16 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(throwaway1, throwaway2);
 			// TBC That we stop execution here
 			break;
+		} else if (opcode1 == 0x12) {
+			// TODO: Working assumption is that this is instructing a character to turn a direction
+			// TODO: Mocking the reads to be able to progress
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+			
+		
 		} else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
 			// Based on previous experimentation, this will play the fumbling animation
@@ -1204,7 +1212,15 @@ void Script::ScriptExecutor::ExecuteScript() {
 			uint16 throwaway2;
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
-		} else if (opcode1 == 0x26) {
+		} else if (opcode1 == 0x25) {
+			// TODO: No visual difference, so only implementing mocked reads here
+			// TODO: There is the weird "rewind" in the log here, to be investigated separately
+			uint16 throwaway1;
+			uint16 throwaway2;
+			Func9F4D(throwaway1, throwaway2);
+			Func9F4D(throwaway1, throwaway2);
+		}
+		else if (opcode1 == 0x26) {
 			// TODO: This handles some bookkeeping and loading, but we skip this for now
 			// Only do the right amount of reads
 			uint16 throwaway1;
