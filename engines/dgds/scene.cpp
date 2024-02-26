@@ -668,7 +668,7 @@ void SDSScene::enableTrigger(uint16 num) {
 void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 	ADSInterpreter *interp = static_cast<DgdsEngine *>(g_engine)->adsInterpreter();
 
-	for (uint i = 0; i < args.size(); i+= 2) {
+	for (uint i = 0; i < args.size(); i += 2) {
 		uint16 subop = args[i];
 		uint16 arg = args[i + 1];
 		if (!subop && !arg)

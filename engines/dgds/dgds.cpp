@@ -157,7 +157,6 @@ void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		return;
 	}
 
-	_adsInterp->unload();
 	_scene->runLeaveSceneOps();
 	_scene->unload();
 

@@ -566,12 +566,9 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 
 
 void ADSInterpreter::unload() {
-	_adsData._scriptNames.clear();
-	_adsData._scriptEnvs.clear();
 	delete _adsData.scr;
-	_adsData.scr = nullptr;
+	_adsData = ADSData();
 	_currentTTMSeq = nullptr;
-	_adsData._ttmSeqs.clear();
 }
 
 bool ADSInterpreter::playScene() {
@@ -617,8 +614,7 @@ void ADSInterpreter::segmentOrState(int16 seg, uint16 val) {
 	int idx = getArrIndexOfSegNum(seg);
 	if (idx >= 0) {
 		_adsData._charWhile[idx] = 0;
-		if (_adsData._state[idx] != 8)
-			_adsData._state[idx] = (_adsData._state[idx] & 8) | val;
+		_adsData._state[idx] = (_adsData._state[idx] & 8) | val;
 	}
 }
 
@@ -871,10 +867,13 @@ bool ADSInterpreter::run() {
 
 	for (int i = 0; i < _adsData._maxSegments; i++) {
 		int16 state = _adsData._state[i];
-		int32 offset = _adsData._segments[i] + 2;
+		int32 offset = _adsData._segments[i];
 		_adsData.scr->seek(offset);
+		int16 segnum = _adsData.scr->readSint16LE();
+		offset += 2;
 		if (state & 8) {
-			_adsData._state[i] &= 0xfff7;
+			state &= 0xfff7;
+			_adsData._state[i] = state;
 		} else {
 			findEndOrInitOp();
 			offset = _adsData.scr->pos();
@@ -890,6 +889,7 @@ bool ADSInterpreter::run() {
 
 		if (_adsData.scr && state == 1) {
 			_adsData.scr->seek(offset);
+			debug("ADS: Run segment %d idx %d/%d", segnum, i, _adsData._maxSegments);
 			runUntilBranchOpOrEnd();
 		}
 	}
