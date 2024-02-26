@@ -24,8 +24,11 @@
 #define BAGEL_BOFLIB_MISC_H
 
 #include "common/scummsys.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
+
+CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
 
 /**
  * Allocates a memory block of specified size
