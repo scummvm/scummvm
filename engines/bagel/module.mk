@@ -2,9 +2,9 @@ MODULE := engines/bagel
 
 MODULE_OBJS = \
 	bagel.o \
-	bof_error.o \
 	console.o \
 	metaengine.o \
+	boflib/bof_error.o \
 	boflib/bof_list.o \
 	boflib/llist.o \
 	boflib/misc.o

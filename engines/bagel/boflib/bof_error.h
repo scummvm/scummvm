@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOF_ERROR_H
-#define BAGEL_BOF_ERROR_H
+#ifndef BAGEL_BOFLIB_BOF_ERROR_H
+#define BAGEL_BOFLIB_BOF_ERROR_H
 
 #include "common/str.h"
 
