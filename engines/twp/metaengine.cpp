@@ -78,12 +78,12 @@ static Common::String getDesc(const Twp::SaveGame &savegame) {
 }
 
 SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s%02d.save", target, slot);
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {
 
-		Common::InSaveFile *thumbnailFile = g_system->getSavefileManager()->openForLoading(Common::String::format("%s%02d.png", target, slot));
+		Common::InSaveFile *thumbnailFile = g_system->getSavefileManager()->openForLoading(filename + ".png");
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(this, slot, "?");
@@ -100,11 +100,10 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 		}
 		Twp::SaveGame savegame;
 		Twp::SaveGameManager::getSaveGame(f, savegame);
-		Common::String time = getDesc(savegame);
-
-		desc.setDescription(time);
-		desc.setPlayTime(savegame.gameTime * 1000);
+		Common::String savegameDesc(getDesc(savegame));
 		Twp::DateTime dt = Twp::toDateTime(savegame.time);
+		desc.setDescription(savegameDesc);
+		desc.setPlayTime(savegame.gameTime * 1000);
 		desc.setSaveDate(dt.year, dt.month, dt.day);
 		desc.setSaveTime(dt.hour, dt.min);
 
@@ -112,36 +111,6 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 	}
 
 	return SaveStateDescriptor();
-}
-
-SaveStateList TwpMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s##.save", target);
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
-		int slot = ext ? atoi(ext - 2) : -1;
-
-		if (slot >= 0 && slot <= MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
-			if (in) {
-				Twp::SaveGame savegame;
-				Twp::SaveGameManager::getSaveGame(in, savegame);
-				Common::String time = getDesc(savegame);
-				saveList.push_back(SaveStateDescriptor(this, slot, time));
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
 }
 
 GUI::OptionsContainerWidget *TwpMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
