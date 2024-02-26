@@ -69,6 +69,12 @@ extern CBofDebugOptions *g_pDebugOptions;
 
 #endif
 
+/**
+ * Terminates current application and displays abort message
+ * @param pszInfo		Message to be displayed
+ * @param pszFile		Filename of where Abort takes place
+ * @param				Line number in file
+**/
 extern VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine);
 
 } // namespace Bagel

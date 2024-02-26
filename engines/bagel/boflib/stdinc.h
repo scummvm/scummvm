@@ -154,7 +154,14 @@ typedef bool BOOLEAN;
 
 #define MAX_DIRPATH 256
 
-extern VOID BofAssert(BOOL, INT, const CHAR *, const CHAR *);
+/**
+ * Displays assertion failure
+ * @param bExpression		Expression to evaluate (fail if false)
+ * @param nLine				Source code line number of assertion
+ * @param pszSourceFile		Source code file of assertion
+ * @param pszTimeStamp		Time and date version of source file
+ */
+extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
 
 #ifdef __TIMESTAMP__
 #define Assert(f) BofAssert(f, __LINE__, __FILE__, __TIMESTAMP__)
