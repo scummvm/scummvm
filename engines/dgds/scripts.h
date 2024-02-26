@@ -157,8 +157,9 @@ public:
 	void segmentOrState(int16 seg, uint16 val);
 	void segmentSetState(int16 seg, uint16 val);
 	
-	void setHitTTMOp0110(); // TODO: What is this global?
+	void setHitTTMOp0110(); // TODO: better name for this global?
 	int16 getStateForSceneOp(uint16 segnum);
+	void setScriptDelay(int16 delay) { _adsData._scriptDelay = delay; }
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
@@ -170,6 +171,7 @@ protected:
 	void findUsedSequencesForSegment(int segno);
 	void findEndOrInitOp();
 	bool updateSeqTimeAndFrame(TTMSeq &seq);
+	int getArrIndexOfSegNum(uint16 segnum);
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
 

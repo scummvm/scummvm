@@ -132,9 +132,13 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 
 	Common::DumpFile out;
 	out.open(Common::Path(dstPath + fileName));
-	out.write(data, size);
-	out.flush();
-	out.close();
+	if (!out.isOpen()) {
+		warning("Couldn't open path %s%s", dstPath.c_str(), fileName.c_str());
+	} else {
+		out.write(data, size);
+		out.flush();
+		out.close();
+	}
 	delete[] data;
 
     return true;
