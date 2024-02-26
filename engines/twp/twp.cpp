@@ -968,20 +968,8 @@ Common::Error TwpEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	return Common::kNoError;
 }
 
-Common::String TwpEngine::getSaveStateName(int slot) const {
-	return Common::String::format("twp%02d.save", slot);
-}
-
 bool TwpEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _saveGameManager->_allowSaveGame && !_cutscene;
-}
-
-static Common::String changeFileExt(const Common::String &s, const Common::String &ext) {
-	size_t i = s.findLastOf('.');
-	if (i != Common::String::npos) {
-		return s.substr(0, i) + ext;
-	}
-	return s + ext;
 }
 
 Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -992,7 +980,7 @@ Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, boo
 
 	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
-		name = changeFileExt(name, ".png");
+		name = name + ".png";
 		Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(name, false);
 		g_twp->capture(*thumbnail, Math::Vector2d(320, 180));
 		thumbnail->finalize();

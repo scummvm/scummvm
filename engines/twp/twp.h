@@ -123,7 +123,6 @@ public:
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
-	virtual Common::String getSaveStateName(int slot) const override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
 	Common::Error loadGameState(int slot) override;
