@@ -98,10 +98,13 @@ public:
 		m_pItemList = nullptr;
 	}
 
+	/**
+	 * Destructor
+	 */
 	virtual ~CBofList() {
 		RemoveAll();
 		KillItemList();
-		Assert(m_nNumItems == 0);
+		assert(m_nNumItems == 0);
 	}
 
 	int GetCount() const { return m_nNumItems; }
