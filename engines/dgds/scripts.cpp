@@ -99,7 +99,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
-		state._timeNext = g_system->getMillis() + ivals[0] * 10;
+		_vm->adsInterpreter()->setScriptDelay(ivals[0] * 10);
 		break;
 	case 0x1030: {
 		// SET BRUSH:	id:int [-1:n]
@@ -273,6 +273,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 	}
 	case 0xf060:
 		// LOAD SONG:	filename:str
+		// TODO: use state._currentSongId
 		if (_vm->_platform == Common::kPlatformAmiga) {
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 		} else if (_vm->_platform == Common::kPlatformMacintosh) {
@@ -457,6 +458,8 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	if (!_vm->getResourceManager()->hasResource(detailfile))
 		detailfile = filename;
 
+	debug("ADSInterpreter: load %s", detailfile.c_str());
+
 	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	dgds.parse(&_adsData, detailfile);
 
@@ -528,6 +531,8 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 	_adsData._usedSeqs[segno].clear();
 	int64 startoff = _adsData.scr->pos();
 	uint16 opcode = 0;
+	// Skip the segment number.
+	_adsData.scr->readUint16LE();
 	while (opcode != 0xffff && _adsData.scr->pos() < _adsData.scr->size()) {
 		opcode = _adsData.scr->readUint16LE();
 		for (uint16 o : ADS_SEQ_OPCODES) {
@@ -609,21 +614,21 @@ TTMSeq *ADSInterpreter::findTTMSeq(int16 enviro, int16 seq) {
 
 
 void ADSInterpreter::segmentOrState(int16 seg, uint16 val) {
-	seg -= 1;
-	if (seg >= 0) {
-		_adsData._charWhile[seg] = 0;
-		if (_adsData._state[seg] != 8)
-			_adsData._state[seg] = (_adsData._state[seg] & 8) | val;
+	int idx = getArrIndexOfSegNum(seg);
+	if (idx >= 0) {
+		_adsData._charWhile[idx] = 0;
+		if (_adsData._state[idx] != 8)
+			_adsData._state[idx] = (_adsData._state[idx] & 8) | val;
 	}
 }
 
 
 void ADSInterpreter::segmentSetState(int16 seg, uint16 val) {
-	seg -= 1;
-	if (seg >= 0) {
-		_adsData._charWhile[seg] = 0;
-		if (_adsData._state[seg] != 8)
-			_adsData._state[seg] = val;
+	int idx = getArrIndexOfSegNum(seg);
+	if (idx >= 0) {
+		_adsData._charWhile[idx] = 0;
+		if (_adsData._state[idx] != 8)
+			_adsData._state[idx] = val;
 	}
 }
 
@@ -651,10 +656,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	//debug("ADSOP: 0x%04x", code);
 
 	switch (code) {
-	case 0x0002: // FIXME: Is this ok? seen in dragon intro.
 	case 0x0001:
 	case 0x0005:
-		debug("ADS: init code 0x%04x", code);
+		//debug("ADS: init code 0x%04x", code);
 		// "init".  0x0005 can be used for searching for next thing.
 		break;
 	case 0x1310: { // IF runtype 5, 2 params
@@ -678,7 +682,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1330: { // IF_NOT_PLAYED, 2 params
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
-		debug("ADS: if not played env %d seq %d", enviro, seqnum);
+		//debug("ADS: if not played env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runPlayed)
 			skipToEndIf(scr);
@@ -779,10 +783,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 	case 0xF010: {// FADE_OUT, 1 param
 		int16 segment = scr->readSint16LE();
-		segment--;
-		debug("ADS: set state 2, segment param %x", segment);
-		if (segment >= 0)
-			_adsData._state[segment] = true;
+		int16 idx = getArrIndexOfSegNum(segment);
+		debug("ADS: set state 2, segment param %x (idx %d)", segment, idx);
+		if (idx >= 0)
+			_adsData._state[idx] = 2;
 		break;
 	}
 
@@ -819,10 +823,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 }
 
 int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
-	if (segnum > _adsData._maxSegments)
+	int idx = getArrIndexOfSegNum(segnum);
+	if (idx < 0)
 		return 0;
-	if (!(_adsData._state[segnum] & 4)) {
-		for (auto *seq : _adsData._usedSeqs[segnum]) {
+	if (!(_adsData._state[idx] & 4)) {
+		for (auto *seq : _adsData._usedSeqs[idx]) {
 			if (!seq)
 				return 0;
 			if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
@@ -830,6 +835,22 @@ int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
 		}
 	}
 	return 0;
+}
+
+
+int ADSInterpreter::getArrIndexOfSegNum(uint16 segnum) {
+	int32 startoff = _adsData.scr->pos();
+	int result = -1;
+	for (int i = 0; i < _adsData._maxSegments; i++) {
+		_adsData.scr->seek(_adsData._segments[i]);
+		int16 seg = _adsData.scr->readSint16LE();
+		if (seg == segnum) {
+			result = i;
+			break;
+		}
+	}
+	_adsData.scr->seek(startoff);
+	return result;
 }
 
 
@@ -850,7 +871,7 @@ bool ADSInterpreter::run() {
 
 	for (int i = 0; i < _adsData._maxSegments; i++) {
 		int16 state = _adsData._state[i];
-		int32 offset = _adsData._segments[i];
+		int32 offset = _adsData._segments[i] + 2;
 		_adsData.scr->seek(offset);
 		if (state & 8) {
 			_adsData._state[i] &= 0xfff7;
@@ -887,6 +908,7 @@ bool ADSInterpreter::run() {
 			int16 curframe = seq._currentFrame;
 			TTMEnviro *env = findTTMEnviro(seq._enviro);
 			_adsData._hitTTMOp0110 = false;
+			_adsData._scriptDelay = -1;
 			bool scriptresult = false;
 			if (curframe < env->_totalFrames && curframe > -1 && env->_frameOffsets[curframe] > -1) {
 				env->scr->seek(env->_frameOffsets[curframe]);

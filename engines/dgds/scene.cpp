@@ -780,8 +780,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 
 		if (cflag & kSceneCond80) {
 			refval = 1;
-			uint16 segnum = c._num - 1;
-			checkval = engine->adsInterpreter()->getStateForSceneOp(segnum);
+			checkval = engine->adsInterpreter()->getStateForSceneOp(c._num);
 			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
 			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
 				refval = 0;
