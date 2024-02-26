@@ -108,9 +108,9 @@ public:
 	void capture(Common::Array<byte> &data);
 
 public:
-	GLuint id = 0;
+	uint id = 0;
 	int width = 0, height = 0;
-	GLuint fbo = 0;
+	uint fbo = 0;
 };
 
 class RenderTexture : public Texture {
@@ -190,7 +190,7 @@ private:
 
 private:
 	Texture _emptyTexture;
-	GLuint _vbo = 0, _ebo = 0;
+	uint _vbo = 0, _ebo = 0;
 	Shader _defaultShader;
 	Shader *_shader = nullptr;
 	Math::Matrix4 _mvp;
@@ -198,7 +198,7 @@ private:
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture *_texture = nullptr;
-	GLint _oldFbo = 0;
+	int _oldFbo = 0;
 };
 } // namespace Twp
 
