@@ -29,6 +29,7 @@
 namespace Bagel {
 
 CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
+inline ULONG GetFreePhysMem() { return 999999; }
 
 /**
  * Allocates a memory block of specified size

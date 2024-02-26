@@ -53,6 +53,9 @@ ERROR_CODE CBofError::m_errGlobal;
 
 CBofError::CBofError() {
 	m_errCode = ERR_NONE;
+}
+
+void CBofError::initStatics() {
 	m_nErrorCount = 0;
 	m_errGlobal = ERR_NONE;
 }

@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	boflib/bof_log.o \
 	boflib/bof_obj.o \
 	boflib/bof_opt.o \
+	boflib/cache.o \
 	boflib/llist.o \
 	boflib/misc.o
 

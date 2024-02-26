@@ -83,6 +83,7 @@ public:
 	ERROR_CODE GetErrorCode() { return m_errCode; }
 	void ClearError() { m_errCode = ERR_NONE; }
 
+	static void initStatics();
 	static ERROR_CODE GetLastError() { return m_errGlobal; }
 	static void SetLastError(ERROR_CODE errCode) { m_errGlobal = errCode; }
 
