@@ -138,8 +138,10 @@ typedef bool BOOL;
 /*
  * Boolean types
  */
-#define YES 1
-#define NO 0
+enum {
+	YES = 1,
+	NO = 0
+};
 #ifndef TRUE
 #define TRUE true
 #define FALSE false
