@@ -727,7 +727,10 @@ void TwpEngine::updateSettingVars() {
 	_resManager->resetSaylineFont();
 	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
 	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
-	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped"));
+	if (ConfMan.getBool("ransomeUnbeeped") && _pack->containsDLC()) {
+		warning("You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!");
+	}
+	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped") && _pack->containsDLC());
 }
 
 Common::Error TwpEngine::run() {

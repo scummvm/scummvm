@@ -63,10 +63,11 @@ int TwpMetaEngine::getMaximumSaveSlot() const {
 void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("toiletPaperOver", false);
 	ConfMan.registerDefault("annoyingInJokes", false);
-	ConfMan.registerDefault("invertVerbHighlight", false);
+	ConfMan.registerDefault("invertVerbHighlight", true);
 	ConfMan.registerDefault("retroFonts", false);
 	ConfMan.registerDefault("retroVerbs", false);
 	ConfMan.registerDefault("hudSentence", false);
+	ConfMan.registerDefault("ransomeUnbeeped", false);
 	ConfMan.registerDefault("language", "en");
 }
 
