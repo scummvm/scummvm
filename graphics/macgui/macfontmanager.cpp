@@ -645,40 +645,44 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	return id;
 }
 
-int MacFontManager::registerTTFFont(const Common::Array<TTFMap> &ttfList) {
-	int defaultValue = 1;
+int MacFontManager::registerTTFFont(TTFMap *ttfList) {
+	int defaultValue = kMacFontGeneva;
 	int realId = 100;
 	auto checkId = [&](int id) {
-		for (auto &&i : ttfList) {
-			if (_fontInfo.contains(id + i.slant)) {
+		int i = 0;
+		while (ttfList[i].ttfName != "0") {
+			if (_fontInfo.contains(id + ttfList[i].slant)) {
 				return true;
 			}
+			i += 1;
 		}
 		return false;
 	};
 
 	while (checkId(realId))
 		realId++;
-
-	for (auto &&i : ttfList) {
+	int i = 0;
+	while (ttfList[i].ttfName != "0") {
 		int id = realId;
-		Common::String name = i.ttfName;
+		Common::String name = ttfList[i].ttfName;
 
 		if (name.empty()) {
 			if (defaultValue == 1)
 				defaultValue = id;
+			i += 1;
 			continue;
 		}
 
 		if (_fontIds.contains(name)) {
 			if (defaultValue == 1)
 				defaultValue = _fontIds[name];
+			i += 1;
 			continue;
 		}
 
 		int slant = 0;
 
-		id += slant | i.slant;
+		id += slant | ttfList[i].slant;
 
 		FontInfo *info = new FontInfo;
 		info->name = name;
@@ -686,6 +690,8 @@ int MacFontManager::registerTTFFont(const Common::Array<TTFMap> &ttfList) {
 		_fontIds[name] = id;
 		if (defaultValue == 1)
 			defaultValue = id;
+		ttfList[i].ttfName = "";
+		i += 1;
 	}
 	return defaultValue;
 }

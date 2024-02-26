@@ -34,7 +34,7 @@ namespace Common {
 namespace Graphics {
 
 struct TTFMap {
-	const char *ttfName;
+	Common::String ttfName;
 	uint16 slant;
 };
 
@@ -179,7 +179,7 @@ public:
 
 	void printFontRegistry(int debugLevel, uint32 channel);
 
-	int registerTTFFont(const Common::Array<Graphics::TTFMap> &ttfList);
+	int registerTTFFont(TTFMap *ttfList);
 
 	int getFamilyId(int newId, int newSlant);
 
