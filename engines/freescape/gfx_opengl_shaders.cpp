@@ -186,7 +186,60 @@ float remap(float f, float s) {
 	return 2. * f / s - 1;
 }
 
-void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {}
+void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point _position, int frame, const Common::Rect viewArea) {
+	uint8 r, g, b;
+
+	Math::Matrix4 identity;
+	identity(0, 0) = 1.0;
+	identity(1, 1) = 1.0;
+	identity(2, 2) = 1.0;
+	identity(3, 3) = 1.0;
+
+	_triangleShader->use();
+	_triangleShader->setUniform("useStipple", false);
+	_triangleShader->setUniform("mvpMatrix", identity);
+
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
+		r = g = b = 255;
+	} else {
+		r = g = b = 255;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+	}
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	useColor(r, g, b);
+
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+	float coef = (9 - frame) / 9.0;
+	float radius = (1 - coef) * 4.0;
+
+	Common::Point position(_position.x, _screenH - _position.y); 
+
+	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, _screenH - (viewArea.height() + viewArea.top));
+	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(remap(ball_position.x, _screenW), remap(ball_position.y, _screenH), 0));
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		float x = remap(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)), _screenW);
+		float y = remap(ball_position.y + (radius * sin(i * twicePi / triangleAmount)), _screenH);
+		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, (triangleAmount + 2) * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, (triangleAmount + 2));
+
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
 
 void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
 	uint8 r, g, b;

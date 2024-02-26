@@ -360,10 +360,9 @@ void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point posit
 	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
 
 	for(int i = 0; i <= triangleAmount; i++) {
-		copyToVertexArray(i + 1,
-			Math::Vector3d(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)),
-						ball_position.y + (radius * sin(i * twicePi / triangleAmount)), 0)
-		);
+		float x = ball_position.x + (radius * cos(i *  twicePi / triangleAmount));
+		float y = ball_position.y + (radius * sin(i * twicePi / triangleAmount));
+		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
 	}
 
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
