@@ -101,7 +101,7 @@ struct TTMSeq {
 
 class ADSData : public ScriptParserData {
 public:
-	ADSData() : _initFlag(0), _maxSegments(0), _scriptDelay(-1),
+	ADSData() : _initFlag(false), _maxSegments(0), _scriptDelay(-1),
 			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1) {
 		for (int i = 0; i < ARRAYSIZE(_state); i++) {
 			_state[i] = 8;
@@ -113,7 +113,7 @@ public:
 	Common::Array<Common::String> _scriptNames;
 	Common::Array<TTMEnviro> _scriptEnvs;
 	Common::Array<TTMSeq> _ttmSeqs;
-	int _initFlag;
+	bool _initFlag;
 	int _maxSegments;
 	// TODO: replace these with dynamic arrays - fixed arrays inherited from original.
 	int _state[80];

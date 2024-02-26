@@ -89,7 +89,7 @@ void GamePalettes::setPalette() {
 	if (_curPalNum >= _palettes.size())
 		error("request to set pal %d but only have %d pals", _curPalNum, _palettes.size());
 
-	_curPal = _palettes[_palettes.size() - _curPalNum - 1];
+	_curPal = _palettes[_curPalNum];
 	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
 }
 
@@ -105,7 +105,7 @@ void GamePalettes::setFade(int col, int ncols, int targetcol, int fade) {
 	if (col + ncols > 256)
 		error("GamePalettes::setFade: request to fade past the end of the palette");
 
-	Palette &pal = _palettes[_palettes.size() - _curPalNum - 1];
+	Palette &pal = _palettes[_curPalNum];
 
 	byte r2 = pal._palette[targetcol * 3 + 0];
 	byte g2 = pal._palette[targetcol * 3 + 1];
@@ -285,8 +285,13 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 					nextOffset = ((nextOffset + 7) / 8) * 8;
 				}
 			} else {
-				if (number)
+				if (number) {
+					if ((number + 1) * 4 > (int)chunk.getSize()) {
+						warning("Trying to load %s frame %d off the end of the list", filename.c_str(), number);
+						break;
+					}
 					stream->skip(4 * number);
+				}
 
 				uint32 subImgOffset = stream->readUint32LE();
 				if (vqtpos != -1) {
