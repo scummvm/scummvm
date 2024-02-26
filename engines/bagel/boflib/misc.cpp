@@ -24,6 +24,24 @@
 
 namespace Bagel {
 
+CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
+	CHAR *p = str;
+
+	/* can't acces a null pointer */
+	Assert(str != NULL);
+
+	/* if cOld was '\0' then this function would do nothing */
+	Assert(cOld != '\0');
+
+	while (*p != '\0') {
+		if (*p == cOld) {
+			*p = cNew;
+		}
+		p++;
+	}
+	return (str);
+}
+
 void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	error("TODO: BofMemAlloc");
 }
