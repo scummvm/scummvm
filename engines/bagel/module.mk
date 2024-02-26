@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	boflib/bof_error.o \
 	boflib/bof_list.o \
+	boflib/bof_obj.o \
 	boflib/llist.o \
 	boflib/misc.o
 
