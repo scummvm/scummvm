@@ -28,8 +28,13 @@
 
 namespace Bagel {
 
+CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *, const CHAR *);
 CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
 inline ULONG GetFreePhysMem() { return 999999; }
+
+#define BofMemSet memset
+#define BofMemCopy memcpy
+#define BofMemMove memmove
 
 /**
  * Allocates a memory block of specified size
