@@ -21,7 +21,8 @@ MODULE_OBJS = \
 	boflib/llist.o \
 	boflib/misc.o \
 	boflib/stack.o \
-	boflib/vector.o
+	boflib/vector.o \
+	boflib/gfx/bof_cursor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
