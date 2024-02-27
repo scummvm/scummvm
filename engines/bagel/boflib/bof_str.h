@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_BOF_STR_H
 #define BAGEL_BOFLIB_BOF_STR_H
 
-#include "bagel/boflib/bof_obj.h"
+#include "bagel/boflib/bof_object.h"
 
 namespace Bagel {
 

@@ -27,7 +27,7 @@
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/boflib/bof_obj.h"
+#include "bagel/boflib/bof_object.h"
 #include "bagel/boflib/bof_error.h"
 
 namespace Bagel {

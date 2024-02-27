@@ -10,7 +10,7 @@ MODULE_OBJS = \
 	boflib/bof_file.o \
 	boflib/bof_list.o \
 	boflib/bof_log.o \
-	boflib/bof_obj.o \
+	boflib/bof_object.o \
 	boflib/bof_opt.o \
 	boflib/bof_str.o \
 	boflib/cache.o \

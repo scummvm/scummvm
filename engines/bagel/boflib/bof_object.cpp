@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/boflib/bof_obj.h"
+#include "bagel/boflib/bof_object.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {
