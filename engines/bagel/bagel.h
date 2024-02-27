@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "bagel/detection.h"
+#include "bagel/boflib/bof_str.h"
 
 namespace Bagel {
 
@@ -49,6 +50,8 @@ protected:
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+	CBofString _bofEmptyString;
+
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~BagelEngine() override;
