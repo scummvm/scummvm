@@ -101,6 +101,10 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(7, r, g, b);
 	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+	_gfx->readFromPalette(2, r, g, b);
+	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
 	int score = _gameStateVars[k8bitVariableScore];
 
 	if (!_currentAreaMessages.empty())
@@ -108,6 +112,16 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 
 	Common::String scoreStr = Common::String::format("%07d", score);
 	drawStringInSurface(scoreStr, 133, 11, back, gray, surface, 'Z' - '0' + 1);
+
+	Common::String shieldStr = Common::String::format("%d", shield);
+
+	int x = 171;
+	if (shield < 10)
+		x = 179;
+	else if (shield < 100)
+		x = 175;
+
+	drawStringInSurface(shieldStr, x, 161, back, red, surface);
 
 	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 141, back, front, surface, 'Z' - '$' + 1);
 	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 141, back, front, surface, 'Z' - '$' + 1);

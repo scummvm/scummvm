@@ -101,7 +101,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 
 void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	int score = _gameStateVars[k8bitVariableScore];
-	int shield = _gameStateVars[k8bitVariableShield];
+	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
@@ -122,8 +122,14 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	Common::String scoreStr = Common::String::format("%07d", score);
 	drawStringInSurface(scoreStr, 136, 6, black, white, surface, 'Z' - '0' + 1);
 
-	Common::String shieldStr = Common::String::format("%02d", shield * 100 / _maxShield);
-	drawStringInSurface(shieldStr, 171, 162, black, redish, surface);
+	int x = 171;
+	if (shield < 10)
+		x = 179;
+	else if (shield < 100)
+		x = 175;
+
+	Common::String shieldStr = Common::String::format("%d", shield);
+	drawStringInSurface(shieldStr, x, 162, black, redish, surface);
 
 	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
 	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, black, yellow, surface, 'Z' - '$' + 1);
