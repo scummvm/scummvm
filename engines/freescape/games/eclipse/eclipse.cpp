@@ -346,6 +346,74 @@ void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int
 	}
 }
 
+void EclipseEngine::drawSensorShoot(Sensor *sensor) {
+	Math::Vector3d target;
+	float distance = 5;
+	int axisToSkip = -1;
+
+	if (sensor->_axis == 0x1 || sensor->_axis == 0x2)
+		axisToSkip = 0;
+
+	if (sensor->_axis == 0x10 || sensor->_axis == 0x20)
+		axisToSkip = 2;
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (i == j) {
+				target = sensor->getOrigin();
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) + distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+				target = sensor->getOrigin();
+
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) - distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+			} else {
+				target = sensor->getOrigin();
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) + distance);
+
+				if (j != axisToSkip)
+					target.setValue(j, target.getValue(j) + distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+				target = sensor->getOrigin();
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) + distance);
+
+				if (j != axisToSkip)
+					target.setValue(j, target.getValue(j) - distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+				target = sensor->getOrigin();
+
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) - distance);
+
+				if (j != axisToSkip)
+					target.setValue(j, target.getValue(j) - distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+				target = sensor->getOrigin();
+				if (i != axisToSkip)
+					target.setValue(i, target.getValue(i) - distance);
+
+				if (j != axisToSkip)
+					target.setValue(j, target.getValue(j) + distance);
+
+				_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+			}
+		}
+	}
+}
+
 void EclipseEngine::updateTimeVariables() {
 	if (_gameStateControl != kFreescapeGameStatePlaying)
 		return;

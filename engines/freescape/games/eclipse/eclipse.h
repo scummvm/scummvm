@@ -45,6 +45,8 @@ public:
 	void drawInfoMenu() override;
 	void drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation);
 
+	void drawSensorShoot(Sensor *sensor) override;
+
 	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void pressedKey(const int keycode) override;
