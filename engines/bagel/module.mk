@@ -17,7 +17,8 @@ MODULE_OBJS = \
 	boflib/crc.o \
 	boflib/deflate.o \
 	boflib/llist.o \
-	boflib/misc.o
+	boflib/misc.o \
+	boflib/stack.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
