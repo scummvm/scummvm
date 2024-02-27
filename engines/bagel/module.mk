@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	boflib/bof_obj.o \
 	boflib/bof_opt.o \
 	boflib/cache.o \
+	boflib/crc.o \
 	boflib/llist.o \
 	boflib/misc.o
 
