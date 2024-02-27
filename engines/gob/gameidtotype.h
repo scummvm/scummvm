@@ -73,6 +73,7 @@ static const GameIdToType gameIdToType[] = {
 	{                 "adibou1", kGameTypeAdibou1 },
 	{                 "adibou2", kGameTypeAdibou2 },
 	{                 "adibou3", kGameTypeNone },
+	{            "adiboucuisine", kGameTypeNone },
 	{            "adiboudessin", kGameTypeNone },
 	{          "adiboudchoumer", kGameTypeNone },
 	{     "adiboudchoubanquise", kGameTypeNone },
