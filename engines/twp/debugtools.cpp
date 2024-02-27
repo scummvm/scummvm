@@ -41,6 +41,7 @@ namespace Twp {
 static struct {
 	bool _showThreads = false;
 	bool _showObjects = false;
+	bool _showObject = false;
 	bool _showStack = false;
 	bool _showAudio = false;
 	bool _showResources = false;
@@ -54,6 +55,7 @@ static struct {
 	bool _fadeToSepia = false;
 	Common::String _textureSelected;
 	int _selectedActor = 0;
+	int _selectedObject = 0;
 } state;
 
 ImVec4 gray(0.6f, 0.6f, 0.6f, 1.f);
@@ -130,7 +132,7 @@ static void drawObjects() {
 	state._objFilter.Draw();
 
 	// show object list
-	for (auto &layer : g_twp->_room->_layers) {
+	for (const auto &layer : g_twp->_room->_layers) {
 		for (auto &obj : layer->_objects) {
 			if (state._objFilter.PassFilter(obj->_key.c_str())) {
 				ImGui::PushID(obj->getId());
@@ -142,13 +144,28 @@ static void drawObjects() {
 				Common::String name = obj->_key.empty() ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
 				bool selected = false;
 				if (ImGui::Selectable(name.c_str(), &selected)) {
-					// gObject = obj;
+					state._selectedObject = obj->getId();
 				}
 				ImGui::PopID();
 			}
 		}
 	}
 
+	ImGui::End();
+}
+
+static void drawObject() {
+	if (!state._showObject)
+		return;
+
+	Common::SharedPtr<Object> obj(sqobj(state._selectedObject));
+	if (!obj)
+		return;
+
+	Common::String name = obj->_key.empty() ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Object", &state._showObject);
+	ImGui::Text("Name: %s", name.c_str());
 	ImGui::End();
 }
 
@@ -185,7 +202,7 @@ static void drawActors() {
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Actors", &state._showStack);
+	ImGui::Begin("Actors", &state._showActor);
 	state._actorFilter.Draw();
 	ImGui::BeginChild("Actor_List");
 	for (auto &actor : g_twp->_actors) {
@@ -292,7 +309,7 @@ static void drawAudio() {
 
 	// count the number of active sounds
 	int count = 0;
-	for (auto &s : g_twp->_audio->_slots) {
+	for (const auto &s : g_twp->_audio->_slots) {
 		if (s.busy)
 			count++;
 	}
@@ -494,6 +511,7 @@ static void drawGeneral() {
 	if (ImGui::CollapsingHeader("Windows")) {
 		ImGui::Checkbox("Threads", &state._showThreads);
 		ImGui::Checkbox("Objects", &state._showObjects);
+		ImGui::Checkbox("Object", &state._showObject);
 		ImGui::Checkbox("Actor", &state._showActor);
 		ImGui::Checkbox("Stack", &state._showStack);
 		ImGui::Checkbox("Audio", &state._showAudio);
@@ -503,9 +521,9 @@ static void drawGeneral() {
 	ImGui::Separator();
 
 	// Room shader
-	const char *RoomEffects = "None\0Sepia\0EGA\0VHS\0Ghost\0Black & White\0\0";
 	if (ImGui::CollapsingHeader("Room Shader")) {
 		int effect = static_cast<int>(room->_effect);
+		const char *RoomEffects = "None\0Sepia\0EGA\0VHS\0Ghost\0Black & White\0\0";
 		if (ImGui::Combo("effect", &effect, RoomEffects))
 			room->_effect = (RoomEffect)effect;
 		ImGui::DragFloat("iFade", &g_twp->_shaderParams->iFade, 0.01f, 0.f, 1.f);
@@ -516,9 +534,9 @@ static void drawGeneral() {
 	}
 
 	// Fade Effects
-	const char *FadeEffects = "None\0In\0Out\0Wobble\0\0";
 	if (ImGui::CollapsingHeader("Fade Shader")) {
 		ImGui::Separator();
+		const char *FadeEffects = "None\0In\0Out\0Wobble\0\0";
 		ImGui::Combo("Fade effect", &state._fadeEffect, FadeEffects);
 		ImGui::DragFloat("Duration", &state._fadeDuration, 0.1f, 0.f, 10.f);
 		ImGui::Checkbox("Fade to sepia", &state._fadeToSepia);
@@ -548,7 +566,7 @@ static void drawNode(Node *node) {
 			if (ImGui::Selectable(node->getName().c_str(), &selected)) {
 				state._node = node;
 			}
-			for (auto &child : children) {
+			for (const auto &child : children) {
 				drawNode(child);
 			}
 			ImGui::TreePop();
@@ -574,7 +592,6 @@ static void drawScenegraph() {
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	if (state._node != nullptr) {
 		ImGui::Begin("Node");
-		state._node->isVisible();
 		bool visible = state._node->isVisible();
 		if (ImGui::Checkbox(state._node->getName().c_str(), &visible)) {
 			state._node->setVisible(visible);
@@ -602,6 +619,7 @@ void onImGuiRender() {
 	drawGeneral();
 	drawThreads();
 	drawObjects();
+	drawObject();
 	drawStack();
 	drawAudio();
 	drawResources();

@@ -207,7 +207,7 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 	Text txt(fontName, text, hAlign, vAlign, maxWidth);
 
 	Common::SharedPtr<TextNode> node(new TextNode());
-	node->setName(obj->_key);
+	node->setName(obj->_name);
 	node->setText(txt);
 	float y = 0.5f;
 	switch (vAlign) {
@@ -313,6 +313,7 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 			Common::SharedPtr<Object> obj(new Object());
 			Twp::setId(obj->_table, g_twp->_resManager->newObjId());
 			obj->_key = jObject["name"]->asString();
+			obj->_node->setName(obj->_key.c_str());
 			obj->_node->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
 			obj->_node->setZSort(jObject["zsort"]->asIntegerNumber());
 			obj->_usePos = parseVec2(jObject["usepos"]->asString());
