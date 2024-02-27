@@ -35,7 +35,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0",
+		"Adi 4.00 Collège",
 		AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
 		FR_FRA,
 		kPlatformWindows,
@@ -48,7 +48,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0",
+		"Adi 4.00",
 		AD_ENTRY1s("intro.stk", "44491d85648810bc6fcf84f9b3aa47d5", 5834944),
 		FR_FRA,
 		kPlatformWindows,
@@ -61,7 +61,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0",
+		"Adi 4.00 École",
 		AD_ENTRY1s("intro.stk", "29374c0e3c10b17dd8463b06a55ad093", 6012072),
 		FR_FRA,
 		kPlatformWindows,
@@ -74,7 +74,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0 Limited Edition",
+		"Adi 4.00 Limited Edition",
 		AD_ENTRY1s("intro.stk", "ebbbc5e28a4adb695535ed989c1b8d66", 5929644),
 		FR_FRA,
 		kPlatformWindows,
@@ -155,7 +155,7 @@
 {
 	{
 		"adi4",
-		"Addy 4.21",
+		"Addy 4.21 Sekundarstufe Basisprogramm",
 		AD_ENTRY1s("intro.stk", "534f0b674cd4830df94a9c32c4ea7225", 6878034),
 		DE_DEU,
 		kPlatformWindows,
@@ -187,7 +187,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0 Interactive Demo",
+		"Adi 4.00 Interactive Demo",
 		AD_ENTRY1s("intro.stk", "89ace204dbaac001425c73f394334f6f", 2413102),
 		FR_FRA,
 		kPlatformWindows,
@@ -200,7 +200,7 @@
 {
 	{
 		"adi4",
-		"Adi 4.0 / Adibou 2 Demo",
+		"Adi 4.00 / Adibou 2 Demo",
 		AD_ENTRY1s("intro.stk", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		FR_FRA,
 		kPlatformWindows,
