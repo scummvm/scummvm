@@ -293,6 +293,57 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	glDepthMask(GL_TRUE);
 }
 
+void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
+	uint8 r1, g1, b1, r2, g2, b2;
+	byte *stipple = nullptr;
+	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+
+	useColor(r1, g1, b1);
+
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+
+	// Quick billboard effect inspired from this code:
+	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	/*Math::Matrix4 mvpMatrix = _mvpMatrix;
+
+	for(int i = 2; i < 4; i++)
+		for(int j = 2; j < 4; j++ ) {
+			if (i == 2)
+				continue;
+			if (i == j)
+				_mvpMatrix.setValue(i, j, 1.0);
+			else
+				_mvpMatrix.setValue(i, j, 0.0);
+		}*/
+
+	_triangleShader->use();
+	_triangleShader->setUniform("useStipple", false);
+	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, position);
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		float x = position.x();
+		float y = position.y() + (radius * cos(i *  twicePi / triangleAmount));
+		float z = position.z() + (radius * sin(i * twicePi / triangleAmount));
+		copyToVertexArray(i + 1, Math::Vector3d(x, y, z));
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, (triangleAmount + 2) * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, (triangleAmount + 2));
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	//_mvpMatrix = mvpMatrix;
+}
+
 void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) {
 	Math::Matrix4 identity;
 	identity(0, 0) = 1.0;
