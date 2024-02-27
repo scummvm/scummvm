@@ -50,6 +50,12 @@
  * - Adibou 1
  * - Adibou 2
  * - Adibou 3
+ * - Adibou présente Cuisine
+ * - Adibou présente Dessin
+ * - Adiboud'chou a la mer
+ * - Adiboud'chou sur la banquise
+ * - Adiboud'chou a la campagne
+ * - Adiboud'chou dans la jungle et la savane
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
