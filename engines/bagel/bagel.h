@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "bagel/detection.h"
+#include "bagel/boflib/bit_buf.h"
 #include "bagel/boflib/bof_str.h"
 
 namespace Bagel {
@@ -50,6 +51,7 @@ protected:
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+	ZIPGLOBAL _zg;
 	CBofString _bofEmptyString;
 
 public:
