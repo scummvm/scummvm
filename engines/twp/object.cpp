@@ -96,6 +96,7 @@ Object::~Object() {
 		if (i != (size_t)-1) {
 			_layer->_objects.remove_at(i);
 		}
+		_layer = nullptr;
 	}
 }
 
