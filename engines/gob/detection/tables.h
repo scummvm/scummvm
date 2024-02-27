@@ -72,8 +72,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adibou1", "Adibou 1"},
 	{"adibou2", "Adibou 2"},
 	{"adibou3", "Adibou 3"},
-	{"adiboucuisine", "Adibou presente Cuisine"},
-	{"adiboudessin", "Adibou presente Dessin"},
+	{"adiboucuisine", "Adibou présente Cuisine"},
+	{"adiboudessin", "Adibou présente Dessin"},
 	{"adiboudchoumer", "Adiboud'chou a la mer"},
 	{"adiboudchoubanquise", "Adiboud'chou sur la banquise"},
 	{"adiboudchoucampagne", "Adiboud'chou a la campagne"},
@@ -106,7 +106,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_adibou1.h"   // Adibou 1 / A.J.'s World of Discovery / ADI Jr.
 	#include "gob/detection/tables_adibou2.h"   // The Adibou 2 / Addy Junior series
 	#include "gob/detection/tables_adibou3.h"	// Adibou 3 / Adiboo 3 series
-	#include "gob/detection/tables_adiboupresente.h"	// Adibou presente series
+	#include "gob/detection/tables_adiboupresente.h"	// Adibou présente series
 	#include "gob/detection/tables_adiboudchou.h"		// Adiboud'chou / Addy Buschu series
 	#include "gob/detection/tables_crousti.h"   // Croustibat
 
