@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	boflib/bof_log.o \
 	boflib/bof_object.o \
 	boflib/bof_opt.o \
+	boflib/bof_res.o \
 	boflib/bof_str.o \
 	boflib/cache.o \
 	boflib/crc.o \
