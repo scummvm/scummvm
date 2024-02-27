@@ -20,29 +20,26 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_CRC_H
-#define BAGEL_BOFLIB_CRC_H
+#ifndef BAGEL_BOFLIB_DEFLATE_H
+#define BAGEL_BOFLIB_DEFLATE_H
 
-#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/bof_file.h"
 
 namespace Bagel {
 
 /**
- * Continues a CRC calculation with specified byte
- * @param chr		Byte to calc crc for
- * @param lOldCRC	Original crc to continue calculation
- * @return			New CRC value
- */
-extern ULONG CalcCrcQuick(UBYTE chr, ULONG crcValue);
+ * Huffman Encoding after Compression with 32k Sliding dictionary.
+ * Will deflate Input file and store it in zipFile data area
+ * @return		Error return code
+ *
+**/
+extern ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT factor, ULONG *pCrc, ULONG *pCompressedSize);
 
 /**
- * Calculates the CRC (Cyclic Redundancy Check) for a buffer
- * @param pBuf			Pointer to buffer
- * @param lBufLen		Length of this buffer
- * @param lCrcValue		Previous CRC value (if running CRC)
- * @return				New CRC value
- */
-extern ULONG CalculateCRC(const VOID *pBuffer, LONG lBufLen, ULONG lCrcValue = 0);
+ * Inflate a Deflated file from the zipFile data area
+ * @return		Error return code
+**/
+extern ERROR_CODE Inflate(UBYTE *pDstBuf, INT nDstBufSize, UBYTE *pSrcBuf, INT nSrcBufSize, ULONG lOriginalCrc);
 
 } // namespace Bagel
 

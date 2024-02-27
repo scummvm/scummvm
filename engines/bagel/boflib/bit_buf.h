@@ -143,25 +143,26 @@ struct ZIPGLOBAL {
 /*
  * prototypes
  */
-VOID BitReadInit(UBYTE *pInBuf, INT nBufSize);
-ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt);
-ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize);
-ERROR_CODE BitReadQuick1(USHORT *bitPtr);
-ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT nBufSize);
+extern VOID BitReadInit(UBYTE *pInBuf, INT nBufSize);
+extern ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize);
+extern ERROR_CODE BitReadQuick1(USHORT *bitPtr);
+extern ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT nBufSize);
 
+extern VOID BitWriteInit(VOID);
+extern LONG BitWriteSize(VOID);
+extern ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitAltFlush(VOID);
+extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
+extern ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size);
+extern ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize);
 
-VOID BitWriteInit(VOID);
-LONG BitWriteSize(VOID);
-ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt);
-ERROR_CODE BitAltFlush(VOID);
-ERROR_CODE BitWriteFlush(LONG *rFileSize);
-ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size);
-ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize);
+extern VOID BufReadInit(UBYTE *pInBuf, INT nBufSize);
+extern ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize);
+extern ERROR_CODE BufReadQuick(UBYTE *data);
+extern ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen);
 
-VOID BufReadInit(UBYTE *pInBuf, INT nBufSize);
-ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize);
-ERROR_CODE BufReadQuick(UBYTE *data);
-ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen);
+#define zg g_engine->_zg
 
 } // namespace Bagel
 

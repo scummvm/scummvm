@@ -24,8 +24,6 @@
 
 namespace Bagel {
 
-#define zg g_engine->_zg
-
 /*
  * table of bit masks 0-15 bits
  */
