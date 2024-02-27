@@ -24,6 +24,10 @@
 
 namespace Bagel {
 
+ULONG GetFreePhysMem() {
+	return 999999;
+}
+
 CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
 	CHAR *p, *pszSearch, *pszEndTok;
 	INT nTok, nNewTok, nDiff;
