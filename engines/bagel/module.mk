@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	boflib/bof_debug.o \
 	boflib/bof_error.o \
 	boflib/bof_file.o \
+	boflib/bof_fixed.o \
 	boflib/bof_list.o \
 	boflib/bof_log.o \
 	boflib/bof_object.o \

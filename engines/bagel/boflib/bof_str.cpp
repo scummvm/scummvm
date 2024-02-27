@@ -30,9 +30,6 @@ namespace Bagel {
 
 #define BUF_EXTRA 20
 
-// Local functions
-static CHAR *_strinc(const CHAR *pszBuf);
-
 CBofString::CBofString() {
 	Init();
 }
@@ -809,10 +806,6 @@ VOID CBofString::GrowTo(INT nNewSize) {
 			BofFree(p);
 		}
 	}
-}
-
-CHAR *_strinc(const CHAR *pszBuf) {
-	return (CHAR *)(pszBuf + 1);
 }
 
 INT CBofString::Hash() const {
