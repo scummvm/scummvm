@@ -5241,8 +5241,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pippi", "v1.3.3", "Pippi Start", "5f48d38b0c9b9c8790796d1eb1525713", 517216, Common::EN_ANY, 404),
 	WINGAME1t_l("pippi", "v1.3.3", "PIPPI.EXE", "2f3533b95406015d03d5dcd8ba7d961f", 691043, Common::EN_ANY, 404),
 
-	MACGAME1("planetarizona", "", "Manual Installation/Planet Arizona", "0c7bbb4b24823e5ab871cb4c1d6f3710", 488433, 400),
-	WINGAME1("planetarizona", "", "INSTALL/ARIZONA.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, 400),
+	MACGAME1("planetarizona", "", "Manual Installation/Planet Arizona", "0c7bbb4b24823e5ab871cb4c1d6f3710", 488433, 404),
+	WINGAME1("planetarizona", "", "INSTALL/ARIZONA.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, 404),
 
 	// Mac demo from MacFormat #44
 	// Win demo from Computer Buyer v17n68 (January 1997)

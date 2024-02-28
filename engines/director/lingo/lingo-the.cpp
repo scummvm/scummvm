@@ -1485,9 +1485,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			CastMember *castMember = movie->getCastMember(castId);
 
 			if (castMember && castMember->_type == kCastDigitalVideo) {
-				Common::String path = castMember->getCast()->getVideoPath(castId.member);
-				if (!path.empty()) {
-					((DigitalVideoCastMember *)castMember)->loadVideo(path);
+				if (((DigitalVideoCastMember *)castMember)->loadVideoFromCast()) {
 					((DigitalVideoCastMember *)castMember)->startVideo(channel);
 					// b_updateStage needs to have _videoPlayback set to render video
 					// in the regular case Score::renderSprites sets it.

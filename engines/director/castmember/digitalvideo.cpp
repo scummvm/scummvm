@@ -89,6 +89,13 @@ DigitalVideoCastMember::~DigitalVideoCastMember() {
 		delete _video;
 }
 
+bool DigitalVideoCastMember::loadVideoFromCast() {
+	Common::String path = getCast()->getVideoPath(_castId);
+	if (!path.empty())
+		return loadVideo(path);
+	return false;
+}
+
 bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 	// insert the right video decoder
@@ -209,6 +216,11 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	_channel = channel;
 
 	if (!_video || !_video->isVideoLoaded()) {
+		// try and load the video if not already
+		loadVideoFromCast();
+	}
+
+	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
 		delete widget;
 
@@ -257,10 +269,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 uint DigitalVideoCastMember::getDuration() {
 	if (!_video || !_video->isVideoLoaded()) {
-		Common::String path = getCast()->getVideoPath(_castId);
-		if (!path.empty())
-			loadVideo(path);
-
+		loadVideoFromCast();
 		_duration = getMovieTotalTime();
 	}
 	return _duration;

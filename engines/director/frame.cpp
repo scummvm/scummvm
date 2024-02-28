@@ -915,6 +915,8 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		switch (stream.pos() - startPosition) {
 		case 0:
 			if (sprite._puppet) {
+				stream.readByte();
+			} else {
 				sprite._spriteType = (SpriteType)stream.readByte();
 			}
 			break;
