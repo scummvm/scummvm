@@ -149,6 +149,10 @@ public:
 	 * Get the length of a file
 	 */
 	ULONG GetLength();
+
+	operator Common::SeekableReadStream* () const {
+		return dynamic_cast<Common::SeekableReadStream *>(_stream);
+	}
 };
 
 } // namespace Bagel
