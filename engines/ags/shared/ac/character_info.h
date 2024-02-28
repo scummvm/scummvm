@@ -112,6 +112,12 @@ struct CharacterInfo {
 	int get_blocking_top();    // return Y - BlockingHeight/2
 	int get_blocking_bottom(); // return Y + BlockingHeight/2
 
+	// Returns effective x/y walkspeeds for this character
+	void get_effective_walkspeeds(int &walk_speed_x, int &walk_speed_y) const {
+		walk_speed_x = walkspeed;
+		walk_speed_y = ((walkspeed_y == UNIFORM_WALK_SPEED) ? walkspeed : walkspeed_y);
+	}
+
 	inline bool has_explicit_light() const {
 		return (flags & CHF_HASLIGHT) != 0;
 	}

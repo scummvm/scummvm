@@ -418,10 +418,8 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 	tox = room_to_mask_coord(tox);
 	toy = room_to_mask_coord(toy);
 
-	set_route_move_speed(spee, spee);
-	set_color_depth(8);
-	int mslot = find_route(objX, objY, tox, toy, prepare_walkable_areas(-1), objj + 1, 1, ignwal);
-	set_color_depth(_GP(game).GetColorDepth());
+	int mslot = find_route(objX, objY, tox, toy, spee, spee, prepare_walkable_areas(-1), objj + 1, 1, ignwal);
+
 	if (mslot > 0) {
 		_G(objs)[objj].moving = mslot;
 		_GP(mls)[mslot].direct = ignwal;
