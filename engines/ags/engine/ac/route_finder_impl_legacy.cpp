@@ -655,7 +655,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 	// Special case for vertical and horizontal movements
 	if (ourx == destx) {
 		mlsp->xpermove[aaa] = 0;
-		mlsp->ypermove[aaa] = _G(move_speed_y);
+		mlsp->ypermove[aaa] = move_speed_y;
 		if (desty < oury)
 			mlsp->ypermove[aaa] = -mlsp->ypermove[aaa];
 
@@ -663,7 +663,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 	}
 
 	if (oury == desty) {
-		mlsp->xpermove[aaa] = _G(move_speed_x);
+		mlsp->xpermove[aaa] = move_speed_x;
 		mlsp->ypermove[aaa] = 0;
 		if (destx < ourx)
 			mlsp->xpermove[aaa] = -mlsp->xpermove[aaa];
@@ -676,19 +676,19 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 
 	fixed useMoveSpeed;
 
-	if (_G(move_speed_x) == _G(move_speed_y)) {
-		useMoveSpeed = _G(move_speed_x);
+	if (move_speed_x == move_speed_y) {
+		useMoveSpeed = move_speed_x;
 	} else {
 		// different X and Y move speeds
 		// the X proportion of the movement is (x / (x + y))
 		fixed xproportion = fixdiv(xdist, (xdist + ydist));
 
-		if (_G(move_speed_x) > _G(move_speed_y)) {
+		if (move_speed_x > move_speed_y) {
 			// speed = y + ((1 - xproportion) * (x - y))
-			useMoveSpeed = _G(move_speed_y) + fixmul(xproportion, _G(move_speed_x) - _G(move_speed_y));
+			useMoveSpeed = move_speed_y + fixmul(xproportion, move_speed_x - move_speed_y);
 		} else {
 			// speed = x + (xproportion * (y - x))
-			useMoveSpeed = _G(move_speed_x) + fixmul(itofix(1) - xproportion, _G(move_speed_y) - _G(move_speed_x));
+			useMoveSpeed = move_speed_x + fixmul(itofix(1) - xproportion, move_speed_y - move_speed_x);
 		}
 	}
 
