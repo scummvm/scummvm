@@ -27,6 +27,7 @@ then
 	--disable-16bit \
 	--disable-highres \
 	--disable-scalers \
+	--disable-aspect \
 	--disable-translation \
 	--disable-eventrecorder \
 	--disable-tts \

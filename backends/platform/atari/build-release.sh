@@ -26,6 +26,7 @@ then
 	--disable-nuked-opl \
 	--disable-16bit \
 	--disable-scalers \
+	--disable-aspect \
 	--disable-translation \
 	--disable-eventrecorder \
 	--disable-tts \
