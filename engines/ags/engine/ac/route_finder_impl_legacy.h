@@ -46,7 +46,7 @@ int can_see_from(int x1, int y1, int x2, int y2);
 void get_lastcpos(int &lastcx, int &lastcy);
 
 int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, AGS::Shared::Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0);
-void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y);
+bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y);
 
 } // namespace RouteFinderLegacy
 } // namespace Engine

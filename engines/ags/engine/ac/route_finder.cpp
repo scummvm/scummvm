@@ -51,8 +51,8 @@ public:
 	int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0) override {
 		return AGS::Engine::RouteFinder::find_route(srcx, srcy, xx, yy, move_speed_x, move_speed_y, onscreen, movlst, nocross, ignore_walls);
 	}
-	void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y) override {
-		AGS::Engine::RouteFinder::calculate_move_stage(mlsp, aaa, move_speed_x, move_speed_y);
+	bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) override {
+		return AGS::Engine::RouteFinder::add_waypoint_direct(mlsp, x, y, move_speed_x, move_speed_y);
 	}
 };
 
@@ -78,8 +78,8 @@ public:
 	int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0) override {
 		return AGS::Engine::RouteFinderLegacy::find_route(srcx, srcy, xx, yy, move_speed_x, move_speed_y, onscreen, movlst, nocross, ignore_walls);
 	}
-	void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y) override {
-		AGS::Engine::RouteFinderLegacy::calculate_move_stage(mlsp, aaa, move_speed_x, move_speed_y);
+	bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) override {
+		return AGS::Engine::RouteFinder::add_waypoint_direct(mlsp, x, y, move_speed_x, move_speed_y);
 	}
 };
 
@@ -116,8 +116,8 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	return _GP(route_finder_impl)->find_route(srcx, srcy, xx, yy, move_speed_x, move_speed_y, onscreen, movlst, nocross, ignore_walls);
 }
 
-void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y) {
-	_GP(route_finder_impl)->calculate_move_stage(mlsp, aaa, move_speed_x, move_speed_y);
+bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) {
+	return _GP(route_finder_impl)->add_waypoint_direct(mlsp, x, y, move_speed_x, move_speed_y);
 }
 
 } // namespace AGS3

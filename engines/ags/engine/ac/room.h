@@ -70,8 +70,6 @@ void  croom_ptr_clear();
 // In legacy games with low-res data resolution there's additional conversion
 // between data and room coordinates.
 //
-// gets multiplier for converting from room mask to data coordinate
-extern AGS_INLINE int get_roommask_to_data_mul();
 // coordinate conversion data ---> room ---> mask
 extern AGS_INLINE int room_to_mask_coord(int coord);
 // coordinate conversion mask ---> room ---> data
@@ -79,7 +77,7 @@ extern AGS_INLINE int mask_to_room_coord(int coord);
 
 struct MoveList;
 // Convert move path from room's mask resolution to room resolution
-void convert_move_path_to_room_resolution(MoveList *ml);
+void convert_move_path_to_room_resolution(MoveList *ml, int from_step = 0, int to_step = -1);
 
 } // namespace AGS3
 

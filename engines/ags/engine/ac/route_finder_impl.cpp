@@ -117,7 +117,7 @@ inline fixed input_speed_to_fixed(int speed_val) {
 }
 
 // Calculates the X and Y per game loop, for this stage of the movelist
-void calculate_move_stage_intern(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
+void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	// work out the x & y per move. First, opp/adj=tan, so work out the angle
 	if (mlsp->pos[aaa] == mlsp->pos[aaa + 1]) {
 		mlsp->xpermove[aaa] = 0;
@@ -189,10 +189,6 @@ void calculate_move_stage_intern(MoveList *mlsp, int aaa, fixed move_speed_x, fi
 	mlsp->ypermove[aaa] = newymove;
 }
 
-void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y) {
-	calculate_move_stage_intern(mlsp, aaa, input_speed_to_fixed(move_speed_x), input_speed_to_fixed(move_speed_y));
-}
-
 int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
 
 	_G(wallscreen) = onscreen;
@@ -233,7 +229,7 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 	for (int i = 0; i < _G(num_navpoints) - 1; i++) {
-		calculate_move_stage_intern(&_GP(mls)[mlist], i, fix_speed_x, fix_speed_y);
+		calculate_move_stage(&_GP(mls)[mlist], i, fix_speed_x, fix_speed_y);
 	}
 
 	_GP(mls)[mlist].fromx = srcx;
@@ -244,6 +240,20 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	_GP(mls)[mlist].lastx = -1;
 	_GP(mls)[mlist].lasty = -1;
 	return mlist;
+}
+
+bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) {
+	if (mlsp->numstage >= MAXNEEDSTAGES)
+		return false;
+
+	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
+	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
+	mlsp->pos[mlsp->numstage] = MAKE_INTCOORD(x, y);
+	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
+	mlsp->numstage++;
+	mlsp->lastx = x;
+	mlsp->lasty = y;
+	return true;
 }
 
 } // namespace RouteFinder

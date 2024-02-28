@@ -637,7 +637,7 @@ inline fixed input_speed_to_fixed(int speed_val) {
 }
 
 // Calculates the X and Y per game loop, for this stage of the movelist
-void calculate_move_stage_intern(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
+void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	assert(mlsp != nullptr);
 
 	// work out the x & y per move. First, opp/adj=tan, so work out the angle
@@ -715,10 +715,6 @@ void calculate_move_stage_intern(MoveList *mlsp, int aaa, fixed move_speed_x, fi
 	// wtextcolor(14);
 	// wgtprintf((reallyneed[aaa] >> 16) & 0x000ffff, reallyneed[aaa] & 0x000ffff, _G(cbuttfont), "%d", aaa);
 #endif
-}
-
-void calculate_move_stage(MoveList *mlsp, int aaa, int move_speed_x, int move_speed_y) {
-	calculate_move_stage_intern(mlsp, aaa, input_speed_to_fixed(move_speed_x), input_speed_to_fixed(move_speed_y));
 }
 
 #define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
@@ -844,7 +840,7 @@ stage_again:
 		const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 		const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 		for (aaa = 0; aaa < numstages - 1; aaa++) {
-			calculate_move_stage_intern(&_GP(mls)[mlist], aaa, fix_speed_x, fix_speed_y);
+			calculate_move_stage(&_GP(mls)[mlist], aaa, fix_speed_x, fix_speed_y);
 		}
 
 		_GP(mls)[mlist].fromx = orisrcx;
@@ -866,6 +862,20 @@ stage_again:
 #ifdef DEBUG_PATHFINDER
 	// __unnormscreen();
 #endif
+}
+
+bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int move_speed_y) {
+	if (mlsp->numstage >= MAXNEEDSTAGES)
+		return false;
+
+	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
+	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
+	mlsp->pos[mlsp->numstage] = MAKE_INTCOORD(x, y);
+	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
+	mlsp->numstage++;
+	mlsp->lastx = x;
+	mlsp->lasty = y;
+	return true;
 }
 
 void shutdown_pathfinder() {
