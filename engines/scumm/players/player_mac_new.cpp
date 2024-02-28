@@ -46,6 +46,7 @@ public:
 	void playNote(uint8 note, uint16 duration);
 	void quiet();
 	void flush();
+	void wait(uint32 duration);
 	void loadWaveTable(const byte *data, uint16 dataSize);
 	void loadInstrument(const MacLowLevelPCMDriver::PCMSound *snd);
 	void setTimbre(uint16 timbre);
@@ -403,6 +404,14 @@ void MacLowLevelPCMDriver::flush(ChanHandle handle, ExecMode mode) {
 	ch->enqueueSndCmd(4, 0, 0, mode);
 }
 
+void MacLowLevelPCMDriver::wait(ChanHandle handle, ExecMode mode, uint16 duration) {
+	Common::StackLock lock(_mutex);
+	MacSndChannel *ch = findAndCheckChannel(handle, __FUNCTION__, kIgnoreSynth);
+	if (!ch)
+		return;
+	ch->enqueueSndCmd(10, duration, 0, mode);
+}
+
 void MacLowLevelPCMDriver::loadWaveTable(ChanHandle handle, ExecMode mode, const byte *data, uint16 dataSize) {
 	if (!data || !dataSize)
 		return;
@@ -538,6 +547,14 @@ void MacSndChannel::quiet() {
 	_tmrInc = 0;
 }
 
+void MacSndChannel::wait(uint32 duration) {
+	_duration = duration;
+	if (duration) {
+		_tmrInc = _tmrRate;
+		_tmrPos = 0;
+	}
+}
+
 void MacSndChannel::flush() {
 	_sndCmdQueue.clear();
 }
@@ -579,6 +596,9 @@ void MacSndChannel::enqueueSndCmd(uint8 c, uint16 p1, uint32 p2, byte mode) {
 			break;
 		case 4:
 			flush();
+			break;
+		case 10:
+			wait(p1);
 			break;
 		case 44:
 			setTimbre(p1);
@@ -664,8 +684,8 @@ void MacSndChannel::feed(int32 *dst, uint32 dstSize, byte dstFrameSize) {
 		_tmrPos += _tmrInc;
 		while (_tmrPos > 0x3fffffff) {
 			_tmrPos -= 0x40000000;
-			if (_duration && !--_duration)
-				_data = nullptr;
+			if (_duration)
+				--_duration;
 		}
 
 		if (_synth != MacLowLevelPCMDriver::kSampledSynth || cpos == _rcPos || _data == nullptr)
@@ -738,10 +758,8 @@ void MacSndChannel::setupRateConv(uint32 drate, uint32 mod, uint32 srate, bool p
 
 void MacSndChannel::startSound(uint32 duration) {
 	_duration = duration;
-	if (duration) {
-		_tmrInc = _tmrRate;
-		_tmrPos = 0;
-	}
+	_tmrInc = duration ? _tmrRate : 0;
+	_tmrPos = 0;
 
 	_data = _res.get();
 	_lastSmp[0] = _data[0];
@@ -755,7 +773,7 @@ void MacSndChannel::startSound(uint32 duration) {
 }
 
 void MacSndChannel::processSndCmdQueue() {
-	if (_data)
+	if ((_data && _tmrInc == 0) || _duration)
 		return;
 
 	if (_sndCmdQueue.empty()) {
@@ -778,6 +796,9 @@ void MacSndChannel::processSndCmdQueue() {
 		break;
 	case 4:
 		flush();
+		break;
+	case 10:
+		wait(c.arg1);
 		break;
 	case 13:
 		callback(c.arg1, c.ptr);

@@ -283,14 +283,19 @@ void LoomMacSnd::sendSoundCommands(const byte *data, int timeStamp) {
 		while (len--) {
 			uint16 p1 = READ_BE_UINT16(s);
 			s += 2;
-			uint32 p2 = 0x8f00 | *s++;
+			uint8 note = *s++;
+
 			if (timeStamp > 0) {
 				int ts = timeStamp;
 				timeStamp = MAX<int>(0, timeStamp - p1);
 				p1 -= ts;
 			}
-			if (!timeStamp)
-				_sdrv->playNote(_sndChannel, MacLowLevelPCMDriver::kEnqueue, p2 & 0x7f, p1);
+			if (timeStamp)
+				continue;
+
+			_sdrv->playNote(_sndChannel, MacLowLevelPCMDriver::kEnqueue, note & 0x7f, p1);
+			if (note == 0) // Workaround for tempo glitch in original driver
+				_sdrv->wait(_sndChannel, MacLowLevelPCMDriver::kEnqueue, p1);
 		}
 		_sdrv->quiet(_sndChannel, MacLowLevelPCMDriver::kEnqueue);
 		_sdrv->callback(_sndChannel, MacLowLevelPCMDriver::kEnqueue, 1, nullptr);
@@ -319,15 +324,21 @@ void LoomMacSnd::sendSoundCommands(const byte *data, int timeStamp) {
 				uint16 p1 = READ_BE_UINT16(src[i]);
 				src[i] += 2;
 				byte note = *src[i]++;
-				uint32 p2 = (/*_curSynthType == 4 && */note == 0) ? 1 : (0x8f00 | note);
 				if (tmstmp[i] > 0) {
 					int ts = tmstmp[i];
 					tmstmp[i] = MAX<int>(0, tmstmp[i] - p1);
 					p1 -= ts;
 				}
 				loop |= static_cast<bool>(--len[i]);
-				if (!tmstmp[i])
-					_sdrv->playNote(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, p2 & 0x7f, p1);
+
+				if (tmstmp[i])
+					continue;
+
+				_sdrv->playNote(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, (_curSynthType == 4 && note == 0) ? 1 : note & 0x7f, p1);
+				// Workaround for tempo glitch in original driver. For the sampled synth in 4 channel mode, there is
+				// some sort of fix in the original (see above), but that really does not work well for the other cases.
+				if (note == 0 && _curSynthType != 4)
+					_sdrv->wait(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, p1);
 			}
 		}
 
@@ -461,7 +472,7 @@ void LoomMacSnd::detectQuality() {
 		if (isSoundCardType10())
 			_machineRating = 1;
 		/*else if (0)
-			_machineQuality = 2;*/
+			_machineRating = 2;*/
 		else
 			_machineRating = 3;
 	}

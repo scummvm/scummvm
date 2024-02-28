@@ -134,6 +134,7 @@ public:
 	void playNote(ChanHandle handle, ExecMode mode, uint8 note, uint16 duration);
 	void quiet(ChanHandle handle, ExecMode mode);
 	void flush(ChanHandle handle, ExecMode mode);
+	void wait(ChanHandle handle, ExecMode mode, uint16 duration);
 	void loadWaveTable(ChanHandle handle, ExecMode mode, const byte *data, uint16 dataSize);
 	void loadInstrument(ChanHandle handle, ExecMode mode, const PCMSound *snd);
 	void setTimbre(ChanHandle handle, ExecMode mode, uint16 timbre);
