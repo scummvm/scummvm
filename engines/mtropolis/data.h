@@ -83,7 +83,7 @@ struct DataIO<MTropolis::Data::DataFormat, Common::XPFloat> {
 		if (dataFormat == MTropolis::Data::kDataFormatMacintosh) {
 			DataIO<MTropolis::Data::DataFormat, uint16>::encode(dataFormat, data + 0, value.signAndExponent);
 			DataIO<MTropolis::Data::DataFormat, uint64>::encode(dataFormat, data + 2, value.mantissa);
-		} else if (MTropolis::Data::kDataFormatWindows) {
+		} else if (dataFormat == MTropolis::Data::kDataFormatWindows) {
 			uint64 doubleBits = 0;
 			bool overflowed = false;
 			value.toDoubleBitsSafe(doubleBits, overflowed);
@@ -95,7 +95,7 @@ struct DataIO<MTropolis::Data::DataFormat, Common::XPFloat> {
 		if (dataFormat == MTropolis::Data::kDataFormatMacintosh) {
 			DataIO<MTropolis::Data::DataFormat, uint16>::decode(dataFormat, data + 0, value.signAndExponent);
 			DataIO<MTropolis::Data::DataFormat, uint64>::decode(dataFormat, data + 2, value.mantissa);
-		} else if (MTropolis::Data::kDataFormatWindows) {
+		} else if (dataFormat == MTropolis::Data::kDataFormatWindows) {
 			uint64 doubleBits = 0;
 			DataIO<MTropolis::Data::DataFormat, uint64>::decode(dataFormat, data, doubleBits);
 			value = value.fromDoubleBits(doubleBits);
