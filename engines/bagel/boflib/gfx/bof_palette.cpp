@@ -26,6 +26,9 @@
 
 namespace Bagel {
 
+CBofPalette *CBofPalette::m_pSharedPalette;
+CHAR CBofPalette::m_szSharedPalFile[MAX_FNAME];
+
 void CBofPalette::initStatics() {
 	m_pSharedPalette = nullptr;
 	m_szSharedPalFile[0] = '\0';
@@ -336,25 +339,10 @@ HPALETTE CopyWindowsPalette(HPALETTE hPal) {
 #endif
 
 RGBCOLOR CBofPalette::GetColor(UBYTE nIndex) {
-	RGBCOLOR cColor;
+	const byte *rgb = &m_hPalette._data[nIndex * 3];
 
-#if BOF_WINDOWS
-	PALETTEENTRY stColor;
-
-	GetPaletteEntries(m_hPalette, nIndex, 1, &stColor);
-
-	cColor = RGB(stColor.peRed, stColor.peGreen, stColor.peBlue);
-
-#elif BOF_MAC
-	RGBColor stColor;
-
-	GetEntryColor(m_hPalette, nIndex, &stColor);
-
-	cColor = RGB(stColor.red >> 8, stColor.green >> 8, stColor.blue >> 8);
-
-#endif
-
-	return (cColor);
+	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);
+	return cColor;
 }
 
 VOID CBofPalette::AnimateEntry(UBYTE nIndex, RGBCOLOR cColor) {

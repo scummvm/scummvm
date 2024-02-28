@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "bagel/boflib/misc.h"
 
@@ -27,6 +28,11 @@ namespace Bagel {
 ULONG GetFreePhysMem() {
 	return 999999;
 }
+
+BOOL FileExists(const CHAR *filename) {
+	return Common::File::exists(filename);
+}
+
 
 CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
 	CHAR *p, *pszSearch, *pszEndTok;
