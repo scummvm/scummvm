@@ -154,6 +154,8 @@ public:
 
 	virtual VOID OnTimer(UINT nTimerId);
 
+	Graphics::ManagedSurface *getSurface();
+
 #if BOF_WINDOWS
 
 	VOID ShowWindow(VOID) { Show(); }
@@ -204,7 +206,7 @@ public:
 	VOID SetCustomWindow(BOOL isCustom) { m_bCustomMacWindow = isCustom; }
 	BOOL IsCustomWindow(VOID) { return m_bCustomMacWindow; }
 #endif
-	// jwl 10.21.96 this can now be public, need to call it from listbox code
+
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID FillWindow(UBYTE iColor);
 	VOID FillRect(CBofRect *pRect, UBYTE iColor);
@@ -303,7 +305,6 @@ public:
 };
 
 class CBofTimerPacket : public CBofObject, public CLList {
-
 public:
 	CBofWindow *m_pOwnerWindow;
 	BOFCALLBACK m_pCallBack;
