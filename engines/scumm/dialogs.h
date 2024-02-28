@@ -299,6 +299,30 @@ private:
 };
 
 /**
+* Options widget for Mac Loom.
+*/
+class LoomMacGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	LoomMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~LoomMacGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+private:
+	enum {
+		kQualitySliderUpdate = 'QUAL'
+	};
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void updateQualitySlider();
+
+	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+	GUI::SliderWidget *_sndQualitySlider;
+	GUI::StaticTextWidget *_sndQualityValue;
+	int _quality;
+};
+
+/**
  * Options widget for VGA Loom (DOS CD).
  */
 class LoomVgaGameOptionsWidget : public ScummOptionsContainerWidget {

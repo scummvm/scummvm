@@ -567,7 +567,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
+	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS && platform != Common::kPlatformMacintosh)
 		return nullptr;
 
 	Common::String extra = ConfMan.get("extra", target);
@@ -580,10 +580,11 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 
 	if (extra == "Steam")
 		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+	else if (platform == Common::kPlatformMacintosh)
+		return new Scumm::LoomMacGameOptionsWidget(boss, name, target);
 
 	// These EGA Loom settings are only relevant for the EGA
 	// version, since that is the only one that has an overture.
-
 	return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
 }
 
@@ -653,7 +654,7 @@ static const ExtraGuiOption fmtownsTrimTo200 = {
 
 static const ExtraGuiOption macV3LowQualityMusic = {
 	_s("Play simplified music"),
-	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
+	_s("This music was intended for low-end Macs, and uses only one channel."),
 	"mac_v3_low_quality_music",
 	false,
 	0,
@@ -773,7 +774,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	// The low quality music in Loom was probably intended for low-end
 	// Macs. It plays only one channel, instead of three.
 
-	if (target.empty() || ((gameid == "loom" || gameid == "indy3") && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+	if (target.empty() || (gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
 	}
 

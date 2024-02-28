@@ -2179,6 +2179,8 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 			_musicEngine = MacSound::createPlayer(this);
 			if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
 				_musicEngine->setQuality(MacSound::kQualityLowest);
+			else if (ConfMan.hasKey("mac_snd_quality"))
+				_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
 			_sound->_musicType = MDT_MACINTOSH;
 		}
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
