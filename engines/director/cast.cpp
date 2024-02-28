@@ -121,12 +121,6 @@ CastMember *Cast::getCastMember(int castId, bool load) {
 		_loadMutex = false;
 		result->load();
 		while (!_loadQueue.empty()) {
-			// prevents double loading of a filmloop of filmloop
-			if (_loadQueue.back()->_type == kCastFilmLoop) {
-				CastMember *subfilmloop = _loadQueue.back();
-				_loadQueue.pop_back();
-				subfilmloop->load();
-			}
 			_loadQueue.back()->load();
 			_loadQueue.pop_back();
 		}
