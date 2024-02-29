@@ -138,8 +138,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		debug("GOTO SCENE: %u", ivals[0]);
 		state._currentFrame = ivals[0];
 		break;
-	case 0x1300: // PLAY SFX?    i:int - eg [72], found in Dragon + HoC intro
-		debug("TODO: PLAY SFX?: %u", ivals[0]);
+	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
+		_vm->_soundPlayer->playSFX(ivals[0]);
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
 		state._drawColFG = static_cast<byte>(ivals[0]);
@@ -273,19 +273,24 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 	}
 	case 0xf060:
 		// LOAD SONG:	filename:str
-		// TODO: use state._currentSongId
 		if (_vm->_platform == Common::kPlatformAmiga) {
+			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 		} else if (_vm->_platform == Common::kPlatformMacintosh) {
-			_vm->_soundPlayer->playMacMusic(sval.c_str());
+			_vm->_soundPlayer->loadMacMusic(sval.c_str());
+			_vm->_soundPlayer->playMusic(state._currentSongId);
 		} else {
-			_vm->_soundPlayer->playMusic(sval.c_str());
+			_vm->_soundPlayer->loadMusic(sval.c_str());
+			_vm->_soundPlayer->playMusic(state._currentSongId);
 		}
+		break;
+
+	case 0x0220: // STOP CURRENT MUSIC
+		_vm->_soundPlayer->stopMusic();
 		break;
 
 	// Unimplemented / unknown
 	case 0x00C0: // FREE BACKGROUND (free getput item pointed to by _currentGetPutId)
-	case 0x0220: // STOP CURRENT MUSIC
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1070: // SELECT FONT  i:int
 	case 0x1310: // STOP SFX    i:int   eg [107]
@@ -375,7 +380,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 	env.scr->seek(0);
 	uint16 op = 0;
 	for (uint frame = 0; frame < env._totalFrames; frame++) {
-		env._frameOffsets[frame] = env.scr->pos();
+		env._frameOffsets[frame] = env.scr->pos() + (op == 0x0ff0 ? 2 : 0);
 		//debug("findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
 		op = env.scr->readUint16LE();
 		while (op != 0x0ff0 && env.scr->pos() < env.scr->size()) {
@@ -579,6 +584,7 @@ bool ADSInterpreter::playScene() {
 	if (!env)
 		error("Couldn't find environment num %d", _currentTTMSeq->_enviro);
 
+	_adsData._gotoTarget = -1;
 	return _ttmInterpreter->run(*env, *_currentTTMSeq);
 }
 
@@ -740,27 +746,27 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		uint16 unk = scr->readUint16LE();
 		debug("ADS: add scene - env %d seq %d runCount %d unk %d", enviro, seqnum, runCount, unk);
 
-		TTMSeq *state = findTTMSeq(enviro, seqnum);
-		if (!state)
+		TTMSeq *seq = findTTMSeq(enviro, seqnum);
+		if (!seq)
 			error("ADS invalid seq requested %d %d", enviro, seqnum);
 
 		if (code == 0x2000)
-			state->_currentFrame = state->_startFrame;
+			seq->_currentFrame = seq->_startFrame;
 
-		_currentTTMSeq = state;
+		_currentTTMSeq = seq;
 		if (runCount == 0) {
-			state->_runFlag = kRunType1;
+			seq->_runFlag = kRunType1;
 		} else if (runCount < 0) {
 			// Negative run count sets the cut time
-			state->_timeCut = g_system->getMillis() + runCount;
+			seq->_timeCut = g_system->getMillis() + runCount;
 			// Should this be *10 like delays?
-			warning("TODO: checkhandling of negative runcount %d", runCount);
-			state->_runFlag = kRunTypeTimeLimited;
+			warning("TODO: check handling of negative runcount %d", runCount);
+			seq->_runFlag = kRunTypeTimeLimited;
 		} else {
-			state->_runFlag = kRunTypeMulti;
-			state->_runCount = runCount - 1;
+			seq->_runFlag = kRunTypeMulti;
+			seq->_runCount = runCount - 1;
 		}
-		state->_runPlayed++;
+		seq->_runPlayed++;
 		break;
 	}
 	case 0x2020: { // RESET SEQ, 2 params (env, seq)
@@ -768,9 +774,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
 		debug("ADS: reset scene env %d seq %d unk %d", enviro, seqnum, unk);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq)
-			seq->reset();
+		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		if (_currentTTMSeq)
+			_currentTTMSeq->reset();
 		break;
 	}
 
@@ -779,11 +785,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 	case 0xF010: {// FADE_OUT, 1 param
 		int16 segment = scr->readSint16LE();
-		int16 idx = getArrIndexOfSegNum(segment);
-		debug("ADS: set state 2, segment param %x (idx %d)", segment, idx);
+		int16 idx = _adsData._runningSegmentIdx;
+		if (segment >= 0)
+			idx = getArrIndexOfSegNum(segment);
+		debug("ADS: set state 2, segment param %d (idx %d)", segment, idx);
 		if (idx >= 0)
 			_adsData._state[idx] = 2;
-		break;
+		if (idx == _adsData._runningSegmentIdx)
+			return false;
+		else
+			return true;
 	}
 
 	//// unknown / to-be-implemented
@@ -797,7 +808,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1080: // if current seq countdown, 1 param
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
-	case 0x2010: // STOP_SCENE, 3 params
+	case 0x2010: // STOP_SCENE, 3 params (ttmenv, ttmseq, ?)
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params
@@ -829,8 +840,9 @@ int16 ADSInterpreter::getStateForSceneOp(uint16 segnum) {
 			if (seq->_runFlag != kRunTypeStopped && !seq->_selfLoop)
 				return 1;
 		}
+		return 0;
 	}
-	return 0;
+	return 1;
 }
 
 
@@ -869,7 +881,7 @@ bool ADSInterpreter::run() {
 		int16 state = _adsData._state[i];
 		int32 offset = _adsData._segments[i];
 		_adsData.scr->seek(offset);
-		int16 segnum = _adsData.scr->readSint16LE();
+		/*int16 segnum =*/ _adsData.scr->readSint16LE();
 		offset += 2;
 		if (state & 8) {
 			state &= 0xfff7;
@@ -887,9 +899,10 @@ bool ADSInterpreter::run() {
 			state = 1;
 		}
 
+		_adsData._runningSegmentIdx = i;
 		if (_adsData.scr && state == 1) {
 			_adsData.scr->seek(offset);
-			debug("ADS: Run segment %d idx %d/%d", segnum, i, _adsData._maxSegments);
+			//debug("ADS: Run segment %d idx %d/%d", segnum, i, _adsData._maxSegments);
 			runUntilBranchOpOrEnd();
 		}
 	}
@@ -910,13 +923,13 @@ bool ADSInterpreter::run() {
 			_adsData._hitTTMOp0110 = false;
 			_adsData._scriptDelay = -1;
 			bool scriptresult = false;
+			// Next few lines of code in a separate function in the original..
 			if (curframe < env->_totalFrames && curframe > -1 && env->_frameOffsets[curframe] > -1) {
 				env->scr->seek(env->_frameOffsets[curframe]);
-				_currentTTMSeq = &seq;
 				scriptresult = playScene();
 			}
 
-			if (scriptresult) {
+			if (scriptresult && sflag != 5) {
 				seq._executed = true;
 				seq._lastFrame = seq._currentFrame;
 				result = true;

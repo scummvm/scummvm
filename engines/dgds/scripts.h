@@ -102,7 +102,8 @@ struct TTMSeq {
 class ADSData : public ScriptParserData {
 public:
 	ADSData() : _initFlag(false), _maxSegments(0), _scriptDelay(-1),
-			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1) {
+			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1),
+			_runningSegmentIdx(0) {
 		for (int i = 0; i < ARRAYSIZE(_state); i++) {
 			_state[i] = 8;
 		}
@@ -126,6 +127,7 @@ public:
 	int32 _gotoTarget;
 	bool _hitTTMOp0110;
 	bool _hitBranchOp;
+	int16 _runningSegmentIdx;
 };
 
 class TTMInterpreter {

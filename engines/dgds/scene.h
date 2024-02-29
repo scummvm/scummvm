@@ -47,11 +47,11 @@ enum SceneCondition {
 	kSceneCondLessThan = 1,
 	kSceneCondEqual = 2,
 	kSceneCondNegate = 4,
-	kSceneCondSceneAbsVal = 8,
+	kSceneCondAbsVal = 8,
 	kSceneCondAlwaysTrue = 0x10,
 	kSceneCondNeedItemField14 = 0x20,
 	kSceneCondNeedItemField12 = 0x40,
-	kSceneCond80 = 0x80
+	kSceneCondSceneState = 0x80
 };
 
 struct SceneConditions {
