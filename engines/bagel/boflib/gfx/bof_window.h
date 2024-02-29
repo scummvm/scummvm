@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_GFX_BOF_WINDOW_H
 
 #include "bagel/boflib/boffo.h"
+#include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/bof_object.h"
 #include "bagel/boflib/point.h"
@@ -46,106 +47,252 @@ class CBofTimerPacket;
 class CBofWindow : public CLList, public CBofObject, public CBofError {
 
 public:
-	CBofWindow(VOID);
-	CBofWindow(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = NULL);
+	/**
+	 * Default constructor
+	 */
+	CBofWindow();
+
+	/**
+	 * Constructor for CBofWindow
+	 * @param pszName	Name of window
+	 * @param x			X position
+	 * @param y			Y position
+	 * @param nWidth	Width of window to create (optional)
+	 * @paramnHeight	Height of window to create (optional)
+	 * @param pParent	Parent of this window (optional)
+	 */
+	CBofWindow(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
+
+	/**
+	 * Destructor
+	 */
 	virtual ~CBofWindow();
 
-	static ERROR_CODE Initialize(VOID);
-	static ERROR_CODE ShutDown(VOID);
+	static ERROR_CODE Initialize();
+	static ERROR_CODE ShutDown();
 
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = NULL, UINT nControlID = 0);
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = NULL, CBofWindow *pParent = NULL, UINT nControlID = 0);
+	/**
+	 * Creates a window
+	 * @param pszName		Name of window
+	 * @param x				X position of upper-left corner
+	 * @param y				Y position of upper-left corner
+	 * @param nWidth		Width of window to create (optional)
+	 * @param nHeight		Height of window to create (optional)
+	 * @param pParent		Parent of this window (optional)
+	 * @param nControlID	User defined ID of this window
+	 * @return				Error return code
+	 */
+	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 
-	virtual VOID Destroy(VOID);
-	virtual VOID DestroyWindow(VOID) { Destroy(); }
+	/**
+	 * Creates a window
+	 * @param pszName		Name of window
+	 * @param pRect			Reactangle for window placement
+	 * @param pParent		Parent of this window (optional)
+	 * @paramnControlID		User defined ID of this window
+	 * @return				Error return code
+	 */
+	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 
-	VOID Show(VOID);
-	VOID Select(VOID);
-	VOID Hide(VOID);
+	/**
+	 * Destroys the Window attached to this CBofWindow (if any)
+	 */
+	virtual VOID Destroy();
+	virtual VOID DestroyWindow() { Destroy(); }
 
-	VOID Center(VOID);
+	/**
+	 * Shows current window (if hidden)
+	 */
+	VOID Show();
+
+	VOID Select();
+
+	/**
+	 * Hides current window (if shown)
+	 */
+	VOID Hide();
+
+	/**
+	 * Centers current window in parent window or in screen
+	 */
+	VOID Center();
+
+	/**
+	 * Moves current window to specified location in parent
+	 * @param x			New upper left corner X position
+	 * @param y			New upper left corner Y position
+	 * @param bRepaint	TRUE if should update the window
+	 */
 	VOID Move(const INT x, const INT y, BOOL bRepaint = FALSE);
+
+	/**
+	 * Resizes current window to specified area
+	 * @param pRect		New area for window
+	 * @parambRepaint	Optional repaint after resize
+	 */
 	VOID ReSize(CBofRect *pRect, BOOL bRepaint = FALSE);
 
-	VOID Close(VOID) { /*PostMessage(BM_CLOSE, 0, 0);*/ }
+	VOID Close() { /*PostMessage(BM_CLOSE, 0, 0);*/ }
 
+	/**
+	 * Posts a message
+	 * @param lMessage		Message to post
+	 * @param lParam1		User info
+	 * @param lParam2		More user info
+	 */
 	VOID PostMessage(ULONG nMessage, ULONG lParam1, ULONG lParam2);
+
+	/**
+	 * Post's a user defined message
+	 */
 	VOID PostUserMessage(ULONG nMessage, ULONG lExtraInfo);
 
-	VOID SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack = NULL);
-	VOID KillTimer(UINT nTimerID);
-	VOID KillMyTimers(VOID);
+	/**
+	 * Sets a timer which calls specified callback (or OnTimer)
+	 * @param nID			ID of timer to set
+	 * @param nInterval		Number of milliseconds till event
+	 * @param pCallBack		Function to call when time is up
+	 */
+	VOID SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack = nullptr);
 
+	/**
+	 * Stops specified timer
+	 * @param nID		ID of timer to stop
+	 */
+	VOID KillTimer(UINT nTimerID);
+
+	/**
+	 * Stops all timers associated with current window
+	 */
+	VOID KillMyTimers();
+
+	/**
+	 * Determines if specified window is a child to current window
+	 * @param pWnd		Window to check
+	 * @return			TRUE if pWnd is a child of current window, FALSE if not
+	 */
 	BOOL IsChildOf(CBofWindow *pWin);
+
+	/**
+	 * Determines if specified window is a parent to current window
+	 * @param pWnd		Window to check
+	 * @return			TRUE if pWnd is a parent of current window, FALSE if not
+	 */
 	BOOL IsParentOf(CBofWindow *pWin);
 
-	CBofWindow *GetParent(VOID) { return (m_pParentWnd); }
-	CBofWindow *GetAnscestor(VOID);
+	CBofWindow *GetParent() { return m_pParentWnd; }
+	CBofWindow *GetAnscestor();
 
-	VOID ValidateAnscestors(CBofRect *pRect = NULL);
+	/**
+	 * Causes all parent windows to have valid paint regions
+	 * @param pRect			Area to validate
+	 */
+	VOID ValidateAnscestors(CBofRect *pRect = nullptr);
 
-	static CBofWindow *GetActiveWindow(VOID) { return (m_pActiveWindow); }
+	static CBofWindow *GetActiveWindow() { return m_pActiveWindow; }
 #if BOF_MAC
 	// jwl 08.23.96 mac stuff is in cbofwin.cpp
-	BOOL IsInActiveList(VOID);
-	VOID SetActive(VOID);
-	VOID RemoveFromActiveList(VOID);
+	BOOL IsInActiveList();
+	VOID SetActive();
+	VOID RemoveFromActiveList();
 #else
-	VOID SetActive(VOID) { m_pActiveWindow = this; }
+	VOID SetActive() { m_pActiveWindow = this; }
 #endif
 
-	static CBofWindow *GetWindowList(VOID) { return (m_pWindowList); }
+	static void initStatics();
+	static CBofWindow *GetWindowList() { return m_pWindowList; }
 
-	CBofRect GetWindowRect(VOID) { return (m_cWindowRect); }
-	CBofRect GetClientRect(VOID);
+	CBofRect GetWindowRect() const { return m_cWindowRect; }
+	CBofRect GetClientRect();
 
-	CBofRect GetRect(VOID) { return (m_cRect); }
+	CBofRect GetRect() const { return m_cRect; }
 
-	INT Width(VOID) { return (m_cRect.Width()); }
-	INT Height(VOID) { return (m_cRect.Height()); }
+	INT Width() const { return m_cRect.Width(); }
+	INT Height() const { return m_cRect.Height(); }
 
 	VOID ScreenToClient(CBofPoint *pPoint);
 	VOID ClientToScreen(CBofPoint *pPoint);
 
+	/**
+	 * Selects and Realizes specified palette into current DC
+	 * @param pPal		Palette to select
+	 */
 	VOID SelectPalette(CBofPalette *pPal);
 
+	/**
+	 * Associates a new background bitmap to this window
+	 * @param pBitmap		New background bitmap
+	 * @param bRefresh		TRUE if should repaint now
+	 * @return				Error return code
+	 */
 	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh = FALSE);
+
+	/**
+	 * Associates a new background bitmap to this window
+	 * @param pszFileName	new background bitmap from file
+	 * @param bRefresh		TRUE if should repaint now
+	 * @return				Error return code
+	 */
 	ERROR_CODE SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh = FALSE);
 
-	// jwl 09.12.96 used to clear backdrop when we "borrow" one from another object.
-	VOID ClearBackdrop(VOID) { m_pBackdrop = NULL; }
+	VOID ClearBackdrop() { m_pBackdrop = nullptr; }
 
-	CBofBitmap *GetBackdrop(VOID) { return (m_pBackdrop); }
+	CBofBitmap *GetBackdrop() { return m_pBackdrop; }
 
-	BOOL HasBackdrop(VOID) { return (m_pBackdrop != NULL); }
+	BOOL HasBackdrop() { return m_pBackdrop != nullptr; }
 
-	VOID KillBackdrop(VOID);
-	ERROR_CODE PaintBackdrop(CBofRect *pRect = NULL, INT nTransparentColor = -1);
+	/**
+	 * Deletes the background bitmap associated with this window
+	 */
+	VOID KillBackdrop();
+
+	/**
+	 * Updates the specified section of the background bitmap
+	 * @param pRect		Area of bitmap to update on screen
+	 * @return			Error return code
+	 */
+	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, INT nTransparentColor = -1);
 
 	VOID SetControlID(UINT nID) { m_nID = nID; }
-	UINT GetControlID(VOID) { return (m_nID); }
+	UINT GetControlID() { return m_nID; }
 
 	VOID SetBkColor(RGBCOLOR cColor) { m_cBkColor = cColor; }
-	RGBCOLOR GetBkColor(VOID) { return (m_cBkColor); }
+	RGBCOLOR GetBkColor() { return m_cBkColor; }
 
 	VOID SetFgColor(RGBCOLOR cColor) { m_cFgColor = cColor; }
-	RGBCOLOR GetFgColor(VOID) { return (m_cFgColor); }
+	RGBCOLOR GetFgColor() { return m_cFgColor; }
 
 	VOID SetPrevMouseDown(CBofPoint p) { m_cPrevMouseDown = p; }
-	CBofPoint GetPrevMouseDown(VOID) { return (m_cPrevMouseDown); }
+	CBofPoint GetPrevMouseDown() { return m_cPrevMouseDown; }
 
-	VOID SetCapture(VOID);
-	VOID ReleaseCapture(VOID);
+	/**
+	 * Sets mouse capture for this window
+	 */
+	VOID SetCapture();
 
-	VOID FlushAllMessages(VOID);
+	/**
+	 * Release mouse capture for this window
+	 */
+	VOID ReleaseCapture();
 
+	VOID FlushAllMessages();
+
+	/**
+	 * Adds specified rectangle to dirty rect list for this window
+	 * @param pRect		Rectangle to add to dirty list
+	 */
 	VOID ValidateRect(CBofRect *pRect);
+
+	/**
+	 * Removes specified rectangle from dirty rect for this window
+	 * @param pRect		Rectangle to remove from dirty list
+	 */
 	VOID InvalidateRect(CBofRect *pRect);
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo);
 	virtual VOID OnBofScrollBar(CBofObject *pButton, INT nNewPos);
 	virtual VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMainLoop();
 
 	virtual VOID OnSoundNotify(CBofObject *pObject, ULONG lParam2);
 	virtual VOID OnMovieNotify(ULONG lParam1, ULONG lParam2);
@@ -156,55 +303,64 @@ public:
 
 	Graphics::ManagedSurface *getSurface();
 
+	/**
+	 * ScummVM always has it's own window active whilst running
+	*/
+	BOOL IsCreated() const { return true; }
+
 #if BOF_WINDOWS
 
-	VOID ShowWindow(VOID) { Show(); }
-	VOID HideWindow(VOID) { Hide(); }
+	VOID ShowWindow() { Show(); }
+	VOID HideWindow() { Hide(); }
 
-	virtual VOID Enable(VOID) { ::EnableWindow(m_hWnd, TRUE); }
-	virtual VOID Disable(VOID) { ::EnableWindow(m_hWnd, FALSE); }
+	virtual VOID Enable() { ::EnableWindow(m_hWnd, TRUE); }
+	virtual VOID Disable() { ::EnableWindow(m_hWnd, FALSE); }
 
-	BOOL IsVisible(VOID) { return (::IsWindowVisible(m_hWnd)); }
-	BOOL IsEnabled(VOID) { return (::IsWindowEnabled(m_hWnd)); }
-	BOOL IsCreated(VOID) { return (m_hWnd != NULL); }
+	BOOL IsVisible() { return ::IsWindowVisible(m_hWnd); }
+	BOOL IsEnabled() { return ::IsWindowEnabled(m_hWnd); }
+	BOOL IsCreated() { return m_hWnd != nullptr; }
 
-	HDC GetDC(VOID) { return ::GetDC(m_hWnd); }
+	HDC GetDC() { return ::GetDC(m_hWnd); }
 	VOID ReleaseDC(HDC hDC) { ::ReleaseDC(m_hWnd, hDC); }
 
 	static CBofWindow *FromHandle(HWND hWnd);
-	HWND GetHandle(VOID) { return (m_hWnd); }
+	HWND GetHandle() { return m_hWnd; }
 
 	virtual LONG OnDefWinProc(UINT nMessage, WPARAM wParam, LPARAM lParam);
 
 	LONG WindowProcedure(UINT nMessage, WPARAM wParam, LPARAM lParam);
 
-	VOID SetFocus(VOID) { ::SetFocus(m_hWnd); }
+	VOID SetFocus() { ::SetFocus(m_hWnd); }
 
-	VOID UpdateWindow(VOID) { ::UpdateWindow(m_hWnd); }
+	VOID UpdateWindow() { ::UpdateWindow(m_hWnd); }
 
 #if BOF_WINMAC
-	WindowPtr GetMacWindow(VOID);
+	WindowPtr GetMacWindow();
 #endif
 
 #elif BOF_MAC
-	virtual VOID Enable(VOID) { m_bEnabled = TRUE; }
-	virtual VOID Disable(VOID) { m_bEnabled = FALSE; }
+	virtual VOID Enable() { m_bEnabled = TRUE; }
+	virtual VOID Disable() { m_bEnabled = FALSE; }
 
 	static CBofWindow *FromMacWindow(WindowPtr pWindow);
+
+	/**
+	 * Handles specified Event
+	 */
 	static BOOL HandleMacEvent(EventRecord *pEvent);
-	static VOID HandleMacTimers(VOID);
+	static VOID HandleMacTimers();
 
-	WindowPtr GetMacWindow(VOID) { return (m_pWindow); }
+	WindowPtr GetMacWindow() { return m_pWindow; }
 
-	BOOL IsVisible(VOID) { return (m_bVisible); }
-	BOOL IsEnabled(VOID) { return (m_bEnabled); }
-	BOOL IsCreated(VOID) { return (m_pWindow != NULL); }
+	BOOL IsVisible() { return m_bVisible; }
+	BOOL IsEnabled() { return m_bEnabled; }
+	BOOL IsCreated() { return m_pWindow != nullptr; }
 
-	VOID SetFocus(VOID) { SetActive(); }
+	VOID SetFocus() { SetActive(); }
 
-	VOID UpdateWindow(VOID) { HandleUpdate(); }
+	VOID UpdateWindow() { HandleUpdate(); }
 	VOID SetCustomWindow(BOOL isCustom) { m_bCustomMacWindow = isCustom; }
-	BOOL IsCustomWindow(VOID) { return m_bCustomMacWindow; }
+	BOOL IsCustomWindow() { return m_bCustomMacWindow; }
 #endif
 
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
@@ -223,13 +379,13 @@ protected:
 
 	virtual VOID OnReSize(CBofSize *pSize);
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose(VOID);
+	virtual VOID OnClose();
 
 	virtual VOID OnCommand(ULONG lParam1, ULONG lParam2);
 	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
 
-	virtual VOID OnActivate(VOID);
-	virtual VOID OnDeActivate(VOID);
+	virtual VOID OnActivate();
+	virtual VOID OnDeActivate();
 #if BOF_MAC
 	static VOID HandleOSEvt(EventRecord *);
 	static BOOL HandleApp3Evt(EventRecord *);
@@ -243,11 +399,15 @@ protected:
 	// Internal routines
 	//
 #if BOF_WINMAC
+	/** Selects and Realizes specified palette into current DC
+	 * @param pPal		Palette to select
+	 * @return			success/failure
+	 */
 	BOOL SetMacPalette(CBofPalette *pPalette);
 #endif
 
 #if BOF_MAC
-	VOID HandleUpdate(VOID);
+	VOID HandleUpdate();
 #endif
 
 #if BOF_DEBUG
@@ -256,22 +416,22 @@ protected:
 
 	// Window Data
 	//
-	CHAR m_szTitle[MAX_TITLE]; // Title of window
-	CBofRect m_cWindowRect;    // Screen based area of this window
-	CBofRect m_cRect;          // Window-based area of this window
-	CBofBitmap *m_pBackdrop;   // Backdrop bitmap
-	CBofWindow *m_pParentWnd;  // Pointer to parent window
-	UINT m_nID;                // ID of this window
+	CHAR m_szTitle[MAX_TITLE];	// Title of window
+	CBofRect m_cWindowRect;		// Screen based area of this window
+	CBofRect m_cRect;			// Window-based area of this window
+	CBofBitmap *m_pBackdrop = nullptr;	// Backdrop bitmap
+	CBofWindow *m_pParentWnd = nullptr;	// Pointer to parent window
+	UINT m_nID = 0;				// ID of this window
 
-	RGBCOLOR m_cBkColor;
-	RGBCOLOR m_cFgColor;
+	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
+	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
 
-	BOOL m_bCaptured;
+	BOOL m_bCaptured = FALSE;
 
 	static CBofWindow *m_pWindowList;
 	static CBofWindow *m_pActiveWindow;
 	static CBofTimerPacket *m_pTimerList;
-	CBofPoint m_cPrevMouseDown; // jwl 08.29.96 need to save (local) mouse coords
+	CBofPoint m_cPrevMouseDown;
 
 #if BOF_WINDOWS
 	HWND m_hWnd;
@@ -291,7 +451,7 @@ public:
 #if PALETTESHIFTFIX
 	static CBofList<PaletteShiftItem> *m_pPaletteShiftList;
 	static VOID AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem = 0);
-	static VOID CheckPaletteShiftList(VOID);
+	static VOID CheckPaletteShiftList();
 #endif
 #endif
 };
@@ -316,8 +476,6 @@ public:
 #endif
 };
 
-// jwl 07.15.96 really hacky stuff to prevent onscreen window border
-// drawing from taking place.
 #if BOF_MAC
 class STBofScreen {
 public:
@@ -354,7 +512,7 @@ private:
 
 // Global Routines
 #if BOF_MAC || BOF_WINMAC
-// VOID    SetPaintWhite(BOOL bWhite); // scg 01.24.97 use LMSetPaintWhite instead
+// VOID    SetPaintWhite(BOOL bWhite);
 #endif
 
 } // namespace Bagel

@@ -25,7 +25,8 @@ MODULE_OBJS = \
 	boflib/vector.o \
 	boflib/gfx/bof_bitmap.o \
 	boflib/gfx/bof_cursor.o \
-	boflib/gfx/bof_palette.o
+	boflib/gfx/bof_palette.o \
+	boflib/gfx/bof_window.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
