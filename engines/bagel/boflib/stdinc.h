@@ -78,7 +78,7 @@ typedef uint32 ULONG;
 
 typedef VOID *(*BOFCALLBACK)(INT, VOID *);
 
-typedef int32 Fixed;
+typedef long Fixed;
 #define FIXED Fixed
 
 #define FAR
