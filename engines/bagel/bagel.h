@@ -36,7 +36,7 @@
 
 #include "bagel/detection.h"
 #include "bagel/boflib/bit_buf.h"
-#include "bagel/boflib/bof_str.h"
+#include "bagel/boflib/bof_string.h"
 
 namespace Bagel {
 

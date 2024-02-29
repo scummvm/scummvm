@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_OPT_H
-#define BAGEL_BOFLIB_BOF_OPT_H
+#ifndef BAGEL_BOFLIB_BOF_OPTIONS_H
+#define BAGEL_BOFLIB_BOF_OPTIONS_H
 
 #include "common/stream.h"
 #include "bagel/boflib/boffo.h"

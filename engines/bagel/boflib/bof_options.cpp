@@ -20,7 +20,7 @@
  */
 
 #include "common/file.h"
-#include "bagel/boflib/bof_opt.h"
+#include "bagel/boflib/bof_options.h"
 #include "bagel/boflib/bof_debug.h"
 #include "bagel/boflib/misc.h"
 
