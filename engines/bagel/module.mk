@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	boflib/vector.o \
 	boflib/gfx/bof_bitmap.o \
 	boflib/gfx/bof_cursor.o \
+	boflib/gfx/bof_movie.o \
 	boflib/gfx/bof_palette.o \
 	boflib/gui/bof_window.o
 
