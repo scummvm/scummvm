@@ -145,9 +145,8 @@ public:
 	CBofString SpanExcluding(const CHAR *lpszCharSet) const;
 
 	// Upper/lower/reverse conversion
-	VOID MakeUpper() { strupr(m_pszData); }
-	VOID MakeLower() { strlwr(m_pszData); }
-	VOID MakeReverse() { strrev(m_pszData); }
+	VOID MakeUpper();
+	VOID MakeLower();
 
 	// Searching (return starting index, or -1 if not found)
 	// look for a single character match
