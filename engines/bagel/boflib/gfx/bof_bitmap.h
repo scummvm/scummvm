@@ -33,7 +33,7 @@
 #include "bagel/boflib/size.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/gfx/bof_palette.h"
-#include "bagel/boflib/gfx/bof_window.h"
+#include "bagel/boflib/gui/bof_window.h"
 
 namespace Bagel {
 

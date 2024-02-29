@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/boflib/gfx/bof_window.h"
+#include "bagel/boflib/gui/bof_window.h"
 #include "bagel/boflib/bof_debug.h"
 #include "bagel/boflib/bof_app.h"
 #include "bagel/boflib/bof_sound.h"
@@ -2468,19 +2468,19 @@ VOID CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest,
 
 #if 0
 		case DISPOSEWINDOW:
-		
+
 			gAllowPaletteShifts = false;
 			LMSetPaintWhite (FALSE);
 			::DisposeWindow (wp);
-			if (psi.m_nAssociatedItem != 0) 
+			if (psi.m_nAssociatedItem != 0)
 				::SetPort((WindowPtr) psi.m_nAssociatedItem);
 			gAllowPaletteShifts = true;
 			break;
-			
+
 		case DISPOSEPALETTE:
-		
+
 			gAllowPaletteShifts = false;
-			::DisposePalette ((PaletteHandle) psi.m_nItemOfInterest); 
+			::DisposePalette ((PaletteHandle) psi.m_nItemOfInterest);
 			gAllowPaletteShifts = true;
 			break;
 #endif
