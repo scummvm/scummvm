@@ -32,6 +32,7 @@
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/bof_window.h"
 
 namespace Bagel {
 
@@ -44,6 +45,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CCache::initStatics();
 	CBofError::initStatics();
 	CBofPalette::initStatics();
+	CBofWindow::initStatics();
 }
 
 BagelEngine::~BagelEngine() {
