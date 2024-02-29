@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	boflib/bof_object.o \
 	boflib/bof_options.o \
 	boflib/bof_res.o \
+	boflib/bof_sound.o \
 	boflib/bof_string.o \
 	boflib/cache.o \
 	boflib/crc.o \
