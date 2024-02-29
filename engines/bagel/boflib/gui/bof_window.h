@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_BOF_WINDOW_H
-#define BAGEL_BOFLIB_GFX_BOF_WINDOW_H
+#ifndef BAGEL_BOFLIB_GUI_BOF_WINDOW_H
+#define BAGEL_BOFLIB_GUI_BOF_WINDOW_H
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"

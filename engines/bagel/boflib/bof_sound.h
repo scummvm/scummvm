@@ -30,7 +30,7 @@
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/bof_debug.h"
 #include "bagel/boflib/queue.h"
-#include "bagel/boflib/gfx/bof_window.h"
+#include "bagel/boflib/gui/bof_window.h"
 
 namespace Bagel {
 
