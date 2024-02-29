@@ -33,6 +33,10 @@ BOOL FileExists(const CHAR *filename) {
 	return Common::File::exists(filename);
 }
 
+CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf) {
+	Common::strcpy_s(pszDstBuf, MAX_DIRPATH, pszSrcBuf);
+	return pszDstBuf;
+}
 
 CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
 	CHAR *p, *pszSearch, *pszEndTok;
@@ -79,6 +83,15 @@ CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
 		p++;
 	}
 	return (str);
+}
+
+Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
+	int64 nBigNum;
+
+	nBigNum = (int64)Dividend << 16;
+	Fixed fixResult = (Fixed)(nBigNum / Divisor);
+
+	return fixResult;
 }
 
 void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
