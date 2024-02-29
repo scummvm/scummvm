@@ -124,6 +124,8 @@ protected:
 	Common::Path _instrumentFile;
 	Channel *_channel;
 
+	uint32 _lastVersionBeforeSaveFormatChange;
+
 	uint32 durationToSamples(uint16 duration);
 	int noteToPitchModifier(byte note, Instrument *instrument);
 	void overrideChannelMask(int newMask);

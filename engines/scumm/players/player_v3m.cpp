@@ -98,6 +98,7 @@ namespace Scumm {
 Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer, bool lowQuality)
 	: Player_Mac(scumm, mixer, 5, lowQuality ? 01 : 0x1E, true) {
 	assert(_vm->_game.id == GID_LOOM);
+	_lastVersionBeforeSaveFormatChange = VER(113);
 
 	// This is guesswork, but there are five music channels.
 	//

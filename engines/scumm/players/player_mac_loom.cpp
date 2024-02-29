@@ -221,6 +221,12 @@ void LoomMacSnd::setQuality(int qual) {
 }
 
 void LoomMacSnd::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.isLoading() && ser.getVersion() < VER(94)) {
+		memset(_soundUsage, 0, _idRangeMax);
+		_curSound = 0;
+		return;
+	}
+
 	if (ser.isLoading() && ser.getVersion() < VER(114)) {
 		memset(_soundUsage, 0, _idRangeMax);
 		// Skip over old driver savedata, since it is not needed here.
