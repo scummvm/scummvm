@@ -71,6 +71,7 @@ EventDispatcher::~EventDispatcher() {
 
 void EventDispatcher::dispatch() {
 	Event event;
+	List<Event> mappedEvents;
 
 	dispatchPoll();
 
@@ -91,7 +92,7 @@ void EventDispatcher::dispatch() {
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_END);
 
 				for (List<MapperEntry>::iterator m = _mappers.begin(); m != _mappers.end(); ++m) {
-					List<Event> mappedEvents;
+					mappedEvents.clear();
 					if (!m->mapper->mapEvent(event, mappedEvents))
 						continue;
 
