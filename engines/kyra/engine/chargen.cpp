@@ -304,7 +304,7 @@ void CharacterGenerator::init(bool defaultParty) {
 		_wndBackgrnd = new uint8[10240];
 		_vm->_wndBackgrnd = _wndBackgrnd;
 		for (int i = 0; i < 16; ++i) {
-			in->seek(((8 + i) * 40 + 18) << 5);
+			in->seek((int64)((8 + i) * 40 + 18) << 5);
 			in->read(&_wndBackgrnd[i * 640], 640);
 		}
 		delete in;
@@ -2038,10 +2038,10 @@ private:
 	const char *const *_labels;
 
 	struct DialogDefs {
-		const Common::Rect dlgCoords;
-		const Common::Point headLinesXY[2];
-		const Common::Rect buttonCoords[2];
-		const Common::Point buttonLabelsXY[2];
+		const int16 dlgCoords[4];
+		const int16 headLinesXY[2][2];
+		const int16 buttonCoords[2][4];
+		const int16 buttonLabelsXY[2][2];
 	};
 
 	const DialogDefs &_dlg;
@@ -2140,13 +2140,15 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 	_vm->_gui->transferWaitBox();
 
 	Common::Array<Common::String> eobTargets;
-	const Common::ConfigManager::DomainMap dom = ConfMan.getGameDomains();
+	const Common::ConfigManager::DomainMap *dom = new Common::ConfigManager::DomainMap(ConfMan.getGameDomains());
 
-	for (Common::ConfigManager::DomainMap::const_iterator i = dom.begin(); i != dom.end(); ++i) {
+	for (Common::ConfigManager::DomainMap::const_iterator i = dom->begin(); i != dom->end(); ++i) {
 		if (ConfMan.get("gameid", i->_key).equals("eob"))
 			eobTargets.push_back(i->_key);
 		_vm->updateInput();
 	}
+
+	delete dom;
 
 	if (eobTargets.empty())
 		return false;
@@ -2182,19 +2184,19 @@ int TransferPartyWiz::selectCharactersMenu() {
 	_screen->clearCurPage();
 
 	for (int i = 0; i < 2; ++i)
-		_vm->gui_drawBox(_dlg.dlgCoords.left, _dlg.dlgCoords.top, _dlg.dlgCoords.width(), _dlg.dlgCoords.height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+		_vm->gui_drawBox(_dlg.dlgCoords[0], _dlg.dlgCoords[1], _dlg.dlgCoords[2] - _dlg.dlgCoords[0], _dlg.dlgCoords[3] - _dlg.dlgCoords[1], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
 	_screen->setFont(_vm->_invFont1);
 	for (int i = 0; i < 6; i++)
 		drawCharPortraitWithStats(i, 0);
 	_screen->setFont(_vm->_conFont);
 
-	for (int i = 0; i < 2 && _dlg.headLinesXY[i].x != -1; ++i)
-		_screen->printText(_strings2[i], _dlg.headLinesXY[i].x, _dlg.headLinesXY[i].y, _vm->guiSettings()->colors.guiColorWhite, 0);
+	for (int i = 0; i < 2 && _dlg.headLinesXY[i][0] != -1; ++i)
+		_screen->printText(_strings2[i], _dlg.headLinesXY[i][0], _dlg.headLinesXY[i][1], _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	for (int i = 0; i < 2; ++i) {
-		_vm->gui_drawBox(_dlg.buttonCoords[i].left, _dlg.buttonCoords[i].top, _dlg.buttonCoords[i].width(), _dlg.buttonCoords[i].height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-		_screen->printShadedText(_labels[i], _dlg.buttonLabelsXY[i].x, _dlg.buttonLabelsXY[i].y, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_vm->gui_drawBox(_dlg.buttonCoords[i][0], _dlg.buttonCoords[i][1], _dlg.buttonCoords[i][2] - _dlg.buttonCoords[i][0], _dlg.buttonCoords[i][3] - _dlg.buttonCoords[i][1], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+		_screen->printShadedText(_labels[i], _dlg.buttonLabelsXY[i][0], _dlg.buttonLabelsXY[i][1], _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	_screen->setCurPage(0);
@@ -2256,10 +2258,10 @@ int TransferPartyWiz::selectCharactersMenu() {
 			continue;
 		}
 
-		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6].left, _dlg.buttonCoords[highlight - 6].top, _dlg.buttonCoords[highlight - 6].width(), _dlg.buttonCoords[highlight - 6].height(), _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
+		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6][0], _dlg.buttonCoords[highlight - 6][1], _dlg.buttonCoords[highlight - 6][2] - _dlg.buttonCoords[highlight - 6][0], _dlg.buttonCoords[highlight - 6][3] - _dlg.buttonCoords[highlight - 6][1], _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
 		_screen->updateScreen();
 		_vm->_system->delayMillis(80);
-		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6].left, _dlg.buttonCoords[highlight - 6].top, _dlg.buttonCoords[highlight - 6].width(), _dlg.buttonCoords[highlight - 6].height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
+		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6][0], _dlg.buttonCoords[highlight - 6][1], _dlg.buttonCoords[highlight - 6][2] - _dlg.buttonCoords[highlight - 6][0], _dlg.buttonCoords[highlight - 6][3] - _dlg.buttonCoords[highlight - 6][1], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_screen->updateScreen();
 
 		if (highlight == 6 || _vm->shouldQuit()) {
@@ -2349,7 +2351,7 @@ void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 
 void TransferPartyWiz::updateHighlight(int index) {
 	if (_highlight > 5 && _highlight != index)
-		_screen->printText(_labels[_highlight - 6], _dlg.buttonLabelsXY[_highlight - 6].x, _dlg.buttonLabelsXY[_highlight - 6].y, _vm->guiSettings()->colors.guiColorWhite, 0);
+		_screen->printText(_labels[_highlight - 6], _dlg.buttonLabelsXY[_highlight - 6][0], _dlg.buttonLabelsXY[_highlight - 6][1], _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	if (index < 6) {
 		_vm->_gui->updateBoxFrameHighLight(14 + index);
@@ -2363,7 +2365,7 @@ void TransferPartyWiz::updateHighlight(int index) {
 	if (_highlight < 6)
 		_vm->_gui->updateBoxFrameHighLight(-1);
 
-	_screen->printText(_labels[index - 6], _dlg.buttonLabelsXY[index - 6].x, _dlg.buttonLabelsXY[index - 6].y, _vm->guiSettings()->colors.guiColorLightRed, 0);
+	_screen->printText(_labels[index - 6], _dlg.buttonLabelsXY[index - 6][0], _dlg.buttonLabelsXY[index - 6][1], _vm->guiSettings()->colors.guiColorLightRed, 0);
 	_screen->updateScreen();
 	_highlight = index;
 }
