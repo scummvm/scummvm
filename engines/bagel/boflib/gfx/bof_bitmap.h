@@ -139,9 +139,9 @@ protected:
 #endif
 	Graphics::ManagedSurface _bitmap;
 
-	UBYTE HUGE *m_pBits = nullptrptr;
+	UBYTE HUGE *m_pBits = nullptr;
 
-	CBofPalette *m_pPalette = nullptrptr;
+	CBofPalette *m_pPalette = nullptr;
 
 	INT m_nScanDX = 0;
 	INT m_nDX = 0;
@@ -167,7 +167,7 @@ public:
 	 * @param pPalette		Palette to use for this bitmap
 	 * @param bOwnPalette	TRUE if destructor should delete palette
 	 */
-	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette = FALSE, UBYTE HUGE *pPrivateBuff = nullptrptr);
+	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette = FALSE, UBYTE HUGE *pPrivateBuff = nullptr);
 
 	/**
 	 * Constructs a CBofBitmap
@@ -181,6 +181,12 @@ public:
 	 * Destructor
 	 */
 	virtual ~CBofBitmap();
+
+	/**
+	 * Allocates the structures needed for a CBofBitmap
+	 * @param		Palette to be assigned into this bitmap
+	 */
+	ERROR_CODE BuildBitmap(CBofPalette *pPalette);
 
 	/**
 	 * Loads the specified bitmap from disk
@@ -245,6 +251,10 @@ public:
 
 	INT Height() { return (m_nDY); }
 
+	/**
+	 * Returns current bitmap's filename (if any)
+	 * @return		Pointer to bitmap's filename
+	 */
 	const CHAR *GetFileName();
 
 	//
@@ -359,7 +369,18 @@ public:
 	 */
 	CBofBitmap *ExtractBitmap(CBofRect *pRect);
 
+	/**
+	 * Peforms a "Fade" onto the specified window
+	 * @param pWnd			Pointer to window to fade into
+	 * @param x				Fade upper left X
+	 * @param y				Fade upper left Y
+	 * @param nMaskColor	Transparency color (if any)
+	 * @param nBlockSize	Size of Fade Blocks
+	 * @param nSpeed		Speed for fade (not implimented yet)
+	 * @return				Error return code
+	 */
 	ERROR_CODE FadeIn(CBofWindow *pWnd, INT x = 0, INT y = 0, INT nMaskColor = NOT_TRANSPARENT, INT nBlockSize = CBMP_FADE_SIZE, INT nSpeed = CBMP_FADE_SPEED);
+
 	ERROR_CODE Curtain(CBofWindow *pWnd, INT nSpeed = CBMP_CURT_SPEED, INT nMaskColor = NOT_TRANSPARENT);
 	ERROR_CODE FadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, INT nSpeed = CBMP_LINE_SPEED, INT nMaskColor = NOT_TRANSPARENT);
 
@@ -482,10 +503,26 @@ public:
 	VOID FlipVerticalFast();
 	VOID FlipBits();
 
+	/**
+	 * Scrolls current bitmap horizontally
+	 * @param nPixels		Number of pixels to scroll by
+	 * @param pRect			Section of bitmap to scroll
+	 * @return				Error return code
+	 */
 	ERROR_CODE ScrollRight(INT nPixels, CBofRect *pRect = nullptr);
+
+
 	ERROR_CODE ScrollLeft(INT nPixels, CBofRect *pRect = nullptr) { return (ScrollRight(-nPixels, pRect)); }
 
+	/**
+	 * Scrolls current bitmap vertially
+	 * @param nPixels		Number of pixels to scroll by
+	 * @param pRect			Section of bitmap to scroll
+	 * @return				Error return code
+	 */
 	ERROR_CODE ScrollUp(INT nPixels, CBofRect *pRect = nullptr);
+
+
 	ERROR_CODE ScrollDown(INT nPixels, CBofRect *pRect = nullptr) { return (ScrollUp(-nPixels, pRect)); }
 
 	// Debug, and perfomance testing routines
@@ -493,7 +530,19 @@ public:
 	ERROR_CODE PaintPalette(CBofWindow *pWin, INT x, INT y);
 
 #if BOF_DEBUG
+	/**
+	 * Tests the Frames Per Second for a 640x480x256 bitmap
+	 * @param pWnd			Window to paint to
+	 * @param pPalette		Palette for btimap
+	 * @return				Frames per second
+	 */
 	static DOUBLE FPSTest(CBofWindow *pWnd, CBofPalette *pPalette);
+
+	/**
+	 * Tests the Frames Per Second for offscreen bit-blt
+	 * @param pPalette		Palette for the offscreen bitmaps
+	 * @return				Frames per Second.
+	 */
 	static DOUBLE OffScreenFPSTest(CBofPalette *pPalette);
 #endif
 
@@ -506,12 +555,55 @@ public:
 // Misc graphics routines
 //
 //////////////////////////////////////////////////////////////////////////////
-CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, BOOL bSharedPal = FALSE);
-ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
-ERROR_CODE PaintBitmap(CBofBitmap *pWindow, const CHAR *pszFileName, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
-CBofSize GetBitmapSize(const CHAR *pszFileName);
 
-CBofPalette *LoadPalette(const CHAR *pszFileName);
+/**
+ * Loads specified bitmap (and possibly re-maps to palette)
+ * @param pszFileName		Bitmap to open
+ * @param pPalette			Palette for re-mapping
+ * @param pSharedPal		Shared palette flag
+ * @return					Pointer to bitmap
+ */
+extern CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, BOOL bSharedPal = FALSE);
+
+/**
+ * Paints specified bitmap to specfied window
+ * @param pWindow			Window to paint to
+ * @param pszFileName		Bitmap filename
+ * @param pDstRect			Destination area to paint to
+ * @param pSrcRect			Source area to paint from
+ * @param pPalette			Optional palette to re-map with
+ * @param nMaskColor		Optional transparent color
+ * @return					Error return code
+ */
+extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *pDstRect = nullptr,
+	CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
+
+/**
+ * Paints specified bitmap to specfied bitmap
+ * @param pBmp				Bitmap to paint to
+ * @param pszFileName		Bitmap filename
+ * @param pDstRect			Destination area to paint to
+ * @param pSrcRect			Source area to paint from
+ * @param pPalette			Optional palette to re-map with
+ * @param nMaskColor		Optional transparent color
+ * @return					Error return code
+ */
+extern ERROR_CODE PaintBitmap(CBofBitmap *pBmp, const CHAR *pszFileName, CBofRect *pDstRect = nullptr,
+	CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
+
+/**
+ * Retrieves the size of the specified bitmap
+ * @param pszFileName		Filename
+ * @return					Size of bitmap
+ */
+extern CBofSize GetBitmapSize(const CHAR *pszFileName);
+
+/**
+ * Loads specified palette
+ * @param pszFileName		Bitmap to open to get palette from
+ * @return					Pointer to palette
+ */
+extern CBofPalette *LoadPalette(const CHAR *pszFileName);
 
 } // namespace Bagel
 
