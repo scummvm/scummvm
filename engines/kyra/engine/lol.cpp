@@ -1912,7 +1912,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	} else if (charId > 0) {
 		int i = 0;
 
-		for (; i < 3; i++) {
+		for (; i < 4; i++) {
 			if (_characters[i].id != charId || !(_characters[i].flags & 1))
 				continue;
 			if (charId == ch)
