@@ -32,6 +32,7 @@
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/config-manager.h"
+#include "common/str-enc.h"
 #include "engines/util.h"
 
 #include "macventure/macventure.h"
@@ -40,20 +41,6 @@
 #include "common/file.h"
 
 namespace MacVenture {
-
-// HACK, see below
-void toASCII(Common::String &str) {
-	debugC(3, kMVDebugMain, "toASCII: %s", str.c_str());
-	Common::String::iterator it = str.begin();
-	for (; it != str.end(); it++) {
-		if (*it == '\216') {
-			str.replace(it, it + 1, "e");
-		}
-		if (*it == '\210') {
-			str.replace(it, it + 1, "a");
-		}
-	}
-}
 
 enum {
 	kMaxMenuTitleLength = 30
@@ -467,9 +454,8 @@ Common::Path MacVentureEngine::getStartGameFileName() {
 	char *fileName = new char[length + 1];
 	res->read(fileName, length);
 	fileName[length] = '\0';
-	Common::String result = Common::String(fileName, length);
-	// HACK, see definition of toASCII
-	toASCII(result);
+
+	Common::U32String result(fileName, Common::kMacRoman);
 
 	delete[] fileName;
 	delete res;
