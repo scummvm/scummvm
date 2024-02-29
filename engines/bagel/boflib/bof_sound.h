@@ -144,8 +144,6 @@ public:
 	static VOID SetQVol(INT nSlot, INT nVol);
 
 #if BOF_WINDOWS && !BOF_WINMAC
-	static CBofSound *OnMCIStopped(WPARAM wParam, LPARAM lParam);
-	static CBofSound *OnMMIOStopped(WPARAM wParam, LPARAM lParam);
 	ERROR_CODE PlayMSS();
 
 #endif
@@ -223,8 +221,9 @@ private:
 #if BOF_WINDOWS
 	HSAMPLE m_hSample;
 	HSEQUENCE m_hSequence;
-	UBYTE *m_pFileBuf;
 #endif
+	UBYTE *m_pFileBuf;
+
 	INT m_iQSlot;
 	BOOL m_bInQueue;
 	BOOL m_bStarted;
