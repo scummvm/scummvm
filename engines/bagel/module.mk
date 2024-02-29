@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	boflib/bof_res.o \
 	boflib/bof_sound.o \
 	boflib/bof_string.o \
+	boflib/bof_timer.o \
 	boflib/cache.o \
 	boflib/crc.o \
 	boflib/deflate.o \
