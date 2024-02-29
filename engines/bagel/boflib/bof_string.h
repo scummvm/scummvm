@@ -81,8 +81,8 @@ public:
 
 	// Attributes & Operations
 
-	const INT GetBufferSize() const { return (NORMALIZEBUFFERSIZE()); }
-	const INT GetLength() const { return (m_nLength); }
+	INT GetBufferSize() const { return (NORMALIZEBUFFERSIZE()); }
+	INT GetLength() const { return (m_nLength); }
 	BOOL IsEmpty() const { return (m_nLength == 0); }
 
 	/**
