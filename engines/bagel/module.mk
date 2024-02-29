@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	boflib/deflate.o \
 	boflib/llist.o \
 	boflib/misc.o \
+	boflib/queue.o \
 	boflib/stack.o \
 	boflib/vector.o \
 	boflib/gfx/bof_bitmap.o \
