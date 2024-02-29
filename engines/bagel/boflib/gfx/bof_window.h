@@ -31,7 +31,7 @@
 #include "bagel/boflib/size.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/gfx/bof_bmp.h"
+#include "bagel/boflib/gfx/bof_bitmap.h"
 #include "bagel/boflib/gfx/bof_palette.h"
 #include "bagel/boflib/std_keys.h"
 

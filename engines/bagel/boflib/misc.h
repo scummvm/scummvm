@@ -55,6 +55,7 @@ BOOL ProbableTrue(INT);
 VOID TimerStart();
 DWORD TimerStop();
 DWORD GetTimer();
+VOID Sleep(DWORD);
 
 Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
 Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
