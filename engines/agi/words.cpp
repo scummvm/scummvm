@@ -80,6 +80,8 @@ int Words::loadDictionary(const char *fname) {
 
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
+	char str[64] = { 0 };
+	char c;
 	for (int i = 0; i < 26; i++) {
 		fp.seek(i * 2, SEEK_SET);
 		int offset = fp.readUint16BE();
@@ -89,7 +91,6 @@ int Words::loadDictionary(const char *fname) {
 		int k = fp.readByte();
 		while (!fp.eos() && !fp.err()) {
 			// Read next word
-			char c, str[64];
 			do {
 				c = fp.readByte();
 				str[k++] = (c ^ 0x7F) & 0x7F;
@@ -106,6 +107,8 @@ int Words::loadDictionary(const char *fname) {
 				newWord->word = Common::String(str, k);
 				newWord->id = fp.readUint16BE();
 				_dictionaryWords[i].push_back(newWord);
+			} else {
+				fp.readUint16BE();
 			}
 
 			k = fp.readByte();
