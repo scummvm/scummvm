@@ -69,6 +69,7 @@ protected:
 
 public:
 	CBofError();
+	virtual ~CBofError() {}
 
 	/**
 	 * Logs specified error to log file.
