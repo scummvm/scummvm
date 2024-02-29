@@ -821,4 +821,18 @@ INT CBofString::Hash() const {
 	return returnValue;
 }
 
+VOID CBofString::MakeUpper() {
+	Common::String s(m_pszData);
+	s.toUppercase();
+
+	strncpy(m_pszData, s.c_str(), m_nLength);
+}
+
+VOID CBofString::MakeLower() {
+	Common::String s(m_pszData);
+	s.toLowercase();
+
+	strncpy(m_pszData, s.c_str(), m_nLength);
+}
+
 } // namespace Bagel
