@@ -45,19 +45,33 @@ public:
 	~Sound();
 
 	void playAmigaSfx(const Common::String &filename, byte channel, byte volume);
-	void loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor);
-	void playMusic(const Common::String &filename);
-	void playMacMusic(const Common::String &filename);
+	void loadMusic(const Common::String &filename);
+	void loadMacMusic(const Common::String &filename);
+	void loadSFX(const Common::String &filename);
+
+	void playMusic(uint num);
+	void stopMusic();
+	void unloadMusic();
+
+	void playSFX(uint num);
 
 	void stopSfx(byte channel);
 
 	bool playPCM(const byte *data, uint32 size);
 
 private:
+	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
+	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray);
+
 	struct Channel _channels[2];
 	Common::SeekableReadStream *_soundData = nullptr;
-	uint32 _musicSize = 0;
-	byte *_musicData = nullptr;
+
+	Common::Array<uint32> _musicSizes;
+	Common::Array<byte *> _musicData;
+
+	Common::Array<uint32> _sfxSizes;
+	Common::Array<byte *> _sfxData;
+
 	Audio::Mixer *_mixer;
 	DgdsMidiPlayer *_midiPlayer;
 	ResourceManager *_resource;

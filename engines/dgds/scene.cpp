@@ -59,9 +59,37 @@ Common::String Rect::dump(const Common::String &indent) const {
 	return Common::String::format("%sRect<%d,%d %d,%d>", indent.c_str(), x, y, width, height);
 }
 
+Common::String _sceneConditionStr(SceneCondition cflag) {
+	Common::String ret;
+
+	if (cflag & kSceneCondAlwaysTrue)
+		return "true";
+
+	if (cflag & kSceneCondSceneState)
+		ret += "state|";
+	if (cflag & kSceneCondNeedItemField12)
+		ret += "item12|";
+	if (cflag & kSceneCondNeedItemField14)
+		ret += "item14|";
+	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14)) == 0)
+		ret += "global|";
+
+	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
+	if (cflag == kSceneCondNone)
+		ret += "nocond";
+	if (cflag & kSceneCondLessThan)
+		ret += "less";
+	if (cflag & kSceneCondEqual)
+		ret += "equal";
+	if (cflag & kSceneCondNegate)
+		ret += "-not";
+
+	return ret;
+}
 
 Common::String SceneConditions::dump(const Common::String &indent) const {
-	return Common::String::format("%sSceneCondition<flg 0x%02x %d  %d>", indent.c_str(), _flags, _num, _val);
+	return Common::String::format("%sSceneCondition<flg 0x%02x(%s) num %d val %d>", indent.c_str(),
+			_flags, _sceneConditionStr(_flags).c_str(), _num, _val);
 }
 
 
@@ -712,9 +740,12 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 void Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
+		debug("Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
-			engine->changeScene(op._args[0], true);
+			if (engine->changeScene(op._args[0], true))
+				// This probably reset the list - stop now.
+				return;
 			break;
 		case kSceneOpNoop:
 			break;
@@ -732,7 +763,9 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpChangeSceneToStored: {
 			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
-			engine->changeScene(sceneNo, true);
+			if (engine->changeScene(sceneNo, true))
+				// This probably reset the list - stop now.
+				return;
 			break;
 		}
 		case kSceneOpShowClock:
@@ -771,14 +804,14 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	Globals *globals = engine->getGameGlobals();
 
-	for (const auto & c : conds) {
+	for (const auto &c : conds) {
 		uint16 refval = c._val;
 		uint16 checkval;
 		SceneCondition cflag = c._flags;
 		if (cflag & kSceneCondAlwaysTrue)
 			return true;
 
-		if (cflag & kSceneCond80) {
+		if (cflag & kSceneCondSceneState) {
 			refval = 1;
 			checkval = engine->adsInterpreter()->getStateForSceneOp(c._num);
 			SceneCondition equalOrNegate = static_cast<SceneCondition>(cflag & (kSceneCondEqual | kSceneCondNegate));
@@ -791,12 +824,12 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 			checkval = 0;
 		} else {
 			checkval = globals->getGlobal(c._num);
-			if (!(cflag & kSceneCondSceneAbsVal))
+			if (!(cflag & kSceneCondAbsVal))
 				refval = globals->getGlobal(refval);
 		}
 
 		bool result = false;
-		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCond80 | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
+		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
 		if (cflag == kSceneCondNone)
 			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
 		if ((cflag & kSceneCondLessThan) && checkval < refval)
@@ -805,6 +838,8 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 			result = true;
 		if (cflag & kSceneCondNegate)
 			result = !result;
+
+		debug("Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
 
 		if (result)
 			truecount++;

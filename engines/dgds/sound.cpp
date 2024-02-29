@@ -45,13 +45,12 @@ Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decom
 }
 
 Sound::~Sound() {
-	delete _midiPlayer;
-	delete _soundData;
-	delete[] _musicData;
-}
+	unloadMusic();
 
-void Sound::loadMusic(Common::SeekableReadStream &file, Decompressor *decompressor) {
-	_musicData = decompressor->decompress(&file, file.size() - file.pos(), _musicSize);
+	for (auto *data: _sfxData)
+		delete [] data;
+
+	delete _midiPlayer;
 }
 
 void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volume) {
@@ -133,12 +132,25 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 	return true;
 }
 
-extern void readStrings(Common::SeekableReadStream *stream);
+static void readStrings(Common::SeekableReadStream *stream) {
+	uint16 count = stream->readUint16LE();
+	debug("        %u:", count);
 
-void Sound::playMacMusic(const Common::String &filename) {
+	for (uint16 k = 0; k < count; k++) {
+		byte ch;
+		uint16 idx = stream->readUint16LE();
+
+		Common::String str;
+		while ((ch = stream->readByte()))
+			str += ch;
+		debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
+	}
+}
+
+void Sound::loadMacMusic(const Common::String &filename) {
 	if (filename.hasSuffixIgnoreCase(".sng")) {
 		Common::String macFileName = filename.substr(0, filename.find(".")) + ".sx";
-		playMacMusic(macFileName);
+		loadMacMusic(macFileName);
 		return;
 	}
 
@@ -171,27 +183,33 @@ void Sound::playMacMusic(const Common::String &filename) {
 		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
 			readStrings(stream);
 		} else if (chunk.isSection(ID_DAT)) {
+			// TODO: Should we record the indexes?
 			/*uint16 idx = */ stream->readUint16LE();
 			/*uint16 type = */ stream->readUint16LE();
-			_musicData = _decompressor->decompress(stream, stream->size() - stream->pos(), _musicSize);
+			uint32 sz;
+			_musicData.push_back(_decompressor->decompress(stream, stream->size() - stream->pos(), sz));
+			_musicSizes.push_back(sz);
 		}
 	}
 
 	delete musicStream;
-
-	// stopMusic();
-
-	// TODO: This isn't correct
-	if (_musicData) {
-		uint32 tracks = availableSndTracks(_musicData, _musicSize);
-		if (tracks & TRACK_MT32)
-			_midiPlayer->play(_musicData, _musicSize);
-		else if (tracks & DIGITAL_PCM)
-			playPCM(_musicData, _musicSize);
-	}
+	
+	stopMusic();
 }
 
-void Sound::playMusic(const Common::String &filename) {
+void Sound::loadMusic(const Common::String &filename) {
+	stopMusic();
+	unloadMusic();
+	loadPCSound(filename, _musicSizes, _musicData);
+}
+
+void Sound::loadSFX(const Common::String &filename) {
+	if (_sfxSizes.size())
+		error("Sound: SFX data should only be loaded once");
+	loadPCSound(filename, _sfxSizes, _sfxData);
+}
+
+void Sound::loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray) {
 	if (!filename.hasSuffixIgnoreCase(".sng"))
 		error("Unhandled music file type: %s", filename.c_str());
 
@@ -209,11 +227,12 @@ void Sound::playMusic(const Common::String &filename) {
 		chunk.readContent(_decompressor);
 
 		Common::SeekableReadStream *stream = chunk.getContent();
-
 		if (chunk.isSection(ID_SNG)) {
-			_musicSize = stream->size();
-			_musicData = new byte[_musicSize];
-			stream->read(_musicData, _musicSize);
+			int32 musicSize = stream->size();
+			byte *data = new byte[musicSize];
+			stream->read(data, musicSize);
+			sizeArray.push_back(musicSize);
+			dataArray.push_back(data);
 		} else if (chunk.isSection(ID_INF)) {
 			uint32 count = stream->size() / 2;
 			debug("        [%u]", count);
@@ -226,15 +245,45 @@ void Sound::playMusic(const Common::String &filename) {
 
 	delete musicStream;
 
-	// stopMusic();
+}
 
-	if (_musicData) {
-		uint32 tracks = availableSndTracks(_musicData, _musicSize);
+void Sound::playSFX(uint num) {
+	playPCSound(num, _sfxSizes, _sfxData);
+}
+
+void Sound::playMusic(uint num) {
+	playPCSound(num, _musicSizes, _musicData);
+}
+
+void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray) {
+	if (num < dataArray.size()) {
+		uint32 tracks = availableSndTracks(dataArray[num], sizeArray[num]);
 		if (tracks & TRACK_MT32)
-			_midiPlayer->play(_musicData, _musicSize);
+			_midiPlayer->play(dataArray[num], sizeArray[num]);
 		else if (tracks & DIGITAL_PCM)
-			playPCM(_musicData, _musicSize);
+			playPCM(dataArray[num], sizeArray[num]);
+	} else {
+		warning("Sound: Requested to play %d but only have %d tracks", num, dataArray.size());
 	}
+	
+}
+
+void Sound::stopMusic() {
+	_midiPlayer->stop();
+	_mixer->stopAll();
+}
+
+void Sound::unloadMusic() {
+	stopMusic();
+	_musicSizes.clear();
+	for (auto *data: _musicData)
+		delete [] data;
+	_musicData.clear();
+
+	// Don't unload the sfx data.
+
+	delete _soundData;
+	_soundData = nullptr;
 }
 
 static inline

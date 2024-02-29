@@ -548,7 +548,8 @@ bool Image::loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::Seeka
 			for (uint16 i = 0; i < (val + 1) / 2; i++) {
 				byte color = stream->readByte();
 				dst[y * tw + x + i * 2] = (color >> 4) + addVal;
-				dst[y * tw + x + i * 2 + 1] = (color & 0xf) + addVal;
+				if (x + i * 2 + 1 < tw)
+					dst[y * tw + x + i * 2 + 1] = (color & 0xf) + addVal;
 			}
 			x += val;
 			break;

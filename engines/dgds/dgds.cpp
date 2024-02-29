@@ -65,9 +65,9 @@ namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
-	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr), _gdsScene(nullptr),
-	_resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr), _detailLevel(kDgdsDetailHigh),
-	_showClockUser(false), _showClockScript(false) {
+	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
+	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
+	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -103,20 +103,6 @@ DgdsEngine::~DgdsEngine() {
 	_bottomBuffer.free();
 }
 
-void readStrings(Common::SeekableReadStream *stream) {
-	uint16 count = stream->readUint16LE();
-	debug("        %u:", count);
-
-	for (uint16 k = 0; k < count; k++) {
-		byte ch;
-		uint16 idx = stream->readUint16LE();
-
-		Common::String str;
-		while ((ch = stream->readByte()))
-			str += ch;
-		debug("        %2u: %2u, \"%s\"", k, idx, str.c_str());
-	}
-}
 
 void DgdsEngine::loadCorners(const Common::String &filename) {
 	Image imgRes(_resource, _decompressor);
@@ -149,16 +135,23 @@ void DgdsEngine::loadIcons() {
 	}
 }
 
-void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
+bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	assert(_scene && _adsInterp);
 
 	if (sceneNum == _scene->getNum()) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
-		return;
+		return false;
+	}
+
+	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
+	if (!_resource->hasResource(sceneFile)) {
+		warning("Tried to switch to non-existant scene %d", sceneNum);
+		return false;
 	}
 
 	_scene->runLeaveSceneOps();
 	_scene->unload();
+	_soundPlayer->unloadMusic();
 
 	_gdsScene->runChangeSceneOps();
 
@@ -166,10 +159,6 @@ void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		CursorMan.popAllCursors();
 		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
 	}
-
-	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
-	if (!_resource->hasResource(sceneFile))
-		error("Tried to switch to non-existant scene %d", sceneNum);
 
 	_scene->load(sceneFile, _resource, _decompressor);
 
@@ -181,6 +170,7 @@ void DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 
 	_scene->runEnterSceneOps();
 	//debug("%s", _scene->dump("").c_str());
+	return true;
 }
 
 Common::Error DgdsEngine::run() {
@@ -216,6 +206,7 @@ Common::Error DgdsEngine::run() {
 	_fontManager->loadFonts(getGameId(), _resource, _decompressor);
 
 	if (getGameId() == GID_DRAGON) {
+		_soundPlayer->loadSFX("SOUNDS.SNG");
 		_gameGlobals = new DragonGlobals();
 		_showClockUser = true;
 		_gamePals->loadPalette("DRAGON.PAL");
@@ -316,10 +307,15 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
+			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 			}
+			
+			// Note: Hard-coded logic for DRAGON, check others
+			//if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
+			//	_gdsScene->runPostTickOps();
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 		} else if (getGameId() == GID_BEAMISH) {

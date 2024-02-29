@@ -207,7 +207,7 @@ void MidiParser_DGDS::mixChannels() {
 		totalSize += _trackSz[i];
 	}
 
-	byte *output = (byte*)malloc(totalSize * 2);
+	byte *output = (byte *)malloc(totalSize * 2);
 	_tracks[0] = output;
 
 	uint32 ticker = 0;
@@ -351,7 +351,7 @@ void DgdsMidiPlayer::play(byte *data, uint32 size) {
 		_parser = parser;
 		syncVolume();
 
-		_isLooping = true;
+		_isLooping = false;
 		_isPlaying = true;
 		debug("Playing music track");
 	} else {
