@@ -20,7 +20,7 @@
  */
 
 #include "common/str.h"
-#include "bagel/boflib/bof_str.h"
+#include "bagel/boflib/bof_string.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {

@@ -12,9 +12,9 @@ MODULE_OBJS = \
 	boflib/bof_list.o \
 	boflib/bof_log.o \
 	boflib/bof_object.o \
-	boflib/bof_opt.o \
+	boflib/bof_options.o \
 	boflib/bof_res.o \
-	boflib/bof_str.o \
+	boflib/bof_string.o \
 	boflib/cache.o \
 	boflib/crc.o \
 	boflib/deflate.o \
