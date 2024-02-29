@@ -617,7 +617,7 @@ VOID CBofString::Format(const CHAR *lpszFormat, ...) {
 		Assert(strlen(szBuf) < MAX_STRING);
 
 		AllocBuffer(strlen(szBuf));
-		strcpy_s(m_pszData, MAX_STRING, szBuf);
+		Common::strcpy_s(m_pszData, MAX_STRING, szBuf);
 	}
 }
 
