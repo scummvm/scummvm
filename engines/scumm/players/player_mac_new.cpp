@@ -545,6 +545,7 @@ void MacSndChannel::playNote(uint8 note, uint16 duration) {
 void MacSndChannel::quiet() {
 	_data = nullptr;
 	_tmrInc = 0;
+	_duration = 0;
 }
 
 void MacSndChannel::wait(uint32 duration) {
@@ -557,6 +558,8 @@ void MacSndChannel::wait(uint32 duration) {
 
 void MacSndChannel::flush() {
 	_sndCmdQueue.clear();
+	_tmrInc = 0;
+	_duration = 0;
 }
 
 void MacSndChannel::loadWaveTable(const byte *data, uint16 dataSize) {
