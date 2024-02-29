@@ -308,13 +308,14 @@ public:
 	*/
 	BOOL IsCreated() const { return true; }
 
+	virtual VOID Enable() { warning("STUB: CBofWindow::Enable()"); }
+	virtual VOID Disable() { warning("STUB: CBofWindow::Disable()"); }
+
 #if BOF_WINDOWS
 
 	VOID ShowWindow() { Show(); }
 	VOID HideWindow() { Hide(); }
 
-	virtual VOID Enable() { ::EnableWindow(m_hWnd, TRUE); }
-	virtual VOID Disable() { ::EnableWindow(m_hWnd, FALSE); }
 
 	BOOL IsVisible() { return ::IsWindowVisible(m_hWnd); }
 	BOOL IsEnabled() { return ::IsWindowEnabled(m_hWnd); }
