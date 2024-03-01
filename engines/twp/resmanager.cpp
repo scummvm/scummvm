@@ -172,9 +172,7 @@ int ResManager::newCallbackId() {
 }
 
 void ResManager::resetIds(int callbackId) {
-	// don't reset _roomId, _objId and _actorId because there are not dynamically created
-	_soundDefId = START_SOUNDDEFID;
-	_soundId = START_SOUNDID;
+	// don't reset _roomId, _objId, _soundDefId, _soundId and _actorId because there are not dynamically created
 	_threadId = START_THREADID;
 	_lightId = START_LIGHTID;
 	_callbackId = callbackId;
