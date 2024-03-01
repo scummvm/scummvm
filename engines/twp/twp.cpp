@@ -376,6 +376,26 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	return result;
 }
 
+struct GetNoun2 {
+	GetNoun2(int verbId, Common::SharedPtr<Object> &obj) : _verbId(verbId), _noun2(obj) {
+		_noun2 = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if (((_verbId == VERB_TALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
+			if (g_twp->_noun2 != obj) {
+				_noun2 = obj;
+			}
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_noun2;
+	int _zOrder = INT_MAX;
+	const int _verbId;
+};
+
 struct GetUseNoun2 {
 	explicit GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
 		_noun2 = nullptr;
@@ -443,7 +463,7 @@ void TwpEngine::update(float elapsed) {
 						debugC(kDebugGame, "Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
 				}
 			} else {
-				_noun1 = objAt(roomPos);
+				objsAt(roomPos, GetNoun2(_hud->_verb.id.id, _noun1));
 				_useFlag = UseFlag::ufNone;
 				_noun2 = nullptr;
 			}
