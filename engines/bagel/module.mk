@@ -34,6 +34,7 @@ MODULE_OBJS = \
 	boflib/gfx/bof_movie.o \
 	boflib/gfx/bof_palette.o \
 	boflib/gui/bof_display_button.o \
+	boflib/gui/bof_display_object.o \
 	boflib/gui/bof_window.o
 
 # This module can be built as a plugin
