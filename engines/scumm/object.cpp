@@ -569,7 +569,7 @@ int ScummEngine::findObject(int x, int y) {
 			if (b == 0) {
 #ifdef ENABLE_HE
 				if (_game.heversion >= 71) {
-					if (((ScummEngine_v71he *)this)->_wiz->polygonHit(_objs[i].obj_nr, x, y))
+					if (((ScummEngine_v71he *)this)->_wiz->polygonTestForObjectHit(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
 				}
 #endif

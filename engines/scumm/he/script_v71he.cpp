@@ -224,15 +224,15 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:
-		_wiz->_rectOverrideEnabled = true;
-		_wiz->_rectOverride.left = args[1];
-		_wiz->_rectOverride.top = args[2];
-		_wiz->_rectOverride.right = args[3];
-		_wiz->_rectOverride.bottom = args[4];
-		adjustRect(_wiz->_rectOverride);
+		_wiz->_lUseWizClipRect = true;
+		_wiz->_lWizClipRect.left = args[1];
+		_wiz->_lWizClipRect.top = args[2];
+		_wiz->_lWizClipRect.right = args[3];
+		_wiz->_lWizClipRect.bottom = args[4];
+		adjustRect(_wiz->_lWizClipRect);
 		break;
 	case 43:
-		_wiz->_rectOverrideEnabled = false;
+		_wiz->_lUseWizClipRect = false;
 		break;
 	default:
 		error("o71_kernelSetFunctions: default case %d (param count %d)", args[0], num);
@@ -444,7 +444,7 @@ void ScummEngine_v71he::o71_polygonOps() {
 void ScummEngine_v71he::o71_polygonHit() {
 	int y = pop();
 	int x = pop();
-	push(_wiz->polygonHit(0, x, y));
+	push(_wiz->polygonTestForObjectHit(0, x, y));
 }
 
 } // End of namespace Scumm

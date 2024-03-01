@@ -21,17 +21,10 @@
 
 #ifdef ENABLE_HE
 
-#include "common/archive.h"
 #include "common/system.h"
 #include "common/math.h"
-#include "graphics/cursorman.h"
-#include "graphics/primitives.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/util.h"
 #include "scumm/he/wiz_he.h"
-#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -473,6 +466,903 @@ void Wiz::pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool backgrou
 	}
 }
 
+void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor) {
+	Common::Rect srcRect, dstRect, clipRect;
+	WizSimpleBitmap srcBitmap, dstBitmap;
+	int off, t;
+
+	// Build the dest bitmap clipping rect and clip the "CLIP"
+	// rect passed in to it.
+	clipRect.left = 0;
+	clipRect.top = 0;
+	clipRect.right = bufferWidth - 1;
+	clipRect.bottom = bufferHeight - 1;
+
+	if (clipRectPtr) {
+		if (!findRectOverlap(&clipRect, clipRectPtr)) {
+			return;
+		}
+	}
+
+	// Build the src and dest rects based on the passed in coords
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = (width - 1);
+	srcRect.bottom = (height - 1);
+
+	dstRect.left = x;
+	dstRect.top = y;
+	dstRect.right = (x + width - 1);
+	dstRect.bottom = (y + height - 1);
+
+	// Clip the src & dst coords to the clipping rect
+	clipRectCoords(&srcRect, &dstRect, &clipRect);
+
+	if (dstRect.right < dstRect.left) {
+		return;
+	}
+
+	if (dstRect.bottom < dstRect.top) {
+		return;
+	}
+
+	if (srcRect.right < srcRect.left) {
+		return;
+	}
+
+	if (srcRect.bottom < srcRect.top) {
+		return;
+	}
+
+	if (_vm->_game.heversion > 90) {
+		if (wizFlags & kWRFHFlip) {
+			off = ((width - (srcRect.right + 1)) - srcRect.left);
+			t = srcRect.left + off;
+			srcRect.left = srcRect.right + off;
+			srcRect.right = t;
+		}
+
+		if (wizFlags & kWRFVFlip) {
+			off = ((height - (srcRect.bottom + 1)) - srcRect.top);
+			t = srcRect.top + off;
+			srcRect.top = srcRect.bottom + off;
+			srcRect.bottom = t;
+		}
+	}
+
+	// Setup the fake simple bitmaps...
+	dstBitmap.bufferPtr = bufferPtr;
+	dstBitmap.bitmapWidth = bufferWidth;
+	dstBitmap.bitmapHeight = bufferHeight;
+
+	srcBitmap.bufferPtr = (WizRawPixel *)rawData;
+	srcBitmap.bitmapWidth = width;
+	srcBitmap.bitmapHeight = height;
+
+	// Dispatch the drawing to the specific drawing function...
+	if (_vm->_game.heversion <= 90) {
+		pgSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &srcRect);
+	} else {
+		if (extraTable) {
+			if (wizFlags & kWRFRemap) {
+				if (transparentColor == -1) {
+					pgSimpleBlitRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (byte *)extraTable);
+				} else {
+					pgSimpleBlitTransparentRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (byte *)extraTable);
+				}
+			} else {
+				if (transparentColor == -1) {
+					pgSimpleBlitMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (byte *)extraTable);
+				} else {
+					pgSimpleBlitTransparentMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (byte *)extraTable);
+				}
+			}
+		} else {
+			// Dispatch the drawing to the specific drawing function...
+			if (transparentColor == -1) {
+				pgSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &srcRect);
+			} else {
+				pgTransparentSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor);
+			}
+		}
+	}
+}
+
+void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect) {
+	int cw, dw, sw, ch, cSize;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		cSize = (cw * sizeof(WizRawPixel));
+
+		while (--ch >= 0) {
+			memcpy(d, s, cSize); // TODO
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		dw -= cw;
+		sw += cw;
+
+		while (--ch >= 0) {
+			for (int i = cw; --i >= 0;) {
+				*d++ = *s--;
+			}
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgSimpleBlitRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *remapColorTable) {
+	int cw, dw, sw, ch;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		while (--ch >= 0) {
+			pgForewordRemapPixelCopy(d, s, cw, remapColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		d += (cw - 1);
+		s -= (cw - 1);
+
+		while (--ch >= 0) {
+			pgBackwardsRemapPixelCopy(d, s, cw, remapColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgSimpleBlitTransparentRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *remapColorTable) {
+	int cw, dw, sw, ch;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		while (--ch >= 0) {
+			pgTransparentForewordRemapPixelCopy(d, s, cw, transparentColor, remapColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		d += (cw - 1);
+		s -= (cw - 1);
+
+		while (--ch >= 0) {
+			pgTransparentBackwardsRemapPixelCopy(d, s, cw, transparentColor, remapColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *mixColorTable) {
+	int cw, dw, sw, ch;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		while (--ch >= 0) {
+			pgForewordMixColorsPixelCopy(d, s, cw, mixColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		d += (cw - 1);
+		s -= (cw - 1);
+
+		while (--ch >= 0) {
+			pgBackwardsMixColorsPixelCopy(d, s, cw, mixColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *mixColorTable) {
+	int cw, dw, sw, ch;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		while (--ch >= 0) {
+			pgTransparentForewordMixColorsPixelCopy(d, s, cw, transparentColor, mixColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		d += (cw - 1);
+		s -= (cw - 1);
+
+		while (--ch >= 0) {
+			pgTransparentBackwardsMixColorsPixelCopy(d, s, cw, transparentColor, mixColorTable);
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor) {
+	int value, cw, dw, sw, ch, soff, doff, tColor;
+	WizRawPixel *s, *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	tColor = (int)transparentColor;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		soff = sw - cw;
+		doff = dw - cw;
+
+		while (--ch >= 0) {
+			for (int x = cw; --x >= 0;) {
+				value = *s++;
+
+				if (value != tColor) {
+					*d++ = value;
+				} else {
+					d++;
+				}
+			}
+
+			s += soff;
+			d += doff;
+		}
+
+	} else {
+		soff = sw + cw;
+		doff = dw - cw;
+
+		while (--ch >= 0) {
+			for (int x = cw; --x >= 0;) {
+				value = *s--;
+
+				if (value != tColor) {
+					*d++ = value;
+				} else {
+					d++;
+				}
+			}
+
+			s += soff;
+			d += doff;
+		}
+	}
+}
+
+void Wiz::pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor, const WizRawPixel *conversionTable) {
+	Common::Rect srcRect, dstRect, clipRect;
+	WizSimpleBitmap srcBitmap, dstBitmap;
+
+	// Build the dest bitmap clipping rect and clip the "CLIP"
+	// rect passed in to it.
+	clipRect.left = 0;
+	clipRect.top = 0;
+	clipRect.right = bufferWidth - 1;
+	clipRect.bottom = bufferHeight - 1;
+
+	if (clipRectPtr) {
+		if (!findRectOverlap(&clipRect, clipRectPtr)) {
+			return;
+		}
+	}
+
+	// Build the src and dest rects based on the passed in coords
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = (width - 1);
+	srcRect.bottom = (height - 1);
+
+	dstRect.left = x;
+	dstRect.top = y;
+	dstRect.right = (x + width - 1);
+	dstRect.bottom = (y + height - 1);
+
+	// Clip the src & dst coords to the clipping rect
+	clipRectCoords(&srcRect, &dstRect, &clipRect);
+
+	if (dstRect.right < dstRect.left) {
+		return;
+	}
+
+	if (dstRect.bottom < dstRect.top) {
+		return;
+	}
+
+	if (srcRect.right < srcRect.left) {
+		return;
+	}
+
+	if (srcRect.bottom < srcRect.top) {
+		return;
+	}
+
+	if (wizFlags & kWRFHFlip) {
+		int off, t;
+		off = ((width - (srcRect.right + 1)) - srcRect.left);
+		t = srcRect.left + off;
+		srcRect.left = srcRect.right + off;
+		srcRect.right = t;
+	}
+
+	if (wizFlags & kWRFVFlip) {
+		int off, t;
+		off = ((height - (srcRect.bottom + 1)) - srcRect.top);
+		t = srcRect.top + off;
+		srcRect.top = srcRect.bottom + off;
+		srcRect.bottom = t;
+	}
+
+	// Setup the fake simple bitmaps...
+	dstBitmap.bufferPtr = bufferPtr;
+	dstBitmap.bitmapWidth = bufferWidth;
+	dstBitmap.bitmapHeight = bufferHeight;
+
+	srcBitmap.bufferPtr = (WizRawPixel *)rawData;
+	srcBitmap.bitmapWidth = width;
+	srcBitmap.bitmapHeight = height;
+
+	// Dispatch the drawing to the specific drawing function...
+	if (transparentColor == -1) {
+		pgDraw8BppSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &srcRect, conversionTable);
+	} else {
+		pgDraw8BppTransparentSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &srcRect, transparentColor, conversionTable);
+	}
+}
+
+void Wiz::pgDraw8BppSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const WizRawPixel *conversionTable) {
+	int x, cw, dw, sw, ch;
+	const byte *s;
+	WizRawPixel *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = ((const byte *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		while (--ch >= 0) {
+			memcpy8BppConversion(d, s, cw, conversionTable);
+
+			d += dw;
+			s += sw;
+		}
+	} else {
+		dw -= cw;
+		sw += cw;
+
+		while (--ch >= 0) {
+			for (x = cw; --x >= 0;) {
+				*d++ = convert8BppToRawPixel(*s--, conversionTable);
+			}
+
+			d += dw;
+			s += sw;
+		}
+	}
+}
+
+void Wiz::pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, int transparentColor, const WizRawPixel *conversionTable) {
+	int cw, dw, sw, ch, soff, doff, value;
+	const byte *s;
+	WizRawPixel *d;
+
+	// Common calcs...
+	dw = destBM->bitmapWidth;
+	sw = sourceBM->bitmapWidth;
+	cw = abs(sourceRect->right - sourceRect->left) + 1;
+	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
+	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
+	s = ((const byte *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+
+	// Going up or down?
+	if (sourceRect->top > sourceRect->bottom) {
+		sw = -sw;
+	}
+
+	// Left or right?
+	if (sourceRect->left <= sourceRect->right) {
+		soff = sw - cw;
+		doff = dw - cw;
+
+		while (--ch >= 0) {
+			for (int x = cw; --x >= 0;) {
+				value = *s++;
+
+				if (value != transparentColor) {
+					*d++ = convert8BppToRawPixel(value, conversionTable);
+				} else {
+					d++;
+				}
+			}
+
+			s += soff;
+			d += doff;
+		}
+	} else {
+		soff = sw + cw;
+		doff = dw - cw;
+
+		while (--ch >= 0) {
+			for (int x = cw; --x >= 0;) {
+				value = *s--;
+				if (value != transparentColor) {
+					*d++ = convert8BppToRawPixel(value, conversionTable);
+				} else {
+					d++;
+				}
+			}
+
+			s += soff;
+			d += doff;
+		}
+	}
+}
+
+void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBitmap *psbZBuffer, const byte *imgData, int x, int y, int z, int width, int height, Common::Rect *prcClip) {
+	// validate parameters
+	assert(psbDst && psbZBuffer && imgData && prcClip);
+
+	// z-buffer and destination buffer must have the same dimensions
+	assert(psbDst->bitmapWidth == psbZBuffer->bitmapWidth);
+	assert(psbDst->bitmapHeight == psbZBuffer->bitmapHeight);
+
+	// make sure that clip rect is clipped to destination buffer
+	Common::Rect dstRect;
+
+	makeSizedRect(&dstRect, psbDst->bitmapWidth, psbDst->bitmapHeight);
+
+	if (!findRectOverlap(prcClip, &dstRect)) {
+		// rectangles don't intersect - no drawing necessary
+		return;
+	}
+
+	// make sure that clip rect is clipped to source image
+	Common::Rect srcRect;
+
+	srcRect.left = x;
+	srcRect.top = y;
+	srcRect.right = x + (width - 1);
+	srcRect.bottom = y + (height - 1);
+
+	if (!findRectOverlap(prcClip, &srcRect)) {
+		// rectangles don't intersect - no drawing necessary
+		return;
+	}
+
+	// perform the drawing
+	int dstWidth = psbDst->bitmapWidth; // same for destination and Z buffer
+
+	WizRawPixel *pSrc = (WizRawPixel *)imgData + (prcClip->top - y) * width + (prcClip->left - x);
+	WizRawPixel *pDst = (WizRawPixel *)psbDst->bufferPtr + prcClip->top * dstWidth + prcClip->left;
+	WizRawPixel *pZB = (WizRawPixel *)psbZBuffer->bufferPtr + prcClip->top * dstWidth + prcClip->left;
+
+	const int drawWidth = (prcClip->right - prcClip->left + 1);
+	const int drawHeight = (prcClip->bottom - prcClip->top + 1);
+
+	for (int row = 0; row < drawHeight; ++row) {
+		for (int col = 0; col < drawWidth; ++col, ++pZB, ++pDst, ++pSrc) {
+			// left hand rule - don't draw unless we're closer than the z-buffer value
+			if (*pZB > z) {
+				*pDst = *pSrc;
+			}
+		}
+
+		// move to the next line
+		pSrc += width - drawWidth;
+		pDst += dstWidth - drawWidth;
+		pZB += dstWidth - drawWidth;
+	}
+}
+
+void Wiz::pgForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			*dstPtr++ = *(lookupTable + *srcPtr++);
+		}
+	} else {
+		while (size-- > 0) {
+			*dstPtr++ = *srcPtr++;
+		}
+	}
+}
+
+void Wiz::pgTransparentForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel remappedColor = *(lookupTable + srcColor);
+
+				if (transparentColor != remappedColor) {
+					*dstPtr++ = remappedColor;
+				} else {
+					++dstPtr;
+				}
+			} else {
+				++dstPtr;
+			}
+		}
+	} else {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				*dstPtr++ = srcColor;
+			} else {
+				++dstPtr;
+			}
+		}
+	}
+}
+
+void Wiz::pgTransparentBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel remappedColor = *(lookupTable + srcColor);
+
+				if (transparentColor != remappedColor) {
+					*dstPtr-- = remappedColor;
+				} else {
+					--dstPtr;
+				}
+			} else {
+				--dstPtr;
+			}
+		}
+	} else {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				*dstPtr-- = srcColor;
+			} else {
+				--dstPtr;
+			}
+		}
+	}
+}
+
+void Wiz::pgBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			*dstPtr-- = *(lookupTable + *srcPtr++);
+		}
+	} else {
+		while (size-- > 0) {
+			*dstPtr-- = *srcPtr++;
+		}
+	}
+}
+
+void Wiz::pgForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			*dstPtr++ = *(lookupTable + ((*srcPtr++) * 256) + *dstPtr);
+		}
+	} else {
+		while (size-- > 0) {
+			if (_vm->_game.heversion > 99) {
+				WizRawPixel srcColor = *srcPtr++;
+				WizRawPixel dstColor = *dstPtr;
+
+				*dstPtr++ = WIZRAWPIXEL_50_50_MIX(
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
+			} else {
+				*dstPtr++ = (*srcPtr++);
+			}
+		}
+	}
+}
+
+void Wiz::pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			*dstPtr-- = *(lookupTable + ((*srcPtr++) * 256) + *dstPtr);
+		}
+	} else {
+		while (size-- > 0) {
+			if (_vm->_game.heversion > 99) {
+				WizRawPixel srcColor = *srcPtr++;
+				WizRawPixel dstColor = *dstPtr;
+
+				*dstPtr-- = WIZRAWPIXEL_50_50_MIX(
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
+			} else {
+				*dstPtr-- = (*srcPtr++);
+			}
+		}
+	}
+}
+
+void Wiz::pgTransparentForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel resultColor = *(lookupTable + (srcColor * 256) + *dstPtr);
+
+				if (transparentColor != resultColor) {
+					*dstPtr++ = resultColor;
+				} else {
+					++dstPtr;
+				}
+			} else {
+				++dstPtr;
+			}
+		}
+	} else {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel dstColor = *dstPtr;
+
+				*dstPtr++ = WIZRAWPIXEL_50_50_MIX(
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
+			} else {
+				++dstPtr;
+			}
+		}
+	}
+}
+
+void Wiz::pgTransparentBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+	if (!_uses16BitColor) {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel resultColor = *(lookupTable + (srcColor * 256) + *dstPtr);
+
+				if (transparentColor != resultColor) {
+					*dstPtr-- = resultColor;
+				} else {
+					--dstPtr;
+				}
+			} else {
+				--dstPtr;
+			}
+		}
+	} else {
+		while (size-- > 0) {
+			WizRawPixel srcColor = *srcPtr++;
+
+			if (transparentColor != srcColor) {
+				WizRawPixel dstColor = *dstPtr;
+
+				*dstPtr-- = WIZRAWPIXEL_50_50_MIX(
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
+			} else {
+				--dstPtr;
+			}
+		}
+	}
+}
+
+static void pgBlitForwardSrcArbitraryDstPixelTransfer(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2) {
+	for (int i = 0; i < count; i++) {
+		*dstPtr = *srcPtr++;
+		dstPtr += dstStep;
+	}
+}
+
+static void pgBlitForwardSrcArbitraryDstTransparentPixelTransfer(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2) {
+	WizRawPixel transparentColor, color;
+	transparentColor = *((const WizRawPixel *)userParam);
+
+	for (int i = 0; i < count; i++) {
+		color = *srcPtr++;
+
+		if (transparentColor != color) {
+			*dstPtr = color;
+		}
+
+		dstPtr += dstStep;
+	}
+}
+
+void Wiz::pgBlit90DegreeRotate(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip) {
+	pgBlit90DegreeRotateCore(
+		dstBitmap, x, y, srcBitmap, optionalSrcRect, optionalClipRect,
+		hFlip, vFlip, nullptr, nullptr, pgBlitForwardSrcArbitraryDstPixelTransfer);
+}
+
+void Wiz::pgBlit90DegreeRotateTransparent(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, WizRawPixel transparentColor) {
+	pgBlit90DegreeRotateCore(
+		dstBitmap, x, y, srcBitmap, optionalSrcRect, optionalClipRect,
+		hFlip, vFlip, &transparentColor, nullptr, pgBlitForwardSrcArbitraryDstTransparentPixelTransfer);
+}
+
+void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect,
+	const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const void *userParam2,
+	void(*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2)) {
+
+	Common::Rect dstRect, srcRect, clipRect, clippedDstRect, clippedSrcRect;
+	int dstOffset, dstStep, wx, w, h, srcOffset, dstX, dstY;
+	const WizRawPixel *srcPtr;
+	WizRawPixel *dstWorkPtr;
+	WizRawPixel *dstPtr;
+
+	// Do as much pre-clipping as possible
+	makeSizedRect(&clipRect, dstBitmap->bitmapWidth, dstBitmap->bitmapHeight);
+
+	if (optionalClipRect) {
+		if (!findRectOverlap(&clipRect, optionalClipRect)) {
+			return;
+		}
+	}
+
+	// Clip the source rect against the actual src bitmap limits
+	makeSizedRect(&srcRect, srcBitmap->bitmapWidth, srcBitmap->bitmapHeight);
+
+	if (optionalSrcRect) {
+		if (!findRectOverlap(&srcRect, optionalSrcRect)) {
+			return;
+		}
+	}
+
+	// Make the "dest" rect then clip it against the clip rect
+	makeSizedRectAt(&dstRect, x, y, getRectHeight(&srcRect), getRectWidth(&srcRect));
+
+	clippedDstRect = dstRect;
+
+	if (!findRectOverlap(&clippedDstRect, &clipRect)) {
+		return;
+	}
+
+	// Make the clipped src rect adjusted for the 90 degree rotation.
+	clippedSrcRect.left = srcRect.left + (clippedDstRect.top - dstRect.top);
+	clippedSrcRect.top = srcRect.top + (dstRect.right - clippedDstRect.right);
+	clippedSrcRect.right = srcRect.right - (dstRect.bottom - clippedDstRect.bottom);
+	clippedSrcRect.bottom = srcRect.bottom - (clippedDstRect.left - dstRect.left);
+
+	// Perform any flipping of the coords and setup the step variables
+	if (hFlip) {
+		horzFlipAlignWithRect(&clippedSrcRect, &srcRect);
+		dstY = clippedDstRect.bottom;
+		dstStep = -dstBitmap->bitmapWidth;
+	} else {
+		dstY = clippedDstRect.top;
+		dstStep = dstBitmap->bitmapWidth;
+	}
+
+	if (vFlip) {
+		vertFlipAlignWithRect(&clippedSrcRect, &srcRect);
+		dstX = clippedDstRect.left;
+		dstOffset = 1;
+	} else {
+		dstX = clippedDstRect.right;
+		dstOffset = -1;
+	}
+
+	// Finally get down to business and do the blit!
+	dstPtr = dstBitmap->bufferPtr + dstX + (dstY * dstBitmap->bitmapWidth);
+	srcPtr = srcBitmap->bufferPtr + clippedSrcRect.left + (clippedSrcRect.top * srcBitmap->bitmapWidth);
+
+	w = getRectWidth(&clippedSrcRect);
+	h = getRectHeight(&clippedSrcRect);
+
+	// Transfer the src line to the dest line using the passed transfer prim.
+	srcOffset = srcBitmap->bitmapWidth;
+
+	while (--h >= 0) {
+		(*srcTransferFP)(this, dstPtr, dstStep, srcPtr, w, userParam, userParam2);
+		dstPtr += dstOffset;
+		srcPtr += srcOffset;
+	}
+}
+
 bool Wiz::findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr) {
 	// Make sure only points inside the viewPort are being set...
 	if ((destRectPtr->left > sourceRectPtr->right) || (destRectPtr->top > sourceRectPtr->bottom) ||
@@ -524,6 +1414,32 @@ void Wiz::combineRects(Common::Rect *destRect, Common::Rect *ra, Common::Rect *r
 	destRect->top =    MIN<int16>(ra->top,    rb->top);
 	destRect->right =  MAX<int16>(ra->right,  rb->right);
 	destRect->bottom = MAX<int16>(ra->bottom, rb->bottom);
+}
+
+void Wiz::clipRectCoords(Common::Rect *sourceRectPtr, Common::Rect *destRectPtr, Common::Rect *clipRectPtr) {
+	int16 value = destRectPtr->left - clipRectPtr->left;
+	if (value < 0) {
+		sourceRectPtr->left -= value;
+		destRectPtr->left -= value;
+	}
+
+	value = destRectPtr->right - clipRectPtr->right;
+	if (value > 0) {
+		sourceRectPtr->right -= value;
+		destRectPtr->right -= value;
+	}
+
+	value = destRectPtr->top - clipRectPtr->top;
+	if (value < 0) {
+		sourceRectPtr->top -= value;
+		destRectPtr->top -= value;
+	}
+
+	value = destRectPtr->bottom - clipRectPtr->bottom;
+	if (value > 0) {
+		sourceRectPtr->bottom -= value;
+		destRectPtr->bottom -= value;
+	}
 }
 
 void Wiz::floodInitFloodState(WizFloodState *statePtr, WizSimpleBitmap *bitmapPtr, int colorToWrite, const Common::Rect *optionalClippingRect) {
@@ -709,12 +1625,83 @@ bool Wiz::floodSimpleFill(WizSimpleBitmap *bitmapPtr, int x, int y, int colorToW
 	return true;
 }
 
+int Wiz::getRectWidth(Common::Rect *rectPtr) {
+	return abs(rectPtr->width()) + 1;
+}
+
+int Wiz::getRectHeight(Common::Rect *rectPtr) {
+	return abs(rectPtr->height()) + 1;
+}
+
+void Wiz::moveRect(Common::Rect *rectPtr, int dx, int dy) {
+	rectPtr->left += dx;
+	rectPtr->right += dx;
+	rectPtr->top += dy;
+	rectPtr->bottom += dy;
+}
+
+void Wiz::horzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+	int dx = (baseRect->right - rectToAlign->right) - (rectToAlign->left - baseRect->left);
+	moveRect(rectToAlign, dx, 0);
+}
+
+void Wiz::vertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+	int dy = (baseRect->bottom - rectToAlign->bottom) - (rectToAlign->top - baseRect->top);
+	moveRect(rectToAlign, 0, dy);
+}
+
 int Wiz::getRawPixel(int color) {
+	return color & WIZRAWPIXEL_MASK;
+}
+
+void Wiz::memset8BppConversion(void *dstPtr, int value, size_t count, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		return color & 0xFFFF;
+		rawPixelMemset(dstPtr, (int)convert8BppToRawPixel((WizRawPixel)value, conversionTable), count);
 	} else {
-		return color & 0xFF;
+		memset(dstPtr, value, count);
 	}
+}
+
+void Wiz::memcpy8BppConversion(void *dstPtr, const void *srcPtr, size_t count, const WizRawPixel *conversionTable) {
+	if (_uses16BitColor) {
+		WizRawPixel *dstWritePtr = (WizRawPixel *)(dstPtr);
+		const byte *srcReadPtr = (const byte *)(srcPtr);
+		int counter = count;
+		while (0 <= --counter) {
+			*dstWritePtr++ = convert8BppToRawPixel((WizRawPixel)(*srcReadPtr++), conversionTable);
+		}
+	} else {
+		memcpy(dstPtr, srcPtr, count);
+	}
+}
+
+void Wiz::rawPixelMemset(void *dstPtr, int value, size_t count) {
+	if (_uses16BitColor) {
+		uint16 *dst16Bit = (uint16 *)dstPtr;
+		for (int i = 0; i < count; i++)
+			WRITE_LE_UINT16(&dst16Bit[i], value);
+	} else {
+		uint8 *dst8Bit = (uint8 *)dstPtr;
+		memset(dst8Bit, value, count);
+	}
+}
+
+WizRawPixel Wiz::convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *conversionTable) {
+	if (_uses16BitColor) {
+		return *(conversionTable + value);
+	} else {
+		return value;
+	}
+}
+
+void Wiz::rawPixelExtractComponents(WizRawPixel aPixel, int &r, int &g, int &b) {
+	r = (aPixel & WIZRAWPIXEL_R_MASK) >> WIZRAWPIXEL_R_SHIFT;
+	g = (aPixel & WIZRAWPIXEL_G_MASK) >> WIZRAWPIXEL_G_SHIFT;
+	b = (aPixel & WIZRAWPIXEL_B_MASK) >> WIZRAWPIXEL_B_SHIFT;
+}
+
+void Wiz::rawPixelPackComponents(WizRawPixel &aPixel, int r, int g, int b) {
+	aPixel = (r << WIZRAWPIXEL_R_SHIFT) | (g << WIZRAWPIXEL_G_SHIFT) | (b << WIZRAWPIXEL_B_SHIFT);
 }
 
 } // End of namespace Scumm
