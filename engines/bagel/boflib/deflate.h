@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_DEFLATE_H
 #define BAGEL_BOFLIB_DEFLATE_H
 
-#include "bagel/boflib/bof_file.h"
+#include "bagel/boflib/file.h"
 
 namespace Bagel {
 

@@ -25,8 +25,8 @@
 
 #include "graphics/managed_surface.h"
 #include "bagel/boflib/boffo.h"
-#include "bagel/boflib/bof_error.h"
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/object.h"
 #include "bagel/boflib/stack.h"
 
 namespace Bagel {

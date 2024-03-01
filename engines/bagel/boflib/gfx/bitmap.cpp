@@ -21,9 +21,9 @@
 
 #include "image/bmp.h"
 #include "bagel/boflib/gfx/bitmap.h"
-#include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/bof_app.h"
-#include "bagel/boflib/bof_file.h"
+#include "bagel/boflib/debug.h"
+#include "bagel/boflib/app.h"
+#include "bagel/boflib/file.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {

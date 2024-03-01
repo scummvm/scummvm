@@ -30,7 +30,7 @@
 #include "bagel/detection.h"
 #include "bagel/console.h"
 #include "bagel/boflib/cache.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/error.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
 

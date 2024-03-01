@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/error.h"
 
 namespace Bagel {
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_LIST_H
-#define BAGEL_BOFLIB_BOF_LIST_H
+#ifndef BAGEL_BOFLIB_LIST_H
+#define BAGEL_BOFLIB_LIST_H
 
 #include "common/scummsys.h"
 
@@ -117,7 +117,7 @@ public:
 
 	/**
 	 * Returns true if the list is empty
-	 * @return 
+	 * @return
 	*/
 	bool IsEmpty() const { return m_pHead == nullptr; }
 

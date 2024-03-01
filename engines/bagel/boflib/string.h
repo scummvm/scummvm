@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_STR_H
-#define BAGEL_BOFLIB_BOF_STR_H
+#ifndef BAGEL_BOFLIB_STRING_H
+#define BAGEL_BOFLIB_STRING_H
 
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
 

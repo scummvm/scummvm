@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_GFX_DISPLAY_BUTTON_H
 #define BAGEL_BOFLIB_GFX_DISPLAY_BUTTON_H
 
-#include "bagel/boflib/bof_app.h"
+#include "bagel/boflib/app.h"
 #include "bagel/boflib/gui/display_window.h"
 #include "bagel/boflib/gfx/palette.h"
 

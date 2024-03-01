@@ -24,10 +24,10 @@
 
 #include "bagel/boflib/boffo.h"
 
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/bitmap.h"
-#include "bagel/boflib/bof_error.h"
-#include "bagel/boflib/bof_string.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/string.h"
 
 namespace Bagel {
 

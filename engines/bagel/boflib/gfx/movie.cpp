@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/boflib/bof_string.h"
+#include "bagel/boflib/string.h"
 #include "bagel/boflib/gfx/movie.h"
 #include "bagel/boflib/gfx/cursor.h"
 

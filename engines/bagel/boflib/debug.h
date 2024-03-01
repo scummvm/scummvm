@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_DEBUG_H
-#define BAGEL_BOFLIB_BOF_DEBUG_H
+#ifndef BAGEL_BOFLIB_DEBUG_H
+#define BAGEL_BOFLIB_DEBUG_H
 
-#include "bagel/boflib/bof_options.h"
-#include "bagel/boflib/bof_log.h"
+#include "bagel/boflib/options.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/misc.h"
 

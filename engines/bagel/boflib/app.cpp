@@ -23,12 +23,12 @@
 
 #include "bagel/boflib/boffo.h"
 
-#include "bagel/boflib/bof_debug.h"
+#include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
-#include "bagel/boflib/bof_app.h"
-#include "bagel/boflib/bof_timer.h"
+#include "bagel/boflib/app.h"
+#include "bagel/boflib/timer.h"
 #include "bagel/boflib/gfx/text.h"
-#include "bagel/boflib/bof_sound.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 

@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_LOG_H
-#define BAGEL_BOFLIB_BOF_LOG_H
+#ifndef BAGEL_BOFLIB_LOG_H
+#define BAGEL_BOFLIB_LOG_H
 
 #include "bagel/boflib/boffo.h"
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 #include "bagel/boflib/stdinc.h"
 
 namespace Bagel {

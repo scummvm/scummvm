@@ -20,7 +20,7 @@
  */
 
 #include "bagel/boflib/gui/display_button.h"
-#include "bagel/boflib/bof_app.h"
+#include "bagel/boflib/app.h"
 #include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {

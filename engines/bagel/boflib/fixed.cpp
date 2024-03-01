@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,18 +19,30 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_OBJ_H
-#define BAGEL_BOFLIB_BOF_OBJ_H
-
-#include "bagel/boflib/stdinc.h"
+#include "bagel/boflib/fixed.h"
 
 namespace Bagel {
 
-class CBofObject {
-public:
-	static BOOL IsValidObject(const CBofObject *pObject) { return true; }
-};
+CBofFixed CBofFixed::operator-=(const CBofFixed &Arg) {
+	m_lVal -= Arg.m_lVal;
+	return *this;
+}
+
+CBofFixed CBofFixed::operator+=(const CBofFixed &Arg) {
+	m_lVal += Arg.m_lVal;
+	return *this;
+}
+
+CBofFixed CBofFixed::operator*=(const CBofFixed &Arg) {
+	m_lVal = m_lVal * Arg.m_lVal;
+
+	return *this;
+}
+
+CBofFixed CBofFixed::operator/=(const CBofFixed &Arg) {
+	m_lVal = m_lVal / Arg.m_lVal;
+
+	return *this;
+}
 
 } // namespace Bagel
-
-#endif

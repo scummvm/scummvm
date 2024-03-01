@@ -24,8 +24,8 @@
 #define BAGEL_BOFLIB_BIT_BUF_H
 
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_error.h"
-#include "bagel/boflib/bof_file.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/file.h"
 
 namespace Bagel {
 

@@ -23,7 +23,7 @@
 #ifndef BAGEL_BOFLIB_QUEUE_H
 #define BAGEL_BOFLIB_QUEUE_H
 
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/stdinc.h"
 

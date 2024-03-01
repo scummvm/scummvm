@@ -20,9 +20,9 @@
  */
 
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/bof_app.h"
-#include "bagel/boflib/bof_sound.h"
+#include "bagel/boflib/debug.h"
+#include "bagel/boflib/app.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 

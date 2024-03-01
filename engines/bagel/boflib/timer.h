@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_TIMER_H
-#define BAGEL_BOFLIB_BOF_TIMER_H
+#ifndef BAGEL_BOFLIB_TIMER_H
+#define BAGEL_BOFLIB_TIMER_H
 
-#include "bagel/boflib/bof_timer.h"
+#include "bagel/boflib/timer.h"
 #include "bagel/boflib/llist.h"
 
 namespace Bagel {

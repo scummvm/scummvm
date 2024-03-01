@@ -20,7 +20,7 @@
  */
 
 #include "common/textconsole.h"
-#include "bagel/boflib/bof_debug.h"
+#include "bagel/boflib/debug.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/misc.h"
 

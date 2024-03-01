@@ -21,7 +21,7 @@
 
 #include "common/str.h"
 #include "common/debug.h"
-#include "bagel/boflib/bof_log.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/stdinc.h"
 
 namespace Bagel {

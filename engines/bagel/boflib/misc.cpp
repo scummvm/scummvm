@@ -22,8 +22,8 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "bagel/boflib/misc.h"
-#include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/bof_log.h"
+#include "bagel/boflib/debug.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/bagel.h"
 
@@ -1617,6 +1617,6 @@ void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2) {
 	}
 #endif
 	return;
-} 
+}
 
 } // namespace Bagel
