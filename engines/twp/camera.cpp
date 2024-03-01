@@ -29,6 +29,10 @@ void Camera::clamp(Math::Vector2d at) {
 	if (_room) {
 		Math::Vector2d roomSize = _room->_roomSize;
 		Math::Vector2d screenSize = _room->getScreenSize();
+		// fix assertion when screen size is greater than room height
+		if(screenSize.getY() > roomSize.getY()) {
+			screenSize.setY(roomSize.getY());
+		}
 
 		_pos.setX(CLIP(at.getX(), screenSize.getX() / 2.f + _bounds.left(), screenSize.getX() / 2 + _bounds.right()));
 		_pos.setY(CLIP(at.getY(), _bounds.bottom(), _bounds.top() - screenSize.getY() / 2));
