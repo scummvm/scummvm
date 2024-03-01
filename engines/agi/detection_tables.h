@@ -671,12 +671,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	// Manhunter SF (ST) 1.0 7/29/89
-	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
+	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH2, Common::kPlatformAtariST),
 
 	// Manhunter SF (Amiga) 3.06 8/17/89        # 2.333
 	GAME3_PSO("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3149, 0, GID_MH2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// Manhunter SF (PC 5.25") 3.02 5.25\"" [AGI 3.002.149]
+	// Manhunter SF (PC 5.25") 3.02 7/26/89 [AGI 3.002.149]
 	GAME3("mh2", "3.02 1989-07-26 5.25\"", "mh2dir", "bbb2c2f88d5740f7437fb7aa6f080b7b", 0x3149, GID_MH2),
 
 	// Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
