@@ -220,17 +220,27 @@ endif
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $@
 
 # Build rule for Windows resource files
-# The regular expression is a portable form of ^(.*\s(FILE|ICON|RT_MANIFEST|DATA)|#include)\s+"([^"]*)".*$
-# This finds lines in the form '... FILE "path/file.ext" ...' (and also ICON and #include)
-# and replaces them with the $(srcdir)/path/file.ext \
-# The second sed removes winresrc.h (system include) and config.h (not in srcdir, printed
-# by the echo before sed), and strips the trailing backslash on the last line.
+# This has multiple passes to generate the deps file:
+# First is to include config.h and config.mk
+# Second is to process all #include "*.h" form includes into source-tree deps
+# Third is to process all #include "*.rh" form includes into build-tree deps
+# Fourth is to process all FILE, ICON, RT_MANIFEST, and DATA lines into source-tree deps
+# The regexes are portable forms of:
+#     ^#include\s+"([^"]*).h".*$
+#     ^#include\s+"([^"]*).rh".*$
+#     ^(.*\s(FILE|ICON|RT_MANIFEST|DATA))\s+"([^"]*)".*$
+# The first sed removes winresrc.h (system include) and config.h (not in srcdir, printed
+# by the echo before sed), the last strips the trailing backslash on the last line.
 %.o: %.rc
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET)echo "$@: $< config.h config.mk \\" > $(*D)/$(DEPDIR)/scummvm.d
-	$(QUIET)sed -n 's:^\(.*[[:space:]]\(FILE\|ICON\|RT_MANIFEST\|DATA\)\|#include\)[[:space:]][[:space:]]*"\([^"]*\)".*$$:    $(srcdir)/\3 \\:p; ' $(<) | \
-		sed '/winresrc\.h\|config\.h/d; $$ s/ \\//' >> $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET)sed -n 's:^\#include[[:space:]][[:space:]]*"\([^"]*\.h\)".*$$:    $(srcdir)/\1 \\:p; ' $(<) | \
+		sed '/winresrc\.h\|config\.h/d' >> $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET)sed -n 's:^\#include[[:space:]][[:space:]]*"\([^"]*\.rh\)".*$$:    \1 \\:p; ' $(<) \
+		>> $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET)sed -n 's:^\(.*[[:space:]]\(FILE\|ICON\|RT_MANIFEST\|DATA\)\)[[:space:]][[:space:]]*"\([^"]*\)".*$$:    $(srcdir)/\3 \\:p; ' $(<) | \
+		sed '$$ s/ \\//' >> $(*D)/$(DEPDIR)/scummvm.d
 	$(QUIET_WINDRES)$(WINDRES) $(WINDRESFLAGS) $(CPPFLAGS) $(<) -o $@
 
 ifdef USE_NASM
@@ -406,16 +416,19 @@ DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.z
 endif
 
 # Engine data files
+DIST_FILES_ENGINEDATA_BASE_CORE_SOURCE:=$(srcdir)/dists/engine-data/engine_data_core.mk
 DIST_FILES_LIST=
--include $(srcdir)/dists/engine-data/engine_data_core.mk
+-include $(DIST_FILES_ENGINEDATA_BASE_CORE_SOURCE)
 DIST_FILES_ENGINEDATA_BASE_CORE:=$(DIST_FILES_LIST)
 
+DIST_FILES_ENGINEDATA_BASE_SOURCE:=$(srcdir)/dists/engine-data/engine_data.mk
 DIST_FILES_LIST=
--include $(srcdir)/dists/engine-data/engine_data.mk
+-include $(DIST_FILES_ENGINEDATA_BASE_SOURCE)
 DIST_FILES_ENGINEDATA_BASE:=$(DIST_FILES_LIST)
 
+DIST_FILES_ENGINEDATA_BASE_BIG_SOURCE:=$(srcdir)/dists/engine-data/engine_data_big.mk
 DIST_FILES_LIST=
--include $(srcdir)/dists/engine-data/engine_data_big.mk
+-include $(DIST_FILES_ENGINEDATA_BASE_BIG_SOURCE)
 DIST_FILES_ENGINEDATA_BASE_BIG:=$(DIST_FILES_LIST)
 
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/,$(DIST_FILES_ENGINEDATA_BASE_CORE) $(DIST_FILES_ENGINEDATA_BASE))
