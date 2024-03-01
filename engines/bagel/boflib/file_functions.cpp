@@ -65,4 +65,45 @@ CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf) {
 	return pszDstBuf;
 }
 
+ERROR_CODE GetCurrentDir(CHAR *pszDirectory) {
+	Assert(pszDirectory != nullptr);
+
+	// ScummVM don't expose folders
+	*pszDirectory = '\0';
+	return ERR_NONE;
+}
+
+ERROR_CODE SetCurrentDir(CHAR *pszDirectory) {
+	// ScummVM doesn't change folders
+	return ERR_NONE;
+}
+
+static CHAR g_szInstallPath[MAX_DIRPATH];
+
+VOID SetInstallPath(CHAR *pszDirectory) {
+	Assert(pszDirectory != nullptr);
+	Assert(strlen(pszDirectory) < MAX_DIRPATH);
+
+	Common::strcpy_s(g_szInstallPath, pszDirectory);
+}
+
+VOID GetInstallPath(CHAR *pszDirectory) {
+	Assert(pszDirectory != nullptr);
+	Assert(strlen(pszDirectory) < MAX_DIRPATH);
+
+	Common::strcpy_s(pszDirectory, MAX_DIRPATH, g_szInstallPath);
+}
+
+ERROR_CODE GotoSystemDir() {
+	// No folder change in ScummVM
+	return ERR_NONE;
+}
+
+ERROR_CODE GetSystemDir(CHAR *pszDirectory) {
+	Assert(pszDirectory != nullptr);
+
+	*pszDirectory = '\0';
+	return ERR_NONE;
+}
+
 } // namespace Bagel
