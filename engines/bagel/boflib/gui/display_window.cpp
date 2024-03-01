@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/boflib/gui/bof_display_window.h"
+#include "bagel/boflib/gui/display_window.h"
 #include "bagel/boflib/bof_timer.h"
 #include "bagel/boflib/bof_app.h"
 

@@ -23,7 +23,7 @@
 #define BAGEL_BOFLIB_GFX_DISPLAY_OBJECT_H
 
 #include "bagel/boflib/gfx/bof_bitmap.h"
-#include "bagel/boflib/gui/bof_window.h"
+#include "bagel/boflib/gui/window.h"
 
 namespace Bagel {
 

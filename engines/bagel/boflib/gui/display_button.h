@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_GFX_BOF_DISPLAY_BUTTON_H
 
 #include "bagel/boflib/bof_app.h"
-#include "bagel/boflib/gui/bof_display_window.h"
+#include "bagel/boflib/gui/display_window.h"
 #include "bagel/boflib/gfx/bof_palette.h"
 
 namespace Bagel {
