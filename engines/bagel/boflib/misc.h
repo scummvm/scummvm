@@ -32,38 +32,45 @@
 
 namespace Bagel {
 
-VOID TimeUnpack(USHORT num, USHORT *hour, USHORT *min, USHORT *sec);
-USHORT TimePack(USHORT hour, USHORT min, USHORT sec);
-VOID DateUnpack(USHORT num, USHORT *year, USHORT *month, USHORT *day);
-USHORT DatePack(USHORT year, USHORT month, USHORT day);
-
 /**
  * Log an error message
 */
-VOID ErrorLog(const CHAR *format, ...);
+extern VOID ErrorLog(const CHAR *format, ...);
 inline VOID SetErrLogFile(const CHAR *pszFileName) {}
 
-LONG FileLength(const CHAR *);
-CHAR *FileGetTempDir();
-CHAR *FileTempName(CHAR *);
-ERROR_CODE FileRename(const CHAR *pszOldName, const CHAR *pszNewName);
-ERROR_CODE FileDelete(const CHAR *);
-BOOL FileExists(const CHAR *);
-BOOL FileIsDirectory(const CHAR *);
-CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf);
-BOOL IsDriveWriteLocked();
-LONG GetFreeDiskSpace(const CHAR *pszDrive);
-INT MapWindowsPointSize(INT pointSize);
+extern INT MapWindowsPointSize(INT pointSize);
 
-BOOL ProbableTrue(INT);
+/**
+ * Return a true / false based on the probability given
+ * @param nProbability		The probability of returning a true
+ * @return					A TRUE <nProbability> of the tine
+ */
+extern BOOL ProbableTrue(INT);
 
-VOID TimerStart();
-DWORD TimerStop();
-DWORD GetTimer();
-VOID Sleep(DWORD);
+/**
+ * Starts a Millisecond timer
+ */
+extern VOID TimerStart();
 
-Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
-Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
+/**
+ * Stops the timer started by TimerStart, returns time elapsed.
+ * @return		Number of MilliSeconds elapsed since call to TimerStart
+ */
+extern DWORD TimerStop();
+
+/**
+ * Returns the current elapsed time in milliseconds
+*/
+extern DWORD GetTimer();
+
+/**
+ * Pauses the computer for specified number of MilliSeconds
+ * @param milli		Number of milliseconds
+ */
+extern VOID Sleep(DWORD milli);
+
+extern Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
+extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
 
 #define IntToFixed(i) (Fixed)(((long)(i)) << 16)
 #define FixedToInt(f) (int)(((long)f) >> 16)
@@ -124,35 +131,73 @@ extern VOID BofMemTest();
 #define BofMemCopy memcpy
 #define BofMemMove memmove
 
-extern ULONG GetFreePhysMem();
-extern ULONG GetFreeMem();
+inline ULONG GetFreePhysMem() { return 999999; }
+inline ULONG GetFreeMem() { return 999999; }
 
+/**
+ * Writes specified setting to specified .INI file
+ * @param pszFileName		Name of .INI file to write to
+ * @param pszSection		Storage section in .INI for option
+ * @param pszVar			Option to insert/update
+ * @param pszNewValue		New Value for this option
+ * @return					Error return code
+ */
+extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, const CHAR *);
 
-ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, const CHAR *);
-ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, UINT);
-ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, INT);
-ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *, INT);
+/**
+ * Reads specified setting from specified .INI file
+ *
+ * @param pszFile		Name of .INI file to read from
+ * @param pszSection	Storage section in .INI for option
+ * @param pszVar		Option to read
+ * @param pszValue		Buffer to hold answer
+ * @param pszDefault	Default answer if option not exist
+ * @param nMaxLen		Max buffer length for answer
+ * @return				Error return code
+ */
+extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, UINT);
 
+/**
+ * Writes specified setting to specified .INI file
+ * @param pszFileName	Name of .INI file to write to
+ * @param pszSection	Storage section in .INI for option
+ * @param pszVar		Option to insert/update
+ * @param nNewValue		New Value for this option
+ * @return				Error return code
+ */
+extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, INT);
+
+/**
+ * Reads specified setting from specified .INI file
+ * @param pszFile		Name of .INI file to read from
+ * @param pszSection	Storage section in .INI for option
+ * @param pszVar		Option to read
+ * @param pValue		Buffer to hold answer
+ * @param nDefault		Default answer if option not exist
+ * @return				Error return code
+ */
+extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *, INT);
+
+/**
+ * Encrypts specified buffer
+ * @param pBuf			Buffer to encrypt
+ * @param lSize			Number of bytes in buffer
+ * @param pszPassword	Optional password to encrypt with
+ */
 VOID Encrypt(VOID *, LONG, const CHAR *pPassword = NULL);
 #define Decrypt Encrypt
 
-// jwl 1.6.97 encrypt/decrypt just part of a buffer
-VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = NULL);
+extern VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = NULL);
 #define DecryptPartial EncryptPartial
 
-ERROR_CODE GetCurrentDir(CHAR *pszDirectory);
-ERROR_CODE SetCurrentDir(CHAR *pszDirectory);
-ERROR_CODE GotoSystemDir();
-ERROR_CODE GetSystemDir(CHAR *pszDirectory);
-VOID GetInstallPath(CHAR *pszDirectory);
-VOID SetInstallPath(CHAR *pszDirectory);
-
+#ifndef ABS
 #define ABS(x) ((x) > 0 ? (x) : -(x))
+#endif
 
-BOOL IsKeyDown(ULONG lKeyCode);
+extern BOOL IsKeyDown(ULONG lKeyCode);
 
 // Debugging
-void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2);
+extern void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2);
 
 // Globals
 extern BOOL gLiveDebugging;

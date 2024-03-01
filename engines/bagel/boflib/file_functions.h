@@ -90,6 +90,37 @@ inline LONG GetFreeDiskSpace(const CHAR* pszDrive) {
 	return 999999;
 }
 
+/**
+ * Retrieves the full path for the current working directory
+ * @param pszDirectory		Buffer to hold full path
+ * @return					Error return code
+ */
+extern ERROR_CODE GetCurrentDir(CHAR *pszDirectory);
+
+/**
+ * Sets the current working directory to that specified
+ * @param pszDirectory		New directory to switch to
+ * @return					Error return code
+ */
+extern ERROR_CODE SetCurrentDir(CHAR *pszDirectory);
+
+/**
+ * Sets the current working directory to the System Dir
+ * @return		Error return code
+ */
+extern ERROR_CODE GotoSystemDir();
+
+/**
+ * Retrieves the full path to the System Directory
+ * @param pszDiretory		Buffer to hold name of system dir
+ * @return					Error return code
+ */
+extern ERROR_CODE GetSystemDir(CHAR *pszDirectory);
+
+extern VOID GetInstallPath(CHAR *pszDirectory);
+
+extern VOID SetInstallPath(CHAR *pszDirectory);
+
 } // namespace Bagel
 
 #endif
