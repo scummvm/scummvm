@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOFF_APP_H
-#define BAGEL_BOFLIB_BOFF_APP_H
+#ifndef BAGEL_BOFLIB_APP_H
+#define BAGEL_BOFLIB_APP_H
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/cursor.h"
-#include "bagel/boflib/bof_error.h"
-#include "bagel/boflib/bof_list.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/list.h"
 
 namespace Bagel {
 

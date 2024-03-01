@@ -23,8 +23,8 @@
 #include "common/system.h"
 #include "bagel/boflib/boffo.h"
 
-#include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/bof_timer.h"
+#include "bagel/boflib/debug.h"
+#include "bagel/boflib/timer.h"
 
 namespace Bagel {
 

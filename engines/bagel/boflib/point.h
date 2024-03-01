@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
 

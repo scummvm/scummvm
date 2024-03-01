@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_OPTIONS_H
-#define BAGEL_BOFLIB_BOF_OPTIONS_H
+#ifndef BAGEL_BOFLIB_OPTIONS_H
+#define BAGEL_BOFLIB_OPTIONS_H
 
 #include "common/stream.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/boflib/bof_object.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/error.h"
 
 namespace Bagel {
 

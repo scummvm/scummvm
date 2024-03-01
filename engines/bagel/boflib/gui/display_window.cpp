@@ -20,8 +20,8 @@
  */
 
 #include "bagel/boflib/gui/display_window.h"
-#include "bagel/boflib/bof_timer.h"
-#include "bagel/boflib/bof_app.h"
+#include "bagel/boflib/timer.h"
+#include "bagel/boflib/app.h"
 
 namespace Bagel {
 

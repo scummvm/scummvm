@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,10 +20,18 @@
  *
  */
 
-#include "bagel/boflib/bof_object.h"
-#include "bagel/boflib/misc.h"
+#ifndef BAGEL_BOFLIB_OBJECT_H
+#define BAGEL_BOFLIB_OBJECT_H
+
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 
+class CBofObject {
+public:
+	static BOOL IsValidObject(const CBofObject *pObject) { return true; }
+};
 
 } // namespace Bagel
+
+#endif

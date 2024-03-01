@@ -22,10 +22,10 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "bagel/boflib/bof_app.h"
+#include "bagel/boflib/app.h"
 #include "bagel/boflib/misc.h"
 
-#include "bagel/boflib/bof_sound.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 

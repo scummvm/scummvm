@@ -25,12 +25,12 @@
 
 #include "bagel/boflib/boffo.h"
 
-#include "bagel/boflib/bof_object.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/error.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
-#include "bagel/boflib/bof_timer.h"
+#include "bagel/boflib/timer.h"
 
 namespace Bagel {
 

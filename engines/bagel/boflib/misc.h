@@ -25,7 +25,7 @@
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/error.h"
 #include "bagel/boflib/date_functions.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/string_functions.h"

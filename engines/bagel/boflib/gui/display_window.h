@@ -23,7 +23,7 @@
 #define BAGEL_BOFLIB_GFX_DISPLAY_WINDOW_H
 
 #include "bagel/boflib/gui/display_object.h"
-#include "bagel/boflib/bof_list.h"
+#include "bagel/boflib/list.h"
 #include "bagel/boflib/queue.h"
 #include "bagel/boflib/stack.h"
 

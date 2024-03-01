@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_VECTOR_H
 
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_object.h"
+#include "bagel/boflib/object.h"
 
 namespace Bagel {
 
@@ -91,7 +91,7 @@ public:
 	 * @return				Cross-product
 	 */
 	CVector CrossProduct(const VECTOR &vector);
-	
+
 	/**
 	 * Rotates this vector the specified number of degrees
 	 * @param fAngle		Rotation angle

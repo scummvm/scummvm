@@ -19,30 +19,10 @@
  *
  */
 
-#include "bagel/boflib/bof_fixed.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
-CBofFixed CBofFixed::operator-=(const CBofFixed &Arg) {
-	m_lVal -= Arg.m_lVal;
-	return *this;
-}
-
-CBofFixed CBofFixed::operator+=(const CBofFixed &Arg) {
-	m_lVal += Arg.m_lVal;
-	return *this;
-}
-
-CBofFixed CBofFixed::operator*=(const CBofFixed &Arg) {
-	m_lVal = m_lVal * Arg.m_lVal;
-
-	return *this;
-}
-
-CBofFixed CBofFixed::operator/=(const CBofFixed &Arg) {
-	m_lVal = m_lVal / Arg.m_lVal;
-
-	return *this;
-}
 
 } // namespace Bagel

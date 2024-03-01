@@ -19,8 +19,8 @@
  *
  */
 
-#include "bagel/boflib/bof_res.h"
-#include "bagel/boflib/bof_debug.h"
+#include "bagel/boflib/res.h"
+#include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {

@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_BOF_FILE_H
-#define BAGEL_BOFLIB_BOF_FILE_H
+#ifndef BAGEL_BOFLIB_FILE_H
+#define BAGEL_BOFLIB_FILE_H
 
 #include "common/stream.h"
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bof_object.h"
-#include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/object.h"
+#include "bagel/boflib/error.h"
 
 namespace Bagel {
 
