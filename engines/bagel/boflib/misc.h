@@ -26,6 +26,9 @@
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/bof_error.h"
+#include "bagel/boflib/date_functions.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 
@@ -34,9 +37,11 @@ USHORT TimePack(USHORT hour, USHORT min, USHORT sec);
 VOID DateUnpack(USHORT num, USHORT *year, USHORT *month, USHORT *day);
 USHORT DatePack(USHORT year, USHORT month, USHORT day);
 
-VOID MessageLog(const CHAR *, const CHAR *, ...);
-VOID ErrorLog(const CHAR *, ...);
-VOID SetErrLogFile(const CHAR *pszFileName);
+/**
+ * Log an error message
+*/
+VOID ErrorLog(const CHAR *format, ...);
+inline VOID SetErrLogFile(const CHAR *pszFileName) {}
 
 LONG FileLength(const CHAR *);
 CHAR *FileGetTempDir();
@@ -122,27 +127,6 @@ extern VOID BofMemTest();
 extern ULONG GetFreePhysMem();
 extern ULONG GetFreeMem();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-// String routines (Should be put into their own STRING module)
-//
-//////////////////////////////////////////////////////////////////////////////
-
-VOID StrWordCaps(CHAR *);
-INT StrFreqMatch(const CHAR *, const CHAR *);
-BOOL StrCompare(const CHAR *, const CHAR *);
-INT StrCharCount(const CHAR *, CHAR);
-CHAR *StriStr(const CHAR *, const CHAR *);
-VOID StrUprStr(CHAR *, const CHAR *);
-VOID StrLwrStr(CHAR *, const CHAR *);
-VOID StrCpyStripChar(CHAR *, const CHAR *, CHAR);
-CHAR *StrStripChar(CHAR *, CHAR);
-CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
-VOID MemReplaceChar(UBYTE *pBuf, UBYTE chOld, UBYTE chNew, LONG lSize);
-CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *, const CHAR *);
-VOID StrInvertCase(CHAR *pszBuf);
-CHAR *StrCToPascal(CHAR *pszBuffer);
-CHAR *StrPascalToC(CHAR *pszBuffer);
 
 ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, const CHAR *);
 ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, UINT);
