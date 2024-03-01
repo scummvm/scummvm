@@ -31,7 +31,9 @@ VOID StrWordCaps(CHAR *pszText) {
 	Assert(pszText != nullptr);
 
 	// Make entire string lower case
-	strlwr(pszText);
+	Common::String ss1(pszText);
+	ss1.toLowercase();
+	strncpy(pszText, ss1.c_str(), ss1.size());
 
 	// Make 1st letter upper case
 	*pszText = (CHAR)toupper(*pszText);
@@ -104,7 +106,10 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
 
 	// Make "THE", "AN", and "A" be special tokens - make them uppercase while
 	// all other words are lowercase.
-	strlwr(s1);
+	Common::String ss1(s1);
+	ss1.toLowercase();
+	strncpy(s1, ss1.c_str(), ss1.size());
+
 	StrUprStr(s1, " the ");
 	StrUprStr(s1, " an ");
 	StrUprStr(s1, " a ");
@@ -139,8 +144,8 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
 	Assert(strlen(s2) < 256);
 
 	// Compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
-	// then do a special compare	
-	bMatch = TRUE;	
+	// then do a special compare
+	bMatch = TRUE;
 
 	i = 0;
 	n = strlen(s1);
@@ -230,8 +235,13 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 			Common::strcpy_s(pszStr2, 9999, s2);
 
 			// Convert to upper case
-			strupr(pszStr1);
-			strupr(pszStr2);
+			Common::String ss1(pszStr1);
+			ss1.toUppercase();
+			strncpy(pszStr1, ss1.c_str(), s1Len);
+
+			Common::String ss2(pszStr2);
+			ss2.toUppercase();
+			strncpy(pszStr2, ss2.c_str(), s2Len);
 
 			// Find pszStr2 in pszStr1
 			p = strstr(pszStr1, pszStr2);
