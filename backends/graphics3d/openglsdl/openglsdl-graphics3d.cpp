@@ -475,17 +475,15 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 	}
 
 #ifdef USE_IMGUI
-	if(!_imguiInit) {
+	if (!_imguiInit) {
 		// Setup Dear ImGui
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
-		ImGui_ImplOpenGL3_Init("#version 110");
+		ImGui_ImplOpenGL3_Init(nullptr);
 		ImGui::StyleColorsDark();
 		ImGuiIO &io = ImGui::GetIO();
-		Common::Path initPath(ConfMan.getPath("savepath"));
-		initPath = initPath.appendComponent("imgui.ini");
-		io.IniFilename = initPath.toString().c_str();
+		io.IniFilename = nullptr;
 	}
 #endif
 #endif
