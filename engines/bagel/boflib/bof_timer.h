@@ -31,7 +31,7 @@ class CBofTimer: public CBofObject, public CLList {
 
     public:
         CBofTimer();
-        CBofTimer(UINT nID, UINT nInterval, ULONG lUserInfo, BOFCALLBACK pCallBack);
+        CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
         ~CBofTimer();
 
         VOID Start(VOID)                    { m_bActive = TRUE; }
@@ -45,8 +45,8 @@ class CBofTimer: public CBofObject, public CLList {
         VOID SetInterval(UINT nInterval)    { m_nInterval = nInterval; }
         UINT GetInterval(VOID)              { return(m_nInterval); }
 
-        VOID SetUserInfo(ULONG lUserInfo)   { m_lUserInfo = lUserInfo; }
-        ULONG GetUserInfo(VOID)             { return(m_lUserInfo); }
+        VOID SetUserInfo(void *lUserInfo)   { m_lUserInfo = lUserInfo; }
+        void *GetUserInfo(VOID)             { return(m_lUserInfo); }
 
         VOID SetCallBack(BOFCALLBACK pCallBack) { m_pCallBack = pCallBack; }
         BOFCALLBACK GetCallBack(VOID)       { return(m_pCallBack); }
@@ -68,7 +68,7 @@ class CBofTimer: public CBofObject, public CLList {
         UINT        m_nID;
         UINT        m_nInterval;
         BOFCALLBACK m_pCallBack;
-        ULONG       m_lUserInfo;
+        void       *m_lUserInfo;
         BOOL        m_bActive;
 };
 

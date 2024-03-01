@@ -60,7 +60,7 @@ CBofTimer::CBofTimer() {
 }
 
 
-CBofTimer::CBofTimer(UINT nID, UINT nInterval, ULONG lUserInfo, BOFCALLBACK pCallBack) {
+CBofTimer::CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack) {
 	m_lLastTime = 0;
 	m_nID = nID;
 	m_nInterval = nInterval;
@@ -113,7 +113,7 @@ VOID CBofTimer::HandleTimers(VOID) {
 				if (pTimer->m_pCallBack != NULL) {
 
 					// Execute call back
-					(*pTimer->m_pCallBack)(pTimer->m_nID, (VOID *)pTimer->m_lUserInfo);
+					(*pTimer->m_pCallBack)(pTimer->m_nID, pTimer->m_lUserInfo);
 
 					// If callback modifies the timer list, then we must start over
 					//
