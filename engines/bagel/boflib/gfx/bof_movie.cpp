@@ -165,7 +165,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 #if BOF_MAC || BOF_WINMAC
 			ReportError(ERR_FOPEN, "Movie not found=%s", filename.GetBuffer());
 #else
-			::MessageBox(GetParent()->GetHandle(), filename.GetBuffer(), "SmackOpen failed", MB_ICONEXCLAMATION | MB_OK);
+			error("SmackOpen failed");
 #endif
 			FileOpenWin(); // Put up to open file message box
 #endif
