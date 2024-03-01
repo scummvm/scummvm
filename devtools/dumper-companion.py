@@ -7,7 +7,7 @@
 # See https://wiki.scummvm.org/index.php?title=HOWTO-Dump_Macintosh_Media for
 # the full documentation
 #
-# prerequisites: pip3 install machfs
+# prerequisites: pip3 install machfs pycdlib
 #
 # Development information:
 # This file contains tests. They can be run with:
@@ -31,6 +31,7 @@ from struct import pack, unpack
 from typing import Any
 
 import machfs
+import pycdlib
 
 
 # fmt: off
@@ -289,7 +290,7 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
-def extract_volume(args: argparse.Namespace) -> int:
+def extract_volume_hfs(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
     loglevel: str = args.log
@@ -338,6 +339,62 @@ def extract_volume(args: argparse.Namespace) -> int:
             f.seek(0)
             vol.read(f.read())
             extract_partition(args, vol)
+
+
+def extract_volume_iso(args: argparse.Namespace):
+    """Extract an ISO volume"""
+    source_volume = args.src
+    loglevel: str = args.log
+
+    numeric_level = getattr(logging, loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError("Invalid log level: %s" % loglevel)
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+
+    logging.info(f"Loading {source_volume} ...")
+
+    iso = pycdlib.PyCdlib()
+    iso.open(source_volume)
+
+    output_dir = str(args.dir)
+
+    for dirname, dirlist, filelist in iso.walk(iso_path='/'):
+        pwd = output_dir + dirname
+        for dir in dirlist:
+            joined_path = os.path.join(pwd, dir)
+            os.makedirs(joined_path, exist_ok=True)
+        for file in filelist:
+            filename = file.split(';')[0]
+            if dirname != '/':
+                iso_file_path = dirname + '/' + file
+            else:
+                iso_file_path = dirname + file
+            with open(os.path.join(pwd, filename), 'wb') as f:
+                iso.get_file_from_iso_fp(outfp=f, iso_path=iso_file_path)
+
+    iso.close()
+
+
+def extract_volume_hybrid(args: argparse.Namespace):
+    source_volume = args.src
+    loglevel: str = args.log
+
+    numeric_level = getattr(logging, loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError("Invalid log level: %s" % loglevel)
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+
+    logging.info(f"Loading {source_volume} ...")
+
+    if not args.macdump and not args.iso9660dump:
+        logging.error("Please provide at least one dump for the hybrid drive")
+        return
+    if args.macdump:
+        args.dir = args.macdump
+        extract_volume_hfs(args)
+    if args.iso9660dump:
+        args.dir = args.iso9660dump
+        extract_volume_iso(args)
 
 
 def extract_partition(args: argparse.Namespace, vol) -> int:
@@ -731,35 +788,81 @@ def generate_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    parser_iso = subparsers.add_parser("iso", help="Dump HFS ISOs")
+    parser_hfs = subparsers.add_parser("hfs", help="Dump HFS ISOs")
 
-    parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
-    parser_iso.add_argument(
+    parser_hfs.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
+    parser_hfs.add_argument(
         "--nopunycode", action="store_true", help="never encode pathnames into punycode"
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "--japanese", action="store_true", help="read MacJapanese HFS"
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "--dryrun", action="store_true", help="do not write any files"
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "--forcemacbinary",
         action="store_true",
         help="always encode using MacBinary, even for files with no resource fork",
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "--addmacbinaryext",
         action="store_true",
         help="add .bin extension when using MacBinary",
     )
-    parser_iso.add_argument(
+    parser_hfs.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
     )
-    parser_iso.set_defaults(func=extract_volume)
+    parser_hfs.set_defaults(func=extract_volume_hfs)
+
+    parser_iso9660 = subparsers.add_parser(
+        "iso9660", help="Dump ISO9660 ISOs"
+    )
+    parser_iso9660.add_argument(
+        "--log", metavar="LEVEL", help="set logging level", default="INFO"
+    )
+    parser_iso9660.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
+    parser_iso9660.add_argument(
+        "dir", metavar="OUTPUT", type=Path, help="Destination folder"
+    )
+    parser_iso9660.set_defaults(func=extract_volume_iso)
+
+    parser_hybrid = subparsers.add_parser(
+        "hybrid", help="Dump Hybrid ISOs"
+    )
+    parser_hybrid.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
+    parser_hybrid.add_argument(
+        "--nopunycode", action="store_true", help="never encode pathnames into punycode"
+    )
+    parser_hybrid.add_argument(
+        "--japanese", action="store_true", help="read MacJapanese HFS"
+    )
+    parser_hybrid.add_argument(
+        "--dryrun", action="store_true", help="do not write any files"
+    )
+    parser_hybrid.add_argument(
+        "--log", metavar="LEVEL", help="set logging level", default="INFO"
+    )
+    parser_hybrid.add_argument(
+        "--forcemacbinary",
+        action="store_true",
+        help="always encode using MacBinary, even for files with no resource fork",
+    )
+    parser_hybrid.add_argument(
+        "--addmacbinaryext",
+        action="store_true",
+        help="add .bin extension when using MacBinary",
+    )
+    parser_hybrid.add_argument(
+        "--macdump", metavar="OUTPUT", type=Path, help="Destination Folder for HFS Dump"
+    )
+    parser_hybrid.add_argument(
+        "--iso9660dump", metavar="OUTPUT", type=Path, help="Destination Folder for ISO9660 Dump"
+    )
+    parser_hybrid.set_defaults(func=extract_volume_hybrid)
 
     parser_dir = subparsers.add_parser(
         "dir", help="Punyencode all files and dirs in place"
