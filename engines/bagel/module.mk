@@ -20,11 +20,14 @@ MODULE_OBJS = \
 	boflib/bof_timer.o \
 	boflib/cache.o \
 	boflib/crc.o \
+	boflib/date_functions.o \
 	boflib/deflate.o \
+	boflib/file_functions.o \
 	boflib/llist.o \
 	boflib/misc.o \
 	boflib/queue.o \
 	boflib/stack.o \
+	boflib/string_functions.o \
 	boflib/vector.o \
 	boflib/gfx/bof_bitmap.o \
 	boflib/gfx/bof_cursor.o \
