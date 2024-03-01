@@ -380,7 +380,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 	env.scr->seek(0);
 	uint16 op = 0;
 	for (uint frame = 0; frame < env._totalFrames; frame++) {
-		env._frameOffsets[frame] = env.scr->pos() + (op == 0x0ff0 ? 2 : 0);
+		env._frameOffsets[frame] = env.scr->pos();
 		//debug("findAndAddSequences: frame %d at offset %d", frame, (int)env.scr->pos());
 		op = env.scr->readUint16LE();
 		while (op != 0x0ff0 && env.scr->pos() < env.scr->size()) {
@@ -524,9 +524,11 @@ bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 	seq._executed = false;
 	if (seq._gotoFrame == -1) {
 		seq._currentFrame++;
+		debug("env %d seq %d advance to frame %d", seq._enviro, seq._seqNum, seq._currentFrame);
 	} else {
 		seq._currentFrame = seq._gotoFrame;
 		seq._gotoFrame = -1;
+		debug("env %d seq %d goto to frame %d", seq._enviro, seq._seqNum, seq._currentFrame);
 	}
 
 	return true;
@@ -915,7 +917,7 @@ bool ADSInterpreter::run() {
 		TTMRunType rflag = seq._runFlag;
 		if (sflag == 6 || (rflag != kRunType1 && rflag != kRunTypeTimeLimited && rflag != kRunTypeMulti && rflag != kRunType5)) {
 			if (sflag != 6 && sflag != 5 && rflag == kRunTypeFinished) {
-			  seq._runFlag = kRunTypeStopped;
+				seq._runFlag = kRunTypeStopped;
 			}
 		} else {
 			int16 curframe = seq._currentFrame;
