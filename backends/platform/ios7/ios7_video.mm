@@ -90,6 +90,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	UITapGestureRecognizer *twoFingerTapGesture;
 	UILongPressGestureRecognizer *oneFingerLongPressGesture;
 	UILongPressGestureRecognizer *twoFingerLongPressGesture;
+	CGPoint touchesBegan;
 #endif
 }
 
@@ -628,6 +629,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+	UITouch *touch = [touches anyObject];
+	touchesBegan = [touch locationInView:self];
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
 			[(TouchController *)c touchesBegan:touches withEvent:event];
@@ -637,8 +640,13 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 #if TARGET_OS_IOS
-	[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
-	[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+	UITouch *touch = [touches anyObject];
+	CGPoint touchesMoved = [touch locationInView:self];
+	if (touchesBegan.x != touchesMoved.x ||
+		touchesBegan.y != touchesMoved.y) {
+		[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+		[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+	}
 #endif
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
