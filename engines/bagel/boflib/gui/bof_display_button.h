@@ -23,8 +23,9 @@
 #ifndef BAGEL_BOFLIB_GFX_BOF_DISPLAY_BUTTON_H
 #define BAGEL_BOFLIB_GFX_BOF_DISPLAY_BUTTON_H
 
-#include "bagel/boflib/gfx/bof_display_window.h"
-#include "bagel/boflib/bof_palette.h"
+#include "bagel/boflib/bof_app.h"
+#include "bagel/boflib/gui/bof_display_window.h"
+#include "bagel/boflib/gfx/bof_palette.h"
 
 namespace Bagel {
 
@@ -77,7 +78,7 @@ public:
 	virtual VOID Enable(VOID);
 	virtual VOID Disable(VOID);
 
-	ERROR_CODE SetState(INT nNewState, Bool bRepaintNow = TRUE);
+	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
 	INT GetState(VOID) { return (m_nState); }
 };
 
