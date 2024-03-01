@@ -248,7 +248,7 @@ int AudioSystem::play(Common::SharedPtr<SoundDefinition> sndDef, Audio::Mixer::S
 		return 0;
 
 	const Common::String &name = sndDef->getName();
-	Audio::SeekableAudioStream *audioStream;
+	Audio::SeekableAudioStream *audioStream = nullptr;
 	if (name.hasSuffixIgnoreCase(".ogg")) {
 		slot->stream.open(sndDef);
 		audioStream = Audio::makeVorbisStream(&slot->stream, DisposeAfterUse::NO);
