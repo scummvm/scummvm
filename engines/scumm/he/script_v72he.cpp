@@ -528,14 +528,17 @@ void ScummEngine_v72he::o72_getObjectImageY() {
 }
 
 void ScummEngine_v72he::o72_captureWizImage() {
-	Common::Rect grab;
-	grab.bottom = pop() + 1;
-	grab.right = pop() + 1;
-	grab.top = pop();
-	grab.left = pop();
+	int y2 = pop();
+	int x2 = pop();
+	int y1 = pop();
+	int x1 = pop();
 	int image = pop();
 
-	_wiz->takeAWiz(image, grab, false, true);
+	_wiz->takeAWiz(image, x1, y1, x2, y2, false, true);
+
+	if (_game.heversion > 99) {
+		_res->setModified(rtImage, image);
+	}
 }
 
 void ScummEngine_v72he::o72_getTimer() {

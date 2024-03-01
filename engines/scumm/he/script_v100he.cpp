@@ -1206,7 +1206,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizImageCommand.xPos = pop();
 		break;
 	case SO_AT_IMAGE: // 7
-		_wizImageCommand.actionFlags |= kWAFSourceImg;
+		_wizImageCommand.actionFlags |= kWAFSourceImage;
 		_wizImageCommand.sourceImage = pop();
 		break;
 	case SO_CAPTURE: // 11

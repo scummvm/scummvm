@@ -1289,9 +1289,8 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 	void(*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2)) {
 
 	Common::Rect dstRect, srcRect, clipRect, clippedDstRect, clippedSrcRect;
-	int dstOffset, dstStep, wx, w, h, srcOffset, dstX, dstY;
+	int dstOffset, dstStep, w, h, srcOffset, dstX, dstY;
 	const WizRawPixel *srcPtr;
-	WizRawPixel *dstWorkPtr;
 	WizRawPixel *dstPtr;
 
 	// Do as much pre-clipping as possible

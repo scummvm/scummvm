@@ -143,6 +143,35 @@ void Wiz::polyMovePolygonPoints(Common::Point *listOfPoints, int numverts, int d
 	}
 }
 
+bool Wiz::polyIsRectangle(const Common::Point *points, int numverts) {
+	// assume it's not
+	bool bRetVal = false;
+
+	// if there aren't four points, it's not a rectangle, duh!
+	if (numverts == 4) {
+		// check if point 0 is on same x and y axis as neighbors
+		if (points[0].x == points[1].x) {
+			// point 3 must be on y axis to form a right angle
+			if (points[0].y == points[3].y) {
+				// check opposite point to make sure that its neighbors form a right angle
+				if ((points[2].x == points[3].x) && (points[2].y == points[1].y)) {
+					bRetVal = true;
+				}
+			}
+		} else if (points[0].x == points[3].x) { // the second of two possible orientations
+			// point 1 must be on y axis to form right angle
+			if (points[0].y == points[1].y) {
+				// check opposite point to make sure that its neighbors form a right angle
+				if ((points[2].x == points[1].x) && (points[2].y == points[3].y)) {
+					bRetVal = true;
+				}
+			}
+		}
+	}
+
+	return bRetVal;
+}
+
 void Wiz::polyBuildBoundingRect(Common::Point *points, int numVerts, Common::Rect &rect) {
 	rect.left = 10000;
 	rect.top = 10000;

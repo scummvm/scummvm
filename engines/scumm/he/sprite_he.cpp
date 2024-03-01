@@ -1350,7 +1350,7 @@ void Sprite::renderSprites(bool arg) {
 			wiz.zPos = spi->priority;
 		}
 		if (spi->sourceImage) {
-			wiz.actionFlags |= kWAFSourceImg;
+			wiz.actionFlags |= kWAFSourceImage;
 			wiz.sourceImage = spi->sourceImage;
 		}
 		wiz.actionFlags |= kWAFFlags;

@@ -193,7 +193,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizImageCommand.extendedRenderInfo.group = 0;
 		break;
 	case SO_AT_IMAGE: // 62, HE99+
-		_wizImageCommand.actionFlags |= kWAFSourceImg;
+		_wizImageCommand.actionFlags |= kWAFSourceImage;
 		_wizImageCommand.sourceImage = pop();
 		break;
 	case SO_AT: // 65
