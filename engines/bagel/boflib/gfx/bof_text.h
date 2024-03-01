@@ -74,7 +74,10 @@ enum {
     DT_RIGHT    = (1 << 3),
     DT_CENTER   = (1 << 4),
     DT_WORDBREAK = (1 << 5),
+};
 
+enum {
+    FW_NORMAL,
 };
 
 #define FONT_DEFAULT        0
