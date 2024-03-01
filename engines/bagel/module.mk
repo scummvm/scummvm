@@ -33,10 +33,10 @@ MODULE_OBJS = \
 	boflib/gfx/bof_cursor.o \
 	boflib/gfx/bof_movie.o \
 	boflib/gfx/bof_palette.o \
-	boflib/gui/bof_display_button.o \
-	boflib/gui/bof_display_object.o \
-	boflib/gui/bof_display_window.o \
-	boflib/gui/bof_window.o
+	boflib/gui/display_button.o \
+	boflib/gui/display_object.o \
+	boflib/gui/display_window.o \
+	boflib/gui/window.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

@@ -32,7 +32,7 @@
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/gfx/bof_palette.h"
-#include "bagel/boflib/gui/bof_window.h"
+#include "bagel/boflib/gui/window.h"
 
 namespace Bagel {
 

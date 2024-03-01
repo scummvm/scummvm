@@ -28,7 +28,7 @@
 #include "bagel/boflib/bof_object.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/boflib/gui/bof_dialog.h"
+#include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/bof_timer.h"
 

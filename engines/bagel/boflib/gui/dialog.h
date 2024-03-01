@@ -22,7 +22,7 @@
 #ifndef BAGEL_BOFLIB_GUI_BOF_DIALOG_H
 #define BAGEL_BOFLIB_GUI_BOF_DIALOG_H
 
-#include "bagel/boflib/gui/bof_window.h"
+#include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/bof_bitmap.h"
 #include "bagel/boflib/gfx/bof_palette.h"
 

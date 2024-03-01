@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/boflib/gui/bof_window.h"
+#include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/bof_debug.h"
 #include "bagel/boflib/bof_app.h"
 #include "bagel/boflib/bof_sound.h"
