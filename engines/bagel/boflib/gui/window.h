@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GUI_BOF_WINDOW_H
-#define BAGEL_BOFLIB_GUI_BOF_WINDOW_H
+#ifndef BAGEL_BOFLIB_GUI_WINDOW_H
+#define BAGEL_BOFLIB_GUI_WINDOW_H
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
@@ -32,8 +32,8 @@
 #include "bagel/boflib/size.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/bof_debug.h"
-#include "bagel/boflib/gfx/bof_bitmap.h"
-#include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/bitmap.h"
+#include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/std_keys.h"
 
 namespace Bagel {

@@ -19,12 +19,12 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GUI_BOF_DIALOG_H
-#define BAGEL_BOFLIB_GUI_BOF_DIALOG_H
+#ifndef BAGEL_BOFLIB_GUI_DIALOG_H
+#define BAGEL_BOFLIB_GUI_DIALOG_H
 
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/gfx/bof_bitmap.h"
-#include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/bitmap.h"
+#include "bagel/boflib/gfx/palette.h"
 
 namespace Bagel {
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_BOF_PALETTE_H
-#define BAGEL_BOFLIB_GFX_BOF_PALETTE_H
+#ifndef BAGEL_BOFLIB_GFX_PALETTE_H
+#define BAGEL_BOFLIB_GFX_PALETTE_H
 
 #include "graphics/screen.h"
 #include "bagel/boflib/boffo.h"

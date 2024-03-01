@@ -20,8 +20,8 @@
  */
 
 #include "bagel/boflib/bof_string.h"
-#include "bagel/boflib/gfx/bof_movie.h"
-#include "bagel/boflib/gfx/bof_cursor.h"
+#include "bagel/boflib/gfx/movie.h"
+#include "bagel/boflib/gfx/cursor.h"
 
 
 namespace Bagel {

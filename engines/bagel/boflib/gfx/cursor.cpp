@@ -20,7 +20,7 @@
  */
 
 #include "graphics/cursorman.h"
-#include "bagel/boflib/gfx/bof_cursor.h"
+#include "bagel/boflib/gfx/cursor.h"
 
 namespace Bagel {
 
