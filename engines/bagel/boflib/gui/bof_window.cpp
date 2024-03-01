@@ -1227,6 +1227,11 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 }
 #endif
 
+Graphics::ManagedSurface* CBofWindow::getSurface() {
+	error("TODO: Implement CBofWindow::getSurface");
+}
+
+
 // Default version of these virtual functions don't do anything
 //
 VOID CBofWindow::OnMouseMove(UINT, CBofPoint *) {}
