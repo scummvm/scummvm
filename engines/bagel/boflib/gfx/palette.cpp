@@ -20,7 +20,7 @@
  */
 
 #include "graphics/palette.h"
-#include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/bof_app.h"
 #include "bagel/boflib/bof_file.h"
 

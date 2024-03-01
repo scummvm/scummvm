@@ -31,7 +31,7 @@
 #include "bagel/console.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/bof_error.h"
-#include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
 
 namespace Bagel {

@@ -25,7 +25,7 @@
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/gfx/bof_cursor.h"
+#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/bof_list.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_BOF_CURSOR_H
-#define BAGEL_BOFLIB_GFX_BOF_CURSOR_H
+#ifndef BAGEL_BOFLIB_GFX_CURSOR_H
+#define BAGEL_BOFLIB_GFX_CURSOR_H
 
 #include "graphics/managed_surface.h"
 #include "bagel/boflib/boffo.h"

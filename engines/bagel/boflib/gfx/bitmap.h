@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_BOF_BMP_H
-#define BAGEL_BOFLIB_GFX_BOF_BMP_H
+#ifndef BAGEL_BOFLIB_GFX_BMP_H
+#define BAGEL_BOFLIB_GFX_BMP_H
 
 #include "graphics/managed_surface.h"
 #include "bagel/boflib/boffo.h"
@@ -32,7 +32,7 @@
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/size.h"
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/gfx/bof_palette.h"
+#include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
 
 namespace Bagel {

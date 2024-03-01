@@ -20,7 +20,7 @@
  */
 
 #include "image/bmp.h"
-#include "bagel/boflib/gfx/bof_bitmap.h"
+#include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/bof_debug.h"
 #include "bagel/boflib/bof_app.h"
 #include "bagel/boflib/bof_file.h"
@@ -59,14 +59,14 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
     m_szFileName[0] = '\0';
     m_pPalette = nullptr;
     m_bInitialized = TRUE;
-    
+
     // jwl 12.06.96 allow privatization of the bitmap (used only on mac from displaytextex).;
-    m_bPrivateBmp = (pPrivateBuff != nullptr); 
-    if (m_bPrivateBmp == TRUE) { 
-    	m_pBits = pPrivateBuff; 
+    m_bPrivateBmp = (pPrivateBuff != nullptr);
+    if (m_bPrivateBmp == TRUE) {
+    	m_pBits = pPrivateBuff;
 	} else {
 	    m_pBits = nullptr;
-	} 
+	}
 
 #if BOF_WINDOWS
     Assert(sizeof(BOFBITMAPINFOHEADER) == sizeof(BITMAPINFOHEADER));
@@ -1718,30 +1718,30 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
         if (pDstRect == nullptr)
             pDstRect = &cRect;
 
-        // jwl 1.14.97 for this one draw, make sure that the right palette is 
-        // in place. 
+        // jwl 1.14.97 for this one draw, make sure that the right palette is
+        // in place.
  #if BOF_MAC
-        CBofPalette *pPal = (pPalette == nullptr ? pBmp->GetPalette() : pPalette); 
-        CBofPalette *pSavePalette = nullptr; 
-        CBofApp *pApp = nullptr; 
-        if (pPal) { 
-            pApp = CBofApp::GetApp(); 
-            if (pApp) { 
-                pSavePalette = pApp->GetPalette (); 
+        CBofPalette *pPal = (pPalette == nullptr ? pBmp->GetPalette() : pPalette);
+        CBofPalette *pSavePalette = nullptr;
+        CBofApp *pApp = nullptr;
+        if (pPal) {
+            pApp = CBofApp::GetApp();
+            if (pApp) {
+                pSavePalette = pApp->GetPalette ();
                 pApp->SetPalette(pPal);
             }
-        } 
+        }
 #endif
 
         errCode = pBmp->Paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
         delete pBmp;
-        
+
         // jwl 1.14.97 restore the previous palette
  #if BOF_MAC
-        if (pSavePalette) { 
+        if (pSavePalette) {
             pApp->SetPalette(pSavePalette);
-        } 
+        }
 #endif
 
     } else {
@@ -1772,7 +1772,7 @@ ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const CHAR *pszFileName, CBofRect *p
 
         if (pDstRect == nullptr)
             pDstRect = &cRect;
-            
+
         errCode = pBmp->Paint(pBitmap, pDstRect, pSrcRect, nMaskColor);
 
         delete pBmp;
@@ -1839,34 +1839,34 @@ CBofSize GetBitmapSize(const CHAR *pszFileName) {
 
 
 //	Routine that takes a palette and a grafport and synchronizes
-//	their color definitions.  Makes the current grafport the 
-//  exact same as the palette passed.  jwl 07.02.96 not currently 
+//	their color definitions.  Makes the current grafport the
+//  exact same as the palette passed.  jwl 07.02.96 not currently
 //  used.
 #if BOF_MAC || BOF_WINMAC
 #if SYNCPALETTES
-VOID SynchronizeColorTables (PaletteHandle pPalette, CGrafPtr cGrafPtr) 
-{ 
-	PixMapHandle		pmh = cGrafPtr->portPixMap; 
-	CTabHandle			clutH = (*pmh)->pmTable; 
-	
-	Assert ((*pmh)->pixelSize == 8); 
-	Assert ((*clutH)->ctSize == 255); 
-	Assert ((*pPalette)->pmEntries == 256); 
+VOID SynchronizeColorTables (PaletteHandle pPalette, CGrafPtr cGrafPtr)
+{
+	PixMapHandle		pmh = cGrafPtr->portPixMap;
+	CTabHandle			clutH = (*pmh)->pmTable;
 
-	if (pPalette == nullptr) 
-		return; 
-		
-	ColorSpecPtr cTable = (*clutH)->ctTable; 
-	HLock ((Handle) clutH); 
-	
-	for (int i = 0; i < 256; i++) { 
-		cTable[i].rgb.red = (*pPalette)->pmInfo[i].ciRGB.red; 
-		cTable[i].rgb.green = (*pPalette)->pmInfo[i].ciRGB.green; 
-		cTable[i].rgb.blue = (*pPalette)->pmInfo[i].ciRGB.blue; 
-	} 
-	
-	HUnlock ((Handle) clutH); 
-} 
+	Assert ((*pmh)->pixelSize == 8);
+	Assert ((*clutH)->ctSize == 255);
+	Assert ((*pPalette)->pmEntries == 256);
+
+	if (pPalette == nullptr)
+		return;
+
+	ColorSpecPtr cTable = (*clutH)->ctTable;
+	HLock ((Handle) clutH);
+
+	for (int i = 0; i < 256; i++) {
+		cTable[i].rgb.red = (*pPalette)->pmInfo[i].ciRGB.red;
+		cTable[i].rgb.green = (*pPalette)->pmInfo[i].ciRGB.green;
+		cTable[i].rgb.blue = (*pPalette)->pmInfo[i].ciRGB.blue;
+	}
+
+	HUnlock ((Handle) clutH);
+}
 #endif
 #endif
 
@@ -1875,30 +1875,30 @@ VOID CBofBitmap::FlipVerticalFast() {
 	m_cBitmapInfo.m_cInfoHeader.biHeight = -m_cBitmapInfo.m_cInfoHeader.biHeight;
 }
 
-VOID CBofBitmap::FlipBits()  {  
+VOID CBofBitmap::FlipBits()  {
 	Assert (m_cBitmapInfo.m_cInfoHeader.biBitCount == 8);
-	Assert (m_cBitmapInfo.m_cInfoHeader.biPlanes == 1); 
-	
-	LONG dx = m_cBitmapInfo.m_cInfoHeader.biWidth; 
-	LONG dy = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight); 
-	
-	dx = m_nScanDX; 
-	dy = m_nDY;  
-	
-	Assert (dx > 0); 
-	Assert (dy > 0); 
-	
-	Assert (m_nScanDX); 
-	Assert (m_nDY > 0); 
-	Assert (m_pBits != 0); 
+	Assert (m_cBitmapInfo.m_cInfoHeader.biPlanes == 1);
+
+	LONG dx = m_cBitmapInfo.m_cInfoHeader.biWidth;
+	LONG dy = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
+
+	dx = m_nScanDX;
+	dy = m_nDY;
+
+	Assert (dx > 0);
+	Assert (dy > 0);
+
+	Assert (m_nScanDX);
+	Assert (m_nDY > 0);
+	Assert (m_pBits != 0);
 
     Lock();
-	
-	UBYTE HUGE *pOrigBits = m_pBits; 
-	UBYTE HUGE *pDestBits = (UBYTE HUGE *) BofAlloc ((LONG) m_nScanDX * (LONG) m_nDY); 
-	
-	Assert (pDestBits != nullptr); 
-	
+
+	UBYTE HUGE *pOrigBits = m_pBits;
+	UBYTE HUGE *pDestBits = (UBYTE HUGE *) BofAlloc ((LONG) m_nScanDX * (LONG) m_nDY);
+
+	Assert (pDestBits != nullptr);
+
 	for (INT i = 0; i < dy; i++) {
 
 #if BOF_MAC && !__POWERPC__
@@ -1906,33 +1906,33 @@ VOID CBofBitmap::FlipBits()  {
 #else
         BofMemCopy(&pDestBits[i*dx], &pOrigBits[dx*(dy-(i+1))], dx);
 #endif
-	} 
-	
-	m_pBits = pDestBits; 
+	}
 
-	UnLock (); 
+	m_pBits = pDestBits;
+
+	UnLock ();
 
 	BofFree (pOrigBits);
-} 
+}
 
 #if COPYBITS && BOF_MAC
-VOID BofCopyBits (PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, INT nMaskColor) { 
+VOID BofCopyBits (PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, INT nMaskColor) {
 
-	RGBColor        myWhite = {0xFFFF, 0xFFFF, 0xFFFF}; 
-	RGBColor        myBlack = {0x0000, 0x0000, 0x0000}; 
-	CGrafPtr		curCPort; 
-	RGBColor		curRGBBkColor; 
-	RGBColor		curRGBFgColor; 
-	long			curRGBBkColorIndex; 
-	long			curRGBFgColorIndex; 
-	short			nTransferMode = srcCopy; 
+	RGBColor        myWhite = {0xFFFF, 0xFFFF, 0xFFFF};
+	RGBColor        myBlack = {0x0000, 0x0000, 0x0000};
+	CGrafPtr		curCPort;
+	RGBColor		curRGBBkColor;
+	RGBColor		curRGBFgColor;
+	long			curRGBBkColorIndex;
+	long			curRGBFgColorIndex;
+	short			nTransferMode = srcCopy;
 	CTabHandle		oldCTab;
 
-	oldCTab = (*trgPixMap)->pmTable; 
+	oldCTab = (*trgPixMap)->pmTable;
 	(*trgPixMap)->pmTable 		= (*srcPixMap)->pmTable;
-	
-	// We really shouldn't have to stretch in this routine. 
-	
+
+	// We really shouldn't have to stretch in this routine.
+
 	Assert ((srcRect->right - srcRect->left) == (trgRect->right - trgRect->left));
 	Assert ((srcRect->bottom - srcRect->top) == (trgRect->bottom - trgRect->top));
 

@@ -19,13 +19,13 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_BOF_TEXT_H
-#define BAGEL_BOFLIB_GFX_BOF_TEXT_H
+#ifndef BAGEL_BOFLIB_GFX_TEXT_H
+#define BAGEL_BOFLIB_GFX_TEXT_H
 
 #include "bagel/boflib/boffo.h"
 
 #include "bagel/boflib/bof_object.h"
-#include "bagel/boflib/gfx/bof_bitmap.h"
+#include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/bof_error.h"
 #include "bagel/boflib/bof_string.h"
 

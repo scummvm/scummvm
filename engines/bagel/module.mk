@@ -29,10 +29,10 @@ MODULE_OBJS = \
 	boflib/stack.o \
 	boflib/string_functions.o \
 	boflib/vector.o \
-	boflib/gfx/bof_bitmap.o \
-	boflib/gfx/bof_cursor.o \
-	boflib/gfx/bof_movie.o \
-	boflib/gfx/bof_palette.o \
+	boflib/gfx/bitmap.o \
+	boflib/gfx/cursor.o \
+	boflib/gfx/movie.o \
+	boflib/gfx/palette.o \
 	boflib/gui/display_button.o \
 	boflib/gui/display_object.o \
 	boflib/gui/display_window.o \
