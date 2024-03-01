@@ -11,14 +11,16 @@ clean: clean-win32-resource-embed
 .PHONY: clean-win32-resource-embed
 
 define win32-resource-embed-macro=
-$(1): configure.stamp
-	@echo '    GENERATE' $$@
-	@echo $$(foreach filename,$$($(2)),$$(filename)) | sed -e 's/ /\n/g' | sed -E 's/(.*\/)(.+)/\2 FILE "\1\2"/g' >> $$@
+$(1): configure.stamp $(foreach filename,$($(2)), $(srcdir)/$(filename)) $($(2)_SOURCE)
+	$(QUIET)echo '    GENERATE' $$@
+	$(QUIET)mkdir -p $$(dir $$@)
+	$(QUIET)echo -n '' > $$@
+	$(QUIET)echo $$(foreach filename,$$($(2)),$$(filename)) | sed -e 's/ /\n/g' | sed -E 's/(.*\/)(.+)/\2 FILE "\1\2"/g' >> $$@
 
 dists/scummvm.o: $(1)
 
 clean-win32-resource-embed-$(1):
-	$(RM) $(srcdir)/$(1)
+	$(RM) $(1)
 
 clean-win32-resource-embed: clean-win32-resource-embed-$(1)
 
