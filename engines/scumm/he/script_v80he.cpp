@@ -331,7 +331,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	wi.x = wi.y = pop();
 	wi.image = pop();
 	wi.state = 0;
-	wi.flags = kWRFIsPolygon;
+	wi.flags = kWRFPolygon;
 	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
 }
 

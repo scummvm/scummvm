@@ -1317,7 +1317,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_SET_POLYGON: // 68
 		_wizImageCommand.actionFlags |= kWAFFlags | kWAFSpot | kWAFPolygon;
-		_wizImageCommand.flags |= kWRFIsPolygon;
+		_wizImageCommand.flags |= kWRFPolygon;
 		_wizImageCommand.polygon = _wizImageCommand.yPos = _wizImageCommand.xPos = pop();
 		break;
 	case SO_SHADOW: // 70

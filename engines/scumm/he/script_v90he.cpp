@@ -325,7 +325,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case SO_SET_POLYGON: // 246
 		_wizImageCommand.actionFlags |= kWAFFlags | kWAFSpot | kWAFPolygon;
-		_wizImageCommand.flags |= kWRFIsPolygon;
+		_wizImageCommand.flags |= kWRFPolygon;
 		_wizImageCommand.polygon = _wizImageCommand.yPos = _wizImageCommand.xPos = pop();
 		break;
 	case SO_END: // 255
@@ -1673,13 +1673,13 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			} else {
 				WizPolygon wp;
 				wp.reset();
-				wp.numVerts = n1;
-				assert(n1 < ARRAYSIZE(wp.vert));
+				wp.numPoints = n1;
+				assert(n1 < ARRAYSIZE(wp.points));
 				for (int i = 0; i < n1; ++i) {
-					wp.vert[i].x = args1[i * 2 + 0];
-					wp.vert[i].y = args1[i * 2 + 1];
+					wp.points[i].x = args1[i * 2 + 0];
+					wp.points[i].y = args1[i * 2 + 1];
 				}
-				push(_wiz->polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
+				push(_wiz->polyIsPointInsidePoly(wp, args2[0], args2[1]) ? 1 : 0);
 			}
 		}
 		break;
@@ -2396,15 +2396,15 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		// Used in readdemo
 		break;
 	case 42:
-		_wiz->_rectOverrideEnabled = true;
-		_wiz->_rectOverride.left = args[1];
-		_wiz->_rectOverride.top = args[2];
-		_wiz->_rectOverride.right = args[3];
-		_wiz->_rectOverride.bottom = args[4];
-		adjustRect(_wiz->_rectOverride);
+		_wiz->_lUseWizClipRect = true;
+		_wiz->_lWizClipRect.left = args[1];
+		_wiz->_lWizClipRect.top = args[2];
+		_wiz->_lWizClipRect.right = args[3];
+		_wiz->_lWizClipRect.bottom = args[4];
+		adjustRect(_wiz->_lWizClipRect);
 		break;
 	case 43:
-		_wiz->_rectOverrideEnabled = false;
+		_wiz->_lUseWizClipRect = false;
 		break;
 	case 714:
 		setResourceOffHeap(args[1], args[2], args[3]);

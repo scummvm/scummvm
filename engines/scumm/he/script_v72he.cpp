@@ -418,7 +418,7 @@ int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
 
 		// Check polygon bounds
 		if (_wiz->polygonDefined(_objs[i].obj_nr)) {
-			if (_wiz->polygonHit(_objs[i].obj_nr, x, y))
+			if (_wiz->polygonTestForObjectHit(_objs[i].obj_nr, x, y))
 				result = _objs[i].obj_nr;
 			else if (VAR_POLYGONS_ONLY != 0xFF && VAR(VAR_POLYGONS_ONLY))
 				continue;

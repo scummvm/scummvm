@@ -85,7 +85,7 @@ void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound)
 		if (spi->flags & (kSFScaleSpecified | kSFAngleSpecified)) {
 			Common::Point pts[4];
 			_vm->_wiz->polygonTransform(spi->image, spi->state, x1, y1, angle, scale, pts);
-			_vm->_wiz->polygonCalcBoundBox(pts, 4, bound);
+			_vm->_wiz->polyBuildBoundingRect(pts, 4, bound);
 		} else {
 			bound.left = x1;
 			bound.top = y1;
@@ -194,7 +194,7 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 				}
 				if (spi->flags & kSFAngleSpecified && angle) {
 					angle = (360 - angle) % 360;
-					_vm->_wiz->polygonRotatePoints(pos, 1, angle);
+					_vm->_wiz->polyRotatePoints(pos, 1, angle);
 				}
 
 				_vm->_wiz->getWizImageDim(image, imageState, w, h);
@@ -1313,7 +1313,7 @@ void Sprite::renderSprites(bool arg) {
 			if (spi->flags & (kSFScaleSpecified | kSFAngleSpecified)) {
 				Common::Point pts[4];
 				_vm->_wiz->polygonTransform(image, imageState, wiz.xPos, wiz.yPos, angle, scale, pts);
-				_vm->_wiz->polygonCalcBoundBox(pts, 4, spi->lastRect);
+				_vm->_wiz->polyBuildBoundingRect(pts, 4, spi->lastRect);
 			} else {
 				bboxPtr->left = wiz.xPos;
 				bboxPtr->top = wiz.yPos;
@@ -1330,9 +1330,9 @@ void Sprite::renderSprites(bool arg) {
 		wiz.flags = kWRFForeground;
 		wiz.zPos = 0;
 		if (spr_flags & kSFHFlip)
-			wiz.flags |= kWRFFlipX;
+			wiz.flags |= kWRFHFlip;
 		if (spr_flags & kSFVFlip)
-			wiz.flags |= kWRFFlipY;
+			wiz.flags |= kWRFVFlip;
 		if (spr_flags & kSFBackgroundRender) {
 			wiz.flags &= ~kWRFForeground;
 			wiz.flags |= kWRFBackground;

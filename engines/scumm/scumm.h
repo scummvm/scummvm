@@ -1507,6 +1507,7 @@ protected:
 	int _shadowPaletteSize = 0;
 	byte _currentPalette[3 * 256];
 	byte _darkenPalette[3 * 256];
+	int _paletteChangedCounter = 1;
 
 	int _palDirtyMin = 0, _palDirtyMax = 0;
 

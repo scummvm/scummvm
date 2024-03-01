@@ -585,6 +585,8 @@ void ScummEngine::setDirtyColors(int min, int max) {
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
+
+	_paletteChangedCounter++; // HE99+
 }
 
 void ScummEngine::initCycl(const byte *ptr) {

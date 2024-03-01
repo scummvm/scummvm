@@ -52,22 +52,41 @@ namespace Scumm {
 
 #define WIZ_MAGIC_REMAP_NUMBER  0x76543210
 
+#define WIZRAWPIXEL_R_MASK    (_uses16BitColor ? 0x7C00 : 0xFF)
+#define WIZRAWPIXEL_G_MASK    (_uses16BitColor ? 0x03E0 : 0xFF)
+#define WIZRAWPIXEL_B_MASK    (_uses16BitColor ? 0x001F : 0xFF)
+
+#define WIZRAWPIXEL_R_SHIFT   (_uses16BitColor ? 10 : 0)
+#define WIZRAWPIXEL_G_SHIFT   (_uses16BitColor ? 5  : 0)
+#define WIZRAWPIXEL_B_SHIFT   (_uses16BitColor ? 0  : 0)
+
+#define WIZRAWPIXEL_MASK   (_uses16BitColor ? 0xFFFF : 0xFF)
+
+#define WIZRAWPIXEL_LO_R_BIT   (1 << WIZRAWPIXEL_R_SHIFT)
+#define WIZRAWPIXEL_LO_G_BIT   (1 << WIZRAWPIXEL_G_SHIFT)
+#define WIZRAWPIXEL_LO_B_BIT   (1 << WIZRAWPIXEL_B_SHIFT)
+#define WIZRAWPIXEL_LO_BITS    ((WIZRAWPIXEL_LO_R_BIT) | (WIZRAWPIXEL_LO_G_BIT) | (WIZRAWPIXEL_LO_B_BIT))
+#define WIZRAWPIXEL_HI_BITS    ~WIZRAWPIXEL_LO_BITS
+
+#define WIZRAWPIXEL_50_50_PREMIX_COLOR(__rawColor__)    (((__rawColor__) & WIZRAWPIXEL_HI_BITS) >> 1)
+#define WIZRAWPIXEL_50_50_MIX(__colorA__, __colorB__)   ((__colorA__) + (__colorB__))
+
 typedef uint16 WizRawPixel;
 
 struct WizPolygon {
-	Common::Point vert[5];
-	Common::Rect bound;
+	Common::Point points[5];
+	Common::Rect boundingRect;
 	int id;
-	int numVerts;
+	int numPoints;
 	bool flag;
 
 	void reset() {
-		for (int i = 0; i < ARRAYSIZE(vert); i++) {
-			vert[i].x = vert[i].y = 0;
+		for (int i = 0; i < ARRAYSIZE(points); i++) {
+			points[i].x = points[i].y = 0;
 		}
-		bound.top = bound.left = bound.bottom = bound.right = 0;
+		boundingRect.top = boundingRect.left = boundingRect.bottom = boundingRect.right = 0;
 		id = 0;
-		numVerts = 0;
+		numPoints = 0;
 		flag = 0;
 	}
 };
@@ -229,6 +248,36 @@ struct WizFloodState {
 	int numStackElements;
 };
 
+struct WizCompressedImage {
+	byte *data;
+	int width;
+	int height;
+};
+
+struct WarpWizOneSpan {
+	int dstLeft;
+	int dstRight;
+	Common::Point srcLeft;
+	Common::Point srcRight;
+};
+
+struct WarpWizOneDrawSpan {
+	int dstOffset;
+	int xSrcStep;
+	int ySrcStep;
+	int xSrcOffset;
+	int ySrcOffset;
+	int dstWidth;
+};
+
+struct WarpWizOneSpanTable {
+	Common::Point dstMinPt, dstMaxPt;
+	Common::Point srcMinPt, srcMaxPt;
+	WarpWizOneDrawSpan *drawSpans;
+	WarpWizOneSpan *spans;
+	int drawSpanCount;
+	int spanCount;
+};
 
 enum WizRenderingFlags {
 	// Standard rendering flags
@@ -238,12 +287,12 @@ enum WizRenderingFlags {
 	kWRFBackground = 0x00000008,
 	kWRFForeground = 0x00000010,
 	kWRFAlloc      = 0x00000020,
-	kWRFIsPolygon  = 0x00000040,
+	kWRFPolygon    = 0x00000040,
 	kWRFZPlaneOn   = 0x00000080,
 	kWRFZPlaneOff  = 0x00000100,
 	kWRFUseShadow  = 0x00000200,
-	kWRFFlipX      = 0x00000400,
-	kWRFFlipY      = 0x00000800,
+	kWRFHFlip      = 0x00000400,
+	kWRFVFlip      = 0x00000800,
 	kWRFRotate90   = 0x00001000,
 
 	// Special rendering flags
@@ -355,7 +404,7 @@ enum WizMoonSystemBits {
 	kWMSBRopParamRShift = 8
 };
 
-enum WizEclipseConstants {
+enum WizEllipseConstants {
 	kWECFixedSize = 16,
 	kWECPiOver2 = 102944, // Fixed point PI/2
 	kWECHalf = 32768      // Fixed point 1/2
@@ -390,25 +439,31 @@ public:
 	Wiz(ScummEngine_v71he *vm);
 
 	void clearWizBuffer();
-	Common::Rect _rectOverride;
+	Common::Rect _lWizClipRect;
 	bool _cursorImage;
-	bool _rectOverrideEnabled;
+	bool _lUseWizClipRect = false;
 	bool _uses16BitColor = false;
+	int _lWizActiveShadow = 0;
 
 	void polygonClear();
 	void polygonLoad(const uint8 *polData);
 	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y);
-	void polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect & bound);
+	void polyBuildBoundingRect(Common::Point *vert, int numVerts, Common::Rect & bound);
 	void polygonErase(int fromId, int toId);
-	int polygonHit(int id, int x, int y);
+	int polygonTestForObjectHit(int id, int x, int y);
 	bool polygonDefined(int id);
-	bool polygonContains(const WizPolygon &pol, int x, int y);
-	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
+	bool polyIsPointInsidePoly(const WizPolygon &pol, int x, int y);
+	void polyRotatePoints(Common::Point *pts, int num, int alpha);
 	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
+	void polyMovePolygonPoints(Common::Point *listOfPoints, int numverts, int deltaX, int deltaY);
 
 	void dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY);
 	bool dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM);
 	int  dwTryToLoadWiz(Common::SeekableReadStream *inFile, const WizImageCommand *params);
+	void dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sourceImage, int sourceState, int32 flags, int paletteNumber, const Common::Rect *optionalClipRect, const WizSimpleBitmap *destBitmapPtr);
+	void dwHandleComplexImageDraw(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	bool dwIsMaskCompatibleCompressionType(int compressionType);
+	bool dwIsUncompressedFormatTypeID(int id);
 
 	void processWizImageCmd(const WizImageCommand *params);
 	void processWizImageCaptureCmd(const WizImageCommand *params);
@@ -432,8 +487,13 @@ public:
 	void getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
 	int getWizImageStates(const uint8 *ptr);
-	void *getWizStateHeaderPrim(int resNum, int state);
-	void *getWizStateDataPrim(int resNum, int state);
+	byte *getWizStateHeaderPrim(int resNum, int state);
+	byte *getWizStateDataPrim(int resNum, int state);
+	byte *getWizStatePaletteDataPrim(int resNum, int state);
+	byte *getWizStateRemapDataPrim(int resNum, int state);
+	int getWizCompressionType(int resNum, int state);
+	bool doesRawWizStateHaveTransparency(int globNum, int state);
+	const byte *getColorMixBlockPtrForWiz(int image);
 
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	int isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags);
@@ -442,7 +502,12 @@ public:
 	int getWizImageData(int resNum, int state, int type);
 	bool isUncompressedFormatTypeID(int id);
 
-	void flushWizBuffer();
+	void handleRotate0SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	void handleRotate90SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	void handleRotate180SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	void handleRotate270SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+
+	void flushAWizBuffer();
 
 	void getWizImageSpot(int resId, int state, int32 &x, int32 &y);
 	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
@@ -453,6 +518,12 @@ public:
 
 	void simpleDrawAWiz(int image, int state, int x, int y, int flags);
 	void bufferAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, int whichPalette);
+	byte *drawAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage,
+				   Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride);
+	byte *drawAWizEx(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect,
+					 int whichPalette, WizSimpleBitmap *optionalBitmapOverride, const WizImageCommand *optionalICmdPtr);
+	void *drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	void *drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr);
 
 	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits);
 	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
@@ -495,6 +566,8 @@ public:
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect &rCapt);
 	void remapImage(int image, int state, int tableCount, const uint8 *remapList, const uint8 *remapTable);
 
+	void ensureNativeFormatImageForState(int image, int state);
+
 	private:
 	ScummEngine_v71he *_vm;
 
@@ -517,8 +590,32 @@ public:
 	void pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, WizRawPixel aColor);
 	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color);
 	void pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalClipRect);
-	void pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background);
 
+	void pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background);
+	void pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor);
+	void pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect);
+	void pgSimpleBlitRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *remapColorTable);
+	void pgSimpleBlitTransparentRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *remapColorTable);
+	void pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *mixColorTable);
+	void pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *mixColorTable);
+	void pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor);
+
+	void pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor, const WizRawPixel *conversionTable);
+	void pgDraw8BppSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
+	void pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, int transparentColor, const WizRawPixel *conversionTable);
+	void pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBitmap *psbZBuffer, const byte *imgData, int x, int y, int z, int width, int height, Common::Rect *prcClip);
+	void pgForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgTransparentForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgTransparentBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgTransparentForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgTransparentBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgBlit90DegreeRotate(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip);
+	void pgBlit90DegreeRotateTransparent(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, WizRawPixel transparentColor);
+	void pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const void *userParam2,
+								  void (*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2));
 	// Rectangles
 	bool findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr);
 	bool isPointInRect(Common::Rect *r, Common::Point *pt);
@@ -526,12 +623,17 @@ public:
 	void makeSizedRectAt(Common::Rect *rectPtr, int x, int y, int width, int height);
 	void makeSizedRect(Common::Rect *rectPtr, int width, int height);
 	void combineRects(Common::Rect *destRect, Common::Rect *ra, Common::Rect *rb);
+	void clipRectCoords(Common::Rect *sourceRectPtr, Common::Rect *destRectPtr, Common::Rect *clipRectPtr);
+	int getRectWidth(Common::Rect *rectPtr);
+	int getRectHeight(Common::Rect *rectPtr);
+	void moveRect(Common::Rect *rectPtr, int dx, int dy);
+	void horzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect);
+	void vertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect);
 
 	// Flood fill
 	void floodInitFloodState(WizFloodState *statePtr, WizSimpleBitmap *bitmapPtr, int colorToWrite, const Common::Rect *optionalClippingRect);
 	WizFloodState *floodCreateFloodState(int numStackElements);
 	void floodDestroyFloodState(WizFloodState *state);
-	//bool floodSimpleFloodCheckPixel(int x, int y, WizFloodState *state);
 	bool floodBoundryColorFloodCheckPixel(int x, int y, WizFloodState *state);
 	void floodFloodFillPrim(int x, int y, WizFloodState *statePtr, bool (*checkPixelFnPtr)(Wiz *w, int x, int y, WizFloodState *state));
 	void floodPerformOpOnRect(WizFloodState *statePtr, Common::Rect *rectPtr);
@@ -539,7 +641,60 @@ public:
 
 	// Utils
 	int getRawPixel(int color);
+	void memset8BppConversion(void *dstPtr, int value, size_t count, const WizRawPixel *conversionTable);
+	void memcpy8BppConversion(void *dstPtr, const void *srcPtr, size_t count, const WizRawPixel *conversionTable);
+	void rawPixelMemset(void *dstPtr, int value, size_t count);
+	WizRawPixel convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *conversionTable);
+	void rawPixelExtractComponents(WizRawPixel aPixel, int &r, int &g, int &b);
+	void rawPixelPackComponents(WizRawPixel &aPixel, int r, int g, int b);
 
+
+	/*
+	 * Compression Primitives
+	 */
+
+	// MRLE
+	void MRLEFLIP_AltSource_DecompressImage(
+		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
+		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
+		int x, int y, int width, int height, Common::Rect *clipRectPtr,
+		int32 wizFlags, const WizRawPixel *conversionTable);
+	void MRLEFLIP_AltSource_DecompressPrim(
+		WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
+		const void *altBufferPtr, int altBitsPerPixel,
+		const WizCompressedImage *imagePtr, int destX, int destY,
+		const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr,
+		int32 flags, const WizRawPixel *conversionTable,
+		void (*forewordFunctionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
+			int skipAmount, int decompAmount, const WizRawPixel *conversionTable),
+		void (*backwardFunctionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
+			int skipAmount, int decompAmount, const WizRawPixel *conversionTable));
+
+
+	/*
+	 * Image Warping on Polygons Primitives
+	 */
+
+	bool WARPWIZ_DrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage);
+	bool WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable);
+	WarpWizOneSpanTable *WARPWIZ_CreateSpanTable(int spanCount);
+	void WARPWIZ_DestroySpanTable(WarpWizOneSpanTable *spanTable);
+	WarpWizOneSpanTable *WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const Common::Point *dstPts, const Common::Point *srcPts, int npoints, const Common::Rect *clipRectPtr);
+	void WARPWIZ_ProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
+	void WARPWIZ_ProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
+	void WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
+	void WARPWIZ_ProcessDrawSpansMixColors( WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr);
+	void WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const Common::Point *dstA, const Common::Point *dstB, const Common::Point *srcA, const Common::Point *srcB);
+	void WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
+	void WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap,const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
+	bool WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags);
+	bool WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor);
+	bool WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect);
+	bool WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable);
+	bool WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
+	void WARPWIZ_FindMinMaxpoints(Common::Point *minPtr, Common::Point *maxPtr, const Common::Point *points, int npoints);
 };
 
 } // End of namespace Scumm

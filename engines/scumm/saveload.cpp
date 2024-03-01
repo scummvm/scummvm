@@ -2235,22 +2235,22 @@ void ScummEngine_v70he::saveLoadWithSerializer(Common::Serializer &s) {
 
 #ifdef ENABLE_HE
 static void syncWithSerializer(Common::Serializer &s, WizPolygon &wp) {
-	s.syncAsSint16LE(wp.vert[0].x, VER(40));
-	s.syncAsSint16LE(wp.vert[0].y, VER(40));
-	s.syncAsSint16LE(wp.vert[1].x, VER(40));
-	s.syncAsSint16LE(wp.vert[1].y, VER(40));
-	s.syncAsSint16LE(wp.vert[2].x, VER(40));
-	s.syncAsSint16LE(wp.vert[2].y, VER(40));
-	s.syncAsSint16LE(wp.vert[3].x, VER(40));
-	s.syncAsSint16LE(wp.vert[3].y, VER(40));
-	s.syncAsSint16LE(wp.vert[4].x, VER(40));
-	s.syncAsSint16LE(wp.vert[4].y, VER(40));
-	s.syncAsSint16LE(wp.bound.left, VER(40));
-	s.syncAsSint16LE(wp.bound.top, VER(40));
-	s.syncAsSint16LE(wp.bound.right, VER(40));
-	s.syncAsSint16LE(wp.bound.bottom, VER(40));
+	s.syncAsSint16LE(wp.points[0].x, VER(40));
+	s.syncAsSint16LE(wp.points[0].y, VER(40));
+	s.syncAsSint16LE(wp.points[1].x, VER(40));
+	s.syncAsSint16LE(wp.points[1].y, VER(40));
+	s.syncAsSint16LE(wp.points[2].x, VER(40));
+	s.syncAsSint16LE(wp.points[2].y, VER(40));
+	s.syncAsSint16LE(wp.points[3].x, VER(40));
+	s.syncAsSint16LE(wp.points[3].y, VER(40));
+	s.syncAsSint16LE(wp.points[4].x, VER(40));
+	s.syncAsSint16LE(wp.points[4].y, VER(40));
+	s.syncAsSint16LE(wp.boundingRect.left, VER(40));
+	s.syncAsSint16LE(wp.boundingRect.top, VER(40));
+	s.syncAsSint16LE(wp.boundingRect.right, VER(40));
+	s.syncAsSint16LE(wp.boundingRect.bottom, VER(40));
 	s.syncAsSint16LE(wp.id, VER(40));
-	s.syncAsSint16LE(wp.numVerts, VER(40));
+	s.syncAsSint16LE(wp.numPoints, VER(40));
 	s.syncAsByte(wp.flag, VER(40));
 }
 
