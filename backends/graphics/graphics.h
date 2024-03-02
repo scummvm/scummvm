@@ -113,6 +113,8 @@ public:
 
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
+
+	virtual void renderImGui(void(*render)()) {}
 };
 
 #endif

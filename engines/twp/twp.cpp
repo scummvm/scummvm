@@ -19,6 +19,8 @@
  *
  */
 
+#include "backends/modular-backend.h"
+#include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
@@ -32,6 +34,7 @@
 #include "twp/actions.h"
 #include "twp/callback.h"
 #include "twp/console.h"
+#include "twp/debugtools.h"
 #include "twp/detection.h"
 #include "twp/enginedialogtarget.h"
 #include "twp/hud.h"
@@ -740,6 +743,13 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// imgui render
 	_gfx.use(nullptr);
+
+#ifdef USE_IMGUI
+	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend*>(g_system);
+	if (sdl_g_system) {
+		sdl_g_system->getGraphicsManager()->renderImGui(onImGuiRender);
+	}
+#endif
 
 	g_system->updateScreen();
 }

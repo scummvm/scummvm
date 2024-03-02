@@ -159,12 +159,6 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
-void TwpMetaEngine::renderImGui() {
-#ifdef USE_IMGUI
-	Twp::onImGuiRender();
-#endif
-}
-
 #if PLUGIN_ENABLED_DYNAMIC(TWP)
 REGISTER_PLUGIN_DYNAMIC(TWP, PLUGIN_TYPE_ENGINE, TwpMetaEngine);
 #else
