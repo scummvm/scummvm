@@ -321,14 +321,17 @@
 }
 
 - (NSArray *)overloadFnKeys {
+#ifdef __IPHONE_13_4
 	if (@available(iOS 13.4, *)) {
 		NSArray<NSString *> *fnKeys = [[NSArray alloc] initWithObjects:UIKeyInputF1, UIKeyInputF2, UIKeyInputF3, UIKeyInputF4, UIKeyInputF5, UIKeyInputF6, UIKeyInputF7, UIKeyInputF8, UIKeyInputF9, UIKeyInputF10, UIKeyInputF11, UIKeyInputF12, nil];
 		return [self overloadKeys:fnKeys withSelector:@selector(handleFnKey:)];
 	}
+#endif
 	return nil;
 }
 
 - (NSArray *)overloadSpecialKeys {
+#ifdef __IPHONE_13_4
 	NSMutableArray<NSString *> *specialKeys = [[NSMutableArray alloc] initWithObjects:UIKeyInputEscape, UIKeyInputPageUp, UIKeyInputPageDown, nil];
 
 	if (@available(iOS 13.4, *)) {
@@ -336,6 +339,9 @@
 		[specialKeys addObject: UIKeyInputEnd];
 	}
 	return [self overloadKeys:specialKeys withSelector:@selector(handleSpecialKey:)];
+#else
+	return nil;
+#endif
 }
 
 - (int)convertModifierFlags:(UIKeyModifierFlags)flags {
@@ -422,6 +428,7 @@
 }
 
 - (void)handleFnKey:(UIKeyCommand *)keyCommand {
+#ifdef __IPHONE_13_4
 	if (@available(iOS 13.4, *)) {
 		if (keyCommand.input == UIKeyInputF1) {
 			[self fn1Key];
@@ -449,9 +456,11 @@
 			[self fn12Key];
 		}
 	}
+#endif
 }
 
 - (void)handleSpecialKey:(UIKeyCommand *)keyCommand {
+#ifdef __IPHONE_13_4
 	if (keyCommand.input == UIKeyInputEscape) {
 		[self escapeKey:keyCommand];
 	} else if (keyCommand.input == UIKeyInputPageUp) {
@@ -466,6 +475,7 @@
 			[softKeyboard handleKeyPress:Common::KEYCODE_END withModifierFlags:[self convertModifierFlags:keyCommand.modifierFlags]];
 		}
 	}
+#endif
 }
 
 - (NSArray *)keyCommands {
@@ -628,6 +638,7 @@
 
 	// Base the new frame size on the current parent frame size
 	CGRect newFrame = self.superview.frame;
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		if (GCKeyboard.coalescedKeyboard != nil) {
 			if (didShow) {
@@ -644,7 +655,7 @@
 	} else {
 		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
 	}
-
+#endif
 	// Resize with a fancy animation
 	NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
 	[UIView animateWithDuration:rate.floatValue animations:^{
@@ -681,11 +692,13 @@
 
 - (void)keyboardDidDisconnect:(NSNotification*)notification
 {
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		if (GCKeyboard.coalescedKeyboard == nil) {
 			[inputView endEditing:YES];
 		}
 	}
+#endif
 }
 #endif
 
@@ -703,6 +716,7 @@
 	 name:UIKeyboardDidHideNotification
 	 object:nil];
 #endif
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		[[NSNotificationCenter defaultCenter] addObserver:self
 		 selector:@selector(keyboardDidConnect:)
@@ -714,6 +728,7 @@
 		 name:GCKeyboardDidDisconnectNotification
 	     object:nil];
 	}
+#endif
 
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
@@ -724,6 +739,7 @@
 	_keyboardVisible = NO;
 	_inputAccessoryHeight = 0.0f;
 
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		// If already connected to a HW keyboard, start
 		// monitoring key presses
@@ -731,6 +747,7 @@
 			[inputView becomeFirstResponder];
 		}
 	}
+#endif
 	return self;
 }
 
@@ -771,6 +788,7 @@
 }
 
 - (void)showKeyboard {
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		if ([inputView isFirstResponder] &&
 			GCKeyboard.coalescedKeyboard != nil) {
@@ -780,10 +798,12 @@
 			return;
 		}
 	}
+#endif
 	[inputView becomeFirstResponder];
 }
 
 - (void)hideKeyboard {
+#ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		if ([inputView isFirstResponder] &&
 			GCKeyboard.coalescedKeyboard != nil) {
@@ -793,6 +813,7 @@
 			return;
 		}
 	}
+#endif
 	[inputView endEditing:YES];
 }
 
