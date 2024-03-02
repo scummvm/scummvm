@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_OPT_WINDOW_H
-#define BAGEL_BAGLIB_OPT_WINDOW_H
+#ifndef BAGEL_BAGLIB_GUI_OPT_WINDOW_H
+#define BAGEL_BAGLIB_GUI_OPT_WINDOW_H
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/string.h"
