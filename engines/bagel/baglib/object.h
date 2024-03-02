@@ -23,11 +23,13 @@
 #ifndef BAGEL_BAGLIB_OBJECT_H
 #define BAGEL_BAGLIB_OBJECT_H
 
+#include "bagel/boflib/stdinc.h"
 #include "bagel/baglib/expression.h"
-#include "bagel/boflib/bmp.h"
-#include "bagel/boflib/string.h"
 #include "bagel/baglib/res.h"
-#include "bagel/baglib/pobj.h"
+#include "bagel/boflib/gfx/bitmap.h"
+#include "bagel/boflib/string.h"
+#include "bagel/boflib/res.h"
+#include "bagel/baglib/parse_object.h"
 
 namespace Bagel {
 
@@ -85,38 +87,36 @@ enum {
 };
 #endif
 
-//
-// CBofBagObject -
-//  CBofBagObject is an object that can be place within the slide window.
-//
+/**
+ * CBofBagObject is an object that can be place within the slide window.
+ */
 class CBagObject : public CBagParseObject, public CBofObject, public CBofError {
-
 private:
-	CBofString m_sFileName;      // File name contain object look/feel data
-	CBofString *m_psName;        // Name of this object, needed by movable objects only, it equals file name unless specified.
-	CBagMenu *m_pMenu;           // Menu for the object
-	CBagExpression *m_pEvalExpr; // Pointer to expression to be evaluated by
+	CBofString m_sFileName;			// File name contain object look/feel data
+	CBofString *m_psName = nullptr;	// Name of this object, needed by movable objects only, it equals file name unless specified.
+	CBagMenu *m_pMenu = nullptr;	// Menu for the object
+	CBagExpression *m_pEvalExpr = nullptr;	// Pointer to expression to be evaluated by
 
-	SHORT m_nState; // Current state of the object
-	USHORT m_nId;   // Ref Id for an object
+	SHORT m_nState = 0;			// Current state of the object
+	USHORT m_nId = 0;			// Ref Id for an object
 
 protected:
-	USHORT m_xObjType;
+	USHORT m_xObjType = AREAOBJ;
 
 private:
-	USHORT m_nProperties; // Properties of object
+	USHORT m_nProperties = 0;	// Properties of object
 
-	SHORT m_nX; // Replaces m_xPosition
-	SHORT m_nY;
+	SHORT m_nX = 0;				// Replaces m_xPosition
+	SHORT m_nY = 0;
 
-	UBYTE m_nOverCursor;       // Ref Id for the objects over cursor
-	UBYTE m_bDirty : 1;        // Object needs redrawing or not?
-	UBYTE m_bMsgWaiting : 1;   // Event needing to be played?
-	UBYTE m_bAlwaysUpdate : 1; // For message light
-	UBYTE m_bNoMenu : 1;       // Used by AS NOMENU
+	UBYTE m_nOverCursor = 0;	// Ref Id for the objects over cursor
+	UBYTE m_bDirty : 1;			// Object needs redrawing or not?
+	UBYTE m_bMsgWaiting : 1;	// Event needing to be played?
+	UBYTE m_bAlwaysUpdate : 1;	// For message light
+	UBYTE m_bNoMenu : 1;		// Used by AS NOMENU
 
 protected:
-	UBYTE m_bInteractive;
+	UBYTE m_bInteractive = 0;
 
 	// Object property functionality
 	BOOL IsProperty(BAG_OBJECT_PROPERTIES xProp) { return m_nProperties & xProp; }

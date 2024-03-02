@@ -47,7 +47,6 @@ namespace Bagel {
 #define STATIC static
 
 #ifndef CDECL
-//define CDECL _cdecl
 #define CDECL
 #endif
 

@@ -39,6 +39,7 @@ VOID StrWordCaps(CHAR *pszText) {
 	*pszText = (CHAR)toupper(*pszText);
 
 	// Make 1st letter after every space be upper-case
+	p = pszText;
 	while ((p = strchr(p, ' ')) != nullptr) {
 		++p;
 		*p = (CHAR)toupper(*p);
