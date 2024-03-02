@@ -480,7 +480,7 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
-		ImGui_ImplOpenGL3_Init(nullptr);
+		ImGui_ImplOpenGL3_Init("#version 110");
 		ImGui::StyleColorsDark();
 		ImGuiIO &io = ImGui::GetIO();
 		io.IniFilename = nullptr;
