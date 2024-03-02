@@ -102,8 +102,8 @@ public:
 
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);
-	CBagVar *GetVariable(INT i) { return (m_xVarList[i]); }
-	INT GetNumVars() { return (m_xVarList.GetCount()); }
+	CBagVar *GetVariable(INT i) { return m_xVarList[i]; }
+	INT GetNumVars() { return m_xVarList.GetCount(); }
 
 	// Use a hash table to lookup variables.
 	CBofList<CBagVar *> m_xVarHashList[VAR_HTABLE_SIZE];

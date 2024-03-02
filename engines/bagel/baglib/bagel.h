@@ -127,21 +127,21 @@ public:
 
 	VOID SetAppName(const CHAR *pszNewAppName) { strcpy(m_szAppName, pszNewAppName); }
 
-	const CHAR *GetAppName() { return ((const CHAR *)m_szAppName); }
+	const CHAR *GetAppName() { return (const CHAR *)m_szAppName; }
 
-	CBofWindow *GetMainWindow() { return (m_pMainWnd); }
+	CBofWindow *GetMainWindow() { return m_pMainWnd; }
 
-	const CHAR *GetOptionsFileName() { return ((const CHAR *)m_szFileName); }
+	const CHAR *GetOptionsFileName() { return (const CHAR *)m_szFileName; }
 
-	const CHAR *GetSaveGameFileName() { return ((const CHAR *)m_szSaveGameFileName); }
+	const CHAR *GetSaveGameFileName() { return (const CHAR *)m_szSaveGameFileName; }
 
-	const CHAR *GetInstallPath() { return ((const CHAR *)m_szInstallPath); }
+	const CHAR *GetInstallPath() { return (const CHAR *)m_szInstallPath; }
 
 	BOOL HaveSavedGames(); //{ return(m_bSavedGames); }
 
-	CBagMasterWin *GetMasterWnd() { return ((CBagMasterWin *)m_pMainWnd); }
+	CBagMasterWin *GetMasterWnd() { return (CBagMasterWin *)m_pMainWnd; }
 
-	static CBagel *GetBagApp() { return ((CBagel *)m_pBofApp); }
+	static CBagel *GetBagApp() { return (CBagel *)m_pBofApp; }
 
 	INT GetChromaColor() { return DEFAULT_CHROMA_COLOR; }
 

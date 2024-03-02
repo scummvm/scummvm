@@ -41,22 +41,22 @@ public:
 		m_nY = y;
 	}
 	VOID SetHotSpot(CBofPoint cPoint) { SetHotSpot(cPoint.x, cPoint.y); }
-	CBofPoint GetHotSpot() { return (CBofPoint(m_nX, m_nY)); }
+	CBofPoint GetHotSpot() { return CBofPoint(m_nX, m_nY); }
 
-	INT GetX() { return (m_nX); }
-	INT GetY() { return (m_nY); }
+	INT GetX() { return m_nX; }
+	INT GetY() { return m_nY; }
 
-	ERROR_CODE Load() { return (Load(m_szFileName)); }
+	ERROR_CODE Load() { return Load(m_szFileName); }
 	ERROR_CODE Load(CBofBitmap *pBmp);
 	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = nullptr);
 
 	VOID UnLoad();
 
-	CBofBitmap *GetImage() { return (m_pBmp); }
-	ERROR_CODE SetImage(CBofBitmap *pBmp) { return (Load(pBmp)); }
+	CBofBitmap *GetImage() { return m_pBmp; }
+	ERROR_CODE SetImage(CBofBitmap *pBmp) { return Load(pBmp); }
 
 	VOID SetCurrent() { m_pCurrentCursor = this; }
-	static CBagCursor *GetCurrent() { return (m_pCurrentCursor); }
+	static CBagCursor *GetCurrent() { return m_pCurrentCursor; }
 
 	/**
 	 * Flag whether this is a wielded cursor or not

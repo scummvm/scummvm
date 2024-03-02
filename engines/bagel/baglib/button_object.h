@@ -63,7 +63,7 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	BUTTON_TYPE GetButtonType() { return (m_xButtonType); }
+	BUTTON_TYPE GetButtonType() { return m_xButtonType; }
 
 	PARSE_CODES SetInfo(bof_ifstream & /*istr*/);
 	virtual BOOL RunObject();

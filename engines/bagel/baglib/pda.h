@@ -66,7 +66,7 @@ public:
 	static VOID AddToMovieQueue(CBagMovieObject *);
 	static VOID RemoveFromMovieQueue(CBagMovieObject *);
 	static BOOL IsMovieWaiting();
-	static BOOL IsMoviePlaying() { return (m_ePdaMode == MOOMODE); }
+	static BOOL IsMoviePlaying() { return m_ePdaMode == MOOMODE; }
 	static VOID RunWaitingMovie();
 
 	virtual BOOL ShowInventory(); // Show the inventory

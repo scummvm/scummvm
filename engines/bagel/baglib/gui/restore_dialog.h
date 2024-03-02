@@ -51,7 +51,7 @@ public:
 
 	ST_BAGEL_SAVE *GetSaveGameBuffer(INT &nLength) {
 		nLength = m_nBufSize;
-		return (m_pSaveBuf);
+		return m_pSaveBuf;
 	}
 
 	VOID SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
@@ -59,7 +59,7 @@ public:
 		m_nBufSize = nLength;
 	}
 
-	BOOL Restored() { return (m_bRestored); }
+	BOOL Restored() { return m_bRestored; }
 
 #if 1
 	virtual VOID OnInitDialog();
