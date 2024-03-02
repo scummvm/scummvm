@@ -200,13 +200,16 @@ FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 	_inStream = nullptr;
 	_outFile = nullptr;
 	_outStream = nullptr;
+	_lastError = kErrorNone;
 }
 
 FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
+	_objType = obj.getObjType();
 	_filename = nullptr;
 	_inStream = nullptr;
 	_outFile = nullptr;
 	_outStream = nullptr;
+	_lastError = kErrorNone;
 }
 
 FileObject::~FileObject() {
@@ -337,6 +340,7 @@ void FileIO::m_new(int nargs) {
 		FileIOError result = me->open(path, option);
 		if (result != kErrorNone) {
 			me->dispose();
+			me->_lastError = result;
 			g_lingo->push(Datum(result));
 			return;
 		}
@@ -365,15 +369,13 @@ void FileIO::m_openFile(int nargs) {
 		break;
 	}
 	Common::String path = d2.asString();
-	FileIOError result = me->open(path, option);
-	g_lingo->push(Datum(result));
+	me->_lastError = me->open(path, option);
 }
 
 void FileIO::m_closeFile(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	me->clear();
-	g_lingo->push(Datum(kErrorNone));
 }
 
 // FIXME: split out filename-to-savegame logic from open() so we can implement createFile
@@ -611,8 +613,64 @@ void FileIO::m_fileName(int nargs) {
 	}
 }
 
-XOBJSTUB(FileIO::m_error, "")
-XOBJSTUB(FileIO::m_status, 0)
+void FileIO::m_error(int nargs) {
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+	Datum d = g_lingo->pop();
+	Datum result("");
+	switch (d.asInt()) {
+	case kErrorNone:
+		if (me->getObjType() == kXtraObj) {
+			result = Datum("OK");
+		}
+		break;
+	case kErrorMemAlloc:
+		result = Datum("Memory allocation failure");
+		break;
+	case kErrorDirectoryFull:
+		result = Datum("File directory full");
+		break;
+	case kErrorVolumeFull:
+		result = Datum("Volume full");
+		break;
+	case kErrorVolumeNotFound:
+		result = Datum("Volume not found");
+		break;
+	case kErrorIO:
+		result = Datum("I/O Error");
+		break;
+	case kErrorBadFileName:
+		result = Datum("Bad file name");
+		break;
+	case kErrorFileNotOpen:
+		result = Datum("File not open");
+		break;
+	case kErrorTooManyFilesOpen:
+		result = Datum("Too many files open");
+		break;
+	case kErrorFileNotFound:
+		result = Datum("File not found");
+		break;
+	case kErrorNoSuchDrive:
+		result = Datum("No such drive");
+		break;
+	case kErrorNoDiskInDrive:
+		result = Datum("No disk in drive");
+		break;
+	case kErrorDirectoryNotFound:
+		result = Datum("Directory not found");
+		break;
+	default:
+		result = Datum("Unknown error");
+		break;
+	}
+	g_lingo->push(result);
+}
+
+void FileIO::m_status(int nargs) {
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+
+	g_lingo->push(Datum(me->_lastError));
+}
 
 // Other
 

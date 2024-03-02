@@ -34,6 +34,7 @@ namespace Director {
 
 enum FileIOError {
 	kErrorNone = 0,
+	kErrorMemAlloc = 1,
 	kErrorEOF = -1,
 	kErrorDirectoryFull = -33,
 	kErrorVolumeFull = -34,
@@ -56,6 +57,7 @@ public:
 	Common::SeekableReadStream *_inStream;
 	Common::OutSaveFile *_outFile;
 	Common::MemoryWriteStreamDynamic *_outStream;
+	FileIOError _lastError;
 
 public:
 	FileObject(ObjectType objType);
