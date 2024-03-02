@@ -23,9 +23,12 @@
 #ifndef BAGEL_BAGLIB_TIME_OBJECT_H
 #define BAGEL_BAGLIB_TIME_OBJECT_H
 
-namespace Bagel {
+#include "bagel/baglib/object.h"
+#include "bagel/boflib/gfx/bitmap.h"
+#include "bagel/boflib/gui/window.h"
+#include "bagel/boflib/gfx/sprite.h"
 
-#include "BagSpObj.h"
+namespace Bagel {
 
 /**
  * CBagTimeObject is an object that can be place within the slide window.
