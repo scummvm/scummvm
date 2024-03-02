@@ -5,7 +5,20 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	baglib/area_object.o \
+	baglib/bmp_object.o \
+	baglib/button_object.o \
+	baglib/character_object.o \
+	baglib/command_object.o \
+	baglib/expression_object.o \
+	baglib/movie_object.o \
 	baglib/parse_object.o \
+	baglib/rp_object.o \
+	baglib/sound_object.o \
+	baglib/sprite_object.o \
+	baglib/text_object.o \
+	baglib/thing_object.o \
+	baglib/time_object.o \
+	baglib/variable_object.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \
