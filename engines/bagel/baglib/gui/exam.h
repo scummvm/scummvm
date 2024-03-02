@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_EVENT_EXAM_H
-#define BAGEL_BAGLIB_EVENT_EXAM_H
+#ifndef BAGEL_BAGLIB_GUI_EXAM_H
+#define BAGEL_BAGLIB_GUI_EXAM_H
 
-#include "bagel/boflib/movie.h"
+#include "bagel/boflib/gui/movie.h"
 
 namespace Bagel {
 

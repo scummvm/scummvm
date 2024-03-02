@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_HELP_H
-#define BAGEL_BAGLIB_HELP_H
+#ifndef BAGEL_BAGLIB_GUI_HELP_H
+#define BAGEL_BAGLIB_GUI_HELP_H
 
 #include "bagel/baglib/sdev.h"
 #include "bagel/boflib/gui/box.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_MASTER_WIN_H
-#define BAGEL_BAGLIB_MASTER_WIN_H
+#ifndef BAGEL_BAGLIB_GUI_MASTER_WIN_H
+#define BAGEL_BAGLIB_GUI_MASTER_WIN_H
 
 #include "bagel/boflib/gfx/text.h"
 #include "bagel/boflib/gfx/cursor.h"

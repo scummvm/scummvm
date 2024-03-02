@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_MASTER_MOVIE_H
-#define BAGEL_BAGLIB_MASTER_MOVIE_H
+#ifndef BAGEL_BAGLIB_GUI_MASTER_MOVIE_H
+#define BAGEL_BAGLIB_GUI_MASTER_MOVIE_H
 
 #include "bagel/boflib/boffo.h"
 
