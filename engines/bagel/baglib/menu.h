@@ -49,7 +49,7 @@ public:
 	}
 	CBofBitmap *GetBackground() {
 		Assert(FALSE);
-		return (NULL);
+		return (nullptr);
 	}
 
 	BOOL AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
@@ -88,7 +88,7 @@ public:
 	CBagMenuDlg();
 	virtual ~CBagMenuDlg();
 
-	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = NULL, UINT nStyle = 0);
+	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, UINT nStyle = 0);
 
 	// virtual VOID OnClose();
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);

@@ -45,13 +45,12 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 
 	CBofSize GetSize() { return m_xSize; }
 
 	void SetSize(const CBofSize &xSize) { m_xSize = xSize; }
 
-	// MDM 9/4/96
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);

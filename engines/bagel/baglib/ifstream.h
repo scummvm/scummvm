@@ -89,7 +89,7 @@ public:
 			CHAR *p;
 			nCount = min(nCount, m_pszEOF - m_pszCurr);
 
-			if ((p = (CHAR *)memchr(m_pszCurr, chDelim, nCount)) != NULL) {
+			if ((p = (CHAR *)memchr(m_pszCurr, chDelim, nCount)) != nullptr) {
 				nCount = min(nCount, p - m_pszCurr /* + 1*/);
 			}
 			memcpy(pszBuf, m_pszCurr, nCount);

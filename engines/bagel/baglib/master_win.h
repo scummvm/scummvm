@@ -53,7 +53,7 @@ class CBagStorageDev;
 
 // Some utility routines
 VOID SetCICStatus(CBagStorageDev *pSDev);
-BOOL GetCICStatus(VOID);
+BOOL GetCICStatus();
 
 class CBagMasterWin : public CBofWindow, public CBagParseObject {
 protected:
@@ -85,11 +85,11 @@ public:
 
 	CBagMasterWin();
 	virtual ~CBagMasterWin();
-	virtual ERROR_CODE Run(const char *sCommandLine = NULL);
+	virtual ERROR_CODE Run(const char *sCommandLine = nullptr);
 
-	VOID Close(VOID);
+	VOID Close();
 
-	CBofString &GetWldScript(VOID) { return (m_cWldScript); }
+	CBofString &GetWldScript() { return (m_cWldScript); }
 
 	static VOID SetActiveCursor(INT iCursor);
 	static INT GetActiveCursor() { return m_nCurCursor; }
@@ -119,7 +119,7 @@ public:
 	static VOID ForcePaintScreen(BOOL bShowCursor = TRUE);
 
 	virtual ERROR_CODE ShowSystemDialog(BOOL bSave = TRUE);
-	BOOL ShowRestartDialog(CBofWindow *pWin = NULL, BOOL bSave = TRUE);
+	BOOL ShowRestartDialog(CBofWindow *pWin = nullptr, BOOL bSave = TRUE);
 	BOOL ShowSaveDialog(CBofWindow *pWin, BOOL bSave = TRUE);
 	BOOL ShowRestoreDialog(CBofWindow *pWin, BOOL bSave = TRUE);
 	BOOL ShowQuitDialog(CBofWindow *pWin, BOOL bSave = TRUE);
@@ -128,7 +128,7 @@ public:
 	VOID FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
 	VOID DoRestore(ST_BAGEL_SAVE *pSaveBuf);
 
-	ERROR_CODE NewGame(VOID);
+	ERROR_CODE NewGame();
 
 	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart = FALSE, BOOL bSetStart = TRUE);
 
@@ -143,7 +143,7 @@ public:
 	ERROR_CODE SetStorageDev(const CBofString &sWldName, BOOL bEntry = TRUE);
 	ERROR_CODE GotoNewWindow(CBofString *pStr);
 
-	USHORT GetDiskID(VOID) { return m_nDiskID; }
+	USHORT GetDiskID() { return m_nDiskID; }
 	VOID SetDiskID(USHORT did) { m_nDiskID = did; }
 
 	CBofWindow *GetCurrentGameWindow() { return (CBofWindow *)m_pGameWindow; }
@@ -157,29 +157,28 @@ public:
 	virtual VOID OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
 	virtual VOID OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
 
-	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = NULL);
+	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
 	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-	VOID OnClose(VOID);
+	VOID OnClose();
 
-	ST_OBJ *GetObjList(VOID) { return (m_pObjList); }
+	ST_OBJ *GetObjList() { return (m_pObjList); }
 	VOID SetSaveObjs(BOOL bSave) { m_bObjSave = bSave; }
-	BOOL IsObjSave(VOID) { return (m_bObjSave); }
+	BOOL IsObjSave() { return (m_bObjSave); }
 
-	VOID SaveSDevStack(VOID);
+	VOID SaveSDevStack();
 
 	virtual VOID HUGE *GetDataStart() { return &m_pGameWindow; }
 	virtual VOID HUGE *GetDataEnd() { return &m_pVariableList + sizeof(CBagVarManager *); }
 
-	// jwl 12.06.96 since we do this from load file and do restore, centralize
-	// it in one location.
+	// Since we do this from load file and do restore, centralize it in one location.
 	VOID RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
 };
 
 ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE WaitForInput(VOID);
+ERROR_CODE WaitForInput();
 
 } // namespace Bagel
 

@@ -40,7 +40,7 @@ public:
 
 	VOID SetSize(const CBofSize &xSize);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 };
 
 #define mMsgTimeMask 0x3FFF
@@ -56,7 +56,7 @@ public:
 	CBagLogMsg(int nSdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 	// PARSE_CODES	        SetInfo(CBofFile&);
@@ -97,7 +97,7 @@ public:
 	CBagLogSuspect(int nSdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
 	VOID SetSize(const CBofSize &xSize);
 
@@ -125,11 +125,9 @@ public:
 
 class CBagLog : public CBagStorageDevBmp {
 protected:
-	// int m_nCurFltPage; 						// mdm 8/5
+	// Queued messages waited to be played and inserted into SDEV
+	CBofList<CBagObject *> *m_pQueued_Msgs;
 
-	CBofList<CBagObject *>
-		*m_pQueued_Msgs; // Queued messages waited to be
-						 // played and inserted into SDEV
 	static CBagLog *m_bLastFloatPage;
 
 public:
@@ -146,8 +144,8 @@ public:
 	INT GetCurFltPage();
 	VOID SetCurFltPage(int nFltPage);
 
-	static VOID ArrangePages(VOID);
-	static VOID InitArrangePages(VOID) { m_bLastFloatPage = NULL; }
+	static VOID ArrangePages();
+	static VOID InitArrangePages() { m_bLastFloatPage = nullptr; }
 };
 
 class CBagEnergyDetectorObject : public CBagTextObject {
@@ -191,7 +189,7 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 };
 
 } // namespace Bagel

@@ -34,8 +34,7 @@ namespace Bagel {
 class CBagObject;
 typedef void *(*BAGFUNCPTR)(int, void *);
 
-// Added thing object - mdm 9/25/96
-const enum BAG_OBJECT_TYPE {
+enum BAG_OBJECT_TYPE {
 	BASEOBJ = 0x0000,
 	BMPOBJ = BOFBMPOBJ,
 	SPRITEOBJ = BOFSPRITEOBJ,
@@ -55,7 +54,7 @@ const enum BAG_OBJECT_TYPE {
 	USEROBJ = 0x1000
 };
 
-const enum BAG_OBJECT_PROPERTIES {
+enum BAG_OBJECT_PROPERTIES {
 	NONE = 0x0000,
 	MOVABLE = 0x0001,
 	MODAL = 0x0002,
@@ -79,8 +78,6 @@ class CBagMenu;
 class CBagStorageDev;
 
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n);
-
-// jwl 08.07.96 callbacks are a little tricky for powerpc...
 
 #if BOF_MAC && __POWERPC__
 enum {
@@ -115,8 +112,8 @@ private:
 	UBYTE m_nOverCursor;       // Ref Id for the objects over cursor
 	UBYTE m_bDirty : 1;        // Object needs redrawing or not?
 	UBYTE m_bMsgWaiting : 1;   // Event needing to be played?
-	UBYTE m_bAlwaysUpdate : 1; // jwl 10.16.96 added for message light
-	UBYTE m_bNoMenu : 1;       // BCW - 12/02/96 - Used by AS NOMENU
+	UBYTE m_bAlwaysUpdate : 1; // For message light
+	UBYTE m_bNoMenu : 1;       // Used by AS NOMENU
 
 protected:
 	UBYTE m_bInteractive;
@@ -130,29 +127,29 @@ public:
 	CBagObject();
 	virtual ~CBagObject();
 
-	BOOL IsInteractive() { return (m_bInteractive); }
+	BOOL IsInteractive() { return m_bInteractive; }
 	VOID SetInteractive(BOOL b) { m_bInteractive = (UBYTE)b; }
 
 	// Callback function functionality - probably can be phased out
-	virtual BOOL RunCallBack() { return (FALSE); }
+	virtual BOOL RunCallBack() { return FALSE; }
 
 #if BOF_MAC && __POWERPC__
-	virtual UniversalProcPtr GetCallBack() { return (NULL); }
+	virtual UniversalProcPtr GetCallBack() { return nullptr; }
 #else
-	virtual BAGFUNCPTR GetCallBack() { return (NULL); }
+	virtual BAGFUNCPTR GetCallBack() { return nullptr; }
 #endif
 
 	// Run Object is called when there is no callback and the item was selected
-	virtual BOOL RunObject(); //	{ return TRUE; }
+	virtual BOOL RunObject();
 
 	VOID SetExpression(CBagExpression *pExpr) { m_pEvalExpr = pExpr; }
-	CBagExpression *GetExpression() { return m_pEvalExpr; }
+	CBagExpression *GetExpression() const { return m_pEvalExpr; }
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
-	virtual ERROR_CODE Attach(); //{ SetVisible(); return CBagParseObject::Attach(); }
-	virtual ERROR_CODE Detach(); //{ SetVisible(FALSE); return CBagParseObject::Detach(); }
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
 
-	BAG_OBJECT_TYPE GetType(VOID) { return ((BAG_OBJECT_TYPE)m_xObjType); }
+	BAG_OBJECT_TYPE GetType() { return (BAG_OBJECT_TYPE)m_xObjType; }
 	VOID SetType(BAG_OBJECT_TYPE nType) { m_xObjType = (USHORT)nType; }
 
 	// Object can be moved within a sceene
@@ -168,7 +165,6 @@ public:
 	BOOL IsModal() { return IsProperty(MODAL); }
 	VOID SetModal(BOOL b = TRUE) { SetProperty(MODAL, b); }
 	virtual BOOL IsModalDone() { return TRUE; }
-	// VOID				SetModalDone(BOOL b=TRUE)           { }
 	//  Is object visible within sceene
 	BOOL IsVisible() { return IsProperty(VISIBLE); }
 	VOID SetVisible(BOOL b = TRUE) { SetProperty(VISIBLE, b); }
@@ -208,39 +204,35 @@ public:
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	BOOL IsForeGround() { return IsProperty(FOREGROUND); }
 	VOID SetForeGround(BOOL b = TRUE) { SetProperty(FOREGROUND, b); }
-	// User defined properties
-	// BOOL				IsUserProperty(int n=0)	            { if(n>0&&n<3) return IsProperty(BAG_OBJECT_PROPERTIES(USER1<<n)); else return IsProperty(USER1);}
-	// VOID				SetUserProperty(int n=0,BOOL b=TRUE){ if(n>0&&n<3) SetProperty(BAG_OBJECT_PROPERTIES(USER1<<n),b); else SetProperty(USER1,b); }
 
-	INT GetProperties(VOID) { return (m_nProperties); }
+	INT GetProperties() { return m_nProperties; }
 	VOID SetProperties(INT nProperties) { m_nProperties = (USHORT)nProperties; }
 
 	// Init variables
-	virtual const CBofString *GetInitInfo() { return (NULL); }
+	virtual const CBofString *GetInitInfo() { return nullptr; }
 	virtual VOID SetInitInfo(const CBofString &) {}
 
 	virtual INT GetProperty(const CBofString &sProp);
 	virtual VOID SetProperty(const CBofString &, int nVal);
 
-	BOOL IsDirty(VOID) { return (m_bDirty != 0); }
+	BOOL IsDirty() { return m_bDirty != 0; }
 	VOID SetDirty(BOOL b = TRUE) { m_bDirty = (UBYTE)b; }
 
-	// jwl 11.01.96 if this thing is getting purged but is awaiting playback, then
-	// mark it as such.
-	BOOL IsMsgWaiting(VOID) { return (m_bMsgWaiting != 0); }
+	// If this thing is getting purged but is awaiting playback, then mark it as such.
+	BOOL IsMsgWaiting() { return m_bMsgWaiting != 0; }
 	VOID SetMsgWaiting(BOOL b = TRUE) { m_bMsgWaiting = (UBYTE)b; }
 
-	BOOL IsAlwaysUpdate(VOID) { return (m_bAlwaysUpdate != 0); }
+	BOOL IsAlwaysUpdate() { return m_bAlwaysUpdate != 0; }
 	VOID SetAlwaysUpdate(BOOL b = TRUE) { m_bAlwaysUpdate = (UBYTE)b; }
 
-	BOOL IsNoMenu(VOID) { return (m_bNoMenu); }
+	BOOL IsNoMenu() { return m_bNoMenu; }
 	VOID SetNoMenu(BOOL b = TRUE) { m_bNoMenu = (UBYTE)b; }
 
-	virtual CBofPoint GetPosition() { return (CBofPoint(m_nX, m_nY)); }
+	virtual CBofPoint GetPosition() { return CBofPoint(m_nX, m_nY); }
 	virtual INT GetRefId() { return m_nId; }
-	virtual INT GetOverCursor() { return (m_nOverCursor); }
+	virtual INT GetOverCursor() { return m_nOverCursor; }
 	virtual INT GetState() { return m_nState; }
-	virtual CBofRect GetRect(VOID) { return (CBofRect(m_nX, m_nY, m_nX - 1, m_nY - 1)); }
+	virtual CBofRect GetRect() { return CBofRect(m_nX, m_nY, m_nX - 1, m_nY - 1); }
 
 	virtual const CBofString &
 	GetFileName() { return m_sFileName; }
@@ -273,17 +265,17 @@ public:
 		return nErrID;
 	}
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
-	// virtual ERROR_CODE  DoModal(CBofBitmap * pBmp, CBofPoint pt, CBofRect * pSrcRect = NULL, INT /*nMaskColor*/ = -1);
+	// virtual ERROR_CODE  DoModal(CBofBitmap * pBmp, CBofPoint pt, CBofRect * pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
 	virtual BOOL OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) { return FALSE; }
 
-	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL) { return FALSE; }
-	virtual BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL); //{ return FALSE; } run menu if availible
-	// virtual BOOL        OnLButtonDblClk(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL);	//{ return FALSE; }
-	virtual BOOL OnMouseMove(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL); //{ return FALSE; }
-	virtual BOOL OnMouseOver(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL) { return FALSE; }
+	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) { return FALSE; }
+	virtual BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if availible
+	// virtual BOOL        OnLButtonDblClk(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);	//{ return FALSE; }
+	virtual BOOL OnMouseMove(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; }
+	virtual BOOL OnMouseOver(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) { return FALSE; }
 };
 
 } // namespace Bagel

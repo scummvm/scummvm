@@ -46,27 +46,27 @@ struct SYSTEM_DATA {
 
 class CBagOptWindow : public CBofDialog {
 public:
-	CBagOptWindow(VOID);
+	CBagOptWindow();
 
 #if BOF_DEBUG
 	virtual ~CBagOptWindow();
 #endif
 
-	virtual ERROR_CODE Attach(VOID);
-	virtual ERROR_CODE Detach(VOID);
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
 
-	VOID LoadIniSettings(VOID);
-	VOID SaveOutNewSettings(VOID);
-	VOID ReturnToDefaults(VOID);
+	VOID LoadIniSettings();
+	VOID SaveOutNewSettings();
+	VOID ReturnToDefaults();
 
-	VOID PutDialogData(VOID);
-	VOID GetDialogData(VOID);
+	VOID PutDialogData();
+	VOID GetDialogData();
 
-	VOID UpdateOptions(VOID);
+	VOID UpdateOptions();
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnInitDialog();
 
 	virtual VOID OnBofScrollBar(CBofObject *pObject, INT nPos);
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);

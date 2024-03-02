@@ -75,7 +75,7 @@ namespace Bagel {
 #define HOMEDIR_DFLT "."
 #endif
 
-// mdm 6/5 - define default chroma color to be palette index 1
+// Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
 
 BOOL MACROREPLACE(CBofString &s);
@@ -100,7 +100,7 @@ typedef struct {
 
 class CBagel : public CBofOptions, public CBofApp {
 public:
-	CBagel(VOID);
+	CBagel();
 	CBagel(BAGEL_REG *pGameReg);
 	~CBagel();
 
@@ -109,12 +109,12 @@ public:
 
 	// these functions must be provided by the child class
 	//
-	virtual ERROR_CODE Initialize(VOID);
-	virtual ERROR_CODE RunApp(VOID);
-	virtual ERROR_CODE ShutDown(VOID);
+	virtual ERROR_CODE Initialize();
+	virtual ERROR_CODE RunApp();
+	virtual ERROR_CODE ShutDown();
 
 	virtual ERROR_CODE InitializeSoundSystem(WORD nChannels = 1, DWORD nFreq = 11025, WORD nBitsPerSample = 8);
-	virtual ERROR_CODE ShutDownSoundSystem(VOID);
+	virtual ERROR_CODE ShutDownSoundSystem();
 
 	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue);
 	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue);
@@ -127,26 +127,26 @@ public:
 
 	VOID SetAppName(const CHAR *pszNewAppName) { strcpy(m_szAppName, pszNewAppName); }
 
-	const CHAR *GetAppName(VOID) { return ((const CHAR *)m_szAppName); }
+	const CHAR *GetAppName() { return ((const CHAR *)m_szAppName); }
 
-	CBofWindow *GetMainWindow(VOID) { return (m_pMainWnd); }
+	CBofWindow *GetMainWindow() { return (m_pMainWnd); }
 
-	const CHAR *GetOptionsFileName(VOID) { return ((const CHAR *)m_szFileName); }
+	const CHAR *GetOptionsFileName() { return ((const CHAR *)m_szFileName); }
 
-	const CHAR *GetSaveGameFileName(VOID) { return ((const CHAR *)m_szSaveGameFileName); }
+	const CHAR *GetSaveGameFileName() { return ((const CHAR *)m_szSaveGameFileName); }
 
-	const CHAR *GetInstallPath(VOID) { return ((const CHAR *)m_szInstallPath); }
+	const CHAR *GetInstallPath() { return ((const CHAR *)m_szInstallPath); }
 
-	BOOL HaveSavedGames(VOID); //{ return(m_bSavedGames); }
+	BOOL HaveSavedGames(); //{ return(m_bSavedGames); }
 
-	CBagMasterWin *GetMasterWnd(VOID) { return ((CBagMasterWin *)m_pMainWnd); }
+	CBagMasterWin *GetMasterWnd() { return ((CBagMasterWin *)m_pMainWnd); }
 
-	static CBagel *GetBagApp(VOID) { return ((CBagel *)m_pBofApp); }
+	static CBagel *GetBagApp() { return ((CBagel *)m_pBofApp); }
 
-	INT GetChromaColor(VOID) { return DEFAULT_CHROMA_COLOR; }
+	INT GetChromaColor() { return DEFAULT_CHROMA_COLOR; }
 
 	static ERROR_CODE SetActiveCursor(INT nCurs);
-	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const CHAR *pszWaveFile = NULL);
+	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const CHAR *pszWaveFile = nullptr);
 
 	static VOID ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID);
 
@@ -154,9 +154,9 @@ public:
 	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() { return m_pCacheFileList; }
 
 protected:
-	ERROR_CODE InitLocalFilePaths(VOID);
-	ERROR_CODE InitGraphics(VOID);
-	ERROR_CODE VerifyRequirements(VOID);
+	ERROR_CODE InitLocalFilePaths();
+	ERROR_CODE InitGraphics();
+	ERROR_CODE VerifyRequirements();
 
 	// Data members
 	//

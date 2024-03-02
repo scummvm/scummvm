@@ -46,8 +46,8 @@ public:
 	virtual ~CBagRestoreDialog();
 #endif
 
-	virtual ERROR_CODE Attach(VOID);
-	virtual ERROR_CODE Detach(VOID);
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
 
 	ST_BAGEL_SAVE *GetSaveGameBuffer(INT &nLength) {
 		nLength = m_nBufSize;
@@ -59,10 +59,10 @@ public:
 		m_nBufSize = nLength;
 	}
 
-	BOOL Restored(VOID) { return (m_bRestored); }
+	BOOL Restored() { return (m_bRestored); }
 
 #if 1
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnInitDialog();
 #endif
 
 protected:
@@ -72,7 +72,7 @@ protected:
 
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-	ERROR_CODE RestoreAndClose(VOID);
+	ERROR_CODE RestoreAndClose();
 
 	// Data
 	//

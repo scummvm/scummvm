@@ -63,13 +63,13 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	BUTTON_TYPE GetButtonType(VOID) { return (m_xButtonType); }
+	BUTTON_TYPE GetButtonType() { return (m_xButtonType); }
 
 	PARSE_CODES SetInfo(bof_ifstream & /*istr*/);
 	virtual BOOL RunObject();
 
 	// Callback function functionality - probably can be phased out
-	VOID SetCallBack(void *(func)(int, void *), void *vpFuncInfo = NULL) {
+	VOID SetCallBack(void *(func)(int, void *), void *vpFuncInfo = nullptr) {
 #if BOF_MAC && __POWERPC__
 		m_vpFunc = NewRoutineDescriptor((ProcPtr)func,
 										uppCBagObjectProcInfo,
@@ -98,11 +98,11 @@ public:
 			return FALSE;
 	}
 
-	BOOL OnLButtonDown(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL);
-	BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL);
+	BOOL OnLButtonDown(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
+	BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 	BOOL OnMouseMove(UINT /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
 	void SetSize(const CBofSize &xSize);
 

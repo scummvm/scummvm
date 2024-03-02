@@ -37,11 +37,11 @@ public:
 #if BOF_DEBUG
 	virtual ~CBagHelp();
 #endif
-	virtual ERROR_CODE Attach(VOID);
-	virtual ERROR_CODE Detach(VOID);
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
 
 #if 1
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnInitDialog();
 #endif
 
 	ERROR_CODE SetHelpFile(const CHAR *pszTextFile);

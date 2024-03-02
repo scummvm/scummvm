@@ -66,8 +66,7 @@ private:
 public:
 	static CBagVar m_xTempVar; // used as a default param
 
-	// mdm else/if bug 5/28 -- added member to track prev sign
-	CBagExpression(CBagExpression *pPrevExpr = NULL, BOOL bPrevNeg = FALSE);
+	CBagExpression(CBagExpression *pPrevExpr = nullptr, BOOL bPrevNeg = FALSE);
 	~CBagExpression();
 
 	BOOL Evaluate(BOOL bNeg = FALSE, CBagVar &xResult = m_xTempVar);
