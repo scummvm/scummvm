@@ -106,58 +106,56 @@ void Context::initialize(ContextType contextType) {
 	majorVersion = GLAD_VERSION_MAJOR(gladVersion);
 	minorVersion = GLAD_VERSION_MINOR(gladVersion);
 
-	if (!gladVersion)
-		// If gladVersion is 0 it either means:
-		// - loading failed and glad didn't even set up core functions
-		// - we are hit by GLAD bug #446 which fails to parse some extensions
-		// In this case just try to do the parsing by ourselves
-#endif
-	{
-		if (!glGetString) {
-			error("Couldn't initialize OpenGL");
+	if (!gladVersion) {
+		// If gladVersion is 0 it means that loading failed and glad didn't set up anything
+		error("Couldn't initialize OpenGL");
+	}
+#else
+	if (!glGetString) {
+		error("Couldn't initialize OpenGL");
+	}
+
+	const char *verString = (const char *)glGetString(GL_VERSION);
+
+	if (!verString) {
+		majorVersion = minorVersion = 0;
+		int errorCode = 0;
+		if (glGetError) {
+			errorCode = glGetError();
 		}
-
-		const char *verString = (const char *)glGetString(GL_VERSION);
-
-		if (!verString) {
+		warning("Could not fetch GL_VERSION: %d", errorCode);
+		return;
+	} else if (type == kContextGL) {
+		// OpenGL version number is either of the form major.minor or major.minor.release,
+		// where the numbers all have one or more digits
+		if (sscanf(verString, "%d.%d", &majorVersion, &minorVersion) != 2) {
 			majorVersion = minorVersion = 0;
-			int errorCode = 0;
-			if (glGetError) {
-				errorCode = glGetError();
-			}
-			warning("Could not fetch GL_VERSION: %d", errorCode);
-			return;
-		} else if (type == kContextGL) {
-			// OpenGL version number is either of the form major.minor or major.minor.release,
-			// where the numbers all have one or more digits
-			if (sscanf(verString, "%d.%d", &majorVersion, &minorVersion) != 2) {
-				majorVersion = minorVersion = 0;
-				warning("Could not parse GL version '%s'", verString);
-			}
-		} else if (type == kContextGLES) {
-			// The form of the string is "OpenGL ES-<profile> <major>.<minor>",
-			// where <profile> is either "CM" (Common) or "CL" (Common-Lite),
-			// and <major> and <minor> are integers.
-			char profile[3];
-			if (sscanf(verString, "OpenGL ES-%2s %d.%d", profile,
-						&majorVersion, &minorVersion) != 3) {
-				majorVersion = minorVersion = 0;
-				warning("Could not parse GL ES version '%s'", verString);
-			}
-		} else if (type == kContextGLES2) {
-			// The version is of the form
-			// OpenGL<space>ES<space><version number><space><vendor-specific information>
-			// version number format is not defined
-			// There is only OpenGL ES 2.0 anyway
-			if (sscanf(verString, "OpenGL ES %d.%d", &majorVersion, &minorVersion) != 2) {
-				minorVersion = 0;
-				if (sscanf(verString, "OpenGL ES %d ", &majorVersion) != 1) {
-					majorVersion = 0;
-					warning("Could not parse GL ES 2 version '%s'", verString);
-				}
+			warning("Could not parse GL version '%s'", verString);
+		}
+	} else if (type == kContextGLES) {
+		// The form of the string is "OpenGL ES-<profile> <major>.<minor>",
+		// where <profile> is either "CM" (Common) or "CL" (Common-Lite),
+		// and <major> and <minor> are integers.
+		char profile[3];
+		if (sscanf(verString, "OpenGL ES-%2s %d.%d", profile,
+					&majorVersion, &minorVersion) != 3) {
+			majorVersion = minorVersion = 0;
+			warning("Could not parse GL ES version '%s'", verString);
+		}
+	} else if (type == kContextGLES2) {
+		// The version is of the form
+		// OpenGL<space>ES<space><version number><space><vendor-specific information>
+		// version number format is not defined
+		// There is only OpenGL ES 2.0 anyway
+		if (sscanf(verString, "OpenGL ES %d.%d", &majorVersion, &minorVersion) != 2) {
+			minorVersion = 0;
+			if (sscanf(verString, "OpenGL ES %d ", &majorVersion) != 1) {
+				majorVersion = 0;
+				warning("Could not parse GL ES 2 version '%s'", verString);
 			}
 		}
 	}
+#endif
 
 	glslVersion = getGLSLVersion();
 
