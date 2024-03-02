@@ -106,7 +106,7 @@ class CBagSaveGameFile : public CBofDataFile {
 public:
 	CBagSaveGameFile(const CHAR *pszFileName);
 
-	LONG GetNumSavedGames() { return (GetNumberOfRecs()); }
+	LONG GetNumSavedGames() { return GetNumberOfRecs(); }
 	LONG GetActualNumSaves();
 	BOOL AnySavedGames();
 

@@ -91,9 +91,9 @@ public:
 	INT GetEndFrame() const { return m_nEndFrame; }
 	INT GetCurrentFrame() const { return (m_pSmk != nullptr) ? m_pSmk->FrameNum : -1; }
 
-	BOOL IsModalDone() { return (!m_nNumOfLoops); }
+	BOOL IsModalDone() { return !m_nNumOfLoops; }
 
-	BOOL IsPanim() { return (m_bPanim); }
+	BOOL IsPanim() { return m_bPanim; }
 	VOID SetPanim(BOOL b = TRUE) { m_bPanim = b; }
 
 	VOID SetNumOfLoops(INT n);

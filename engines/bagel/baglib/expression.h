@@ -75,7 +75,7 @@ public:
 	BOOL NegEvaluate(CBagVar &xResult = m_xTempVar);
 
 	VOID SetNegative(BOOL b = TRUE) { m_bNegative = (UBYTE)b; }
-	BOOL IsNegative() { return (m_bNegative); }
+	BOOL IsNegative() { return m_bNegative; }
 
 	CBagVar *GetVariable(int nPos);
 	OPERATION GetOperation(int nPos);

@@ -75,8 +75,8 @@ public:
 	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
-	BOOL IsValid() { return (m_bIsValid); }
-	BOOL IsPan() { return (m_bPanorama); }
+	BOOL IsValid() { return m_bIsValid; }
+	BOOL IsPan() { return m_bPanorama; }
 
 	ERROR_CODE Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ERROR_CODE Paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));

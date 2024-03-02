@@ -72,13 +72,13 @@ public:
 		INT nState = GetState();
 		SetState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
 	}
-	INT GetMsgTime() { return (GetState() & mMsgTimeMask); }
+	INT GetMsgTime() { return GetState() & mMsgTimeMask; }
 
 	VOID SetMsgPlayed(BOOL bPlayed) {
 		INT nState = GetState();
 		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
 	}
-	BOOL GetMsgPlayed() { return ((GetState() & mMsgPlayedMask) != 0); }
+	BOOL GetMsgPlayed() { return (GetState() & mMsgPlayedMask) != 0; }
 };
 
 #define mSusChecked 0x0001
@@ -113,14 +113,14 @@ public:
 
 #if INCLUDE_RP_AND_VP
 	VOID SetSusVP(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted); }
-	BOOL GetSusVP() { return ((GetState() & mSusVoicePrinted) != 0); }
+	BOOL GetSusVP() { return (GetState() & mSusVoicePrinted) != 0; }
 
 	VOID SetSusRP(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted); }
-	BOOL GetSusRP() { return ((GetState() & mSusResiduePrinted) != 0); }
+	BOOL GetSusRP() { return (GetState() & mSusResiduePrinted) != 0; }
 #endif
 
 	VOID SetSusChecked(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked); }
-	BOOL GetSusChecked() { return ((GetState() & mSusChecked) != 0); }
+	BOOL GetSusChecked() { return (GetState() & mSusChecked) != 0; }
 };
 
 class CBagLog : public CBagStorageDevBmp {

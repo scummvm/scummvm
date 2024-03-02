@@ -89,7 +89,7 @@ public:
 
 	VOID Close();
 
-	CBofString &GetWldScript() { return (m_cWldScript); }
+	CBofString &GetWldScript() { return m_cWldScript; }
 
 	static VOID SetActiveCursor(INT iCursor);
 	static INT GetActiveCursor() { return m_nCurCursor; }
@@ -112,8 +112,8 @@ public:
 	static INT GetWaveVolume();
 	static VOID SetWaveVolume(INT nVol);
 
-	static BOOL GetMidi() { return (GetMidiVolume() != 0); }
-	static BOOL GetDigitalAudio() { return (GetWaveVolume() != 0); }
+	static BOOL GetMidi() { return GetMidiVolume() != 0; }
+	static BOOL GetDigitalAudio() { return GetWaveVolume() != 0; }
 
 	static VOID MuteToggle();
 	static VOID ForcePaintScreen(BOOL bShowCursor = TRUE);
@@ -163,9 +163,9 @@ public:
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnClose();
 
-	ST_OBJ *GetObjList() { return (m_pObjList); }
+	ST_OBJ *GetObjList() { return m_pObjList; }
 	VOID SetSaveObjs(BOOL bSave) { m_bObjSave = bSave; }
-	BOOL IsObjSave() { return (m_bObjSave); }
+	BOOL IsObjSave() { return m_bObjSave; }
 
 	VOID SaveSDevStack();
 

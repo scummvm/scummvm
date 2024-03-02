@@ -54,12 +54,12 @@ public:
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach() { return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/); }
 	ERROR_CODE Attach(CBofWindow *pWnd);
-	BOOL IsAttached() { return (m_pSound != nullptr); }
+	BOOL IsAttached() { return m_pSound != nullptr; }
 	ERROR_CODE Detach();
 
-	CBofSound *GetLastMidi() { return (m_pMidiSound); }
+	CBofSound *GetLastMidi() { return m_pMidiSound; }
 
-	CBofSound *GetSound() { return (m_pSound); }
+	CBofSound *GetSound() { return m_pSound; }
 
 	VOID SetWave() { m_wFlags = SOUND_WAVE; }
 	VOID SetMidi() { m_wFlags = (SOUND_MIDI | SOUND_LOOP); }
@@ -69,7 +69,7 @@ public:
 
 	VOID SetSync(BOOL b = TRUE);
 	VOID SetASync(BOOL b = TRUE) { SetSync(!b); }
-	BOOL IsSync() { return (m_wFlags & SOUND_ASYNCH); }
+	BOOL IsSync() { return m_wFlags & SOUND_ASYNCH; }
 
 	VOID SetMix() { m_wFlags = SOUND_MIX; }
 	VOID SetQueue(BOOL b = TRUE);

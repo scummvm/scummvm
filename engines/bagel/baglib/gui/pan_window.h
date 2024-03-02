@@ -109,7 +109,7 @@ public:
 	VOID DeActivateView();
 
 	static VOID SetPanSpeed(INT nSpeed) { m_nPanSpeed = nSpeed; }
-	static INT GetPanSpeed() { return (m_nPanSpeed); }
+	static INT GetPanSpeed() { return m_nPanSpeed; }
 
 #if BOF_MAC
 	// We need to be able to call activate view and deactivate view outside
@@ -153,7 +153,7 @@ public:
 	BOOL GetStretchToScreen() { return m_bStretchToScreen; }
 	BOOL SetStretchToScreen(BOOL val = TRUE) { return m_bStretchToScreen = val; }
 
-	static INT GetRealCorrection() { return (m_nCorrection); }
+	static INT GetRealCorrection() { return m_nCorrection; }
 	static VOID SetRealCorrection(INT n) { m_nCorrection = n; }
 
 	INT GetCorrection() { return m_pSlideBitmap->GetCorrWidth(); }

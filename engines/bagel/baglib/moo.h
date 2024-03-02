@@ -52,7 +52,7 @@ public:
 	CBagCharacterObject *GetPDAMovie() { return m_pMovie; }
 
 	VOID StopMovie(BOOL);
-	BOOL MoviePlaying() { return (m_pMovie != nullptr); }
+	BOOL MoviePlaying() { return m_pMovie != nullptr; }
 
 	VOID SavePDAMode(PDAMODE pdaMode) { m_eSavePDAMode = pdaMode; }
 	VOID SavePDAPosition(PDAPOS pdaPos) { m_eSavePDAPos = pdaPos; }

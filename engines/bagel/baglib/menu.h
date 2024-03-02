@@ -45,11 +45,11 @@ public:
 
 	ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
 		Assert(FALSE);
-		return (ERR_NONE);
+		return ERR_NONE;
 	}
 	CBofBitmap *GetBackground() {
 		Assert(FALSE);
-		return (nullptr);
+		return nullptr;
 	}
 
 	BOOL AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
@@ -68,7 +68,7 @@ public:
 	// BOOL AddUniversalObject(CBagObject *pObj);
 	static BOOL RemoveUniversalObjectList();
 	static BOOL SetUniversalObjectList(CBofList<CBagObject *> *pObjList);
-	static CBofList<CBagObject *> *GetUniversalObjectList() { return (m_pUniversalObjectList); }
+	static CBofList<CBagObject *> *GetUniversalObjectList() { return m_pUniversalObjectList; }
 
 	CBagObject *OnNewSpriteObject(const CBofString &);
 };

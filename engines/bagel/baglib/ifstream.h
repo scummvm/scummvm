@@ -58,30 +58,30 @@ public:
 	}
 
 	INT getline(CHAR *pszBuf, INT nLength) {
-		return (get(pszBuf, nLength, '\n'));
+		return get(pszBuf, nLength, '\n');
 	}
 
 	INT putback(CHAR /*ch*/) {
 		if (m_pszCurr > m_pszBuf)
 			m_pszCurr--;
 
-		return (0);
+		return 0;
 	}
 
 	INT eof() {
 		if (m_pszCurr == m_pszEOF) {
-			return (-1);
+			return -1;
 
 		} else {
-			return (0);
+			return 0;
 		}
 	}
 
 	INT get() {
 		if (m_pszCurr != m_pszEOF)
-			return (*m_pszCurr++);
+			return *m_pszCurr++;
 		else
-			return (-1);
+			return -1;
 	}
 
 	INT get(char *pszBuf, INT nCount, CHAR chDelim = '\n') {
@@ -96,18 +96,18 @@ public:
 			m_pszCurr += nCount;
 			Assert(m_pszCurr <= m_pszEOF);
 
-			return (m_pszCurr == m_pszEOF ? -1 : 0);
+			return m_pszCurr == m_pszEOF ? -1 : 0;
 
 		} else {
-			return (-1);
+			return -1;
 		}
 	}
 
 	INT peek() {
 		if (m_pszCurr != m_pszEOF)
-			return (*m_pszCurr);
+			return *m_pszCurr;
 		else
-			return (-1);
+			return -1;
 	}
 
 	INT Get(char *pch, int nCount, char delim = '\n') {

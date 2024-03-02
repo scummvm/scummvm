@@ -48,7 +48,7 @@ public:
 
 	UBYTE *GetSaveGameBuffer(INT &nLength) {
 		nLength = m_nBufSize;
-		return (m_pSaveBuf);
+		return m_pSaveBuf;
 	}
 
 	VOID SetSaveGameBuffer(UBYTE *pBuf, INT nLength) {
