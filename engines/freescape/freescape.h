@@ -383,8 +383,12 @@ public:
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;
-	void loadSpeakerFx(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration);
+	void loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration);
+	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
+
+	void playSoundZX(Common::Array<uint16> *data);
+	Common::HashMap<uint16, Common::Array<uint16>*> _soundsSpeakerFxZX;
 
 	// Rendering
 	int _screenW, _screenH;

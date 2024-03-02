@@ -64,6 +64,7 @@ void DarkEngine::loadAssetsZXFullGame() {
 		addECDs(it._value);
 		addSkanner(it._value);
 	}
+	loadSpeakerFxZX(&file, 0x9c1, 0xa55);
 
 	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
