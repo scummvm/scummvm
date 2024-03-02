@@ -1,0 +1,1037 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "bagel/boflib/dat_file.h"
+#include "bagel/boflib/crc.h"
+#include "bagel/boflib/debug.h"
+#include "bagel/boflib/log.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/boflib/stdinc.h"
+
+namespace Bagel {
+
+// Local prototypes
+//
+ULONG CreateHashCode(const UBYTE *);
+
+struct HEAD_INFO {
+	LONG m_lNumRecs;  // Number of records in this file
+	LONG m_lAddress;  // starting address of footer
+	ULONG m_lFlags;   // contains flags for this file
+	ULONG m_lFootCrc; // CRC of the footer
+};
+
+#if BOF_MAC
+VOID SwapHeadInfo(HEAD_INFO *stHI);
+VOID SwapHeaderRec(HEADER_REC *stHR, INT);
+#endif
+
+CBofDataFile::CBofDataFile() {
+	m_szFileName[0] = '\0';
+	m_szPassWord[0] = '\0';
+	m_lHeaderLength = 0;
+	m_lNumRecs = 0;
+	m_pHeader = nullptr;
+	m_bHeaderDirty = FALSE;
+}
+
+CBofDataFile::CBofDataFile(const CHAR *pszFileName, ULONG lFlags, const CHAR *pPassword) {
+	m_szFileName[0] = '\0';
+	m_szPassWord[0] = '\0';
+	m_lHeaderLength = 0;
+	m_lNumRecs = 0;
+	m_pHeader = nullptr;
+	m_bHeaderDirty = FALSE;
+
+	SetFile(pszFileName, lFlags, pPassword);
+}
+
+ERROR_CODE CBofDataFile::SetFile(const CHAR *pszFileName, ULONG lFlags, const CHAR *pPassword) {
+	Assert(IsValidObject(this));
+
+	// Validate input
+	Assert(pszFileName != nullptr);
+	Assert(strlen(pszFileName) < MAX_FNAME);
+
+	// Release any previous data-file
+	ReleaseFile();
+
+	// All data files are binary, so force it
+	lFlags |= CBF_BINARY;
+
+	// Store password locally
+	//
+	if (pPassword != nullptr) {
+		// don't want to overwrite past our password buffer
+		Assert(strlen(pPassword) < MAX_PW_LEN);
+
+		Common::strcpy_s(m_szPassWord, pPassword);
+
+		// Force encryption on since they supplied a password
+		m_lFlags |= CDF_ENCRYPT;
+	}
+
+	// Remember the flags
+	m_lFlags = lFlags;
+
+	// Remember this file's name
+	//
+	// Hopefully this code won't stand... there are three places inside
+	// of the following code that changes m_szFileName to a full path,
+	// and each of them expects as input just the filename,
+	// so carefully preserve the value of that buffer along the way.
+#if BOF_MAC
+	Common::strcpy_s(m_szFileName, pszFileName);
+#else
+	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
+#endif
+	if (Open() == ERR_NONE) {
+
+		// Read header block
+		ReadHeader();
+
+		// Close data file if we are not keeping it open
+		//
+		if (!(m_lFlags & CDF_KEEPOPEN)) {
+			Close();
+		}
+	}
+#if !BOF_MAC
+}
+else {
+	ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
+}
+#endif
+	return m_errCode;
+}
+
+CBofDataFile::~CBofDataFile() {
+	Assert(IsValidObject(this));
+
+	ReleaseFile();
+}
+
+ERROR_CODE CBofDataFile::ReleaseFile() {
+	Assert(IsValidObject(this));
+
+	// If header was modified
+	//
+	if (m_bHeaderDirty) {
+		// Write header to disk
+		WriteHeader();
+	}
+
+	Close();
+
+	// Free header buffer
+	if (m_pHeader != nullptr) {
+		delete[] m_pHeader;
+		m_pHeader = nullptr;
+	}
+
+	return m_errCode;
+}
+
+ERROR_CODE CBofDataFile::Create() {
+	Assert(IsValidObject(this));
+
+	HEAD_INFO stHeaderInfo;
+
+	// Only continue if there is no current error
+	if (m_errCode == ERR_NONE) {
+		if (_stream != nullptr) {
+			Close();
+		}
+
+		// Re-initialize
+		//
+		if (m_pHeader != nullptr) {
+			delete[] m_pHeader;
+			m_pHeader = nullptr;
+		}
+		_stream = nullptr;
+		m_lHeaderLength = 0;
+		m_bHeaderDirty = FALSE;
+
+		stHeaderInfo.m_lNumRecs = m_lNumRecs = 0;
+		stHeaderInfo.m_lAddress = sizeof(HEAD_INFO);
+
+#if BOF_WINMAC || BOF_MAC
+		SwapHeadInfo(&stHeaderInfo);
+#endif
+
+		// create the file
+		//
+		if (CBofFile::Create(m_szFileName, m_lFlags) == ERR_NONE) {
+
+			// write empty header info
+			//
+			if (Write(&stHeaderInfo, sizeof(HEAD_INFO)) == ERR_NONE) {
+
+			} else {
+				m_errCode = ERR_FWRITE;
+			}
+
+			CBofFile::Close();
+
+		} else {
+			m_errCode = ERR_FOPEN;
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::Open() {
+#if BOF_MAC
+	CHAR pszFileName[MAX_FNAME];
+#endif
+	Assert(IsValidObject(this));
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		if (_stream == nullptr) {
+
+			if (!(m_lFlags & CDF_READONLY)) {
+				if (!FileExists(m_szFileName)) {
+					Create();
+				}
+			}
+
+			// Open data-file
+			//
+			// jwl 07.14.96 pass the filename only, not the full path,
+			// otherwise our m_szFileName buffer will get expanded
+			// prematurely.
+#if BOF_MAC
+			Common::strcpy_s(pszFileName, m_szFileName);
+			CBofFile::Open(pszFileName, m_lFlags);
+#else
+				CBofFile::Open(m_szFileName, m_lFlags);
+#endif
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::Close() {
+	Assert(IsValidObject(this));
+
+	if (_stream != nullptr) {
+		if (m_bHeaderDirty) {
+			WriteHeader();
+		}
+
+		CBofFile::Close();
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::ReadHeader() {
+	Assert(IsValidObject(this));
+
+	HEAD_INFO stHeaderInfo;
+	ULONG lCrc;
+	LONG lFileLength;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		if (_stream == nullptr) {
+			Open();
+		}
+
+		if (!ErrorOccurred()) {
+
+			// determine number of records in file
+			//
+			if (Read(&stHeaderInfo, sizeof(HEAD_INFO)) == ERR_NONE) {
+
+#if BOF_WINMAC || BOF_MAC
+				SwapHeadInfo(&stHeaderInfo);
+#endif
+
+				m_lNumRecs = stHeaderInfo.m_lNumRecs;
+				m_lHeaderStart = stHeaderInfo.m_lAddress;
+
+				// length of header is number of records * header-record size
+				m_lHeaderLength = m_lNumRecs * sizeof(HEADER_REC);
+
+				lFileLength = FileLength(m_szFileName);
+
+				// make sure header contains valid info
+				//
+				if ((m_lHeaderStart >= sizeof(HEAD_INFO)) &&
+					(m_lHeaderStart <= lFileLength) && (m_lHeaderLength >= 0) &&
+					(m_lHeaderLength < lFileLength)) {
+
+					// force Encrypted, and Compress if existing file has them
+					//
+					m_lFlags |= stHeaderInfo.m_lFlags & CDF_ENCRYPT;
+					m_lFlags |= stHeaderInfo.m_lFlags & CDF_COMPRESSED;
+
+					if (m_lHeaderLength != 0) {
+
+						// allocate buffer to hold header
+						//
+						// jwl 09.19.96, watch out!  Could be the metrowerks allocation bug
+						// here! ???
+						if ((m_pHeader = new HEADER_REC[(int)m_lNumRecs]) != nullptr) {
+
+							// seek to start of header
+							//
+							Seek(m_lHeaderStart);
+
+							// read header
+							//
+							if (Read(m_pHeader, sizeof(HEADER_REC) * m_lNumRecs) == ERR_NONE) {
+								lCrc = CalculateCRC(m_pHeader, (INT)(sizeof(HEADER_REC) * m_lNumRecs));
+#if BOF_WINMAC || BOF_MAC
+								SwapHeaderRec(m_pHeader, m_lNumRecs);
+#endif
+								if (lCrc != stHeaderInfo.m_lFootCrc) {
+									LogError(BuildString("Error: '%s' has invalid footer", m_szFileName));
+									m_errCode = ERR_CRC;
+								}
+
+							} else {
+								LogError(BuildString("Error: Could not read footer in file '%s'", m_szFileName));
+								m_errCode = ERR_FREAD;
+							}
+
+						} else {
+							LogError(BuildString("Error: Could not allocate footer for file '%s'", m_szFileName));
+							m_errCode = ERR_MEMORY;
+						}
+					}
+
+				} else {
+					LogError(BuildString("Error: '%s' has invalid header", m_szFileName));
+					m_errCode = ERR_FTYPE;
+				}
+
+			} else {
+				LogError(BuildString("Error: Could not read header in file '%s'", m_szFileName));
+				m_errCode = ERR_FREAD;
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::WriteHeader() {
+	Assert(IsValidObject(this));
+
+	HEAD_INFO stHeaderInfo;
+	HEADER_REC *pRec;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// open the data file if it's not already open
+		//
+		if (_stream == nullptr) {
+			Open();
+		}
+
+		if (m_errCode == ERR_NONE) {
+
+			// header starts at the end of the last record
+			//
+			pRec = &m_pHeader[m_lNumRecs - 1];
+			m_lHeaderStart = pRec->m_lOffset + pRec->m_lLength;
+
+			stHeaderInfo.m_lNumRecs = m_lNumRecs;
+			stHeaderInfo.m_lAddress = m_lHeaderStart;
+			stHeaderInfo.m_lFlags = m_lFlags;
+#if BOF_WINMAC || BOF_MAC
+			// jwl 09.19.96 Swap all the header recs before going to disk...
+			SwapHeaderRec(m_pHeader, m_lNumRecs);
+#endif
+			stHeaderInfo.m_lFootCrc = CalculateCRC(m_pHeader, (INT)(sizeof(HEADER_REC) * m_lNumRecs));
+
+			// seek to front of file to write header info
+			SeekToBeginning();
+
+#if BOF_WINMAC || BOF_MAC
+			// jwl 09.19.96 before going to disk, swap!
+			SwapHeadInfo(&stHeaderInfo);
+#endif
+			if (Write(&stHeaderInfo, sizeof(HEAD_INFO)) == ERR_NONE) {
+
+				// seek to start of where header is to be written
+				//
+				Seek(m_lHeaderStart);
+
+				// write header to data file
+				//
+				if (Write(m_pHeader, sizeof(HEADER_REC) * m_lNumRecs) == ERR_NONE) {
+					// header is now clean
+					m_bHeaderDirty = FALSE;
+
+				} else {
+					LogError(BuildString("Error writing footer to file '%s'", m_szFileName));
+					m_errCode = ERR_FWRITE;
+				}
+
+			} else {
+				LogError(BuildString("Error writing header to file '%s'", m_szFileName));
+				m_errCode = ERR_FWRITE;
+			}
+#if BOF_WINMAC || BOF_MAC
+			// jwl 09.19.96 Swap all the header recs before going to disk...
+			SwapHeaderRec(m_pHeader, m_lNumRecs);
+#endif
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
+	Assert(IsValidObject(this));
+
+	HEADER_REC *pRecInfo;
+	ULONG lCrc;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// can't write to nullptr pointers
+		Assert(pBuf != nullptr);
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		// make sure we have a valid header
+		Assert(m_pHeader != nullptr);
+
+		// get info about address of where record starts
+		// and how large the record is.
+		//
+		pRecInfo = &m_pHeader[(int)lRecNum];
+
+		// open the data file if it's not already open
+		//
+		if (_stream == nullptr) {
+
+			Open();
+		}
+
+		if (m_errCode == ERR_NONE) {
+
+			// seek to that point in the file
+			//
+			Seek(pRecInfo->m_lOffset);
+
+			// read in the record
+			//
+			if (Read(pBuf, pRecInfo->m_lLength) == ERR_NONE) {
+
+				// if this file is encrypted, then decrypt it
+				//
+				if (m_lFlags & CDF_ENCRYPT) {
+					Decrypt(pBuf, (INT)pRecInfo->m_lLength, m_szPassWord);
+				}
+
+				// calculate and verify this record's CRC value
+				//
+				lCrc = CalculateCRC(pBuf, (INT)pRecInfo->m_lLength);
+
+				if (lCrc != pRecInfo->m_lCrc) {
+					m_errCode = ERR_CRC;
+				}
+
+			} else {
+				LogError(BuildString("Error reading record %ld in file '%s'", lRecNum, m_szFileName));
+				m_errCode = ERR_FREAD;
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
+	Assert(IsValidObject(this));
+
+	HEADER_REC *pRecInfo;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// can't write to nullptr pointers
+		Assert(pBuf != nullptr);
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		// make sure we have a valid header
+		Assert(m_pHeader != nullptr);
+
+		// get info about address of where record starts
+		// and how large the record is.
+		//
+		pRecInfo = &m_pHeader[(int)lRecNum];
+
+		// open the data file if it's not already open
+		//
+		if (_stream == nullptr) {
+
+			Open();
+		}
+
+		if (m_errCode == ERR_NONE) {
+
+			// seek to that point in the file
+			//
+			Seek(pRecInfo->m_lOffset);
+
+			// jwl 1.6.97 read in the requested bytes...
+			//
+			if (Read(pBuf, lBytes) == ERR_NONE) {
+
+				// if this file is encrypted, then decrypt it
+				//
+				if (m_lFlags & CDF_ENCRYPT) {
+					DecryptPartial(pBuf, (LONG)pRecInfo->m_lLength, (LONG)lBytes, m_szPassWord);
+				}
+
+				// Don't bother with a CRC as this chunk of input won't generate a proper
+				// CRC anyway.
+			} else {
+				LogError(BuildString("Error reading record %ld in file '%s'", lRecNum, m_szFileName));
+				m_errCode = ERR_FREAD;
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL bUpdateHeader, ULONG lKey) {
+	Assert(IsValidObject(this));
+
+	HEADER_REC *pRecInfo;
+	UBYTE *pTmpBuf;
+	LONG lPrevLength, lPrevOffset;
+	int i;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		// validate input buffer
+		Assert(pBuf != nullptr);
+
+		// there must already be a valid header
+		Assert(m_pHeader != nullptr);
+
+		if (lSize == -1)
+			lSize = m_pHeader[(int)lRecNum].m_lLength;
+
+		lPrevOffset = sizeof(HEAD_INFO);
+		lPrevLength = 0;
+
+		if (lRecNum != 0) {
+			lPrevOffset = m_pHeader[(int)lRecNum - 1].m_lOffset;
+			lPrevLength = m_pHeader[(int)lRecNum - 1].m_lLength;
+		}
+
+		pRecInfo = &m_pHeader[(int)lRecNum];
+
+		// header needs to updated
+		m_bHeaderDirty = TRUE;
+
+		if (_stream == nullptr) {
+			Open();
+		}
+
+		// this record starts at the end of the last record
+		pRecInfo->m_lOffset = lPrevOffset + lPrevLength;
+
+		// seek to where we want to write this record
+		Seek(pRecInfo->m_lOffset);
+
+		// calculate new hash code based on this records key
+		//
+		pRecInfo->m_lKey = lKey;
+		if (lKey == 0xFFFFFFFF) {
+			pRecInfo->m_lKey = CreateHashCode((const UBYTE *)pBuf);
+		}
+
+		// calculate this record's CRC value
+		pRecInfo->m_lCrc = CalculateCRC(pBuf, lSize);
+
+		if (m_lFlags & CDF_ENCRYPT) {
+			Encrypt(pBuf, lSize, m_szPassWord);
+		}
+
+		// If new record is larger then original
+		//
+		if (lSize > pRecInfo->m_lLength) {
+			LONG lDiff;
+
+			// How many bytes back do we have to write?
+			lDiff = lSize - pRecInfo->m_lLength;
+
+			LONG lBufLength, lChunkSize;
+
+			//
+			// Move the rest of file back that many bytes
+			//
+
+			// Read the rest of the file in chunks (of 200k or less),
+			// and write each chunk back in it's new position.
+			//
+			lBufLength = GetLength() - (pRecInfo->m_lOffset + pRecInfo->m_lLength);
+			lChunkSize = min(lBufLength, 200000);
+
+			// Allocate a buffer big enough for one chunk
+			//
+			if ((pTmpBuf = (UBYTE *)BofAlloc(lChunkSize)) != nullptr) {
+
+				// While there is data to move
+				//
+				while (lBufLength > 0) {
+
+					// Seek to begining of the source for this chunk
+					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize);
+
+					// Read the chunk
+					Read(pTmpBuf, lChunkSize);
+
+					// Seek to this chunks new positon (offset by 'lDiff' bytes)
+					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize + lDiff);
+
+					// Write chunk to new position
+					Write(pTmpBuf, lChunkSize);
+
+					// That much less to do next time thru
+					lBufLength -= lChunkSize;
+
+					// Last chunk is lBufLength
+					lChunkSize = min(lBufLength, lChunkSize);
+				}
+
+				// don't need that temp buffer anymore
+				BofFree(pTmpBuf);
+
+			} else {
+
+				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in WriteRecord()", lBufLength);
+			}
+
+			// Tell the rest of the records that they moved
+			//
+			for (i = lRecNum + 1; i < GetNumberOfRecs(); i++) {
+				m_pHeader[i].m_lOffset += lDiff;
+			}
+
+			// remember it's new length
+			pRecInfo->m_lLength = lSize;
+
+			// seek to where we want to write this record
+			Seek(pRecInfo->m_lOffset);
+
+			// write this record
+			//
+			Write(pBuf, lSize);
+
+			// if we are to update the header now
+			//
+			if (bUpdateHeader) {
+				WriteHeader();
+			}
+
+		} else {
+
+			// write this record
+			//
+			if (Write(pBuf, lSize) == ERR_NONE) {
+
+				// if this record got smaller
+				//
+				if (pRecInfo->m_lLength > lSize) {
+
+					// remember it's length
+					pRecInfo->m_lLength = lSize;
+
+					// allocate a buffer that could hold the largest record
+					//
+					if ((pTmpBuf = (UBYTE *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
+
+						for (i = (int)lRecNum + 1; i < (int)m_lNumRecs - 1; i++) {
+
+							if ((m_errCode = ReadRecord(i, pTmpBuf)) != ERR_NONE)
+								break;
+
+							if ((m_errCode = WriteRecord(i + 1, pTmpBuf)) != ERR_NONE)
+								break;
+						}
+
+						BofFree(pTmpBuf);
+
+					} else {
+						m_errCode = ERR_MEMORY;
+					}
+				}
+
+				// if we are to update the header now
+				//
+				if (bUpdateHeader) {
+					WriteHeader();
+				}
+
+			} else {
+				m_errCode = ERR_FWRITE;
+			}
+		}
+
+		// if this record is encrypted the decrypt it
+		//
+		if (m_lFlags & CDF_ENCRYPT) {
+			Decrypt(pBuf, (int)pRecInfo->m_lLength, m_szPassWord);
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
+	Assert(IsValidObject(this));
+
+	VOID *pBuf;
+
+	if (m_errCode == ERR_NONE) {
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		// allocate space to hold this record
+		//
+		if ((pBuf = BofAlloc((INT)GetRecSize(lRecNum))) != nullptr) {
+
+			m_errCode = ReadRecord(lRecNum, pBuf);
+
+			BofFree(pBuf);
+
+		} else {
+			m_errCode = ERR_MEMORY;
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::VerifyAllRecords() {
+	Assert(IsValidObject(this));
+
+	LONG i, n;
+
+	if (m_errCode == ERR_NONE) {
+
+		n = GetNumberOfRecs();
+		for (i = 0; i < n; i++) {
+
+			if ((m_errCode = VerifyRecord(i)) != ERR_NONE) {
+				break;
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader, ULONG lKey) {
+	Assert(IsValidObject(this));
+
+	HEADER_REC *pTmpHeader;
+	HEADER_REC *pCurRec;
+	LONG lRecNum;
+	LONG lPrevLength;
+	LONG lPrevOffset;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// validate input
+		Assert(pBuf != nullptr);
+		Assert(lLength > 0);
+
+		if (lLength > 0) {
+
+			if (_stream == nullptr) {
+				Open();
+			}
+
+			if (m_errCode == ERR_NONE) {
+
+				m_lNumRecs++;
+
+#if BOF_MAC && DEVELOPMENT && !__POWERPC__
+				// jwl 07.29.96 there is a metrowerks code generation bug in the new
+				// [] operator.  Just put a debug statement here so we're sure to examine
+				// it next time we run this code.
+
+				DebugStr("\ppTmpHeader = new HEADER_REC[(int)m_lNumRecs]");
+#endif
+				if ((pTmpHeader = new HEADER_REC[(int)m_lNumRecs]) != nullptr) {
+
+					if (m_pHeader != nullptr) {
+
+						BofMemCopy(pTmpHeader, m_pHeader, (size_t)(sizeof(HEADER_REC) * (m_lNumRecs - 1)));
+
+						delete[] m_pHeader;
+					}
+
+					m_pHeader = pTmpHeader;
+
+					lRecNum = m_lNumRecs - 1;
+
+					pCurRec = &m_pHeader[lRecNum];
+					lPrevLength = sizeof(HEAD_INFO);
+					lPrevOffset = 0;
+					if (lRecNum != 0) {
+						lPrevLength = m_pHeader[lRecNum - 1].m_lLength;
+						lPrevOffset = m_pHeader[lRecNum - 1].m_lOffset;
+					}
+
+					pCurRec->m_lLength = lLength;
+					pCurRec->m_lOffset = lPrevOffset + lPrevLength;
+
+					WriteRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
+
+				} else {
+					ReportError(ERR_MEMORY, "Could not allocate a data file header");
+				}
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
+	Assert(IsValidObject(this));
+
+	//
+	// I don't think this function works yet!
+	//
+
+	UBYTE *pBuf;
+	int i;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		m_bHeaderDirty = TRUE;
+
+		// header has moved
+		m_lHeaderStart -= m_pHeader[(int)lRecNum].m_lLength;
+
+		// header has changed size
+		BofMemMove(m_pHeader + lRecNum, m_pHeader + lRecNum + 1, (size_t)((m_lNumRecs - lRecNum - 1) * sizeof(HEADER_REC)));
+
+		// on less record
+		m_lNumRecs--;
+
+		m_lHeaderLength = m_lNumRecs * sizeof(HEADER_REC);
+
+		// open the data file if it's not already
+		//
+		if (_stream == nullptr) {
+			Open();
+		}
+
+		if (m_errCode == ERR_NONE) {
+
+			// allocate a buffer that could hold the largest record
+			//
+			if ((pBuf = (UBYTE *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
+
+				// remove this record from the file
+				//
+				for (i = (int)lRecNum; i < (int)m_lNumRecs - 1; i++) {
+
+					if ((m_errCode = ReadRecord(i + 1, pBuf)) != ERR_NONE)
+						break;
+
+					if ((m_errCode = WriteRecord(i, pBuf)) != ERR_NONE)
+						break;
+				}
+
+				// if we are to update the header now
+				//
+				if (bUpdateHeader) {
+					WriteHeader();
+				}
+
+				BofFree(pBuf);
+
+			} else {
+				m_errCode = ERR_MEMORY;
+			}
+		}
+	}
+
+	return (m_errCode);
+}
+
+LONG CBofDataFile::FindRecord(ULONG lKey) {
+	Assert(IsValidObject(this));
+
+	LONG i, lRecNum;
+
+	// assume no match
+	lRecNum = -1;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// scan the header for the key matching the hash code
+		//
+		for (i = 0; i < m_lNumRecs; i++) {
+
+			// header records must be valid
+			Assert(m_pHeader != nullptr);
+
+			if (m_pHeader[i].m_lKey == lKey) {
+				lRecNum = i;
+				break;
+			}
+		}
+	}
+
+	return (lRecNum);
+}
+
+LONG CBofDataFile::GetRecSize(LONG lRecNum) {
+	Assert(IsValidObject(this));
+
+	LONG lSize = -1;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// validate record number
+		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
+
+		Assert(m_pHeader != nullptr);
+
+		lSize = m_pHeader[lRecNum].m_lLength;
+	}
+
+	return (lSize);
+}
+
+LONG CBofDataFile::GetMaxRecSize() const {
+	Assert(IsValidObject(this));
+
+	LONG lLargest;
+	INT i;
+
+	lLargest = -1;
+
+	// only continue if there is no current error
+	//
+	if (m_errCode == ERR_NONE) {
+
+		// validate header
+		Assert(m_pHeader != nullptr);
+
+		for (i = 0; i < (INT)m_lNumRecs; i++) {
+			lLargest = max(lLargest, m_pHeader[i].m_lLength);
+		}
+	}
+
+	return (lLargest);
+}
+
+VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
+	Assert(IsValidObject(this));
+
+	m_szPassWord[0] = '\0';
+	if (pszPassword != nullptr) {
+
+		Assert(strlen(pszPassword) < MAX_PW_LEN);
+
+		Common::strcpy_s(m_szPassWord, pszPassword);
+	}
+}
+
+/**
+ * Builds a Hash code based on a key.
+ * @param pKey			Key
+ * @return				Hash code
+ */
+ULONG CreateHashCode(const UBYTE *pKey) {
+	ULONG lCode;
+
+	// validate input
+	Assert(pKey != nullptr);
+
+	lCode = ((ULONG)*pKey << 24) | ((ULONG) * (pKey + 1) << 16) | ((ULONG) * (pKey + 2) << 8) | *(pKey + 3);
+
+	return lCode;
+}
+
+VOID SwapHeadInfo(HEAD_INFO *stHI) {
+	// Macintosh is big endian, so we must swap our bytes
+	//
+	stHI->m_lNumRecs = SWAPLONG(stHI->m_lNumRecs);
+	stHI->m_lAddress = SWAPLONG(stHI->m_lAddress);
+	stHI->m_lFlags = SWAPLONG(stHI->m_lFlags);
+	stHI->m_lFootCrc = SWAPLONG(stHI->m_lFootCrc);
+}
+
+VOID SwapHeaderRec(HEADER_REC *stHR, INT nRecords) {
+	HEADER_REC *p = stHR;
+	for (INT i = 0; i < nRecords; i++) {
+		p->m_lOffset = SWAPLONG(p->m_lOffset);
+		p->m_lLength = SWAPLONG(p->m_lLength);
+		p->m_lCrc = SWAPLONG(p->m_lCrc);
+		p->m_lKey = SWAPLONG(p->m_lKey);
+
+		p++;
+	}
+}
+
+} // namespace Bagel
