@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	boflib/bit_buf.o \
 	boflib/cache.o \
 	boflib/crc.o \
+	boflib/dat_file.o \
 	boflib/date_functions.o \
 	boflib/debug.o \
 	boflib/deflate.o \
