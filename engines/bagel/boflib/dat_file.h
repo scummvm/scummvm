@@ -196,7 +196,7 @@ public:
 	 * @param bUpdateHeader		TRUE if header is to be commited to disk
 	 * @return					Error return code
 	 */
-	ERROR_CODE DeleteRecord(LONG lRecNum, BOOL bUpdateHeader = FALSE);/*****************************************************************************
+	ERROR_CODE DeleteRecord(LONG lRecNum, BOOL bUpdateHeader = FALSE);
 
 	/**
 	 * Finds record by it's key.
