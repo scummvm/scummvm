@@ -3390,7 +3390,7 @@ EOF
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
-		append_var CXXFLAGS "-G0"
+		append_var CXXFLAGS "-mno-gpopt"
 		add_line_to_config_mk 'PSP = 1'
 		;;
 	riscos)
