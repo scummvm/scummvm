@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	bagel.o \
 	console.o \
 	metaengine.o \
+	baglib/parse_object.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \
