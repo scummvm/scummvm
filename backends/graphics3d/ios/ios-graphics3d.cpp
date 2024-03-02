@@ -226,6 +226,9 @@ void iOSGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat 
 	bool engineSupportsArbitraryResolutions = !g_engine ||
 			g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 	if (!engineSupportsArbitraryResolutions) {
+		if (_frameBuffer) {
+			delete _frameBuffer;
+		}
 		// If the game can't adapt to any resolution, render it to a framebuffer
 		// so it can be scaled to fill the available space.
 		_frameBuffer = new OpenGL::FrameBuffer(w, h);
