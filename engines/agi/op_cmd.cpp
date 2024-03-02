@@ -1003,7 +1003,7 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
-// push.script was not available until 2.425, and also not available in 2.440
+// pop.script was not available until 2.425, and also not available in 2.440
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
 		// was not available before 2.2425, but also not available in 2.440
@@ -2245,7 +2245,17 @@ void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 // push.script was not available until 2.425, and also not available in 2.440
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	// We run AGIMOUSE always as a side effect
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
+		// was not available before 2.2425, but also not available in 2.440
+		warning("push.script called, although not available for current AGI version");
+		return;
+	}
+
+	debug(0, "push.script");
+}
+
+// The AGIMOUSE interpreter modified push.script to set variables 27-29 to mouse state
+void cmdAgiMousePushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, state->_vm->_mouse.button);
 	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
 	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
