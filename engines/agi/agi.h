@@ -116,7 +116,7 @@ enum AgiGameType {
 };
 
 enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
+	GF_AGIMOUSE    = (1 << 0), // marks games created with AGIMOUSE, disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1), // marks games created with AGDS - all using AGI version 2.440
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games

@@ -462,6 +462,11 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		}
 	}
 
+	// AGIMOUSE games use a modified push.script that updates mouse state
+	if (getFeatures() & GF_AGIMOUSE) {
+		_opCodes[0xab].functionPtr = &cmdAgiMousePushScript;
+	}
+
 	// add invalid entries for every opcode, that is not defined at all
 	for (int opCodeNr = opCodesTableSize; opCodeNr < ARRAYSIZE(_opCodes); opCodeNr++) {
 		_opCodes[opCodeNr].name = "illegal";
