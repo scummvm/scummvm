@@ -3269,10 +3269,12 @@ void LB::b_script(int nargs) {
 		ScriptContext *script = nullptr;
 
 		if (cast->_type == kCastLingoScript) {
-			// script cast can be either a movie script or score script
+			// script cast can be either a movie script, score script, or parent script (D5+)
 			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, memberID);
 			if (!script)
 				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, memberID);
+			if (!script)
+				script = g_director->getCurrentMovie()->getScriptContext(kParentScript, memberID);
 		} else {
 			g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
 		}
@@ -3282,7 +3284,7 @@ void LB::b_script(int nargs) {
 			return;
 		}
 	}
-
+	warning("b_script(): No script context found for '%s'", d.asString(true).c_str());
 	g_lingo->push(Datum());
 }
 
