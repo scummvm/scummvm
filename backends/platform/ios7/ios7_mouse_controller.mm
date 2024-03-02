@@ -46,9 +46,10 @@
 												   object:nil];
 	}
 
+#ifdef __IPHONE_14_0
 	_dxReminder = 0.0;
 	_dyReminder = 0.0;
-
+#endif
 	return self;
 }
 
