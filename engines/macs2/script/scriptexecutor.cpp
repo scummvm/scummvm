@@ -1243,6 +1243,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
 			FuncC8E4();
+		} else if (opcode1 == 0x3E) {
+			// TODO: Seems to have no visual difference
+		} else if (opcode1 == 0x40) {
+			// TODO: Called function has some outputs to DMA functions - could be something very
+			// specific related to memory management
 		}
 		else {
 			ScriptUnimplementedOpcode(opcode1)
@@ -1260,7 +1265,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 	l0037_DC63:
 		;; #path This needs to be executed in order to reach the print string
 		jmp	0DD3Ch
-
+		 
 	l0037_DC66:
 		call	far 0037h:9F07h
 		mov	[bp-3h],al
