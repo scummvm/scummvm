@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/screen.h"
 #include "graphics/opengl/system_headers.h"
 #include "image/png.h"
@@ -781,6 +782,8 @@ Common::Error TwpEngine::run() {
 	entry.open(*_pack, lang);
 	_textDb.reset(new TextDb());
 	_textDb->parseTsv(entry);
+
+	CursorMan.showMouse(false);
 
 	_vm.reset(new Vm());
 	HSQUIRRELVM v = _vm->get();

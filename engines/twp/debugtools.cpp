@@ -613,9 +613,12 @@ static void drawScenegraph() {
 }
 
 void onImGuiRender() {
-	if (!debugChannelSet(-1, kDebugConsole))
+	if (!debugChannelSet(-1, kDebugConsole)) {
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
 		return;
+	}
 
+	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 	drawGeneral();
 	drawThreads();
 	drawObjects();
