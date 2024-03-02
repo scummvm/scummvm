@@ -15,8 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
 
- MTROPOLIS:
+ mTropolis:
    - Fixed crash in Muppet Treasure Island on some platforms.
+   - Fixed jewel puzzle in Muppet Treasure Island not being randomized.
 
  NANCY:
    - Fixed the telephone hints in Secrets Can Kill.
@@ -46,6 +47,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VIII camera during cutscenes for Shrine of the Ancient Ones.
    - Fix Ultima VIII invalid placement of items within containers.
    - Fix Ultima VIII never-ending lava sounds.
+
+ V-Cruise:
+   - Fixed crash in Reah: Face the Unknown and Schizm: Mysterious Journey
+     when music is muted.
 
  Android port:
    - Fixed crash in built-in help with German language.
