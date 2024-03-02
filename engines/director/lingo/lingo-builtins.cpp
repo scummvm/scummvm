@@ -1305,8 +1305,6 @@ void LB::b_openResFile(int nargs) {
 }
 
 void LB::b_openXlib(int nargs) {
-	// TODO: When Xtras are implemented, determine whether to initialize
-	// the XObject or Xtra version of FileIO
 	Common::String xlibName;
 
 	Datum d = g_lingo->pop();
@@ -1344,7 +1342,13 @@ void LB::b_openXlib(int nargs) {
 	}
 
 	xlibName = getFileName(d.asString());
-	g_lingo->openXLib(xlibName, kXObj);
+
+	// TODO: Figure out a nicer way of differentiating Xtras from XLibs on Mac
+	if (xlibName.hasSuffixIgnoreCase(".x16") || xlibName.hasSuffixIgnoreCase(".x32")) {
+		g_lingo->openXLib(xlibName, kXtraObj);
+	} else {
+		g_lingo->openXLib(xlibName, kXObj);
+	}
 }
 
 void LB::b_saveMovie(int nargs) {
