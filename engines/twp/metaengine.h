@@ -45,8 +45,6 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
-
-	void renderImGui() override;
 };
 
 #endif // TWP_METAENGINE_H

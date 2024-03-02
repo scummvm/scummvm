@@ -617,9 +617,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 	initializeOpenGLContext();
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 	_imguiInit = true;
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
-	plugin = PluginMan.getEngineFromMetaEngine(plugin);
-	_metaEngine = &plugin->get<MetaEngine>();
 #endif
 
 	if (clear)
@@ -661,17 +658,20 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 	}
 }
 
-void OpenGLSdlGraphics3dManager::updateScreen() {
+void OpenGLSdlGraphics3dManager::renderImGui(void(*render)()) {
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
 
 	ImGui::NewFrame();
-	_metaEngine->renderImGui();
+	render();
 	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+}
+
+void OpenGLSdlGraphics3dManager::updateScreen() {
 
 	GLint prevStateViewport[4];
 	glGetIntegerv(GL_VIEWPORT, prevStateViewport);
