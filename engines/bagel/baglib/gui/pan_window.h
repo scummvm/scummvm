@@ -37,7 +37,7 @@ namespace Bagel {
 
 #define EVAL_EXPR 303
 
-// The height and width of the pan area -- mdm 7/18
+// The height and width of the pan area
 #define PAN_AREA_WIDTH 480
 #define PAN_AREA_HEIGHT 360
 
@@ -112,9 +112,8 @@ public:
 	static INT GetPanSpeed() { return (m_nPanSpeed); }
 
 #if BOF_MAC
-	// jwl 07.24.96 we need to be able to call activate view and
-	// deactivate view outside of the on_timer mechanism, use these
-	// methods to do it.
+	// We need to be able to call activate view and deactivate view outside
+	// of the on_timer mechanism, use these methods to do it.
 	VOID OnActivate();
 	VOID OnDeActivate();
 #endif
@@ -176,7 +175,6 @@ public:
 	VOID OnMouseMove(UINT nFlags, CBofPoint *p);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
-	// VOID 				OnLButtonDblClk(UINT nFlags, CBofPoint* point);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnSize(UINT nType, int cx, int cy);
 	VOID OnWindowPosChanging(WINDOWPOS *lpwndpos);
@@ -184,7 +182,7 @@ public:
 	VOID OnTimer(UINT);
 #endif
 #if !BOF_MAC
-	// jwl 07.22.96 undefined on mac
+	// Undefined on mac
 	LONG OnDefWinProc(UINT nMessage, WPARAM wParam, LPARAM lParam);
 #endif
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
@@ -197,10 +195,10 @@ public:
 	void WaitForPDA() {
 #if BOF_MAC
 		{
-			// jwl 10.14.96 make sure our grafport is current
+			// Make sure our grafport is current
 			STBofPort stSave(GetMacWindow());
 #endif
-			// jwl 12.18.96 make sure we have a non-null pda
+			// Make sure we have a non-null pda
 			while (m_pPDABmp && m_pPDABmp->IsActivating()) {
 				SetPreFilterPan(TRUE);
 				m_pPDABmp->SetDirty(TRUE);

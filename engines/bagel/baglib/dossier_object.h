@@ -52,24 +52,24 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = NULL, INT = -1);
+	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, INT = -1);
 
-	virtual BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = NULL); //{ return FALSE; } run menu if availible
+	virtual BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if availible
 
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 	CBofString &GetDossierLine() { return m_sIndexLine; }
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 
 	VOID SetNotActive(BOOL b) { m_bNotActive = b; }
-	BOOL GetNotActive(VOID) { return m_bNotActive; }
+	BOOL GetNotActive() { return m_bNotActive; }
 
 	VOID ActivateDosObject(CBagLog *pLogWld);
 	VOID DeactivateDosObject(CBagLog *pLogWld);
 
 	VOID SetRPObj(CBagObject *p) { m_pRPObj = p; };
-	CBagObject *GetRPObj(VOID) { return m_pRPObj; };
+	CBagObject *GetRPObj() { return m_pRPObj; };
 
-	static VOID DeactivateCurDossier(VOID);
+	static VOID DeactivateCurDossier();
 	VOID ShowDosText();
 
 	static CBagDossierObject *m_pCurDossier;

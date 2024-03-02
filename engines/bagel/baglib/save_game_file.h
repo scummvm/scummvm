@@ -106,9 +106,9 @@ class CBagSaveGameFile : public CBofDataFile {
 public:
 	CBagSaveGameFile(const CHAR *pszFileName);
 
-	LONG GetNumSavedGames(VOID) { return (GetNumberOfRecs()); }
-	LONG GetActualNumSaves(VOID);
-	BOOL AnySavedGames(VOID);
+	LONG GetNumSavedGames() { return (GetNumberOfRecs()); }
+	LONG GetActualNumSaves();
+	BOOL AnySavedGames();
 
 	ERROR_CODE WriteSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);
 	ERROR_CODE ReadSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);

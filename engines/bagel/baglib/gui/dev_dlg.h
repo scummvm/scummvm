@@ -53,7 +53,7 @@ public:
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnClose();
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = NULL);
+	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 };
 
 } // namespace Bagel

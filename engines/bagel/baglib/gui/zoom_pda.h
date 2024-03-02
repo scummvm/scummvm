@@ -30,7 +30,7 @@ namespace Bagel {
 
 class SBZoomPda : public CBagStorageDevWnd, public SBBasePda {
 public:
-	SBZoomPda(CBofWindow *pParent = NULL, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
+	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
 
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
@@ -42,7 +42,7 @@ public:
 	virtual VOID OnMainLoop();
 
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint);
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = NULL);
+	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual ERROR_CODE AttachActiveObjects();
 	virtual ERROR_CODE DetachActiveObjects();

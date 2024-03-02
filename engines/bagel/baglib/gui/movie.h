@@ -68,15 +68,10 @@ typedef BOOL (*FilterFunction)(CBofBitmap*, CBofRect*);
 
 class CBagFMovie : public CBofDialog {
 public:
-	enum MVSTATUS { STOPPED,
-					PAUSED,
-					FOREWARD,
-					REVERSE };
-	enum MVTYPE { QT,
-				  SMACKER };
-	// BOOL 			m_bReverseWait;		// removed the need for the timer mdm 8/4
+	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE };
+	enum MVTYPE { QT, SMACKER };
+
 protected:
-	// CBofTimer 	*	m_pMovTimer;	 	// removed the need for the timer mdm 8/4
 #if BOF_WINDOWS
 	UINT m_wMCIDeviceID; // MCI Device ID for the QT file
 #endif
@@ -99,12 +94,12 @@ protected:
 	u32 m_nReversed;
 	CBofRect m_xBounds;
 	BOOL m_bUseNewPalette;
-	BOOL m_bBlackOutWindow; // jwl 1.22.97 Used to avoid palette shift land
+	BOOL m_bBlackOutWindow; // Used to avoid palette shift land
 
 	virtual ERROR_CODE Initialize(CBofWindow *pParent); // Initialize
 
 	virtual BOOL OpenMovie(const char *sFilename); // MCI_OPEN
-	virtual VOID CloseMovie(VOID);
+	virtual VOID CloseMovie();
 
 	virtual BOOL FileOpenWin(); // Display the File Open Dialog box
 
@@ -117,42 +112,41 @@ protected:
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint) { OnButtonUp(nFlags, pPoint); }
 	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMovieDone(VOID);
-	virtual VOID OnClose(VOID);
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMovieDone();
+	virtual VOID OnClose();
+	virtual VOID OnMainLoop();
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
 public:
-	CBagFMovie(CBofWindow *pParent = NULL, const char *sFilename = NULL, CBofRect *pBounds = NULL, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr, CBofRect *pBounds = nullptr, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
 	~CBagFMovie();
 
-	virtual BOOL Open(const char *sFilename = NULL, CBofRect *pBounds = NULL);
+	virtual BOOL Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
 	virtual BOOL Play(BOOL bLoop, BOOL bEscCanStop = TRUE);
 	virtual BOOL Reverse(BOOL bLoop, BOOL bEscCanStop = TRUE);
-	virtual BOOL Pause(void);
-	virtual BOOL Stop(void);
+	virtual BOOL Pause();
+	virtual BOOL Stop();
 
-	virtual MVSTATUS Status(void) { return m_eMovStatus; }
+	virtual MVSTATUS Status() { return m_eMovStatus; }
 
-	virtual BOOL SeekToStart(void); // Seek to the start of the movie
-	virtual BOOL SeekToEnd(void);   // Seek to the start of the movie
+	virtual BOOL SeekToStart(); // Seek to the start of the movie
+	virtual BOOL SeekToEnd();   // Seek to the start of the movie
 
-	virtual DWORD GetFrame(void);
+	virtual DWORD GetFrame();
 	virtual BOOL SetFrame(DWORD dwFrameNum);
 
 	virtual BOOL CenterRect();
 
-	virtual BOOL ShowMovie(void);
-	virtual BOOL HideMovie(void);
-	virtual HPALETTE WinPalFromSmkPal(void);
+	virtual BOOL ShowMovie();
+	virtual BOOL HideMovie();
+	virtual HPALETTE WinPalFromSmkPal();
 
-	// jwl 1.24.97 need to access members from outside of class for
-	// performance optimization.
-	SmackBuf *GetSmackBuffer(void) { return m_pSbuf; }
-	Smack *GetSmackMovie(void) { return m_pSmk; }
+	// Need to access members from outside of class for performance optimization.
+	SmackBuf *GetSmackBuffer() { return m_pSbuf; }
+	Smack *GetSmackMovie() { return m_pSmk; }
 #if SMACKOFFSCREEN
-	CBofBitmap *GetSmackBitmap(void) { return m_pBmpBuf; }
+	CBofBitmap *GetSmackBitmap() { return m_pBmpBuf; }
 #endif
 };
 

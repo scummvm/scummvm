@@ -59,8 +59,7 @@ protected:
 
 	VOID SetFrame(INT n);
 
-	// jwl 10.16.96 keep track of the PDA wand and the number of frames it has
-
+	// Keep track of the PDA wand and the number of frames it has
 	static CBagCharacterObject *m_pPDAWand;
 	static BOOL m_bPDAAnimating;
 
@@ -69,16 +68,16 @@ public:
 	virtual ~CBagCharacterObject();
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
-	ERROR_CODE Attach(void);
-	ERROR_CODE Detach(void);
+	ERROR_CODE Attach();
+	ERROR_CODE Detach();
 
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 
 	virtual ERROR_CODE Update(CBofWindow * /*pWnd*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
-	BOOL DoAdvance(VOID);
-	VOID UpdatePosition(VOID);
+	BOOL DoAdvance();
+	VOID UpdatePosition();
 	BOOL RefreshCurrFrame();
 
 	virtual BOOL RunObject();
@@ -108,10 +107,10 @@ public:
 	VOID SetProperty(const CBofString &sProp, INT nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	// jwl 10.16.96 remember the pda wand, we'll need to know about it and
+	// Remember the pda wand, we'll need to know about it and
 	// it's total number of frames.
 	static VOID SetPDAWand(CBagCharacterObject *pWand);
-	static BOOL PDAWandAnimating(VOID);
+	static BOOL PDAWandAnimating();
 
 	BOOL IsStationary() const { return m_pBinBuf != nullptr; }
 };

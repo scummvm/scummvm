@@ -50,7 +50,7 @@ public:
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 
 	CBofSize GetSize() const { return m_xSize; }
 	CBofPoint GetDstLoc() const { return m_xDestLocation; }

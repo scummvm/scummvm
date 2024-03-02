@@ -30,7 +30,7 @@ namespace Bagel {
 
 class CBagCursor : public CBofObject, public CBofError {
 public:
-	CBagCursor(VOID);
+	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
 	CBagCursor(const CHAR *pszFileName, BOOL bSharedPal = FALSE);
 
@@ -41,29 +41,31 @@ public:
 		m_nY = y;
 	}
 	VOID SetHotSpot(CBofPoint cPoint) { SetHotSpot(cPoint.x, cPoint.y); }
-	CBofPoint GetHotSpot(VOID) { return (CBofPoint(m_nX, m_nY)); }
+	CBofPoint GetHotSpot() { return (CBofPoint(m_nX, m_nY)); }
 
-	INT GetX(VOID) { return (m_nX); }
-	INT GetY(VOID) { return (m_nY); }
+	INT GetX() { return (m_nX); }
+	INT GetY() { return (m_nY); }
 
-	ERROR_CODE Load(VOID) { return (Load(m_szFileName)); }
+	ERROR_CODE Load() { return (Load(m_szFileName)); }
 	ERROR_CODE Load(CBofBitmap *pBmp);
-	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = NULL);
+	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = nullptr);
 
-	VOID UnLoad(VOID);
+	VOID UnLoad();
 
-	CBofBitmap *GetImage(VOID) { return (m_pBmp); }
+	CBofBitmap *GetImage() { return (m_pBmp); }
 	ERROR_CODE SetImage(CBofBitmap *pBmp) { return (Load(pBmp)); }
 
-	VOID SetCurrent(VOID) { m_pCurrentCursor = this; }
-	static CBagCursor *GetCurrent(VOID) { return (m_pCurrentCursor); }
+	VOID SetCurrent() { m_pCurrentCursor = this; }
+	static CBagCursor *GetCurrent() { return (m_pCurrentCursor); }
 
-	// jwl 1.14.97 need to know if this is a wielded cursor or not
+	/**
+	 * Flag whether this is a wielded cursor or not
+	 */
 	VOID SetWieldCursor(BOOL b = FALSE) { m_bWieldCursor = b; }
-	BOOL IsWieldCursor(VOID) { return m_bWieldCursor; }
+	BOOL IsWieldCursor() const { return m_bWieldCursor; }
 
-	VOID Show(VOID) { SetCurrent(); }
-	VOID Hide(VOID) { m_pCurrentCursor = NULL; }
+	VOID Show() { SetCurrent(); }
+	VOID Hide() { m_pCurrentCursor = nullptr; }
 
 private:
 	static CBagCursor *m_pCurrentCursor;

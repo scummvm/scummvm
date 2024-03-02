@@ -50,7 +50,7 @@ public:
 	BOOL IsInside(const CBofPoint &xPoint);
 
 	CBofBitmap *GetBitmap() { return m_xBmp; }
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);

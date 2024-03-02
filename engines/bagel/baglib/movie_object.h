@@ -37,10 +37,7 @@ namespace Bagel {
  */
 class CBagMovieObject : public CBagObject {
 public:
-	enum DISP_TYPE { MOVIE,
-					 EXAMINE,
-					 PDAMSG,
-					 ASYNCH_PDAMSG };
+	enum DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
 
 private:
 	// CBofSize 		 m_xSize;
@@ -55,38 +52,32 @@ public:
 	CBagMovieObject();
 	virtual ~CBagMovieObject();
 
-	// jwl 1.2.96 associated sound object access members
+	// Associated sound object access members
 	VOID SetAssociatedSound(CBagSoundObject *p) { m_pSndObj = p; }
-	CBagSoundObject *GetAssociatedSound(VOID) const { return m_pSndObj; }
+	CBagSoundObject *GetAssociatedSound() const { return m_pSndObj; }
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
 	// ERROR_CODE			Attach();
 	// ERROR_CODE			Detach();
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	// CBofRect 			GetRect(VOID);
-
-	// CBofSize 			GetSize()				const { return m_xSize; }
-
-	// void 				SetSize(const CBofSize& xSize)	{ m_xSize=xSize; }
-
 	virtual BOOL RunObject();
 
-	// jwl 11.29.96 return true if this asynch zelda movie can play right now
-	BOOL AsynchPDAMovieCanPlay(VOID);
+	// Return true if this asynch zelda movie can play right now
+	BOOL AsynchPDAMovieCanPlay();
 
-	// jwl 12.02.96 special routines for handling asynch zelda movies
+	// Special routines for handling asynch zelda movies
 	VOID SetDontQueue() { m_nAsynchFlags |= ASYNCH_DONTQUEUE; }
 	VOID SetDontOverride() { m_nAsynchFlags |= ASYNCH_DONTOVERRIDE; }
 	VOID SetPlayImmediate() { m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE; }
 	VOID SetIncrement(BOOL b = TRUE) { m_bIncrement = b; }
 	VOID SetOnBlack(BOOL b = TRUE) { m_bOnBlack = b; }
 
-	BOOL IsDontQueue() const { return ((m_nAsynchFlags & ASYNCH_DONTQUEUE) != 0); }
-	BOOL IsDontOverride() const { return ((m_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0); }
-	BOOL IsPlayImmediate() const { return ((m_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0); }
-	BOOL IsIncrement() const { return (m_bIncrement); }
-	BOOL IsOnBlack() const { return (m_bOnBlack); }
+	BOOL IsDontQueue() const { return (m_nAsynchFlags & ASYNCH_DONTQUEUE) != 0; }
+	BOOL IsDontOverride() const { return (m_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0; }
+	BOOL IsPlayImmediate() const { return (m_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0; }
+	BOOL IsIncrement() const { return m_bIncrement; }
+	BOOL IsOnBlack() const { return m_bOnBlack; }
 };
 
 } // namespace Bagel

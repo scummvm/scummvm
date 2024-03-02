@@ -35,11 +35,9 @@ namespace Bagel {
 class CBagSoundObject : public CBagObject {
 private:
 	static CBofSound *m_pMidiSound; // There is only one allowed at a time
-									// CBofSize            m_xSize;
 	CBofSound *m_pSound;
 
 	WORD m_wFlags;
-	// INT                 m_nOutline;
 	INT m_nLoops;
 	UBYTE m_nVol;
 
@@ -50,26 +48,23 @@ public:
 	CBagSoundObject();
 	virtual ~CBagSoundObject();
 
-	VOID KillSound(VOID);
+	VOID KillSound();
 	ERROR_CODE NewSound(CBofWindow *pWin);
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach() { return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/); }
 	ERROR_CODE Attach(CBofWindow *pWnd);
-	BOOL IsAttached() { return (m_pSound != NULL); }
+	BOOL IsAttached() { return (m_pSound != nullptr); }
 	ERROR_CODE Detach();
 
 	CBofSound *GetLastMidi() { return (m_pMidiSound); }
 
 	CBofSound *GetSound() { return (m_pSound); }
-	// CBofSize	GetSize() 				{ return(m_xSize); }
-	// VOID 		SetSize(const CBofSize& xSize)	{ m_xSize = xSize; }
-	// VOID 		SetOutline(int nColor)	{ m_nOutline = nColor; }
 
 	VOID SetWave() { m_wFlags = SOUND_WAVE; }
 	VOID SetMidi() { m_wFlags = (SOUND_MIDI | SOUND_LOOP); }
 
-	// jwl 12.02.96 add ability to sound over certain sounds
+	// Gives ability to sound over certain sounds
 	VOID SetSoundOver() { m_wFlags |= SOUND_OVEROK; }
 
 	VOID SetSync(BOOL b = TRUE);
@@ -81,8 +76,6 @@ public:
 
 	virtual BOOL RunObject();
 
-	// CBofRect 	GetRect(VOID);
-
 	VOID SetVolume(int nVol);
 	INT GetVolume();
 
@@ -93,7 +86,7 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	// mdm 8/5/96 - Added properties to sound object
+	//  Added properties to sound object
 	BOOL IsPlaying();
 	BOOL IsQueued();
 

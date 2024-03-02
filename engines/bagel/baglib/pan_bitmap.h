@@ -75,14 +75,14 @@ public:
 	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
-	BOOL IsValid(VOID) { return (m_bIsValid); }
-	BOOL IsPan(VOID) { return (m_bPanorama); }
+	BOOL IsValid() { return (m_bIsValid); }
+	BOOL IsPan() { return (m_bPanorama); }
 
 	ERROR_CODE Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ERROR_CODE Paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ERROR_CODE PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect);
-	ERROR_CODE PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = NULL, const CBofRect &preSrcRect = CBofRect());
-	ERROR_CODE PaintWarped4(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = NULL, const CBofRect &preSrcRect = CBofRect());
+	ERROR_CODE PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
+	ERROR_CODE PaintWarped4(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
 
 	CBofRect GetWarpSrcRect();
 	CBofPoint WarpedPoint(CBofPoint &xPoint);

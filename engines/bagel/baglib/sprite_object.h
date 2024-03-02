@@ -45,7 +45,7 @@ public:
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() { return m_xSprite != NULL; }
+	BOOL IsAttached() { return m_xSprite != nullptr; }
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	BOOL IsInside(const CBofPoint &xPoint);
@@ -58,13 +58,13 @@ public:
 	INT GetCels() { return m_nCels; }
 
 	BOOL IsAnimated() { return m_bAnimated; }
-	// added call to sprite::setanimted - mdm 7/30/96
+
 	VOID SetAnimated(BOOL b = TRUE);
 	VOID SetCels(int nCels);
 	virtual VOID SetPosition(CBofPoint &pos);
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT /*nMaskColor*/ = -1);
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
 	VOID SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);

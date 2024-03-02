@@ -51,17 +51,17 @@ public:
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() { return m_xDig1 != NULL; }
+	BOOL IsAttached() { return m_xDig1 != nullptr; }
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	CBofRect GetRect(VOID);
+	CBofRect GetRect();
 	INT GetCels() { return m_nCels; }
 
 	VOID SetCels(int nCels);
 	virtual VOID SetPosition(CBofPoint &pos);
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT /*nMaskColor*/ = -1);
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = NULL, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
 	VOID SetVariable(const CBofString &sProp) { m_sVariable = sProp; }
 };

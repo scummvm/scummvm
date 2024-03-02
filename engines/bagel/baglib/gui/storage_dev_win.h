@@ -28,6 +28,7 @@
 #include "bagel/baglib/object.h"
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/save_game_file.h"
+#include "bagel/baglib/event.h"
 
 namespace Bagel {
 
@@ -70,7 +71,7 @@ typedef UniversalProcPtr FilterFunction;
 typedef BOOL (*FilterFunction)(const USHORT nFilterId, CBofBitmap *, CBofRect *);
 #endif
 
-// jwl 09.18.96 callbacks are a little tricky for powerpc...
+// Callbacks are a little tricky for powerpc...
 #if BOF_MAC && __POWERPC__
 enum {
 	uppFilterProcInfo = kRegisterBased | REGISTER_ROUTINE_PARAMETER(1, kRegisterD0, SIZE_CODE(sizeof(USHORT))) | REGISTER_ROUTINE_PARAMETER(2, kRegisterA0, SIZE_CODE(sizeof(CBofBitmap *))) | REGISTER_ROUTINE_PARAMETER(3, kRegisterA1, SIZE_CODE(sizeof(CBofRect *)))
@@ -122,11 +123,11 @@ protected:
 	BOOL m_bCloseup : 1;       // TRUE if is a closeup (includes CIC, or CHAT)
 	BOOL m_bCIC : 1;           // TRUE if is a CIC
 	BOOL m_bCustom : 1;        // TRUE if is a hand coded closeup
-	BOOL m_bFirstPaint : 1;    // run object stuff - mdm 7/26/96
+	BOOL m_bFirstPaint : 1;    // run object stuff
 
-	static BOOL m_bPanPreFiltered;  // jwl 10.25.96 let pda know if screens been prefiltered
-	static BOOL m_bDirtyAllObjects; // jwl 10.21.96 dirty all objects in prefilter?
-	static BOOL m_bPreFilter;       // jwl 10.10.96
+	static BOOL m_bPanPreFiltered;  // Let pda know if screens been prefiltered
+	static BOOL m_bDirtyAllObjects; // Dirty all objects in prefilter?
+	static BOOL m_bPreFilter;
 
 	INT m_nFloatPages; // The number of pages required to display all floating objects
 
@@ -149,11 +150,11 @@ public:
 	BOOL IsCloseup() { return m_bCloseup; }
 	VOID SetCloseup(BOOL b = TRUE) { m_bCloseup = b; }
 
-	// jwl 11.04.96 set true if sdef is "AS CIC"
+	// Set true if sdef is "AS CIC"
 	BOOL IsCIC();
 	VOID SetCIC(BOOL b = TRUE) { m_bCIC = b; }
 
-	// jwl 1.13.97 set to true if this is a hand coded closeup
+	// Set to true if this is a hand coded closeup
 	BOOL IsCustom() { return m_bCustom; }
 	VOID SetCustom(BOOL b = TRUE) { m_bCustom = b; }
 
@@ -284,11 +285,11 @@ public:
 	virtual CBagObject *OnNewThingObject(const CBofString &sInit);
 
 	// Call to arrange floating object, override to customize layout
-	virtual CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj); // mdm 8/4/96
+	virtual CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
-	int GetNumFloatPages() { return m_nFloatPages; }                        // mdm 8/4/96
-	VOID SetNumFloatPages(int nFloatPages) { m_nFloatPages = nFloatPages; } // mdm 8/4/96 // jwl 10.16.96
+	int GetNumFloatPages() { return m_nFloatPages; }
+	VOID SetNumFloatPages(int nFloatPages) { m_nFloatPages = nFloatPages; }
 
 	// Correctly set the filter function for the storage device.
 	// GJJ 9-1-96
@@ -305,23 +306,22 @@ public:
 	//
 	BOOL IsFiltered() { return m_nFilterId != 0; }
 
-	static CBofBitmap *m_pUnderCursorBmp; // jwl 10.10.96 For preserving under bitmap.
-	static BOOL m_bDrawCursorBackdrop;    // jwl 10.11.96 draw cursor backdrop
+	static CBofBitmap *m_pUnderCursorBmp; // For preserving under bitmap.
+	static BOOL m_bDrawCursorBackdrop;    // Draw cursor backdrop
 
-	// jwl 10.11.96 provide a method to get at the above vars
+	// Provide a method to get at the above vars
 	static VOID SetDrawCursorBackdrop(BOOL b) { m_bDrawCursorBackdrop = b; }
 	static BOOL DrawCursorBackdrop() { return m_bDrawCursorBackdrop; }
 
-	// jwl 10.21.96 provide a method to get at the above vars
+	// Provide a method to get at the above vars
 	static VOID SetDirtyAllObjects(BOOL b) { m_bDirtyAllObjects = b; }
 	static BOOL GetDirtyAllObjects() { return m_bDirtyAllObjects; }
 
-	// jwl 10.25.96 provide a method to let PDA know that it should update everything
+	// Provide a method to let PDA know that it should update everything
 	static VOID SetPreFiltered(BOOL b = TRUE) { m_bPanPreFiltered = b; }
 	static BOOL GetPreFiltered() { return m_bPanPreFiltered; }
 
-	// jwl 10.10.96 we won't always call the prefilter, just when explicitly instructed
-	// to.
+	// We won't always call the prefilter, just when explicitly instructed to.
 	static BOOL PreFilterPan() { return m_bPreFilter; }
 	static VOID SetPreFilterPan(BOOL b = TRUE) {
 		m_bPreFilter = b;
@@ -330,8 +330,6 @@ public:
 };
 
 class CBagEventSDev;
-
-#include <cbagevt.h> // Get definition for CBagEventSDev
 
 //
 // CBagStorageDevWnd -
@@ -383,22 +381,18 @@ public:
 	VOID OnMouseMove(UINT nFlags, CBofPoint *);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
-	// VOID OnLButtonDblClk(UINT nFlags, CBofPoint *point);
 
 	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
 
 protected:
 	virtual ERROR_CODE SetWorkBmp();
 	virtual ERROR_CODE KillWorkBmp();
-
-	// DECLARE_MESSAGE_MAP()
 };
 
-//
-// CBagStorageDevDlg -
-//  CBagStorageDevDlg is a window that contains a slide bitmap object.  It has specialize
-//  functions for handling slide bitmaps and slide objects.
-//
+/**
+ * CBagStorageDevDlg is a window that contains a slide bitmap object.
+ * It has specialize functions for handling slide bitmaps and slide objects.
+ */
 class CBagStorageDevDlg : public CBofDialog, public CBagStorageDev {
 private:
 	BOOL m_bMadeSelection;
@@ -441,16 +435,12 @@ public:
 	VOID OnMouseMove(UINT nFlags, CBofPoint *);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
-	// VOID OnLButtonDblClk(UINT nFlags, CBofPoint *point);
 };
 
-//
-// CBagStorageDevManager -
-//  Tracks all the storage devices
-//
-//
+/**
+ * Tracks all the storage devices
+ */
 class CBagStorageDevManager : public CBofObject {
-
 private:
 	static int nSDevMngrs;
 	CBofList<CBagStorageDev *> m_xStorageDeviceList;
@@ -469,7 +459,7 @@ public:
 	INT GetNumStorageDevices() { return m_xStorageDeviceList.GetCount(); }
 
 	CBagStorageDev *GetStorageDevice(INT nIndex) { return m_xStorageDeviceList[nIndex]; }
-	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName); // MDM 7/16
+	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
 	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
 	CBagStorageDev *GetStorageDevice(const CBofString &sName);
 	BOOL MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
@@ -479,7 +469,6 @@ public:
 	VOID SaveObjList(ST_OBJ *pObjList, INT nNumEntries);
 	VOID RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
 };
-
 
 } // namespace Bagel
 

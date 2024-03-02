@@ -35,16 +35,16 @@ public:
 	CBagEventSDev() : CBagStorageDev() {}
 	virtual ~CBagEventSDev() {}
 
-	virtual ERROR_CODE Attach(); // mdm 8/5/96 m_bFirstPaint flag stuff
+	virtual ERROR_CODE Attach();
 
 	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) { return ERR_NONE; }
 	virtual CBofBitmap *GetBackground() { return nullptr; }
 
 	virtual ERROR_CODE EvaluateExpressions();
 
-	// jwl 12.27.96 give timer code a method to launch tim
+	// Gives timer code a method to launch tim
 	static VOID SetEvalTurnEvents(BOOL b = TRUE) { m_bEvalTurnEvents = b; }
-	static BOOL GetEvalTurnEvents(VOID) { return m_bEvalTurnEvents; }
+	static BOOL GetEvalTurnEvents() { return m_bEvalTurnEvents; }
 };
 
 class CBagTurnEventSDev : public CBagStorageDev {

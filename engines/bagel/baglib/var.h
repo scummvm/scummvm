@@ -103,9 +103,9 @@ public:
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);
 	CBagVar *GetVariable(INT i) { return (m_xVarList[i]); }
-	INT GetNumVars(VOID) { return (m_xVarList.GetCount()); }
+	INT GetNumVars() { return (m_xVarList.GetCount()); }
 
-	// jwl 1.9.97 use a hash table to lookup variables.
+	// Use a hash table to lookup variables.
 	CBofList<CBagVar *> m_xVarHashList[VAR_HTABLE_SIZE];
 };
 

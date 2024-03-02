@@ -38,11 +38,11 @@ class CBagStartDialog : public CBofDialog {
 public:
 	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
 
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnInitDialog();
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose(VOID);
+	virtual VOID OnClose();
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
 
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);

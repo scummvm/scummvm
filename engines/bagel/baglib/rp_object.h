@@ -110,21 +110,21 @@ public:
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);
 
-	virtual BOOL OnLButtonUp(UINT, CBofPoint, void * = NULL);
+	virtual BOOL OnLButtonUp(UINT, CBofPoint, void * = nullptr);
 
 	VOID SetTouchedDos(CBofString &s, CBagExpression *x);
 	VOID SetUntouchedDos(CBofString &s, CBagExpression *x);
 
-	BOOL ActivateRPObject(VOID);
-	VOID DeactivateRPObject(VOID);
+	BOOL ActivateRPObject();
+	VOID DeactivateRPObject();
 
-	BOOL GetTimeSet(VOID) { return m_bRPTimeSet; }
+	BOOL GetTimeSet() { return m_bRPTimeSet; }
 	VOID SetTimeSet(BOOL b = TRUE) { m_bRPTimeSet = b; }
 
-	VOID EvaluateDossiers(VOID);
+	VOID EvaluateDossiers();
 
-	VOID SaveRPVars(VOID);
-	VOID RestoreRPVars(VOID);
+	VOID SaveRPVars();
+	VOID RestoreRPVars();
 
 	BOOL Initialize();
 
@@ -136,15 +136,15 @@ public:
 	static BOOL Zoomed();
 
 	// Command (bagcoobj) objects, activated from script
-	static INT RunRPQueue(VOID);
-	static INT UpdateRPQueue(VOID);
+	static INT RunRPQueue();
+	static INT UpdateRPQueue();
 	static VOID DeactivateRPQueue();
 
 	static VOID ActivateRPReview();
 	static VOID DeactivateRPReview();
 
 	static VOID SetLogState(RPSTATES eLogMode);
-	static RPSTATES GetLogState(VOID);
+	static RPSTATES GetLogState();
 
 	static VOID SetLogPages(INT);
 

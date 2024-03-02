@@ -43,8 +43,8 @@ public:
 	virtual ~CBagSaveDialog();
 #endif
 
-	virtual ERROR_CODE Attach(VOID);
-	virtual ERROR_CODE Detach(VOID);
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
 
 	UBYTE *GetSaveGameBuffer(INT &nLength) {
 		nLength = m_nBufSize;
@@ -57,7 +57,7 @@ public:
 	}
 
 #if 1
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnInitDialog();
 #endif
 
 protected:
@@ -65,11 +65,11 @@ protected:
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
 	virtual VOID OnBofListBox(CBofObject *pObject, INT nItemIndex);
 #if BOF_MAC
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMainLoop();
 #endif
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-	VOID SaveAndClose(VOID);
+	VOID SaveAndClose();
 
 	// Data
 	//
