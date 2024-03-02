@@ -43,6 +43,7 @@ static SQInteger addTrigger(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, obj->_leave)))
 			return sq_throwerror(v, "failed to get leave");
 	sq_addref(g_twp->getVm(), &obj->_leave);
+	obj->_triggerActive = false;
 	g_twp->_room->_triggers.push_back(obj);
 	return 0;
 }
