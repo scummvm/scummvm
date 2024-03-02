@@ -164,7 +164,7 @@ void ReachAnim::update(float elapsed) {
 		break;
 	case 1:
 		_elapsed += elapsed;
-		if (_elapsed > 0.5)
+		if (_elapsed > 0.10)
 			_state = 2;
 		break;
 	case 2:
