@@ -114,7 +114,13 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	Common::Path gamePath(ConfMan.getPath("path", _domain));
 	Common::Path extraPath(ConfMan.getPath("extrapath", _domain));
+	if (!ConfMan.hasKey("extrapath", _domain)) {
+		extraPath.clear();
+	}
 	Common::Path savePath(ConfMan.getPath("savepath", _domain));
+	if (!ConfMan.hasKey("savepath", _domain)) {
+		savePath.clear();
+	}
 
 	// GAME: Determine the description string
 	Common::String description(ConfMan.get("description", domain));
