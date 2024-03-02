@@ -1530,11 +1530,15 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			_cursor.height = 15;
 			_cursor.hotspotX = 7;
 			_cursor.hotspotY = 7;
-		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
+		} else if (_game.id == GID_LOOM) {
 			_cursor.width = 16;
 			_cursor.height = 16;
-			_cursor.hotspotX = 3;
-			_cursor.hotspotY = 2;
+			if (_game.platform == Common::kPlatformMacintosh) {
+				_cursor.hotspotX = 3;
+				_cursor.hotspotY = 2;
+			} else { // DOS, Amiga, FM-Towns and PCE
+				_cursor.hotspotX = _cursor.hotspotY = 0;
+			}
 		}
 	}
 
