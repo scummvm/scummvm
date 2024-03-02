@@ -29,6 +29,9 @@
 #include "bagel/bagel.h"
 #include "bagel/detection.h"
 #include "bagel/console.h"
+
+#include "bagel/baglib/parse_object.h"
+
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/gfx/palette.h"
@@ -42,6 +45,10 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_gameDescription(gameDesc), _randomSource("Bagel") {
 	g_engine = this;
 
+	// baglib/ class statics initializations
+	CBagParseObject::initStatics();
+
+	// boflib/ class statics initializations
 	CCache::initStatics();
 	CBofError::initStatics();
 	CBofPalette::initStatics();

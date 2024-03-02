@@ -24,6 +24,7 @@
 #define BAGEL_BAGLIB_PARSE_OBJECT_H
 
 #include "bagel/baglib/ifstream.h"
+#include "bagel/boflib/error.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/vector.h"
@@ -49,9 +50,7 @@ public:
 	int nChangeRate;
 };
 
-enum PARSE_CODES { PARSING_DONE = 0,
-				   UPDATED_OBJECT,
-				   UNKNOWN_TOKEN };
+enum PARSE_CODES { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
 
 #ifdef BAG_DEBUG
 static ofstream g_fParseLog;
@@ -59,18 +58,20 @@ static ofstream g_fParseLog;
 
 class CBagParseObject {
 public:
-	enum KEYWORDS { UNKNOWN = 0,
-					STORAGEDEV,
-					START_WLD,
-					VARIABLE,
-					REMARK,
-					DISKID,
-					CURSOR,
-					SHAREDPAL,
-					DISKAUDIO,
-					PDASTATE,
-					SYSSCREEN,
-					WIELDCURSOR };
+	enum KEYWORDS {
+		UNKNOWN = 0,
+		STORAGEDEV,
+		START_WLD,
+		VARIABLE,
+		REMARK,
+		DISKID,
+		CURSOR,
+		SHAREDPAL,
+		DISKAUDIO,
+		PDASTATE,
+		SYSSCREEN,
+		WIELDCURSOR
+	};
 
 private:
 	static int m_nIndentation;
@@ -79,6 +80,7 @@ private:
 
 public:
 	CBagParseObject();
+	static void initStatics();
 
 	virtual ERROR_CODE Attach() {
 		m_bAttached = TRUE;
@@ -93,11 +95,11 @@ public:
 	virtual PARSE_CODES SetInfo(bof_ifstream &) { return PARSING_DONE; }
 
 	int SetIndent(int n) { return m_nIndentation = n; }
-	int GetIndent() { return m_nIndentation; }
+	int GetIndent() const { return m_nIndentation; }
 	int Tab(int n = 2) { return m_nIndentation += n; }
 	int UnTab(int n = 2) { return m_nIndentation -= n; }
 
-	int SetBinaryData(BOOL b = TRUE) { return m_bBinaryData = b; }
+	int SetBinaryData(BOOL b = TRUE) const { return m_bBinaryData = b; }
 	int IsBinaryData() { return m_bBinaryData; }
 
 	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, BOOL bPutBack = FALSE);

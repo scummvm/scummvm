@@ -23,7 +23,7 @@
 #ifndef BAGEL_BAGLIB_IFSTREAM_H
 #define BAGEL_BAGLIB_IFSTREAM_H
 
-#include "bagel/boflib/fobject.h"
+#include "bagel/boflib/object.h"
 #include "bagel/boflib/string.h"
 
 namespace Bagel {
