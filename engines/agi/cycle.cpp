@@ -183,10 +183,10 @@ uint16 AgiEngine::processAGIEvents() {
 
 	// In AGI Mouse emulation mode we must update the mouse-related
 	// vars in every interpreter cycle.
-	//
-	// We run AGIMOUSE always as a side effect
-	setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
-	setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
+	if (getFeatures() & GF_AGIMOUSE) {
+		setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
+		setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
+	}
 
 	if (!cycleInnerLoopIsActive()) {
 		// Click-to-walk mouse interface
