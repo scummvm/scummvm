@@ -150,8 +150,8 @@ public:
 
 #if BOF_WINDOWS
 	static ERROR_CODE FlushQueue(INT nSlot);
-	static VOID ResetQVolumes();
 #endif
+	static VOID ResetQVolumes();
 
 	static BOOL PauseSounds();
 	static BOOL ResumeSounds();

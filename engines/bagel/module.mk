@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	baglib/time_object.o \
 	baglib/var.o \
 	baglib/variable_object.o \
+	baglib/gui/master_win.o \
 	baglib/gui/paint_table.o \
 	boflib/app.o \
 	boflib/bit_buf.o \

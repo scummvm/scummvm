@@ -112,7 +112,7 @@ public:
 	int GetKeywordFromStream(bof_ifstream &istr, KEYWORDS &keyword);
 	int PutbackStringOnStream(bof_ifstream &istr, const CBofString &sStr);
 
-	int ParseAlertBox(bof_ifstream &istr, char *sTitle, char *sFile, int nLine);
+	int ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine);
 
 	virtual VOID HUGE *GetDataStart() { return &m_bAttached; }
 	virtual VOID HUGE *GetDataEnd() { return &m_bAttached + sizeof(BOOL); }

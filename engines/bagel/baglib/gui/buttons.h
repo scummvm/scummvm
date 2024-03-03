@@ -20,22 +20,18 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_CHAT_WND_H
-#define BAGEL_BAGLIB_CHAT_WND_H
+#ifndef BAGEL_BAGLIB_GUI_BUTTONS_H
+#define BAGEL_BAGLIB_GUI_BUTTONS_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
+#define SAVE_BTN 0
+#define CANCEL_BTN 1
+#define RESTORE_BTN 2
+#define RESTART_BTN 3
+#define QUIT_BTN 4
 
-namespace Bagel {
-
-class CBagChatWnd : public CBagStorageDevWnd {
-public:
-	CBagChatWnd();
-
-	virtual ERROR_CODE Attach();
-	virtual VOID OnTimer(UINT nTimerId);
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPos);
-};
-
-} // namespace Bagel
+#define LINEUP_BTN 10
+#define LINEDN_BTN 11
+#define PAGEUP_BTN 12
+#define PAGEDN_BTN 13
 
 #endif

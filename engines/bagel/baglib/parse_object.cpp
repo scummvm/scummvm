@@ -286,7 +286,7 @@ int CBagParseObject::PutbackStringOnStream(bof_ifstream &istr, const CBofString 
 	return 0;
 }
 
-int CBagParseObject::ParseAlertBox(bof_ifstream &istr, char *sTitle, char *sFile, int nLine) {
+int CBagParseObject::ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine) {
 	char str[256];
 
 	CBofString s = sFile;
