@@ -20,7 +20,7 @@
  */
 
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/gfx/movie.h"
+#include "bagel/boflib/gui/movie.h"
 #include "bagel/boflib/gfx/cursor.h"
 
 

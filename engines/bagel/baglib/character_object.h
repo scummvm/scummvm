@@ -24,12 +24,9 @@
 #define BAGEL_BAGLIB_BAG_CHARACTER_OBJECT_H
 
 #include "bagel/baglib/object.h"
-//include <smack.h>
+#include "bagel/api/smacker.h"
 
 namespace Bagel {
-
-struct SmackBuf {};
-struct Smack { int FrameNum = 0; };
 
 // By setting BININMEMORY to TRUE, we preload all the bin files needed
 // for a specific world thus freeing the main loop of having to

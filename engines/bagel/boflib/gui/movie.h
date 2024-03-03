@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_GFX_MOVIE_H
-#define BAGEL_BOFLIB_GFX_MOVIE_H
+#ifndef BAGEL_BOFLIB_GUI_MOVIE_H
+#define BAGEL_BOFLIB_GUI_MOVIE_H
 
 #include "bagel/boflib/boffo.h"
 
@@ -35,8 +35,6 @@
 namespace Bagel {
 
 #define BUFFER_LENGTH       254
-#define MAKEDWORD(a,b) MAKELPARAM(a,b)
-#define MAKERGB(R,G,B) ((DWORD)(  ((DWORD)((BYTE)(R))) | ( ((DWORD)((BYTE)(G)))<<8 ) | ( ((DWORD)((BYTE)(B)))<<16 ) ) )
 
 class CBofMovie : public CBofDialog {
 public:
