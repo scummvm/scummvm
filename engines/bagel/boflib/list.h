@@ -173,7 +173,13 @@ public:
 	 * @returns		Returns the item located at the node with given index.
 	 * @param nNodeIndex		Index of node to retrieve
 	 */
-	T GetNodeItem(int nNodeIndex);
+	inline T GetNodeItem(int nNodeIndex) {
+		CBofListNode<T> *pNode = GetNode(nNodeIndex);
+
+		assert(pNode != nullptr);
+
+		return pNode->GetNodeItem();
+	}
 
 
 	void SetNodeItem(int nNodeIndex, T t);
@@ -298,25 +304,51 @@ public:
 	 * Removes specfied node (by index) from the list
 	 * @returns		Item stored at specified location
 	 */
-	T RemoveHead();
+	inline T RemoveHead() {
+		assert(m_pHead != nullptr);
+
+		return Remove(m_pHead);
+	}
 
 	/**
 	 * Removes specfied node (by index) from the list
 	 * @returns		Item stored at specified location
 	 */
-	T RemoveTail();
+	inline T RemoveTail() {
+		assert(m_pTail != nullptr);
+		return Remove(m_pTail);
+	}
 
 	/**
 	 * Adds specified node as the new head of this list
 	 * @param pNode		Pointer to node to add to the list
 	 */
-	void AddToHead(CBofListNode<T> *pNewNode);
+	inline void AddToHead(CBofListNode<T> *pNewNode) {
+		assert(pNewNode != nullptr);
+
+		pNewNode->m_pNext = m_pHead;
+		pNewNode->m_pPrev = nullptr;
+		if (m_pHead != nullptr)
+			m_pHead->m_pPrev = pNewNode;
+		m_pHead = pNewNode;
+
+		if (m_pTail == nullptr)
+			m_pTail = m_pHead;
+
+		// one less item in list
+		assert(m_nNumItems != 0xFFFF);
+		m_nNumItems++;
+
+		RecalcItemList();
+	}
 
 	/**
 	 * Adds specified item as the new head of this list
 	 * @param cItem		Item to add to the list
 	 */
-	void AddToHead(T cItem);
+	inline void AddToHead(T cItem) {
+		AddToHead(NewNode(cItem));
+	}
 
 	/**
 	 * Adds specified node as the new tail of this list

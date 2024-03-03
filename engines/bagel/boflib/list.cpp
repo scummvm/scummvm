@@ -44,15 +44,6 @@ inline int CBofList<T>::GetActualCount() const {
 }
 
 template<class T>
-inline T CBofList<T>::GetNodeItem(int nNodeIndex) {
-	CBofListNode<T> *pNode = GetNode(nNodeIndex);
-
-	assert(pNode != nullptr);
-
-	return pNode->GetNodeItem();
-}
-
-template<class T>
 inline void CBofList<T>::SetNodeItem(int nNodeIndex, T tNewItem) {
 	CBofListNode<T> *pNode = GetNode(nNodeIndex);
 
@@ -136,44 +127,6 @@ inline void CBofList<T>::InsertBefore(CBofListNode<T> *pNode, T cNewItem) {
 	}
 
 	// one more item in list
-	assert(m_nNumItems != 0xFFFF);
-	m_nNumItems++;
-
-	RecalcItemList();
-}
-
-template<class T>
-inline T CBofList<T>::RemoveHead() {
-	assert(m_pHead != nullptr);
-
-	return Remove(m_pHead);
-}
-
-template<class T>
-inline T CBofList<T>::RemoveTail() {
-	assert(m_pTail != nullptr);
-	return Remove(m_pTail);
-}
-
-template<class T>
-inline void CBofList<T>::AddToHead(T cItem) {
-	AddToHead(NewNode(cItem));
-}
-
-template<class T>
-inline void CBofList<T>::AddToHead(CBofListNode<T> *pNewNode) {
-	assert(pNewNode != nullptr);
-
-	pNewNode->m_pNext = m_pHead;
-	pNewNode->m_pPrev = nullptr;
-	if (m_pHead != nullptr)
-		m_pHead->m_pPrev = pNewNode;
-	m_pHead = pNewNode;
-
-	if (m_pTail == nullptr)
-		m_pTail = m_pHead;
-
-	// one less item in list
 	assert(m_nNumItems != 0xFFFF);
 	m_nNumItems++;
 
