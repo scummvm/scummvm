@@ -93,13 +93,13 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 }
 
 
-Common::String SceneStruct2::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneStruct2<%s %d %d",
+Common::String HotArea::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sHotArea<%s %d %d",
 			indent.c_str(), rect.dump("").c_str(), field1_0x8, field2_0xa);
-	str += _dumpStructList(indent, "struct1list", struct1List);
-	str += _dumpStructList(indent, "oplist1", opList1);
-	str += _dumpStructList(indent, "oplist2", opList2);
-	str += _dumpStructList(indent, "oplist3", opList3);
+	str += _dumpStructList(indent, "enableConditions", enableConditions);
+	str += _dumpStructList(indent, "opList1", opList1);
+	str += _dumpStructList(indent, "opList2", opList2);
+	str += _dumpStructList(indent, "onClickOps", onClickOps);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -150,7 +150,7 @@ Common::String SceneOp::dump(const Common::String &indent) const {
 }
 
 Common::String GameItem::dump(const Common::String &indent) const {
-	Common::String super = SceneStruct2::dump(indent + "  ");
+	Common::String super = HotArea::dump(indent + "  ");
 
 	Common::String str = Common::String::format(
 			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
@@ -513,25 +513,25 @@ bool Scene::readConditionList(Common::SeekableReadStream *s, Common::Array<Scene
 }
 
 
-bool Scene::readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const {
+bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst.rect.x = s->readUint16LE();
 	dst.rect.y = s->readUint16LE();
 	dst.rect.width = s->readUint16LE();
 	dst.rect.height = s->readUint16LE();
 	dst.field1_0x8 = s->readUint16LE();
 	dst.field2_0xa = s->readUint16LE();
-	readConditionList(s, dst.struct1List);
+	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.opList1);
 	readOpList(s, dst.opList2);
-	readOpList(s, dst.opList3);
+	readOpList(s, dst.onClickOps);
 	return !s->err();
 }
 
 
-bool Scene::readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const {
+bool Scene::readHotAreaList(Common::SeekableReadStream *s, Common::Array<HotArea> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct2 &dst : list) {
-		readStruct2(s, dst);
+	for (HotArea &dst : list) {
+		readHotArea(s, dst);
 	}
 	return !s->err();
 }
@@ -540,7 +540,7 @@ bool Scene::readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneSt
 bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const {
 	list.resize(s->readUint16LE());
 	for (GameItem &dst : list) {
-		readStruct2(s, dst);
+		readHotArea(s, dst);
 	}
 	for (GameItem &dst : list) {
 		dst._iconNum = s->readUint16LE();
@@ -787,7 +787,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			warning("TODO: Implement scene op 10 (find SDS hot spot?)");
 			break;
 		case kSceneOp107:
-			warning("TODO: Implement scene op 107 (inject key code 0xfc)");
+			warning("TODO: Implement scene op 107 (inject key code 0xfc, open menu to play intro or not)");
 			break;
 		default:
 			warning("TODO: Implement scene op %d", op._opCode);
@@ -895,7 +895,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _postTickOps);
 	_field6_0x14 = stream->readUint16LE();
 	_adsFile = stream->readString();
-	readStruct2List(stream, _struct2List);
+	readHotAreaList(stream, _struct2List);
 	readStruct4List(stream, _struct4List1);
 	if (isVersionOver(" 1.205")) {
 		readStruct4List(stream, _struct4List2);
