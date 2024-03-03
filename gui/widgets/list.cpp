@@ -559,6 +559,12 @@ void ListWidget::drawWidget() {
 		if (_selectedItem == pos)
 			inverted = _inversion;
 
+		// Display selected/unselected games in mass detection as enabled/disabled items.
+		if (pos < (signed int)_listSelected.size() && _listSelected[pos])
+			_state = ThemeEngine::kStateEnabled;
+		else
+			_state = ThemeEngine::kStateDisabled;
+
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;
 		int rtlPad = (_x + r.left + _leftPadding) - (_x + _hlLeftPadding);
