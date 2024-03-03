@@ -39,7 +39,10 @@ private:
 public:
 	CBagCommandObject();
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	/**
+	 * Takes in info and then removes the relative information
+	 * and returns the info without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	virtual BOOL RunObject();
