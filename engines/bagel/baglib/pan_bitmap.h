@@ -87,13 +87,13 @@ public:
 	CBofRect GetWarpSrcRect();
 	CBofPoint WarpedPoint(CBofPoint &xPoint);
 
-	const double GetFOV() { return m_xFOVAngle; }
+	double GetFOV() { return m_xFOVAngle; }
 	const CBofSize GetViewSize() { return CBofPoint(m_xCurrView.Size()); }
 	const CBofRect GetCurrView() { return m_xCurrView; }
 
 	const CBofRect GetMaxView(CBofSize s = CBofSize(640, 480));
 	const CBofPoint GetRotateRate() { return m_xRotateRate; }
-	const DIRECTION GetDirection() { return m_xDirection; }
+	DIRECTION GetDirection() { return m_xDirection; }
 
 	void SetRotateRate(const CBofPoint &xRotRate) { m_xRotateRate = xRotRate; }
 	void SetDirection(const DIRECTION xDirection) { m_xDirection = xDirection; }

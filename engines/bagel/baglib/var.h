@@ -47,7 +47,7 @@ public:
 	CBagVar();
 	CBagVar(CBagVar &xVar);
 	CBagVar(const CBofString &sName, const CBofString &sValue, BOOL bAddToList);
-	~CBagVar();
+	virtual ~CBagVar();
 
 	PARSE_CODES SetInfo(bof_ifstream &);
 
