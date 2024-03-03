@@ -32,27 +32,30 @@ namespace Bagel {
 
 class CBagExpression : public CBagParseObject, public CBofObject {
 public:
-	enum OPERATION { NONE,
-					 ASSIGN,
-					 EQUAL,
-					 NOTEQUAL,
-					 LESSTHAN,
-					 LESSTHANEQUAL,
-					 GREATERTHAN,
-					 GREATERTHANEQUAL,
-					 PLUSASSIGN,
-					 MINUSASSIGN,
-					 CONTAINS,
-					 HAS,
-					 CURRSDEV,
-					 PLUS,
-					 MINUS,
-					 MULTIPLY,
-					 DIVIDE,
-					 AND,
-					 OR,
-					 MOD,
-					 STATUS };
+	enum OPERATION {
+		NONE,
+		ASSIGN,
+		EQUAL,
+		NOTEQUAL,
+		LESSTHAN,
+		LESSTHANEQUAL,
+		GREATERTHAN,
+		GREATERTHANEQUAL,
+		PLUSASSIGN,
+		MINUSASSIGN,
+		CONTAINS,
+		HAS,
+		CURRSDEV,
+		PLUS,
+		MINUS,
+		MULTIPLY,
+		DIVIDE,
+		AND,
+		OR,
+		MOD,
+		STATUS
+	};
+
 private:
 	CBofList<CBagVar *> m_cVarList;    // Right hand operator
 	CBofList<OPERATION> m_cOperList;   // Operation to be preformed

@@ -25,7 +25,7 @@
 
 #include "bagel/baglib/character_object.h"
 #include "bagel/baglib/dossier_object.h"
-#include "bagel/baglib/expression_object.h"
+#include "bagel/baglib/expression.h"
 #include "bagel/baglib/movie_object.h"
 #include "bagel/baglib/text_object.h"
 #include "bagel/baglib/variable_object.h"

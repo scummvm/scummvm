@@ -20,17 +20,13 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_MENU_H
-#define BAGEL_BAGLIB_MENU_H
+#ifndef BAGEL_BAGLIB_GUI_MENU_DLG_H
+#define BAGEL_BAGLIB_GUI_MENU_DLG_H
 
-#include "bagel/baglib/storage_dev.h"
-#include "bagel/baglib/storage_dev_dialog.h"
-#include "bagel/boflib/list.h"
+#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/sprite_object.h"
 
 namespace Bagel {
-
-#include <bagspobj.h>
-
 
 class CBagMenu : public CBagStorageDev {
 private:

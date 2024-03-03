@@ -23,7 +23,7 @@
 #ifndef BAGEL_BAGLIB_GUI_ZOOM_PDA_H
 #define BAGEL_BAGLIB_GUI_ZOOM_PDA_H
 
-#include "bagel/baglib/gui/storage_dev_wnd.h"
+#include "bagel/baglib/gui/storage_dev_win.h"
 #include "bagel/baglib/base_pda.h"
 
 namespace Bagel {

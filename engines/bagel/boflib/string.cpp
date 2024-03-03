@@ -25,10 +25,11 @@
 
 namespace Bagel {
 
-
 #define MAX_STRING 256
 
 #define BUF_EXTRA 20
+
+CBofString BofEmptyString;
 
 CBofString::CBofString() {
 	Init();

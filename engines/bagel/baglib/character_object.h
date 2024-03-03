@@ -25,10 +25,11 @@
 
 #include "bagel/baglib/object.h"
 //include <smack.h>
-//include <fstream.h>
 
 namespace Bagel {
 
+struct SmackBuf {};
+struct Smack { int FrameNum = 0; };
 
 // By setting BININMEMORY to TRUE, we preload all the bin files needed
 // for a specific world thus freeing the main loop of having to
@@ -37,8 +38,8 @@ namespace Bagel {
 class CBagCharacterObject : public CBagObject {
 protected:
 	CBofBitmap *m_pBmpBuf;
-	SmackBuf far *m_pSbuf;
-	Smack far *m_pSmk;
+	SmackBuf *m_pSbuf;
+	Smack *m_pSmk;
 	INT m_nCharTransColor;
 
 	CHAR *m_pBinBuf;

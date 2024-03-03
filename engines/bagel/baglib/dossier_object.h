@@ -24,7 +24,7 @@
 #define BAGEL_BAGLIB_DOSSIER_OBJECT_H
 
 #include "bagel/baglib/text_object.h"
-#include "bagel/baglib/log.h"
+#include "bagel/baglib/log_msg.h"
 
 namespace Bagel {
 

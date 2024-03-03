@@ -39,9 +39,9 @@ public:
 	virtual ~CBagWield();
 
 	CBagObject *GetCurrObj() const { return m_pCurrObj; }
-	CBagObject *SetCurrObj(CBagObject *pObj) const { return m_pCurrObj = pObj; }
+	CBagObject *SetCurrObj(CBagObject *pObj) { return m_pCurrObj = pObj; }
 
-	static INT GetWieldCursor() const { return m_nWieldCursor; }
+	static INT GetWieldCursor() { return m_nWieldCursor; }
 	static VOID SetWieldCursor(INT n) { m_nWieldCursor = n; }
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);

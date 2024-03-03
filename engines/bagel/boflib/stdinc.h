@@ -111,6 +111,17 @@ typedef struct bofVECTOR {
 	DOUBLE z;
 } VECTOR;
 
+struct WINDOWPOS {
+	void *hwnd = nullptr;
+	void *hwndInsertAfter = nullptr;
+	int x = 0;
+	int y = 0;
+	int cx = 0;
+	int cy = 0;
+	uint32 flags = 0;
+};
+
+
 typedef byte BYTE;
 typedef uint32 UINT;
 typedef uint32 DWORD;

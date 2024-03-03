@@ -24,7 +24,7 @@
 #define BAGEL_BAGLIB_SOUND_OBJECT_H
 
 #include "bagel/baglib/object.h"
-#include "bagel/boflib/bagel.h"
+#include "bagel/baglib/bagel.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {

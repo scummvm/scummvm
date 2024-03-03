@@ -277,7 +277,7 @@ INLINE BOOL operator>=(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) <= 0;
 }
 
-#define BofEmptyString g_engine->_bofEmptyString
+extern CBofString BofEmptyString;
 
 } // namespace Bagel
 
