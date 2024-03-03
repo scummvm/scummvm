@@ -55,7 +55,7 @@ namespace Twp {
 
 TwpEngine *g_twp;
 
-TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
+TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
 	  _randomSource("Twp") {
@@ -109,11 +109,11 @@ Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
 }
 
 uint32 TwpEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String TwpEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
 }
 
 bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
@@ -745,7 +745,7 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	_gfx.use(nullptr);
 
 #ifdef USE_IMGUI
-	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend*>(g_system);
+	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend *>(g_system);
 	if (sdl_g_system) {
 		sdl_g_system->getGraphicsManager()->renderImGui(onImGuiRender);
 	}
@@ -785,7 +785,32 @@ Common::Error TwpEngine::run() {
 	_fadeShader.reset(new FadeShader());
 	_lighting.reset(new Lighting());
 	_resManager.reset(new ResManager());
-	_pack->init();
+
+	switch (_gameDescription->xorKey) {
+	case GAME_XORKEY_56AD: {
+		const XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+		_pack->init(key);
+		break;
+	}
+	case GAME_XORKEY_566D: {
+		const XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+		_pack->init(key);
+		break;
+	}
+	case GAME_XORKEY_5B6D: {
+		const XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+		_pack->init(key);
+		break;
+	}
+	case GAME_XORKEY_5BAD: {
+		const XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+		_pack->init(key);
+		break;
+	}
+	default:
+		error("This version of the game is invalid or not supported (yet?)");
+		break;
+	}
 
 	Common::String lang(Common::String::format("ThimbleweedText_%s.tsv", ConfMan.get("language").c_str()));
 	GGPackEntryReader entry;

@@ -47,7 +47,7 @@ const char *TwpMetaEngine::getName() const {
 }
 
 Common::Error TwpMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Twp::TwpEngine(syst, desc);
+	*engine = new Twp::TwpEngine(syst, (const Twp::TwpGameDescription*)(desc));
 	return Common::kNoError;
 }
 

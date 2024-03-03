@@ -737,42 +737,28 @@ bool GGPackSet::containsDLC() const {
 	return _packs.find(3) != _packs.end();
 }
 
-void GGPackSet::init() {
-	// try to auto-detect which XOR key to use to decrypt the resources of the game
-	const XorKey key1{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
-	const XorKey key2{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
-	const XorKey key3{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
-	const XorKey key4{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
-
-	const XorKey keys[]{key1, key2, key3, key4};
-	const char *key_names[]{"56ad", "566d", "5b6d", "5bad"};
-
+void GGPackSet::init(const XorKey& key) {
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "*.ggpack*");
 
-	for (int i = 0; i < ARRAYSIZE(keys); i++) {
-		const XorKey *key = &keys[i];
-		for (auto it = fileList.begin(); it != fileList.end(); ++it) {
-			const Common::ArchiveMember &m = **it;
-			Common::String fileName = m.getFileName();
-			size_t pos = fileName.findLastOf("ggpack");
-			if (pos == Common::String::npos)
-				continue;
+	for (auto it = fileList.begin(); it != fileList.end(); ++it) {
+		const Common::ArchiveMember &m = **it;
+		Common::String fileName = m.getFileName();
+		size_t pos = fileName.findLastOf("ggpack");
+		if (pos == Common::String::npos)
+			continue;
 
-			long index = atol(fileName.c_str() + pos + 1);
+		long index = atol(fileName.c_str() + pos + 1);
 
-			Common::SeekableReadStream *stream = m.createReadStream();
-			GGPackDecoder pack;
-			if (stream && pack.open(stream, *key)) {
-				_packs[index] = pack;
-			}
+		Common::SeekableReadStream *stream = m.createReadStream();
+		GGPackDecoder pack;
+		if (stream && pack.open(stream, key)) {
+			_packs[index] = pack;
 		}
+	}
 
-		if (!_packs.empty()) {
-			// the game has been detected because we have at least 1 ggpack file.
-			debugC(kDebugGGPack, "Thimbleweed Park detected with key %s", key_names[i]);
-			return;
-		}
+	if (!_packs.empty()) {
+		return;
 	}
 
 	error("This version of the game is invalid or not supported (yet?)");

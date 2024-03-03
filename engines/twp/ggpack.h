@@ -176,7 +176,7 @@ private:
 
 class GGPackSet {
 public:
-	void init();
+	void init(const XorKey& key);
 	bool assetExists(const char *asset);
 
 	bool containsDLC() const;

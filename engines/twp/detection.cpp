@@ -42,17 +42,20 @@ const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
 
 TwpMetaEngineDetection::TwpMetaEngineDetection()
 	: AdvancedMetaEngineDetection(Twp::gameDescriptions,
-								  sizeof(ADGameDescription), Twp::twpGames) {
+								  sizeof(Twp::TwpGameDescription), Twp::twpGames) {
 }
 
 DetectedGame TwpMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
 	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame, extraInfo);
+	Twp::LanguageSupported languageSupported = reinterpret_cast<const Twp::TwpGameDescription *>(adGame.desc)->languageSupported;
 	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
 	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
 	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
 	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-	game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+	if (languageSupported == Twp::LS_WITH_RUSSIAN) {
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+	}
 	return game;
 }
 

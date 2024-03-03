@@ -82,7 +82,7 @@ enum class UseFlag;
 
 class TwpEngine : public Engine {
 private:
-	const ADGameDescription *_gameDescription;
+	const TwpGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
 protected:
@@ -90,7 +90,7 @@ protected:
 	Common::Error run() override;
 
 public:
-	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc);
 	~TwpEngine() override;
 
 	uint32 getFeatures() const;
