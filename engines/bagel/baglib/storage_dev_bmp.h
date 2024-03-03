@@ -23,20 +23,57 @@
 #ifndef BAGEL_BAGLIB_STORAGE_DEV_BMP_H
 #define BAGEL_BAGLIB_STORAGE_DEV_BMP_H
 
-#include "bagel/baglib/storage_dev_bmp.h"
+#include "bagel/baglib/bmp_object.h"
+#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/boflib/list.h"
 
 namespace Bagel {
 
-class CBagInv : public CBagStorageDevBmp {
+class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
-	static BOOL m_bFirstStash;
+	INT m_nMaskColor;
+	CBofPoint m_xCursorLocation; // Current cursor location in bmp.
+	CBofRect m_cSrcRect;
+	BOOL m_bTrans;
+	CBofBitmap *m_pWorkBmp;
 
 public:
-	CBagInv() : CBagStorageDevBmp() {}
-	virtual ~CBagInv() {}
+	CBagStorageDevBmp(CBofWindow *pParent = NULL, const CBofRect &xRect = CBofRect(), BOOL bTrans = TRUE);
+	virtual ~CBagStorageDevBmp();
 
-	ERROR_CODE ActivateLocalObject(const CBofString &sName);
-	ERROR_CODE DeactivateLocalObject(const CBofString &sName);
+	CBofBitmap *GetWorkBmp() { return (m_pWorkBmp); }
+	ERROR_CODE SetWorkBmp();
+	ERROR_CODE KillWorkBmp();
+
+	CBofRect GetRect(VOID) { return CBagStorageDev::GetRect(); }
+	VOID SetRect(const CBofRect &xRect) { CBagStorageDev::SetRect(xRect); }
+	CBofPoint GetPosition() { return CBagStorageDev::GetPosition(); }
+	VOID SetPosition(const CBofPoint &pos) { CBagStorageDev::SetPosition(pos); }
+
+	BOOL GetTransparent() { return m_bTrans; }
+	VOID SetTransparent(BOOL bTrans = TRUE) { m_bTrans = bTrans; }
+
+	CBofPoint GetScaledPt(CBofPoint xPoint);
+
+	ERROR_CODE SetBackground(CBofBitmap *pBmp);
+	CBofBitmap *GetBackground() { return (GetBitmap()); }
+
+	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
+
+	virtual BOOL IsAttached() { return CBagBmpObject::IsAttached(); }
+
+	virtual BOOL PaintFGObjects(CBofBitmap *) { return TRUE; }
+
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
+
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT nMaskColor = -1);
+
+	// Grab the button event of the bagbmobj and send them to the cbagsdev
+	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info);
+	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = NULL);
+
+	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
 };
 
 } // namespace Bagel

@@ -24,9 +24,10 @@
 #define BAGEL_BAGLIB_GUI_PAN_WINDOW_H
 
 #include "bagel/baglib/pda.h"
-#include "bagel/baglib/gui/storage_dev_wnd.h"
+#include "bagel/baglib/gui/storage_dev_win.h"
 #include "bagel/baglib/wield.h"
-#include "bagel/baglib/pan_bmp.h"
+#include "bagel/baglib/pan_bitmap.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 
@@ -121,7 +122,12 @@ public:
 	virtual VOID Enable();
 	virtual VOID Disable();
 
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect = CRect(), CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
+		CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+		CRect emptyRect;
+		return PaintObjects(list, pBmp, emptyRect);
+	}
 
 	VOID SetViewPortPos(const CPoint &pos) { m_xVeiwPortPos = pos; } // Position of the viewport
 	VOID SetViewPortSize(const CSize &xViewSize) {
@@ -183,7 +189,7 @@ public:
 #endif
 #if !BOF_MAC
 	// Undefined on mac
-	LONG OnDefWinProc(UINT nMessage, WPARAM wParam, LPARAM lParam);
+	LONG OnDefWinProc(UINT nMessage, int16 wParam, int32 lParam);
 #endif
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 

@@ -53,7 +53,6 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	ZIPGLOBAL _zg;
-	CBofString _bofEmptyString;
 
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);

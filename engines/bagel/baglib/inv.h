@@ -20,35 +20,24 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_EXPRESSION_OBJECT_H
-#define BAGEL_BAGLIB_EXPRESSION_OBJECT_H
+#ifndef BAGEL_BAGLIB_INV_H
+#define BAGEL_BAGLIB_INV_H
 
-#include "bagel/baglib/object.h"
-#include "bagel/baglib/expression.h"
-#include "bagel/boflib/stdinc.h"
-
-/**
- * CBagExpressionObject is an object that can be place within the slide window.
- */
-class CBagExpressionObject : public CBagObject {
-private:
-	CBagExpression *m_xExpression;
-	UBYTE m_bConditional;
-
-public:
-	CBagExpressionObject();
-	virtual ~CBagExpressionObject();
-
-	virtual BOOL RunObject();
-	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
-
-	BOOL IsConditional() const { return m_bConditional; }
-	VOID SetConditional(BOOL b = TRUE) { m_bConditional = (UBYTE)b; }
-};
+#include "bagel/baglib/storage_dev_bmp.h"
 
 namespace Bagel {
 
+class CBagInv : public CBagStorageDevBmp {
+protected:
+	static BOOL m_bFirstStash;
 
+public:
+	CBagInv() : CBagStorageDevBmp() {}
+	virtual ~CBagInv() {}
+
+	ERROR_CODE ActivateLocalObject(const CBofString &sName);
+	ERROR_CODE DeactivateLocalObject(const CBofString &sName);
+};
 
 } // namespace Bagel
 
