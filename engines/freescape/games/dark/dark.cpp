@@ -507,8 +507,12 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		playSound(9, true);
 	} else if (areaID == _endArea && entranceID == _endEntrance) {
 		_pitch = 10;
-	} else
-		playSound(5, false);
+	} else {
+		if (isSpectrum())
+			playSound(0x1c, false);
+		else
+			playSound(5, false);
+	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();

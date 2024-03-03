@@ -387,8 +387,9 @@ public:
 	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
 
-	void playSoundZX(Common::Array<uint16> *data);
-	Common::HashMap<uint16, Common::Array<uint16>*> _soundsSpeakerFxZX;
+	void playSoundZX(Common::Array<soundUnitZX> *data);
+	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
+	int _nextSoundToPlay = 1;
 
 	// Rendering
 	int _screenW, _screenH;

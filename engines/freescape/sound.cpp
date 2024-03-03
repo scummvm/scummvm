@@ -29,8 +29,8 @@ namespace Freescape {
 
 void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData) {
 	for (int i = 1; i < 34; i++) {
-		debug("Reading sound table entry: %d ", i);
-		_soundsSpeakerFxZX[i] = new Common::Array<uint16>();
+		//debug("Reading sound table entry: %d ", i);
+		_soundsSpeakerFxZX[i] = new Common::Array<soundUnitZX>();
 		int soundIdx = (i - 1) * 4;
 		file->seek(sfxTable + soundIdx);
 
@@ -48,7 +48,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 		int sound_ptr = original_sound_ptr;
 		uint8 soundSize = 0;
 		int16 repetitions = 0;
-		debug("dataIndex: %x, value: %x, SFXtempStruct[0]: %x, type: %x", dataIndex, soundValue, SFXtempStruct[0], soundType);
+		//debug("dataIndex: %x, value: %x, SFXtempStruct[0]: %x, type: %x", dataIndex, soundValue, SFXtempStruct[0], soundType);
 
 		if ((soundType & 0x80) == 0) {
 			SFXtempStruct[6] = 0;
@@ -57,26 +57,38 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 			while (true) {
 				while (true) {
 					file->seek(sound_ptr);
+					//debug("start sound ptr: %x", sound_ptr);
 					soundSize = file->readByte();
 					SFXtempStruct[1] = soundSize;
 					SFXtempStruct[2] = file->readByte();
 					SFXtempStruct[3] = file->readByte();
 
-					do {
-						uint32 var9 = 0xffffff & (7 * soundValue);
-						int16 soundValueVar = int16(var9) - 0x1e;
-						if (soundValueVar < 0)
-							soundValueVar = 1;
+					//for (int j = 0; j <= 7; j++)
+					//	debug("SFXtempStruct[%d]: %x", j, SFXtempStruct[j]);
 
-						debug("playSFX(%x, %x)", soundValueVar >> 8, soundValueVar & 0xff);
-						_soundsSpeakerFxZX[i]->push_back(soundValueVar);
-						uint8 var6 = 0;
+					do {
+						uint32 var9 = 0xffffff & (SFXtempStruct[3] * 0xd0);
+						uint32 var10 = var9 / soundValue;
+
+						var9 = 0xffffff & (7 * soundValue);
+						uint16 var5 = (0xffff & var9) - 0x1e;
+						if ((short)var5 < 0)
+							var5 = 1;
+
+						soundUnitZX soundUnit;
+						soundUnit.freqTimesSeconds = (var10 & 0xffff) + 1;
+						soundUnit.tStates = var5;
+						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
+						_soundsSpeakerFxZX[i]->push_back(soundUnit);
+						int16 var4 = 0;
 
 						if ((SFXtempStruct[2] & 0x80) != 0) {
-							var6 = 0xff;
+							var4 = 0xff;
 						}
-
-						soundValue = soundValue + (((var6 << 8) | SFXtempStruct[2]) & 0xfff);
+						//debug("var4: %d", var4);
+						//debug("soundValue delta: %d", int16(((var4 << 8) | SFXtempStruct[2])));
+						soundValue = soundValue + int16(((var4 << 8) | SFXtempStruct[2]));
+						//debug("soundValue: %x", soundValue);
 						soundSize = soundSize - 1;
 					} while (soundSize != 0);
 					SFXtempStruct[5] = SFXtempStruct[5] + 1;
@@ -84,6 +96,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						break;
 
 					sound_ptr = original_sound_ptr + SFXtempStruct[5] * 3;
+					//debug("sound ptr: %x", sound_ptr);
 				}
 
 				soundSize = SFXtempStruct[0];
@@ -97,30 +110,35 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 			file->seek(sound_ptr);
 			for (int j = 1; j <= 7; j++) {
 				SFXtempStruct[j] = file->readByte();
-				debug("SFXtempStruct[%d]: %x", j, SFXtempStruct[j]);
+				//debug("SFXtempStruct[%d]: %x", j, SFXtempStruct[j]);
 				//sound_ptr = sound_ptr + 1;
 			}
 			soundSize = SFXtempStruct[0];
 			repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
-			uint16 increment = SFXtempStruct[5] | (SFXtempStruct[6] << 8);
-			uint16 soundValueVar = soundValue;
-			debug("Repetitions: %x", repetitions);
+			uint16 var5 = soundValue;
+			//debug("Repetitions: %x", repetitions);
 			if ((soundType & 0x7f) == 1) {
 				do  {
 					do {
-						debug("playSFX(%x, %x)", soundValueVar >> 8, soundValueVar & 0xff);
-						_soundsSpeakerFxZX[i]->push_back(soundValueVar);
-						//queueSoundConst(soundValueVar & 0xff, soundValueVar >> 8);
+						soundUnitZX soundUnit;
+						soundUnit.tStates = var5;
+						soundUnit.freqTimesSeconds = SFXtempStruct[3] | (SFXtempStruct[4] << 8);
+						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
+						_soundsSpeakerFxZX[i]->push_back(soundUnit);
+						repetitions = repetitions - 1;
+						var5 = var5 + (SFXtempStruct[5] | (SFXtempStruct[6] << 8)); 
 
-						soundValueVar += increment; 
-						repetitions--;
 					} while ((byte)((byte)repetitions | (byte)((ushort)repetitions >> 8)) != 0);
-					soundSize--;
+					soundSize = soundSize - 1;
 					repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
-					soundValueVar = soundValue;
+					var5 = soundValue;
 				} while (soundSize != 0);
+			} else if ((soundType & 0x7f) == 2) { 
+			} else {
+				debug("Unknown sound type: %x", soundType);
 			}
 		}
+		free(SFXtempStruct);
 	}
 	//assert(0);
 }
@@ -374,16 +392,18 @@ uint16 FreescapeEngine::playSoundDOSSpeaker(uint16 frequencyStart, soundSpeakerF
 	return freq;
 }
 
-void FreescapeEngine::playSoundZX(Common::Array<uint16> *data) {
+void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
 	for (auto &it : *data) {
-		uint16 value = it;
-		float hzFreq = (value & 0xff);
-		debug("hz: %f, duration: %d", hzFreq, value >> 8);
-		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 5 * 1000 * (value >> 8));
+		soundUnitZX value = it;
+		float hzFreq = 1 / ((value.tStates + 30.125) / 437500.0);
+		float waveDuration = value.freqTimesSeconds / hzFreq;
+		waveDuration = 400 * 1000 * (waveDuration + 1);
+		debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %d", hzFreq, waveDuration);
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
 	}
 
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 2, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {

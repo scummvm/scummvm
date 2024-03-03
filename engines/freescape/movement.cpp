@@ -184,7 +184,10 @@ void FreescapeEngine::activate() {
 
 
 void FreescapeEngine::shoot() {
-	playSound(1, false);
+	if (isDark() && isDark())
+		playSound(0xf, false);
+	else 
+		playSound(8, false);
 	g_system->delayMillis(2);
 	_shootingFrames = 10;
 
