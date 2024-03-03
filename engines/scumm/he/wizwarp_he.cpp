@@ -83,7 +83,7 @@ bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *ds
 		optionalColorConversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(1);
 	}
 
-	// Decompress the wiz into a SIMPLEBITMAP... (Always if using a remap table)
+	// Decompress the wiz into a WizSimpleBitmap... (Always if using a remap table)
 	if ((getWizCompressionType(image, state) != kWCTNone) ||
 		(optionalColorConversionTable != nullptr) || (flags & (kWRFHFlip | kWRFVFlip | kWRFRemap))) {
 
@@ -348,10 +348,10 @@ void Wiz::WARPWIZ_FindMinMaxpoints(Common::Point *minPtr, Common::Point *maxPtr,
 	Common::Point minPt, maxPt, pt;
 
 	// Find the limits...
-	maxPt.x = INT16_MIN;
-	maxPt.y = INT16_MIN;
-	minPt.x = INT16_MAX;
-	minPt.y = INT16_MAX;
+	maxPt.x = -0x8000;
+	maxPt.y = -0x8000;
+	minPt.x = 0x7FFF;
+	minPt.y = 0x7FFF;
 
 	for (int i = 0; i < npoints; i++) {
 		pt = *points++;
