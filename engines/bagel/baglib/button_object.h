@@ -27,6 +27,9 @@
 
 namespace Bagel {
 
+/**
+ * CBagButtonObject is an object that can be place within the slide window.
+ */
 class CBagButtonObject : public CBagSpriteObject {
 public:
 	enum BUTTON_TYPE {
@@ -67,6 +70,10 @@ public:
 
 	BUTTON_TYPE GetButtonType() { return m_xButtonType; }
 
+	/**
+	 * Takes in info and then removes the relative information and returns
+	 * the info without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream & /*istr*/);
 	virtual BOOL RunObject();
 
@@ -74,8 +81,7 @@ public:
 	VOID SetCallBack(void *(func)(int, void *), void *vpFuncInfo = nullptr) {
 #if BOF_MAC && __POWERPC__
 		m_vpFunc = NewRoutineDescriptor((ProcPtr)func,
-										uppCBagObjectProcInfo,
-										GetCurrentArchitecture());
+			uppCBagObjectProcInfo, GetCurrentArchitecture());
 		m_vpFuncInfo = vpFuncInfo;
 	}
 	virtual UniversalProcPtr GetCallBack() { return m_vpFunc; }
@@ -89,9 +95,8 @@ public:
 	virtual BOOL RunCallBack() {
 		if (m_vpFunc) {
 #if BOF_MAC && __POWERPC__
-			CallUniversalProc(m_vpFunc,
-							  uppCBagObjectProcInfo,
-							  (INT)GetRefId(), m_vpFuncInfo);
+			CallUniversalProc(m_vpFunc, uppCBagObjectProcInfo,
+				(INT)GetRefId(), m_vpFuncInfo);
 #else
 			m_vpFunc((INT)GetRefId(), m_vpFuncInfo);
 #endif

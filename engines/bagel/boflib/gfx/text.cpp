@@ -506,8 +506,8 @@ ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect
 	Assert(m_pBackground != NULL);
 
 	if (!m_bSaved) {
-		CBofRect cRect = m_pBackground->GetRect();
-		pBmp->Paint(m_pBackground, &cRect, pRect);
+		CBofRect r = m_pBackground->GetRect();
+		pBmp->Paint(m_pBackground, &r, pRect);
 		m_bSaved = TRUE;
 	}
 
@@ -927,7 +927,6 @@ ERROR_CODE CBofText::Initialize(VOID) {
 
 
 ERROR_CODE CBofText::ShutDown(VOID) {
-	INT i;
 	ERROR_CODE errCode;
 
 	// Assume no error
@@ -935,7 +934,7 @@ ERROR_CODE CBofText::ShutDown(VOID) {
 
 #if BOF_WINDOWS
 
-	for (i = 0; i < NUM_POINT_SIZES; i++) {
+	for (int i = 0; i < NUM_POINT_SIZES; i++) {
 
 		if (m_hDefaultFont[i] != NULL) {
 			if (::DeleteObject(m_hDefaultFont[i]) == FALSE) {
