@@ -132,8 +132,9 @@ VOID CBagVar::SetValue(INT nVal) {
 	CHAR str[256];
 
 	SetNumeric();
-	itoa(nVal, str, 10);
-	m_sVarValue = str;
+
+	Common::String tmp = Common::String::format("%d", nVal);
+	m_sVarValue = tmp.c_str();
 }
 
 INT CBagVar::GetNumValue() {
@@ -188,7 +189,7 @@ PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, "AS ");
 			}
 		} else {
-			PutbackStringOnStream(istr, sStr);	
+			PutbackStringOnStream(istr, sStr);
 		}
 	}
 
