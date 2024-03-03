@@ -64,6 +64,7 @@ MODULE_OBJS = \
 	boflib/gui/list_box.o \
 	boflib/gui/movie.o \
 	boflib/gui/scroll_bar.o \
+	boflib/gui/sprite.o \
 	boflib/gui/window.o
 
 # This module can be built as a plugin
