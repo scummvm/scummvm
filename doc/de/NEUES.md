@@ -15,8 +15,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
    - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
 
- MTROPOLIS:
+ mTropolis:
    - Absturz in Muppet Treasure Island auf einigen Plattformen behoben.
+   - Das Juwelen-Puzzle in Muppet Treasure Island wird jetzt korrekt randomisiert.
 
  NANCY:
    - Telefon-Hinweise in Secrets Can Kill korrigiert.
@@ -46,6 +47,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Kamera im Shrine of the Anicent Ones in Ultima VIII korrigiert.
    - Ungültige Item-Ablage innerhalb von Containern in Ultima VIII korrigiert.
    - Nie endender Lava-Sound in Ultima VIII korrigiert.
+
+ V-Cruise:
+   - Absturz in Reah: Face the Unknown und Schizm: Mysterious Journey behoben, der auftritt,
+     wenn die Musik stummgeschaltet ist.
 
  Android-Portierung:
    - Absturz in der eingebauten Hilfe korrigiert, der bei der Nutzung des deutschen Sprachpaketes auftritt.
