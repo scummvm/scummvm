@@ -136,10 +136,13 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Common::sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
 		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
-			debug(1, "  Added gameid '%s', desc '%s'\n",
-				iter->gameId.c_str(),
-				iter->description.c_str());
-			iter->gameId = EngineMan.createTargetForGame(*iter);
+			// Make sure the game is selected
+			if (iter->isSelected) {
+				debug(1, "  Added gameid '%s', desc '%s'",
+					iter->gameId.c_str(),
+					iter->description.c_str());
+				iter->gameId = EngineMan.createTargetForGame(*iter);
+			}
 		}
 
 		// Write everything to disk
@@ -156,8 +159,27 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// User cancelled, so we don't do anything and just leave.
 		_games.clear();
 		close();
+	} else if (cmd == kListSelectionChangedCmd) {
+		// Select / unselect game from list
+		int curretScrollPos = _list->getCurrentScrollPos();
+		_games[_list->getSelected()].isSelected = !_games[_list->getSelected()].isSelected;
+		updateGameList();
+		_list->scrollTo(curretScrollPos);
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void MassAddDialog::updateGameList() {
+	// Update list to correctly display selected / unselected games
+	Common::U32StringArray l;
+	_list->setList(l);
+	_list->clearSelectedList();
+
+	for (const auto &game : _games) {
+		Common::U32String displayString = game.isSelected ? Common::String("[x] ") + game.description : Common::String("[\u2000] ") + game.description;
+		_list->append(displayString);
+		_list->appendToSelectedList(game.isSelected);
 	}
 }
 
@@ -227,6 +249,11 @@ void MassAddDialog::handleTickle() {
 			_list->append(result.description);
 		}
 
+		for (DetectedGame &game : _games) {
+			game.isSelected = true;
+		}
+
+		updateGameList();
 
 		// Recurse into all subdirs
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
