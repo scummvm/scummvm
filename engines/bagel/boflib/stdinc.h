@@ -28,6 +28,9 @@
 
 namespace Bagel {
 
+#define MAKEDWORD(a, b) MAKELPARAM(a, b)
+#define MAKERGB(R, G, B) ((DWORD)(((DWORD)((BYTE)(R))) | (((DWORD)((BYTE)(G))) << 8) | (((DWORD)((BYTE)(B))) << 16)))
+
 /*
  * Math Function Macros
  */
