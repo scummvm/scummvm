@@ -64,10 +64,8 @@ enum TTMRunType {
 
 
 struct TTMSeq {
-	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _currentFrame(0),
-	_lastFrame(0), _selfLoop(false), _executed(false), _timeNext(0),
-	_timeCut(0), _currentBmpId(0), _brushNum(0), _currentSongId(-1),
-	_currentPalId(0), _currentGetPutId(0), _timeInterval(0) {
+	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _lastFrame(0), _timeCut(0) {
+		// Other members are initialized in the reset function.
 		reset();
 	}
 
@@ -81,15 +79,16 @@ struct TTMSeq {
 	int16 _lastFrame;
 	bool _selfLoop;
 	bool _executed;
-	int16 _slot[6];
 	uint32 _timeNext;
 	uint32 _timeCut;
 	Common::Rect _drawWin;
-	int16 _currentBmpId;
+	// these are just called "slot"s in the original
+	int16 _currentFontId; 	// aka slot 0
+	int16 _currentPalId;	// aka slot 1
+	int16 _currentSongId;	// aka slot 3
+	int16 _currentBmpId;	// aka slot 4
+	int16 _currentGetPutId;	// aka slot 5
 	int16 _brushNum;
-	int16 _currentSongId;
-	int16 _currentPalId;
-	int16 _currentGetPutId;
 	byte _drawColFG;
 	byte _drawColBG;
 	int16 _runPlayed;
