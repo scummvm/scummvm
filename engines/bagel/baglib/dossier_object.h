@@ -47,6 +47,10 @@ public:
 	CBagDossierObject();
 	virtual ~CBagDossierObject();
 
+	/**
+	 * Takes in info and then removes the relative information and returns
+	 * the info without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	ERROR_CODE Attach();
@@ -56,6 +60,9 @@ public:
 
 	virtual BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if availible
 
+	/**
+	 * Arrange the float rects for the script rpo objects
+	 */
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 	CBofString &GetDossierLine() { return m_sIndexLine; }
 	CBofRect GetRect();
@@ -72,6 +79,7 @@ public:
 	static VOID DeactivateCurDossier();
 	VOID ShowDosText();
 
+	static void initStatics();
 	static CBagDossierObject *m_pCurDossier;
 }; 
 
