@@ -440,7 +440,6 @@ ScummEngine::~ScummEngine() {
 	for (int i = 0; i < 20; i++)
 		if (_2byteMultiFontPtr[i])
 			delete _2byteMultiFontPtr[i];
-	delete _macFontManager;
 	delete _charset;
 	delete _messageDialog;
 	delete _pauseDialog;
@@ -1636,7 +1635,6 @@ void ScummEngine::setupCharsetRenderer(const Common::Path &macFontFile) {
 		if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
 		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty()) {
-			_macFontManager = new Graphics::MacFontManager(0, Common::Language::UNK_LANG);
 			_charset = new CharsetRendererMac(this, macFontFile);
 		} else
 			_charset = new CharsetRendererV3(this);

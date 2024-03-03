@@ -67,7 +67,6 @@ class SeekableWriteStream;
 }
 namespace Graphics {
 class FontSJIS;
-class MacFontManager;
 }
 
 /**
@@ -1587,7 +1586,6 @@ public:
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier = 0;
 
-	Graphics::MacFontManager *_macFontManager = nullptr;
 	Graphics::Surface *_macScreen = nullptr;
 	MacGui *_macGui = nullptr;
 
