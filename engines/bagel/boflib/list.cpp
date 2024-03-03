@@ -20,7 +20,6 @@
  */
 
 #include "bagel/boflib/list.h"
-#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
@@ -60,28 +59,6 @@ inline void CBofList<T>::SetNodeItem(int nNodeIndex, T tNewItem) {
 	assert(pNode != nullptr);
 
 	pNode->SetNodeItem(tNewItem);
-}
-
-template<class T>
-inline CBofListNode<T> *CBofList<T>::GetNode(int nNodeIndex) {
-	assert(nNodeIndex >= 0 && nNodeIndex < GetCount());
-
-	CBofListNode<T> *pNode;
-
-	if (m_pItemList == nullptr) {
-
-		pNode = m_pHead;
-		while (pNode != nullptr) {
-			if (nNodeIndex-- == 0)
-				break;
-			pNode = pNode->m_pNext;
-		}
-
-	} else {
-		pNode = (CBofListNode<T> *)(*(m_pItemList + nNodeIndex));
-	}
-
-	return pNode;
 }
 
 template<class T>
@@ -127,53 +104,6 @@ inline void CBofList<T>::NewItemList() {
 
 	if (m_nNumItems != 0) {
 		m_pItemList = (uint32 *)BofAlloc(m_nNumItems * sizeof(uint32));
-	}
-}
-
-template<class T>
-inline void CBofList<T>::KillItemList() {
-	if (m_pItemList != nullptr) {
-		BofFree(m_pItemList);
-		m_pItemList = nullptr;
-	}
-}
-
-template<class T>
-inline void CBofList<T>::RecalcItemList() {
-	CBofListNode<T> *pNode;
-	int i;
-
-	// we only want to recalc if we're about to overflow what we
-	// have.
-
-	if (m_nNumItems >= m_nItemsAllocated) {
-
-		if (m_pItemList != nullptr) {
-			BofFree(m_pItemList);
-			m_pItemList = nullptr;
-		}
-
-		if (m_nNumItems != 0) {
-
-			assert(m_nItemsAllocated < 0x8000);
-			m_nItemsAllocated *= 2;
-			if (m_nItemsAllocated == 0)
-				m_nItemsAllocated = MIN_NODES;
-
-			m_pItemList = (uint32 *)BofAlloc(m_nItemsAllocated * sizeof(uint32));
-		}
-	}
-
-	if (m_nNumItems != 0) {
-
-		assert(m_pItemList != nullptr);
-
-		i = 0;
-		pNode = m_pHead;
-		while (pNode != nullptr) {
-			*(m_pItemList + i++) = (uint32)pNode;
-			pNode = pNode->m_pNext;
-		}
 	}
 }
 
@@ -226,54 +156,6 @@ inline T CBofList<T>::RemoveTail() {
 }
 
 template<class T>
-inline T CBofList<T>::Remove(int nNodeIndex) {
-	return Remove(GetNode(nNodeIndex));
-}
-
-template<class T>
-inline T CBofList<T>::Remove(CBofListNode<T> *pNode) {
-	assert(pNode != nullptr);
-
-	T retVal;
-
-	// One less item in list
-	m_nNumItems--;
-
-	assert(m_nNumItems >= 0);
-
-	if (pNode != nullptr) {
-
-		retVal = pNode->GetNodeItem();
-
-		if (m_pHead == pNode)
-			m_pHead = m_pHead->m_pNext;
-
-		if (m_pTail == pNode)
-			m_pTail = m_pTail->m_pPrev;
-
-		if (pNode->m_pPrev != nullptr)
-			pNode->m_pPrev->m_pNext = pNode->m_pNext;
-
-		if (pNode->m_pNext != nullptr)
-			pNode->m_pNext->m_pPrev = pNode->m_pPrev;
-
-		delete pNode;
-	}
-
-	RecalcItemList();
-
-	return retVal;
-}
-
-template<class T>
-inline void CBofList<T>::RemoveAll() {
-	int i = GetCount();
-
-	while (i-- != 0)
-		Remove(0);
-}
-
-template<class T>
 inline void CBofList<T>::AddToHead(T cItem) {
 	AddToHead(NewNode(cItem));
 }
@@ -296,36 +178,6 @@ inline void CBofList<T>::AddToHead(CBofListNode<T> *pNewNode) {
 	m_nNumItems++;
 
 	RecalcItemList();
-}
-
-template<class T>
-inline void CBofList<T>::AddToTail(T cItem) {
-	AddToTail(NewNode(cItem));
-}
-
-template<class T>
-inline void CBofList<T>::AddToTail(CBofListNode<T> *pNewNode) {
-	assert(pNewNode != nullptr);
-
-	pNewNode->m_pPrev = m_pTail;
-	pNewNode->m_pNext = nullptr;
-	if (m_pTail != nullptr)
-		m_pTail->m_pNext = pNewNode;
-	m_pTail = pNewNode;
-
-	if (m_pHead == nullptr)
-		m_pHead = m_pTail;
-
-	// One more item in list
-	assert(m_nNumItems != 0xFFFF);
-	m_nNumItems++;
-	RecalcItemList();
-}
-
-template<class T>
-inline CBofListNode<T> *CBofList<T>::NewNode(T cItem) {
-	CBofListNode<T> *pNewNode = new CBofListNode<T>(cItem);
-	return pNewNode;
 }
 
 template<class T>

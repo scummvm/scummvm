@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_LIST_H
 
 #include "common/scummsys.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
@@ -53,15 +54,61 @@ template<class T>
 class CBofList {
 private:
 	void NewItemList();
-	void KillItemList();
-	void RecalcItemList();
+
+	void KillItemList() {
+		if (m_pItemList != nullptr) {
+			BofFree(m_pItemList);
+			m_pItemList = nullptr;
+		}
+	}
+
+	void RecalcItemList() {
+		CBofListNode<T> *pNode;
+		int i;
+
+		// we only want to recalc if we're about to overflow what we
+		// have.
+
+		if (m_nNumItems >= m_nItemsAllocated) {
+
+			if (m_pItemList != nullptr) {
+				BofFree(m_pItemList);
+				m_pItemList = nullptr;
+			}
+
+			if (m_nNumItems != 0) {
+
+				assert(m_nItemsAllocated < 0x8000);
+				m_nItemsAllocated *= 2;
+				if (m_nItemsAllocated == 0)
+					m_nItemsAllocated = MIN_NODES;
+
+				m_pItemList = (void **)BofAlloc(m_nItemsAllocated * sizeof(uint32));
+			}
+		}
+
+		if (m_nNumItems != 0) {
+
+			assert(m_pItemList != nullptr);
+
+			i = 0;
+			pNode = m_pHead;
+			while (pNode != nullptr) {
+				*(m_pItemList + i++) = pNode;
+				pNode = pNode->m_pNext;
+			}
+		}
+	}
 
 	/**
 	 * Allocates a new CBofListNode with specified data
 	 * @param cItem		Data to store in new node
 	 * @returns			Pointer to new node
 	 */
-	CBofListNode<T> *NewNode(T cItem);
+	CBofListNode<T> *NewNode(T cItem) {
+		CBofListNode<T> *pNewNode = new CBofListNode<T>(cItem);
+		return pNewNode;
+	}
 
 	/**
 	 * Calculates the actual head of this linked list
@@ -85,7 +132,7 @@ protected:
 	CBofListNode<T> *m_pHead;		// pointer to head of list
 	CBofListNode<T> *m_pTail;		// pointer to tail of list
 
-	uint32 *m_pItemList;			// pointer to secondary node list
+	void **m_pItemList;			// pointer to secondary node list
 
 public:
 	/*
@@ -138,7 +185,26 @@ public:
 	 * @returns		Returns the node located at the given index.
 	 * @param nIndex		Index of node to retrieve
 	 */
-	CBofListNode<T> *GetNode(int nNodeIndex);
+	CBofListNode<T> *GetNode(int nNodeIndex) {
+		assert(nNodeIndex >= 0 && nNodeIndex < GetCount());
+
+		CBofListNode<T> *pNode;
+
+		if (m_pItemList == nullptr) {
+
+			pNode = m_pHead;
+			while (pNode != nullptr) {
+				if (nNodeIndex-- == 0)
+					break;
+				pNode = pNode->m_pNext;
+			}
+
+		} else {
+			pNode = (CBofListNode<T> *)(*(m_pItemList + nNodeIndex));
+		}
+
+		return pNode;
+	}
 
 	/**
 	 * Inserts a new node as the previous node to the one specified
@@ -173,20 +239,59 @@ public:
 	 * @param pNode				Node to remove
 	 * @returns					Item stored at specified location
 	 */
-	T Remove(CBofListNode<T> *pNode);
+	T Remove(CBofListNode<T> *pNode) {
+		assert(pNode != nullptr);
+
+		T retVal;
+
+		// One less item in list
+		m_nNumItems--;
+
+		assert(m_nNumItems >= 0);
+
+		if (pNode != nullptr) {
+
+			retVal = pNode->GetNodeItem();
+
+			if (m_pHead == pNode)
+				m_pHead = m_pHead->m_pNext;
+
+			if (m_pTail == pNode)
+				m_pTail = m_pTail->m_pPrev;
+
+			if (pNode->m_pPrev != nullptr)
+				pNode->m_pPrev->m_pNext = pNode->m_pNext;
+
+			if (pNode->m_pNext != nullptr)
+				pNode->m_pNext->m_pPrev = pNode->m_pPrev;
+
+			delete pNode;
+		}
+
+		RecalcItemList();
+
+		return retVal;
+	}
 
 	/**
 	 * Removes specfied node (by index) from the list
 	 * @param nNodeIndex		Index of node to remove
 	 * @returns					Item stored at specified location
 	 */
-	T Remove(int nNodeIndex);
+	T Remove(int nNodeIndex) {
+		return Remove(GetNode(nNodeIndex));
+	}
 
 	/**
 	 * Removes all nodes from this list
 	 * @remarks		Deletes all memory used by the nodes in this list
 	 */
-	void RemoveAll();
+	void RemoveAll() {
+		int i = GetCount();
+
+		while (i-- != 0)
+			Remove(0);
+	}
 
 	/**
 	 * Removes specfied node (by index) from the list
@@ -216,13 +321,31 @@ public:
 	 * Adds specified node as the new tail of this list
 	 * @param pNode		Pointer to node to add to the list
 	 */
-	void AddToTail(CBofListNode<T> *pNewNode);
+	void AddToTail(CBofListNode<T> *pNewNode) {
+		assert(pNewNode != nullptr);
+
+		pNewNode->m_pPrev = m_pTail;
+		pNewNode->m_pNext = nullptr;
+		if (m_pTail != nullptr)
+			m_pTail->m_pNext = pNewNode;
+		m_pTail = pNewNode;
+
+		if (m_pHead == nullptr)
+			m_pHead = m_pTail;
+
+		// One more item in list
+		assert(m_nNumItems != 0xFFFF);
+		m_nNumItems++;
+		RecalcItemList();
+	}
 
 	/**
 	 * Adds specified item as the new tail of this list
 	 * @param cItem		Item to add to the list
 	 */
-	void AddToTail(T cItem);
+	void AddToTail(T cItem) {
+		AddToTail(NewNode(cItem));
+	}
 
 	CBofListNode<T> *GetHead() const { return m_pHead; }
 	CBofListNode<T> *GetTail() const { return m_pTail; }
