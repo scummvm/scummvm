@@ -290,12 +290,11 @@ int CBagParseObject::ParseAlertBox(bof_ifstream &istr, char *sTitle, char *sFile
 	char str[256];
 
 	CBofString s = sFile;
-	itoa(nLine, str, 10);
-	s += "(";
-	s += str;
-	s += ")@";
-	itoa(istr.GetLineNumber(), str, 10);
-	s += str;
+
+	Common::String tmp = Common::String::format("(%d)@%d", nLine, istr.GetLineNumber());
+
+	s += tmp.c_str();
+
 	s += ":";
 	s += istr.GetLineString();
 
