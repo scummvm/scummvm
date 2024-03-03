@@ -62,14 +62,14 @@ struct SceneConditions {
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct SceneStruct2 {
+struct HotArea {
 	struct Rect rect;
 	uint16 field1_0x8;
 	uint16 field2_0xa;
-	Common::Array<struct SceneConditions> struct1List;
+	Common::Array<struct SceneConditions> enableConditions;
 	Common::Array<struct SceneOp> opList1;
 	Common::Array<struct SceneOp> opList2;
-	Common::Array<struct SceneOp> opList3;
+	Common::Array<struct SceneOp> onClickOps;
 
 	virtual Common::String dump(const Common::String &indent) const;
 };
@@ -114,7 +114,7 @@ struct SceneOp {
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct GameItem : public SceneStruct2 {
+struct GameItem : public HotArea {
 	Common::Array<struct SceneOp> opList5;
 	Common::Array<struct SceneOp> opList6;
 	uint16 field10_0x24;
@@ -251,8 +251,8 @@ public:
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
-	bool readStruct2(Common::SeekableReadStream *s, SceneStruct2 &dst) const;
-	bool readStruct2List(Common::SeekableReadStream *s, Common::Array<SceneStruct2> &list) const;
+	bool readHotArea(Common::SeekableReadStream *s, HotArea &dst) const;
+	bool readHotAreaList(Common::SeekableReadStream *s, Common::Array<HotArea> &list) const;
 	bool readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
@@ -346,7 +346,7 @@ private:
 	uint _field6_0x14;
 	Common::String _adsFile;
 	//uint _field8_0x23;
-	Common::Array<struct SceneStruct2> _struct2List;
+	Common::Array<struct HotArea> _struct2List;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
