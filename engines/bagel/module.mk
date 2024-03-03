@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	baglib/command_object.o \
 	baglib/expression_object.o \
 	baglib/movie_object.o \
+	baglib/object.o \
 	baglib/pan_bitmap.o \
 	baglib/parse_object.o \
 	baglib/rp_object.o \

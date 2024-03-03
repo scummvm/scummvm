@@ -237,8 +237,7 @@ public:
 	virtual const CBofString &
 	GetFileName() { return m_sFileName; }
 	CBagMenu *GetMenuPtr() { return m_pMenu; }
-	virtual const CBofString &
-	GetRefName();
+	virtual const CBofString &GetRefName();
 	virtual VOID SetRefName(const CBofString &s);
 
 	virtual VOID SetFileName(const CBofString &s) { m_sFileName = s; }
@@ -258,6 +257,12 @@ public:
 		m_nY = (SHORT)pos.y;
 	}
 
+	/**
+	 * Takes in info and then removes the relative information and returns
+	 * UNKNOWN_TOKEN	if nothing has changed
+	 * UPDATED_OBJECT	if something has changed
+	 * PARSING_DONE  	if done processing
+	 */
 	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	virtual INT HandleError(int nErrID) {
@@ -266,8 +271,6 @@ public:
 	}
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
-
-	// virtual ERROR_CODE  DoModal(CBofBitmap * pBmp, CBofPoint pt, CBofRect * pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
 	virtual BOOL OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) { return FALSE; }
 
