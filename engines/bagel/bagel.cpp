@@ -30,6 +30,7 @@
 #include "bagel/detection.h"
 #include "bagel/console.h"
 
+#include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/parse_object.h"
 
 #include "bagel/boflib/cache.h"
@@ -46,6 +47,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	g_engine = this;
 
 	// baglib/ class statics initializations
+	CBagDossierObject::initStatics();
 	CBagParseObject::initStatics();
 
 	// boflib/ class statics initializations

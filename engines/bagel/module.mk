@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	baglib/bmp_object.o \
 	baglib/button_object.o \
 	baglib/character_object.o \
+	baglib/dossier_object.o \
 	baglib/command_object.o \
 	baglib/expression_object.o \
 	baglib/movie_object.o \
