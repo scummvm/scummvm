@@ -24,11 +24,11 @@
 #define BAGEL_BAGLIB_GUI_STORAGE_DEV_WIN_H
 
 #include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflist/list.h"
+#include "bagel/boflib/list.h"
 #include "bagel/baglib/object.h"
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/save_game_file.h"
-#include "bagel/baglib/event.h"
+//#include "bagel/baglib/event.h"
 
 namespace Bagel {
 
@@ -217,7 +217,7 @@ public:
 	// CBagObject* 		GetRActiveObject() 					{ return m_pRActiveObject; }
 	ERROR_CODE SetLActiveObject(CBagObject *pObj) {
 		m_pLActiveObject = pObj;
-		return 0;
+		return ERR_NONE;
 	}
 	// ERROR_CODE			SetRActiveObject(CBagObject* pObj) 	{ m_pRActiveObject = pObj; return 0;}
 
@@ -360,7 +360,13 @@ public:
 	BOOL GetOnUpdate() { return m_bOnUpdate; }
 
 	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewOffsetRect = CBofRect(), CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject*>* list, CBofBitmap* pBmp) {
+		CBofRect emptyRect;
+		return PaintObjects(list, pBmp, emptyRect);
+	}
+
 	ERROR_CODE PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual CBofRect GetLocation() { return GetWindowRect(); }
@@ -402,7 +408,12 @@ public:
 	CBagStorageDevDlg();
 
 	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewOffsetRect = CBofRect(), CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject*>* list, CBofBitmap* pBmp) {
+		CBofRect emptyRect;
+		return PaintObjects(list, pBmp, emptyRect);
+	}
 
 	virtual CBofRect GetLocation() { return GetWindowRect(); }
 

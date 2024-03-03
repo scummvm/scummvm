@@ -24,13 +24,13 @@
 #define BAGEL_BAGLIB_GUI_MASTER_WIN_H
 
 #include "bagel/boflib/gfx/text.h"
-#include "bagel/boflib/gfx/cursor.h"
+#include "bagel/baglib/cursor.h"
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/bagel.h"
-#include "bagel/boflib/gfx/window.h"
+#include "bagel/baglib/bagel.h"
+#include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/object.h"
-#include "bagel/baglib/save.h"
+#include "bagel/baglib/gui/save_dialog.h"
 #include "bagel/baglib/var.h"
 
 namespace Bagel {
