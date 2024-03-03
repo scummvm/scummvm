@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	baglib/text_object.o \
 	baglib/thing_object.o \
 	baglib/time_object.o \
+	baglib/var.o \
 	baglib/variable_object.o \
 	baglib/gui/paint_table.o \
 	boflib/app.o \
