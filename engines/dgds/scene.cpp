@@ -895,7 +895,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	readOpList(stream, _postTickOps);
 	_field6_0x14 = stream->readUint16LE();
 	_adsFile = stream->readString();
-	readHotAreaList(stream, _struct2List);
+	readHotAreaList(stream, _hotAreaList);
 	readStruct4List(stream, _struct4List1);
 	if (isVersionOver(" 1.205")) {
 		readStruct4List(stream, _struct4List2);
@@ -916,7 +916,7 @@ void SDSScene::unload() {
 	_postTickOps.clear();
 	_field6_0x14 = 0;
 	_adsFile.clear();
-	_struct2List.clear();
+	_hotAreaList.clear();
 	_struct4List1.clear();
 	_struct4List2.clear();
 	_dialogs.clear();
@@ -930,7 +930,7 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "leaveSceneOps", _leaveSceneOps);
 	str += _dumpStructList(indent, "preTickOps", _preTickOps);
 	str += _dumpStructList(indent, "postTickOps", _postTickOps);
-	str += _dumpStructList(indent, "struct2List", _struct2List);
+	str += _dumpStructList(indent, "hotAreaList", _hotAreaList);
 	str += _dumpStructList(indent, "struct4List1", _struct4List1);
 	str += _dumpStructList(indent, "struct4List2", _struct4List2);
 	str += _dumpStructList(indent, "dialogues", _dialogs);
@@ -972,7 +972,7 @@ void SDSScene::showDialog(uint16 num) {
 }
 
 bool SDSScene::checkDialogActive() {
-	uint32 timeNow = g_system->getMillis();
+	uint32 timeNow = g_engine->getTotalPlayTime();
 	bool retval = false;
 	for (auto &dialog : _dialogs) {
 		if (dialog.hasFlag(kDlgFlagVisible)) {
@@ -997,7 +997,7 @@ bool SDSScene::drawActiveDialog(Graphics::Surface *dst, int mode) {
 		if (dialog.hasFlag(kDlgFlagVisible)) {
 			if (dialog._hideTime == 0 && dialog._time > 0) {
 				// TOOD: This should be (9 - text-speed-slider-setting)
-				dialog._hideTime = g_system->getMillis() + dialog._time * 9;
+				dialog._hideTime = g_engine->getTotalPlayTime() + dialog._time * 9;
 			}
 			dialog.draw(dst, mode);
 			retval = true;

@@ -64,7 +64,7 @@ struct SceneConditions {
 
 struct HotArea {
 	struct Rect rect;
-	uint16 field1_0x8;
+	uint16 field1_0x8; //
 	uint16 field2_0xa;
 	Common::Array<struct SceneConditions> enableConditions;
 	Common::Array<struct SceneOp> opList1;
@@ -346,7 +346,7 @@ private:
 	uint _field6_0x14;
 	Common::String _adsFile;
 	//uint _field8_0x23;
-	Common::Array<struct HotArea> _struct2List;
+	Common::Array<struct HotArea> _hotAreaList;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
