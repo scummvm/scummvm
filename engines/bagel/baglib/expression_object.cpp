@@ -19,10 +19,104 @@
  *
  */
 
-#include "bagel/baglib/command_object.h"
+#include "bagel/baglib/expression_object.h"
+#include "bagel/baglib/gui/master_win.h"
+#include "bagel/baglib/var.h"
 
 namespace Bagel {
 
+CBagExpressionObject::CBagExpressionObject() : CBagObject() {
+	m_xObjType = EXPRESSOBJ;
+	m_xExpression = NULL;
+	SetConditional(FALSE);
+	SetVisible(FALSE);
+	SetTimeless(TRUE);
+}
 
+CBagExpressionObject::~CBagExpressionObject() {
+	if (m_xExpression != NULL) {
+		delete m_xExpression;
+		m_xExpression = NULL;
+	}
+	Detach();
+}
+
+/*CRect CBagExpressionObject::GetRect(VOID)
+{
+	CPoint p = GetPosition();
+	CSize  s = GetSize();
+	CRect r = CRect(p,s);
+	return(r);
+}*/
+
+BOOL CBagExpressionObject::RunObject() {
+	if (m_xExpression != NULL) {
+		CBagVar xVar;
+		m_xExpression->Evaluate(FALSE, xVar);
+
+		if (!IsConditional()) {
+			if (GetFileName().IsEmpty())
+				return FALSE;
+
+			int nIndex = GetFileName().Find("~~");
+			if (nIndex > 0) { // this is a reference
+				CBofString sObject = GetFileName().Left(nIndex);
+				CBofString sProperty = GetFileName().Mid(nIndex + 2);
+
+				SDEVMNGR->SetObjectValue(sObject, sProperty, xVar.GetNumValue());
+
+			} else {
+				CBagVar *pVar = VARMNGR->GetVariable(GetFileName());
+				if (pVar)
+					pVar->SetValue(xVar.GetValue());
+			}
+		}
+	}
+
+	return CBagObject::RunObject();
+}
+
+PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
+	int nChanged;
+	BOOL nObjectUpdated = FALSE;
+	char ch;
+
+	while (!istr.eof()) {
+		nChanged = 0;
+
+		switch (ch = (char)istr.peek()) {
+		//
+		//  AS  - n number of slides in sprite
+		//
+		case '(': {
+			m_xExpression = new CBagExpression();
+			if (m_xExpression) {
+				m_xExpression->SetInfo(istr);
+				nObjectUpdated = TRUE;
+				nChanged++;
+			} else {
+				// there was an error
+			}
+		} break;
+		//
+		//  no match return from funtion
+		//
+		default: {
+			PARSE_CODES rc;
+			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+				return PARSING_DONE;
+			} else if (rc == UPDATED_OBJECT) {
+				nObjectUpdated = TRUE;
+			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+				if (nObjectUpdated)
+					return UPDATED_OBJECT;
+				else
+					return UNKNOWN_TOKEN;
+			}
+		} break;
+		}
+	}
+	return PARSING_DONE;
+}
 
 } // namespace Bagel

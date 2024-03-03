@@ -27,6 +27,8 @@
 #include "bagel/baglib/expression.h"
 #include "bagel/boflib/stdinc.h"
 
+namespace Bagel {
+
 /**
  * CBagExpressionObject is an object that can be place within the slide window.
  */
@@ -45,10 +47,6 @@ public:
 	BOOL IsConditional() const { return m_bConditional; }
 	VOID SetConditional(BOOL b = TRUE) { m_bConditional = (UBYTE)b; }
 };
-
-namespace Bagel {
-
-
 
 } // namespace Bagel
 
