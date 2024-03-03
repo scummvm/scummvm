@@ -415,6 +415,24 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 				delete fontstream;
 
+				Common::String name = fontFamily->getName();
+
+				if (!_fontIds.contains(name)) {
+					int id = fontFamily->getFontFamilyId();
+
+					FontInfo *info = new FontInfo;
+					info->name = fontFamily->getName();
+					if (id >= 0x4000) {
+						info->lang = Common::JA_JPN;
+						info->encoding = Common::kWindows932;
+					} else {
+						info->encoding = Common::kMacRoman;
+					}
+
+					_fontIds[name] = id;
+					_fontInfo[id] = info;
+				}
+
 				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
 
 				macfont = new MacFont(_fontIds.getValOrDefault(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
