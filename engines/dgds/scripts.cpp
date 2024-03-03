@@ -135,7 +135,7 @@ static const char *ttmOpName(uint16 op) {
 	}
 }
 
-void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
+void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	switch (op) {
@@ -143,15 +143,21 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		// FINISH:	void
 		break;
 	case 0x0020: // SAVE (free?) BACKGROUND
+		if (seq._executed) // this is a one-shot op
+			break;
 		_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 		break;
 	case 0x0070: // FREE PALETTE
+		if (seq._executed) // this is a one-shot op
+			break;
 		error("TODO: Implement me: free palette (current pal)");
 		break;
 	case 0x0080: // FREE SHAPE // DRAW BACKGROUND??
 		_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
 		break;
 	case 0x0090: // FREE FONT
+		if (seq._executed) // this is a one-shot op
+			break;
 		error("TODO: Implement me: free font (current one)");
 		break;
 	case 0x00B0:
@@ -175,24 +181,24 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		break;
 	case 0x1030: {
 		// SET BRUSH:	id:int [-1:n]
-		state._brushNum = ivals[0];
-		if (state._brushNum != -1) {
-			_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], state._brushNum);
+		seq._brushNum = ivals[0];
+		if (seq._brushNum != -1) {
+			_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], seq._brushNum);
 		}
 		break;
 	}
 	case 0x1050:
 		// SELECT BMP:	    id:int [0:n]
-		state._currentBmpId = ivals[0];
+		seq._currentBmpId = ivals[0];
 		break;
 	case 0x1060:
 		// SELECT PAL:  id:int [0]
-		state._currentPalId = ivals[0];
+		seq._currentPalId = ivals[0];
 		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
 		break;
 	case 0x1090:
 		// SELECT SONG:	    id:int [0]
-		state._currentSongId = ivals[0];
+		seq._currentSongId = ivals[0];
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
 		debug("SCENE SETUP DONE: %u", ivals[0]);
@@ -204,24 +210,26 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		break;
 	}
 	case 0x1120: // SET GETPUT NUM
-		state._currentGetPutId = ivals[0];
+		seq._currentGetPutId = ivals[0];
 		break;
 	case 0x1200: // GOTO? How different to SET SCENE??
 		debug("GOTO SCENE: %u", ivals[0]);
-		state._currentFrame = ivals[0];
+		seq._currentFrame = ivals[0];
 		break;
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
 		_vm->_soundPlayer->playSFX(ivals[0]);
 		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
-		state._drawColFG = static_cast<byte>(ivals[0]);
-		state._drawColBG = static_cast<byte>(ivals[1]);
+		seq._drawColFG = static_cast<byte>(ivals[0]);
+		seq._drawColBG = static_cast<byte>(ivals[1]);
 		break;
 	case 0x4000:
 		// SET CLIP WINDOW x,y,w,h:int	[0..320,0..200]
-		state._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
+		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110:
+		if (seq._executed) // this is a one-shot op.
+			break;
 		// FADE OUT:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->clearPalette();
@@ -232,13 +240,15 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen(state);
+				updateScreen(seq);
 				g_system->delayMillis(5);
 			}
 		}
 		_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x4120: {
+		if (seq._executed) // this is a one-shot op.
+			break;
 		// blt first?
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
 		Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
@@ -253,13 +263,15 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 			for (int i = 320; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen(state);
+				updateScreen(seq);
 				g_system->delayMillis(5);
 			}
 		}
 		break;
 	}
 	case 0x4200: {
+		if (seq._executed) // this is a one-shot op
+			break;
 		// STORE AREA:	x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
 		const Common::Rect destRect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
@@ -271,7 +283,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		warning("TODO: Implement TTM opcode 0x4210 save getput region");
 		break;
 	case 0xa000: // DRAW PIXEL x,y:int
-		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], state._drawColFG);
+		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
 	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l]
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
@@ -280,19 +292,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		_vm->getTopBuffer().copyFrom(_vm->_resData);
 		break;
 	case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
-		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], state._drawColFG);
+		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
 		break;
 	case 0xa100:
 		// DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
 		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-		_vm->getTopBuffer().fillRect(bmpArea, state._drawColFG);
+		_vm->getTopBuffer().fillRect(bmpArea, seq._drawColFG);
 		break;
 	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
 		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, state._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, state._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, seq._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, seq._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, seq._drawColFG);
+		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, seq._drawColFG);
 		break;
 	case 0xa520:
 		// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
@@ -303,62 +315,74 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		// FALL THROUGH
 	case 0xa500:
-		debug("DRAW \"%s\"", env._scriptShapes[state._currentBmpId].c_str());
+		debug("DRAW \"%s\"", env._scriptShapes[seq._currentBmpId].c_str());
 
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		// This is kind of file system intensive, will likely have to change to store all the BMPs.
 		if (count == 4) {
 			int tileId = ivals[2];
-			state._currentBmpId = ivals[3];
+			seq._currentBmpId = ivals[3];
 			if (tileId != -1) {
-				_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], tileId);
+				_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], tileId);
 			}
 		} else if (!_vm->_image->isLoaded()) {
 			// load on demand?
-			warning("trying to load bmp %d (%s) on demand", state._currentBmpId, env._scriptShapes[state._currentBmpId].c_str());
-			_vm->_image->loadBitmap(env._scriptShapes[state._currentBmpId], 0);
+			warning("trying to load bmp %d (%s) on demand", seq._currentBmpId, env._scriptShapes[seq._currentBmpId].c_str());
+			_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], 0);
 		}
 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
 		if (_vm->_image->isLoaded())
-			_vm->_image->drawBitmap(ivals[0], ivals[1], state._drawWin, _vm->getTopBuffer());
+			_vm->_image->drawBitmap(ivals[0], ivals[1], seq._drawWin, _vm->getTopBuffer());
 		else
 			warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 		break;
 	case 0xf010:
+		if (seq._executed) // this is a one-shot op
+			break;
 		// LOAD SCR:	filename:str
 		_vm->_image->drawScreen(sval, _vm->getBottomBuffer());
 		break;
 	case 0xf020:
+		if (seq._executed) // this is a one-shot op
+			break;
 		// LOAD BMP:	filename:str
-		env._scriptShapes[state._currentBmpId] = sval;
+		env._scriptShapes[seq._currentBmpId] = sval;
 		break;
 	case 0xf040: {
+		if (seq._executed) // this is a one-shot op
+			break;
 		// LOAD FONT:	filename:str
 		error("TODO: Implement opcode 0xf040 load font");
 		break;
 	}
 	case 0xf050: {
+		if (seq._executed) // this is a one-shot op
+			break;
 		// LOAD PAL:	filename:str
 		int newPalNum = _vm->getGamePals()->loadPalette(sval);
-		env._scriptPals[state._currentPalId] = newPalNum;
+		env._scriptPals[seq._currentPalId] = newPalNum;
 		break;
 	}
 	case 0xf060:
+		if (seq._executed) // this is a one-shot op
+			break;
 		// LOAD SONG:	filename:str
 		if (_vm->_platform == Common::kPlatformAmiga) {
 			// TODO: remove hard-coded stuff..
 			_vm->_soundPlayer->playAmigaSfx("DYNAMIX.INS", 0, 255);
 		} else if (_vm->_platform == Common::kPlatformMacintosh) {
 			_vm->_soundPlayer->loadMacMusic(sval.c_str());
-			_vm->_soundPlayer->playMusic(state._currentSongId);
+			_vm->_soundPlayer->playMusic(seq._currentSongId);
 		} else {
 			_vm->_soundPlayer->loadMusic(sval.c_str());
-			_vm->_soundPlayer->playMusic(state._currentSongId);
+			_vm->_soundPlayer->playMusic(seq._currentSongId);
 		}
 		break;
 
 	case 0x0220: // STOP CURRENT MUSIC
+		if (seq._executed) // this is a one-shot op
+			break;
 		_vm->_soundPlayer->stopMusic();
 		break;
 
@@ -398,7 +422,7 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 		return false;
 
 	// TODO: This seems to not be how it works in the original?
-	//if (seq._timeNext > g_system->getMillis()) {
+	//if (seq._timeNext > g_engine->getTotalPlayTime()) {
 	//	return true;
 	//}
 	//seq._timeNext = 0;
@@ -594,7 +618,7 @@ static const uint16 ADS_SEQ_OPCODES[] = {
 
 bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 	if (seq._timeInterval != 0) {
-		uint32 now = g_system->getMillis();
+		uint32 now = g_engine->getTotalPlayTime();
 		if (now < seq._timeNext) {
 			debug("env %d seq %d not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
 					seq._seqNum, seq._currentFrame, now, seq._timeNext, seq._timeInterval);
@@ -844,7 +868,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			seq->_runFlag = kRunType1;
 		} else if (runCount < 0) {
 			// Negative run count sets the cut time
-			seq->_timeCut = g_system->getMillis() + runCount;
+			seq->_timeCut = g_engine->getTotalPlayTime() + runCount;
 			// Should this be *10 like delays?
 			warning("TODO: check handling of negative runcount %d", runCount);
 			seq->_runFlag = kRunTypeTimeLimited;
@@ -1019,7 +1043,7 @@ bool ADSInterpreter::run() {
 				seq._lastFrame = seq._currentFrame;
 				result = true;
 				if (_adsData._scriptDelay != -1 && seq._timeInterval != _adsData._scriptDelay) {
-					uint32 now = g_system->getMillis();
+					uint32 now = g_engine->getTotalPlayTime();
 					seq._timeNext = now + _adsData._scriptDelay;
 					seq._timeInterval = _adsData._scriptDelay;
 				}
@@ -1055,7 +1079,7 @@ bool ADSInterpreter::run() {
 			}
 		}
 
-		if (rflag == kRunTypeTimeLimited && seq._timeCut > g_system->getMillis()) {
+		if (rflag == kRunTypeTimeLimited && seq._timeCut > g_engine->getTotalPlayTime()) {
 			seq._runFlag = kRunTypeFinished;
 		}
 	}
