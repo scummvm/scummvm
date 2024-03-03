@@ -69,6 +69,72 @@ void TTMInterpreter::updateScreen(struct TTMSeq &state) {
 	g_system->updateScreen();
 }
 
+static const char *ttmOpName(uint16 op) {
+	switch (op) {
+	case 0x0000: return "FINISH";
+	case 0x0020: return "SAVE(free?) BACKGROUND";
+	case 0x0070: return "FREE PALETTE";
+	case 0x0080: return "FREE SHAPE / DRAW BACKGROUND??";
+	case 0x0090: return "FREE FONT";
+	case 0x00B0: return "NULLOP";
+	case 0x0110: return "PURGE";
+	case 0x0ff0: return "FINISH FRAME / DRAW";
+	case 0x1020: return "SET DELAY";
+	case 0x1030: return "SET BRUSH";
+	case 0x1050: return "SELECT BMP";
+	case 0x1060: return "SELECT PAL";
+	case 0x1090: return "SELECT SONG";
+	case 0x10a0: return "SET SCENE";
+	case 0x1100: // fall through
+	case 0x1110: return "SET SCENE";
+	case 0x1120: return "SET GETPUT NUM";
+	case 0x1200: return "GOTO";
+	case 0x1300: return "PLAY SFX";
+	case 0x2000: return "SET DRAW COLORS";
+	case 0x4000: return "SET CLIP WINDOW";
+	case 0x4110: return "FADE OUT";
+	case 0x4120: return "FADE IN";
+	case 0x4200: return "STORE AREA";
+	case 0x4210: return "SAVE GETPUT REGION";
+	case 0xa000: return "DRAW PIXEL";
+	case 0xa050: return "SAVE REGION";
+	case 0xa0a0: return "DRAW LINE";
+	case 0xa100: return "DRAW FILLED RECT";
+	case 0xa110: return "DRAW EMPTY RECT";
+	case 0xa520: return "DRAW SPRITE FLIP";
+	case 0xa530: return "DRAW BMP4";
+	case 0xa500: return "DRAW BMP";
+	case 0xf010: return "LOAD SCR";
+	case 0xf020: return "LOAD BMP";
+	case 0xf040: return "LOAD FONT";
+	case 0xf050: return "LOAD PAL";
+	case 0xf060: return "LOAD SONG";
+	case 0x0220: return "STOP CURRENT MUSIC";
+
+	case 0x00C0: return "FREE BACKGROUND";
+	case 0x0230: return "reset current music?";
+	case 0x1070: return "SELECT FONT";
+	case 0x1310: return "STOP SFX";
+	case 0x2010: return "SET FRAME";
+	case 0x2020: return "SET TIMER";
+	case 0xa300: return "DRAW some string";
+	case 0xa400: return "DRAW FILLED CIRCLE";
+	case 0xa424: return "DRAW EMPTY CIRCLE";
+	case 0xa510: return "DRAW SPRITE1";
+	case 0xa600: return "CLEAR SCREEN";
+	case 0xb000: return "? (0 args)";
+	case 0xb010: return "? (3 args: 30, 2, 19)";
+	case 0xb600: return "DRAW SCREEN";
+	case 0xc020: return "LOAD_SAMPLE";
+	case 0xc030: return "SELECT_SAMPLE";
+	case 0xc040: return "DESELECT_SAMPLE";
+	case 0xc050: return "PLAY_SAMPLE";
+	case 0xc060: return "STOP_SAMPLE";
+
+	default: return "UNKNOWN!!";
+	}
+}
+
 void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -76,7 +142,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 	case 0x0000:
 		// FINISH:	void
 		break;
-	case 0x0020: // SAVE BACKGROUND
+	case 0x0020: // SAVE (free?) BACKGROUND
 		_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
 		break;
 	case 0x0070: // FREE PALETTE
@@ -87,6 +153,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		break;
 	case 0x0090: // FREE FONT
 		error("TODO: Implement me: free font (current one)");
+		break;
+	case 0x00B0:
+		// Does nothing?
 		break;
 	case 0x0110: // PURGE void
 		_vm->adsInterpreter()->setHitTTMOp0110();
@@ -99,7 +168,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
-		_vm->adsInterpreter()->setScriptDelay(ivals[0] * 10);
+		// Delay of 240 should be 2 seconds, so this is in quarter-frames.
+		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
+		// 		 in game frames, not millis.
+		_vm->adsInterpreter()->setScriptDelay((int)(ivals[0] * 8.33));
 		break;
 	case 0x1030: {
 		// SET BRUSH:	id:int [-1:n]
@@ -156,6 +228,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &state, uint1
 		} else {
 			// The original tight-loops here with 640 steps and i/10 as the fade level..
 			// bring that down a bit to use less cpu.
+			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
@@ -324,11 +397,14 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	if (scr->pos() >= scr->size())
 		return false;
 
-	if (seq._timeNext > g_system->getMillis()) {
-		return true;
-	}
-	seq._timeNext = 0;
+	// TODO: This seems to not be how it works in the original?
+	//if (seq._timeNext > g_system->getMillis()) {
+	//	return true;
+	//}
+	//seq._timeNext = 0;
 
+	debug("TTM: Run env %d seq %d frame %d (scr offset %d)", seq._enviro, seq._seqNum,
+			seq._currentFrame, (int)scr->pos());
 	uint16 code = 0;
 	while (code != 0x0ff0 && scr->pos() < scr->size()) {
 		code = scr->readUint16LE();
@@ -362,7 +438,7 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 				debugN("%d", ivals[i]);
 			}
 		}
-		debug(" ");
+		debug(" (%s)", ttmOpName(op));
 
 		handleOperation(env, seq, op, count, ivals, sval);
 	}
@@ -423,14 +499,17 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 }
 
 void TTMSeq::reset() {
-	ARRAYCLEAR(_slot);
+	_currentFontId = 0;
+	_currentPalId = 0;
+	_currentPalId = 0;
+	_currentBmpId = 0;
+	_currentGetPutId = 0;
     _currentFrame = _startFrame;
     _gotoFrame = -1;
     _drawColBG = 0xf;
     _drawColFG = 0xf;
-    //_brush_num = 0;
-    _currentBmpId = 0;
-    _timeCut = 0;
+    _brushNum = 0;
+    _timeInterval = 0;
     _timeNext = 0;
     _runCount = 0;
     _runPlayed = 0;
@@ -516,19 +595,24 @@ static const uint16 ADS_SEQ_OPCODES[] = {
 bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 	if (seq._timeInterval != 0) {
 		uint32 now = g_system->getMillis();
-		if (now < seq._timeNext)
+		if (now < seq._timeNext) {
+			debug("env %d seq %d not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
+					seq._seqNum, seq._currentFrame, now, seq._timeNext, seq._timeInterval);
 			return false;
+		}
 		seq._timeNext = now + seq._timeInterval;
 	}
 
 	seq._executed = false;
 	if (seq._gotoFrame == -1) {
+		debug("env %d seq %d advance to frame %d->%d (start %d last %d)", seq._enviro,
+				seq._seqNum, seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
 		seq._currentFrame++;
-		debug("env %d seq %d advance to frame %d", seq._enviro, seq._seqNum, seq._currentFrame);
 	} else {
+		debug("env %d seq %d goto to frame %d->%d (start %d last %d)", seq._enviro,
+				seq._seqNum, seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
 		seq._currentFrame = seq._gotoFrame;
 		seq._gotoFrame = -1;
-		debug("env %d seq %d goto to frame %d", seq._enviro, seq._seqNum, seq._currentFrame);
 	}
 
 	return true;
@@ -656,7 +740,7 @@ void ADSInterpreter::findEndOrInitOp() {
 
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
-	
+
 	//debug("ADSOP: 0x%04x", code);
 
 	switch (code) {
@@ -884,7 +968,6 @@ bool ADSInterpreter::run() {
 		int32 offset = _adsData._segments[i];
 		_adsData.scr->seek(offset);
 		/*int16 segnum =*/ _adsData.scr->readSint16LE();
-		offset += 2;
 		if (state & 8) {
 			state &= 0xfff7;
 			_adsData._state[i] = state;
