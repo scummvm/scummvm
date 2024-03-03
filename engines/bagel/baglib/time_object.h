@@ -49,9 +49,17 @@ public:
 	CBagTimeObject();
 	virtual ~CBagTimeObject();
 
+	/**
+	 * Create all 5 sprite objects for the clock and set their positions
+	 */
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 	BOOL IsAttached() { return m_xDig1 != nullptr; }
+
+	/**
+	 * Takes in info and then removes the relative information and returns the info
+	 * without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	CBofRect GetRect();
@@ -60,6 +68,11 @@ public:
 	VOID SetCels(int nCels);
 	virtual VOID SetPosition(CBofPoint &pos);
 
+	/**
+	 * Read in the value of the associated variable and set the time equal
+	 * to the first 4 digits of the variable if the variable is less the 4 digits
+	 * the time is padded with 0's if it is greater the 4 we truncate to remaining digits
+	 */
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
