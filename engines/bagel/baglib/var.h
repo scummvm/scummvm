@@ -94,6 +94,7 @@ private:
 public:
 	CBagVarManager();
 	~CBagVarManager();
+	static void initStatics();
 
 	ERROR_CODE RegisterVariable(CBagVar *pVar);
 	ERROR_CODE UnRegisterVariable(CBagVar *pVar);

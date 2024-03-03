@@ -32,6 +32,7 @@
 
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/parse_object.h"
+#include "bagel/baglib/var.h"
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
@@ -49,6 +50,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	// baglib/ class statics initializations
 	CBagDossierObject::initStatics();
 	CBagParseObject::initStatics();
+	CBagVarManager::initStatics();
 
 	// boflib/ class statics initializations
 	CCache::initStatics();
