@@ -20,6 +20,7 @@
  */
 
 #include "bagel/baglib/bmp_object.h"
+#include "bagel/boflib/app.h"
 
 namespace Bagel {
 
@@ -64,7 +65,7 @@ CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT nM
 		m_nTrans = nMaskColor;
 		return m_xBmp->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
 	} else
-		return 0;
+		return ERR_NONE;
 }
 
 ERROR_CODE
@@ -92,7 +93,8 @@ CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nM
 		if (m_xBmp->Paint(pBmp, pt.x, pt.y, pSrcRect, nMaskColor))
 			return ERR_UNKNOWN;
 	}
-	return 0;
+
+	return ERR_NONE;
 }
 
 BOOL CBagBmpObject::IsInside(const CBofPoint &xPoint) {
@@ -101,10 +103,12 @@ BOOL CBagBmpObject::IsInside(const CBofPoint &xPoint) {
 			int x = xPoint.x - GetRect().left;
 			int y = xPoint.y - GetRect().top;
 			int c = m_xBmp->ReadPixel(x, y);
-			return (c != m_nTrans);
-		} else
+			return c != m_nTrans;
+		} else {
 			return TRUE;
+		}
 	}
+
 	return FALSE;
 }
 

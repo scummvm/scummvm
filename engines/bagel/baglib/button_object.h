@@ -23,18 +23,20 @@
 #ifndef BAGEL_BAGLIB_BUTTON_OBJECT_H
 #define BAGEL_BAGLIB_BUTTON_OBJECT_H
 
-#include "bagel/baglib/bag_sprite_object.h"
+#include "bagel/baglib/sprite_object.h"
 
 namespace Bagel {
 
 class CBagButtonObject : public CBagSpriteObject {
 public:
-	enum BUTTON_TYPE { PUSH = 0,
-					   CHECKBOX = 1,
-					   HLEVER = 2,
-					   VLEVER = 3,
-					   DIAL = 4,
-					   SLIDER = 5 };
+	enum BUTTON_TYPE {
+		PUSH = 0,
+		CHECKBOX = 1,
+		HLEVER = 2,
+		VLEVER = 3,
+		DIAL = 4,
+		SLIDER = 5
+	};
 
 private:
 	BOOL m_bDragging;
