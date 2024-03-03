@@ -121,9 +121,7 @@ public:
 
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize);
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *nValue, INT nDefault);
-#if BOF_MAC
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, INT nDefault);
-#endif
 
 	VOID SetAppName(const CHAR *pszNewAppName) { Common::strcpy_s(m_szAppName, pszNewAppName); }
 

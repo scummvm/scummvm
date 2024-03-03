@@ -81,9 +81,9 @@ public:
 
 	// Attributes & Operations
 
-	INT GetBufferSize() const { return (NORMALIZEBUFFERSIZE()); }
-	INT GetLength() const { return (m_nLength); }
-	BOOL IsEmpty() const { return (m_nLength == 0); }
+	INT GetBufferSize() const { return NORMALIZEBUFFERSIZE(); }
+	INT GetLength() const { return m_nLength; }
+	BOOL IsEmpty() const { return m_nLength == 0; }
 
 	/**
 	 * De-Allocates internal buffer for current CBofString
@@ -96,7 +96,7 @@ public:
 	CHAR operator[](INT nIndex); // same as GetAt
 	VOID SetAt(INT nIndex, CHAR ch);
 
-	operator const CHAR *() const { return ((const CHAR *)m_pszData); }
+	operator const CHAR *() const { return (const CHAR *)m_pszData; }
 
 	// Hashing support.
 	//
