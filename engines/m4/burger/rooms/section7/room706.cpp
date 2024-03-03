@@ -28,7 +28,8 @@ namespace Burger {
 namespace Rooms {
 
 enum {
-	kCHANGE_ASTRAL_ANIMATION = 33
+	kCHANGE_ASTRAL_ANIMATION = 33,
+	kCHANGE_FLUMIX_ANIMATION = 34
 };
 
 static const seriesStreamBreak SERIES1[] = {
@@ -248,8 +249,8 @@ void Room706::daemon() {
 
 	case 4:
 		player_set_commands_allowed(true);
-		getRoomVal();
-		kernel_trigger_dispatch_now(34);
+		getFlumixShould();
+		kernel_trigger_dispatch_now(kCHANGE_FLUMIX_ANIMATION);
 		conv_load_and_prepare("conv83", 5);
 		conv_play_curr();
 		break;
@@ -265,6 +266,7 @@ void Room706::daemon() {
 			terminateMachineAndNull(_series6);
 
 		_flag5 = _flag6 = _flag7 = false;
+		_G(flumix_should) = 4;
 		series_unload(_series2);
 		series_unload(_series3);
 		series_unload(_series4);
@@ -457,16 +459,16 @@ void Room706::daemon() {
 		}
 		break;
 
-	case 34:
+	case kCHANGE_FLUMIX_ANIMATION:
 		switch (_G(flumix_should)) {
 		case 2:
-			getRoomVal();
-			series_play("706FLX01", 0x400, 0, 34, 6);
+			getFlumixShould();
+			series_play("706FLX01", 0x400, 0, kCHANGE_FLUMIX_ANIMATION, 6);
 			break;
 
 		case 3:
-			getRoomVal();
-			kernel_timing_trigger(60, 34);
+			getFlumixShould();
+			kernel_timing_trigger(60, kCHANGE_FLUMIX_ANIMATION);
 			break;
 
 		default:
@@ -569,7 +571,7 @@ void Room706::conv83() {
 	}
 }
 
-void Room706::getRoomVal() {
+void Room706::getFlumixShould() {
 	_G(flumix_should) = imath_ranged_rand(1, 100) >= 10 ? 3 : 2;
 }
 

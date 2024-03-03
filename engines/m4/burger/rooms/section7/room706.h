@@ -45,7 +45,7 @@ private:
 	int _astralShould = 0;
 
 	void conv83();
-	void getRoomVal();
+	void getFlumixShould();
 
 public:
 	Room706() : Room() {
