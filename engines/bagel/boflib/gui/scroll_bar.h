@@ -26,6 +26,7 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/debug.h"
+#include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
 
