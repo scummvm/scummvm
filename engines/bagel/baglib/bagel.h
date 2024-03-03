@@ -25,14 +25,14 @@
 
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/gui/option.h"
+#include "bagel/boflib/options.h"
 #include "bagel/boflib/error.h"
-#include "bagel/baglib/master.h"
+#include "bagel/baglib/gui/master_win.h"
 #include "bagel/baglib/res.h"
-#include "bagel/baglib/gui/cursor.h"
+#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/list.h"
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/htbl.h"
+#include "bagel/boflib/vhash_table.h"
 
 namespace Bagel {
 
@@ -125,7 +125,7 @@ public:
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, INT nDefault);
 #endif
 
-	VOID SetAppName(const CHAR *pszNewAppName) { strcpy(m_szAppName, pszNewAppName); }
+	VOID SetAppName(const CHAR *pszNewAppName) { Common::strcpy_s(m_szAppName, pszNewAppName); }
 
 	const CHAR *GetAppName() { return (const CHAR *)m_szAppName; }
 

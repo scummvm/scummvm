@@ -23,7 +23,7 @@
 #ifndef BAGEL_BAGLIB_CURSOR_H
 #define BAGEL_BAGLIB_CURSOR_H
 
-#include "bagel/boflib/gfx/bmp.h"
+#include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/error.h"
 
 namespace Bagel {

@@ -23,15 +23,16 @@
 #ifndef BAGEL_BAGLIB_GUI_SAVE_DIALOG_H
 #define BAGEL_BAGLIB_GUI_SAVE_DIALOG_H
 
-namespace Bagel {
-
 #include "bagel/baglib/gui/storage_dev_win.h"
 #include "bagel/baglib/save_game_file.h"
-#include "bagel/boflib/gui/listbox.h"
-#include "bagel/boflib/gui/scrollbox.h"
+#include "bagel/boflib/gui/dialog.h"
+#include "bagel/boflib/gui/list_box.h"
+#include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gui/edit.h"
+#include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/string.h"
+
+namespace Bagel {
 
 #define NUM_BUTTONS 6
 

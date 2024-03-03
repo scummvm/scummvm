@@ -23,10 +23,9 @@
 #ifndef BAGEL_BAGLIB_SAVE_GAME_FILE_H
 #define BAGEL_BAGLIB_SAVE_GAME_FILE_H
 
+#include "bagel/boflib/dat_file.h"
+
 namespace Bagel {
-
-
-#include <cdatfile.h>
 
 #define MAX_SAVEDGAMES 40
 #define MAX_SAVETITLE 128
