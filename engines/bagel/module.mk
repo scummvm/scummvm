@@ -55,6 +55,7 @@ MODULE_OBJS = \
 	boflib/gfx/palette.o \
 	boflib/gfx/sprite.o \
 	boflib/gfx/text.o \
+	boflib/gui/dialog.o \
 	boflib/gui/display_button.o \
 	boflib/gui/display_object.o \
 	boflib/gui/display_window.o \

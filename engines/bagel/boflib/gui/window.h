@@ -310,6 +310,8 @@ public:
 
 	virtual VOID Enable() { warning("STUB: CBofWindow::Enable()"); }
 	virtual VOID Disable() { warning("STUB: CBofWindow::Disable()"); }
+	BOOL IsEnabled() { warning("STUB: CBofWindow::IsEnabled()"); return true; }
+	VOID UpdateWindow() { warning("STUB: CBofWindow::UpdateWindow()"); }
 
 #if BOF_WINDOWS
 
