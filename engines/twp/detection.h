@@ -41,11 +41,26 @@ enum TwpDebugChannels {
 	kDebugConsole
 };
 
+enum GameXorKey {
+	GAME_XORKEY_56AD,
+	GAME_XORKEY_566D,
+	GAME_XORKEY_5B6D,
+	GAME_XORKEY_5BAD,
+};
+
+enum LanguageSupported {
+	LS_WITH_RUSSIAN,
+	LS_WITHOUT_RUSSIAN
+};
+
 extern const PlainGameDescriptor twpGames[];
+struct TwpGameDescription {
+	ADGameDescription desc;
+	GameXorKey xorKey;
+	LanguageSupported languageSupported;
+};
 
-extern const ADGameDescription gameDescriptions[];
-
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+extern const TwpGameDescription gameDescriptions[];
 
 } // End of namespace Twp
 

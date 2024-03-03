@@ -25,26 +25,91 @@ const PlainGameDescriptor twpGames[] = {
 	{"twp", "Thimbleweed Park"},
 	{0, 0}};
 
-const ADGameDescription gameDescriptions[] = {
-	// Thimbleweed Park - GOG/1.0.958
+const TwpGameDescription gameDescriptions[] = {
+	// Thimbleweed Park - STEAM/1.0.859
 	{
-		"twp",
-		"",
-		AD_ENTRY1s("ThimbleweedPark.ggpack1", "6180145221d18e9e9caac6459e840579", 502661439),
-		Common::UNK_LANG,
-		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)},
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "b1c35b7a6b5b0c2e6f466ea384f22558", 435353845),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_5B6D,
+		LS_WITHOUT_RUSSIAN
+	},
 	// Thimbleweed Park - EPIC Games/1.0.955
 	{
-		"twp",
-		"",
-		AD_ENTRY1s("ThimbleweedPark.ggpack1", "a97546ee2d9e19aab59714a267009a31", 502540584),
-		Common::UNK_LANG,
-		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)},
-
-	AD_TABLE_END_MARKER};
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "a97546ee2d9e19aab59714a267009a31", 502540584),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_566D,
+		LS_WITH_RUSSIAN
+	},
+	// Thimbleweed Park - GOG/1.0.938
+	{
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "5532019821c077dda5cf86b619e4b173", 502495748),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_566D,
+		LS_WITH_RUSSIAN
+	},
+	// Thimbleweed Park - GOG/1.0.951
+  	{
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "f0bd29df9fcaba3d4047eac1046e0abf", 502503739),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_566D,
+		LS_WITH_RUSSIAN
+	},
+	// Thimbleweed Park - GOG/1.0.957
+  	{
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "5631cf51cb7afc4babf7f2d5a8bdfc21", 502661437),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_56AD,
+		LS_WITH_RUSSIAN
+	},
+  	// Thimbleweed Park - GOG/1.0.958
+	{
+		{
+			"twp",
+			"",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "6180145221d18e9e9caac6459e840579", 502661439),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_56AD,
+		LS_WITH_RUSSIAN
+	},
+	{AD_TABLE_END_MARKER,(GameXorKey)0, (LanguageSupported)0}};
 
 } // End of namespace Twp
