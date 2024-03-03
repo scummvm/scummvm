@@ -53,6 +53,7 @@ MODULE_OBJS = \
 	boflib/gfx/bitmap.o \
 	boflib/gfx/cursor.o \
 	boflib/gfx/palette.o \
+	boflib/gfx/sprite.o \
 	boflib/gfx/text.o \
 	boflib/gui/display_button.o \
 	boflib/gui/display_object.o \
