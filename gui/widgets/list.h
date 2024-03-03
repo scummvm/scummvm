@@ -97,6 +97,8 @@ protected:
 	FilterMatcher	_filterMatcher;
 	void			*_filterMatcherArg;
 
+	Common::Array<bool>	_listSelected;
+
 public:
 	ListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -130,6 +132,9 @@ public:
 	void setEditable(bool editable)				{ _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
+
+	void appendToSelectedList(bool selected) { _listSelected.push_back(selected); }
+	void clearSelectedList() { _listSelected.clear(); }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser
 	void startEditMode() override;
