@@ -343,48 +343,15 @@ ERROR_CODE CBofDisplayWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCa
 
 ERROR_CODE CBofDisplayWindow::KillTimer(UINT nTimerID) {
 	Assert(IsValidObject(this));
-	INT i;
 
-	CBofTimer *pTimer;
-
-	// Find and remove specified timer from the list of timers
-	//
-	//pTimer = CBofTimer::m_pTimerList;
-	/*for (i = 0; i < CBofTimer::m_cTimerList.GetCount(); i++) {
-	    pTimer = CBofTimer::m_cTimerList[i];
-
-	    if (pTimer->m_nID == nTimerID && (CBofDisplayWindow *)pTimer->m_lUserInfo == this) {
-	        delete pTimer;
-	        break;
-	    }
-	}*/
-
-	return (m_errCode);
+	return m_errCode;
 }
 
 
 ERROR_CODE CBofDisplayWindow::KillMyTimers(VOID) {
 	Assert(IsValidObject(this));
 
-	CBofTimer *pTimer;
-	INT i;
-
-	i = 0;
-	/*while (i < CBofTimer::m_cTimerList.GetCount()) {
-
-	    pTimer = CBofTimer::m_cTimerList[i];
-
-	    if ((CBofDisplayWindow *)pTimer->m_lUserInfo == this) {
-	        delete pTimer;
-	        i = 0;
-	        continue;
-	    }
-
-	    // next timer
-	    i++;
-	}*/
-
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDisplayWindow::SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh) {
@@ -402,7 +369,7 @@ ERROR_CODE CBofDisplayWindow::SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh) {
 		UpdateDirtyRect();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -412,7 +379,7 @@ ERROR_CODE CBofDisplayWindow::SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh)
 	CBofBitmap *pBitmap;
 	pBitmap = LoadBitmap(pszBmpFile);
 
-	return (SetBackdrop(pBitmap, bRefresh));
+	return SetBackdrop(pBitmap, bRefresh);
 }
 
 
@@ -426,7 +393,7 @@ ERROR_CODE CBofDisplayWindow::SetCapture(VOID) {
 		m_pCaptureWindow = this;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -437,7 +404,7 @@ ERROR_CODE CBofDisplayWindow::ReleaseCapture(VOID) {
 		m_pCaptureWindow = (CBofDisplayWindow *)m_cCaptureStack.Pop();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -562,7 +529,7 @@ CBofDisplayWindow *CBofDisplayWindow::FindWindowFromPoint(const CBofPoint &cPoin
 		pWindow = (CBofDisplayWindow *)m_pMainDisplay->GetChildFromPoint(cPoint);
 	}
 
-	return (pWindow);
+	return pWindow;
 }
 
 } // namespace Bagel
