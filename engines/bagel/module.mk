@@ -61,6 +61,7 @@ MODULE_OBJS = \
 	boflib/gui/display_object.o \
 	boflib/gui/display_window.o \
 	boflib/gui/edit_text.o \
+	boflib/gui/list_box.o \
 	boflib/gui/movie.o \
 	boflib/gui/window.o
 
