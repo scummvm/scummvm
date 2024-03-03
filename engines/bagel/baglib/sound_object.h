@@ -84,6 +84,10 @@ public:
 	INT GetProperty(const CBofString &sProp);
 	VOID SetProperty(const CBofString &sProp, int nVal);
 
+	/**
+	 * Takes in info and then removes the relative information and returns
+	 * the info without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	//  Added properties to sound object
