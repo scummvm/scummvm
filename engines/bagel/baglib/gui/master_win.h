@@ -32,6 +32,7 @@
 #include "bagel/baglib/object.h"
 #include "bagel/baglib/gui/save_dialog.h"
 #include "bagel/baglib/var.h"
+#include "bagel/boflib/gui/text_box.h"
 
 namespace Bagel {
 
@@ -55,6 +56,12 @@ class CBagStorageDev;
 VOID SetCICStatus(CBagStorageDev *pSDev);
 BOOL GetCICStatus();
 
+/**
+ * This is the main window that is never destroyed throughout the game.
+ * It handles bringing new windows in and out of focus as well as
+ * containing the parsing file and info.  It also captures
+ * keyboard entry and will save state information
+ */
 class CBagMasterWin : public CBofWindow, public CBagParseObject {
 protected:
 	static BOOL m_bObjSave;

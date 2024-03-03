@@ -25,7 +25,7 @@
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gui/box.h"
+#include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
 

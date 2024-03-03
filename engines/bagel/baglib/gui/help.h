@@ -23,8 +23,8 @@
 #ifndef BAGEL_BAGLIB_GUI_HELP_H
 #define BAGEL_BAGLIB_GUI_HELP_H
 
-#include "bagel/baglib/sdev.h"
-#include "bagel/boflib/gui/box.h"
+#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/string.h"
 

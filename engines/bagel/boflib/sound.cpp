@@ -332,6 +332,9 @@ VOID CBofSound::ResetQVolumes(VOID) {
 		m_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 }
+#else
+void CBofSound::ResetQVolumes() {
+}
 #endif
 
 
