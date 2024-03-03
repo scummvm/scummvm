@@ -266,11 +266,12 @@ public:
 				pNode->m_pNext->m_pPrev = pNode->m_pPrev;
 
 			delete pNode;
+
+			RecalcItemList();
+			return retVal;
+		} else {
+			return T();
 		}
-
-		RecalcItemList();
-
-		return retVal;
 	}
 
 	/**
