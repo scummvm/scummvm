@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	boflib/gui/display_button.o \
 	boflib/gui/display_object.o \
 	boflib/gui/display_window.o \
+	boflib/gui/edit_text.o \
 	boflib/gui/movie.o \
 	boflib/gui/window.o
 
