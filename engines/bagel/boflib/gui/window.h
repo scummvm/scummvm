@@ -312,6 +312,8 @@ public:
 	virtual VOID Disable() { warning("STUB: CBofWindow::Disable()"); }
 	BOOL IsVisible() { warning("STUB: CBofWindow::IsEnabled()"); return true; }
 	BOOL IsEnabled() { warning("STUB: CBofWindow::IsEnabled()"); return true; }
+
+	VOID SetFocus() { warning("STUB: CBofWindow::UpdateWindow()"); }
 	VOID UpdateWindow() { warning("STUB: CBofWindow::UpdateWindow()"); }
 
 #if BOF_WINDOWS
