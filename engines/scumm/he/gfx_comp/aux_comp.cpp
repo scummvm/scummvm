@@ -28,22 +28,18 @@
 
 namespace Scumm {
 
-#define WRLE_QUICK_CACHE					(0)
-#define WRLE_CAN_STOP_EARLY					(0)
-#define TRACK_COMPRESSION_STATS				(0)
-
-#define WRLE_BIT_SIZE(zp)					(1 << (8-(zp)))
+#define WRLE_BIT_SIZE(zp)					(1 << (8 - (zp)))
 
 #define WRLE_TINY_RUN_BITS					0x01
 #define WRLE_TINY_RUN_BIT_COUNT				1
 #define WRLE_TINY_RUN_COUNT_BITS			2
 #define WRLE_TINY_RUN_MIN_COUNT				3
-#define WRLE_TINY_RUN_BITS_OVERHEAD			((WRLE_TINY_RUN_BIT_COUNT)+(WRLE_TINY_RUN_COUNT_BITS))
+#define WRLE_TINY_RUN_BITS_OVERHEAD			((WRLE_TINY_RUN_BIT_COUNT) + (WRLE_TINY_RUN_COUNT_BITS))
 #define WRLE_TINY_RUN_MAX_COUNT				((WRLE_TINY_RUN_MIN_COUNT) + ((1 << (WRLE_TINY_RUN_COUNT_BITS)) - 1))
 
 #define WRLE_TRUN_BITS						0x00
 #define WRLE_TRUN_BIT_COUNT					2
-#define WRLE_SMALL_TRUN_SIZE				(WRLE_BIT_SIZE(WRLE_TRUN_BIT_COUNT)-1)
+#define WRLE_SMALL_TRUN_SIZE				(WRLE_BIT_SIZE(WRLE_TRUN_BIT_COUNT) - 1)
 #define WRLE_LARGE_TRUN_SIZE				65536
 
 #define WRLE_SINGLE_COLOR_BITS				0x02
@@ -51,42 +47,36 @@ namespace Scumm {
 
 #define WRLE_LESS_RUN_BITS					0x06
 #define WRLE_LESS_RUN_BIT_COUNT				3
-#define WRLE_LESS_SMALL_RUN_SIZE			(WRLE_BIT_SIZE(WRLE_LESS_RUN_BIT_COUNT)-1)
+#define WRLE_LESS_SMALL_RUN_SIZE			(WRLE_BIT_SIZE(WRLE_LESS_RUN_BIT_COUNT) - 1)
 #define WRLE_LESS_LARGE_RUN_SIZE			256
 
-#define AUX_IGNORE_ZPLANE_BITS(_dst, _mask, _count)         \
-	{                                                       \
-		 int _counter;                                      \
-		for (_counter = 0; _counter < _count; _counter++) { \
-			if (0 == (_mask >>= 1)) {                       \
-				_mask = 0x80;                               \
-				_dst++;                                     \
-			}                                               \
-		}                                                   \
+#define AUX_IGNORE_ZPLANE_BITS(_dst, _mask, _count) {           \
+		for (int _counter = 0; _counter < _count; _counter++) { \
+			if (0 == (_mask >>= 1)) {                           \
+				_mask = 0x80;                                   \
+				_dst++;                                         \
+			}                                                   \
+		}                                                       \
 	}
 
-#define AUX_SET_ZPLANE_BITS(_dst, _mask, _count)            \
-	{                                                       \
-		int _counter;                                       \
-		for (_counter = 0; _counter < _count; _counter++) { \
-			*(_dst) |= _mask;                               \
-			if (0 == (_mask >>= 1)) {                       \
-				_mask = 0x80;                               \
-				_dst++;                                     \
-			}                                               \
-		}                                                   \
+#define AUX_SET_ZPLANE_BITS(_dst, _mask, _count) {              \
+		for (int _counter = 0; _counter < _count; _counter++) { \
+			*(_dst) |= _mask;                                   \
+			if (0 == (_mask >>= 1)) {                           \
+				_mask = 0x80;                                   \
+				_dst++;                                         \
+			}                                                   \
+		}                                                       \
 	}
 
-#define AUX_CLEAR_ZPLANE_BITS(_dst, _mask, _count)          \
-	{                                                       \
-		int _counter;                                       \
-		for (_counter = 0; _counter < _count; _counter++) { \
-			*(_dst) &= ~_mask;                              \
-			if (0 == (_mask >>= 1)) {                       \
-				_mask = 0x80;                               \
-				_dst++;                                     \
-			}                                               \
-		}                                                   \
+#define AUX_CLEAR_ZPLANE_BITS(_dst, _mask, _count) {            \
+		for (int _counter = 0; _counter < _count; _counter++) { \
+			*(_dst) &= ~_mask;                                  \
+			if (0 == (_mask >>= 1)) {                           \
+				_mask = 0x80;                                   \
+				_dst++;                                         \
+			}                                                   \
+		}                                                       \
 	}
 
 

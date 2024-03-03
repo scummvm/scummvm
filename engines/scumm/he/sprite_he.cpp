@@ -1258,6 +1258,7 @@ void Sprite::renderSprites(bool arg) {
 	int angle, scale;
 	int32 w, h;
 	WizImageCommand wiz;
+	wiz.reset();
 
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];

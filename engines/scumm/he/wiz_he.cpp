@@ -1091,22 +1091,6 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return dataSize;
 }
 
-static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt) {
-	debug(9, "wizPackType0([%d,%d,%d,%d])", rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
-	int w = rCapt.width();
-	int h = rCapt.height();
-	int size = w * h;
-	if (dst) {
-		src += rCapt.top * srcPitch + rCapt.left;
-		while (h--) {
-			memcpy(dst, src, w);
-			dst += w;
-			src += srcPitch;
-		}
-	}
-	return size;
-}
-
 void Wiz::processWizImageCaptureCmd(const WizImageCommand *params) {
 	bool compressIt = (params->compressionType == kWCTTRLE);
 	bool background = (params->flags & kWRFBackground) != 0;
@@ -1255,9 +1239,10 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	if (shadowImage) {
 		shadow_p = (byte *)getColorMixBlockPtrForWiz(shadowImage);
 
-		if (shadow_p) {
-			shadow_p += 8;
-		}
+		// TODO: I don't think this is needed here?
+		//if (shadow_p) {
+		//	shadow_p += 8;
+		//}
 	} else {
 		shadow_p = nullptr;
 	}
@@ -1277,7 +1262,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	// Get the header for this "state"
-	pp = (byte *)getWizStateHeaderPrim(globNum, state);
+	pp = getWizStateHeaderPrim(globNum, state);
 	if (!pp)
 		error("Wiz::drawAWizPrimEx(): %d state %d missing header", globNum, state);
 
@@ -1285,12 +1270,12 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
 	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
 
-	if ((!isUncompressedFormatTypeID(src_c)) && (kWCTTRLE != src_c)) {
+	if ((!isUncompressedFormatTypeID(src_c)) && (src_c != kWCTTRLE)) {
 		error("Wiz::drawAWizPrimEx(): %d has invalid compression type %d", globNum, src_c);
 	}
 
 	// Get the data block for this "state"
-	src_d = (byte *)getWizStateDataPrim( globNum, state);
+	src_d = (byte *)getWizStateDataPrim(globNum, state);
 	if (!src_d)
 		error("Wiz::drawAWizPrimEx(): %d state %d missing data block", globNum, state);
 
@@ -1328,7 +1313,11 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	if (flags & (kWRFPrint | kWRFAlloc)) {
 		dest_w = src_w;
 		dest_h = src_h;
-		dest_p = (WizRawPixel *)malloc(dest_w * dest_h * sizeof(WizRawPixel));
+		if (_uses16BitColor) {
+			dest_p = (WizRawPixel *)malloc(dest_w * dest_h * sizeof(WizRawPixel16));
+		} else {
+			dest_p = (WizRawPixel *)malloc(dest_w * dest_h * sizeof(WizRawPixel8));
+		}
 
 		if (!dest_p) {
 			warning("Wiz::drawAWizPrimEx(): Not enough memory for image operation (print / other)");
@@ -1419,12 +1408,12 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 
 			if (flags & kWRFRemap)
 				dataPtr = remap_p + _vm->_resourceHeaderSize + 4;
-			// TODO
-			//TRLEFLIP_DecompressImage(
-			//	dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
-			//	x, y, src_w, src_h, &clip_r, flags, dataPtr,
-			//	optionalColorConversionTable,
-			//	optionalICmdPtr);
+
+			TRLEFLIP_DecompressImage(
+				dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
+				x, y, src_w, src_h, &clip_r, flags, dataPtr,
+				optionalColorConversionTable,
+				optionalICmdPtr);
 		}
 
 	} else {
@@ -1443,8 +1432,8 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			transColorOverride = -1;
 		}
 
-		if (kWCTNone16Bpp != src_c && kWCTNone16BppBigEndian != src_c) {
-			if (kWCTNone == src_c) {
+		if (src_c != kWCTNone16Bpp && src_c != kWCTNone16BppBigEndian) {
+			if (src_c == kWCTNone) {
 				pgDraw8BppFormatImage(
 					dest_p, (byte *)(src_d + _vm->_resourceHeaderSize), dest_w, dest_h,
 					x, y, src_w, src_h, &clip_r, flags, dataPtr, transColorOverride,
@@ -1454,7 +1443,6 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			}
 
 		} else {
-
 			// Use the native transfer function
 			if (optionalColorConversionTable &&
 				((WizRawPixel *)_vm->getHEPaletteSlot(1) != optionalColorConversionTable)) {
@@ -1484,7 +1472,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			dest_r.bottom = y + src_h - 1;
 
 			if (findRectOverlap(&dest_r, &clip_r)) {
-				// If neither forground or background, copy to both
+				// If neither foreground or background, copy to both
 				if ((flags & kWRFBackground) || ((flags & (kWRFBackground | kWRFForeground)) == 0)) {
 					_vm->backgroundToForegroundBlit(dest_r);
 				} else {
@@ -1511,7 +1499,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 
 	dataSize = 0;
 
-	if (!rectPtr) {
+	if (rectPtr) {
 		if (!findRectOverlap(&compRect, rectPtr)) {
 			error("Build wiz incorrect size (%d,%d,%d,%d)", rectPtr->left, rectPtr->top, rectPtr->right, rectPtr->bottom);
 		}
@@ -1530,10 +1518,9 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	}
 
 	if (compressionType == kWCTTRLE) {
-		// TODO
-		//dataSize = TRLE_CompressImageArea(
-		//	nullptr, bufPtr, bufWidth, compRect.left, compRect.top, compRect.right, compRect.bottom,
-		//	(WizRawPixel)transparentColor);
+		dataSize = TRLE_CompressImageArea(
+			nullptr, bufPtr, bufWidth, compRect.left, compRect.top, compRect.right, compRect.bottom,
+			(WizRawPixel)transparentColor);
 	} else if (isUncompressedFormatTypeID(compressionType)) {
 		dataSize = ((getRectWidth(&compRect) *  getRectHeight(&compRect)) * sizeof(WizRawPixel));
 	} else {
@@ -1587,11 +1574,10 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 
 	if (compressionType == kWCTTRLE) {
 		if (!_uses16BitColor) {
-			// TODO
-			// TRLE_CompressImageArea(
-			// 	ptr + dataOffset, bufPtr, bufWidth,
-			// 	compRect.left, compRect.top, compRect.top, compRect.bottom,
-			// 	(byte)transparentColor);
+			TRLE_CompressImageArea(
+				ptr + dataOffset, bufPtr, bufWidth,
+				compRect.left, compRect.top, compRect.top, compRect.bottom,
+				(byte)transparentColor);
 		} else {
 			error("Incorrect type %d for current pixel mode 16 bit", compressionType);
 		}
@@ -1626,6 +1612,153 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	dataOffset += dataSize;
 	if (globSize != dataOffset) {
 		error("WIZ size mismatch!");
+	}
+}
+
+int Wiz::pixelHitTestWiz(int image, int state, int x, int y, int32 flags) {
+	return pixelHitTestWizPrim(image, state, x, y, flags);
+}
+
+int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
+
+#ifdef SCUMM_XTL_BRIDGE // 5/9/2000 BPT
+	int outValue = 0;
+
+	if (PU_OverrideImagePixelHitTest(&outValue, globType, globNum, state, x, y, flags)) {
+		return outValue;
+	}
+#endif
+
+	int src_c, src_w, src_h;
+	byte *src_d;
+	byte *pp;
+
+	// Get the header (width, height + compression)
+	pp = getWizStateHeaderPrim(globNum, state);
+
+	src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
+	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
+	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+
+	// If the compression type is TRLE...
+	if (src_c == kWCTTRLE) {
+		src_d = getWizStateDataPrim(globNum, state);
+
+		// Where should the color lookup happen?
+		int pixel = auxPixelHitTestTRLEImageRelPos(
+			src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h,
+			_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
+
+		int compType = getWizCompressionType(globNum, state);
+
+		if (LITTLE_ENDIAN_WIZ(compType)) {
+			return pixel;
+		} else {
+			if (WIZ_16BPP(compType)) {
+				return SWAP_BYTES_16(pixel);
+			} else {
+				return pixel;
+			}
+		}
+
+	} else if (isUncompressedFormatTypeID(src_c)) {
+		WizSimpleBitmap srcBitmap;
+
+		src_d = getWizStateDataPrim(globNum, state);
+
+		srcBitmap.bufferPtr = (WizRawPixel *)(src_d + _vm->_resourceHeaderSize);
+		srcBitmap.bitmapWidth = src_w;
+		srcBitmap.bitmapHeight = src_h;
+
+		int pixel = pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
+		int compType = getWizCompressionType(globNum, state);
+
+		if (LITTLE_ENDIAN_WIZ(compType)) {
+			return pixel;
+		} else {
+			if (WIZ_16BPP(compType)) {
+				return SWAP_BYTES_16(pixel);
+			} else {
+				return pixel;
+			}
+		}
+	} else {
+		return _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR);
+	}
+}
+
+int Wiz::hitTestWiz(int image, int state, int x, int y, int32 flags) {
+	return hitTestWizPrim(image, state, x, y, flags);
+}
+
+int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
+
+#ifdef SCUMM_XTL_BRIDGE // 5/9/2000 BPT
+	int outValue = 0;
+
+	if (PU_OverrideImageHitTest(&outValue, globType, globNum, state, x, y, flags)) {
+		return outValue;
+	}
+#endif
+
+	int src_c, src_w, src_h;
+	byte *src_d;
+	byte *pp;
+
+	// Get the header (width, height + compression)
+	pp = getWizStateHeaderPrim(globNum, state);
+
+	src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
+	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
+	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+
+	if (_vm->_game.heversion > 98) {
+		// Flip the test coords if needed and do simple point rejection
+		// (should be faster than calling the various functions)
+
+		if (flags & kWRFHFlip) {
+			x = ((src_w - 1) - x);
+
+			if (x < 0) {
+				return 0;
+			}
+
+		} else if ((x >= src_w) || (x < 0)) {
+			return 0;
+		}
+
+		if (flags & kWRFVFlip) {
+			y = ((src_h - 1) - y);
+
+			if (y < 0) {
+				return 0;
+			}
+
+		} else if ((y >= src_h) || (y < 0)) {
+			return 0;
+		}
+	}
+
+	// If the compression type is TRLE...
+	if (src_c == kWCTTRLE) {
+		src_d = getWizStateDataPrim(globNum, state);
+
+		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h) ? 1 : 0;
+	} else if (_vm->_game.heversion > 98 && isUncompressedFormatTypeID(src_c)) {
+		WizSimpleBitmap srcBitmap;
+
+		src_d = getWizStateDataPrim(globNum, state);
+
+		srcBitmap.bufferPtr = (WizRawPixel *)(src_d + _vm->_resourceHeaderSize);
+		srcBitmap.bitmapWidth = src_w;
+		srcBitmap.bitmapHeight = src_h;
+
+		return (_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) !=
+				pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR)))
+					? 1
+					: 0;
+	} else {
+		return 0;
 	}
 }
 
@@ -2103,79 +2236,6 @@ struct PolygonDrawData {
 };
 
 void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
-	//int resNum = params->image;
-	//int maskNum = params->sourceImage;
-	//bool maskState = (params->actionFlags & kWAFState) ? params->state : 0;
-	//int id1 = params->polygon;
-	//int id2 = params->polygon2;
-	//int compType = params->compressionType;
-	//
-	//debug(7, "processWizImagePolyCaptureCmd: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
-	//
-	//int i, j;
-	//WizPolygon *wp;
-	//
-	//wp = nullptr;
-	//for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
-	//	if (_polygons[i].id == id1) {
-	//		wp = &_polygons[i];
-	//		break;
-	//	}
-	//}
-	//if (!wp) {
-	//	error("Polygon1 %d is not defined", id1);
-	//}
-	//if (wp->numPoints != 5) {
-	//	error("Invalid point count %d for Polygon1 %d", wp->numPoints, id1);
-	//}
-	//
-	//wp = nullptr;
-	//for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
-	//	if (_polygons[i].id == id2) {
-	//		wp = &_polygons[i];
-	//		break;
-	//	}
-	//}
-	//if (!wp) {
-	//	error("Polygon2 %d is not defined", id2);
-	//}
-	//if (wp->numPoints != 5) {
-	//	error("Invalid point count %d for Polygon2 %d", wp->numPoints, id2);
-	//}
-	//
-	//int32 dstw, dsth, dstpitch;
-	//int32 srcw, srch;
-	//uint8 *imageBuffer;
-	//
-	//assert(maskNum);
-	//const Common::Rect *r = nullptr;
-	//const uint8 *src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWRFAlloc, 0, 0, 0);
-	//getWizImageDim(maskNum, maskState, srcw, srch);
-	//
-	//dstw = wp->boundingRect.width();
-	//dsth = wp->boundingRect.height();
-	//dstpitch = dstw * _vm->_bytesPerPixel;
-	//imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bytesPerPixel);
-	//assert(imageBuffer);
-	//
-	//const uint16 transColor = (_vm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) : 5;
-	//if (_vm->_bytesPerPixel == 2) {
-	//	uint8 *tmpPtr = imageBuffer;
-	//	for (i = 0; i < dsth; i++) {
-	//		for (j = 0; j < dstw; j++)
-	//			WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
-	//		tmpPtr += dstpitch;
-	//	}
-	//} else {
-	//	memset(imageBuffer, transColor, dstw * dsth);
-	//}
-	//
-	//Common::Rect bound;
-	//drawWizPolygonImage(imageBuffer, src, nullptr, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp->points, _vm->_bytesPerPixel);
-	//
-	//captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp->boundingRect, compType);
-	//free(imageBuffer);
-
 	int polygon1, polygon2, compressionType, srcImage = 0, shadow = 0, state = 0;
 	bool bIsHintColor = false;
 	int iHintColor = 0;
@@ -2728,7 +2788,9 @@ void Wiz::loadWizCursor(int resId, int palette) {
 
 	const Common::Rect *r = nullptr;
 	_cursorImage = true;
-	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWRFAlloc, 0, _vm->getHEPaletteSlot(palette), 0);
+	// TODO
+	//uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWRFAlloc, 0, _vm->getHEPaletteSlot(palette), 0);
+	uint8 *cursor = (uint8 *)drawAWizPrim(resId, 0, 0, 0, 0, 0, 0, 0, kWRFAlloc, 0, (WizRawPixel *)_vm->getHEPaletteSlot(palette));
 	_cursorImage = false;
 
 	int32 cw, ch;
@@ -2961,9 +3023,6 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	case 16:
 		compressionType = kWCTNone16Bpp;
 		break;
-	case 32:
-		compressionType = kWCTNone32Bpp;
-		break;
 	default:
 		error("Unsupported image bits size %d", bitsPerPixel);
 		break;
@@ -3144,11 +3203,6 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 	case kWCTNone16BppBigEndian:
 		srcBitsPerPixel = 16;
 		break;
-
-	case kWCTNone32Bpp:
-	case kWCTNone32BppBigEndian:
-		srcBitsPerPixel = 32;
-		break;
 	}
 
 	// Get the source wiz data pointer.
@@ -3198,13 +3252,13 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 	}
 
 	// Finally call the primitive...
-	if (maskCompressionType == kWCTTRLE) { // TODO
-		//TRLEFLIP_AltSource_DecompressImage(
-		//	destBitmapPtr->bufferPtr, maskDataPtr,
-		//	destBitmapPtr->bitmapWidth, destBitmapPtr->bitmapHeight,
-		//	sourceBufferPtr, srcBitmapWidth, srcBitmapHeight, srcBitsPerPixel,
-		//	x, y, maskWidth, maskHeight, &clipRect, flags, conversionTable,
-		//	nullptr);
+	if (maskCompressionType == kWCTTRLE) {
+		TRLEFLIP_AltSource_DecompressImage(
+			destBitmapPtr->bufferPtr, maskDataPtr,
+			destBitmapPtr->bitmapWidth, destBitmapPtr->bitmapHeight,
+			sourceBufferPtr, srcBitmapWidth, srcBitmapHeight, srcBitsPerPixel,
+			x, y, maskWidth, maskHeight, &clipRect, flags, conversionTable,
+			nullptr);
 
 	} else if (maskCompressionType == kWCTMRLEWithLineSizePrefix) {
 		MRLEFLIP_AltSource_DecompressImage(
@@ -3359,8 +3413,38 @@ bool Wiz::dwIsMaskCompatibleCompressionType(int compressionType) {
 
 bool Wiz::dwIsUncompressedFormatTypeID(int id) {
 	return ((kWCTNone == id)      ||
-		    (kWCTNone16Bpp == id) || (kWCTNone32Bpp == id) ||
-		    (kWCTNone16BppBigEndian == id) || (kWCTNone32BppBigEndian == id));
+		    (kWCTNone16Bpp == id) ||
+		    (kWCTNone16BppBigEndian == id));
+}
+
+int Wiz::dwGetImageGeneralProperty(int image, int state, int property) {
+	switch (property) {
+	case kWIPCompressionType:
+		return getWizCompressionType(image, state);
+		break;
+
+	case kWIPPaletteBlockPresent:
+		return doesStateContainBlock(image, state, MKTAG('R', 'G', 'B', 'S'));
+		break;
+
+	case kWIPRemapBlockPresent:
+		return doesStateContainBlock(image, state, MKTAG('R', 'M', 'A', 'P'));
+		break;
+
+	case kWIPOpaqueBlockPresent:
+		return doesRawWizStateHaveTransparency(image, state);
+		break;
+
+	case kWIPXMAPBlockPresent:
+		return doesStateContainBlock(image, state, MKTAG('X', 'M', 'A', 'P'));
+		break;
+
+	default:
+		debug("Wiz::dwGetImageGeneralProperty(): image %d state %d property %d (unknown property id).", image, state, property);
+		break;
+	}
+
+	return 0;
 }
 
 void Wiz::handleRotate0SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable) {
@@ -3417,11 +3501,10 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 			}
 		}
 
-		// TODO
-		//TRLEFLIP_Rotate90_DecompressImage(
-		//	dest_p, compressedDataPtr, dest_w, dest_h, x, y, src_w, src_h,
-		//	clipRect, flags, nullptr, optionalColorConversionTable,
-		//	nullptr);
+		TRLEFLIP_Rotate90_DecompressImage(
+			dest_p, compressedDataPtr, dest_w, dest_h, x, y, src_w, src_h,
+			clipRect, flags, nullptr, optionalColorConversionTable,
+			nullptr);
 
 		// Update the screen? (If not writing to another bitmap...)
 		if (!optionalBitmapOverride) {
@@ -3699,8 +3782,115 @@ void Wiz::remapImage(int image, int state, int tableCount, const uint8 *remapLis
 	}
 }
 
+int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *optionalClipRect) {
+	int src_c, src_w, src_h, globNum;
+	Common::Rect realClippedRect;
+	int histogramTable[256];
+	byte *src_d;
+	byte *pp;
+
+	// This only makes sense in 8 bit color!!!!
+	globNum = image;
+
+	_vm->writeVar(0, 0);
+	((ScummEngine_v72he *)_vm)->defineArray(0, _vm->kDwordArray, 0, 0, 0, 255);
+
+	if (_vm->readVar(0) != 0) {
+		// Get the header (width, height + compression)
+		pp = getWizStateHeaderPrim(globNum, state);
+
+		src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
+		src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
+		src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+
+		// Clip the passed in coords to the real dimensions of the image
+		makeSizedRect(&realClippedRect, src_w, src_h);
+
+		if (optionalClipRect) {
+			if (!findRectOverlap(&realClippedRect, optionalClipRect)) {
+				return _vm->readVar(0);
+			}
+		}
+
+		// Get the data pointer
+		src_d = getWizStateDataPrim(globNum, state);
+
+		// Start with a clean array...
+		memset(histogramTable, 0, sizeof(histogramTable));
+
+		// Handle the different compression types...
+		if (src_c == kWCTTRLE) {
+			// Get the histogram...
+			auxHistogramTRLEPrim(histogramTable, src_d + _vm->_resourceHeaderSize, &realClippedRect);
+		} else if (src_c == kWCTNone) {
+			WizSimpleBitmap srcBitmap;
+
+			srcBitmap.bufferPtr = (WizRawPixel *)(src_d + _vm->_resourceHeaderSize);
+			srcBitmap.bitmapWidth = src_w;
+			srcBitmap.bitmapHeight = src_h;
+
+			pgHistogramBitmapSubRect(histogramTable, &srcBitmap, &realClippedRect);
+		} else {
+			warning("Wiz::createHistogramArrayForImage(): Unable to return histogram for type %d", src_c);
+		}
+
+		// Fill in the scumm array with the values...
+		if (_vm->readVar(0) != 0) {
+			for (int i = 0; i < 256; i++) {
+				((ScummEngine_v72he *)_vm)->writeArray(0, 0, i, histogramTable[i]);
+			}
+		}
+	}
+
+	return _vm->readVar(0); // Too much fun!!!!
+}
+
 void Wiz::ensureNativeFormatImageForState(int image, int state) {
-	// TODO
+	// If AWIZ block is an XMAP, we don't want to do anything with it
+	if (dwGetImageGeneralProperty(image, state, kWIPXMAPBlockPresent)) {
+		return;
+	}
+
+	int compType = getWizCompressionType(image, state);
+	bool wiz16bpp = WIZ_16BPP(compType);
+	bool native = NATIVE_WIZ_TYPE(compType);
+
+	if (wiz16bpp && !native) {
+		uint16 *ptr = (uint16 *)getWizStateDataPrim(image, state);
+
+		int w, h;
+		getWizImageDim(image, state, w, h);
+		int32 pixelCount = w * h; // Number of pixels to twiddle
+
+		if (pixelCount <= 0) {
+			error("Width or height 0 for image %d state %d", image, state);
+		}
+
+		uint16 *thisPixel = ptr + 2; // Skip the "WIZD" header
+
+		for (int i = 0; i < pixelCount; i++) {
+			thisPixel[i] = SWAP_BYTES_16(thisPixel[i]);
+		}
+
+		int newCompType = compType;
+		switch (compType) {
+		case kWCTNone16Bpp:
+			newCompType += kWCTNone16BppBigEndian - kWCTNone16Bpp;
+			break;
+		case kWCTTRLE16Bpp:
+			newCompType += kWCTTRLE16BppBigEndian - kWCTTRLE16Bpp;
+			break;
+		case kWCTNone16BppBigEndian:
+			newCompType -= kWCTNone16BppBigEndian - kWCTNone16Bpp;
+			break;
+		case kWCTTRLE16BppBigEndian:
+			newCompType -= kWCTTRLE16BppBigEndian - kWCTTRLE16Bpp;
+			break;
+		}
+
+		// Reset the compression type
+		setWizCompressionType(image, state, newCompType);
+	}
 }
 
 void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
@@ -3954,7 +4144,12 @@ void Wiz::processWizImageSaveCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageCmd(const WizImageCommand *params) {
-	debug(7, "processWizImageCmd: actionMode %d", params->actionMode);
+	// TODO
+	//if (PU_ProcessWizImageCmd(params)) {
+	//	return;
+	//}
+	debug(5, "processWizImageCmd: actionMode %d for image %d", params->actionMode, params->image);
+
 	switch (params->actionMode) {
 	case kWAUnknown:
 		// Do nothing...
@@ -4017,9 +4212,7 @@ void Wiz::processWizImageCmd(const WizImageCommand *params) {
 }
 
 bool Wiz::isUncompressedFormatTypeID(int id) {
-	return ((kWCTNone == id) || (kWCTNone16Bpp == id) ||
-			(kWCTNone32Bpp == id) || (kWCTNone16BppBigEndian == id) ||
-			(kWCTNone32BppBigEndian == id));
+	return ((kWCTNone == id) || (kWCTNone16Bpp == id) || (kWCTNone16BppBigEndian == id));
 }
 
 void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
@@ -4132,6 +4325,13 @@ const byte *Wiz::getColorMixBlockPtrForWiz(int image) {
 	return _vm->findResourceData(MKTAG('X', 'M', 'A', 'P'), data);
 }
 
+void Wiz::setWizCompressionType(int image, int state, int newType) {
+	byte *data = getWizStateHeaderPrim(image, state);
+	assert(data);
+
+	WRITE_LE_UINT32(data + _vm->_resourceHeaderSize, newType);
+}
+
 int Wiz::getWizCompressionType(int image, int state) {
 	byte *data = (byte *)getWizStateHeaderPrim(image, state);
 	assert(data);
@@ -4144,6 +4344,13 @@ bool Wiz::doesRawWizStateHaveTransparency(int globNum, int state) {
 	assert(data);
 
 	return _vm->findWrappedBlock(MKTAG('T', 'R', 'N', 'S'), data, state, false) != nullptr;
+}
+
+bool Wiz::doesStateContainBlock(int globNum, int state, uint32 blockID) {
+	byte *data = _vm->getResourceAddress(rtImage, globNum);
+	assert(data);
+
+	return _vm->findWrappedBlock(blockID, data, state, false) != nullptr;
 }
 
 int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {

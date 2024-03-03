@@ -50,6 +50,29 @@ namespace Scumm {
 #define DW_SAVE_PCX_FORMAT    1
 #define DW_SAVE_RAW_FORMAT    2
 
+#if defined SCUMM_LITTLE_ENDIAN
+#define NATIVE_WIZ_COMP_NONE_16BPP kWCTNone16Bpp
+#define NATIVE_WIZ_COMP_TRLE_16BPP kWCTTRLE16Bpp
+
+#elif defined SCUMM_BIG_ENDIAN
+#define NATIVE_WIZ_COMP_NONE_16BPP kWCTNone16BppBigEndian
+#define NATIVE_WIZ_COMP_TRLE_16BPP kWCTTRLE16BppBigEndian
+#endif
+
+#define LITTLE_ENDIAN_WIZ(wizComp)    \
+	    (wizComp) == kWCTNone16Bpp || \
+		(wizComp) == kWCTTRLE16Bpp
+
+#define NATIVE_WIZ_TYPE(wizComp)                   \
+		(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
+		(wizComp) == NATIVE_WIZ_COMP_TRLE_16BPP    \
+
+#define WIZ_16BPP(wizComp)                       \
+		(wizComp) == kWCTNone16Bpp ||            \
+		(wizComp) == kWCTTRLE16Bpp ||            \
+		(wizComp) == kWCTNone16BppBigEndian ||   \
+		(wizComp) == kWCTTRLE16BppBigEndian
+
 #define WIZ_MAGIC_REMAP_NUMBER  0x76543210
 
 #define WIZRAWPIXEL_R_MASK    (_uses16BitColor ? 0x7C00 : 0xFF)
@@ -68,10 +91,26 @@ namespace Scumm {
 #define WIZRAWPIXEL_LO_BITS    ((WIZRAWPIXEL_LO_R_BIT) | (WIZRAWPIXEL_LO_G_BIT) | (WIZRAWPIXEL_LO_B_BIT))
 #define WIZRAWPIXEL_HI_BITS    ~WIZRAWPIXEL_LO_BITS
 
+#define WIZ_COLOR16_COMPONENT_COUNT   (1 << 5)
+#define WIZ_QUANTIZED_ALPHA_COUNT     16
+#define WIZ_QUANTIZED_ALPHA_DIV       ((256) / (WIZ_QUANTIZED_ALPHA_COUNT))
+
 #define WIZRAWPIXEL_50_50_PREMIX_COLOR(__rawColor__)    (((__rawColor__) & WIZRAWPIXEL_HI_BITS) >> 1)
 #define WIZRAWPIXEL_50_50_MIX(__colorA__, __colorB__)   ((__colorA__) + (__colorB__))
 
+#define WIZRAWPIXEL_ADDITIVE_MIX(__colorA__, __colorB__)                                                             \
+		(MIN<int>(WIZRAWPIXEL_R_MASK, (((__colorA__) & WIZRAWPIXEL_R_MASK) + ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
+		 MIN<int>(WIZRAWPIXEL_G_MASK, (((__colorA__) & WIZRAWPIXEL_G_MASK) + ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
+		 MIN<int>(WIZRAWPIXEL_B_MASK, (((__colorA__) & WIZRAWPIXEL_B_MASK) + ((__colorB__) & WIZRAWPIXEL_B_MASK))))
+
+#define WIZRAWPIXEL_SUBTRACTIVE_MIX(__colorA__, __colorB__)                                                            \
+		(MAX<int>(WIZRAWPIXEL_LO_R_BIT, (((__colorA__) & WIZRAWPIXEL_R_MASK) - ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
+		 MAX<int>(WIZRAWPIXEL_LO_G_BIT, (((__colorA__) & WIZRAWPIXEL_G_MASK) - ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
+		 MAX<int>(WIZRAWPIXEL_LO_B_BIT, (((__colorA__) & WIZRAWPIXEL_B_MASK) - ((__colorB__) & WIZRAWPIXEL_B_MASK))))
+
 typedef uint16 WizRawPixel;
+typedef uint8  WizRawPixel8;
+typedef uint16 WizRawPixel16;
 
 struct WizPolygon {
 	Common::Point points[5];
@@ -279,6 +318,12 @@ struct WarpWizOneSpanTable {
 	int spanCount;
 };
 
+struct COMPRESSEDIMAGE {
+	byte *data;
+	int width;
+	int height;
+};
+
 enum WizRenderingFlags {
 	// Standard rendering flags
 	kWRFUsePalette = 0x00000001,
@@ -370,17 +415,17 @@ enum WizCompressionTypes {
 	kWCTNone                      = 0x00000000,
 	kWCTTRLE                      = 0x00000001,
 	kWCTNone16Bpp                 = 0x00000002,
-	kWCTNone32Bpp                 = 0x00000003,
+	// kWCTNone32Bpp              = 0x00000003,
 	kWCTComposite                 = 0x00000004,
 	kWCTTRLE16Bpp                 = 0x00000005,
-	kWCTTRLE32Bpp                 = 0x00000006,
+	// kWCTTRLE32Bpp              = 0x00000006,
 	kWCTMRLEWithLineSizePrefix    = 0x00000007,
 	kWCTMRLEWithoutLineSizePrefix = 0x00000008,
 	kWCTDataBlockDependent        = 0x00000009,
 	kWCTNone16BppBigEndian        = 0x0000000A,
-	kWCTNone32BppBigEndian        = 0x0000000B,
+	// kWCTNone32BppBigEndian     = 0x0000000B,
 	kWCTTRLE16BppBigEndian        = 0x0000000C,
-	kWCTTRLE32BppBigEndian        = 0x0000000D
+	// kWCTTRLE32BppBigEndian     = 0x0000000D
 };
 
 enum CreateWizFlags {
@@ -388,6 +433,14 @@ enum CreateWizFlags {
 	kCWFSpot       = 0x00000002,
 	kCWFRemapTable = 0x00000008,
 	kCWFDefault    = ((kCWFPalette) | (kCWFSpot) | (kCWFRemapTable))
+};
+
+enum WizImgProps {
+	kWIPCompressionType     = 0x10000000,
+	kWIPPaletteBlockPresent = 0x10000001,
+	kWIPRemapBlockPresent   = 0x10000002,
+	kWIPOpaqueBlockPresent  = 0x10000003,
+	kWIPXMAPBlockPresent    = 0x10000004
 };
 
 enum WizSpcConditionTypes : uint {
@@ -471,6 +524,7 @@ public:
 	void dwHandleComplexImageDraw(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
 	bool dwIsMaskCompatibleCompressionType(int compressionType);
 	bool dwIsUncompressedFormatTypeID(int id);
+	int	 dwGetImageGeneralProperty(int image, int state, int property);
 
 	void processWizImageCmd(const WizImageCommand *params);
 	void processWizImageCaptureCmd(const WizImageCommand *params);
@@ -500,7 +554,10 @@ public:
 	byte *getWizStateRemapDataPrim(int resNum, int state);
 	int getWizCompressionType(int resNum, int state);
 	bool doesRawWizStateHaveTransparency(int globNum, int state);
+	bool doesStateContainBlock(int globNum, int state, uint32 blockID);
 	const byte *getColorMixBlockPtrForWiz(int image);
+	void setWizCompressionType(int image, int state, int newType);
+
 
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	int isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags);
@@ -531,6 +588,10 @@ public:
 	void *drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
 	void *drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr);
 	void buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, const byte *palettePtr, const Common::Rect *rectPtr, int compressionType, int globNum, int transparentColor);
+	int	pixelHitTestWiz(int image, int state, int x, int y, int32 flags);
+	int pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags);
+	int	hitTestWiz(int image, int state, int x, int y, int32 flags);
+	int hitTestWizPrim(int globNum, int state, int x, int y, int32 flags);
 
 	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits);
 	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
@@ -573,11 +634,15 @@ public:
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect &rCapt);
 	void remapImage(int image, int state, int tableCount, const uint8 *remapList, const uint8 *remapTable);
 
+	int createHistogramArrayForImage(int image, int state, const Common::Rect *optionalClipRect);
+
 	void ensureNativeFormatImageForState(int image, int state);
 
-	private:
+private:
 	ScummEngine_v71he *_vm;
 
+
+public:
 	/* Drawing Primitives
 	 *
 	 * These primitives are slightly different and less precise
@@ -588,7 +653,6 @@ public:
 	 */
 
 	// Primitives
-public:
 	int  pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValue);
 	void pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value);
 	void pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value);
@@ -598,6 +662,7 @@ public:
 	void pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color);
 	void pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalClipRect);
 
+	void pgHistogramBitmapSubRect(int *tablePtr, const WizSimpleBitmap *bitmapPtr, const Common::Rect *sourceRect);
 	void pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background);
 	void pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor);
 	void pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect);
@@ -623,6 +688,7 @@ public:
 	void pgBlit90DegreeRotateTransparent(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, WizRawPixel transparentColor);
 	void pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const void *userParam2,
 								  void (*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2));
+
 	// Rectangles
 	bool findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr);
 	bool isPointInRect(Common::Rect *r, Common::Point *pt);
@@ -636,6 +702,8 @@ public:
 	void moveRect(Common::Rect *rectPtr, int dx, int dy);
 	void horzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect);
 	void vertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect);
+	void swapRectX(Common::Rect *rectPtr);
+	void swapRectY(Common::Rect *rectPtr);
 
 	// Flood fill
 	void floodInitFloodState(WizFloodState *statePtr, WizSimpleBitmap *bitmapPtr, int colorToWrite, const Common::Rect *optionalClippingRect);
@@ -654,7 +722,6 @@ public:
 	WizRawPixel convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *conversionTable);
 	void rawPixelExtractComponents(WizRawPixel aPixel, int &r, int &g, int &b);
 	void rawPixelPackComponents(WizRawPixel &aPixel, int r, int g, int b);
-
 
 	/*
 	 * Compression Primitives
@@ -721,6 +788,115 @@ public:
 
 	void auxHistogramTRLELine(int *tablePtr, const byte *dataStream, int skipAmount, int decompAmount);
 	void auxHistogramTRLEPrim(int *histogramTablePtr, byte *compData, Common::Rect *sourceRect);
+
+	// TRLE
+	int _trlePutsize = 0;
+	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)];
+
+	byte *trle_putdump(byte *dest, int nn);
+	byte *trle_putrun(byte *dest, int nn, int cc, int tcolor);
+	int trle_rle_compression(byte *pdest, const WizRawPixel *psource, int rowsize, WizRawPixel tcolor);
+	int TRLE_CompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer, int sourceBufferWidth, int x1, int y1, int x2, int y2, WizRawPixel transparentColor);
+
+	// TRLE FLIP
+	bool s_InitializelphaTable = true;
+	float s_AlphaTable[256];
+	int s_Precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT];
+
+	void TRLEFLIP_DecompressImage(
+		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,
+		int x, int y, int width, int height, Common::Rect *clipRectPtr,
+		int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
+		const WizImageCommand *optionalICmdPtr);
+
+	void TRLEFLIP_DecompressPrim(
+		WizSimpleBitmap *bitmapPtr, const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
+		const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr, const void *extraPtr,
+		int32 flags, const WizRawPixel *conversionTable,
+		void (*forewordFunctionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
+			int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable),
+		void (*backwardFunctionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
+			int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable));
+
+	void TRLEFLIP_DecompImageHull(
+		WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
+		const byte *compData, const Common::Rect *sourceRect, const void *extraPtr,
+		const WizRawPixel *conversionTable,
+		void (*functionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
+			int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable));
+
+	void TRLEFLIP_AltSource_DecompressImage(
+		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
+		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
+		int x, int y, int width, int height, Common::Rect *clipRectPtr,
+		int32 wizFlags, const WizRawPixel *conversionTable,
+		WizImageCommand *optionalICmdPtr);
+
+	void TRLEFLIP_AltSource_DecompressPrim(
+		WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
+		const void *altBufferPtr, int altBitsPerPixel,
+		const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
+		const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr,
+		int32 flags, const WizRawPixel *conversionTable,
+		void (*forewordFunctionPtr)(Wiz *wiz,
+									WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
+									int skipAmount, int decompAmount, const WizRawPixel *conversionTable),
+		void (*backwardFunctionPtr)(Wiz *wiz,
+									WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
+									int skipAmount, int decompAmount, const WizRawPixel *conversionTable));
+
+	void TRLEFLIP_AltSource_DecompImageHull(
+		WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
+		const byte *altSourceBuffer, int altBytesPerLine,
+		int altBytesPerPixel, const Common::Rect *altRect,
+		const byte *compData, const Common::Rect *sourceRect,
+		const WizRawPixel *conversionTable,
+		void (*functionPtr)(Wiz *,
+							WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
+							int skipAmount, int decompAmount, const WizRawPixel *conversionTable));
+
+	bool TRLEFLIP_AltSource_SpecialCaseDispatch(
+		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
+		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
+		int x, int y, int width, int height, Common::Rect *clipRectPtr,
+		int32 wizFlags, const WizRawPixel *conversionTable,
+		WizImageCommand *optionalICmdPtr);
+
+	void TRLEFLIP_Rotate90_DecompressImage(
+		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,
+		int x, int y, int width, int height, const Common::Rect *clipRectPtr,
+		int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
+		WizImageCommand *optionalICmdPtr);
+
+	void TRLEFLIP_90_DegreeRotateCore(
+		WizSimpleBitmap *dstBitmap, int x, int y, const COMPRESSEDIMAGE *imagePtr, const Common::Rect *optionalSrcRect,
+		const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const WizRawPixel *conversionTable,
+		void (*functionPtr)(Wiz *wiz,
+			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
+			int decompAmount, const void *userParam, int destStepValue,
+			const WizRawPixel *conversionTable));
+
+	void TRLEFLIP_CheckAlphaSetup();
+	WizRawPixel TRLEFLIP_AlphaMixPrim(WizRawPixel b, WizRawPixel a, int alpha);
+	void TRLEFLIP_50_50_Mix_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void TRLEFLIP_50_50_Mix_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_50_50_Mix_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_ADDITIVE_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void TRLEFLIP_ADDITIVE_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_ADDITIVE_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_SUBTRACTIVE_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void TRLEFLIP_SUBTRACTIVE_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_SUBTRACTIVE_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_RemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable);
+	void TRLEFLIP_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void TRLEFLIP_ForewordLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
+	void TRLEFLIP_BackwardsLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
+	void TRLEFLIP_ForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
+	void TRLEFLIP_BackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
 
 
 	/*

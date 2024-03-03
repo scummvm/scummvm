@@ -334,6 +334,8 @@ public:
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {
+	friend class Wiz;
+
 protected:
 	enum SubOpType {
 		SO_NONE = 1,

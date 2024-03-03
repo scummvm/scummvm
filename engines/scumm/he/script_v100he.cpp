@@ -2204,7 +2204,7 @@ void ScummEngine_v100he::o100_systemOps() {
 }
 
 void ScummEngine_v100he::o100_cursorCommand() {
-	int a, b, i;
+	int a, b;
 	int args[16];
 
 	byte subOp = fetchScriptByte();
@@ -2215,7 +2215,7 @@ void ScummEngine_v100he::o100_cursorCommand() {
 		break;
 	case SO_CHARSET_COLOR:
 		getStackList(args, ARRAYSIZE(args));
-		for (i = 0; i < 16; i++)
+		for (int i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case SO_CURSOR_IMAGE:
@@ -2582,6 +2582,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 void ScummEngine_v100he::o100_getWizData() {
 	byte filename[4096];
 	int resId, state, type;
+	Common::Rect clipRect;
 	int32 w, h;
 	int32 x, y;
 
@@ -2593,18 +2594,17 @@ void ScummEngine_v100he::o100_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(_wiz->getWizPixelColor(resId, state, x, y));
+		push(_wiz->pixelHitTestWiz(resId, state, x, y, 0));
 		break;
 	case SO_COUNT:
-		resId = pop();
-		push(_wiz->getWizImageStates(resId));
+		push(_wiz->getWizImageStates(pop()));
 		break;
 	case SO_FIND:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
+		push(_wiz->hitTestWiz(resId, state, x, y, 0));
 		break;
 	case SO_HEIGHT:
 		state = pop();
@@ -2615,8 +2615,11 @@ void ScummEngine_v100he::o100_getWizData() {
 	case SO_NEW_GENERAL_PROPERTY:
 		type = pop();
 		state = pop();
-		resId = pop();
-		push(_wiz->getWizImageData(resId, state, type));
+		if (resId = pop()) {
+			push(_wiz->dwGetImageGeneralProperty(resId, state, type));
+		} else {
+			push(0);
+		}
 		break;
 	case SO_WIDTH:
 		state = pop();
@@ -2644,18 +2647,19 @@ void ScummEngine_v100he::o100_getWizData() {
 		debug(0, "o100_getWizData() case 111 unhandled");
 		break;
 	case SO_HISTOGRAM:
-		h = pop();
-		w = pop();
-		y = pop();
-		x = pop();
+		clipRect.bottom = pop();
+		clipRect.right = pop();
+		clipRect.top = pop();
+		clipRect.left = pop();
 		state = pop();
 		resId = pop();
-		if (x == -1 && y == -1 && w == -1 && h == -1) {
+		if (clipRect.left == -1 && clipRect.top == -1 &&
+			clipRect.right == -1 && clipRect.bottom == -1) {
 			_wiz->getWizImageDim(resId, state, w, h);
-			x = 0;
-			y = 0;
+			_wiz->makeSizedRect(&clipRect, w, h);
 		}
-		push(computeWizHistogram(resId, state, x, y, w, h));
+
+		push(_wiz->createHistogramArrayForImage(resId, state, &clipRect));
 		break;
 	default:
 		error("o100_getWizData: Unknown case %d", subOp);

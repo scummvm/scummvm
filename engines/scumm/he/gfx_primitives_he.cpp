@@ -33,9 +33,9 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 		return defaultValue;
 	} else {
 		if (_uses16BitColor) {
-			return *(srcBM->bufferPtr + y * srcBM->bitmapWidth + x);
+			return *(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
 		} else {
-			return *(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
+			return *(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
 		}
 	}
 }
@@ -43,9 +43,9 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) {
 	if ((x >= 0) && (y >= 0) && (x < srcBM->bitmapWidth) && (y < srcBM->bitmapHeight)) {
 		if (_uses16BitColor) {
-			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
 		} else {
-			*(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
 		}
 	}
 }
@@ -53,9 +53,9 @@ void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) 
 void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value) {
 	if ((x >= clipRectPtr->left) && (y >= clipRectPtr->top) && (x <= clipRectPtr->right) && (y <= clipRectPtr->bottom)) {
 		if (_uses16BitColor) {
-			*(srcBM->bufferPtr + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
 		} else {
-			*(((uint8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
 		}
 	}
 }
@@ -387,8 +387,8 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 }
 
 void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, WizRawPixel color) {
-	WizRawPixel *d;
-	uint8 *d8bit;
+	WizRawPixel16 *d16bit;
+	WizRawPixel8 *d8bit;
 	int cw, dw, ch;
 	int x1 = rectPtr->left, y1 = rectPtr->top, x2 = rectPtr->right, y2 = rectPtr->bottom;
 
@@ -396,16 +396,16 @@ void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, 
 	dw = destBM->bitmapWidth;
 	cw = x2 - x1 + 1;
 	ch = y2 - y1 + 1;
-	d = destBM->bufferPtr + y1 * dw + x1;
 
-	d8bit = ((uint8 *)destBM->bufferPtr) + y1 * dw + x1;
+	d16bit = ((WizRawPixel16 *)destBM->bufferPtr) + y1 * dw + x1;
+	d8bit = ((WizRawPixel8 *)destBM->bufferPtr) + y1 * dw + x1;
 
 	if (cw > 1) {
 		while (--ch >= 0) {
 			if (_uses16BitColor) {
-				for (int i = 0; i < dw; i++)
-					WRITE_LE_UINT16(&d[i], color);
-				d += dw;
+				for (int i = 0; i < cw; i++)
+					WRITE_LE_UINT16(&d16bit[i], color);
+				d16bit += dw;
 			} else {
 				memset(d8bit, color, cw);
 				d8bit += dw;
@@ -414,8 +414,8 @@ void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, 
 	} else {
 		while (--ch >= 0) {
 			if (_uses16BitColor) {
-				*d = color;
-				d += dw;
+				*d16bit = color;
+				d16bit += dw;
 			} else {
 				*d8bit = color;
 				d8bit += dw;
@@ -449,6 +449,37 @@ void Wiz::pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalCl
 		} else {
 			updateRect.bottom++;
 			_vm->markRectAsDirty(kMainVirtScreen, updateRect);
+		}
+	}
+}
+
+void Wiz::pgHistogramBitmapSubRect(int *tablePtr, const WizSimpleBitmap *bitmapPtr, const Common::Rect *sourceRect) {
+	if (!_uses16BitColor) {
+		Common::Rect rect, clipRect;
+		WizRawPixel8 *srcPtr;
+		int off, h, w, x;
+
+		rect = *sourceRect;
+
+		clipRect.left = 0;
+		clipRect.top = 0;
+		clipRect.right = (bitmapPtr->bitmapWidth - 1);
+		clipRect.bottom = (bitmapPtr->bitmapHeight - 1);
+
+		if (findRectOverlap(&rect, &clipRect)) {
+			srcPtr = ((WizRawPixel8 *)bitmapPtr->bufferPtr) + bitmapPtr->bitmapWidth * rect.top + rect.left;
+
+			w = getRectWidth(&rect);
+			h = getRectHeight(&rect);
+			off = bitmapPtr->bitmapWidth - w;
+
+			while (--h >= 0) {
+				for (x = w; --x >= 0;) {
+					*(tablePtr + *srcPtr++) += 1;
+				}
+
+				srcPtr += off;
+			}
 		}
 	}
 }
@@ -1286,7 +1317,7 @@ void Wiz::pgBlit90DegreeRotateTransparent(WizSimpleBitmap *dstBitmap, int x, int
 
 void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect,
 	const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const void *userParam2,
-	void(*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2)) {
+	void (*srcTransferFP)(Wiz *wiz, WizRawPixel *dstPtr, int dstStep, const WizRawPixel *srcPtr, int count, const void *userParam, const void *userParam2)) {
 
 	Common::Rect dstRect, srcRect, clipRect, clippedDstRect, clippedSrcRect;
 	int dstOffset, dstStep, w, h, srcOffset, dstX, dstY;
@@ -1649,13 +1680,25 @@ void Wiz::vertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *b
 	moveRect(rectToAlign, 0, dy);
 }
 
+void Wiz::swapRectX(Common::Rect *rectPtr) {
+	int16 t = rectPtr->right;
+	rectPtr->right = rectPtr->left;
+	rectPtr->left = t;
+}
+
+void Wiz::swapRectY(Common::Rect *rectPtr) {
+	int16 t = rectPtr->bottom;
+	rectPtr->bottom = rectPtr->top;
+	rectPtr->top = t;
+}
+
 int Wiz::getRawPixel(int color) {
 	return color & WIZRAWPIXEL_MASK;
 }
 
 void Wiz::memset8BppConversion(void *dstPtr, int value, size_t count, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		rawPixelMemset(dstPtr, (int)convert8BppToRawPixel((WizRawPixel)value, conversionTable), count);
+		rawPixelMemset(dstPtr, (int)convert8BppToRawPixel((WizRawPixel16)value, conversionTable), count);
 	} else {
 		memset(dstPtr, value, count);
 	}
@@ -1663,11 +1706,11 @@ void Wiz::memset8BppConversion(void *dstPtr, int value, size_t count, const WizR
 
 void Wiz::memcpy8BppConversion(void *dstPtr, const void *srcPtr, size_t count, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		WizRawPixel *dstWritePtr = (WizRawPixel *)(dstPtr);
+		WizRawPixel16 *dstWritePtr = (WizRawPixel16 *)(dstPtr);
 		const byte *srcReadPtr = (const byte *)(srcPtr);
 		int counter = count;
 		while (0 <= --counter) {
-			*dstWritePtr++ = convert8BppToRawPixel((WizRawPixel)(*srcReadPtr++), conversionTable);
+			*dstWritePtr++ = convert8BppToRawPixel((WizRawPixel16)(*srcReadPtr++), conversionTable);
 		}
 	} else {
 		memcpy(dstPtr, srcPtr, count);
@@ -1676,18 +1719,18 @@ void Wiz::memcpy8BppConversion(void *dstPtr, const void *srcPtr, size_t count, c
 
 void Wiz::rawPixelMemset(void *dstPtr, int value, size_t count) {
 	if (_uses16BitColor) {
-		uint16 *dst16Bit = (uint16 *)dstPtr;
+		WizRawPixel16 *dst16Bit = (WizRawPixel16 *)dstPtr;
 		for (int i = 0; i < count; i++)
 			WRITE_LE_UINT16(&dst16Bit[i], value);
 	} else {
-		uint8 *dst8Bit = (uint8 *)dstPtr;
+		WizRawPixel8 *dst8Bit = (WizRawPixel8 *)dstPtr;
 		memset(dst8Bit, value, count);
 	}
 }
 
 WizRawPixel Wiz::convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		return *(conversionTable + value);
+		return *(((WizRawPixel16 *)conversionTable) + value);
 	} else {
 		return value;
 	}

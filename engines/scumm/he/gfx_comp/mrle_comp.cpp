@@ -350,6 +350,9 @@ void Wiz::MRLEFLIP_AltSource_DecompressImage(
 	int x, int y, int width, int height, Common::Rect *clipRectPtr,
 	int32 wizFlags, const WizRawPixel *conversionTable) {
 
+	if (!_uses16BitColor)
+		error("Wiz::MRLEFLIP_AltSource_DecompressImage(): It's used, fix it...");
+
 	Common::Rect srcRect, clipRect;
 	WizCompressedImage fakeImage;
 
