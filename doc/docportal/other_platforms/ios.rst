@@ -80,6 +80,26 @@ Keyboard
 ^^^^^^^^^^^^^^^^^^^^
 
 If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected the inputs from the external keyboard is enaled by default.
+External keyboards are supported and from iOS 13.4 most of the special keys, e.g. function keys, Home and End, are mapped.
+For external keyboards missing the special keys, e.g. the Apple Magic Keyboard for iPads, the special keys can be triggered using the following key combinations:
+
+.. csv-table::
+    :widths: 40 60
+    :header-rows: 1
+    :class: keyboard
+
+        Key combination, Action
+        CMD + 1, F1
+        CMD + 2, F2
+        "..." , "..."
+        CMD + 0, F10
+        CMD + SHIFT 1, F11
+        CMD + SHIFT 2, F12
+        CMD + UP, PAGE UP
+        CMD + DOWN, PAGE DOWN
+        CMD + LEFT, HOME
+        CMD + RIGHT, END
+
 
 Game controllers
 ^^^^^^^^^^^^^^^^^^^^
