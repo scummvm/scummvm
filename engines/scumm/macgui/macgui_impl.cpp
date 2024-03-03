@@ -233,7 +233,7 @@ void MacGuiImpl::initialize() {
 
 	for (uint i = 0; i < fontFamilies.size(); i++) {
 		if (fontFamilies[i]->getName() == fontFamily) {
-			_gameFontId = _windowManager->_fontMan->registerFontName(fontFamily, fontFamilies[i]->getFontFamilyId());
+			_gameFontId = fontFamilies[i]->getFontFamilyId();
 			break;
 		}
 	}
