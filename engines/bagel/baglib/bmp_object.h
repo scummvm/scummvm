@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_AREA_OBJECT_H
-#define BAGEL_BAGLIB_AREA_OBJECT_H
+#ifndef BAGEL_BAGLIB_BMP_OBJECT_H
+#define BAGEL_BAGLIB_BMP_OBJECT_H
 
 #include "bagel/baglib/object.h"
 
