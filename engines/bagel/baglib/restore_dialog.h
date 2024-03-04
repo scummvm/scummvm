@@ -20,38 +20,73 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_START_DIALOG_H
-#define BAGEL_BAGLIB_GUI_START_DIALOG_H
+#ifndef BAGEL_BAGLIB_RESTORE_DIALOG_H
+#define BAGEL_BAGLIB_RESTORE_DIALOG_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/list_box.h"
 #include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
-#include "bagel/baglib/gui/save_dialog.h"
+#include "bagel/baglib/save_dialog.h"
 
 namespace Bagel {
 
-#define NUM_START_BTNS 3
+#define NUM_RESTORE_BTNS 6
 
-class CBagStartDialog : public CBofDialog {
+const CHAR *BuildSysDir(const CHAR *pszFile);
+
+class CBagRestoreDialog : public CBofDialog {
 public:
-	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
+	CBagRestoreDialog();
 
+#if BOF_DEBUG
+	virtual ~CBagRestoreDialog();
+#endif
+
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
+
+	ST_BAGEL_SAVE *GetSaveGameBuffer(INT &nLength) {
+		nLength = m_nBufSize;
+		return m_pSaveBuf;
+	}
+
+	VOID SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
+		m_pSaveBuf = pBuf;
+		m_nBufSize = nLength;
+	}
+
+	BOOL Restored() { return m_bRestored; }
+
+#if 1
 	virtual VOID OnInitDialog();
+#endif
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
+	virtual VOID OnBofListBox(CBofObject *pObject, INT nItemIndex);
 
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
+	ERROR_CODE RestoreAndClose();
+
 	// Data
 	//
-	CBofBmpButton *m_pButtons[NUM_START_BTNS];
+	ST_SAVEDGAME_HEADER m_stGameInfo;
+	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
+	CBofScrollBar *m_pScrollBar;
+
+	CBofText *m_pText;
+	CBofListBox *m_pListBox;
+	CBagSaveGameFile *m_pSaveGameFile;
+	INT m_nSelectedItem;
+	ST_BAGEL_SAVE *m_pSaveBuf;
+	INT m_nBufSize;
+	BOOL m_bRestored;
 	CBofPalette *m_pSavePalette;
 };
 

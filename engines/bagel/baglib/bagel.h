@@ -27,7 +27,7 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/error.h"
-#include "bagel/baglib/gui/master_win.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/res.h"
 #include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/list.h"

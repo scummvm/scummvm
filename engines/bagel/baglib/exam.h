@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_EXAM_H
-#define BAGEL_BAGLIB_GUI_EXAM_H
+#ifndef BAGEL_BAGLIB_EXAM_H
+#define BAGEL_BAGLIB_EXAM_H
 
 #include "bagel/boflib/gui/movie.h"
 

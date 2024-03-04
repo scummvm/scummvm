@@ -20,13 +20,13 @@
  */
 
 #include "bagel/baglib/text_object.h"
-#include "bagel/baglib/gui/pan_window.h"
-#include "bagel/baglib/gui/zoom_pda.h"
+#include "bagel/baglib/pan_window.h"
+#include "bagel/baglib/zoom_pda.h"
 #include "bagel/baglib/base_pda.h"
-#include "bagel/baglib/gui/menu_dlg.h"
+#include "bagel/baglib/menu_dlg.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/rp_object.h"
-#include "bagel/baglib/gui/menu_dlg.h"
+#include "bagel/baglib/menu_dlg.h"
 #include "bagel/boflib/gfx/text.h"
 
 #if BOF_MAC // jwl 08.27.96

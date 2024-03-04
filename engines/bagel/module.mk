@@ -11,8 +11,10 @@ MODULE_OBJS = \
 	baglib/dossier_object.o \
 	baglib/command_object.o \
 	baglib/expression_object.o \
+	baglib/master_win.o \
 	baglib/movie_object.o \
 	baglib/object.o \
+	baglib/paint_table.o \
 	baglib/pan_bitmap.o \
 	baglib/parse_object.o \
 	baglib/rp_object.o \
@@ -23,8 +25,6 @@ MODULE_OBJS = \
 	baglib/time_object.o \
 	baglib/var.o \
 	baglib/variable_object.o \
-	baglib/gui/master_win.o \
-	baglib/gui/paint_table.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \

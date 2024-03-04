@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_FMOVIE_H
-#define BAGEL_BAGLIB_GUI_FMOVIE_H
+#ifndef BAGEL_BAGLIB_FMOVIE_H
+#define BAGEL_BAGLIB_FMOVIE_H
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/gui/dialog.h"
@@ -31,7 +31,7 @@
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/api/smacker.h"
 
 namespace Bagel {

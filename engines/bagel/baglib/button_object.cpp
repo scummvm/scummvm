@@ -21,7 +21,7 @@
 
 #include "bagel/baglib/button_object.h"
 #include "bagel/baglib/bagel.h"
-#include "bagel/baglib/gui/pan_window.h"
+#include "bagel/baglib/pan_window.h"
 
 namespace Bagel {
 

@@ -21,12 +21,12 @@
 
 #include "common/file.h"
 #include "bagel/baglib/movie_object.h"
-#include "bagel/baglib/gui/exam.h"
-#include "bagel/baglib/gui/master_win.h"
-#include "bagel/baglib/gui/pan_window.h"
+#include "bagel/baglib/exam.h"
+#include "bagel/baglib/master_win.h"
+#include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/gui/fmovie.h"
-#include "bagel/baglib/gui/zoom_pda.h"
+#include "bagel/baglib/fmovie.h"
+#include "bagel/baglib/zoom_pda.h"
 
 namespace Bagel {
 

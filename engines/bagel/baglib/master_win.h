@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_MASTER_WIN_H
-#define BAGEL_BAGLIB_GUI_MASTER_WIN_H
+#ifndef BAGEL_BAGLIB_MASTER_WIN_H
+#define BAGEL_BAGLIB_MASTER_WIN_H
 
 #include "bagel/boflib/gfx/text.h"
 #include "bagel/baglib/cursor.h"
@@ -30,7 +30,7 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/object.h"
-#include "bagel/baglib/gui/save_dialog.h"
+#include "bagel/baglib/save_dialog.h"
 #include "bagel/baglib/var.h"
 #include "bagel/boflib/gui/text_box.h"
 

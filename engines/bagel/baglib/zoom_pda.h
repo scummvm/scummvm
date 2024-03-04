@@ -20,44 +20,32 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_HELP_H
-#define BAGEL_BAGLIB_GUI_HELP_H
+#ifndef BAGEL_BAGLIB_ZOOM_PDA_H
+#define BAGEL_BAGLIB_ZOOM_PDA_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/string.h"
+#include "bagel/baglib/storage_dev_win.h"
+#include "bagel/baglib/base_pda.h"
 
 namespace Bagel {
 
-class CBagHelp : public CBofDialog {
+class SBZoomPda : public CBagStorageDevWnd, public SBBasePda {
 public:
-	CBagHelp();
+	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
 
-#if BOF_DEBUG
-	virtual ~CBagHelp();
-#endif
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-#if 1
-	virtual VOID OnInitDialog();
-#endif
+	virtual ERROR_CODE LoadFile(const CBofString &sFile);
+	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *);
 
-	ERROR_CODE SetHelpFile(const CHAR *pszTextFile);
+	CBagObject *OnNewButtonObject(const CBofString &sInit);
+	virtual VOID OnMainLoop();
 
-protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint);
+	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	CBofString m_cTextFile;
-
-	CBofTextBox *m_pTextBox;
-	CBofBmpButton *m_pOKButton;
-	CBofBmpButton *m_pPageUp;
-	CBofBmpButton *m_pPageDown;
-	CBofPalette *m_pSavePalette;
+	virtual ERROR_CODE AttachActiveObjects();
+	virtual ERROR_CODE DetachActiveObjects();
 };
 
 } // namespace Bagel

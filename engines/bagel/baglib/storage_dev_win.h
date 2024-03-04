@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_STORAGE_DEV_WIN_H
-#define BAGEL_BAGLIB_GUI_STORAGE_DEV_WIN_H
+#ifndef BAGEL_BAGLIB_STORAGE_DEV_WIN_H
+#define BAGEL_BAGLIB_STORAGE_DEV_WIN_H
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/list.h"

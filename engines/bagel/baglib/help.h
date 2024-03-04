@@ -20,19 +20,45 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_PAINT_TABLE_H
-#define BAGEL_BAGLIB_GUI_PAINT_TABLE_H
+#ifndef BAGEL_BAGLIB_HELP_H
+#define BAGEL_BAGLIB_HELP_H
 
-#include "common/scummsys.h"
+#include "bagel/baglib/storage_dev_win.h"
+#include "bagel/boflib/gui/text_box.h"
+#include "bagel/boflib/gui/button.h"
+#include "bagel/boflib/string.h"
 
 namespace Bagel {
 
-struct stripEnds {
-	int16 top;
-	int16 bottom;
-};
+class CBagHelp : public CBofDialog {
+public:
+	CBagHelp();
 
-extern stripEnds STRIP_POINTS[153][120];
+#if BOF_DEBUG
+	virtual ~CBagHelp();
+#endif
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
+
+#if 1
+	virtual VOID OnInitDialog();
+#endif
+
+	ERROR_CODE SetHelpFile(const CHAR *pszTextFile);
+
+protected:
+	virtual VOID OnPaint(CBofRect *pRect);
+	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
+	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+
+	CBofString m_cTextFile;
+
+	CBofTextBox *m_pTextBox;
+	CBofBmpButton *m_pOKButton;
+	CBofBmpButton *m_pPageUp;
+	CBofBmpButton *m_pPageDown;
+	CBofPalette *m_pSavePalette;
+};
 
 } // namespace Bagel
 

@@ -20,77 +20,41 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_SAVE_DIALOG_H
-#define BAGEL_BAGLIB_GUI_SAVE_DIALOG_H
+#ifndef BAGEL_BAGLIB_START_DIALOG_H
+#define BAGEL_BAGLIB_START_DIALOG_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
-#include "bagel/baglib/save_game_file.h"
-#include "bagel/boflib/gui/dialog.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/list_box.h"
 #include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/edit_text.h"
+#include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
+#include "bagel/baglib/save_dialog.h"
 
 namespace Bagel {
 
-#define NUM_BUTTONS 6
+#define NUM_START_BTNS 3
 
-class CBagSaveDialog : public CBofDialog {
+class CBagStartDialog : public CBofDialog {
 public:
-	CBagSaveDialog();
+	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
 
-#if BOF_DEBUG
-	virtual ~CBagSaveDialog();
-#endif
-
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
-
-	UBYTE *GetSaveGameBuffer(INT &nLength) {
-		nLength = m_nBufSize;
-		return m_pSaveBuf;
-	}
-
-	VOID SetSaveGameBuffer(UBYTE *pBuf, INT nLength) {
-		m_pSaveBuf = pBuf;
-		m_nBufSize = nLength;
-	}
-
-#if 1
 	virtual VOID OnInitDialog();
-#endif
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
+	virtual VOID OnClose();
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnBofListBox(CBofObject *pObject, INT nItemIndex);
-#if BOF_MAC
-	virtual VOID OnMainLoop();
-#endif
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-	VOID SaveAndClose();
+	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
 	// Data
 	//
-	ST_SAVEDGAME_HEADER m_stGameInfo;
-	CBofBmpButton *m_pButtons[NUM_BUTTONS];
-	CBofScrollBar *m_pScrollBar;
-
-	CBofEditText *m_pEditText;
-	CBofListBox *m_pListBox;
-	CBagSaveGameFile *m_pSaveGameFile;
-	INT m_nSelectedItem;
-	UBYTE *m_pSaveBuf;
-	INT m_nBufSize;
-#if BOF_MAC
-	BOOL m_bResetFocus;
-#endif
+	CBofBmpButton *m_pButtons[NUM_START_BTNS];
 	CBofPalette *m_pSavePalette;
 };
 
-const CHAR *BuildSRDir(const CHAR *pszFile);
 } // namespace Bagel
 
 #endif
