@@ -58,8 +58,12 @@ public:
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
+	/**
+	 * Takes in info and then removes the relative information and returns the info
+	 * without the relevant info.
+	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
-	// PARSE_CODES	        SetInfo(CBofFile&);
+
 	VOID SetSize(const CBofSize &xSize);
 
 	VOID SetProperty(const CBofString &sProp, int nVal);
@@ -133,14 +137,41 @@ protected:
 public:
 	CBagLog();
 	virtual ~CBagLog();
+	static void initStatics() {
+		m_bLastFloatPage = nullptr;
+	}
 
 	virtual CBagObject *OnNewUserObject(const CBofString &sInit);
+
+	/**
+	 * This is different for the log sdev Object are just queued for insertion
+	 * and the message light starts blinking. The messages will be added
+	 * to the sdev when the message light is clicked
+	 * @return		Error result code
+	 */
 	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
+
+	/**
+	 * Releases and deletes all the objects in the list
+	 */
 	ERROR_CODE ReleaseMsg();
+
 	ERROR_CODE PlayMsgQue();
+
+	/**
+	 * Remove a (duplicate) message from the message queue
+	 */
 	BOOL RemoveFromMsgQueue(CBagObject *pObj);
 
+	/**
+	 * This function arranges the objects that are considered floating
+	 * (no coordinates given in script).  It is virtual so that derived
+	 * storage devices can do special things, like paging etc.
+	 * @return Returns the next available location in the sdev,
+	 * at this level the objects will go out of range of the sdev.
+	 */
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
+
 	INT GetCurFltPage();
 	VOID SetCurFltPage(int nFltPage);
 
