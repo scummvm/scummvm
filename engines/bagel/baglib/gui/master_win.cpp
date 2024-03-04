@@ -518,14 +518,9 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 			m_bObjSave = TRUE;
 
-			// jwl 10.08.96 only allocate the object list when we
-			// really need it...
-
+			// Only allocate the object list when we really need it...
 			if (m_pObjList == nullptr) {
-
 				if ((m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ))) != nullptr) {
-
-					// BCW - 12/23/96 01:19 pm
 					// Init to zero (we might not use all slots)
 					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
@@ -536,7 +531,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 			m_pStorageDeviceList->SaveObjList(m_pObjList, MAX_OBJS); // xxx
 
-			// BCW - 12/01/96 02:49 pm
 			// Save our SDEV location, so we can restore it from Kerpupu
 			SaveSDevStack();
 
@@ -632,11 +626,8 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 			}
 		}
 
-		// Now that we know we are on the correct CD, we can load
-		// the cursors
-		//
-		// jwl 1.14.97 optimizing game load time, only load the cursors
-		// that are not wield cursors
+		// Now that we know we are on the correct CD, we can load the cursors
+		// Only load the cursors that are not wield cursors
 		for (INT i = 0; i < MAX_CURSORS; i++) {
 			if (m_cCursorList[i] != nullptr) {
 #if OPTIMIZELOADTIME
@@ -657,12 +648,11 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 			if (bRestore && m_bObjSave) {
 				Assert(m_pStorageDeviceList != nullptr);
 				if (m_pStorageDeviceList != nullptr) {
-
-					// jwl 10.08.96 use a preallocated buffer, trash it when we're done.
+					// Use a preallocated buffer, trash it when we're done.
 					Assert(m_pObjList != nullptr);
 					m_pStorageDeviceList->RestoreObjList(m_pObjList, MAX_OBJS);
 
-					// all done with this list, can trash it now
+					// All done with this list, can trash it now
 					BofFree(m_pObjList);
 					m_pObjList = nullptr;
 				}
@@ -822,24 +812,26 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 						fpInput.EatWhite();
 						pVar->SetInfo(fpInput);
 						pVar->SetGlobal();
-					} break;
+						break;
+					}
 
 					case REMARK: {
 						char s[256];
 						fpInput.Get(s, 255);
-						// LOGINFO s << endl;
-					} break;
+						break;
+					}
 
 					case STORAGEDEV:
 					case START_WLD:
 					case SYSSCREEN:
 					case DISKID:
-					case DISKAUDIO: // BCW - 10/07/96 09:40 pm
-					case SHAREDPAL: // jwl 10.07.96
-					case PDASTATE:  // jwl 10.31.96
+					case DISKAUDIO:
+					case SHAREDPAL:
+					case PDASTATE:
 					default: {
 						ParseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
-					} break;
+						break;
+					}
 					}
 				}
 
@@ -874,17 +866,11 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 	BOOL bIsWieldCursor = FALSE;
 
 	memset(szLocalStr, 0, 256);
-	CBofString sWorkStr(szLocalStr, 256); // jwl 08.28.96 perf improvment
+	CBofString sWorkStr(szLocalStr, 256);
 
 	m_sStartWld = sWldName;
 
-	// jwl 10.31.96 set default PDA state
-	// jwl 11.05.96 now done with a global (look at pda constructor)
-	//
-	// SBBasePda::SetPDAMode(NOMODE);
-
-	while (/*fpInput &&*/ !fpInput.eof()) {
-
+	while (!fpInput.eof()) {
 		fpInput.EatWhite();
 		pSDev = nullptr;
 		nFilter = 0;
@@ -909,8 +895,8 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 
 			memset(szNameBuff, 0, 256);
 			memset(szTypeBuff, 0, 256);
-			CBofString namestr(szNameBuff, 256); // jwl 08.28.96 perf improvment
-			CBofString typestr(szTypeBuff, 256); // jwl 08.28.96 perf improvment
+			CBofString namestr(szNameBuff, 256);
+			CBofString typestr(szTypeBuff, 256);
 
 			fpInput.EatWhite();
 			GetAlphaNumFromStream(fpInput, namestr);
@@ -975,7 +961,8 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 #if defined(BOF_DEBUG) && defined(RMS_MESSAGES)
 			LogInfo(BuildString("Storage device '%s' at '%d' [ %d / %d ]", namestr.GetBuffer(), pSDev, GetFreePhysMem(), GetFreeMem()));
 #endif
-		} break;
+			break;
+		}
 
 		case START_WLD: {
 			CHAR str[256];
@@ -988,13 +975,13 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 				fpInput.Get();
 				fpInput.EatWhite();
 				GetAlphaNumFromStream(fpInput, sStr);
+
 				// Only use the start wld if not specified elsewhere
-				// if (m_sStartWld.IsEmpty()) {
 				m_sStartWld = sStr;
 				LogInfo(BuildString("START_WLD set to %s", m_sStartWld.GetBuffer()));
-				//}
 			}
-		} break;
+			break;
+		}
 
 		case WIELDCURSOR:
 			bIsWieldCursor = TRUE;
@@ -1022,8 +1009,8 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 				GetAlphaNumFromStream(fpInput, sStr);
 				MACROREPLACE(sStr);
 
-				// jwl 10.07.96 Specify if we have a shared palette or not,
-				// look for the USESHAREDPAL token after the full cursor specification
+				// Specify if we have a shared palette or not, look for
+				// the USESHAREDPAL token after the full cursor specification
 				BOOL bUseShared = FALSE;
 
 				fpInput.EatWhite();
@@ -1053,7 +1040,7 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 					}
 					m_cCursorList[nId] = pCursor;
 
-					// jwl 1.14.97 set the wielded cursor status (needed for
+					// Set the wielded cursor status (needed for
 					// a load time optimization)
 					pCursor->SetWieldCursor(bIsWieldCursor);
 
@@ -1064,9 +1051,10 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 			} else {
 				ReportError(ERR_UNKNOWN, "Bad cursor syntax");
 			}
-		} break;
+			break;
+		}
 
-		case PDASTATE: { // jwl 10.31.96
+		case PDASTATE: {
 			CHAR szPDAState[256];
 			szPDAState[0] = '\0';
 			CBofString sStr(szPDAState, 256);
@@ -1090,9 +1078,10 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 				}
 				LogInfo(BuildString("PDASTATE = %s", szPDAState));
 			}
-		} break;
+			break;
+		}
 
-		// jwl 10.07.96 implement shared palettes
+		// Implement shared palettes
 		case SHAREDPAL: {
 			CHAR szBmpFileName[256];
 			szBmpFileName[0] = '\0';
@@ -1110,7 +1099,8 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 
 				LogInfo(BuildString("SHAREDPAL = %s", sStr.GetBuffer()));
 			}
-		} break;
+			break;
+		}
 
 		case SYSSCREEN: {
 
@@ -1152,7 +1142,8 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 
 				LogInfo(BuildString("DISKAUDIO = %s", m_cCDChangeAudio.GetBuffer()));
 			}
-		} break;
+			break;
+		}
 
 		case DISKID: {
 			/*CHAR szDiskID[256];
@@ -1185,19 +1176,21 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 
 			} else {
 			}
-		} break;
+			break;
+		}
 
 		case VARIABLE: {
 			CBagVar *xVar = new CBagVar;
 			// LogInfo("New global variable");
 			fpInput.EatWhite();
 			xVar->SetInfo(fpInput);
-		} break;
+			break;
+		}
 
 		case REMARK: {
 			char s[255];
 #if BOF_MAC
-			// jwl 07.23.96 there's a bug in the mac streams code where if the
+			// There's a bug in the mac streams code where if the
 			// first char that ".Get" is the delimeter (/r or /n) then the
 			// next call to get will cause an EOF to be returned.
 
@@ -1207,17 +1200,13 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 			else
 #endif
 				fpInput.Get(s, 255);
-
-			// LOGINFO s << endl;
-		} break;
+			break;
+		}
 
 		default: {
-			// char s[255];
-			// fpInput.getline(s,255);
-			// int n = fpInput.GetLineNumber();
 			ParseAlertBox(fpInput, "Syntax Error:", __FILE__, __LINE__);
-			// LOGINFO"Syntax Error before:" << s << endl;
-		} break;
+			break;
+		}
 		}
 
 	} // While not eof
@@ -1371,7 +1360,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 			VARMNGR->IncrementTimers();
 
-			// jwl 10.30.96 prefilter this guy, could cause something to change in the
+			// Prefilter this guy, could cause something to change in the
 			// pan or the PDA or a closeup.
 			m_pGameWindow->SetPreFilterPan(TRUE);
 
@@ -1578,7 +1567,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(CBofString *pStr) {
 		if (m_nFadeIn != 0)
 			pSDev->SetFadeId((USHORT)m_nFadeIn);
 
-		// jwl 10.11.96 make sure the cursor backdrop is not drawn for the first frame
+		// Make sure the cursor backdrop is not drawn for the first frame
 		pSDev->SetDrawCursorBackdrop(FALSE);
 
 		// Reset paints
@@ -1665,7 +1654,7 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 		//
 		CBofSound::StopSounds();
 
-		// jwl 12.19.96 kill any waiting PDA messages that are queued up...
+		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::RemoveFromMovieQueue(nullptr);
 
 		CBofBitmap cBmp(Width(), Height(), CBagel::GetApp()->GetPalette());
@@ -1761,13 +1750,13 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 				m_pGameWindow->Detach();
 			}
 			pSDev->Attach();
-			// jwl 10.11.96 make sure that the cursor backdrop is not drawn by the
+			// make sure that the cursor backdrop is not drawn by the
 			// next storage device.
 			pSDev->SetDrawCursorBackdrop(FALSE);
 			pSDev->SetPreFilterPan(TRUE);
 			m_pGameWindow = (CBagStorageDevWnd *)pSDev;
 
-			// jwl 12.19.96 reset the CIC var
+			// Reset the CIC var
 			SetCICStatus(pSDev);
 		} else {
 			// report error
@@ -1800,13 +1789,6 @@ VOID CBagMasterWin::SetActiveCursor(INT iCursor) {
 		m_cCursorList[iCursor]->SetCurrent();
 		m_nCurCursor = iCursor;
 	}
-
-	// jwl 08.13.96 Before we totally cut over to color cursors... we still
-	// need a cursor on the screen.
-	// #if BOF_MAC
-	// else
-	//	::InitCursor ();
-	// #endif
 }
 
 VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
@@ -1887,7 +1869,7 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 			if ((pSDevWin = GetCurrentStorageDev()) != nullptr) {
 				CHAR szLocalStr[256];
 				szLocalStr[0] = 0;
-				CBofString cStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+				CBofString cStr(szLocalStr, 256);
 				CBagPanWindow *pPanWin;
 				CBagStorageDevManager *pManager;
 
@@ -2040,7 +2022,7 @@ VOID CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	CHAR szBuf[60], szCloseup[256];
 	CHAR szLocalStr[256];
 	szLocalStr[0] = 0;
-	CBofString cStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+	CBofString cStr(szLocalStr, 256);
 	INT i;
 
 	// Rebuild the stack of locations (Could be 3 closups deep)
@@ -2328,7 +2310,6 @@ INT CBagMasterWin::GetWaveVolume() {
 	nWaveVol = VOLUME_INDEX_DEFAULT;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 #if BOF_MAC
-		// jwl 09.24.96
 		pApp->GetOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
 #else
 		pApp->GetOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
@@ -2730,13 +2711,13 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 	}
 }
 
-// jwl 12.19.96 set the CIC var to either true or false so that our scripting
+// Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
 VOID SetCICStatus(CBagStorageDev *pSDev) {
 	CHAR szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 
-	// jwl 12.19.96 if the new game window is a CIC, then set the global var
+	// If the new game window is a CIC, then set the global var
 	// indicating that this is the case.  Don't reset when we're zooming the
 	// PDA.
 	if (pSDev && pSDev->GetName() != "BPDAZ_WLD") {
@@ -2749,7 +2730,6 @@ VOID SetCICStatus(CBagStorageDev *pSDev) {
 	}
 }
 
-// jwl 12.23.96 Return the CIC status var.
 BOOL GetCICStatus(VOID) {
 	CHAR szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
