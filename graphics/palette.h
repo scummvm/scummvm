@@ -111,6 +111,110 @@ public:
 
 namespace Graphics {
 
+/**
+ * @brief Simple class for handling a palette data.
+ *
+ * The palette data is specified in interleaved RGB format. That is, the
+ * first byte of the memory block 'colors' points at is the red component
+ * of the first new color; the second byte the green component of the first
+ * new color; the third byte the blue component, the last byte to the alpha
+ * (transparency) value. Then the second color starts, and so on. So memory
+ * looks like this: R1-G1-B1-R2-G2-B2-R3-...
+ */
+class Palette {
+	byte *_data;
+	uint16 _size;
+
+public:
+	static const uint16 npos = 0xFFFF;
+
+	/**
+	 * @brief Construct a new Palette object
+	 *
+	 * @param size   the number of palette entries
+	 */
+	Palette(uint size);
+
+	Palette(const Palette &p);
+
+	~Palette();
+
+	bool operator==(const Palette &rhs) const { return equals(rhs); }
+	bool operator!=(const Palette &rhs) const { return !equals(rhs); }
+
+	bool equals(const Palette &p) const;
+
+	bool contains(const Palette &p) const;
+
+	const byte *data() const { return _data; }
+	uint size() const { return _size; }
+
+	void set(uint entry, byte r, byte g, byte b) {
+		assert(entry < _size);
+		_data[entry * 3 + 0] = r;
+		_data[entry * 3 + 1] = g;
+		_data[entry * 3 + 2] = b;
+	}
+
+	void get(uint entry, byte &r, byte &g, byte &b) const {
+		assert(entry < _size);
+		r = _data[entry * 3 + 0];
+		g = _data[entry * 3 + 1];
+		b = _data[entry * 3 + 2];
+	}
+
+	/**
+	 * Finds the index of an exact color from the palette.
+	 *
+	 * @return the palette index or npos if not found
+	 */
+	uint find(byte r, byte g, byte b) const {
+		for (uint i = 0; i < _size; i++) {
+			if (_data[i * 3 + 0] == r && _data[i * 3 + 1] == g && _data[i * 3 + 2] == b)
+				return i;
+		}
+		return npos;
+	}
+
+	/**
+	 * Finds the index of the closest color from the palette.
+	 *
+	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 *
+	 * @return the palette index
+	 */
+	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false) const;
+
+	void clear();
+
+	/**
+	 * Replace the specified range of the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * @param colors	the new palette data, in interleaved RGB format
+	 * @param start		the first palette entry to be updated
+	 * @param num		the number of palette entries to be updated
+	 *
+	 * @note It is an error if start+num exceeds 256.
+	 */
+	void set(const byte *colors, uint start, uint num);
+	void set(const Palette &p, uint start, uint num);
+
+	/**
+	 * Grabs a specified part of the currently active palette.
+	 * The format is the same as for setPalette.
+	 *
+	 * @param colors	the palette data, in interleaved RGB format
+	 * @param start		the first platte entry to be read
+	 * @param num		the number of palette entries to be read
+	 *
+	 * @note It is an error if start+num exceeds 256.
+	 */
+	void grab(byte *colors, uint start, uint num) const;
+	void grab(Palette &p, uint start, uint num) const;
+};
+
 class PaletteLookup {
 public:
 	PaletteLookup();
@@ -137,7 +241,7 @@ public:
 	 * @brief This method returns closest color from the palette
 	 *        and it uses cache for faster lookups
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 * @param useNaiveAlg            if true, use a simpler algorithm
 	 *
 	 * @return the palette index
 	 */
@@ -149,14 +253,14 @@ public:
 	 *
 	 * @param palette   the palette data, in interleaved RGB format
 	 * @param len       the number of palette entries to be read
-	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 * @param useNaiveAlg            if true, use a simpler algorithm
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
 	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
 
 private:
-	byte _palette[256 * 3];
+	Palette _palette;
 	uint _paletteSize;
 	Common::HashMap<int, byte> _colorHash;
 };
