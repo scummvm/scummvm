@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	baglib/chat_wnd.o \
 	baglib/command_object.o \
 	baglib/cursor.o \
+	baglib/dialogs.o \
 	baglib/dossier_object.o \
 	baglib/expression_object.o \
 	baglib/master_win.o \
