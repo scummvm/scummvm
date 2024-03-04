@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	baglib/fmovie.o \
 	baglib/help.o \
 	baglib/inv.o \
+	baglib/log_msg.o \
 	baglib/master_win.o \
 	baglib/movie_object.o \
 	baglib/object.o \
