@@ -482,6 +482,9 @@ void Talking::say(const Common::String &text) {
 
 void Talking::disable() {
 	Motor::disable();
+	if (_obj->_sound) {
+		g_twp->_audio->stop(_obj->_sound);
+	}
 	_texts.clear();
 	_obj->setHeadIndex(1);
 	if (_node)
