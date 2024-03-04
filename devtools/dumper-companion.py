@@ -358,19 +358,28 @@ def extract_volume_iso(args: argparse.Namespace):
 
     output_dir = str(args.dir)
 
-    for dirname, dirlist, filelist in iso.walk(iso_path='/'):
+    if not args.extension:
+        path_type = 'iso_path'
+    elif args.extension == 'joliet':
+        path_type = 'joliet_path'
+    elif args.extension == 'rr':
+        path_type = 'rr_type'
+    else:
+        path_type = 'udf_path'
+
+    arg = {path_type: '/'}
+
+    for dirname, dirlist, filelist in iso.walk(**arg):
         pwd = output_dir + dirname
         for dir in dirlist:
             joined_path = os.path.join(pwd, dir)
             os.makedirs(joined_path, exist_ok=True)
         for file in filelist:
             filename = file.split(';')[0]
-            if dirname != '/':
-                iso_file_path = dirname + '/' + file
-            else:
-                iso_file_path = dirname + file
+            iso_file_path = os.path.join(dirname, filename)
             with open(os.path.join(pwd, filename), 'wb') as f:
-                iso.get_file_from_iso_fp(outfp=f, iso_path=iso_file_path)
+                arg[path_type] = iso_file_path
+                iso.get_file_from_iso_fp(outfp=f, **arg)
 
     iso.close()
 
@@ -824,6 +833,7 @@ def generate_parser() -> argparse.ArgumentParser:
     parser_iso9660.add_argument(
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
+    parser_iso9660.add_argument("--extension", choices=['joliet', 'rr', 'udf'], metavar="EXTENSION", help="Use if the iso9660 has an extension")
     parser_iso9660.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso9660.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
