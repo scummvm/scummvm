@@ -70,7 +70,17 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 // - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
 // - KQ1: when grabbing the eagle (room 22).
 // - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
+// FIXME: This workaround prevents the DDP introduction from animating the three
+//        jumping ducks while they move from left to right. Bug #14170
+//        For now, this game is excluded from the workaround, but a proper fix
+//        is needed, or at least an explanation for why blocking this behavior
+//        is the right thing to do when at least one game relies on it.
 void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
+	// Exclude DDP from workaround; see above
+	if (getGameID() == GID_DDP) {
+		return;
+	}
+
 	if (screenObj->flags & fCycling) {
 		// Cycling active too
 		switch (screenObj->cycle) {
