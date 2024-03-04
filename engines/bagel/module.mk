@@ -79,6 +79,7 @@ MODULE_OBJS = \
 	boflib/gui/movie.o \
 	boflib/gui/scroll_bar.o \
 	boflib/gui/sprite.o \
+	boflib/gui/text_box.o \
 	boflib/gui/window.o
 
 # This module can be built as a plugin
