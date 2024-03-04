@@ -345,6 +345,9 @@ def extract_volume_iso(args: argparse.Namespace):
     """Extract an ISO volume"""
     source_volume = args.src
     loglevel: str = args.log
+    dopunycode: bool = not args.nopunycode
+    dryrun: bool = args.dryrun
+    japanese: bool = args.japanese
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
@@ -363,24 +366,35 @@ def extract_volume_iso(args: argparse.Namespace):
     elif args.extension == 'joliet':
         path_type = 'joliet_path'
     elif args.extension == 'rr':
-        path_type = 'rr_type'
+        path_type = 'rr_path'
     else:
         path_type = 'udf_path'
 
     arg = {path_type: '/'}
 
+    if japanese:
+        arg['encoding'] = 'shift_jis'
+
     for dirname, dirlist, filelist in iso.walk(**arg):
         pwd = output_dir + dirname
         for dir in dirlist:
             joined_path = os.path.join(pwd, dir)
-            os.makedirs(joined_path, exist_ok=True)
+            if not dryrun:
+                os.makedirs(joined_path, exist_ok=True)
+            else:
+                print(joined_path)
+
+        if dryrun:
+            continue
+
         for file in filelist:
             filename = file.split(';')[0]
             iso_file_path = os.path.join(dirname, filename)
             with open(os.path.join(pwd, filename), 'wb') as f:
                 arg[path_type] = iso_file_path
                 iso.get_file_from_iso_fp(outfp=f, **arg)
-
+    if dopunycode:
+        punyencode_dir(Path(output_dir))
     iso.close()
 
 
@@ -834,6 +848,15 @@ def generate_parser() -> argparse.ArgumentParser:
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
     parser_iso9660.add_argument("--extension", choices=['joliet', 'rr', 'udf'], metavar="EXTENSION", help="Use if the iso9660 has an extension")
+    parser_iso9660.add_argument(
+        "--nopunycode", action="store_true", help="never encode pathnames into punycode"
+    )
+    parser_iso9660.add_argument(
+        "--dryrun", action="store_true", help="do not write any files"
+    )
+    parser_iso9660.add_argument(
+        "--japanese", action="store_true", help="read MacJapanese HFS"
+    )
     parser_iso9660.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso9660.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
