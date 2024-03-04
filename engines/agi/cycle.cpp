@@ -151,6 +151,12 @@ void AgiEngine::interpretCycle() {
 		_veryFirstInitialCycle = false;
 		artificialDelay_CycleDone();
 		resetControllers();
+
+		// Reset mouse button state after new.room, because we don't poll input.
+		// Otherwise, AGIMOUSE games that call new.room in response to a click
+		// will enter an infinite loop due to the mouse button global (27) never
+		// resetting to zero. Bug #10737
+		_mouse.button = kAgiMouseButtonUp;
 	}
 	_veryFirstInitialCycle = false;
 	artificialDelay_CycleDone();
