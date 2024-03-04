@@ -65,17 +65,23 @@ bool Wiz::WARPWIZ_DrawWiz(int image, int state, int polygon, int32 flags, int tr
 	}
 
 	// Call the actual warping primitive
+	WarpWizPoint polypoints[5];
+	for (int i = 0; i < 5; i++) {
+		WarpWizPoint tmp(_polygons[polyIndex].points[i]);
+		polypoints[i] = tmp;
+	}
+
 	return WARPWIZ_DrawWizTo4Points(
-		image, state, _polygons[polyIndex].points, flags, transparentColor,
+		image, state, polypoints, flags, transparentColor,
 		nullptr, optionalDestBitmap, optionalColorConversionTable, xmapColorTable);
 }
 
-bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable) {
+bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable) {
 	WizSimpleBitmap dstBitmap, srcBitmap;
 	bool rValue, freeBitmapBits;
 	Common::Rect updateRect;
 	int x, y;
-	Common::Point srcPoints[4];
+	WarpWizPoint srcPoints[4];
 	byte *ptr;
 
 	// Set the optional remap table up to the default if one isn't specified
@@ -101,7 +107,7 @@ bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *ds
 			error("Image %d missing data", image);
 
 		// Map the srcBitmap bits to the wiz data...
-		srcBitmap.bufferPtr = (WizRawPixel *)(ptr + 8);
+		srcBitmap.bufferPtr = (WizRawPixel *)(ptr + _vm->_resourceHeaderSize);
 		freeBitmapBits = false;
 	}
 
@@ -123,7 +129,15 @@ bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *ds
 			error("Missing drawing buffer?");
 		}
 
-		dstBitmap.bufferPtr += pvs->xstart;
+		if (_uses16BitColor) {
+			WizRawPixel16 *buf16 = (WizRawPixel16 *)dstBitmap.bufferPtr;
+			buf16 += pvs->xstart;
+			dstBitmap.bufferPtr = (WizRawPixel *)buf16;
+		} else {
+			WizRawPixel8 *buf8 = (WizRawPixel8 *)dstBitmap.bufferPtr;
+			buf8 += pvs->xstart;
+			dstBitmap.bufferPtr = (WizRawPixel *)buf8;
+		}
 	}
 
 	// Find the bounding rect and double check the coords.
@@ -192,6 +206,7 @@ bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *ds
 	// Cleanup!
 	if (freeBitmapBits) {
 		free(srcBitmap.bufferPtr);
+		srcBitmap.bufferPtr = nullptr;
 	}
 
 	return rValue;
@@ -245,9 +260,9 @@ void Wiz::WARPWIZ_DestroySpanTable(WarpWizOneSpanTable *spanTable) {
 	spanTable = nullptr;
 }
 
-WarpWizOneSpanTable *Wiz::WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const Common::Point *dstPts, const Common::Point *srcPts, int npoints, const Common::Rect *clipRectPtr) {
+WarpWizOneSpanTable *Wiz::WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *dstPts, const WarpWizPoint *srcPts, int npoints, const Common::Rect *clipRectPtr) {
 	int offset, dw, sw, nonClippedWidth, maxOffset, cl, cr, cy, dl, cw;
-	Common::Point srcPt, dstPt, dstMinPt, dstMaxPt, srcMinPt, srcMaxPt, clippedPt;
+	WarpWizPoint srcPt, dstPt, dstMinPt, dstMaxPt, srcMinPt, srcMaxPt, clippedPt;
 	WarpWizOneDrawSpan *drawSpan;
 	Common::Rect clippingRect;
 	WarpWizOneSpanTable *st;
@@ -298,7 +313,7 @@ WarpWizOneSpanTable *Wiz::WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, con
 	dw = dstBitmap->bitmapWidth;
 	sw = srcBitmap->bitmapWidth;
 	span = st->spans;
-	offset = ((int)st->dstMinPt.y) * dw;
+	offset = st->dstMinPt.y * dw;
 	maxOffset = (dw * (dstBitmap->bitmapHeight - 1));
 	st->drawSpanCount = 0;
 	cy = st->dstMinPt.y;
@@ -344,8 +359,8 @@ WarpWizOneSpanTable *Wiz::WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, con
 	return st;
 }
 
-void Wiz::WARPWIZ_FindMinMaxpoints(Common::Point *minPtr, Common::Point *maxPtr, const Common::Point *points, int npoints) {
-	Common::Point minPt, maxPt, pt;
+void Wiz::WARPWIZ_FindMinMaxpoints(WarpWizPoint *minPtr, WarpWizPoint *maxPtr, const WarpWizPoint *points, int npoints) {
+	WarpWizPoint minPt, maxPt, pt;
 
 	// Find the limits...
 	maxPt.x = -0x8000;
@@ -379,21 +394,38 @@ void Wiz::WARPWIZ_FindMinMaxpoints(Common::Point *minPtr, Common::Point *maxPtr,
 
 void Wiz::WARPWIZ_ProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count) {
 	int xStep, yStep, sw, xOffset, yOffset;
-	const WizRawPixel *srcPtr;
-	WizRawPixel *dstPtr;
+
+	const WizRawPixel8 *src8;
+	const WizRawPixel16 *src16;
+
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	sw = srcBitmap->bitmapWidth;
-	srcPtr = srcBitmap->bufferPtr;
+
+	src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
 
 	for (int yCounter = count; --yCounter >= 0;) {
-		dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
+
 		xOffset = drawSpans->xSrcOffset;
 		yOffset = drawSpans->ySrcOffset;
 		xStep = drawSpans->xSrcStep;
 		yStep = drawSpans->ySrcStep;
 
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
-			*dstPtr++ = *(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+			if (!_uses16BitColor) {
+				*dst8++ = *(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+			} else {
+				*dst16++ = *(src16 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+			}
 
 			xOffset += xStep;
 			yOffset += yStep;
@@ -405,26 +437,46 @@ void Wiz::WARPWIZ_ProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleB
 
 void Wiz::WARPWIZ_ProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor) {
 	int xStep, yStep, sw, xOffset, yOffset;
-	const WizRawPixel *srcPtr;
+
+	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
+
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+
 	WizRawPixel srcColor;
-	WizRawPixel *dstPtr;
 
 	sw = srcBitmap->bitmapWidth;
-	srcPtr = srcBitmap->bufferPtr;
 
 	for (int yCounter = count; --yCounter >= 0;) {
-		dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
+
 		xOffset = drawSpans->xSrcOffset;
 		yOffset = drawSpans->ySrcOffset;
 		xStep = drawSpans->xSrcStep;
 		yStep = drawSpans->ySrcStep;
 
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
-			srcColor = *(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
-			if (srcColor != transparentColor) {
-				*dstPtr++ = srcColor;
+			if (!_uses16BitColor) {
+				srcColor = *(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+				if (srcColor != transparentColor) {
+					*dst8++ = (WizRawPixel8)srcColor;
+				} else {
+					dst8++;
+				}
 			} else {
-				dstPtr++;
+				srcColor = *(src16 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+				if (srcColor != transparentColor) {
+					*dst16++ = (WizRawPixel16)srcColor;
+				} else {
+					dst16++;
+				}
 			}
 
 			xOffset += xStep;
@@ -437,13 +489,18 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const 
 
 void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
 	int srcWidth = srcBitmap->bitmapWidth;
-	const WizRawPixel *srcPtr = srcBitmap->bufferPtr;
+
+	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
+
 	bool bSkipFilter = false;
 
 	int xStep, yStep, xOffset, yOffset;
 	WizRawPixel srcColor, srcColorN, srcColorS, srcColorE, srcColorW;
 	int iCurrentX, iCurrentY, iXScan, iYScan;
-	WizRawPixel *dstPtr;
+
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	// set up a rect for clipping if needed
 	Common::Rect aSrcRect;  // the source rectangle for clipping
@@ -455,19 +512,30 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap
 	iYScan = aSrcRect.bottom / count;
 
 	for (int yCounter = count; --yCounter >= 0;) {
-		dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
+
 		xOffset = drawSpans->xSrcOffset;
 		yOffset = drawSpans->ySrcOffset;
 		xStep = drawSpans->xSrcStep;
 		yStep = drawSpans->ySrcStep;
-		iXScan = WARP_FROM_FRAC(xStep); // the width of the seach should be the x step size
+		iXScan = WARP_FROM_FRAC(xStep); // the width of the search should be the x step size
 
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			iCurrentX = WARP_FROM_FRAC(xOffset);
 			iCurrentY = WARP_FROM_FRAC(yOffset);
 
 			// get the current color and the surrounding colors
-			srcColor = *(srcPtr + (srcWidth * iCurrentY) + iCurrentX);
+			if (!_uses16BitColor) {
+				srcColor = *(src8 + (srcWidth * iCurrentY) + iCurrentX);
+			} else {
+				srcColor = *(src16 + (srcWidth * iCurrentY) + iCurrentX);
+			}
 
 			bSkipFilter = false;
 			if (bIsHintColor) {
@@ -481,10 +549,18 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap
 				// scan through rect looking for hint color
 				for (int yScan = aScanRect.top; yScan < aScanRect.bottom; ++yScan) {
 					for (int xScan = aScanRect.left; xScan < aScanRect.right; ++xScan) {
-						if ((*(srcPtr + (yScan * srcWidth) + xScan)) == hintColor) {
-							srcColor = hintColor;
-							bSkipFilter = true;
-							break;
+						if (!_uses16BitColor) {
+							if ((*(src8 + (yScan * srcWidth) + xScan)) == hintColor) {
+								srcColor = hintColor;
+								bSkipFilter = true;
+								break;
+							}
+						} else {
+							if ((*(src16 + (yScan * srcWidth) + xScan)) == hintColor) {
+								srcColor = hintColor;
+								bSkipFilter = true;
+								break;
+							}
 						}
 					}
 
@@ -497,28 +573,44 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap
 			if ((srcColor != transparentColor) && !bSkipFilter) {
 				// check if top
 				if (iCurrentY != 0) {
-					srcColorN = *(srcPtr + (srcWidth * (iCurrentY - 1)) + iCurrentX);
+					if (!_uses16BitColor) {
+						srcColorN = *(src8 + (srcWidth * (iCurrentY - 1)) + iCurrentX);
+					} else {
+						srcColorN = *(src16 + (srcWidth * (iCurrentY - 1)) + iCurrentX);
+					}
 				} else {
 					srcColorN = transparentColor;
 				}
 
 				// check if bottom
 				if (iCurrentY != aSrcRect.bottom) {
-					srcColorS = *(srcPtr + (srcWidth * (iCurrentY + 1)) + iCurrentX);
+					if (!_uses16BitColor) {
+						srcColorS = *(src8 + (srcWidth * (iCurrentY + 1)) + iCurrentX);
+					} else {
+						srcColorS = *(src16 + (srcWidth * (iCurrentY + 1)) + iCurrentX);
+					}
 				} else {
 					srcColorS = transparentColor;
 				}
 
 				// check for left edge
 				if (iCurrentX != 0) {
-					srcColorW = *(srcPtr + (srcWidth * iCurrentY) + (iCurrentX - 1));
+					if (!_uses16BitColor) {
+						srcColorW = *(src8 + (srcWidth * iCurrentY) + (iCurrentX - 1));
+					} else {
+						srcColorW = *(src16 + (srcWidth * iCurrentY) + (iCurrentX - 1));
+					}
 				} else {
 					srcColorW = transparentColor;
 				}
 
 				// check for right edge
 				if (iCurrentX != aSrcRect.right) {
-					srcColorE = *(srcPtr + (srcWidth * iCurrentY) + (iCurrentX + 1));
+					if (!_uses16BitColor) {
+						srcColorE = *(src8 + (srcWidth * iCurrentY) + (iCurrentX + 1));
+					} else {
+						srcColorE = *(src16 + (srcWidth * iCurrentY) + (iCurrentX + 1));
+					}
 				} else {
 					srcColorE = transparentColor;
 				}
@@ -596,9 +688,17 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap
 			}
 
 			if (srcColor != transparentColor) {
-				*dstPtr++ = srcColor;
+				if (!_uses16BitColor) {
+					*dst8++ = srcColor;
+				} else {
+					*dst16++ = srcColor;
+				}
 			} else {
-				dstPtr++;
+				if (!_uses16BitColor) {
+					dst8++;
+				} else {
+					dst16++;
+				}
 			}
 
 			xOffset += xStep;
@@ -612,15 +712,24 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap
 void Wiz::WARPWIZ_ProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr) {
 	int xStep, yStep, sw, xOffset, yOffset;
 	WizRawPixel srcColor;
-	const WizRawPixel *srcPtr;
-	WizRawPixel *dstPtr;
+
+	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
+
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	sw = srcBitmap->bitmapWidth;
-	srcPtr = srcBitmap->bufferPtr;
 
 	for (int yCounter = count; --yCounter >= 0;) {
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
 
-		dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
 		xOffset = drawSpans->xSrcOffset;
 		yOffset = drawSpans->ySrcOffset;
 		xStep = drawSpans->xSrcStep;
@@ -628,16 +737,16 @@ void Wiz::WARPWIZ_ProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const Wi
 
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
-				srcColor = (*(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
+				srcColor = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 				if (srcColor != transparentColor) {
-					*dstPtr++ = *(tablePtr + (srcColor * 256) + (*dstPtr));
+					*dst8++ = *(tablePtr + (srcColor * 256) + (*dst8));
 				} else {
-					dstPtr++;
+					dst8++;
 				}
 			} else {
-				srcColor = *(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
+				srcColor = *(src16 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
 
-				*dstPtr++ = WIZRAWPIXEL_50_50_MIX(WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor), WIZRAWPIXEL_50_50_PREMIX_COLOR(*dstPtr));
+				*dst16++ = WIZRAWPIXEL_50_50_MIX(WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor), WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
 			}
 
 			xOffset += xStep;
@@ -648,8 +757,8 @@ void Wiz::WARPWIZ_ProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const Wi
 	}
 }
 
-void Wiz::WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const Common::Point *dstA, const Common::Point *dstB, const Common::Point *srcA, const Common::Point *srcB) {
-	Common::Point dstStep, srcStep, dstPt, srcPt, dpt, spt;
+void Wiz::WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const WarpWizPoint *dstA, const WarpWizPoint *dstB, const WarpWizPoint *srcA, const WarpWizPoint *srcB) {
+	WarpWizPoint dstStep, srcStep, dstPt, srcPt, dpt, spt;
 	int h, lx1, ly1, lx2, ly2;
 	WarpWizOneSpan *spanPtr;
 
@@ -707,7 +816,10 @@ void Wiz::WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const Common::Point 
 
 void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count) {
 	// Setup read pointer and clipping limits for the sampling rect
-	const WizRawPixel *srcPtr = srcBitmap->bufferPtr;
+	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	int sw = srcBitmap->bitmapWidth;
 	int src_x_limit = (srcBitmap->bitmapWidth - 1);
@@ -715,7 +827,13 @@ void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const Wiz
 
 	// Process all of the spans in this span collection.
 	for (int yCounter = count; --yCounter >= 0;) {
-		WizRawPixel *dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
 
 		int xOffset = drawSpans->xSrcOffset;
 		int yOffset = drawSpans->ySrcOffset;
@@ -747,7 +865,7 @@ void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const Wiz
 		// Process all pixels covered by this "span"
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
-				*dstPtr++ = (*(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
+				*dst8++ = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 			} else {
 				// Do a really lame sampling of the potential source pixels
 				int sx = WARP_FROM_FRAC(xOffset);
@@ -773,7 +891,7 @@ void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const Wiz
 				// Sample pixels from the source potential sampling area
 				if (total > 1) {
 					int total_R, total_G, total_B;
-					const WizRawPixel *samplePtr = (srcPtr + ((sw * sy1) + sx1));
+					const WizRawPixel *samplePtr = (const WizRawPixel *)(src16 + ((sw * sy1) + sx1));
 
 					rawPixelExtractComponents(*samplePtr, total_R, total_G, total_B);
 
@@ -795,10 +913,9 @@ void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const Wiz
 						samplePtr += sampleStep;
 					}
 
-					rawPixelPackComponents(*dstPtr, total_R / total, total_G / total, total_B / total);
-
+					rawPixelPackComponents(*dst16, total_R / total, total_G / total, total_B / total);
 				} else {
-					*dstPtr = (*(srcPtr + (sw * sy1) + sx1));
+					*dst16 = (*(src16 + (sw * sy1) + sx1));
 				}
 			}
 
@@ -812,7 +929,10 @@ void Wiz::WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const Wiz
 
 void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor) {
 	// Setup read pointer and clipping limits for the sampling rect
-	const WizRawPixel *srcPtr = srcBitmap->bufferPtr;
+	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
+	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	int sw = srcBitmap->bitmapWidth;
 	int src_x_limit = (srcBitmap->bitmapWidth - 1);
@@ -820,8 +940,13 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap
 
 	// Process all of the spans in this span collection.
 	for (int yCounter = count; --yCounter >= 0;) {
-
-		WizRawPixel *dstPtr = dstBitmap->bufferPtr + drawSpans->dstOffset;
+		if (!_uses16BitColor) {
+			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
+			dst8 += drawSpans->dstOffset;
+		} else {
+			dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
+			dst16 += drawSpans->dstOffset;
+		}
 
 		int xOffset = drawSpans->xSrcOffset;
 		int yOffset = drawSpans->ySrcOffset;
@@ -853,12 +978,12 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap
 		// Process all pixels covered by this "span"
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
-				WizRawPixel src_color = (*(srcPtr + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
+				WizRawPixel src_color = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 
 				if (src_color != transparentColor) {
-					*dstPtr++ = src_color;
+					*dst8++ = src_color;
 				} else {
-					dstPtr++;
+					dst8++;
 				}
 
 			} else {
@@ -889,9 +1014,9 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap
 				if (total > 1) {
 					int total_R, total_G, total_B;
 
-					const WizRawPixel *samplePtr = (srcPtr + ((sw * sy1) + sx1));
+					const WizRawPixel *samplePtr = (const WizRawPixel *)(src16 + ((sw * sy1) + sx1));
 
-					WizRawPixel first_color = (*(srcPtr + (sw * sy1) + sx1));
+					WizRawPixel first_color = (*(src16 + (sw * sy1) + sx1));
 
 					if (first_color != transparentColor) {
 						rawPixelExtractComponents(*samplePtr, total_R, total_G, total_B);
@@ -931,21 +1056,21 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap
 						rawPixelPackComponents(src_color, total_R / total, total_G / total, total_B / total);
 
 						if (transparentColor != src_color) {
-							*dstPtr = src_color;
+							*dst16 = src_color;
 						} else {
-							*dstPtr = 4;
+							*dst16 = 4;
 						}
 					}
 
 				} else {
-					WizRawPixel src_color = (*(srcPtr + (sw * sy1) + sx1));
+					WizRawPixel src_color = (*(src16 + (sw * sy1) + sx1));
 
 					if (src_color != transparentColor) {
-						*dstPtr = src_color;
+						*dst16 = src_color;
 					}
 				}
 
-				dstPtr++;
+				dst16++;
 			}
 
 			xOffset += xStep;
@@ -956,7 +1081,7 @@ void Wiz::WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap
 	}
 }
 
-bool Wiz::WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags) {
+bool Wiz::WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags) {
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
@@ -998,7 +1123,7 @@ bool Wiz::WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const Common::Poi
 	return false;
 }
 
-bool Wiz::WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor) {
+bool Wiz::WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor) {
 	if (_vm->_game.heversion > 99) {
 		return WARPWIZ_NPt2NPtWarp_CORE(
 			dstBitmap, dstpoints, srcBitmap, srcpoints,
@@ -1035,7 +1160,7 @@ bool Wiz::WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const Common
 	}
 }
 
-bool Wiz::WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect) {
+bool Wiz::WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect) {
 	if (_vm->_game.heversion > 99) {
 		return WARPWIZ_NPt2NPtWarp_CORE(
 			dstBitmap, dstpoints, srcBitmap, srcpoints,
@@ -1071,7 +1196,7 @@ bool Wiz::WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const Common::P
 	}
 }
 
-bool Wiz::WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable) {
+bool Wiz::WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable) {
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
@@ -1098,7 +1223,7 @@ bool Wiz::WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const 
 	}
 }
 
-bool Wiz::WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
+bool Wiz::WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {

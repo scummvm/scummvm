@@ -1239,10 +1239,9 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	if (shadowImage) {
 		shadow_p = (byte *)getColorMixBlockPtrForWiz(shadowImage);
 
-		// TODO: I don't think this is needed here?
-		//if (shadow_p) {
-		//	shadow_p += 8;
-		//}
+		if (shadow_p) {
+			shadow_p += _vm->_resourceHeaderSize;
+		}
 	} else {
 		shadow_p = nullptr;
 	}
@@ -2496,16 +2495,40 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 
 		pXmapColorTable += _vm->_resourceHeaderSize;
 
+		WarpWizPoint polypoints[5];
+		for (int i = 0; i < 5; i++) {
+			WarpWizPoint tmp(_polygons[polygon2].points[i]);
+			polypoints[i] = tmp;
+		}
+
+		WarpWizPoint srcWarpPoints[5];
+		for (int i = 0; i < 5; i++) {
+			WarpWizPoint tmp(srcPoints[i]);
+			srcWarpPoints[i] = tmp;
+		}
+
 		WARPWIZ_NPt2NPtNonClippedWarpFiltered(
-			&destBitmap, _polygons[polygon2].points, &srcBitmap, srcPoints,
+			&destBitmap, polypoints, &srcBitmap, srcWarpPoints,
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			pXmapColorTable, bIsHintColor, (WizRawPixel)iHintColor);
 
 	} else if (bOneToOneRect) { // if a one to one copy is performed, just copy this bits
 		memcpy(destBitmap.bufferPtr, srcBitmap.bufferPtr, destBitmap.bitmapHeight * destBitmap.bitmapWidth);
 	} else { // otherwise do "old" warp
+		WarpWizPoint polypoints[5];
+		for (int i = 0; i < 5; i++) {
+			WarpWizPoint tmp(_polygons[polygon2].points[i]);
+			polypoints[i] = tmp;
+		}
+
+		WarpWizPoint srcWarpPoints[5];
+		for (int i = 0; i < 5; i++) {
+			WarpWizPoint tmp(srcPoints[i]);
+			srcWarpPoints[i] = tmp;
+		}
+
 		WARPWIZ_NPt2NPtNonClippedWarp(
-			&destBitmap, _polygons[polygon2].points, &srcBitmap, srcPoints,
+			&destBitmap, polypoints, &srcBitmap, srcWarpPoints,
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 	}
 
@@ -3397,9 +3420,15 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 		shadowPtr = nullptr;
 	}
 
+	WarpWizPoint listOfWarpPoints[4];
+	for (int i = 0; i < 4; i++) {
+		WarpWizPoint tmp(listOfPoints[i]);
+		listOfWarpPoints[i] = tmp;
+	}
+
 	// Finally call the renderer
 	WARPWIZ_DrawWizTo4Points(
-		image, state, listOfPoints, flags,
+		image, state, listOfWarpPoints, flags,
 		_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 		clipRect, optionalBitmapOverride, optionalColorConversionTable,
 		shadowPtr);
@@ -4322,7 +4351,7 @@ byte *Wiz::getWizStateRemapDataPrim(int globNum, int state) {
 const byte *Wiz::getColorMixBlockPtrForWiz(int image) {
 	byte *data = _vm->getResourceAddress(rtImage, image);
 	assert(data);
-	return _vm->findResourceData(MKTAG('X', 'M', 'A', 'P'), data);
+	return _vm->findResourceData(MKTAG('X', 'M', 'A', 'P'), data) - _vm->_resourceHeaderSize;
 }
 
 void Wiz::setWizCompressionType(int image, int state, int newType) {
