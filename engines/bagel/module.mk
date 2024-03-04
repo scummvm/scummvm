@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	baglib/dialogs.o \
 	baglib/dossier_object.o \
 	baglib/event_sdev.o \
+	baglib/exam.o \
 	baglib/expression_object.o \
 	baglib/master_win.o \
 	baglib/movie_object.o \

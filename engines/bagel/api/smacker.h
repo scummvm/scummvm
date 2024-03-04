@@ -26,6 +26,7 @@ namespace Bagel {
 
 struct SmackBuf {};
 struct Smack {
+	int Frames = 0;
 	int FrameNum = 0;
 };
 
