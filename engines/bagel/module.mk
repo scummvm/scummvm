@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	baglib/expression.o \
 	baglib/expression_object.o \
 	baglib/fmovie.o \
+	baglib/help.o \
 	baglib/master_win.o \
 	baglib/movie_object.o \
 	baglib/object.o \
