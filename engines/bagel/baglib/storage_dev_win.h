@@ -348,6 +348,9 @@ public:
 
 	CBagStorageDevWnd();
 	virtual ~CBagStorageDevWnd();
+	static void initStatics() {
+		m_pEvtSDev = nullptr;
+	}
 
 	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
 	virtual ERROR_CODE Detach(); // This function attachs the background and nessasary bitmaps

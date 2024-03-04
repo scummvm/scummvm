@@ -75,25 +75,30 @@ protected:
 public:
 	SBBasePda(CBofWindow *pParent = NULL, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
 	virtual ~SBBasePda();
+	static void initStatics();
 
-	// jwl 10.31.96 allow PDA mode to be set by script
+	/**
+	 * Allows PDA mode to be set by script
+	 */
 	static VOID SetPDAMode(PDAMODE ePDAMode) { m_ePdaMode = ePDAMode; }
 	static PDAMODE GetPDAMode() { return m_ePdaMode; }
-	BOOL IsActivated() { return (m_bActivating) ? !m_bActivated : m_bActivated; }
-	BOOL IsActivating() { return (m_bActivating); }
+	BOOL IsActivated() { return m_bActivating ? !m_bActivated : m_bActivated; }
+	BOOL IsActivating() { return m_bActivating; }
 
 	virtual ERROR_CODE AttachActiveObjects();
 	virtual ERROR_CODE DetachActiveObjects();
 
-	// jwl 11.05.96 sync starting options
+	/**
+	 * Sync starting options
+	 */
 	VOID SynchronizePDAState();
 
 	BOOL Deactivate() {
 		if (!m_bActivating) {
-
 			m_bActivating = m_nNumMoves;
 			m_bActivated = FALSE;
 		}
+
 		m_ePDAPos = PDADOWN;
 		SetPDAState();
 		return TRUE;
@@ -110,29 +115,71 @@ public:
 		return TRUE;
 	}
 
-	virtual BOOL ShowInventory(); // Show the inventory
-	virtual BOOL HideInventory(); // Hide the inventory
+	/**
+	 * Show the inventory
+	 */
+	virtual BOOL ShowInventory();
 
-	virtual BOOL ShowMovie();     // Show the movie window
-	virtual BOOL HideMovie();     // Hide the movie window
+	/**
+	 * Hide the inventory
+	 */
+	virtual BOOL HideInventory();
+
+	/**
+	 * Show the movie window
+	 */
+	virtual BOOL ShowMovie();
+
+	/**
+	 * Hide the movie window
+	 */
+	virtual BOOL HideMovie();
+
+	/**
+	 * Set the movie to play
+	 * @param s			Movie filename
+	 * @return			Success/failure
+	 */
 	BOOL SetMovie(CBofString &s); // Set the movie
-	VOID StopMovie(BOOL);         // Stop any asynch movies playing
 
-	// jwl 12.30.96
+	/**
+	 * Stops any playing movie
+	 */
+	VOID StopMovie(BOOL);
+
 	VOID SetDeactivate(BOOL b = FALSE) { m_bDeactivate = b; }
 	BOOL GetDeactivate() { return m_bDeactivate; }
 
-	virtual BOOL ShowMap(); // Show the Map
-	virtual BOOL HideMap(); // Hide the Map
+	/**
+	 * Show the map
+	 */
+	virtual BOOL ShowMap();
 
-	virtual BOOL Zoom() { return TRUE; } // Zoom the current display
+	/**
+	 * Hide the map
+	 */
+	virtual BOOL HideMap();
+
+	/**
+	 * Zoom the current display
+	 */
+	virtual BOOL Zoom() { return TRUE; }
 
 	virtual BOOL ShowLog();
 
 	virtual BOOL MsgLight();
 
-	virtual BOOL HideCurDisplay();    // Hide the current display
-	virtual BOOL RestoreCurDisplay(); // Restore cur display, paired with hide
+	/**
+	 * Hide the current display and reset the m_xCurDisplay to nullptr
+	 * @return		Success/failure
+	 */
+	virtual BOOL HideCurDisplay();
+
+	/**
+	 * Hide the current display and reset the m_xCurDisplay to nullptr
+	 * @return		Success/Failure
+	 */
+	virtual BOOL RestoreCurDisplay();
 
 	static void *fPdaButtonHandler(int /* nRefId */, void *pvInfo);
 
@@ -144,7 +191,9 @@ public:
 
 	INT GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
 
-	// jwl 11.26.96 allow for getting the background rect.
+	/**
+	 * Returns the background rect
+	 */
 	CBofRect GetViewRect();
 };
 

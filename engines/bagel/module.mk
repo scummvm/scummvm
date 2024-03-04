@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	baglib/area_object.o \
+	baglib/base_pda.o \
 	baglib/bmp_object.o \
 	baglib/button_object.o \
 	baglib/character_object.o \
