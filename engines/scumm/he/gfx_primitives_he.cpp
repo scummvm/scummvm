@@ -1698,9 +1698,9 @@ int Wiz::getRawPixel(int color) {
 
 void Wiz::memset8BppConversion(void *dstPtr, int value, size_t count, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		rawPixelMemset(dstPtr, (int)convert8BppToRawPixel((WizRawPixel16)value, conversionTable), count);
+		rawPixelMemset((WizRawPixel16 *)dstPtr, (int)convert8BppToRawPixel((WizRawPixel16)value, conversionTable), count);
 	} else {
-		memset(dstPtr, value, count);
+		memset((WizRawPixel8 *)dstPtr, value, count);
 	}
 }
 
@@ -1713,7 +1713,7 @@ void Wiz::memcpy8BppConversion(void *dstPtr, const void *srcPtr, size_t count, c
 			*dstWritePtr++ = convert8BppToRawPixel((WizRawPixel16)(*srcReadPtr++), conversionTable);
 		}
 	} else {
-		memcpy(dstPtr, srcPtr, count);
+		memcpy((WizRawPixel8 *)dstPtr, (const byte *)srcPtr, count);
 	}
 }
 

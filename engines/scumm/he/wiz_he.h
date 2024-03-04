@@ -293,11 +293,27 @@ struct WizCompressedImage {
 	int height;
 };
 
+// Our Common::Point has int16 coordinates.
+// This is not enough for polygon warping...
+struct WarpWizPoint {
+	int32 x;
+	int32 y;
+
+	WarpWizPoint(Common::Point pt) {
+		x = pt.x;
+		y = pt.y;
+	}
+
+	WarpWizPoint() {
+		x = y = 0;
+	}
+};
+
 struct WarpWizOneSpan {
 	int dstLeft;
 	int dstRight;
-	Common::Point srcLeft;
-	Common::Point srcRight;
+	WarpWizPoint srcLeft;
+	WarpWizPoint srcRight;
 };
 
 struct WarpWizOneDrawSpan {
@@ -310,8 +326,8 @@ struct WarpWizOneDrawSpan {
 };
 
 struct WarpWizOneSpanTable {
-	Common::Point dstMinPt, dstMaxPt;
-	Common::Point srcMinPt, srcMaxPt;
+	WarpWizPoint dstMinPt, dstMaxPt;
+	WarpWizPoint srcMinPt, srcMaxPt;
 	WarpWizOneDrawSpan *drawSpans;
 	WarpWizOneSpan *spans;
 	int drawSpanCount;
@@ -904,23 +920,23 @@ public:
 	 */
 
 	bool WARPWIZ_DrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage);
-	bool WARPWIZ_DrawWizTo4Points(int image, int state, const Common::Point *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable);
+	bool WARPWIZ_DrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable);
 	WarpWizOneSpanTable *WARPWIZ_CreateSpanTable(int spanCount);
 	void WARPWIZ_DestroySpanTable(WarpWizOneSpanTable *spanTable);
-	WarpWizOneSpanTable *WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const Common::Point *dstPts, const Common::Point *srcPts, int npoints, const Common::Rect *clipRectPtr);
+	WarpWizOneSpanTable *WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *dstPts, const WarpWizPoint *srcPts, int npoints, const Common::Rect *clipRectPtr);
 	void WARPWIZ_ProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
 	void WARPWIZ_ProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
 	void WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
-	void WARPWIZ_ProcessDrawSpansMixColors( WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr);
-	void WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const Common::Point *dstA, const Common::Point *dstB, const Common::Point *srcA, const Common::Point *srcB);
+	void WARPWIZ_ProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr);
+	void WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const WarpWizPoint *dstA, const WarpWizPoint *dstB, const WarpWizPoint *srcA, const WarpWizPoint *srcB);
 	void WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
 	void WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap,const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
-	bool WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags);
-	bool WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor);
-	bool WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect);
-	bool WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable);
-	bool WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const Common::Point *dstpoints, const WizSimpleBitmap *srcBitmap, const Common::Point *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
-	void WARPWIZ_FindMinMaxpoints(Common::Point *minPtr, Common::Point *maxPtr, const Common::Point *points, int npoints);
+	bool WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags);
+	bool WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor);
+	bool WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect);
+	bool WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable);
+	bool WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
+	void WARPWIZ_FindMinMaxpoints(WarpWizPoint *minPtr, WarpWizPoint *maxPtr, const WarpWizPoint *points, int npoints);
 };
 
 } // End of namespace Scumm
