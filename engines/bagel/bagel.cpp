@@ -55,6 +55,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	// baglib/ class statics initializations
 	CBagCursor::initStatics();
 	CBagDossierObject::initStatics();
+	CBagEventSDev::initStatics();
 	CBagParseObject::initStatics();
 	CBagSoundObject::initStatics();
 	CBagStorageDevWnd::initStatics();
