@@ -47,6 +47,7 @@ protected:
 public:
 	CBagSoundObject();
 	virtual ~CBagSoundObject();
+	static void initStatics();
 
 	VOID KillSound();
 	ERROR_CODE NewSound(CBofWindow *pWin);
