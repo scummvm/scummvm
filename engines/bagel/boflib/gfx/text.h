@@ -90,6 +90,7 @@ namespace Bagel {
 enum {
     FW_NORMAL,
 	FW_BOLD,
+	FW_MEDIUM,
 };
 
 #define FONT_DEFAULT        0
