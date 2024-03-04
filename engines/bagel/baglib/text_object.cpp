@@ -29,10 +29,9 @@
 #include "bagel/baglib/menu_dlg.h"
 #include "bagel/boflib/gfx/text.h"
 
-#if BOF_MAC // jwl 08.27.96
+#if BOF_MAC
 #include <mac.h>
 #endif
-
 
 namespace Bagel {
 
@@ -41,36 +40,28 @@ INT MapFont(INT nFont);
 
 extern BOOL g_bPauseTimer;
 
-//
-// CBagTextObject -
-//  CBagTextObject is an object that can be place within the slide window.
-//
 CBagTextObject::CBagTextObject() : CBagObject() {
 	m_xObjType = TEXTOBJ;
 	m_nDX = 80;
 	m_nDY = 20;
-	m_psText = NULL;
-	SetOverCursor(1); // jwl 11.26.96 switch to cursor 1, 4 doesn't exist.
+	m_psText = nullptr;
+	SetOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
 
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
-	m_psInitInfo = NULL;
-	// MDM 6/12
+	m_psInitInfo = nullptr;
 	m_bCaption = FALSE;
 	m_bTitle = FALSE;
 	m_bReAttach = FALSE;
-
-	// jwl 10.18.96
 	m_nTextFont = FONT_DEFAULT;
 
-	// jwl 11.11.96 no rp object by default
-	SetRPObject(NULL);
+	SetRPObject(nullptr);
 }
 
 CBagTextObject::~CBagTextObject() {
-	if (m_psInitInfo != NULL) {
+	if (m_psInitInfo != nullptr) {
 		delete m_psInitInfo;
-		m_psInitInfo = NULL;
+		m_psInitInfo = nullptr;
 	}
 	Detach();
 }
@@ -84,15 +75,15 @@ CBofRect CBagTextObject::GetRect(VOID) {
 
 ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT) {
 	Assert(IsValidObject(this));
-	Assert(pBmp != NULL);
-	Assert(pSrcRect != NULL);
+	Assert(pBmp != nullptr);
+	Assert(pSrcRect != nullptr);
 
 	ERROR_CODE errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pBmp != NULL) && IsAttached() && !(GetText().IsEmpty())) {
+	if ((pBmp != nullptr) && IsAttached() && !(GetText().IsEmpty())) {
 
 		if (pBmp->GetRect().PtInRect(pt)) {
 
@@ -141,7 +132,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 
 			errCode = PaintText(pBmp, &r, GetText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
 
-			// jwl 10.11.96 this object does not need to be updated now...
+			// This object does not need to be updated now...
 			SetDirty(FALSE);
 		}
 	}
@@ -155,13 +146,13 @@ ERROR_CODE CBagTextObject::Attach() {
 	if (!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt")) {
 
 		// Prevent memory leak
-		if (m_psText != NULL) {
+		if (m_psText != nullptr) {
 			delete m_psText;
-			m_psText = NULL;
+			m_psText = nullptr;
 		}
 
 		// Allocate a new string
-		if ((m_psText = new CBofString) != NULL) {
+		if ((m_psText = new CBofString) != nullptr) {
 
 			CBofFile fpTextFile(GetFileName());
 			CHAR *pTextBuff;
@@ -172,7 +163,7 @@ ERROR_CODE CBagTextObject::Attach() {
 				// Allocate the buffers
 				//
 				nFileLen = fpTextFile.GetLength();
-				if ((pTextBuff = (CHAR *)BofCAlloc(nFileLen + 1, 1)) != NULL) {
+				if ((pTextBuff = (CHAR *)BofCAlloc(nFileLen + 1, 1)) != nullptr) {
 
 					// Read the text file into buffers
 					fpTextFile.Read(pTextBuff, nFileLen);
@@ -180,16 +171,16 @@ ERROR_CODE CBagTextObject::Attach() {
 
 					*m_psText += pTextBuff;
 
-					if (m_psInitInfo != NULL) {
+					if (m_psInitInfo != nullptr) {
 						CBagVar *pVar;
 
-						if ((pVar = VARMNGR->GetVariable(*m_psInitInfo)) != NULL) {
+						if ((pVar = VARMNGR->GetVariable(*m_psInitInfo)) != nullptr) {
 							m_bReAttach = TRUE;
 							m_psText->ReplaceStr("%s", pVar->GetValue());
 						}
 					}
 
-					BofFree(pTextBuff); // jwl 10.22.96 changed from delete.
+					BofFree(pTextBuff); // Changed from delete.
 
 				} else {
 					ReportError(ERR_MEMORY);
@@ -214,13 +205,13 @@ ERROR_CODE CBagTextObject::Attach() {
 #endif
 
 		// Prevent memory leak
-		if (m_psText != NULL) {
+		if (m_psText != nullptr) {
 			delete m_psText;
-			m_psText = NULL;
+			m_psText = nullptr;
 		}
 
 		// Allocate a new string
-		if ((m_psText = new CBofString) != NULL) {
+		if ((m_psText = new CBofString) != nullptr) {
 			*m_psText = GetFileName();
 
 			// Replace any underscores with spaces
@@ -237,7 +228,7 @@ ERROR_CODE CBagTextObject::Attach() {
 	// we've been attached.
 	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();
 
-	if (pRPObj != NULL) {
+	if (pRPObj != nullptr) {
 		pRPObj->SetTimeSet(FALSE);
 	}
 
@@ -247,9 +238,9 @@ ERROR_CODE CBagTextObject::Attach() {
 ERROR_CODE CBagTextObject::Detach() {
 	Assert(IsValidObject(this));
 
-	if (m_psText != NULL) {
+	if (m_psText != nullptr) {
 		delete m_psText;
-		m_psText = NULL;
+		m_psText = nullptr;
 	}
 
 	return CBagObject::Detach();
@@ -298,7 +289,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 
 			// Need to use this field, so no one else can
-			Assert(m_psInitInfo == NULL);
+			Assert(m_psInitInfo == nullptr);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -320,7 +311,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -334,14 +325,15 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+			break;
+		}
 		//
 		//  FONT MONO or DEFAULT
 		//
 		case 'F': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -355,7 +347,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
 			//
 			//  AS [CAPTION]  - how to run the link
 			//
@@ -363,7 +355,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		case 'A': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
@@ -386,7 +378,8 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+			break;
+		}
 		//
 		//  COLOR n - n color index
 		//
@@ -400,7 +393,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		case 'C': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -414,7 +407,8 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+			break;
+		}
 		//
 		//  no match return from funtion
 		//
@@ -430,7 +424,8 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+			break;
+		}
 		}
 	}
 
@@ -519,8 +514,8 @@ BOOL CBagTextObject::RunObject() {
 		CBagMasterWin *pWin;
 		CBagStorageDevWnd *pParent;
 
-		if ((pApp = CBagel::GetBagApp()) != NULL) {
-			if ((pWin = pApp->GetMasterWnd()) != NULL) {
+		if ((pApp = CBagel::GetBagApp()) != nullptr) {
+			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 				pParent = pWin->GetCurrentStorageDev();
 
 				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + GetRect().Height() - 1 + 5);
@@ -531,20 +526,20 @@ BOOL CBagTextObject::RunObject() {
 
 				CBofBitmap cBmp(cRect.Width(), cRect.Height(), pPal);
 
-				cBmp.FillRect(NULL, pPal->GetNearestIndex(RGB(92, 92, 92)));
+				cBmp.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
 				cDlg.Create(pParent, pPal, &cRect);
 				// cDlg.SetBackdrop(&cBmp);
 
 				Update(cDlg.GetBackdrop(), cPoint, &cRect);
 
-				CBagPDA *pPDA = NULL;
+				CBagPDA *pPDA = nullptr;
 				sStr = "BPDA_WLD";
 				pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(sStr);
 
-				// jwl 12.12.96 if we're in the zoom pda then put this box at the
+				// If we're in the zoom pda then put this box at the
 				// bottom of the zoom rect.
-				SBZoomPda *pPDAZ = NULL;
+				SBZoomPda *pPDAZ = nullptr;
 				sStr = "BPDAZ_WLD";
 				pPDAZ = (SBZoomPda *)SDEVMNGR->GetStorageDevice(sStr);
 
@@ -554,7 +549,7 @@ BOOL CBagTextObject::RunObject() {
 					Assert(zRect.Width() > 0 && zRect.Width() < 640);
 					cDlg.Move(80, zRect.bottom - cRect.Height(), TRUE); // xxx
 				} else {
-					if ((pPDA != NULL) && (pPDA->IsActivated() || pPDA->IsActivating())) {
+					if ((pPDA != nullptr) && (pPDA->IsActivated() || pPDA->IsActivating())) {
 						cDlg.Move(80, 10, TRUE);
 
 					} else {
@@ -629,9 +624,9 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	HDC hDC;
 	HFONT hFont, hFontOld; // font that was mapped to the context
 
-	if ((hDC = pPanWin->GetDC()) != NULL) {
+	if ((hDC = pPanWin->GetDC()) != nullptr) {
 
-		// jwl 12.20.96 if we have a mono space font, use our utility routine to get our font handle
+		// If we have a mono space font, use our utility routine to get our font handle
 		if (GetFont() == FONT_MONO) {
 			hFont = CBofText::GetMonoFont(m_nPointSize, 0);
 		} else {
@@ -639,7 +634,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 		}
 		hFontOld = (HFONT)SelectObject(hDC, hFont); // select it into our context
 
-		Assert(m_psText != NULL);
+		Assert(m_psText != nullptr);
 
 #if BOF_WIN16 || BOF_WINMAC
 		GetTextExtentPoint(hDC, m_psText->GetBuffer(), strlen(m_psText->GetBuffer()), &stTextSize);
@@ -676,7 +671,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 
 	::GetPort(&curPort);
 
-	// jwl 08.05.96 set the text characteristics before calling textwidth.
+	// Set the text characteristics before calling textwidth.
 
 	short saveTxSize = curPort->txSize;
 	short saveTxFont = curPort->txFont;
@@ -684,16 +679,16 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	::TextFont(GetFont());
 	::TextSize(ABS(MapWindowsPointSize(m_nPointSize)));
 
-	// jwl 07.30.96 use toolbox to find text width.
+	// Use toolbox to find text width.
 
 	::GetFontInfo(&fInfo);
 
-	Assert(m_psText != NULL);
+	Assert(m_psText != nullptr);
 
 	cSize.cx = ::TextWidth(m_psText->GetBuffer(), 0, strlen(m_psText->GetBuffer())) + 5;
 	cSize.cy = fInfo.ascent + fInfo.descent + fInfo.leading;
 
-	// jwl 11.27.97 add some to the height, we were not providing enough here.
+	// Add some to the height, we were not providing enough here.
 	if (bTextFromFile == FALSE) {
 		cSize.cy += (m_bTitle ? 0 : 5);
 	}
@@ -740,12 +735,12 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 VOID CBagTextObject::SetPSText(CBofString *p) {
 	Assert(IsValidObject(this));
 
-	if (m_psText != NULL) {
+	if (m_psText != nullptr) {
 		delete m_psText;
-		m_psText = NULL;
+		m_psText = nullptr;
 	}
 
-	if (p != NULL) {
+	if (p != nullptr) {
 		m_psText = new CBofString(*p);
 	}
 }
