@@ -34,12 +34,23 @@ private:
 public:
 	CBagEventSDev() : CBagStorageDev() {}
 	virtual ~CBagEventSDev() {}
+	static void initStatics() {
+		m_bEvalTurnEvents = FALSE;
+	}
 
+	/**
+	 * Called to overload new set backgrounds.  Calls the set backdrop pure
+	 * virtual function by default.
+	 */
 	virtual ERROR_CODE Attach();
 
 	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) { return ERR_NONE; }
 	virtual CBofBitmap *GetBackground() { return nullptr; }
 
+	/**
+	 * Evaluate only the expression object of this storage device
+	 * @return	Returns and error code if there is an invalid object in the list
+	 */
 	virtual ERROR_CODE EvaluateExpressions();
 
 	// Gives timer code a method to launch tim
