@@ -1727,7 +1727,7 @@ void TwpEngine::skipCutscene() {
 		_cutscene->cutsceneOverride();
 		return;
 	}
-	_noOverride.reset();
+	_noOverride->reset();
 }
 
 Scaling *TwpEngine::getScaling(const Common::String &name) {
