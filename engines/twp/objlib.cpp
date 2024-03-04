@@ -422,7 +422,7 @@ static SQInteger objectHotspot(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get object or actor");
 	if (sq_gettop(v) == 2) {
 		Math::Vector2d pos = obj->_node->getAbsPos();
-		sqpush(v, Rectf::fromPosAndSize(Math::Vector2d(obj->_hotspot.left + pos.getX(), obj->_hotspot.bottom + pos.getY()), Math::Vector2d(obj->_hotspot.width(), obj->_hotspot.height())));
+		sqpush(v, Rectf::fromPosAndSize(Math::Vector2d(obj->_hotspot.left + pos.getX(), obj->_hotspot.top + pos.getY()), Math::Vector2d(obj->_hotspot.width(), obj->_hotspot.height())));
 		return 1;
 	}
 	SQInteger left = 0;
