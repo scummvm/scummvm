@@ -31,6 +31,7 @@
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/timer.h"
+#include "bagel/api/smacker.h"
 
 namespace Bagel {
 
@@ -47,15 +48,15 @@ protected:
 	UINT            m_wMCIDeviceID;         // MCI Device ID for the QT file
 #endif
 
-	byte    *m_pSbuf;
-	byte    *m_pSmk;
-	MVTYPE          m_eMovType;
-	BOOL            m_bEscCanStop;
-	BOOL            m_bLoop;
-	BOOL            m_bStretch;
-	BOOL            m_bUseNewPalette;
-	BOOL            m_bBlackOutWindow;      // jwl 1.22.97 Used to avoid palette shift land
-	MVSTATUS        m_eMovStatus;
+	SmackBuf *m_pSbuf;
+	Smack *m_pSmk;
+	MVTYPE m_eMovType;
+	BOOL m_bEscCanStop;
+	BOOL m_bLoop;
+	BOOL m_bStretch;
+	BOOL m_bUseNewPalette;
+	BOOL m_bBlackOutWindow;
+	MVSTATUS m_eMovStatus;
 #if BOF_MAC
 	BOOL            m_bPositioned;
 #endif
@@ -118,12 +119,8 @@ public:
 	virtual BOOL        ShowMovie(void);
 	virtual BOOL        HideMovie(void);
 
-	byte            *GetSmackBuffer(void)  {
-		return m_pSbuf;
-	}
-	byte               *GetSmackMovie(void)   {
-		return m_pSmk;
-	}
+	SmackBuf            *GetSmackBuffer(void)  { return m_pSbuf; }
+	Smack               *GetSmackMovie(void)   { return m_pSmk; }
 };
 
 ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect = NULL);

@@ -45,20 +45,53 @@ public:
 		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0),																																		m_dwStart(0), m_dwEnd(0) {}
 	~CBagExam() {}
 
+	/**
+	 * Initailize exam object after opened and ready to play
+	 * @return		Success/failure
+	 */
 	virtual BOOL Exam();
 
 #if BOF_WINDOWS
 	virtual VOID OnMCINotify(ULONG wParam, ULONG lParam);
 #endif
+
+	/**
+	 * Called when the mouse is moved over window, check if the
+	 * cursor is in one of the rectangle and rotate object accordingly
+	 */
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);
+
+	/**
+	 * Resize the examination window
+	 */
 	virtual VOID OnReSize(CBofSize *pSize);
 	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
 
+	/**
+	 * Set the rectangles that determine "hot" mouse locations
+	 * @return		Success/failure
+	 */
 	BOOL SetRotationRects();
+
+	/**
+	 * Store off the start and end frames of the movies
+	 * @return		Success/failure
+	 */
 	BOOL MarkBegEnd();
 
+	/**
+	 * Rotate the object to the right (play movie)
+	 */
 	BOOL RotateRight();
+
+	/**
+	 * Rotate the object to the left (reverse movie)
+	 */
 	BOOL RotateLeft();
+
+	/**
+	 * Stop the rotation of the object (stop movie)
+	 */
 	BOOL RotateStop();
 };
 
