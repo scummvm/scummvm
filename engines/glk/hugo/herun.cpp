@@ -842,7 +842,7 @@ void Hugo::RunInput() {
 	if (debugger_collapsing) return;
 #endif
 
-	Common::strcpy_s(buffer, Rtrim(strlwr(buffer)));
+	Common::strcpy_s(buffer, Rtrim(hugo_strlwr(buffer)));
 
 	SeparateWords();
 

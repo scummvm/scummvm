@@ -267,7 +267,7 @@ long Hugo::FindResource(const char *filename, const char *resname) {
 
 
 	/* Open the resourcefile */
-	//strupr(filename);
+	//hugo_strupr(filename);
 
 #if !defined (GLK)
 	/* stdio implementation */
@@ -437,7 +437,7 @@ int Hugo::GetResourceParameters(char *filename, char *resname, int restype) {
 
 	if (MEM(codeptr++)!=EOL_T)	/* two or more parameters */
 	{
-		strupr(filename);
+		hugo_strupr(filename);
 		Common::strcpy_s(resname, MAX_RES_PATH, GetWord(GetValue()));
 		if (MEM(codeptr++)==COMMA_T)
 		{

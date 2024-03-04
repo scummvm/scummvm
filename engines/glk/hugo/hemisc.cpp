@@ -2170,9 +2170,9 @@ HUGO_FILE TrytoOpen(char *f, char *p, char *d)
 		strcpy(envvar, "hugo_");        /* the actual var. name */
 		strcat(envvar, d);
 
-		if (getenv(strupr(envvar)))
+		if (getenv(hugo_strupr(envvar)))
 		{
-			hugo_makepath(temppath, "", getenv(strupr(envvar)), fname, ext);
+			hugo_makepath(temppath, "", getenv(hugo_strupr(envvar)), fname, ext);
 
 			if ((tempfile = HUGO_FOPEN(temppath, p)))
 			{

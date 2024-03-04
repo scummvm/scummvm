@@ -103,13 +103,13 @@ char *StringFunctions::GetTempString() {
 	return r;
 }
 
-char *StringFunctions::strlwr(char *s) {
+char *StringFunctions::hugo_strlwr(char *s) {
 	for (char *sp = s; *sp; ++sp)
 		*sp = tolower(*sp);
 	return s;
 }
 
-char *StringFunctions::strupr(char *s) {
+char *StringFunctions::hugo_strupr(char *s) {
 	for (char *sp = s; *sp; ++sp)
 		*sp = toupper(*sp);
 	return s;
