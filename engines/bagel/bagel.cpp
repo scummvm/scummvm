@@ -30,6 +30,7 @@
 #include "bagel/detection.h"
 #include "bagel/console.h"
 
+#include "bagel/baglib/bagel.h"
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/event_sdev.h"
@@ -58,6 +59,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagSoundObject::initStatics();
 	CBagStorageDevWnd::initStatics();
 	CBagVarManager::initStatics();
+	CBagel::initStatics();
 
 	// boflib/ class statics initializations
 	CCache::initStatics();
