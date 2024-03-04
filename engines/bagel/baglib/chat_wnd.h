@@ -31,6 +31,10 @@ class CBagChatWnd : public CBagStorageDevWnd {
 public:
 	CBagChatWnd();
 
+	/**
+	 * Called to overload new set backgrounds. Calls the set backdrop pure
+	 * virtual function by default.
+	 */
 	virtual ERROR_CODE Attach();
 	virtual VOID OnTimer(UINT nTimerId);
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPos);
