@@ -73,6 +73,12 @@ public:
 	~CBagExpression();
 
 	BOOL Evaluate(BOOL bNeg = FALSE, CBagVar &xResult = m_xTempVar);
+
+	/**
+	 * Same as evaluate above except it evaluates left to right and preserves
+	 * the value of the previous evaluation in the loop.  Provides partial 
+	 * evaluation hierarchy support. 
+	 */
 	BOOL EvalLeftToRight(BOOL bNeg = FALSE, CBagVar &xResult = m_xTempVar);
 
 	BOOL NegEvaluate(CBagVar &xResult = m_xTempVar);
