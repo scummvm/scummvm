@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	bagel.o \
 	console.o \
 	metaengine.o \
+	api/smacker.o \
 	baglib/area_object.o \
 	baglib/bagel.o \
 	baglib/base_pda.o \
@@ -19,6 +20,7 @@ MODULE_OBJS = \
 	baglib/exam.o \
 	baglib/expression.o \
 	baglib/expression_object.o \
+	baglib/fmovie.o \
 	baglib/master_win.o \
 	baglib/movie_object.o \
 	baglib/object.o \

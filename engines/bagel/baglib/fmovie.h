@@ -42,9 +42,8 @@ class CBagFMovie : public CBofDialog {
 public:
 	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE };
 	enum MVTYPE { QT, SMACKER };
-	// BOOL 			m_bReverseWait;		// removed the need for the timer mdm 8/4
+
 protected:
-	// CBofTimer 	*	m_pMovTimer;	 	// removed the need for the timer mdm 8/4
 #if BOF_WINDOWS
 	UINT m_wMCIDeviceID; // MCI Device ID for the QT file
 #endif
@@ -67,12 +66,24 @@ protected:
 	uint32 m_nReversed;
 	CBofRect m_xBounds;
 	BOOL m_bUseNewPalette;
-	BOOL m_bBlackOutWindow; // jwl 1.22.97 Used to avoid palette shift land
+	BOOL m_bBlackOutWindow;
 
-	virtual ERROR_CODE Initialize(CBofWindow *pParent); // Initialize
+	/**
+	 * Open the movie file, center it in parent, rewind it, and realize it's
+	 * palette in the background
+	 */
+	virtual ERROR_CODE Initialize(CBofWindow *pParent);
 
+	/**
+	 * Open the movie file, center it in parent, rewind it, and realize it's
+	 * palette in the background.
+	 */
 	virtual BOOL OpenMovie(const char *sFilename); // MCI_OPEN
-	virtual VOID CloseMovie(VOID);
+
+	/**
+	 * Close the MCI Device file
+	 */
+	virtual VOID CloseMovie();
 
 	virtual BOOL FileOpenWin(); // Display the File Open Dialog box
 
@@ -81,46 +92,64 @@ protected:
 	virtual BOOL Play();
 	virtual BOOL Reverse();
 
-	// virtual VOID 	OnMouseMove(UINT nFlags, CBofPoint *pPoint){}
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint) { OnButtonUp(nFlags, pPoint); }
 	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMovieDone(VOID);
-	virtual VOID OnClose(VOID);
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMovieDone();
+	virtual VOID OnClose();
+	virtual VOID OnMainLoop();
+
+	/**
+	 * Catch the ESC key when hit
+	 */
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
 public:
-	CBagFMovie(CBofWindow *pParent = NULL, const char *sFilename = NULL, CBofRect *pBounds = NULL, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	/**
+	 * Initializes Movie Object and opens movie file @ Rect
+	 * @param pParent		A pointer to the parent window
+	 * @param sFilename		String containing filename of movie to be opened
+	 * @param pBounds 		Location for video object relative to parent
+	 */
+	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
+		CBofRect *pBounds = nullptr, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+
+	/**
+	 * Destructor
+	 */
 	~CBagFMovie();
 
-	virtual BOOL Open(const char *sFilename = NULL, CBofRect *pBounds = NULL);
+	/**
+	 * Open the movie file, place it @ pBounds, rewind it, and realize it's
+	 * palette in the background.
+	 */
+	virtual BOOL Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
 	virtual BOOL Play(BOOL bLoop, BOOL bEscCanStop = TRUE);
 	virtual BOOL Reverse(BOOL bLoop, BOOL bEscCanStop = TRUE);
-	virtual BOOL Pause(void);
-	virtual BOOL Stop(void);
+	virtual BOOL Pause();
+	virtual BOOL Stop();
 
-	virtual MVSTATUS Status(void) { return m_eMovStatus; }
+	virtual MVSTATUS Status() { return m_eMovStatus; }
 
-	virtual BOOL SeekToStart(void); // Seek to the start of the movie
-	virtual BOOL SeekToEnd(void);   // Seek to the start of the movie
+	virtual BOOL SeekToStart(); // Seek to the start of the movie
+	virtual BOOL SeekToEnd();   // Seek to the start of the movie
 
-	virtual DWORD GetFrame(void);
+	virtual DWORD GetFrame();
 	virtual BOOL SetFrame(DWORD dwFrameNum);
 
 	virtual BOOL CenterRect();
 
-	virtual BOOL ShowMovie(void);
-	virtual BOOL HideMovie(void);
-	virtual HPALETTE WinPalFromSmkPal(void);
+	virtual BOOL ShowMovie();
+	virtual BOOL HideMovie();
+	virtual HPALETTE WinPalFromSmkPal();
 
 	// jwl 1.24.97 need to access members from outside of class for
 	// performance optimization.
-	SmackBuf *GetSmackBuffer(void) { return m_pSbuf; }
-	Smack *GetSmackMovie(void) { return m_pSmk; }
+	SmackBuf *GetSmackBuffer() { return m_pSbuf; }
+	Smack *GetSmackMovie() { return m_pSmk; }
 #if SMACKOFFSCREEN
-	CBofBitmap *GetSmackBitmap(void) { return m_pBmpBuf; }
+	CBofBitmap *GetSmackBitmap() { return m_pBmpBuf; }
 #endif
 };
 

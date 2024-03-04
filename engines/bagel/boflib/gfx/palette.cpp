@@ -29,6 +29,24 @@ namespace Bagel {
 CBofPalette *CBofPalette::m_pSharedPalette;
 CHAR CBofPalette::m_szSharedPalFile[MAX_FNAME];
 
+HPALETTE::HPALETTE(SHORT numColors) : _numColors(numColors) {
+	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
+}
+
+HPALETTE CreatePalette(const LOGPALETTE *pal) {
+	HPALETTE result(pal->palNumEntries);
+
+	const PALETTEENTRY *src = &pal->palPalEntry[0];
+	for (int i = 0; i < pal->palNumEntries; ++i, ++src) {
+		result._data[i * 3 + 0] = src->peRed;
+		result._data[i * 3 + 1] = src->peGreen;
+		result._data[i * 3 + 2] = src->peBlue;
+	}
+
+	return result;
+}
+
+
 void CBofPalette::initStatics() {
 	m_pSharedPalette = nullptr;
 	m_szSharedPalFile[0] = '\0';
