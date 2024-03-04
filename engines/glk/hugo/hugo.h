@@ -1122,7 +1122,7 @@ private:
 		return _random.getRandomNumber(0xffffff);
 	}
 
-	char *itoa(int value, char *str, int base, size_t str_size) {
+	char *hugo_itoa(int value, char *str, int base, size_t str_size) {
 		assert(base == 10);
 		Common::sprintf_s(str, str_size, "%d", value);
 		return str;
