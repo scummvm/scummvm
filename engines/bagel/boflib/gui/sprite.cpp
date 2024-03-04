@@ -592,8 +592,8 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 						if (!bSuccess)
 							goto punt;
 					}
-					CBofRect cTempRect((CBofPoint)(pMyRect->TopLeft() - unionRect.TopLeft()), m_cSize);
-					pWork->Paint(m_pBackground, 0, 0, &cTempRect);
+					CBofRect r((CBofPoint)(pMyRect->TopLeft() - unionRect.TopLeft()), m_cSize);
+					pWork->Paint(m_pBackground, 0, 0, &r);
 				}
 				m_bPaintOverlap = TRUE;
 
@@ -608,16 +608,16 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 			if (pSprite->m_bRetainBackground && pSprite->m_bPaintOverlap) {
 
-				CBofRect cTempRect((CBofPoint)(pSprite->m_cPosition - unionRect.TopLeft()), pSprite->m_cSize);
-				pWork->Paint(pSprite->m_pBackground, 0, 0, &cTempRect);
+				CBofRect r((CBofPoint)(pSprite->m_cPosition - unionRect.TopLeft()), pSprite->m_cSize);
+				pWork->Paint(pSprite->m_pBackground, 0, 0, &r);
 			}
 			cPoint.x = pSprite->m_cPosition.x - unionRect.left;   // set the destination for sprite
 			cPoint.y = pSprite->m_cPosition.y - unionRect.top;
 
 paint_sprite:
 			if (pSprite->m_bPaintOverlap) {
-				CBofRect cTempRect(pSprite->m_cImageRect.TopLeft(), pSprite->m_cSize);
-				pSprite->m_pImage->Paint(pWork, cPoint.x, cPoint.y, &cTempRect, m_nMaskColor);
+				CBofRect r(pSprite->m_cImageRect.TopLeft(), pSprite->m_cSize);
+				pSprite->m_pImage->Paint(pWork, cPoint.x, cPoint.y, &r, m_nMaskColor);
 
 #if SPRITE_DEBUG
 				pWork->Paint(pWnd, 0, 0);
