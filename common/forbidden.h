@@ -627,6 +627,18 @@
 #define strdup(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
+// Use Common::String.toLowercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strlwr
+#undef strlwr
+#define strlwr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String.toUppercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strupr
+#undef strupr
+#define strupr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
 /*
  * We also would like to disable the following symbols;
  * however, these are also frequently used in regular code,

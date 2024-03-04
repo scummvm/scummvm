@@ -57,9 +57,9 @@ public:
 
 	char *hugo_strcpy(char *s, const char *t);
 
-	char *strlwr(char *s);
+	char *hugo_strlwr(char *s);
 
-	char *strupr(char *s);
+	char *hugo_strupr(char *s);
 };
 
 } // End of namespace Hugo

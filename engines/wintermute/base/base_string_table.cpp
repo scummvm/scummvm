@@ -86,7 +86,7 @@ char *BaseStringTable::getKey(const char *str) const {
 	char *key = new char[value - str];
 	Common::strlcpy(key, str + 1, (size_t)(value - str));
 
-	BasePlatform::strlwr(key);
+	BasePlatform::wintermute_strlwr(key);
 
 	char *newStr;
 
@@ -123,7 +123,7 @@ void BaseStringTable::expand(char **str) const {
 	char *key = new char[value - *str];
 	Common::strlcpy(key, *str + 1, (size_t)(value - *str));
 
-	BasePlatform::strlwr(key);
+	BasePlatform::wintermute_strlwr(key);
 
 	value++;
 
@@ -172,7 +172,7 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 
 	char *key = new char[value - string];
 	Common::strlcpy(key, string + 1, (size_t)(value - string - 1));
-	BasePlatform::strlwr(key);
+	BasePlatform::wintermute_strlwr(key);
 
 	value++;
 

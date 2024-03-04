@@ -55,7 +55,7 @@ public:
 	static bool copyRect(Rect32 *lprcDst, Rect32 *lprcSrc);
 
 	// string functions
-	static char *strlwr(char *string);
+	static char *wintermute_strlwr(char *string);
 
 private:
 	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WintermuteEngine
