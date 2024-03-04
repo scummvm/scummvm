@@ -380,22 +380,21 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	return result;
 }
 
-struct GetNoun2 {
-	GetNoun2(int verbId, Common::SharedPtr<Object> &obj) : _verbId(verbId), _noun2(obj) {
-		_noun2 = nullptr;
+struct GetNoun {
+	GetNoun(int verbId, Common::SharedPtr<Object> &obj) : _verbId(verbId), _noun(obj) {
+		_noun = nullptr;
 	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
 		if (((_verbId == VERB_TALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
-			if (g_twp->_noun2 != obj) {
-				_noun2 = obj;
-			}
+			_noun = obj;
+			_zOrder = obj->_node->getZSort();
 		}
 		return false;
 	}
 
 public:
-	Common::SharedPtr<Object> &_noun2;
+	Common::SharedPtr<Object> &_noun;
 	int _zOrder = INT_MAX;
 	const int _verbId;
 };
@@ -409,6 +408,7 @@ struct GetUseNoun2 {
 		if (obj->_node->getZSort() <= _zOrder) {
 			if ((obj != g_twp->_actor) && (g_twp->_noun2 != obj)) {
 				_noun2 = obj;
+				_zOrder = obj->_node->getZSort();
 			}
 		}
 		return false;
@@ -467,7 +467,7 @@ void TwpEngine::update(float elapsed) {
 						debugC(kDebugGame, "Give '%s' to '%s'", _noun1->_key.c_str(), _noun2->_key.c_str());
 				}
 			} else {
-				objsAt(roomPos, GetNoun2(_hud->_verb.id.id, _noun1));
+				objsAt(roomPos, GetNoun(_hud->_verb.id.id, _noun1));
 				_useFlag = UseFlag::ufNone;
 				_noun2 = nullptr;
 			}
