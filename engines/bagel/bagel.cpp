@@ -34,6 +34,7 @@
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/event_sdev.h"
+#include "bagel/baglib/inv.h"
 #include "bagel/baglib/parse_object.h"
 #include "bagel/baglib/sound_object.h"
 #include "bagel/baglib/storage_dev_win.h"
@@ -56,6 +57,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagCursor::initStatics();
 	CBagDossierObject::initStatics();
 	CBagEventSDev::initStatics();
+	CBagInv::initStatics();
 	CBagParseObject::initStatics();
 	CBagSoundObject::initStatics();
 	CBagStorageDevWnd::initStatics();

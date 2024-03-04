@@ -34,8 +34,16 @@ protected:
 public:
 	CBagInv() : CBagStorageDevBmp() {}
 	virtual ~CBagInv() {}
+	static void initStatics() {
+		m_bFirstStash = TRUE;
+	}
 
 	ERROR_CODE ActivateLocalObject(const CBofString &sName);
+
+	/**
+	 * This is called when a object is removed from the inventory
+	 * The wand on the PDA should animate
+	 */
 	ERROR_CODE DeactivateLocalObject(const CBofString &sName);
 };
 
