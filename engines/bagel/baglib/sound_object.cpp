@@ -25,12 +25,13 @@
 
 namespace Bagel {
 
-CBofSound *CBagSoundObject::m_pMidiSound = nullptr; // There is only one allowed at a time
+// There is only one allowed at a time
+CBofSound *CBagSoundObject::m_pMidiSound;
 
-//
-// CBagSpriteObject -
-//  CBagSpriteObject is an object that can be place within the slide window.
-//
+void CBagSoundObject::initStatics() {
+	m_pMidiSound = nullptr;
+}
+
 CBagSoundObject::CBagSoundObject() {
 	m_xObjType = SOUNDOBJ;
 	m_pSound = nullptr;
