@@ -1656,7 +1656,7 @@ CheckWord:
 		/* a number */
 		case NUMBER_T:
 			if ((STARTS_AS_NUMBER(word[*wordnum])) &&
-				!strcmp(itoa(atoi(word[*wordnum]), num, 10, sizeof(num)), word[*wordnum]))
+				!strcmp(hugo_itoa(atoi(word[*wordnum]), num, 10, sizeof(num)), word[*wordnum]))
 			{
 				if (obj_match_state==1)
 					var[xobject] = atoi(word[*wordnum]);
@@ -1739,7 +1739,7 @@ CheckWordorString:
 
 					/* or a number */
 					else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-						!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
+						!strcmp(word[*wordnum], hugo_itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 					{
 						grammaraddr = nextsyntax;
 						if (*wordnum != objstart)
@@ -1852,7 +1852,7 @@ CheckXobjectFinish:
 							goto CheckXobjectFinish;
 						}
 						else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-							!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
+							!strcmp(word[*wordnum], hugo_itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 						{
 							objfinish = i;
 							break;
@@ -1984,7 +1984,7 @@ int Hugo::Parse() {
 			wd[i] = FindWord(word[i]);
 
 			/* Numbers -32768 to 32767 are valid...*/
-			if (!strcmp(word[i], itoa(atoi(word[i]), num, 10, sizeof(num))))
+			if (!strcmp(word[i], hugo_itoa(atoi(word[i]), num, 10, sizeof(num))))
 			{
 #if !defined (MATH_16BIT)
 				if (atoi(word[i]) > 32767 || atoi(word[i]) < -32768)
@@ -2415,12 +2415,12 @@ void Hugo::SeparateWords() {
 			   as the modified word, storing the original hh:mm
 			   in parse$:
 			*/
-			if (!strcmp(w1, itoa((int)n1, temp, 10, sizeof(temp))) &&
-				!strcmp(w2, itoa((int)n2, temp, 10, sizeof(temp))) &&
+			if (!strcmp(w1, hugo_itoa((int)n1, temp, 10, sizeof(temp))) &&
+				!strcmp(w2, hugo_itoa((int)n2, temp, 10, sizeof(temp))) &&
 				(n1 > 0 && n1 < 25) && (n2 >= 0 && n2 < 60))
 			{
 				Common::strcpy_s(parseerr, word[i]);
-				itoa(n1 * 60 + n2, word[i], 10, strlen(word[i]) + 1);
+				hugo_itoa(n1 * 60 + n2, word[i], 10, strlen(word[i]) + 1);
 			}
 		}
 	}

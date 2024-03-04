@@ -196,13 +196,13 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 			// fallthrough intended
 			case 'd':
 				int_temp = va_arg(args, int);
-				itoa(int_temp, buffer, 10);
+				ustr_helper_itoa(int_temp, buffer, 10);
 
 				output += buffer;
 				break;
 			case 'u':
 				uint_temp = va_arg(args, uint);
-				uitoa(uint_temp, buffer, 10);
+				ustr_helper_uitoa(uint_temp, buffer, 10);
 
 				output += buffer;
 				break;
@@ -234,18 +234,18 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 	return output.size();
 }
 
-U32String::value_type* U32String::itoa(int num, value_type* str, uint base) {
+U32String::value_type* U32String::ustr_helper_itoa(int num, value_type* str, uint base) {
 	if (num < 0) {
 		str[0] = '-';
-		uitoa(-num, str + 1, base);
+		ustr_helper_uitoa(-num, str + 1, base);
 	} else {
-		uitoa(num, str, base);
+		ustr_helper_uitoa(num, str, base);
 	}
 
 	return str;
 }
 
-U32String::value_type* U32String::uitoa(uint num, value_type* str, uint base) {
+U32String::value_type* U32String::ustr_helper_uitoa(uint num, value_type* str, uint base) {
 	int i = 0;
 
 	if (num) {
