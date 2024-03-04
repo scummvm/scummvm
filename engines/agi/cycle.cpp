@@ -187,13 +187,6 @@ uint16 AgiEngine::processAGIEvents() {
 	wait(10);
 	uint16 key = doPollKeyboard();
 
-	// In AGI Mouse emulation mode we must update the mouse-related
-	// vars in every interpreter cycle.
-	if (getFeatures() & GF_AGIMOUSE) {
-		setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
-		setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
-	}
-
 	if (!cycleInnerLoopIsActive()) {
 		// Click-to-walk mouse interface
 		if (_game.playerControl && (screenObjEgo->flags & fAdjEgoXY)) {
