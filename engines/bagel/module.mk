@@ -34,6 +34,7 @@ MODULE_OBJS = \
 	baglib/rp_object.o \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
+	baglib/storage_dev_win.o \
 	baglib/text_object.o \
 	baglib/thing_object.o \
 	baglib/time_object.o \
