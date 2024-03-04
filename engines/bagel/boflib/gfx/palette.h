@@ -38,7 +38,23 @@ namespace Bagel {
 typedef ULONG RGBCOLOR;
 struct HPALETTE {
 	byte _data[PALETTE_SIZE];
+	SHORT _numColors;
+	HPALETTE(SHORT numColors = PALETTE_COUNT);
 };
+
+struct PALETTEENTRY {
+	byte peRed;
+	byte peGreen;
+	byte peBlue;
+	byte peFlags;
+};
+struct LOGPALETTE {
+	SHORT palNumEntries;
+	SHORT palVersion;
+	PALETTEENTRY palPalEntry[1];
+};
+
+extern HPALETTE CreatePalette(LOGPALETTE *pal);
 
 #define RGB(r, g, b) ((RGBCOLOR)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((DWORD)(BYTE)(b)) << 16)))
 
@@ -99,14 +115,12 @@ public:
 
 	VOID AnimateToPalette(CBofPalette *pSrcPal);
 
-	CBofPalette(HPALETTE hPalette);
-
 	/**
 	 * Assignes specified palette to this CBofPalette
 	 * @param hPal		Handle to windows palette
 	 */
 	VOID SetPalette(const HPALETTE &hPalette);
-	HPALETTE GetPalette() { return (m_hPalette); }
+	HPALETTE GetPalette() { return m_hPalette; }
 
 	virtual ~CBofPalette();
 
