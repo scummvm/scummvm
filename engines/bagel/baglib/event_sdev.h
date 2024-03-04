@@ -23,7 +23,7 @@
 #ifndef BAGEL_BAGLIB_EVENT_SDEV_H
 #define BAGEL_BAGLIB_EVENT_SDEV_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 
 namespace Bagel {
 

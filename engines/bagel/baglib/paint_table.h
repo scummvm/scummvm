@@ -20,33 +20,19 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_ZOOM_PDA_H
-#define BAGEL_BAGLIB_GUI_ZOOM_PDA_H
+#ifndef BAGEL_BAGLIB_PAINT_TABLE_H
+#define BAGEL_BAGLIB_PAINT_TABLE_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
-#include "bagel/baglib/base_pda.h"
+#include "common/scummsys.h"
 
 namespace Bagel {
 
-class SBZoomPda : public CBagStorageDevWnd, public SBBasePda {
-public:
-	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
-
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
-
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *);
-
-	CBagObject *OnNewButtonObject(const CBofString &sInit);
-	virtual VOID OnMainLoop();
-
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint);
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
-
-	virtual ERROR_CODE AttachActiveObjects();
-	virtual ERROR_CODE DetachActiveObjects();
+struct stripEnds {
+	int16 top;
+	int16 bottom;
 };
+
+extern stripEnds STRIP_POINTS[153][120];
 
 } // namespace Bagel
 

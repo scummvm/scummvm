@@ -20,8 +20,8 @@
  */
 
 #include "bagel/baglib/object.h"
-#include "bagel/baglib/gui/menu_dlg.h"
-#include "bagel/baglib/gui/master_win.h"
+#include "bagel/baglib/menu_dlg.h"
+#include "bagel/baglib/master_win.h"
 
 #if BOF_MAC
 #include <ctype.h>

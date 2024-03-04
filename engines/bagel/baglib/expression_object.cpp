@@ -20,7 +20,7 @@
  */
 
 #include "bagel/baglib/expression_object.h"
-#include "bagel/baglib/gui/master_win.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/var.h"
 
 namespace Bagel {

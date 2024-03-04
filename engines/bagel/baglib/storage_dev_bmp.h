@@ -24,7 +24,7 @@
 #define BAGEL_BAGLIB_STORAGE_DEV_BMP_H
 
 #include "bagel/baglib/bmp_object.h"
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/list.h"
 
 namespace Bagel {

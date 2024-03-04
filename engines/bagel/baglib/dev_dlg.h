@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_DEV_DLG_H
-#define BAGEL_BAGLIB_GUI_DEV_DLG_H
+#ifndef BAGEL_BAGLIB_DEV_DLG_H
+#define BAGEL_BAGLIB_DEV_DLG_H
 
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {

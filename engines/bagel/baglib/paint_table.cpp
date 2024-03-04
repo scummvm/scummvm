@@ -20,7 +20,7 @@
  *
  */
 
-#include "bagel/baglib/gui/paint_table.h"
+#include "bagel/baglib/paint_table.h"
 
 namespace Bagel {
 

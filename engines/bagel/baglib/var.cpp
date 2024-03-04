@@ -21,8 +21,8 @@
 
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/event_sdev.h"
-#include "bagel/baglib/gui/master_win.h"
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/master_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/bagel.h"
 
 #if BOF_MAC
@@ -128,8 +128,6 @@ VOID CBagVar::SetBoolValue(BOOL bVal) {
 
 VOID CBagVar::SetValue(INT nVal) {
 	Assert(IsValidObject(this));
-
-	CHAR str[256];
 
 	SetNumeric();
 

@@ -21,7 +21,7 @@
 
 #include "bagel/baglib/pan_bitmap.h"
 #include "bagel/baglib/bagel.h"
-#include "bagel/baglib/gui/paint_table.h"
+#include "bagel/baglib/paint_table.h"
 
 namespace Bagel {
 

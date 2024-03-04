@@ -20,11 +20,11 @@
  */
 
 #include "bagel/baglib/rp_object.h"
-#include "bagel/baglib/gui/master_win.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/base_pda.h"
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/pda.h"
-#include "bagel/baglib/gui/zoom_pda.h"
+#include "bagel/baglib/zoom_pda.h"
 
 namespace Bagel {
 

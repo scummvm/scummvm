@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_GUI_PAN_WINDOW_H
-#define BAGEL_BAGLIB_GUI_PAN_WINDOW_H
+#ifndef BAGEL_BAGLIB_PAN_WINDOW_H
+#define BAGEL_BAGLIB_PAN_WINDOW_H
 
 #include "bagel/baglib/pda.h"
-#include "bagel/baglib/gui/storage_dev_win.h"
+#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/baglib/pan_bitmap.h"
 #include "bagel/boflib/stdinc.h"
