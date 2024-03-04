@@ -19,10 +19,12 @@
  *
  */
 
-#include "bagel/baglib/command_object.h"
+#include "bagel/baglib/thing_object.h"
 
 namespace Bagel {
 
-
+CBagThingObject::CBagThingObject() {
+	m_xObjType = THNGOBJ;
+}
 
 } // namespace Bagel
