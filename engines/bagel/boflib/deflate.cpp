@@ -31,9 +31,9 @@ namespace Bagel {
 /*
  * Deflate constants
  */
-#define DF_MAXCODES 288 
+#define DF_MAXCODES 288
 /* maximum # of all codes */
-#define DF_LITCODES 288 
+#define DF_LITCODES 288
 /* maximum # of literal codes */
 #define DF_LITCODESUSED (DF_LITCODES - 2)
 #define DF_DISCODES 32 /* maximum # of distance codes */
@@ -169,7 +169,8 @@ struct CODETABLE disExtraTable[] = {
  * <val, bits>
  */
 struct CODELENS bitTreeTable[] = {
-	{16}, {17}, {18}, {0}, {8}, {7}, {9}, {6}, {10}, {5}, {11}, {4}, {12}, {3}, {13}, {2}, {14}, {1}, {15}
+	{16, 0}, {17, 0}, {18, 0}, {0, 0}, {8, 0},  {7, 0}, {9, 0},  {6, 0}, {10, 0}, {5, 0},
+	{11, 0},  {4, 0}, {12, 0}, {3, 0}, {13, 0}, {2, 0}, {14, 0}, {1, 0}, {15, 0}
 };
 
 /*
@@ -1320,7 +1321,7 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	struct PACKTABLE *pkTable;
 
 	LONG fileSize, blockSize, oldSize;
-	LONG compSize, altCompSize;
+	LONG compSize = 0, altCompSize = 0;
 	LONG dynSize, fixSize;
 	LONG disVar, oldDisVar, lenVar, oldLenVar;
 	USHORT bufSize, bufUsed, offset, lastOff, off;
@@ -2417,6 +2418,8 @@ skipliteral:
 
 	if (pCompressedSize != NULL)
 		*pCompressedSize = zg.dataSize;
+
+	debug(1, "compSize: %d altCompSize: %d", compSize, altCompSize);
 
 	return (errCode);
 }
