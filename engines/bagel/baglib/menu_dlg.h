@@ -38,6 +38,7 @@ private:
 
 public:
 	CBagMenu();
+	static void initStatics();
 
 	ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
 		Assert(FALSE);
@@ -78,8 +79,7 @@ private:
 
 public:
 	static CBagObject *m_pSelectedObject;
-
-	// static INT 		m_nActiveMenus;
+	static void initStatics();
 
 	CBagMenuDlg();
 	virtual ~CBagMenuDlg();
