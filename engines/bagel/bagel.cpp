@@ -36,6 +36,7 @@
 #include "bagel/baglib/event_sdev.h"
 #include "bagel/baglib/inv.h"
 #include "bagel/baglib/log_msg.h"
+#include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/parse_object.h"
 #include "bagel/baglib/pda.h"
 #include "bagel/baglib/sound_object.h"
@@ -62,6 +63,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagEventSDev::initStatics();
 	CBagInv::initStatics();
 	CBagLog::initStatics();
+	CBagPanWindow::initStatics();
 	CBagParseObject::initStatics();
 	CBagPDA::initStatics();
 	CBagSoundObject::initStatics();

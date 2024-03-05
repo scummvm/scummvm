@@ -85,23 +85,32 @@ public:
 	static CBagWield *m_pWieldBmp; // Pointer to the WEILD object
 
 	CBagPanWindow();
-
 	virtual ~CBagPanWindow();
+	static void initStatics();
 
 	virtual ERROR_CODE AttachActiveObjects();
 
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
-	ERROR_CODE RunModal(CBagObject *pObj);
 
-	// virtual ERROR_CODE  PreFilter(CBofBitmap *pBmp, CBofRect *pRect);
-	// virtual ERROR_CODE  NoObjectsUnderMouse()               { return ERR_NONE; }
+	/**
+	 * The modal object is painted to the screen until it is done with
+	 * its modal loop.  This is mainly used with characters.  It is called
+	 * when the loop value of a modal character is set, before execution
+	 * of the next line of script.
+	 */
+	ERROR_CODE RunModal(CBagObject *pObj);
 
 	ERROR_CODE InsertFGObjects(CBagObject *pBmp);
 	VOID DeleteFGObjects();
 	CBagObject *GetFGObjects(CBofString &sObjName);
 
 	CBofPalette *SetSlidebitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
+
+	/**
+	 * Clear the last pan bitmaps and return a rect of the current view
+	 */
 	CBofRect UnSetSlidebitmap();
+
 	CBagPanBitmap *GetSlideBitmap() { return m_pSlideBitmap; }
 
 	DWORD RotateTo(CPoint xPoint, int nRate = 8);
@@ -195,7 +204,16 @@ public:
 
 	static CBagPDA *m_pPDABmp; // Pointer to the PDA object
 
+	/**
+	 * Deactivate the PDA by calling the PDA->Deactivate() directly.
+	 * This is called from the PDA ON/OFF button
+	 */
 	BOOL DeactivatePDA();
+
+	/**
+	 * Activate the PDA by calling the PDA->Deactivate() directly.
+	 * This is called on a mouse down anywhere on the deactivated PDA.
+	 */
 	BOOL ActivatePDA();
 
 	void WaitForPDA() {
