@@ -54,7 +54,7 @@ struct LOGPALETTE {
 	PALETTEENTRY palPalEntry[1];
 };
 
-extern HPALETTE CreatePalette(LOGPALETTE *pal);
+extern HPALETTE CreatePalette(const LOGPALETTE *pal);
 
 #define RGB(r, g, b) ((RGBCOLOR)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((DWORD)(BYTE)(b)) << 16)))
 
