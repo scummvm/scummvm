@@ -41,6 +41,7 @@
 #include "bagel/baglib/sound_object.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/var.h"
+#include "bagel/baglib/wield.h"
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
@@ -66,6 +67,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagSoundObject::initStatics();
 	CBagStorageDevWnd::initStatics();
 	CBagVarManager::initStatics();
+	CBagWield::initStatics();
 	CBagel::initStatics();
 
 	// boflib/ class statics initializations

@@ -37,6 +37,9 @@ private:
 public:
 	CBagWield(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
 	virtual ~CBagWield();
+	static void initStatics() {
+		m_nWieldCursor = -1;
+	}
 
 	CBagObject *GetCurrObj() const { return m_pCurrObj; }
 	CBagObject *SetCurrObj(CBagObject *pObj) { return m_pCurrObj = pObj; }
