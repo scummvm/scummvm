@@ -41,21 +41,20 @@ Common::Error SpaceBarEngine::run() {
 	setDebugger(new Console());
 
 	// Create the app
-	CBofApp *pApp = CBofApp::GetApp();
-	assert(pApp != nullptr);
+	CBofApp app;
 
 	// Initialize
-	pApp->PreInit();
-	pApp->Initialize();
+	app.PreInit();
+	app.Initialize();
 
 	// Run the app
-	if (!pApp->ErrorOccurred())
-		pApp->RunApp();
+	if (!app.ErrorOccurred())
+		app.RunApp();
 
 	// Shutdown
-	pApp->PreShutDown();
-	pApp->ShutDown();
-	pApp->PostShutDown();
+	app.PreShutDown();
+	app.ShutDown();
+	app.PostShutDown();
 
 	return Common::kNoError;
 }
