@@ -7,6 +7,20 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
    - Don't try to use shaders on old OpenGL implementations.
 
+ AGI:
+   - Fixed Space Quest 1 version 1.0X freezing in the skimmer.
+   - Fixed Mixed-Up Mother Goose message boxes during nursery rhymes.
+   - Fixed Mixed-Up Mother Goose graphics in Amiga version.
+   - Fixed Atari ST version of Manhunter 1 not starting.
+   - Fixed Tandy CoCo3 version of Leisure Suit Larry 1 not starting.
+   - Fixed Tandy CoCo3 unofficial ports not starting.
+   - Fixed Amiga menus in Space Quest 1, Manhunter 1, and Manhunter 2.
+   - Fixed ducks not jumping at the start of Donald Duck's Playground.
+   - Fixed instant death in fan game "Phil's Quest: The Search for Tolbaga".
+   - Fixed buttons freezing in fan game "DG: The AGIMouse Adventure".
+   - Fixed unrecognized words in fan game "V - The Graphical Adventure".
+   - Added detection for Macintosh version of Mixed-Up Mother Goose.
+
  Broken Sword 2:
    - Fixed crash when quitting the game while it was paused.
 
