@@ -144,7 +144,7 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
 	 */
 	if (zg.bitVar.bitCnt)
 		zg.bitVar.bufPtr++;
-	if (zg.bitVar.bitCnt > CHAR_BIT)
+	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		zg.bitVar.bufPtr++;
 
 	zg.bitVar.bitCnt = 0;
@@ -166,7 +166,7 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
 #endif
 			if ((zg.bitVar.bufPtr - pInBuf) & 1) {
 				zg.bitVar.last = *zg.bitVar.bufPtr--;
-				zg.bitVar.bitCnt = CHAR_BIT;
+				zg.bitVar.bitCnt = BITS_IN_CHAR;
 			}
 			break;
 		}
@@ -390,7 +390,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size) {
 	 */
 	if (zg.bitVar.bitCnt)
 		zg.bitVar.bufPtr++;
-	if (zg.bitVar.bitCnt > CHAR_BIT)
+	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		zg.bitVar.bufPtr++;
 
 	/* we are now byte aligned */
@@ -412,7 +412,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size) {
 			 */
 			if ((zg.bitVar.bufPtr - zg.u.s.outBuffer) & 1) {
 				zg.bitVar.bufPtr--;
-				zg.bitVar.bitCnt = CHAR_BIT;
+				zg.bitVar.bitCnt = BITS_IN_CHAR;
 			}
 			break;
 		}
@@ -459,7 +459,7 @@ LONG BitWriteSize() {
 	fileSize = (zg.bitVar.bufPtr - zg.u.s.outBuffer) + zg.bitVar.fileSize;
 	if (zg.bitVar.bitCnt)
 		fileSize++;
-	if (zg.bitVar.bitCnt > CHAR_BIT)
+	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		fileSize++;
 
 	return (fileSize);
@@ -587,7 +587,7 @@ ERROR_CODE BitWriteFlush(LONG *rFileSize) {
 	used = zg.bitVar.bufPtr - zg.u.s.outBuffer;
 	if (zg.bitVar.bitCnt)
 		used++;
-	if (zg.bitVar.bitCnt > CHAR_BIT)
+	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		used++;
 
 	/*
@@ -646,7 +646,7 @@ LONG BitWriteSize(UBYTE *pOutBuf, INT nBufSize)
     fileSize = (zg.bitVar.bufPtr - pOutBuf) + zg.bitVar.fileSize;
     if (zg.bitVar.bitCnt)
         fileSize++;
-    if (zg.bitVar.bitCnt > CHAR_BIT)
+    if (zg.bitVar.bitCnt > BITS_IN_CHAR)
         fileSize++;
 
     return(fileSize);
@@ -727,7 +727,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size, UBYTE *pOutBuf, INT nBufSize
     */
     if (zg.bitVar.bitCnt)
         zg.bitVar.bufPtr++;
-    if (zg.bitVar.bitCnt > CHAR_BIT)
+    if (zg.bitVar.bitCnt > BITS_IN_CHAR)
         zg.bitVar.bufPtr++;
 
     /* we are now byte aligned */
@@ -744,7 +744,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size, UBYTE *pOutBuf, INT nBufSize
             */
             if ((zg.bitVar.bufPtr - pOutBuf) & 1) {
                 zg.bitVar.bufPtr--;
-                zg.bitVar.bitCnt = CHAR_BIT;
+                zg.bitVar.bitCnt = BITS_IN_CHAR;
             }
             break;
         }

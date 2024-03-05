@@ -52,10 +52,10 @@ namespace Bagel {
 // I/O buffer for reading and writing
 #define MAXFILEBUF 8192
 
-#define CHAR_BIT 8
+#define BITS_IN_CHAR 8
 
 // Bitwise Finction info
-#define USHRT_BITS (sizeof(USHORT) * CHAR_BIT)
+#define USHRT_BITS (sizeof(USHORT) * BITS_IN_CHAR)
 
 /*
  * Huffman binary tree - used by implode and deflate
