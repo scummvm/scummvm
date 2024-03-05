@@ -41,44 +41,125 @@ protected:
 	static CBofList<CBagMovieObject *> *m_pMovieList;
 
 public:
+	/**
+	 * Constructor
+	 * @param pParent		Pointer to the parent window
+	 * @param xPoint		Upper-left corner of PDA in parent window
+	 * @param bActivated	State of PDA whe constructed (optional)
+	 */
 	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
+
+	/**
+	 * Destructor
+	 */
 	virtual ~CBagPDA();
+	static void initStatics();
 
 	virtual ERROR_CODE Attach();
 
+	/**
+	 * Positions the PDA centered vertically and window
+	 * @param width		Width of area to center pda
+	 * @param height	Height of area to place pda
+	 * @param nDist		Distance to bring move PDA
+	 */
 	VOID SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
 
+	/**
+	 * Update the PDA to the screen and then call CBagStorageDevBmp Update
+	 * @param pBmp			Background bitmap to paint to
+	 * @param pt			Offset into bitmap
+	 * @param pSrcRect		Clip rect of the object to be painted
+	 * @param nMaskColor	Mask color for the object
+	*/
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
 
+	/**
+	 * Called to overload specific types of sprite objects
+	 * @param pBmp			Bitmap
+	 * @return				Success/failure
+	 */
 	virtual BOOL PaintFGObjects(CBofBitmap *pBmp);
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 
-	// CBagObject* 		OnNewWldObject(const CBofString& sInit);
+	/**
+	 * Called to overload specific types of sprite objects
+	 * @param sInit		Init
+	 * @return			Pointer to the new object
+	 */
 	CBagObject *OnNewButtonObject(const CBofString &sInit);
 
+	/**
+	 * Called on the mouse left button down
+	 * Is the PDA is deactivated mouse down activates the PDA
+	 * else it call CBagStorageDevBmp::OnLButtonDown
+	 * @param nFlags		Flags
+	 * @param xPoint		X, Y position
+	 * @param info			Optional info
+	 */
 	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
-	virtual BOOL OnLButtonDown(UINT, CPoint, void * = nullptr);
+
+	/**
+	 * Called on the mouse left button down
+	 * @param nFlags		Flags
+	 * @param xPoint		X, Y position
+	 * @param info			Optional info
+	 */
+	virtual BOOL OnLButtonDown(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
+
 	BOOL IsInside(const CBofPoint &xPoint);
 
 	CBagObject *OnNewUserObject(const CBofString &sInit);
 
+	/**
+	 * Allow the movie code to queue up asynch pda messages
+	 * Must be before the destructor
+	 */
 	static VOID AddToMovieQueue(CBagMovieObject *);
+
+	/**
+	 * Just remove this message from the queue, remember that we
+	 * don't own this object, so just remove it, don't delete it!!!!
+	 */
 	static VOID RemoveFromMovieQueue(CBagMovieObject *);
+
+	/**
+	 * Return true if a movie is waiting to play.
+	 */
 	static BOOL IsMovieWaiting();
+
 	static BOOL IsMoviePlaying() { return m_ePdaMode == MOOMODE; }
+
 	static VOID RunWaitingMovie();
 
-	virtual BOOL ShowInventory(); // Show the inventory
-	virtual BOOL HideInventory(); // Hide the inventory
+	/**
+	 * SHow the inventory
+	*/
+	virtual BOOL ShowInventory();
 
-	virtual BOOL HideCurDisplay();    // Hide the current display
-	virtual BOOL RestoreCurDisplay(); // restore display, must be paired with hide
+	/**
+	 * Hide the inventory
+	 */
+	virtual BOOL HideInventory();
+
+	/**
+	 * Hide the current display
+	 */
+	virtual BOOL HideCurDisplay();
+
+	/**
+	 * Restore display
+	 */
+	virtual BOOL RestoreCurDisplay();
 
 	virtual ERROR_CODE AttachActiveObjects();
 	virtual ERROR_CODE DetachActiveObjects();
 
-	VOID HandleZoomButton(BOOL);
+	/**
+	 * Handle switching back and forth from our flashing zoom button
+	 */
+	VOID HandleZoomButton(BOOL bButtonDown);
 };
 
 } // namespace Bagel
