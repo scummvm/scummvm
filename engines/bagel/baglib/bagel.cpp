@@ -58,7 +58,7 @@ CBofWindow *g_pHackWindow;
 void CBagel::initStatics() {
 	g_cHomeDir = HOMEDIR_DFLT;
 	g_cCacheDir = "";
-	*g_pHackWindow = nullptr;
+	g_pHackWindow = nullptr;
 }
 
 // local functions
