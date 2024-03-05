@@ -197,4 +197,28 @@ void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
 	m(1, 1) *= v.getY();
 }
 
+float dot(Math::Vector2d u, Math::Vector2d v) {
+	return (u.getX() * v.getX()) + (u.getY() * v.getY());
+}
+
+float length(Math::Vector2d v) { return sqrt(dot(v, v)); }
+
+bool lineSegmentsCross(Math::Vector2d a, Math::Vector2d b, Math::Vector2d c, Math::Vector2d d) {
+	const float EPSILON = 1e-3f;
+	const float denominator = ((b.getX() - a.getX()) * (d.getY() - c.getY())) - ((b.getY() - a.getY()) * (d.getX() - c.getX()));
+	if (abs(denominator) < EPSILON) {
+		return false;
+	}
+
+	const float numerator1 = ((a.getY() - c.getY()) * (d.getX() - c.getX())) - ((a.getX() - c.getX()) * (d.getY() - c.getY()));
+	const float numerator2 = ((a.getY() - c.getY()) * (b.getX() - a.getX())) - ((a.getX() - c.getX()) * (b.getY() - a.getY()));
+	if ((abs(numerator1) < EPSILON) || (abs(numerator2) < EPSILON)) {
+		return false;
+	}
+
+	const float r = numerator1 / denominator;
+	const float s = numerator2 / denominator;
+	return ((r > 0.f) && (r < 1.f)) && ((s > 0.f) && (s < 1.f));
+}
+
 } // namespace Twp
