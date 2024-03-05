@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	baglib/inv.o \
 	baglib/log_msg.o \
 	baglib/master_win.o \
+	baglib/menu_dlg.o \
 	baglib/moo.o \
 	baglib/movie_object.o \
 	baglib/object.o \
