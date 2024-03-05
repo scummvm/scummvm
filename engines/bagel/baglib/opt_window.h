@@ -55,11 +55,29 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
+	/**
+	 * Get the system settings from CBofApp.
+	 */
 	VOID LoadIniSettings();
+
+	/**
+	 * Save Out New Settings to the ini file of the App.
+	 */
 	VOID SaveOutNewSettings();
+
+	/**
+	 * Change Settings to the defaults
+	 */
 	VOID ReturnToDefaults();
 
+	/**
+	 * Changes the states of buttons & controls to reflect the current variable values.
+	 */
 	VOID PutDialogData();
+
+	/**
+	 * Changes the current variable values to reflect the states of buttons & controls.
+	 */
 	VOID GetDialogData();
 
 	VOID UpdateOptions();
