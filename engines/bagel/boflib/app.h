@@ -35,19 +35,19 @@ namespace Bagel {
 
 class CBofApp : public CBofError {
 private:
-	VOID ConstructorInits(VOID);
+	VOID ConstructorInits();
 
 protected:
 #if BOF_MAC
 	VOID HandleMacEvent(EventRecord *pEvent);
-	VOID InitMacToolBox(VOID);
+	VOID InitMacToolBox();
 #if USEDRAWSPROCKET
-	VOID InitDrawSprocket(VOID);
+	VOID InitDrawSprocket();
 #endif
 #endif
 
-	VOID StartupCode(VOID);
-	VOID ShutDownCode(VOID);
+	VOID StartupCode();
+	VOID ShutDownCode();
 
 	CHAR m_szAppName[MAX_APPNAME];
 
@@ -84,57 +84,57 @@ private:
 	CBofWindow *m_pWindow;
 
 public:
-	CBofApp(VOID);
+	CBofApp();
 	CBofApp(const CHAR *pszAppName);
 	virtual ~CBofApp();
 
-	ERROR_CODE PreInit(VOID);
-	ERROR_CODE PreShutDown(VOID); // scg 01.13.97
-	ERROR_CODE PostShutDown(VOID);
+	ERROR_CODE PreInit();
+	ERROR_CODE PreShutDown(); // scg 01.13.97
+	ERROR_CODE PostShutDown();
 
 	// these functions can be overridden by the child class
 	//
-	virtual ERROR_CODE Initialize(VOID);
-	virtual ERROR_CODE RunApp(VOID);
-	virtual ERROR_CODE ShutDown(VOID);
+	virtual ERROR_CODE Initialize();
+	virtual ERROR_CODE RunApp();
+	virtual ERROR_CODE ShutDown();
 
 	VOID SetAppName(const CHAR *pszNewAppName) { Common::strcpy_s(m_szAppName, pszNewAppName); }
 
-	const CHAR *GetAppName(VOID) { return ((const CHAR *)m_szAppName); }
+	const CHAR *GetAppName() { return (const CHAR *)m_szAppName; }
 
 	VOID SetMainWindow(CBofWindow *pWnd) { m_pMainWnd = pWnd; }
-	CBofWindow *GetMainWindow(VOID) { return (m_pMainWnd); }
+	CBofWindow *GetMainWindow() { return m_pMainWnd; }
 
-	CBofWindow *GetActualWindow(VOID) { return (m_pWindow); }
+	CBofWindow *GetActualWindow() { return m_pWindow; }
 
 	VOID SetPalette(CBofPalette *pPalette);
-	CBofPalette *GetPalette(VOID) { return (m_pPalette); }
+	CBofPalette *GetPalette() { return m_pPalette; }
 
-	INT ScreenWidth(VOID) { return (m_nScreenDX); }
-	INT ScreenHeight(VOID) { return (m_nScreenDY); }
-	INT ScreenDepth(VOID) { return (m_nColorDepth); }
+	INT ScreenWidth() { return m_nScreenDX; }
+	INT ScreenHeight() { return m_nScreenDY; }
+	INT ScreenDepth() { return m_nColorDepth; }
 
-	CBofCursor GetDefaultCursor(VOID) { return (m_cDefaultCursor); }
+	CBofCursor GetDefaultCursor() { return m_cDefaultCursor; }
 	VOID SetDefaultCursor(CBofCursor &cCursor) { m_cDefaultCursor = cCursor; }
 
 #if !BOF_WIN16
 	VOID AddCursor(CBofCursor &cCursor);
 	VOID DelCursor(INT nIndex);
-	CBofCursor GetCursor(INT nIndex) { return (m_cCursorList[nIndex]); }
-	INT GetNumberOfCursors(VOID) { return (m_cCursorList.GetCount()); }
+	CBofCursor GetCursor(INT nIndex) { return m_cCursorList[nIndex]; }
+	INT GetNumberOfCursors() { return m_cCursorList.GetCount(); }
 #endif
 
-	static CBofApp *GetApp(VOID) { return (m_pBofApp); }
-	static ULONG GetMachineSpeed(VOID) { return (m_lCPUSpeed); }
-	static VOID CalcCPUSpeed(VOID);
+	static CBofApp *GetApp() { return m_pBofApp; }
+	static ULONG GetMachineSpeed() { return m_lCPUSpeed; }
+	static VOID CalcCPUSpeed();
 
 #if BOF_WINDOWS
-	HDIGDRIVER GetDriver(VOID) { return (m_hDriver); }
-	HMDIDRIVER GetMidiDriver(VOID) { return (m_hMidiDriver); }
+	HDIGDRIVER GetDriver() { return m_hDriver; }
+	HMDIDRIVER GetMidiDriver() { return m_hMidiDriver; }
 
 	static VOID SetInstanceHandle(HINSTANCE hInstance) { m_hInstance = hInstance; }
 
-	static HINSTANCE GetInstanceHandle(VOID) { return (m_hInstance); }
+	static HINSTANCE GetInstanceHandle() { return m_hInstance; }
 #elif BOF_MAC
 
 #endif
@@ -170,7 +170,7 @@ VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
 #endif
 
 VOID SetMousePos(CBofPoint &cPoint);
-CBofPoint GetMousePos(VOID);
+CBofPoint GetMousePos();
 
 } // namespace Bagel
 

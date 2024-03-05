@@ -56,12 +56,12 @@ CHAR g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved
 
 // Local functions
 //
-BOOL FirstInstance(VOID);
+BOOL FirstInstance();
 #if BOF_MAC && USEDRAWSPROCKET
 void InitDSpContextAttributes(DSpContextAttributes *inAttributes);
 #endif
 
-CBofApp::CBofApp(VOID) {
+CBofApp::CBofApp() {
 	ConstructorInits();
 
 	StartupCode();
@@ -77,7 +77,7 @@ CBofApp::CBofApp(const CHAR *pszAppName) {
 }
 
 
-VOID CBofApp::ConstructorInits(VOID) {
+VOID CBofApp::ConstructorInits() {
 	m_szAppName[0] = '\0';
 	m_pMainWnd = NULL;
 	m_pPalette = NULL;
@@ -132,7 +132,7 @@ CBofApp::~CBofApp() {
 }
 
 
-VOID CBofApp::StartupCode(VOID) {
+VOID CBofApp::StartupCode() {
 	BOOL bRand;
 
 #if BOF_MAC
@@ -211,7 +211,7 @@ VOID CBofApp::StartupCode(VOID) {
 }
 
 
-VOID CBofApp::ShutDownCode(VOID) {
+VOID CBofApp::ShutDownCode() {
 	// Un-initialize the text library
 	CBofText::ShutDown();
 
@@ -237,7 +237,7 @@ VOID CBofApp::ShutDownCode(VOID) {
 }
 
 
-ERROR_CODE CBofApp::PreInit(VOID) {
+ERROR_CODE CBofApp::PreInit() {
 #if BOF_MAC || BOF_WINMAC
 	HideMenuBar();
 #endif
@@ -292,14 +292,14 @@ ERROR_CODE CBofApp::PreInit(VOID) {
 }
 
 
-ERROR_CODE CBofApp::Initialize(VOID) {
+ERROR_CODE CBofApp::Initialize() {
 	//Assert(IsValidObject(this));
 
 	return (m_errCode);
 }
 
 
-ERROR_CODE CBofApp::RunApp(VOID) {
+ERROR_CODE CBofApp::RunApp() {
 	CBofWindow *pWindow;
 	INT i, nCount;
 
@@ -458,14 +458,14 @@ ERROR_CODE CBofApp::RunApp(VOID) {
 }
 
 
-ERROR_CODE CBofApp::ShutDown(VOID) {
+ERROR_CODE CBofApp::ShutDown() {
 	//Assert(IsValidObject(this));
 
 	return (m_errCode);
 }
 
 
-ERROR_CODE CBofApp::PreShutDown(VOID) {
+ERROR_CODE CBofApp::PreShutDown() {
 #if BOF_MAC || BOF_WINMAC
 	ShowMenuBar();
 #endif
@@ -488,7 +488,7 @@ ERROR_CODE CBofApp::PreShutDown(VOID) {
 }
 
 
-ERROR_CODE CBofApp::PostShutDown(VOID) {
+ERROR_CODE CBofApp::PostShutDown() {
 	LogInfo(BuildString("Shutting down %s...", m_szAppName));
 
 #if BOFDISP
@@ -513,7 +513,7 @@ ERROR_CODE CBofApp::PostShutDown(VOID) {
 	return (m_errCode);
 }
 
-VOID CBofApp::CalcCPUSpeed(VOID) {
+VOID CBofApp::CalcCPUSpeed() {
 	TimerStart();
 	m_lCPUSpeed = TimerStop();
 
@@ -604,7 +604,7 @@ VOID CBofApp::DelCursor(INT nIndex) {
 
 #if BOF_MAC
 
-VOID CBofApp::InitMacToolBox(VOID) {
+VOID CBofApp::InitMacToolBox() {
 	THz             az;
 	unsigned long   limit;
 	short           omm;
@@ -713,7 +713,7 @@ INT main(INT argc, CHAR *argv[])
 }
 
 
-BOOL FirstInstance(VOID) {
+BOOL FirstInstance() {
 	BOOL bFirstTime;
 
 	// assume this is the first instance
@@ -732,7 +732,7 @@ BOOL FirstInstance(VOID) {
 
 
 #if BOF_MAC && USEDRAWSPROCKET
-VOID CBofApp::InitDrawSprocket(VOID) {
+VOID CBofApp::InitDrawSprocket() {
 	DSpStartup();
 
 	DSpContextAttributes theDesiredAttributes;
@@ -833,7 +833,7 @@ VOID SetMousePos(CBofPoint &cPoint) {
 }
 
 
-CBofPoint GetMousePos(VOID) {
+CBofPoint GetMousePos() {
 	CBofPoint cPoint;
 
 #if BOF_WINDOWS
