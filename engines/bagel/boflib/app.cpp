@@ -514,39 +514,10 @@ ERROR_CODE CBofApp::PostShutDown(VOID) {
 }
 
 VOID CBofApp::CalcCPUSpeed(VOID) {
-#define TEMP_BUF_SIZE   1024
-#define TEMP_NUM_LOOPS 10000
-
-#if BOF_MAC
-	LONG        nCPUType;
-	// jwl 1.24.97 this is a lame first pass at this, but it might actually work,
-	// assume that our clock speed is directly proportional to our cpu type, I
-	// know this is not entirely true, but as a general rule it might work.
-	Gestalt(gestaltNativeCPUtype, &nCPUType);
-	if (nCPUType == gestaltCPU601) {
-		m_lCPUSpeed = kReallySlowPPC;
-	} else {
-		if (nCPUType == gestaltCPU603 || nCPUType == gestaltCPU604) {
-			m_lCPUSpeed = kReallyFastPPC;
-		} else {
-			// we don't know about this type of cpu, but we're gonna make the
-			// assumption that Apple and the clone makers are going to make
-			// faster machines not slower ones, seems like a reasonable assumption.
-			m_lCPUSpeed = kReallyFastPPC;
-		}
-	}
-
-	return;
-#endif
-
-	CHAR szBuf1[TEMP_BUF_SIZE], szBuf2[TEMP_BUF_SIZE];
-	INT i;
-
 	TimerStart();
-	for (i = 0; i < TEMP_NUM_LOOPS; i++) {
-		BofMemCopy(&szBuf1[0], &szBuf2[0], TEMP_BUF_SIZE);
-	}
 	m_lCPUSpeed = TimerStop();
+
+	warning("TODO: m_lCPUSpeed may need an appropriate dummy value");
 
 	LogInfo(BuildString("CPUSpeedIndex: %ld", m_lCPUSpeed));
 }
