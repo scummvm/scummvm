@@ -205,7 +205,7 @@ static SQInteger actorDistanceTo(HSQUIRRELVM v) {
 	} else {
 		obj = g_twp->_actor;
 	}
-	sqpush(v, distance((Vector2i)actor->_node->getPos(), (Vector2i)obj->getUsePos()));
+	sqpush(v, distance(actor->_node->getPos(), obj->getUsePos()));
 	return 1;
 }
 
@@ -222,7 +222,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 		if (actor1->_room != actor2->_room)
 			return false;
 		// not sure about this, needs to be check one day ;)
-		sqpush(v, distance((Vector2i)actor1->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < distance((Vector2i)actor2->_node->getAbsPos(), (Vector2i)obj->getUsePos()));
+		sqpush(v, distance(actor1->_node->getAbsPos(), obj->getUsePos()) < distance(actor2->_node->getAbsPos(), obj->getUsePos()));
 		return 1;
 	}
 
@@ -238,7 +238,7 @@ static SQInteger actorDistanceWithin(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get distance");
 		if (actor->_room != obj->_room)
 			return false;
-		sqpush(v, distance((Vector2i)actor->_node->getAbsPos(), (Vector2i)obj->getUsePos()) < dist);
+		sqpush(v, distance(actor->_node->getAbsPos(), obj->getUsePos()) < dist);
 		return 1;
 	}
 	return sq_throwerror(v, "actorDistanceWithin not implemented");
@@ -341,7 +341,7 @@ static SQInteger actorInWalkbox(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get name");
 	for (const auto &walkbox : g_twp->_room->_walkboxes) {
 		if (walkbox._name == name) {
-			if (walkbox.contains((Vector2i)actor->_node->getAbsPos())) {
+			if (walkbox.contains(actor->_node->getAbsPos())) {
 				sqpush(v, true);
 				return 1;
 			}
@@ -693,7 +693,7 @@ static SQInteger actorWalkForward(HSQUIRRELVM v) {
 		dir = Math::Vector2d(dist, 0);
 		break;
 	}
-	Object::walk(actor, (Vector2i)(actor->_node->getAbsPos() + dir));
+	Object::walk(actor, (actor->_node->getAbsPos() + dir));
 	return 0;
 }
 
@@ -762,7 +762,7 @@ static SQInteger actorWalkTo(HSQUIRRELVM v) {
 			if (SQ_FAILED(sqget(v, 5, facing)))
 				return sq_throwerror(v, "failed to get dir");
 		}
-		Object::walk(actor, Vector2i(static_cast<int>(x), static_cast<int>(y)), facing);
+		Object::walk(actor, Math::Vector2d(x, y), facing);
 	} else {
 		return sq_throwerror(v, "invalid number of arguments in actorWalkTo");
 	}

@@ -735,7 +735,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 				return;
 			}
 			// Did we get close enough?
-			float dist = distance((Vector2i)obj->getUsePos(), (Vector2i)noun1->getUsePos());
+			float dist = distance(obj->getUsePos(), noun1->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debugC(kDebugGame, "actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
@@ -753,7 +753,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 				obj->_exec.enabled = false;
 				return;
 			}
-			float dist = distance((Vector2i)obj->getUsePos(), (Vector2i)noun2->getUsePos());
+			float dist = distance(obj->getUsePos(), noun2->getUsePos());
 			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
 			debugC(kDebugGame, "actorArrived: noun2 min_dist: %f > %f ?", dist, min_dist);
 			if (dist > min_dist) {
@@ -769,8 +769,8 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 }
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
-void Object::walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing) {
-	debugC(kDebugGame, "walk to obj %s: %d,%d, %d", obj->_key.c_str(), pos.x, pos.y, facing);
+void Object::walk(Common::SharedPtr<Object> obj, Math::Vector2d pos, int facing) {
+	debugC(kDebugGame, "walk to obj %s: %f,%f, %d", obj->_key.c_str(), pos.getX(), pos.getY(), facing);
 	if (!obj->_walkTo || (!obj->_walkTo->isEnabled())) {
 		obj->play(obj->getAnimName(WALK_ANIMNAME), true);
 	}
@@ -781,7 +781,7 @@ void Object::walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing) {
 void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	debugC(kDebugGame, "walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
 	int facing = static_cast<int>(obj->_useDir);
-	walk(actor, (Vector2i)obj->getUsePos(), facing);
+	walk(actor, obj->getUsePos(), facing);
 }
 
 void Object::turn(Facing facing) {

@@ -178,12 +178,12 @@ void ReachAnim::update(float elapsed) {
 	}
 }
 
-WalkTo::WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing)
+WalkTo::WalkTo(Common::SharedPtr<Object> obj, Math::Vector2d dest, int facing)
 	: _obj(obj), _facing(facing) {
 	if (obj->_useWalkboxes) {
-		_path = obj->_room->calculatePath((Vector2i)obj->_node->getAbsPos(), dest);
+		_path = obj->_room->calculatePath(obj->_node->getAbsPos(), dest);
 	} else {
-		_path = {(Vector2i)obj->_node->getAbsPos(), dest};
+		_path = {obj->_node->getAbsPos(), dest};
 	}
 
 	_wsd = sqrt(obj->_walkSpeed.getX() * obj->_walkSpeed.getX() + obj->_walkSpeed.getY() * obj->_walkSpeed.getY());
@@ -251,8 +251,8 @@ void WalkTo::update(float elapsed) {
 	if (!_enabled)
 		return;
 	if (_state == kWalking && !_path.empty()) {
-		Vector2i dest = _path[0];
-		float d = distance(dest, (Vector2i)_obj->_node->getAbsPos());
+		Math::Vector2d dest = _path[0];
+		float d = distance(dest, _obj->_node->getAbsPos());
 
 		// arrived at destination ?
 		if (d < 1.0) {

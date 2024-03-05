@@ -462,7 +462,7 @@ void Room::walkboxHidden(const Common::String &name, bool hidden) {
 	}
 }
 
-Common::Array<Vector2i> Room::calculatePath(Vector2i frm, Vector2i to) {
+Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vector2d to) {
 	if (_mergedPolygon.size() > 0) {
 		if (_pathFinder.isDirty()) {
 			_mergedPolygon = merge(_walkboxes);
@@ -491,19 +491,19 @@ Walkbox::Walkbox(const Common::Array<Vector2i> &polygon, bool visible)
 }
 
 bool Walkbox::concave(int vertex) const {
-	Vector2i current = _polygon[vertex];
-	Vector2i next = _polygon[(vertex + 1) % _polygon.size()];
-	Vector2i previous = _polygon[vertex == 0 ? _polygon.size() - 1 : vertex - 1];
+	Math::Vector2d current = (Math::Vector2d)_polygon[vertex];
+	Math::Vector2d next = (Math::Vector2d)_polygon[(vertex + 1) % _polygon.size()];
+	Math::Vector2d previous = (Math::Vector2d)_polygon[vertex == 0 ? _polygon.size() - 1 : vertex - 1];
 
-	Vector2i left{current.x - previous.x, current.y - previous.y};
-	Vector2i right{next.x - current.x, next.y - current.y};
+	Math::Vector2d left{current.getX() - previous.getX(), current.getY() - previous.getY()};
+	Math::Vector2d right{next.getX() - current.getX(), next.getY() - current.getY()};
 
-	float cross = (left.x * right.y) - (left.y * right.x);
+	float cross = (left.getX() * right.getY()) - (left.getY() * right.getX());
 	return cross < 0;
 }
 
-bool Walkbox::contains(Vector2i position, bool toleranceOnOutside) const {
-	Vector2i point = position;
+bool Walkbox::contains(Math::Vector2d position, bool toleranceOnOutside) const {
+	Math::Vector2d point = position;
 	const float epsilon = 2.0f;
 	bool result = false;
 
@@ -511,19 +511,19 @@ bool Walkbox::contains(Vector2i position, bool toleranceOnOutside) const {
 	if (_polygon.size() < 3)
 		return false;
 
-	Vector2i oldPoint(_polygon[_polygon.size() - 1]);
+	Math::Vector2d oldPoint(_polygon[_polygon.size() - 1]);
 	float oldSqDist = distanceSquared(oldPoint, point);
 
 	for (size_t i = 0; i < _polygon.size(); i++) {
-		Vector2i newPoint = _polygon[i];
+		Math::Vector2d newPoint = (Math::Vector2d)_polygon[i];
 		float newSqDist = distanceSquared(newPoint, point);
 
 		if (oldSqDist + newSqDist + 2.0f * sqrt(oldSqDist * newSqDist) - distanceSquared(newPoint, oldPoint) < epsilon)
 			return toleranceOnOutside;
 
-		Vector2i left;
-		Vector2i right;
-		if (newPoint.x > oldPoint.x) {
+		Math::Vector2d left;
+		Math::Vector2d right;
+		if (newPoint.getX() > oldPoint.getX()) {
 			left = oldPoint;
 			right = newPoint;
 		} else {
@@ -531,7 +531,7 @@ bool Walkbox::contains(Vector2i position, bool toleranceOnOutside) const {
 			right = oldPoint;
 		}
 
-		if ((left.x < point.x) && (point.x <= right.x) && ((point.y - left.y) * (right.x - left.x)) < ((right.y - left.y) * (point.x - left.x)))
+		if ((left.getX() < point.getX()) && (point.getX() <= right.getX()) && ((point.getY() - left.getY()) * (right.getX() - left.getX())) < ((right.getY() - left.getY()) * (point.getX() - left.getX())))
 			result = !result;
 
 		oldPoint = newPoint;
