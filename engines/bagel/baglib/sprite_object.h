@@ -73,7 +73,7 @@ public:
 
 	VOID SetAnimated(BOOL b = TRUE);
 	VOID SetCels(int nCels);
-	virtual VOID SetPosition(CBofPoint &pos);
+	virtual VOID SetPosition(const CBofPoint &pos);
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
