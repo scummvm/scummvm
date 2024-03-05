@@ -39,6 +39,7 @@ private:
 public:
 	CBagMoo() : CBagStorageDevBmp() {}
 	virtual ~CBagMoo();
+	static void initStatics();
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 
