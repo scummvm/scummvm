@@ -1290,10 +1290,10 @@ STATIC struct CODETABLE fdTable[] = {
 //
 // local function prototypes
 //
-LONG UnStackCodes(struct CODESTACK FAR *, struct ALTCODESTACK FAR *, SHORT, SHORT *, SHORT *, SHORT *, SHORT *);
-LONG StackCodes(struct CODESTACK FAR *, struct ALTCODESTACK FAR *, SHORT, SHORT, SHORT *, SHORT *, SHORT *, SHORT *, LONG *, SHORT *, SHORT *, LONG *);
+LONG UnStackCodes(struct CODESTACK *, struct ALTCODESTACK *, SHORT, SHORT *, SHORT *, SHORT *, SHORT *);
+LONG StackCodes(struct CODESTACK *, struct ALTCODESTACK *, SHORT, SHORT, SHORT *, SHORT *, SHORT *, SHORT *, LONG *, SHORT *, SHORT *, LONG *);
 SHORT HuffCalcHead(struct PACKTABLE *, struct CODETABLE *, SHORT, SHORT);
-LONG HuffCalcSize(struct CODETABLE *, struct CODETABLE *, struct CODESTACK FAR *, SHORT);
+LONG HuffCalcSize(struct CODETABLE *, struct CODETABLE *, struct CODESTACK *, SHORT);
 SHORT PackLengths(struct CODETABLE *, struct PACKTABLE *, SHORT);
 ERROR_CODE HuffBuildCodes(struct CODETABLE *, SHORT *, SHORT, SHORT, SHORT);
 VOID SFBuildCodes(struct CODETABLE *, struct CODELENS *, SHORT);
@@ -1331,15 +1331,15 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	SHORT *lenProbCount, *disProbCount;
 	UBYTE *lookBackBuf, *endBuf, *rdPtr, *oldPtr;
 	UBYTE *nextPtr, *curNextPtr, *curRepPtr;
-	USHORT FAR *hashTable, FAR *colTable;
+	USHORT *hashTable, *colTable;
 	ERROR_CODE altErrCode, errCode;
 	UBYTE method;
 
 	UBYTE *toPtr, *tp, *hp, *p;
-	struct CODESTACK FAR *stack;
-	struct CODESTACK FAR *sPtr;
-	struct ALTCODESTACK FAR *altStack;
-	struct ALTCODESTACK FAR *altPtr;
+	struct CODESTACK *stack;
+	struct CODESTACK *sPtr;
+	struct ALTCODESTACK *altStack;
+	struct ALTCODESTACK *altPtr;
 	struct CODETABLE *ct, *bt;
 	struct CODETABLE *cte, *bte;
 	struct PACKTABLE *pk;
@@ -2423,8 +2423,8 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
  * name      UnStackCodes - removes specified number of codes from stack
  *
  * synopsis  size = UnStackCodes(sPtr, altPtr, count, lenProbCount, disProbCount, lenSum, disSum)
- *           struct CODESTACK FAR *sPtr;         top of stack
- *           struct ALTCODESTACK FAR *altPtr;    top of alternate stack
+ *           struct CODESTACK *sPtr;             top of stack
+ *           struct ALTCODESTACK *altPtr;        top of alternate stack
  *           SHORT count;                        number of codes
  *           SHORT *lenProbCount;                literal/length probabilities
  *           SHORT *disProbCount;                distance probabilities
@@ -2437,7 +2437,7 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
  *
  **/
 
-LONG UnStackCodes(struct CODESTACK FAR *sPtr, struct ALTCODESTACK FAR *altPtr, SHORT count, SHORT *lenProbCount, SHORT *disProbCount, SHORT *lenSum, SHORT *disSum) {
+LONG UnStackCodes(struct CODESTACK *sPtr, struct ALTCODESTACK *altPtr, SHORT count, SHORT *lenProbCount, SHORT *disProbCount, SHORT *lenSum, SHORT *disSum) {
 	SHORT i;
 	LONG stSize;
 
@@ -2488,8 +2488,8 @@ LONG UnStackCodes(struct CODESTACK FAR *sPtr, struct ALTCODESTACK FAR *altPtr, S
  * name      StackCodes - addes specified number of codes removed from stack
  *
  * synopsis  size = StackCodes(sPtr, altPtr, offset, count, lenProbCount, disProbCount, lenSum, lenNum, lenSqr, disSum, disNum, disSqr)
- *           struct CODESTACK FAR *sPtr;         base of stack
- *           struct ALTCODESTACK FAR *altPtr;    base of alternate stack
+ *           struct CODESTACK *sPtr;             base of stack
+ *           struct ALTCODESTACK *altPtr;        base of alternate stack
  *           SHORT offset;                       offset to top of stack
  *           SHORT count;                        number of codes
  *           SHORT *lenProbCount;                literal/length probabilities
@@ -2507,7 +2507,7 @@ LONG UnStackCodes(struct CODESTACK FAR *sPtr, struct ALTCODESTACK FAR *altPtr, S
  *
  **/
 
-LONG StackCodes(struct CODESTACK FAR *sPtr, struct ALTCODESTACK FAR *altPtr, SHORT offset, SHORT count, SHORT *lenProbCount, SHORT *disProbCount, SHORT *lenSum, SHORT *lenNum, LONG *lenSqr, SHORT *disSum, SHORT *disNum, LONG *disSqr) {
+LONG StackCodes(struct CODESTACK *sPtr, struct ALTCODESTACK *altPtr, SHORT offset, SHORT count, SHORT *lenProbCount, SHORT *disProbCount, SHORT *lenSum, SHORT *lenNum, LONG *lenSqr, SHORT *disSum, SHORT *disNum, LONG *disSqr) {
 	SHORT i;
 	LONG size;
 
@@ -2597,7 +2597,7 @@ SHORT HuffCalcHead(struct PACKTABLE *pkTable, struct CODETABLE *blTable, SHORT p
  * synopsis  newSize = HuffCalcSize(table, block, size)
  *           struct CODETABLE *lenTable;     table of literal/length huffman codes
  *           struct CODETABLE *disTable      table of distance huffman codes
- *           struct CODESTACK FAR *block     block of compressed data
+ *           struct CODESTACK *block     block of compressed data
  *           SHORT size                      size of the data block
  *
  * purpose   Determines size of a data block after huffman compression
@@ -2606,7 +2606,7 @@ SHORT HuffCalcHead(struct PACKTABLE *pkTable, struct CODETABLE *blTable, SHORT p
  *
  **/
 
-LONG HuffCalcSize(struct CODETABLE *lenTable, struct CODETABLE *disTable, struct CODESTACK FAR *sPtr, SHORT sSize) {
+LONG HuffCalcSize(struct CODETABLE *lenTable, struct CODETABLE *disTable, struct CODESTACK *sPtr, SHORT sSize) {
 	LONG size;
 
 	/* start with nothing */

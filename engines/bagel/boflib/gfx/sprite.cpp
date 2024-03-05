@@ -726,7 +726,7 @@ BOOL CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 
 	CBofRect   overlapRect;
 	LONG    dx, dy, x, y, x1, y1, x2, y2, dx1, dx2;
-	UBYTE   HUGE *pDib1, HUGE *pDib2, HUGE *pPtr1, HUGE *pPtr2;
+	UBYTE   *pDib1, *pDib2, *pPtr1, *pPtr2;
 	UBYTE   m1, m2;
 	BOOL bHit;
 
@@ -756,8 +756,8 @@ BOOL CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		m_pImage->Lock();
 		pSprite->m_pImage->Lock();
 
-		pDib1 = (UBYTE HUGE *)m_pImage->GetPixelAddress((INT)x1, (INT)y1);
-		pDib2 = (UBYTE HUGE *)pSprite->m_pImage->GetPixelAddress((INT)x2, (INT)y2);
+		pDib1 = (UBYTE *)m_pImage->GetPixelAddress((INT)x1, (INT)y1);
+		pDib2 = (UBYTE *)pSprite->m_pImage->GetPixelAddress((INT)x2, (INT)y2);
 
 		if (!m_pImage->IsTopDown()) {
 			dx1 = -dx1;
@@ -913,7 +913,7 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	LONG    x, y, dx, dy, x1, y1, x2, y2, dx1, dy1, dx2, dy2;
 	LONG    nDxBytes1, nDxBytes2, nDyBytes1, nDyBytes2;
 	BOOL    bOk1, bOk2, bGood1, bGood2;
-	UBYTE   HUGE *pDib1, HUGE *pDib2, HUGE *pPtr1, HUGE *pPtr2;
+	UBYTE   *pDib1, *pDib2, *pPtr1, *pPtr2;
 	UBYTE   m1, m2;
 	UBYTE   c1, c2;
 	BOOL bFound;
@@ -932,8 +932,8 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	m_pImage->Lock();
 	pSprite->m_pImage->Lock();
 
-	pDib1 = (UBYTE HUGE *)m_pImage->GetPixelAddress(0, 0);
-	pDib2 = (UBYTE HUGE *)pSprite->m_pImage->GetPixelAddress(0, 0);
+	pDib1 = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
+	pDib2 = (UBYTE *)pSprite->m_pImage->GetPixelAddress(0, 0);
 
 	if (m_nCelCount != 0) {
 		pDib1 += ((LONG)m_cSize.cx * m_nCelID);
@@ -1030,11 +1030,11 @@ endroutine:
 
 BOOL CBofSprite::IsSpriteHidden(VOID) {
 	CBofRect rect, cOverlapRect;
-	UBYTE HUGE *pBuf;
+	UBYTE *pBuf;
 	CBofSprite *pSprite;
 	LONG i, lBufSize;
 	LONG dx, dy, x, y, x1, y1, x2, y2, dx1, dx2, dy1, dy2;
-	UBYTE HUGE *pDib1, HUGE *pDib2, HUGE *pPtr1, HUGE *pPtr2;
+	UBYTE *pDib1, *pDib2, *pPtr1, *pPtr2;
 	UBYTE m1, m2;
 	BOOL bHidden;
 
@@ -1045,12 +1045,12 @@ BOOL CBofSprite::IsSpriteHidden(VOID) {
 
 	// create a copy of the DibBytes for this sprite
 	//
-	if ((pBuf = (UBYTE HUGE *)BofAlloc(m_pImage->WidthBytes() * m_pImage->Height())) != NULL) {
+	if ((pBuf = (UBYTE *)BofAlloc(m_pImage->WidthBytes() * m_pImage->Height())) != NULL) {
 
 		m_pImage->Lock();
 
 		pDib1 = pBuf;
-		pDib2 = (UBYTE HUGE *)m_pImage->GetPixelAddress(0, 0);
+		pDib2 = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
 
 		lBufSize = m_pImage->WidthBytes() * m_pImage->Height();
 		for (i = 0; i < lBufSize; i++) {
@@ -1077,7 +1077,7 @@ BOOL CBofSprite::IsSpriteHidden(VOID) {
 						pSprite->m_pImage->Lock();
 
 						pDib1 = pBuf;
-						pDib2 = (UBYTE HUGE *) pSprite->m_pImage->GetPixelAddress(0, 0);
+						pDib2 = (UBYTE *) pSprite->m_pImage->GetPixelAddress(0, 0);
 
 						dx = cOverlapRect.Width();
 						dy = cOverlapRect.Height();
@@ -1161,7 +1161,7 @@ BOOL CBofSprite::IsSpriteHidden(VOID) {
 
 BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 	LONG x, y;
-	UBYTE HUGE *pBuf;
+	UBYTE *pBuf;
 	INT nCels;
 	BOOL bTouch;
 
@@ -1180,7 +1180,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 
 		m_pImage->Lock();
 
-		pBuf = (UBYTE HUGE *)m_pImage->GetPixelAddress(0, 0);
+		pBuf = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
 		Assert(pBuf != NULL);
 
 		nCels = m_nCelID;

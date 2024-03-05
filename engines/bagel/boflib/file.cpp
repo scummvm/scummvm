@@ -139,7 +139,7 @@ VOID CBofFile::Close() {
 	}
 }
 
-ERROR_CODE CBofFile::Read(VOID HUGE *pDestBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Read(VOID *pDestBuf, LONG lBytes) {
 	Assert(IsValidObject(this));
 	Assert(pDestBuf != nullptr);
 	Assert(lBytes >= 0);
@@ -149,11 +149,11 @@ ERROR_CODE CBofFile::Read(VOID HUGE *pDestBuf, LONG lBytes) {
 
 	if (!ErrorOccurred()) {
 		if (rs != nullptr) {
-			UBYTE HUGE *pBuf;
+			UBYTE *pBuf;
 			INT nLength;
 			INT nTotalBytes = 0;
 
-			pBuf = (UBYTE HUGE *)pDestBuf;
+			pBuf = (UBYTE *)pDestBuf;
 
 			while (lBytes > 0) {
 				nLength = (INT)min(lBytes, CHUNK_SIZE);
@@ -175,7 +175,7 @@ ERROR_CODE CBofFile::Read(VOID HUGE *pDestBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Write(const VOID HUGE *pSrcBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Write(const VOID *pSrcBuf, LONG lBytes) {
 	Assert(IsValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
@@ -183,9 +183,9 @@ ERROR_CODE CBofFile::Write(const VOID HUGE *pSrcBuf, LONG lBytes) {
 	if (ws != nullptr) {
 		// As long as this file is not set for readonly, then write the buffer
 		if (!(m_lFlags & CBF_READONLY)) {
-			const UBYTE HUGE *pBuf;
+			const UBYTE *pBuf;
 			INT nLength;
-			pBuf = (const UBYTE HUGE *)pSrcBuf;
+			pBuf = (const UBYTE *)pSrcBuf;
 
 			while (lBytes > 0) {
 				nLength = (INT)min(lBytes, CHUNK_SIZE);

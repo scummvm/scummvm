@@ -683,8 +683,8 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	BOOL            whiteText = false;
 	PaletteHandle   pmh = NULL;
 	ColorInfo       ci;
-	UBYTE HUGE      privateTextBuff[TEXTBMPSIZE];
-	UBYTE HUGE      *pPrivateTextBuff;
+	UBYTE           privateTextBuff[TEXTBMPSIZE];
+	UBYTE          *pPrivateTextBuff;
 
 	// save contents of current port
 	GetPort(&pOldPort);

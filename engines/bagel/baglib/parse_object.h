@@ -114,8 +114,8 @@ public:
 
 	int ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine);
 
-	virtual VOID HUGE *GetDataStart() { return &m_bAttached; }
-	virtual VOID HUGE *GetDataEnd() { return &m_bAttached + sizeof(BOOL); }
+	virtual VOID *GetDataStart() { return &m_bAttached; }
+	virtual VOID *GetDataEnd() { return &m_bAttached + sizeof(BOOL); }
 };
 
 } // namespace Bagel

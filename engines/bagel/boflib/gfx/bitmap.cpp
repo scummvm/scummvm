@@ -38,7 +38,7 @@ CBofBitmap::CBofBitmap() {
     m_szFileName[0] = '\0';
 }
 
-CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, UBYTE HUGE *pPrivateBuff) {
+CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, UBYTE *pPrivateBuff) {
     Assert((dx > 0) && (dy > 0));
 
     // use application's palette if not supplied
@@ -224,7 +224,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 		if (m_bPrivateBmp == FALSE) {
-			if ((m_pBits = (UBYTE HUGE *)BofAlloc((LONG)m_nScanDX * m_nDY)) != NULL) {
+			if ((m_pBits = (UBYTE *)BofAlloc((LONG)m_nScanDX * m_nDY)) != NULL) {
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (LONG)m_nScanDX * m_nDY);
 			}
@@ -667,7 +667,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
         SourceStepY = FixedDivide(IntToFixed(dy), IntToFixed(nDstHeight));
 
         LONG lInc;
-        UBYTE HUGE *pSrcEnd, HUGE *pDestEnd;
+        UBYTE *pSrcEnd, *pDestEnd;
         INT nMod, i;
         PosY = 0;
         pSrcEnd = pSrcBits + (dy - 1) * dx1;
@@ -809,7 +809,7 @@ VOID CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
             BYTE                xlat[256];
             RGBQUAD            *pRgb;
             BITMAPINFOHEADER   *pBmpInfo;
-            UBYTE HUGE         *pBits;
+            UBYTE              *pBits;
             LONG                lBufSize;
             LONG                n, i;
             INT                 nDibColors;
@@ -864,7 +864,7 @@ VOID CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, UBYTE /*iFillColor*/) {
     LogWarning("CBofBitmap::FloodFill has not been written yet");
 }
 
-UBYTE HUGE *CBofBitmap::GetPixelAddress(INT x, INT y) {
+UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
     Assert(IsValidObject(this));
 
     // you can not call this function unless you manually lock this bitmap
@@ -918,7 +918,7 @@ VOID CBofBitmap::WritePixel(INT x, INT y, UBYTE iColor) {
 
     Lock();
 
-    UBYTE HUGE *pPixel;
+    UBYTE *pPixel;
 
     pPixel = GetPixelAddress(x, y);
 
@@ -1023,7 +1023,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 
         } else {
             CBofRect cRect;
-            UBYTE HUGE *pSrcBits;
+            UBYTE *pSrcBits;
             INT y, x1, y1, dx, dy, dx1;
 
             // Clip to my rectangle
@@ -1129,8 +1129,8 @@ ERROR_CODE CBofBitmap::FlipVertical(CBofRect *pRect) {
 
         CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
         LONG x, y, dx, dy, dx1, dy1, i, nRows;
-    	UBYTE HUGE *pStart, HUGE *pEnd;
-        UBYTE HUGE *pLine;
+		UBYTE *pStart, *pEnd;
+		UBYTE *pLine;
 
         // flip entire bitmap ?
         //
@@ -1143,7 +1143,7 @@ ERROR_CODE CBofBitmap::FlipVertical(CBofRect *pRect) {
         dx = pRect->Width();
         dy = pRect->Height();
 
-        if ((pLine = (UBYTE HUGE *)BofAlloc(dx)) != nullptr) {
+        if ((pLine = (UBYTE *)BofAlloc(dx)) != nullptr) {
 
             pEnd = pStart = m_pBits;
 
@@ -1203,7 +1203,7 @@ ERROR_CODE CBofBitmap::FlipHorizontal(CBofRect *pRect) {
         CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
 
         LONG x, y, dx, dy, dx1, dy1, i, j, nCols;
-    	UBYTE HUGE *pStart, HUGE *pCurr, HUGE *pMirr;
+		UBYTE *pStart, *pCurr, *pMirr;
         UBYTE cPixel;
 
         // flip entire bitmap ?
@@ -1362,8 +1362,8 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
         CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
         LONG lJump;
         LONG x, y, dx, dy, dx1, dy1, i;
-        UBYTE HUGE *pStart, HUGE *pEnd, HUGE *p1stRow;
-    	UBYTE HUGE *pCurRow, HUGE *pLastRow, HUGE *pRowBuf;
+		UBYTE *pStart, *pEnd, *p1stRow;
+		UBYTE *pCurRow, *pLastRow, *pRowBuf;
 
         // flip entire bitmap ?
         //
@@ -1405,7 +1405,7 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 
             // allocate a buffer to hold one horizontal line
             //
-            if ((pRowBuf = (UBYTE HUGE *)BofAlloc(dx)) != nullptr) {
+            if ((pRowBuf = (UBYTE *)BofAlloc(dx)) != nullptr) {
 
                 pStart = pEnd = m_pBits;
 
@@ -1894,8 +1894,8 @@ VOID CBofBitmap::FlipBits()  {
 
     Lock();
 
-	UBYTE HUGE *pOrigBits = m_pBits;
-	UBYTE HUGE *pDestBits = (UBYTE HUGE *) BofAlloc ((LONG) m_nScanDX * (LONG) m_nDY);
+	UBYTE *pOrigBits = m_pBits;
+	UBYTE *pDestBits = (UBYTE *) BofAlloc ((LONG) m_nScanDX * (LONG) m_nDY);
 
 	Assert (pDestBits != nullptr);
 

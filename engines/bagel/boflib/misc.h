@@ -120,8 +120,8 @@ extern VOID BofMemDefrag();
 extern VOID MarkMemBlocks();
 extern VOID VerifyMemoryBlocks();
 extern VOID VerifyAllBlocksDeleted();
-extern VOID VerifyPointer(UBYTE HUGE *pPtr);
-extern BOOL IsValidPointer(UBYTE HUGE *pPtr);
+extern VOID VerifyPointer(UBYTE *pPtr);
+extern BOOL IsValidPointer(UBYTE *pPtr);
 #if BOF_MEMTEST
 extern VOID BofMemTest();
 #endif
