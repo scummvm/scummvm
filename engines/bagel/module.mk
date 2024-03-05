@@ -66,7 +66,6 @@ MODULE_OBJS = \
 	boflib/file.o \
 	boflib/file_functions.o \
 	boflib/fixed.o \
-	boflib/list.o \
 	boflib/llist.o \
 	boflib/log.o \
 	boflib/misc.o \

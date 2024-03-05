@@ -53,7 +53,16 @@ public:
 template<class T>
 class CBofList {
 private:
-	void NewItemList();
+	void NewItemList() {
+		if (m_pItemList != nullptr) {
+			BofFree(m_pItemList);
+			m_pItemList = nullptr;
+		}
+
+		if (m_nNumItems != 0) {
+			m_pItemList = (uint32 *)BofAlloc(m_nNumItems * sizeof(uint32));
+		}
+	}
 
 	void KillItemList() {
 		if (m_pItemList != nullptr) {
@@ -116,7 +125,17 @@ private:
 	 *				is still pointing to the 1st node in the list.
 	 * @returns		Pointer to head of list
 	 */
-	CBofListNode<T> *GetActualHead();
+	CBofListNode<T> *GetActualHead() {
+		CBofListNode<T> *pNode, *pLast;
+
+		pLast = pNode = m_pHead;
+		while (pNode != nullptr) {
+			pLast = pNode;
+			pNode = pNode->m_pPrev;
+		}
+
+		return pLast;
+	}
 
 	/**
 	 * Calculates the actual tail of this linked list
@@ -124,7 +143,17 @@ private:
 	 *				is still pointing to the last node in the list.
 	 * @returns		Pointer to tail of list
 	 */
-	CBofListNode<T> *GetActualTail();
+	CBofListNode<T> *GetActualTail() {
+		CBofListNode<T> *pNode, *pLast;
+
+		pLast = pNode = m_pTail;
+		while (pNode != nullptr) {
+			pLast = pNode;
+			pNode = pLast->m_pNext;
+		}
+
+		return pLast;
+	}
 
 protected:
 	size_t m_nNumItems;
@@ -160,7 +189,24 @@ public:
 	 * Retrieves the number of items in this list
 	 * @returns		Returns the number of linked items in this linked list.
 	 */
-	int GetActualCount() const;
+	int GetActualCount() const {
+#ifndef RELEASE_BUILD
+		CBofListNode<T> *pNode;
+		int nCount;
+
+		nCount = 0;
+		pNode = m_pHead;
+		while (pNode != nullptr) {
+			nCount++;
+			pNode = pNode->m_pNext;
+		}
+
+		// There should be no discrepency
+		assert(m_nNumItems == nCount);
+#endif
+
+		return m_nNumItems;
+	}
 
 	/**
 	 * Returns true if the list is empty
@@ -182,7 +228,13 @@ public:
 	}
 
 
-	void SetNodeItem(int nNodeIndex, T t);
+	void SetNodeItem(int nNodeIndex, T tNewItem) {
+		CBofListNode<T> *pNode = GetNode(nNodeIndex);
+
+		assert(pNode != nullptr);
+
+		pNode->SetNodeItem(tNewItem);
+	}
 
 	T operator[](int nIndex) { return GetNodeItem(nIndex); }
 
@@ -217,28 +269,85 @@ public:
 	 * @param nNodeIndex	Index of node to insert before
 	 * @param cNewItem		Data to store at new node
 	 */
-	void InsertBefore(int nNodeIndex, T cNewItem);
+	void InsertBefore(int nNodeIndex, T cNewItem) {
+		assert(!IsEmpty());
+		InsertBefore(GetNode(nNodeIndex), cNewItem);
+	}
 
 	/**
 	 * Inserts a new node as the previous node to the one specified
 	 * @param pNode			Node to insert before
 	 * @param cNewItem		Data to store at new node
 	 */
-	void InsertBefore(CBofListNode<T> *pNode, T cNewItem);
+	void InsertBefore(CBofListNode<T> *pNode, T cNewItem) {
+		assert(pNode != nullptr);
+		assert(!IsEmpty());
+
+		CBofListNode<T> *pNewNode;
+
+		if (pNode == m_pHead) {
+			AddToHead(cNewItem);
+		} else {
+
+			pNewNode = NewNode(cNewItem);
+
+			pNewNode->m_pPrev = pNode->m_pPrev;
+			pNewNode->m_pNext = pNode;
+
+			if (pNode->m_pPrev != nullptr)
+				pNode->m_pPrev->m_pNext = pNewNode;
+
+			pNode->m_pPrev = pNewNode;
+		}
+
+		// one more item in list
+		assert(m_nNumItems != 0xFFFF);
+		m_nNumItems++;
+
+		RecalcItemList();
+	}
 
 	/**
 	 * Inserts a new node as the next node to the one specified
 	 * @param nNodeIndex		Index of node to insert after
 	 * @param cNewItem			Data to store at new node
 	 */
-	void InsertAfter(int nNodeIndex, T cNewItem);
+	void InsertAfter(int nNodeIndex, T cNewItem) {
+		assert(!IsEmpty());
+		InsertAfter(GetNode(nNodeIndex), cNewItem);
+	}
 
 	/**
 	 * Inserts a new node as the next node to the one specified
 	 * @param pNode				Node to insert after
 	 * @param cNewItem			Data to store at new node
 	 */
-	void InsertAfter(CBofListNode<T> *pNode, T cNewItem);
+	void InsertAfter(CBofListNode<T> *pNode, T cNewItem) {
+		assert(pNode != nullptr);
+		assert(!IsEmpty());
+
+		CBofListNode<T> *pNewNode;
+
+		if (pNode == m_pTail) {
+			AddToTail(cNewItem);
+		} else {
+
+			pNewNode = NewNode(cNewItem);
+			pNewNode->m_pPrev = pNode;
+			pNewNode->m_pNext = pNode->m_pNext;
+
+			if (pNode->m_pNext != nullptr)
+				pNode->m_pNext->m_pPrev = pNewNode;
+
+			pNode->m_pNext = pNewNode;
+		}
+
+		// one more item in list
+		assert(m_nNumItems != 0xFFFF);
+		m_nNumItems++;
+
+		RecalcItemList();
+	}
 
 	/**
 	 * Removes specfied node from the list
