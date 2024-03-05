@@ -47,9 +47,7 @@ class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-protected:
-	// Engine APIs
-	Common::Error run() override;
+
 public:
 	Graphics::Screen *_screen = nullptr;
 	ZIPGLOBAL _zg;

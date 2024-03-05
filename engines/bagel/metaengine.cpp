@@ -23,7 +23,7 @@
 
 #include "bagel/metaengine.h"
 #include "bagel/detection.h"
-#include "bagel/bagel.h"
+#include "bagel/spacebar/spacebar.h"
 
 namespace Bagel {
 
@@ -53,7 +53,7 @@ const ADExtraGuiOptionsMap *BagelMetaEngine::getAdvancedExtraGuiOptions() const 
 }
 
 Common::Error BagelMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Bagel::BagelEngine(syst, desc);
+	*engine = new Bagel::SpaceBar::SpaceBarEngine(syst, desc);
 	return Common::kNoError;
 }
 
