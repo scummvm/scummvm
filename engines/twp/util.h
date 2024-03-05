@@ -118,9 +118,9 @@ Common::String replaceAll(const Common::String &s, const Common::String &what, c
 // math util
 void scale(Math::Matrix4 &m, const Math::Vector2d &v);
 Math::Vector2d operator*(Math::Vector2d v, float f);
-float distance(Vector2i p1, Vector2i p2);
-float distanceSquared(Vector2i p1, Vector2i p2);
-float distanceToSegment(Vector2i p, Vector2i v, Vector2i w);
+float distance(Math::Vector2d p1, Math::Vector2d p2);
+float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
+float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
 
 } // namespace Twp
 

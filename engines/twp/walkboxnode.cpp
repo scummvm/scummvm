@@ -97,11 +97,11 @@ PathNode::PathNode() : Node("Path") {
 	_zOrder = -1000;
 }
 
-Vector2i PathNode::fixPos(Vector2i pos) {
+Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
 	for (size_t i = 0; i < g_twp->_room->_mergedPolygon.size(); i++) {
 		Walkbox &wb = g_twp->_room->_mergedPolygon[i];
 		if (!wb.isVisible() && wb.contains(pos)) {
-			return wb.getClosestPointOnEdge((Vector2i)pos);
+			return wb.getClosestPointOnEdge(pos);
 		}
 	}
 	//   for wb in gEngine.room.mergedPolygon:
@@ -123,7 +123,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 	// draw actor path
 	if (((_mode == PathMode::GraphMode) || (_mode == PathMode::All)) && actor && actor->getWalkTo()) {
 		const WalkTo *walkTo = (WalkTo *)actor->getWalkTo().get();
-		const Common::Array<Vector2i> &path = walkTo->getPath();
+		const Common::Array<Math::Vector2d> &path = walkTo->getPath();
 		if (path.size() > 0) {
 			Common::Array<Vertex> vertices;
 			vertices.push_back(Vertex(g_twp->roomToScreen(actor->_node->getPos()), yellow));
@@ -173,7 +173,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 
 		const Math::Vector2d scrPos = g_twp->winToScreen(g_twp->_cursor.pos);
 		const Math::Vector2d roomPos = g_twp->screenToRoom(scrPos);
-		Vector2i p = fixPos((Vector2i)roomPos);
+		Math::Vector2d p = fixPos(roomPos);
 		t = Math::Matrix4();
 		pos = g_twp->roomToScreen((Math::Vector2d)p) - Math::Vector2d(4.f, 4.f);
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
@@ -187,7 +187,7 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 			g_twp->getGfx().drawQuad(Math::Vector2d(8.f, 8.f), red, t);
 		}
 
-		const Common::Array<Vector2i> path = g_twp->_room->calculatePath(fixPos((Vector2i)actor->_node->getPos()), p);
+		const Common::Array<Math::Vector2d> path = g_twp->_room->calculatePath(fixPos(actor->_node->getPos()), p);
 		Common::Array<Vertex> vertices;
 		for (uint i = 0; i < path.size(); i++) {
 			vertices.push_back(Vertex(g_twp->roomToScreen((Math::Vector2d)path[i]), yellow));
@@ -201,14 +201,14 @@ void PathNode::drawCore(Math::Matrix4 trsf) {
 		if (walkboxes.empty())
 			return;
 
-		const bool inside = (walkboxes.size() > 0) && walkboxes[0].contains((Vector2i)roomPos);
+		const bool inside = (walkboxes.size() > 0) && walkboxes[0].contains(roomPos);
 		pos = scrPos - Math::Vector2d(4.f, 4.f);
 		t = Math::Matrix4();
 		t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 		g_twp->getGfx().drawQuad(Math::Vector2d(8.f, 8.f), inside ? green : red, t);
 
 		// draw a blue square on the closest point
-		pos = g_twp->roomToScreen((Math::Vector2d)walkboxes[0].getClosestPointOnEdge((Vector2i)roomPos));
+		pos = g_twp->roomToScreen((Math::Vector2d)walkboxes[0].getClosestPointOnEdge(roomPos));
 		t = Math::Matrix4();
 		t.translate(Math::Vector3d(pos.getX() - 2.f, pos.getY() - 2.f, 0.f));
 		g_twp->getGfx().drawQuad(Math::Vector2d(4.f, 4.f), blue, t);

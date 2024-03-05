@@ -63,15 +63,15 @@ struct GraphEdge {
 class Graph {
 public:
 	Graph();
-	void addNode(Vector2i node);
+	void addNode(Math::Vector2d node);
 	void addEdge(GraphEdge edge);
 	// Gets the edge from 'from' index to 'to' index.
 	GraphEdge *edge(int start, int to);
 	Common::Array<int> getPath(int source, int target);
 
-	Common::Array<Vector2i> _nodes;
+	Common::Array<Math::Vector2d> _nodes;
 	Common::Array<Common::Array<GraphEdge> > _edges;
-	Common::Array<Vector2i> _concaveVertices;
+	Common::Array<Math::Vector2d> _concaveVertices;
 };
 
 class AStar {
@@ -92,12 +92,12 @@ public:
 	Walkbox(const Common::Array<Vector2i> &polygon, bool visible = true);
 
 	// Indicates whether or not the specified position is inside this walkbox.
-	bool contains(Vector2i position, bool toleranceOnOutside = true) const;
+	bool contains(Math::Vector2d position, bool toleranceOnOutside = true) const;
 	bool concave(int vertex) const;
 	void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
 	const Common::Array<Vector2i> &getPoints() const { return _polygon; }
-	Vector2i getClosestPointOnEdge(Vector2i p) const;
+	Math::Vector2d getClosestPointOnEdge(Math::Vector2d p) const;
 
 public:
 	Common::String _name;
@@ -112,14 +112,14 @@ class PathFinder {
 public:
 	void setWalkboxes(const Common::Array<Walkbox> &walkboxes);
 	Common::Array<Walkbox> getWalkboxes() const { return _walkboxes; }
-	Common::Array<Vector2i> calculatePath(Vector2i start, Vector2i to);
+	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d start, Math::Vector2d to);
 	void setDirty(bool dirty) { _isDirty = dirty; }
 	bool isDirty() const { return _isDirty; }
 	const Graph &getGraph() const { return _walkgraph; }
 
 private:
 	Common::SharedPtr<Graph> createGraph();
-	bool inLineOfSight(Vector2i start, Vector2i to);
+	bool inLineOfSight(Math::Vector2d start, Math::Vector2d to);
 
 private:
 	Common::Array<Walkbox> _walkboxes;

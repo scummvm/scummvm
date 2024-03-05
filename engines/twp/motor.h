@@ -224,10 +224,10 @@ enum WalkToState {
 
 class WalkTo : public Motor {
 public:
-	WalkTo(Common::SharedPtr<Object> obj, Vector2i dest, int facing = 0);
+	WalkTo(Common::SharedPtr<Object> obj, Math::Vector2d dest, int facing = 0);
 	void disable() override;
 
-	const Common::Array<Vector2i> &getPath() const { return _path; }
+	const Common::Array<Math::Vector2d> &getPath() const { return _path; }
 
 private:
 	void actorArrived();
@@ -235,7 +235,7 @@ private:
 
 private:
 	Common::SharedPtr<Object> _obj;
-	Common::Array<Vector2i> _path;
+	Common::Array<Math::Vector2d> _path;
 	int _facing = 0;
 	float _wsd;
 	WalkToState _state = kWalking;

@@ -199,7 +199,7 @@ public:
 	void setReach(Common::SharedPtr<Motor> reach);
 	Common::SharedPtr<Motor> getWalkTo() { return _walkTo; }
 	Common::SharedPtr<Motor> getReach() { return _reach; }
-	static void walk(Common::SharedPtr<Object> obj, Vector2i pos, int facing = 0);
+	static void walk(Common::SharedPtr<Object> obj, Math::Vector2d pos, int facing = 0);
 	static void walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 	void setTalking(Common::SharedPtr<Motor> talking);

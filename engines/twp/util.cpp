@@ -130,29 +130,29 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 	}
 }
 
-float distanceSquared(Vector2i p1, Vector2i p2) {
-	const float dx = p1.x - p2.x;
-	const float dy = p1.y - p2.y;
+float distanceSquared(Math::Vector2d p1, Math::Vector2d p2) {
+	const float dx = p1.getX() - p2.getX();
+	const float dy = p1.getY() - p2.getY();
 	return dx * dx + dy * dy;
 }
 
-float distanceToSegmentSquared(Vector2i p, Vector2i v, Vector2i w) {
+float distanceToSegmentSquared(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
 	const float l2 = distanceSquared(v, w);
 	if (l2 == 0)
 		return distanceSquared(p, v);
-	const float t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+	const float t = ((p.getX() - v.getX()) * (w.getX() - v.getX()) + (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2;
 	if (t < 0)
 		return distanceSquared(p, v);
 	if (t > 1)
 		return distanceSquared(p, w);
-	return distanceSquared(p, Vector2i(v.x + t * (w.x - v.x), v.y + t * (w.y - v.y)));
+	return distanceSquared(p, Math::Vector2d(v.getX() + t * (w.getX() - v.getX()), v.getY() + t * (w.getY() - v.getY())));
 }
 
-float distanceToSegment(Vector2i p, Vector2i v, Vector2i w) {
+float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
 	return sqrt(distanceToSegmentSquared(p, v, w));
 }
 
-float distance(Vector2i p1, Vector2i p2) {
+float distance(Math::Vector2d p1, Math::Vector2d p2) {
 	return sqrt(distanceSquared(p1, p2));
 }
 

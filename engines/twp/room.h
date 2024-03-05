@@ -127,7 +127,7 @@ public:
 	Color getOverlay() const;
 
 	void walkboxHidden(const Common::String &name, bool hidden);
-	Common::Array<Vector2i> calculatePath(Vector2i frm, Vector2i to);
+	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d frm, Math::Vector2d to);
 
 public:
 	Common::String _name;                             // Name of the room
