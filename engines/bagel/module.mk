@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	baglib/master_win.o \
 	baglib/movie_object.o \
 	baglib/object.o \
+	baglib/opt_window.o \
 	baglib/paint_table.o \
 	baglib/pan_bitmap.o \
 	baglib/pan_window.o \
