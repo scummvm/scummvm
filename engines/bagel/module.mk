@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	baglib/time_object.o \
 	baglib/var.o \
 	baglib/variable_object.o \
+	baglib/wield.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \
