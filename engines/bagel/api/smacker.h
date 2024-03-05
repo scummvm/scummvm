@@ -29,6 +29,7 @@ namespace Bagel {
 // Random values for needed constants just to let it compile
 #define SMACKTRACKS 1
 #define SMACKAUTOEXTRA 1
+#define SMACKPRELOADALL 1
 
 struct SmackBuf {};
 struct Smack {
@@ -45,7 +46,7 @@ extern void SmackToBuffer(Smack *Smack, uint32 Unknown1, uint32 Unknown2,
 	uint32 Stride, uint32 FrameHeightInPixels, char *OutBuffer,
 	uint32 Flags);
 
-extern void SmackDoFrame(Smack *smack);
+extern bool SmackDoFrame(Smack *smack);
 extern void SmackNextFrame(Smack *smack);
 inline bool SmackWait(Smack *smack) { return false; }
 inline void SmackClose(Smack *smack) {}

@@ -31,6 +31,7 @@
 #include "bagel/console.h"
 
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/character_object.h"
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/event_sdev.h"
@@ -61,6 +62,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	g_engine = this;
 
 	// baglib/ class statics initializations
+	CBagCharacterObject::initStatics();
 	CBagCursor::initStatics();
 	CBagDossierObject::initStatics();
 	CBagEventSDev::initStatics();

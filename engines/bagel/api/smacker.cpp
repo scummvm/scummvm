@@ -33,7 +33,7 @@ void SmackToBuffer(Smack *Smack, uint32 Unknown1, uint32 Unknown2,
 	error("TODO: SmackToBuffer");
 }
 
-void SmackDoFrame(Smack *smack) {
+bool SmackDoFrame(Smack *smack) {
 	error("TODO: SmackDoFrame");
 }
 

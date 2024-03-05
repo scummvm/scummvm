@@ -64,6 +64,7 @@ protected:
 public:
 	CBagCharacterObject();
 	virtual ~CBagCharacterObject();
+	static void initStatics();
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach();
