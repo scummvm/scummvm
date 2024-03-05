@@ -64,24 +64,34 @@ public:
 	 * Arrange the float rects for the script rpo objects
 	 */
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
-	CBofString &GetDossierLine() { return m_sIndexLine; }
+	CBofString &GetDossierLine() {
+		return m_sIndexLine;
+	}
 	CBofRect GetRect();
 
-	VOID SetNotActive(BOOL b) { m_bNotActive = b; }
-	BOOL GetNotActive() { return m_bNotActive; }
+	VOID SetNotActive(BOOL b) {
+		m_bNotActive = b;
+	}
+	BOOL GetNotActive() {
+		return m_bNotActive;
+	}
 
 	VOID ActivateDosObject(CBagLog *pLogWld);
 	VOID DeactivateDosObject(CBagLog *pLogWld);
 
-	VOID SetRPObj(CBagObject *p) { m_pRPObj = p; };
-	CBagObject *GetRPObj() { return m_pRPObj; };
+	VOID SetRPObj(CBagObject *p) {
+		m_pRPObj = p;
+	};
+	CBagObject *GetRPObj() {
+		return m_pRPObj;
+	};
 
 	static VOID DeactivateCurDossier();
 	VOID ShowDosText();
 
 	static void initStatics();
 	static CBagDossierObject *m_pCurDossier;
-}; 
+};
 
 } // namespace Bagel
 

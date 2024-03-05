@@ -94,55 +94,101 @@ public:
 	CBofSprite *Interception(CBofRect *newRect, CBofSprite *pSprite);
 	CBofSprite *Interception(CBofSprite *pTestSprite);
 
-	CBofSprite *Interception() { return Interception(m_pSpriteChain); }
+	CBofSprite *Interception() {
+		return Interception(m_pSpriteChain);
+	}
 
-	CBofSprite *Interception(CBofRect *newRect) { return Interception(newRect, m_pSpriteChain); }
+	CBofSprite *Interception(CBofRect *newRect) {
+		return Interception(newRect, m_pSpriteChain);
+	}
 
 	BOOL TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
 	VOID SetReadOnly(BOOL bReadOnly = TRUE);
-	BOOL GetReadOnly() const { return m_bReadOnly; }
+	BOOL GetReadOnly() const {
+		return m_bReadOnly;
+	}
 
 	VOID SetPosition(INT x, INT y);
-	VOID SetPosition(CBofPoint point) { SetPosition(point.x, point.y); }
-	CBofPoint GetPosition() const { return m_cPosition; }
+	VOID SetPosition(CBofPoint point) {
+		SetPosition(point.x, point.y);
+	}
+	CBofPoint GetPosition() const {
+		return m_cPosition;
+	}
 
-	CBofSize GetSize() const { return m_cSize; }
+	CBofSize GetSize() const {
+		return m_cSize;
+	}
 
-	CBofRect GetRect() const { return m_cRect; }
+	CBofRect GetRect() const {
+		return m_cRect;
+	}
 
-	INT Height() const { return m_cRect.Height(); }
+	INT Height() const {
+		return m_cRect.Height();
+	}
 
-	INT Width() const { return m_cRect.Width(); }
+	INT Width() const {
+		return m_cRect.Width();
+	}
 
 	VOID SetMasked(BOOL bMasked);
-	BOOL GetMasked() const { return m_nMaskColor != NOT_TRANSPARENT; }
+	BOOL GetMasked() const {
+		return m_nMaskColor != NOT_TRANSPARENT;
+	}
 
-	VOID SetMaskColor(INT nColor) { m_nMaskColor = nColor; }
+	VOID SetMaskColor(INT nColor) {
+		m_nMaskColor = nColor;
+	}
 
-	INT GetMaskColor() const { return m_nMaskColor; }
+	INT GetMaskColor() const {
+		return m_nMaskColor;
+	}
 
-	UBYTE ReadPixel(CBofPoint *pPoint) const { return m_pImage->ReadPixel(pPoint); }
-	UBYTE ReadPixel(INT x, INT y) const { return m_pImage->ReadPixel(x, y); }
+	UBYTE ReadPixel(CBofPoint *pPoint) const {
+		return m_pImage->ReadPixel(pPoint);
+	}
+	UBYTE ReadPixel(INT x, INT y) const {
+		return m_pImage->ReadPixel(x, y);
+	}
 
 	VOID SetZOrder(INT nValue);
 
-	INT GetZOrder() const { return m_nZOrder; }
+	INT GetZOrder() const {
+		return m_nZOrder;
+	}
 
-	INT GetCelCount() const { return m_nCelCount; }
-	INT GetCelIndex() const { return m_nCelID; }
+	INT GetCelCount() const {
+		return m_nCelCount;
+	}
+	INT GetCelIndex() const {
+		return m_nCelID;
+	}
 
-	VOID SetAnimated(BOOL bAnimated) { m_bAnimated = bAnimated; }
-	BOOL GetAnimated() const { return m_bAnimated; }
+	VOID SetAnimated(BOOL bAnimated) {
+		m_bAnimated = bAnimated;
+	}
+	BOOL GetAnimated() const {
+		return m_bAnimated;
+	}
 
-	BOOL IsLinked() const { return m_bLinked; }
+	BOOL IsLinked() const {
+		return m_bLinked;
+	}
 	VOID LinkSprite();
 	VOID UnlinkSprite();
 
-	CBofSprite *GetNextSprite() const { return (CBofSprite *)m_pNext; }
-	CBofSprite *GetPrevSprite() const { return (CBofSprite *)m_pPrev; }
+	CBofSprite *GetNextSprite() const {
+		return (CBofSprite *)m_pNext;
+	}
+	CBofSprite *GetPrevSprite() const {
+		return (CBofSprite *)m_pPrev;
+	}
 
-	const CHAR *GetFileName() const { return m_pImage->GetFileName(); }
+	const CHAR *GetFileName() const {
+		return m_pImage->GetFileName();
+	}
 
 	BOOL Touching(CBofPoint myPoint);
 	BOOL IsSpriteInSprite(CBofSprite *pSprite);
@@ -155,19 +201,31 @@ public:
 
 	static VOID SetSharedPalette(CBofPalette *pPalette);
 
-	static CBofSprite *Touched(CBofPoint myPoint) { return Touched(myPoint, m_pSpriteChain); }
+	static CBofSprite *Touched(CBofPoint myPoint) {
+		return Touched(myPoint, m_pSpriteChain);
+	}
 	static CBofSprite *Touched(CBofPoint myPoint, CBofSprite *pSprite);
-	static BOOL InterceptOccurred() { return m_pTouchedSprite != nullptr; }
-	static CBofSprite *GetInterception() { return m_pTouchedSprite; }
+	static BOOL InterceptOccurred() {
+		return m_pTouchedSprite != nullptr;
+	}
+	static CBofSprite *GetInterception() {
+		return m_pTouchedSprite;
+	}
 
-	static CBofSprite *GetSpriteChain() { return m_pSpriteChain; }
+	static CBofSprite *GetSpriteChain() {
+		return m_pSpriteChain;
+	}
 
 	static BOOL UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
 	static BOOL UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
 	static VOID AddToDirtyRect(CBofRect *pRect);
-	static VOID ClearDirtyRect() { m_cDirtyRect.SetRectEmpty(); }
+	static VOID ClearDirtyRect() {
+		m_cDirtyRect.SetRectEmpty();
+	}
 
-	static CBofRect *GetDirtyRect() { return &m_cDirtyRect; }
+	static CBofRect *GetDirtyRect() {
+		return &m_cDirtyRect;
+	}
 
 	static BOOL EraseSprites(CBofWindow *pWnd);
 	static VOID FlushSpriteChain();
@@ -180,8 +238,12 @@ public:
 	// jwl 10.24.96 add a method for allowing callers of this object to block
 	// next cell advancement
 
-	VOID SetBlockAdvance(BOOL b = TRUE) { m_bBlockAdvance = b; }
-	BOOL GetBlockAdvance() const { return m_bBlockAdvance; }
+	VOID SetBlockAdvance(BOOL b = TRUE) {
+		m_bBlockAdvance = b;
+	}
+	BOOL GetBlockAdvance() const {
+		return m_bBlockAdvance;
+	}
 
 private:
 	VOID ClearImage();

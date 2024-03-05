@@ -69,20 +69,28 @@ public:
 	VOID SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	VOID SetMsgSendee(const CBofString &sProp) { m_sMsgSendee = sProp; }
-	CBofString GetMsgSendee() { return m_sMsgSendee; }
+	VOID SetMsgSendee(const CBofString &sProp) {
+		m_sMsgSendee = sProp;
+	}
+	CBofString GetMsgSendee() {
+		return m_sMsgSendee;
+	}
 
 	VOID SetMsgTime(INT &nVal) {
 		INT nState = GetState();
 		SetState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
 	}
-	INT GetMsgTime() { return GetState() & mMsgTimeMask; }
+	INT GetMsgTime() {
+		return GetState() & mMsgTimeMask;
+	}
 
 	VOID SetMsgPlayed(BOOL bPlayed) {
 		INT nState = GetState();
 		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
 	}
-	BOOL GetMsgPlayed() { return (GetState() & mMsgPlayedMask) != 0; }
+	BOOL GetMsgPlayed() {
+		return (GetState() & mMsgPlayedMask) != 0;
+	}
 };
 
 #define mSusChecked 0x0001
@@ -106,25 +114,43 @@ public:
 	VOID SetSize(const CBofSize &xSize);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
-	// PARSE_CODES	        SetInfo(CBofFile&);
+	// PARSE_CODES          SetInfo(CBofFile&);
 
 	VOID SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	VOID SetSusName(const CBofString &sProp) { m_sSusName = sProp; }
-	VOID SetSusSpecies(const CBofString &sProp) { m_sSusSpecies = sProp; }
-	VOID SetSusRoom(const CBofString &sProp) { m_sSusRoom = sProp; }
+	VOID SetSusName(const CBofString &sProp) {
+		m_sSusName = sProp;
+	}
+	VOID SetSusSpecies(const CBofString &sProp) {
+		m_sSusSpecies = sProp;
+	}
+	VOID SetSusRoom(const CBofString &sProp) {
+		m_sSusRoom = sProp;
+	}
 
 #if INCLUDE_RP_AND_VP
-	VOID SetSusVP(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted); }
-	BOOL GetSusVP() { return (GetState() & mSusVoicePrinted) != 0; }
+	VOID SetSusVP(BOOL bVal) {
+		bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
+	}
+	BOOL GetSusVP() {
+		return (GetState() & mSusVoicePrinted) != 0;
+	}
 
-	VOID SetSusRP(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted); }
-	BOOL GetSusRP() { return (GetState() & mSusResiduePrinted) != 0; }
+	VOID SetSusRP(BOOL bVal) {
+		bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
+	}
+	BOOL GetSusRP() {
+		return (GetState() & mSusResiduePrinted) != 0;
+	}
 #endif
 
-	VOID SetSusChecked(BOOL bVal) { bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked); }
-	BOOL GetSusChecked() { return (GetState() & mSusChecked) != 0; }
+	VOID SetSusChecked(BOOL bVal) {
+		bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
+	}
+	BOOL GetSusChecked() {
+		return (GetState() & mSusChecked) != 0;
+	}
 };
 
 class CBagLog : public CBagStorageDevBmp {
@@ -147,7 +173,7 @@ public:
 	 * This is different for the log sdev Object are just queued for insertion
 	 * and the message light starts blinking. The messages will be added
 	 * to the sdev when the message light is clicked
-	 * @return		Error result code
+	 * @return      Error result code
 	 */
 	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
 
@@ -176,7 +202,9 @@ public:
 	VOID SetCurFltPage(int nFltPage);
 
 	static VOID ArrangePages();
-	static VOID InitArrangePages() { m_bLastFloatPage = nullptr; }
+	static VOID InitArrangePages() {
+		m_bLastFloatPage = nullptr;
+	}
 };
 
 class CBagEnergyDetectorObject : public CBagTextObject {
@@ -191,8 +219,12 @@ public:
 
 	ERROR_CODE Attach();
 
-	VOID SetMsgTime(INT &nVal) { SetState(nVal); }
-	INT GetMsgTime() { return GetState(); }
+	VOID SetMsgTime(INT &nVal) {
+		SetState(nVal);
+	}
+	INT GetMsgTime() {
+		return GetState();
+	}
 
 protected:
 private:

@@ -138,8 +138,12 @@ public:
 			return 0;
 	}
 
-	INT GetLineNumber() { return m_nLineNumber; }
-	const CBofString &GetLineString() { return m_sLineString; }
+	INT GetLineNumber() {
+		return m_nLineNumber;
+	}
+	const CBofString &GetLineString() {
+		return m_sLineString;
+	}
 };
 
 

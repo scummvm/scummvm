@@ -148,7 +148,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			SetCels(cels);
 			nChanged++;
 			nObjectUpdated = TRUE;
-		} break;
+		}
+		break;
 		case '#': {
 			int curs;
 			istr.Get();
@@ -156,7 +157,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			SetWieldCursor(curs);
 			nChanged++;
 			nObjectUpdated = TRUE;
-		} break;
+		}
+		break;
 		case 'N': { // NOANIM
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -171,7 +173,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		// jwl 10.24.96 handle a maximum framerate...
 		case 'F': { // NOANIM
@@ -195,7 +198,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 		//
 		//  no match return from funtion
 		//
@@ -211,7 +215,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 
@@ -223,10 +228,12 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 #if 0                // THIS HAS BEEN REMOVED BECAUSE BOFSPRITES CLIP ON THIER OWN
 		if (pSrcRect) {
 			CBofSize s = pBmp->GetSize();
-			if ((m_xSprite->Width()+pt.x-s.cx)>=0)  
-				{ pt.x = s.cx-m_xSprite->Width();}
-			if ((m_xSprite->Height()+pt.y-s.cy)>=0)  
-				{ pt.y = s.cy-m_xSprite->Height();}
+			if ((m_xSprite->Width() + pt.x - s.cx) >= 0) {
+				pt.x = s.cx - m_xSprite->Width();
+			}
+			if ((m_xSprite->Height() + pt.y - s.cy) >= 0) {
+				pt.y = s.cy - m_xSprite->Height();
+			}
 		}
 #endif
 		// allow maximum framerates

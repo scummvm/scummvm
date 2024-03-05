@@ -44,19 +44,31 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
-	BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*info*/) { return ERR_NONE; }
-	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = nullptr) { return ERR_NONE; }
+	BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*info*/) {
+		return ERR_NONE;
+	}
+	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = nullptr) {
+		return ERR_NONE;
+	}
 
 	// For public access to our movie object
 
 	ERROR_CODE SetPDAMovie(CBofString &s);
-	CBagCharacterObject *GetPDAMovie() { return m_pMovie; }
+	CBagCharacterObject *GetPDAMovie() {
+		return m_pMovie;
+	}
 
 	VOID StopMovie(BOOL);
-	BOOL MoviePlaying() { return m_pMovie != nullptr; }
+	BOOL MoviePlaying() {
+		return m_pMovie != nullptr;
+	}
 
-	VOID SavePDAMode(PDAMODE pdaMode) { m_eSavePDAMode = pdaMode; }
-	VOID SavePDAPosition(PDAPOS pdaPos) { m_eSavePDAPos = pdaPos; }
+	VOID SavePDAMode(PDAMODE pdaMode) {
+		m_eSavePDAMode = pdaMode;
+	}
+	VOID SavePDAPosition(PDAPOS pdaPos) {
+		m_eSavePDAPos = pdaPos;
+	}
 };
 
 } // namespace Bagel

@@ -36,20 +36,28 @@ private:
 	int m_nTrans;
 
 protected:
-	VOID SetBitmap(CBofBitmap *pBmp) { m_xBmp = pBmp; }
+	VOID SetBitmap(CBofBitmap *pBmp) {
+		m_xBmp = pBmp;
+	}
 
 public:
 	CBagBmpObject();
 	virtual ~CBagBmpObject();
 
-	ERROR_CODE Attach() { return Attach(nullptr); }
+	ERROR_CODE Attach() {
+		return Attach(nullptr);
+	}
 	ERROR_CODE Attach(CBofPalette *pPalette);
 	ERROR_CODE Detach();
-	BOOL IsAttached() { return m_xBmp != nullptr; }
+	BOOL IsAttached() {
+		return m_xBmp != nullptr;
+	}
 
 	BOOL IsInside(const CBofPoint &xPoint);
 
-	CBofBitmap *GetBitmap() { return m_xBmp; }
+	CBofBitmap *GetBitmap() {
+		return m_xBmp;
+	}
 	CBofRect GetRect();
 
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);

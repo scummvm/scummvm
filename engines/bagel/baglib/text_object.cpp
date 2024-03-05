@@ -198,10 +198,10 @@ ERROR_CODE CBagTextObject::Attach() {
 	} else {
 		// The Text is in the Bagel script, rather than a .txt file
 #if 0
-        CBagPanWindow*  pPanWin;        // The window where the object are displayed
-        CBofSize        cSize;          // Size of rect needed to display font
-		HFONT       	hFont, hFontOld;                // font that was mapped to the context
-		HDC 			hDC;
+		CBagPanWindow  *pPanWin;        // The window where the object are displayed
+		CBofSize        cSize;          // Size of rect needed to display font
+		HFONT           hFont, hFontOld;                // font that was mapped to the context
+		HDC             hDC;
 #endif
 
 		// Prevent memory leak
@@ -348,10 +348,10 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 		}
-			//
-			//  AS [CAPTION]  - how to run the link
-			//
-			//  MDM 6/12
+		//
+		//  AS [CAPTION]  - how to run the link
+		//
+		//  MDM 6/12
 		case 'A': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -380,9 +380,9 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
-		//
-		//  COLOR n - n color index
-		//
+			//
+			//  COLOR n - n color index
+			//
 #if BOF_MAC
 #define CTEXT_YELLOW RGB(0xFC, 0xF3, 0x05)
 #define CTEXT_WHITE RGB(255, 255, 255)
@@ -490,8 +490,8 @@ INT CBagTextObject::GetProperty(const CBofString &sProp) {
 
 /*class CBagTextDialog : public CBofDialog {
 
-	public:
-		CBagTextDialog();
+    public:
+        CBagTextDialog();
 };*/
 
 BOOL CBagTextObject::RunObject() {

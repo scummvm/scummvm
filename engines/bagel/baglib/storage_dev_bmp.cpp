@@ -34,7 +34,7 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 
 	SetAssociateWnd(pParent);
 
-	SetVisible();		// This object is visible
+	SetVisible();       // This object is visible
 }
 
 CBagStorageDevBmp::~CBagStorageDevBmp() {
@@ -58,7 +58,7 @@ ERROR_CODE CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
 		SetBitmap(pBmp);
 		SetWorkBmp();
 	} else {
-		// Hope and pray that this is the right thing to do 
+		// Hope and pray that this is the right thing to do
 		if (GetBitmap()) {
 			delete GetBitmap();
 		}
@@ -100,13 +100,13 @@ ERROR_CODE CBagStorageDevBmp::LoadFile(bof_ifstream &fpInput, const CBofString &
 }
 
 CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
-	CBofRect 		SDevDstRect;
-	CBofRect 		SDevSrcRect;
-	CBofPoint 			pt;
-	CBofRect		rDestRect = GetRect();
+	CBofRect        SDevDstRect;
+	CBofRect        SDevSrcRect;
+	CBofPoint           pt;
+	CBofRect        rDestRect = GetRect();
 
-	SDevDstRect = GetRect();				// Get the destination (screen) rect
-	SDevSrcRect = CBagBmpObject::GetRect();	// Get the source (origin) rect
+	SDevDstRect = GetRect();                // Get the destination (screen) rect
+	SDevSrcRect = CBagBmpObject::GetRect(); // Get the source (origin) rect
 
 	pt.x = m_cSrcRect.Width() * xPoint.x / rDestRect.Width();
 	pt.y = m_cSrcRect.Height() * xPoint.y / rDestRect.Height();

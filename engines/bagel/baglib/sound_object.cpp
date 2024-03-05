@@ -146,7 +146,7 @@ BOOL CBagSoundObject::RunObject() {
 		// This would be much cooler if it were a cast to another object type and
 		// then a run.  But this is a quicker fix.
 		//
-		else /* if no sound */ {
+		else { /* if no sound */
 
 			if (!(m_wFlags & SOUND_MIDI)) {
 
@@ -287,7 +287,8 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		// MDM 7/17 - ADDED LOOP PROPERTY TO SOUNDS
 		case 'L': {
@@ -305,7 +306,8 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 		// jwl 12.02.96 added oversound attribute to sound object
 		case 'S': {
 			CHAR szLocalStr[256];
@@ -321,7 +323,8 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 		//
 		//  no match return from funtion
 		//
@@ -337,7 +340,8 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		} // end switch
 
 	} // end while

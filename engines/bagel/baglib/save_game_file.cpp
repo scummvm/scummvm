@@ -45,7 +45,7 @@ ERROR_CODE CBagSaveGameFile::WriteSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSa
 	UBYTE *pBuf;
 	LONG lSize, lRecNum;
 
-#if BOF_MAC   
+#if BOF_MAC
 	PCizeSavedGame(pDataBuf, lDataSize);
 #endif
 
@@ -72,7 +72,7 @@ ERROR_CODE CBagSaveGameFile::WriteSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSa
 		ReportError(ERR_MEMORY, "Could not allocate %ld bytes for saved game", lSize);
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 ERROR_CODE CBagSaveGameFile::ReadSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize) {
@@ -117,7 +117,7 @@ ERROR_CODE CBagSaveGameFile::ReadSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSav
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 ERROR_CODE CBagSaveGameFile::ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame) {
@@ -151,7 +151,7 @@ ERROR_CODE CBagSaveGameFile::ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGa
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 ERROR_CODE CBagSaveGameFile::ReadTitleOnly(LONG lSlot, CHAR *pGameTitle) {
@@ -175,7 +175,7 @@ ERROR_CODE CBagSaveGameFile::ReadTitleOnly(LONG lSlot, CHAR *pGameTitle) {
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 LONG CBagSaveGameFile::GetActualNumSaves(VOID) {
@@ -227,13 +227,13 @@ BOOL CBagSaveGameFile::AnySavedGames(VOID) {
 VOID CBagSaveGameFile::MacintizeSavedGame(VOID *pBuf, LONG pBufLen) {
 	ST_BAGEL_SAVE *pstBagGame = (ST_BAGEL_SAVE *)pBuf;
 	CHAR *p;
-	CHAR			szLocalBuff[256];
+	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
-	CBofString		sStr(szLocalBuff, 256);
+	CBofString      sStr(szLocalBuff, 256);
 
 	SwapSavedGame(pBuf, pBufLen);
 
-	// Fix the filename... don't bother if there is none. 
+	// Fix the filename... don't bother if there is none.
 
 	if (strlen(pstBagGame->m_szScript) == 0) {
 		return;
@@ -245,7 +245,7 @@ VOID CBagSaveGameFile::MacintizeSavedGame(VOID *pBuf, LONG pBufLen) {
 		p = strchr(p, '\\');
 	}
 
-	// Gotta figure out the name of the world script.  Try this three 
+	// Gotta figure out the name of the world script.  Try this three
 	// tier approach:
 	//
 	// If file exists, we're done.
@@ -263,7 +263,7 @@ VOID CBagSaveGameFile::MacintizeSavedGame(VOID *pBuf, LONG pBufLen) {
 		return;
 	}
 
-	// Nope, still not there... work back from the end of the file path until we 
+	// Nope, still not there... work back from the end of the file path until we
 	// hit the delimeter then tack a $SBARDIR:WLD on the front of that.
 
 	p = &szLocalBuff[sStr.GetLength() - 1];
@@ -282,9 +282,9 @@ VOID CBagSaveGameFile::MacintizeSavedGame(VOID *pBuf, LONG pBufLen) {
 VOID CBagSaveGameFile::PCizeSavedGame(VOID *pBuf, LONG pBufLen) {
 	ST_BAGEL_SAVE *pstBagGame = (ST_BAGEL_SAVE *)pBuf;
 	CHAR *p;
-	CHAR			szLocalBuff[256];
+	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
-	CBofString 		sGameStr(pstBagGame->m_szScript, MAX_FNAME);
+	CBofString      sGameStr(pstBagGame->m_szScript, MAX_FNAME);
 
 	if (pBuf == nullptr || pBufLen == 0) {
 		return;
@@ -312,32 +312,32 @@ VOID CBagSaveGameFile::PCizeSavedGame(VOID *pBuf, LONG pBufLen) {
 // This will swap all the shorts and longs in the buffer.
 VOID CBagSaveGameFile::SwapSavedGame(VOID *pBuf, LONG pBufLen) {
 	ST_BAGEL_SAVE *p = (ST_BAGEL_SAVE *)pBuf;
-	INT		i;
+	INT     i;
 
 	Assert(pBufLen >= sizeof(ST_BAGEL_SAVE));
 
-	//	Here's the structure of the game file that we'll be receiving... 
-	//	typedef struct {
-	//	    ULONG   m_lStructSize;                  // sizeof(ST_BAGEL_SAVE)
-	//	    ST_VAR  m_stVarList[MAX_VARS];
-	//	    ST_OBJ  m_stObjList[MAX_OBJS];
-	//	    ST_OBJ  m_stObjListEx[MAX_OBJS];
-	//	    CHAR    m_szScript[MAX_FNAME];          // Name of current world file (no path)
-	//	    ULONG   m_nLocType;                     // TYPE_PAN, TYPE_CLOSUP, etc...
-	//	    CHAR    m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
-	//	    USHORT  m_nLocX;                        // X Location in PAN
-	//	    USHORT  m_nLocY;                        // Y Location in PAN
-	//	    USHORT  m_bUseEx;
-	//	} ST_BAGEL_SAVE;
+	//  Here's the structure of the game file that we'll be receiving...
+	//  typedef struct {
+	//      ULONG   m_lStructSize;                  // sizeof(ST_BAGEL_SAVE)
+	//      ST_VAR  m_stVarList[MAX_VARS];
+	//      ST_OBJ  m_stObjList[MAX_OBJS];
+	//      ST_OBJ  m_stObjListEx[MAX_OBJS];
+	//      CHAR    m_szScript[MAX_FNAME];          // Name of current world file (no path)
+	//      ULONG   m_nLocType;                     // TYPE_PAN, TYPE_CLOSUP, etc...
+	//      CHAR    m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
+	//      USHORT  m_nLocX;                        // X Location in PAN
+	//      USHORT  m_nLocY;                        // Y Location in PAN
+	//      USHORT  m_bUseEx;
+	//  } ST_BAGEL_SAVE;
 
-	//	ULONG   m_lStructSize;                  // sizeof(ST_BAGEL_SAVE)
+	//  ULONG   m_lStructSize;                  // sizeof(ST_BAGEL_SAVE)
 	p->m_lStructSize = SWAPLONG(p->m_lStructSize);
 
 	for (i = 0; i < MAX_VARS; i++) {
 		p->m_stVarList[i].m_nType = SWAPWORD(p->m_stVarList[i].m_nType);
 	}
 
-	//	    ST_OBJ  m_stObjList[MAX_OBJS];
+	//      ST_OBJ  m_stObjList[MAX_OBJS];
 	for (i = 0; i < MAX_OBJS; i++) {
 
 		// Swap all longs in the structure.
@@ -349,7 +349,7 @@ VOID CBagSaveGameFile::SwapSavedGame(VOID *pBuf, LONG pBufLen) {
 		p->m_stObjList[i].m_nFlags = SWAPWORD(p->m_stObjList[i].m_nFlags);
 	}
 
-	//	    ST_OBJ  m_stObjListEx[MAX_OBJS];
+	//      ST_OBJ  m_stObjListEx[MAX_OBJS];
 	for (i = 0; i < MAX_OBJS; i++) {
 
 		// Swap all longs in the structure.
@@ -361,18 +361,18 @@ VOID CBagSaveGameFile::SwapSavedGame(VOID *pBuf, LONG pBufLen) {
 		p->m_stObjListEx[i].m_nFlags = SWAPWORD(p->m_stObjListEx[i].m_nFlags);
 	}
 
-	//	    CHAR    m_szScript[MAX_FNAME];          // Name of current world file (no path)
-	//	    ULONG   m_nLocType;                     // TYPE_PAN, TYPE_CLOSUP, etc...
+	//      CHAR    m_szScript[MAX_FNAME];          // Name of current world file (no path)
+	//      ULONG   m_nLocType;                     // TYPE_PAN, TYPE_CLOSUP, etc...
 	p->m_nLocType = SWAPLONG(p->m_nLocType);
 
-	//	    CHAR    m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
-	//	    USHORT  m_nLocX;                        // X Location in PAN
+	//      CHAR    m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
+	//      USHORT  m_nLocX;                        // X Location in PAN
 	p->m_nLocX = SWAPWORD(p->m_nLocX);
 
-	//	    USHORT  m_nLocY;                        // Y Location in PAN
+	//      USHORT  m_nLocY;                        // Y Location in PAN
 	p->m_nLocY = SWAPWORD(p->m_nLocY);
 
-	//	    USHORT  m_bUseEx;
+	//      USHORT  m_bUseEx;
 	p->m_bUseEx = SWAPWORD(p->m_bUseEx);
 }
 

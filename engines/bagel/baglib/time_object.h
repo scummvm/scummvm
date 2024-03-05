@@ -54,7 +54,9 @@ public:
 	 */
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() { return m_xDig1 != nullptr; }
+	BOOL IsAttached() {
+		return m_xDig1 != nullptr;
+	}
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
@@ -63,7 +65,9 @@ public:
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	CBofRect GetRect();
-	INT GetCels() { return m_nCels; }
+	INT GetCels() {
+		return m_nCels;
+	}
 
 	VOID SetCels(int nCels);
 	virtual VOID SetPosition(CBofPoint &pos);
@@ -76,7 +80,9 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
-	VOID SetVariable(const CBofString &sProp) { m_sVariable = sProp; }
+	VOID SetVariable(const CBofString &sProp) {
+		m_sVariable = sProp;
+	}
 };
 
 } // namespace Bagel

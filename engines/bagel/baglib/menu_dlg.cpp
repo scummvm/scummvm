@@ -34,16 +34,16 @@ namespace Bagel {
 #define DELAY_DEFAULT      0
 
 CBagObject *CBagMenuDlg::m_pSelectedObject;
-CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;	// Objects used in every menu
+CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
 INT CBagMenu::m_nDefaultDelay;
 
 BOOL g_bPauseTimer = FALSE;
 extern BOOL g_bAAOk;
 
 #if BOF_MAC || BOF_WINMAC
-#define EXAMINEBMP			"$SBARDIR:GENERAL:MENUS:EXAMINE.BMP"
+#define EXAMINEBMP          "$SBARDIR:GENERAL:MENUS:EXAMINE.BMP"
 #else
-#define EXAMINEBMP			"$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
+#define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
 #endif
 
 void CBagMenuDlg::initStatics() {
@@ -99,7 +99,7 @@ BOOL CBagMenu::TrackPopupMenu(UINT /*nFlags*/, int x, int y, CBofWindow *pWnd, C
 	CBagObject *pObj;
 	INT nObjectPal = -1;
 	INT i, nMenuCount = 0, nRunItems = 0, nBaseMenuLocX = 3;
-	CBofList<CBagObject *> 	xObjList;
+	CBofList<CBagObject *>  xObjList;
 	INT nNumItems = 0;
 	CBofRect wndRect(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 	CBofRect objSize;
@@ -403,7 +403,7 @@ BOOL CBagMenu::TrackPopupMenu(UINT /*nFlags*/, int x, int y, CBofWindow *pWnd, C
 
 					pObj->SetSize(CBofSize(cx, cy));
 
-					// Need to move the menus up when have a wielded item, but 
+					// Need to move the menus up when have a wielded item, but
 					// not displaying the wield menu
 					//
 					if (bMoved) {
@@ -515,10 +515,10 @@ BOOL CBagMenu::TrackPopupMenu(UINT /*nFlags*/, int x, int y, CBofWindow *pWnd, C
 
 	nNumCalls--;
 
-	return(bReturn);
+	return (bReturn);
 }
 
-BOOL CBagMenu::AddItem(CBagObject *pObj, void *(* /*func*/)(int, void *), void * /*info*/) {
+BOOL CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->SetPosition(CBofPoint(0, m_nY));
 	//pObj->Attach();
 	m_nY = (SHORT)(m_nY + (SHORT)(pObj->GetRect().Height() + 1));

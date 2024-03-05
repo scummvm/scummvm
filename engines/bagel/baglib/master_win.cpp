@@ -449,13 +449,13 @@ ERROR_CODE CBagMasterWin::NewGame(VOID) {
  *  LoadFile -
  *
  *  DESCRIPTION:
- *		Called to load script file containing objects from a file named sFile
+ *      Called to load script file containing objects from a file named sFile
  *
  *  SAMPLE USAGE:
- *  		errCode = LoadFile();
+ *          errCode = LoadFile();
  *
  *  RETURNS:
- *		True on success
+ *      True on success
  *
  *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart, BOOL bSetStart) {
@@ -744,13 +744,13 @@ VOID CBagMasterWin::SaveSDevStack(VOID) {
  *  LoadGlobalVars -
  *
  *  DESCRIPTION:
- *		Called to load script file containing variable objects from a file named sWldName
+ *      Called to load script file containing variable objects from a file named sWldName
  *
  *  SAMPLE USAGE:
- *  		errCode = LoadFile();
+ *          errCode = LoadFile();
  *
  *  RETURNS:
- *		True on success
+ *      True on success
  *
  *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
@@ -848,13 +848,13 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
  *  LoadFile -
  *
  *  DESCRIPTION:
- *		Called to load script file containing objects from a file named sFile
+ *      Called to load script file containing objects from a file named sFile
  *
  *  SAMPLE USAGE:
- *  		errCode = LoadFile();
+ *          errCode = LoadFile();
  *
  *  RETURNS:
- *		True on success
+ *      True on success
  *
  *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL /*bAttach*/) {
@@ -1382,7 +1382,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 #endif // !DEMO
 		break;
 
-	// 	Help
+	//  Help
 	//
 	case BKEY_F1:
 		if (m_pGameWindow != nullptr) {
@@ -1440,7 +1440,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		break;
 	}
 
-	// Do some major debug tests
+// Do some major debug tests
 	case BKEY_ALT_D:
 	case BKEY_ALT_d:
 		VerifyMemoryBlocks();
@@ -1460,7 +1460,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		break;
 	}
 
-	// Default action
+// Default action
 	default:
 		if (m_pGameWindow)
 			m_pGameWindow->OnKeyHit(lKey, lRepCount);

@@ -65,15 +65,23 @@ public:
 	VOID CopyRect(const CBofRect &cRect);
 	BOOL EqualRect(const CBofRect &cRect);
 
-	CBofRect(const RECT &cRect) { SetWinRect(&cRect); }
-	CBofRect(const RECT *pRect) { SetWinRect(pRect); }
+	CBofRect(const RECT &cRect) {
+		SetWinRect(&cRect);
+	}
+	CBofRect(const RECT *pRect) {
+		SetWinRect(pRect);
+	}
 
 	VOID SetWinRect(const RECT *pRect);
 	RECT GetWinRect(VOID);
 
-	VOID operator=(const RECT &srcRect) { SetWinRect(&srcRect); }
+	VOID operator=(const RECT &srcRect) {
+		SetWinRect(&srcRect);
+	}
 
-	operator const RECT() { return (GetWinRect()); }
+	operator const RECT() {
+		return (GetWinRect());
+	}
 
 	VOID OffsetRect(INT x, INT y);
 	VOID OffsetRect(const CBofSize &size);
@@ -353,7 +361,7 @@ INLINE BOOL CBofRect::operator==(const CBofRect &rect) {
 	Assert(IsValidObject(this));
 
 	return (left == rect.left && right == rect.right &&
-			top == rect.top && bottom == rect.bottom);
+	        top == rect.top && bottom == rect.bottom);
 }
 
 INLINE BOOL CBofRect::operator!=(const CBofRect &rect) {
@@ -361,7 +369,7 @@ INLINE BOOL CBofRect::operator!=(const CBofRect &rect) {
 	Assert(IsValidObject(this));
 
 	return (left != rect.left || right != rect.right ||
-			top != rect.top || bottom != rect.bottom);
+	        top != rect.top || bottom != rect.bottom);
 }
 
 INLINE VOID CBofRect::operator+=(const CBofPoint &point) {

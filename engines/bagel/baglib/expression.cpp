@@ -255,15 +255,15 @@ BOOL CBagExpression::EvalLeftToRight(BOOL bNeg, CBagVar &xResult) {
 	if (bRCparent) {
 		while (nVCount < m_cVarList.GetCount()) {
 			xRHOper = GetVariable(nVCount++);
-			xPrevOper = xOper; 		// save previous operator
+			xPrevOper = xOper;      // save previous operator
 			xOper = m_cOperList.GetNodeItem(nECount++);
 
 			if (bFirstTime) {
 				stLHOper = *xLHOper;
 				bFirstTime = FALSE;
 			} else {
-				// Based on what we have for a previous operator, either use 
-				// the left hand expression or the result of the previous expression. 
+				// Based on what we have for a previous operator, either use
+				// the left hand expression or the result of the previous expression.
 				switch (xPrevOper) {
 				case MINUS:
 				case MULTIPLY:
@@ -555,14 +555,14 @@ BOOL CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultO
 BOOL CBagExpression::OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	return(!xLHOper->GetValue().Find("TRUE") && !xRHOper->GetValue().Find("TRUE"));
+	return (!xLHOper->GetValue().Find("TRUE") && !xRHOper->GetValue().Find("TRUE"));
 }
 
 
 BOOL CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	return(!xLHOper->GetValue().Find("TRUE") || !xRHOper->GetValue().Find("TRUE"));
+	return (!xLHOper->GetValue().Find("TRUE") || !xRHOper->GetValue().Find("TRUE"));
 }
 
 

@@ -68,7 +68,9 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	BUTTON_TYPE GetButtonType() { return m_xButtonType; }
+	BUTTON_TYPE GetButtonType() {
+		return m_xButtonType;
+	}
 
 	/**
 	 * Takes in info and then removes the relative information and returns
@@ -81,22 +83,28 @@ public:
 	VOID SetCallBack(void *(func)(int, void *), void *vpFuncInfo = nullptr) {
 #if BOF_MAC && __POWERPC__
 		m_vpFunc = NewRoutineDescriptor((ProcPtr)func,
-			uppCBagObjectProcInfo, GetCurrentArchitecture());
+		                                uppCBagObjectProcInfo, GetCurrentArchitecture());
 		m_vpFuncInfo = vpFuncInfo;
 	}
-	virtual UniversalProcPtr GetCallBack() { return m_vpFunc; }
+	virtual UniversalProcPtr GetCallBack() {
+		return m_vpFunc;
+	}
 #else
 		m_vpFunc = func;
 		m_vpFuncInfo = vpFuncInfo;
 	}
-	virtual BAGFUNCPTR GetCallBack() { return m_vpFunc; }
+	virtual BAGFUNCPTR GetCallBack() {
+		return m_vpFunc;
+	}
 #endif
-	VOID *GetCallBackInfo() { return m_vpFuncInfo; }
+	VOID *GetCallBackInfo() {
+		return m_vpFuncInfo;
+	}
 	virtual BOOL RunCallBack() {
 		if (m_vpFunc) {
 #if BOF_MAC && __POWERPC__
 			CallUniversalProc(m_vpFunc, uppCBagObjectProcInfo,
-				(INT)GetRefId(), m_vpFuncInfo);
+			                  (INT)GetRefId(), m_vpFuncInfo);
 #else
 			m_vpFunc((INT)GetRefId(), m_vpFuncInfo);
 #endif

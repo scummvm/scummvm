@@ -79,7 +79,9 @@ public:
 	virtual VOID Disable(VOID);
 
 	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
-	INT GetState(VOID) { return (m_nState); }
+	INT GetState(VOID) {
+		return (m_nState);
+	}
 };
 
 } // namespace Bagel

@@ -262,8 +262,8 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		for (i = 0; i < MAX_SAVEDGAMES; i++) {
 			if (i < nNumSavedGames) {
 				if (m_pSaveGameFile != nullptr) {
-						// Read in just the title (not the whole damn thing).
-						m_pSaveGameFile->ReadTitleOnly(i, stGameInfo.m_szTitle);
+					// Read in just the title (not the whole damn thing).
+					m_pSaveGameFile->ReadTitleOnly(i, stGameInfo.m_szTitle);
 #if 1
 					if (strlen(stGameInfo.m_szTitle) == 0) {
 #else
@@ -274,8 +274,8 @@ ERROR_CODE CBagSaveDialog::Attach() {
 						}
 						Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
 					}
-					}
-				} else {
+				}
+			} else {
 				Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
 			}
 			m_pListBox->AddToTail(stGameInfo.m_szTitle, FALSE);
@@ -355,7 +355,7 @@ ERROR_CODE CBagSaveDialog::Detach() {
 	return m_errCode;
 }
 
-VOID CBagSaveDialog::OnPaint(CBofRect * pRect) {
+VOID CBagSaveDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -463,7 +463,7 @@ VOID CBagSaveDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 }
 
 
-VOID CBagSaveDialog::OnBofButton(CBofObject * pObject, INT nFlags) {
+VOID CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

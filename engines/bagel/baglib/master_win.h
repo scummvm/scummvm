@@ -96,10 +96,14 @@ public:
 
 	VOID Close();
 
-	CBofString &GetWldScript() { return m_cWldScript; }
+	CBofString &GetWldScript() {
+		return m_cWldScript;
+	}
 
 	static VOID SetActiveCursor(INT iCursor);
-	static INT GetActiveCursor() { return m_nCurCursor; }
+	static INT GetActiveCursor() {
+		return m_nCurCursor;
+	}
 
 	// User options
 	static BOOL GetFlyThru();
@@ -119,8 +123,12 @@ public:
 	static INT GetWaveVolume();
 	static VOID SetWaveVolume(INT nVol);
 
-	static BOOL GetMidi() { return GetMidiVolume() != 0; }
-	static BOOL GetDigitalAudio() { return GetWaveVolume() != 0; }
+	static BOOL GetMidi() {
+		return GetMidiVolume() != 0;
+	}
+	static BOOL GetDigitalAudio() {
+		return GetWaveVolume() != 0;
+	}
 
 	static VOID MuteToggle();
 	static VOID ForcePaintScreen(BOOL bShowCursor = TRUE);
@@ -150,13 +158,25 @@ public:
 	ERROR_CODE SetStorageDev(const CBofString &sWldName, BOOL bEntry = TRUE);
 	ERROR_CODE GotoNewWindow(CBofString *pStr);
 
-	USHORT GetDiskID() { return m_nDiskID; }
-	VOID SetDiskID(USHORT did) { m_nDiskID = did; }
+	USHORT GetDiskID() {
+		return m_nDiskID;
+	}
+	VOID SetDiskID(USHORT did) {
+		m_nDiskID = did;
+	}
 
-	CBofWindow *GetCurrentGameWindow() { return (CBofWindow *)m_pGameWindow; }
-	CBagStorageDevWnd *GetCurrentStorageDev() { return m_pGameWindow; }
-	CBagStorageDevManager *GetStorageDevManager() { return m_pStorageDeviceList; }
-	CBagVarManager *GetVariableManager() { return m_pVariableList; }
+	CBofWindow *GetCurrentGameWindow() {
+		return (CBofWindow *)m_pGameWindow;
+	}
+	CBagStorageDevWnd *GetCurrentStorageDev() {
+		return m_pGameWindow;
+	}
+	CBagStorageDevManager *GetStorageDevManager() {
+		return m_pStorageDeviceList;
+	}
+	CBagVarManager *GetVariableManager() {
+		return m_pVariableList;
+	}
 
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) = 0;
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType) = 0;
@@ -170,14 +190,24 @@ public:
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnClose();
 
-	ST_OBJ *GetObjList() { return m_pObjList; }
-	VOID SetSaveObjs(BOOL bSave) { m_bObjSave = bSave; }
-	BOOL IsObjSave() { return m_bObjSave; }
+	ST_OBJ *GetObjList() {
+		return m_pObjList;
+	}
+	VOID SetSaveObjs(BOOL bSave) {
+		m_bObjSave = bSave;
+	}
+	BOOL IsObjSave() {
+		return m_bObjSave;
+	}
 
 	VOID SaveSDevStack();
 
-	virtual VOID *GetDataStart() { return &m_pGameWindow; }
-	virtual VOID *GetDataEnd() { return &m_pVariableList + sizeof(CBagVarManager *); }
+	virtual VOID *GetDataStart() {
+		return &m_pGameWindow;
+	}
+	virtual VOID *GetDataEnd() {
+		return &m_pVariableList + sizeof(CBagVarManager *);
+	}
 
 	// Since we do this from load file and do restore, centralize it in one location.
 	VOID RestoreActiveMessages(CBagStorageDevManager *pSDevManager);

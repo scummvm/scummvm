@@ -41,14 +41,20 @@ public:
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const ST_SIZE &cSize);
 
-	CBofPoint(const POINT &stPoint) { SetWinPoint(&stPoint); }
+	CBofPoint(const POINT &stPoint) {
+		SetWinPoint(&stPoint);
+	}
 
 	VOID SetWinPoint(const POINT *pPoint);
 	POINT GetWinPoint();
 
-	VOID operator=(const POINT &stPoint) { SetWinPoint(&stPoint); }
+	VOID operator=(const POINT &stPoint) {
+		SetWinPoint(&stPoint);
+	}
 
-	operator const POINT() { return (GetWinPoint()); }
+	operator const POINT() {
+		return (GetWinPoint());
+	}
 
 
 	// Operations

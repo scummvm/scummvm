@@ -88,7 +88,7 @@ namespace Bagel {
 
 
 enum {
-    FW_NORMAL,
+	FW_NORMAL,
 	FW_BOLD,
 	FW_MEDIUM,
 };

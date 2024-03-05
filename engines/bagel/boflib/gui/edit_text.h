@@ -37,7 +37,9 @@ public:
 #if BOF_WINDOWS
 	CBofEditText() {}
 #elif BOF_MAC
-	CBofEditText() { m_hTE = nullptr; }
+	CBofEditText() {
+		m_hTE = nullptr;
+	}
 #endif
 
 	CBofEditText(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);

@@ -44,11 +44,15 @@ public:
 	BOOL DuplicateSprite(CSprite *pSprite);
 
 	BOOL PaintSprite(CBofWindow *pWnd, const INT x, const INT y);
-	BOOL PaintSprite(CBofWindow *pWnd, CBofPoint point) { return (PaintSprite(pWnd, point.x, point.y)); }
+	BOOL PaintSprite(CBofWindow *pWnd, CBofPoint point) {
+		return (PaintSprite(pWnd, point.x, point.y));
+	}
 
 	BOOL CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow = TRUE);
 
-	BOOL RefreshSprite(CBofWindow *pWnd) { return (PaintSprite(pWnd, m_cPosition.x, m_cPosition.y)); }
+	BOOL RefreshSprite(CBofWindow *pWnd) {
+		return (PaintSprite(pWnd, m_cPosition.x, m_cPosition.y));
+	}
 
 	BOOL RefreshBackground(CBofWindow *pWnd);
 
@@ -56,13 +60,21 @@ public:
 
 	VOID ClearBackground();
 
-	VOID SetTypeCode(INT nValue) { m_nType = nValue; }
-	INT GetTypeCode() { return (m_nType); }
+	VOID SetTypeCode(INT nValue) {
+		m_nType = nValue;
+	}
+	INT GetTypeCode() {
+		return (m_nType);
+	}
 
-	INT GetZPosition() { return (m_nZPosition); }
+	INT GetZPosition() {
+		return (m_nZPosition);
+	}
 
 	VOID SetRetainBackground(BOOL bValue);
-	BOOL GetRetainBackground() { return (m_bRetainBackground); }
+	BOOL GetRetainBackground() {
+		return (m_bRetainBackground);
+	}
 
 	static BOOL EraseSprites(CBofWindow *pWnd);
 	static VOID ClearBackgrounds();

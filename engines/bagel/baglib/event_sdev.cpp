@@ -49,7 +49,7 @@ ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 
 	// If a zelda movie is playing, don't execute the event world
 	if (CBagPDA::IsMoviePlaying()) {
-		return(ERR_NONE);
+		return (ERR_NONE);
 	}
 
 	if ((nCount = GetObjectCount()) != 0) {
@@ -88,7 +88,7 @@ ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
 
 	// If a zelda movie is playing, don't execute the turncount world
 	if (CBagPDA::IsMoviePlaying()) {
-		return(ERR_UNKNOWN);
+		return (ERR_UNKNOWN);
 	}
 
 	if ((nCount = GetObjectCount()) != 0) {

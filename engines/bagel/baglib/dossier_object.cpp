@@ -113,7 +113,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		} 
+		}
 
 		//
 		//  FONT MONO or DEFAULT
@@ -167,7 +167,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		} 
+		}
 
 		//
 		//  AS [CAPTION]  - how to run the link
@@ -197,9 +197,9 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
-		//  COLOR n - n color index
-		//
+			//
+			//  COLOR n - n color index
+			//
 #if BOF_MAC
 #define CTEXT_YELLOW RGB(0xFC, 0xF3, 0x05)
 #define CTEXT_WHITE RGB(255, 255, 255)
@@ -222,7 +222,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		} 
+		}
 		//
 		//  no match return from funtion
 		//

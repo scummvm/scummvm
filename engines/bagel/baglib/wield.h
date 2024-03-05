@@ -41,11 +41,19 @@ public:
 		m_nWieldCursor = -1;
 	}
 
-	CBagObject *GetCurrObj() const { return m_pCurrObj; }
-	CBagObject *SetCurrObj(CBagObject *pObj) { return m_pCurrObj = pObj; }
+	CBagObject *GetCurrObj() const {
+		return m_pCurrObj;
+	}
+	CBagObject *SetCurrObj(CBagObject *pObj) {
+		return m_pCurrObj = pObj;
+	}
 
-	static INT GetWieldCursor() { return m_nWieldCursor; }
-	static VOID SetWieldCursor(INT n) { m_nWieldCursor = n; }
+	static INT GetWieldCursor() {
+		return m_nWieldCursor;
+	}
+	static VOID SetWieldCursor(INT n) {
+		m_nWieldCursor = n;
+	}
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 

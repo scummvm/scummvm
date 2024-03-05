@@ -115,12 +115,11 @@ ERROR_CODE CBofDataFile::SetFile(const CHAR *pszFileName, ULONG lFlags, const CH
 		}
 	}
 #if !BOF_MAC
-}
-else {
+} else {
 	ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 }
 #endif
-	return m_errCode;
+return m_errCode;
 }
 
 CBofDataFile::~CBofDataFile() {
@@ -227,7 +226,7 @@ ERROR_CODE CBofDataFile::Open() {
 			Common::strcpy_s(pszFileName, m_szFileName);
 			CBofFile::Open(pszFileName, m_lFlags);
 #else
-				CBofFile::Open(m_szFileName, m_lFlags);
+			CBofFile::Open(m_szFileName, m_lFlags);
 #endif
 		}
 	}
@@ -285,8 +284,8 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 				// make sure header contains valid info
 				//
 				if ((m_lHeaderStart >= sizeof(HEAD_INFO)) &&
-					(m_lHeaderStart <= lFileLength) && (m_lHeaderLength >= 0) &&
-					(m_lHeaderLength < lFileLength)) {
+				        (m_lHeaderStart <= lFileLength) && (m_lHeaderLength >= 0) &&
+				        (m_lHeaderLength < lFileLength)) {
 
 					// force Encrypted, and Compress if existing file has them
 					//
@@ -999,8 +998,8 @@ VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
 
 /**
  * Builds a Hash code based on a key.
- * @param pKey			Key
- * @return				Hash code
+ * @param pKey          Key
+ * @return              Hash code
  */
 ULONG CreateHashCode(const UBYTE *pKey) {
 	ULONG lCode;
@@ -1008,7 +1007,7 @@ ULONG CreateHashCode(const UBYTE *pKey) {
 	// validate input
 	Assert(pKey != nullptr);
 
-	lCode = ((ULONG)*pKey << 24) | ((ULONG) * (pKey + 1) << 16) | ((ULONG) * (pKey + 2) << 8) | *(pKey + 3);
+	lCode = ((ULONG) * pKey << 24) | ((ULONG) * (pKey + 1) << 16) | ((ULONG) * (pKey + 2) << 8) | *(pKey + 3);
 
 	return lCode;
 }

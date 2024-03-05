@@ -29,7 +29,7 @@
 
 namespace Bagel {
 
-#define FIRSSTASHMOV 		"FIRST_STASH_MOVIE"
+#define FIRSSTASHMOV        "FIRST_STASH_MOVIE"
 
 BOOL CBagInv::m_bFirstStash;
 
@@ -116,7 +116,7 @@ ERROR_CODE CBagInv::DeactivateLocalObject(const CBofString &sName) {
 			pWand->SetPlaybackSpeed(-1);
 			pWand->SetNumOfLoops(1);
 
-			// Let it know our ending frame is 0, not 1.  
+			// Let it know our ending frame is 0, not 1.
 			pWand->SetEndFrame(0);
 		}
 	}

@@ -39,7 +39,7 @@ const DebugChannelDef BagelMetaEngineDetection::debugFlagList[] = {
 };
 
 BagelMetaEngineDetection::BagelMetaEngineDetection() : AdvancedMetaEngineDetection(Bagel::gameDescriptions,
-	sizeof(ADGameDescription), Bagel::bagelGames) {
+	        sizeof(ADGameDescription), Bagel::bagelGames) {
 }
 
 REGISTER_PLUGIN_STATIC(BAGEL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BagelMetaEngineDetection);

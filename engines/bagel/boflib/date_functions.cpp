@@ -34,7 +34,7 @@ CHAR *strtime(CHAR *pszBuffer) {
 	g_system->getTimeAndDate(td);
 
 	Common::sprintf_s(pszBuffer, MAX_TIMESTR, "%.2d:%.2d:%.2d",
-		td.tm_hour, td.tm_min, td.tm_sec);
+	                  td.tm_hour, td.tm_min, td.tm_sec);
 
 	return pszBuffer;
 }
@@ -46,7 +46,7 @@ CHAR *strdate(CHAR *pszBuffer) {
 	g_system->getTimeAndDate(td);
 
 	Common::sprintf_s(pszBuffer, MAX_TIMESTR, "%.2d:%.2d:%.2d",
-					  td.tm_mday, td.tm_mon, td.tm_year);
+	                  td.tm_mday, td.tm_mon, td.tm_year);
 
 	return pszBuffer;
 }

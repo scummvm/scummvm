@@ -43,10 +43,10 @@ CBagExpressionObject::~CBagExpressionObject() {
 
 /*CRect CBagExpressionObject::GetRect(VOID)
 {
-	CPoint p = GetPosition();
-	CSize  s = GetSize();
-	CRect r = CRect(p,s);
-	return(r);
+    CPoint p = GetPosition();
+    CSize  s = GetSize();
+    CRect r = CRect(p,s);
+    return(r);
 }*/
 
 BOOL CBagExpressionObject::RunObject() {
@@ -113,7 +113,8 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 	return PARSING_DONE;

@@ -44,18 +44,26 @@ public:
 	 */
 	virtual ERROR_CODE Attach();
 
-	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) { return ERR_NONE; }
-	virtual CBofBitmap *GetBackground() { return nullptr; }
+	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
+		return ERR_NONE;
+	}
+	virtual CBofBitmap *GetBackground() {
+		return nullptr;
+	}
 
 	/**
 	 * Evaluate only the expression object of this storage device
-	 * @return	Returns and error code if there is an invalid object in the list
+	 * @return  Returns and error code if there is an invalid object in the list
 	 */
 	virtual ERROR_CODE EvaluateExpressions();
 
 	// Gives timer code a method to launch tim
-	static VOID SetEvalTurnEvents(BOOL b = TRUE) { m_bEvalTurnEvents = b; }
-	static BOOL GetEvalTurnEvents() { return m_bEvalTurnEvents; }
+	static VOID SetEvalTurnEvents(BOOL b = TRUE) {
+		m_bEvalTurnEvents = b;
+	}
+	static BOOL GetEvalTurnEvents() {
+		return m_bEvalTurnEvents;
+	}
 };
 
 class CBagTurnEventSDev : public CBagStorageDev {
@@ -63,8 +71,12 @@ public:
 	CBagTurnEventSDev() : CBagStorageDev() {}
 	virtual ~CBagTurnEventSDev() {}
 
-	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) { return ERR_NONE; }
-	virtual CBofBitmap *GetBackground() { return nullptr; }
+	virtual ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
+		return ERR_NONE;
+	}
+	virtual CBofBitmap *GetBackground() {
+		return nullptr;
+	}
 
 	virtual ERROR_CODE EvaluateExpressions();
 };

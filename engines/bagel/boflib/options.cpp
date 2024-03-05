@@ -73,7 +73,7 @@ ERROR_CODE CBofOptions::Load(VOID) {
 	// free any previous option info
 	Release();
 
-		Common::File f;
+	Common::File f;
 	if (Common::File::exists(m_szFileName) && f.open(m_szFileName)) {
 		CHAR szBuf[MAX_OPTION_LEN];
 

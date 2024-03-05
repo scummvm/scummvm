@@ -65,7 +65,7 @@ CBagRPObject *CBagRPObject::m_pActivateThisGuy = NULL;
 //
 // CBagRPObject -
 //  CBagRPObject is an object that can be accessed through script to handle residue
-// 	printing.
+//  printing.
 //
 CBagRPObject::CBagRPObject() {
 	m_xObjType = RESPRNTOBJ;
@@ -133,7 +133,7 @@ CBagRPObject::~CBagRPObject() {
 	}
 
 	//  explicitly delete everything in the list
-	//	Only trash them if they are not the same list.
+	//  Only trash them if they are not the same list.
 	if (bSame == FALSE) {
 		if (m_pUntouchedList != NULL) {
 			INT nCount = m_pUntouchedList->GetCount();
@@ -212,7 +212,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			BOOL bTouched = (ch == 'T');
 
 			if ((bTouched && !sStr.Find("TOUCHED")) ||
-				(bTouched == FALSE && !sStr.Find("UNTOUCHED"))) {
+			        (bTouched == FALSE && !sStr.Find("UNTOUCHED"))) {
 
 				nObjectUpdated = TRUE;
 				nChanged++;
@@ -249,7 +249,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		//
 		// We can hit a continuation character, a plus sign tells us that there
@@ -263,7 +264,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			while (!Common::isAlnum((char)istr.peek())) {
 				istr.Get();
 			}
-		} break;
+		}
+		break;
 
 		case 'N': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -279,7 +281,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		// Same and Save can be in the stream.
 		case 'S': {
@@ -299,7 +302,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				// complain violently.
 				if (m_pSaveVar == NULL) {
 					ReportError(ERR_UNKNOWN, "Invalid Residue Print SAVE Variable=%s",
-						sStr.GetBuffer());
+					            sStr.GetBuffer());
 					return UNKNOWN_TOKEN;
 				}
 				break;
@@ -313,7 +316,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		//
 		// Might have an associated movie
@@ -329,7 +333,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		//
 		// must have a description file, this contains the description of the object
@@ -348,7 +353,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		// The variable, which is required, will be the var that is set when
 		// residue printing of that object has occurred.
@@ -368,13 +374,14 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				// complain violently.
 				if (m_pVarObj == NULL) {
 					ReportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
-						sStr.GetBuffer());
+					            sStr.GetBuffer());
 					return UNKNOWN_TOKEN;
 				}
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		default: {
 			PARSE_CODES rc;
@@ -388,7 +395,8 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 
@@ -479,7 +487,7 @@ ERROR_CODE CBagRPObject::Detach() {
 // Have a dossier name and expression for a touched object
 VOID CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 	DossierObj *pDosObj;
-	//	Make sure the list has been allocated
+	//  Make sure the list has been allocated
 
 	if (m_pTouchedList == NULL) {
 		m_pTouchedList = new CBofList<DossierObj *>;
@@ -503,7 +511,7 @@ VOID CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 // Store a dossier name and associated expression for an untouched object
 VOID CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	DossierObj *pDosObj;
-	//	Make sure the list has been allocated
+	//  Make sure the list has been allocated
 
 	if (m_pUntouchedList == NULL) {
 		m_pUntouchedList = new CBofList<DossierObj *>;
@@ -913,7 +921,7 @@ VOID CBagRPObject::DeactivateRPObject(VOID) {
 	// attach the description object.
 	Assert(m_pDescObj != NULL);
 	if (m_pDescObj) {
-		//	m_pDescObj->Detach ();
+		//  m_pDescObj->Detach ();
 		m_pDescObj->SetVisible(FALSE);  // hide this guy
 		m_pDescObj->SetActive(FALSE);   // don't take mousedowns
 		m_pDescObj->SetFloating(FALSE); // don't calculate floating rects
@@ -974,7 +982,7 @@ VOID CBagRPObject::DeactivateRPReview() {
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
 			// if (pRPObj->m_pObjectName->IsAttached()) {
-			//	pLogWld->DeactivateLocalObject (pRPObj->m_pObjectName);
+			//  pLogWld->DeactivateLocalObject (pRPObj->m_pObjectName);
 			pRPObj->m_pObjectName->SetFloating(FALSE);
 			pRPObj->m_pObjectName->SetVisible(FALSE);
 			pRPObj->m_pObjectName->SetActive(FALSE);
@@ -1046,8 +1054,8 @@ VOID CBagRPObject::EvaluateDossiers() {
 		// there, then lookup the suspect var and let the voice printing code know
 		// that this guy's DNA has shown up on some object.
 		if (pDosLObj->m_bDisplayDossier &&
-			pDosLObj->m_pDossier &&
-			pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == FALSE) {
+		        pDosLObj->m_pDossier &&
+		        pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == FALSE) {
 
 			if (pLogZWld == NULL) {
 				pLogZWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
@@ -1503,7 +1511,7 @@ VOID CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	}
 }
 
-// 	We're going to need to switch the PDA to log mode.
+//  We're going to need to switch the PDA to log mode.
 VOID CBagRPObject::ShowPDALog() {
 	CBagPDA *pPDA;
 	SBZoomPda *pZoomPDA;

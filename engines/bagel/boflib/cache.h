@@ -30,19 +30,19 @@ namespace Bagel {
 
 class CCache : private CLList {
 private:
-	VIRTUAL BOOL Alloc() = 0;		// These pure-virtuals MUST be defined
-	VIRTUAL VOID Free() = 0;		// in the derived class.
+	VIRTUAL BOOL Alloc() = 0;       // These pure-virtuals MUST be defined
+	VIRTUAL VOID Free() = 0;        // in the derived class.
 
-	STATIC CCache *m_pCacheList;	// linked cache list
-	STATIC ULONG m_lOldest;			// current oldest object in cache
-	STATIC ULONG m_lYoungest;		// current youngest object in cache
-	STATIC USHORT m_nEntries;		// number of CCache Objects
+	STATIC CCache *m_pCacheList;    // linked cache list
+	STATIC ULONG m_lOldest;         // current oldest object in cache
+	STATIC ULONG m_lYoungest;       // current youngest object in cache
+	STATIC USHORT m_nEntries;       // number of CCache Objects
 
-	ULONG m_lAge;		// age of this object
-	INT m_nLockCount;	// # of locks held on this object
-	BOOL m_bCached;		// TRUE if object is in the cache
+	ULONG m_lAge;       // age of this object
+	INT m_nLockCount;   // # of locks held on this object
+	BOOL m_bCached;     // TRUE if object is in the cache
 
-	BOOL m_bValid;		// TRUE if this object is valid
+	BOOL m_bValid;      // TRUE if this object is valid
 
 public:
 	/**
@@ -69,8 +69,12 @@ public:
 		m_nLockCount++;
 		Load();
 	}
-	VOID UnLock() { m_nLockCount--; }
-	BOOL IsLocked() { return (m_nLockCount > 0); }
+	VOID UnLock() {
+		m_nLockCount--;
+	}
+	BOOL IsLocked() {
+		return (m_nLockCount > 0);
+	}
 
 	/**
 	 * Initialize statics
@@ -84,10 +88,10 @@ public:
 
 	/**
 	 * Releases older objects from cache if need memory
-	 * @remarks		Optimizes cache so that the specified ammount of memory is left available.
-	 * @param lRequestedFreeSpace	Free space requested to remain available
-	 * @return		TRUE if there were any objects to release from the cache.
-	 *				FALSE if there were no objects released.
+	 * @remarks     Optimizes cache so that the specified ammount of memory is left available.
+	 * @param lRequestedFreeSpace   Free space requested to remain available
+	 * @return      TRUE if there were any objects to release from the cache.
+	 *              FALSE if there were no objects released.
 	 */
 	STATIC BOOL Optimize(ULONG lRequestedFreeSpace);
 };

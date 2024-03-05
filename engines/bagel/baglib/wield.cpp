@@ -31,7 +31,7 @@ INT CBagWield::m_nWieldCursor = -1;
 CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
 	m_xSDevType = SDEV_WIELD;
-	m_nObjects = 0;			// This should be changed on the attach
+	m_nObjects = 0;         // This should be changed on the attach
 	m_pCurrObj = nullptr;
 }
 

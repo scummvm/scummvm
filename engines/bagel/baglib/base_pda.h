@@ -80,10 +80,18 @@ public:
 	/**
 	 * Allows PDA mode to be set by script
 	 */
-	static VOID SetPDAMode(PDAMODE ePDAMode) { m_ePdaMode = ePDAMode; }
-	static PDAMODE GetPDAMode() { return m_ePdaMode; }
-	BOOL IsActivated() { return m_bActivating ? !m_bActivated : m_bActivated; }
-	BOOL IsActivating() { return m_bActivating; }
+	static VOID SetPDAMode(PDAMODE ePDAMode) {
+		m_ePdaMode = ePDAMode;
+	}
+	static PDAMODE GetPDAMode() {
+		return m_ePdaMode;
+	}
+	BOOL IsActivated() {
+		return m_bActivating ? !m_bActivated : m_bActivated;
+	}
+	BOOL IsActivating() {
+		return m_bActivating;
+	}
 
 	virtual ERROR_CODE AttachActiveObjects();
 	virtual ERROR_CODE DetachActiveObjects();
@@ -137,8 +145,8 @@ public:
 
 	/**
 	 * Set the movie to play
-	 * @param s			Movie filename
-	 * @return			Success/failure
+	 * @param s         Movie filename
+	 * @return          Success/failure
 	 */
 	BOOL SetMovie(CBofString &s); // Set the movie
 
@@ -147,8 +155,12 @@ public:
 	 */
 	VOID StopMovie(BOOL);
 
-	VOID SetDeactivate(BOOL b = FALSE) { m_bDeactivate = b; }
-	BOOL GetDeactivate() { return m_bDeactivate; }
+	VOID SetDeactivate(BOOL b = FALSE) {
+		m_bDeactivate = b;
+	}
+	BOOL GetDeactivate() {
+		return m_bDeactivate;
+	}
 
 	/**
 	 * Show the map
@@ -163,7 +175,9 @@ public:
 	/**
 	 * Zoom the current display
 	 */
-	virtual BOOL Zoom() { return TRUE; }
+	virtual BOOL Zoom() {
+		return TRUE;
+	}
 
 	virtual BOOL ShowLog();
 
@@ -171,13 +185,13 @@ public:
 
 	/**
 	 * Hide the current display and reset the m_xCurDisplay to nullptr
-	 * @return		Success/failure
+	 * @return      Success/failure
 	 */
 	virtual BOOL HideCurDisplay();
 
 	/**
 	 * Hide the current display and reset the m_xCurDisplay to nullptr
-	 * @return		Success/Failure
+	 * @return      Success/Failure
 	 */
 	virtual BOOL RestoreCurDisplay();
 
@@ -186,8 +200,12 @@ public:
 	VOID SetPDAState();
 	VOID GetPDAState();
 
-	VOID SetZoomed(BOOL b = FALSE) { m_bZoomed = b; }
-	BOOL GetZoomed() { return m_bZoomed; }
+	VOID SetZoomed(BOOL b = FALSE) {
+		m_bZoomed = b;
+	}
+	BOOL GetZoomed() {
+		return m_bZoomed;
+	}
 
 	INT GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
 

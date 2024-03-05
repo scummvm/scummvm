@@ -326,8 +326,8 @@ UBYTE CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
 #if BOF_WINDOWS
 /**
  * Creates a new palette based on specified palette
- * @param hPal		Palette to copy
- * @return			New palette
+ * @param hPal      Palette to copy
+ * @return          New palette
  */
 HPALETTE CopyWindowsPalette(HPALETTE hPal) {
 	LPLOGPALETTE ppal;

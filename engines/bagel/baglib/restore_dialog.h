@@ -59,7 +59,9 @@ public:
 		m_nBufSize = nLength;
 	}
 
-	BOOL Restored() { return m_bRestored; }
+	BOOL Restored() {
+		return m_bRestored;
+	}
 
 #if 1
 	virtual VOID OnInitDialog();

@@ -106,36 +106,66 @@ public:
 	BOOL Resume();
 	BOOL Stop();
 
-	CBofSound *GetNext() { return ((CBofSound *)m_pNext); }
-	CBofSound *GetPrev() { return ((CBofSound *)m_pPrev); }
+	CBofSound *GetNext() {
+		return ((CBofSound *)m_pNext);
+	}
+	CBofSound *GetPrev() {
+		return ((CBofSound *)m_pPrev);
+	}
 
-	CHAR *GetFileName() { return (&m_szFileName[0]); }
+	CHAR *GetFileName() {
+		return (&m_szFileName[0]);
+	}
 
-	VOID SetFlags(WORD wFlags) { m_wFlags = wFlags; }
-	WORD GetFlags() { return (m_wFlags); }
+	VOID SetFlags(WORD wFlags) {
+		m_wFlags = wFlags;
+	}
+	WORD GetFlags() {
+		return (m_wFlags);
+	}
 
-	BOOL Playing() { return (IsPlaying()); }
+	BOOL Playing() {
+		return (IsPlaying());
+	}
 
-	BOOL IsPlaying() { return (m_bPlaying); }
-	BOOL IsQueued() { return (m_bInQueue); }
+	BOOL IsPlaying() {
+		return (m_bPlaying);
+	}
+	BOOL IsQueued() {
+		return (m_bInQueue);
+	}
 
-	BOOL Paused() { return (m_bPaused); }
+	BOOL Paused() {
+		return (m_bPaused);
+	}
 
-	VOID SetQSlot(INT nSlot) { m_iQSlot = nSlot; }
-	INT GetQSlot() { return (m_iQSlot); }
+	VOID SetQSlot(INT nSlot) {
+		m_iQSlot = nSlot;
+	}
+	INT GetQSlot() {
+		return (m_iQSlot);
+	}
 
 	VOID SetVolume(INT nVol);
-	INT GetVolume() { return (m_nVol); }
+	INT GetVolume() {
+		return (m_nVol);
+	}
 
 	static VOID Initialize();
 	static VOID UnInitialize();
 	static VOID SetVolume(INT MidiVolume, INT WaveVolume);
 	static BOOL SoundAvailable();
 	static BOOL MidiAvailable();
-	static BOOL SoundVolumeAvailable() { return (m_bWaveVolume); }
-	static BOOL MidiVolumeAvailable() { return (m_bMidiVolume); }
+	static BOOL SoundVolumeAvailable() {
+		return (m_bWaveVolume);
+	}
+	static BOOL MidiVolumeAvailable() {
+		return (m_bMidiVolume);
+	}
 
-	static BOOL SoundPlaying() { return ((m_nCount > 0) ? TRUE : FALSE); }
+	static BOOL SoundPlaying() {
+		return ((m_nCount > 0) ? TRUE : FALSE);
+	}
 
 	static BOOL WaveSoundPlaying();
 	static BOOL MidiSoundPlaying();

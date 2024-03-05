@@ -168,10 +168,10 @@ typedef bool BOOLEAN;
 
 /**
  * Displays assertion failure
- * @param bExpression		Expression to evaluate (fail if false)
- * @param nLine				Source code line number of assertion
- * @param pszSourceFile		Source code file of assertion
- * @param pszTimeStamp		Time and date version of source file
+ * @param bExpression       Expression to evaluate (fail if false)
+ * @param nLine             Source code line number of assertion
+ * @param pszSourceFile     Source code file of assertion
+ * @param pszTimeStamp      Time and date version of source file
  */
 extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
 

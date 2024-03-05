@@ -37,16 +37,16 @@ class CBofDebugOptions: public CBofOptions {
 public:
 	/**
 	 * Constructor
-	 * @param pszFileName		Name of debug options file
+	 * @param pszFileName       Name of debug options file
 	 */
-    CBofDebugOptions(const CHAR *pszFileName);
+	CBofDebugOptions(const CHAR *pszFileName);
 
-    INT  m_nDebugLevel;
-    BOOL m_bAbortsOn;
-    BOOL m_bMessageBoxOn;
-    BOOL m_bRandomOn;
-    BOOL m_bShowIO;
-    BOOL m_bShowMessages;
+	INT  m_nDebugLevel;
+	BOOL m_bAbortsOn;
+	BOOL m_bMessageBoxOn;
+	BOOL m_bRandomOn;
+	BOOL m_bShowIO;
+	BOOL m_bShowMessages;
 };
 
 extern CBofLog *g_pDebugLog;
@@ -71,9 +71,9 @@ extern CBofDebugOptions *g_pDebugOptions;
 
 /**
  * Terminates current application and displays abort message
- * @param pszInfo		Message to be displayed
- * @param pszFile		Filename of where Abort takes place
- * @param				Line number in file
+ * @param pszInfo       Message to be displayed
+ * @param pszFile       Filename of where Abort takes place
+ * @param               Line number in file
 **/
 extern VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine);
 

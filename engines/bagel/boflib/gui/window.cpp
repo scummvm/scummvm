@@ -57,7 +57,7 @@ typedef SetEntriesProcPtr SetEntriesUPP;
 #endif
 
 #define NewSetEntriesProc(userRoutine) \
-	(SetEntriesUPP) NewRoutineDescriptor((ProcPtr)(userRoutine), uppSetEntriesProcInfo, GetCurrentArchitecture())
+    (SetEntriesUPP) NewRoutineDescriptor((ProcPtr)(userRoutine), uppSetEntriesProcInfo, GetCurrentArchitecture())
 
 SetEntriesUPP gOldSetEntries;
 SetEntriesUPP gNewSetEntries;
@@ -268,9 +268,9 @@ VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	pParent = m_pParentWnd;
 	while (pParent != nullptr) {
 #if BOF_MAC || BOF_WINMAC
-		//	jwl 07.02.96 On the mac, we have to make sure that
-		//	the grafport is our current grafport (i.e. the window
-		//	that we are validating).
+		//  jwl 07.02.96 On the mac, we have to make sure that
+		//  the grafport is our current grafport (i.e. the window
+		//  that we are validating).
 
 		if (pParent->m_pWindow) {
 #endif
@@ -627,7 +627,7 @@ VOID CBofWindow::Show() {
 #endif
 			::SetPort(m_pWindow);
 
-			//	generate an update event.
+			//  generate an update event.
 			InvalidateRect(&m_cRect);
 
 			m_bVisible = TRUE;
@@ -1110,14 +1110,14 @@ VOID CBofWindow::SelectPalette(CBofPalette *pPal) {
 		/*HDC hDC;
 
 		if ((hDC = GetDC()) != nullptr) {
-			::SelectPalette(hDC, pPal->GetPalette(), FALSE);
+		    ::SelectPalette(hDC, pPal->GetPalette(), FALSE);
 
-#if BOF_WINMAC
-			if (g_bRealizePalette)
-#endif
-			::RealizePalette(hDC);
+		#if BOF_WINMAC
+		    if (g_bRealizePalette)
+		#endif
+		    ::RealizePalette(hDC);
 
-			ReleaseDC(hDC);
+		    ReleaseDC(hDC);
 		}*/
 
 #if BOF_WINMAC
@@ -1214,7 +1214,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 			DisposePalette(hOldMainMacPal);
 	}
 
-	SetPalette((WindowPtr)-1, hMainMacPal, true);
+	SetPalette((WindowPtr) - 1, hMainMacPal, true);
 
 	SetPalette(myWindow, hMainMacPal, true);
 	ActivatePalette(myWindow);
@@ -1227,7 +1227,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 }
 #endif
 
-Graphics::ManagedSurface* CBofWindow::getSurface() {
+Graphics::ManagedSurface *CBofWindow::getSurface() {
 	error("TODO: Implement CBofWindow::getSurface");
 }
 
@@ -1697,7 +1697,7 @@ VOID CBofWindow::HandleMouseDown(EventRecord *pEvent) {
 		//
 		/*
 		else {
-			::SelectWindow(pMacWin);
+		    ::SelectWindow(pMacWin);
 		}
 		*/
 	}
@@ -2200,7 +2200,7 @@ VOID CBofWindow::FillRect(CBofRect *pRect, UBYTE iColor) {
 	// Can we just fill the backdrop?
 	//
 	// if (GetBackdrop()) {
-	//	GetBackdrop()->FillRect(pRect, iColor);
+	//  GetBackdrop()->FillRect(pRect, iColor);
 
 	// Otherwise, things get tough.
 	//
@@ -2472,22 +2472,22 @@ VOID CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest,
 	switch (psi.m_eItemID) {
 
 #if 0
-		case DISPOSEWINDOW:
+	case DISPOSEWINDOW:
 
-			gAllowPaletteShifts = false;
-			LMSetPaintWhite (FALSE);
-			::DisposeWindow (wp);
-			if (psi.m_nAssociatedItem != 0)
-				::SetPort((WindowPtr) psi.m_nAssociatedItem);
-			gAllowPaletteShifts = true;
-			break;
+		gAllowPaletteShifts = false;
+		LMSetPaintWhite(FALSE);
+		::DisposeWindow(wp);
+		if (psi.m_nAssociatedItem != 0)
+			::SetPort((WindowPtr) psi.m_nAssociatedItem);
+		gAllowPaletteShifts = true;
+		break;
 
-		case DISPOSEPALETTE:
+	case DISPOSEPALETTE:
 
-			gAllowPaletteShifts = false;
-			::DisposePalette ((PaletteHandle) psi.m_nItemOfInterest);
-			gAllowPaletteShifts = true;
-			break;
+		gAllowPaletteShifts = false;
+		::DisposePalette((PaletteHandle) psi.m_nItemOfInterest);
+		gAllowPaletteShifts = true;
+		break;
 #endif
 
 	default:
@@ -2519,8 +2519,8 @@ VOID CBofWindow::CheckPaletteShiftList() {
 				case SETPALETTE:
 
 					::SetPalette((WindowPtr)psi.m_nAssociatedItem,
-								 (PaletteHandle)psi.m_nItemOfInterest,
-								 false);
+					             (PaletteHandle)psi.m_nItemOfInterest,
+					             false);
 					break;
 
 				case SHOWWINDOW:
@@ -2641,9 +2641,9 @@ pascal void MySetEntries(short start, short count, CSpecArray aTable) {
 void InstallPalettePatch() {
 	if (!gPalettePatchesInstalled) {
 
-		//		gOldActivatePalette = GetToolboxTrapAddress(_ActivatePalette);
-		//		gNewActivatePalette = NewActivatePaletteProc(MyActivatePalette);
-		//		SetToolboxTrapAddress(gNewActivatePalette, _ActivatePalette);
+		//      gOldActivatePalette = GetToolboxTrapAddress(_ActivatePalette);
+		//      gNewActivatePalette = NewActivatePaletteProc(MyActivatePalette);
+		//      SetToolboxTrapAddress(gNewActivatePalette, _ActivatePalette);
 
 		gOldSetEntries = (SetEntriesUPP)GetToolboxTrapAddress(_SetEntries);
 		gNewSetEntries = NewSetEntriesProc(MySetEntries);
@@ -2653,8 +2653,8 @@ void InstallPalettePatch() {
 		SetToolboxTrapAddress((ProcPtr)gNewSetEntries, _SetEntries);
 #endif
 
-		//		gActivePalette = GetPalette((WindowPtr) -1);
-		//		gActivePaletteWindow = nullptr;
+		//      gActivePalette = GetPalette((WindowPtr) -1);
+		//      gActivePaletteWindow = nullptr;
 		gPalettePatchesInstalled = true;
 	}
 }

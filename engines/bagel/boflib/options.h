@@ -52,23 +52,23 @@ class CBofOptions : public CBofObject { // CCache
 private:
 	/**
 	 * Finds the specified INI section in current file
-	 * @param pszSection	INI section
-	 * @return				Pointer to option where this section starts
+	 * @param pszSection    INI section
+	 * @return              Pointer to option where this section starts
 	 */
 	COption *FindSection(const CHAR *pszSection);
 
 	/**
 	 * Finds the variable (option) in specified section
-	 * @param pszSection	INI section
-	 * @param pszVar		Variable name for this option
-	 * @return				Pointer to option containing this variable
+	 * @param pszSection    INI section
+	 * @param pszVar        Variable name for this option
+	 * @return              Pointer to option containing this variable
 	 */
 	COption *FindOption(const CHAR *pszSection, const CHAR *pszVar);
 
 	/**
 	 * Reads one line of text from specified file
-	 * @param pFile		Pointer to open file for reading
-	 * @param pszBuf	Buffer to fill with text read
+	 * @param pFile     Pointer to open file for reading
+	 * @param pszBuf    Buffer to fill with text read
 	 */
 	BOOL ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf);
 
@@ -80,8 +80,8 @@ protected:
 public:
 	/**
 	 * Constructor
-	 * @brief		Loads specified .INI file which contains user options.
-	 * @param pszOptionsFile	Name of .INI settings file
+	 * @brief       Loads specified .INI file which contains user options.
+	 * @param pszOptionsFile    Name of .INI settings file
 	**/
 	CBofOptions(const CHAR *pszOptionsFile = NULL);
 
@@ -92,66 +92,68 @@ public:
 
 	/**
 	 * Updates current option list file
-	 * @return		Error return code
+	 * @return      Error return code
 	 */
 	ERROR_CODE Commit();
 
 	/**
 	 * Loads specified .INI options file
-	 * @brief			Loads and builds Option list
-	 * @param pszFile	Name of .INI file to load
-	 * @return			Error return code
+	 * @brief           Loads and builds Option list
+	 * @param pszFile   Name of .INI file to load
+	 * @return          Error return code
 	**/
 	ERROR_CODE LoadOptionFile(const CHAR *pszFile);
 
-	const CHAR *GetFileName() const { return ((const CHAR *)m_szFileName); }
+	const CHAR *GetFileName() const {
+		return ((const CHAR *)m_szFileName);
+	}
 
 	/**
 	 * Adds or modifies 1 option in list
-	 * @param pszSection		Section in .INI file
-	 * @param pszOption			Option to update
-	 * @param pszValue			New value
-	 * @return					Error return code
+	 * @param pszSection        Section in .INI file
+	 * @param pszOption         Option to update
+	 * @param pszValue          New value
+	 * @return                  Error return code
 	 */
 	ERROR_CODE WriteSetting(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue);
 
 	/**
 	 * Adds or modifies 1 option in list
-	 * @param pszSection		Section in .INI file
-	 * @param pszOption			Option to update
-	 * @param pszValue			New value
-	 * @return					Error return code
+	 * @param pszSection        Section in .INI file
+	 * @param pszOption         Option to update
+	 * @param pszValue          New value
+	 * @return                  Error return code
 	 */
 	ERROR_CODE WriteSetting(const CHAR *pszSection, const CHAR *pszOption, INT nValue);
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection		Section in .INI file
-	 * @param pszOption			Option to update
-	 * @param pszValue			destination buffer for read value
-	 * @param pszDefault		Default value if not exists
-	 * @param nSize				Max length of pszValue buffer
-	 * @return					Error return code
+	 * @param pszSection        Section in .INI file
+	 * @param pszOption         Option to update
+	 * @param pszValue          destination buffer for read value
+	 * @param pszDefault        Default value if not exists
+	 * @param nSize             Max length of pszValue buffer
+	 * @return                  Error return code
 	 */
 	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize);
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection		Section in .INI file
-	 * @param pszOption			Option to update
-	 * @param nValue			Pointer to write value to
-	 * @param nDefault			Default value if not exists
-	 * @return					Error return code
+	 * @param pszSection        Section in .INI file
+	 * @param pszOption         Option to update
+	 * @param nValue            Pointer to write value to
+	 * @param nDefault          Default value if not exists
+	 * @return                  Error return code
 	 */
 	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, INT *nValue, INT nDefault);
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection		Section in .INI file
-	 * @param pszOption			Option to update
-	 * @param nValue			Pointer to write value to
-	 * @param nDefault			Default value if not exists
-	 * @return					Error return code
+	 * @param pszSection        Section in .INI file
+	 * @param pszOption         Option to update
+	 * @param nValue            Pointer to write value to
+	 * @param nDefault          Default value if not exists
+	 * @return                  Error return code
 	 */
 	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault) {
 		INT v;
@@ -162,7 +164,7 @@ public:
 
 	/**
 	 * Loads current .INI options file
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE Load();
 

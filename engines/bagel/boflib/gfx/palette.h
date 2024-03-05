@@ -89,7 +89,7 @@ public:
 
 	/**
 	 * Constructor that loads a palette from a file
-	 * @param pszFileName		filename
+	 * @param pszFileName       filename
 	 */
 	CBofPalette(const CHAR *pszFileName);
 
@@ -100,9 +100,9 @@ public:
 
 	/**
 	 * Loads palette from specified bitmap-file
-	 * @param pszFileName	Name of file to load palette from
-	 * @param nFlags		Flags for animation, etc...
-	 * @return				Error return Code
+	 * @param pszFileName   Name of file to load palette from
+	 * @param nFlags        Flags for animation, etc...
+	 * @return              Error return Code
 	 */
 	ERROR_CODE LoadPalette(const CHAR *pszFileName, USHORT nFlags = PAL_DEFAULT);
 
@@ -117,10 +117,12 @@ public:
 
 	/**
 	 * Assignes specified palette to this CBofPalette
-	 * @param hPal		Handle to windows palette
+	 * @param hPal      Handle to windows palette
 	 */
 	VOID SetPalette(const HPALETTE &hPalette);
-	HPALETTE GetPalette() { return m_hPalette; }
+	HPALETTE GetPalette() {
+		return m_hPalette;
+	}
 
 	virtual ~CBofPalette();
 
@@ -136,13 +138,13 @@ public:
 
 	/**
 	 * Called only in response to "SHAREDPAL=filename" in a script file
-	 * @param pszFileName		Palette filename
+	 * @param pszFileName       Palette filename
 	 */
 	static ERROR_CODE SetSharedPalette(const CHAR *pszFileName);
 
 	/**
 	 * Returns the current shared palette
-	 * @return		Pointer to shared palette
+	 * @return      Pointer to shared palette
 	 */
 	static CBofPalette *GetSharedPalette();
 };

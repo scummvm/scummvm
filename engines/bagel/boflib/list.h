@@ -34,17 +34,23 @@ namespace Bagel {
 template<class T>
 class CBofListNode {
 protected:
-	T m_cItem;				// data contained at this node
+	T m_cItem;              // data contained at this node
 
 public:
-	CBofListNode() { m_pNext = m_pPrev = nullptr; }
+	CBofListNode() {
+		m_pNext = m_pPrev = nullptr;
+	}
 	CBofListNode(T cItem) {
 		m_pNext = m_pPrev = nullptr;
 		m_cItem = cItem;
 	}
 
-	T GetNodeItem() { return (m_cItem); }
-	void SetNodeItem(T cItem) { m_cItem = cItem; }
+	T GetNodeItem() {
+		return (m_cItem);
+	}
+	void SetNodeItem(T cItem) {
+		m_cItem = cItem;
+	}
 
 	CBofListNode *m_pNext; // Next node in list
 	CBofListNode *m_pPrev; // previous node in list
@@ -111,8 +117,8 @@ private:
 
 	/**
 	 * Allocates a new CBofListNode with specified data
-	 * @param cItem		Data to store in new node
-	 * @returns			Pointer to new node
+	 * @param cItem     Data to store in new node
+	 * @returns         Pointer to new node
 	 */
 	CBofListNode<T> *NewNode(T cItem) {
 		CBofListNode<T> *pNewNode = new CBofListNode<T>(cItem);
@@ -121,9 +127,9 @@ private:
 
 	/**
 	 * Calculates the actual head of this linked list
-	 * @remarks		This function is used for debugging to verify that m_pHead
-	 *				is still pointing to the 1st node in the list.
-	 * @returns		Pointer to head of list
+	 * @remarks     This function is used for debugging to verify that m_pHead
+	 *              is still pointing to the 1st node in the list.
+	 * @returns     Pointer to head of list
 	 */
 	CBofListNode<T> *GetActualHead() {
 		CBofListNode<T> *pNode, *pLast;
@@ -139,9 +145,9 @@ private:
 
 	/**
 	 * Calculates the actual tail of this linked list
-	 * @remarks		This function is used for debugging to verify that m_pTail
-	 *				is still pointing to the last node in the list.
-	 * @returns		Pointer to tail of list
+	 * @remarks     This function is used for debugging to verify that m_pTail
+	 *              is still pointing to the last node in the list.
+	 * @returns     Pointer to tail of list
 	 */
 	CBofListNode<T> *GetActualTail() {
 		CBofListNode<T> *pNode, *pLast;
@@ -158,10 +164,10 @@ private:
 protected:
 	size_t m_nNumItems;
 	size_t m_nItemsAllocated;
-	CBofListNode<T> *m_pHead;		// pointer to head of list
-	CBofListNode<T> *m_pTail;		// pointer to tail of list
+	CBofListNode<T> *m_pHead;       // pointer to head of list
+	CBofListNode<T> *m_pTail;       // pointer to tail of list
 
-	void **m_pItemList;			// pointer to secondary node list
+	void **m_pItemList;         // pointer to secondary node list
 
 public:
 	/*
@@ -183,11 +189,13 @@ public:
 		assert(m_nNumItems == 0);
 	}
 
-	int GetCount() const { return m_nNumItems; }
+	int GetCount() const {
+		return m_nNumItems;
+	}
 
 	/**
 	 * Retrieves the number of items in this list
-	 * @returns		Returns the number of linked items in this linked list.
+	 * @returns     Returns the number of linked items in this linked list.
 	 */
 	int GetActualCount() const {
 #ifndef RELEASE_BUILD
@@ -212,12 +220,14 @@ public:
 	 * Returns true if the list is empty
 	 * @return
 	*/
-	bool IsEmpty() const { return m_pHead == nullptr; }
+	bool IsEmpty() const {
+		return m_pHead == nullptr;
+	}
 
 	/**
 	 * Retrieves the item at the specified location
-	 * @returns		Returns the item located at the node with given index.
-	 * @param nNodeIndex		Index of node to retrieve
+	 * @returns     Returns the item located at the node with given index.
+	 * @param nNodeIndex        Index of node to retrieve
 	 */
 	inline T GetNodeItem(int nNodeIndex) {
 		CBofListNode<T> *pNode = GetNode(nNodeIndex);
@@ -236,12 +246,14 @@ public:
 		pNode->SetNodeItem(tNewItem);
 	}
 
-	T operator[](int nIndex) { return GetNodeItem(nIndex); }
+	T operator[](int nIndex) {
+		return GetNodeItem(nIndex);
+	}
 
 	/**
 	 * Retrieves the node at the specified location
-	 * @returns		Returns the node located at the given index.
-	 * @param nIndex		Index of node to retrieve
+	 * @returns     Returns the node located at the given index.
+	 * @param nIndex        Index of node to retrieve
 	 */
 	CBofListNode<T> *GetNode(int nNodeIndex) {
 		assert(nNodeIndex >= 0 && nNodeIndex < GetCount());
@@ -266,8 +278,8 @@ public:
 
 	/**
 	 * Inserts a new node as the previous node to the one specified
-	 * @param nNodeIndex	Index of node to insert before
-	 * @param cNewItem		Data to store at new node
+	 * @param nNodeIndex    Index of node to insert before
+	 * @param cNewItem      Data to store at new node
 	 */
 	void InsertBefore(int nNodeIndex, T cNewItem) {
 		assert(!IsEmpty());
@@ -276,8 +288,8 @@ public:
 
 	/**
 	 * Inserts a new node as the previous node to the one specified
-	 * @param pNode			Node to insert before
-	 * @param cNewItem		Data to store at new node
+	 * @param pNode         Node to insert before
+	 * @param cNewItem      Data to store at new node
 	 */
 	void InsertBefore(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
@@ -309,8 +321,8 @@ public:
 
 	/**
 	 * Inserts a new node as the next node to the one specified
-	 * @param nNodeIndex		Index of node to insert after
-	 * @param cNewItem			Data to store at new node
+	 * @param nNodeIndex        Index of node to insert after
+	 * @param cNewItem          Data to store at new node
 	 */
 	void InsertAfter(int nNodeIndex, T cNewItem) {
 		assert(!IsEmpty());
@@ -319,8 +331,8 @@ public:
 
 	/**
 	 * Inserts a new node as the next node to the one specified
-	 * @param pNode				Node to insert after
-	 * @param cNewItem			Data to store at new node
+	 * @param pNode             Node to insert after
+	 * @param cNewItem          Data to store at new node
 	 */
 	void InsertAfter(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
@@ -351,8 +363,8 @@ public:
 
 	/**
 	 * Removes specfied node from the list
-	 * @param pNode				Node to remove
-	 * @returns					Item stored at specified location
+	 * @param pNode             Node to remove
+	 * @returns                 Item stored at specified location
 	 */
 	T Remove(CBofListNode<T> *pNode) {
 		assert(pNode != nullptr);
@@ -391,8 +403,8 @@ public:
 
 	/**
 	 * Removes specfied node (by index) from the list
-	 * @param nNodeIndex		Index of node to remove
-	 * @returns					Item stored at specified location
+	 * @param nNodeIndex        Index of node to remove
+	 * @returns                 Item stored at specified location
 	 */
 	T Remove(int nNodeIndex) {
 		return Remove(GetNode(nNodeIndex));
@@ -400,7 +412,7 @@ public:
 
 	/**
 	 * Removes all nodes from this list
-	 * @remarks		Deletes all memory used by the nodes in this list
+	 * @remarks     Deletes all memory used by the nodes in this list
 	 */
 	void RemoveAll() {
 		int i = GetCount();
@@ -411,7 +423,7 @@ public:
 
 	/**
 	 * Removes specfied node (by index) from the list
-	 * @returns		Item stored at specified location
+	 * @returns     Item stored at specified location
 	 */
 	inline T RemoveHead() {
 		assert(m_pHead != nullptr);
@@ -421,7 +433,7 @@ public:
 
 	/**
 	 * Removes specfied node (by index) from the list
-	 * @returns		Item stored at specified location
+	 * @returns     Item stored at specified location
 	 */
 	inline T RemoveTail() {
 		assert(m_pTail != nullptr);
@@ -430,7 +442,7 @@ public:
 
 	/**
 	 * Adds specified node as the new head of this list
-	 * @param pNode		Pointer to node to add to the list
+	 * @param pNode     Pointer to node to add to the list
 	 */
 	inline void AddToHead(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
@@ -453,7 +465,7 @@ public:
 
 	/**
 	 * Adds specified item as the new head of this list
-	 * @param cItem		Item to add to the list
+	 * @param cItem     Item to add to the list
 	 */
 	inline void AddToHead(T cItem) {
 		AddToHead(NewNode(cItem));
@@ -461,7 +473,7 @@ public:
 
 	/**
 	 * Adds specified node as the new tail of this list
-	 * @param pNode		Pointer to node to add to the list
+	 * @param pNode     Pointer to node to add to the list
 	 */
 	void AddToTail(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
@@ -483,14 +495,18 @@ public:
 
 	/**
 	 * Adds specified item as the new tail of this list
-	 * @param cItem		Item to add to the list
+	 * @param cItem     Item to add to the list
 	 */
 	void AddToTail(T cItem) {
 		AddToTail(NewNode(cItem));
 	}
 
-	CBofListNode<T> *GetHead() const { return m_pHead; }
-	CBofListNode<T> *GetTail() const { return m_pTail; }
+	CBofListNode<T> *GetHead() const {
+		return m_pHead;
+	}
+	CBofListNode<T> *GetTail() const {
+		return m_pTail;
+	}
 };
 
 } // namespace Bagel

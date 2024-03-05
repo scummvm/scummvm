@@ -98,43 +98,81 @@ public:
 	virtual ERROR_CODE RunApp();
 	virtual ERROR_CODE ShutDown();
 
-	VOID SetAppName(const CHAR *pszNewAppName) { Common::strcpy_s(m_szAppName, pszNewAppName); }
+	VOID SetAppName(const CHAR *pszNewAppName) {
+		Common::strcpy_s(m_szAppName, pszNewAppName);
+	}
 
-	const CHAR *GetAppName() { return (const CHAR *)m_szAppName; }
+	const CHAR *GetAppName() {
+		return (const CHAR *)m_szAppName;
+	}
 
-	VOID SetMainWindow(CBofWindow *pWnd) { m_pMainWnd = pWnd; }
-	CBofWindow *GetMainWindow() { return m_pMainWnd; }
+	VOID SetMainWindow(CBofWindow *pWnd) {
+		m_pMainWnd = pWnd;
+	}
+	CBofWindow *GetMainWindow() {
+		return m_pMainWnd;
+	}
 
-	CBofWindow *GetActualWindow() { return m_pWindow; }
+	CBofWindow *GetActualWindow() {
+		return m_pWindow;
+	}
 
 	VOID SetPalette(CBofPalette *pPalette);
-	CBofPalette *GetPalette() { return m_pPalette; }
+	CBofPalette *GetPalette() {
+		return m_pPalette;
+	}
 
-	INT ScreenWidth() { return m_nScreenDX; }
-	INT ScreenHeight() { return m_nScreenDY; }
-	INT ScreenDepth() { return m_nColorDepth; }
+	INT ScreenWidth() {
+		return m_nScreenDX;
+	}
+	INT ScreenHeight() {
+		return m_nScreenDY;
+	}
+	INT ScreenDepth() {
+		return m_nColorDepth;
+	}
 
-	CBofCursor GetDefaultCursor() { return m_cDefaultCursor; }
-	VOID SetDefaultCursor(CBofCursor &cCursor) { m_cDefaultCursor = cCursor; }
+	CBofCursor GetDefaultCursor() {
+		return m_cDefaultCursor;
+	}
+	VOID SetDefaultCursor(CBofCursor &cCursor) {
+		m_cDefaultCursor = cCursor;
+	}
 
 #if !BOF_WIN16
 	VOID AddCursor(CBofCursor &cCursor);
 	VOID DelCursor(INT nIndex);
-	CBofCursor GetCursor(INT nIndex) { return m_cCursorList[nIndex]; }
-	INT GetNumberOfCursors() { return m_cCursorList.GetCount(); }
+	CBofCursor GetCursor(INT nIndex) {
+		return m_cCursorList[nIndex];
+	}
+	INT GetNumberOfCursors() {
+		return m_cCursorList.GetCount();
+	}
 #endif
 
-	static CBofApp *GetApp() { return m_pBofApp; }
-	static ULONG GetMachineSpeed() { return m_lCPUSpeed; }
+	static CBofApp *GetApp() {
+		return m_pBofApp;
+	}
+	static ULONG GetMachineSpeed() {
+		return m_lCPUSpeed;
+	}
 	static VOID CalcCPUSpeed();
 
 #if BOF_WINDOWS
-	HDIGDRIVER GetDriver() { return m_hDriver; }
-	HMDIDRIVER GetMidiDriver() { return m_hMidiDriver; }
+	HDIGDRIVER GetDriver() {
+		return m_hDriver;
+	}
+	HMDIDRIVER GetMidiDriver() {
+		return m_hMidiDriver;
+	}
 
-	static VOID SetInstanceHandle(HINSTANCE hInstance) { m_hInstance = hInstance; }
+	static VOID SetInstanceHandle(HINSTANCE hInstance) {
+		m_hInstance = hInstance;
+	}
 
-	static HINSTANCE GetInstanceHandle() { return m_hInstance; }
+	static HINSTANCE GetInstanceHandle() {
+		return m_hInstance;
+	}
 #elif BOF_MAC
 
 #endif

@@ -60,27 +60,39 @@ public:
 
 	CBofRect GetRect();
 
-	CBofSize GetSize() const { return CBofSize(m_nDX, m_nDY); }
+	CBofSize GetSize() const {
+		return CBofSize(m_nDX, m_nDY);
+	}
 	VOID SetSize(const CBofSize &xSize) {
 		m_nDX = (SHORT)xSize.cx;
 		m_nDY = (SHORT)xSize.cy;
 	}
 
-	INT GetPointSize() const { return m_nPointSize; }
+	INT GetPointSize() const {
+		return m_nPointSize;
+	}
 	VOID SetPointSize(INT xSize) {
 		Assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (UBYTE)xSize;
 	}
-	INT GetColor() const { return 0; }
+	INT GetColor() const {
+		return 0;
+	}
 	VOID SetColor(int nColor);
 
 	// Font support for text objects
-	INT GetFont() const { return m_nTextFont; }
-	VOID SetFont(INT nFont) { m_nTextFont = nFont; }
+	INT GetFont() const {
+		return m_nTextFont;
+	}
+	VOID SetFont(INT nFont) {
+		m_nTextFont = nFont;
+	}
 
 	virtual BOOL RunObject();
 
-	const CBofString *GetInitInfo() const { return m_psInitInfo; }
+	const CBofString *GetInitInfo() const {
+		return m_psInitInfo;
+	}
 	VOID SetInitInfo(const CBofString &info) {
 		if (m_psInitInfo)
 			delete m_psInitInfo;
@@ -88,7 +100,9 @@ public:
 		*m_psInitInfo = info;
 	}
 
-	CBofString *GetPSText() const { return m_psText; }
+	CBofString *GetPSText() const {
+		return m_psText;
+	}
 	VOID SetPSText(CBofString *p);
 
 	const CBofString &GetText();
@@ -106,16 +120,26 @@ public:
 	VOID SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	BOOL IsCaption() const { return m_bCaption; }
+	BOOL IsCaption() const {
+		return m_bCaption;
+	}
 
-	VOID SetTitle(BOOL b = TRUE) { m_bTitle = b; }
-	BOOL IsTitle() const { return m_bTitle; }
+	VOID SetTitle(BOOL b = TRUE) {
+		m_bTitle = b;
+	}
+	BOOL IsTitle() const {
+		return m_bTitle;
+	}
 
 	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
 	virtual BOOL OnLButtonUp(UINT, CBofPoint, void * = nullptr);
 
-	VOID SetRPObject(CBagObject *prp) { m_pRPObject = prp; }
-	CBagObject *GetRPObject() const { return m_pRPObject; }
+	VOID SetRPObject(CBagObject *prp) {
+		m_pRPObject = prp;
+	}
+	CBagObject *GetRPObject() const {
+		return m_pRPObject;
+	}
 };
 
 } // namespace Bagel

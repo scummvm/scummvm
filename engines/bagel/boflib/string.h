@@ -44,7 +44,7 @@ public:
 
 	/**
 	 * Construct a string from a null terminated string
-	 * @param pszBuf		Source string
+	 * @param pszBuf        Source string
 	 */
 	CBofString(const CHAR *pszBuf);
 
@@ -55,22 +55,22 @@ public:
 
 	/**
 	 * Construct a string with a single character repeated a number of times
-	 * @param ch		Character to use
-	 * @param nRepeat	Number of repeats
+	 * @param ch        Character to use
+	 * @param nRepeat   Number of repeats
 	 */
 	CBofString(CHAR ch, INT nRepeat = 1);
 
 	/**
 	 * Constructs a string, and sets initial buffer size
-	 * @param nLength		String length
+	 * @param nLength       String length
 	 */
 	CBofString(INT nLength);
 
 	/**
 	 * Construct a string based on a subset of a passed null terminated string
-	 * @brief	This modifies the passed source string to null terminate the substring
-	 * @param pszBuff		Source string
-	 * @param pszBuffLen	Substring length
+	 * @brief   This modifies the passed source string to null terminate the substring
+	 * @param pszBuff       Source string
+	 * @param pszBuffLen    Substring length
 	 */
 	CBofString(CHAR *pszBuff, INT pszBuffLen);
 
@@ -81,9 +81,15 @@ public:
 
 	// Attributes & Operations
 
-	INT GetBufferSize() const { return NORMALIZEBUFFERSIZE(); }
-	INT GetLength() const { return m_nLength; }
-	BOOL IsEmpty() const { return m_nLength == 0; }
+	INT GetBufferSize() const {
+		return NORMALIZEBUFFERSIZE();
+	}
+	INT GetLength() const {
+		return m_nLength;
+	}
+	BOOL IsEmpty() const {
+		return m_nLength == 0;
+	}
 
 	/**
 	 * De-Allocates internal buffer for current CBofString
@@ -96,7 +102,9 @@ public:
 	CHAR operator[](INT nIndex); // same as GetAt
 	VOID SetAt(INT nIndex, CHAR ch);
 
-	operator const CHAR *() const { return (const CHAR *)m_pszData; }
+	operator const CHAR *() const {
+		return (const CHAR *)m_pszData;
+	}
 
 	// Hashing support.
 	//
@@ -105,7 +113,7 @@ public:
 	// Overloaded assignment
 	/**
 	 * Copies specified string into current CBofString
-	 * @param pszBuf	Buffer to copy
+	 * @param pszBuf    Buffer to copy
 	 */
 	VOID Copy(const CHAR *pszSourceBuf);
 
@@ -186,7 +194,7 @@ protected:
 
 	/**
 	 * Allocates internal buffer for current CBofString
-	 * @param nLen		Initial buffer size
+	 * @param nLen      Initial buffer size
 	 */
 	VOID AllocBuffer(INT nLen);
 

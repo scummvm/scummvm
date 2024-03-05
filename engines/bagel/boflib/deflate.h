@@ -30,14 +30,14 @@ namespace Bagel {
 /**
  * Huffman Encoding after Compression with 32k Sliding dictionary.
  * Will deflate Input file and store it in zipFile data area
- * @return		Error return code
+ * @return      Error return code
  *
 **/
 extern ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT factor, ULONG *pCrc, ULONG *pCompressedSize);
 
 /**
  * Inflate a Deflated file from the zipFile data area
- * @return		Error return code
+ * @return      Error return code
 **/
 extern ERROR_CODE Inflate(UBYTE *pDstBuf, INT nDstBufSize, UBYTE *pSrcBuf, INT nSrcBufSize, ULONG lOriginalCrc);
 

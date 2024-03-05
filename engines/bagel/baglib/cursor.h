@@ -43,32 +43,58 @@ public:
 		m_nX = x;
 		m_nY = y;
 	}
-	VOID SetHotSpot(CBofPoint cPoint) { SetHotSpot(cPoint.x, cPoint.y); }
-	CBofPoint GetHotSpot() { return CBofPoint(m_nX, m_nY); }
+	VOID SetHotSpot(CBofPoint cPoint) {
+		SetHotSpot(cPoint.x, cPoint.y);
+	}
+	CBofPoint GetHotSpot() {
+		return CBofPoint(m_nX, m_nY);
+	}
 
-	INT GetX() { return m_nX; }
-	INT GetY() { return m_nY; }
+	INT GetX() {
+		return m_nX;
+	}
+	INT GetY() {
+		return m_nY;
+	}
 
-	ERROR_CODE Load() { return Load(m_szFileName); }
+	ERROR_CODE Load() {
+		return Load(m_szFileName);
+	}
 	ERROR_CODE Load(CBofBitmap *pBmp);
 	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = nullptr);
 
 	VOID UnLoad();
 
-	CBofBitmap *GetImage() { return m_pBmp; }
-	ERROR_CODE SetImage(CBofBitmap *pBmp) { return Load(pBmp); }
+	CBofBitmap *GetImage() {
+		return m_pBmp;
+	}
+	ERROR_CODE SetImage(CBofBitmap *pBmp) {
+		return Load(pBmp);
+	}
 
-	VOID SetCurrent() { m_pCurrentCursor = this; }
-	static CBagCursor *GetCurrent() { return m_pCurrentCursor; }
+	VOID SetCurrent() {
+		m_pCurrentCursor = this;
+	}
+	static CBagCursor *GetCurrent() {
+		return m_pCurrentCursor;
+	}
 
 	/**
 	 * Flag whether this is a wielded cursor or not
 	 */
-	VOID SetWieldCursor(BOOL b = FALSE) { m_bWieldCursor = b; }
-	BOOL IsWieldCursor() const { return m_bWieldCursor; }
+	VOID SetWieldCursor(BOOL b = FALSE) {
+		m_bWieldCursor = b;
+	}
+	BOOL IsWieldCursor() const {
+		return m_bWieldCursor;
+	}
 
-	VOID Show() { SetCurrent(); }
-	VOID Hide() { m_pCurrentCursor = nullptr; }
+	VOID Show() {
+		SetCurrent();
+	}
+	VOID Hide() {
+		m_pCurrentCursor = nullptr;
+	}
 
 private:
 	static CBagCursor *m_pCurrentCursor;

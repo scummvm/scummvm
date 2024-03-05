@@ -119,8 +119,12 @@ public:
 	virtual BOOL        ShowMovie(void);
 	virtual BOOL        HideMovie(void);
 
-	SmackBuf            *GetSmackBuffer(void)  { return m_pSbuf; }
-	Smack               *GetSmackMovie(void)   { return m_pSmk; }
+	SmackBuf            *GetSmackBuffer(void)  {
+		return m_pSbuf;
+	}
+	Smack               *GetSmackMovie(void)   {
+		return m_pSmk;
+	}
 };
 
 ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect = NULL);

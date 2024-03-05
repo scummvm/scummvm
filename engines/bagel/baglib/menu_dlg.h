@@ -65,7 +65,9 @@ public:
 	// BOOL AddUniversalObject(CBagObject *pObj);
 	static BOOL RemoveUniversalObjectList();
 	static BOOL SetUniversalObjectList(CBofList<CBagObject *> *pObjList);
-	static CBofList<CBagObject *> *GetUniversalObjectList() { return m_pUniversalObjectList; }
+	static CBofList<CBagObject *> *GetUniversalObjectList() {
+		return m_pUniversalObjectList;
+	}
 
 	CBagObject *OnNewSpriteObject(const CBofString &);
 };

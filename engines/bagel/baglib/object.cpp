@@ -185,7 +185,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			MACROREPLACE(s);
 			SetFileName(s);
 			break;
-		} 
+		}
 		//
 		//  { menu objects .... }  - Add menu items
 		//
@@ -209,7 +209,8 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			CBofString s(szBuff, 256);
 
 			m_pMenu->LoadFile(istr, s, FALSE);
-		} break;
+		}
+		break;
 		//
 		//  ^id;  - Set id
 		//
@@ -228,7 +229,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 				SetRefName(s);
 			}
 			break;
-		} 
+		}
 		//
 		//  *state;  - Set state
 		//
@@ -238,7 +239,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			GetIntFromStream(istr, nState);
 			SetState(nState);
 			break;
-		} 
+		}
 		//
 		//  %cusror;  - Set cursor
 		//
@@ -248,7 +249,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			GetIntFromStream(istr, nCursor);
 			SetOverCursor(nCursor);
 			break;
-		} 
+		}
 		//
 		//  [left,top,right,bottom]  - Set position
 		//
@@ -261,7 +262,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			if (r.Width() && r.Height())
 				SetSize(CSize(r.Width(), r.Height()));
 			break;
-		} 
+		}
 		//
 		//  IS [NOT] [MOVABLE|MODAL|VISIBLE|STRETCHABLE|HIGHLIGHT|ACTIVE|TRANSPARENT|HIDE_ON_CLICK|IMMEDIATE_RUN|LOCAL|CONSTANT_UPDATE|PRELOAD|FOREGROUND]
 		//
@@ -324,7 +325,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			}
 			rc = UPDATED_OBJECT;
 			break;
-		} 
+		}
 		//
 		//  ; is the end of the line, exit this object
 		//
@@ -366,7 +367,7 @@ BOOL CBagObject::OnLButtonUp(UINT nFlags, CBofPoint /*xPoint*/, void *) {
 }
 
 BOOL CBagObject::OnMouseMove(UINT /*nFlags*/, CPoint /*xPoint*/, void *) {
-		return FALSE;
+	return FALSE;
 }
 
 const CBofString &CBagObject::GetRefName(VOID) {

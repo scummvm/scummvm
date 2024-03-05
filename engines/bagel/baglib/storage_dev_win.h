@@ -56,10 +56,18 @@ public:
 		m_nResId = 0;
 	}
 
-	VOID SetResource(LPCTSTR lpszResourceName) { m_lpszResourceName = lpszResourceName; }
-	VOID SetResource(UINT nResId) { m_nResId = nResId; }
-	const LPCTSTR GetResourceName() { return m_lpszResourceName; }
-	UINT GetResourceId() { return m_nResId; }
+	VOID SetResource(LPCTSTR lpszResourceName) {
+		m_lpszResourceName = lpszResourceName;
+	}
+	VOID SetResource(UINT nResId) {
+		m_nResId = nResId;
+	}
+	const LPCTSTR GetResourceName() {
+		return m_lpszResourceName;
+	}
+	UINT GetResourceId() {
+		return m_nResId;
+	}
 };
 
 // Filter function function prototype.
@@ -95,7 +103,7 @@ private:
 	CBofPoint m_xPrevLocation; // Previous view location in bmp.
 
 	CBagObject *m_pLActiveObject; // The last object selected on mouse down
-	// CBagObject 		   *m_pRActiveObject;		// The last object selected on mouse down
+	// CBagObject          *m_pRActiveObject;       // The last object selected on mouse down
 
 	CBofList<CBagObject *> *m_pObjectList;         // Objects to be painted to the pan
 	CBofList<CBagExpression *> *m_pExpressionList; // Condition for painting to the pan
@@ -142,23 +150,41 @@ public:
 	 */
 	VOID MakeListDirty(CBofList<CBagObject *> *pList);
 
-	VOID SetDiskID(USHORT nDiskID) { m_nDiskID = nDiskID; }
-	USHORT GetDiskID() { return m_nDiskID; }
+	VOID SetDiskID(USHORT nDiskID) {
+		m_nDiskID = nDiskID;
+	}
+	USHORT GetDiskID() {
+		return m_nDiskID;
+	}
 
-	virtual ERROR_CODE SetLoadFilePos(const CBofPoint) { return ERR_NONE; }
+	virtual ERROR_CODE SetLoadFilePos(const CBofPoint) {
+		return ERR_NONE;
+	}
 
-	BOOL IsCloseup() { return m_bCloseup; }
-	VOID SetCloseup(BOOL b = TRUE) { m_bCloseup = b; }
+	BOOL IsCloseup() {
+		return m_bCloseup;
+	}
+	VOID SetCloseup(BOOL b = TRUE) {
+		m_bCloseup = b;
+	}
 
 	// Set true if sdef is "AS CIC"
 	BOOL IsCIC();
-	VOID SetCIC(BOOL b = TRUE) { m_bCIC = b; }
+	VOID SetCIC(BOOL b = TRUE) {
+		m_bCIC = b;
+	}
 
 	// Set to true if this is a hand coded closeup
-	BOOL IsCustom() { return m_bCustom; }
-	VOID SetCustom(BOOL b = TRUE) { m_bCustom = b; }
+	BOOL IsCustom() {
+		return m_bCustom;
+	}
+	VOID SetCustom(BOOL b = TRUE) {
+		m_bCustom = b;
+	}
 
-	INT GetDeviceType() { return m_xSDevType; }
+	INT GetDeviceType() {
+		return m_xSDevType;
+	}
 
 	INT GetObjectCount();
 	CBagObject *GetObjectByPos(INT nIndex);
@@ -166,17 +192,27 @@ public:
 	CBagObject *GetObject(const CBofPoint &xPoint, BOOL bActiveOnly = FALSE);
 	CBagObject *GetObject(const CBofString &sName, BOOL bActiveOnly = FALSE);
 	CBagObject *GetObjectByType(const CBofString &sName, BOOL bActiveOnly = FALSE);
-	CBofPoint &GetLastCursorLocation() { return m_xCursorLocation; }
+	CBofPoint &GetLastCursorLocation() {
+		return m_xCursorLocation;
+	}
 	CBofList<CBagObject *> *
-	GetObjectList() { return m_pObjectList; }
+	GetObjectList() {
+		return m_pObjectList;
+	}
 	VOID SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
 	BOOL Contains(CBagObject *pObj, BOOL bActive = TRUE);
 
-	// virtual CBofRect	GetLocation()						{ return CBofRect(); }
-	CBofRect GetRect() { return m_cDestRect; }
-	VOID SetRect(const CBofRect &xRect) { m_cDestRect = xRect; }
-	CBofPoint GetPosition() { return m_cDestRect.TopLeft(); }
+	// virtual CBofRect GetLocation()                       { return CBofRect(); }
+	CBofRect GetRect() {
+		return m_cDestRect;
+	}
+	VOID SetRect(const CBofRect &xRect) {
+		m_cDestRect = xRect;
+	}
+	CBofPoint GetPosition() {
+		return m_cDestRect.TopLeft();
+	}
 	VOID SetPosition(const CBofPoint &pos);
 
 	virtual ERROR_CODE AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
@@ -191,41 +227,77 @@ public:
 
 	virtual VOID SetHelpFilename(const CBofString &) {}
 
-	const CBofString &GetName() { return m_sName; }
-	VOID SetName(const CBofString &str) { m_sName = str; }
+	const CBofString &GetName() {
+		return m_sName;
+	}
+	VOID SetName(const CBofString &str) {
+		m_sName = str;
+	}
 
-	VOID SetFilterId(USHORT nId) { m_nFilterId = nId; }
-	USHORT GetFilterId() { return m_nFilterId; }
+	VOID SetFilterId(USHORT nId) {
+		m_nFilterId = nId;
+	}
+	USHORT GetFilterId() {
+		return m_nFilterId;
+	}
 
-	VOID SetFadeId(USHORT nId) { m_nFadeId = nId; }
-	USHORT GetFadeId() { return m_nFadeId; }
+	VOID SetFadeId(USHORT nId) {
+		m_nFadeId = nId;
+	}
+	USHORT GetFadeId() {
+		return m_nFadeId;
+	}
 
-	const CBofString &GetPrevSDev() { return m_sPrevSDev; }
-	const CBofPoint GetPrevLoc() { return m_xPrevLocation; }
-	VOID SetPrevSDev(const CBofString &str) { m_sPrevSDev = str; }
+	const CBofString &GetPrevSDev() {
+		return m_sPrevSDev;
+	}
+	const CBofPoint GetPrevLoc() {
+		return m_xPrevLocation;
+	}
+	VOID SetPrevSDev(const CBofString &str) {
+		m_sPrevSDev = str;
+	}
 
-	BOOL GetCloseOnOpen() { return m_bCloseOnOpen; }
-	VOID SetCloseOnOpen(BOOL bVal) { m_bCloseOnOpen = bVal; }
+	BOOL GetCloseOnOpen() {
+		return m_bCloseOnOpen;
+	}
+	VOID SetCloseOnOpen(BOOL bVal) {
+		m_bCloseOnOpen = bVal;
+	}
 
-	BOOL GetContainsModal() { return m_bContainsModal; }
-	VOID SetContainsModal(BOOL bVal) { m_bContainsModal = bVal; }
+	BOOL GetContainsModal() {
+		return m_bContainsModal;
+	}
+	VOID SetContainsModal(BOOL bVal) {
+		m_bContainsModal = bVal;
+	}
 
-	USHORT GetExitOnEdge() { return m_nExitOnEdge; }
-	VOID SetExitOnEdge(USHORT nVal) { m_nExitOnEdge = nVal; }
+	USHORT GetExitOnEdge() {
+		return m_nExitOnEdge;
+	}
+	VOID SetExitOnEdge(USHORT nVal) {
+		m_nExitOnEdge = nVal;
+	}
 
-	CBagObject *GetLActiveObject() { return m_pLActiveObject; }
-	// CBagObject* 		GetRActiveObject() 					{ return m_pRActiveObject; }
+	CBagObject *GetLActiveObject() {
+		return m_pLActiveObject;
+	}
+	// CBagObject*      GetRActiveObject()                  { return m_pRActiveObject; }
 	ERROR_CODE SetLActiveObject(CBagObject *pObj) {
 		m_pLActiveObject = pObj;
 		return ERR_NONE;
 	}
-	// ERROR_CODE			SetRActiveObject(CBagObject* pObj) 	{ m_pRActiveObject = pObj; return 0;}
+	// ERROR_CODE           SetRActiveObject(CBagObject* pObj)  { m_pRActiveObject = pObj; return 0;}
 
 	virtual ERROR_CODE OnLActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	// virtual ERROR_CODE 	OnRActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	// virtual ERROR_CODE   OnRActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	MOUSE_ACTIVITY GetLActivity() { return m_nCurrMouseActivity; }
-	VOID SetLActivity(MOUSE_ACTIVITY ma) { m_nCurrMouseActivity = ma; }
+	MOUSE_ACTIVITY GetLActivity() {
+		return m_nCurrMouseActivity;
+	}
+	VOID SetLActivity(MOUSE_ACTIVITY ma) {
+		m_nCurrMouseActivity = ma;
+	}
 
 	ERROR_CODE PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
@@ -233,14 +305,20 @@ public:
 
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
-	virtual VOID SetAssociateWnd(CBofWindow *pWnd) { m_pAssociateWnd = pWnd; }
-	virtual CBofWindow *GetAssociateWnd() { return m_pAssociateWnd; }
+	virtual VOID SetAssociateWnd(CBofWindow *pWnd) {
+		m_pAssociateWnd = pWnd;
+	}
+	virtual CBofWindow *GetAssociateWnd() {
+		return m_pAssociateWnd;
+	}
 
 	virtual PARSE_CODES SetInfo(bof_ifstream &fpInput); // This function call the pure virt set background
 
 	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *GetBackground() = 0;                // Think about it, you can figure this out
-	const CBofString &GetBackgroundName() { return m_sBackgroundName; }
+	const CBofString &GetBackgroundName() {
+		return m_sBackgroundName;
+	}
 
 	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
 	virtual ERROR_CODE Detach(); // This function attachs the background and nessasary bitmaps
@@ -249,13 +327,17 @@ public:
 
 	virtual ERROR_CODE LoadObjects();
 	virtual ERROR_CODE ReleaseObjects();
-	// virtual ERROR_CODE	InsertObjects(CBagObject *);
+	// virtual ERROR_CODE   InsertObjects(CBagObject *);
 	virtual ERROR_CODE NoObjectsUnderMouse();
 
-	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint) { return xPoint; }
-	virtual const CBofPoint ViewPortToDevPt(const CBofPoint &xPoint) { return xPoint; }
+	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint) {
+		return xPoint;
+	}
+	virtual const CBofPoint ViewPortToDevPt(const CBofPoint &xPoint) {
+		return xPoint;
+	}
 
-	// virtual ERROR_CODE	SaveFile(ostream& fpOutput);
+	// virtual ERROR_CODE   SaveFile(ostream& fpOutput);
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
@@ -263,9 +345,11 @@ public:
 	virtual ERROR_CODE OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	// virtual ERROR_CODE	OnLButtonDblClk(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	// virtual ERROR_CODE   OnLButtonDblClk(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	virtual ERROR_CODE OnCursorUpdate(INT /*nCurrObj*/) { return ERR_NONE; }
+	virtual ERROR_CODE OnCursorUpdate(INT /*nCurrObj*/) {
+		return ERR_NONE;
+	}
 	virtual CBagObject *OnNewSpriteObject(const CBofString &sInit);
 	virtual CBagObject *OnNewBitmapObject(const CBofString &sInit);
 	virtual CBagObject *OnNewTextObject(const CBofString &sInit);
@@ -288,8 +372,12 @@ public:
 	virtual CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
-	int GetNumFloatPages() { return m_nFloatPages; }
-	VOID SetNumFloatPages(int nFloatPages) { m_nFloatPages = nFloatPages; }
+	int GetNumFloatPages() {
+		return m_nFloatPages;
+	}
+	VOID SetNumFloatPages(int nFloatPages) {
+		m_nFloatPages = nFloatPages;
+	}
 
 	// Correctly set the filter function for the storage device.
 	// GJJ 9-1-96
@@ -304,25 +392,41 @@ public:
 	// Predicate to test if this storage device is filtered.
 	// GJJ 9-11-96
 	//
-	BOOL IsFiltered() { return m_nFilterId != 0; }
+	BOOL IsFiltered() {
+		return m_nFilterId != 0;
+	}
 
 	static CBofBitmap *m_pUnderCursorBmp; // For preserving under bitmap.
 	static BOOL m_bDrawCursorBackdrop;    // Draw cursor backdrop
 
 	// Provide a method to get at the above vars
-	static VOID SetDrawCursorBackdrop(BOOL b) { m_bDrawCursorBackdrop = b; }
-	static BOOL DrawCursorBackdrop() { return m_bDrawCursorBackdrop; }
+	static VOID SetDrawCursorBackdrop(BOOL b) {
+		m_bDrawCursorBackdrop = b;
+	}
+	static BOOL DrawCursorBackdrop() {
+		return m_bDrawCursorBackdrop;
+	}
 
 	// Provide a method to get at the above vars
-	static VOID SetDirtyAllObjects(BOOL b) { m_bDirtyAllObjects = b; }
-	static BOOL GetDirtyAllObjects() { return m_bDirtyAllObjects; }
+	static VOID SetDirtyAllObjects(BOOL b) {
+		m_bDirtyAllObjects = b;
+	}
+	static BOOL GetDirtyAllObjects() {
+		return m_bDirtyAllObjects;
+	}
 
 	// Provide a method to let PDA know that it should update everything
-	static VOID SetPreFiltered(BOOL b = TRUE) { m_bPanPreFiltered = b; }
-	static BOOL GetPreFiltered() { return m_bPanPreFiltered; }
+	static VOID SetPreFiltered(BOOL b = TRUE) {
+		m_bPanPreFiltered = b;
+	}
+	static BOOL GetPreFiltered() {
+		return m_bPanPreFiltered;
+	}
 
 	// We won't always call the prefilter, just when explicitly instructed to.
-	static BOOL PreFilterPan() { return m_bPreFilter; }
+	static BOOL PreFilterPan() {
+		return m_bPreFilter;
+	}
 	static VOID SetPreFilterPan(BOOL b = TRUE) {
 		m_bPreFilter = b;
 		m_bDirtyAllObjects = b;
@@ -359,29 +463,43 @@ public:
 	virtual ERROR_CODE RunModal(CBagObject *pObj);
 	virtual VOID OnTimer(UINT nTimerId);
 
-	VOID SetOnUpdate(BOOL bVal = TRUE) { m_bOnUpdate = bVal; }
-	BOOL GetOnUpdate() { return m_bOnUpdate; }
+	VOID SetOnUpdate(BOOL bVal = TRUE) {
+		m_bOnUpdate = bVal;
+	}
+	BOOL GetOnUpdate() {
+		return m_bOnUpdate;
+	}
 
 	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
-	ERROR_CODE PaintObjects(CBofList<CBagObject*>* list, CBofBitmap* pBmp) {
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
 
 	ERROR_CODE PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual CBofRect GetLocation() { return GetWindowRect(); }
+	virtual CBofRect GetLocation() {
+		return GetWindowRect();
+	}
 
 	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp);
-	virtual CBofBitmap *GetBackground() { return GetBackdrop(); }
-	virtual CBofBitmap *GetWorkBmp() { return m_pWorkBmp; }
+	virtual CBofBitmap *GetBackground() {
+		return GetBackdrop();
+	}
+	virtual CBofBitmap *GetWorkBmp() {
+		return m_pWorkBmp;
+	}
 
 	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
 
-	virtual const CBofString &GetHelpFilename() { return m_sHelpFileName; }
-	virtual VOID SetHelpFilename(const CBofString &s) { m_sHelpFileName = s; }
+	virtual const CBofString &GetHelpFilename() {
+		return m_sHelpFileName;
+	}
+	virtual VOID SetHelpFilename(const CBofString &s) {
+		m_sHelpFileName = s;
+	}
 
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 	virtual VOID OnPaint(CBofRect *);
@@ -412,13 +530,15 @@ public:
 
 	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-		CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
-	ERROR_CODE PaintObjects(CBofList<CBagObject*>* list, CBofBitmap* pBmp) {
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
 
-	virtual CBofRect GetLocation() { return GetWindowRect(); }
+	virtual CBofRect GetLocation() {
+		return GetWindowRect();
+	}
 
 	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp) {
 		if (pBmp)
@@ -427,7 +547,9 @@ public:
 			KillBackdrop();
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *GetBackground() { return GetBackdrop(); }
+	virtual CBofBitmap *GetBackground() {
+		return GetBackdrop();
+	}
 
 	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
 
@@ -438,8 +560,12 @@ public:
 
 	virtual ERROR_CODE Close();
 
-	virtual const CBofString &GetHelpFilename() { return m_sHelpFileName; }
-	virtual VOID SetHelpFilename(const CBofString &s) { m_sHelpFileName = s; }
+	virtual const CBofString &GetHelpFilename() {
+		return m_sHelpFileName;
+	}
+	virtual VOID SetHelpFilename(const CBofString &s) {
+		m_sHelpFileName = s;
+	}
 
 	virtual VOID OnMainLoop();
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
@@ -470,9 +596,13 @@ public:
 	INT GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
 	VOID SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue);
 
-	INT GetNumStorageDevices() { return m_xStorageDeviceList.GetCount(); }
+	INT GetNumStorageDevices() {
+		return m_xStorageDeviceList.GetCount();
+	}
 
-	CBagStorageDev *GetStorageDevice(INT nIndex) { return m_xStorageDeviceList[nIndex]; }
+	CBagStorageDev *GetStorageDevice(INT nIndex) {
+		return m_xStorageDeviceList[nIndex];
+	}
 	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
 	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
 	CBagStorageDev *GetStorageDevice(const CBofString &sName);

@@ -59,7 +59,7 @@ Common::Error BagelMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 
 bool BagelMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+	       (f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BAGEL)

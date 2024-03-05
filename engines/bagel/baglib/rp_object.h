@@ -75,7 +75,7 @@ private:
 	CBofRect m_cOrigRect; // Original text rect
 
 	SHORT m_nCurDossier;      // index of current dossier
-							  // member data BOOLS
+	// member data BOOLS
 	BOOL m_bOrigRectInit : 1; // Original text initialized
 	BOOL m_bRPReported : 1;   // been reported yet?
 	BOOL m_bResPrinted : 1;   // been submitted?
@@ -118,8 +118,12 @@ public:
 	BOOL ActivateRPObject();
 	VOID DeactivateRPObject();
 
-	BOOL GetTimeSet() { return m_bRPTimeSet; }
-	VOID SetTimeSet(BOOL b = TRUE) { m_bRPTimeSet = b; }
+	BOOL GetTimeSet() {
+		return m_bRPTimeSet;
+	}
+	VOID SetTimeSet(BOOL b = TRUE) {
+		m_bRPTimeSet = b;
+	}
 
 	VOID EvaluateDossiers();
 
@@ -157,7 +161,7 @@ public:
 	static VOID ShowPDALog();
 
 	static VOID SynchronizeRPObjects(BOOL);
-}; 
+};
 
 } // namespace Bagel
 

@@ -37,29 +37,29 @@ CBagLog *CBagLog::m_bLastFloatPage;
 #define LOGZBORDER (84)
 
 #if BOF_MAC || BOF_WINMAC
-#define OVERRIDESMK  		    "$SBARDIR:BAR:LOG:OVERRIDE.SMK"
+#define OVERRIDESMK             "$SBARDIR:BAR:LOG:OVERRIDE.SMK"
 #else
-#define OVERRIDESMK  		    "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
+#define OVERRIDESMK             "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
 #endif
 #define OVERRIDEMOVIE           "OVERRIDE_MOVIE"
 
-CBagLog::CBagLog() :CBagStorageDevBmp() {
+CBagLog::CBagLog() : CBagStorageDevBmp() {
 	m_pQueued_Msgs = new CBofList<CBagObject *>;
 	SetCurFltPage(1);
 }
 
 CBagLog::~CBagLog() {
 	if (m_pQueued_Msgs != nullptr) {
-		ReleaseMsg();		// Delete all master sprite objects
+		ReleaseMsg();       // Delete all master sprite objects
 		delete m_pQueued_Msgs;
 		m_pQueued_Msgs = nullptr;
 	}
 }
 
 CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
-	CBofPoint 	NextPos = nPos;
-	CBofRect  	xFloatRect;
-	int			nBorderSize = 0;
+	CBofPoint   NextPos = nPos;
+	CBofRect    xFloatRect;
+	int         nBorderSize = 0;
 
 	// Things are so convoluted now, it is entirely  possible that this method
 	// will get called on a storage device that is not the current one,
@@ -127,7 +127,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 }
 
 VOID CBagLog::ArrangePages() {
-	// Don't bother if we don't have a floater worth arranging... 
+	// Don't bother if we don't have a floater worth arranging...
 	if (m_bLastFloatPage == nullptr) {
 		return;
 	}
@@ -137,7 +137,7 @@ VOID CBagLog::ArrangePages() {
 
 	CBagLog *pLastFloat = m_bLastFloatPage;
 
-	// Get the up button and the down button... 
+	// Get the up button and the down button...
 	pUpObj = pLastFloat->GetObject("LOGPAGUP");
 	pDownObj = pLastFloat->GetObject("LOGPAGDOWN");
 
@@ -240,8 +240,8 @@ ERROR_CODE CBagLog::ReleaseMsg() {
 			// This is waiting to be played, mark it in memory as such, the fixes
 			// get uglier and uglier... since zoomed pda doesn't have a message light,
 			// only set this thing as waiting if we are in the regular PDA,
-			// otherwise, we get superflous blinking of the PDA light. 
-			CBofString	sDevName = GetName();
+			// otherwise, we get superflous blinking of the PDA light.
+			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
 				pObj->SetMsgWaiting(TRUE);
 			}
@@ -255,8 +255,8 @@ ERROR_CODE CBagLog::ReleaseMsg() {
 CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 	CBagTextObject *LogObj = nullptr;
 	CBofRect cSDevRect = GetRect();
-	CBofString	sDevName = GetName();
-	int 	nPntSize = 10;
+	CBofString  sDevName = GetName();
+	int     nPntSize = 10;
 
 	if (sDevName == "LOG_WLD")
 		nPntSize = FONT_8POINT;
@@ -273,8 +273,8 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 		LogObj = (CBagTextObject *)new CBagLogSuspect(cSDevRect.Width());
 		LogObj->SetInitInfo(sInit);
 
-		// Reduce point size on zoompda suspect list, make it 
-		// all fit in the zoompda window. 
+		// Reduce point size on zoompda suspect list, make it
+		// all fit in the zoompda window.
 		if (nPntSize == FONT_18POINT) {
 			nPntSize -= 2;
 		}
@@ -297,7 +297,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 BOOL CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 	INT nCount = m_pQueued_Msgs->GetCount();
 	CBagObject *pObj;
-	BOOL		bRemoved = FALSE;
+	BOOL        bRemoved = FALSE;
 
 	for (INT i = 0; i < nCount; i++) {
 		pObj = m_pQueued_Msgs->GetNodeItem(i);
@@ -319,13 +319,13 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 	if (pObj != nullptr) {
 
 		if (pObj->IsMsgWaiting() ||
-			(pObj->GetType() == USEROBJ && (pObj->GetInitInfo() != nullptr) && (*pObj->GetInitInfo() == "MSG"))) {
+		        (pObj->GetType() == USEROBJ && (pObj->GetInitInfo() != nullptr) && (*pObj->GetInitInfo() == "MSG"))) {
 			m_pQueued_Msgs->AddToTail(pObj);
 
 			// Since zoomed pda doesn't  have a message light, only set this thing
 			// as waiting if we are in the  regular PDA, otherwise, we get superflous
-			// blinking of the PDA light. 
-			CBofString	sDevName = GetName();
+			// blinking of the PDA light.
+			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
 				pObj->SetMsgWaiting(TRUE);
 			}
@@ -344,8 +344,8 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 						pMsgLight->Attach();
 					}
 
-					// Make sure this guy always gets updated regardless of its 
-					// dirty bit. 
+					// Make sure this guy always gets updated regardless of its
+					// dirty bit.
 					pMsgLight->SetAlwaysUpdate(TRUE);
 					pMsgLight->SetAnimated(TRUE);
 				}
@@ -363,7 +363,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 	CBagObject *pObj = nullptr;
 	INT nCount = m_pQueued_Msgs->GetCount();
 	CBagMenu *pObjMenu = nullptr;
-	BOOL		bPlayMsg = TRUE;
+	BOOL        bPlayMsg = TRUE;
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
@@ -374,7 +374,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 		pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 		pPDAReally = (CBagPDA *)pPda;
 
-		// If we're in a closeup, then don't play the message!  
+		// If we're in a closeup, then don't play the message!
 		CBagStorageDev *pSDev;
 
 		if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
@@ -401,7 +401,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 			}
 		}
 
-		// If we're playing a valid message (not the override message) then make sure 
+		// If we're playing a valid message (not the override message) then make sure
 		// we remove it from the queue.
 		if (bPlayMsg) {
 			pObj = m_pQueued_Msgs->RemoveHead();
@@ -416,12 +416,12 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 				pObj->RunObject();
 				pObj->SetMsgWaiting(FALSE);
 
-				// Mark this guy as played... 
+				// Mark this guy as played...
 				((CBagLogMsg *)pObj)->SetMsgPlayed(TRUE);
 			}
 
 			// Although this might seem like a superflous thing to do, but wait!
-			// it is not!  the runobject call above can cause the number of objects in the 
+			// it is not!  the runobject call above can cause the number of objects in the
 			// message queue to be decremented.
 			nCount = m_pQueued_Msgs->GetCount();
 
@@ -447,7 +447,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 	return errCode;
 }
 
-CBagLogResidue::CBagLogResidue(int nSdevWidth) :CBagTextObject() {
+CBagLogResidue::CBagLogResidue(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 	m_bTitle = TRUE;
@@ -457,7 +457,7 @@ VOID CBagLogResidue::SetSize(const CBofSize &xSize) {
 	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
 }
 
-CBagLogMsg::CBagLogMsg(int nSdevWidth) :CBagTextObject() {
+CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 	m_bTitle = TRUE;
@@ -485,7 +485,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 		istr.EatWhite();
 
 		switch (ch = (char)istr.peek()) {
-		// 
+		//
 		//  SENDEE FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'S': {
@@ -508,7 +508,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		// 
+		//
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
@@ -517,7 +517,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("TIME")) {
 				istr.EatWhite();
 				CHAR cNext = (char)istr.peek();
-				INT		nMsgTime = 0;
+				INT     nMsgTime = 0;
 				if (Common::isDigit(cNext)) {
 					GetIntFromStream(istr, nMsgTime);
 				} else {
@@ -588,7 +588,7 @@ ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect
 		SetMsgTime(nMsgTime);
 	}
 
-	INT		nMsgTime = GetMsgTime();
+	INT     nMsgTime = GetMsgTime();
 	nHr = nMsgTime / 100;
 	nMn = nMsgTime - (nHr * 100);
 
@@ -603,7 +603,7 @@ ERROR_CODE CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-CBagLogSuspect::CBagLogSuspect(int nSdevWidth) :CBagTextObject() {
+CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 
@@ -629,7 +629,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 		istr.EatWhite();
 
 		switch (ch = (char)istr.peek()) {
-		// 
+		//
 		//  NAME FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'N': {
@@ -820,18 +820,18 @@ ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 
 #if INCLUDE_RP_AND_VP
 	SetText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
-		sSusChecked.GetBuffer(),
-		m_sSusName.GetBuffer(),
-		m_sSusSpecies.GetBuffer(),
-		m_sSusRoom.GetBuffer(),
-		sSusVP.GetBuffer(),
-		sSusRP.GetBuffer()));
+	                    sSusChecked.GetBuffer(),
+	                    m_sSusName.GetBuffer(),
+	                    m_sSusSpecies.GetBuffer(),
+	                    m_sSusRoom.GetBuffer(),
+	                    sSusVP.GetBuffer(),
+	                    sSusRP.GetBuffer()));
 #else
 	SetText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s",
-		sSusChecked.GetBuffer(),
-		m_sSusName.GetBuffer(),
-		m_sSusSpecies.GetBuffer(),
-		m_sSusRoom.GetBuffer()));
+	                    sSusChecked.GetBuffer(),
+	                    m_sSusName.GetBuffer(),
+	                    m_sSusSpecies.GetBuffer(),
+	                    m_sSusRoom.GetBuffer()));
 #endif
 
 #if 0
@@ -853,9 +853,9 @@ ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 // Energy detector objects, this should be pretty straightforward.
 
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
-	SetFont(FONT_MONO);			// correct for spacing
-	SetColor(7);					// make it white
-	SetFloating();		            // is definitely floating
+	SetFont(FONT_MONO);         // correct for spacing
+	SetColor(7);                    // make it white
+	SetFloating();                  // is definitely floating
 	SetHighlight();                 // Is highlight
 	SetTitle();                     // As title
 	m_bTextInitialized = FALSE;     // Not initialized yet
@@ -879,9 +879,9 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 		istr.EatWhite();
 
 		switch (ch = (char)istr.peek()) {
-			// 
-			//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
-			//
+		//
+		//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
+		//
 		case 'Z': {
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -899,7 +899,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		// 
+		//
 		//  CAUSE - REASON FOR ENERGY BURST
 		//
 		case 'C': {
@@ -918,8 +918,8 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
-		
-		// 
+
+		//
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
@@ -928,7 +928,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("TIME")) {
 				istr.EatWhite();
 				(void)istr.peek();
-				
+
 				GetAlphaNumFromStream(istr, m_sEnergyTimeStr);
 				nObjectUpdated = TRUE;
 				nChanged++;
@@ -937,14 +937,14 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
-		
+
 		//
 		//  SIZE n - n point size of the txt
 		//
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr2(szLocalStr, 256);		// jwl 08.28.96 performance improvement
+			CBofString sStr2(szLocalStr, 256);      // jwl 08.28.96 performance improvement
 
 			GetAlphaNumFromStream(istr, sStr2);
 
@@ -1013,7 +1013,7 @@ ERROR_CODE CBagEnergyDetectorObject::Attach() {
 	nHr = nMsgTime / 100;
 	nMn = nMsgTime - (nHr * 100);
 
-	// Get the number of zhaps. 
+	// Get the number of zhaps.
 	pVar = VARMNGR->GetVariable(m_sZhapsStr);
 	if (pVar) {
 		zStr = pVar->GetValue();
@@ -1061,8 +1061,8 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, INT nSdevWidth, INT nPointSize
 }
 
 ERROR_CODE CBagLogClue::Attach() {
-	CHAR		szFormatStr[256];
-	CHAR		szClueStr[256];
+	CHAR        szFormatStr[256];
+	CHAR        szClueStr[256];
 	CBofString  cFormat(szFormatStr, 256);
 
 	Assert(IsValidObject(this));
@@ -1078,10 +1078,10 @@ ERROR_CODE CBagLogClue::Attach() {
 
 	// Format the text appropriately.
 	Common::sprintf_s(szClueStr, cFormat.GetBuffer(),
-		(m_pStringVar1 ? (const CHAR *)m_pStringVar1->GetValue() : (const CHAR *)""),
-		(m_pStringVar2 ? (const CHAR *)m_pStringVar2->GetValue() : (const CHAR *)""),
-		(m_pStringVar3 ? (const CHAR *)m_pStringVar3->GetValue() : (const CHAR *)""),
-		(m_pStringVar4 ? (const CHAR *)m_pStringVar4->GetValue() : (const CHAR *)""));
+	                  (m_pStringVar1 ? (const CHAR *)m_pStringVar1->GetValue() : (const CHAR *)""),
+	                  (m_pStringVar2 ? (const CHAR *)m_pStringVar2->GetValue() : (const CHAR *)""),
+	                  (m_pStringVar3 ? (const CHAR *)m_pStringVar3->GetValue() : (const CHAR *)""),
+	                  (m_pStringVar4 ? (const CHAR *)m_pStringVar4->GetValue() : (const CHAR *)""));
 
 	CBofString cStr(szClueStr);
 	SetPSText(&cStr);
@@ -1102,8 +1102,8 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 		istr.EatWhite();
 
 		switch (ch = (char)istr.peek()) {
-		// 
-		//  STRINGVAR - This will be a variable used to display some information that 
+		//
+		//  STRINGVAR - This will be a variable used to display some information that
 		//  is contained in script in a clue statement.
 		//
 		case 'S': {
@@ -1114,8 +1114,8 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				pVar = VARMNGR->GetVariable(sStr);
-				// the variable must have been found, if it wasn't, then 
-				// complain violently. 
+				// the variable must have been found, if it wasn't, then
+				// complain violently.
 
 				if (pVar == nullptr) {
 					return UNKNOWN_TOKEN;

@@ -30,37 +30,37 @@ namespace Bagel {
 
 /**
  * Rename a file
- * @param pszOldName		Name of file to rename
- * @param pszNewName		New name for file
- * @return					Error return code
+ * @param pszOldName        Name of file to rename
+ * @param pszNewName        New name for file
+ * @return                  Error return code
  */
 extern ERROR_CODE FileRename(const CHAR *pszOldName, const CHAR *pszNewName);
 
 /**
  * Delete specified file
- * @param fileName			File to delete
- * @return					Error return code
+ * @param fileName          File to delete
+ * @return                  Error return code
  */
 extern ERROR_CODE FileDelete(const CHAR *fileName);
 
 /**
  * Returns a unique file name
- * @param buf		Buffer to fill with new unique name
- * @return			Pointer to buffer containing new unique file name
+ * @param buf       Buffer to fill with new unique name
+ * @return          Pointer to buffer containing new unique file name
  **/
 extern CHAR *FileTempName(CHAR *buf);
 
 /**
  * Checks if 'path' is a valid directory
- * @param path		Path name to test
- * @return			TRUE if specified entry is a directory, else FALSE
+ * @param path      Path name to test
+ * @return          TRUE if specified entry is a directory, else FALSE
  **/
 extern BOOL FileIsDirectory(const CHAR *path);
 
 /**
  * Checks to see if specified file exists
- * @param pszFileName	Name of file to check existance
- * @return				TRUE if file exists, FALSE if file does not exist
+ * @param pszFileName   Name of file to check existance
+ * @return              TRUE if file exists, FALSE if file does not exist
  *
  **/
 // for mac, use this routine to replace the diskid
@@ -68,8 +68,8 @@ extern BOOL FileExists(const CHAR *pszFileName);
 
 /**
  * Gets length of file in bytes (via file name)
- * @param pszFileName		Name of file to get length for
- * @return					Size of specified file (or -1 if not exist or error)
+ * @param pszFileName       Name of file to get length for
+ * @return                  Size of specified file (or -1 if not exist or error)
  */
 extern LONG FileLength(const CHAR *pszFileName);
 
@@ -77,7 +77,7 @@ extern CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf);
 
 /**
  * Determines if current drive is write protected
- * @return		Returns TRUE if drive is write protected as in a CD-ROM drive.
+ * @return      Returns TRUE if drive is write protected as in a CD-ROM drive.
  */
 inline BOOL IsDriveWriteLocked() {
 	return true;
@@ -86,34 +86,34 @@ inline BOOL IsDriveWriteLocked() {
 /**
  * Gets number of free bytes on specified drive
  */
-inline LONG GetFreeDiskSpace(const CHAR* pszDrive) {
+inline LONG GetFreeDiskSpace(const CHAR *pszDrive) {
 	return 999999;
 }
 
 /**
  * Retrieves the full path for the current working directory
- * @param pszDirectory		Buffer to hold full path
- * @return					Error return code
+ * @param pszDirectory      Buffer to hold full path
+ * @return                  Error return code
  */
 extern ERROR_CODE GetCurrentDir(CHAR *pszDirectory);
 
 /**
  * Sets the current working directory to that specified
- * @param pszDirectory		New directory to switch to
- * @return					Error return code
+ * @param pszDirectory      New directory to switch to
+ * @return                  Error return code
  */
 extern ERROR_CODE SetCurrentDir(CHAR *pszDirectory);
 
 /**
  * Sets the current working directory to the System Dir
- * @return		Error return code
+ * @return      Error return code
  */
 extern ERROR_CODE GotoSystemDir();
 
 /**
  * Retrieves the full path to the System Directory
- * @param pszDiretory		Buffer to hold name of system dir
- * @return					Error return code
+ * @param pszDiretory       Buffer to hold name of system dir
+ * @return                  Error return code
  */
 extern ERROR_CODE GetSystemDir(CHAR *pszDirectory);
 

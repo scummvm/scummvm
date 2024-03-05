@@ -105,35 +105,37 @@ class CBagSaveGameFile : public CBofDataFile {
 public:
 	CBagSaveGameFile(const CHAR *pszFileName);
 
-	LONG GetNumSavedGames() { return GetNumberOfRecs(); }
+	LONG GetNumSavedGames() {
+		return GetNumberOfRecs();
+	}
 	LONG GetActualNumSaves();
 	BOOL AnySavedGames();
 
 	/**
 	 * Saves a BAGEL game to current save game file
-	 * @param lSaveGamePos		Slot to save game into
-	 * @param pSavedGame		Saved game description info
-	 * @param pDataBuf			Actual game data
-	 * @param lDataSize			Size of data buffer
-	 * @return					Error return Code
+	 * @param lSaveGamePos      Slot to save game into
+	 * @param pSavedGame        Saved game description info
+	 * @param pDataBuf          Actual game data
+	 * @param lDataSize         Size of data buffer
+	 * @return                  Error return Code
 	 */
 	ERROR_CODE WriteSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);
 
 	/**
 	 * Restore a BAGEL saved game
-	 * @param lSaveGamePos		Slot to read from
-	 * @param pSavedGame		Buffer to fill with saved game info
-	 * @param pDataBuf			Buffer to store actual game data
-	 * @param lDataSize			Size of data buffer
-	 * @return					Error return Code
+	 * @param lSaveGamePos      Slot to read from
+	 * @param pSavedGame        Buffer to fill with saved game info
+	 * @param pDataBuf          Buffer to store actual game data
+	 * @param lDataSize         Size of data buffer
+	 * @return                  Error return Code
 	 */
 	ERROR_CODE ReadSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);
 
 	/**
 	 * Reads a BAGEL saved game title
-	 * @param lSlot				Slot to read from
-	 * @param pSavedGame		Buffer to fill with saved game info
-	 * @return					Error return Code
+	 * @param lSlot             Slot to read from
+	 * @param pSavedGame        Buffer to fill with saved game info
+	 * @return                  Error return Code
 	 */
 	ERROR_CODE ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
 

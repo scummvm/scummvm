@@ -29,47 +29,69 @@ namespace Bagel {
 
 class CBofTimer: public CBofObject, public CLList {
 
-    public:
-        CBofTimer();
-        CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
-        ~CBofTimer();
+public:
+	CBofTimer();
+	CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
+	~CBofTimer();
 
-        VOID Start(VOID)                    { m_bActive = TRUE; }
-        VOID Stop(VOID)                     { m_bActive = FALSE; }
+	VOID Start(VOID)                    {
+		m_bActive = TRUE;
+	}
+	VOID Stop(VOID)                     {
+		m_bActive = FALSE;
+	}
 
-        BOOL IsActive(VOID)                 { return(m_bActive); }
+	BOOL IsActive(VOID)                 {
+		return (m_bActive);
+	}
 
-        VOID SetID(UINT nID)                { m_nID = nID; }
-        UINT GetID(VOID)                    { return(m_nID); }
+	VOID SetID(UINT nID)                {
+		m_nID = nID;
+	}
+	UINT GetID(VOID)                    {
+		return (m_nID);
+	}
 
-        VOID SetInterval(UINT nInterval)    { m_nInterval = nInterval; }
-        UINT GetInterval(VOID)              { return(m_nInterval); }
+	VOID SetInterval(UINT nInterval)    {
+		m_nInterval = nInterval;
+	}
+	UINT GetInterval(VOID)              {
+		return (m_nInterval);
+	}
 
-        VOID SetUserInfo(void *lUserInfo)   { m_lUserInfo = lUserInfo; }
-        void *GetUserInfo(VOID)             { return(m_lUserInfo); }
+	VOID SetUserInfo(void *lUserInfo)   {
+		m_lUserInfo = lUserInfo;
+	}
+	void *GetUserInfo(VOID)             {
+		return (m_lUserInfo);
+	}
 
-        VOID SetCallBack(BOFCALLBACK pCallBack) { m_pCallBack = pCallBack; }
-        BOFCALLBACK GetCallBack(VOID)       { return(m_pCallBack); }
+	VOID SetCallBack(BOFCALLBACK pCallBack) {
+		m_pCallBack = pCallBack;
+	}
+	BOFCALLBACK GetCallBack(VOID)       {
+		return (m_pCallBack);
+	}
 
-        static VOID HandleTimers(VOID);
+	static VOID HandleTimers(VOID);
 
-        //
-        // members
-        //
+	//
+	// members
+	//
 
-    protected:
+protected:
 
-        static CBofTimer *m_pTimerList;
-        static BOOL m_bModified;
+	static CBofTimer *m_pTimerList;
+	static BOOL m_bModified;
 
-    public:
+public:
 
-        ULONG       m_lLastTime;
-        UINT        m_nID;
-        UINT        m_nInterval;
-        BOFCALLBACK m_pCallBack;
-        void       *m_lUserInfo;
-        BOOL        m_bActive;
+	ULONG       m_lLastTime;
+	UINT        m_nID;
+	UINT        m_nInterval;
+	BOFCALLBACK m_pCallBack;
+	void       *m_lUserInfo;
+	BOOL        m_bActive;
 };
 
 } // namespace Bagel

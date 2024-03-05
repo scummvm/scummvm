@@ -33,7 +33,8 @@ namespace Bagel {
 class CBagLinkObject : public CBagObject {
 public:
 	enum LINK_TYPE { LINK = 0,
-					 CLOSEUP = 1 };
+	                 CLOSEUP = 1
+	               };
 
 private:
 	CBofSize m_xSize;
@@ -52,14 +53,28 @@ public:
 
 	CBofRect GetRect();
 
-	CBofSize GetSize() const { return m_xSize; }
-	CBofPoint GetDstLoc() const { return m_xDestLocation; }
-	CBofPoint GetSrcLoc() const { return m_xSrcLocation; }
+	CBofSize GetSize() const {
+		return m_xSize;
+	}
+	CBofPoint GetDstLoc() const {
+		return m_xDestLocation;
+	}
+	CBofPoint GetSrcLoc() const {
+		return m_xSrcLocation;
+	}
 
-	void SetSize(const CBofSize &xSize) { m_xSize = xSize; }
-	void SetDstLoc(CBofPoint xLoc) { m_xDestLocation = xLoc; }
-	void SetSrcLoc(CBofPoint xLoc) { m_xSrcLocation = xLoc; }
-	void SetOutline(int nColor) { m_nOutline = nColor; }
+	void SetSize(const CBofSize &xSize) {
+		m_xSize = xSize;
+	}
+	void SetDstLoc(CBofPoint xLoc) {
+		m_xDestLocation = xLoc;
+	}
+	void SetSrcLoc(CBofPoint xLoc) {
+		m_xSrcLocation = xLoc;
+	}
+	void SetOutline(int nColor) {
+		m_nOutline = nColor;
+	}
 
 	virtual BOOL RunObject();
 };

@@ -51,12 +51,12 @@ public:
 	 */
 	CVector(DOUBLE xx, DOUBLE yy, DOUBLE zz = 0);
 
-	#if BOF_DEBUG
+#if BOF_DEBUG
 	/**
 	 * Destructor
 	 */
 	virtual ~CVector();
-	#endif
+#endif
 
 	// Vector operations
 	//
@@ -72,61 +72,61 @@ public:
 
 	/**
 	 * Assigns new specified values to this vector
-	 * @param xx		X value
-	 * @param yy		Y value
-	 * @param zz		Z value
+	 * @param xx        X value
+	 * @param yy        Y value
+	 * @param zz        Z value
 	 */
 	VOID SetVector(DOUBLE, DOUBLE, DOUBLE zz = 0);
 
 	/**
 	 * Calculates the dot-product of the 2 specified vectors
-	 * @param vector		Second vector
-	 * @return				Dot-product
+	 * @param vector        Second vector
+	 * @return              Dot-product
 	 */
 	DOUBLE DotProduct(const VECTOR &vector);
 
 	/**
 	 * Calculates the cross-product of the 2 specified vectors
-	 * @param vector		Second vector
-	 * @return				Cross-product
+	 * @param vector        Second vector
+	 * @return              Cross-product
 	 */
 	CVector CrossProduct(const VECTOR &vector);
 
 	/**
 	 * Rotates this vector the specified number of degrees
-	 * @param fAngle		Rotation angle
+	 * @param fAngle        Rotation angle
 	 */
 	VOID Rotate(DOUBLE fAngle);
 
 	/**
 	 * Reflects this vector around the specified vector
-	 * @param vMirror		Mirro vector
+	 * @param vMirror       Mirro vector
 	 */
 	VOID Reflect(const VECTOR &vMirror);
 
 	/**
 	 * Gets the angle between this vector and specified vector
-	 * @param vector	Second vector
-	 * @return			Angle
+	 * @param vector    Second vector
+	 * @return          Angle
 	 */
 	DOUBLE AngleBetween(const VECTOR &vector);
 
 	/**
 	 * Calculates the positive or negative angle between 2 vectors
-	 * @param vector		Second vector
-	 * @return				Angle
+	 * @param vector        Second vector
+	 * @return              Angle
 	 */
 	DOUBLE RealAngle(const VECTOR &vector);
 
 	/**
 	 * Calculates the relative angle between 2 vectors
-	 * @return				Angle
+	 * @return              Angle
 	 */
 	DOUBLE Angle();
 
 	/**
 	 * Gets the length of this vector
-	 * @return		Vector length
+	 * @return      Vector length
 	 */
 	DOUBLE Length();
 

@@ -47,11 +47,19 @@ public:
 	CBofCursor(HCURSOR hCurs);
 	HCURSOR operator=(HCURSOR hCurs);
 
-	static HCURSOR GetCurrent() { return (m_hCurrentCurs); }
-	static VOID SetCurrent(HCURSOR h) { m_hCurrentCurs = h; }
+	static HCURSOR GetCurrent() {
+		return (m_hCurrentCurs);
+	}
+	static VOID SetCurrent(HCURSOR h) {
+		m_hCurrentCurs = h;
+	}
 
-	HCURSOR GetWinCursor() { return (m_hCurs); }
-	VOID SetWinCursor(HCURSOR hCursor) { m_hCurs = hCursor; }
+	HCURSOR GetWinCursor() {
+		return (m_hCurs);
+	}
+	VOID SetWinCursor(HCURSOR hCursor) {
+		m_hCurs = hCursor;
+	}
 #endif
 
 	ERROR_CODE Load(SHORT nResId);

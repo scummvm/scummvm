@@ -31,7 +31,7 @@ namespace Bagel {
 template<class T, int S>
 class CBofVHashTable {
 public:
-	CBofVHashTable(unsigned (*hashFun)(const T &));
+	CBofVHashTable(unsigned(*hashFun)(const T &));
 	virtual ~CBofVHashTable();
 	BOOL contains(const T &val) const;
 	VOID insert(const T &val);
@@ -50,7 +50,7 @@ private:
 
 	// Member which holds a pointer to the table's hashing
 	// function.
-	unsigned (*m_pHashFunction)(const T &);
+	unsigned(*m_pHashFunction)(const T &);
 
 	// Member which holds the count of buckets in the hash table.
 	INT m_nHashTableSize;
@@ -64,8 +64,8 @@ private:
 // CBofVHashTable::CBofVHashTable - class constructor.
 //
 template<class T, int S>
-CBofVHashTable<T, S>::CBofVHashTable(unsigned (*hashFun)(const T &)) : m_nHashTableSize(S),
-		m_pHashFunction(hashFun), m_bIsEmpty(TRUE) {
+CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : m_nHashTableSize(S),
+	m_pHashFunction(hashFun), m_bIsEmpty(TRUE) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.
