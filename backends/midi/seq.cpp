@@ -282,6 +282,7 @@ public:
 
 	MusicDevices getDevices() const;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const;
 
 private:
 	void addMidiDevices(int deviceFD, MusicDevices &devices, Common::Array<int> *portIDs) const;
@@ -379,6 +380,10 @@ Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 	}
 
 	return Common::kAudioDeviceInitFailed;
+}
+
+bool SeqMusicPlugin::checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const {
+	return true;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(SEQ)

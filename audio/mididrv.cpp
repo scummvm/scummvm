@@ -216,8 +216,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		break;
 	}
 
-	int checkFlags = (flags & (MDT_SUPPLIED_SOUND_FONT));
-	flags ^= checkFlags;
+	int checkFlags = MDCK_NONE;
+
+	if (flags & MDT_SUPPLIED_SOUND_FONT) {
+		checkFlags |= MDCK_SUPPLIED_SOUND_FONT;
+		flags ^= MDT_SUPPLIED_SOUND_FONT;
+	}
 
 	Common::String failedDevStr;
 	if (getMusicType(hdl) == MT_INVALID) {
@@ -311,7 +315,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_MT32) {
 								hdl = d->getHandle();
-								if (checkDevice(hdl, checkFlags, true))
+								if (checkDevice(hdl, checkFlags | MDCK_AUTO, true))
 									return hdl;
 							}
 						}
@@ -326,7 +330,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS) {
 								hdl = d->getHandle();
-								if (checkDevice(hdl, checkFlags, true))
+								if (checkDevice(hdl, checkFlags | MDCK_AUTO, true))
 									return hdl;
 							}
 						}

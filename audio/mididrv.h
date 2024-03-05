@@ -99,6 +99,13 @@ enum MidiDriverFlags {
 	MDT_SUPPLIED_SOUND_FONT = 1 << 15,		// Engine will supply sound font (allows checkDevice to pass if it would fail due to missing sound font)
 };
 
+enum MidiDriverCheckFlags {
+	MDCK_NONE					= 0,
+
+	MDCK_SUPPLIED_SOUND_FONT	= 1 << 0,	// Sound font will be supplied by the engine
+	MDCK_AUTO					= 1 << 1,	// Driver is being checked for automatic selection (i.e. MIDI device is set to "auto")
+};
+
 /**
  * TODO: Document this, give it a better name.
  */

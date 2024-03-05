@@ -604,7 +604,7 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 
 bool FluidSynthMusicPlugin::checkDevice(MidiDriver::DeviceHandle, int flags, bool quiet) const {
 #ifdef FS_HAS_STREAM_SUPPORT
-	if (flags & MDT_SUPPLIED_SOUND_FONT)
+	if (flags & MDCK_SUPPLIED_SOUND_FONT)
 		return true;
 #endif
 
