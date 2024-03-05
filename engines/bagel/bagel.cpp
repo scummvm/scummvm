@@ -43,6 +43,7 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/wield.h"
+#include "bagel/baglib/zoom_pda.h"
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
@@ -71,6 +72,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagVarManager::initStatics();
 	CBagWield::initStatics();
 	CBagel::initStatics();
+	SBZoomPda::initStatics();
 
 	// boflib/ class statics initializations
 	CCache::initStatics();

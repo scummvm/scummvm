@@ -30,7 +30,14 @@ namespace Bagel {
 
 class SBZoomPda : public CBagStorageDevWnd, public SBBasePda {
 public:
+	/**
+	 * Constructor
+	 * @param pParent		Pointer to the parent window
+	 * @param xPoint		Upper-left corner of PDA in parent window
+	 * @param bActivated	State of PDA whe constructed (optional)
+	 */
 	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
+	static void initStatics();
 
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
@@ -38,7 +45,12 @@ public:
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *);
 
+	/**
+	 * Called to overload specific types of sprite objects
+	 * @retrn		Pointer to the new object
+	 */
 	CBagObject *OnNewButtonObject(const CBofString &sInit);
+
 	virtual VOID OnMainLoop();
 
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint);
