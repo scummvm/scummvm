@@ -81,7 +81,7 @@ public:
 	BOOL IsRandom() {
 		return m_bRandom;
 	}
-	const VARTYPE GetType() {
+	VARTYPE GetType() {
 		return m_xVarType;
 	}
 
@@ -129,7 +129,7 @@ private:
 
 public:
 	CBagVarManager();
-	~CBagVarManager();
+	virtual ~CBagVarManager();
 	static void initStatics();
 
 	ERROR_CODE RegisterVariable(CBagVar *pVar);

@@ -249,7 +249,7 @@ VOID SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 			SetLActiveObject(pObj);
 		}
 	} else {
-		SetLActivity(NONE);
+		SetLActivity(kMouseNONE);
 
 		if (m_xCurDisplay) {
 			CBofRect offset = CBagStorageDev::GetRect();

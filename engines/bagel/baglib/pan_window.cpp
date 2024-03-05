@@ -409,7 +409,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 	return errCode;
 }
 
-// jwl 09.30.96 delete the foreground objects
+//  delete the foreground objects
 VOID CBagPanWindow::DeleteFGObjects(VOID) {
 	m_pFGObjectList->RemoveAll();
 }
@@ -717,11 +717,11 @@ VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
-	if ((pActObj != nullptr) && (nMA == DRAGGING) && (pActObj->GetType() == BUTTONOBJ) && (((CBagButtonObject *)pActObj)->GetButtonType() == CBagButtonObject::SLIDER)) {
+	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) && (pActObj->GetType() == BUTTONOBJ) && (((CBagButtonObject *)pActObj)->GetButtonType() == CBagButtonObject::SLIDER)) {
 		pActObj->OnLButtonUp(nFlags, *xPoint, this);
 
 		// We are not dragging a slider anymore
-		SetLActivity(NONE);
+		SetLActivity(kMouseNONE);
 		SetLActiveObject(nullptr);
 
 	} else {
@@ -788,7 +788,7 @@ VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
 #endif
 		xMaxPanBmpRect.SetRect(0, 0, DEF_WIDTH, DEF_HEIGHT);
 
-#if BOF_MAC     // jwl 07.24.96 seems to work fine... 
+#if BOF_MAC     // seems to work fine...
 	cx = DEF_WIDTH;
 	cy = DEF_HEIGHT;
 #elif SCUMMVM_TODO

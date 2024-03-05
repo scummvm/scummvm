@@ -129,7 +129,7 @@ CBagStorageDev::CBagStorageDev() {
 
 	// jwl 07.23.96 not sure what the hell is going on here...
 #if !BOF_MAC
-	SetLActivity(MOUSE_ACTIVITY::NONE);
+	SetLActivity(kMouseNONE);
 #endif
 
 	SDEVMNGR->RegisterStorageDev(this);
@@ -507,12 +507,12 @@ ERROR_CODE CBagStorageDev::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *v
 	m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
-	SetLActivity(NONE);
+	SetLActivity(kMouseNONE);
 
 	if ((pObj = GetObject(xCursorLocation, TRUE)) != NULL) {
 		if (pObj->IsActive()) {
 			pObj->OnLButtonDown(nFlags, *xPoint, vpInfo);
-			SetLActivity(DRAGGING);
+			SetLActivity(kMouseDRAGGING);
 		}
 	}
 
@@ -581,7 +581,7 @@ ERROR_CODE CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpI
 		}
 	}
 
-	SetLActivity(NONE);
+	SetLActivity(kMouseNONE);
 	//SetLActiveObject(NULL);
 
 	if (g_bAAOk && (sCurrSDev == (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName()))) {
