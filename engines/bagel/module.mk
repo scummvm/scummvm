@@ -96,7 +96,8 @@ MODULE_OBJS = \
 	boflib/gui/scroll_bar.o \
 	boflib/gui/sprite.o \
 	boflib/gui/text_box.o \
-	boflib/gui/window.o
+	boflib/gui/window.o \
+	spacebar/spacebar.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)
