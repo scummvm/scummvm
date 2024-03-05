@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	baglib/fmovie.o \
 	baglib/help.o \
 	baglib/inv.o \
+	baglib/link_object.o \
 	baglib/log_msg.o \
 	baglib/master_win.o \
 	baglib/menu_dlg.o \
