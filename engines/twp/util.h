@@ -110,6 +110,29 @@ size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T *o) {
 	return (size_t)-1;
 }
 
+template<typename T>
+size_t minIndex(const Common::Array<T> &values) {
+	if(values.empty()) return (size_t)-1;
+	T min = values[0];
+	size_t index = 0;
+	for (size_t i = 1; i < values.size(); i++) {
+		if (values[i] < min) {
+			index = i;
+			min = values[i];
+		}
+	}
+	return index;
+}
+
+template<typename T>
+Common::Array<T> reverse(const Common::Array<T> &arr) {
+	Common::Array<T> result(arr.size());
+	for (size_t i = 0; i < arr.size(); i++) {
+		result[arr.size() - 1 - i] = arr[i];
+	}
+	return result;
+}
+
 // string util
 Common::String join(const Common::Array<Common::String> &array, const Common::String &sep);
 Common::String remove(const Common::String &txt, char startC, char endC);
@@ -121,6 +144,9 @@ Math::Vector2d operator*(Math::Vector2d v, float f);
 float distance(Math::Vector2d p1, Math::Vector2d p2);
 float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
 float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
+float dot(Math::Vector2d u, Math::Vector2d v);
+float length(Math::Vector2d v);
+bool lineSegmentsCross(Math::Vector2d a, Math::Vector2d b, Math::Vector2d c, Math::Vector2d d);
 
 } // namespace Twp
 

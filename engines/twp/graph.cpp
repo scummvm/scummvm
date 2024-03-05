@@ -23,51 +23,6 @@
 
 namespace Twp {
 
-static float dot(Math::Vector2d u, Math::Vector2d v) {
-	return (u.getX() * v.getX()) + (u.getY() * v.getY());
-}
-
-static float length(Math::Vector2d v) { return sqrt(dot(v, v)); }
-
-static bool lineSegmentsCross(Math::Vector2d a, Math::Vector2d b, Math::Vector2d c, Math::Vector2d d) {
-	const float EPSILON = 1e-3f;
-	const float denominator = ((b.getX() - a.getX()) * (d.getY() - c.getY())) - ((b.getY() - a.getY()) * (d.getX() - c.getX()));
-	if (abs(denominator) < EPSILON) {
-		return false;
-	}
-
-	const float numerator1 = ((a.getY() - c.getY()) * (d.getX() - c.getX())) - ((a.getX() - c.getX()) * (d.getY() - c.getY()));
-	const float numerator2 = ((a.getY() - c.getY()) * (b.getX() - a.getX())) - ((a.getX() - c.getX()) * (b.getY() - a.getY()));
-	if ((abs(numerator1) < EPSILON) || (abs(numerator2) < EPSILON)) {
-		return false;
-	}
-
-	const float r = numerator1 / denominator;
-	const float s = numerator2 / denominator;
-	return ((r > 0.f) && (r < 1.f)) && ((s > 0.f) && (s < 1.f));
-}
-
-static Common::Array<int> reverse(const Common::Array<int> &arr) {
-	Common::Array<int> result(arr.size());
-	for (size_t i = 0; i < arr.size(); i++) {
-		result[arr.size() - 1 - i] = arr[i];
-	}
-	return result;
-}
-
-static uint minIndex(const Common::Array<float> &values) {
-	if(values.empty()) return (uint)-1;
-	float min = values[0];
-	uint index = 0;
-	for (uint i = 1; i < values.size(); i++) {
-		if (values[i] < min) {
-			index = i;
-			min = values[i];
-		}
-	}
-	return index;
-}
-
 IndexedPriorityQueue::IndexedPriorityQueue(Common::Array<float> &keys)
 	: _keys(keys) {
 }
@@ -327,7 +282,7 @@ Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Ma
 				dists[i] = distance(wb.getClosestPointOnEdge(start), start);
 			}
 
-			const uint index = minIndex(dists);
+			const size_t index = minIndex(dists);
 			if (index != 0) {
 				_graph.reset();
 				SWAP(_walkboxes[0], _walkboxes[index]);
