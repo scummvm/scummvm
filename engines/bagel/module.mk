@@ -36,6 +36,7 @@ MODULE_OBJS = \
 	baglib/restart_dialog.o \
 	baglib/restore_dialog.o \
 	baglib/rp_object.o \
+	baglib/save_game_file.o \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
 	baglib/start_dialog.o \
