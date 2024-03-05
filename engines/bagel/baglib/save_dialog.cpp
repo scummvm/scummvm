@@ -75,7 +75,7 @@ static ST_BUTTONS g_stButtons[NUM_BUTTONS] = {
 };
 
 // Globals
-static INT g_nSelectedSlot;
+INT g_nSelectedSlot;
 
 CBagSaveDialog::CBagSaveDialog() {
 	LogInfo("Constructing CBagSaveDialog");
