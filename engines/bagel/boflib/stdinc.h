@@ -85,9 +85,6 @@ typedef VOID *(*BOFCALLBACK)(INT, VOID *);
 typedef long Fixed;
 #define FIXED Fixed
 
-#define FAR
-#define HUGE
-
 /*
  * extended types
  */

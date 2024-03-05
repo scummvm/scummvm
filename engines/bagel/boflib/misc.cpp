@@ -77,7 +77,7 @@ LONG GetMemAllocated();
 #if USEPOOLMEMORY
 
 // the workhorses...
-VOID HUGE *BofGetPoolMem(ULONG lSize);
+VOID *BofGetPoolMem(ULONG lSize);
 VOID BofFreePoolMem(VOID *);
 #endif
 
@@ -143,7 +143,7 @@ VOID Sleep(DWORD milli) {
 
 typedef struct tagMEMBLOCK {
 	const CHAR *m_pFile;
-	UBYTE HUGE *m_pBuf;
+	UBYTE *m_pBuf;
 	ULONG m_lSize;
 	INT m_nLine;
 	UINT m_nUsed;
@@ -155,7 +155,7 @@ typedef struct tagMEMBLOCK {
 /*
  * local functions
  */
-MEMBLOCK *GetMemBlock(UBYTE HUGE *pPtr);
+MEMBLOCK *GetMemBlock(UBYTE *pPtr);
 
 static MEMBLOCK g_cMemBlockList[MAX_MEM_BLOCKS];
 static LONG g_lTotalAllocated = 0;
@@ -288,7 +288,7 @@ LONG GetMemAllocated() {
  *  RETURNS:  MEMBLOCK * = pointer to memory allocation block
  *
  *****************************************************************************/
-MEMBLOCK *GetMemBlock(UBYTE HUGE *pPtr) {
+MEMBLOCK *GetMemBlock(UBYTE *pPtr) {
 	MEMBLOCK *p;
 	LONG i;
 
@@ -339,7 +339,7 @@ MEMBLOCK *GetMemBlock(UBYTE HUGE *pPtr) {
  *  RETURNS:  BOOL = TRUE if pointer is a valid memory block
  *
  *****************************************************************************/
-BOOL IsValidPointer(UBYTE HUGE *pPtr) {
+BOOL IsValidPointer(UBYTE *pPtr) {
 	return (GetMemBlock(pPtr) != nullptr);
 }
 
@@ -358,7 +358,7 @@ BOOL IsValidPointer(UBYTE HUGE *pPtr) {
  *  RETURNS:  nothing
  *
  *****************************************************************************/
-VOID VerifyPointer(UBYTE HUGE *pPtr) {
+VOID VerifyPointer(UBYTE *pPtr) {
 	MEMBLOCK *p;
 
 	Assert(pPtr != nullptr);
@@ -367,7 +367,7 @@ VOID VerifyPointer(UBYTE HUGE *pPtr) {
 
 		Assert(p->m_pBuf != nullptr);
 
-		UBYTE HUGE *pBuf;
+		UBYTE *pBuf;
 		pBuf = p->m_pBuf;
 		pBuf += sizeof(ULONG);
 
@@ -398,7 +398,7 @@ VOID VerifyPointer(UBYTE HUGE *pPtr) {
  *
  *****************************************************************************/
 VOID VerifyMemoryBlocks() {
-	UBYTE HUGE *pi, HUGE *pjStart, HUGE *pjEnd;
+	UBYTE *pi, *pjStart, *pjEnd;
 	LONG i, j;
 
 	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
@@ -470,7 +470,7 @@ VOID VerifyAllBlocksDeleted() {
 
 #endif
 
-VOID HUGE *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
+VOID *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
@@ -533,7 +533,7 @@ VOID HUGE *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear)
 		lSafeSize = lSize + 2 * sizeof(USHORT) + sizeof(ULONG);
 
 #if BOF_WIN16
-		p->m_pBuf = (UBYTE HUGE *)GlobalAllocPtr(GMEM_FIXED | (bClear ? 0 : GMEM_ZEROINIT), lSafeSize);
+		p->m_pBuf = (UBYTE *)GlobalAllocPtr(GMEM_FIXED | (bClear ? 0 : GMEM_ZEROINIT), lSafeSize);
 #else
 #if BOF_MAC
 #if USEMALLOC
@@ -583,7 +583,7 @@ VOID HUGE *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear)
 		pNewBlock = BofGetPoolMem(lSize);
 #else
 #if BOF_WIN16
-		pNewBlock = (UBYTE HUGE *)GlobalAllocPtr(GMEM_FIXED | (bClear ? 0 : GMEM_ZEROINIT), lSize);
+		pNewBlock = (UBYTE *)GlobalAllocPtr(GMEM_FIXED | (bClear ? 0 : GMEM_ZEROINIT), lSize);
 #else
 #if BOF_MAC
 #if USEMALLOC
@@ -620,7 +620,7 @@ VOID HUGE *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear)
 	return pNewBlock;
 }
 
-VOID HUGE *BofMemReAlloc(VOID HUGE *pOldPtr, ULONG lNewSize, const CHAR *pszFile, INT nLine) {
+VOID *BofMemReAlloc(VOID *pOldPtr, ULONG lNewSize, const CHAR *pszFile, INT nLine) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 
@@ -656,7 +656,7 @@ VOID HUGE *BofMemReAlloc(VOID HUGE *pOldPtr, ULONG lNewSize, const CHAR *pszFile
 					 * reallocate a new buffer
 					 */
 #if BOF_WIN16
-					if ((p->m_pBuf = (UBYTE HUGE *)GlobalReAllocPtr(p->m_pBuf, lSafeSize, 0)) != nullptr) {
+					if ((p->m_pBuf = (UBYTE *)GlobalReAllocPtr(p->m_pBuf, lSafeSize, 0)) != nullptr) {
 #else
 					if ((p->m_pBuf = (UBYTE *)realloc(p->m_pBuf, lSafeSize)) != nullptr) {
 #endif
@@ -703,10 +703,10 @@ VOID HUGE *BofMemReAlloc(VOID HUGE *pOldPtr, ULONG lNewSize, const CHAR *pszFile
 	return (nullptr);
 
 #else
-	VOID HUGE *pNewBlock;
+	VOID *pNewBlock;
 
 #if BOF_WIN16
-	pNewBlock = (UBYTE HUGE *)GlobalReAllocPtr(pOldPtr, lNewSize, 0);
+	pNewBlock = (UBYTE *)GlobalReAllocPtr(pOldPtr, lNewSize, 0);
 #else
 	pNewBlock = realloc(pOldPtr, lNewSize);
 #endif
@@ -715,7 +715,7 @@ VOID HUGE *BofMemReAlloc(VOID HUGE *pOldPtr, ULONG lNewSize, const CHAR *pszFile
 #endif
 }
 
-VOID BofMemFree(VOID HUGE *pBuf, const CHAR *pszFile, INT nLine) {
+VOID BofMemFree(VOID *pBuf, const CHAR *pszFile, INT nLine) {
 	Assert(pszFile != nullptr);
 
 #if BOF_DEBUG
@@ -724,7 +724,7 @@ VOID BofMemFree(VOID HUGE *pBuf, const CHAR *pszFile, INT nLine) {
 
 	if (pBuf != nullptr) {
 
-		if ((p = GetMemBlock((UBYTE HUGE *)pBuf)) != nullptr) {
+		if ((p = GetMemBlock((UBYTE *)pBuf)) != nullptr) {
 			LONG i;
 
 #if BOF_MEM_ANALYZE
@@ -732,7 +732,7 @@ VOID BofMemFree(VOID HUGE *pBuf, const CHAR *pszFile, INT nLine) {
 			gAnalyzeMem[p->m_nAnalyzeIndex].m_nTotalBytes -= p->m_lSize;
 #endif
 
-			VerifyPointer((UBYTE HUGE *)pBuf);
+			VerifyPointer((UBYTE *)pBuf);
 
 			i = *(ULONG *)p->m_pBuf;
 
@@ -830,25 +830,25 @@ Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
 	return fixResult;
 }
 
-VOID BofMemSet(VOID HUGE *pSrc, UBYTE chByte, LONG lBytes) {
+VOID BofMemSet(VOID *pSrc, UBYTE chByte, LONG lBytes) {
 	Assert(pSrc != nullptr);
 
-	UBYTE HUGE *pBuf;
+	UBYTE *pBuf;
 
-	pBuf = (UBYTE HUGE *)pSrc;
+	pBuf = (UBYTE *)pSrc;
 
 	while (lBytes-- != 0)
 		*pBuf++ = chByte;
 }
 
-VOID BofMemCopy(VOID HUGE *pDst, const VOID HUGE *pSrc, LONG lLength) {
+VOID BofMemCopy(VOID *pDst, const VOID *pSrc, LONG lLength) {
 	Assert(pDst != nullptr);
 	Assert(pSrc != nullptr);
 	Assert(lLength >= 0);
-	UBYTE HUGE *p1, HUGE *p2;
+	UBYTE *p1, *p2;
 
-	p1 = (UBYTE HUGE *)pDst;
-	p2 = (UBYTE HUGE *)pSrc;
+	p1 = (UBYTE *)pDst;
+	p2 = (UBYTE *)pSrc;
 
 	while (lLength-- != 0) {
 		*p1++ = *p2++;
@@ -1306,8 +1306,8 @@ typedef struct {
 	INT nSize;
 	INT nAlignedSize;
 	INT nOccurrences;
-	VOID HUGE *pMemBuff;
-	VOID HUGE *pEndMemBuff;
+	VOID *pMemBuff;
+	VOID *pEndMemBuff;
 	USHORT *pMemUsed;
 	USHORT nIndex;
 } MEMOPTTABLE;
@@ -1371,7 +1371,7 @@ static MEMOPTTABLE gMemOptTable[NUM_OPT_SIZES] =
 
 #if USEPOOLMEMORY
 #define LONGSIZE 4
-VOID HUGE *BofGetPoolMem(ULONG lSize) {
+VOID *BofGetPoolMem(ULONG lSize) {
 	VOID *pNewBlock = nullptr;
 	INT i;
 

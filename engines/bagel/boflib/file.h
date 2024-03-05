@@ -94,7 +94,7 @@ public:
 	 * @param lBytes		Number of bytes
 	 * @return				Error code
 	 */
-	ERROR_CODE Read(VOID HUGE *pDestBuf, LONG lBytes);
+	ERROR_CODE Read(VOID *pDestBuf, LONG lBytes);
 
 	/**
 	 * Write to a currently open file
@@ -102,7 +102,7 @@ public:
 	 * @param lBytes		Number of bytes
 	 * @return				Error code
 	 */
-	ERROR_CODE Write(const VOID HUGE *pSrcBuf, LONG lBytes);
+	ERROR_CODE Write(const VOID *pSrcBuf, LONG lBytes);
 
 	/**
 	 * Flushes I/O stream

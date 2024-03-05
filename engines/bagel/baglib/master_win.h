@@ -176,8 +176,8 @@ public:
 
 	VOID SaveSDevStack();
 
-	virtual VOID HUGE *GetDataStart() { return &m_pGameWindow; }
-	virtual VOID HUGE *GetDataEnd() { return &m_pVariableList + sizeof(CBagVarManager *); }
+	virtual VOID *GetDataStart() { return &m_pGameWindow; }
+	virtual VOID *GetDataEnd() { return &m_pVariableList + sizeof(CBagVarManager *); }
 
 	// Since we do this from load file and do restore, centralize it in one location.
 	VOID RestoreActiveMessages(CBagStorageDevManager *pSDevManager);

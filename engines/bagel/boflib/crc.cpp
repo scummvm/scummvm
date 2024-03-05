@@ -97,14 +97,14 @@ ULONG CalcCrcQuick(UBYTE chr, ULONG crcValue) {
 	return (crcValue >> 8) ^ crc32tabLo[chr] ^ ((ULONG)crc32tabHi[chr] << 16);
 }
 
-ULONG CalculateCRC(const VOID HUGE *pBuffer, LONG lBufLen, ULONG lCrcValue) {
+ULONG CalculateCRC(const VOID *pBuffer, LONG lBufLen, ULONG lCrcValue) {
 	LONG i;
-	UBYTE HUGE *p, c;
+	UBYTE *p, c;
 
 	Assert(pBuffer != NULL);
 	Assert(lBufLen > 0);
 
-	p = (UBYTE HUGE *)pBuffer;
+	p = (UBYTE *)pBuffer;
 	i = -1;
 	while (++i < lBufLen) {
 

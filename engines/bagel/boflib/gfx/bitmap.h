@@ -138,7 +138,7 @@ protected:
 #endif
 	Graphics::ManagedSurface _bitmap;
 
-	UBYTE HUGE *m_pBits = nullptr;
+	UBYTE *m_pBits = nullptr;
 
 	CBofPalette *m_pPalette = nullptr;
 
@@ -166,7 +166,7 @@ public:
 	 * @param pPalette		Palette to use for this bitmap
 	 * @param bOwnPalette	TRUE if destructor should delete palette
 	 */
-	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette = FALSE, UBYTE HUGE *pPrivateBuff = nullptr);
+	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette = FALSE, UBYTE *pPrivateBuff = nullptr);
 
 	/**
 	 * Constructs a CBofBitmap
@@ -231,8 +231,8 @@ public:
 	 * @param y		Row in m_pBits
 	 * @return		Address of (x,y) in bitmap surface
 	 */
-	UBYTE HUGE *GetPixelAddress(INT x, INT y);
-	UBYTE HUGE *GetPixelAddress(CBofPoint *pPoint) { return (GetPixelAddress(pPoint->x, pPoint->y)); }
+	UBYTE *GetPixelAddress(INT x, INT y);
+	UBYTE *GetPixelAddress(CBofPoint *pPoint) { return (GetPixelAddress(pPoint->x, pPoint->y)); }
 
 	CBofSize GetSize() { return (CBofSize(m_nDX, m_nDY)); }
 
