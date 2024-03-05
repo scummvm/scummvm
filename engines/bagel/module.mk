@@ -39,6 +39,7 @@ MODULE_OBJS = \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
 	baglib/start_dialog.o \
+	baglib/storage_dev_bmp.o \
 	baglib/storage_dev_win.o \
 	baglib/text_object.o \
 	baglib/thing_object.o \

@@ -38,7 +38,7 @@ protected:
 	CBofBitmap *m_pWorkBmp;
 
 public:
-	CBagStorageDevBmp(CBofWindow *pParent = NULL, const CBofRect &xRect = CBofRect(), BOOL bTrans = TRUE);
+	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bTrans = TRUE);
 	virtual ~CBagStorageDevBmp();
 
 	CBofBitmap *GetWorkBmp() { return (m_pWorkBmp); }
@@ -53,6 +53,9 @@ public:
 	BOOL GetTransparent() { return m_bTrans; }
 	VOID SetTransparent(BOOL bTrans = TRUE) { m_bTrans = bTrans; }
 
+	/**
+	 * Return a scaled point from the screen to the bitmap
+	 */
 	CBofPoint GetScaledPt(CBofPoint xPoint);
 
 	ERROR_CODE SetBackground(CBofBitmap *pBmp);
@@ -67,11 +70,19 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = NULL, INT nMaskColor = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 
-	// Grab the button event of the bagbmobj and send them to the cbagsdev
+	/**
+	 * Called on the mouse left button up of the bagbmobj
+	 *	and redirected to the lbutton up of the CBagStorageDev
+	 */
 	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info);
-	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = NULL);
+
+	/**
+	 * Called on the mouse left button down of the bagbmobj
+	 * and redirected to the lbutton down of the CBagStorageDev
+	 */
+	virtual BOOL OnLButtonDown(UINT nFlags, CPoint xPoint, void *info = nullptr);
 
 	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
 };
