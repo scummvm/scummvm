@@ -505,9 +505,9 @@ public:
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnMainLoop();
 	VOID OnClose();
-	VOID OnMouseMove(UINT nFlags, CBofPoint *);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
+	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	ERROR_CODE OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
+	ERROR_CODE OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 
 	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
 
@@ -572,9 +572,9 @@ public:
 
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnClose();
-	VOID OnMouseMove(UINT nFlags, CBofPoint *);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
+	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	ERROR_CODE OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
+	ERROR_CODE OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 };
 
 /**

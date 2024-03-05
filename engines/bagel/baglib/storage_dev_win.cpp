@@ -1797,7 +1797,7 @@ VOID CBagStorageDevWnd::OnClose() {
 	DestroyWindow();                            // destruct the main window
 }
 
-VOID CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint) {
+ERROR_CODE CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 	CBagStorageDev::OnMouseMove(n, pPoint, GetAssociateWnd());
 
 	CBagMasterWin::SetActiveCursor(0);
@@ -1808,7 +1808,7 @@ VOID CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint) {
 	// Brian, note I did not do "== TRUE", you should be very proud of me.
 	if (CBagPDA::IsMoviePlaying()) {
 		CBagMasterWin::SetActiveCursor(6);
-		return;
+		return ERR_NONE;
 	}
 
 	// This should be on update cursor virtual func
@@ -1870,28 +1870,32 @@ VOID CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint) {
 			}
 		}
 	}
+
+	return ERR_NONE;
 }
 
 
-VOID CBagStorageDevWnd::OnLButtonDown(UINT nFlags, CBofPoint *xPoint) {
+ERROR_CODE CBagStorageDevWnd::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	// if asynch movie playing in PDA don't react to mouse down
 	// (8033) if it's not a wait cursor, then allow the user to access
 	// that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return;
+		return ERR_NONE;
 	}
 
 	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
 	CBofWindow::OnLButtonDown(nFlags, xPoint);
+
+	return ERR_NONE;
 }
 
 
-VOID CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
+ERROR_CODE CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	// if asynch movie playing in PDA don't react to mouse down
 	// (8033) if it's not a wait cursor, then allow the user to access
 	// that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return;
+		return ERR_NONE;
 	}
 
 	// react to a mouse up, it will probably involve drawing a new
@@ -1909,6 +1913,8 @@ VOID CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
 		CBofWindow::OnLButtonUp(nFlags, xPoint);
 	}
+
+	return ERR_NONE;
 }
 
 
@@ -2301,25 +2307,29 @@ VOID CBagStorageDevDlg::OnClose(VOID) {
 }
 
 
-VOID CBagStorageDevDlg::OnMouseMove(UINT n, CBofPoint *xPoint) {
-	CBagStorageDev::OnMouseMove(n, xPoint, GetAssociateWnd());
+ERROR_CODE CBagStorageDevDlg::OnMouseMove(UINT n, CBofPoint *xPoint, void *) {
+	return CBagStorageDev::OnMouseMove(n, xPoint, GetAssociateWnd());
 }
 
 
 
-VOID CBagStorageDevDlg::OnLButtonDown(UINT nFlags, CBofPoint *xPoint) {
+ERROR_CODE CBagStorageDevDlg::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
 	CBofDialog::OnLButtonDown(nFlags, xPoint);
+
+	return ERR_NONE;
 }
 
 
-VOID CBagStorageDevDlg::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
+ERROR_CODE CBagStorageDevDlg::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (CBofDialog::GetRect().PtInRect(*xPoint)) {
 		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
 		CBofDialog::OnLButtonUp(nFlags, xPoint);
 	} else  {
 		Close();
 	}
+
+	return ERR_NONE;
 }
 
 

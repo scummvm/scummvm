@@ -235,7 +235,7 @@ CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
 
 }
 
-VOID SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
+ERROR_CODE SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 	CBagObject *pObj;
@@ -276,9 +276,11 @@ VOID SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 		InvalidateRect(NULL);
 		UpdateWindow();
 	}
+
+	return ERR_NONE;
 }
 
-VOID SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
+ERROR_CODE SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev::OnMouseMove(nFlags, pPoint, GetAssociateWnd());
@@ -291,6 +293,8 @@ VOID SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 		CBofRect cRect = GetBackdrop()->GetRect();
 		CBagMasterWin::SetActiveCursor(GetProperCursor(*pPoint, cRect));
 	}
+
+	return ERR_NONE;
 }
 
 VOID SBZoomPda::OnMainLoop() {
