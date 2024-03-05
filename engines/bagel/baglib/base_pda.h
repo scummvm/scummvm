@@ -37,14 +37,14 @@ namespace Bagel {
 #define MSGLIGHT (110)
 #define ZOOMFLASH "ZOOMFLASH"
 
-const enum PDAMODE {
+enum PDAMODE {
 	NOMODE,
 	MAPMODE,
 	INVMODE,
 	LOGMODE,
 	MOOMODE
 };
-const enum PDAPOS {
+enum PDAPOS {
 	UNINITIALIZED,
 	PDAUP,
 	PDADOWN

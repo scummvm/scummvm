@@ -301,7 +301,7 @@ public:
 	}
 
 	// Init variables
-	virtual const CBofString *GetInitInfo() {
+	virtual const CBofString *GetInitInfo() const {
 		return nullptr;
 	}
 	virtual VOID SetInitInfo(const CBofString &) {}

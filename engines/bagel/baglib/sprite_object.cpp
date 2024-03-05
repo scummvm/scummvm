@@ -109,7 +109,7 @@ VOID CBagSpriteObject::SetCels(int nCels) {
 		m_xSprite->SetupCels(nCels);
 }
 
-VOID CBagSpriteObject::SetPosition(CBofPoint &pos) {
+VOID CBagSpriteObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
 	if (m_xSprite)
 		m_xSprite->SetPosition(pos.x, pos.y);
