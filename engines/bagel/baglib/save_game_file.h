@@ -109,13 +109,39 @@ public:
 	LONG GetActualNumSaves();
 	BOOL AnySavedGames();
 
+	/**
+	 * Saves a BAGEL game to current save game file
+	 * @param lSaveGamePos		Slot to save game into
+	 * @param pSavedGame		Saved game description info
+	 * @param pDataBuf			Actual game data
+	 * @param lDataSize			Size of data buffer
+	 * @return					Error return Code
+	 */
 	ERROR_CODE WriteSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);
+
+	/**
+	 * Restore a BAGEL saved game
+	 * @param lSaveGamePos		Slot to read from
+	 * @param pSavedGame		Buffer to fill with saved game info
+	 * @param pDataBuf			Buffer to store actual game data
+	 * @param lDataSize			Size of data buffer
+	 * @return					Error return Code
+	 */
 	ERROR_CODE ReadSavedGame(LONG lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize);
 
+	/**
+	 * Reads a BAGEL saved game title
+	 * @param lSlot				Slot to read from
+	 * @param pSavedGame		Buffer to fill with saved game info
+	 * @return					Error return Code
+	 */
 	ERROR_CODE ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
 
-	// Aadd a method for reading just the first 128 bytes of the saved game slot.
+	/**
+	 * Read just the first 128 bytes of the saved game slot.
+	 */
 	ERROR_CODE ReadTitleOnly(LONG lSlot, CHAR *);
+
 #if BOF_MAC
 	VOID SwapSavedGame(VOID *pBuf, LONG pBufLen);
 	VOID MacintizeSavedGame(VOID *pBuf, LONG pBufLen);
