@@ -32,9 +32,12 @@ MODULE_OBJS = \
 	baglib/pan_bitmap.o \
 	baglib/parse_object.o \
 	baglib/pda.o \
+	baglib/restart_dialog.o \
+	baglib/restore_dialog.o \
 	baglib/rp_object.o \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
+	baglib/start_dialog.o \
 	baglib/storage_dev_win.o \
 	baglib/text_object.o \
 	baglib/thing_object.o \
