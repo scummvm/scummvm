@@ -425,7 +425,6 @@ ERROR_CODE CBofListBox::RepaintAll(VOID) {
 			m_pWork->Lock();
 
 			INT nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
-			INT nIndexedHighColor = m_pWork->GetPalette()->GetNearestIndex(m_cHighColor);
 
 			// prepare the background
 			//
@@ -510,7 +509,6 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 
 			CreateWorkArea();
 			INT nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
-			INT nIndexedHighColor = m_pWork->GetPalette()->GetNearestIndex(m_cHighColor);
 
 			m_pWork->Lock();
 

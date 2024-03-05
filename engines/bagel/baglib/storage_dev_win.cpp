@@ -422,7 +422,6 @@ VOID CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBag
 
 ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
 	BOOL        bMouseOverObj = FALSE;
-	BOOL        bUpdatedObj   = FALSE;
 	int         nCount        = GetObjectCount();
 
 	if (nCount) {
@@ -767,9 +766,9 @@ ERROR_CODE CBagStorageDev::LoadFile(bof_ifstream &fpInput, const CBofString &sWl
 				pActiveExpr = pActiveExpr->GetPrevExpression();
 //LOGINFO("ENDIF");
 			} else {
-				CBofString str("Unexpected ENDIF:");
-				str += sWldName;
-				ParseAlertBox(fpInput, str.GetBuffer(), __FILE__, __LINE__);
+				CBofString str2("Unexpected ENDIF:");
+				str2 += sWldName;
+				ParseAlertBox(fpInput, str2.GetBuffer(), __FILE__, __LINE__);
 				//BofMessageBox(str.GetBuffer(), "Continuing");
 //LOGINFO(str);
 			}
@@ -923,9 +922,9 @@ ERROR_CODE CBagStorageDev::LoadFile(bof_ifstream &fpInput, const CBofString &sWl
 	fpInput.EatWhite();
 
 	if (pActiveExpr) {
-		CBofString str("Mismatch in IF/ENDIF:");
-		str += sWldName;
-		ParseAlertBox(fpInput, str.GetBuffer(), __FILE__, __LINE__);
+		CBofString str2("Mismatch in IF/ENDIF:");
+		str2 += sWldName;
+		ParseAlertBox(fpInput, str2.GetBuffer(), __FILE__, __LINE__);
 		//BofMessageBox(str.GetBuffer(), "Could not attach object");
 //LOGINFO("Mismatch in IF/ENDIF of " << sWldName << endl;
 		return ERR_UNKNOWN;
@@ -1598,7 +1597,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 			gRepaintRect.SetRect(x, y, x + pCursorBmp->Width() - 1, y + pCursorBmp->Height() - 1);
 			CBofRect cDstRect(0, 0, pCursorBmp->Width() - 1, pCursorBmp->Height() - 1);
 
-			CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
+//			CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 			pBmp->Paint(CBagStorageDev::m_pUnderCursorBmp, &cDstRect, &gRepaintRect, NOT_TRANSPARENT);
 
 			errCode = pCursorBmp->Paint(pBmp, x, y, NULL, DEFAULT_CHROMA_COLOR);
@@ -1610,10 +1609,8 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 
 ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 	Assert(IsValidObject(this));
-	CBagCursor *pCursor = CBagCursor::GetCurrent();
 
 	if (m_pBackdrop != NULL) {
-
 		if (m_pUnderCursorBmp == NULL) {
 			m_pUnderCursorBmp = new CBofBitmap(kCursWidth, kCursWidth, NULL);
 			SetDrawCursorBackdrop(TRUE);
