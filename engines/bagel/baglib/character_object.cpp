@@ -40,7 +40,7 @@ void CBagCharacterObject::initStatics() {
 	m_bPDAAnimating = FALSE;
 }
 
-CBagCharacterObject::CBagCharacterObject() :CBagObject() {
+CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	m_xObjType = CHAROBJ;
 	m_pSbuf = nullptr;
 	m_pSmk = nullptr;
@@ -80,7 +80,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 
 	if (!m_pSmk) {
 		LogError(BuildString("CHAR SmackOpen failed: %s ", filename.GetBuffer()));
-		return(ERR_FOPEN);
+		return (ERR_FOPEN);
 	}
 
 #if BOF_WINDOWS
@@ -114,11 +114,11 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		m_pBmpBuf->Lock();
 
 #if BOF_MAC || BOF_WINMAC
-		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(0, 0, 0)));			// jwl 08.01.96
+		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(0, 0, 0)));         // jwl 08.01.96
 #else
 		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(255, 255, 255))/*RGB(0,0,0)*/);
 #endif
-		//	SmackToBuffer( m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, ( m_pBmpBuf->GetPixelAddress(1,1) )/* buffer */, (u8)!( m_pBmpBuf->IsTopDown() )/* upside down*/);
+		//  SmackToBuffer( m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, ( m_pBmpBuf->GetPixelAddress(1,1) )/* buffer */, (u8)!( m_pBmpBuf->IsTopDown() )/* upside down*/);
 
 		// BCW - 11/19/96 09:10 am
 		// We only need to set the buffer once (Not each time we paint)
@@ -283,8 +283,8 @@ BOOL CBagCharacterObject::RefreshCurrFrame() {
 #endif
 		// Decompress frame to buffer
 		// Smacker returns true if it had to skip a frame for the video
-		// to keep up with the audio, if so, return false so we don't update our 
-		// position. 
+		// to keep up with the audio, if so, return false so we don't update our
+		// position.
 		if (SmackDoFrame(m_pSmk)) {
 			bNewFrame = FALSE;
 		}
@@ -471,13 +471,13 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 		if (m_pBmpBuf) {
 			m_pBmpBuf->Lock();
 			MacintizeBitmap(m_pBmpBuf->GetPixelAddress(0, 0), ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width()));
-#endif		
+#endif
 			errCode = m_pBmpBuf->Paint(pBmp, (pt.x + (NewPos.x - OrigPos.x)), (pt.y + (NewPos.y - OrigPos.y)), nullptr, m_nCharTransColor);
 #if BOF_MAC
 			MacintizeBitmap(m_pBmpBuf->GetPixelAddress(0, 0), ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width()));
 			m_pBmpBuf->UnLock();
 		}
-#endif		
+#endif
 		if (errCode) {
 			return ERR_UNKNOWN;
 		}
@@ -490,7 +490,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 	int     nChanged;
 	BOOL    nObjectUpdated = FALSE;
-	char 	ch;
+	char    ch;
 
 	while (!istr.eof()) {
 		nChanged = 0;
@@ -501,7 +501,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		case 'K': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);       // jwl 08.28.96 performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -539,13 +539,13 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		// 
+		//
 		//  SPEED n - n pace of playback (negative is backward), (0 to hold at current frame)
 		//
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);       // jwl 08.28.96 performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -560,7 +560,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		// 
+		//
 		//  EXITATEND - detach at end of looping (call run after objects)
 		//
 		case 'E': {
@@ -693,8 +693,7 @@ VOID CBagCharacterObject::SetNumOfLoops(INT n) {
 
 VOID CBagCharacterObject::SetPlaybackSpeed(INT n) {
 	if (m_nPlaybackSpeed != n) {
-		if (n < 0)
-		{
+		if (n < 0) {
 			m_nStartFrame++;
 			m_nEndFrame++;
 		} else {

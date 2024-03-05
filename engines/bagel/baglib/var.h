@@ -51,34 +51,70 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &);
 
-	const CBofString &GetName() { return m_sVarName; }
-	//	const CBofString& 	GetValue() 		{ return m_sVarValue; }
+	const CBofString &GetName() {
+		return m_sVarName;
+	}
+	//  const CBofString&   GetValue()      { return m_sVarValue; }
 	const CBofString &GetValue();
 	int GetNumValue();
-	BOOL IsGlobal() { return m_bGlobal; }
-	BOOL IsConstant() { return m_bConstant; }
-	BOOL IsNumeric() { return m_xVarType == NUMBER; }
-	BOOL IsBoolean() { return m_xVarType == BOOLEAN; }
-	BOOL IsString() { return m_xVarType == STRING; }
-	BOOL IsReference() { return m_bReference; }
-	BOOL IsTimer() { return m_bTimer; }
-	BOOL IsRandom() { return m_bRandom; }
-	const VARTYPE GetType() { return m_xVarType; }
+	BOOL IsGlobal() {
+		return m_bGlobal;
+	}
+	BOOL IsConstant() {
+		return m_bConstant;
+	}
+	BOOL IsNumeric() {
+		return m_xVarType == NUMBER;
+	}
+	BOOL IsBoolean() {
+		return m_xVarType == BOOLEAN;
+	}
+	BOOL IsString() {
+		return m_xVarType == STRING;
+	}
+	BOOL IsReference() {
+		return m_bReference;
+	}
+	BOOL IsTimer() {
+		return m_bTimer;
+	}
+	BOOL IsRandom() {
+		return m_bRandom;
+	}
+	const VARTYPE GetType() {
+		return m_xVarType;
+	}
 
 	// Whenever setting the name, add this object to the hash table.
 	VOID SetName(const CBofString &s);
 	VOID SetValue(const CBofString &s);
 	VOID SetValue(int nVal);
 	VOID SetBoolValue(BOOL bVal);
-	VOID SetGlobal(BOOL bVal = TRUE) { m_bGlobal = bVal; }
-	VOID SetConstant(BOOL bVal = TRUE) { m_bConstant = bVal; }
-	VOID SetReference(BOOL bVal = TRUE) { m_bReference = bVal; }
-	VOID SetTimer(BOOL bVal = TRUE) { m_bTimer = bVal; }
-	VOID SetRandom(BOOL bVal = TRUE) { m_bRandom = bVal; }
-	VOID SetString() { m_xVarType = STRING; }
-	VOID SetNumeric() { m_xVarType = NUMBER; }
-	VOID SetBoolean() { m_xVarType = BOOLEAN; }
-	// VOID SetType(VARTYPE xType)		{ m_xVarType  = xType; }
+	VOID SetGlobal(BOOL bVal = TRUE) {
+		m_bGlobal = bVal;
+	}
+	VOID SetConstant(BOOL bVal = TRUE) {
+		m_bConstant = bVal;
+	}
+	VOID SetReference(BOOL bVal = TRUE) {
+		m_bReference = bVal;
+	}
+	VOID SetTimer(BOOL bVal = TRUE) {
+		m_bTimer = bVal;
+	}
+	VOID SetRandom(BOOL bVal = TRUE) {
+		m_bRandom = bVal;
+	}
+	VOID SetString() {
+		m_xVarType = STRING;
+	}
+	VOID SetNumeric() {
+		m_xVarType = NUMBER;
+	}
+	VOID SetBoolean() {
+		m_xVarType = BOOLEAN;
+	}
+	// VOID SetType(VARTYPE xType)      { m_xVarType  = xType; }
 
 	VOID Increment();
 };
@@ -103,8 +139,12 @@ public:
 
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);
-	CBagVar *GetVariable(INT i) { return m_xVarList[i]; }
-	INT GetNumVars() { return m_xVarList.GetCount(); }
+	CBagVar *GetVariable(INT i) {
+		return m_xVarList[i];
+	}
+	INT GetNumVars() {
+		return m_xVarList.GetCount();
+	}
 
 	// Use a hash table to lookup variables.
 	CBofList<CBagVar *> m_xVarHashList[VAR_HTABLE_SIZE];

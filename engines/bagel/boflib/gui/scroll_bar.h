@@ -53,24 +53,50 @@ public:
 	ERROR_CODE LoadBitmaps(const CHAR *pszBack, const CHAR *pszThumb, const CHAR *pszLeftUp = nullptr, const CHAR *pszRightUp = nullptr, const CHAR *pszLeftDown = nullptr, const CHAR *pszRightDown = nullptr);
 
 	ERROR_CODE SetPos(const INT nPos, BOOL bRepaint = TRUE);
-	INT GetPos() { return (m_nPos); }
+	INT GetPos() {
+		return (m_nPos);
+	}
 
-	ERROR_CODE LineLeft() { return (SetPos(m_nPos - m_nLineDelta)); }
-	ERROR_CODE LineRight() { return (SetPos(m_nPos + m_nLineDelta)); }
-	ERROR_CODE PageLeft() { return (SetPos(m_nPos - m_nPageDelta)); }
-	ERROR_CODE PageRight() { return (SetPos(m_nPos + m_nPageDelta)); }
+	ERROR_CODE LineLeft() {
+		return (SetPos(m_nPos - m_nLineDelta));
+	}
+	ERROR_CODE LineRight() {
+		return (SetPos(m_nPos + m_nLineDelta));
+	}
+	ERROR_CODE PageLeft() {
+		return (SetPos(m_nPos - m_nPageDelta));
+	}
+	ERROR_CODE PageRight() {
+		return (SetPos(m_nPos + m_nPageDelta));
+	}
 
-	ERROR_CODE Home() { return (SetPos(m_nMin)); }
-	ERROR_CODE End() { return (SetPos(m_nMax)); }
+	ERROR_CODE Home() {
+		return (SetPos(m_nMin));
+	}
+	ERROR_CODE End() {
+		return (SetPos(m_nMax));
+	}
 
-	INT GetScrollMin() { return (m_nMin); }
-	INT GetScrollMax() { return (m_nMax); }
+	INT GetScrollMin() {
+		return (m_nMin);
+	}
+	INT GetScrollMax() {
+		return (m_nMax);
+	}
 
-	VOID SetLineDelta(const INT nDelta) { m_nLineDelta = nDelta; }
-	INT GetLineDelta() { return (m_nLineDelta); }
+	VOID SetLineDelta(const INT nDelta) {
+		m_nLineDelta = nDelta;
+	}
+	INT GetLineDelta() {
+		return (m_nLineDelta);
+	}
 
-	VOID SetPageDelta(const INT nDelta) { m_nPageDelta = nDelta; }
-	INT GetPageDelta() { return (m_nPageDelta); }
+	VOID SetPageDelta(const INT nDelta) {
+		m_nPageDelta = nDelta;
+	}
+	INT GetPageDelta() {
+		return (m_nPageDelta);
+	}
 
 	VOID GetScrollRange(INT &nMin, INT &nMax);
 	VOID SetScrollRange(INT nMin, INT nMax, BOOL bRepaint = TRUE);

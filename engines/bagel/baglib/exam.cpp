@@ -34,7 +34,7 @@ BOOL CBagExam::Exam() {
 	::FlushEvents(everyEvent, 0);
 #elif BOF_WINDOWS
 
-	MSG			msg;
+	MSG         msg;
 
 	for (;;) {
 		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
@@ -69,7 +69,7 @@ VOID CBagExam::OnReSize(CBofSize *pSize) {
 }
 
 BOOL CBagExam::SetRotationRects() {
-	CBofRect rcClient = GetClientRect();	// Get the  windows rect
+	CBofRect rcClient = GetClientRect();    // Get the  windows rect
 
 	// Left quarter of the video window
 	m_LeftRect.left = rcClient.left;
@@ -141,18 +141,14 @@ BOOL CBagExam::RotateStop() {
 VOID CBagExam::OnMCINotify(ULONG wParam, ULONG /*lParam*/) {
 	switch (wParam) {
 	case MCI_NOTIFY_SUCCESSFUL: {
-		if (m_bLoop) // we are looping
-		{
-			if (m_eMovStatus == FOREWARD) // and we are moving forward
-			{
-				if (m_dwEnd == GetFrame()) // and we are at the end
-				{
-					SeekToStart();			 // go to beginning
-					RotateLeft();			 // and play
+		if (m_bLoop) { // we are looping
+			if (m_eMovStatus == FOREWARD) { // and we are moving forward
+				if (m_dwEnd == GetFrame()) { // and we are at the end
+					SeekToStart();           // go to beginning
+					RotateLeft();            // and play
 				}
 			} else {
-				if (m_dwStart == GetFrame())
-				{
+				if (m_dwStart == GetFrame()) {
 					SeekToEnd();
 					RotateRight();
 				}

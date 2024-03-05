@@ -92,7 +92,9 @@ protected:
 	virtual BOOL Play();
 	virtual BOOL Reverse();
 
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint) { OnButtonUp(nFlags, pPoint); }
+	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+		OnButtonUp(nFlags, pPoint);
+	}
 	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnMovieDone();
@@ -107,12 +109,12 @@ protected:
 public:
 	/**
 	 * Initializes Movie Object and opens movie file @ Rect
-	 * @param pParent		A pointer to the parent window
-	 * @param sFilename		String containing filename of movie to be opened
-	 * @param pBounds 		Location for video object relative to parent
+	 * @param pParent       A pointer to the parent window
+	 * @param sFilename     String containing filename of movie to be opened
+	 * @param pBounds       Location for video object relative to parent
 	 */
 	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
-		CBofRect *pBounds = nullptr, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	           CBofRect *pBounds = nullptr, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
 
 	/**
 	 * Destructor
@@ -130,7 +132,9 @@ public:
 	virtual BOOL Pause();
 	virtual BOOL Stop();
 
-	virtual MVSTATUS Status() { return m_eMovStatus; }
+	virtual MVSTATUS Status() {
+		return m_eMovStatus;
+	}
 
 	virtual BOOL SeekToStart(); // Seek to the start of the movie
 	virtual BOOL SeekToEnd();   // Seek to the start of the movie
@@ -146,10 +150,16 @@ public:
 
 	// jwl 1.24.97 need to access members from outside of class for
 	// performance optimization.
-	SmackBuf *GetSmackBuffer() { return m_pSbuf; }
-	Smack *GetSmackMovie() { return m_pSmk; }
+	SmackBuf *GetSmackBuffer() {
+		return m_pSbuf;
+	}
+	Smack *GetSmackMovie() {
+		return m_pSmk;
+	}
 #if SMACKOFFSCREEN
-	CBofBitmap *GetSmackBitmap() { return m_pBmpBuf; }
+	CBofBitmap *GetSmackBitmap() {
+		return m_pBmpBuf;
+	}
 #endif
 };
 

@@ -31,23 +31,41 @@ namespace Bagel {
 class CBofFixed : public CBofObject {
 private:
 	Fixed m_lVal;
-	CBofFixed(const Fixed Arg) { m_lVal = Arg; }
+	CBofFixed(const Fixed Arg) {
+		m_lVal = Arg;
+	}
 
 public:
 	// Constructors
-	CBofFixed() { m_lVal = 0L; }
-	CBofFixed(const CBofFixed &Arg) { m_lVal = Arg.m_lVal; }
-	CBofFixed(const INT Arg) { m_lVal = (Fixed)(((long)(Arg)) << 16); }
-	CBofFixed(const DOUBLE Arg) { m_lVal = (Fixed)(Arg * (1 << 16)); }
+	CBofFixed() {
+		m_lVal = 0L;
+	}
+	CBofFixed(const CBofFixed &Arg) {
+		m_lVal = Arg.m_lVal;
+	}
+	CBofFixed(const INT Arg) {
+		m_lVal = (Fixed)(((long)(Arg)) << 16);
+	}
+	CBofFixed(const DOUBLE Arg) {
+		m_lVal = (Fixed)(Arg * (1 << 16));
+	}
 
 	// Operators
 	// inline CBofFixed operator =(const CBofFixed& Arg) const;
-	CBofFixed operator+(const CBofFixed &Arg) const { return m_lVal + Arg.m_lVal; }
-	CBofFixed operator-(const CBofFixed &Arg) const { return m_lVal - Arg.m_lVal; }
+	CBofFixed operator+(const CBofFixed &Arg) const {
+		return m_lVal + Arg.m_lVal;
+	}
+	CBofFixed operator-(const CBofFixed &Arg) const {
+		return m_lVal - Arg.m_lVal;
+	}
 
-	CBofFixed operator*(const CBofFixed &Arg) const { return FixedMultiply(m_lVal, Arg.m_lVal); }
+	CBofFixed operator*(const CBofFixed &Arg) const {
+		return FixedMultiply(m_lVal, Arg.m_lVal);
+	}
 
-	CBofFixed operator/(const CBofFixed &Arg) const { return FixedDivide(m_lVal, Arg.m_lVal); }
+	CBofFixed operator/(const CBofFixed &Arg) const {
+		return FixedDivide(m_lVal, Arg.m_lVal);
+	}
 
 	CBofFixed operator+=(const CBofFixed &Arg);
 	CBofFixed operator-=(const CBofFixed &Arg);
@@ -60,7 +78,9 @@ public:
 	}
 
 	// Conversion operators
-	operator INT() { return (INT)(((LONG)m_lVal) >> 16); }
+	operator INT() {
+		return (INT)(((LONG)m_lVal) >> 16);
+	}
 };
 
 } // namespace Bagel

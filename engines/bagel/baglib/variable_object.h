@@ -47,9 +47,13 @@ public:
 
 	CBofRect GetRect();
 
-	CBofSize GetSize() { return m_xSize; }
+	CBofSize GetSize() {
+		return m_xSize;
+	}
 
-	void SetSize(const CBofSize &xSize) { m_xSize = xSize; }
+	void SetSize(const CBofSize &xSize) {
+		m_xSize = xSize;
+	}
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 

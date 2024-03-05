@@ -108,9 +108,9 @@ CBagPanBitmap::CBagPanBitmap(const CHAR *pszFileName, CBofPalette *pPalette, con
 
 CBagPanBitmap::CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
 #ifdef COMPRESSED
-																								 CBofCompressedBitmap(dx, dy, pPalette)
+	CBofCompressedBitmap(dx, dy, pPalette)
 #else
-																								  CBofBitmap(dx, dy, pPalette)
+	CBofBitmap(dx, dy, pPalette)
 #endif
 {
 	int nW = Width();
@@ -215,9 +215,9 @@ CBofRect CBagPanBitmap::GetWarpSrcRect() {
 	int nH2 = Height() >> 1;
 
 	return CBofRect(m_xCurrView.left,
-					nH2 + (int)(*m_pCosineTable * CBofFixed(m_xCurrView.top - nH2)),
-					m_xCurrView.right,
-					nH2 + (int)(*m_pCosineTable * CBofFixed(m_xCurrView.bottom - nH2)));
+	                nH2 + (int)(*m_pCosineTable * CBofFixed(m_xCurrView.top - nH2)),
+	                m_xCurrView.right,
+	                nH2 + (int)(*m_pCosineTable * CBofFixed(m_xCurrView.bottom - nH2)));
 }
 
 CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
@@ -267,9 +267,9 @@ ERROR_CODE CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect,
 			// Set the source
 			//
 			PanSrcRect.SetRect(srcRect.left + i,
-							   nTop + (INT)(*pSrcHeight * srcTop),
-							   nRight + i,
-							   nTop + (INT)(*pSrcHeight * srcBottom));
+			                   nTop + (INT)(*pSrcHeight * srcTop),
+			                   nRight + i,
+			                   nTop + (INT)(*pSrcHeight * srcBottom));
 
 			pSrcBmp->Paint(pBmp, &WndDstRect, &PanSrcRect);
 
@@ -284,9 +284,9 @@ ERROR_CODE CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect,
 		for (i = 0, stripNumber = 0; i < dstRect.Width(); i += nWidth, stripNumber++) {
 			// Set the source
 			PanSrcRect.SetRect(srcRect.left + i,
-							   STRIP_POINTS[tableSlot][stripNumber].top,
-							   nRight + i,
-							   STRIP_POINTS[tableSlot][stripNumber].bottom);
+			                   STRIP_POINTS[tableSlot][stripNumber].top,
+			                   nRight + i,
+			                   STRIP_POINTS[tableSlot][stripNumber].bottom);
 
 			pSrcBmp->PaintStretch4(pBmp, &WndDstRect, &PanSrcRect);
 
@@ -294,15 +294,14 @@ ERROR_CODE CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect,
 			WndDstRect.right = WndDstRect.right + nWidth;
 			pSrcHeight += nIncrement;
 		}
-	} else // nWidth > 4
-	{
+	} else { // nWidth > 4
 		for (i = 0; i < dstRect.Width(); i += nWidth) {
 			// Set the source
 			//
 			PanSrcRect.SetRect(srcRect.left + i,
-							   nTop + (INT)(*pSrcHeight * srcTop),
-							   nRight + i,
-							   nTop + (INT)(*pSrcHeight * srcBottom));
+			                   nTop + (INT)(*pSrcHeight * srcTop),
+			                   nRight + i,
+			                   nTop + (INT)(*pSrcHeight * srcBottom));
 
 			pSrcBmp->PaintStretchOpt(pBmp, &WndDstRect, &PanSrcRect, nWidth);
 

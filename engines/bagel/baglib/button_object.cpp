@@ -118,7 +118,7 @@ BOOL CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint xPoint, void *) 
 	} else if (m_xButtonType == HLEVER || m_xButtonType == VLEVER) {
 		if (!m_bActiveDown && !m_bActiveUp) {
 			if ((m_xButtonType == HLEVER && xPoint.x > m_MidPoint.x) || // right of midpoint
-				(m_xButtonType == VLEVER && xPoint.y > m_MidPoint.y)) { // below midpoint
+			        (m_xButtonType == VLEVER && xPoint.y > m_MidPoint.y)) { // below midpoint
 				m_bActiveDown = TRUE;
 			} else {
 				m_bActiveUp = TRUE;
@@ -248,7 +248,7 @@ BOOL CBagButtonObject::OnMouseMove(UINT /*nFlags*/, CBofPoint xPoint, void *info
 	if (m_xButtonType == PUSH) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
 			if (!this->GetRect().PtInRect(xPoint) &&
-				m_bActive && !m_bActiveUp) {
+			        m_bActive && !m_bActiveUp) {
 				m_bActiveUp = TRUE;
 			}
 		}
@@ -271,14 +271,14 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 
 			if (m_bActive) { // If the button is doing something
 				if (m_bActiveDown) {
-					GetSprite()->NextCel(); //	increment frame
-											// jwl 10.30.96, If this is animated, the bring it back up immediately
+					GetSprite()->NextCel(); //  increment frame
+					// jwl 10.30.96, If this is animated, the bring it back up immediately
 					if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1 || GetSprite()->GetAnimated()) {
 						m_bActiveDown = FALSE;
 					}
 				} else if (m_bActiveUp) {   // else (going back up)
-					GetSprite()->PrevCel(); //	decrement frame
-											// jwl 10.30.96, If this is animated, the let it go immediately
+					GetSprite()->PrevCel(); //  decrement frame
+					// jwl 10.30.96, If this is animated, the let it go immediately
 					if (GetSprite()->GetCelIndex() == 0 || GetSprite()->GetAnimated()) {
 						m_bActiveUp = FALSE;
 						m_bActive = FALSE;
@@ -290,12 +290,12 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 	} else if (m_xButtonType == CHECKBOX) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1) && m_bActive) {
 			if (m_bActiveDown) {
-				GetSprite()->NextCel(); //	increment frame
+				GetSprite()->NextCel(); //  increment frame
 				if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1) {
 					m_bActive = FALSE;
 				}
 			} else {                    // else (going back up)
-				GetSprite()->PrevCel(); //	decrement frame
+				GetSprite()->PrevCel(); //  decrement frame
 				if (GetSprite()->GetCelIndex() == 0) {
 					m_bActive = FALSE;
 				}
@@ -320,7 +320,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 			}
 
 			SetState(GetSprite()->GetCelIndex());
-			//			RunCallBack();
+			//          RunCallBack();
 		}
 	}
 

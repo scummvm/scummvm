@@ -74,12 +74,12 @@ private:
 
 	BOOL m_bStretchToScreen;                 // Whether or not the backdrop is painted full screen
 	BOOL m_bPaintToBackdrop;                 // Whether or not the backdrop is a extra paint surface
-											 // Access via CSprite::GetBackdrop()
+	// Access via CSprite::GetBackdrop()
 	CBofList<CBagObject *> *m_pFGObjectList; // Objects to be painted to the window
 
-	// CPoint              m_xCursorLocation;			// Current cursor location in bmp.
-	// double 				 m_fxAspectRation;			// Maintain the current aspect ratio
-	// double 				 m_fyAspectRation;			// Maintain the current aspect ratio
+	// CPoint              m_xCursorLocation;           // Current cursor location in bmp.
+	// double                m_fxAspectRation;          // Maintain the current aspect ratio
+	// double                m_fyAspectRation;          // Maintain the current aspect ratio
 
 public:
 	static CBagWield *m_pWieldBmp; // Pointer to the WEILD object
@@ -111,15 +111,21 @@ public:
 	 */
 	CBofRect UnSetSlidebitmap();
 
-	CBagPanBitmap *GetSlideBitmap() { return m_pSlideBitmap; }
+	CBagPanBitmap *GetSlideBitmap() {
+		return m_pSlideBitmap;
+	}
 
 	DWORD RotateTo(CPoint xPoint, int nRate = 8);
 
 	VOID ActivateView();
 	VOID DeActivateView();
 
-	static VOID SetPanSpeed(INT nSpeed) { m_nPanSpeed = nSpeed; }
-	static INT GetPanSpeed() { return m_nPanSpeed; }
+	static VOID SetPanSpeed(INT nSpeed) {
+		m_nPanSpeed = nSpeed;
+	}
+	static INT GetPanSpeed() {
+		return m_nPanSpeed;
+	}
 
 #if BOF_MAC
 	// We need to be able to call activate view and deactivate view outside
@@ -132,13 +138,15 @@ public:
 	virtual VOID Disable();
 
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
-		CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
+	                        CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
 
-	VOID SetViewPortPos(const CPoint &pos) { m_xVeiwPortPos = pos; } // Position of the viewport
+	VOID SetViewPortPos(const CPoint &pos) {
+		m_xVeiwPortPos = pos;    // Position of the viewport
+	}
 	VOID SetViewPortSize(const CSize &xViewSize) {
 		if (m_pSlideBitmap)
 			m_pSlideBitmap->SetViewSize(xViewSize);
@@ -149,7 +157,9 @@ public:
 			r = m_pSlideBitmap->GetCurrView();
 		return r;
 	}
-	const CPoint GetViewPortPos() { return m_xVeiwPortPos; }
+	const CPoint GetViewPortPos() {
+		return m_xVeiwPortPos;
+	}
 	const CSize GetViewPortSize() {
 		CRect r;
 		if (m_pSlideBitmap)
@@ -159,24 +169,48 @@ public:
 	const CRect GetMaxView() {
 		return m_pSlideBitmap->GetMaxView();
 	}
-	VOID SetMovementRect(const CRect &rect) { m_xMovementRect = rect; }
-	const CRect &GetMovementRect() { return m_xMovementRect; }
-	VOID SetPaintToBackdrop(const BOOL bPaint) { m_bPaintToBackdrop = bPaint; }
+	VOID SetMovementRect(const CRect &rect) {
+		m_xMovementRect = rect;
+	}
+	const CRect &GetMovementRect() {
+		return m_xMovementRect;
+	}
+	VOID SetPaintToBackdrop(const BOOL bPaint) {
+		m_bPaintToBackdrop = bPaint;
+	}
 
 	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
 	virtual const CBofPoint ViewPortToDevPt(const CBofPoint &xPoint);
-	BOOL GetStretchToScreen() { return m_bStretchToScreen; }
-	BOOL SetStretchToScreen(BOOL val = TRUE) { return m_bStretchToScreen = val; }
+	BOOL GetStretchToScreen() {
+		return m_bStretchToScreen;
+	}
+	BOOL SetStretchToScreen(BOOL val = TRUE) {
+		return m_bStretchToScreen = val;
+	}
 
-	static INT GetRealCorrection() { return m_nCorrection; }
-	static VOID SetRealCorrection(INT n) { m_nCorrection = n; }
+	static INT GetRealCorrection() {
+		return m_nCorrection;
+	}
+	static VOID SetRealCorrection(INT n) {
+		m_nCorrection = n;
+	}
 
-	INT GetCorrection() { return m_pSlideBitmap->GetCorrWidth(); }
-	VOID SetCorrection(INT nCorr) { m_pSlideBitmap->SetCorrWidth(nCorr); }
-	double GetFOV() { return m_pSlideBitmap->GetFOV(); }
-	VOID SetFOV(double fov) { m_pSlideBitmap->SetFOV(fov); }
+	INT GetCorrection() {
+		return m_pSlideBitmap->GetCorrWidth();
+	}
+	VOID SetCorrection(INT nCorr) {
+		m_pSlideBitmap->SetCorrWidth(nCorr);
+	}
+	double GetFOV() {
+		return m_pSlideBitmap->GetFOV();
+	}
+	VOID SetFOV(double fov) {
+		m_pSlideBitmap->SetFOV(fov);
+	}
 
-	CBofPalette *GetPalette() { return m_pSlideBitmap->GetPalette(); }
+	CBofPalette *GetPalette() {
+		return m_pSlideBitmap->GetPalette();
+	}
 
 	DWORD Benchmark();
 

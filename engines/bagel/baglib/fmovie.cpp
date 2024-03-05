@@ -61,7 +61,7 @@ CBagFMovie::~CBagFMovie() {
 }
 
 ERROR_CODE CBagFMovie::Initialize(CBofWindow *pParent) {
-	// Movie Stuff	
+	// Movie Stuff
 	m_eMovStatus = STOPPED;
 	m_eMovType = SMACKER;
 	m_bEscCanStop = TRUE;
@@ -126,7 +126,7 @@ BOOL CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 }
 
 BOOL CBagFMovie::OpenMovie(const char *sFilename) {
-	BOOL bRepaint; 			// jwl 07.05.96
+	BOOL bRepaint;          // jwl 07.05.96
 	Assert(sFilename[0] != '\0');
 
 	// Get a non const version of the filename
@@ -189,14 +189,14 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 			SmackToBuffer(m_pSmk, 0, 0, m_pBmpBuf->Width(), m_pBmpBuf->Height(), m_pBufferStart, m_nReversed);
 
 #if BOF_MAC
-			// jwl if we were opened without being positioned, do that here. 
+			// jwl if we were opened without being positioned, do that here.
 			if (m_bPositioned == false) {
 				CenterRect();
 			}
 #endif
 			SmackDoFrame(m_pSmk);
 		}
-		bRepaint = TRUE; 		// jwl 07.05.96
+		bRepaint = TRUE;        // jwl 07.05.96
 
 		m_xBounds = CBofRect(0, 0, (WORD)m_pBmpBuf->Width() - 1, (WORD)m_pBmpBuf->Height() - 1);
 
@@ -221,8 +221,8 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 					m_pBmpBuf->Paint(m_pFilterBmp);
 #if BOF_MAC && __POWERPC__
 					CallUniversalProc(pFilterFunction,
-						uppFilterProcInfo,
-						nFilterId, m_pFilterBmp, &m_xBounds);
+					                  uppFilterProcInfo,
+					                  nFilterId, m_pFilterBmp, &m_xBounds);
 #else
 					(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 #endif
@@ -257,16 +257,15 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 }
 
 VOID CBagFMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
-	if (m_bEscCanStop && lKey == BKEY_ESC)
-	{
+	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = FALSE;
 		Stop();
 		if (m_eMovType == SMACKER)
 			OnMovieDone();
 
-		// SMACKER NEEDS THIS CALLED, 
-		// MCI WILL CALL IT AUTOMATICALLY           
+		// SMACKER NEEDS THIS CALLED,
+		// MCI WILL CALL IT AUTOMATICALLY
 	}
 }
 
@@ -292,8 +291,8 @@ VOID CBagFMovie::OnMainLoop() {
 
 #if BOF_MAC && __POWERPC__
 						CallUniversalProc(pFilterFunction,
-							uppFilterProcInfo,
-							nFilterId, m_pFilterBmp, &m_xBounds);
+						                  uppFilterProcInfo,
+						                  nFilterId, m_pFilterBmp, &m_xBounds);
 #else
 						(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 #endif
@@ -389,16 +388,16 @@ VOID CBagFMovie::CloseMovie() {
 *
 * Parameters
 *
-*	void
+*   void
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Called when dialog box closec
+*   Called when dialog box closec
 *
 ***********************************************************************/
 VOID CBagFMovie::OnClose() {
@@ -413,16 +412,16 @@ VOID CBagFMovie::OnClose() {
 *
 * Parameters
 *
-*	OnMovieDone
+*   OnMovieDone
 *
 * Return Value
 *
-*	VOID
+*   VOID
 *
 * Description
 *
 *
-*	On ANY button up the movie stops and the capture is released
+*   On ANY button up the movie stops and the capture is released
 *
 ***********************************************************************/
 VOID CBagFMovie::OnMovieDone() {
@@ -445,16 +444,16 @@ VOID CBagFMovie::OnMovieDone() {
 *
 * Parameters
 *
-*	void
+*   void
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Show the movie file
+*   Show the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::ShowMovie() {
@@ -473,16 +472,16 @@ BOOL CBagFMovie::ShowMovie() {
 *
 * Parameters
 *
-*	void
+*   void
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Hide the movie file
+*   Hide the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::HideMovie() {
@@ -496,7 +495,7 @@ BOOL CBagFMovie::HideMovie() {
 
 
 #if BOF_MAC
-#pragma profile off		// jwl 08.12.96 movies are skewing our profiling
+#pragma profile off     // jwl 08.12.96 movies are skewing our profiling
 // data, since we don't have control over it, don't
 // include it.
 #endif
@@ -506,16 +505,16 @@ BOOL CBagFMovie::HideMovie() {
 *
 * Parameters
 *
-*	bMouseCanStop		Mouse Down will stop the movie
+*   bMouseCanStop       Mouse Down will stop the movie
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
@@ -539,7 +538,7 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	CBofCursor::Show();
 #endif
 
-	return(bSuccess);
+	return (bSuccess);
 }
 
 
@@ -549,29 +548,26 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 *
 * Parameters
 *
-*	bMouseCanStop		Mouse Down will stop the movie
+*   bMouseCanStop       Mouse Down will stop the movie
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::Play() {
 
-	if (m_eMovType == SMACKER)
-	{
-		if (m_pSmk)
-		{
+	if (m_eMovType == SMACKER) {
+		if (m_pSmk) {
 			m_eMovStatus = FOREWARD;
 			return TRUE;
 		}
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -588,16 +584,16 @@ BOOL CBagFMovie::Play() {
 *
 * Parameters
 *
-*	bMouseCanStop		Mouse Down will stop the movie
+*   bMouseCanStop       Mouse Down will stop the movie
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
@@ -622,29 +618,26 @@ BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 *
 * Parameters
 *
-*	bMouseCanStop		Mouse Down will stop the movie
+*   bMouseCanStop       Mouse Down will stop the movie
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::Reverse() {
 
-	if (m_eMovType == SMACKER)
-	{
-		if (m_pSmk)
-		{
+	if (m_eMovType == SMACKER) {
+		if (m_pSmk) {
 			m_eMovStatus = REVERSE;
 			return TRUE;
 		}
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -658,29 +651,26 @@ BOOL CBagFMovie::Reverse() {
 *
 * Parameters
 *
-*	none
+*   none
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Stop the movie
+*   Stop the movie
 *
 ***********************************************************************/
 BOOL CBagFMovie::Stop() {
 
-	if (m_eMovType == SMACKER)
-	{
-		if (m_pSmk)
-		{
+	if (m_eMovType == SMACKER) {
+		if (m_pSmk) {
 			m_eMovStatus = STOPPED;
 			return TRUE;
 		}
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -694,30 +684,27 @@ BOOL CBagFMovie::Stop() {
 *
 * Parameters
 *
-*	none
+*   none
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Pause the movie
+*   Pause the movie
 *
 ***********************************************************************/
 BOOL CBagFMovie::Pause() {
 
-	if (m_eMovType == SMACKER)
-	{
-		if (m_pSmk)
-		{
+	if (m_eMovType == SMACKER) {
+		if (m_pSmk) {
 			m_eMovStatus = PAUSED;
 			return TRUE;
 		} else
 			return FALSE;
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -732,25 +719,23 @@ BOOL CBagFMovie::Pause() {
 *
 * Parameters
 *
-*	void
+*   void
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::SeekToStart() {
-	if (m_eMovType == SMACKER)
-	{
+	if (m_eMovType == SMACKER) {
 		SmackGoto(m_pSmk, 0);
 		return FALSE;
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add Quicktime support here.
 		//
 	}
@@ -765,25 +750,23 @@ BOOL CBagFMovie::SeekToStart() {
 *
 * Parameters
 *
-*	void
+*   void
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Seek to the start of the movie file
+*   Seek to the start of the movie file
 *
 ***********************************************************************/
 BOOL CBagFMovie::SeekToEnd() {
-	if (m_eMovType == SMACKER)
-	{
+	if (m_eMovType == SMACKER) {
 		SmackGoto(m_pSmk, m_pSmk->Frames - 1); // Goto last frame
 		return TRUE;
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -797,30 +780,28 @@ BOOL CBagFMovie::SeekToEnd() {
 *
 * Parameters
 *
-*	none
+*   none
 *
 * Return Value
 *
-*		The frame number
+*       The frame number
 *
 * Description
 *
 *
-*	Return the current frame of the movie
+*   Return the current frame of the movie
 *
 ***********************************************************************/
 DWORD CBagFMovie::GetFrame() {
-	if (m_eMovType == SMACKER)
-	{
+	if (m_eMovType == SMACKER) {
 		if (m_pSmk)
-			return(m_pSmk->FrameNum);
-	} else if (m_eMovType == QT)
-	{
+			return (m_pSmk->FrameNum);
+	} else if (m_eMovType == QT) {
 		// Add QuickTime suport here.
 		//
 	}
 
-	return((DWORD)-1);
+	return ((DWORD) -1);
 }
 
 
@@ -830,30 +811,27 @@ DWORD CBagFMovie::GetFrame() {
 *
 * Parameters
 *
-*	none
+*   none
 *
 * Return Value
 *
-*		Success/Failure
+*       Success/Failure
 *
 * Description
 *
 *
-*	Set the current frame of the movie
+*   Set the current frame of the movie
 *
 ***********************************************************************/
 BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
-	if (m_eMovType == SMACKER)
-	{
-		if (m_pSmk)
-		{
+	if (m_eMovType == SMACKER) {
+		if (m_pSmk) {
 			SmackGoto(m_pSmk, dwFrameNum);
 			SmackNextFrame(m_pSmk); // This seems to be neccessary to increment frameNum etc.
 			return TRUE;
 		} else
 			return FALSE;
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -867,21 +845,20 @@ BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
 *
 * Parameters
 *
-*	pRect
+*   pRect
 *
 * Return Value
 *
-*		Success/Failure
+*       Success/Failure
 *
 * Description
 *
 *
-*	Set the current frame of the movie
+*   Set the current frame of the movie
 *
 ***********************************************************************/
 VOID CBagFMovie::OnReSize(CBofSize *) {
-	if (m_eMovType == QT)
-	{
+	if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -893,26 +870,26 @@ VOID CBagFMovie::OnReSize(CBofSize *) {
 *
 * Parameters
 *
-*	pRect
+*   pRect
 *
 * Return Value
 *
-*		Success/Failure
+*       Success/Failure
 *
 * Description
 *
 *
-*	Set the current frame of the movie
+*   Set the current frame of the movie
 *
 ***********************************************************************/
 BOOL CBagFMovie::CenterRect() {
-	CBofRect			cBofRect;
-	RECT				rcParentRect, rcMovieBounds;
-	int					ClientWidth, ClientHeight;
-	int					MovieWidth = 0;
-	int					MovieHeight = 0;
+	CBofRect            cBofRect;
+	RECT                rcParentRect, rcMovieBounds;
+	int                 ClientWidth, ClientHeight;
+	int                 MovieWidth = 0;
+	int                 MovieHeight = 0;
 
-#if BOF_MAC		// jwl 06.26.96 Use the windows port rect
+#if BOF_MAC     // jwl 06.26.96 Use the windows port rect
 	rcParentRect = m_pParentWnd->GetRect();
 	m_bPositioned = TRUE;
 #else
@@ -923,12 +900,10 @@ BOOL CBagFMovie::CenterRect() {
 	ClientHeight = rcParentRect.bottom - rcParentRect.top;
 
 	// Get Movies width and height
-	if (m_eMovType == SMACKER)
-	{
+	if (m_eMovType == SMACKER) {
 		MovieWidth = m_pSmk->Width;
 		MovieHeight = m_pSmk->Height;
-	} else if (m_eMovType == QT)
-	{
+	} else if (m_eMovType == QT) {
 		// Add QuickTime support here.
 		//
 	}
@@ -938,7 +913,7 @@ BOOL CBagFMovie::CenterRect() {
 	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;
 	rcMovieBounds.bottom = rcMovieBounds.top + MovieHeight;
 
-	// reposition the playback window 
+	// reposition the playback window
 	cBofRect = rcMovieBounds;
 	ReSize(&cBofRect, TRUE);
 
@@ -952,16 +927,16 @@ BOOL CBagFMovie::CenterRect() {
 *
 * Parameters
 *
-*	OnButtonUp
+*   OnButtonUp
 *
 * Return Value
 *
-*	VOID
+*   VOID
 *
 * Description
 *
 *
-*	On ANY button up the movie stops and the capture is released
+*   On ANY button up the movie stops and the capture is released
 *
 ***********************************************************************/
 VOID CBagFMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
@@ -975,21 +950,21 @@ VOID CBagFMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
 *
 * Parameters
 *
-*	FileOpenWin
+*   FileOpenWin
 *
 * Return Value
 *
-*	Success/Failure
+*   Success/Failure
 *
 * Description
 *
 *
-*	Display a file open message box to allow user to pick movie
+*   Display a file open message box to allow user to pick movie
 *
 ***********************************************************************/
 BOOL CBagFMovie::FileOpenWin() {
 	// Currently disabled because got wacky with the compiler
-	return(FALSE);
+	return (FALSE);
 }
 
 // Create a windows palette from a smacker palette.
@@ -1000,8 +975,8 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 	HPALETTE returnValue;
 
 
-#if BOF_MAC	
-	//	jwl 10.01.96 get a new palette and seed it from the palette 
+#if BOF_MAC
+	//  jwl 10.01.96 get a new palette and seed it from the palette
 	USHORT nIndex;
 
 	returnValue = ::NewPalette(kNumColors, 0, pmExplicit | pmAnimated, 0);

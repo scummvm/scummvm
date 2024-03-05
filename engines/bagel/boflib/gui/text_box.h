@@ -45,29 +45,59 @@ public:
 
 	VOID SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const INT nFont = FONT_DEFAULT);
 
-	VOID SetPointSize(const INT nSize) { m_nPointSize = nSize; }
-	INT GetPointSize(VOID) { return (m_nPointSize); }
+	VOID SetPointSize(const INT nSize) {
+		m_nPointSize = nSize;
+	}
+	INT GetPointSize(VOID) {
+		return (m_nPointSize);
+	}
 
-	VOID SetWeight(const INT nWeight) { m_nWeight = nWeight; }
-	INT GetWeight(VOID) { return (m_nWeight); }
+	VOID SetWeight(const INT nWeight) {
+		m_nWeight = nWeight;
+	}
+	INT GetWeight(VOID) {
+		return (m_nWeight);
+	}
 
-	VOID SetPageLength(const INT nSize) { m_nPageSize = nSize; }
-	INT GetPageLength(VOID) { return (m_nPageSize); }
+	VOID SetPageLength(const INT nSize) {
+		m_nPageSize = nSize;
+	}
+	INT GetPageLength(VOID) {
+		return (m_nPageSize);
+	}
 
-	VOID SetColor(const RGBCOLOR cColor) { m_cTextColor = cColor; }
-	RGBCOLOR GetColor(VOID) { return (m_cTextColor); }
+	VOID SetColor(const RGBCOLOR cColor) {
+		m_cTextColor = cColor;
+	}
+	RGBCOLOR GetColor(VOID) {
+		return (m_cTextColor);
+	}
 
-	VOID SetFont(INT nFont) { m_nTextFont = nFont; }
-	INT GetFont() { return m_nTextFont; }
+	VOID SetFont(INT nFont) {
+		m_nTextFont = nFont;
+	}
+	INT GetFont() {
+		return m_nTextFont;
+	}
 
-	ERROR_CODE LineUp(VOID) { return (ScrollUp(1)); }
-	ERROR_CODE LineDown(VOID) { return (ScrollDown(1)); }
+	ERROR_CODE LineUp(VOID) {
+		return (ScrollUp(1));
+	}
+	ERROR_CODE LineDown(VOID) {
+		return (ScrollDown(1));
+	}
 
-	ERROR_CODE PageUp(VOID) { return (ScrollUp(m_nPageSize)); }
-	ERROR_CODE PageDown(VOID) { return (ScrollDown(m_nPageSize)); }
+	ERROR_CODE PageUp(VOID) {
+		return (ScrollUp(m_nPageSize));
+	}
+	ERROR_CODE PageDown(VOID) {
+		return (ScrollDown(m_nPageSize));
+	}
 
 	ERROR_CODE ScrollUp(const INT nLines);
-	ERROR_CODE ScrollDown(const INT nLines) { return (ScrollUp(-nLines)); }
+	ERROR_CODE ScrollDown(const INT nLines) {
+		return (ScrollUp(-nLines));
+	}
 
 	ERROR_CODE ScrollTo(const INT nLine);
 
@@ -76,8 +106,12 @@ public:
 
 	VOID FlushBackground(VOID);
 
-	INT GetCurrLine(VOID) { return (m_nCurrentLine); }
-	ERROR_CODE SetCurrLine(const INT nLine) { return (ScrollTo(nLine)); }
+	INT GetCurrLine(VOID) {
+		return (m_nCurrentLine);
+	}
+	ERROR_CODE SetCurrLine(const INT nLine) {
+		return (ScrollTo(nLine));
+	}
 
 protected:
 	INT GetIndex(const INT nLines);

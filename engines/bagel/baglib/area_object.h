@@ -43,9 +43,13 @@ public:
 	ERROR_CODE Detach();
 
 	CBofRect GetRect();
-	CBofSize GetSize() const { return m_xSize; }
+	CBofSize GetSize() const {
+		return m_xSize;
+	}
 
-	void SetSize(const CBofSize &xSize) { m_xSize = xSize; }
+	void SetSize(const CBofSize &xSize) {
+		m_xSize = xSize;
+	}
 };
 
 } // namespace Bagel

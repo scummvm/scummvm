@@ -29,7 +29,9 @@ namespace Bagel {
 
 class CBofObject {
 public:
-	static BOOL IsValidObject(const CBofObject *pObject) { return true; }
+	static BOOL IsValidObject(const CBofObject *pObject) {
+		return true;
+	}
 };
 
 } // namespace Bagel

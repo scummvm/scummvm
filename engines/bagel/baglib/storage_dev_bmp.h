@@ -41,17 +41,31 @@ public:
 	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bTrans = TRUE);
 	virtual ~CBagStorageDevBmp();
 
-	CBofBitmap *GetWorkBmp() { return (m_pWorkBmp); }
+	CBofBitmap *GetWorkBmp() {
+		return (m_pWorkBmp);
+	}
 	ERROR_CODE SetWorkBmp();
 	ERROR_CODE KillWorkBmp();
 
-	CBofRect GetRect(VOID) { return CBagStorageDev::GetRect(); }
-	VOID SetRect(const CBofRect &xRect) { CBagStorageDev::SetRect(xRect); }
-	CBofPoint GetPosition() { return CBagStorageDev::GetPosition(); }
-	VOID SetPosition(const CBofPoint &pos) { CBagStorageDev::SetPosition(pos); }
+	CBofRect GetRect(VOID) {
+		return CBagStorageDev::GetRect();
+	}
+	VOID SetRect(const CBofRect &xRect) {
+		CBagStorageDev::SetRect(xRect);
+	}
+	CBofPoint GetPosition() {
+		return CBagStorageDev::GetPosition();
+	}
+	VOID SetPosition(const CBofPoint &pos) {
+		CBagStorageDev::SetPosition(pos);
+	}
 
-	BOOL GetTransparent() { return m_bTrans; }
-	VOID SetTransparent(BOOL bTrans = TRUE) { m_bTrans = bTrans; }
+	BOOL GetTransparent() {
+		return m_bTrans;
+	}
+	VOID SetTransparent(BOOL bTrans = TRUE) {
+		m_bTrans = bTrans;
+	}
 
 	/**
 	 * Return a scaled point from the screen to the bitmap
@@ -59,13 +73,19 @@ public:
 	CBofPoint GetScaledPt(CBofPoint xPoint);
 
 	ERROR_CODE SetBackground(CBofBitmap *pBmp);
-	CBofBitmap *GetBackground() { return (GetBitmap()); }
+	CBofBitmap *GetBackground() {
+		return (GetBitmap());
+	}
 
 	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
-	virtual BOOL IsAttached() { return CBagBmpObject::IsAttached(); }
+	virtual BOOL IsAttached() {
+		return CBagBmpObject::IsAttached();
+	}
 
-	virtual BOOL PaintFGObjects(CBofBitmap *) { return TRUE; }
+	virtual BOOL PaintFGObjects(CBofBitmap *) {
+		return TRUE;
+	}
 
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
@@ -74,7 +94,7 @@ public:
 
 	/**
 	 * Called on the mouse left button up of the bagbmobj
-	 *	and redirected to the lbutton up of the CBagStorageDev
+	 *  and redirected to the lbutton up of the CBagStorageDev
 	 */
 	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info);
 

@@ -84,16 +84,32 @@ public:
 
 	VOID ArrangeFrames();
 
-	INT GetNumOfLoops() const { return m_nNumOfLoops; }
-	INT GetPlaybackSpeed() const { return m_nPlaybackSpeed; }
-	INT GetStartFrame() const { return m_nStartFrame; }
-	INT GetEndFrame() const { return m_nEndFrame; }
-	INT GetCurrentFrame() const { return (m_pSmk != nullptr) ? m_pSmk->FrameNum : -1; }
+	INT GetNumOfLoops() const {
+		return m_nNumOfLoops;
+	}
+	INT GetPlaybackSpeed() const {
+		return m_nPlaybackSpeed;
+	}
+	INT GetStartFrame() const {
+		return m_nStartFrame;
+	}
+	INT GetEndFrame() const {
+		return m_nEndFrame;
+	}
+	INT GetCurrentFrame() const {
+		return (m_pSmk != nullptr) ? m_pSmk->FrameNum : -1;
+	}
 
-	BOOL IsModalDone() { return !m_nNumOfLoops; }
+	BOOL IsModalDone() {
+		return !m_nNumOfLoops;
+	}
 
-	BOOL IsPanim() { return m_bPanim; }
-	VOID SetPanim(BOOL b = TRUE) { m_bPanim = b; }
+	BOOL IsPanim() {
+		return m_bPanim;
+	}
+	VOID SetPanim(BOOL b = TRUE) {
+		m_bPanim = b;
+	}
 
 	VOID SetNumOfLoops(INT n);
 	VOID SetPlaybackSpeed(INT n);
@@ -111,7 +127,9 @@ public:
 	static VOID SetPDAWand(CBagCharacterObject *pWand);
 	static BOOL PDAWandAnimating();
 
-	BOOL IsStationary() const { return m_pBinBuf != nullptr; }
+	BOOL IsStationary() const {
+		return m_pBinBuf != nullptr;
+	}
 };
 
 } // namespace Bagel

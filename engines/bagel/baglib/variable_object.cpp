@@ -68,7 +68,7 @@ CBofRect CBagVariableObject::GetRect(VOID) {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 //
-// 		MDM 9/4/96
+//      MDM 9/4/96
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	BOOL nObjectUpdated = FALSE;
@@ -99,11 +99,12 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
-		//
-		//  COLOR n - n color index
-		//
+			//
+			//  COLOR n - n color index
+			//
 #if BOF_MAC
 #define CTEXT_YELLOW RGB(0xFC, 0xF3, 0x05)
 #define CTEXT_WHITE RGB(255, 255, 255)
@@ -155,7 +156,8 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 		//
 		//  no match return from funtion
 		//
@@ -171,7 +173,8 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 

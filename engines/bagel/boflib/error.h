@@ -31,25 +31,25 @@ namespace Bagel {
  * Error reporting codes
  */
 enum ERROR_CODE {
-	ERR_NONE    =  0,	/* no error */
-	ERR_MEMORY  =  1,	/* not enough memory */
-	ERR_FOPEN   =  2,	/* error opening a file */
-	ERR_FCLOSE  =  3,	/* error closing a file */
-	ERR_FREAD   =  4,	/* error reading a file */
-	ERR_FWRITE  =  5,	/* error writing a file */
-	ERR_FSEEK   =  6,	/* error seeking a file */
-	ERR_FDEL    =  7,	/* error deleting a file */
-	ERR_FFIND   =  8,	/* could not find file */
-	ERR_FTYPE   =  9,	/* invalid file type */
-	ERR_PATH    = 10,	/* invalid path or filename */
-	ERR_DISK    = 11,	/* unrecoverable disk error */
-	ERR_UNKNOWN = 12,	/* unknown error */
-	ERR_CRC     = 13,	/* file or data failed CRC check */
-	ERR_SPACE   = 14,	/* not enough disk space */
+	ERR_NONE    =  0,   /* no error */
+	ERR_MEMORY  =  1,   /* not enough memory */
+	ERR_FOPEN   =  2,   /* error opening a file */
+	ERR_FCLOSE  =  3,   /* error closing a file */
+	ERR_FREAD   =  4,   /* error reading a file */
+	ERR_FWRITE  =  5,   /* error writing a file */
+	ERR_FSEEK   =  6,   /* error seeking a file */
+	ERR_FDEL    =  7,   /* error deleting a file */
+	ERR_FFIND   =  8,   /* could not find file */
+	ERR_FTYPE   =  9,   /* invalid file type */
+	ERR_PATH    = 10,   /* invalid path or filename */
+	ERR_DISK    = 11,   /* unrecoverable disk error */
+	ERR_UNKNOWN = 12,   /* unknown error */
+	ERR_CRC     = 13,   /* file or data failed CRC check */
+	ERR_SPACE   = 14,   /* not enough disk space */
 
-	ERR_FUTURE3 = 15,	/* future use */
-	ERR_FUTURE4 = 16,	/*            */
-	ERR_FUTURE5 = 17	/* future use */
+	ERR_FUTURE3 = 15,   /* future use */
+	ERR_FUTURE4 = 16,   /*            */
+	ERR_FUTURE5 = 17    /* future use */
 };
 
 #define NUM_ERR_CODES 18
@@ -73,24 +73,40 @@ public:
 
 	/**
 	 * Logs specified error to log file.
-	 * @remarks		Sets m_errCode to specified error condition, and logs the
+	 * @remarks     Sets m_errCode to specified error condition, and logs the
 	 *                   error.
-	 * @param errCode		Error to report
-	 * @param format		printf style format string
+	 * @param errCode       Error to report
+	 * @param format        printf style format string
 	 */
 	void ReportError(ERROR_CODE errCode, const char *format = nullptr, ...);
 
-	bool ErrorOccurred() { return m_errCode != ERR_NONE; }
-	ERROR_CODE GetErrorCode() { return m_errCode; }
-	void ClearError() { m_errCode = ERR_NONE; }
+	bool ErrorOccurred() {
+		return m_errCode != ERR_NONE;
+	}
+	ERROR_CODE GetErrorCode() {
+		return m_errCode;
+	}
+	void ClearError() {
+		m_errCode = ERR_NONE;
+	}
 
 	static void initStatics();
-	static ERROR_CODE GetLastError() { return m_errGlobal; }
-	static void SetLastError(ERROR_CODE errCode) { m_errGlobal = errCode; }
+	static ERROR_CODE GetLastError() {
+		return m_errGlobal;
+	}
+	static void SetLastError(ERROR_CODE errCode) {
+		m_errGlobal = errCode;
+	}
 
-	static int GetErrorCount() { return m_nErrorCount; }
-	static void SetErrorCount(int nCount) { m_nErrorCount = nCount; }
-	static void ClearErrorCount() { SetErrorCount(0); }
+	static int GetErrorCount() {
+		return m_nErrorCount;
+	}
+	static void SetErrorCount(int nCount) {
+		m_nErrorCount = nCount;
+	}
+	static void ClearErrorCount() {
+		SetErrorCount(0);
+	}
 
 };
 

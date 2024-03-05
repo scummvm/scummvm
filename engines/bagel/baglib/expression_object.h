@@ -44,8 +44,12 @@ public:
 	virtual BOOL RunObject();
 	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	BOOL IsConditional() const { return m_bConditional; }
-	VOID SetConditional(BOOL b = TRUE) { m_bConditional = (UBYTE)b; }
+	BOOL IsConditional() const {
+		return m_bConditional;
+	}
+	VOID SetConditional(BOOL b = TRUE) {
+		m_bConditional = (UBYTE)b;
+	}
 };
 
 } // namespace Bagel

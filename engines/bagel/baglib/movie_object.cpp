@@ -82,28 +82,28 @@ CBagMovieObject::~CBagMovieObject() {
 
 /*ERROR_CODE CBagMovieObject::Attach()
 {
-	return CBagObject::Attach();
+    return CBagObject::Attach();
 }
 
 
 ERROR_CODE CBagMovieObject::Detach()
 {
-	return CBagObject::Detach();
+    return CBagObject::Detach();
 }
 
 
 CBofRect CBagMovieObject::GetRect(VOID)
 {
-	CBofPoint p = GetPosition();
-	CBofSize  s = GetSize();
-	CBofRect r = CBofRect(p,s);
-	return(r);
+    CBofPoint p = GetPosition();
+    CBofSize  s = GetSize();
+    CBofRect r = CBofRect(p,s);
+    return(r);
 }*/
 
 #if BOF_MAC
 #pragma profile off // jwl 08.13.96 movies are skewing our profiling
-					// data, since we don't have control over it, don't
-					// include it.
+// data, since we don't have control over it, don't
+// include it.
 #endif
 BOOL CBagMovieObject::RunObject() {
 	BOOL rc;
@@ -138,9 +138,10 @@ BOOL CBagMovieObject::RunObject() {
 		// then a run.  But this is a quicker fix.
 		//
 		enum MOVFILETYPE { NONE = 0,
-						   TEXT = 1,
-						   SOUND = 2,
-						   MOVIE = 3 } nMovFileType;
+		                   TEXT = 1,
+		                   SOUND = 2,
+		                   MOVIE = 3
+		                 } nMovFileType;
 		CBofString sBaseStr = sFileName.Left(nExt);
 
 #if BOF_MAC
@@ -258,7 +259,7 @@ BOOL CBagMovieObject::RunObject() {
 				// jwl 1.22.97 set the first frame to be black so that we don't get a palette shift.
 				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r, FALSE, TRUE, m_xDisplayType == EXAMINE);
 #else
-			CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
+				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
 #endif
 				if (pMovie) {
 					// jwl 1.2.96 if there is an associated sound file, then start it up here.
@@ -423,7 +424,7 @@ BOOL CBagMovieObject::RunObject() {
 #if BOF_MAC
 							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r, FALSE, (m_xDisplayType != PDAMSG), (m_xDisplayType == EXAMINE || m_bFlyThru == TRUE));
 #else
-						pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
+							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
 #endif
 						}
 
@@ -570,7 +571,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 
 			nObjectUpdated = TRUE;
 			nChanged++;
-		} break;
+		}
+		break;
 		// jwl 12.02.96 dont queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'D': {
@@ -596,7 +598,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 					}
 				}
 			}
-		} break;
+		}
+		break;
 		// jwl 12.02.96 dont queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'P': {
@@ -609,7 +612,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 		// jwl 12.17.96 This is probably going to be much more important to the
 		// mac version... give the option of playing the movie on a black
 		// background.  this solves the problem of palette shifts on examine
@@ -624,7 +628,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		// jwl 1.2.97 associate a sound file with this movie (primarily for examine
 		// movies).
@@ -641,7 +646,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
-		} break;
+		}
+		break;
 
 		//
 		//  no match return from funtion
@@ -658,7 +664,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 				else
 					return UNKNOWN_TOKEN;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 
@@ -692,9 +699,9 @@ BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
 
 	if (pPDA && pPDAz) {
 		if (pPDAz && pPDAz->GetZoomed() ||              // we're zoomed
-			(pMainWin->IsCIC() && !IsDontOverride()) || // we're in a character closeup
-			CBofSound::SoundsPlayingNotOver() ||        // a sound is playing
-			pPDA->GetPDAMode() == MOOMODE) {            // an asynch movie is already playing
+		        (pMainWin->IsCIC() && !IsDontOverride()) || // we're in a character closeup
+		        CBofSound::SoundsPlayingNotOver() ||        // a sound is playing
+		        pPDA->GetPDAMode() == MOOMODE) {            // an asynch movie is already playing
 			bCanPlay = FALSE;
 		}
 	}

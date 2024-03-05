@@ -45,19 +45,31 @@ public:
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() { return m_xSprite != nullptr; }
+	BOOL IsAttached() {
+		return m_xSprite != nullptr;
+	}
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	BOOL IsInside(const CBofPoint &xPoint);
 
-	INT GetWieldCursor() { return m_nWieldCursor; }
-	VOID SetWieldCursor(int n) { m_nWieldCursor = n; }
+	INT GetWieldCursor() {
+		return m_nWieldCursor;
+	}
+	VOID SetWieldCursor(int n) {
+		m_nWieldCursor = n;
+	}
 
-	CBofSprite *GetSprite() { return m_xSprite; }
+	CBofSprite *GetSprite() {
+		return m_xSprite;
+	}
 	CBofRect GetRect();
-	INT GetCels() { return m_nCels; }
+	INT GetCels() {
+		return m_nCels;
+	}
 
-	BOOL IsAnimated() { return m_bAnimated; }
+	BOOL IsAnimated() {
+		return m_bAnimated;
+	}
 
 	VOID SetAnimated(BOOL b = TRUE);
 	VOID SetCels(int nCels);
@@ -69,8 +81,12 @@ public:
 	VOID SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	INT GetFrameRate() { return m_nMaxFrameRate; }
-	VOID SetFrameRate(INT nFR) { m_nMaxFrameRate = nFR; }
+	INT GetFrameRate() {
+		return m_nMaxFrameRate;
+	}
+	VOID SetFrameRate(INT nFR) {
+		m_nMaxFrameRate = nFR;
+	}
 
 	ULONG m_nLastUpdate;
 };

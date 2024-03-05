@@ -31,7 +31,7 @@ namespace Bagel {
 
 /**
  * Builds a string like sprintf()
- * @return		Pointer to new (temporary) buffer.
+ * @return      Pointer to new (temporary) buffer.
  *
  *****************************************************************************/
 
@@ -67,8 +67,8 @@ class CBofLog : public CBofObject {
 private:
 	/**
 	 * Gets the index for the error type
-	 * @param nLogType		Error type
-	 * @return				Index of log error type
+	 * @param nLogType      Error type
+	 * @return              Index of log error type
 	 */
 	INT GetTypeIndex(ULONG nLogType);
 
@@ -78,8 +78,8 @@ private:
 public:
 	/**
 	 * Constructor
-	 * @param pszFileName		Name of text file to write to
-	 * @param lOptions			Logging options
+	 * @param pszFileName       Name of text file to write to
+	 * @param lOptions          Logging options
 	 */
 	CBofLog(const CHAR *pszFileName = nullptr, ULONG lOptions = LOG_DEFAULT);
 
@@ -92,29 +92,33 @@ public:
 
 	/**
 	 * Sets the log file
-	 * @param pszFileName		Log filename
+	 * @param pszFileName       Log filename
 	 */
 	VOID SetLogFile(const CHAR *pszFileName);
 
 	/**
 	 * Retrieves the name of the file used for tracing
-	 * @param pszFileName		Buffer to fill with the filename
+	 * @param pszFileName       Buffer to fill with the filename
 	 */
 	VOID GetLogFile(CHAR *pszFileName);
 
 	VOID SetLogOptions(ULONG lOptions);
-	ULONG GetLogOptions() { return (m_lOptions & 0xFFFF0000); }
+	ULONG GetLogOptions() {
+		return (m_lOptions & 0xFFFF0000);
+	}
 
 	VOID SetUserFilter(USHORT lUserFilter);
-	USHORT GetUserFilter() { return ((USHORT)(m_lOptions & 0x0000FFFF)); }
+	USHORT GetUserFilter() {
+		return ((USHORT)(m_lOptions & 0x0000FFFF));
+	}
 
 	/**
 	 * Writes specified text message to the current log file
-	 * @param nLogType		Log error type
-	 * @param pszMessage	Message to write
-	 * @param nUserFilter	User filter options
-	 * @param pszSourceFile	Source code filename
-	 * @param nLine			Source line number
+	 * @param nLogType      Log error type
+	 * @param pszMessage    Message to write
+	 * @param nUserFilter   User filter options
+	 * @param pszSourceFile Source code filename
+	 * @param nLine         Source line number
 	 */
 	VOID WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
 };

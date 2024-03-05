@@ -38,7 +38,7 @@ namespace Bagel {
 #define CDF_ENCRYPT 0x00020000    // Specifies if data should use encryption
 #define CDF_KEEPOPEN 0x00040000   // File should be kept open after construction
 #define CDF_COMPRESSED 0x00080000 // *Specifies if data should be compressed
-								  // * = indicates feature not yet implemented
+// * = indicates feature not yet implemented
 
 #define CDF_DEFAULT (CDF_MEMORY | CDF_ENCRYPT | CDF_SHARED | CDF_KEEPOPEN | CDF_READONLY)
 
@@ -65,13 +65,13 @@ private:
 protected:
 	/**
 	 * Read the header (actually a footer) from the data-file.
-	 * @return					Error return code
+	 * @return                  Error return code
 	 */
 	ERROR_CODE ReadHeader();
 
 	/**
 	 * Writes the header (actually a footer) to the data-file.
-	 * @return					Error return code
+	 * @return                  Error return code
 	 */
 	ERROR_CODE WriteHeader();
 
@@ -83,9 +83,9 @@ public:
 
 	/**
 	 * Constructor
-	 * @param pszFileName		Name of .DAT file
-	 * @param lFlags			Flags for open, and ecnryption, etc.
-	 * @param pszPassword		Password for encryption
+	 * @param pszFileName       Name of .DAT file
+	 * @param lFlags            Flags for open, and ecnryption, etc.
+	 * @param pszPassword       Password for encryption
 	 */
 
 	CBofDataFile(const CHAR *pszFileName, ULONG lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
@@ -97,56 +97,58 @@ public:
 
 	/**
 	 * Initializes a CBofDataFile with specified info
-	 * @param pszFileName		Name of .DAT file
-	 * @param lFlags			Flags for open, and ecnryption, etc.
-	 * @param pszPassword		Password for encryption
-	 * @return					Error return code
+	 * @param pszFileName       Name of .DAT file
+	 * @param lFlags            Flags for open, and ecnryption, etc.
+	 * @param pszPassword       Password for encryption
+	 * @return                  Error return code
 	 */
 	ERROR_CODE SetFile(const CHAR *pszFileName, ULONG lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
 
 	/**
 	 * Free memory used by this object
-	 * @return					Error return code
+	 * @return                  Error return code
 	 */
 	ERROR_CODE ReleaseFile();
 
 	/**
 	 * Retrieves size of specified record.
-	 * @param lRecNum			Index of record to get size of
-	 * @return					Size of specified record
+	 * @param lRecNum           Index of record to get size of
+	 * @return                  Size of specified record
 	 */
 	LONG GetRecSize(LONG lRecNum);
-	LONG GetNumberOfRecs() const { return (m_lNumRecs); }
+	LONG GetNumberOfRecs() const {
+		return (m_lNumRecs);
+	}
 
 	/**
 	 * Retrieves size of the largest record.
-	 * @return					Size of largest record in the data-file
+	 * @return                  Size of largest record in the data-file
 	 */
 	LONG GetMaxRecSize() const;
 
 	/**
 	 * Opens an existsing data-file, or creates a new one.
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE Open();
 
 	/**
 	 * Closes current data-file, if it's not already closed
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE Close();
 
 	/**
 	 * Destroys current data-file, if any, and starts a new empty one
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE Create();
 
 	/**
 	 * Reads specified record from data-file.
-	 * @param lRecNum	Record number to read
-	 * @param pBuf		Buffer to store record
-	 * @return			Error return code
+	 * @param lRecNum   Record number to read
+	 * @param pBuf      Buffer to store record
+	 * @return          Error return code
 	 */
 	ERROR_CODE ReadRecord(LONG lRecNum, VOID *pBuf);
 
@@ -159,58 +161,60 @@ public:
 
 	/**
 	 * Writes specified to data-file.
-	 * @param lRecordNum		Record number to read
-	 * @param pBuf				Buffer to write data from
-	 * @param lRecSize			Size of buffer
-	 * @param bUpdateHeader		TRUE if header is to be commited to disk
-	 * @return					Error return code
+	 * @param lRecordNum        Record number to read
+	 * @param pBuf              Buffer to write data from
+	 * @param lRecSize          Size of buffer
+	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @return                  Error return code
 	 */
 	ERROR_CODE WriteRecord(LONG lRecNum, VOID *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, ULONG lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
-	 * @param lRecNum			Record number to verify
-	 * @return					Error return code
+	 * @param lRecNum           Record number to verify
+	 * @return                  Error return code
 	 */
 	ERROR_CODE VerifyRecord(LONG lRecNum);
 
 	/**
 	 * Verifies all records in this file
-	 * @return					Error return code
+	 * @return                  Error return code
 	 */
 	ERROR_CODE VerifyAllRecords();
 
 	/**
 	 * Adds a new record to the data-file.
-	 * @param pBuf				Buffer to write data from
-	 * @param lRecSize			Size of buffer
-	 * @param bUpdateHeader		TRUE if header is to be commited to disk
-	 * @param key				Key
-	 * @return					Error return code
+	 * @param pBuf              Buffer to write data from
+	 * @param lRecSize          Size of buffer
+	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @param key               Key
+	 * @return                  Error return code
 	 */
 	ERROR_CODE AddRecord(VOID *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, ULONG lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
-	 * @param lRecNum			Record number to read
-	 * @param bUpdateHeader		TRUE if header is to be commited to disk
-	 * @return					Error return code
+	 * @param lRecNum           Record number to read
+	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @return                  Error return code
 	 */
 	ERROR_CODE DeleteRecord(LONG lRecNum, BOOL bUpdateHeader = FALSE);
 
 	/**
 	 * Finds record by it's key.
-	 * @param lKey				Key to search records with
-	 * @return					Index of record matching key, or -1
+	 * @param lKey              Key to search records with
+	 * @return                  Index of record matching key, or -1
 	 */
 	LONG FindRecord(ULONG lKey);
 
 	/**
 	 * Sets encryption password
-	 * @param pszPassword		New password
+	 * @param pszPassword       New password
 	 */
 	VOID SetPassword(const CHAR *pszPassword);
-	const CHAR *GetPassword() const { return m_szPassWord; }
+	const CHAR *GetPassword() const {
+		return m_szPassWord;
+	}
 };
 
 } // namespace Bagel

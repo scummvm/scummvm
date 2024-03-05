@@ -50,8 +50,8 @@ private:
 protected:
 	/**
 	 * Loads string table from specified res file
-	 * @param pszFileName	Name of file containing resources
-	 * @return				Error return code
+	 * @param pszFileName   Name of file containing resources
+	 * @return              Error return code
 	 */
 	ERROR_CODE Load(const CHAR *pszFileName);
 
@@ -62,7 +62,7 @@ protected:
 
 	/**
 	 * Allocates the current Resource String Table
-	 * @return		Error return code
+	 * @return      Error return code
 	 */
 	ERROR_CODE BuildTable();
 
@@ -74,7 +74,7 @@ protected:
 public:
 	/**
 	 * Constructor for Boffo Resource String Table
-	 * @param pszFileName	Name of file containing resources
+	 * @param pszFileName   Name of file containing resources
 	**/
 	CBofStringTable(const CHAR *pszFileName);
 
@@ -85,7 +85,7 @@ public:
 
 	/**
 	 * Retrieves the specified resource string
-	 * @param nId		Res ID for string to be retrieved
+	 * @param nId       Res ID for string to be retrieved
 	 */
 	const CHAR *GetString(INT nId);
 };

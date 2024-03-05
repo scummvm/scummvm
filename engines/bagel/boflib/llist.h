@@ -54,8 +54,8 @@ public:
 
 	/**
 	 * Links specified node to current list after current node
-	 * @remarks			This will link a new list into the current right after the current node
-	 * @param pNewList	Pointer to list to be inserted
+	 * @remarks         This will link a new list into the current right after the current node
+	 * @param pNewList  Pointer to list to be inserted
 	 */
 	void Insert(CLList *);
 
@@ -66,17 +66,17 @@ public:
 
 	/**
 	 * Links specified node to head of list
-	 * @remarks			This can be used to link 2 lists together by Linking the
-	 *					tail of one list to the head of another
-	 * @param pNewList	New list to link to head of current list
+	 * @remarks         This can be used to link 2 lists together by Linking the
+	 *                  tail of one list to the head of another
+	 * @param pNewList  New list to link to head of current list
 	 */
 	void AddToHead(CLList *);
 
 	/**
 	 * Links specified node to tail of current list
-	 * @remarks			This can be used to link 2 lists together by Linking the
-	 *					head of one list to the tail of another
-	 * @param pNewList	Pointer to new list
+	 * @remarks         This can be used to link 2 lists together by Linking the
+	 *                  head of one list to the tail of another
+	 * @param pNewList  Pointer to new list
 	 */
 	void AddToTail(CLList *);
 
@@ -102,20 +102,28 @@ public:
 
 	/**
 	 * Returns head of current list
-	 * @return		Pointer to head of list
+	 * @return      Pointer to head of list
 	*/
 	CLList *GetHead();
 
 	/**
 	 * Returns tail of current list
-	 * @return		Pointer to tail of list
+	 * @return      Pointer to tail of list
 	*/
 	CLList *GetTail();
-	CLList *GetPrev() const { return m_pPrev; }
-	CLList *GetNext() const { return m_pNext; }
+	CLList *GetPrev() const {
+		return m_pPrev;
+	}
+	CLList *GetNext() const {
+		return m_pNext;
+	}
 
-	void *GetData() const { return m_pData; }
-	void PutData(void *pObj) { m_pData = pObj; }
+	void *GetData() const {
+		return m_pData;
+	}
+	void PutData(void *pObj) {
+		m_pData = pObj;
+	}
 
 	/**
 	 * Flushes entire list

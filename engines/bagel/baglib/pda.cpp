@@ -49,7 +49,7 @@ void CBagPDA::initStatics() {
 
 CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated)
 	: CBagStorageDevBmp(pParent, xRect),
-	SBBasePda(pParent, xRect, bActivated) {
+	  SBBasePda(pParent, xRect, bActivated) {
 	m_xSDevType = SDEV_PDA;
 
 	m_nActiveHeight = 0;
@@ -64,7 +64,7 @@ VOID CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 
 	// Handle simple case first, if it is marked for don't queue, then don't
 	// add it at all.  This is done to insure that insignificant movies
-	// such as "have you noticed your message light has been blinking" do not 
+	// such as "have you noticed your message light has been blinking" do not
 	// get queued (and subsequently play when they are no longer appropriate).
 	if (pMObj->IsDontQueue()) {
 		return;
@@ -72,9 +72,9 @@ VOID CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 
 	Assert(m_pMovieList != nullptr);
 
-	// Go through the whole movie list, make sure there are no dup's of 
-	// this movie. 
-	INT	nCount = m_pMovieList->GetCount();
+	// Go through the whole movie list, make sure there are no dup's of
+	// this movie.
+	INT nCount = m_pMovieList->GetCount();
 	for (INT i = 0; i < nCount; i++) {
 		CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
 		if (p->GetFileName().Find(pMObj->GetFileName()) == 0) {
@@ -117,10 +117,10 @@ ERROR_CODE CBagPDA::LoadFile(const CBofString &sFile) {
 	return error;
 }
 
-#define MOOWLD		"MOO_WLD"
-#define INVWLD		"INV_WLD"
-#define MAPWLD		"MAP_WLD"
-#define LOGWLD		"LOG_WLD"
+#define MOOWLD      "MOO_WLD"
+#define INVWLD      "INV_WLD"
+#define MAPWLD      "MAP_WLD"
+#define LOGWLD      "LOG_WLD"
 
 ERROR_CODE CBagPDA::Attach() {
 	CBagStorageDev *pSDev;
@@ -134,7 +134,7 @@ ERROR_CODE CBagPDA::Attach() {
 	CBofWindow *pGameWin = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow();
 	CBofRect GameRect = pGameWin->GetRect();
 
-	// When the pda is active it should sit flush with the bottom of the screen	
+	// When the pda is active it should sit flush with the bottom of the screen
 	m_nActiveHeight = GameRect.Height() - bmpRect.Height();
 	// When it is deactivated it should be the active height less the total movement distance
 	m_nDeactiveHeight = GameRect.Height() - (bmpRect.Height() - (m_nMoveDist * m_nNumMoves));
@@ -247,7 +247,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 	CBofRect *pr = pSrcRect;
 	BOOL bMoviePlaying = FALSE;
 
-	// Update the zoom button (it might need to blink). 
+	// Update the zoom button (it might need to blink).
 
 	HandleZoomButton(FALSE);
 	errCode = ERR_NONE;
@@ -294,19 +294,19 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 			ShowLog();
 		}
 
-#define kPDAMapUpdateRate 250		// 4 frames / second
+#define kPDAMapUpdateRate 250       // 4 frames / second
 
 		BOOL bUpdate = TRUE;
 		BOOL bIsMovieWaiting = IsMovieWaiting();
 
-		if ((!IsActivated()) && 							// Must be down
-			((m_ePdaMode == MAPMODE) ||
-				(bIsMovieWaiting && m_ePdaMode != MOOMODE))) {
+		if ((!IsActivated()) &&                             // Must be down
+		        ((m_ePdaMode == MAPMODE) ||
+		         (bIsMovieWaiting && m_ePdaMode != MOOMODE))) {
 
 			INT nCurTime = GetTimer();
 			INT nFrameInterval = kPDAMapUpdateRate;
 			if ((nCurTime > m_nLastUpdate + nFrameInterval) ||
-				(GetPreFiltered())) {
+			        (GetPreFiltered())) {
 
 				// Record time of last update
 				m_nLastUpdate = nCurTime;
@@ -342,8 +342,8 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
 		} else {
-			// If it is not activated, then don't bother redrawing it or the objects 
-			// inside of it.  
+			// If it is not activated, then don't bother redrawing it or the objects
+			// inside of it.
 			if (!IsActivated()) {
 				if (SBBasePda::m_ePdaMode != MAPMODE) {
 					SetDirty(FALSE);
@@ -374,7 +374,7 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 	BOOL rc;
 
-	if (!IsActivated() && m_ePdaMode != INVMODE) { 			// if the PDA is not active, activate it
+	if (!IsActivated() && m_ePdaMode != INVMODE) {          // if the PDA is not active, activate it
 		if (IsInside(xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
@@ -405,8 +405,8 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 				return TRUE;
 			}
 
-			// If it's in one of the buttons, then pass it off to the 
-			// sdev bmp code. 
+			// If it's in one of the buttons, then pass it off to the
+			// sdev bmp code.
 			if (IsActivated()) {
 				BOOL bButtonHit = FALSE;
 				CBofList<CBagObject *> *pList = GetObjectList();
@@ -432,16 +432,16 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 			}
 		}
 
-		// After a change of state, check if we should be flashing our 
-		// zoom button or not. 
+		// After a change of state, check if we should be flashing our
+		// zoom button or not.
 		HandleZoomButton(FALSE);
 		return rc;
 	}
 }
 
 BOOL CBagPDA::OnLButtonDown(UINT nFlags, CBofPoint xPoint, void *info) {
-	// All we want to do here is if we had a mouse down on our 
-	// zoom button, then make sure we have the real zoom button current (that 
+	// All we want to do here is if we had a mouse down on our
+	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).
 
 	HandleZoomButton(TRUE);
@@ -461,9 +461,9 @@ CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
 
 BOOL  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 	if (m_xCurDisplay) {
-		// If we get here, then we are guaranteed that our pda 
+		// If we get here, then we are guaranteed that our pda
 		// needs updating, so dirty the whole list before updating...
-		// this assures that all objects will be updated (that are active). 
+		// this assures that all objects will be updated (that are active).
 		MakeListDirty(m_xCurDisplay->GetObjectList());
 
 		CBofRect tmp = GetRect();
@@ -542,7 +542,7 @@ VOID CBagPDA::HandleZoomButton(BOOL bButtonDown) {
 
 VOID CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 	if (m_pMovieList != nullptr) {
-		INT			nCount = m_pMovieList->GetCount();
+		INT         nCount = m_pMovieList->GetCount();
 		for (INT i = 0; i < nCount; i++) {
 			CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
 			if (pMObj == p) {
@@ -560,8 +560,8 @@ BOOL CBagPDA::IsMovieWaiting() {
 		bMovieWaiting = (m_pMovieList->GetCount() > 0);
 	}
 
-	// If our sounds are paused, and our movie is done playing, 
-	// then start up our sounds again. 
+	// If our sounds are paused, and our movie is done playing,
+	// then start up our sounds again.
 	if (m_bSoundsPaused == TRUE && IsMoviePlaying() == FALSE) {
 		CSound::ResumeSounds();
 		m_bSoundsPaused = FALSE;
@@ -580,7 +580,7 @@ VOID CBagPDA::RunWaitingMovie() {
 				pMObj = m_pMovieList->GetNodeItem(i);
 				if (pMObj->AsynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = TRUE;
-					CSound::PauseSounds(); 				// pause all sounds
+					CSound::PauseSounds();              // pause all sounds
 					pMObj->RunObject();
 					RemoveFromMovieQueue(pMObj);
 				}
@@ -603,7 +603,7 @@ ERROR_CODE CBagPDA::AttachActiveObjects() {
 		bAlready = FALSE;
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 ERROR_CODE CBagPDA::DetachActiveObjects() {

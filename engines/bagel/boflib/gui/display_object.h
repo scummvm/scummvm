@@ -27,11 +27,11 @@
 
 namespace Bagel {
 
-#define DISPLAYOBJ_TOPMOST		0
-#define DISPLAYOBJ_FOREGROUND	64
-#define DISPLAYOBJ_MIDDLE		128
-#define DISPLAYOBJ_BACKGROUND	192
-#define DISPLAYOBJ_HINDMOST		255
+#define DISPLAYOBJ_TOPMOST      0
+#define DISPLAYOBJ_FOREGROUND   64
+#define DISPLAYOBJ_MIDDLE       128
+#define DISPLAYOBJ_BACKGROUND   192
+#define DISPLAYOBJ_HINDMOST     255
 
 #define DISPTYPE_OBJECT 0x0000
 #define DISPTYPE_WINDOW (0x0001 | DISPTYPE_OBJECT)
@@ -41,95 +41,131 @@ namespace Bagel {
 
 class CBofDisplayObject: public CLList, public CBofError, public CBofObject {
 
-    public:
-        CBofDisplayObject();
-        virtual ~CBofDisplayObject();
+public:
+	CBofDisplayObject();
+	virtual ~CBofDisplayObject();
 
-        ERROR_CODE LoadImage(const CHAR *pszFileName);
-        ERROR_CODE CreateImage(INT dx, INT dy);
-        ERROR_CODE ReleaseImage(VOID);
+	ERROR_CODE LoadImage(const CHAR *pszFileName);
+	ERROR_CODE CreateImage(INT dx, INT dy);
+	ERROR_CODE ReleaseImage(VOID);
 
-        ERROR_CODE Paint(const INT x, const INT y);
-        ERROR_CODE Paint(CBofPoint &cPoint)         { return(Paint(cPoint.x, cPoint.y)); }
+	ERROR_CODE Paint(const INT x, const INT y);
+	ERROR_CODE Paint(CBofPoint &cPoint)         {
+		return (Paint(cPoint.x, cPoint.y));
+	}
 
-        ERROR_CODE BatchPaint(const INT x, const INT y);
-        ERROR_CODE BatchPaint(CBofPoint &cPoint)    { return(BatchPaint(cPoint.x, cPoint.y)); }
+	ERROR_CODE BatchPaint(const INT x, const INT y);
+	ERROR_CODE BatchPaint(CBofPoint &cPoint)    {
+		return (BatchPaint(cPoint.x, cPoint.y));
+	}
 
-        ERROR_CODE Erase(VOID);
-        ERROR_CODE BatchErase(VOID);
+	ERROR_CODE Erase(VOID);
+	ERROR_CODE BatchErase(VOID);
 
-        ERROR_CODE SetPosition(INT x, INT y);
-        ERROR_CODE SetPosition(const CBofPoint &cPoint) { return(SetPosition(cPoint.x, cPoint.y)); }
-        CBofPoint  GetPosition(VOID)                { return(m_cPosition); }
+	ERROR_CODE SetPosition(INT x, INT y);
+	ERROR_CODE SetPosition(const CBofPoint &cPoint) {
+		return (SetPosition(cPoint.x, cPoint.y));
+	}
+	CBofPoint  GetPosition(VOID)                {
+		return (m_cPosition);
+	}
 
-        ERROR_CODE SetZOrder(INT nValue);
-        INT        GetZOrder(VOID)                  { return(m_nZOrder); }
+	ERROR_CODE SetZOrder(INT nValue);
+	INT        GetZOrder(VOID)                  {
+		return (m_nZOrder);
+	}
 
-        VOID       SetSize(const CBofSize &cSize)   { m_cSize = cSize; }
-        CBofSize   GetSize(VOID)                    { return(m_cSize); }
+	VOID       SetSize(const CBofSize &cSize)   {
+		m_cSize = cSize;
+	}
+	CBofSize   GetSize(VOID)                    {
+		return (m_cSize);
+	}
 
-        INT        Width(VOID)                      { return(m_cSize.cx); }
-        INT        Height(VOID)                     { return(m_cSize.cy); }
+	INT        Width(VOID)                      {
+		return (m_cSize.cx);
+	}
+	INT        Height(VOID)                     {
+		return (m_cSize.cy);
+	}
 
-        CBofRect   GetRect(VOID)                    { return(CBofRect(m_cPosition, m_cSize)); }
+	CBofRect   GetRect(VOID)                    {
+		return (CBofRect(m_cPosition, m_cSize));
+	}
 
-        ERROR_CODE LinkChild(CBofDisplayObject *pChild);
-        ERROR_CODE UnlinkChild(CBofDisplayObject *pChild);
+	ERROR_CODE LinkChild(CBofDisplayObject *pChild);
+	ERROR_CODE UnlinkChild(CBofDisplayObject *pChild);
 
-        BOOL       IsMasked(VOID)           { return(m_nMaskColor != NOT_TRANSPARENT); }
-        VOID       SetMaskColor(INT nColor) { m_nMaskColor = nColor; }
-        INT        GetMaskColor(VOID)       { return(m_nMaskColor); }
+	BOOL       IsMasked(VOID)           {
+		return (m_nMaskColor != NOT_TRANSPARENT);
+	}
+	VOID       SetMaskColor(INT nColor) {
+		m_nMaskColor = nColor;
+	}
+	INT        GetMaskColor(VOID)       {
+		return (m_nMaskColor);
+	}
 
-        BOOL       IsType(ULONG lType)      { return((m_lType & lType) != 0); }
+	BOOL       IsType(ULONG lType)      {
+		return ((m_lType & lType) != 0);
+	}
 
-        CBofDisplayObject *GetNext(VOID)    { return((CBofDisplayObject *)m_pNext); }
-        CBofDisplayObject *GetPrev(VOID)    { return((CBofDisplayObject *)m_pPrev); }
+	CBofDisplayObject *GetNext(VOID)    {
+		return ((CBofDisplayObject *)m_pNext);
+	}
+	CBofDisplayObject *GetPrev(VOID)    {
+		return ((CBofDisplayObject *)m_pPrev);
+	}
 
-        ERROR_CODE AddChild(CBofDisplayObject *pChildObj);
+	ERROR_CODE AddChild(CBofDisplayObject *pChildObj);
 
-        CBofPoint  LocalToGlobal(const CBofPoint &cPoint);
-        CBofPoint  GlobalToLocal(const CBofPoint &cPoint);
+	CBofPoint  LocalToGlobal(const CBofPoint &cPoint);
+	CBofPoint  GlobalToLocal(const CBofPoint &cPoint);
 
-        CBofRect   LocalToGlobal(const CBofRect &cRect);
-        CBofRect   GlobalToLocal(const CBofRect &cRect);
+	CBofRect   LocalToGlobal(const CBofRect &cRect);
+	CBofRect   GlobalToLocal(const CBofRect &cRect);
 
-        CBofDisplayObject *GetChildFromPoint(const CBofPoint &cPoint);
+	CBofDisplayObject *GetChildFromPoint(const CBofPoint &cPoint);
 
-        virtual ERROR_CODE OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect);
+	virtual ERROR_CODE OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect);
 
-        static ERROR_CODE Initialize(VOID);
-        static ERROR_CODE CleanUp(VOID);
+	static ERROR_CODE Initialize(VOID);
+	static ERROR_CODE CleanUp(VOID);
 
-        static ERROR_CODE ReMapPalette(CBofPalette *pPalette);
+	static ERROR_CODE ReMapPalette(CBofPalette *pPalette);
 
-        static CBofDisplayObject *GetMain(VOID) { return(m_pMainDisplay); }
+	static CBofDisplayObject *GetMain(VOID) {
+		return (m_pMainDisplay);
+	}
 
-        static ERROR_CODE AddToDirtyRect(CBofRect *pRect);
-        static ERROR_CODE UpdateDirtyRect(VOID);
-        static VOID ClearDirtyRect(VOID)    { m_cDirtyRect.SetRectEmpty(); }
+	static ERROR_CODE AddToDirtyRect(CBofRect *pRect);
+	static ERROR_CODE UpdateDirtyRect(VOID);
+	static VOID ClearDirtyRect(VOID)    {
+		m_cDirtyRect.SetRectEmpty();
+	}
 
-       	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo) {}
+	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo) {}
 
 
-    protected:
-        static CBofRect     m_cDirtyRect;
-        static CBofDisplayObject *m_pMainDisplay;
+protected:
+	static CBofRect     m_cDirtyRect;
+	static CBofDisplayObject *m_pMainDisplay;
 
-        CBofSize            m_cSize;            // Object's Image size
-        CBofPoint           m_cPosition;        // position (Local coordinates)
+	CBofSize            m_cSize;            // Object's Image size
+	CBofPoint           m_cPosition;        // position (Local coordinates)
 
-        CBofDisplayObject  *m_pParent;          // one parent
+	CBofDisplayObject  *m_pParent;          // one parent
 
-        CBofDisplayObject  *m_pDisplayList;     // many children
-        CBofBitmap         *m_pImage;
+	CBofDisplayObject  *m_pDisplayList;     // many children
+	CBofBitmap         *m_pImage;
 
-        INT                 m_nZOrder;
-        INT                 m_nMaskColor;
+	INT                 m_nZOrder;
+	INT                 m_nMaskColor;
 
-        ULONG               m_lType;
+	ULONG               m_lType;
 
-        BOOL                m_bPositioned;
-        BOOL                m_bCreated;
+	BOOL                m_bPositioned;
+	BOOL                m_bCreated;
 };
 
 } // namespace Bagel

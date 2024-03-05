@@ -140,8 +140,8 @@ VOID CBagQuitDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 
 	switch (lKey) {
 
-		// Cancel
-		//
+	// Cancel
+	//
 	case BKEY_ESC:
 		SetReturnValue(CANCEL_BTN);
 		Close();
@@ -450,7 +450,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile(VOID) {
 		}
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 INT CBagCreditsDialog::LinesPerPage(VOID) {
@@ -459,7 +459,7 @@ INT CBagCreditsDialog::LinesPerPage(VOID) {
 	INT n;
 	n = (g_cScreen[m_iScreen].m_nBottom - g_cScreen[m_iScreen].m_nTop) / (LINE_HEIGHT + 2) + 1;
 
-	return(n);
+	return (n);
 }
 
 

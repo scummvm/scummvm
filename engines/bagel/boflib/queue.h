@@ -41,19 +41,19 @@ public:
 
 	/**
 	 * Constructor that adds a passed object onto the queue
-	 * @param pObject		First object
+	 * @param pObject       First object
 	 */
 	CQueue(VOID *pObject);
 
 	/**
 	 * Constructor that copies an existing queue
-	 * @param pQueue		Source queue
+	 * @param pQueue        Source queue
 	 */
 	CQueue(CQueue *pQueue);
 
 	/**
 	 * Constructor that copies an existing queue
-	 * @param cQueue		Source queue
+	 * @param cQueue        Source queue
 	*/
 	CQueue(const CQueue &cQueue);
 
@@ -64,25 +64,25 @@ public:
 
 	/**
 	 * Pushes object onto stack
-	 * @param pObject		Pointer to object to be pushed
+	 * @param pObject       Pointer to object to be pushed
 	 */
 	VOID AddItem(VOID *pObject);
 
 	/**
 	 * Removes 1 object off stack
-	 * @return		Pointer to top object on stack
+	 * @return      Pointer to top object on stack
 	 */
 	VOID *RemoveItem();
 
 	/**
 	 * Retrieves the 1st item (FIFO order) without removing it.
-	 * @return		1st item in Queue (or nullptr is Queue is empty)
+	 * @return      1st item in Queue (or nullptr is Queue is empty)
 	 */
 	VOID *GetQItem();
 
 	/**
 	 * Deletes specified item from the QUEUE (Illegally)
-	 * @param pObject		Object to remove
+	 * @param pObject       Object to remove
 	 */
 	VOID DeleteItem(VOID *pObject);
 

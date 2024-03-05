@@ -42,8 +42,8 @@ extern INT MapWindowsPointSize(INT pointSize);
 
 /**
  * Return a true / false based on the probability given
- * @param nProbability		The probability of returning a true
- * @return					A TRUE <nProbability> of the tine
+ * @param nProbability      The probability of returning a true
+ * @return                  A TRUE <nProbability> of the tine
  */
 extern BOOL ProbableTrue(INT);
 
@@ -54,7 +54,7 @@ extern VOID TimerStart();
 
 /**
  * Stops the timer started by TimerStart, returns time elapsed.
- * @return		Number of MilliSeconds elapsed since call to TimerStart
+ * @return      Number of MilliSeconds elapsed since call to TimerStart
  */
 extern DWORD TimerStop();
 
@@ -65,7 +65,7 @@ extern DWORD GetTimer();
 
 /**
  * Pauses the computer for specified number of MilliSeconds
- * @param milli		Number of milliseconds
+ * @param milli     Number of milliseconds
  */
 extern VOID Sleep(DWORD milli);
 
@@ -84,29 +84,29 @@ extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
 
 /**
  * Allocates a memory block of specified size
- * @param nSize			Number of bytes to allocate
- * @param pFile			Source file name
- * @param nLine			Source file line number
- * @param bClear		true if buffer should be cleared
- * @return				Pointer to new buffer
+ * @param nSize         Number of bytes to allocate
+ * @param pFile         Source file name
+ * @param nLine         Source file line number
+ * @param bClear        true if buffer should be cleared
+ * @return              Pointer to new buffer
  */
 extern void *BofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear);
 
 /**
  * Re-Allocates a memory block to the specified size
- * @param pOldPointer	Old memory pointer
- * @param nNewSize		New buffer size
- * @param pFile			Source file name
- * @param nLine			Source file line number
- * @return				Pointer to new buffer
+ * @param pOldPointer   Old memory pointer
+ * @param nNewSize      New buffer size
+ * @param pFile         Source file name
+ * @param nLine         Source file line number
+ * @return              Pointer to new buffer
  */
 extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, int nLine);
 
 /**
  * Frees specified memory block
- * @param pBuf			Buffer to de-allocate
- * @param pFile			Source file name
- * @param nLine			Source file line number
+ * @param pBuf          Buffer to de-allocate
+ * @param pFile         Source file name
+ * @param nLine         Source file line number
  **/
 extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 
@@ -131,58 +131,62 @@ extern VOID BofMemTest();
 #define BofMemCopy memcpy
 #define BofMemMove memmove
 
-inline ULONG GetFreePhysMem() { return 999999; }
-inline ULONG GetFreeMem() { return 999999; }
+inline ULONG GetFreePhysMem() {
+	return 999999;
+}
+inline ULONG GetFreeMem() {
+	return 999999;
+}
 
 /**
  * Writes specified setting to specified .INI file
- * @param pszFileName		Name of .INI file to write to
- * @param pszSection		Storage section in .INI for option
- * @param pszVar			Option to insert/update
- * @param pszNewValue		New Value for this option
- * @return					Error return code
+ * @param pszFileName       Name of .INI file to write to
+ * @param pszSection        Storage section in .INI for option
+ * @param pszVar            Option to insert/update
+ * @param pszNewValue       New Value for this option
+ * @return                  Error return code
  */
 extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, const CHAR *);
 
 /**
  * Reads specified setting from specified .INI file
  *
- * @param pszFile		Name of .INI file to read from
- * @param pszSection	Storage section in .INI for option
- * @param pszVar		Option to read
- * @param pszValue		Buffer to hold answer
- * @param pszDefault	Default answer if option not exist
- * @param nMaxLen		Max buffer length for answer
- * @return				Error return code
+ * @param pszFile       Name of .INI file to read from
+ * @param pszSection    Storage section in .INI for option
+ * @param pszVar        Option to read
+ * @param pszValue      Buffer to hold answer
+ * @param pszDefault    Default answer if option not exist
+ * @param nMaxLen       Max buffer length for answer
+ * @return              Error return code
  */
 extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, UINT);
 
 /**
  * Writes specified setting to specified .INI file
- * @param pszFileName	Name of .INI file to write to
- * @param pszSection	Storage section in .INI for option
- * @param pszVar		Option to insert/update
- * @param nNewValue		New Value for this option
- * @return				Error return code
+ * @param pszFileName   Name of .INI file to write to
+ * @param pszSection    Storage section in .INI for option
+ * @param pszVar        Option to insert/update
+ * @param nNewValue     New Value for this option
+ * @return              Error return code
  */
 extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, INT);
 
 /**
  * Reads specified setting from specified .INI file
- * @param pszFile		Name of .INI file to read from
- * @param pszSection	Storage section in .INI for option
- * @param pszVar		Option to read
- * @param pValue		Buffer to hold answer
- * @param nDefault		Default answer if option not exist
- * @return				Error return code
+ * @param pszFile       Name of .INI file to read from
+ * @param pszSection    Storage section in .INI for option
+ * @param pszVar        Option to read
+ * @param pValue        Buffer to hold answer
+ * @param nDefault      Default answer if option not exist
+ * @return              Error return code
  */
 extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *, INT);
 
 /**
  * Encrypts specified buffer
- * @param pBuf			Buffer to encrypt
- * @param lSize			Number of bytes in buffer
- * @param pszPassword	Optional password to encrypt with
+ * @param pBuf          Buffer to encrypt
+ * @param lSize         Number of bytes in buffer
+ * @param pszPassword   Optional password to encrypt with
  */
 VOID Encrypt(VOID *, LONG, const CHAR *pPassword = NULL);
 #define Decrypt Encrypt

@@ -31,8 +31,10 @@ namespace Bagel {
 /*
  * Deflate constants
  */
-#define DF_MAXCODES 288 /* maximum # of all codes */
-#define DF_LITCODES 288 /* maximum # of literal codes */
+#define DF_MAXCODES 288 
+/* maximum # of all codes */
+#define DF_LITCODES 288 
+/* maximum # of literal codes */
 #define DF_LITCODESUSED (DF_LITCODES - 2)
 #define DF_DISCODES 32 /* maximum # of distance codes */
 #define DF_DISCODESUSED (DF_DISCODES - 2)
@@ -167,7 +169,8 @@ struct CODETABLE disExtraTable[] = {
  * <val, bits>
  */
 struct CODELENS bitTreeTable[] = {
-	{16}, {17}, {18}, {0}, {8}, {7}, {9}, {6}, {10}, {5}, {11}, {4}, {12}, {3}, {13}, {2}, {14}, {1}, {15}};
+	{16}, {17}, {18}, {0}, {8}, {7}, {9}, {6}, {10}, {5}, {11}, {4}, {12}, {3}, {13}, {2}, {14}, {1}, {15}
+};
 
 /*
  * table of indexs in lenExtraTable[] for lengths 3 - 258
@@ -1389,13 +1392,13 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	 * allocate the literal, distance, and bit length code tables
 	 */
 	if ((hashTable = (USHORT *)BofCAlloc(HASHSIZE, sizeof(USHORT))) == NULL ||
-		(colTable = (USHORT *)BofCAlloc(bufSize, sizeof(USHORT))) == NULL ||
-		(stack = (CODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct CODESTACK))) == NULL ||
-		(altStack = (ALTCODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct ALTCODESTACK))) == NULL ||
-		(lookBackBuf = (UBYTE *)BofAlloc(bufSize + (DF_MAXLENGTH - 1))) == NULL ||
-		(dlTable = (CODETABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED + DF_BITCODES) * sizeof(struct CODETABLE))) == NULL ||
-		(pkTable = (PACKTABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(struct PACKTABLE))) == NULL ||
-		(lenProbCount = (SHORT *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(SHORT))) == NULL) {
+	        (colTable = (USHORT *)BofCAlloc(bufSize, sizeof(USHORT))) == NULL ||
+	        (stack = (CODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct CODESTACK))) == NULL ||
+	        (altStack = (ALTCODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct ALTCODESTACK))) == NULL ||
+	        (lookBackBuf = (UBYTE *)BofAlloc(bufSize + (DF_MAXLENGTH - 1))) == NULL ||
+	        (dlTable = (CODETABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED + DF_BITCODES) * sizeof(struct CODETABLE))) == NULL ||
+	        (pkTable = (PACKTABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(struct PACKTABLE))) == NULL ||
+	        (lenProbCount = (SHORT *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(SHORT))) == NULL) {
 		errCode = ERR_MEMORY;
 
 		/*
@@ -2001,7 +2004,7 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 				 * string match enters here *
 				 ****************************/
 
-			skipliteral:
+skipliteral:
 
 				/* compute variance for literals/lengths */
 				lenVar = ComputeVar(lenNum, lenSum, lenSqr);
@@ -2293,10 +2296,10 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 						 * three characters costs less than lookback
 						 */
 						if ((len == 3) &&
-							((bits1 = curLitTable[altPtr->lit1].bits) != 0) &&
-							((bits2 = curLitTable[altPtr->lit2].bits) != 0) &&
-							((bits3 = curLitTable[altPtr->lit3].bits) != 0) &&
-							(bits1 + bits2 + bits3) <= (ct->bits + cte->bits + bt->bits + bte->bits)) {
+						        ((bits1 = curLitTable[altPtr->lit1].bits) != 0) &&
+						        ((bits2 = curLitTable[altPtr->lit2].bits) != 0) &&
+						        ((bits3 = curLitTable[altPtr->lit3].bits) != 0) &&
+						        (bits1 + bits2 + bits3) <= (ct->bits + cte->bits + bt->bits + bte->bits)) {
 
 							/*
 							 * write out each code in this string

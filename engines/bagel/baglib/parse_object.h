@@ -90,17 +90,33 @@ public:
 		m_bAttached = FALSE;
 		return ERR_NONE;
 	}
-	virtual BOOL IsAttached() { return m_bAttached; }
+	virtual BOOL IsAttached() {
+		return m_bAttached;
+	}
 
-	virtual PARSE_CODES SetInfo(bof_ifstream &) { return PARSING_DONE; }
+	virtual PARSE_CODES SetInfo(bof_ifstream &) {
+		return PARSING_DONE;
+	}
 
-	int SetIndent(int n) { return m_nIndentation = n; }
-	int GetIndent() const { return m_nIndentation; }
-	int Tab(int n = 2) { return m_nIndentation += n; }
-	int UnTab(int n = 2) { return m_nIndentation -= n; }
+	int SetIndent(int n) {
+		return m_nIndentation = n;
+	}
+	int GetIndent() const {
+		return m_nIndentation;
+	}
+	int Tab(int n = 2) {
+		return m_nIndentation += n;
+	}
+	int UnTab(int n = 2) {
+		return m_nIndentation -= n;
+	}
 
-	int SetBinaryData(BOOL b = TRUE) const { return m_bBinaryData = b; }
-	int IsBinaryData() { return m_bBinaryData; }
+	int SetBinaryData(BOOL b = TRUE) const {
+		return m_bBinaryData = b;
+	}
+	int IsBinaryData() {
+		return m_bBinaryData;
+	}
 
 	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, BOOL bPutBack = FALSE);
 	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, BOOL bPutBack = FALSE);
@@ -114,8 +130,12 @@ public:
 
 	int ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine);
 
-	virtual VOID *GetDataStart() { return &m_bAttached; }
-	virtual VOID *GetDataEnd() { return &m_bAttached + sizeof(BOOL); }
+	virtual VOID *GetDataStart() {
+		return &m_bAttached;
+	}
+	virtual VOID *GetDataEnd() {
+		return &m_bAttached + sizeof(BOOL);
+	}
 };
 
 } // namespace Bagel

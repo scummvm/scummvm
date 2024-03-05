@@ -76,15 +76,19 @@ public:
 
 	/**
 	 * Same as evaluate above except it evaluates left to right and preserves
-	 * the value of the previous evaluation in the loop.  Provides partial 
-	 * evaluation hierarchy support. 
+	 * the value of the previous evaluation in the loop.  Provides partial
+	 * evaluation hierarchy support.
 	 */
 	BOOL EvalLeftToRight(BOOL bNeg = FALSE, CBagVar &xResult = m_xTempVar);
 
 	BOOL NegEvaluate(CBagVar &xResult = m_xTempVar);
 
-	VOID SetNegative(BOOL b = TRUE) { m_bNegative = (UBYTE)b; }
-	BOOL IsNegative() { return m_bNegative; }
+	VOID SetNegative(BOOL b = TRUE) {
+		m_bNegative = (UBYTE)b;
+	}
+	BOOL IsNegative() {
+		return m_bNegative;
+	}
 
 	CBagVar *GetVariable(int nPos);
 	OPERATION GetOperation(int nPos);
@@ -92,8 +96,12 @@ public:
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 	ERROR_CODE GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
 
-	CBagExpression *GetPrevExpression() { return m_xPrevExpression; }
-	VOID SetPrevExpression(CBagExpression *pExpr) { m_xPrevExpression = pExpr; }
+	CBagExpression *GetPrevExpression() {
+		return m_xPrevExpression;
+	}
+	VOID SetPrevExpression(CBagExpression *pExpr) {
+		m_xPrevExpression = pExpr;
+	}
 
 	virtual BOOL OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
 	virtual BOOL OnEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);

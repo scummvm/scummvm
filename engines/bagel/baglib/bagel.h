@@ -107,7 +107,7 @@ public:
 
 	/**
 	 * Registers game information for this game object
-	 * @param pGameReg		Game registration info
+	 * @param pGameReg      Game registration info
 	 */
 	VOID RegisterGame(BAGEL_REG *pGameReg);
 
@@ -115,19 +115,19 @@ public:
 	//
 	/**
 	 * Initializes BAGEL, checks system resources, etc...
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	virtual ERROR_CODE Initialize();
 
 	/**
 	 * Provides main message loop (MainEventLoop)
-	 * @return			Error return Code.
+	 * @return          Error return Code.
 	 */
 	virtual ERROR_CODE RunApp();
 
 	/**
 	 * Performs cleanup and destruction of Bagel object
-	 * @return			Error return Code.
+	 * @return          Error return Code.
 	 */
 	virtual ERROR_CODE ShutDown();
 
@@ -136,80 +136,98 @@ public:
 
 	/**
 	 * Sets specified user option in assocciated .INI file
-	 * @param pszSection		.INI section to write to
-	 * @param pszOption			Option to add/update
-	 * @param pszValue			New value of option
-	 * @return					Error return code
+	 * @param pszSection        .INI section to write to
+	 * @param pszOption         Option to add/update
+	 * @param pszValue          New value of option
+	 * @return                  Error return code
 	 */
 	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue);
 
 	/**
 	 * Sets specified user option in assocciated .INI file
-	 * @param pszSection		.INI section to write to
-	 * @param pszOption			Option to add/update
-	 * @param nValue			New value of option
-	 * @return					Error return code
+	 * @param pszSection        .INI section to write to
+	 * @param pszOption         Option to add/update
+	 * @param nValue            New value of option
+	 * @return                  Error return code
 	 */
 	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
-	 * @param pszSection		.INI section to read from
-	 * @param pszOption			Option to retrieve
-	 * @param pszValue			Buffer to hold value
-	 * @param pszDefault		Default value if option not found
-	 * @param nSize				Length of the pszValue buffer
-	 * @return					Error return code
+	 * @param pszSection        .INI section to read from
+	 * @param pszOption         Option to retrieve
+	 * @param pszValue          Buffer to hold value
+	 * @param pszDefault        Default value if option not found
+	 * @param nSize             Length of the pszValue buffer
+	 * @return                  Error return code
 	*/
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
-	 * @param pszSection		.INI section to read from
-	 * @param pszOption			Option to retrieve
-	 * @param nValue			Buffer to hold value
-	 * @param nDefault			Default value if option not found
-	 * @return					Error return code
+	 * @param pszSection        .INI section to read from
+	 * @param pszOption         Option to retrieve
+	 * @param nValue            Buffer to hold value
+	 * @param nDefault          Default value if option not found
+	 * @return                  Error return code
 	 */
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *nValue, INT nDefault);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
-	 * @param pszSection		.INI section to read from
-	 * @param pszOption			Option to retrieve
-	 * @param nValue			Buffer to hold value
-	 * @param nDefault			Default value if option not found
-	 * @return					Error return code
+	 * @param pszSection        .INI section to read from
+	 * @param pszOption         Option to retrieve
+	 * @param nValue            Buffer to hold value
+	 * @param nDefault          Default value if option not found
+	 * @return                  Error return code
 	 */
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, INT nDefault);
 
-	VOID SetAppName(const CHAR *pszNewAppName) { Common::strcpy_s(m_szAppName, pszNewAppName); }
+	VOID SetAppName(const CHAR *pszNewAppName) {
+		Common::strcpy_s(m_szAppName, pszNewAppName);
+	}
 
-	const CHAR *GetAppName() { return (const CHAR *)m_szAppName; }
+	const CHAR *GetAppName() {
+		return (const CHAR *)m_szAppName;
+	}
 
-	CBofWindow *GetMainWindow() { return m_pMainWnd; }
+	CBofWindow *GetMainWindow() {
+		return m_pMainWnd;
+	}
 
-	const CHAR *GetOptionsFileName() { return (const CHAR *)m_szFileName; }
+	const CHAR *GetOptionsFileName() {
+		return (const CHAR *)m_szFileName;
+	}
 
-	const CHAR *GetSaveGameFileName() { return (const CHAR *)m_szSaveGameFileName; }
+	const CHAR *GetSaveGameFileName() {
+		return (const CHAR *)m_szSaveGameFileName;
+	}
 
-	const CHAR *GetInstallPath() { return (const CHAR *)m_szInstallPath; }
+	const CHAR *GetInstallPath() {
+		return (const CHAR *)m_szInstallPath;
+	}
 
 	BOOL HaveSavedGames(); //{ return(m_bSavedGames); }
 
-	CBagMasterWin *GetMasterWnd() { return (CBagMasterWin *)m_pMainWnd; }
+	CBagMasterWin *GetMasterWnd() {
+		return (CBagMasterWin *)m_pMainWnd;
+	}
 
-	static CBagel *GetBagApp() { return (CBagel *)m_pBofApp; }
+	static CBagel *GetBagApp() {
+		return (CBagel *)m_pBofApp;
+	}
 
-	INT GetChromaColor() { return DEFAULT_CHROMA_COLOR; }
+	INT GetChromaColor() {
+		return DEFAULT_CHROMA_COLOR;
+	}
 
 	static ERROR_CODE SetActiveCursor(INT nCurs);
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
-	 * @param nDiskID		Disk number
-	 * @param pszWaveFile	Filename
-	 * @return				Error return code
+	 * @param nDiskID       Disk number
+	 * @param pszWaveFile   Filename
+	 * @return              Error return code
 	 */
 	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const CHAR *pszWaveFile = nullptr);
 
@@ -220,12 +238,14 @@ public:
 	 */
 	static VOID ScanTree(const CHAR *, const CHAR *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
 
-	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() { return m_pCacheFileList; }
+	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() {
+		return m_pCacheFileList;
+	}
 
 protected:
 	/**
 	 * Initialize full path names to files stored on local disk
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE InitLocalFilePaths();
 	ERROR_CODE InitGraphics();
@@ -233,7 +253,7 @@ protected:
 	/**
 	 * Checks system resources, determining if user has the minimum
 	 * system requirements to play this game.
-	 * @return			Error return code
+	 * @return          Error return code
 	 */
 	ERROR_CODE VerifyRequirements();
 

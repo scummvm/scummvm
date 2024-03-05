@@ -65,7 +65,9 @@ public:
 	virtual VOID Disable(VOID);
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
-	INT GetState(VOID) { return (m_nState); }
+	INT GetState(VOID) {
+		return (m_nState);
+	}
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
@@ -94,7 +96,9 @@ protected:
 class CBofCheckButton : public CBofButton {
 public:
 	ERROR_CODE SetCheck(BOOL bChecked);
-	BOOL GetCheck(VOID) { return (m_nState == BUTTON_CHECKED); }
+	BOOL GetCheck(VOID) {
+		return (m_nState == BUTTON_CHECKED);
+	}
 
 	virtual ERROR_CODE Paint(CBofRect *pRect = NULL);
 
@@ -119,9 +123,13 @@ public:
 	ERROR_CODE Paint(CBofRect *pRect = NULL);
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
-	INT GetState(VOID) { return (m_nState); }
+	INT GetState(VOID) {
+		return (m_nState);
+	}
 
-	CBofBitmap *GetButtonBmp(VOID) { return m_pButtonUp; }
+	CBofBitmap *GetButtonBmp(VOID) {
+		return m_pButtonUp;
+	}
 
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);

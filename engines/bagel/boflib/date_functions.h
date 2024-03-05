@@ -29,22 +29,22 @@ namespace Bagel {
 
 /**
  * Fills specified buffer with the current time
- * @param pszBuf	Pointer to buffer to fill
- * @return			Pointer to filled buffer
+ * @param pszBuf    Pointer to buffer to fill
+ * @return          Pointer to filled buffer
  */
 extern CHAR *strtime(CHAR *pszBuffer);
 
 /**
  * Fills specified buffer with the current date
- * @param pszBuf	Pointer to buffer to fill
- * @return			Pointer to filled buffer
+ * @param pszBuf    Pointer to buffer to fill
+ * @return          Pointer to filled buffer
  */
 extern CHAR *strdate(CHAR *pszBuffer);
 
 /**
  * Reverses specified string
- * @param pStr		Description of param1
- * @return			Reversed string
+ * @param pStr      Description of param1
+ * @return          Reversed string
  */
 extern CHAR *strrev(CHAR *pszBuffer);
 

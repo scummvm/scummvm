@@ -40,14 +40,14 @@ public:
 	CBagExam(CBofWindow *pParent, const char *sFilename) : CBofMovie(pParent, sFilename),
 		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0), m_dwStart(0), m_dwEnd(0) {}
 	CBagExam(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds,
-		BOOL bStretch = FALSE, BOOL bUseNewPal = TRUE, BOOL bBlackOutWindow = FALSE) :
+	         BOOL bStretch = FALSE, BOOL bUseNewPal = TRUE, BOOL bBlackOutWindow = FALSE) :
 		CBofMovie(pParent, sFilename, pBounds, bStretch, bUseNewPal, bBlackOutWindow),
-		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0),																																		m_dwStart(0), m_dwEnd(0) {}
+		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0),                                                                                                                                        m_dwStart(0), m_dwEnd(0) {}
 	~CBagExam() {}
 
 	/**
 	 * Initailize exam object after opened and ready to play
-	 * @return		Success/failure
+	 * @return      Success/failure
 	 */
 	virtual BOOL Exam();
 
@@ -69,13 +69,13 @@ public:
 
 	/**
 	 * Set the rectangles that determine "hot" mouse locations
-	 * @return		Success/failure
+	 * @return      Success/failure
 	 */
 	BOOL SetRotationRects();
 
 	/**
 	 * Store off the start and end frames of the movies
-	 * @return		Success/failure
+	 * @return      Success/failure
 	 */
 	BOOL MarkBegEnd();
 

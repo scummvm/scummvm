@@ -55,20 +55,32 @@ public:
 	ERROR_CODE DelItem(INT nIndex, BOOL bRepaint = TRUE);
 	ERROR_CODE DeleteAll(BOOL bRepaint = TRUE);
 
-	INT GetNumItems(VOID) { return (m_nNumItems); }
+	INT GetNumItems(VOID) {
+		return (m_nNumItems);
+	}
 	CBofString GetText(INT nIndex);
 	VOID SetText(INT nIndex, const CBofString &cStr);
 
 	VOID SetTextLineColor(INT nIndex, RGBCOLOR rgbColor);
 
-	ERROR_CODE LineUp(VOID) { return (ScrollUp(1)); }
-	ERROR_CODE LineDown(VOID) { return (ScrollDown(1)); }
+	ERROR_CODE LineUp(VOID) {
+		return (ScrollUp(1));
+	}
+	ERROR_CODE LineDown(VOID) {
+		return (ScrollDown(1));
+	}
 
-	ERROR_CODE PageUp(VOID) { return (ScrollUp(m_nPageSize)); }
-	ERROR_CODE PageDown(VOID) { return (ScrollDown(m_nPageSize)); }
+	ERROR_CODE PageUp(VOID) {
+		return (ScrollUp(m_nPageSize));
+	}
+	ERROR_CODE PageDown(VOID) {
+		return (ScrollDown(m_nPageSize));
+	}
 
 	ERROR_CODE ScrollUp(const INT nLines);
-	ERROR_CODE ScrollDown(const INT nLines) { return (ScrollUp(-nLines)); }
+	ERROR_CODE ScrollDown(const INT nLines) {
+		return (ScrollUp(-nLines));
+	}
 
 	ERROR_CODE ScrollTo(const INT nLine);
 
@@ -76,25 +88,51 @@ public:
 	ERROR_CODE SaveBackground(VOID);
 	VOID KillBackground(VOID);
 
-	VOID SetHighlightColor(RGBCOLOR cHighColor) { m_cHighColor = cHighColor; }
-	RGBCOLOR GetHighlightColor(VOID) { return (m_cHighColor); }
+	VOID SetHighlightColor(RGBCOLOR cHighColor) {
+		m_cHighColor = cHighColor;
+	}
+	RGBCOLOR GetHighlightColor(VOID) {
+		return (m_cHighColor);
+	}
 
-	VOID SetTextColor(RGBCOLOR cColor) { m_cTextColor = cColor; }
-	RGBCOLOR GetTextColor(VOID) { return (m_cTextColor); }
+	VOID SetTextColor(RGBCOLOR cColor) {
+		m_cTextColor = cColor;
+	}
+	RGBCOLOR GetTextColor(VOID) {
+		return (m_cTextColor);
+	}
 
-	VOID SetPointSize(INT nSize) { m_nTextSize = nSize; }
-	INT GetPointSize(VOID) { return (m_nTextSize); }
+	VOID SetPointSize(INT nSize) {
+		m_nTextSize = nSize;
+	}
+	INT GetPointSize(VOID) {
+		return (m_nTextSize);
+	}
 
-	VOID SetWeight(INT nWeight) { m_nTextWeight = nWeight; }
-	INT GetWeight(VOID) { return (m_nTextWeight); }
+	VOID SetWeight(INT nWeight) {
+		m_nTextWeight = nWeight;
+	}
+	INT GetWeight(VOID) {
+		return (m_nTextWeight);
+	}
 
-	VOID SetItemHeight(INT nHeight) { m_nItemHeight = nHeight; }
-	INT GetItemHeight(VOID) { return (m_nItemHeight); }
+	VOID SetItemHeight(INT nHeight) {
+		m_nItemHeight = nHeight;
+	}
+	INT GetItemHeight(VOID) {
+		return (m_nItemHeight);
+	}
 
-	VOID SetFont(INT nFont) { m_nTextFont = nFont; }
-	INT GetFont(VOID) { return (m_nTextFont); }
+	VOID SetFont(INT nFont) {
+		m_nTextFont = nFont;
+	}
+	INT GetFont(VOID) {
+		return (m_nTextFont);
+	}
 
-	INT GetState(VOID) { return (m_nState); }
+	INT GetState(VOID) {
+		return (m_nState);
+	}
 
 	virtual ERROR_CODE RepaintItem(INT nIndex);
 	virtual ERROR_CODE RepaintAll(VOID);

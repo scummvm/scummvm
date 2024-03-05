@@ -33,7 +33,7 @@
 namespace Bagel {
 
 #define MAXDIVVIEW (12.8 / 3)     // Ratio for 480x380 Screen
-#define DEFFOV (360 / MAXDIVVIEW) //	1TO1 Paint FOV
+#define DEFFOV (360 / MAXDIVVIEW) //    1TO1 Paint FOV
 
 class CBagPanBitmap :
 #ifdef COMPRESSED
@@ -75,8 +75,12 @@ public:
 	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
-	BOOL IsValid() { return m_bIsValid; }
-	BOOL IsPan() { return m_bPanorama; }
+	BOOL IsValid() {
+		return m_bIsValid;
+	}
+	BOOL IsPan() {
+		return m_bPanorama;
+	}
 
 	ERROR_CODE Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ERROR_CODE Paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));
@@ -87,16 +91,30 @@ public:
 	CBofRect GetWarpSrcRect();
 	CBofPoint WarpedPoint(CBofPoint &xPoint);
 
-	double GetFOV() { return m_xFOVAngle; }
-	const CBofSize GetViewSize() { return CBofPoint(m_xCurrView.Size()); }
-	const CBofRect GetCurrView() { return m_xCurrView; }
+	double GetFOV() {
+		return m_xFOVAngle;
+	}
+	const CBofSize GetViewSize() {
+		return CBofPoint(m_xCurrView.Size());
+	}
+	const CBofRect GetCurrView() {
+		return m_xCurrView;
+	}
 
 	const CBofRect GetMaxView(CBofSize s = CBofSize(640, 480));
-	const CBofPoint GetRotateRate() { return m_xRotateRate; }
-	DIRECTION GetDirection() { return m_xDirection; }
+	const CBofPoint GetRotateRate() {
+		return m_xRotateRate;
+	}
+	DIRECTION GetDirection() {
+		return m_xDirection;
+	}
 
-	void SetRotateRate(const CBofPoint &xRotRate) { m_xRotateRate = xRotRate; }
-	void SetDirection(const DIRECTION xDirection) { m_xDirection = xDirection; }
+	void SetRotateRate(const CBofPoint &xRotRate) {
+		m_xRotateRate = xRotRate;
+	}
+	void SetDirection(const DIRECTION xDirection) {
+		m_xDirection = xDirection;
+	}
 	void SetCurrView(const CBofRect &xCurrView) {
 		m_xCurrView = xCurrView;
 		NormalizeViewSize();
@@ -113,7 +131,9 @@ public:
 			GenerateCosineTable();
 		}
 	}
-	int GetCorrWidth() { return m_nCorrWidth; }
+	int GetCorrWidth() {
+		return m_nCorrWidth;
+	}
 
 	void SetCorrWidth(int nWidth, BOOL bUpdate = TRUE);
 
@@ -144,8 +164,12 @@ public:
 
 	DIRECTION UpdateView();
 
-	void ActivateScrolling(BOOL val = TRUE) { m_bActiveScrolling = val; }
-	void DeActivateScrolling() { ActivateScrolling(FALSE); }
+	void ActivateScrolling(BOOL val = TRUE) {
+		m_bActiveScrolling = val;
+	}
+	void DeActivateScrolling() {
+		ActivateScrolling(FALSE);
+	}
 };
 
 } // namespace Bagel

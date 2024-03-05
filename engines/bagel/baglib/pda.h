@@ -43,9 +43,9 @@ protected:
 public:
 	/**
 	 * Constructor
-	 * @param pParent		Pointer to the parent window
-	 * @param xPoint		Upper-left corner of PDA in parent window
-	 * @param bActivated	State of PDA whe constructed (optional)
+	 * @param pParent       Pointer to the parent window
+	 * @param xPoint        Upper-left corner of PDA in parent window
+	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
 	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
 
@@ -59,25 +59,25 @@ public:
 
 	/**
 	 * Positions the PDA centered vertically and window
-	 * @param width		Width of area to center pda
-	 * @param height	Height of area to place pda
-	 * @param nDist		Distance to bring move PDA
+	 * @param width     Width of area to center pda
+	 * @param height    Height of area to place pda
+	 * @param nDist     Distance to bring move PDA
 	 */
 	VOID SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
 
 	/**
 	 * Update the PDA to the screen and then call CBagStorageDevBmp Update
-	 * @param pBmp			Background bitmap to paint to
-	 * @param pt			Offset into bitmap
-	 * @param pSrcRect		Clip rect of the object to be painted
-	 * @param nMaskColor	Mask color for the object
+	 * @param pBmp          Background bitmap to paint to
+	 * @param pt            Offset into bitmap
+	 * @param pSrcRect      Clip rect of the object to be painted
+	 * @param nMaskColor    Mask color for the object
 	*/
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
 
 	/**
 	 * Called to overload specific types of sprite objects
-	 * @param pBmp			Bitmap
-	 * @return				Success/failure
+	 * @param pBmp          Bitmap
+	 * @return              Success/failure
 	 */
 	virtual BOOL PaintFGObjects(CBofBitmap *pBmp);
 
@@ -85,8 +85,8 @@ public:
 
 	/**
 	 * Called to overload specific types of sprite objects
-	 * @param sInit		Init
-	 * @return			Pointer to the new object
+	 * @param sInit     Init
+	 * @return          Pointer to the new object
 	 */
 	CBagObject *OnNewButtonObject(const CBofString &sInit);
 
@@ -94,17 +94,17 @@ public:
 	 * Called on the mouse left button down
 	 * Is the PDA is deactivated mouse down activates the PDA
 	 * else it call CBagStorageDevBmp::OnLButtonDown
-	 * @param nFlags		Flags
-	 * @param xPoint		X, Y position
-	 * @param info			Optional info
+	 * @param nFlags        Flags
+	 * @param xPoint        X, Y position
+	 * @param info          Optional info
 	 */
 	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
 
 	/**
 	 * Called on the mouse left button down
-	 * @param nFlags		Flags
-	 * @param xPoint		X, Y position
-	 * @param info			Optional info
+	 * @param nFlags        Flags
+	 * @param xPoint        X, Y position
+	 * @param info          Optional info
 	 */
 	virtual BOOL OnLButtonDown(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
 
@@ -129,7 +129,9 @@ public:
 	 */
 	static BOOL IsMovieWaiting();
 
-	static BOOL IsMoviePlaying() { return m_ePdaMode == MOOMODE; }
+	static BOOL IsMoviePlaying() {
+		return m_ePdaMode == MOOMODE;
+	}
 
 	static VOID RunWaitingMovie();
 

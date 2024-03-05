@@ -27,14 +27,14 @@
 
 namespace Bagel {
 
-#define ZOOMMOOWLD		"MOOZ_WLD"
-#define ZOOMINVWLD		"INVZ_WLD"
-#define ZOOMMAPWLD		"MAPZ_WLD"
-#define ZOOMLOGWLD		"LOGZ_WLD"
+#define ZOOMMOOWLD      "MOOZ_WLD"
+#define ZOOMINVWLD      "INVZ_WLD"
+#define ZOOMMAPWLD      "MAPZ_WLD"
+#define ZOOMLOGWLD      "LOGZ_WLD"
 
-CBofRect DisplayZMRect(24, 49, 623, 348);	  // Rect for display on zoom display
+CBofRect DisplayZMRect(24, 49, 623, 348);     // Rect for display on zoom display
 
-// Keep track of updates... 
+// Keep track of updates...
 static DWORD g_lZoomPDALastUpdate;
 
 void SBZoomPda::initStatics() {
@@ -43,7 +43,7 @@ void SBZoomPda::initStatics() {
 
 SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated)
 	: CBagStorageDevWnd(),
-	SBBasePda(pParent, xRect, bActivated) {
+	  SBBasePda(pParent, xRect, bActivated) {
 	m_xSDevType = SDEV_ZOOMPDA;
 }
 
@@ -54,13 +54,13 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	// Paint the storage device
 	if (pBmp != NULL) {
 		BOOL bUpdate = FALSE;
-		// Only clear the background and paint the backdrop if we've 
-		// been instructed to. 
+		// Only clear the background and paint the backdrop if we've
+		// been instructed to.
 
 		if (PreFilterPan()) {
 			PreFilter(pBmp, pRect, (m_xCurDisplay == NULL ? NULL : m_xCurDisplay->GetObjectList()));
 
-			// Paint our storage device the first time through and the next time 
+			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
 			if (m_bFirstPaint == FALSE) {
 				SetPreFilterPan(FALSE);
@@ -95,7 +95,7 @@ ERROR_CODE SBZoomPda::LoadFile(const CBofString &sFile) {
 	RemoveObject(m_xMapWnd);
 	RemoveObject(m_xLogWnd);
 
-	return(error);
+	return (error);
 }
 
 ERROR_CODE SBZoomPda::Detach() {
@@ -209,8 +209,7 @@ ERROR_CODE SBZoomPda::Attach() {
 			ShowInventory();
 		} else if (m_ePdaMode == MAPMODE) {
 			ShowMap();
-		} else if (m_ePdaMode == LOGMODE)
-		{
+		} else if (m_ePdaMode == LOGMODE) {
 			ShowLog();
 		}
 
@@ -219,7 +218,7 @@ ERROR_CODE SBZoomPda::Attach() {
 		UpdateWindow();
 	}
 
-	// Keep track of updates... 
+	// Keep track of updates...
 	g_lZoomPDALastUpdate = 0;
 
 	return rc;
@@ -257,7 +256,7 @@ VOID SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 			xPoint->x -= offset.TopLeft().x;
 			xPoint->y -= offset.TopLeft().y;
 
-			// Make sure this stuff is nice and dirty before calling off 
+			// Make sure this stuff is nice and dirty before calling off
 			// to the button handling routine, this assures that if we go from one screen
 			// to the next, then we'll get redrawn.
 			SetPreFilterPan(TRUE);
@@ -272,7 +271,7 @@ VOID SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 		}
 	}
 
-	// This thing could get trashed by the underlying code... 
+	// This thing could get trashed by the underlying code...
 	if (IsCreated()) {
 		InvalidateRect(NULL);
 		UpdateWindow();
@@ -290,12 +289,12 @@ VOID SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 		CBagMasterWin::SetActiveCursor(10);
 	} else {
 		CBofRect cRect = GetBackdrop()->GetRect();
-		CBagMasterWin::SetActiveCursor(GetProperCursor(*pPoint, cRect));   
+		CBagMasterWin::SetActiveCursor(GetProperCursor(*pPoint, cRect));
 	}
 }
 
 VOID SBZoomPda::OnMainLoop() {
-	DWORD 		nCurTime = GetTimer();
+	DWORD       nCurTime = GetTimer();
 
 	// Force an update every 1/4 second
 	if (m_ePdaMode == INVMODE || m_ePdaMode == MAPMODE) {

@@ -180,8 +180,8 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 			ch = (char)istr.Get();
 
 		// if ((lastch == '/') && (ch == '/')) { // put comment back
-		//	istr.putback(lastch);
-		//	bDone = TRUE;
+		//  istr.putback(lastch);
+		//  bDone = TRUE;
 		// } else
 		if (Common::isAlnum(ch) || ch == '_' || ch == '-' || ch == '\\' || ch == '/' || ch == '.' || ch == ':' || ch == '$' || ch == 39 || ch == '~') {
 #if BOF_MAC

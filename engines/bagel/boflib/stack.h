@@ -61,13 +61,13 @@ public:
 
 	/**
 	 * Pushes object onto stack
-	 * @param pObject		Pointer to object to be pushed
+	 * @param pObject       Pointer to object to be pushed
 	 */
 	VOID Push(VOID *pObject);
 
 	/**
 	 * Pops 1 object off stack
-	 * @return		Pointer to top object on stack
+	 * @return      Pointer to top object on stack
 	 */
 	VOID *Pop();
 };

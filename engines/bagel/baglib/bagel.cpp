@@ -37,10 +37,10 @@
 namespace Bagel {
 
 #if BOF_MAC
-#define SPINANDWAIT(n) {EventRecord	event;												\
-                        for (INT jj = 0; jj < n; jj++) { 								\
-					        ::WaitNextEvent (everyEvent, &event, 0xFFFFFFFF, nullptr);		\
-					    }}
+#define SPINANDWAIT(n) {EventRecord event;                                              \
+                        for (INT jj = 0; jj < n; jj++) {                                \
+                            ::WaitNextEvent (everyEvent, &event, 0xFFFFFFFF, nullptr);      \
+                        }}
 #endif
 
 // Initialize class static member variables.
@@ -133,27 +133,27 @@ VOID CBagel::RegisterGame(BAGEL_REG *pGameReg) {
 
 ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue) {
 	Assert(IsValidObject(this));
-	return(WriteSetting(pszSection, pszOption, pszValue));
+	return (WriteSetting(pszSection, pszOption, pszValue));
 }
 
 ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue) {
 	Assert(IsValidObject(this));
-	return(WriteSetting(pszSection, pszOption, nValue));
+	return (WriteSetting(pszSection, pszOption, nValue));
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize) {
 	Assert(IsValidObject(this));
-	return(ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize));
+	return (ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize));
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
-	return(ReadSetting(pszSection, pszOption, pValue, nDefault));
+	return (ReadSetting(pszSection, pszOption, pValue, nDefault));
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
-	return(ReadSetting(pszSection, pszOption, pValue, nDefault));
+	return (ReadSetting(pszSection, pszOption, pValue, nDefault));
 }
 
 ERROR_CODE CBagel::Initialize() {
@@ -230,7 +230,7 @@ ERROR_CODE CBagel::SetActiveCursor(INT nCurs) {
 
 	CBagMasterWin::SetActiveCursor(nCurs);
 
-	return(ERR_NONE);
+	return (ERR_NONE);
 }
 
 ERROR_CODE CBagel::InitLocalFilePaths() {
@@ -331,17 +331,17 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 }
 
 #if BOF_MAC || BOF_WINMAC
-#define LOADINGBMP			"$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
+#define LOADINGBMP          "$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
 #else
-#define LOADINGBMP			"$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
+#define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 #endif
 
 ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
-	BOOL		bEjectDisk = FALSE;
-	VolumeParam	vInfo;
-	OSErr		oserr = noErr;
+	BOOL        bEjectDisk = FALSE;
+	VolumeParam vInfo;
+	OSErr       oserr = noErr;
 	CBofWindow *pBlackWin = nullptr;
 #endif
 
@@ -387,9 +387,9 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			SHORT nVRefNum = GetVolumeFromPath(g_cHomeDir.GetBuffer());
 			bEjectDisk = TRUE;
 
-			// If we get no disk to eject, then just check and see 
-			// if a disk that we know about is present.  If it is, then spit it 
-			// out for the user. 
+			// If we get no disk to eject, then just check and see
+			// if a disk that we know about is present.  If it is, then spit it
+			// out for the user.
 			if (nVRefNum == 0) {
 				for (INT i = DISK_1; i <= DISK_3; i++) {
 					if (i != nDiskID) {
@@ -444,8 +444,8 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			short attempts = 0;
 			SetWatchCursor();
 			do {
-				long		finalTicks;
-				CHAR 		szNewVol[MAX_DIRPATH];
+				long        finalTicks;
+				CHAR        szNewVol[MAX_DIRPATH];
 
 				Common::strcpy_s(szNewVol, g_cHomeDir.GetBuffer());
 				StrCToPascal(szNewVol);
@@ -491,7 +491,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 		CBagMasterWin::SetActiveCursor(6);
 	}
 
-	// new home dir... 
+	// new home dir...
 	SetCurrentDisk(nDiskID);
 	DISKREPLACE(m_szCDPath);
 
@@ -527,7 +527,7 @@ ERROR_CODE CBagel::VerifyRequirements() {
 			// Inform the user that there is not enough RAM to play this game
 
 			ReportError(ERR_MEMORY, "This game requires %ld bytes of free memory.  You should close all other applications before running %s.  If this does not work, you may want to try increasing your virtual memory space.",
-				m_pGameReg->m_lRamRequired, m_pGameReg->m_pszGameName);
+			            m_pGameReg->m_lRamRequired, m_pGameReg->m_pszGameName);
 
 			break;
 
@@ -583,12 +583,12 @@ ERROR_CODE CBagel::VerifyRequirements() {
 			// Make sure that we are operating in 256 colors (i.e. 8 bit).
 
 #if BOF_MAC
-			GDHandle	screenGD;
-			GWorldPtr	curWorld;
+			GDHandle    screenGD;
+			GWorldPtr   curWorld;
 
 			GetGWorld(&curWorld, &screenGD);
 
-			//	First off, handle the case where 8 bit color isn't even
+			//  First off, handle the case where 8 bit color isn't even
 			//  supported.
 
 			if (!HasDepth(screenGD, 8, 0, 0)) {
@@ -620,9 +620,9 @@ ERROR_CODE CBagel::VerifyRequirements() {
 			// Inform the user that they must change the pixel depth in order
 			// to play this game, or we must change it for them.
 			if (::MessageBox(nullptr,
-				"Your display is currently set to 256 colors, but The Space Bar requires that your display be set to 16bit Color.  If you continue now, some parts of the game may not display correctly.  Continue anyway?",
-				"Display requirement failure",
-				MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
+			                 "Your display is currently set to 256 colors, but The Space Bar requires that your display be set to 16bit Color.  If you continue now, some parts of the game may not display correctly.  Continue anyway?",
+			                 "Display requirement failure",
+			                 MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
 				m_errCode = ERR_UNKNOWN;
 				break;
 			}
@@ -640,8 +640,8 @@ ERROR_CODE CBagel::VerifyRequirements() {
 #endif
 #elif BOF_WINDOWS
 			if (::MessageBox(nullptr, BuildString("It is strongly recommended that this game be played in a video mode of %d x %d.  Your current video mode is %d x %d.  Continue anyway?",
-				m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight, ScreenWidth(), ScreenHeight()),
-				"Invalid video mode", MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
+			                                      m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight, ScreenWidth(), ScreenHeight()),
+			                 "Invalid video mode", MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
 				m_errCode = ERR_UNKNOWN;
 				break;
 			}
@@ -761,17 +761,17 @@ ERROR_CODE CBagel::ShutDownSoundSystem() {
 
 void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTable<CBofString, HASHTABLESIZE> *pCacheFileList) {
 #if BOF_MAC
-	CInfoPBRec		cipbr;
+	CInfoPBRec      cipbr;
 	HFileInfo *fpb = (HFileInfo *)&cipbr;
 	DirInfo *dpb = (DirInfo *)&cipbr;
-	Str255			szOrigDir;
-	OSErr			oserr = noErr;
-	INT				nIndex = 0;
-	Str255			pstrRoot;
+	Str255          szOrigDir;
+	OSErr           oserr = noErr;
+	INT             nIndex = 0;
+	Str255          pstrRoot;
 
 	// preserve the original
 	//
-	// Use p-strings, they're much more mac friendly.  We'll convert back 
+	// Use p-strings, they're much more mac friendly.  We'll convert back
 	// to c-string for lists and recursing.
 	Common::strcpy_s(PCHS(szOrigDir), pszRoot);
 	szOrigDir[0] = strlen(pszRoot);
@@ -796,8 +796,8 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	LONG nDirID = dpb->ioDrDirID;
 
 	// now loop through the children.
-	Str255			pszFileName;
-	Str255			szFullFilePath;
+	Str255          pszFileName;
+	Str255          szFullFilePath;
 
 	CHAR szNewFile[256];
 	CBofString sNewFileName(szNewFile, 256);
@@ -851,22 +851,17 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	// See if any files can be found.
 	//
 	hFind = ::FindFirstFile(szTargetFilename, &xFindData);
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			if (!strcmp(xFindData.cFileName, "."))
-			{
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			if (!strcmp(xFindData.cFileName, ".")) {
 				// Skip the "." directory entry.
 				//
 				;
-			} else if (!strcmp(xFindData.cFileName, ".."))
-			{
+			} else if (!strcmp(xFindData.cFileName, "..")) {
 				// Skip the ".." directory entry.
 				//
 				;
-			} else if (xFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			{
+			} else if (xFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 				// We have a directory - recurse in that directory.
 				//
 				char szRecursiveScanPath[MAX_PATH] = "";
@@ -876,8 +871,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 				strcat(szRecursiveScanPath, xFindData.cFileName);
 
 				ScanTree(szRecursiveScanPath, "*.*", pCacheFileList);
-			} else
-			{
+			} else {
 				// Just an ordinary file (not a directory and not . or ..).
 				//
 				char szNewFile[MAX_PATH];
@@ -987,8 +981,8 @@ BOOL MACROREPLACE(CBofString &s) {
 			CBofString newString(newStr, 256);
 
 #if BOF_MAC && !PLAYWAVONMAC
-			// Stuff is cached by the name on the disk.  So the mac 
-			// will have .snd files on the disk. 
+			// Stuff is cached by the name on the disk.  So the mac
+			// will have .snd files on the disk.
 			BOOL bReplaceExtension = FALSE;
 			if (newString.Find(".WAV") >= 0) {
 				newString.ReplaceStr(".WAV", ".SND");

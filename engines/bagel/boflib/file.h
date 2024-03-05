@@ -59,8 +59,8 @@ public:
 
 	/**
 	 * Open a specified file for access
-	 * @param pszFileName		Filename
-	 * @param lFlags			Access flags
+	 * @param pszFileName       Filename
+	 * @param lFlags            Access flags
 	 */
 	CBofFile(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT);
 
@@ -71,36 +71,36 @@ public:
 
 	/**
 	 * Open specified file into this object
-	 * @param pszFileName		Filename
-	 * @param lFlags			Access flags
+	 * @param pszFileName       Filename
+	 * @param lFlags            Access flags
 	 */
 	ERROR_CODE Open(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT);
 
 	/**
 	 * Creates specified file
-	 * @param pszFileName		Filename
-	 * @param lFlags			Access flags
+	 * @param pszFileName       Filename
+	 * @param lFlags            Access flags
 	 */
 	ERROR_CODE Create(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT | CBF_CREATE);
 
 	/**
 	 * Close a currently open file
 	 */
-	 VOID Close();
+	VOID Close();
 
 	/**
 	 * Read from a currently open file
-	 * @param pDestBuf		Destination buffer
-	 * @param lBytes		Number of bytes
-	 * @return				Error code
+	 * @param pDestBuf      Destination buffer
+	 * @param lBytes        Number of bytes
+	 * @return              Error code
 	 */
 	ERROR_CODE Read(VOID *pDestBuf, LONG lBytes);
 
 	/**
 	 * Write to a currently open file
-	 * @param pSrcBuf		Source buffer
-	 * @param lBytes		Number of bytes
-	 * @return				Error code
+	 * @param pSrcBuf       Source buffer
+	 * @param lBytes        Number of bytes
+	 * @return              Error code
 	 */
 	ERROR_CODE Write(const VOID *pSrcBuf, LONG lBytes);
 
@@ -113,25 +113,29 @@ public:
 
 	/**
 	 * Seek to a specified location in the file
-	 * @return		Error code
+	 * @return      Error code
 	 */
-	ERROR_CODE Seek(ULONG lPos) { return (SetPosition(lPos)); }
+	ERROR_CODE Seek(ULONG lPos) {
+		return (SetPosition(lPos));
+	}
 
 	/**
 	 * Sets the file pointer to the beginning of the file
-	 * @return		Error code
+	 * @return      Error code
 	 */
-	ERROR_CODE SeekToBeginning() { return (SetPosition(0)); }
+	ERROR_CODE SeekToBeginning() {
+		return (SetPosition(0));
+	}
 
 	/**
 	 * Sets the file pointer to the end of the file
-	 * @return		Error code
+	 * @return      Error code
 	 */
 	ERROR_CODE SeekToEnd();
 
 	/**
 	 * Sets the current file-seek position to that specified
-	 * @param lPos		New position
+	 * @param lPos      New position
 	 */
 	ERROR_CODE SetPosition(ULONG lPos);
 
@@ -150,7 +154,7 @@ public:
 	 */
 	ULONG GetLength();
 
-	operator Common::SeekableReadStream* () const {
+	operator Common::SeekableReadStream *() const {
 		return dynamic_cast<Common::SeekableReadStream *>(_stream);
 	}
 };

@@ -29,9 +29,9 @@
 namespace Bagel {
 
 #if BOF_MAC || BOF_WINMAC
-#define LOADINGBMP			"$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
+#define LOADINGBMP          "$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
 #else
-#define LOADINGBMP			"$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
+#define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 #endif
 
 struct ST_BUTTONS {
@@ -54,7 +54,7 @@ static ST_BUTTONS g_stRestartButtons[NUM_RESTART_BTNS] = {
 
 
 CBagRestartDialog::CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin)
-		: CBofDialog(pszFileName, pRect, pWin) {
+	: CBofDialog(pszFileName, pRect, pWin) {
 	// Inits
 	m_pSavePalette = nullptr;
 	m_nReturnValue = -1;

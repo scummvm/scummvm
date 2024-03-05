@@ -43,7 +43,7 @@ ERROR_CODE CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRec
 		CBofPoint cPos(116, 61);
 		ec = m_pMovie->Update(pBmp, cPos, pSrcRect, nMaskColor);
 
-		// If we're done or we encountered an error, then roll over and die. 
+		// If we're done or we encountered an error, then roll over and die.
 		if (ec != ERR_NONE || m_pMovie->IsModalDone()) {
 			StopMovie(TRUE);
 		}
@@ -63,7 +63,7 @@ CBagMoo::~CBagMoo() {
 ERROR_CODE CBagMoo::SetPDAMovie(CBofString &s) {
 	ERROR_CODE    ec = ERR_NONE;
 
-	// Should never happen, but just make sure. 
+	// Should never happen, but just make sure.
 	if (m_pMovie) {
 		delete m_pMovie;
 		m_pMovie = nullptr;
@@ -76,7 +76,7 @@ ERROR_CODE CBagMoo::SetPDAMovie(CBofString &s) {
 	if (m_pMovie) {
 		m_pMovie->SetFileName(s);
 
-		// Attach this bad baby... 
+		// Attach this bad baby...
 		ec = m_pMovie->Attach();
 		if (ec == ERR_NONE) {
 			m_pMovie->SetModal(FALSE);
@@ -92,7 +92,7 @@ VOID CBagMoo::StopMovie(BOOL bResetPDA) {
 
 	if (bResetPDA) {
 		if (pPDA) {
-			// Assume this marks the end of the movie. 
+			// Assume this marks the end of the movie.
 			switch (m_eSavePDAMode) {
 			case MAPMODE:
 				pPDA->ShowMap();
@@ -120,7 +120,7 @@ VOID CBagMoo::StopMovie(BOOL bResetPDA) {
 		m_pMovie = nullptr;
 	}
 
-	// If we're done playing, then deactivate the PDA. 
+	// If we're done playing, then deactivate the PDA.
 	if (pPDA && pPDA->GetDeactivate() == TRUE) {
 		if (pPDA->IsActivated()) {
 			pPDA->Deactivate();

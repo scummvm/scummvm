@@ -33,18 +33,18 @@
 namespace Bagel {
 
 #if defined(PAINT_TIMER) && !BOF_MAC
-#define CSLDE_TIMER_ID		11
-#define CSLDE_TIMER_SPEED	50
+#define CSLDE_TIMER_ID      11
+#define CSLDE_TIMER_SPEED   50
 #endif
 
 
-CBofPoint g_cInitLoc;		// This is the initial location for the next new pan (only option at this point)
+CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 BOOL g_bUseInitLoc;
 
-CBagPDA *CBagPanWindow::m_pPDABmp;		// Pointer to the PDA object
+CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
 INT CBagPanWindow::m_nCorrection;
 INT CBagPanWindow::m_nPanSpeed;
-CBagWield *CBagPanWindow::m_pWieldBmp;	// Pointer to the WEILD object
+CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initStatics() {
 	g_bUseInitLoc = FALSE;
@@ -87,7 +87,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 }
 
 CBofRect CBagPanWindow::UnSetSlidebitmap() {
-	CBofRect		viewRect;
+	CBofRect        viewRect;
 
 	SetLActiveObject(nullptr);
 
@@ -169,7 +169,7 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 }
 
 CBagPanWindow::~CBagPanWindow() {
-	ReleaseObjects();	// Delete all master sprite objects
+	ReleaseObjects();   // Delete all master sprite objects
 
 	if (m_pSlideBitmap) {
 		delete m_pSlideBitmap;
@@ -203,7 +203,7 @@ ERROR_CODE CBagPanWindow::RunModal(CBagObject *pObj) {
 
 		// Make sure we update the entire screen after this,
 		// we're not really sure what got trashed, also,
-		// the cursor background will contain bogus information, 
+		// the cursor background will contain bogus information,
 		// so make sure that gets overwritten
 		SetPreFilterPan(TRUE);
 	}
@@ -225,11 +225,11 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		if (m_pSlideBitmap->IsPan()) {
 
 			// Paint uncorrected view to backdrop
-			CBofRect currViewRect = m_pSlideBitmap->GetCurrView();	// Hold current view
-			CBofRect offsetRect;				// Size of viewportbmp
-			CBofRect srcRect = dstRect;			// Src will be same as dst
+			CBofRect currViewRect = m_pSlideBitmap->GetCurrView();  // Hold current view
+			CBofRect offsetRect;                // Size of viewportbmp
+			CBofRect srcRect = dstRect;         // Src will be same as dst
 
-			// If we've been given the go ahead to call prefilter, then 
+			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
 			if (PreFilterPan()) {
 				PreFilter(pBmp, pRect, m_pFGObjectList);
@@ -237,7 +237,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			m_pSlideBitmap->PaintUncorrected(m_pVeiwPortBitmap, offsetRect);  // Paint and return size
-			srcRect.OffsetRect(0, currViewRect.top - offsetRect.top);			 //	  less the offset from full
+			srcRect.OffsetRect(0, currViewRect.top - offsetRect.top);            //   less the offset from full
 
 			// Paint the objects to the backdrop
 			PaintObjects(GetObjectList(), m_pVeiwPortBitmap, offsetRect, nullptr);
@@ -257,8 +257,8 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				USHORT nFilterId = GetFilterId();
 #if BOF_MAC && __POWERPC__
 				CallUniversalProc(m_pBitmapFilter,
-					uppFilterProcInfo,
-					nFilterId, pBmp, pRect);
+				                  uppFilterProcInfo,
+				                  nFilterId, pBmp, pRect);
 #else
 				(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
 #endif
@@ -272,14 +272,14 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			// Close-Ups
 			m_pSlideBitmap->SetCorrWidth(0, FALSE);
 
-			// If we've been given the go ahead to call prefilter, then 
+			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
 			if (PreFilterPan()) {
 				PreFilter(pBmp, pRect, m_pFGObjectList);
 				SetPreFilterPan(FALSE);
 
 				// Only paint the slide the first time around, if we paint
-				// it in subsequent calls, then we will trash our PDA in this closeup, 
+				// it in subsequent calls, then we will trash our PDA in this closeup,
 				// and that will be a bad thing.
 				dstRect.OffsetRect(m_xVeiwPortPos);
 				((CBofBitmap *)m_pSlideBitmap)->Paint(pBmp, m_xVeiwPortPos.x, m_xVeiwPortPos.y);
@@ -293,8 +293,8 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				BOOL bFiltered = FALSE;
 #if BOF_MAC && __POWERPC__
 				bFiltered = CallUniversalProc(m_pBitmapFilter,
-					uppFilterProcInfo,
-					nFilterId, pBmp, pRect);
+				                              uppFilterProcInfo,
+				                              nFilterId, pBmp, pRect);
 #else
 				bFiltered = (*m_pBitmapFilter)(nFilterId, pBmp, pRect);
 #endif
@@ -365,11 +365,11 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 							if (pCharObj->GetNumOfLoops() == 1) {
 								SetPreFilterPan(TRUE);
 							} else {
-								if (pObj->IsAttached() && 						// don't care if it's not running...
-									(pCharObj->IsStationary() == FALSE) &&
-									(pCharObj->GetNumOfLoops() != 0) &&		// Plays multiple or infinite (fly == -1)
-									((pObj->GetRect().Width() != 480) &&
-										(pObj->GetRect().Height() != 360))) {
+								if (pObj->IsAttached() &&                       // don't care if it's not running...
+								        (pCharObj->IsStationary() == FALSE) &&
+								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
+								        ((pObj->GetRect().Width() != 480) &&
+								         (pObj->GetRect().Height() != 360))) {
 
 									// Redraw everything inside of the closeup... but not the PDA...
 									// only want to redraw the closeup, not everything else.
@@ -643,8 +643,8 @@ VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p) {
 			}
 		}
 
-		// If we just happen to be over the pda then let our 
-		// PDA code decide... oh, and we're wielding... 
+		// If we just happen to be over the pda then let our
+		// PDA code decide... oh, and we're wielding...
 		if (pOverObj != nullptr) {
 			INT nCursorID = -1;
 
@@ -657,7 +657,7 @@ VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p) {
 				}
 			}
 
-			// Still no luck, if we're wielding, use that cursor. 
+			// Still no luck, if we're wielding, use that cursor.
 			if (nCursorID == -1) {
 				nCursorID = pOverObj->GetOverCursor();
 				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->GetRefName().Find("BWIELD_WLD") != -1) || (pOverObj->GetRefName().Find("THUD_WLD") != -1))) {
@@ -697,11 +697,11 @@ VOID CBagPanWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint) {
 				pObj->OnLButtonDown(nFlags, *xPoint, this);
 				return;
 			}
-			}
 		}
+	}
 	CBagStorageDevWnd::OnLButtonDown(nFlags, xPoint);
 
-	MOUSE_ACTIVITY	nMA = GetLActivity();
+	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
 	if (nMA && pActObj && pActObj->IsMovable()) {
@@ -709,12 +709,12 @@ VOID CBagPanWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint) {
 		m_bDraggingStart = pActObj->GetPosition();
 		m_pFGObjectList->AddToTail(pActObj);
 	}
-	}
+}
 
-VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint * xPoint) {
+VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 	BOOL bMoved = FALSE;
 
-	MOUSE_ACTIVITY	nMA = GetLActivity();
+	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == DRAGGING) && (pActObj->GetType() == BUTTONOBJ) && (((CBagButtonObject *)pActObj)->GetButtonType() == CBagButtonObject::SLIDER)) {
@@ -788,7 +788,7 @@ VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
 #endif
 		xMaxPanBmpRect.SetRect(0, 0, DEF_WIDTH, DEF_HEIGHT);
 
-#if BOF_MAC		// jwl 07.24.96 seems to work fine... 
+#if BOF_MAC     // jwl 07.24.96 seems to work fine... 
 	cx = DEF_WIDTH;
 	cy = DEF_HEIGHT;
 #elif SCUMMVM_TODO
@@ -805,7 +805,7 @@ VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
 	CBofPoint vp;
 	CBofSize  vs = CBofSize(cx, cy);
 
-	// Check if the current view is greater than the max view	
+	// Check if the current view is greater than the max view
 	if (vs.cx > xMaxPanBmpRect.Width())
 		vs.cx = xMaxPanBmpRect.Width();
 
@@ -839,7 +839,7 @@ VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
 }
 
 
-void CBagPanWindow::OnWindowPosChanging(WINDOWPOS * lpwndpos) {
+void CBagPanWindow::OnWindowPosChanging(WINDOWPOS *lpwndpos) {
 	const int MENUNBORDER = 50;
 	CBofRect xSlideBmpRect;
 
@@ -861,13 +861,12 @@ LONG CBagPanWindow::OnDefWinProc(UINT nMessage, int16 wParam, int32 lParam) {
 
 #if BOF_WINDOWS
 	switch (nMessage) {
-	case WM_SETCURSOR:
-	{
+	case WM_SETCURSOR: {
 		// just return
 		break;
 	}
 	default:
-		return(CBagStorageDevWnd::OnDefWinProc(nMessage, wParam, lParam));
+		return (CBagStorageDevWnd::OnDefWinProc(nMessage, wParam, lParam));
 	}
 
 #endif //BOF_WINDOWS
@@ -975,10 +974,10 @@ BOOL CBagPanWindow::DeactivatePDA() {
 			// deactivate it
 			m_pPDABmp->Deactivate();
 
-			return TRUE;		// PDA successfully deactivated
+			return TRUE;        // PDA successfully deactivated
 		}
 	}
-	return FALSE;				// PDA already deactivated
+	return FALSE;               // PDA already deactivated
 }
 
 BOOL CBagPanWindow::ActivatePDA() {
@@ -986,24 +985,23 @@ BOOL CBagPanWindow::ActivatePDA() {
 	if (m_pPDABmp) {
 		// and the pda is not active
 		if (!m_pPDABmp->IsActivated() || m_pPDABmp->IsActivating()) {
-			m_pPDABmp->Activate();	// activate it
+			m_pPDABmp->Activate();  // activate it
 
-			return TRUE;			// PDA successfully activated
+			return TRUE;            // PDA successfully activated
 		}
 	}
 
-	return FALSE;					// PDA already activated
+	return FALSE;                   // PDA already activated
 }
 
-const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint & xPoint) {
+const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint &xPoint) {
 	CRect r = m_pSlideBitmap->GetCurrView();
 	CBofPoint p;
 
 	p.x = xPoint.x + r.left - m_xVeiwPortPos.x;
 	p.y = xPoint.y + r.top - m_xVeiwPortPos.y;
 
-	if (m_pSlideBitmap->IsPan())
-	{
+	if (m_pSlideBitmap->IsPan()) {
 		if (p.x >= m_pSlideBitmap->Width())
 			p.x -= m_pSlideBitmap->Width();
 
@@ -1018,7 +1016,7 @@ const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint & xPoint) {
 }
 
 
-const CBofPoint CBagPanWindow::ViewPortToDevPt(const CBofPoint & xPoint) {
+const CBofPoint CBagPanWindow::ViewPortToDevPt(const CBofPoint &xPoint) {
 	CRect r = m_pSlideBitmap->GetCurrView();
 	CBofPoint p(xPoint.x - r.left, xPoint.y - r.top);
 
