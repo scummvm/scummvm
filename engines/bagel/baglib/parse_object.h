@@ -80,6 +80,7 @@ private:
 
 public:
 	CBagParseObject();
+	virtual ~CBagParseObject() {}
 	static void initStatics();
 
 	virtual ERROR_CODE Attach() {

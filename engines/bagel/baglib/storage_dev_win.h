@@ -62,7 +62,7 @@ public:
 	VOID SetResource(UINT nResId) {
 		m_nResId = nResId;
 	}
-	const LPCTSTR GetResourceName() {
+	LPCTSTR GetResourceName() {
 		return m_lpszResourceName;
 	}
 	UINT GetResourceId() {
@@ -92,7 +92,7 @@ enum {
  */
 class CBagStorageDev : public CBagParseObject {
 public:
-	enum MOUSE_ACTIVITY { NONE = 0x0000, DRAGGING = 0x0001 };
+	enum MOUSE_ACTIVITY { kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001 };
 
 private:
 	CBofString m_sName;           // Name of this storage device

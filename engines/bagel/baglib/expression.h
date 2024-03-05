@@ -70,7 +70,7 @@ public:
 	static CBagVar m_xTempVar; // used as a default param
 
 	CBagExpression(CBagExpression *pPrevExpr = nullptr, BOOL bPrevNeg = FALSE);
-	~CBagExpression();
+	virtual ~CBagExpression();
 
 	BOOL Evaluate(BOOL bNeg = FALSE, CBagVar &xResult = m_xTempVar);
 
