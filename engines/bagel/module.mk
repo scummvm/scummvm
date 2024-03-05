@@ -30,6 +30,7 @@ MODULE_OBJS = \
 	baglib/object.o \
 	baglib/paint_table.o \
 	baglib/pan_bitmap.o \
+	baglib/pan_window.o \
 	baglib/parse_object.o \
 	baglib/pda.o \
 	baglib/restart_dialog.o \
