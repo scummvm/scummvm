@@ -1743,6 +1743,9 @@ bool MacIndy3Gui::handleEvent(Common::Event event) {
 	if (MacGuiImpl::handleEvent(event))
 		return true;
 
+	if (_vm->isPaused())
+		return false;
+
 	bool isPauseEvent = event.type == Common::EVENT_KEYDOWN &&
 		event.kbd == Common::KEYCODE_SPACE;
 
