@@ -71,6 +71,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  macOS port:
    - Fixed a problem where some Mac games would not load resources correctly.
+   - Updated application icon to conform with modern standards.
+
 
 #### 2.8.0 "Mysteries, Mammoths, and Muppets" (2023-12-30)
 
