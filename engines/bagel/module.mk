@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	baglib/paint_table.o \
 	baglib/pan_bitmap.o \
 	baglib/parse_object.o \
+	baglib/pda.o \
 	baglib/rp_object.o \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
