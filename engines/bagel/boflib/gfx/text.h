@@ -33,39 +33,21 @@ namespace Bagel {
 
 #define NUM_POINT_SIZES 18
 
-// text color and offset definitions
-//
-// jwl 08.19.96 rgb's are the same for black and white...
-
-//#if BOF_MAC
-//#define CTEXT_COLOR         RGB(255,255,255)
-//#define CTEXT_SHADOW_COLOR  RGB(255,255,255)
-//#else
+// Text color and offset definitions
 #define CTEXT_COLOR         RGB(0,0,0)
 #define CTEXT_SHADOW_COLOR  RGB(0,0,0)
-//#endif
+
 #define CTEXT_SHADOW_DX     2
 #define CTEXT_SHADOW_DY     2
 
-// text justification definitions
-//
-// jwl 07.15.96 use mac constants
-#if BOF_MAC
-#define JUSTIFY_CENTER      1
-#define JUSTIFY_LEFT        0
-#define JUSTIFY_RIGHT       -1
-#define JUSTIFY_WRAP        0       // no concept on mac
-#else
+// Text justification definitions
 #define JUSTIFY_CENTER      0
 #define JUSTIFY_LEFT        1
 #define JUSTIFY_RIGHT       2
 #define JUSTIFY_WRAP        3
 
-#endif
-
-// text weight definitions
+// Text weight definitions
 //
-#if 1 // BOF_WINDOWS
 
 /*
  * DrawText Format Flags
@@ -125,51 +107,6 @@ enum {
 #define FORMAT_MULTI_LINE       DT_WORDBREAK
 #define FORMAT_DEFAULT          ( FORMAT_TOP_LEFT | FORMAT_MULTI_LINE )
 
-#elif BOF_MAC
-#define FONT_DEFAULT        applFont
-#define FONT_MONO           monaco
-
-#define TEXT_DONTCARE       0
-#define TEXT_THIN           0
-#define TEXT_EXTRALIGHT     0
-#define TEXT_ULTRALIGHT     0
-#define TEXT_LIGHT          0
-#define TEXT_NORMAL         0
-#define TEXT_REGULAR        0
-#define TEXT_MEDIUM         0
-#define TEXT_SEMIBOLD       0
-#define TEXT_DEMIBOLD       0
-#define TEXT_BOLD           bold
-#define TEXT_EXTRABOLD      (bold | outline)
-#define TEXT_ULTRABOLD      (bold | shadow)
-#define TEXT_BLACK          0
-#define TEXT_HEAVY          0
-
-#define FORMAT_TOP_LEFT         teFlushLeft
-#define FORMAT_TOP_RIGHT        teFlushRight
-#define FORMAT_TOP_CENTER       teCenter
-#define FORMAT_BOT_LEFT         0
-#define FORMAT_BOT_RIGHT        0
-#define FORMAT_BOT_CENTER       0
-#define FORMAT_CENTER_LEFT      0
-#define FORMAT_CENTER_RIGHT     0
-#define FORMAT_CENTER_CENTER    0
-#define FORMAT_SINGLE_LINE      0
-#define FORMAT_MULTI_LINE       0
-#define FORMAT_DEFAULT          ( FORMAT_TOP_LEFT | FORMAT_MULTI_LINE )
-#endif
-
-#if BOF_MAC || BOF_WINMAC
-#define FONT_DEFAULT_SIZE       10
-#define FONT_8POINT             8
-#define FONT_10POINT            10
-#define FONT_12POINT            10
-#define FONT_14POINT            12
-#define FONT_15POINT            12
-#define FONT_18POINT            16
-#define FONT_20POINT            18
-#define TEXT_DEFAULT_FACE       TEXT_REGULAR
-#else
 #define FONT_DEFAULT_SIZE       -14
 #define FONT_8POINT             8
 #define FONT_10POINT            10
@@ -179,94 +116,191 @@ enum {
 #define FONT_18POINT            18
 #define FONT_20POINT            20
 #define TEXT_DEFAULT_FACE       TEXT_BOLD
-#endif
 
-// jwl 12.24.96 a utility routine for calculating a text rectangle.
+// A utility routine for calculating a text rectangle.
 CBofRect CalculateTextRect(CBofWindow *pWnd, CBofString *pStr, INT nSize, INT nFont);
 
 class CBofText: public CBofObject, public CBofError {
-
 public:
-
 	// Constructors
-	//
 	CBofText();
 	CBofText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
-
 	virtual ~CBofText();
+	static void initStatics();
 
 	// Implementation
 	//
-	ERROR_CODE  SetupText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
-	ERROR_CODE  SetupTextOpt(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
 
-	VOID        SetText(const CBofString &cString)  {
+	/**
+	 * Build primary data objects and work areas; text will be displayed
+	 * centered within the defined rectangular area, hence it is up to
+	 * the caller to ensure that the text fits (excess is cropped).
+	 * @param pRect			Rectangular area encompassed by the text object
+	 * @param nJustify		Alignment of text in the rectangle
+	 */
+	ERROR_CODE SetupText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	ERROR_CODE SetupTextOpt(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+
+	VOID SetText(const CBofString &cString) {
 		m_cCurString = cString;
 	}
-	VOID        SetColor(const RGBCOLOR cColor) {
+	VOID SetColor(const RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
-	VOID        SetSize(const INT nSize)        {
+	VOID SetSize(const INT nSize) {
 		m_nCurSize = nSize;
 	}
-	VOID        SetWeight(const INT nWeight)    {
+	VOID SetWeight(const INT nWeight) {
 		m_nCurWeight = nWeight;
 	}
 
-	VOID        SetShadowColor(const RGBCOLOR cColor) {
+	VOID SetShadowColor(const RGBCOLOR cColor) {
 		m_cShadowColor = cColor;
 	}
-	VOID        SetShadowSize(INT nDX, INT nDY) {
+	VOID SetShadowSize(INT nDX, INT nDY) {
 		m_nShadow_DX = nDX;
 		m_nShadow_DY = nDY;
 	}
 
-	CBofString  GetText(VOID)                   {
-		return (m_cCurString);
+	CBofString GetText() const {
+		return m_cCurString;
 	}
-	RGBCOLOR    GetColor(VOID)                  {
-		return (m_cTextColor);
+	RGBCOLOR GetColor() const {
+		return m_cTextColor;
 	}
-	INT         GetSize(VOID)                   {
-		return (m_nCurSize);
+	INT GetSize() const {
+		return m_nCurSize;
 	}
-	INT         GetWeight(VOID)                 {
-		return (m_nCurWeight);
+	INT GetWeight() const {
+		return m_nCurWeight;
 	}
 
-	ERROR_CODE  Erase(CBofWindow *pWnd);
-	ERROR_CODE  Erase(CBofBitmap *pBmp);
+	/**
+	 * Restores the background behind current text on screen
+	 * @param pWnd		Window to erase text from
+	 * @return			Error return Code
+	 */
+	ERROR_CODE Erase(CBofWindow *pWnd);
 
-	ERROR_CODE  Display(CBofWindow *pWnd);
-	ERROR_CODE  Display(CBofBitmap *pBmp);
+	/**
+	 * Restores the background behind current text offscreen
+	 * @param pBmp		Offscreen bitmap to erase text from
+	 * @return			Error return Code
+	 */
+	ERROR_CODE Erase(CBofBitmap *pBmp);
 
-	ERROR_CODE  Display(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
-	ERROR_CODE  Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
+	/**
+	 * Re-displays current text, formatted with current attribs
+	 * @param pWnd		Window to paint into
+	 * @return			Error return Code
+	 */
+	ERROR_CODE Display(CBofWindow *pWnd);
 
-	ERROR_CODE  DisplayShadowed(CBofWindow *, const CHAR *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
-	ERROR_CODE  DisplayShadowed(CBofBitmap *, const CHAR *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
+	/**
+	 * Re-displays current text, formatted with current attribs
+	 * @param pBmp		Bitmap to paint into
+	 * @return			Error return Code
+	 */
+	ERROR_CODE Display(CBofBitmap *pBmp);
 
-	VOID        FlushBackground(VOID)       {
+	/**
+	 * Display a text string, formatted in the current text area
+	 * @param pWnd			Window to paint into
+	 * @param pszText		Point to text string to be displayed
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param cColor		Color that the text will be
+	 * @return				Error return Code
+	 */
+	ERROR_CODE Display(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
+
+	/**
+	 * Display a text string, formatted in the current text area
+	 * @param pBmp			Bitmap to paint into
+	 * @param pszText		Point to text string to be displayed
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param cColor		Color that the text will be
+	 * @return				Error return Code
+	 */
+	ERROR_CODE Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
+
+	/**
+	 * Display a shadowed text string into the current text area
+	 * @param pWnd			Window to paint into
+	 * @param pszText		Point to text string to be displayed
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param cColor		Color that the text will be
+	 * @param cShadow		Color that the text's shadow will be
+	 * @return				Error return Code
+	 */
+	ERROR_CODE DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, INT nSize,
+		INT nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
+		INT nDX = CTEXT_SHADOW_DX, INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
+
+	/**
+	 * Display a shadowed text string into the current text area
+	 * @param pBmp			Bitmap to paint into
+	 * @param pszText		Point to text string to be displayed
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param cColor		Color that the text will be
+	 * @param cShadow		Color that the text's shadow will be
+	 * @return				Error return Code
+	 */
+	ERROR_CODE DisplayShadowed(CBofBitmap *, const CHAR *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
+
+	VOID FlushBackground()       {
 		m_bSaved = FALSE;
 	}
 
-	BOOL        WillTextFit(CBofWindow *pWnd, const CHAR *pszText);
+	/**
+	 * Determine if specified text will fit into our text area
+	 * @param pWnd			Window to test
+	 * @param pszText		Text to test
+	 * @return				TRUE if text will fit onto screen
+	 */
+	BOOL WillTextFit(CBofWindow *pWnd, const CHAR *pszText) const;
 
-	static ERROR_CODE Initialize(VOID);
-	static ERROR_CODE ShutDown(VOID);
+	static ERROR_CODE Initialize();
+	static ERROR_CODE ShutDown();
 
-	ERROR_CODE  DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
+	/**
+	 * Displays specified text onto specified bitmap
+	 * @param pBmp			Bitmap to paint text onto
+	 * @param pszText		Pointer to text string to be displayed
+	 * @param pRect			Area to paint text to
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param bShadowed		Whether the text is shadowed
+	 * @return				Error return Code
+	 */
+	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
 #if BOF_WINDOWS
 	static HFONT GetMonoFont(INT nSize, INT nWeight);
 #endif
 
 private:
-	VOID        InitializeFields(VOID);
-	ERROR_CODE  DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
-	ERROR_CODE  DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
+	/**
+	 * Initializes key fields to zero or nullptr states.
+	 */
+	VOID InitializeFields();
+
+	/**
+	 * Displays specified text onto specified bitmap
+	 * @param pWnd			Window to paint text onto
+	 * @param pszText		Pointer to text string to be displayed
+	 * @param pRect			Area to paint text to
+	 * @param nSize			Point size of the text to be used
+	 * @param nWeight		Weighting of the font (FW_ identifier)
+	 * @param bShadowed		Whether the text is shadowed
+	 * @return				Error return Code
+	 */
+	ERROR_CODE DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
 
 protected:
-
 	CBofString  m_cCurString;       // text to be displayed
 	CBofRect    m_cRect;            // bounding rectangle of text area
 	CBofPoint   m_cPosition;        // upper left corner of text displayed

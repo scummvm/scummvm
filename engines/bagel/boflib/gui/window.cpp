@@ -174,41 +174,18 @@ CBofWindow::~CBofWindow() {
 }
 
 ERROR_CODE CBofWindow::Initialize() {
-	ERROR_CODE errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-#if BOF_WINDOWS
-	m_hBrush = nullptr;
-#endif
-
-	return errCode;
+	return ERR_NONE;
 }
 
 ERROR_CODE CBofWindow::ShutDown() {
-	ERROR_CODE errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-#if BOF_WINDOWS
-	if (m_hBrush != nullptr) {
-		if (::DeleteObject(m_hBrush) == FALSE) {
-			LogError("DeleteObject() failed");
-		}
-		m_hBrush = nullptr;
-	}
-#endif
-
-	return errCode;
+	return ERR_NONE;
 }
 
 VOID CBofWindow::Destroy() {
 	ReleaseCapture();
 
 #if BOF_MAC || BOF_WINMAC
-	// jwl 07.15.96 if we're at the last window, then set paint to white
+	// If we're at the last window, then set paint to white
 	// as to make sure that we don't trash other application windows lying
 	// beneath ours.
 	if (m_pWindowList == nil) {
