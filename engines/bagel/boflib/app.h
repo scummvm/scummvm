@@ -32,56 +32,31 @@
 namespace Bagel {
 
 #define MAX_APPNAME 128
+#define DEFAULT_MAINLOOPS   1
 
 class CBofApp : public CBofError {
-private:
-	VOID ConstructorInits();
-
 protected:
-#if BOF_MAC
-	VOID HandleMacEvent(EventRecord *pEvent);
-	VOID InitMacToolBox();
-#if USEDRAWSPROCKET
-	VOID InitDrawSprocket();
-#endif
-#endif
-
 	VOID StartupCode();
 	VOID ShutDownCode();
 
-	CHAR m_szAppName[MAX_APPNAME];
-
-#if !BOF_WIN16
+	CHAR m_szAppName[MAX_APPNAME] = { 0 };
 	CBofList<CBofCursor> m_cCursorList;
-#endif
-
 	CBofCursor m_cDefaultCursor;
-	CBofWindow *m_pMainWnd;
-	CBofPalette *m_pPalette;
-	CBofPalette *m_pDefPalette;
-	INT m_nScreenDX;
-	INT m_nScreenDY;
-	INT m_nColorDepth;
 
-	INT m_nIterations;
+	CBofWindow *m_pMainWnd = nullptr;
+	CBofPalette *m_pPalette = nullptr;
+	CBofPalette *m_pDefPalette = nullptr;
+	INT m_nScreenDX = 0;
+	INT m_nScreenDY = 0;
+	INT m_nColorDepth = 0;
+
+	INT m_nIterations = DEFAULT_MAINLOOPS;
 
 	static CBofApp *m_pBofApp;
 	static ULONG m_lCPUSpeed;
 
-#if BOF_WINDOWS
-	static HINSTANCE m_hInstance;
-	HDIGDRIVER m_hDriver;
-	HMDIDRIVER m_hMidiDriver;
-#elif BOF_MAC
-	BOOL m_bQuit;
-	// scg 01.20.97
-	ULONG m_nextWNETime;
-	BOOL m_bSuspended;
-	Point m_prevMouse;
-#endif
-
 private:
-	CBofWindow *m_pWindow;
+	CBofWindow *m_pWindow = nullptr;
 
 public:
 	CBofApp();
@@ -89,11 +64,10 @@ public:
 	virtual ~CBofApp();
 
 	ERROR_CODE PreInit();
-	ERROR_CODE PreShutDown(); // scg 01.13.97
+	ERROR_CODE PreShutDown();
 	ERROR_CODE PostShutDown();
 
-	// these functions can be overridden by the child class
-	//
+	// These functions can be overridden by the child class
 	virtual ERROR_CODE Initialize();
 	virtual ERROR_CODE RunApp();
 	virtual ERROR_CODE ShutDown();
@@ -102,53 +76,53 @@ public:
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
-	const CHAR *GetAppName() {
+	const CHAR *GetAppName() const {
 		return (const CHAR *)m_szAppName;
 	}
 
 	VOID SetMainWindow(CBofWindow *pWnd) {
 		m_pMainWnd = pWnd;
 	}
-	CBofWindow *GetMainWindow() {
+	CBofWindow *GetMainWindow() const {
 		return m_pMainWnd;
 	}
 
-	CBofWindow *GetActualWindow() {
+	CBofWindow *GetActualWindow() const {
 		return m_pWindow;
 	}
 
 	VOID SetPalette(CBofPalette *pPalette);
-	CBofPalette *GetPalette() {
+
+	CBofPalette *GetPalette() const {
 		return m_pPalette;
 	}
 
-	INT ScreenWidth() {
+	INT ScreenWidth() const {
 		return m_nScreenDX;
 	}
-	INT ScreenHeight() {
+	INT ScreenHeight() const {
 		return m_nScreenDY;
 	}
-	INT ScreenDepth() {
+	INT ScreenDepth() const {
 		return m_nColorDepth;
 	}
 
-	CBofCursor GetDefaultCursor() {
+	CBofCursor GetDefaultCursor() const {
 		return m_cDefaultCursor;
 	}
 	VOID SetDefaultCursor(CBofCursor &cCursor) {
 		m_cDefaultCursor = cCursor;
 	}
 
-#if !BOF_WIN16
 	VOID AddCursor(CBofCursor &cCursor);
 	VOID DelCursor(INT nIndex);
+
 	CBofCursor GetCursor(INT nIndex) {
 		return m_cCursorList[nIndex];
 	}
-	INT GetNumberOfCursors() {
+	INT GetNumberOfCursors() const {
 		return m_cCursorList.GetCount();
 	}
-#endif
 
 	static CBofApp *GetApp() {
 		return m_pBofApp;
@@ -178,8 +152,9 @@ public:
 #endif
 };
 
-// The actual window that is used as our application
-//
+/**
+ * The actual window that is used as our application
+ */
 class CBofAppWindow : public CBofWindow {
 protected:
 	virtual VOID OnPaint(CBofRect *pRect);
@@ -196,16 +171,12 @@ protected:
 	virtual VOID OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 };
 
-// global routines
+// Global routines
 //
 VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lParam2);
 VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
 
-#if BOF_WINDOWS
-#define Quit() PostQuitMessage(0);
-#else
-#define Quit() BofPostMessage(NULL, BM_QUIT, 0, 0);
-#endif
+#define Quit() g_engine->quitGame()
 
 VOID SetMousePos(CBofPoint &cPoint);
 CBofPoint GetMousePos();

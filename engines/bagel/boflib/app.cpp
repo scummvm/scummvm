@@ -35,8 +35,6 @@ namespace Bagel {
 #define DEBUG_LOG "DEBUG.LOG"
 #define DEBUG_INI "BOFFO.INI"
 
-#define DEFAULT_MAINLOOPS   1
-
 #define BOFDISP 0
 
 #if BOF_MAC && USEDRAWSPROCKET
@@ -47,9 +45,9 @@ CBofApp *CBofApp::m_pBofApp;
 ULONG    CBofApp::m_lCPUSpeed;
 
 #if BOF_WINDOWS
-HINSTANCE CBofApp::m_hInstance = NULL;
+HINSTANCE CBofApp::m_hInstance = nullptr;
 
-extern "C" HINSTANCE g_hInst = NULL;
+extern "C" HINSTANCE g_hInst = nullptr;
 #endif
 
 CHAR g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved.";
@@ -62,73 +60,23 @@ void InitDSpContextAttributes(DSpContextAttributes *inAttributes);
 #endif
 
 CBofApp::CBofApp() {
-	ConstructorInits();
-
 	StartupCode();
 }
 
 
 CBofApp::CBofApp(const CHAR *pszAppName) {
-	ConstructorInits();
-
 	StartupCode();
 
 	SetAppName(pszAppName);
 }
 
-
-VOID CBofApp::ConstructorInits() {
-	m_szAppName[0] = '\0';
-	m_pMainWnd = NULL;
-	m_pPalette = NULL;
-	m_pWindow = NULL;
-	m_pBofApp = this;
-	m_nScreenDX = m_nScreenDY = 0;
-	m_nIterations = DEFAULT_MAINLOOPS;
-	m_nColorDepth = 0;
-	m_pDefPalette = NULL;
-
-#if BOF_WINDOWS
-	m_hDriver = NULL;
-	m_hInstance = NULL;
-
-	HDC hDC;
-	if ((hDC = ::GetDC(NULL)) != NULL) {
-		m_nScreenDX = ::GetDeviceCaps(hDC, HORZRES);
-		m_nScreenDY = ::GetDeviceCaps(hDC, VERTRES);
-		m_nColorDepth = ::GetDeviceCaps(hDC, BITSPIXEL);
-		::ReleaseDC(NULL, hDC);
-	} else {
-		ReportError(ERR_UNKNOWN, "Call to ::GetDC(NULL) failed");
-	}
-
-#elif BOF_MAC
-	GDHandle    screenGD;
-
-	screenGD = GetGDevice();
-
-	m_nScreenDX = (*(*screenGD)->gdPMap)->bounds.right - (*(*screenGD)->gdPMap)->bounds.left;
-	m_nScreenDY = (*(*screenGD)->gdPMap)->bounds.bottom - (*(*screenGD)->gdPMap)->bounds.top;
-	m_nColorDepth = (*(*screenGD)->gdPMap)->pixelSize;
-
-	// scg 01.20.97
-	m_nextWNETime = 0;
-	m_bSuspended = FALSE;
-	m_prevMouse.h = 0;
-	m_prevMouse.v = 0;
-#endif
-}
-
-
 CBofApp::~CBofApp() {
-	//Assert(IsValidObject(this));
-
 	ShutDownCode();
 
 	m_szAppName[0] = '\0';
-	m_pMainWnd = NULL;
-	m_pPalette = NULL;
-	m_pBofApp = NULL;
+	m_pMainWnd = nullptr;
+	m_pPalette = nullptr;
+	m_pBofApp = nullptr;
 }
 
 
@@ -170,7 +118,7 @@ VOID CBofApp::StartupCode() {
 	// Open the Boffo debug options file (BOFFO.INI)
 	//
 	bRand = TRUE;
-	if ((g_pDebugOptions = new CBofDebugOptions(szBuf)) != NULL) {
+	if ((g_pDebugOptions = new CBofDebugOptions(szBuf)) != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
 		bRand = g_pDebugOptions->m_bRandomOn;
 	}
@@ -185,7 +133,7 @@ VOID CBofApp::StartupCode() {
 
 	// initialize the logging file (DEBUG.LOG)
 	//
-	if ((g_pDebugLog = new CBofLog(szBuf)) != NULL) {
+	if ((g_pDebugLog = new CBofLog(szBuf)) != nullptr) {
 	}
 
 #if BOF_DEBUG
@@ -219,20 +167,20 @@ VOID CBofApp::ShutDownCode() {
 	CBofWindow::ShutDown();
 
 	// Kill any shared palette
-	CBofPalette::SetSharedPalette(NULL);
+	CBofPalette::SetSharedPalette(nullptr);
 
 #if BOF_DEBUG
 	// Make sure that all memory allocated by our game has been deleted
 	VerifyAllBlocksDeleted();
 #endif
 
-	if (g_pDebugLog != NULL) {
+	if (g_pDebugLog != nullptr) {
 		delete g_pDebugLog;
-		g_pDebugLog = NULL;
+		g_pDebugLog = nullptr;
 	}
-	if (g_pDebugOptions != NULL) {
+	if (g_pDebugOptions != nullptr) {
 		delete g_pDebugOptions;
-		g_pDebugOptions = NULL;
+		g_pDebugOptions = nullptr;
 	}
 }
 
@@ -242,9 +190,9 @@ ERROR_CODE CBofApp::PreInit() {
 	HideMenuBar();
 #endif
 
-	if ((m_pPalette == NULL) && (m_pDefPalette == NULL)) {
+	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
 
-		if ((m_pDefPalette = new CBofPalette) != NULL) {
+		if ((m_pDefPalette = new CBofPalette) != nullptr) {
 			m_pDefPalette->CreateDefault();
 			SetPalette(m_pDefPalette);
 		}
@@ -255,25 +203,25 @@ ERROR_CODE CBofApp::PreInit() {
 
 	// Allocate a default palette
 	//
-	if ((m_pDefPalette = new CBofPalette) != NULL) {
+	if ((m_pDefPalette = new CBofPalette) != nullptr) {
 		m_pDefPalette->LoadPalette("ANIMOIDS.BMP");
 		//m_pDefPalette->CreateDefault(PAL_DEFAULT);
 
-		if (m_pPalette == NULL)
+		if (m_pPalette == nullptr)
 			m_pPalette = m_pDefPalette;
 
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
-	if ((pWnd = new CBofAppWindow()) != NULL) {
+	if ((pWnd = new CBofAppWindow()) != nullptr) {
 		CBofRect cRect(0, 0, m_nScreenDX - 1, m_nScreenDY - 1);
 
 #ifdef _DEBUG
 		cRect.SetRect(0, 0, 640 - 1, 480 - 1);
 #endif
 
-		pWnd->Create(m_szAppName, &cRect, NULL);
+		pWnd->Create(m_szAppName, &cRect, nullptr);
 		pWnd->Show();
 
 		m_pWindow = pWnd;
@@ -325,7 +273,7 @@ ERROR_CODE CBofApp::RunApp() {
 
 #if BOFDISP
 	// You should have registered a main window by this point
-	Assert(m_pWindow != NULL);
+	Assert(m_pWindow != nullptr);
 #endif
 
 	nCount = m_nIterations;
@@ -340,10 +288,10 @@ ERROR_CODE CBofApp::RunApp() {
 
 		// if there is a message for a window, then process it
 		//
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
 #if BOF_DEBUG
-			if ((g_pDebugOptions != NULL) && g_pDebugOptions->m_bShowMessages) {
+			if ((g_pDebugOptions != nullptr) && g_pDebugOptions->m_bShowMessages) {
 				LogInfo(BuildString("HWND1: %08lx, MSG: %08lx (%08lx, %08lx)", msg.hwnd, msg.message, msg.wParam, msg.lParam));
 			}
 #endif
@@ -422,7 +370,7 @@ ERROR_CODE CBofApp::RunApp() {
 				// give each window it's own main loop (sort-of)
 				//
 				pWindow = CBofWindow::GetWindowList();
-				while (pWindow != NULL) {
+				while (pWindow != nullptr) {
 
 					if (pWindow->IsCreated()) {
 #if BOF_MAC
@@ -495,17 +443,17 @@ ERROR_CODE CBofApp::PostShutDown() {
 	CBofDisplayObject::CleanUp();
 #endif
 
-	if (m_pWindow != NULL) {
+	if (m_pWindow != nullptr) {
 		delete m_pWindow;
-		m_pWindow = NULL;
+		m_pWindow = nullptr;
 	}
 
 	// No more palettes
 	//
-	m_pPalette = NULL;
-	if (m_pDefPalette != NULL) {
+	m_pPalette = nullptr;
+	if (m_pDefPalette != nullptr) {
 		delete m_pDefPalette;
-		m_pDefPalette = NULL;
+		m_pDefPalette = nullptr;
 	}
 
 	LogInfo(BuildString("CBofApp::PostShutDown - Available Physical Memory: %ld", GetFreePhysMem()));
@@ -526,29 +474,29 @@ VOID CBofApp::CalcCPUSpeed() {
 VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
 
-	if (pPalette != NULL) {
+	if (pPalette != nullptr) {
 
 #if BOF_WINDOWS
 		HDC hDC;
 
-		if ((hDC = ::GetDC(NULL)) != NULL) {
+		if ((hDC = ::GetDC(nullptr)) != nullptr) {
 
 			::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), FALSE);
 
 			::RealizePalette(hDC);
 
-			::ReleaseDC(NULL, hDC);
+			::ReleaseDC(nullptr, hDC);
 		}
 #endif
 
 #if BOF_MAC
 		// jwl 09.24.96 make this our current palette...
-		Assert(pPalette != NULL);
+		Assert(pPalette != nullptr);
 		PaletteHandle thePH = pPalette->GetPalette();
 
-		// jwl 08.08.96 have seen newPH null, if it is, the default 256 colors
+		// jwl 08.08.96 have seen newPH nullptr, if it is, the default 256 colors
 		// of the game are used (see 'pltt' resource)
-		if (thePH != NULL) {
+		if (thePH != nullptr) {
 			Assert((*thePH)->pmEntries == 256);
 			Assert(GetHandleSize((Handle) thePH) != 0);
 
@@ -558,7 +506,7 @@ VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 
 			CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
 
-			if (pWnd != NULL) {
+			if (pWnd != nullptr) {
 #if PALETTESHIFTFIX
 				PaletteShiftItem        psi;
 
@@ -567,7 +515,7 @@ VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 				psi.m_nAssociatedItem = (LONG) pWnd->GetMacWindow();
 				psi.m_eItemID = SETPALETTE;
 
-				if (CBofWindow::m_pPaletteShiftList == NULL) {
+				if (CBofWindow::m_pPaletteShiftList == nullptr) {
 					CBofWindow::m_pPaletteShiftList = new CBofList<PaletteShiftItem>;
 				}
 
@@ -664,14 +612,14 @@ INT main(INT argc, CHAR *argv[])
 	pApp = CBofApp::GetApp();
 
 	// The game-object must be instantiated by now
-	Assert(pApp != NULL);
+	Assert(pApp != nullptr);
 
 	// Don't allow the game to be in memory more than once (BCW 10/08/96 03:03 pm)
 	//
 #if BOF_WINDOWS
 	HANDLE hMutex;
 
-	hMutex = ::CreateMutex(NULL, TRUE, "BoffoMutex");
+	hMutex = ::CreateMutex(nullptr, TRUE, "BoffoMutex");
 
 	if ((GetLastError() != ERROR_ALREADY_EXISTS) && FirstInstance()) {
 #endif
@@ -700,7 +648,7 @@ INT main(INT argc, CHAR *argv[])
 
 	// Delete the Mutex we created (to stop multiple instances)
 	//
-	if (hMutex != NULL) {
+	if (hMutex != nullptr) {
 		::ReleaseMutex(hMutex);
 	}
 
@@ -722,7 +670,7 @@ BOOL FirstInstance() {
 #if BOF_WINDOWS
 	HWND hWnd;
 
-	if ((hWnd = ::FindWindow("BofWindowParent", NULL)) != NULL) {
+	if ((hWnd = ::FindWindow("BofWindowParent", nullptr)) != nullptr) {
 		bFirstTime = FALSE;
 	}
 #endif
@@ -755,12 +703,12 @@ VOID CBofApp::InitDrawSprocket() {
 
 		theError = DSpContext_Reserve(theContext, &theDesiredAttributes);
 		Assert(theError == noErr);
-		theError = DSpContext_FadeGammaOut(NULL, NULL);
+		theError = DSpContext_FadeGammaOut(nullptr, nullptr);
 		Assert(theError == noErr);
 		theError = DSpContext_SetState(theContext, kDSpContextState_Active);
 		Assert(theError == noErr);
 		//  <call DSpContext_SetCLUTEntries as needed>
-		theError = DSpContext_FadeGammaIn(NULL, NULL);
+		theError = DSpContext_FadeGammaIn(nullptr, nullptr);
 		Assert(theError == noErr);
 		theError = DSpContext_GetBackBuffer(theContext, kDSpBufferKind_Normal, &gBackBuffer);
 		Assert(theError == noErr);
@@ -771,7 +719,7 @@ VOID CBofApp::InitDrawSprocket() {
 void InitDSpContextAttributes(
     DSpContextAttributes *inAttributes      /* attr structure to init */
 ) {
-	Assert(inAttributes != NULL);
+	Assert(inAttributes != nullptr);
 
 	inAttributes->frequency                 = 0;
 	inAttributes->displayWidth              = 0;
@@ -779,7 +727,7 @@ void InitDSpContextAttributes(
 	inAttributes->reserved1                 = 0;
 	inAttributes->reserved2                 = 0;
 	inAttributes->colorNeeds                = 0;
-	inAttributes->colorTable                = NULL;
+	inAttributes->colorTable                = nullptr;
 	inAttributes->contextOptions            = 0;
 	inAttributes->backBufferDepthMask       = 0;
 	inAttributes->displayDepthMask          = 0;
@@ -799,8 +747,8 @@ VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lP
 #if BOF_WINDOWS
 	HWND hWnd;
 
-	hWnd = NULL;
-	if (pWindow != NULL)
+	hWnd = nullptr;
+	if (pWindow != nullptr)
 		hWnd = pWindow->GetHandle();
 
 	::PostMessage(hWnd, lMessage, (WPARAM)lParam1, (LPARAM)lParam2);
@@ -811,7 +759,7 @@ VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lP
 	// Create a user defined message.
 	// NOTE: This message will be deleted by HandleMacEvent()
 	//
-	if ((pMessage = new CBofMessage) != NULL) {
+	if ((pMessage = new CBofMessage) != nullptr) {
 
 		pMessage->m_pWindow = pWindow;
 		pMessage->m_nMessage = lMessage;
@@ -859,11 +807,11 @@ CBofPoint GetMousePos() {
 #if BOFDISP
 VOID CBofAppWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
-	CBofBitmap cBmp(pRect->Width(), pRect->Height(), NULL);
+	CBofBitmap cBmp(pRect->Width(), pRect->Height(), nullptr);
 
-	cBmp.FillRect(NULL, COLOR_BLACK);
+	cBmp.FillRect(nullptr, COLOR_BLACK);
 
 	cBmp.Paint(this, pRect);
 
@@ -876,7 +824,7 @@ VOID CBofAppWindow::OnPaint(CBofRect *pRect) {
 
 VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleMouseMove(nFlags, *pPoint);
 }
@@ -884,42 +832,42 @@ VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 
 VOID CBofAppWindow::OnLButtonDown(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleLButtonDown(nFlags, *pPoint);
 }
 
 VOID CBofAppWindow::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleLButtonUp(nFlags, *pPoint);
 }
 
 VOID CBofAppWindow::OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleLButtonDblClk(nFlags, *pPoint);
 }
 
 VOID CBofAppWindow::OnRButtonDown(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleRButtonDown(nFlags, *pPoint);
 }
 
 VOID CBofAppWindow::OnRButtonUp(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleRButtonUp(nFlags, *pPoint);
 }
 
 VOID CBofAppWindow::OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleRButtonDblClk(nFlags, *pPoint);
 }
@@ -956,10 +904,10 @@ VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage) {
 	CBofApp *pApp;
 	HWND hWnd;
 
-	hWnd = NULL;
-	if ((pApp = CBofApp::GetApp()) != NULL) {
+	hWnd = nullptr;
+	if ((pApp = CBofApp::GetApp()) != nullptr) {
 		CBofWindow *pWnd;
-		if ((pWnd = pApp->GetMainWindow()) != NULL) {
+		if ((pWnd = pApp->GetMainWindow()) != nullptr) {
 			hWnd = pWnd->GetHandle();
 		}
 	}
