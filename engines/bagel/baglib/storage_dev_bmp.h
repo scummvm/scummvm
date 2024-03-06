@@ -77,6 +77,7 @@ public:
 		return (GetBitmap());
 	}
 
+	virtual ERROR_CODE LoadFile(const CBofString &sFile) = 0;
 	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
 	virtual BOOL IsAttached() {

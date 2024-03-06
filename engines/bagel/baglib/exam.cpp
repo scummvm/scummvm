@@ -167,7 +167,7 @@ VOID CBagExam::OnMCINotify(ULONG wParam, ULONG /*lParam*/) {
 }
 #endif
 
-VOID CBagExam::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CBagExam::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
