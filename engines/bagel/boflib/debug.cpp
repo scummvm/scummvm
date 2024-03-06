@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/textconsole.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/boffo.h"
@@ -26,19 +28,25 @@
 
 namespace Bagel {
 
-#define DEFAULT_DEBUG_LEVEL 4
-
 CBofDebugOptions *g_pDebugOptions = NULL;
 CBofLog *g_pDebugLog = NULL;
 
 CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFileName) {
 	// Add programmer definable debug options here
-	ReadSetting("DebugOptions", "AbortsOn", &m_bAbortsOn, TRUE);
-	ReadSetting("DebugOptions", "MessageBoxOn", &m_bMessageBoxOn, TRUE);
-	ReadSetting("DebugOptions", "RandomOn", &m_bRandomOn, TRUE);
-	ReadSetting("DebugOptions", "DebugLevel", &m_nDebugLevel, DEFAULT_DEBUG_LEVEL);
-	ReadSetting("DebugOptions", "ShowIO", &m_bShowIO, FALSE);
-	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, FALSE);
+	ConfMan.registerDefault("AbortsOn", TRUE);
+	ConfMan.registerDefault("MessageBoxOn", TRUE);
+	ConfMan.registerDefault("RandomOn", TRUE);
+	ConfMan.registerDefault("DebugLevel", gDebugLevel);
+	ConfMan.registerDefault("ShowIO",FALSE);
+	ConfMan.registerDefault("MessageSpy", FALSE);
+
+
+	ReadSetting("DebugOptions", "AbortsOn", &m_bAbortsOn, ConfMan.getBool("AbortsOn"));
+	ReadSetting("DebugOptions", "MessageBoxOn", &m_bMessageBoxOn, ConfMan.getBool("MessageBoxOn"));
+	ReadSetting("DebugOptions", "RandomOn", &m_bRandomOn, ConfMan.getBool("RandomOn"));
+	ReadSetting("DebugOptions", "DebugLevel", &m_nDebugLevel, ConfMan.getInt("DebugLevel"));
+	ReadSetting("DebugOptions", "ShowIO", &m_bShowIO, ConfMan.getBool("ShowIO"));
+	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
 VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
