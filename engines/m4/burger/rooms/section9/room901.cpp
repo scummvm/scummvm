@@ -45,6 +45,13 @@ static const MenuButtonDef DEMO_BUTTONS[2] = {
 	{ 337, 260, 622, 317, 12, 13, 14, 15, BTNSTATE_ENABLED, 9 }
 };
 
+static const MenuButtonDef DEMO_DE_BUTTONS[4] = {
+	{ 337, 82, 622, 140, 0, 1, 2, 3, BTNSTATE_ENABLED, 3 },
+	{ 337, 138, 622, 197, 4, 5, 6, 7, BTNSTATE_ENABLED, 6 },
+	{ 337, 198, 622, 256, 8, 9, 10, 11, BTNSTATE_ENABLED, 5 },
+	{ 337, 260, 622, 317, 12, 13, 14, 15, BTNSTATE_ENABLED, 8 },
+};
+
 static const MenuButtonDef GAME_BUTTONS[2] = {
 	{ 337, 82, 622, 140, 4, 5, 6, 7, BTNSTATE_ENABLED, 6 },
 	{ 337, 138, 622, 197, 12, 13, 14, 15, BTNSTATE_ENABLED, 9 }
@@ -61,7 +68,12 @@ void Room901::init() {
 	case JUST_OVERVIEW:
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
-		setButtons(DEMO_BUTTONS, 2);
+		if (g_engine->getLanguage() == Common::DE_DEU) {
+			setButtons(DEMO_DE_BUTTONS, 4);
+		} else {
+			setButtons(DEMO_BUTTONS, 2);
+		}
+
 		series_play("901order", 0, 0, -1, 60, -1, 100, 165, 395, 0, -1);
 		break;
 
