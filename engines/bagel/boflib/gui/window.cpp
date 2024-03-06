@@ -1211,7 +1211,7 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 
 // Default version of these virtual functions don't do anything
 //
-VOID CBofWindow::OnMouseMove(UINT, CBofPoint *) {}
+VOID CBofWindow::OnMouseMove(UINT, CBofPoint *, void *) {}
 
 VOID CBofWindow::OnLButtonDown(UINT, CBofPoint *, void *) {}
 VOID CBofWindow::OnLButtonUp(UINT, CBofPoint *, void *) {}

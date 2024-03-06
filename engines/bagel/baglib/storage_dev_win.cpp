@@ -477,7 +477,7 @@ ERROR_CODE CBagStorageDev::NoObjectsUnderMouse() {
 	return (ERR_NONE);
 }
 
-ERROR_CODE CBagStorageDev::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
+void CBagStorageDev::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
 	m_xCursorLocation = *xPoint;
 
 	if (GetLActiveObject() && GetLActivity()) {
@@ -488,7 +488,7 @@ ERROR_CODE CBagStorageDev::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *vpI
 	    GetRActiveObject()->OnMouseMove(nFlags, *xPoint, vpInfo);
 	}*/
 
-	return (ERR_NONE);
+	return;
 }
 
 
@@ -1792,7 +1792,7 @@ VOID CBagStorageDevWnd::OnClose() {
 	DestroyWindow();                            // destruct the main window
 }
 
-ERROR_CODE CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
+void CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 	CBagStorageDev::OnMouseMove(n, pPoint, GetAssociateWnd());
 
 	CBagMasterWin::SetActiveCursor(0);
@@ -1803,7 +1803,7 @@ ERROR_CODE CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 	// Brian, note I did not do "== TRUE", you should be very proud of me.
 	if (CBagPDA::IsMoviePlaying()) {
 		CBagMasterWin::SetActiveCursor(6);
-		return ERR_NONE;
+		return;
 	}
 
 	// This should be on update cursor virtual func
@@ -1865,8 +1865,6 @@ ERROR_CODE CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 			}
 		}
 	}
-
-	return ERR_NONE;
 }
 
 
@@ -2298,8 +2296,8 @@ VOID CBagStorageDevDlg::OnClose(VOID) {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::OnMouseMove(UINT n, CBofPoint *xPoint, void *) {
-	return CBagStorageDev::OnMouseMove(n, xPoint, GetAssociateWnd());
+void CBagStorageDevDlg::OnMouseMove(UINT n, CBofPoint *xPoint, void *) {
+	CBagStorageDev::OnMouseMove(n, xPoint, GetAssociateWnd());
 }
 
 

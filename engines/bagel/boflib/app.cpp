@@ -764,7 +764,7 @@ VOID CBofAppWindow::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

@@ -635,7 +635,7 @@ ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRe
 }
 
 
-VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 	// We are ignoring all input until the dialog is actually visible
 	if (m_bAcceptInput) {
 		m_pSelectedObject = nullptr;
@@ -665,7 +665,7 @@ VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
 	}
 }
 
-VOID CBagMenuDlg::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CBagMenuDlg::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	CBagObject *pObj;
 
 	CBagMasterWin::SetActiveCursor(0);

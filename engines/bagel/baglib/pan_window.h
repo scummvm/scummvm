@@ -222,8 +222,8 @@ public:
 
 	VOID OnClose();
 	VOID OnMouseMove(UINT nFlags, CBofPoint *p);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *point);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *point);
+	VOID OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
+	VOID OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnSize(UINT nType, int cx, int cy);
 	VOID OnWindowPosChanging(WINDOWPOS *lpwndpos);

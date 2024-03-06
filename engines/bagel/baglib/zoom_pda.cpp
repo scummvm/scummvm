@@ -278,7 +278,7 @@ void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-ERROR_CODE SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+void SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev::OnMouseMove(nFlags, pPoint, GetAssociateWnd());
@@ -291,8 +291,6 @@ ERROR_CODE SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 		CBofRect cRect = GetBackdrop()->GetRect();
 		CBagMasterWin::SetActiveCursor(GetProperCursor(*pPoint, cRect));
 	}
-
-	return ERR_NONE;
 }
 
 VOID SBZoomPda::OnMainLoop() {
