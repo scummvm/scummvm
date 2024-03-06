@@ -57,6 +57,8 @@ void WagProperty::deepCopy(const WagProperty &other) {
 	if (other._propData != nullptr) {
 		_propData = (char *)calloc(other._propSize + 1UL, 1); // Allocate space for property's data plus trailing zero
 		memcpy(_propData, other._propData, other._propSize + 1UL); // Copy the whole thing
+	} else {
+		_propData = nullptr;
 	}
 }
 
