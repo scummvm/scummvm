@@ -200,7 +200,7 @@ public:
 	int GetActualCount() const {
 #ifndef RELEASE_BUILD
 		CBofListNode<T> *pNode;
-		int nCount;
+		size_t nCount;
 
 		nCount = 0;
 		pNode = m_pHead;
