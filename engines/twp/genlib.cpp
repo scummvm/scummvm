@@ -572,7 +572,9 @@ static SQInteger randomFrom(HSQUIRRELVM v) {
 		HSQOBJECT obj;
 		sq_resetobject(&obj);
 		SQInteger size = sq_getsize(v, 2);
+		assert(size > 0);
 		int index = g_twp->getRandomSource().getRandomNumber(size - 1);
+		assert(index >= 0);
 		int i = 0;
 		sq_push(v, 2);  // array
 		sq_pushnull(v); // null iterator
@@ -590,7 +592,8 @@ static SQInteger randomFrom(HSQUIRRELVM v) {
 		sq_pushobject(v, obj);
 	} else {
 		SQInteger size = sq_gettop(v);
-		int index = g_twp->getRandomSource().getRandomNumber(size - 3);
+		int index = g_twp->getRandomSource().getRandomNumber(size - 2);
+		assert(index >= 0);
 		sq_push(v, 2 + index);
 	}
 	return 1;
