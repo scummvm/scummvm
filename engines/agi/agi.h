@@ -675,13 +675,6 @@ struct ImageStackElement {
 	int16 parm7;
 };
 
-struct StringData {
-	int x;
-	int y;
-	int len;
-	int str;
-};
-
 #define TICK_SECONDS 20
 
 #define KEY_QUEUE_SIZE 16
@@ -842,8 +835,6 @@ private:
 
 public:
 	Common::Array<AgiObject> _objects;    // objects in the game
-
-	StringData _stringdata;
 
 	SavedGameSlotIdArray getSavegameSlotIds();
 	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);

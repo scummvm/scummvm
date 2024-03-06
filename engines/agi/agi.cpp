@@ -351,8 +351,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_intobj = nullptr;
 
-	memset(&_stringdata, 0, sizeof(struct StringData));
-
 	_restartGame = false;
 
 	_firstSlot = 0;
