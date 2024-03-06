@@ -74,7 +74,7 @@ protected:
 	virtual BOOL    Reverse();
 
 	//virtual VOID  OnMouseMove(UINT nFlags, CBofPoint *pPoint){}
-	virtual VOID    OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+	virtual VOID    OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
 	virtual VOID    OnRButtonUp(UINT nFlags, CBofPoint *pPoint) {

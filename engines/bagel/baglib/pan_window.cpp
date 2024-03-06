@@ -584,7 +584,7 @@ VOID CBagPanWindow::OnTimer(UINT nEventID) {
 }
 #endif
 
-VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p) {
+VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p, void *) {
 	Assert(IsValidObject(this));
 	Assert(p != nullptr);
 

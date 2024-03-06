@@ -504,7 +504,7 @@ VOID CBagCreditsDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagCreditsDialog::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+VOID CBagCreditsDialog::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 
 	NextScreen();

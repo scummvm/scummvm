@@ -168,7 +168,7 @@ VOID CBagTimeObject::SetCels(int nCels) {
 		m_xDig4->SetupCels(nCels);
 }
 
-VOID CBagTimeObject::SetPosition(CBofPoint &pos) {
+VOID CBagTimeObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
 	// Deal with this if you can ever change the time position
 	// after the attach

@@ -37,7 +37,7 @@ public:
 	 */
 	virtual ERROR_CODE Attach();
 	virtual VOID OnTimer(UINT nTimerId);
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPos);
+	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPos, void * = nullptr);
 };
 
 } // namespace Bagel

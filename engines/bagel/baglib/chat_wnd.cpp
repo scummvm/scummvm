@@ -45,7 +45,7 @@ VOID CBagChatWnd::OnTimer(UINT /*nTimerId*/) {
 	Assert(IsValidObject(this));
 }
 
-VOID CBagChatWnd::OnMouseMove(UINT nFlags, CBofPoint *pPos) {
+VOID CBagChatWnd::OnMouseMove(UINT nFlags, CBofPoint *pPos, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPos != nullptr);
 

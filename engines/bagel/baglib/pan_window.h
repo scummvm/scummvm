@@ -221,7 +221,7 @@ public:
 	static VOID FlushInputEvents();
 
 	VOID OnClose();
-	VOID OnMouseMove(UINT nFlags, CBofPoint *p);
+	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);

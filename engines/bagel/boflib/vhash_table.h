@@ -33,7 +33,7 @@ class CBofVHashTable {
 public:
 	CBofVHashTable(unsigned(*hashFun)(const T &));
 	virtual ~CBofVHashTable();
-	BOOL contains(const T &val) const;
+	BOOL contains(const T &val);
 	VOID insert(const T &val);
 
 private:
@@ -102,7 +102,7 @@ VOID CBofVHashTable<T, S>::insert(const T &val) {
 
 // CBofVHashTable<T, S>contains - predicate to test whether a value is stored in the hash table.
 template<class T, int S>
-BOOL CBofVHashTable<T, S>::contains(const T &val) const {
+BOOL CBofVHashTable<T, S>::contains(const T &val) {
 	BOOL returnValue = FALSE;
 	INT nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
 	Assert(nHashBucketIndex < m_nHashTableSize);
@@ -118,7 +118,6 @@ BOOL CBofVHashTable<T, S>::contains(const T &val) const {
 			break;
 		}
 	}
-
 	return returnValue;
 }
 

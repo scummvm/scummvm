@@ -92,7 +92,7 @@ protected:
 	virtual BOOL Play();
 	virtual BOOL Reverse();
 
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
 	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
