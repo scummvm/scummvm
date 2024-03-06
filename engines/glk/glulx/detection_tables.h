@@ -2551,6 +2551,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "130504", "3102ddb8eed9fbbb9d53eea347ab69be", 1264944),
 	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "131220", "8d61af8aed9a0dc3c863432c15f4609f", 1294640),
 	DT_ENTRYL1("drakulasdiamanten", Common::DE_DEU, "230707", "f110dfe786b00cb0ee7e73f68f921f67", 1490450),
+	DT_ENTRYL1("drakulasdiamanten", Common::DE_DEU, "240103", "dcf28a351b00b484b9985ecf2db420a6", 1491474),
 	DT_ENTRYL1("drkongpoodle", Common::DE_DEU, "111122", "131c5fb87a237b473b4d5b81b7c989d8", 1551344),
 	DT_ENTRYL1("homunculus", Common::DE_DEU, "111122", "98a35cd1506a68a485c250edef54553a", 1311816),
 	DT_ENTRYL1("jaeger", Common::DE_DEU, "210701", "4958d690aae92343b2cf4117fb65acd2", 1441682),
