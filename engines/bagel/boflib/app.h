@@ -155,7 +155,7 @@ protected:
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);

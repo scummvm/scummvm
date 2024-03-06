@@ -518,7 +518,7 @@ VOID CBofScrollBar::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofScrollBar::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofScrollBar::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (m_bMouseCaptured) {

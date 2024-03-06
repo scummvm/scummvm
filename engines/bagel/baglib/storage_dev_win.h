@@ -341,7 +341,7 @@ public:
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
-	virtual ERROR_CODE OnMouseMove(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnMouseMove(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -504,7 +504,7 @@ public:
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnMainLoop();
 	VOID OnClose();
-	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	void OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 
@@ -571,7 +571,7 @@ public:
 
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnClose();
-	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	void OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 };
