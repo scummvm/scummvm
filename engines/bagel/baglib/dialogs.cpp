@@ -530,13 +530,9 @@ VOID CBagCreditsDialog::OnMainLoop(VOID) {
 	// Check again...could have changed in DisplayCredits()
 	//
 	if (m_bDisplay) {
-
-		// If it's a fast machine, then govern the scroll rate
-		//
-		//if (CBofApp::GetMachineSpeed() <= 90) {
+		// Control the scroll rate
 		Assert(m_iScreen >= 0 && m_iScreen < NUM_SCREENS);
 		Sleep(g_cScreen[m_iScreen].m_nScrollRate);
-		//}
 	}
 }
 
