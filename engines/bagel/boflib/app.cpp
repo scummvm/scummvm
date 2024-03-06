@@ -83,57 +83,17 @@ CBofApp::~CBofApp() {
 VOID CBofApp::StartupCode() {
 	BOOL bRand;
 
-#if BOF_MAC
-
-	// Initialize the Macintosh toolbox
-	InitMacToolBox();
-
-#if USEDRAWSPROCKET
-	InitDrawSprocket();
-#endif
-
-#endif
-
-	CHAR szSysDir[MAX_DIRPATH], szBuf[MAX_DIRPATH];
-
-	// The user's \WINDOWS directory is where we put the BOFFO.INI
-	// and DEBUG.LOG files.
-	//
-	// For the mac, use the prefs dir.
-
-#if BOF_MAC || BOF_WINMAC
-	GetPrefsDir(szSysDir);
-#else
-	GetSystemDir(szSysDir);
-#endif
-
-#if BOF_MAC || BOF_WINMAC
-	snprintf(szBuf, MAX_DIRPATH, "%s:%s", szSysDir, DEBUG_INI);
-	StrReplaceStr(szBuf, "::", ":");
-#else
-	snprintf(szBuf, MAX_DIRPATH, "%s\\%s", szSysDir, DEBUG_INI);
-	StrReplaceStr(szBuf, "\\\\", "\\");
-#endif
-
 	// Open the Boffo debug options file (BOFFO.INI)
 	//
 	bRand = TRUE;
-	if ((g_pDebugOptions = new CBofDebugOptions(szBuf)) != nullptr) {
+	if ((g_pDebugOptions = new CBofDebugOptions(DEBUG_INI)) != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
 		bRand = g_pDebugOptions->m_bRandomOn;
 	}
 
-#if BOF_MAC || BOF_WINMAC
-	snprintf(szBuf, MAX_DIRPATH, "%s:%s", szSysDir, DEBUG_LOG);
-	StrReplaceStr(szBuf, "::", ":");
-#else
-	snprintf(szBuf, MAX_DIRPATH, "%s\\%s", szSysDir, DEBUG_LOG);
-	StrReplaceStr(szBuf, "\\\\", "\\");
-#endif
-
-	// initialize the logging file (DEBUG.LOG)
+	// Initialize the logging file (DEBUG.LOG)
 	//
-	if ((g_pDebugLog = new CBofLog(szBuf)) != nullptr) {
+	if ((g_pDebugLog = new CBofLog(DEBUG_LOG)) != nullptr) {
 	}
 
 #if BOF_DEBUG

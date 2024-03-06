@@ -34,7 +34,6 @@ CBofOptions::CBofOptions(const CHAR *pszOptionFile) {
 	m_bDirty = FALSE;
 
 	if (pszOptionFile != nullptr) {
-
 		LoadOptionFile(pszOptionFile);
 	}
 }
