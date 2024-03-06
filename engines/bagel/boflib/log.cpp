@@ -19,7 +19,8 @@
  *
  */
 
-#include "common/str.h"
+#include "common/system.h"
+#include "common/savefile.h"
 #include "common/debug.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/stdinc.h"
@@ -35,16 +36,17 @@ static const CHAR *const g_pszLogTypes[4] = {
 
 #define MAX_LOG_LINE_LEN 400
 
-CBofLog::CBofLog(const CHAR *pszFileName, ULONG lOptions) {
-	// Inits
-	//
-	m_szFileName[0] = '\0';
-	m_lOptions = lOptions;
-
-	if (pszFileName != nullptr) {
+CBofLog::CBofLog(const CHAR *pszFileName, ULONG lOptions) : _options(lOptions) {
+	if (pszFileName != nullptr)
 		SetLogFile(pszFileName);
-	}
 }
+
+CBofLog::~CBofLog() {
+	if (_logFile)
+		_logFile->finalize();
+	delete _logFile;
+}
+
 
 #if BOF_DEBUG
 CBofLog::~CBofLog() {
@@ -61,7 +63,7 @@ VOID CBofLog::SetLogFile(const CHAR *pszFileName) {
 	Assert(*pszFileName != '\0');
 	Assert(strlen(pszFileName) < MAX_FNAME);
 
-	Common::strcpy_s(m_szFileName, pszFileName);
+	_filename = pszFileName;
 
 #if BOF_DEBUG
 	CHAR szTimeBuf[12], szDateBuf[12];
@@ -74,7 +76,7 @@ VOID CBofLog::GetLogFile(CHAR *pszFileName) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 
-	Common::strcpy_s(pszFileName, MAX_FNAME, m_szFileName);
+	Common::strcpy_s(pszFileName, MAX_FNAME, _filename.c_str());
 }
 
 INT CBofLog::GetTypeIndex(ULONG nLogType) {
@@ -98,7 +100,6 @@ VOID CBofLog::WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT /*nUse
 	static BOOL bAlready = FALSE;
 
 	if (!bAlready) {
-
 		// stop recursion
 		bAlready = TRUE;
 
@@ -110,12 +111,12 @@ VOID CBofLog::WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT /*nUse
 
 		Common::String buf, extraBuf;
 
-		if ((m_lOptions & nLogType) /*&& (m_lOptions & nUserFilter)*/) {
+		if ((_options & nLogType) /*&& (m_lOptions & nUserFilter)*/) {
 			buf = Common::String::format("%s%s", g_pszLogTypes[GetTypeIndex(nLogType)], pszMessage);
 
 			// include source file and line # info?
 			//
-			if ((m_lOptions & LOG_SOURCE) && (pszSourceFile != nullptr)) {
+			if ((_options & LOG_SOURCE) && (pszSourceFile != nullptr)) {
 				extraBuf = Common::String::format(" in %s(%d)", pszSourceFile, nLine);
 				buf += extraBuf;
 			}
@@ -124,19 +125,16 @@ VOID CBofLog::WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT /*nUse
 			Assert(buf.size() < MAX_LOG_LINE_LEN);
 
 			// if writing to an output file
-			if ((m_lOptions & LOG_FILE) && (m_szFileName[0] != '\0')) {
-#if 0
-				FILE *pFile;
+			if ((_options & LOG_FILE) && !_filename.empty()) {
+				// Only open the log file the first time a string is written
+				if (!_logFile)
+					_logFile = g_system->getSavefileManager()->openForSaving(_filename, false);
 
-				if ((pFile = fopen(m_szFileName, "at")) != nullptr) {
-					fprintf(pFile, "\n%s", szBuf);
-					fclose(pFile);
-				}
-#endif
+				_logFile->writeString(Common::String::format("%s\n", buf.c_str()));
 			}
 
 			// if writing to the debug output window
-			if (m_lOptions & LOG_WINDOW) {
+			if (_options & LOG_WINDOW) {
 				debug("%s", buf.c_str());
 			}
 		}
