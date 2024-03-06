@@ -1398,6 +1398,17 @@ void cmdPositionF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	screenObj->xPos = screenObj->xPos_prev = vm->getVar(varNr1);
 	screenObj->yPos = screenObj->yPos_prev = vm->getVar(varNr2);
+
+	// WORKAROUND: KQ3 Rosella Staircase bug; fixed by Sierra in Amiga version 2.15.
+	// When changing rooms while Rosella follows, if ego is facing left or right
+	// but not diagonal, then Rosella is placed at the same position as ego.
+	// This can trap the player on the stairs. Sierra fixed this by placing Rosella
+	// one pixel above ego, just like when facing down or diagonal-down. Bug #11996
+	if (vm->getGameID() == GID_KQ3 && state->curLogicNr == 119 && objectNr == 15 &&
+		screenObj->yPos == state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].yPos) {
+		screenObj->yPos--;
+		screenObj->yPos_prev--;
+	}
 }
 
 void cmdPositionFV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
