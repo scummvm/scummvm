@@ -54,7 +54,6 @@ OSystem_DS::OSystem_DS()
 	_instance = this;
 
 	nitroFSInit(NULL);
-	_fsFactory = new DevoptabFilesystemFactory();
 
 	DevoptabFilesystemFactory *fsFactory = new DevoptabFilesystemFactory();
 
