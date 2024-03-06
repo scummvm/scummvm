@@ -448,6 +448,9 @@ ERROR_CODE CBagRPObject::Attach() {
 			ActivateRPReview();
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	return ec;
@@ -591,13 +594,17 @@ INT CBagRPObject::RunRPQueue() {
 					m_pActivateThisGuy->ActivateRPObject();
 					break;
 
-				case RP_READ_DOSSIER:
+				case RP_READ_DOSSIER: {
 					CBagDossierObject *pDObj = m_pActivateThisGuy->GetActiveDossier();
 					if (pDObj) {
 						pDObj->ShowDosText();
 						// special case, make sure the trail back to the rp obj is clearly marked
 						pDObj->SetRPObj(m_pActivateThisGuy);
 					}
+					break;
+				}
+
+				default:
 					break;
 				}
 				m_pActivateThisGuy = NULL;
@@ -1015,13 +1022,13 @@ VOID CBagRPObject::EvaluateDossiers() {
 	}
 
 	// Get the correct log storage device
-	CBagLog *pLogWld;
-
-	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
-	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
-	}
+	// CBagLog *pLogWld;
+	//
+	// if (Zoomed()) {
+	// 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+	// } else {
+	// 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	// }
 
 	// Just cruise through each of our dossier's and decide which ones
 	// to include in our list, this is based on the expression objects
@@ -1110,6 +1117,9 @@ VOID CBagRPObject::SetLogState(RPSTATES eLogMode) {
 			bRemember = TRUE;
 			bRestorePage = TRUE;
 			cStr = "RES_PRINT_REVIEW";
+			break;
+
+		default:
 			break;
 		}
 
@@ -1665,6 +1675,8 @@ VOID CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
 					if (pRPObj->m_bRPRead) {
 						pRPObj->ActivateRPReview();
 					}
+					break;
+				default:
 					break;
 				}
 			}

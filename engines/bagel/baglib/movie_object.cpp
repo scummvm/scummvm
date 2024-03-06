@@ -698,7 +698,7 @@ BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
 	Assert(pPDAz != NULL);
 
 	if (pPDA && pPDAz) {
-		if (pPDAz && pPDAz->GetZoomed() ||              // we're zoomed
+		if ((pPDAz && pPDAz->GetZoomed()) ||              // we're zoomed
 		        (pMainWin->IsCIC() && !IsDontOverride()) || // we're in a character closeup
 		        CBofSound::SoundsPlayingNotOver() ||        // a sound is playing
 		        pPDA->GetPDAMode() == MOOMODE) {            // an asynch movie is already playing

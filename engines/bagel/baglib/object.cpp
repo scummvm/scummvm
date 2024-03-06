@@ -62,8 +62,9 @@ CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
 		return ("COMMAND");
 	case THNGOBJ:
 		return ("TNG");
+	default:
+		return ("UKN");
 	};
-	return ("UKN");
 }
 
 CBagObject::CBagObject() {
