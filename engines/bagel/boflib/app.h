@@ -53,7 +53,6 @@ protected:
 	INT m_nIterations = DEFAULT_MAINLOOPS;
 
 	static CBofApp *m_pBofApp;
-	static ULONG m_lCPUSpeed;
 
 private:
 	CBofWindow *m_pWindow = nullptr;
@@ -127,10 +126,6 @@ public:
 	static CBofApp *GetApp() {
 		return m_pBofApp;
 	}
-	static ULONG GetMachineSpeed() {
-		return m_lCPUSpeed;
-	}
-	static VOID CalcCPUSpeed();
 
 #if BOF_WINDOWS
 	HDIGDRIVER GetDriver() {

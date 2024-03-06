@@ -42,7 +42,6 @@ CGrafPtr gBackBuffer;
 #endif
 
 CBofApp *CBofApp::m_pBofApp;
-ULONG    CBofApp::m_lCPUSpeed;
 
 #if BOF_WINDOWS
 HINSTANCE CBofApp::m_hInstance = nullptr;
@@ -109,10 +108,6 @@ VOID CBofApp::StartupCode() {
 
 	// Init the text library
 	CBofText::Initialize();
-
-	// Find the relative speed of this machine
-	CalcCPUSpeed();
-	//CalcGraphicsSpeed();
 }
 
 
@@ -417,16 +412,6 @@ ERROR_CODE CBofApp::PostShutDown() {
 
 	return (m_errCode);
 }
-
-VOID CBofApp::CalcCPUSpeed() {
-	TimerStart();
-	m_lCPUSpeed = TimerStop();
-
-	warning("TODO: m_lCPUSpeed may need an appropriate dummy value");
-
-	LogInfo(BuildString("CPUSpeedIndex: %ld", m_lCPUSpeed));
-}
-
 
 VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
