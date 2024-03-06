@@ -290,6 +290,7 @@ Common::MemoryReadStream *unpack(struct memstream *ms) {
 	reverse(unpacked_data, unpacked_data_size);
 	reloc = create_reloc_table(ms, &dh, &eh, &reloc_size);
 	Common::MemoryReadStream *ret = craftexec(&dh, &eh, unpacked_data, unpacked_data_size, reloc, reloc_size);
+	free(reloc);
 	free(unpacked_data);
 	return ret;
 }
