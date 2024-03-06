@@ -84,7 +84,6 @@ VOID CBofApp::StartupCode() {
 	BOOL bRand;
 
 	// Open the Boffo debug options file (BOFFO.INI)
-	//
 	bRand = TRUE;
 	if ((g_pDebugOptions = new CBofDebugOptions(DEBUG_INI)) != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
@@ -92,9 +91,7 @@ VOID CBofApp::StartupCode() {
 	}
 
 	// Initialize the logging file (DEBUG.LOG)
-	//
-	if ((g_pDebugLog = new CBofLog(DEBUG_LOG)) != nullptr) {
-	}
+	g_pDebugLog = new CBofLog(DEBUG_LOG);
 
 #if BOF_DEBUG
 	// Mark all currently allocated memory blocks so that a call

@@ -23,6 +23,8 @@
 #ifndef BAGEL_BOFLIB_LOG_H
 #define BAGEL_BOFLIB_LOG_H
 
+#include "common/str.h"
+#include "common/stream.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/stdinc.h"
@@ -32,9 +34,7 @@ namespace Bagel {
 /**
  * Builds a string like sprintf()
  * @return      Pointer to new (temporary) buffer.
- *
- *****************************************************************************/
-
+ */
 const CHAR *BuildString(const CHAR *pszFormat, ...);
 
 #define LOG_FATAL 0x00010000 // show fatal errors
@@ -72,8 +72,9 @@ private:
 	 */
 	INT GetTypeIndex(ULONG nLogType);
 
-	CHAR m_szFileName[MAX_FNAME];
-	ULONG m_lOptions;
+	Common::String _filename;
+	Common::WriteStream *_logFile = nullptr;
+	ULONG _options = 0;
 
 public:
 	/**
@@ -82,6 +83,7 @@ public:
 	 * @param lOptions          Logging options
 	 */
 	CBofLog(const CHAR *pszFileName = nullptr, ULONG lOptions = LOG_DEFAULT);
+	~CBofLog();
 
 #if BOF_DEBUG
 	/**
@@ -104,12 +106,12 @@ public:
 
 	VOID SetLogOptions(ULONG lOptions);
 	ULONG GetLogOptions() {
-		return (m_lOptions & 0xFFFF0000);
+		return (_options & 0xFFFF0000);
 	}
 
 	VOID SetUserFilter(USHORT lUserFilter);
 	USHORT GetUserFilter() {
-		return ((USHORT)(m_lOptions & 0x0000FFFF));
+		return ((USHORT)(_options & 0x0000FFFF));
 	}
 
 	/**
