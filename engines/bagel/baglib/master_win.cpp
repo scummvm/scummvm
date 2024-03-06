@@ -1244,7 +1244,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 
 	} else if (bEntry) {
 
-		GotoNewWindow((CBofString *)&sWldName);
+		GotoNewWindow(&sWldName);
 
 	} else {
 
@@ -1479,7 +1479,7 @@ VOID CBagMasterWin::OnClose() {
 	g_engine->quitGame();
 }
 
-ERROR_CODE CBagMasterWin::GotoNewWindow(CBofString *pStr) {
+ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	Assert(IsValidObject(this));
 	Assert(pStr != nullptr);
 	Assert(CBofObject::IsValidObject(pStr));

@@ -156,7 +156,7 @@ public:
 		return ERR_NONE;
 	}
 	ERROR_CODE SetStorageDev(const CBofString &sWldName, BOOL bEntry = TRUE);
-	ERROR_CODE GotoNewWindow(CBofString *pStr);
+	ERROR_CODE GotoNewWindow(const CBofString *pStr);
 
 	USHORT GetDiskID() {
 		return m_nDiskID;

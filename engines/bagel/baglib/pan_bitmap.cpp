@@ -211,7 +211,7 @@ ERROR_CODE CBagPanBitmap::Paint(CBofWindow * /*pWnd*/, const CBofPoint /*xDstOff
 }
 
 CBofRect CBagPanBitmap::GetWarpSrcRect() {
-	CBofRect r = GetRect();
+	//CBofRect r = GetRect();
 	int nH2 = Height() >> 1;
 
 	return CBofRect(m_xCurrView.left,
@@ -362,7 +362,7 @@ ERROR_CODE CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	srcRect.right = m_xCurrView.left + viewWidth - 1;
 #endif
 	int nOffset = srcRect.right - nW;
-	CBofRect r = GetRect();
+	//CBofRect r = GetRect();
 
 	dstRect.top = xDstOffset.y;
 	dstRect.bottom = dstRect.top + srcRect.Height() - 1;
