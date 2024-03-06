@@ -98,7 +98,7 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
+	void OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info = nullptr);
 
 	/**
 	 * Called on the mouse left button down
@@ -106,7 +106,7 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	virtual BOOL OnLButtonDown(UINT nFlags, CBofPoint xPoint, void *info = nullptr);
+	virtual void OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *info = nullptr);
 
 	BOOL IsInside(const CBofPoint &xPoint);
 

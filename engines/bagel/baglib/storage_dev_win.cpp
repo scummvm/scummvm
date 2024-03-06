@@ -497,11 +497,11 @@ ERROR_CODE CBagStorageDev::OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, 
 }
 
 
-ERROR_CODE CBagStorageDev::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
+void CBagStorageDev::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
 	CBagObject *pObj;
 
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return (ERR_NONE);
+		return;
 	}
 
 	m_xCursorLocation = *xPoint;
@@ -511,29 +511,26 @@ ERROR_CODE CBagStorageDev::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *v
 
 	if ((pObj = GetObject(xCursorLocation, TRUE)) != NULL) {
 		if (pObj->IsActive()) {
-			pObj->OnLButtonDown(nFlags, *xPoint, vpInfo);
+			pObj->OnLButtonDown(nFlags, xPoint, vpInfo);
 			SetLActivity(kMouseDRAGGING);
 		}
 	}
 
 	SetLActiveObject(pObj);
-
-	return (ERR_NONE);
 }
 
 BOOL g_bNoMenu = FALSE;
 
 
-ERROR_CODE CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpInfo) {
+void CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpInfo) {
 	CBagObject *pObj;
 	CHAR       szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return (ERR_NONE);
+		return;
 	}
 
-	ERROR_CODE  errCode = ERR_NONE;
 	BOOL bUseWield;
 	sCurrSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
 
@@ -546,7 +543,7 @@ ERROR_CODE CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpI
 
 		g_bNoMenu = FALSE;
 		if (pObj->IsActive()) {
-			pObj->OnLButtonUp(nFlags, *xPoint, vpInfo);
+			pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
 
 			if (g_bNoMenu) {
 				g_bNoMenu = FALSE;
@@ -571,7 +568,7 @@ ERROR_CODE CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpI
 
 						if (pObj->IsActive()) {
 							//pObj->RunObject();
-							pObj->OnLButtonUp(nFlags, *xPoint, vpInfo);
+							pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
 							SetLActiveObject(pObj);
 							m_bHandledUpEvent = TRUE;
 						}
@@ -588,8 +585,6 @@ ERROR_CODE CBagStorageDev::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *vpI
 		AttachActiveObjects();
 	}
 	g_bAAOk = TRUE;
-
-	return (errCode);
 }
 
 
@@ -1875,27 +1870,25 @@ ERROR_CODE CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevWnd::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	// if asynch movie playing in PDA don't react to mouse down
 	// (8033) if it's not a wait cursor, then allow the user to access
 	// that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return ERR_NONE;
+		return;
 	}
 
 	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
 	CBofWindow::OnLButtonDown(nFlags, xPoint);
-
-	return ERR_NONE;
 }
 
 
-ERROR_CODE CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	// if asynch movie playing in PDA don't react to mouse down
 	// (8033) if it's not a wait cursor, then allow the user to access
 	// that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
-		return ERR_NONE;
+		return;
 	}
 
 	// react to a mouse up, it will probably involve drawing a new
@@ -1913,8 +1906,6 @@ ERROR_CODE CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *
 		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
 		CBofWindow::OnLButtonUp(nFlags, xPoint);
 	}
-
-	return ERR_NONE;
 }
 
 
@@ -2313,23 +2304,19 @@ ERROR_CODE CBagStorageDevDlg::OnMouseMove(UINT n, CBofPoint *xPoint, void *) {
 
 
 
-ERROR_CODE CBagStorageDevDlg::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevDlg::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
 	CBofDialog::OnLButtonDown(nFlags, xPoint);
-
-	return ERR_NONE;
 }
 
 
-ERROR_CODE CBagStorageDevDlg::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevDlg::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (CBofDialog::GetRect().PtInRect(*xPoint)) {
 		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
 		CBofDialog::OnLButtonUp(nFlags, xPoint);
 	} else  {
 		Close();
 	}
-
-	return ERR_NONE;
 }
 
 

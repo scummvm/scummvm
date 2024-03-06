@@ -313,17 +313,15 @@ CBofRect CBagDossierObject::GetRect(VOID) {
 	return r;
 }
 
-BOOL CBagDossierObject::OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*pInfo*/) {
+void CBagDossierObject::OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*pInfo*/) {
 	// If this is an inactive object (such as "plus residue too old" or "negative")
 	// then ignore the mousedown.
 
 	if (GetNotActive()) {
-		return FALSE;
+		return;
 	}
 
 	ShowDosText();
-
-	return TRUE;
 }
 
 // utility routine for activating dossier objects

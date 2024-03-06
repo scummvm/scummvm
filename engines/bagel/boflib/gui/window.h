@@ -471,8 +471,8 @@ public:
 
 protected:
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 
 	virtual VOID OnRButtonDown(UINT nFlags, CBofPoint *pPoint);

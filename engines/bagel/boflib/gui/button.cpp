@@ -247,7 +247,7 @@ VOID CBofButton::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBofButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
+VOID CBofButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -260,7 +260,7 @@ VOID CBofButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
 }
 
 
-VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint) {
+VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -281,7 +281,7 @@ VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint) {
 /*****************************************************************************/
 
 
-VOID CBofRadioButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
+VOID CBofRadioButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -292,7 +292,7 @@ VOID CBofRadioButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
 }
 
 
-VOID CBofRadioButton::OnLButtonUp(UINT, CBofPoint *pPoint) {
+VOID CBofRadioButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 }
@@ -384,7 +384,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 /*****************************************************************************/
 
 
-VOID CBofCheckButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
+VOID CBofCheckButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -402,7 +402,7 @@ VOID CBofCheckButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
 }
 
 
-VOID CBofCheckButton::OnLButtonUp(UINT, CBofPoint *pPoint) {
+VOID CBofCheckButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -687,7 +687,7 @@ VOID CBofBmpButton::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
+VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 
@@ -700,7 +700,7 @@ VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint) {
 }
 
 
-VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint) {
+VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 

@@ -132,7 +132,7 @@ public:
 	}
 
 	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
-	virtual BOOL OnLButtonUp(UINT, CBofPoint, void * = nullptr);
+	virtual void OnLButtonUp(UINT, CBofPoint *, void * = nullptr);
 
 	VOID SetRPObject(CBagObject *prp) {
 		m_pRPObject = prp;

@@ -1213,8 +1213,8 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 //
 VOID CBofWindow::OnMouseMove(UINT, CBofPoint *) {}
 
-VOID CBofWindow::OnLButtonDown(UINT, CBofPoint *) {}
-VOID CBofWindow::OnLButtonUp(UINT, CBofPoint *) {}
+VOID CBofWindow::OnLButtonDown(UINT, CBofPoint *, void *) {}
+VOID CBofWindow::OnLButtonUp(UINT, CBofPoint *, void *) {}
 VOID CBofWindow::OnLButtonDblClk(UINT, CBofPoint *) {}
 
 VOID CBofWindow::OnRButtonDown(UINT, CBofPoint *) {}

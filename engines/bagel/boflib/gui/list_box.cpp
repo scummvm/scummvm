@@ -195,7 +195,7 @@ ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
 }
 
 
-VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 

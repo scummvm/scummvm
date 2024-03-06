@@ -657,7 +657,7 @@ VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
 			pt = DevPtToViewPort(*pPoint);
 
 			if ((m_pSelectedObject = GetObject(pt)) != nullptr) {
-				m_pSelectedObject->OnLButtonUp(nFlags, *pPoint);
+				m_pSelectedObject->OnLButtonUp(nFlags, pPoint);
 			}
 		}
 

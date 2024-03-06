@@ -772,14 +772,14 @@ VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 }
 
 
-VOID CBofAppWindow::OnLButtonDown(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofAppWindow::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
 	CBofDisplayWindow::HandleLButtonDown(nFlags, *pPoint);
 }
 
-VOID CBofAppWindow::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofAppWindow::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
