@@ -164,12 +164,12 @@ static SQInteger addFolder(HSQUIRRELVM v) {
 
 static void threadFrames(Common::SharedPtr<ThreadBase> tb, void *data) {
 	int numFrames = *(int *)data;
-	((Thread *)tb.get())->_numFrames = numFrames;
+	tb->_numFrames = numFrames;
 }
 
 static void threadTime(Common::SharedPtr<ThreadBase> tb, void *data) {
 	float time = *(float *)data;
-	((Thread *)tb.get())->_waitTime = time;
+	tb->_waitTime = time;
 }
 
 // When called in a function started with startthread, execution is suspended for count frames.
@@ -352,6 +352,7 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 static bool isSomeoneTalking() {
 	for (auto it = g_twp->_actors.begin(); it != g_twp->_actors.end(); it++) {
 		Common::SharedPtr<Object> obj = *it;
+		if(obj->_room != g_twp->_room) continue;
 		if (obj->getTalking() && obj->getTalking()->isEnabled())
 			return true;
 	}
@@ -359,6 +360,7 @@ static bool isSomeoneTalking() {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			Common::SharedPtr<Object> obj = *it2;
+			if(obj->_room != g_twp->_room) continue;
 			if (obj->getTalking() && obj->getTalking()->isEnabled())
 				return true;
 		}
