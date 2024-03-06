@@ -110,8 +110,8 @@ protected:
 	INT PointToPos(CBofPoint *pPoint);
 
 	virtual VOID OnPaint(CBofRect *pDirtyRect);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnTimer(UINT);
 

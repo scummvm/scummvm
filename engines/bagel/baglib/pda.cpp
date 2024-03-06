@@ -370,12 +370,11 @@ BOOL CBagPDA::IsInside(const CBofPoint &xPoint) {
 	return FALSE;
 }
 
-BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
+void CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
-	BOOL rc;
 
 	if (!IsActivated() && m_ePdaMode != INVMODE) {          // if the PDA is not active, activate it
-		if (IsInside(xPoint)) {
+		if (IsInside(*xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
 
@@ -383,26 +382,25 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 			SetDirty(TRUE);
 			AttachActiveObjects();  // Forces PDA to be reevaluated.
 		}
-		return TRUE;
+		return;
 
 	} else {
 		// Else, call the default func
-		CBofPoint RealPt = DevPtToViewPort(xPoint);
+		CBofPoint RealPt = DevPtToViewPort(*xPoint);
 
-		rc = FALSE;
 		if (m_xCurDisplay && m_xCurDisplay->GetRect().PtInRect(RealPt)) {
-			m_xCurDisplay->OnLButtonUp(nFlags, RealPt, info);
+			m_xCurDisplay->OnLButtonUp(nFlags, &RealPt, info);
 		} else {
 			// if not in the PDA view port then check and make sure it is activated.
 			if (SBBasePda::m_ePdaMode == INVMODE && !IsActivated()) {
-				if (IsInside(xPoint)) {
+				if (IsInside(*xPoint)) {
 					// Make sure the entire screen gets redrawn for an activate
 					((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
 
 					Activate();
 					SetDirty(TRUE);
 				}
-				return TRUE;
+				return;
 			}
 
 			// If it's in one of the buttons, then pass it off to the
@@ -424,7 +422,7 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 
 				// Deactivate the PDA if we didn't hit a button.
 				if (bButtonHit || m_ePdaMode == NOMODE) {
-					rc = CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
+					CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
 				} else {
 					((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
 					Deactivate();
@@ -435,18 +433,17 @@ BOOL CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
 		// After a change of state, check if we should be flashing our
 		// zoom button or not.
 		HandleZoomButton(FALSE);
-		return rc;
 	}
 }
 
-BOOL CBagPDA::OnLButtonDown(UINT nFlags, CBofPoint xPoint, void *info) {
+void CBagPDA::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *info) {
 	// All we want to do here is if we had a mouse down on our
 	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).
 
 	HandleZoomButton(TRUE);
 
-	return CBagStorageDevBmp::OnLButtonDown(nFlags, xPoint, info);
+	CBagStorageDevBmp::OnLButtonDown(nFlags, xPoint, info);
 }
 
 CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {

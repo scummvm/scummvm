@@ -991,7 +991,7 @@ VOID CBagRPObject::DeactivateRPReview() {
 	}
 }
 
-BOOL CBagRPObject::OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*pv*/) {
+void CBagRPObject::OnLButtonUp(UINT /*nFlags*/, CBofPoint */*xPoint*/, void * /*pv*/) {
 	// Deactivate everything in the rp list
 
 	HideRPReview();
@@ -1001,8 +1001,6 @@ BOOL CBagRPObject::OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*p
 	SetLogPages(1);
 
 	RunObject();
-
-	return TRUE;
 }
 
 VOID CBagRPObject::EvaluateDossiers() {

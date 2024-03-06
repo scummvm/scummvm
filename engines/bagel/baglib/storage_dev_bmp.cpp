@@ -117,12 +117,12 @@ CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
 	return pt;
 }
 
-BOOL CBagStorageDevBmp::OnLButtonDown(UINT nFlags, CBofPoint  xPoint, void *info) {
-	return CBagStorageDev::OnLButtonDown(nFlags, &xPoint, info);
+void CBagStorageDevBmp::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *info) {
+	CBagStorageDev::OnLButtonDown(nFlags, xPoint, info);
 }
 
-BOOL CBagStorageDevBmp::OnLButtonUp(UINT nFlags, CBofPoint  xPoint, void *info) {
-	return CBagStorageDev::OnLButtonUp(nFlags, &xPoint, info);
+void CBagStorageDevBmp::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
+	CBagStorageDev::OnLButtonUp(nFlags, xPoint, info);
 }
 
 const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {

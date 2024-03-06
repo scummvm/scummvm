@@ -53,7 +53,7 @@ public:
 
 	virtual VOID OnMainLoop();
 
-	ERROR_CODE OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual ERROR_CODE AttachActiveObjects();

@@ -398,7 +398,7 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 }
 
 
-VOID CBofScrollBar::OnLButtonDown(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofScrollBar::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
@@ -474,7 +474,7 @@ INT CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 }
 
 
-VOID CBofScrollBar::OnLButtonUp(UINT nFlags, CBofPoint *pPoint) {
+VOID CBofScrollBar::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	INT x, y;

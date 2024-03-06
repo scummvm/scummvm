@@ -44,12 +44,8 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
-	BOOL OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*info*/) {
-		return ERR_NONE;
-	}
-	virtual BOOL OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = nullptr) {
-		return ERR_NONE;
-	}
+	void OnLButtonUp(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * /*info*/) {}
+	virtual void OnLButtonDown(UINT /*nFlags*/, CPoint /*xPoint*/, void * = nullptr) {}
 
 	// For public access to our movie object
 

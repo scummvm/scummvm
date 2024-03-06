@@ -102,7 +102,7 @@ BOOL CBagButtonObject::RunObject() {
 	return CBagObject::RunObject();
 }
 
-BOOL CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint xPoint, void *) {
+void CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint *xPoint, void *) {
 	if (m_xButtonType == PUSH) {
 		if (!m_bActive && !m_bActiveDown) {
 			m_bActiveDown = TRUE;
@@ -117,8 +117,8 @@ BOOL CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint xPoint, void *) 
 
 	} else if (m_xButtonType == HLEVER || m_xButtonType == VLEVER) {
 		if (!m_bActiveDown && !m_bActiveUp) {
-			if ((m_xButtonType == HLEVER && xPoint.x > m_MidPoint.x) || // right of midpoint
-			        (m_xButtonType == VLEVER && xPoint.y > m_MidPoint.y)) { // below midpoint
+			if ((m_xButtonType == HLEVER && xPoint->x > m_MidPoint.x) || // right of midpoint
+			        (m_xButtonType == VLEVER && xPoint->y > m_MidPoint.y)) { // below midpoint
 				m_bActiveDown = TRUE;
 			} else {
 				m_bActiveUp = TRUE;
@@ -130,11 +130,9 @@ BOOL CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint xPoint, void *) 
 	}
 
 	SetDirty();
-
-	return TRUE; // RunObject();
 }
 
-BOOL CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info) {
+void CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (pMainWin != NULL) {
@@ -151,8 +149,8 @@ BOOL CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info) {
 		CBagPanWindow *pWnd = (CBagPanWindow *)info;
 		CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
 
-		mLoc.x = xPoint.x + r.left - pWnd->GetViewPortPos().x;
-		mLoc.y = xPoint.y + r.top - pWnd->GetViewPortPos().y;
+		mLoc.x = xPoint->x + r.left - pWnd->GetViewPortPos().x;
+		mLoc.y = xPoint->y + r.top - pWnd->GetViewPortPos().y;
 
 		int xIncrement = m_SlideRect.Width() / (m_nNumPos - 1);
 
@@ -205,7 +203,7 @@ BOOL CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info) {
 
 	SetDirty();
 
-	return CBagSpriteObject::OnLButtonUp(nFlags, xPoint, info);
+	CBagSpriteObject::OnLButtonUp(nFlags, xPoint, info);
 }
 
 BOOL CBagButtonObject::OnMouseMove(UINT /*nFlags*/, CBofPoint xPoint, void *info) {

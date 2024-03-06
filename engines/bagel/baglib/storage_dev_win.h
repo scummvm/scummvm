@@ -343,9 +343,8 @@ public:
 
 	virtual ERROR_CODE OnMouseMove(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ERROR_CODE OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ERROR_CODE OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	// virtual ERROR_CODE   OnLButtonDblClk(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	virtual ERROR_CODE OnCursorUpdate(INT /*nCurrObj*/) {
 		return ERR_NONE;
@@ -506,8 +505,8 @@ public:
 	virtual VOID OnMainLoop();
 	VOID OnClose();
 	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
-	ERROR_CODE OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
-	ERROR_CODE OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 
 	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
 
@@ -573,8 +572,8 @@ public:
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnClose();
 	ERROR_CODE OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
-	ERROR_CODE OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
-	ERROR_CODE OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 };
 
 /**

@@ -96,13 +96,13 @@ public:
 	 * Called on the mouse left button up of the bagbmobj
 	 *  and redirected to the lbutton up of the CBagStorageDev
 	 */
-	BOOL OnLButtonUp(UINT nFlags, CBofPoint xPoint, void *info);
+	void OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info);
 
 	/**
 	 * Called on the mouse left button down of the bagbmobj
 	 * and redirected to the lbutton down of the CBagStorageDev
 	 */
-	virtual BOOL OnLButtonDown(UINT nFlags, CPoint xPoint, void *info = nullptr);
+	virtual void OnLButtonDown(UINT nFlags, CPoint *xPoint, void *info = nullptr);
 
 	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
 };

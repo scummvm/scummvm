@@ -110,7 +110,7 @@ public:
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);
 
-	virtual BOOL OnLButtonUp(UINT, CBofPoint, void * = nullptr);
+	virtual void OnLButtonUp(UINT, CBofPoint *, void * = nullptr);
 
 	VOID SetTouchedDos(CBofString &s, CBagExpression *x);
 	VOID SetUntouchedDos(CBofString &s, CBagExpression *x);
