@@ -98,6 +98,7 @@ void DarkEngine::loadAssetsZXDemo() {
 
 	loadMessagesFixedSize(&file, 0x56b, 16, 27);
 	loadMessagesFixedSize(&file, 0x5761, 264, 5);
+	loadSpeakerFxZX(&file, 0x9c7, 0xa5b);
 
 	loadFonts(&file, 0x6164);
 	loadGlobalObjects(&file, 0x20, 23);

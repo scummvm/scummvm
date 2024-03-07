@@ -36,6 +36,7 @@ struct soundFx {
 struct soundUnitZX {
 	uint16 freqTimesSeconds;
 	uint16 tStates;
+	uint32 multiplier;
 };
 
 struct soundSpeakerFx {

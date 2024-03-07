@@ -78,6 +78,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						soundUnitZX soundUnit;
 						soundUnit.freqTimesSeconds = (var10 & 0xffff) + 1;
 						soundUnit.tStates = var5;
+						soundUnit.multiplier = 400;
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						int16 var4 = 0;
@@ -123,6 +124,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						soundUnitZX soundUnit;
 						soundUnit.tStates = var5;
 						soundUnit.freqTimesSeconds = SFXtempStruct[3] | (SFXtempStruct[4] << 8);
+						soundUnit.multiplier = 400;
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						repetitions = repetitions - 1;
@@ -134,6 +136,13 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 					var5 = soundValue;
 				} while (soundSize != 0);
 			} else if ((soundType & 0x7f) == 2) { 
+				int size = 2 * (SFXtempStruct[1] + SFXtempStruct[2]);
+
+				soundUnitZX soundUnit;
+				soundUnit.freqTimesSeconds = 100;
+				soundUnit.tStates = 437500 / 100 - 30.125;
+				soundUnit.multiplier = 2 * size;
+				_soundsSpeakerFxZX[i]->push_back(soundUnit);
 			} else {
 				debug("Unknown sound type: %x", soundType);
 			}
@@ -397,8 +406,8 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
 		soundUnitZX value = it;
 		float hzFreq = 1 / ((value.tStates + 30.125) / 437500.0);
 		float waveDuration = value.freqTimesSeconds / hzFreq;
-		waveDuration = 400 * 1000 * (waveDuration + 1);
-		debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %d", hzFreq, waveDuration);
+		waveDuration = value.multiplier * 1000 * (waveDuration + 1);
+		debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %f", hzFreq, waveDuration);
 		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
 	}
 
