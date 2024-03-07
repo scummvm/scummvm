@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/file.h"
 #include "graphics/palette.h"
+#include "image/bmp.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/file.h"
@@ -53,28 +55,26 @@ void CBofPalette::initStatics() {
 }
 
 CBofPalette::CBofPalette() {
-	Common::fill(&m_hPalette._data[0], &m_hPalette._data[PALETTE_SIZE], 0);
+	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
 }
 
 CBofPalette::CBofPalette(const CHAR *pszFileName) {
-	Common::fill(&m_hPalette._data[0], &m_hPalette._data[PALETTE_SIZE], 0);
+	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
 	Assert(pszFileName != nullptr);
 
 	LoadPalette(pszFileName);
 }
 
 CBofPalette::CBofPalette(const HPALETTE &hPalette) {
-	m_hPalette = hPalette;
+	_palette = hPalette;
 }
 
 CBofPalette::~CBofPalette() {
 	Assert(IsValidObject(this));
 
-	// jwl 08.08.96 if we trash the games palette, then reset it back
-	// to nullptr.
+	// If we trash the games palette, then reset it back to nullptr.
 	CBofApp *pApp;
 	if ((pApp = CBofApp::GetApp()) != nullptr) {
-
 		if (this == pApp->GetPalette()) {
 			pApp->SetPalette(nullptr);
 		}
@@ -87,7 +87,7 @@ VOID CBofPalette::SetPalette(const HPALETTE &hPalette) {
 	Assert(IsValidObject(this));
 
 	ReleasePalette();
-	m_hPalette = hPalette;
+	_palette = hPalette;
 }
 
 ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, USHORT nFlags) {
@@ -98,196 +98,27 @@ ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, USHORT nFlags) {
 
 	ReleasePalette();
 
-	static BOFRGBQUAD cRGB[256];
-	BOFBITMAPFILEHEADER cBmpFileHeader;
-	BOFBITMAPINFOHEADER cBmpInfoHeader;
-	CBofFile *pFile;
-	//INT i;
-	INT nNumColors;
+	// Load in new bitmap file to get the palette
+	Common::File f;
+	Image::BitmapDecoder decoder;
 
-	// Open bitmap
-	if ((pFile = new CBofFile(pszFileName, CBOFFILE_READONLY)) != nullptr) {
-		// Read header
-		if (pFile->Read(&cBmpFileHeader, sizeof(BOFBITMAPFILEHEADER)) == ERR_NONE) {
+	if (f.open(pszFileName) && decoder.loadStream(f)) {
+		// Copy the palette
+		_palette._numColors = decoder.getPaletteColorCount();
+		const byte *src = decoder.getPalette();
+		Common::copy(src, src + _palette._numColors * 3, _palette._data);
 
-#if BOF_MAC || BOF_WINMAC
-			//
-			// swap bytes for Macintosh Big-Endian
-			//
-			cBmpFileHeader.bfType = SWAPWORD(cBmpFileHeader.bfType);
-			cBmpFileHeader.bfSize = SWAPLONG(cBmpFileHeader.bfSize);
-			cBmpFileHeader.bfOffBits = SWAPLONG(cBmpFileHeader.bfOffBits);
-#endif
-
-			if (pFile->Read(&cBmpInfoHeader, sizeof(BOFBITMAPINFOHEADER)) == ERR_NONE) {
-
-#if BOF_MAC || BOF_WINMAC
-				//
-				// swap bytes for Macintosh Big-Endian
-				//
-				cBmpInfoHeader.biSize = SWAPLONG(cBmpInfoHeader.biSize);
-				cBmpInfoHeader.biWidth = SWAPLONG(cBmpInfoHeader.biWidth);
-				cBmpInfoHeader.biHeight = SWAPLONG(cBmpInfoHeader.biHeight);
-				cBmpInfoHeader.biPlanes = SWAPWORD(cBmpInfoHeader.biPlanes);
-				cBmpInfoHeader.biBitCount = SWAPWORD(cBmpInfoHeader.biBitCount);
-				cBmpInfoHeader.biCompression = SWAPLONG(cBmpInfoHeader.biCompression);
-				cBmpInfoHeader.biSizeImage = SWAPLONG(cBmpInfoHeader.biSizeImage);
-				cBmpInfoHeader.biXPelsPerMeter = SWAPLONG(cBmpInfoHeader.biXPelsPerMeter);
-				cBmpInfoHeader.biYPelsPerMeter = SWAPLONG(cBmpInfoHeader.biYPelsPerMeter);
-				cBmpInfoHeader.biClrUsed = SWAPLONG(cBmpInfoHeader.biClrUsed);
-				cBmpInfoHeader.biClrImportant = SWAPLONG(cBmpInfoHeader.biClrImportant);
-#endif
-
-				if ((nNumColors = (INT)cBmpInfoHeader.biClrUsed) == 0) {
-					nNumColors = (INT)(1 << (INT)cBmpInfoHeader.biBitCount);
-				}
-				Assert(nNumColors <= 256);
-
-				// load the actual palette colors from the bitmap
-				//
-				if (pFile->Read(&cRGB, sizeof(BOFRGBQUAD) * nNumColors) == ERR_NONE) {
-
-#if BOF_MAC || BOF_WINMAC
-					// Macintize this palette
-					//
-					/// BOFRGBQUAD stTempEntry;
-
-					/// stTempEntry = cRGB[0];
-					/// cRGB[0] = cRGB[255];
-					/// cRGB[255] = stTempEntry;
-#endif
-
-#if BOF_WINDOWS
-					LPLOGPALETTE pLogPal;
-					HPALETTE hPal;
-
-					// assume failure
-					hPal = nullptr;
-
-					// build a logical palette from these colors.
-					// (this is needed to create a CPalette)
-					//
-					if ((pLogPal = (LPLOGPALETTE)BofAlloc(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nNumColors)) != nullptr) {
-
-						pLogPal->palNumEntries = (WORD)nNumColors;
-						pLogPal->palVersion = 0x300;
-
-						if (nFlags & PAL_EXPLICIT) {
-
-							for (i = 0; i < nNumColors; i++) {
-								pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-								pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-								pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-								pLogPal->palPalEntry[i].peFlags = (UBYTE)(PC_EXPLICIT | i);
-							}
-
-						} else if (nFlags & PAL_ANIMATED) {
-
-							for (i = 0; i < nNumColors; i++) {
-								pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-								pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-								pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-								pLogPal->palPalEntry[i].peFlags = PC_RESERVED; // | PC_NOCOLLAPSE;
-								if (i < 10 || i >= 245)
-									pLogPal->palPalEntry[i].peFlags = 0;
-							}
-
-						} else {
-
-							for (i = 0; i < nNumColors; i++) {
-								pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-								pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-								pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-								pLogPal->palPalEntry[i].peFlags = 0;
-							}
-						}
-
-						if ((hPal = ::CreatePalette(pLogPal)) != nullptr) {
-							m_hPalette = hPal;
-						}
-
-						BofFree(pLogPal);
-
-					} else {
-						LogError(BuildString("Error allocating %ld bytes for palette", sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nNumColors));
-					}
-#elif BOF_MAC
-
-					if ((m_hPalette = NewPalette(nNumColors, 0, pmExplicit | pmAnimated, 0)) != nullptr) {
-						// jwl 10.07.96 move this bad baby way up in the heap
-						::MoveHHi((Handle)m_hPalette);
-
-						RGBColor rgb;
-
-						for (i = 0; i < nNumColors; i++) {
-
-							rgb.red = cRGB[i].rgbRed << 8;
-							rgb.green = cRGB[i].rgbGreen << 8;
-							rgb.blue = cRGB[i].rgbBlue << 8;
-
-							SetEntryColor(m_hPalette, i, &rgb);
-						}
-
-						// SetEntryUsage(m_hPalette, 0, pmExplicit | pmAnimated, 0);
-						// SetEntryUsage(m_hPalette, 255, pmExplicit | pmAnimated, 0);
-
-					} else {
-						LogError(BuildString("Unable to allocate NewPalette() from %s", pszFileName));
-					}
-
-#endif
-
-				} else {
-					LogError(BuildString("Error reading palette entries from %s", pszFileName));
-				}
-
-			} else {
-				LogError(BuildString("Error reading BOFBITMAPINFOHEADER from %s", pszFileName));
-			}
-
-			// read palette entries
-			//
-		} else {
-			LogError(BuildString("Error reading BOFBITMAPFILEHEADER from %s", pszFileName));
-		}
-
-		// close bitmap
-		delete pFile;
+		m_errCode = ERR_NONE;
 
 	} else {
-		LogError(BuildString("Could not allocate a CBofFile for %s", pszFileName));
+		m_errCode = ERR_FREAD;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 VOID CBofPalette::ReleasePalette() {
-#if BOF_WINDOWS
-	if (m_hPalette != nullptr) {
-		if (::DeleteObject(m_hPalette) == FALSE) {
-			LogError(BuildString("::DeleteObject() failed"));
-		}
-		m_hPalette = nullptr;
-	}
-#elif BOF_MAC
-	if (m_hPalette != nullptr) {
-#if PALETTESHIFTFIX // scg 01.26.97
-
-		CBofWindow::AddToPaletteShiftList(DISPOSEPALETTE, (LONG)m_hPalette);
-
-#else
-		extern BOOL gAllowPaletteShifts;
-
-		gAllowPaletteShifts = false;
-		::DisposePalette(m_hPalette);
-		gAllowPaletteShifts = true;
-#endif
-		m_hPalette = nullptr;
-	}
-#endif
+	Common::fill(_palette._data, _palette._data + PALETTE_SIZE, 0);
 }
 
 CBofPalette *CBofPalette::CopyPalette() {
@@ -300,7 +131,7 @@ CBofPalette *CBofPalette::CopyPalette() {
 #if BOF_WINDOWS
 	HPALETTE hPal;
 
-	if ((hPal = CopyWindowsPalette(m_hPalette)) != nullptr) {
+	if ((hPal = CopyWindowsPalette(_palette)) != nullptr) {
 
 		if ((pBofPal = new CBofPalette(hPal)) != nullptr) {
 
@@ -315,11 +146,11 @@ CBofPalette *CBofPalette::CopyPalette() {
 
 #endif
 
-	return (pBofPal);
+	return pBofPal;
 }
 
 UBYTE CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
-	Graphics::PaletteLookup lookup(m_hPalette._data, PALETTE_COUNT);
+	Graphics::PaletteLookup lookup(_palette._data, PALETTE_COUNT);
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
 
@@ -352,12 +183,12 @@ HPALETTE CopyWindowsPalette(HPALETTE hPal) {
 		}
 	}
 
-	return (hPal);
+	return hPal;
 }
 #endif
 
 RGBCOLOR CBofPalette::GetColor(UBYTE nIndex) {
-	const byte *rgb = &m_hPalette._data[nIndex * 3];
+	const byte *rgb = &_palette._data[nIndex * 3];
 
 	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);
 	return cColor;
@@ -378,7 +209,7 @@ VOID CBofPalette::AnimateEntry(UBYTE nIndex, RGBCOLOR cColor) {
 	stColor.peBlue = GetBlue(cColor);
 	stColor.peFlags = PC_RESERVED;
 
-	::AnimatePalette(m_hPalette, nIndex, 1, &stColor);
+	::AnimatePalette(_palette, nIndex, 1, &stColor);
 #endif
 
 #elif BOF_MAC
@@ -408,113 +239,11 @@ VOID CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 ERROR_CODE CBofPalette::CreateDefault(USHORT nFlags) {
 	Assert(IsValidObject(this));
 
-	static BOFRGBQUAD cRGB[256];
-	INT i, nNumColors;
+	byte *pal = _palette._data;
+	for (int i = 0; i < 256; ++i, pal += 3)
+		pal[0] = pal[1] = pal[2] = (byte)i;
 
-	for (i = 0; i < 256; i++) {
-		cRGB[i].rgbRed = (BYTE)i;
-		cRGB[i].rgbGreen = (BYTE)i;
-		cRGB[i].rgbBlue = (BYTE)i;
-		cRGB[i].rgbReserved = 0;
-	}
-	nNumColors = 256;
-
-#if BOF_WINDOWS
-	LPLOGPALETTE pLogPal;
-	HPALETTE hPal;
-
-	// assume failure
-	hPal = nullptr;
-
-	// build a logical palette from these colors.
-	// (this is needed to create a CPalette)
-	//
-	if ((pLogPal = (LPLOGPALETTE)BofAlloc(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nNumColors)) != nullptr) {
-
-		pLogPal->palNumEntries = (WORD)nNumColors;
-		pLogPal->palVersion = 0x300;
-
-		if (nFlags & PAL_EXPLICIT) {
-
-			for (i = 0; i < nNumColors; i++) {
-				pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-				pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-				pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-				pLogPal->palPalEntry[i].peFlags = (UBYTE)(PC_EXPLICIT | i);
-			}
-
-		} else if (nFlags & PAL_ANIMATED) {
-
-			for (i = 0; i < nNumColors; i++) {
-				pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-				pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-				pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-				pLogPal->palPalEntry[i].peFlags = PC_RESERVED; // | PC_NOCOLLAPSE;
-				if (i < 10 || i >= 245)
-					pLogPal->palPalEntry[i].peFlags = 0;
-			}
-
-		} else {
-
-			for (i = 0; i < nNumColors; i++) {
-				pLogPal->palPalEntry[i].peRed = cRGB[i].rgbRed;
-				pLogPal->palPalEntry[i].peGreen = cRGB[i].rgbGreen;
-				pLogPal->palPalEntry[i].peBlue = cRGB[i].rgbBlue;
-
-				pLogPal->palPalEntry[i].peFlags = 0;
-			}
-		}
-
-		if ((hPal = ::CreatePalette(pLogPal)) != nullptr) {
-			m_hPalette = hPal;
-		}
-
-		BofFree(pLogPal);
-
-	} else {
-		LogError(BuildString("Error allocating %ld bytes for palette", sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nNumColors));
-	}
-#elif BOF_MAC
-#if JWL
-	CTabHandle hCTab = GetCTable(72);
-#endif
-
-	if ((m_hPalette = NewPalette(nNumColors, 0, pmExplicit | pmAnimated, 0)) != nullptr) {
-		// jwl 10.07.96 move this bad baby way up in the heap
-		::MoveHHi((Handle)m_hPalette);
-
-		RGBColor rgb;
-		BOFRGBQUAD cTempRGB;
-
-		cTempRGB = cRGB[0];
-		cRGB[0] = cRGB[255];
-		cRGB[255] = cTempRGB;
-
-		for (i = 0; i < nNumColors; i++) {
-
-#if JWL
-			rgb = (**hCTab).ctTable[i].rgb;
-#else
-			rgb.red = cRGB[i].rgbRed << 8;
-			rgb.green = cRGB[i].rgbGreen << 8;
-			rgb.blue = cRGB[i].rgbBlue << 8;
-#endif
-			SetEntryColor(m_hPalette, i, &rgb);
-		}
-		// SetEntryUsage(m_hPalette, 0, pmExplicit | pmAnimated, 0);
-		// SetEntryUsage(m_hPalette, 255, pmExplicit | pmAnimated, 0);
-
-	} else {
-		LogError(BuildString("Unable to allocate NewPalette()")); // jwl 06.26.96 remove pszFileName
-	}
-#endif
-
-#if JWL
-	::DisposeCTable(hCTab);
-#endif
-	return (m_errCode);
+	return ERR_NONE;
 }
 
 ERROR_CODE CBofPalette::SetSharedPalette(const CHAR *pszFileName) {

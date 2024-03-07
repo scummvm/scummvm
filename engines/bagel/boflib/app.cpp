@@ -20,9 +20,9 @@
  */
 
 #include "common/system.h"
+#include "graphics/palette.h"
 
 #include "bagel/boflib/boffo.h"
-
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/app.h"
@@ -138,13 +138,8 @@ VOID CBofApp::ShutDownCode() {
 
 
 ERROR_CODE CBofApp::PreInit() {
-#if BOF_MAC || BOF_WINMAC
-	HideMenuBar();
-#endif
-
 	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
-
-		if ((m_pDefPalette = new CBofPalette) != nullptr) {
+		if ((m_pDefPalette = new CBofPalette()) != nullptr) {
 			m_pDefPalette->CreateDefault();
 			SetPalette(m_pDefPalette);
 		}
@@ -188,14 +183,12 @@ ERROR_CODE CBofApp::PreInit() {
 
 	LogInfo(BuildString("Initializing %s...", m_szAppName));
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
 ERROR_CODE CBofApp::Initialize() {
-	//Assert(IsValidObject(this));
-
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -354,14 +347,14 @@ ERROR_CODE CBofApp::RunApp() {
 #endif
 #endif
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
 ERROR_CODE CBofApp::ShutDown() {
 	//Assert(IsValidObject(this));
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -384,7 +377,7 @@ ERROR_CODE CBofApp::PreShutDown() {
 #endif
 #endif
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -410,64 +403,15 @@ ERROR_CODE CBofApp::PostShutDown() {
 
 	LogInfo(BuildString("CBofApp::PostShutDown - Available Physical Memory: %ld", GetFreePhysMem()));
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
 
 	if (pPalette != nullptr) {
-
-#if BOF_WINDOWS
-		HDC hDC;
-
-		if ((hDC = ::GetDC(nullptr)) != nullptr) {
-
-			::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), FALSE);
-
-			::RealizePalette(hDC);
-
-			::ReleaseDC(nullptr, hDC);
-		}
-#endif
-
-#if BOF_MAC
-		// jwl 09.24.96 make this our current palette...
-		Assert(pPalette != nullptr);
-		PaletteHandle thePH = pPalette->GetPalette();
-
-		// jwl 08.08.96 have seen newPH nullptr, if it is, the default 256 colors
-		// of the game are used (see 'pltt' resource)
-		if (thePH != nullptr) {
-			Assert((*thePH)->pmEntries == 256);
-			Assert(GetHandleSize((Handle) thePH) != 0);
-
-			// jwl 09.24.96 palette shift fix... take all the calls that cause palette shifts
-			// and move them as close to the onscreen rendering code as possible, this will
-			// minimize the shift... but not eliminate it.
-
-			CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
-
-			if (pWnd != nullptr) {
-#if PALETTESHIFTFIX
-				PaletteShiftItem        psi;
-
-				psi.m_nItemOfInterest = (LONG) thePH;
-
-				psi.m_nAssociatedItem = (LONG) pWnd->GetMacWindow();
-				psi.m_eItemID = SETPALETTE;
-
-				if (CBofWindow::m_pPaletteShiftList == nullptr) {
-					CBofWindow::m_pPaletteShiftList = new CBofList<PaletteShiftItem>;
-				}
-
-				CBofWindow::m_pPaletteShiftList->AddToTail(psi);
-#else
-				::SetPalette(pWnd->GetMacWindow(), thePH, false);
-#endif
-			}
-		}
-#endif
+		const HPALETTE &pal = pPalette->GetPalette();
+		g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
 
 	} else {
 		// Use default palette
@@ -475,214 +419,13 @@ VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	}
 }
 
-
-#if !BOF_WIN16
 VOID CBofApp::AddCursor(CBofCursor &cCursor) {
-	//Assert(IsValidObject(this));
-
 	m_cCursorList.AddToTail(cCursor);
 }
 
-
 VOID CBofApp::DelCursor(INT nIndex) {
-	//Assert(IsValidObject(this));
-
 	m_cCursorList.Remove(nIndex);
 }
-#endif
-
-
-#if BOF_MAC
-
-VOID CBofApp::InitMacToolBox() {
-	THz             az;
-	unsigned long   limit;
-	short           omm;
-
-	//Assert(IsValidObject(this));
-
-	InitGraf(&qd.thePort);
-	InitFonts();
-	FlushEvents(everyEvent, 0);
-	InitWindows();
-	InitMenus();
-	TEInit();
-	InitDialogs(0l);
-	InitCursor();
-
-	//  jwl 07.03.96 get more master pointers
-
-	//  scg 01.13.97 This is the 68K way of doing things.  For PPC, the
-	//  stack size is set in the development environment
-#if 0
-	limit = (unsigned long)LMGetCurStackBase() - 64 * 1024;
-	if ((unsigned long)GetApplLimit() > limit)
-		SetApplLimit((Ptr)limit);
-#endif
-
-	MaxApplZone();
-
-	//  scg 01.13.97 Rather than interacting with the zone itself, I
-	//  suggest we do this the way it is most often done.
-#if 1
-	MoreMasters();
-	MoreMasters();
-	MoreMasters();
-#else
-	az = ApplicZone();
-	omm = az->moreMast;
-	az->moreMast = omm * 3;
-	MoreMasters();
-	az->moreMast = omm;
-#endif
-}
-#endif
-
-#if BOF_WINDOWS
-#if BOF_WINMAC
-extern "C" INT WINAPI
-#else
-extern "C" INT PASCAL
-#endif
-WinMain(HINSTANCE hInst, HINSTANCE /*hPrevInst*/, LPSTR /*lpCmdLine*/, INT /*nCmdShow*/)
-#else
-INT main(INT argc, CHAR *argv[])
-#endif // !BOF_WINDOWS
-{
-	CBofApp *pApp;
-
-	pApp = CBofApp::GetApp();
-
-	// The game-object must be instantiated by now
-	Assert(pApp != nullptr);
-
-	// Don't allow the game to be in memory more than once (BCW 10/08/96 03:03 pm)
-	//
-#if BOF_WINDOWS
-	HANDLE hMutex;
-
-	hMutex = ::CreateMutex(nullptr, TRUE, "BoffoMutex");
-
-	if ((GetLastError() != ERROR_ALREADY_EXISTS) && FirstInstance()) {
-#endif
-
-#if BOF_WINDOWS
-
-		CBofApp::SetInstanceHandle(hInst);
-		g_hInst = hInst;
-
-#endif
-		pApp->PreInit();
-
-		pApp->Initialize();
-
-		if (!pApp->ErrorOccurred())
-			pApp->RunApp();
-
-		pApp->PreShutDown(); // scg 01.13.97
-
-		pApp->ShutDown();
-
-		pApp->PostShutDown();
-
-#if BOF_WINDOWS
-	}
-
-	// Delete the Mutex we created (to stop multiple instances)
-	//
-	if (hMutex != nullptr) {
-		::ReleaseMutex(hMutex);
-	}
-
-#endif
-
-#if BOF_MAC
-	::ExitToShell();
-#endif
-	return ((INT)pApp->GetErrorCode());
-}
-
-
-BOOL FirstInstance() {
-	BOOL bFirstTime;
-
-	// assume this is the first instance
-	bFirstTime = TRUE;
-
-#if BOF_WINDOWS
-	HWND hWnd;
-
-	if ((hWnd = ::FindWindow("BofWindowParent", nullptr)) != nullptr) {
-		bFirstTime = FALSE;
-	}
-#endif
-
-	return (bFirstTime);
-}
-
-
-#if BOF_MAC && USEDRAWSPROCKET
-VOID CBofApp::InitDrawSprocket() {
-	DSpStartup();
-
-	DSpContextAttributes theDesiredAttributes;
-
-	InitDSpContextAttributes(&theDesiredAttributes);
-
-	theDesiredAttributes.displayWidth           = 640;
-	theDesiredAttributes.displayHeight          = 480;
-	theDesiredAttributes.colorNeeds             = kDSpColorNeeds_Require;
-	theDesiredAttributes.backBufferDepthMask    = kDSpDepthMask_8;
-	theDesiredAttributes.displayDepthMask       = kDSpDepthMask_8;
-	theDesiredAttributes.backBufferBestDepth    = 8;
-	theDesiredAttributes.displayBestDepth       = 8;
-	theDesiredAttributes.pageCount              = 1;
-
-	DSpContextReference theContext;
-
-	if (DebuggerIsRunning() == FALSE) {
-		OSStatus theError = DSpFindBestContext(&theDesiredAttributes, &theContext);
-
-		theError = DSpContext_Reserve(theContext, &theDesiredAttributes);
-		Assert(theError == noErr);
-		theError = DSpContext_FadeGammaOut(nullptr, nullptr);
-		Assert(theError == noErr);
-		theError = DSpContext_SetState(theContext, kDSpContextState_Active);
-		Assert(theError == noErr);
-		//  <call DSpContext_SetCLUTEntries as needed>
-		theError = DSpContext_FadeGammaIn(nullptr, nullptr);
-		Assert(theError == noErr);
-		theError = DSpContext_GetBackBuffer(theContext, kDSpBufferKind_Normal, &gBackBuffer);
-		Assert(theError == noErr);
-	}
-}
-
-
-void InitDSpContextAttributes(
-    DSpContextAttributes *inAttributes      /* attr structure to init */
-) {
-	Assert(inAttributes != nullptr);
-
-	inAttributes->frequency                 = 0;
-	inAttributes->displayWidth              = 0;
-	inAttributes->displayHeight             = 0;
-	inAttributes->reserved1                 = 0;
-	inAttributes->reserved2                 = 0;
-	inAttributes->colorNeeds                = 0;
-	inAttributes->colorTable                = nullptr;
-	inAttributes->contextOptions            = 0;
-	inAttributes->backBufferDepthMask       = 0;
-	inAttributes->displayDepthMask          = 0;
-	inAttributes->backBufferBestDepth       = 0;
-	inAttributes->displayBestDepth          = 0;
-	inAttributes->pageCount                 = 0;
-	inAttributes->gameMustConfirmSwitch     = false;
-	inAttributes->reserved3[0]              = 0;
-	inAttributes->reserved3[1]              = 0;
-	inAttributes->reserved3[2]              = 0;
-	inAttributes->reserved3[3]              = 0;
-}
-#endif
 
 
 VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lParam2) {
@@ -742,7 +485,7 @@ CBofPoint GetMousePos() {
 	cPoint.x = stPoint.h;
 	cPoint.y = stPoint.v;
 #endif
-	return (cPoint);
+	return cPoint;
 }
 
 

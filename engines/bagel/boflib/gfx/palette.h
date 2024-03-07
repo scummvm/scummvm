@@ -71,7 +71,7 @@ typedef struct bofRGBQUAD {
 
 class CBofPalette : public CBofError, public CBofObject {
 protected:
-	HPALETTE m_hPalette;
+	HPALETTE _palette;
 
 	static CBofPalette *m_pSharedPalette;
 	static CHAR m_szSharedPalFile[MAX_FNAME];
@@ -120,8 +120,9 @@ public:
 	 * @param hPal      Handle to windows palette
 	 */
 	VOID SetPalette(const HPALETTE &hPalette);
-	HPALETTE GetPalette() {
-		return m_hPalette;
+
+	const HPALETTE &GetPalette() const {
+		return _palette;
 	}
 
 	virtual ~CBofPalette();
