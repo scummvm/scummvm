@@ -27,9 +27,18 @@
 #include "twp/squtil.h"
 
 #define MIN_TALK_DIST 60
+#define MIN_GIVE_DIST 30
 #define MIN_USE_DIST 15
 
 namespace Twp {
+
+static float getVerbDist(VerbId verb) {
+	if(verb.id == VERB_TALKTO)
+		return MIN_TALK_DIST;
+	if(verb.id == VERB_GIVE)
+		return MIN_GIVE_DIST;
+	return MIN_USE_DIST;
+}
 
 enum class BlinkState {
 	Closed,
@@ -736,7 +745,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 			}
 			// Did we get close enough?
 			float dist = distance(obj->getUsePos(), noun1->getUsePos());
-			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
+			float min_dist = getVerbDist(verb);
 			debugC(kDebugGame, "actorArrived: noun1 min_dist: %f > %f (actor: {self.getUsePos}, obj: {noun1.getUsePos}) ?", dist, min_dist);
 			if (!verbNotClose(verb) && (dist > min_dist)) {
 				cantReach(noun1, noun2);
@@ -754,7 +763,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 				return;
 			}
 			float dist = distance(obj->getUsePos(), noun2->getUsePos());
-			float min_dist = verb.id == VERB_TALKTO ? MIN_TALK_DIST : MIN_USE_DIST;
+			float min_dist = getVerbDist(verb);
 			debugC(kDebugGame, "actorArrived: noun2 min_dist: %f > %f ?", dist, min_dist);
 			if (dist > min_dist) {
 				cantReach(noun1, noun2);
