@@ -277,6 +277,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "madccpk",			"Madeline Classroom Companion: Preschool & Kindergarten" },
 	{ "madpup",				"Madeline and the Magnificent Puppet Show: A Learning Journey" },
 	{ "madtg",				"Madeline Thinking Games" },
+	{ "maisybday",			"Happy Birthday, Maisy!" },
 	{ "majestic",			"Majestic Part I: Alien Encounter" },
 	{ "maniacsports",		"Maniac Sports" },
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
@@ -8182,6 +8183,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("littlebilly", "", "quest.exe", "t:73ca03e8a10e3266f20442ce50fd0311", 105118,
 								"Child.dxr", "t:57e4acc11a12a483541cfb69eb570810", 387835, 700),
+
+	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
+	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
 
 	// Mia Muis Op Zoek naar Oma Mimi's Medicijn (CD1)
 	WINGAME1("miareading1", "", "Mia.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2595806, 702),
