@@ -82,34 +82,32 @@ BOOL MACROREPLACE(CBofString &s);
 
 class CBagMasterWin;
 
-// If you need to add a field to this structure, then you also need to
-// add an initializer for it for the App's contsructor
-//
-typedef struct {
-	CHAR *m_pszGameName;     // Game Name. Ex: "The Space Bar"
-	CHAR *m_pszGamePath;     // Relative path for the CD: "\\SPACEBAR"
-	CHAR *m_pszOptionFile;   // This game's INI file name
-	CHAR *m_pszSaveGameFile; // name of save game Index file.
-	ULONG m_lRamRequired;    // ammount of free RAM needed to play game
-	LONG m_nNumberOfCDs;     // # of CDs used by this game
-	INT m_nRequiredDepth;    // Required bits per pixel to play game
-	INT m_nRequiredWidth;    // minimum screen width for game
-	INT m_nRequiredHeight;   // minimum screen height for game
-
-} BAGEL_REG;
+/**
+ * Initialization structure fot CBagel app
+ */
+struct BagelReg {
+	const CHAR *m_pszGameName;		// Game Name. Ex: "The Space Bar"
+	const CHAR *m_pszGamePath;		// Relative path for the CD: "\\SPACEBAR"
+	const CHAR *m_pszOptionFile;	// This game's INI file name
+	const CHAR *m_pszSaveGameFile;	// name of save game Index file.
+	ULONG m_lRamRequired;			// ammount of free RAM needed to play game
+	LONG m_nNumberOfCDs;			// # of CDs used by this game
+	INT m_nRequiredDepth;			// Required bits per pixel to play game
+	INT m_nRequiredWidth;			// minimum screen width for game
+	INT m_nRequiredHeight;			// minimum screen height for game
+};
 
 class CBagel : public CBofOptions, public CBofApp {
 public:
 	CBagel();
-	CBagel(BAGEL_REG *pGameReg);
+	CBagel(const BagelReg *pGameReg);
 	~CBagel();
-	static void initStatics();
 
 	/**
 	 * Registers game information for this game object
 	 * @param pGameReg      Game registration info
 	 */
-	VOID RegisterGame(BAGEL_REG *pGameReg);
+	VOID RegisterGame(const BagelReg *pGameReg);
 
 	// these functions must be provided by the child class
 	//
@@ -258,17 +256,17 @@ protected:
 	ERROR_CODE VerifyRequirements();
 
 	// Data members
-	CHAR m_szSaveGameFileName[MAX_DIRPATH];
-	CHAR m_szInstallPath[MAX_DIRPATH];
-	CHAR m_szCDPath[MAX_DIRPATH];
-	BAGEL_REG *m_pGameReg;
+	CHAR m_szSaveGameFileName[MAX_DIRPATH] = { 0 };
+	CHAR m_szInstallPath[MAX_DIRPATH] = { 0 };
+	CHAR m_szCDPath[MAX_DIRPATH] = { 0 };
+	const BagelReg *m_pGameReg = nullptr;
 
 #if BOF_MAC
 	static SHORT m_nVRefNum;
 #endif
-	INT m_nNumRetries;
-	INT m_nInstallCode;
-	BOOL m_bSavedGames;
+	INT m_nNumRetries = 20;
+	INT m_nInstallCode = 0;
+	BOOL m_bSavedGames = FALSE;
 
 	CBofString m_lpCmdLine;
 	CBofCursor m_cCursor;

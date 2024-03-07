@@ -28,13 +28,28 @@
 namespace Bagel {
 namespace SpaceBar {
 
+static const BagelReg SPACEBAR_REG = {
+	"The Space Bar",
+	".",
+	"SPACEBAR.INI",
+	"SPACEBAR.SAV",
+	4000000,
+	3,
+	16,
+	640,
+	480
+};
+
+
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-	BagelEngine(syst, gameDesc) {
+	BagelEngine(syst, gameDesc), _bagelApp(&SPACEBAR_REG) {
 }
 
 Common::Error SpaceBarEngine::run() {
-	// Initialize paletted graphics mode
-	initGraphics(640, 480);
+	// Initialize graphics mode
+	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	initGraphics(640, 480, &format);
+
 	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console

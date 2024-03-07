@@ -55,12 +55,6 @@ CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList = new CBofVH
 CBofString g_cHomeDir, g_cCacheDir;
 CBofWindow *g_pHackWindow;
 
-void CBagel::initStatics() {
-	g_cHomeDir = HOMEDIR_DFLT;
-	g_cCacheDir = "";
-	g_pHackWindow = nullptr;
-}
-
 // local functions
 VOID RemoveDoubleDelimeter(CHAR *pszBuf);
 
@@ -72,7 +66,7 @@ CBagel::CBagel() {
 	RegisterGame(nullptr);
 }
 
-CBagel::CBagel(BAGEL_REG *pGameReg) {
+CBagel::CBagel(const BagelReg *pGameReg) {
 	Assert(pGameReg != nullptr);
 
 	RegisterGame(pGameReg);
@@ -95,15 +89,14 @@ CBagel::~CBagel() {
 	m_pGameReg = nullptr;
 }
 
-VOID CBagel::RegisterGame(BAGEL_REG *pGameReg) {
+VOID CBagel::RegisterGame(const BagelReg *pGameReg) {
 	Assert(IsValidObject(this));
-
-	// Inits
-	m_pMainWnd = nullptr;          // no main window yet
 	m_pGameReg = pGameReg;
-	m_bSavedGames = FALSE;      // no saved games that we know about
-	m_szAppName[0] = '\0';      // Game name not yet determined
-	m_nNumRetries = 20;
+
+	// Init statics
+	g_cHomeDir = HOMEDIR_DFLT;
+	g_cCacheDir = "";
+	g_pHackWindow = nullptr;
 
 	// Use registration info to init this game object
 	if (pGameReg != nullptr) {
