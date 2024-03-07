@@ -745,13 +745,13 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 	_gfx.use(nullptr);
 
 #ifdef USE_IMGUI
-	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend *>(g_system);
+	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend *>(_system);
 	if (sdl_g_system) {
 		sdl_g_system->getGraphicsManager()->renderImGui(onImGuiRender);
 	}
 #endif
 
-	g_system->updateScreen();
+	_system->updateScreen();
 }
 
 void TwpEngine::updateSettingVars() {
@@ -819,6 +819,7 @@ Common::Error TwpEngine::run() {
 	_textDb->parseTsv(entry);
 
 	CursorMan.showMouse(false);
+	g_system->lockMouse(true);
 
 	_vm.reset(new Vm());
 	HSQUIRRELVM v = _vm->get();
@@ -845,7 +846,7 @@ Common::Error TwpEngine::run() {
 	uint time = _system->getMillis();
 	while (!shouldQuit()) {
 		Math::Vector2d camPos = _gfx.cameraPos();
-		while (g_system->getEventManager()->pollEvent(e)) {
+		while (_system->getEventManager()->pollEvent(e)) {
 			switch (e.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
 				switch ((TwpAction)e.customType) {
@@ -1006,7 +1007,7 @@ Common::Error TwpEngine::run() {
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		if (delta < 10) {
-			g_system->delayMillis(10 - delta);
+			_system->delayMillis(10 - delta);
 		}
 	}
 
@@ -1766,6 +1767,11 @@ int TwpEngine::runDialog(GUI::Dialog &dialog) {
 	int result = Engine::runDialog(dialog);
 	updateSettingVars();
 	return result;
+}
+
+void TwpEngine::pauseEngineIntern(bool pause) {
+	// Unlock the mouse so that the cursor is usable when the GMM opens
+	_system->lockMouse(!debugChannelSet(-1, kDebugConsole) && !pause);
 }
 
 ScalingTrigger::ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
