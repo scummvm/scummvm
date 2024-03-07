@@ -23,11 +23,15 @@
 #define BAGEL_SPACEBAR_H
 
 #include "bagel/bagel.h"
+#include "bagel/baglib/bagel.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
 class SpaceBarEngine : public BagelEngine {
+private:
+	CBagel _bagelApp;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
