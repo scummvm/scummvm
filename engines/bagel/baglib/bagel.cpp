@@ -147,8 +147,6 @@ ERROR_CODE CBagel::Initialize() {
 		m_nNumRetries = 100;
 	}
 
-	BOOL bInit;
-
 	LogInfo("Initializing BAGEL");
 
 	// Turn off System cursor
@@ -158,16 +156,13 @@ ERROR_CODE CBagel::Initialize() {
 	InitLocalFilePaths();
 
 	// Check for adequate system resources
-	bInit = VerifyRequirements();
+	VerifyRequirements();
 
 	// Check for Saved Games
 	m_bSavedGames = HaveSavedGames();
 
 	// If the game is installed, Initialize the hard disk drive file cache
 	if (m_nInstallCode != BAG_INSTALL_NONE && g_cCacheDir != g_cHomeDir) {
-#if BOF_MAC
-		m_nVRefNum = GetVolumeFromPath(g_cCacheDir.GetBuffer());
-#endif
 		ScanTree(g_cCacheDir.GetBuffer(), "*.*", GetCacheFileList());
 	}
 
@@ -484,160 +479,6 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 ERROR_CODE CBagel::VerifyRequirements() {
 	Assert(IsValidObject(this));
 	Assert(m_pGameReg != nullptr);
-
-	VOID *pBuf;
-
-	for (;;) {
-
-#if BOF_MAC
-		ULONG nFreeMem = GetFreeMem();
-		if (nFreeMem < m_pGameReg->m_lRamRequired) {
-
-			// Inform the user that there is not enough RAM to play this game
-
-			ReportError(ERR_MEMORY, "There is only %ld bytes of free memory available, but this game requires %ld bytes.  Please close all other applications before running %s.", nFreeMem, m_pGameReg->m_lRamRequired);
-			break;
-		}
-
-#else
-		// Check for minimum ram required to play the game
-		if ((pBuf = malloc(m_pGameReg->m_lRamRequired)) == nullptr) {
-			// Inform the user that there is not enough RAM to play this game
-
-			ReportError(ERR_MEMORY, "This game requires %ld bytes of free memory.  You should close all other applications before running %s.  If this does not work, you may want to try increasing your virtual memory space.",
-			            m_pGameReg->m_lRamRequired, m_pGameReg->m_pszGameName);
-
-			break;
-
-		} else {
-			free(pBuf);
-		}
-#endif
-
-		//
-		// Check disk space (need about 12Mb for saved games)
-		//
-
-#ifndef DEMO
-#if BOF_WINDOWS
-		CHAR szBuf[10];
-
-		szBuf[0] = m_szSaveGameFileName[0];
-		szBuf[1] = m_szSaveGameFileName[1];
-		szBuf[2] = m_szSaveGameFileName[2];
-		szBuf[3] = '\0';
-
-		LogInfo(BuildString("Free Disk Space on '%s' is %ld bytes", szBuf, GetFreeDiskSpace(szBuf)));
-		if (GetFreeDiskSpace(szBuf) < (LONG)(MAX_SAVEDGAMES * sizeof(ST_BAGEL_SAVE)) + 100000) {
-
-			ReportError(ERR_SPACE, "The SpaceBar requires approximately %ld bytes of free disk space for Saved Games.  Please free up some more space, and re-run The SpaceBar.", (MAX_SAVEDGAMES * sizeof(ST_BAGEL_SAVE)) + 100000);
-			break;
-		}
-#endif
-#endif  // !DEMO
-
-		// check virtual memory
-		//
-
-		// check for min OS version
-		//
-
-		// check for minimum graphics color depth and resolution
-		//
-
-		BOOL bUseDirectDraw;
-
-		// Assume we are not using direct draw
-		bUseDirectDraw = FALSE;
-
-#if 0 //BOF_WINDOWS
-		GetOption("UserOptions", "UseDirectDraw", &bUseDirectDraw, TRUE);
-#endif
-
-		//INT nActualDepth = 8;
-#if !BOF_MAC
-		if (!bUseDirectDraw && ScreenDepth() < m_pGameReg->m_nRequiredDepth) {
-#endif
-			// Make sure that we are operating in 256 colors (i.e. 8 bit).
-
-#if BOF_MAC
-			GDHandle    screenGD;
-			GWorldPtr   curWorld;
-
-			GetGWorld(&curWorld, &screenGD);
-
-			//  First off, handle the case where 8 bit color isn't even
-			//  supported.
-
-			if (!HasDepth(screenGD, 8, 0, 0)) {
-				ReportError(ERR_UNKNOWN, "The SpaceBar requires a monitor that can support 256 colors.");
-				ReportMacError(kNot8BitDevice, nullptr);
-				break;
-			}
-
-			// if our pixel depth is not 8 bit, then see if the user wants to switch, if
-			// they don't, then bomb out of the game.  If they do, then use set depth
-			// to switch it over.
-
-			if ((*(*screenGD)->gdPMap)->pixelSize != 8) {
-				if (QueryMacUser(kSwitchTo8BitColor)) {
-					OSErr oserr = SetDepth(screenGD, 8, 0, 0);
-					if (OS_ERROR(oserr)) {
-						ReportError(ERR_UNKNOWN, "The SpaceBar can not run in this color mode.");
-						ReportMacError(kErrorSwitchingTo8Bit, nullptr);
-						break;
-					}
-				} else {
-					ReportError(ERR_UNKNOWN, "User foolishly chose not to switch to 256 colors.");
-					break;
-				}
-			}
-
-			//nActualDepth = 8;
-#elif BOF_WINDOWS
-			// Inform the user that they must change the pixel depth in order
-			// to play this game, or we must change it for them.
-			if (::MessageBox(nullptr,
-			                 "Your display is currently set to 256 colors, but The Space Bar requires that your display be set to 16bit Color.  If you continue now, some parts of the game may not display correctly.  Continue anyway?",
-			                 "Display requirement failure",
-			                 MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
-				m_errCode = ERR_UNKNOWN;
-				break;
-			}
-#else
-			error("We want 256 colors in ScummVM");
-#endif
-#if !BOF_MAC
-		}
-#endif
-
-		if (!bUseDirectDraw && (ScreenHeight() != m_pGameReg->m_nRequiredHeight || ScreenWidth() != m_pGameReg->m_nRequiredWidth)) {
-#if BOF_MAC
-#if !USEDRAWSPROCKET
-			BofMessageBox(BuildString("For best performance, please change your video display to a resolution of (%d x %d).", m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight), "Invalid screen size");
-#endif
-#elif BOF_WINDOWS
-			if (::MessageBox(nullptr, BuildString("It is strongly recommended that this game be played in a video mode of %d x %d.  Your current video mode is %d x %d.  Continue anyway?",
-			                                      m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight, ScreenWidth(), ScreenHeight()),
-			                 "Invalid video mode", MB_YESNO | MB_ICONEXCLAMATION) == IDNO) {
-				m_errCode = ERR_UNKNOWN;
-				break;
-			}
-#else
-			error("Bad video mode");
-#endif
-		}
-
-
-		if (!bUseDirectDraw && (ScreenHeight() < m_pGameReg->m_nRequiredHeight || ScreenWidth() < m_pGameReg->m_nRequiredWidth)) {
-			// Inform the user that they must change the screen resolution in
-			// order to play this game, or we must change it for them.
-			//
-			ReportError(ERR_UNKNOWN, "This game requires a graphics resolution of (%d x %d)", m_pGameReg->m_nRequiredHeight, m_pGameReg->m_nRequiredWidth);
-			break;
-		}
-		break;
-	}
 
 	return m_errCode;
 }
