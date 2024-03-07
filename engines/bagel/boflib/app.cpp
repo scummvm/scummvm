@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "graphics/palette.h"
 
 #include "bagel/boflib/boffo.h"
@@ -29,6 +30,7 @@
 #include "bagel/boflib/timer.h"
 #include "bagel/boflib/gfx/text.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -145,44 +147,6 @@ ERROR_CODE CBofApp::PreInit() {
 		}
 	}
 
-#if BOFDISP
-	CBofWindow *pWnd;
-
-	// Allocate a default palette
-	//
-	if ((m_pDefPalette = new CBofPalette) != nullptr) {
-		m_pDefPalette->LoadPalette("ANIMOIDS.BMP");
-		//m_pDefPalette->CreateDefault(PAL_DEFAULT);
-
-		if (m_pPalette == nullptr)
-			m_pPalette = m_pDefPalette;
-
-	} else {
-		ReportError(ERR_MEMORY);
-	}
-
-	if ((pWnd = new CBofAppWindow()) != nullptr) {
-		CBofRect cRect(0, 0, m_nScreenDX - 1, m_nScreenDY - 1);
-
-#ifdef _DEBUG
-		cRect.SetRect(0, 0, 640 - 1, 480 - 1);
-#endif
-
-		pWnd->Create(m_szAppName, &cRect, nullptr);
-		pWnd->Show();
-
-		m_pWindow = pWnd;
-	} else {
-		ReportError(ERR_MEMORY);
-	}
-
-	CBofDisplayObject::Initialize();
-#endif
-
-	LogInfo(BuildString("CBofApp::PreInit - Available Physical Memory: %ld", GetFreePhysMem()));
-
-	LogInfo(BuildString("Initializing %s...", m_szAppName));
-
 	return m_errCode;
 }
 
@@ -195,112 +159,20 @@ ERROR_CODE CBofApp::Initialize() {
 ERROR_CODE CBofApp::RunApp() {
 	CBofWindow *pWindow;
 	INT i, nCount;
-
-	// jwl 08.08.96 add code for profiling.
-#if BOF_MAC && __profile__ && PROFILE_GAME
-	OSErr oserr = ::ProfilerInit(collectSummary, bestTimeBase, 300, 20);
-	Assert(oserr == noErr);
-	::ProfilerSetStatus(true);
-#endif
-
-	LogInfo(BuildString("CBofApp::RunApp - Available Physical Memory: %ld", GetFreePhysMem()));
-
-#if BOF_WINDOWS
-	MSG msg;
-
-#elif BOF_MAC
-	CBofMessage *pMessage;
-
-	EventRecord event;
-	Rect theRect;
-
-#endif
-
-#if BOFDISP
-	// You should have registered a main window by this point
-	Assert(m_pWindow != nullptr);
-#endif
+	Common::Event evt;
 
 	nCount = m_nIterations;
 
-	// Acquire and dispatch messages until a BM_QUIT message is received,
-	// or until there are too many errors
-	//
+	// Acquire and dispatch messages until we need to quit, or too many errors
 
-	while (CBofError::GetErrorCount() < MAX_ERRORS) {
-
-#if BOF_WINDOWS
-
-		// if there is a message for a window, then process it
-		//
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-
-#if BOF_DEBUG
-			if ((g_pDebugOptions != nullptr) && g_pDebugOptions->m_bShowMessages) {
-				LogInfo(BuildString("HWND1: %08lx, MSG: %08lx (%08lx, %08lx)", msg.hwnd, msg.message, msg.wParam, msg.lParam));
-			}
-#endif
-
-			if (msg.message == WM_QUIT)
-				break;
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
+		while (g_system->getEventManager()->pollEvent(evt)) {
+//			TranslateMessage(evt);
+//			DispatchMessage(evt);
 		}
 
-		// This 2nd Message hook is needed for Wave Mixing, because when
-		// we play a wave mix sound, that 1st message hook only gets MM_WOM_DONE
-		// messages, and the app looks halted until well after the sound stops.
-		// I put in this 2nd hook so that we can get other messages.
-		//
-		// If there is a message for the main window (or any of it's children),
-		// then process it.
-		//
-
-#elif BOF_MAC
-
-		const ULONG wneInterval = 15; // ticks between WNE calls
-
-		::OSEventAvail(0, &event);
-
-		if (event.where.h != m_prevMouse.h || event.where.v != m_prevMouse.v) {
-
-			//  synthesize a mouse moved event to take advantage of the existing
-			//  architecture for HandleMacEvent.
-			event.what = osEvt;
-			event.message = ((ULONG) mouseMovedMessage) << 24;
-
-			if (CBofWindow::HandleMacEvent(&event))
-				break;
-
-			m_prevMouse = event.where;
-		}
-
-		if (event.when >= m_nextWNETime) {
-
-			// if there is a message for a window, then process it
-
-//	        if (::WaitNextEvent(everyEvent, &event, 0xFFFFFFFF, hCursorRgn) != 0) {
-			if (::WaitNextEvent(everyEvent, &event, 0, nil) != 0) {
-
-				// Convert the Mac event into a message our CBofWindows can handle.
-				// HandleMacEvent returns TRUE when QUIT message is received.
-				//
-				if (CBofWindow::HandleMacEvent(&event))
-					break;
-			}
-
-			m_nextWNETime = event.when + wneInterval;
-		}
-
-		CBofWindow::HandleMacTimers();
-#endif
+		// Handle sounds and timers
 		CBofSound::AudioTask();
-
-#if BOFDISP
-		CBofDisplayWindow::HandleMessages();
-#endif
-
 		CBofTimer::HandleTimers();
 
 		if (nCount < 0)  {
@@ -309,21 +181,11 @@ ERROR_CODE CBofApp::RunApp() {
 				nCount = 1;
 
 		} else {
-
 			for (i = 0; i < nCount; i++) {
-
-				// give each window it's own main loop (sort-of)
-				//
+				// Give each window it's own main loop (sort-of)
 				pWindow = CBofWindow::GetWindowList();
 				while (pWindow != nullptr) {
-
 					if (pWindow->IsCreated()) {
-#if BOF_MAC
-						STBofPort stSavePort(pWindow->GetMacWindow());
-#if PALETTESHIFTFIX
-						CBofWindow::CheckPaletteShiftList();
-#endif
-#endif
 						pWindow->OnMainLoop();
 					}
 
@@ -333,57 +195,24 @@ ERROR_CODE CBofApp::RunApp() {
 
 			nCount = m_nIterations;
 		}
-	}
-#if BOF_MAC
 
-#if __profile__ && PROFILE_GAME
-	::ProfilerSetStatus(false);
-#if __POWERPC__
-	::ProfilerDump("\pMacintosh HD:spacebar_ppc.prof");
-#else
-	::ProfilerDump("\pMacintosh HD:spacebar_68k.prof");
-#endif
-	::ProfilerTerm();
-#endif
-#endif
+		g_system->delayMillis(10);
+	}
 
 	return m_errCode;
 }
 
 
 ERROR_CODE CBofApp::ShutDown() {
-	//Assert(IsValidObject(this));
-
 	return m_errCode;
 }
 
 
 ERROR_CODE CBofApp::PreShutDown() {
-#if BOF_MAC || BOF_WINMAC
-	ShowMenuBar();
-#endif
-#if USESOUNDMUSICSYS
-	MacQT::Finish();
-#endif
-
-#if BOF_MAC && USEDRAWSPROCKET
-	DSpShutdown();
-#endif
-
-#if BOF_MAC || BOF_WINMAC
-#define SCG_HACK 1
-#if SCG_HACK
-	::ExitToShell();
-#endif
-#endif
-
 	return m_errCode;
 }
 
-
 ERROR_CODE CBofApp::PostShutDown() {
-	LogInfo(BuildString("Shutting down %s...", m_szAppName));
-
 #if BOFDISP
 	CBofDisplayObject::CleanUp();
 #endif
@@ -394,14 +223,12 @@ ERROR_CODE CBofApp::PostShutDown() {
 	}
 
 	// No more palettes
-	//
 	m_pPalette = nullptr;
+
 	if (m_pDefPalette != nullptr) {
 		delete m_pDefPalette;
 		m_pDefPalette = nullptr;
 	}
-
-	LogInfo(BuildString("CBofApp::PostShutDown - Available Physical Memory: %ld", GetFreePhysMem()));
 
 	return m_errCode;
 }
