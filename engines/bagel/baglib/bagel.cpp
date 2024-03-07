@@ -100,27 +100,12 @@ VOID CBagel::RegisterGame(const BagelReg *pGameReg) {
 
 	// Use registration info to init this game object
 	if (pGameReg != nullptr) {
-		// keep application name
+		// Keep application name
 		SetAppName(pGameReg->m_pszGameName);
 
-		// Load this App's .INI file (if any)
-		//
-		if (pGameReg->m_pszOptionFile != nullptr) {
-			CHAR szBuf[MAX_DIRPATH], szFile[MAX_DIRPATH];
-
-#if BOF_MAC || BOF_WINMAC
-			// Storing the ini file in the preferences is such
-			// a better thing to do then putting it on the top level of the
-			// startup drive.
-			GetPrefsDir(szBuf);
-#else
-			GetSystemDir(szBuf);
-#endif
-			Common::sprintf_s(szFile, "%s%s%s", szBuf, PATH_DELIMETER, pGameReg->m_pszOptionFile);
-			RemoveDoubleDelimeter(szFile);
-
-			LoadOptionFile(szFile);
-		}
+		// Load this game's .ini file
+		if (pGameReg->m_pszOptionFile != nullptr)
+			LoadOptionFile(pGameReg->m_pszOptionFile);
 	}
 }
 
