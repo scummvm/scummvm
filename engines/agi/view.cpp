@@ -484,16 +484,21 @@ void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
 		// instead of error()ing out, we instead clip it
 		// At least required for possibly Manhunter 1 according to previous comment when leaving the arcade machine
 		// TODO: Check MH1
-		// TODO: This causes an issue in KQ1, when bowing to the king in room 53
-		//       Ego will face away from the king, because the scripts set the loop first and then the view
-		//       Loop is corrected by us, because at that time it's invalid. Was already present in 1.7.0
-		//       We should probably script-patch it out.
-		int16 requestedLoopNr = loopNr;
+		// WORKAROUND: This code caused an issue in KQ1 when bowing to the king in room 53. Bug #7045
+		// When ego finishes bowing, the script sets his view to 0 and loop to 1 so that he faces left,
+		// but it does this by setting the loop first and then the view. The previous view is 71 and only
+		// has one loop. This code treated that as an invalid set.loop and would clip it to 0, but that
+		// caused ego to face away from the king. For now, we detect this and set the view to 0 first.
+		if (getGameID() == GID_KQ1 && screenObj->currentViewNr == 71 && loopNr == 1) {
+			setView(screenObj, 0);
+		} else {
+			int16 requestedLoopNr = loopNr;
 
-		loopNr = screenObj->loopCount - 1;
+			loopNr = screenObj->loopCount - 1;
 
-		warning("Non-existent loop requested for screen object %d", screenObj->objectNr);
-		warning("view %d, requested loop %d -> clipped to loop %d", screenObj->currentViewNr, requestedLoopNr, loopNr);
+			warning("Non-existent loop requested for screen object %d", screenObj->objectNr);
+			warning("view %d, requested loop %d -> clipped to loop %d", screenObj->currentViewNr, requestedLoopNr, loopNr);
+		}
 	}
 
 	AgiViewLoop *curViewLoop = &_game.views[screenObj->currentViewNr].loop[loopNr];
