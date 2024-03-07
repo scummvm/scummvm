@@ -53,7 +53,7 @@ private:
 
 public:
 	bool _allowSaveGame = true;
-	bool _autoSave = false;
+	bool _autoSave = true;
 };
 
 } // namespace Twp
