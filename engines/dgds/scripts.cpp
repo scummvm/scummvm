@@ -765,7 +765,7 @@ void ADSInterpreter::findEndOrInitOp() {
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
 
-	//debug("ADSOP: 0x%04x", code);
+	debug("  ADSOP: 0x%04x", code);
 
 	switch (code) {
 	case 0x0001:
@@ -794,7 +794,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1330: { // IF_NOT_PLAYED, 2 params
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
-		//debug("ADS: if not played env %d seq %d", enviro, seqnum);
+		debug("ADS: if not played env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runPlayed)
 			skipToEndIf(scr);
@@ -842,7 +842,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_adsData._hitBranchOp = true;
 		return true;
 	case 0x1510: // PLAY_SCENE? 0 params
-		return false;
+		debug("ADS: 0x%04x hit branch op true", code);
+		_adsData._hitBranchOp = true;
+		return true;
 	case 0x1520: // PLAY_SCENE_ENDIF?, 0 params
 		debug("ADS: 0x%04x hit branch op", code);
 		_adsData._hitBranchOp = true;
@@ -877,6 +879,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			seq->_runCount = runCount - 1;
 		}
 		seq->_runPlayed++;
+		break;
+	}
+	case 0x2010: { // STOP_SCENE, 3 params (ttmenv, ttmseq, ?)
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		uint16 unk = scr->readUint16LE();
+		debug("ADS: stop seq env %d seq %d unk %d", enviro, seqnum, unk);
+		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		if (_currentTTMSeq)
+			_currentTTMSeq->_runFlag = kRunTypeStopped;
 		break;
 	}
 	case 0x2020: { // RESET SEQ, 2 params (env, seq)
@@ -918,7 +930,6 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1080: // if current seq countdown, 1 param
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
-	case 0x2010: // STOP_SCENE, 3 params (ttmenv, ttmseq, ?)
 	case 0x3010: // RANDOM_START, 0 params
 	case 0x3020: // RANDOM_??, 1 param
 	case 0x30FF: // RANDOM_END, 0 params
@@ -991,6 +1002,7 @@ bool ADSInterpreter::run() {
 		int16 state = _adsData._state[i];
 		int32 offset = _adsData._segments[i];
 		_adsData.scr->seek(offset);
+		offset += 2;
 		/*int16 segnum =*/ _adsData.scr->readSint16LE();
 		if (state & 8) {
 			state &= 0xfff7;

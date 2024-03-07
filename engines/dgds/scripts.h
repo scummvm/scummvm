@@ -73,16 +73,16 @@ struct TTMSeq {
 
 	int16 _enviro;
 	int16 _seqNum;
-	int16 _startFrame;
-	int16 _gotoFrame;
-	int16 _currentFrame;
-	int16 _lastFrame;
-	bool _selfLoop;
-	bool _executed;
-	uint32 _timeNext;
-	uint32 _timeCut;
+	int16 _startFrame;	// first frame in this sequence
+	int16 _gotoFrame;   // frame to GOTO (or -1 if not currently set)
+	int16 _currentFrame; // currently executing frame
+	int16 _lastFrame;	// previous frame processed (-1 if none)
+	bool _selfLoop;		// does the script frame loop back on itself
+	bool _executed;		// has the current frame already been run
+	uint32 _timeNext;	// time the next frame should be run
+	uint32 _timeCut;	// time to finish execution
 	Common::Rect _drawWin;
-	// these are just called "slot"s in the original
+	// these current ids are called "slot"s in the original
 	int16 _currentFontId; 	// aka slot 0
 	int16 _currentPalId;	// aka slot 1
 	int16 _currentSongId;	// aka slot 3
@@ -91,9 +91,9 @@ struct TTMSeq {
 	int16 _brushNum;
 	byte _drawColFG;
 	byte _drawColBG;
-	int16 _runPlayed;
-	int16 _runCount;
-	int16 _timeInterval;
+	int16 _runPlayed;		// number of times the sequence has been started from ADS
+	int16 _runCount;		// number of times to play the sequence before stopping
+	int16 _timeInterval;	// interval between frames
 	TTMRunType _runFlag;
 	int16 _scriptFlag;
 };
@@ -118,7 +118,7 @@ public:
 	// TODO: replace these with dynamic arrays - fixed arrays inherited from original.
 	int _state[80];
 	int _countdown[80];
-	// note: originals uses char * but we use offsets into script for less pointers..
+	// note: originals uses char * but we use offsets into script for less pointers. -1 is nullptr
 	int32 _segments[80];
 	int32 _charWhile[80];
 	Common::Array<struct TTMSeq *> _usedSeqs[80];
