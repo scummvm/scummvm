@@ -2487,7 +2487,7 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int quarterFrames) {
+void ScummEngine::waitForTimer(int quarterFrames, bool freezeMacGui) {
 	uint32 endTime, cur;
 	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
 
@@ -2512,7 +2512,7 @@ void ScummEngine::waitForTimer(int quarterFrames) {
 		towns_updateGfx();
 #endif
 
-		if (_macGui)
+		if (_macGui && !freezeMacGui)
 			_macGui->updateWindowManager();
 
 		_system->updateScreen();
