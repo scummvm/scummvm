@@ -15,6 +15,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Tandy CoCo3 version of Leisure Suit Larry 1 not starting.
    - Fixed Tandy CoCo3 unofficial ports not starting.
    - Fixed Amiga menus in Space Quest 1, Manhunter 1, and Manhunter 2.
+   - Fixed Graham facing away from the king in King's Quest 1.
+   - Fixed Alexander getting stuck on the stairs in King's Quest 3.
    - Fixed ducks not jumping at the start of Donald Duck's Playground.
    - Fixed instant death in fan game "Phil's Quest: The Search for Tolbaga".
    - Fixed buttons freezing in fan game "DG: The AGIMouse Adventure".
