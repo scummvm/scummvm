@@ -66,7 +66,7 @@ ERROR_CODE CBofOptions::Load(VOID) {
 	COption *pNewOption;
 	ERROR_CODE errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
 	// free any previous option info

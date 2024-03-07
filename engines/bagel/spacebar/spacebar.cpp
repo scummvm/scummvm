@@ -31,8 +31,8 @@ namespace SpaceBar {
 static const BagelReg SPACEBAR_REG = {
 	"The Space Bar",
 	".",
-	"SPACEBAR.INI",
-	"SPACEBAR.SAV",
+	"spacebar.ini",
+	"spacebar.sav",
 	4000000,
 	3,
 	16,

@@ -237,8 +237,10 @@ VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
 
 	if (pPalette != nullptr) {
-		const HPALETTE &pal = pPalette->GetPalette();
-		g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
+		if (g_system->getScreenFormat().bytesPerPixel == 1) {
+			const HPALETTE &pal = pPalette->GetPalette();
+			g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
+		}
 
 	} else {
 		// Use default palette
