@@ -115,6 +115,13 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 
 		_game._vm->_text->statusDraw();
 		_game._vm->_text->promptRedraw();
+
+		// WORKAROUND: LSL1 has a script bug where exiting room 17 via the staircase
+		// leaves a flag set that ignores priority triggers in all rooms. This allows
+		// the player to leave the store (room 21) without paying. Bug #13137
+		if (getGameID() == GID_LSL1) {
+			setFlag(36, 0); // clear "ignore special" flag on every room change
+		}
 	}
 }
 
