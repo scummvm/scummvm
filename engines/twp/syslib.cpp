@@ -523,7 +523,7 @@ static SQInteger exCommand(HSQUIRRELVM v) {
 		g_twp->_saveGameManager->_autoSave = enabled != 0;
 	} break;
 	case EX_AUTOSAVE: {
-		if (g_twp->_saveGameManager->_autoSave) {
+		if (g_twp->_saveGameManager->_autoSave && g_twp->_saveGameManager->_allowSaveGame) {
 			g_twp->saveGameState(0, "", true);
 		}
 	} break;
