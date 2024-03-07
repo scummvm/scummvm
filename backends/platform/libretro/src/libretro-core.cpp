@@ -154,7 +154,23 @@ static void audio_run(void) {
 	}
 
 	samples_produced = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) audio_sample_buffer, samples_to_read * 2 * sizeof(int16));
-	audio_status = samples_produced ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
+
+	/* Workaround as currently there's no way to detect silence-only buffers from the mixer */
+	if (samples_produced) {
+		int i = 0;
+		for (; i < samples_produced; i += 2)
+			/* SID streams constant crap */
+			if (READ_UINT16(audio_sample_buffer + i) > 32)
+				break;
+		samples_produced = i >= samples_produced ? 0 : samples_produced;
+	}
+
+	if (samples_produced)
+		audio_status &= ~AUDIO_STATUS_MUTE;
+	else {
+		audio_status |= AUDIO_STATUS_MUTE;
+		return;
+	}
 
 	/* Workaround for a RetroArch audio driver
 	 * limitation: a maximum of 1024 frames
