@@ -2167,7 +2167,7 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_INDY3 || _game.id == GID_LOOM || _game.id == GID_MONKEY)) {
-#if 1
+#if 0
 		if (_game.id == GID_LOOM) {
 			_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
 			((Player_V3M *)_musicEngine)->init(macInstrumentFile);
