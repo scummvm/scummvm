@@ -156,7 +156,7 @@ void MacGuiImpl::initialize() {
 
 	if (_vm->isUsingOriginalGUI()) {
 		_windowManager->setMenuHotzone(Common::Rect(640, 23));
-		_windowManager->setMenuDelay(250000);
+		_windowManager->setMenuDelay(250);
 
 		Common::MacResManager resource;
 		Graphics::MacMenu *menu = _windowManager->addMenu();
