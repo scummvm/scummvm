@@ -147,25 +147,6 @@ public:
 #endif
 };
 
-/**
- * The actual window that is used as our application
- */
-class CBofAppWindow : public CBofWindow {
-protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
-
-	virtual VOID OnRButtonDown(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonUp(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint);
-};
-
 // Global routines
 //
 VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lParam2);
