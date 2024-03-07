@@ -102,7 +102,7 @@ Screen::Screen(PinkEngine *vm)
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
-	_wm->setMenuDelay(250000);
+	_wm->setMenuDelay(250);
 	_wm->setEngineRedrawCallback(this, redrawCallback);
 
 	_textFont = nullptr;
