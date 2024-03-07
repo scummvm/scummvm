@@ -54,7 +54,7 @@ MODULE_OBJS := \
 	players/player_he.o \
 	players/player_mac.o \
 	players/player_mac_indy3.o \
-	players/player_mac_loom.o \
+	players/player_mac_loom_monkey.o \
 	players/player_mac_new.o \
 	players/player_mod.o \
 	players/player_nes.o \

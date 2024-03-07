@@ -32,6 +32,12 @@ namespace MacSound {
 enum {
 	kQualityAuto = 0,
 	kQualityLowest = 1,
+	kHardwareRatingLow = 0,
+	kHardwareRatingMedium = 3,
+	kHardwareRatingHigh = 6,
+	kQualitySelectionGood = 1,
+	kQualitySelectionBetter = 2,
+	kQualitySelectionBest = 3,
 	kQualityHighest = 9
 };
 

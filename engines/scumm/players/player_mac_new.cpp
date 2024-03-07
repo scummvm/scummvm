@@ -1050,7 +1050,7 @@ const uint8 _fourToneSynthWaveForm[256] = {
 const uint32 _fourToneSynthWaveFormSize = sizeof(_fourToneSynthWaveForm);
 
 class Indy3MacSnd;
-class LoomMacSnd;
+class LoomMonkeyMacSnd;
 
 template<typename T> class MusicEngineImpl : public MusicEngine {
 public:
@@ -1138,7 +1138,8 @@ MusicEngine *createPlayer(ScummEngine *vm) {
 		res = new MusicEngineImpl<Indy3MacSnd>(vm, vm->_mixer);
 		break;
 	case GID_LOOM:
-		res = new MusicEngineImpl<LoomMacSnd>(vm, vm->_mixer);
+	case GID_MONKEY:
+		res = new MusicEngineImpl<LoomMonkeyMacSnd>(vm, vm->_mixer);
 		break;
 	default:
 		break;

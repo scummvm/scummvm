@@ -367,12 +367,13 @@ public:
 	MusicChannel *getMusicChannel(uint8 id) const;
 };
 
-class LoomMacSnd final : public VblTaskClientDriver, public MacLowLevelPCMDriver::CallbackClient {
+class MacSndLoader;
+class LoomMonkeyMacSnd final : public VblTaskClientDriver, public MacLowLevelPCMDriver::CallbackClient {
 private:
-	LoomMacSnd(ScummEngine *vm, Audio::Mixer *mixer);
+	LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer);
 public:
-	~LoomMacSnd();
-	static Common::SharedPtr<LoomMacSnd> open(ScummEngine *scumm, Audio::Mixer *mixer);
+	~LoomMonkeyMacSnd();
+	static Common::SharedPtr<LoomMonkeyMacSnd> open(ScummEngine *scumm, Audio::Mixer *mixer);
 	bool startDevice(uint32 outputRate, uint32 pcmDeviceRate, uint32 feedBufferSize, bool enableInterpolation, bool stereo, bool internal16Bit);
 
 	void setMusicVolume(int vol);
@@ -393,7 +394,7 @@ public:
 	void sndChannelCallback(uint16 arg1, const void *arg2) override;
 
 private:
-	void sendSoundCommands(const byte *data, int timeStamp);
+	void sendSoundCommands(int timeStamp);
 	void stopActiveSound();
 	void setupChannels();
 	void disposeAllChannels();
@@ -401,32 +402,16 @@ private:
 	void detectQuality();
 	bool isSoundCardType10() const;
 
-	struct Instrument {
-	public:
-		Instrument(uint16 id, Common::SeekableReadStream *&in, Common::String &&name);
-		~Instrument() { _res.reset(); }
-		const MacLowLevelPCMDriver::PCMSound *data() const { return &_snd; }
-		uint16 id() const { return _id; }
-	private:
-		uint16 _id;
-		Common::SharedPtr<const byte> _res;
-		Common::String _name;
-		MacLowLevelPCMDriver::PCMSound _snd;
-	};
-
-	bool loadInstruments();
-	const Common::SharedPtr<Instrument> *findInstrument(uint16 id) const;
-	Common::Array<Common::SharedPtr<Instrument> > _instruments;
-
 	int _curSound;
+	int _restartSound;
+	int _curSoundSaveVar;
 	int _songTimer;
 	byte _songTimerInternal;
-	byte *_soundUsage;
 	byte *_chanConfigTable;
 	const int _idRangeMax;
+	const byte _saveVersionChange;
+	const byte _legacySaveUnits;
 	bool _mixerThread;
-
-	MacLowLevelPCMDriver *_sdrv;
 
 	int _machineRating;
 	int _selectedQuality;
@@ -438,13 +423,15 @@ private:
 	MacLowLevelPCMDriver::ChanHandle _musChannels[4];
 
 	MacPlayerAudioStream *_macstr;
+	MacSndLoader *_loader;
+	MacLowLevelPCMDriver *_sdrv;
 	Audio::SoundHandle _soundHandle;
-	MacPlayerAudioStream::CallbackProc _songTimerUpdt;
+	MacPlayerAudioStream::CallbackProc _vblTskProc;
 	MacLowLevelPCMDriver::ChanCallback _chanCbProc;
 
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
-	static Common::WeakPtr<LoomMacSnd> *_inst;
+	static Common::WeakPtr<LoomMonkeyMacSnd> *_inst;
 
 	byte _curChanConfig;
 	byte _chanUse;
@@ -452,21 +439,6 @@ private:
 	Audio::Mixer::SoundType _curSndType;
 	Audio::Mixer::SoundType _lastSndType;
 	byte _chanPlaying;
-
-	struct SoundConfig {
-		SoundConfig(LoomMacSnd *pl) : player(pl), sndRes6(0), switchable(0), sndRes10(0), chanSetup(0), timbre(0) {
-			assert(player);
-			memset(instruments, 0, sizeof(instruments));
-		}
-		void load(const byte *data);
-		byte sndRes6;
-		byte switchable;
-		byte sndRes10;
-		uint16 chanSetup;
-		uint16 timbre;
-		const Common::SharedPtr<Instrument> *instruments[5];
-		LoomMacSnd *player;
-	} _soundConfig;
 };
 
 extern const uint8 _fourToneSynthWaveForm[256];
