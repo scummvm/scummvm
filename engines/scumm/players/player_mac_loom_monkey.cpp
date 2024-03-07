@@ -641,7 +641,8 @@ void LoomMonkeyMacSnd::saveLoadWithSerializer(Common::Serializer &ser) {
 void LoomMonkeyMacSnd::restoreAfterLoad() {
 	int sound = _curSoundSaveVar;
 	stopActiveSound();
-	startSound(sound);
+	if (sound)
+		startSound(sound);
 }
 
 void LoomMonkeyMacSnd::vblCallback() {
