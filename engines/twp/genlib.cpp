@@ -243,10 +243,9 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 	} else {
 		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
-	Math::Vector2d halfScreen(g_twp->_room->getScreenSize() / 2.f);
 	debugC(kDebugGenScript, "cameraPanTo: (%f,%f), dur=%f, method=%d", pos.getX(), pos.getY(), duration, interpolation);
 	g_twp->follow(nullptr);
-	g_twp->_camera->panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
+	g_twp->_camera->panTo(pos, duration, interpolation);
 	return 0;
 }
 
