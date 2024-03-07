@@ -33,28 +33,25 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 Common::Error SpaceBarEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	// Initialize paletted graphics mode
+	initGraphics(640, 480);
 	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	// Create the app
-	CBofApp app;
-
 	// Initialize
-	app.PreInit();
-	app.Initialize();
+	_bagelApp.PreInit();
+	_bagelApp.Initialize();
 
 	// Run the app
-	if (!app.ErrorOccurred())
-		app.RunApp();
+	if (!_bagelApp.ErrorOccurred())
+		_bagelApp.RunApp();
 
 	// Shutdown
-	app.PreShutDown();
-	app.ShutDown();
-	app.PostShutDown();
+	_bagelApp.PreShutDown();
+	_bagelApp.ShutDown();
+	_bagelApp.PostShutDown();
 
 	return Common::kNoError;
 }
