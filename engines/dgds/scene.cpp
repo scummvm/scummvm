@@ -978,6 +978,10 @@ bool SDSScene::checkDialogActive() {
 		if (dialog.hasFlag(kDlgFlagVisible)) {
 			if (dialog._hideTime > 0 && dialog._hideTime < timeNow) {
 				dialog.clearFlag(kDlgFlagVisible);
+				for (auto &action : dialog._subStrings) {
+					if (action.strStart == action.strEnd)
+						runOps(action.sceneOpList);
+				}
 				dialog._hideTime = 0;
 				if (dialog._nextDialogNum) {
 					showDialog(dialog._nextDialogNum);

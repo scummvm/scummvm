@@ -169,7 +169,7 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		_adsInterp->load(_scene->getAdsFile());
 
 	_scene->runEnterSceneOps();
-	//debug("%s", _scene->dump("").c_str());
+	debug("%s", _scene->dump("").c_str());
 	return true;
 }
 

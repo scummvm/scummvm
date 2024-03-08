@@ -698,15 +698,38 @@ bool ADSInterpreter::playScene() {
 	return _ttmInterpreter->run(*env, *_currentTTMSeq);
 }
 
-void ADSInterpreter::skipToEndIf(Common::SeekableReadStream *scr) {
+bool ADSInterpreter::skipSceneLogicBranch() {
+	Common::SeekableReadStream *scr = _adsData.scr;
+	bool result = true;
 	while (scr->pos() < scr->size()) {
 		uint16 op = scr->readUint16LE();
-		if (op == 0x1520)
+		if (op == 0x1510 || op == 0x1500) {
 			scr->seek(-2, SEEK_CUR);
-		if (op == 0 || op == 0x1520)
-			return;
-		scr->skip(numArgs(op) * 2);
+			return true;
+		} else if (op == 0 || op == 0xffff) {
+			return false;
+		} else if ((op & 0xff0f) == 0x1300) {
+			// a 0x13x0 logic op
+			error("TODO: Implement nested ADS condition handling");
+		} else {
+			scr->skip(numArgs(op) * 2);
+		}
 	}
+	return result && scr->pos() < scr->size();
+}
+
+bool ADSInterpreter::skipToEndIf() {
+	Common::SeekableReadStream *scr = _adsData.scr;
+	bool result = skipSceneLogicBranch();
+	if (result) {
+		uint16 op = scr->readUint16LE();
+		if (op == 0x1500) {
+			result = runUntilBranchOpOrEnd();
+		}
+		// don't rewind - the calls to this should always return ptr+2
+		//scr->seek(-2, SEEK_CUR);
+	}
+	return result;
 }
 
 TTMEnviro *ADSInterpreter::findTTMEnviro(int16 enviro) {
@@ -779,8 +802,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if runtype 5 env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runFlag != kRunType5)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1320: { // IF not runtype 5, 2 params
 		enviro = scr->readUint16LE();
@@ -788,8 +812,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if not runtype 5 env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runFlag == kRunType5)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1330: { // IF_NOT_PLAYED, 2 params
 		enviro = scr->readUint16LE();
@@ -797,8 +822,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if not played env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runPlayed)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1340: { // IF_PLAYED, 2 params
 		enviro = scr->readUint16LE();
@@ -806,8 +832,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if played env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && !seq->_runPlayed)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1350: { // IF_FINISHED, 2 params
 		enviro = scr->readUint16LE();
@@ -815,8 +842,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if finished env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runFlag != kRunTypeFinished)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1360: { // IF_NOT_RUNNING, 2 params
 		enviro = scr->readUint16LE();
@@ -824,8 +852,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if not running env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && seq->_runFlag != kRunTypeStopped)
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1370: { // IF_RUNNING, 2 params
 		enviro = scr->readUint16LE();
@@ -833,8 +862,9 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug("ADS: if running env %d seq %d", enviro, seqnum);
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (seq && (seq->_runFlag != kRunType1 && seq->_runFlag != kRunTypeMulti && seq->_runFlag != kRunTypeTimeLimited))
-			skipToEndIf(scr);
-		break;
+			return skipToEndIf();
+		else
+			return runUntilBranchOpOrEnd();
 	}
 	case 0x1500: // ? IF ?, 0 params
 		debug("ADS: Unimplemented ADS branch logic opcode 0x1500");
@@ -1106,12 +1136,15 @@ bool ADSInterpreter::runUntilBranchOpOrEnd() {
 	bool more = true;
 	do {
 		uint16 code = scr->readUint16LE();
+		if (code == 0xffff)
+			return false;
 		more = handleOperation(code, scr);
+		// FIXME: Breaking on hitBranchOp here doesn't work - probably need to fix the IF handling properly.
 	} while (!_adsData._hitBranchOp && more && scr->pos() < scr->size());
 
 	_adsData._hitBranchOp = false;
 
-	return true;
+	return more;
 }
 
 void ADSInterpreter::setHitTTMOp0110() {

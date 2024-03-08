@@ -165,7 +165,8 @@ public:
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
 	bool playScene();
-	void skipToEndIf(Common::SeekableReadStream *scr);
+	bool skipToEndIf();
+	bool skipSceneLogicBranch();
 	TTMSeq *findTTMSeq(int16 enviro, int16 seq);
 	TTMEnviro *findTTMEnviro(int16 enviro);
 	bool runUntilBranchOpOrEnd();
