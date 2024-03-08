@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,29 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
+#ifndef BAGEL_SPACEBAR_FULL_WND_H
+#define BAGEL_SPACEBAR_FULL_WND_H
 
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/baglib/storage_dev_win.h"
+#include "bagel/baglib/object.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
-
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
-
+class SBarFullWnd : public CBagStorageDevWnd {
 public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
+	SBarFullWnd();
+
+	virtual ERROR_CODE Attach();
+	virtual ERROR_CODE Detach();
+
+	virtual VOID OnTimer(UINT nTimerId);
+
+	VOID OnMouseMove(UINT nFlags, CBofPoint *);
+
+	BOOL m_bAllowEventWorld;
+
+	static CBagObject *m_pWieldedObject;
 };
 
 } // namespace SpaceBar

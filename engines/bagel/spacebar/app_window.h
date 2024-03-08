@@ -26,6 +26,7 @@
 #include "bagel/boflib/gui/window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 /**
  * The actual window that is used as our application
@@ -46,6 +47,7 @@ protected:
 	virtual VOID OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 };
 
+} // namespace SpaceBar
 } // namespace Bagel
 
 #endif

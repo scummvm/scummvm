@@ -71,9 +71,7 @@ namespace Bagel {
 extern BOOL g_bGetVilVars;
 extern BOOL g_bUseInitLoc;
 extern CBofWindow *g_pHackWindow;
-extern BOOL g_bPauseTimer;
 static BOOL g_bAllowRestore = FALSE;
-extern BOOL g_bAllowPaint;
 
 BOOL g_bRestoreObjList = TRUE;
 

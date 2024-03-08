@@ -45,7 +45,6 @@ class CBofBitmap;
 class CBofTimerPacket;
 
 class CBofWindow : public CLList, public CBofObject, public CBofError {
-
 public:
 	/**
 	 * Default constructor
@@ -616,6 +615,8 @@ private:
 #if BOF_MAC || BOF_WINMAC
 // VOID    SetPaintWhite(BOOL bWhite);
 #endif
+
+extern CBofWindow *g_pHackWindow;
 
 } // namespace Bagel
 

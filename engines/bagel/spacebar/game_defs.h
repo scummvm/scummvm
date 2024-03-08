@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,28 +20,25 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
-
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#ifndef BAGEL_SPACEBAR_GAME_DEFS_H
+#define BAGEL_SPACEBAR_GAME_DEFS_H
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+#define GAMEWINDOW			CMainWindow
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
+#define TOKEN_GAME_SDEV		"<default>"
+#define CLASS_GAME_SDEV		CMainWindow
 
-public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
-};
+#define TOKEN_SDEV_1		"INV"
+#define CLASS_SDEV_1		CBagInv
+#define TOKEN_SDEV_2		"PDA"
+#define CLASS_SDEV_2		CBagPDA
+#define TOKEN_SDEV_3		"STASH"
+#define CLASS_SDEV_3		CBagStash
+#define TOKEN_SDEV_4		"MAP"
+#define CLASS_SDEV_4		CBagMap
 
 } // namespace SpaceBar
 } // namespace Bagel

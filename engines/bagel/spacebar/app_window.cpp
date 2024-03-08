@@ -24,6 +24,7 @@
 #include "bagel/boflib/gui/display_window.h"
 
 namespace Bagel {
+namespace SpaceBar {
 
 VOID CBofAppWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
@@ -98,4 +99,5 @@ VOID CBofAppWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	CBofDisplayWindow::HandleKeyHit(lKey, lRepCount);
 }
 
+} // namespace SpaceBar
 } // namespace Bagel

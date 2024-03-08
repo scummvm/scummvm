@@ -613,6 +613,9 @@ public:
 	VOID RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
 };
 
+extern BOOL g_bAllowPaint;
+extern CBagStorageDevWnd *g_pLastWindow;
+
 } // namespace Bagel
 
 #endif

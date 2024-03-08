@@ -23,10 +23,20 @@
 #include "engines/util.h"
 #include "bagel/console.h"
 #include "bagel/spacebar/spacebar.h"
+#include "bagel/spacebar/master_win.h"
 #include "bagel/boflib/app.h"
+#include "bagel/baglib/start_dialog.h"
+#include "bagel/baglib/opt_window.h"
+#include "bagel/baglib/buttons.h"
+#include "bagel/boflib/gui/movie.h"
 
 namespace Bagel {
 namespace SpaceBar {
+
+#define LOGOSMK1 		"$SBARDIR\\INTRO\\LOGO1.SMK"
+#define LOGOSMK2 		"$SBARDIR\\INTRO\\LOGO2.SMK"
+#define LOGOSMK3   		"$SBARDIR\\INTRO\\LOGO3.SMK"
+#define LOGOSMK3EX 		"$SBARDIR\\INTRO\\LOGO3EX.SMK"
 
 static const BagelReg SPACEBAR_REG = {
 	"The Space Bar",
@@ -40,9 +50,225 @@ static const BagelReg SPACEBAR_REG = {
 	480
 };
 
-
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-	BagelEngine(syst, gameDesc), _bagelApp(&SPACEBAR_REG) {
+	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+}
+
+ERROR_CODE SpaceBarEngine::Initialize() {
+	Assert(IsValidObject(this));
+
+	CBagel::Initialize();
+
+	if (!ErrorOccurred()) {
+		CSBarMasterWin *pGameWindow;
+		BOOL bShowLogo;
+
+		bShowLogo = TRUE;
+
+		if ((pGameWindow = new CSBarMasterWin()) != NULL) {
+
+			// This is the primary game window
+			SetMainWindow(pGameWindow);
+
+			// Init Miles Sound System for Mono, 22kHz, 8bit
+			// NOTE: This cannot be called until after the 1st Window has been
+			// created.
+			//
+			InitializeSoundSystem(1, 22050, 8);
+
+
+			// Use DirectDraw
+			//
+#if BOF_WINDOWS && BOF_DIRECTDRAW
+
+			BOOL bUseDirectDraw;
+
+			GetOption("UserOptions", "UseDirectDraw", &bUseDirectDraw, TRUE);
+
+			if (bUseDirectDraw) {
+				HRESULT ddrval;
+
+				if ((ddrval = DirectDrawCreate(NULL, &g_pDD, NULL)) == DD_OK) {
+
+					if ((ddrval = g_pDD->SetCooperativeLevel(pGameWindow->GetHandle(), DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX)) == DD_OK) {
+
+						// Set specified screen resolution (DirectDraw)
+						//
+						if (g_pDD->SetDisplayMode(m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight, m_pGameReg->m_nRequiredDepth) == DD_OK) {
+
+							// Reset screen info
+							//
+							m_nScreenDX = m_pGameReg->m_nRequiredWidth;
+							m_nScreenDY = m_pGameReg->m_nRequiredHeight;
+							m_nColorDepth = m_pGameReg->m_nRequiredDepth;
+						}
+
+					} else {
+
+						ReportError(ERR_UNKNOWN, "SetCooperativeLevel() failed with error code %ld", ddrval);
+					}
+
+				} else {
+
+					ReportError(ERR_UNKNOWN, "Could not create a DirectDraw Session: %ld", ddrval);
+
+					if (g_pDD != NULL) {
+						g_pDD->Release();
+						g_pDD = NULL;
+					}
+				}
+			}
+#endif
+
+
+			// BCW - 12/11/96 07:05 pm
+			// Hack to fix our in-ability to change the volume of the 1st midi
+			// file played.
+			//
+#if !BOF_MAC
+			{
+				CBofSound cSound(pGameWindow, BuildSysDir("1.MID"), SOUND_MIDI);
+				cSound.SetVolume(0);
+				cSound.Play();
+				cSound.Stop();
+			}
+#endif
+			CBofBitmap *pBmp;
+
+			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != NULL) {
+				pBmp->FillRect(NULL, COLOR_BLACK);
+			} else {
+				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
+			}
+
+			pGameWindow->Show();
+			pGameWindow->ValidateRect(NULL);
+
+			// Paint the screen black
+			//
+			if (pBmp != NULL) {
+				pBmp->Paint(pGameWindow, 0, 0);
+			}
+			BOOL bRestart;
+
+			bRestart = TRUE;
+			if (HaveSavedGames()) {
+				bRestart = FALSE;
+
+				CBagStartDialog cDlg(BuildSysDir("START.BMP"), NULL, pGameWindow);
+				INT nRetVal;
+
+				CBofWindow *pLastWin = g_pHackWindow;
+				g_pHackWindow = &cDlg;
+
+				nRetVal = cDlg.DoModal();
+
+				g_pHackWindow = pLastWin;
+
+				switch (nRetVal) {
+				case RESTORE_BTN:
+					break;
+
+				case RESTART_BTN:
+					bRestart = TRUE;
+
+					// Hide that dialog
+					//
+					if (pBmp != NULL) {
+						pBmp->Paint(pGameWindow, 0, 0);
+					}
+					break;
+
+				case QUIT_BTN:
+					// Hide that dialog
+					//
+					if (pBmp != NULL) {
+						pBmp->Paint(pGameWindow, 0, 0);
+					}
+					pGameWindow->Close();
+					break;
+				}
+			}
+
+			if (bRestart) {
+
+				// Should we show the intro movies?
+				GetOption("Startup", "ShowLogo", &bShowLogo, TRUE);
+
+				// Play intro movies, logo screens, etc...
+				// (Unless user holds down the shift key, or ShowLogo=0 in SPACEBAR.INI)
+				//
+				if (bShowLogo && !IsKeyDown(BKEY_SHIFT)) {
+
+					CBofString cString(LOGOSMK1);
+					MACROREPLACE(cString);
+
+					// Play the movie only if it exists
+					//
+					if (FileExists(cString.GetBuffer())) {
+						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						if (pBmp != NULL) {
+							pBmp->Paint(pGameWindow, 0, 0);
+						}
+					}
+
+					cString = LOGOSMK2;
+					MACROREPLACE(cString);
+					if (FileExists(cString.GetBuffer())) {
+						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						if (pBmp != NULL) {
+							pBmp->Paint(pGameWindow, 0, 0);
+						}
+					}
+
+					// Use hi-res movie if user has a fast machine
+					//
+					cString = LOGOSMK3;
+					if (GetMachineSpeed() < 100) {
+						cString = LOGOSMK3EX;
+					}
+					MACROREPLACE(cString);
+					if (FileExists(cString.GetBuffer())) {
+						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						if (pBmp != NULL) {
+							pBmp->Paint(pGameWindow, 0, 0);
+						}
+					}
+				}
+
+				// Start a new game (In entry vestible)
+				pGameWindow->NewGame();
+			}
+
+			if (pBmp != NULL) {
+				delete pBmp;
+			}
+
+		} else {
+			ReportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
+		}
+	}
+
+	return(m_errCode);
+}
+
+ERROR_CODE SpaceBarEngine::ShutDown() {
+	CBagel::ShutDown();
+
+	// No more Miles Sound System
+	//
+	ShutDownSoundSystem();
+
+#if BOF_WINDOWS && BOF_DIRECTDRAW
+	// Get rid of the direct draw object
+	//
+	if (g_pDD != NULL) {
+		g_pDD->Release();
+		g_pDD = NULL;
+	}
+#endif
+
+	return m_errCode;
 }
 
 Common::Error SpaceBarEngine::run() {
@@ -56,17 +282,17 @@ Common::Error SpaceBarEngine::run() {
 	setDebugger(new Console());
 
 	// Initialize
-	_bagelApp.PreInit();
-	_bagelApp.Initialize();
+	PreInit();
+	Initialize();
 
 	// Run the app
-	if (!_bagelApp.ErrorOccurred())
-		_bagelApp.RunApp();
+	if (!ErrorOccurred())
+		RunApp();
 
 	// Shutdown
-	_bagelApp.PreShutDown();
-	_bagelApp.ShutDown();
-	_bagelApp.PostShutDown();
+	PreShutDown();
+	ShutDown();
+	PostShutDown();
 
 	return Common::kNoError;
 }

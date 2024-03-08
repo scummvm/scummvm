@@ -115,19 +115,19 @@ public:
 	 * Initializes BAGEL, checks system resources, etc...
 	 * @return          Error return code
 	 */
-	virtual ERROR_CODE Initialize();
+	ERROR_CODE Initialize() override;
 
 	/**
 	 * Provides main message loop (MainEventLoop)
 	 * @return          Error return Code.
 	 */
-	virtual ERROR_CODE RunApp();
+	ERROR_CODE RunApp() override;
 
 	/**
 	 * Performs cleanup and destruction of Bagel object
 	 * @return          Error return Code.
 	 */
-	virtual ERROR_CODE ShutDown();
+	ERROR_CODE ShutDown() override;
 
 	virtual ERROR_CODE InitializeSoundSystem(WORD nChannels = 1, DWORD nFreq = 11025, WORD nBitsPerSample = 8);
 	virtual ERROR_CODE ShutDownSoundSystem();

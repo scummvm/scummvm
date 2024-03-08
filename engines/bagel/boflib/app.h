@@ -123,6 +123,12 @@ public:
 		return m_cCursorList.GetCount();
 	}
 
+	static ULONG GetMachineSpeed(VOID) {
+		// What is the system's power level? It's over 9000!
+		return 9001;
+	}
+
+
 	static CBofApp *GetApp() {
 		return m_pBofApp;
 	}
