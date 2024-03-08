@@ -156,8 +156,8 @@ Common::String GameItem::dump(const Common::String &indent) const {
 			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
 			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
 			_iconNum, field12_0x28, _flags, field14_0x2c);
-	str += _dumpStructList(indent, "oplist5", opList5);
-	str += _dumpStructList(indent, "oplist6", opList6);
+	str += _dumpStructList(indent, "opList5", opList5);
+	str += _dumpStructList(indent, "opList6", opList6);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -172,7 +172,7 @@ Common::String MouseCursor::dump(const Common::String &indent) const {
 Common::String SceneStruct4::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneStruct4<%d %d", indent.c_str(), val1, val2);
 
-	str += _dumpStructList(indent, "oplist", opList);
+	str += _dumpStructList(indent, "opList", opList);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -181,7 +181,7 @@ Common::String SceneStruct4::dump(const Common::String &indent) const {
 
 Common::String SceneTrigger::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sSceneTrigger<num %d %s", indent.c_str(), _num, _enabled ? "enabled" : "disabled");
-	str += _dumpStructList(indent, "struct1list", conditionList);
+	str += _dumpStructList(indent, "conditionList", conditionList);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
 	str += indent + ">";
@@ -475,7 +475,7 @@ Common::String Dialogue::dump(const Common::String &indent) const {
 
 Common::String DialogueAction::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sDialogueAction<%d span: %d-%d", indent.c_str(), val, strStart, strEnd);
-	str += _dumpStructList(indent, "oplist", sceneOpList);
+	str += _dumpStructList(indent, "opList", sceneOpList);
 	if (!sceneOpList.empty()) {
 		str += "\n";
 		str += indent;
