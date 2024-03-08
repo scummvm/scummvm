@@ -177,7 +177,7 @@ bool Wiz::WARPWIZ_DrawWizTo4Points(int image, int state, const WarpWizPoint *dst
 			&dstBitmap, dstPoints, &srcBitmap, srcPoints, 4, transparentColor,
 			optionalClipRect, colorMixTable);
 	} else {
-		if (_vm->_game.heversion > 99) {
+		if (_vm->_game.heversion >= 99) { // TODO: Recheck!! Code valid for executables from 3/14/2000 onwards
 			rValue = WARPWIZ_NPt2NPtWarp_CORE(
 				&dstBitmap, dstPoints, &srcBitmap, srcPoints,
 				4, transparentColor, optionalClipRect, flags);
@@ -231,8 +231,8 @@ WarpWizOneSpanTable *Wiz::WARPWIZ_CreateSpanTable(int spanCount) {
 
 	spanPtr = spanTable->spans;
 	for (counter = 0; counter < spanCount; counter++) {
-		spanPtr->dstLeft = INT_MAX;
-		spanPtr->dstRight = INT_MIN;
+		spanPtr->dstLeft = 0x7FFFFFFF;
+		spanPtr->dstRight = (-0x7FFFFFFF - 1);
 		spanPtr++;
 	}
 
@@ -330,7 +330,7 @@ WarpWizOneSpanTable *Wiz::WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, con
 
 		// Clip horizontal
 		cl = MAX<int>(clippingRect.left, span->dstLeft);
-		cr = MAX<int>(clippingRect.right, span->dstRight);
+		cr = MIN<int>(clippingRect.right, span->dstRight);
 
 		if ((cw = (cr - cl + 1)) <= 0) {
 			continue;
@@ -363,10 +363,10 @@ void Wiz::WARPWIZ_FindMinMaxpoints(WarpWizPoint *minPtr, WarpWizPoint *maxPtr, c
 	WarpWizPoint minPt, maxPt, pt;
 
 	// Find the limits...
-	maxPt.x = -0x8000;
-	maxPt.y = -0x8000;
-	minPt.x = 0x7FFF;
-	minPt.y = 0x7FFF;
+	maxPt.x = (-0x7FFFFFFF - 1);
+	maxPt.y = (-0x7FFFFFFF - 1);
+	minPt.x = 0x7FFFFFFF;
+	minPt.y = 0x7FFFFFFF;
 
 	for (int i = 0; i < npoints; i++) {
 		pt = *points++;
