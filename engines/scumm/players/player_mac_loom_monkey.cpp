@@ -543,7 +543,7 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 		_curChanConfig = 0;
 
 	_curSound = id;
-	_curSoundSaveVar = _loader->isMusic() && _loader->isLooping() ? _curSound : 0;
+	_curSoundSaveVar = _loader->restartSoundAfterLoad() ? _curSound : 0;
 
 	setupChannels();
 	sendSoundCommands(jumpToTick);
@@ -555,8 +555,8 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 }
 
 void LoomMonkeyMacSnd::stopSound(int id) {
-	if (id < 0 || id >= _idRangeMax) {
-		warning("LoomMonkeyMacSnd::stopSound(): sound id '%d' out of range (0 - %d)", id, _idRangeMax - 1);
+	if (id < 1 || id >= _idRangeMax) {
+		warning("LoomMonkeyMacSnd::stopSound(): sound id '%d' out of range (1 - %d)", id, _idRangeMax - 1);
 		return;
 	}
 
@@ -577,8 +577,8 @@ int LoomMonkeyMacSnd::getMusicTimer() {
 }
 
 int LoomMonkeyMacSnd::getSoundStatus(int id) const {
-	if (id < 0 || id >= _idRangeMax) {
-		warning("LoomMonkeyMacSnd::getSoundStatus(): sound id '%d' out of range (0 - %d)", id, _idRangeMax - 1);
+	if (id < 1 || id >= _idRangeMax) {
+		warning("LoomMonkeyMacSnd::getSoundStatus(): sound id '%d' out of range (1 - %d)", id, _idRangeMax - 1);
 		return 0;
 	}
 	Common::StackLock lock(_mixer->mutex());
