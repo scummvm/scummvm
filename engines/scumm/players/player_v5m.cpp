@@ -83,6 +83,7 @@ namespace Scumm {
 Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
 	: Player_Mac(scumm, mixer, 3, 0x07, false) {
 	assert(_vm->_game.id == GID_MONKEY);
+	memset(_lastNoteSamples, 0, sizeof(_lastNoteSamples));
 	_lastVersionBeforeSaveFormatChange = VER(114);
 }
 

@@ -44,8 +44,9 @@ public:
 	virtual bool init() = 0;
 	virtual bool checkResource(const byte *data, uint32 dataSize) const = 0;
 	virtual bool blocked(const byte *data, uint32 dataSize) const = 0;
-	virtual bool loadSound(byte synthType, const byte *data, uint32 dataSize) = 0;
+	virtual bool loadSound(const byte *data, uint32 dataSize) = 0;
 	virtual void unblock() = 0;
+	void setSynthType(byte type) { _synth = type; }
 
 	const MacLowLevelPCMDriver::PCMSound *getInstrData(uint16 chan);
 	virtual bool isInstrUsable(uint16 chan) const = 0;
@@ -104,7 +105,7 @@ public:
 	bool init() override;
 	bool checkResource(const byte *data, uint32 dataSize) const override;
 	bool blocked(const byte *data, uint32 dataSize) const override { return false; }
-	bool loadSound(byte synthType, const byte *data, uint32 dataSize) override;
+	bool loadSound(const byte *data, uint32 dataSize) override;
 	void unblock() override {}
 
 	bool isInstrUsable(uint16 chan) const override;
@@ -125,7 +126,7 @@ public:
 	bool init() override;
 	bool checkResource(const byte *data, uint32 dataSize) const override;
 	bool blocked(const byte *data, uint32 dataSize) const override;
-	bool loadSound(byte synthType, const byte *data, uint32 dataSize) override;
+	bool loadSound(const byte *data, uint32 dataSize) override;
 	void unblock() override { _blockSfx = false; }
 
 	bool isInstrUsable(uint16 chan) const override;
@@ -240,7 +241,7 @@ bool LoomMacSndLoader::checkResource(const byte *data, uint32 dataSize) const {
 	return (dataSize >= 14 && READ_BE_UINT16(data + 4) == 'so' && !READ_BE_UINT32(data + 10));
 }
 
-bool LoomMacSndLoader::loadSound(byte synthType, const byte *data, uint32 dataSize) {
+bool LoomMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
 	if (dataSize < 40)
 		return false;
 
@@ -255,8 +256,6 @@ bool LoomMacSndLoader::loadSound(byte synthType, const byte *data, uint32 dataSi
 		_chanNumEvents[i] = READ_BE_UINT16(_chanSndData[i] - 2);
 		_chanCurEvent[i] = 0;
 	}
-
-	_synth = synthType;
 
 	return true;
 }
@@ -308,7 +307,7 @@ bool MonkeyMacSndLoader::blocked(const byte *data, uint32 dataSize) const {
 	return (dataSize < 14 || (_blockSfx && !data[13]));
 }
 
-bool MonkeyMacSndLoader::loadSound(byte synthType, const byte *data, uint32 dataSize) {
+bool MonkeyMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
 	if (dataSize < 32)
 		return false;
 
@@ -345,7 +344,6 @@ bool MonkeyMacSndLoader::loadSound(byte synthType, const byte *data, uint32 data
 	}
 
 	_blockSfx = (_isMusic && _loop);
-	_synth = synthType;
 
 	return true;
 }
@@ -504,8 +502,8 @@ void LoomMonkeyMacSnd::setSfxVolume(int vol) {
 }
 
 void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
-	if (_sdrv == nullptr || id < 0 || id >= _idRangeMax) {
-		warning("LoomMonkeyMacSnd::startSound(): sound id '%d' out of range (0 - %d)", id, _idRangeMax - 1);
+	if (_sdrv == nullptr || id < 1 || id >= _idRangeMax) {
+		warning("LoomMonkeyMacSnd::startSound(): sound id '%d' out of range (1 - %d)", id, _idRangeMax - 1);
 		return;
 	}
 
@@ -530,7 +528,7 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 	if (!_defaultChanConfig)
 		detectQuality();
 
-	if (!_loader->loadSound(_curSynthType, ptr, size)) {
+	if (!_loader->loadSound(ptr, size)) {
 		warning("LoomMonkeyMacSnd::startSound(): Sound resource '%d' cannot be played", id);
 		return;
 	}
@@ -668,9 +666,9 @@ const MacSoundDriver::Status &LoomMonkeyMacSnd::getDriverStatus(uint8, Audio::Mi
 }
 
 void LoomMonkeyMacSnd::sndChannelCallback(uint16 arg1, const void*) {
-	// We do this a little smarter than the original player which would stop the track immediately when
-	// the first channel invoked its end-of-track callback. This would cut of the playback early, in an
-	// unpleasant way. Instead, we stop the playback not before all channels have finished.
+	// The original Loom player stops the track immediately when the first channel invoked its end-of-track
+	// callback. This cuts of the playback early, in an unpleasant way. The Monkey Island player stops the
+	// playback not before all channels have finished. We do the same here for both games.
 	_chanPlaying &= ~arg1;
 	if (_chanPlaying)
 		return;
@@ -796,6 +794,7 @@ void LoomMonkeyMacSnd::setupChannels() {
 		_curSynthType = synthType[_curChanConfig];
 		_chanUse = numChan[_curChanConfig];
 		_lastSndType = _curSndType;
+		_loader->setSynthType(_curSynthType);
 
 		switch (_curSynthType) {
 		case 1:
