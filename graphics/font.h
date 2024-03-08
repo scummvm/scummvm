@@ -263,12 +263,14 @@ public:
 	 * @param lines      The string list to which the text lines from @p str are appended.
 	 * @param initWidth  Starting width of the first line, for partially filled lines (optional).
 	 * @param mode		 Wrapping mode. A bitfield of @c WordWrapMode values.
+	 * @param wordSplit  Bool used in macgui that indicates if a word has been split into a new line.
+	 * @param shouldAddSpace Integer that returns if a space has been deleted at the beggining of the ith line.
 	 *
 	 * @return The maximal width of any of the lines added to @p lines.
 	 */
-	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
+	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines, bool *wordSplit = nullptr, int *shouldAddSpace = nullptr) const;
 	/** @overload */
-	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines, bool *wordSplit = nullptr, int *shouldAddSpace = nullptr) const;
 
 	/**
 	 * Scales the single gylph at @p chr the given the @p scale and the pointer @p grayScaleMap to the grayscale array. It fills @p scaleSurface surface 

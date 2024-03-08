@@ -153,6 +153,15 @@ public:
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 	/**
+	 * Flags wordContinuation to false when a word is no longer splitted between different lines.
+	 * There is a rare edgecase to fix where a non-splitted line is treated as such when a previously
+	 * splitted line is reduced into just one line. If the new next line is a splitted word, then all
+	 * the lines will be treated as a single word continuation, which is incorrect.
+	 * TODO: Fix edgecase. 
+	 */
+	void recalculateWordContinuation(int shouldAddSpace = -1);
+
+	/**
 	 * Rewraps paragraph containing given text row.
 	 * When text is modified, we redo whole thing again without touching
 	 * other paragraphs. Also, cursor position is returned in the arguments
@@ -179,7 +188,7 @@ struct MacTextLine {
 	int y = 0;
 	int charwidth = -1;
 	bool paragraphEnd = false;
-	bool wordContinuation = false;
+	bool wordContinuation = true;
 	int indent = 0; // in units
 	int firstLineIndent = 0; // in pixels
 	Common::Path picfname;

@@ -46,6 +46,41 @@ MacTextCanvas::~MacTextCanvas() {
 	}
 }
 
+void MacTextCanvas::recalculateWordContinuation(int shouldAddSpace) {
+
+	int lastTotalWidth = -1;
+
+	for (int i = 0; i < _text.size(); i++) {
+
+		Common::U32String lineText = getTextChunk(i, 0, i, -1);
+		int totalWidth = 0;
+		Common::u32char_type_t last = 0;
+
+		// Calculate the line's width to see if there is a possible split
+		for (Common::U32String::const_iterator x = lineText.begin(); x != lineText.end(); ++x) {
+			Common::u32char_type_t c = *x;
+			totalWidth += _text[i].firstChunk().font->getCharWidth(c) + _text[i].firstChunk().font->getKerningOffset(last, c);
+			last = c;
+		}
+
+		int lastCharWidth = 0;
+		if (last != 0)
+			lastCharWidth = _text[i].firstChunk().font->getCharWidth(last);
+
+		// If the line contains a space or the line is not full, flag wordContinuation to false
+		if (lineText.contains(' ') || totalWidth < _maxWidth - lastCharWidth) {
+			_text[i].wordContinuation = false;
+		}
+
+		// Prevent the special case where the spaces at the beggining of a line are deleted
+		if (i > 0 && lastTotalWidth >= _maxWidth - lastCharWidth && (i == shouldAddSpace) && !Common::isSpace(_text[i].firstChunk().text[0])) {
+			_text[i - 1].wordContinuation = false;
+			_text[i].firstChunk().text = ' ' + _text[i].firstChunk().text;
+		}
+		lastTotalWidth = totalWidth;
+	}
+}
+
 // Adds the given string to the end of the last line/chunk
 // while observing the _canvas._maxWidth and keeping this chunk's
 // formatting
@@ -79,7 +114,12 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	int w = getLineWidth(curLine, true);
 	D(9, "** chopChunk before wrap \"%s\"", Common::toPrintable(str.encode()).c_str());
 
-	chunk->getFont()->wordWrapText(str, maxWidth, text, w);
+	bool wordSplit = false;
+	int shouldAddSpace = -1;
+
+	chunk->getFont()->wordWrapText(str, maxWidth, text, w, kWordWrapDefault, &wordSplit, &shouldAddSpace);
+	if (wordSplit)
+		_text[curLine].wordContinuation = true;
 
 	if (text.size() == 0) {
 		warning("chopChunk: too narrow width, >%d", maxWidth);
@@ -114,9 +154,12 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		_text[curLine].chunks.push_back(newchunk);
 		_text[curLine].indent = indent;
 		_text[curLine].firstLineIndent = 0;
+	
 
 		D(9, "** chopChunk, added line (firstIndent: %d): \"%s\"", _text[curLine].firstLineIndent, toPrintable(text[i].encode()).c_str());
 	}
+
+	recalculateWordContinuation(shouldAddSpace);
 
 	*curLinePtr = curLine;
 }
@@ -568,6 +611,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			curLine++;
 			_text.insert_at(curLine, MacTextLine());
 			_text[curLine].chunks.push_back(chunk);
+
+			recalculateWordContinuation();
 
 			curTextLine = &_text[curLine];
 
@@ -1097,7 +1142,7 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	// Find end of the paragraph
 	while (end < (int)_text.size() - 1 && !_text[end].paragraphEnd)
 		end++;
-
+	
 	// Get character pos within paragraph
 	int ppos = 0;
 
@@ -1159,6 +1204,8 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	_text.insert_at(curLine, MacTextLine());
 	_text[curLine].indent = indent;
 	_text[curLine].firstLineIndent = firstLineIndent;
+
+	recalculateWordContinuation();
 
 	for (auto &ch : chunks) {
 		_text[curLine].chunks.push_back(ch);
