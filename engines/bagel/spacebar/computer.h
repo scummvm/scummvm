@@ -83,8 +83,15 @@ public:
 	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
 	virtual	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
 
-	virtual	ERROR_CODE Attach();	// This function attachs the background and nessasary bitmaps
-	virtual ERROR_CODE Detach();	// This function detachs the background and nessasary bitmaps
+	/**
+	 * This function attachs the background and nessasary bitmaps
+	 */
+	virtual	ERROR_CODE Attach();
+
+	/**
+	 * This function detachs the background and nessasary bitmaps
+	 */
+	virtual ERROR_CODE Detach();
 
 	ERROR_CODE CreateDrinksListBox();
 	ERROR_CODE CreateIngListBox();
@@ -99,10 +106,20 @@ public:
 	VOID SetIng();
 	VOID SetList();
 
-	ERROR_CODE ReadDrnkFile(); // Read in the ingredient file
-	ERROR_CODE ReadIngFile(); // Read in the ingredient file
+	/**
+	 * Read in the ingredient file
+	 */
+	ERROR_CODE ReadDrnkFile();
 
-	VOID Order();	// Order Button
+	/**
+	 * Read in the ingredient file
+	 */
+	ERROR_CODE ReadIngFile();
+
+	/**
+	 * Order Button
+	 */
+	VOID Order();
 
 	VOID PageUp();
 	VOID PageDown();

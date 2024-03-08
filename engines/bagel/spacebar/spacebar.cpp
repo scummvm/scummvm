@@ -24,6 +24,7 @@
 #include "bagel/console.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
+#include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/boflib/app.h"
 #include "bagel/baglib/start_dialog.h"
 #include "bagel/baglib/opt_window.h"
@@ -51,7 +52,8 @@ static const BagelReg SPACEBAR_REG = {
 };
 
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+	SBarBibOddsWnd::initStatics();
 }
 
 ERROR_CODE SpaceBarEngine::Initialize() {

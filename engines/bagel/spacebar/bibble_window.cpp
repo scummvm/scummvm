@@ -44,10 +44,8 @@ namespace SpaceBar {
 #define ARCH1_BMP       "ARCH1.BMP"
 #define ARCH2_BMP       "ARCH2.BMP"
 #define ARCH3_BMP       "ARCH3.BMP"
-// Added for casino background sounds BFW 12/24/96
 #define CASINO_AUDIO			"CASINO.WAV"
 
-// scg 01.07.97 added PLAYWAVONMAC conditional
 #if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
 #define SOUNDFILEEXTLOWER		".snd"
 #define SOUNDFILEEXTUPPER		".SND"
@@ -56,7 +54,6 @@ namespace SpaceBar {
 #define SOUNDFILEEXTUPPER		".WAV"
 #endif
 
-// scg 01.07.97 added PLAYWAVONMAC conditional
 #if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
 #define BIBBLE_AUDIO_STARTGAME  "TEMP.SND"
 #define BIBBLE_AUDIO_WINNER     "EVBWIN01.SND"
@@ -135,7 +132,7 @@ namespace SpaceBar {
 // Globals
 //
 
-ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS] = {
+const ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS] = {
 	{5, 4},
 	{3, 2},
 	{2, 1},
@@ -155,7 +152,6 @@ ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS] = {
 };
 
 CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS] = {
-	// scg 01.07.97 added PLAYWAVONMAC conditional
 	#if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
 		CBetArea(0, 66, 304, 66 + 49, 334, 3, 2, "EVBWIN02.SND", "EVBWIN27.SND"),
 		CBetArea(0, 66, 336, 66 + 49, 366, 2, 1, "EVBWIN03.SND", "EVBWIN28.SND"),
@@ -233,20 +229,19 @@ typedef struct {
 
 } ST_BUTTONS;
 
-ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
-
-	{"Bet 1", "bin1.bmp", "bio1.bmp", "big1.bmp", "big1.bmp", 230, 290, 58, 35, BIBBLE_BUTTON_BET1 },
-	{"Bet 5", "bin5.bmp", "bio5.bmp", "big5.bmp", "big5.bmp", 288, 290, 58, 35, BIBBLE_BUTTON_BET5 },
-	{"Bet 10", "bin10.bmp", "bio10.bmp", "big10.bmp", "big10.bmp", 346, 290, 58, 35, BIBBLE_BUTTON_BET10 },
-	{"Bet 50", "bin50.bmp", "bio50.bmp", "big50.bmp", "big50.bmp", 230, 325, 58, 35, BIBBLE_BUTTON_BET50 },
-	{"Bet 100", "bin100.bmp", "bio100.bmp", "big100.bmp", "big100.bmp", 288, 325, 58, 35, BIBBLE_BUTTON_BET100 },
-	{"Bet 500", "bin500.bmp", "bio500.bmp", "big500.bmp", "big500.bmp", 346, 325, 58, 35, BIBBLE_BUTTON_BET500 },
-	{"Bet 1000", "bin1000.bmp", "bio1000.bmp", "big1000.bmp", "big1000.bmp", 230, 360, 58, 35, BIBBLE_BUTTON_BET1000 },
-	{"Bet 5000", "bin5000.bmp", "bio5000.bmp", "big5000.bmp", "big5000.bmp", 288, 360, 58, 35, BIBBLE_BUTTON_BET5000 },
-	{"Clear Bet", "binclear.bmp", "bioclear.bmp", "bigclear.bmp", "bigclear.bmp", 346, 360, 58, 35, BIBBLE_BUTTON_CLEARBET},
-	{"Ready", "binready.bmp", "bioready.bmp", "bioready.bmp", "bioready.bmp", 270, 395, 100, 40, BIBBLE_BUTTON_READY},
-	{"Help", "helpup.bmp", "helpdown.bmp", "helpup.bmp", "helpup.bmp", 31, 445, 200, 30, BIBBLE_BUTTON_HELP},
-	{"Quit", "quitup.bmp", "quitdown.bmp", "quitup.bmp", "quitup.bmp", 407, 445, 200, 30, BIBBLE_BUTTON_QUIT}
+static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
+	{ "Bet 1", "bin1.bmp", "bio1.bmp", "big1.bmp", "big1.bmp", 230, 290, 58, 35, BIBBLE_BUTTON_BET1 },
+	{ "Bet 5", "bin5.bmp", "bio5.bmp", "big5.bmp", "big5.bmp", 288, 290, 58, 35, BIBBLE_BUTTON_BET5 },
+	{ "Bet 10", "bin10.bmp", "bio10.bmp", "big10.bmp", "big10.bmp", 346, 290, 58, 35, BIBBLE_BUTTON_BET10 },
+	{ "Bet 50", "bin50.bmp", "bio50.bmp", "big50.bmp", "big50.bmp", 230, 325, 58, 35, BIBBLE_BUTTON_BET50 },
+	{ "Bet 100", "bin100.bmp", "bio100.bmp", "big100.bmp", "big100.bmp", 288, 325, 58, 35, BIBBLE_BUTTON_BET100 },
+	{ "Bet 500", "bin500.bmp", "bio500.bmp", "big500.bmp", "big500.bmp", 346, 325, 58, 35, BIBBLE_BUTTON_BET500 },
+	{ "Bet 1000", "bin1000.bmp", "bio1000.bmp", "big1000.bmp", "big1000.bmp", 230, 360, 58, 35, BIBBLE_BUTTON_BET1000 },
+	{ "Bet 5000", "bin5000.bmp", "bio5000.bmp", "big5000.bmp", "big5000.bmp", 288, 360, 58, 35, BIBBLE_BUTTON_BET5000 },
+	{ "Clear Bet", "binclear.bmp", "bioclear.bmp", "bigclear.bmp", "bigclear.bmp", 346, 360, 58, 35, BIBBLE_BUTTON_CLEARBET },
+	{ "Ready", "binready.bmp", "bioready.bmp", "bioready.bmp", "bioready.bmp", 270, 395, 100, 40, BIBBLE_BUTTON_READY },
+	{ "Help", "helpup.bmp", "helpdown.bmp", "helpup.bmp", "helpup.bmp", 31, 445, 200, 30, BIBBLE_BUTTON_HELP },
+	{ "Quit", "quitup.bmp", "quitdown.bmp", "quitup.bmp", "quitup.bmp", 407, 445, 200, 30, BIBBLE_BUTTON_QUIT }
 };
 
 // Local functions
@@ -302,8 +297,7 @@ CBibbleWindow::CBibbleWindow() {
 
 	SetHelpFilename(BuildDir("BIBBLE.TXT"));
 
-	// jwl 1.13.97 call this thing a closeup so that time won't go 
-	// by when entering the closeup
+	// Call this thing a closeup so that time won't go  by when entering the closeup
 	SetCloseup(TRUE);
 }
 
@@ -324,12 +318,12 @@ ERROR_CODE CBibbleWindow::Attach() {
 	CBofPalette *pPal;
 	INT i;
 
-	INT nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
+	const INT nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
 		BIBBLE_START_Y1,
 		BIBBLE_START_Y2,
 		BIBBLE_START_Y3
 	};
-	INT nBibbleXPos[BIBBLE_NUM_BIBBLES] = {
+	const INT nBibbleXPos[BIBBLE_NUM_BIBBLES] = {
 		BIBBLE_START_X1,
 		BIBBLE_START_X2,
 		BIBBLE_START_X3
@@ -371,9 +365,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 		INT nPayOff;
 
 		if ((pSDev = SDEVMNGR->GetStorageDevice("BGNM_WLD")) != NULL) {
-
 			for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 				// The sprite object start in the script at 500
 				if ((pObj = pSDev->GetObject(500 + i)) != NULL) {
 
@@ -397,7 +389,6 @@ ERROR_CODE CBibbleWindow::Attach() {
 		m_pCreditsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 		m_pCreditsText->SetColor(RGB(255, 255, 255));
 
-		// jwl 1.6.97 use 16 pt on the mac
 		m_pCreditsText->SetSize(MapWindowsPointSize(20));
 		m_pCreditsText->SetWeight(TEXT_BOLD);
 		m_pCreditsText->SetText(BuildString("%d", m_nNumCredits));
@@ -502,7 +493,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 #if BOF_MAC
-			// jwl 1.6.97 make this our own custom window such that no frame is drawn
+			// Make this our own custom window such that no frame is drawn
 			// around the window/button
 			m_pButtons[i]->SetCustomWindow(TRUE);
 #endif
@@ -529,7 +520,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 	Show();
 
 #if BOF_MAC
-	// jwl 1.6.97 show all our buttons after doing the
+	// Show all our buttons after doing the
 	for (INT i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		if (m_pButtons[i] != NULL) {
 			m_pButtons[i]->Show();
@@ -541,7 +532,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 
 	CBofCursor::Show();
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -554,7 +545,6 @@ ERROR_CODE CBibbleWindow::Detach() {
 
 	CBofCursor::Hide();
 
-	// BCW - 11/13/96 10:01 am (Fix for bug #6457)
 	// Remove any unused credits from the table, and put them back into your
 	// Credit Chip
 	//
@@ -596,7 +586,6 @@ ERROR_CODE CBibbleWindow::Detach() {
 		m_pArch1 = NULL;
 	}
 	for (i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-
 		if (m_pBibble[i] != NULL) {
 			delete m_pBibble[i];
 			m_pBibble[i] = NULL;
@@ -620,7 +609,6 @@ ERROR_CODE CBibbleWindow::Detach() {
 	// Destroy all buttons
 	//
 	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-
 		if (m_pButtons[i] != NULL) {
 			delete m_pButtons[i];
 			m_pButtons[i] = NULL;
@@ -644,7 +632,7 @@ ERROR_CODE CBibbleWindow::Detach() {
 	// Playing BibbleBonk has made 1 turn go by.
 	VARMNGR->IncrementTimers();
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -691,7 +679,6 @@ VOID CBibbleWindow::OnPaint(CBofRect *pRect) {
 		// Update the display of all the bet areas;
 		//
 		for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 			// Add bet ammount text
 			Common::sprintf_s(szBuf, "%d", g_cBetAreas[i].m_nBet);
 			cRect = g_cBetAreas[i].m_cRect;
@@ -714,7 +701,7 @@ VOID CBibbleWindow::OnPaint(CBofRect *pRect) {
 		}
 
 #if BOF_MAC
-		// jwl 1.6.97 out here in mac land, we need to layer out windows appropriately, 
+		// out here in mac land, we need to layer out windows appropriately, 
 		// so make sure our buttons are on top.
 		for (INT i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 			if (m_pButtons[i] != NULL) {
@@ -818,9 +805,7 @@ VOID CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
 		}
 
 		if (nBet != 0) {
-
 			if (m_nNumCredits < MAX_AMOUNT) {
-
 				if (m_pSelected != NULL) {
 					LogInfo(BuildString("\tHave %d Credits, Betting %d credits", m_nNumCredits, nBet));
 					m_nNumCredits -= nBet;
@@ -870,7 +855,7 @@ ERROR_CODE CBibbleWindow::DisplayCredits(VOID) {
 		m_pCreditsText->Display(this);
 	}
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -879,10 +864,6 @@ ERROR_CODE CBibbleWindow::PlayGame(VOID) {
 
 	INT nPayoff, i;
 	BOOL bWin;
-
-	// Play start game audio ("No more bets")
-	//
-	//BofPlaySound(BuildDir(BIBBLE_AUDIO_STARTGAME), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH);
 
 	// Remove any current highlight
 	//
@@ -989,12 +970,11 @@ ERROR_CODE CBibbleWindow::PlayGame(VOID) {
 		UnHighlight(&g_cBetAreas[i]);
 	}
 
-	// BCW - 11/13/96 02:07 pm - Fix for bug #6458
 	m_pSelected = NULL;
 
 	LogInfo(BuildString("\tDone BibbleBonk.  Credits: %d", m_nNumCredits));
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -1015,7 +995,7 @@ CBofString LoadTextFile(const CHAR *pszFileName) {
 
 		BofFree(pszBuf);
 	}
-	return(cString);
+	return cString;
 }
 
 ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
@@ -1056,7 +1036,7 @@ ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
 		if (m_pBall->TestInterception(pBibble)) {
 
 			m_pBall->EraseSprite(this);
-#if 1
+
 			for (i = 0; i < pBibble->GetCelCount(); i++) {
 				pBibble->PaintSprite(this, pBibble->GetPosition());
 
@@ -1067,37 +1047,14 @@ ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
 
 				Sleep(SPEED_DELAY2);
 			}
-#else
-
-			// Start the bonk
-			//
-			for (i = 0; i < BIBBLE_NUM_PAINTS; i++) {
-
-				// bonking
-				//
-				if (i < pBibble->GetCelCount()) {
-					pBibble->PaintSprite(this, pBibble->GetPosition());
-				}
-				if (i + 1 < pBibble->GetCelCount()) {
-					pBibble->PaintSprite(this, pBibble->GetPosition());
-				}
-
-
-				// ball continues off screen
-				cBallPosition.x += BALL_SPEED;
-				m_pBall->PaintSprite(this, cBallPosition);
-
-				Sleep(SPEED_DELAY);
-			}
-#endif
-
 			break;
 		}
 		Sleep(SPEED_DELAY);
 	}
+
 	pBibble->SetAnimated(FALSE);
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -1420,7 +1377,7 @@ ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, UBYTE nColor) {
 	// Paint result to screen
 	cBmp.Paint(this, &pArea->m_cRect);
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 
@@ -1449,14 +1406,13 @@ ERROR_CODE CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	// Paint to screen
 	cBmp.Paint(this, &pArea->m_cRect);
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 VOID CBibbleWindow::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
-
 	case BKEY_ESC:
 		Close();
 		break;
@@ -1474,7 +1430,7 @@ const CHAR *BuildDir(const CHAR *pszFile) {
 	CBofString sBibbleDir(szBuf, MAX_DIRPATH);
 	MACROREPLACE(sBibbleDir);
 
-	return(&szBuf[0]);
+	return &szBuf[0];
 }
 
 } // namespace SpaceBar
