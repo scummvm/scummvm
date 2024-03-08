@@ -581,7 +581,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 	if (extra == "Steam")
 		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 	else if (platform == Common::kPlatformMacintosh)
-		return new Scumm::LoomMacGameOptionsWidget(boss, name, target);
+		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_LOOM);
 
 	// These EGA Loom settings are only relevant for the EGA
 	// version, since that is the only one that has an overture.
@@ -590,6 +590,10 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String extra = ConfMan.get("extra", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+
+	if (platform == Common::kPlatformMacintosh && extra != "Steam")
+		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_MONKEY);
 
 	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
 		return nullptr;
