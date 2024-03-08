@@ -423,7 +423,7 @@ ERROR_CODE CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 	return m_errCode;
 }
 
-CBagObject *CBagPanWindow::GetFGObjects(CBofString &sObjName) {
+CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
 	CBagObject *pObj;
 	int nListLen = m_pFGObjectList->GetCount();
 

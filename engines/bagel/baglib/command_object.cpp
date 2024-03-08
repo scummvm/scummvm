@@ -33,7 +33,6 @@
 
 namespace Bagel {
 
-extern BOOL g_bAllowPaint;
 extern BOOL g_bRestoreObjList;
 extern BOOL g_bAllowAAO;
 

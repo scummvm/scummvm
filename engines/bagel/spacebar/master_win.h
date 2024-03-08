@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,29 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
+#ifndef BAGEL_SPACEBAR_MAsTER_WIN_H
+#define BAGEL_SPACEBAR_MAsTER_WIN_H
 
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
-
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
-
+/**
+ * This is the main window that is never destroyed throughout the game.
+ * It handles bringing new windows in and out of focus as well as
+ * containing the parsing file and info.  It also captures keyboard entry
+ * and will save state information
+ */
+class CSBarMasterWin : public CBagMasterWin {
 public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
+	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr);
+	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType);
+
+	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+
+	VOID OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
+	VOID OnNewFilter(CBagStorageDev *pSDev, const int nType);
 };
 
 } // namespace SpaceBar

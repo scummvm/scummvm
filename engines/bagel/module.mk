@@ -97,7 +97,21 @@ MODULE_OBJS = \
 	boflib/gui/text_box.o \
 	boflib/gui/window.o \
 	spacebar/spacebar.o \
-	spacebar/app_window.o
+	spacebar/app_window.o \
+	spacebar/bib_odds_wnd.o \
+	spacebar/bibble_window.o \
+	spacebar/computer.o \
+	spacebar/filter.o \
+	spacebar/full_wnd.o \
+	spacebar/inv.o \
+	spacebar/main_link_object.o \
+	spacebar/main_window.o \
+	spacebar/master_win.o \
+	spacebar/nav_window.o \
+	spacebar/slot_wnd.o \
+	spacebar/sraf_computer.o \
+	spacebar/thud.o \
+	spacebar/vid_wnd.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BAGEL), DYNAMIC_PLUGIN)

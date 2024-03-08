@@ -19,30 +19,39 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
-
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/main_link_object.h"
+#include "bagel/spacebar/master_win.h"
+#include "bagel/spacebar/main_window.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+CMainLinkObject::CMainLinkObject()
+	: CBagLinkObject() {
+	m_bClickedOn = FALSE;
+	m_bClickedResize = FALSE;
+}
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
 
-public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
+void CMainLinkObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
+	CMainWindow *pWnd = (CMainWindow *)info;
+	BOOL bActivated;
+
+	bActivated = FALSE;
+	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {
+		if (CBagMasterWin::GetFlyThru()) {
+			pWnd->RotateTo(GetSrcLoc(), 12);
+		}
+
+		// Set the link position for the storage device we are about to jump to
+		CBagStorageDev *pDestWin;
+		if ((pDestWin = SDEVMNGR->GetStorageDevice(GetFileName())) != NULL) {
+			pDestWin->SetLoadFilePos(GetDstLoc());
+		}
+
+		CBagLinkObject::OnLButtonUp(nFlags, xPoint);
 	}
-};
+}
 
 } // namespace SpaceBar
 } // namespace Bagel
-
-#endif

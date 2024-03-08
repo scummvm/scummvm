@@ -24,7 +24,7 @@
 #define BAGEL_BOFLIB_GUI_LIST_BOX_H
 
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/llist.h"
+#include "bagel/boflib/list.h"
 #include "bagel/boflib/string.h"
 
 namespace Bagel {

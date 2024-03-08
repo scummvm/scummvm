@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,26 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
+#ifndef BAGEL_SPACEBAR_INV_H
+#define BAGEL_SPACEBAR_INV_H
 
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/baglib/storage_dev_win.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
-
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
-
+/**
+ * CBagPanWindow is a window that contains a slide bitmap object. It has specialized
+ * functions for handling slide bitmaps and slide objects.
+ */
+class SBarInventoryWindow : public CBagStorageDevWnd {
+private:
 public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
+	SBarInventoryWindow();
+	~SBarInventoryWindow();
+
+	BOOL Create(CBofWindow *pWnd, CBofPoint p);
+	VOID OnLButtonDown(UINT, CBofPoint);
 };
 
 } // namespace SpaceBar

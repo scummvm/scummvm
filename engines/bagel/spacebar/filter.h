@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,28 +20,31 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
+#ifndef BAGEL_SPACEBAR_FILTER_H
+#define BAGEL_SPACEBAR_FILTER_H
 
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/boflib/gfx/bitmap.h"
+#include "bagel/boflib/rect.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+const USHORT kTriFilter = (USHORT)1;
+const USHORT kHalucinateFilter = (USHORT)2;
+const USHORT kVildroidFilter = (USHORT)4;
+const USHORT kZzazzlFilter = (USHORT)8;
+const USHORT kLightningFilter = (USHORT)16;
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
+typedef BOOL(*FilterFxn)(const USHORT, CBofBitmap *, CBofRect *);
 
-public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
-};
+VOID VilInitFilters(CBofBitmap *pBmp);
+VOID TriInitFilters(CBofBitmap *pBmp);
+VOID LightningInitFilters(VOID);
+VOID DestroyFilters();
+
+BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
+
+static DWORD waitCount;
 
 } // namespace SpaceBar
 } // namespace Bagel

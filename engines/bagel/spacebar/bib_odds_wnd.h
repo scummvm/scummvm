@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,29 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
+#ifndef BAGEL_SPACEBAR_BIB_ODDS_WND_H
+#define BAGEL_SPACEBAR_BIB_ODDS_WND_H
 
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/boflib/gui/window.h"
+#include "bagel/baglib/chat_wnd.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+#define NUM_PAYOFFS 16
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
-
+class SBarBibOddsWnd : public CBagChatWnd {
 public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
+	SBarBibOddsWnd();
+	virtual ~SBarBibOddsWnd();
+
+	virtual	ERROR_CODE Attach();		// Save wielded cursor
+	virtual ERROR_CODE Detach();		// This function detachs the background and nessasary bitmaps
+
+	VOID OnMouseMove(UINT nFlags, CBofPoint *xPoint);
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+
+	static CBagObject *m_pWieldedObject;
 };
 
 } // namespace SpaceBar

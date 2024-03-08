@@ -19,30 +19,27 @@
  *
  */
 
-#ifndef BAGEL_SPACEBAR_H
-#define BAGEL_SPACEBAR_H
-
-#include "bagel/bagel.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/inv.h"
+#include "bagel/baglib/object.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
-class SpaceBarEngine : public BagelEngine, public CBagel {
-protected:
-	// Engine APIs
-	Common::Error run() override;
+SBarInventoryWindow::SBarInventoryWindow() {
+}
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
+SBarInventoryWindow::~SBarInventoryWindow() {
+}
 
-public:
-	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
-};
+VOID SBarInventoryWindow::OnLButtonDown(UINT, CBofPoint) {
+}
+
+BOOL SBarInventoryWindow::Create(CBofWindow * /*pWnd*/, CBofPoint p) {
+	CBofRect tmpRect(p, CBofSize(100, 50));
+	LoadFile("Inv.wld");
+	CBofWindow::Create("Inventory", &tmpRect);
+	return TRUE;
+}
 
 } // namespace SpaceBar
 } // namespace Bagel
-
-#endif

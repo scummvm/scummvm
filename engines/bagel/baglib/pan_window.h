@@ -102,7 +102,7 @@ public:
 
 	ERROR_CODE InsertFGObjects(CBagObject *pBmp);
 	VOID DeleteFGObjects();
-	CBagObject *GetFGObjects(CBofString &sObjName);
+	CBagObject *GetFGObjects(const CBofString &sObjName);
 
 	CBofPalette *SetSlidebitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
 

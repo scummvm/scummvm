@@ -98,6 +98,8 @@ public:
 	virtual VOID OnPaint(CBofRect *pRect);
 };
 
+extern BOOL g_bPauseTimer;
+
 } // namespace Bagel
 
 #endif
