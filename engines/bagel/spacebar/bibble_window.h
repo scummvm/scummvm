@@ -61,7 +61,7 @@ public:
 };
 
 extern CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
-extern ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS];
+extern const ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS];
 
 
 class CBibbleWindow : public CBagStorageDevWnd {

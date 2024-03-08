@@ -113,32 +113,17 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 		m_pButtons[i] = NULL;
 	}
 
-	// jwl 1.13.97 call this thing a closeup so that time won't go 
-	// by when entering the closeup
+	// Call this thing a closeup so that time won't go by when
+	// entering the closeup
 	SetCloseup(TRUE);
 }
 SBarComputer::~SBarComputer() {
 }
 
-/*****************************************************************************
-*
-*  OnMainLoop -
-*
-*  DESCRIPTION:
-*
-*
-*  SAMPLE USAGE:
-*
-*
-*  RETURNS:
-*		NONE
-*
-*****************************************************************************/
 VOID SBarComputer::OnMainLoop() {
 #if BOF_MAC
 	CBofCursor::Show();
 #endif
-	//   PaintScreen(); 
 	if (m_bFirstPaint) {
 		m_bFirstPaint = FALSE;
 		AttachActiveObjects();
@@ -155,15 +140,12 @@ VOID SBarComputer::EraseBackdrop() {
 VOID  SBarComputer::OnPaint(CBofRect *pRect) {
 	ERROR_CODE errCode = ERR_NONE;
 
-	//Paint the storage device
-	// PaintScreen();
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != NULL);
 		// erase everything from the background
 		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
 		// paint all the objects to the background
 		errCode = PaintStorageDevice(NULL, GetBackdrop(), pRect);
-		// PaintBackdrop();
 	}
 
 	if (m_pTBox != NULL)
@@ -172,7 +154,8 @@ VOID  SBarComputer::OnPaint(CBofRect *pRect) {
 	// Paint the backdrop
 	if (GetBackdrop())
 		PaintBackdrop();
-	// jwl 08.23.96 the backdrop is not painted with the state of the
+
+	// The backdrop is not painted with the state of the
 	// on/off button taken into consideration... handle that here.
 
 #if BOF_MAC
@@ -180,33 +163,8 @@ VOID  SBarComputer::OnPaint(CBofRect *pRect) {
 		m_pButtons[ONBUT]->Paint(NULL);
 	}
 #endif
+}
 
-#if 0 // not neccessary
-	if (m_pLBox != NULL)
-	{
-		m_pLBox->InvalidateRect(NULL);
-		m_pLBox->UpdateWindow();
-	}
-#endif
-}
-#if 0
-ERROR_CODE  SBarComputer::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
-	return ERR_NONE;
-}
-#endif
-/*****************************************************************************
-*
-*  Attach -
-*
-*  DESCRIPTION:
-*	This is where we read in drink.txt and ing.txt, allocate storage for them,
-*	parse them, etc.
-*
-*
-*  RETURNS:
-*		ERROR_CODE
-*
-*****************************************************************************/
 ERROR_CODE SBarComputer::Attach() {
 	LogInfo("Attaching SBarComputer...");
 
@@ -214,7 +172,6 @@ ERROR_CODE SBarComputer::Attach() {
 	ERROR_CODE 			rc = ERR_NONE;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
-
 		g_bWaitOK = FALSE;
 
 		m_pDrinkList = new CBofList<SBarCompItem>;
@@ -250,7 +207,7 @@ ERROR_CODE SBarComputer::Attach() {
 				m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
 #if BOF_MAC
-				// jwl 08.21.96 make this our own custom window such that no frame is drawn
+				// Make this our own custom window such that no frame is drawn
 				// around the window/button
 				m_pButtons[i]->SetCustomWindow(true);
 #endif
@@ -274,8 +231,7 @@ ERROR_CODE SBarComputer::Attach() {
 #endif
 
 #if !BOF_MAC
-		// jwl 08.21.96 order these windows properly... the show code does
-		// an invalidate.
+		// Order these windows properly... the show code does an invalidate.
 		InvalidateRect(NULL);
 #endif
 
@@ -288,28 +244,14 @@ ERROR_CODE SBarComputer::Attach() {
 			m_pIngBox->SetSelectedItem(-1, FALSE);
 		}
 
-		UpdateWindow(); //PaintScreen();
+		UpdateWindow();
 	}
 
 	CBofCursor::Show();
 
-	return(rc);
+	return rc;
 }
 
-
-/*****************************************************************************
-*
-*  Detach -
-*
-*  DESCRIPTION:
-*
-*  SAMPLE USAGE:
-*
-*
-*  RETURNS:
-*		ERROR_CODE
-*
-*****************************************************************************/
 ERROR_CODE SBarComputer::Detach() {
 	CBofCursor::Hide();
 
@@ -345,8 +287,6 @@ ERROR_CODE SBarComputer::Detach() {
 		}
 	}
 
-	//	m_nSelection = -1;
-	//  mdm 9/23 - changed to have seperate selections
 	m_nDrinkSelect = -1;
 	m_nIngSelect = -1;
 
@@ -358,7 +298,7 @@ ERROR_CODE SBarComputer::Detach() {
 	SetBlankingOption(FORCEFULLSCREEN);
 #endif
 
-	// jwl 1.13.97 going into mr drinkmaster makes 1 turn go by
+	// Going into mr drinkmaster makes 1 turn go by
 	VARMNGR->IncrementTimers();
 
 	LogInfo("Detached SBarComputer");
@@ -366,19 +306,6 @@ ERROR_CODE SBarComputer::Detach() {
 	return ERR_NONE;
 }
 
-/*****************************************************************************
-*
-*  ReadDrnkFile -
-*
-*  DESCRIPTION:
-*	This is where we read in drink.txt, allocate storage for them,
-*	parse them, etc.
-*
-*
-*  RETURNS:
-*		ERROR_CODE
-*
-*****************************************************************************/
 ERROR_CODE SBarComputer::ReadDrnkFile() {
 	char *pPosInBuff;
 	SBarCompItem *pCompItem;
@@ -393,8 +320,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 		return fpDrinkFile.GetErrorCode();
 
 	// Check that buffers are null
-	if (m_pDrinkBuff)
-	{
+	if (m_pDrinkBuff) {
 		delete m_pDrinkBuff;
 		m_pDrinkBuff = NULL;
 	}
@@ -461,19 +387,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 	fpDrinkFile.Close();
 	return ERR_NONE;
 }
-/*****************************************************************************
-*
-*  ReadIngFile -
-*
-*  DESCRIPTION:
-*	This is where we read in ing.txt, allocate storage for them,
-*	parse them, etc.
-*
-*
-*  RETURNS:
-*		ERROR_CODE
-*
-*****************************************************************************/
+
 ERROR_CODE SBarComputer::ReadIngFile() {
 	char *pPosInBuff;
 	SBarCompItem *pCompItem;
@@ -547,7 +461,6 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 }
 
 VOID SBarComputer::CreateTextBox(CBofString &newText) {
-	// m_pTBox = new CBofTextBox(this, &CompDisplay, cText);
 	if (m_pTBox == NULL)
 	{
 		m_pTBox = new CBofTextBox(GetBackdrop(), &CompDisplay, newText);
@@ -595,7 +508,6 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 
 	if (m_pDrinkBox == NULL) // We need to create one
 	{
-		// BCW changes
 		if ((m_pDrinkBox = new CBofListBox) != NULL) {
 #if BOF_MAC
 			// jwl 08.21.96 make this our own custom window such that no frame is drawn
@@ -623,8 +535,6 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 			for (int i = 0; i < numItems; ++i)
 			{
 				CompItem = m_pDrinkList->GetNodeItem(i);
-				//CBofString cText(CompItem.m_pItem);
-				// m_pLBox->AddToTail( cText, TRUE);
 				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
 			}
 
@@ -638,9 +548,8 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 	ERROR_CODE error = ERR_NONE;
 	CBofPalette *pPal;
 
-	if (m_pIngBox == NULL) // We need to create one
-	{
-		// BCW changes
+	if (m_pIngBox == NULL) {
+		// We need to create one
 		if ((m_pIngBox = new CBofListBox) != NULL) {
 #if BOF_MAC
 			// jwl 08.21.96 make this our own custom window such that no frame is drawn
@@ -678,30 +587,17 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 }
 
 VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
-#if 0
-	// Unhighlight
-	if (m_pLBox)
-		m_pLBox->RepaintItem(m_nSelection);
-
-	// Highlight
-	if (m_pLBox)
-		m_pLBox->RepaintItem(nItemIndex);
-
-#endif
-
-	// m_nSelection = nItemIndex;
-
 	if (m_eMode == DRINKMODE) {
 		m_nDrinkSelect = nItemIndex;
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[ORDER]->Select();
 		m_pButtons[LISTD]->Select();
 
 		m_pButtons[ORDER]->Show();
 		m_pButtons[LISTD]->Show();
 
-		// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+		// Paint to this button immediately, this minimizes the white 
 		// flash of bringing the window frontmost. 
 #if BOF_MAC
 		m_pButtons[ORDER]->Paint(NULL);
@@ -711,11 +607,11 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 
 	} else {
 		m_nIngSelect = nItemIndex;
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[LISTI]->Select();
 
 		m_pButtons[LISTI]->Show();
-		// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+		// Paint to this button immediately, this minimizes the white 
 		// flash of bringing the window frontmost. 
 #if BOF_MAC
 		m_pButtons[LISTI]->Paint(NULL);
@@ -731,9 +627,6 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 		m_pLBox->RepaintAll();
 #endif
 
-	// These lines need to be called to make this thing behave
-	// properly(hiding,showing,invalidating,etc)
-	// START OF - DO NOT REMOVE THEM OR ALTER THEM IN ANYWAY
 #if !BOF_MAC
 #else
 #endif
@@ -748,24 +641,21 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 	m_pButtons[PGDOWN]->InvalidateRect(NULL);
 
 	UpdateWindow();
-	// END OF - DO NOT REMOVE THEM OR ALTER THEM IN ANYWAY
-
 }
 
 VOID SBarComputer::SetOn() {
-	// 1.27.97 Prevents the white flash when the show window is performed
+	// Prevents the white flash when the show window is performed
 	m_pButtons[ONBUT]->Select();
 
 	m_pButtons[OFFBUT]->Hide();
 	m_pButtons[ONBUT]->Show();
 
 #if BOF_MAC
-	// jwl 08.22.96 whenever dealing with the on/off button, make sure to 
-	// paint the new bitmap.  Seems like this should be a windowz fix 
-	// also, but I'll let the next windows guy in here determine that.
+	// Whenever dealing with the on/off button, make sure to 
+	// paint the new bitmap.
 	m_pButtons[ONBUT]->Paint(NULL);
 #endif
-	// bar 11/27/96 added switching-on sound
+	// Added switching-on sound
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
 	SetDrink();
@@ -797,14 +687,14 @@ VOID SBarComputer::SetOff() {
 
 		m_eMode = OFFMODE;
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[OFFBUT]->Select();
 		m_pButtons[ONBUT]->Hide();
 		m_pButtons[OFFBUT]->Show();
 		// bar 11/27/96 added switching-off sound
 		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 #if BOF_MAC
-		// jwl 08.22.96 whenever dealing with the on/off button, make sure to 
+		// Whenever dealing with the on/off button, make sure to 
 		// paint the new bitmap. 
 		m_pButtons[OFFBUT]->Paint(NULL);
 #endif
@@ -850,7 +740,7 @@ VOID SBarComputer::SetDrink() {
 
 		DeleteTextBox();
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[INGRED]->Select();
 
 		m_pButtons[DRINKS]->Hide();
@@ -862,7 +752,7 @@ VOID SBarComputer::SetDrink() {
 		//m_nIngSelect = -1;
 		m_pButtons[LISTI]->Hide();
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[PGUP]->Select();
 		m_pButtons[PGDOWN]->Select();
 
@@ -876,11 +766,11 @@ VOID SBarComputer::SetDrink() {
 		m_pButtons[BCBACK]->Hide();
 
 		if (m_nDrinkSelect != -1) {
-			// 1.27.97 Prevents the white flash when the show window is performed
+			// Prevents the white flash when the show window is performed
 			m_pButtons[LISTD]->Select();
 
 			m_pButtons[LISTD]->Show();
-			// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+			// Paint to this button immediately, this minimizes the white 
 			// flash of bringing the window frontmost. 
 #if BOF_MAC
 			m_pButtons[LISTD]->Paint(NULL);
@@ -901,8 +791,6 @@ VOID SBarComputer::SetDrink() {
 }
 
 VOID SBarComputer::SetIng() {
-//	ERROR_CODE error = ERR_NONE;
-
 	if (m_eMode != INGMODE) {
 		DeleteTextBox();
 
@@ -926,14 +814,14 @@ VOID SBarComputer::SetIng() {
 		m_nSelection = -1;
 #endif
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[DRINKS]->Select();
 
 		// set up buttons
 		m_pButtons[INGRED]->Hide();
 		m_pButtons[DRINKS]->Show();
 
-		// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+		// Paint to this button immediately, this minimizes the white 
 		// flash of bringing the window frontmost. 
 #if BOF_MAC
 		m_pButtons[DRINKS]->Paint(NULL);
@@ -943,14 +831,15 @@ VOID SBarComputer::SetIng() {
 		m_pButtons[LISTD]->Hide();
 		//m_nDrinkSelect = -1;
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[PGUP]->Select();
 		m_pButtons[PGDOWN]->Select();
 
 		m_pButtons[PGUP]->Show();
 		m_pButtons[PGDOWN]->Show();
 		m_pButtons[BCBACK]->Hide();
-		// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+
+		// Paint to this button immediately, this minimizes the white 
 		// flash of bringing the window frontmost. 
 #if BOF_MAC
 		m_pButtons[PGUP]->Paint(NULL);
@@ -958,10 +847,10 @@ VOID SBarComputer::SetIng() {
 #endif
 
 		if (m_nIngSelect != -1) {
-			// 1.27.97 Prevents the white flash when the show window is performed
+			// Prevents the white flash when the show window is performed
 			m_pButtons[LISTI]->Select();
 			m_pButtons[LISTI]->Show();
-			// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+			// Paint to this button immediately, this minimizes the white 
 			// flash of bringing the window frontmost. 
 #if BOF_MAC
 			m_pButtons[LISTI]->Paint(NULL);
@@ -1011,13 +900,13 @@ VOID SBarComputer::SetList() {
 		// Save off the previous mode for BACK
 		m_ePrevMode = m_eMode;
 
-		// 1.27.97 Prevents the white flash when the show window is performed
+		// Prevents the white flash when the show window is performed
 		m_pButtons[BCBACK]->Select();
 		// Set up buttons
 		m_pButtons[PGDOWN]->Hide();
 		m_pButtons[BCBACK]->Show();
 
-		// jwl 1.28.97 paint to this button immediately, this minimizes the white 
+		// Paint to this button immediately, this minimizes the white 
 		// flash of bringing the window frontmost. 
 #if BOF_MAC
 		m_pButtons[BCBACK]->Paint(NULL);
@@ -1055,14 +944,6 @@ VOID SBarComputer::Order() {
 		// Get the associated drink name
 		CompItem = m_pDrinkList->GetNodeItem(m_nDrinkSelect);
 
-#if 0  // Drink has been moved to soldier's closeup
-		CBagInv *pInventory;
-
-		SDEVMNGR->AddObject("INV_WLD", CompItem.m_pDrink);
-		pInventory = (CBagInv *)SDEVMNGR->GetStorageDevice("INV_WLD");
-		if (pInventory)
-			pInventory->AttachActiveObjects();
-#endif
 		// Deduct 1 Nugget from the player
 		// Read in their total nuggets from game
 		CBagVar *pVar = NULL;
@@ -1077,11 +958,6 @@ VOID SBarComputer::Order() {
 			// If the player is out of nuggets, then put up a 
 			// text message.    
 			if (nCredits < 1) {
-				//                CBagObject *pTXObj = GetObject ("OUTOFCREDITS"); 
-				//                if (pTXObj) { 
-				//                    ActivateLocalObject (pTXObj); 
-				//                }
-								// changed to use PaintBeveledText 01-07-97 bar 
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)NULL, FALSE);
 				saveBackground.CaptureScreen(this, &gCompTextWindow);
 				PaintBeveledText(this, &gCompTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -1097,13 +973,12 @@ VOID SBarComputer::Order() {
 				CBagStorageDev *pSoldierSDev = NULL;
 				CBagObject *pDrinkObj = NULL;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
-				// changed to use PaintBeveledText 01-07-97 bar 
+
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)NULL, FALSE);
 				saveBackgroundTwo.CaptureScreen(this, &gCompTextWindow);
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
-				if (pSoldierSDev)
-				{
+				if (pSoldierSDev) {
 					BOOL bRefuse = FALSE;
 					if (pDrinkObj = pSoldierSDev->GetObject("DRINK1", TRUE))
 						bRefuse = TRUE;
@@ -1251,7 +1126,6 @@ VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
 			break;
 		}
-		// InvalidateRect(NULL);
 	}
 }
 VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
@@ -1351,32 +1225,10 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 VOID SBarComputer::OnMouseMove(UINT nFlags, CBofPoint *xPoint) {
 	// change it to the pointy hand
 	CBagel::GetBagApp()->SetActiveCursor(1);
+
 	// but let CBagStorageDevWnd check for EXIT area
 	CBagStorageDevWnd::OnMouseMove(nFlags, xPoint);
 }
-
-#if 0
-/*****************************************************************************
-*
-*  OnLButtonUp -
-*
-*  DESCRIPTION:
-*
-*
-*  SAMPLE USAGE:
-*
-*
-*  RETURNS:
-*		NONE
-*
-*****************************************************************************/
-VOID
-SBarComputer::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
-	CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
-	InvalidateRect(NULL);
-	UpdateWindow();
-}
-#endif
 
 const CHAR *BuildBarcDir(const CHAR *pszFile) {
 	Assert(pszFile != NULL);
@@ -1390,7 +1242,7 @@ const CHAR *BuildBarcDir(const CHAR *pszFile) {
 	CBofString sBarcDir(szBuf, MAX_DIRPATH);
 	MACROREPLACE(sBarcDir);
 
-	return(&szBuf[0]);
+	return &szBuf[0];
 }
 
 } // namespace SpaceBar

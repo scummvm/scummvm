@@ -37,11 +37,9 @@ VOID CBofAppWindow::OnPaint(CBofRect *pRect) {
 	cBmp.Paint(this, pRect);
 
 	// Must now repaint all display objects that have been invalidated
-	//
 	CBofDisplayObject::AddToDirtyRect(pRect);
 	CBofDisplayObject::UpdateDirtyRect();
 }
-
 
 VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
@@ -49,7 +47,6 @@ VOID CBofAppWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 
 	CBofDisplayWindow::HandleMouseMove(nFlags, *pPoint);
 }
-
 
 VOID CBofAppWindow::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));

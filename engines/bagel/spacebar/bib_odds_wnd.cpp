@@ -28,7 +28,11 @@
 namespace Bagel {
 namespace SpaceBar {
 
-CBagObject *SBarBibOddsWnd::m_pWieldedObject = nullptr;
+CBagObject *SBarBibOddsWnd::m_pWieldedObject;
+
+void SBarBibOddsWnd::initStatics() {
+	m_pWieldedObject = nullptr;
+}
 
 SBarBibOddsWnd::SBarBibOddsWnd() : CBagChatWnd() {
 }
@@ -50,13 +54,6 @@ ERROR_CODE SBarBibOddsWnd::Detach() {
 			nPayIdx = pObj->GetState();
 			g_cBetAreas[i].m_nPayOff1 = g_stPayOffs[nPayIdx].m_nPay1;
 			g_cBetAreas[i].m_nPayOff2 = g_stPayOffs[nPayIdx].m_nPay2;
-
-			// BCW - 11/25/96 11:30 pm
-			// Tell script that the player has modified the BibbleBonk odds
-			//
-			//if ((pVar = VARMNGR->GetVariable("BIBBLEHACK")) != nullptr) {
-			//    pVar->SetValue(1);
-			//}
 		}
 	}
 
@@ -78,7 +75,6 @@ VOID SBarBibOddsWnd::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 		StateStr = pVar->GetValue();
 		if (StateStr == "MAINMENU") {
-
 			switch (lKey) {
 			case BKEY_1:
 				pVar->SetValue("VIDINFO");
@@ -104,7 +100,6 @@ VOID SBarBibOddsWnd::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 			}
 
 		} else if (StateStr == "SETBIBBLE") {
-
 			switch (lKey) {
 			case BKEY_1:
 				pVar->SetValue("SETBONK");
@@ -123,20 +118,14 @@ VOID SBarBibOddsWnd::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	CBagChatWnd::OnKeyHit(lKey, lRepCount);
 }
 
-
-// jwl 12.27.96 fullscreen 2 uses pointy hand... 
 VOID SBarBibOddsWnd::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
-	// change it to the pointy hand... 
-	//CBagel::GetBagApp()->SetActiveCursor(1);
-
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
-
 
 ERROR_CODE SBarBibOddsWnd::Attach() {
 	Assert(IsValidObject(this));
 
-	// jwl 12.27.96 if we have something wielded, put it on hold for now. 
+	// If we have something wielded, put it on hold for now. 
 	if (CBagPanWindow::m_pWieldBmp != nullptr) {
 		if ((m_pWieldedObject = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
 			SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
@@ -144,14 +133,13 @@ ERROR_CODE SBarBibOddsWnd::Attach() {
 	}
 
 	// Don't call CBagChatWnd::Attach() - We are overriding it's behavoir
-	//
 	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
 		Show();
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 } // namespace SpaceBar
