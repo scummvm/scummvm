@@ -38,7 +38,7 @@ public:
 
 	virtual VOID OnTimer(UINT nTimerId);
 
-	VOID OnMouseMove(UINT nFlags, CBofPoint *);
+	VOID OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
 
 	BOOL m_bAllowEventWorld;
 

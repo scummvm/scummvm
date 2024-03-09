@@ -31,7 +31,7 @@ SBarInventoryWindow::SBarInventoryWindow() {
 SBarInventoryWindow::~SBarInventoryWindow() {
 }
 
-VOID SBarInventoryWindow::OnLButtonDown(UINT, CBofPoint) {
+VOID SBarInventoryWindow::OnLButtonDown(UINT, CBofPoint *, void *) {
 }
 
 BOOL SBarInventoryWindow::Create(CBofWindow * /*pWnd*/, CBofPoint p) {

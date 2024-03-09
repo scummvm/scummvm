@@ -764,7 +764,7 @@ VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 }
 
 
-VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

@@ -1167,13 +1167,13 @@ ERROR_CODE SrafComputer::Detach() {
 }
 
 
-VOID SrafComputer::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/) {
+VOID SrafComputer::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 	// If we don't want to allow exiting from the left hand column,
 	// then remove this call.
 	//CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
 }
 
-VOID SrafComputer::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/) {
+VOID SrafComputer::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 //
 

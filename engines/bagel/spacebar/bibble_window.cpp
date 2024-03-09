@@ -1296,12 +1296,12 @@ VOID CBibbleWindow::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-VOID CBibbleWindow::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+VOID CBibbleWindow::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 }
 
 
-VOID CBibbleWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CBibbleWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != NULL);
 

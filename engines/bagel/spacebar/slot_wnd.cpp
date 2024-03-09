@@ -1036,7 +1036,7 @@ VOID SBarSlotWnd::OnTimer(UINT /*nTimerId*/) {
 }
 
 
-VOID SBarSlotWnd::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID SBarSlotWnd::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint))
 	{
 		FixBet();
