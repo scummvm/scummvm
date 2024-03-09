@@ -1217,7 +1217,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 #endif
 
 Graphics::ManagedSurface *CBofWindow::getSurface() {
-	error("TODO: Implement CBofWindow::getSurface");
+	return m_pWindow;
 }
 
 
