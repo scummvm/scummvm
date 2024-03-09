@@ -378,7 +378,7 @@ struct ActorTalking {
 	explicit ActorTalking(Common::SharedPtr<Object> obj) : _obj(obj) {}
 
 	bool operator()() {
-		return _obj->getTalking() && _obj->getTalking()->isEnabled();
+		return _obj->getTalking() && _obj->getTalking()->isEnabled() && _obj->_room == g_twp->_room;
 	}
 
 private:

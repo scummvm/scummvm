@@ -275,4 +275,10 @@ bool Cutscene::isStopped() {
 	return sq_getvmstate(getThread()) == 0;
 }
 
+void Cutscene::cutsceneOverride() {
+	if (_state == csCheckEnd) {
+		_state = csOverride;
+	}
+}
+
 } // namespace Twp

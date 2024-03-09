@@ -82,7 +82,6 @@ static void drawThreads() {
 			if (g_twp->_cutscene) {
 				Common::SharedPtr<ThreadBase> thread(g_twp->_cutscene);
 				SQStackInfos infos;
-				sq_stackinfos(thread->getThread(), 0, &infos);
 
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
@@ -92,11 +91,16 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-6s", "cutscene");
 				ImGui::TableNextColumn();
-				ImGui::Text("%-9s", infos.funcname);
-				ImGui::TableNextColumn();
-				ImGui::Text("%-9s", infos.source);
-				ImGui::TableNextColumn();
-				ImGui::Text("%5lld", infos.line);
+				if (SQ_SUCCEEDED(sq_stackinfos(thread->getThread(), 0, &infos))) {
+					ImGui::Text("%-9s", infos.funcname);
+					ImGui::TableNextColumn();
+					ImGui::Text("%-9s", infos.source);
+					ImGui::TableNextColumn();
+					ImGui::Text("%5lld", infos.line);
+				} else {
+					ImGui::TableNextColumn();
+					ImGui::TableNextColumn();
+				}
 			}
 
 			for (const auto &thread : threads) {
@@ -111,11 +115,16 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
 				ImGui::TableNextColumn();
-				ImGui::Text("%-9s", infos.funcname);
-				ImGui::TableNextColumn();
-				ImGui::Text("%-9s", infos.source);
-				ImGui::TableNextColumn();
-				ImGui::Text("%5lld", infos.line);
+				if (SQ_SUCCEEDED(sq_stackinfos(thread->getThread(), 0, &infos))) {
+					ImGui::Text("%-9s", infos.funcname);
+					ImGui::TableNextColumn();
+					ImGui::Text("%-9s", infos.source);
+					ImGui::TableNextColumn();
+					ImGui::Text("%5lld", infos.line);
+				} else {
+					ImGui::TableNextColumn();
+					ImGui::TableNextColumn();
+				}
 			}
 			ImGui::EndTable();
 		}

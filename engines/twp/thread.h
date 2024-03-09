@@ -114,7 +114,7 @@ public:
 	void stop() override final;
 
 	bool hasOverride() const;
-	inline void cutsceneOverride() { _state = csOverride; }
+	void cutsceneOverride();
 	bool isStopped();
 
 	void setInputState(InputStateFlag state) { _inputState = state; }
