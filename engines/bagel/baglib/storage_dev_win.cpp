@@ -621,7 +621,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 
-		CBagStorageDev::LoadFile(fpInput, sWldFileName);
+		CBagStorageDev::LoadFileFromStream(fpInput, sWldFileName);
 
 		BofFree(pBuf);
 	}
@@ -631,7 +631,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 }
 
 
-ERROR_CODE CBagStorageDev::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
 	CHAR                szWorkStr[256];
 	CHAR                szStr[256];
 	szWorkStr[0] = 0;
@@ -1768,7 +1768,7 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 
-		CBagStorageDev::LoadFile(fpInput, sWldFile);
+		CBagStorageDev::LoadFileFromStream(fpInput, sWldFile);
 
 		// If the window.IsCreated()
 		//
@@ -2222,7 +2222,7 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 
-		CBagStorageDev::LoadFile(fpInput, sWldFile);
+		CBagStorageDev::LoadFileFromStream(fpInput, sWldFile);
 
 		BofFree(pBuf);
 
