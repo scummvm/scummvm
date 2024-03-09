@@ -129,9 +129,6 @@ public:
 	 */
 	ERROR_CODE ShutDown() override;
 
-	virtual ERROR_CODE InitializeSoundSystem(WORD nChannels = 1, DWORD nFreq = 11025, WORD nBitsPerSample = 8);
-	virtual ERROR_CODE ShutDownSoundSystem();
-
 	/**
 	 * Sets specified user option in assocciated .INI file
 	 * @param pszSection        .INI section to write to

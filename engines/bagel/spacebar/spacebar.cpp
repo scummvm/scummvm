@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "audio/mixer.h"
 #include "engines/util.h"
 #include "bagel/console.h"
 #include "bagel/spacebar/spacebar.h"
@@ -71,18 +71,9 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			// This is the primary game window
 			SetMainWindow(pGameWindow);
 
-			// Init Miles Sound System for Mono, 22kHz, 8bit
+			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-#if SCUMMVM_UNNEEDED
-			// Hack to fix in-ability to change the volume of the 1st midi file played.
-			{
-				CBofSound cSound(pGameWindow, BuildSysDir("1.MID"), SOUND_MIDI);
-				cSound.SetVolume(0);
-				cSound.Play();
-				cSound.Stop();
-			}
-#endif
 			CBofBitmap *pBmp;
 			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != nullptr) {
 				pBmp->FillRect(nullptr, COLOR_BLACK);
@@ -199,6 +190,19 @@ ERROR_CODE SpaceBarEngine::ShutDown() {
 
 	return m_errCode;
 }
+
+
+ERROR_CODE SpaceBarEngine::InitializeSoundSystem(WORD nChannels, DWORD nFreq, WORD nBitsPerSample) {
+	// Nothing to do
+
+	return ERR_NONE;
+}
+
+ERROR_CODE SpaceBarEngine::ShutDownSoundSystem() {
+	_mixer->stopAll();
+	return m_errCode;
+}
+
 
 Common::Error SpaceBarEngine::run() {
 	// Initialize graphics mode
