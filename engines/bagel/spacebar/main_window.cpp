@@ -636,7 +636,7 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 }
 
 
-VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
+VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -654,7 +654,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
 
 
 
-VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
+VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)				// if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
@@ -664,7 +664,7 @@ VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint) {
 }
 
 
-VOID CMainWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint) {
+VOID CMainWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)				// if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);

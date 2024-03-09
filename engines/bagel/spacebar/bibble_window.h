@@ -88,8 +88,8 @@ protected:
 	ERROR_CODE Highlight(CBetArea *pArea, UBYTE nColor);
 	ERROR_CODE UnHighlight(CBetArea *pArea);
 
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 

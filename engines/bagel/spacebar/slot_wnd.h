@@ -118,8 +118,8 @@ public:
 	VOID 				OnPaint(CBofRect *pRect);
 	VOID 				EraseBackdrop();
 	VOID 				OnTimer(UINT nTimerId);
-	VOID 				OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
-	VOID 				OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+	VOID 				OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	VOID 				OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}
 };
 

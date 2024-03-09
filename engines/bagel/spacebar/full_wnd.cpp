@@ -79,7 +79,7 @@ VOID SBarFullWnd::OnTimer(UINT nTimerId) {
 	}
 }
 
-VOID SBarFullWnd::OnMouseMove(UINT nFlags, CBofPoint *pPoint) {
+VOID SBarFullWnd::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 

@@ -68,7 +68,7 @@ public:
 protected:
 	VOID CalcFuel(DOUBLE hf);
 
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	//virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	virtual VOID OnTimer(UINT tId);

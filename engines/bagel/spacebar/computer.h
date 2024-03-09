@@ -133,10 +133,10 @@ public:
 	VOID OnPaint(CBofRect *pRect);
 	VOID EraseBackdrop();
 
-	VOID OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {}
-	VOID OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {}
+	VOID OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	VOID OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
-	VOID OnMouseMove(UINT nFlags, CBofPoint *);
+	VOID OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
 };
 
 } // namespace SpaceBar

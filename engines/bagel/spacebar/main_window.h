@@ -139,9 +139,9 @@ public:
 	VOID OnClose(VOID);
 	VOID OnSize(UINT nType, int cx, int cy);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint);
-	VOID OnMouseMove(UINT nFlags, CBofPoint *p);
+	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);
 };
 
 } // namespace SpaceBar
