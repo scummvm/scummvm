@@ -156,8 +156,8 @@ CBofWindow::CBofWindow(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeigh
 CBofWindow::~CBofWindow() {
 	Assert(IsValidObject(this));
 
-	delete m_pWindow;
-	m_pWindow = nullptr;
+	delete _surface;
+	_surface = nullptr;
 
 #if BOF_MAC
 	if (IsInActiveList()) {
@@ -286,8 +286,8 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		stRect.translate(pParent->GetWindowRect().left,
 			pParent->GetWindowRect().top);
 		
-	delete m_pWindow;
-	m_pWindow = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
+	delete _surface;
+	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
 #if BOF_WINDOWS
 
@@ -1217,7 +1217,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 #endif
 
 Graphics::ManagedSurface *CBofWindow::getSurface() {
-	return m_pWindow;
+	return _surface;
 }
 
 
