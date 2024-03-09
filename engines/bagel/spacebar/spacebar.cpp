@@ -154,11 +154,9 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					}
 
 					// Use hi-res movie if user has a fast machine
-					cString = LOGOSMK3;
-					if (GetMachineSpeed() < 100) {
-						cString = LOGOSMK3EX;
-					}
+					cString = (GetMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
 					MACROREPLACE(cString);
+
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(pGameWindow, cString.GetBuffer());
 						if (pBmp != nullptr) {

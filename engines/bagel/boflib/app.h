@@ -33,6 +33,8 @@ namespace Bagel {
 
 #define MAX_APPNAME 128
 #define DEFAULT_MAINLOOPS   1
+#define kReallyFastPPC 50
+#define kReallySlowPPC 200
 
 class CBofApp : public CBofError {
 protected:
@@ -124,8 +126,7 @@ public:
 	}
 
 	static ULONG GetMachineSpeed(VOID) {
-		// What is the system's power level? It's over 9000!
-		return 9001;
+		return kReallyFastPPC;
 	}
 
 
