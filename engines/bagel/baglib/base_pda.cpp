@@ -580,7 +580,7 @@ INT SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	return nCursorID;
 }
 
-CBofRect SBBasePda::GetViewRect(VOID) {
+CBofRect SBBasePda::GetViewRect() {
 	return (m_xCurDisplay == nullptr ? xEmptyRect : m_xCurDisplay->GetRect());
 }
 

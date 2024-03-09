@@ -73,7 +73,7 @@ public:
 	}
 
 	VOID SetWinRect(const RECT *pRect);
-	RECT GetWinRect(VOID);
+	RECT GetWinRect();
 
 	VOID operator=(const RECT &srcRect) {
 		SetWinRect(&srcRect);
@@ -221,7 +221,7 @@ INLINE VOID CBofRect::SetRect(INT x1, INT y1, INT x2, INT y2) {
 	bottom = y2;
 }
 
-INLINE VOID CBofRect::SetRectEmpty(VOID) {
+INLINE VOID CBofRect::SetRectEmpty() {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -253,7 +253,7 @@ INLINE BOOL CBofRect::EqualRect(const CBofRect &cRect) {
 	return (left == cRect.left && right == cRect.right && top == cRect.top && bottom == cRect.bottom);
 }
 
-INLINE RECT CBofRect::GetWinRect(VOID) {
+INLINE RECT CBofRect::GetWinRect() {
 	Assert(IsValidObject(this));
 
 	RECT stRect;
@@ -269,7 +269,7 @@ INLINE RECT CBofRect::GetWinRect(VOID) {
 INLINE VOID CBofRect::SetWinRect(const RECT *pRect) {
 	Assert(IsValidObject(this));
 
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	left = pRect->left;
 	top = pRect->top;
@@ -312,8 +312,8 @@ INLINE BOOL CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRec
 	Assert(IsValidObject(this));
 
 	// can't access null pointers
-	Assert(pRect1 != NULL);
-	Assert(pRect2 != NULL);
+	Assert(pRect1 != nullptr);
+	Assert(pRect2 != nullptr);
 
 	left = max(pRect1->left, pRect2->left);
 	top = max(pRect1->top, pRect2->top);
@@ -335,8 +335,8 @@ INLINE BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) 
 	Assert(IsValidObject(this));
 
 	// can't access null pointers
-	Assert(pRect1 != NULL);
-	Assert(pRect2 != NULL);
+	Assert(pRect1 != nullptr);
+	Assert(pRect2 != nullptr);
 
 	left = min(pRect1->left, pRect2->left);
 	top = min(pRect1->top, pRect2->top);

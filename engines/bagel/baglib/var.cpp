@@ -272,7 +272,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	CBofListNode<CBagVar *> *pList;
 
 	pList = m_xVarList.GetTail();
-	while (pList != NULL) {
+	while (pList != nullptr) {
 
 		if (pList->GetNodeItem() == pVar) {
 			m_xVarList.Remove(pList);
@@ -371,7 +371,7 @@ ERROR_CODE CBagVarManager::ReleaseVariables(BOOL bIncludeGlobals) {
 CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBagVar *pVar;
 
-	pVar = NULL;
+	pVar = nullptr;
 
 #if 1
 	// Use the hash table to find the variable.
@@ -384,7 +384,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 	for (INT i = 0; i < pVarList->GetCount(); ++i) {
 		pVar = pVarList->GetNodeItem(i);
-		if (pVar != NULL && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName)) {
+		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName)) {
 			return (pVar);
 		}
 	}
@@ -394,12 +394,12 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	for (INT i = 0; i < m_xVarList.GetCount(); ++i) {
 
 		pVar = m_xVarList[i];
-		if (pVar != NULL && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName))
+		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName))
 			return (pVar);
 	}
 #endif
 
-	return NULL;
+	return nullptr;
 }
 
 VOID CBagVar::SetName(const CBofString &s) {

@@ -74,20 +74,20 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect);
 
 // Static data definitions.
 //
-static CBofBitmap *pTipBmp = NULL;
-static CBofBitmap *pChipBmp = NULL;
-static CBofBitmap *pGrafittiBmp = NULL;
-static CBofBitmap *pTriBmp = NULL;
+static CBofBitmap *pTipBmp = nullptr;
+static CBofBitmap *pChipBmp = nullptr;
+static CBofBitmap *pGrafittiBmp = nullptr;
+static CBofBitmap *pTriBmp = nullptr;
 static BOOL initDone = FALSE;
 static BOOL triinitDone = FALSE;
 static BOOL lightninginitDone = FALSE;
-static char *buff = NULL;
+static char *buff = nullptr;
 static const char *kPrecipString = "Chance Of Precipitation: ";
 static const char *kDustString = "Dust Level: ";
 static const char *kRadioOnString = "Internal Radio Receiver: On";
 static const char *kRadioOffString = "Internal Radio Receiver: Off";
 static DWORD dwTimeOfNextBolt = 0;
-static CBofSound *pThunder = NULL;
+static CBofSound *pThunder = nullptr;
 static const char *voiceNameArray[] = {
 	"Voice ID: None",
 	"Voice ID: Veeblecoach",
@@ -126,7 +126,7 @@ VOID VilInitFilters(CBofBitmap *pBmp) {
 		StrReplaceChar(buff, '\r', ' ');
 		pTipBmp = new CBofBitmap((nfile.GetLength() + 1) * 7, 20, pBmp->GetPalette());
 #if BOF_MAC
-		pTipBmp->FillRect(NULL, COLOR_WHITE);
+		pTipBmp->FillRect(nullptr, COLOR_WHITE);
 #endif
 		CBofRect rct(0, 0, (nfile.GetLength() + 1) * 7, 20);
 		PaintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
@@ -164,7 +164,7 @@ VOID TriInitFilters(CBofBitmap *pBmp) {
 	triinitDone = TRUE;
 }
 
-VOID LightningInitFilters(VOID) {
+VOID LightningInitFilters() {
 	if (!lightninginitDone) {
 		CHAR szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
@@ -178,30 +178,30 @@ VOID LightningInitFilters(VOID) {
 VOID DestroyFilters() {
 	if (pTipBmp) {
 		delete pTipBmp;
-		pTipBmp = NULL;
+		pTipBmp = nullptr;
 	}
 	if (pGrafittiBmp) {
 		delete pGrafittiBmp;
-		pGrafittiBmp = NULL;
+		pGrafittiBmp = nullptr;
 	}
 	// clean up trisecks bmp
 	if (pTriBmp) {
 		delete pTriBmp;
-		pTriBmp = NULL;
+		pTriBmp = nullptr;
 	}
 	// Chip bitmap is destroyed here is the cleanup function because
 	// presumably we're being called when the game is ending.
 	//
 	if (pChipBmp) {
 		delete pChipBmp;
-		pChipBmp = NULL;
+		pChipBmp = nullptr;
 	}
 
 	// Clean up the lightning filter.
 	//
 	if (pThunder) {
 		delete pThunder;
-		pThunder = NULL;
+		pThunder = nullptr;
 	}
 
 	// Record the fact that the filter bitmaps need to be instantiated
@@ -240,26 +240,26 @@ BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	return bReturnValue;
 }
 
-static CBagVar *g_pHudOn = NULL;
-static CBagVar *g_pDGrafiti = NULL;
-static CBagVar *g_pDRadio = NULL;
-static CBagVar *g_pPrecip = NULL;
-static CBagVar *g_pPrecDecimal = NULL;
-static CBagVar *g_pDust = NULL;
-static CBagVar *g_pDustDecimal = NULL;
-static CBagVar *g_pDVoiceID = NULL;
-static CBagVar *g_pDChipID = NULL;
-static CBagVar *g_pTDig1 = NULL;
-static CBagVar *g_pTDig2 = NULL;
-static CBagVar *g_pTDig3 = NULL;
-static CBagVar *g_pTDig4 = NULL;
+static CBagVar *g_pHudOn = nullptr;
+static CBagVar *g_pDGrafiti = nullptr;
+static CBagVar *g_pDRadio = nullptr;
+static CBagVar *g_pPrecip = nullptr;
+static CBagVar *g_pPrecDecimal = nullptr;
+static CBagVar *g_pDust = nullptr;
+static CBagVar *g_pDustDecimal = nullptr;
+static CBagVar *g_pDVoiceID = nullptr;
+static CBagVar *g_pDChipID = nullptr;
+static CBagVar *g_pTDig1 = nullptr;
+static CBagVar *g_pTDig2 = nullptr;
+static CBagVar *g_pTDig3 = nullptr;
+static CBagVar *g_pTDig4 = nullptr;
 
 BOOL g_bGetVilVars = TRUE;
 
 // BCW - 01-09-97
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
-static VOID GetVilVars(VOID) {
+static VOID GetVilVars() {
 	CHAR szBuf[256];
 	szBuf[0] = '\0';
 	CBofString cStr(szBuf, 256);
@@ -322,7 +322,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		g_bGetVilVars = FALSE;
 	}
 
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		viewRect = *pRect;
 
 	} else {
@@ -383,7 +383,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		srcTipRect.top = 0;
 		srcTipRect.bottom = 20;
 
-		pTipBmp->ScrollLeft(VILDROIDTIPSCROLLSPEED, NULL);
+		pTipBmp->ScrollLeft(VILDROIDTIPSCROLLSPEED, nullptr);
 		rect.left = viewRect.left;
 		rect.right = viewRect.right;
 		rect.top = viewRect.bottom - 20;
@@ -399,7 +399,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			};
 			case 1: {
-				if (pChipBmp != NULL)
+				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
 				CHAR szCString[256];                // jwl 09.25.96 performance improvement
@@ -442,7 +442,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			};
 			case 2: {
-				if (pChipBmp != NULL)
+				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
 				CHAR szCString[256];                // jwl 09.25.96 performance improvement
@@ -485,9 +485,9 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			};
 			case 3: {
-				if (pChipBmp != NULL) {
+				if (pChipBmp != nullptr) {
 					delete pChipBmp;
-					pChipBmp = NULL;
+					pChipBmp = nullptr;
 				}
 				CMainWindow::chipdisp = TRUE;
 				break;
@@ -593,7 +593,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			} else {
 				// Chip is Green or Blue (ID 1 or 2)
-				if (pChipBmp != NULL) {
+				if (pChipBmp != nullptr) {
 					int rdef = viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
 					int tdef = viewRect.Height() - 300;
 					CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
@@ -614,7 +614,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					cString = DISCEJECTSOUND;
 					MACROREPLACE(cString);
 					BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
-					CBagStorageDev *pWieldSDev = NULL;
+					CBagStorageDev *pWieldSDev = nullptr;
 					pWieldSDev = SDEVMNGR->GetStorageDevice("BWIELD_WLD");
 					if (chipID == 1)
 						pWieldSDev->ActivateLocalObject("GREENCHIP");
@@ -636,7 +636,7 @@ static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		TriInitFilters(pBmp);
 	}
 
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		viewRect = *pRect;
 	} else {
 
@@ -666,7 +666,7 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBofString zStr(szZBuff, 256);
 	BOOL bZzazzlVision = FALSE;
 
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		viewRect = *pRect;
 	} else {
 		// A null rectangle implies that we're going to filter the
@@ -680,7 +680,7 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	zStr = "ZZAZZLVISION";      // jwl 09.25.96 performance improvement
-	if ((pVar = VARMNGR->GetVariable(zStr)) != NULL) {
+	if ((pVar = VARMNGR->GetVariable(zStr)) != nullptr) {
 
 		bZzazzlVision = TRUE;
 		if (pVar->GetNumValue() > 0) {
@@ -691,7 +691,7 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			CBofBitmap *pMiniBitmap;
 
-			if ((pMiniBitmap = new CBofBitmap(dx, dy, pPal)) != NULL) {
+			if ((pMiniBitmap = new CBofBitmap(dx, dy, pPal)) != nullptr) {
 				CBofRect dstRect(viewRect);
 				CBofRect srcRect = pMiniBitmap->GetRect();
 				pBmp->Paint(pMiniBitmap, &srcRect, &dstRect);
@@ -748,7 +748,7 @@ static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBofString hStr(szHBuff, 256);
 	BOOL bHallucinating = FALSE;
 
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		viewRect = *pRect;
 	} else {
 		// A null rectangle implies that we're going to filter the
@@ -806,7 +806,7 @@ static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(pBmp != NULL);
+	Assert(pBmp != nullptr);
 
 	BOOL bReturnValue = TRUE;
 
@@ -818,7 +818,7 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar = VARMNGR->GetVariable(vStr);
 	INT nLightningDelay = 0;
 
-	if (pVar != NULL) {
+	if (pVar != nullptr) {
 		nLightningDelay = pVar->GetNumValue();
 	}
 
@@ -834,7 +834,7 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// flash and play the sound of a thunderbolt.
 			//
 
-			if (pRect != NULL) {
+			if (pRect != nullptr) {
 				viewRect = *pRect;
 			} else {
 				// A null rectangle implies that we're going to filter the

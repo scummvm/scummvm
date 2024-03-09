@@ -585,7 +585,7 @@ ERROR_CODE CNavWindow::Detach() {
 }
 
 
-VOID CNavWindow::OnMainLoop(VOID) {
+VOID CNavWindow::OnMainLoop() {
 	// Do nothing
 }
 

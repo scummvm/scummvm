@@ -65,7 +65,7 @@ CBagRestartDialog::CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, C
 }
 
 
-VOID CBagRestartDialog::OnInitDialog(VOID) {
+VOID CBagRestartDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();

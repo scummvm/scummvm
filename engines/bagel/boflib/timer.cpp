@@ -29,7 +29,7 @@
 namespace Bagel {
 
 BOOL CBofTimer::m_bModified = FALSE;
-CBofTimer *CBofTimer::m_pTimerList = NULL;
+CBofTimer *CBofTimer::m_pTimerList = nullptr;
 
 #if BOF_WINDOWS
 #define GETTIME() (ULONG)GetTickCount()
@@ -42,13 +42,13 @@ CBofTimer::CBofTimer() {
 	m_lLastTime = 0;
 	m_nID = 0;
 	m_nInterval = 0;
-	m_pCallBack = NULL;
+	m_pCallBack = nullptr;
 	m_lUserInfo = 0;
 	m_bActive = FALSE;
 
 	// Another item for the list
 	//
-	if (m_pTimerList == NULL) {
+	if (m_pTimerList == nullptr) {
 		m_pTimerList = this;
 
 	} else {
@@ -70,7 +70,7 @@ CBofTimer::CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCal
 
 	// Another item for the list
 	//
-	if (m_pTimerList == NULL) {
+	if (m_pTimerList == nullptr) {
 		m_pTimerList = this;
 
 	} else {
@@ -94,12 +94,12 @@ CBofTimer::~CBofTimer() {
 }
 
 
-VOID CBofTimer::HandleTimers(VOID) {
+VOID CBofTimer::HandleTimers() {
 	CBofTimer *pTimer;
 	ULONG lCurrentTime;
 
 	pTimer = m_pTimerList;
-	while (pTimer != NULL) {
+	while (pTimer != nullptr) {
 
 		if (pTimer->IsActive()) {
 
@@ -110,7 +110,7 @@ VOID CBofTimer::HandleTimers(VOID) {
 				// Remember for next time
 				pTimer->m_lLastTime = lCurrentTime;
 
-				if (pTimer->m_pCallBack != NULL) {
+				if (pTimer->m_pCallBack != nullptr) {
 
 					// Execute call back
 					(*pTimer->m_pCallBack)(pTimer->m_nID, pTimer->m_lUserInfo);

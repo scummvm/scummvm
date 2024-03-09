@@ -73,7 +73,7 @@ protected:
 	static PDAMODE m_eHoldMode;
 
 public:
-	SBBasePda(CBofWindow *pParent = NULL, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
+	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
 	virtual ~SBBasePda();
 	static void initStatics();
 

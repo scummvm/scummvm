@@ -38,7 +38,7 @@ CBofListBox::CBofListBox() {
 	m_nNumItems = 0;
 	m_n1stVisible = 0;
 	m_nPageSize = 0;
-	m_pWork = NULL;
+	m_pWork = nullptr;
 	m_nItemHeight = TEXT_ITEM_HEIGHT;
 	m_nState = LISTBOX_NORMAL;
 
@@ -53,9 +53,9 @@ CBofListBox::CBofListBox() {
 CBofListBox::~CBofListBox() {
 	// kill the temporary work area
 	//
-	if (m_pWork != NULL) {
+	if (m_pWork != nullptr) {
 		delete m_pWork;
-		m_pWork  = NULL;
+		m_pWork  = nullptr;
 	}
 
 	DeleteAll(FALSE);
@@ -197,7 +197,7 @@ ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
 
 VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	INT nIndex;
 
@@ -207,7 +207,7 @@ VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
 		m_nState = LISTBOX_SELECT;
 
-		if (m_pParentWnd != NULL) {
+		if (m_pParentWnd != nullptr) {
 			m_pParentWnd->SetPrevMouseDown(*pPoint);
 			m_pParentWnd->OnBofListBox(this, nIndex);
 		}
@@ -219,7 +219,7 @@ VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 
 VOID CBofListBox::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	INT nIndex;
 
@@ -229,7 +229,7 @@ VOID CBofListBox::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
 		m_nState = LISTBOX_USENOW;
 
-		if (m_pParentWnd != NULL) {
+		if (m_pParentWnd != nullptr) {
 			m_pParentWnd->SetPrevMouseDown(*pPoint);
 			m_pParentWnd->OnBofListBox(this, nIndex);
 		}
@@ -336,7 +336,7 @@ VOID CBofListBox::OnPaint(CBofRect * /*pRect*/) {
 
 	m_nPageSize = Height() / m_nItemHeight;
 
-	if (m_pBackdrop == NULL) {
+	if (m_pBackdrop == nullptr) {
 
 		SaveBackground();
 	}
@@ -345,24 +345,24 @@ VOID CBofListBox::OnPaint(CBofRect * /*pRect*/) {
 }
 
 
-VOID CBofListBox::KillBackground(VOID) {
+VOID CBofListBox::KillBackground() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != NULL) {
+	if (m_pBackdrop != nullptr) {
 		delete m_pBackdrop;
-		m_pBackdrop = NULL;
+		m_pBackdrop = nullptr;
 	}
 }
 
 
-ERROR_CODE CBofListBox::SaveBackground(VOID) {
+ERROR_CODE CBofListBox::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	KillBackground();
 
-	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != NULL) {
+	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 
-		if ((m_pParentWnd != NULL) && (m_pParentWnd->GetBackdrop() != NULL)) {
+		if ((m_pParentWnd != nullptr) && (m_pParentWnd->GetBackdrop() != nullptr)) {
 			CBofRect cDstRect, cRect;
 
 			cRect = m_pBackdrop->GetRect();
@@ -385,18 +385,18 @@ ERROR_CODE CBofListBox::SaveBackground(VOID) {
 }
 
 
-ERROR_CODE CBofListBox::CreateWorkArea(VOID) {
+ERROR_CODE CBofListBox::CreateWorkArea() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop == NULL) {
+	if (m_pBackdrop == nullptr) {
 		SaveBackground();
 	}
 
-	if (m_pWork == NULL) {
+	if (m_pWork == nullptr) {
 
-		Assert(m_pBackdrop != NULL);
+		Assert(m_pBackdrop != nullptr);
 
-		if ((m_pWork = new CBofBitmap(Width(), Height(), m_pBackdrop->GetPalette())) == NULL) {
+		if ((m_pWork = new CBofBitmap(Width(), Height(), m_pBackdrop->GetPalette())) == nullptr) {
 			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
 		}
 	}
@@ -405,7 +405,7 @@ ERROR_CODE CBofListBox::CreateWorkArea(VOID) {
 }
 
 
-ERROR_CODE CBofListBox::RepaintAll(VOID) {
+ERROR_CODE CBofListBox::RepaintAll() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -420,7 +420,7 @@ ERROR_CODE CBofListBox::RepaintAll(VOID) {
 
 		CreateWorkArea();
 
-		if (m_pWork != NULL) {
+		if (m_pWork != nullptr) {
 
 			m_pWork->Lock();
 
@@ -428,7 +428,7 @@ ERROR_CODE CBofListBox::RepaintAll(VOID) {
 
 			// prepare the background
 			//
-			Assert(m_pBackdrop != NULL);
+			Assert(m_pBackdrop != nullptr);
 			m_pBackdrop->Paint(m_pWork);
 
 			for (i = 0; i < m_nPageSize; i++) {
@@ -480,7 +480,7 @@ ERROR_CODE CBofListBox::RepaintAll(VOID) {
 		}
 
 #if BOF_MAC
-		InvalidateRect(NULL);
+		InvalidateRect(nullptr);
 #endif
 
 		// jwl 08.29.96 reset the font
@@ -517,7 +517,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 			cRect.SetRect(0, i * m_nItemHeight, Width() - 1, (i + 1) * m_nItemHeight - 1);
 
 			// prepare the background
-			Assert(m_pBackdrop != NULL);
+			Assert(m_pBackdrop != nullptr);
 			m_pBackdrop->Paint(m_pWork, &cRect, &cRect);
 
 			// If this item is currently selected and we have a high color mdm 5/2

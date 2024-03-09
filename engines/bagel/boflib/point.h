@@ -105,14 +105,14 @@ INLINE CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 }
 
 INLINE VOID CBofPoint::SetWinPoint(const POINT *pPoint) {
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 	Assert(IsValidObject(this));
 
 	x = pPoint->x;
 	y = pPoint->y;
 }
 
-INLINE POINT CBofPoint::GetWinPoint(VOID) {
+INLINE POINT CBofPoint::GetWinPoint() {
 	Assert(IsValidObject(this));
 
 	POINT stPoint;

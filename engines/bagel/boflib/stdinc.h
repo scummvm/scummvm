@@ -182,7 +182,7 @@ extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, co
 #ifdef __TIMESTAMP__
 #define Assert(f) BofAssert(f, __LINE__, __FILE__, __TIMESTAMP__)
 #else
-#define Assert(f) BofAssert(f, __LINE__, __FILE__, NULL)
+#define Assert(f) BofAssert(f, __LINE__, __FILE__, nullptr)
 #endif /* __TIMESTAMP__ */
 
 #endif /* _DEBUG */

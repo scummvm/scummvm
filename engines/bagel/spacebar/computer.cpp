@@ -92,17 +92,17 @@ static ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 const CHAR *BuildBarcDir(const CHAR *pszFile);
 
 SBarComputer::SBarComputer() : CBagStorageDevWnd() {
-	m_pDrinkBuff = NULL;
-	m_pIngBuff = NULL;
+	m_pDrinkBuff = nullptr;
+	m_pIngBuff = nullptr;
 #if TWOLISTS
-	m_pDrinkBox = NULL;
-	m_pIngBox = NULL;
+	m_pDrinkBox = nullptr;
+	m_pIngBox = nullptr;
 #else
-	m_pLBox = NULL;
+	m_pLBox = nullptr;
 #endif
-	m_pTBox = NULL;
-	m_pDrinkList = NULL;
-	m_pIngList = NULL;
+	m_pTBox = nullptr;
+	m_pDrinkList = nullptr;
+	m_pIngList = nullptr;
 	//  m_nSelection = -1;
 	m_nDrinkSelect = -1;
 	m_nIngSelect = -1;
@@ -110,7 +110,7 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 	m_ePrevMode = DRINKMODE;
 
 	for (int i = 0; i < NUM_COMPBUTT; i++) {
-		m_pButtons[i] = NULL;
+		m_pButtons[i] = nullptr;
 	}
 
 	// Call this thing a closeup so that time won't go by when
@@ -139,14 +139,14 @@ VOID SBarComputer::EraseBackdrop() {
 
 VOID  SBarComputer::OnPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
-		Assert(GetWorkBmp() != NULL);
+		Assert(GetWorkBmp() != nullptr);
 		// erase everything from the background
 		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
 		// paint all the objects to the background
-		PaintStorageDevice(NULL, GetBackdrop(), pRect);
+		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
 	}
 
-	if (m_pTBox != NULL)
+	if (m_pTBox != nullptr)
 		m_pTBox->Display();
 
 	// Paint the backdrop
@@ -158,7 +158,7 @@ VOID  SBarComputer::OnPaint(CBofRect *pRect) {
 
 #if BOF_MAC
 	if (m_eMode == DRINKMODE) {
-		m_pButtons[ONBUT]->Paint(NULL);
+		m_pButtons[ONBUT]->Paint(nullptr);
 	}
 #endif
 }
@@ -184,7 +184,7 @@ ERROR_CODE SBarComputer::Attach() {
 		CreateIngListBox();
 
 		// Must have a valid backdrop by now
-		Assert(m_pBackdrop != NULL);
+		Assert(m_pBackdrop != nullptr);
 		pPal = m_pBackdrop->GetPalette();
 
 #if BOF_MAC
@@ -193,7 +193,7 @@ ERROR_CODE SBarComputer::Attach() {
 #endif
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
-			if ((m_pButtons[i] = new CBofBmpButton) != NULL) {
+			if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
 				CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
@@ -230,15 +230,15 @@ ERROR_CODE SBarComputer::Attach() {
 
 #if !BOF_MAC
 		// Order these windows properly... the show code does an invalidate.
-		InvalidateRect(NULL);
+		InvalidateRect(nullptr);
 #endif
 
 		// Fix drink already selected bug
 		//
-		if (m_pDrinkBox != NULL) {
+		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->SetSelectedItem(-1, FALSE);
 		}
-		if (m_pIngBox != NULL) {
+		if (m_pIngBox != nullptr) {
 			m_pIngBox->SetSelectedItem(-1, FALSE);
 		}
 
@@ -253,35 +253,35 @@ ERROR_CODE SBarComputer::Attach() {
 ERROR_CODE SBarComputer::Detach() {
 	CBofCursor::Hide();
 
-	if (m_pDrinkBuff != NULL) {
+	if (m_pDrinkBuff != nullptr) {
 		delete m_pDrinkBuff;
-		m_pDrinkBuff = NULL;
+		m_pDrinkBuff = nullptr;
 	}
 
-	if (m_pIngBuff != NULL) {
+	if (m_pIngBuff != nullptr) {
 		delete m_pIngBuff;
-		m_pIngBuff = NULL;
+		m_pIngBuff = nullptr;
 	}
 
 	DeleteListBox();
 	DeleteTextBox();
 
-	if (m_pDrinkList != NULL) {
+	if (m_pDrinkList != nullptr) {
 		delete m_pDrinkList;
-		m_pDrinkList = NULL;
+		m_pDrinkList = nullptr;
 	}
 
-	if (m_pIngList != NULL) {
+	if (m_pIngList != nullptr) {
 		delete m_pIngList;
-		m_pIngList = NULL;
+		m_pIngList = nullptr;
 	}
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_COMPBUTT; i++) {
 
-		if (m_pButtons[i] != NULL) {
+		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
-			m_pButtons[i] = NULL;
+			m_pButtons[i] = nullptr;
 		}
 	}
 
@@ -320,12 +320,12 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 	// Check that buffers are null
 	if (m_pDrinkBuff) {
 		delete m_pDrinkBuff;
-		m_pDrinkBuff = NULL;
+		m_pDrinkBuff = nullptr;
 	}
 
 	// Allocate the buffers
 	m_pDrinkBuff = (char *)BofAlloc(fpDrinkFile.GetLength() + 1);
-	if (m_pDrinkBuff == NULL)
+	if (m_pDrinkBuff == nullptr)
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
@@ -336,12 +336,12 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 	while (pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength()) {
 		pCompItem = new SBarCompItem();
 		if (pCompItem) {
-			pCompItem->m_pItem = NULL;
-			pCompItem->m_pList = NULL;
-			pCompItem->m_pDrink = NULL;
+			pCompItem->m_pItem = nullptr;
+			pCompItem->m_pList = nullptr;
+			pCompItem->m_pDrink = nullptr;
 		}
 
-		Assert(pCompItem != NULL);
+		Assert(pCompItem != nullptr);
 
 		// get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
@@ -400,12 +400,12 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 	// Check that buffers are null
 	if (m_pIngBuff) {
 		delete m_pIngBuff;
-		m_pIngBuff = NULL;
+		m_pIngBuff = nullptr;
 	}
 
 	// Allocate the buffers
 	m_pIngBuff = (char *)BofAlloc(fpIngFile.GetLength() + 1);
-	if (m_pIngBuff == NULL)
+	if (m_pIngBuff == nullptr)
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
@@ -416,9 +416,9 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 	while (pPosInBuff < m_pIngBuff + fpIngFile.GetLength()) {
 		pCompItem = new SBarCompItem();
 		if (pCompItem) {
-			pCompItem->m_pItem = NULL;
-			pCompItem->m_pList = NULL;
-			pCompItem->m_pDrink = NULL;
+			pCompItem->m_pItem = nullptr;
+			pCompItem->m_pList = nullptr;
+			pCompItem->m_pDrink = nullptr;
 		}
 
 		// get the item pointer pointing to item
@@ -454,9 +454,9 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 }
 
 VOID SBarComputer::CreateTextBox(CBofString &newText) {
-	if (m_pTBox == NULL) {
+	if (m_pTBox == nullptr) {
 		m_pTBox = new CBofTextBox(GetBackdrop(), &CompDisplay, newText);
-		Assert(m_pTBox != NULL);
+		Assert(m_pTBox != nullptr);
 		m_pTBox->SetTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
 		EraseBackdrop();
@@ -467,25 +467,25 @@ VOID SBarComputer::CreateTextBox(CBofString &newText) {
 
 	if (m_pButtons[ONBUT]) {
 		m_pButtons[ONBUT]->Show();
-		m_pButtons[ONBUT]->InvalidateRect(NULL);
+		m_pButtons[ONBUT]->InvalidateRect(nullptr);
 	}
 }
 
 VOID SBarComputer::DeleteTextBox() {
 	if (m_pTBox) {
 		delete m_pTBox;
-		m_pTBox = NULL;
+		m_pTBox = nullptr;
 	}
 }
 
 VOID SBarComputer::DeleteListBox() {
 	if (m_pDrinkBox) {
 		delete m_pDrinkBox;
-		m_pDrinkBox = NULL;
+		m_pDrinkBox = nullptr;
 	}
 	if (m_pIngBox) {
 		delete m_pIngBox;
-		m_pIngBox = NULL;
+		m_pIngBox = nullptr;
 	}
 }
 
@@ -493,8 +493,8 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 	ERROR_CODE error = ERR_NONE;
 	CBofPalette *pPal;
 
-	if (m_pDrinkBox == NULL) { // We need to create one
-		if ((m_pDrinkBox = new CBofListBox) != NULL) {
+	if (m_pDrinkBox == nullptr) { // We need to create one
+		if ((m_pDrinkBox = new CBofListBox) != nullptr) {
 #if BOF_MAC
 			// jwl 08.21.96 make this our own custom window such that no frame is drawn
 			// around the window/button
@@ -533,9 +533,9 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 	ERROR_CODE error = ERR_NONE;
 	CBofPalette *pPal;
 
-	if (m_pIngBox == NULL) {
+	if (m_pIngBox == nullptr) {
 		// We need to create one
-		if ((m_pIngBox = new CBofListBox) != NULL) {
+		if ((m_pIngBox = new CBofListBox) != nullptr) {
 #if BOF_MAC
 			// jwl 08.21.96 make this our own custom window such that no frame is drawn
 			// around the window/button
@@ -585,8 +585,8 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 		// Paint to this button immediately, this minimizes the white
 		// flash of bringing the window frontmost.
 #if BOF_MAC
-		m_pButtons[ORDER]->Paint(NULL);
-		m_pButtons[LISTD]->Paint(NULL);
+		m_pButtons[ORDER]->Paint(nullptr);
+		m_pButtons[LISTD]->Paint(nullptr);
 #endif
 		m_pDrinkBox->RepaintAll();
 
@@ -599,7 +599,7 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 		// Paint to this button immediately, this minimizes the white
 		// flash of bringing the window frontmost.
 #if BOF_MAC
-		m_pButtons[LISTI]->Paint(NULL);
+		m_pButtons[LISTI]->Paint(nullptr);
 #endif
 
 		m_pIngBox->RepaintAll();
@@ -615,15 +615,15 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 #if !BOF_MAC
 #else
 #endif
-	ValidateAnscestors(NULL);
+	ValidateAnscestors(nullptr);
 	if (m_eMode == DRINKMODE) {
-		m_pButtons[LISTD]->InvalidateRect(NULL);
+		m_pButtons[LISTD]->InvalidateRect(nullptr);
 	} else {
-		m_pButtons[LISTI]->InvalidateRect(NULL);
+		m_pButtons[LISTI]->InvalidateRect(nullptr);
 	}
-	m_pButtons[ORDER]->InvalidateRect(NULL);
-	m_pButtons[PGUP]->InvalidateRect(NULL);
-	m_pButtons[PGDOWN]->InvalidateRect(NULL);
+	m_pButtons[ORDER]->InvalidateRect(nullptr);
+	m_pButtons[PGUP]->InvalidateRect(nullptr);
+	m_pButtons[PGDOWN]->InvalidateRect(nullptr);
 
 	UpdateWindow();
 }
@@ -638,7 +638,7 @@ VOID SBarComputer::SetOn() {
 #if BOF_MAC
 	// Whenever dealing with the on/off button, make sure to
 	// paint the new bitmap.
-	m_pButtons[ONBUT]->Paint(NULL);
+	m_pButtons[ONBUT]->Paint(nullptr);
 #endif
 	// Added switching-on sound
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
@@ -651,10 +651,10 @@ VOID SBarComputer::SetOff() {
 
 		// Fix drink already selected bug
 		// copied here from Attach bar 12-06-96
-		if (m_pDrinkBox != NULL) {
+		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->SetSelectedItem(-1, FALSE);
 		}
-		if (m_pIngBox != NULL) {
+		if (m_pIngBox != nullptr) {
 			m_pIngBox->SetSelectedItem(-1, FALSE);
 		}
 
@@ -680,7 +680,7 @@ VOID SBarComputer::SetOff() {
 #if BOF_MAC
 		// Whenever dealing with the on/off button, make sure to
 		// paint the new bitmap.
-		m_pButtons[OFFBUT]->Paint(NULL);
+		m_pButtons[OFFBUT]->Paint(nullptr);
 #endif
 		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
@@ -727,7 +727,7 @@ VOID SBarComputer::SetDrink() {
 		m_pButtons[DRINKS]->Hide();
 		m_pButtons[INGRED]->Show();
 #if BOF_MAC
-		m_pButtons[INGRED]->Paint(NULL);
+		m_pButtons[INGRED]->Paint(nullptr);
 #endif
 
 		//m_nIngSelect = -1;
@@ -740,8 +740,8 @@ VOID SBarComputer::SetDrink() {
 		m_pButtons[PGUP]->Show();
 		m_pButtons[PGDOWN]->Show();
 #if BOF_MAC
-		m_pButtons[PGUP]->Paint(NULL);
-		m_pButtons[PGDOWN]->Paint(NULL);
+		m_pButtons[PGUP]->Paint(nullptr);
+		m_pButtons[PGDOWN]->Paint(nullptr);
 #endif
 
 		m_pButtons[BCBACK]->Hide();
@@ -754,7 +754,7 @@ VOID SBarComputer::SetDrink() {
 			// Paint to this button immediately, this minimizes the white
 			// flash of bringing the window frontmost.
 #if BOF_MAC
-			m_pButtons[LISTD]->Paint(NULL);
+			m_pButtons[LISTD]->Paint(nullptr);
 #endif
 		}
 
@@ -805,7 +805,7 @@ VOID SBarComputer::SetIng() {
 		// Paint to this button immediately, this minimizes the white
 		// flash of bringing the window frontmost.
 #if BOF_MAC
-		m_pButtons[DRINKS]->Paint(NULL);
+		m_pButtons[DRINKS]->Paint(nullptr);
 #endif
 
 		// hide list drink ingrediant button
@@ -823,8 +823,8 @@ VOID SBarComputer::SetIng() {
 		// Paint to this button immediately, this minimizes the white
 		// flash of bringing the window frontmost.
 #if BOF_MAC
-		m_pButtons[PGUP]->Paint(NULL);
-		m_pButtons[PGDOWN]->Paint(NULL);
+		m_pButtons[PGUP]->Paint(nullptr);
+		m_pButtons[PGDOWN]->Paint(nullptr);
 #endif
 
 		if (m_nIngSelect != -1) {
@@ -834,7 +834,7 @@ VOID SBarComputer::SetIng() {
 			// Paint to this button immediately, this minimizes the white
 			// flash of bringing the window frontmost.
 #if BOF_MAC
-			m_pButtons[LISTI]->Paint(NULL);
+			m_pButtons[LISTI]->Paint(nullptr);
 #endif
 		}
 
@@ -890,7 +890,7 @@ VOID SBarComputer::SetList() {
 		// Paint to this button immediately, this minimizes the white
 		// flash of bringing the window frontmost.
 #if BOF_MAC
-		m_pButtons[BCBACK]->Paint(NULL);
+		m_pButtons[BCBACK]->Paint(nullptr);
 #endif
 
 		m_pButtons[LISTD]->Hide();
@@ -927,8 +927,8 @@ VOID SBarComputer::Order() {
 
 		// Deduct 1 Nugget from the player
 		// Read in their total nuggets from game
-		CBagVar *pVar = NULL;
-		CBagVar *pVar2 = NULL;
+		CBagVar *pVar = nullptr;
+		CBagVar *pVar2 = nullptr;
 
 		pVar = VARMNGR->GetVariable("NUGGETS");
 		pVar2 = VARMNGR->GetVariable("HAVEDRINK");
@@ -939,7 +939,7 @@ VOID SBarComputer::Order() {
 			// If the player is out of nuggets, then put up a
 			// text message.
 			if (nCredits < 1) {
-				CBofBitmap saveBackground(640, 480, (CBofPalette *)NULL, FALSE);
+				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, FALSE);
 				saveBackground.CaptureScreen(this, &gCompTextWindow);
 				PaintBeveledText(this, &gCompTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 #if BOF_MAC
@@ -951,10 +951,10 @@ VOID SBarComputer::Order() {
 #endif
 				saveBackground.Paint(this, &gCompTextWindow);
 			} else {
-				CBagStorageDev *pSoldierSDev = NULL;
+				CBagStorageDev *pSoldierSDev = nullptr;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
 
-				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)NULL, FALSE);
+				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, FALSE);
 				saveBackgroundTwo.CaptureScreen(this, &gCompTextWindow);
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
@@ -1038,7 +1038,7 @@ VOID SBarComputer::PageDown() {
 
 VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
-	Assert(pObject != NULL);
+	Assert(pObject != nullptr);
 
 	CBofButton *pButton;
 
@@ -1088,8 +1088,8 @@ VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 			CBagel *pApp;
 			CBagMasterWin *pWin;
 
-			if ((pApp = CBagel::GetBagApp()) != NULL) {
-				if ((pWin = pApp->GetMasterWnd()) != NULL) {
+			if ((pApp = CBagel::GetBagApp()) != nullptr) {
+				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 					pWin->OnHelp(BuildBarcDir("BARCOMP.TXT"));
 				}
 			}
@@ -1119,7 +1119,7 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 			}
 		}
 #else
-		if (m_pLBox != NULL) {
+		if (m_pLBox != nullptr) {
 			m_pLBox->LineUp();
 		}
 #endif
@@ -1139,7 +1139,7 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 			}
 		}
 #else
-		if (m_pLBox != NULL) {
+		if (m_pLBox != nullptr) {
 			m_pLBox->LineDown();
 		}
 #endif
@@ -1161,7 +1161,7 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 			}
 		}
 #else
-		if (m_pLBox != NULL) {
+		if (m_pLBox != nullptr) {
 			m_pLBox->PageUp();
 		}
 #endif
@@ -1182,7 +1182,7 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 			}
 		}
 #else
-		if (m_pLBox != NULL) {
+		if (m_pLBox != nullptr) {
 			m_pLBox->PageDown();
 		}
 #endif
@@ -1203,7 +1203,7 @@ VOID SBarComputer::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *) {
 }
 
 const CHAR *BuildBarcDir(const CHAR *pszFile) {
-	Assert(pszFile != NULL);
+	Assert(pszFile != nullptr);
 
 	// Where are the Bar Computer assets
 

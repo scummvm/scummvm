@@ -88,7 +88,7 @@ ERROR_CODE CBagCursor::Load(const CHAR *pszFileName, CBofPalette *pPal) {
 	return m_errCode;
 }
 
-VOID CBagCursor::UnLoad(VOID) {
+VOID CBagCursor::UnLoad() {
 	Assert(IsValidObject(this));
 
 	if (m_pBmp != nullptr) {

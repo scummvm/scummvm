@@ -149,10 +149,10 @@ extern ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize);
 extern ERROR_CODE BitReadQuick1(USHORT *bitPtr);
 extern ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT nBufSize);
 
-extern VOID BitWriteInit(VOID);
-extern LONG BitWriteSize(VOID);
+extern VOID BitWriteInit();
+extern LONG BitWriteSize();
 extern ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt);
-extern ERROR_CODE BitAltFlush(VOID);
+extern ERROR_CODE BitAltFlush();
 extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
 extern ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size);
 extern ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize);

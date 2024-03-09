@@ -178,7 +178,7 @@ ERROR_CODE CBagSaveGameFile::ReadTitleOnly(LONG lSlot, CHAR *pGameTitle) {
 	return (m_errCode);
 }
 
-LONG CBagSaveGameFile::GetActualNumSaves(VOID) {
+LONG CBagSaveGameFile::GetActualNumSaves() {
 	Assert(IsValidObject(this));
 
 	ST_SAVEDGAME_HEADER stGameInfo;
@@ -201,7 +201,7 @@ LONG CBagSaveGameFile::GetActualNumSaves(VOID) {
 	return lNumSaves;
 }
 
-BOOL CBagSaveGameFile::AnySavedGames(VOID) {
+BOOL CBagSaveGameFile::AnySavedGames() {
 	Assert(IsValidObject(this));
 
 	ST_SAVEDGAME_HEADER stGameInfo;

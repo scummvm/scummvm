@@ -62,7 +62,7 @@ static ST_COLORSCHEME g_stGrayColors = {
 };
 
 
-CBofButton::CBofButton(VOID) {
+CBofButton::CBofButton() {
 	// Inits
 	m_nState = BUTTON_UP;
 
@@ -72,7 +72,7 @@ CBofButton::CBofButton(VOID) {
 
 
 CBofButton::CBofButton(ST_COLORSCHEME *pColorScheme) {
-	Assert(pColorScheme != NULL);
+	Assert(pColorScheme != nullptr);
 
 	// Inits
 	m_nState = BUTTON_UP;
@@ -91,7 +91,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != NULL) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -177,7 +177,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 VOID CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 	Assert(IsValidObject(this));
 
-	Assert(pColorScheme != NULL);
+	Assert(pColorScheme != nullptr);
 
 	// save all of the color info we need to build a button
 	//
@@ -190,7 +190,7 @@ VOID CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 }
 
 
-VOID CBofButton::Enable(VOID) {
+VOID CBofButton::Enable() {
 	Assert(IsValidObject(this));
 
 	CBofWindow::Enable();
@@ -199,7 +199,7 @@ VOID CBofButton::Enable(VOID) {
 }
 
 
-VOID CBofButton::Disable(VOID) {
+VOID CBofButton::Disable() {
 	Assert(IsValidObject(this));
 
 	SetState(BUTTON_DISABLED);
@@ -226,11 +226,11 @@ ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
 	}
 
 	// I MUST have a valid parent
-	Assert(m_pParentWnd != NULL);
+	Assert(m_pParentWnd != nullptr);
 
 	// tell parent the new state of this button
 	//
-	if (m_pParentWnd != NULL) {
+	if (m_pParentWnd != nullptr) {
 		m_pParentWnd->OnBofButton(this, m_nState);
 	}
 
@@ -241,7 +241,7 @@ ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
 VOID CBofButton::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	Paint(pRect);
 }
@@ -249,7 +249,7 @@ VOID CBofButton::OnPaint(CBofRect *pRect) {
 
 VOID CBofButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if (!m_bCaptured && m_nState != BUTTON_DISABLED) {
 
@@ -262,7 +262,7 @@ VOID CBofButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 
 VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if (m_bCaptured) {
 
@@ -270,7 +270,7 @@ VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 
 		SetState(BUTTON_UP, TRUE);
 
-		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != NULL)) {
+		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != nullptr)) {
 			m_pParentWnd->OnBofButton(this, BUTTON_CLICKED);
 		}
 	}
@@ -283,7 +283,7 @@ VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 
 VOID CBofRadioButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if ((m_nState != BUTTON_DISABLED) && (m_nState == BUTTON_UP)) {
 
@@ -294,7 +294,7 @@ VOID CBofRadioButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 
 VOID CBofRadioButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 }
 
 
@@ -303,7 +303,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != NULL) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -386,7 +386,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 
 VOID CBofCheckButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if (m_nState != BUTTON_DISABLED) {
 
@@ -404,7 +404,7 @@ VOID CBofCheckButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 
 VOID CBofCheckButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	// Do nothing, and don't call the base class version of this function
 }
@@ -415,7 +415,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != NULL) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -496,37 +496,37 @@ ERROR_CODE CBofCheckButton::SetCheck(BOOL bChecked) {
 /*****************************************************************************/
 
 
-CBofBmpButton::CBofBmpButton(VOID) {
-	m_pButtonUp = NULL;
-	m_pButtonDown = NULL;
-	m_pButtonFocus = NULL;
-	m_pButtonDisabled = NULL;
-	m_pBackground = NULL;
+CBofBmpButton::CBofBmpButton() {
+	m_pButtonUp = nullptr;
+	m_pButtonDown = nullptr;
+	m_pButtonFocus = nullptr;
+	m_pButtonDisabled = nullptr;
+	m_pBackground = nullptr;
 	m_nState = BUTTON_UP;
 	m_nMaskColor = NOT_TRANSPARENT;
 }
 
 
 CBofBmpButton::~CBofBmpButton() {
-	if (m_pButtonUp != NULL) {
+	if (m_pButtonUp != nullptr) {
 		delete m_pButtonUp;
-		m_pButtonUp = NULL;
+		m_pButtonUp = nullptr;
 	}
-	if (m_pButtonDown != NULL) {
+	if (m_pButtonDown != nullptr) {
 		delete m_pButtonDown;
-		m_pButtonDown = NULL;
+		m_pButtonDown = nullptr;
 	}
-	if (m_pButtonDisabled != NULL) {
+	if (m_pButtonDisabled != nullptr) {
 		delete m_pButtonDisabled;
-		m_pButtonDisabled = NULL;
+		m_pButtonDisabled = nullptr;
 	}
-	if (m_pButtonFocus != NULL) {
+	if (m_pButtonFocus != nullptr) {
 		delete m_pButtonFocus;
-		m_pButtonFocus = NULL;
+		m_pButtonFocus = nullptr;
 	}
-	if (m_pBackground != NULL) {
+	if (m_pBackground != nullptr) {
 		delete m_pBackground;
-		m_pBackground = NULL;
+		m_pBackground = nullptr;
 	}
 }
 
@@ -536,14 +536,14 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 
 	// You must call LoadBitmaps before you can paint this button
 	//
-	Assert(m_pButtonUp != NULL);
-	Assert(m_pButtonDown != NULL);
-	Assert(m_pButtonFocus != NULL);
-	Assert(m_pButtonDisabled != NULL);
+	Assert(m_pButtonUp != nullptr);
+	Assert(m_pButtonDown != nullptr);
+	Assert(m_pButtonFocus != nullptr);
+	Assert(m_pButtonDisabled != nullptr);
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != NULL) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
 
 		CBofBitmap *pBitmap;
 		CBofPalette *pPalette;
@@ -558,8 +558,8 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 		//
 		CBofBitmap cOffScreen(nWidth, nHeight, pPalette);
 
-		if (m_pBackground == NULL) {
-			if ((m_pBackground = new CBofBitmap(nWidth, nHeight, pPalette)) != NULL) {
+		if (m_pBackground == nullptr) {
+			if ((m_pBackground = new CBofBitmap(nWidth, nHeight, pPalette)) != nullptr) {
 
 			} else {
 				ReportError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
@@ -588,7 +588,7 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 		}
 
 		// paint button offscreen
-		pBitmap->Paint(&cOffScreen, 0, 0, NULL, m_nMaskColor);
+		pBitmap->Paint(&cOffScreen, 0, 0, nullptr, m_nMaskColor);
 
 		// now we can update the window
 		cOffScreen.Paint(this, 0, 0);
@@ -601,8 +601,8 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, INT nMaskColor) {
 	Assert(IsValidObject(this));
 
-	Assert(pUp != NULL);
-	Assert(pDown != NULL);
+	Assert(pUp != nullptr);
+	Assert(pDown != nullptr);
 
 	// use the bitmaps passed in
 	m_pButtonUp = pUp;
@@ -620,27 +620,27 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBi
 ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, const CHAR *pszDown, const CHAR *pszFocus, const CHAR *pszDisabled, INT nMaskColor) {
 	Assert(IsValidObject(this));
 
-	Assert(pPalette != NULL);
-	Assert(pszUp != NULL);
-	Assert(pszDown != NULL);
-	Assert(pszFocus != NULL);
-	Assert(pszDisabled != NULL);
+	Assert(pPalette != nullptr);
+	Assert(pszUp != nullptr);
+	Assert(pszDown != nullptr);
+	Assert(pszFocus != nullptr);
+	Assert(pszDisabled != nullptr);
 
 	// remember the button transparent color
 	m_nMaskColor = nMaskColor;
 
 	// load each of the bitmaps that represent the button state
 	//
-	if ((m_pButtonUp = new CBofBitmap(pszUp, pPalette)) != NULL) {
+	if ((m_pButtonUp = new CBofBitmap(pszUp, pPalette)) != nullptr) {
 		m_pButtonUp->SetReadOnly(TRUE);
 	}
-	if ((m_pButtonDown = new CBofBitmap(pszDown, pPalette)) != NULL) {
+	if ((m_pButtonDown = new CBofBitmap(pszDown, pPalette)) != nullptr) {
 		m_pButtonDown->SetReadOnly(TRUE);
 	}
-	if ((m_pButtonFocus = new CBofBitmap(pszFocus, pPalette)) != NULL) {
+	if ((m_pButtonFocus = new CBofBitmap(pszFocus, pPalette)) != nullptr) {
 		m_pButtonFocus->SetReadOnly(TRUE);
 	}
-	if ((m_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette)) != NULL) {
+	if ((m_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette)) != nullptr) {
 		m_pButtonDisabled->SetReadOnly(TRUE);
 	}
 
@@ -666,11 +666,11 @@ ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
 	}
 
 	// I MUST have a valid parent
-	Assert(m_pParentWnd != NULL);
+	Assert(m_pParentWnd != nullptr);
 
 	// tell parent the new state of this button
 	//
-	if (m_pParentWnd != NULL) {
+	if (m_pParentWnd != nullptr) {
 		m_pParentWnd->OnBofButton(this, m_nState);
 	}
 
@@ -681,7 +681,7 @@ ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
 VOID CBofBmpButton::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	Paint(pRect);
 }
@@ -689,7 +689,7 @@ VOID CBofBmpButton::OnPaint(CBofRect *pRect) {
 
 VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if (!m_bCaptured && m_nState != BUTTON_DISABLED) {
 
@@ -702,7 +702,7 @@ VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 
 VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	if (m_bCaptured) {
 
@@ -710,7 +710,7 @@ VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 
 		SetState(BUTTON_UP, TRUE);
 
-		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != NULL)) {
+		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != nullptr)) {
 			m_pParentWnd->OnBofButton(this, BUTTON_CLICKED);
 		}
 	}

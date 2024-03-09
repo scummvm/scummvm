@@ -37,7 +37,7 @@ BOOL CBagExam::Exam() {
 	MSG         msg;
 
 	for (;;) {
-		if (!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
 #else
@@ -169,7 +169,7 @@ VOID CBagExam::OnMCINotify(ULONG wParam, ULONG /*lParam*/) {
 
 VOID CBagExam::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != NULL);
+	Assert(pPoint != nullptr);
 
 	// No more cursor in Examine movies
 	if (pPoint->x <= m_LeftRect.right) {

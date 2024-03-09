@@ -103,7 +103,7 @@ ULONG CalculateCRC(const VOID *pBuffer, LONG lBufLen, ULONG lCrcValue) {
 	LONG i;
 	UBYTE *p, c;
 
-	Assert(pBuffer != NULL);
+	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
 	p = (UBYTE *)pBuffer;

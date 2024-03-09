@@ -80,7 +80,7 @@ CBofVHashTable<T, S>::~CBofVHashTable() {
 		for (i = 0; i < nListEntries; i++) {
 			T *pListItem = pHashBucket->GetNodeItem(i);
 			delete pListItem;
-			pHashBucket->SetNodeItem(i, (T *)NULL);
+			pHashBucket->SetNodeItem(i, (T *)nullptr);
 		}
 	}
 }
@@ -90,13 +90,13 @@ template<class T, int S>
 VOID CBofVHashTable<T, S>::insert(const T &val) {
 	T *pNodeValue = new T(val);
 	CBofListNode<T *> *pNode = new CBofListNode<T *>(pNodeValue);
-	Assert(pNode != NULL);
+	Assert(pNode != nullptr);
 
 	INT nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
 	Assert(nHashBucketIndex < m_nHashTableSize);
 
 	CBofList<T *> *pHashBucket = &m_xHashTable[nHashBucketIndex];
-	Assert(pHashBucket != NULL);
+	Assert(pHashBucket != nullptr);
 	pHashBucket->AddToTail(pNode);
 }
 
@@ -109,7 +109,7 @@ BOOL CBofVHashTable<T, S>::contains(const T &val) {
 
 	CBofVHashTable<T, S> *const fakeThis = (CBofVHashTable<T, S> *const)this;
 	CBofList<T *> *pHashBucket = &(fakeThis->m_xHashTable[nHashBucketIndex]);
-	Assert(pHashBucket != NULL);
+	Assert(pHashBucket != nullptr);
 	int nItemsInBucket = pHashBucket->GetCount();
 	for (int i = 0; i < nItemsInBucket; i++) {
 		T *TableEntry = pHashBucket->GetNodeItem(i);

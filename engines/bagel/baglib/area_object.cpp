@@ -41,7 +41,7 @@ ERROR_CODE CBagAreaObject::Detach() {
 	return CBagObject::Detach();
 }
 
-CBofRect CBagAreaObject::GetRect(VOID) {
+CBofRect CBagAreaObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);

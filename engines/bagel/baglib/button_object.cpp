@@ -38,7 +38,7 @@ CBagButtonObject::CBagButtonObject() {
 	// mdm 5/20
 	m_nNumPos = 0;
 	m_bDragging = FALSE;
-	SetCallBack(NULL, NULL);
+	SetCallBack(nullptr, nullptr);
 	SetAlwaysUpdate(TRUE);
 
 	SetTimeless(TRUE);
@@ -135,7 +135,7 @@ void CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint *xPoint, void *)
 void CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
-	if (pMainWin != NULL) {
+	if (pMainWin != nullptr) {
 		pMainWin->SetPreFilterPan(TRUE);
 	}
 
@@ -211,7 +211,7 @@ BOOL CBagButtonObject::OnMouseMove(UINT /*nFlags*/, CBofPoint xPoint, void *info
 
 	if (m_xButtonType == SLIDER && m_bDragging) {
 		if (!m_SlideRect.IsRectEmpty()) {
-			if (pMainWin != NULL) {
+			if (pMainWin != nullptr) {
 				pMainWin->SetPreFilterPan(TRUE);
 			}
 			SetDirty();

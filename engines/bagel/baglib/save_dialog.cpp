@@ -380,7 +380,7 @@ VOID CBagSaveDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-VOID CBagSaveDialog::SaveAndClose(VOID) {
+VOID CBagSaveDialog::SaveAndClose() {
 	Assert(IsValidObject(this));
 
 	// We should not be able to access the save button if we
@@ -553,7 +553,7 @@ VOID CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
 
 
 #if !USE_CBAGDIALOG
-VOID CBagSaveDialog::OnInitDialog(VOID) {
+VOID CBagSaveDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();

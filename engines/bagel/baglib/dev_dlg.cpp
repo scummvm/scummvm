@@ -30,7 +30,7 @@ namespace Bagel {
 #define MENU_DFLT_HEIGHT 20
 
 CDevDlg::CDevDlg(INT nButtonX, INT nButtonY) {
-	m_pTitleText = NULL;
+	m_pTitleText = nullptr;
 	m_nButtonX = nButtonX;
 	m_nButtonY = nButtonY;
 	m_achGuess[0] = '\0';
@@ -40,19 +40,19 @@ CDevDlg::CDevDlg(INT nButtonX, INT nButtonY) {
 
 
 CDevDlg::~CDevDlg() {
-	if (m_pTitleText != NULL) {
+	if (m_pTitleText != nullptr) {
 		delete m_pTitleText;
-		m_pTitleText = NULL;
+		m_pTitleText = nullptr;
 	}
 }
 
 
 ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, BOOL bUseEx) {
 	Assert(IsValidObject(this));
-	Assert(pszBmp != NULL);
-	Assert(pWnd != NULL);
-	Assert(pPal != NULL);
-	Assert(pRect != NULL);
+	Assert(pszBmp != nullptr);
+	Assert(pWnd != nullptr);
+	Assert(pPal != nullptr);
+	Assert(pRect != nullptr);
 
 	CBofString str = "CDevDlg";
 	CBofRect cDlgRect, r, txtRect;
@@ -67,7 +67,7 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 		r = *pRect;
 	}
 
-	if ((m_pGuessText = new CBofText()) != NULL) {
+	if ((m_pGuessText = new CBofText()) != nullptr) {
 		m_pGuessText->SetupText(pRect, JUSTIFY_LEFT);
 	}
 	m_nGuessCount = 0;
@@ -75,11 +75,11 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 
 	CBofBitmap *pBmp;
 
-	pBmp = NULL;
+	pBmp = nullptr;
 
-	if (pszBmp != NULL) {
+	if (pszBmp != nullptr) {
 
-		if ((pBmp = new CBofBitmap(pszBmp, pPal)) != NULL) {
+		if ((pBmp = new CBofBitmap(pszBmp, pPal)) != nullptr) {
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -89,12 +89,12 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 
 	// Fall back to original dialog on failure
 	//
-	if (pBmp == NULL) {
+	if (pBmp == nullptr) {
 
-		if ((pBmp = new CBofBitmap(200, 100, pPal)) != NULL) {
+		if ((pBmp = new CBofBitmap(200, 100, pPal)) != nullptr) {
 
-			Assert(pPal != NULL);
-			pBmp->FillRect(NULL, pPal->GetNearestIndex(RGB(92, 92, 92)) /*RGB(0,0,0)*/);
+			Assert(pPal != nullptr);
+			pBmp->FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)) /*RGB(0,0,0)*/);
 			CBofRect rect(pBmp->GetRect());
 			pBmp->DrawRect(&rect, pPal->GetNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
 			pBmp->FillRect(pRect, pPal->GetNearestIndex(RGB(255, 255, 255)));
@@ -103,7 +103,7 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 			ReportError(ERR_MEMORY);
 		}
 	}
-	Assert(pBmp != NULL);
+	Assert(pBmp != nullptr);
 
 	CBofRect rect(pBmp->GetRect());
 
@@ -129,7 +129,7 @@ VOID CDevDlg::OnClose() {
 	CBagVar *pVar;
 	CHAR *p;
 
-	if ((pVar = VARMNGR->GetVariable("DIALOGRETURN")) != NULL) {
+	if ((pVar = VARMNGR->GetVariable("DIALOGRETURN")) != nullptr) {
 
 		// If we need to parse the input for 2 words (Deven-7 Code words)
 		//
@@ -137,7 +137,7 @@ VOID CDevDlg::OnClose() {
 
 			// Find the break
 			//
-			if (((p = strchr(m_achGuess, ',')) != NULL) || ((p = strchr(m_achGuess, ' ')) != NULL)) {
+			if (((p = strchr(m_achGuess, ',')) != nullptr) || ((p = strchr(m_achGuess, ' ')) != nullptr)) {
 
 				CBagVar *pVarEx;
 
@@ -146,7 +146,7 @@ VOID CDevDlg::OnClose() {
 
 				// Set variable 2 (DIALOGRETURN2)
 				//
-				if ((pVarEx = VARMNGR->GetVariable("DIALOGRETURN2")) != NULL) {
+				if ((pVarEx = VARMNGR->GetVariable("DIALOGRETURN2")) != nullptr) {
 					pVarEx->SetValue(p);
 				}
 			}
@@ -156,9 +156,9 @@ VOID CDevDlg::OnClose() {
 		pVar->SetValue(m_achGuess);
 	}
 
-	if (m_pGuessText != NULL) {     // last text area
+	if (m_pGuessText != nullptr) {     // last text area
 		delete m_pGuessText;
-		m_pGuessText = NULL;
+		m_pGuessText = nullptr;
 	}
 
 	CBagStorageDevDlg::OnClose();
@@ -458,7 +458,7 @@ VOID CDevDlg::PaintText() {
 VOID CDevDlg::SetText(CBofString &tStr, CBofRect *pcRect) {
 	Assert(IsValidObject(this));
 
-	if ((m_pTitleText = new CBofText) != NULL) {
+	if ((m_pTitleText = new CBofText) != nullptr) {
 		m_pTitleText->SetupText(pcRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
 		m_pTitleText->SetColor(RGB(255, 255, 255));
 		m_pTitleText->SetSize(FONT_14POINT);
@@ -473,7 +473,7 @@ ERROR_CODE CDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	ERROR_CODE err = CBagStorageDevDlg::OnRender(pBmp, pRect);
 
-	if (m_pTitleText != NULL) {
+	if (m_pTitleText != nullptr) {
 		m_pTitleText->Display(GetBackdrop());
 	}
 

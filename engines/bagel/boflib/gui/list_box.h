@@ -55,7 +55,7 @@ public:
 	ERROR_CODE DelItem(INT nIndex, BOOL bRepaint = TRUE);
 	ERROR_CODE DeleteAll(BOOL bRepaint = TRUE);
 
-	INT GetNumItems(VOID) {
+	INT GetNumItems() {
 		return (m_nNumItems);
 	}
 	CBofString GetText(INT nIndex);
@@ -63,17 +63,17 @@ public:
 
 	VOID SetTextLineColor(INT nIndex, RGBCOLOR rgbColor);
 
-	ERROR_CODE LineUp(VOID) {
+	ERROR_CODE LineUp() {
 		return (ScrollUp(1));
 	}
-	ERROR_CODE LineDown(VOID) {
+	ERROR_CODE LineDown() {
 		return (ScrollDown(1));
 	}
 
-	ERROR_CODE PageUp(VOID) {
+	ERROR_CODE PageUp() {
 		return (ScrollUp(m_nPageSize));
 	}
-	ERROR_CODE PageDown(VOID) {
+	ERROR_CODE PageDown() {
 		return (ScrollDown(m_nPageSize));
 	}
 
@@ -84,58 +84,58 @@ public:
 
 	ERROR_CODE ScrollTo(const INT nLine);
 
-	ERROR_CODE CreateWorkArea(VOID);
-	ERROR_CODE SaveBackground(VOID);
-	VOID KillBackground(VOID);
+	ERROR_CODE CreateWorkArea();
+	ERROR_CODE SaveBackground();
+	VOID KillBackground();
 
 	VOID SetHighlightColor(RGBCOLOR cHighColor) {
 		m_cHighColor = cHighColor;
 	}
-	RGBCOLOR GetHighlightColor(VOID) {
+	RGBCOLOR GetHighlightColor() {
 		return (m_cHighColor);
 	}
 
 	VOID SetTextColor(RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
-	RGBCOLOR GetTextColor(VOID) {
+	RGBCOLOR GetTextColor() {
 		return (m_cTextColor);
 	}
 
 	VOID SetPointSize(INT nSize) {
 		m_nTextSize = nSize;
 	}
-	INT GetPointSize(VOID) {
+	INT GetPointSize() {
 		return (m_nTextSize);
 	}
 
 	VOID SetWeight(INT nWeight) {
 		m_nTextWeight = nWeight;
 	}
-	INT GetWeight(VOID) {
+	INT GetWeight() {
 		return (m_nTextWeight);
 	}
 
 	VOID SetItemHeight(INT nHeight) {
 		m_nItemHeight = nHeight;
 	}
-	INT GetItemHeight(VOID) {
+	INT GetItemHeight() {
 		return (m_nItemHeight);
 	}
 
 	VOID SetFont(INT nFont) {
 		m_nTextFont = nFont;
 	}
-	INT GetFont(VOID) {
+	INT GetFont() {
 		return (m_nTextFont);
 	}
 
-	INT GetState(VOID) {
+	INT GetState() {
 		return (m_nState);
 	}
 
 	virtual ERROR_CODE RepaintItem(INT nIndex);
-	virtual ERROR_CODE RepaintAll(VOID);
+	virtual ERROR_CODE RepaintAll();
 
 protected:
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);

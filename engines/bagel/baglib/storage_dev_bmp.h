@@ -47,7 +47,7 @@ public:
 	ERROR_CODE SetWorkBmp();
 	ERROR_CODE KillWorkBmp();
 
-	CBofRect GetRect(VOID) {
+	CBofRect GetRect() {
 		return CBagStorageDev::GetRect();
 	}
 	VOID SetRect(const CBofRect &xRect) {

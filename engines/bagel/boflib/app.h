@@ -125,7 +125,7 @@ public:
 		return m_cCursorList.GetCount();
 	}
 
-	static ULONG GetMachineSpeed(VOID) {
+	static ULONG GetMachineSpeed() {
 		return kReallyFastPPC;
 	}
 

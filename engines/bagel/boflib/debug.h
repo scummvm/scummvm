@@ -55,10 +55,10 @@ extern CBofDebugOptions *g_pDebugOptions;
 
 #if BOF_DEBUG
 
-#define LogInfo(p)    { if ((g_pDebugLog != NULL) && (g_pDebugOptions != NULL) && (g_pDebugOptions->m_nDebugLevel >= 4)) g_pDebugLog->WriteMessage(LOG_INFO, p, 0, __FILE__, __LINE__); }
-#define LogWarning(p) { if ((g_pDebugLog != NULL) && (g_pDebugOptions != NULL) && (g_pDebugOptions->m_nDebugLevel >= 3)) g_pDebugLog->WriteMessage(LOG_WARN, p, 0, __FILE__, __LINE__); }
-#define LogError(p)   { if ((g_pDebugLog != NULL) && (g_pDebugOptions != NULL) && (g_pDebugOptions->m_nDebugLevel >= 2)) g_pDebugLog->WriteMessage(LOG_ERROR, p, 0, __FILE__, __LINE__); }
-#define LogFatal(p)   { if ((g_pDebugLog != NULL) && (g_pDebugOptions != NULL) && (g_pDebugOptions->m_nDebugLevel >= 1)) g_pDebugLog->WriteMessage(LOG_FATAL, p, 0, __FILE__, __LINE__); }
+#define LogInfo(p)    { if ((g_pDebugLog != nullptr) && (g_pDebugOptions != nullptr) && (g_pDebugOptions->m_nDebugLevel >= 4)) g_pDebugLog->WriteMessage(LOG_INFO, p, 0, __FILE__, __LINE__); }
+#define LogWarning(p) { if ((g_pDebugLog != nullptr) && (g_pDebugOptions != nullptr) && (g_pDebugOptions->m_nDebugLevel >= 3)) g_pDebugLog->WriteMessage(LOG_WARN, p, 0, __FILE__, __LINE__); }
+#define LogError(p)   { if ((g_pDebugLog != nullptr) && (g_pDebugOptions != nullptr) && (g_pDebugOptions->m_nDebugLevel >= 2)) g_pDebugLog->WriteMessage(LOG_ERROR, p, 0, __FILE__, __LINE__); }
+#define LogFatal(p)   { if ((g_pDebugLog != nullptr) && (g_pDebugOptions != nullptr) && (g_pDebugOptions->m_nDebugLevel >= 1)) g_pDebugLog->WriteMessage(LOG_FATAL, p, 0, __FILE__, __LINE__); }
 
 #else
 

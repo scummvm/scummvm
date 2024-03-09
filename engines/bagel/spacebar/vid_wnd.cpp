@@ -67,11 +67,11 @@ ST_FRAMES g_stFrames[NUM_FRAME_TYPES] = {
 const CHAR *BuildVidDir(const CHAR *pszFile);
 
 SBarVidWnd::SBarVidWnd() {
-	m_pTimerVar = NULL;
-	m_pPlayingVar = NULL;
-	m_pDiscVar = NULL;
+	m_pTimerVar = nullptr;
+	m_pPlayingVar = nullptr;
+	m_pDiscVar = nullptr;
 
-	m_pMovie = NULL;
+	m_pMovie = nullptr;
 	m_fTimerDiff = 0;
 
 	m_fTimer = 0.0;
@@ -99,20 +99,20 @@ ERROR_CODE SBarVidWnd::Attach() {
 		// What time does the murder occurr?
 		//
 		pVar = VARMNGR->GetVariable("VDISC_EVTIME");
-		if (pVar != NULL) {
+		if (pVar != nullptr) {
 			m_nStartTime = pVar->GetNumValue();
 			m_nStartTime -= 180;
 		}
 
-		if (m_pTimerVar != NULL) {
+		if (m_pTimerVar != nullptr) {
 			m_fTimer = m_pTimerVar->GetNumValue();
 		}
-		if (m_pMovie != NULL) {
+		if (m_pMovie != nullptr) {
 			m_pMovie->Detach();
 			delete m_pMovie;
-			m_pMovie = NULL;
+			m_pMovie = nullptr;
 		}
-		if ((m_pMovie = new CBagCharacterObject) != NULL) {
+		if ((m_pMovie = new CBagCharacterObject) != nullptr) {
 			m_pMovie->SetFileName(BuildVidDir("BRNL.SMK"));
 			m_pMovie->SetPosition(CBofPoint(209, 10));
 			m_pMovie->Attach();
@@ -123,7 +123,7 @@ ERROR_CODE SBarVidWnd::Attach() {
 
 		m_fTimerDiff = 0;
 
-		if ((m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING")) != NULL) {
+		if ((m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING")) != nullptr) {
 			INT nMode;
 			nMode = m_pPlayingVar->GetNumValue();
 
@@ -156,21 +156,21 @@ ERROR_CODE SBarVidWnd::Attach() {
 ERROR_CODE SBarVidWnd::Detach() {
 	Assert(IsValidObject(this));
 
-	if (m_pMovie != NULL) {
+	if (m_pMovie != nullptr) {
 		m_pMovie->Detach();
 		delete m_pMovie;
-		m_pMovie = NULL;
+		m_pMovie = nullptr;
 	}
 
 	CBagVar *pTimerVar;
 
-	if ((pTimerVar = VARMNGR->GetVariable("CUR_VTIME")) != NULL) {
+	if ((pTimerVar = VARMNGR->GetVariable("CUR_VTIME")) != nullptr) {
 		pTimerVar->SetValue((INT)m_fTimer);
 	}
 
-	m_pTimerVar = NULL;
-	m_pPlayingVar = NULL;
-	m_pDiscVar = NULL;
+	m_pTimerVar = nullptr;
+	m_pPlayingVar = nullptr;
+	m_pDiscVar = nullptr;
 
 	CMainWindow::Detach();
 
@@ -181,19 +181,19 @@ ERROR_CODE SBarVidWnd::Detach() {
 VOID SBarVidWnd::SetPlayMode(INT nMode) {
 	Assert(IsValidObject(this));
 
-	if (m_pPlayingVar != NULL) {
+	if (m_pPlayingVar != nullptr) {
 		m_pPlayingVar->SetValue(nMode);
 	}
 
 	// If user is playing the disk with the death scene on it, then
 	// reflect that in the script.
 	//
-	if (nMode != 0 && m_pDiscVar != NULL) {
+	if (nMode != 0 && m_pDiscVar != nullptr) {
 		if (m_pDiscVar->GetNumValue() == 2) {
 			CBagVar *pVar;
 
 			pVar = VARMNGR->GetVariable("VIDDISC_SEEN");
-			if (pVar != NULL) {
+			if (pVar != nullptr) {
 				pVar->SetValue(1);
 			}
 		}
@@ -201,7 +201,7 @@ VOID SBarVidWnd::SetPlayMode(INT nMode) {
 }
 
 
-BOOL SBarVidWnd::HasDisc(VOID) {
+BOOL SBarVidWnd::HasDisc() {
 	Assert(IsValidObject(this));
 
 	BOOL bHaveDisc;
@@ -209,7 +209,7 @@ BOOL SBarVidWnd::HasDisc(VOID) {
 	// If either disk is in the vid player
 
 	bHaveDisc = FALSE;
-	if (m_pDiscVar != NULL) {
+	if (m_pDiscVar != nullptr) {
 
 		if (m_pDiscVar->GetNumValue() != 0) {
 			bHaveDisc = TRUE;
@@ -249,7 +249,7 @@ INT SBarVidWnd::GetFrame(DOUBLE fTime, INT nUseDisc) {
 
 ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pBmp != NULL);
+	Assert(pBmp != nullptr);
 
 	SetPreFilterPan(TRUE);
 
@@ -257,7 +257,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	// If the disc is in Play, FastForward, or Rewind mode
 	//
-	if (HasDisc() && m_pPlayingVar != NULL && m_pPlayingVar->GetNumValue() != 0) {
+	if (HasDisc() && m_pPlayingVar != nullptr && m_pPlayingVar->GetNumValue() != 0) {
 
 		static DWORD nLastTime = 0;
 
@@ -276,7 +276,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		// Keep BAGEL up to date with this info
 		//
-		if (m_pTimerVar != NULL) {
+		if (m_pTimerVar != nullptr) {
 			m_pTimerVar->SetValue((INT)m_fTimer);
 		}
 
@@ -286,7 +286,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		INT nFrame, nDisc;
 
 		nDisc = 1;
-		if (m_pDiscVar != NULL) {
+		if (m_pDiscVar != nullptr) {
 			nDisc = m_pDiscVar->GetNumValue();
 			Assert(nDisc != 0);
 		}
@@ -328,7 +328,7 @@ CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
 
 
 const CHAR *BuildVidDir(const CHAR *pszFile) {
-	Assert(pszFile != NULL);
+	Assert(pszFile != nullptr);
 
 	static CHAR szBuf[MAX_DIRPATH];
 

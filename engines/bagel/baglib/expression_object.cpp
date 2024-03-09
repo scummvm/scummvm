@@ -27,21 +27,21 @@ namespace Bagel {
 
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	m_xObjType = EXPRESSOBJ;
-	m_xExpression = NULL;
+	m_xExpression = nullptr;
 	SetConditional(FALSE);
 	SetVisible(FALSE);
 	SetTimeless(TRUE);
 }
 
 CBagExpressionObject::~CBagExpressionObject() {
-	if (m_xExpression != NULL) {
+	if (m_xExpression != nullptr) {
 		delete m_xExpression;
-		m_xExpression = NULL;
+		m_xExpression = nullptr;
 	}
 	Detach();
 }
 
-/*CRect CBagExpressionObject::GetRect(VOID)
+/*CRect CBagExpressionObject::GetRect()
 {
     CPoint p = GetPosition();
     CSize  s = GetSize();
@@ -50,7 +50,7 @@ CBagExpressionObject::~CBagExpressionObject() {
 }*/
 
 BOOL CBagExpressionObject::RunObject() {
-	if (m_xExpression != NULL) {
+	if (m_xExpression != nullptr) {
 		CBagVar xVar;
 		m_xExpression->Evaluate(FALSE, xVar);
 

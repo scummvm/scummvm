@@ -40,11 +40,11 @@ public:
 	}
 
 	virtual ~CRingBuffer() {
-		if (m_pStart != NULL) {
+		if (m_pStart != nullptr) {
 			free(m_pStart);
-			m_pStart = NULL;
+			m_pStart = nullptr;
 		}
-		m_pCur = m_pEnd = NULL;
+		m_pCur = m_pEnd = nullptr;
 	}
 
 	T operator++() {

@@ -96,7 +96,7 @@ public:
 	static int pause;
 	//CBofRect srcTipRect;
 
-	CMainWindow(const char *sCommandLine = NULL);
+	CMainWindow(const char *sCommandLine = nullptr);
 	virtual ~CMainWindow();
 
 	ERROR_CODE Attach();
@@ -137,7 +137,7 @@ public:
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 
 	VOID OnSysChar(UINT, UINT, UINT);
-	VOID OnClose(VOID);
+	VOID OnClose();
 	VOID OnSize(UINT nType, int cx, int cy);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);

@@ -174,7 +174,7 @@ VOID CBagTimeObject::SetPosition(const CBofPoint &pos) {
 	// after the attach
 }
 
-CBofRect CBagTimeObject::GetRect(VOID) {
+CBofRect CBagTimeObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 

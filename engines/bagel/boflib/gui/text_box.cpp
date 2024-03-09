@@ -29,12 +29,12 @@ namespace Bagel {
 #define DEFAULT_COLOR       CTEXT_COLOR
 
 
-CBofTextBox::CBofTextBox(VOID) {
+CBofTextBox::CBofTextBox() {
 	// Inits
 	//
-	m_pDestWindow = NULL;
-	m_pDestBitmap = NULL;
-	m_pTextField = NULL;
+	m_pDestWindow = nullptr;
+	m_pDestBitmap = nullptr;
+	m_pTextField = nullptr;
 	m_nWeight = DEFAULT_WEIGHT;
 	m_nPointSize = DEFAULT_POINT_SIZE;
 	m_cTextColor = DEFAULT_COLOR;
@@ -47,14 +47,14 @@ CBofTextBox::CBofTextBox(VOID) {
 
 
 CBofTextBox::CBofTextBox(CBofWindow *pWindow, CBofRect *pRect, const CBofString &cText) {
-	Assert(pWindow != NULL);
-	Assert(pRect != NULL);
+	Assert(pWindow != nullptr);
+	Assert(pRect != nullptr);
 
 	// Inits
 	//
-	m_pDestWindow = NULL;
-	m_pDestBitmap = NULL;
-	m_pTextField = NULL;
+	m_pDestWindow = nullptr;
+	m_pDestBitmap = nullptr;
+	m_pTextField = nullptr;
 	m_nWeight = DEFAULT_WEIGHT;
 	m_nPointSize = DEFAULT_POINT_SIZE;
 	m_cTextColor = DEFAULT_COLOR;
@@ -70,14 +70,14 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, CBofRect *pRect, const CBofString 
 
 
 CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, CBofRect *pRect, const CBofString &cText) {
-	Assert(pBitmap != NULL);
-	Assert(pRect != NULL);
+	Assert(pBitmap != nullptr);
+	Assert(pRect != nullptr);
 
 	// Inits
 	//
-	m_pDestWindow = NULL;
-	m_pDestBitmap = NULL;
-	m_pTextField = NULL;
+	m_pDestWindow = nullptr;
+	m_pDestBitmap = nullptr;
+	m_pTextField = nullptr;
 	m_nWeight = DEFAULT_WEIGHT;
 	m_nPointSize = DEFAULT_POINT_SIZE;
 	m_cTextColor = DEFAULT_COLOR;
@@ -95,29 +95,29 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, CBofRect *pRect, const CBofString 
 CBofTextBox::~CBofTextBox() {
 	Assert(IsValidObject(this));
 
-	if (m_pTextField != NULL) {
+	if (m_pTextField != nullptr) {
 		delete m_pTextField;
-		m_pTextField = NULL;
+		m_pTextField = nullptr;
 	}
-	m_pDestWindow = NULL;
-	m_pDestBitmap = NULL;
+	m_pDestWindow = nullptr;
+	m_pDestBitmap = nullptr;
 }
 
 
 ERROR_CODE CBofTextBox::SetBox(CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	// remove previous text field (if any)
 	//
-	if (m_pTextField != NULL) {
+	if (m_pTextField != nullptr) {
 		delete m_pTextField;
-		m_pTextField = NULL;
+		m_pTextField = nullptr;
 	}
 
 	// create a new text field the size of the box we want
 	//
-	if ((m_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != NULL) {
+	if ((m_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != nullptr) {
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate a CBofText");
@@ -129,19 +129,19 @@ ERROR_CODE CBofTextBox::SetBox(CBofRect *pRect) {
 
 VOID CBofTextBox::SetDisplay(CBofWindow *pWindow) {
 	Assert(IsValidObject(this));
-	Assert(pWindow != NULL);
+	Assert(pWindow != nullptr);
 
 	m_pDestWindow = pWindow;
-	m_pDestBitmap = NULL;
+	m_pDestBitmap = nullptr;
 }
 
 
 VOID CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
 	Assert(IsValidObject(this));
-	Assert(pBitmap != NULL);
+	Assert(pBitmap != nullptr);
 
 	m_pDestBitmap = pBitmap;
-	m_pDestWindow = NULL;
+	m_pDestWindow = nullptr;
 }
 
 
@@ -195,7 +195,7 @@ INT CBofTextBox::GetIndex(const INT nLine) {
 		pszCur = strstr(pszCur, "\n");
 #endif
 		// make sure we don't go too far (nLines is invalid)
-		Assert(pszCur != NULL);
+		Assert(pszCur != nullptr);
 
 		pszCur++;
 	}
@@ -249,24 +249,24 @@ ERROR_CODE CBofTextBox::ScrollTo(const INT nLine) {
 }
 
 
-ERROR_CODE CBofTextBox::Display(VOID) {
+ERROR_CODE CBofTextBox::Display() {
 	Assert(IsValidObject(this));
 	Assert(m_nCurrentLine >= 0 && m_nCurrentLine <= m_nNumLines);
 	Assert(m_nCurrentIndex >= 0 && m_nCurrentIndex < m_cBuffer.GetLength());
 
 	// The actual text box must have been created before it can be displayed
-	Assert(m_pTextField != NULL);
+	Assert(m_pTextField != nullptr);
 
 	// if painting to a window
 	//
-	if (m_pDestWindow != NULL) {
+	if (m_pDestWindow != nullptr) {
 
 		m_pTextField->Display(m_pDestWindow, m_cBuffer.Mid(m_nCurrentIndex), m_nPointSize, m_nWeight, m_cTextColor, m_nTextFont);
 
 		// otherwise, must be painting to a bitmap
 		//
 	} else {
-		Assert(m_pDestBitmap != NULL);
+		Assert(m_pDestBitmap != nullptr);
 
 		m_pTextField->Display(m_pDestBitmap, m_cBuffer.Mid(m_nCurrentIndex), m_nPointSize, m_nWeight, m_cTextColor, m_nTextFont);
 	}
@@ -275,17 +275,17 @@ ERROR_CODE CBofTextBox::Display(VOID) {
 }
 
 
-ERROR_CODE CBofTextBox::Erase(VOID) {
+ERROR_CODE CBofTextBox::Erase() {
 	Assert(IsValidObject(this));
 
 	// The actual text box must have been created before it can be displayed
-	Assert(m_pTextField != NULL);
+	Assert(m_pTextField != nullptr);
 
-	if (m_pDestWindow != NULL) {
+	if (m_pDestWindow != nullptr) {
 		m_errCode = m_pTextField->Erase(m_pDestWindow);
 
 	} else {
-		Assert(m_pDestBitmap != NULL);
+		Assert(m_pDestBitmap != nullptr);
 		m_errCode = m_pTextField->Erase(m_pDestBitmap);
 	}
 
@@ -293,10 +293,10 @@ ERROR_CODE CBofTextBox::Erase(VOID) {
 }
 
 
-VOID CBofTextBox::FlushBackground(VOID) {
+VOID CBofTextBox::FlushBackground() {
 	Assert(IsValidObject(this));
 
-	if (m_pTextField != NULL) {
+	if (m_pTextField != nullptr) {
 		m_pTextField->FlushBackground();
 	}
 }

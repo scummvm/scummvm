@@ -390,7 +390,7 @@ BOOL CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, BOOL bSaveBackground) {
 	return bQuit;
 }
 
-ERROR_CODE CBagMasterWin::NewGame(VOID) {
+ERROR_CODE CBagMasterWin::NewGame() {
 	Assert(IsValidObject(this));
 
 	CHAR sWorkStr[256];
@@ -678,7 +678,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 	return m_errCode;
 }
 
-VOID CBagMasterWin::SaveSDevStack(VOID) {
+VOID CBagMasterWin::SaveSDevStack() {
 	Assert(IsValidObject(this));
 
 	// BCW - 12/01/96 02:49 pm
@@ -2607,7 +2607,7 @@ ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString 
 	return errCode;
 }
 
-ERROR_CODE WaitForInput(VOID) {
+ERROR_CODE WaitForInput() {
 	ERROR_CODE errCode;
 
 	// Assume no error
@@ -2666,7 +2666,7 @@ ERROR_CODE WaitForInput(VOID) {
 	return errCode;
 }
 
-VOID CBagMasterWin::Close(VOID) {
+VOID CBagMasterWin::Close() {
 	Assert(IsValidObject(this));
 
 	g_bAllowPaint = FALSE;
@@ -2727,7 +2727,7 @@ VOID SetCICStatus(CBagStorageDev *pSDev) {
 	}
 }
 
-BOOL GetCICStatus(VOID) {
+BOOL GetCICStatus() {
 	CHAR szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 	BOOL bRetVal = FALSE;

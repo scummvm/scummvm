@@ -59,7 +59,7 @@ CBagQuitDialog::CBagQuitDialog() {
 }
 
 
-VOID CBagQuitDialog::OnInitDialog(VOID) {
+VOID CBagQuitDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -197,7 +197,7 @@ CBagNextCDDialog::CBagNextCDDialog() {
 }
 
 
-VOID CBagNextCDDialog::OnInitDialog(VOID) {
+VOID CBagNextCDDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -351,7 +351,7 @@ CBagCreditsDialog::CBagCreditsDialog() {
 	m_bDisplay = FALSE;
 }
 
-VOID CBagCreditsDialog::OnInitDialog(VOID) {
+VOID CBagCreditsDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	// Hide cursor for credit screens
@@ -376,7 +376,7 @@ VOID CBagCreditsDialog::OnInitDialog(VOID) {
 }
 
 
-ERROR_CODE CBagCreditsDialog::LoadNextTextFile(VOID) {
+ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 	Assert(IsValidObject(this));
 
 	// Our credits text must exist
@@ -453,7 +453,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile(VOID) {
 	return (m_errCode);
 }
 
-INT CBagCreditsDialog::LinesPerPage(VOID) {
+INT CBagCreditsDialog::LinesPerPage() {
 	Assert(IsValidObject(this));
 
 	INT n;
@@ -518,7 +518,7 @@ VOID CBagCreditsDialog::OnKeyHit(ULONG /*lKey*/, ULONG /*nRepCount*/) {
 }
 
 
-VOID CBagCreditsDialog::OnMainLoop(VOID) {
+VOID CBagCreditsDialog::OnMainLoop() {
 	Assert(IsValidObject(this));
 
 	// If it's OK to show the credits
@@ -537,7 +537,7 @@ VOID CBagCreditsDialog::OnMainLoop(VOID) {
 }
 
 
-ERROR_CODE CBagCreditsDialog::DisplayCredits(VOID) {
+ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 	Assert(IsValidObject(this));
 
 	if (m_nNumPixels < (m_nLines + LinesPerPage() + 1) * LINE_HEIGHT) {
@@ -589,7 +589,7 @@ ERROR_CODE CBagCreditsDialog::DisplayCredits(VOID) {
 }
 
 
-ERROR_CODE CBagCreditsDialog::NextScreen(VOID) {
+ERROR_CODE CBagCreditsDialog::NextScreen() {
 	Assert(IsValidObject(this));
 
 	if (++m_iScreen < NUM_SCREENS) {
@@ -636,7 +636,7 @@ ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, CHAR *pszText) {
 }
 
 
-VOID CBagCreditsDialog::NextLine(VOID) {
+VOID CBagCreditsDialog::NextLine() {
 	Assert(IsValidObject(this));
 
 	Assert(m_pszNextLine != nullptr);

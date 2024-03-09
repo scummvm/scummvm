@@ -37,7 +37,7 @@ public:
 CBofList<CBofDisplayWindow *> CBofDisplayWindow::m_cWindowList;
 CBofDisplayWindow *CBofDisplayWindow::m_pActiveWindow;
 
-CBofDisplayWindow *CBofDisplayWindow::m_pCaptureWindow = NULL;
+CBofDisplayWindow *CBofDisplayWindow::m_pCaptureWindow = nullptr;
 CQueue CBofDisplayWindow::m_cMessageQueue;
 CStack CBofDisplayWindow::m_cCaptureStack;
 
@@ -59,7 +59,7 @@ CBofDisplayWindow::CBofDisplayWindow() {
 
 
 CBofDisplayWindow::CBofDisplayWindow(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofDisplayWindow *pParent, INT nID) {
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 	Assert(strlen(pszName) < MAX_TITLE);
 
 	// Inits
@@ -97,7 +97,7 @@ CBofDisplayWindow::~CBofDisplayWindow() {
 
 ERROR_CODE CBofDisplayWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofDisplayWindow *pParent, UINT nID) {
 	Assert(IsValidObject(this));
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 	Assert(strlen(pszName) < MAX_TITLE);
 
 	// Remember my ID
@@ -105,12 +105,12 @@ ERROR_CODE CBofDisplayWindow::Create(const CHAR *pszName, INT x, INT y, INT nWid
 
 	// Determine parent/child relationship
 	//
-	if (pParent != NULL) {
+	if (pParent != nullptr) {
 		pParent->LinkChild(this);
 		m_pParent = pParent;
 	} else {
 
-		Assert(m_pMainDisplay != NULL);
+		Assert(m_pMainDisplay != nullptr);
 
 		m_pMainDisplay->LinkChild(this);
 		m_pParent = m_pMainDisplay;
@@ -141,7 +141,7 @@ ERROR_CODE CBofDisplayWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofD
 
 	x = y = 0;
 	dx = dy = DISPWIN_SIZE_DEF;
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
 		dx = pRect->Width();
@@ -157,7 +157,7 @@ ERROR_CODE CBofDisplayWindow::Center(BOOL bRepaint) {
 	CBofDisplayObject *pParent;
 	INT x, y;
 
-	if ((pParent = m_pParent) != NULL) {
+	if ((pParent = m_pParent) != nullptr) {
 
 		x = (pParent->Width() - Width()) / 2;
 		y = (pParent->Height() - Height()) / 2;
@@ -188,7 +188,7 @@ ERROR_CODE CBofDisplayWindow::Move(const INT x, const INT y, BOOL bRepaint) {
 
 ERROR_CODE CBofDisplayWindow::ReSize(CBofSize *pNewSize, BOOL bRepaint) {
 	Assert(IsValidObject(this));
-	Assert(pNewSize != NULL);
+	Assert(pNewSize != nullptr);
 
 	OnReSize(pNewSize);
 
@@ -218,7 +218,7 @@ ERROR_CODE CBofDisplayWindow::PostMessage(ULONG lMessage, ULONG lParam1, ULONG l
 	// Create a user defined message.
 	// NOTE: This message will be deleted by()
 	//
-	if ((pMessage = new CBofMessageEx) != NULL) {
+	if ((pMessage = new CBofMessageEx) != nullptr) {
 
 		pMessage->m_pWindow = this;
 		pMessage->m_lMessage = lMessage;
@@ -240,10 +240,10 @@ ERROR_CODE CBofDisplayWindow::PostUserMessage(ULONG nMessage, ULONG lExtraInfo) 
 }
 
 
-VOID CBofDisplayWindow::HandleMessages(VOID) {
+VOID CBofDisplayWindow::HandleMessages() {
 	CBofMessageEx *pMessage;
 
-	if ((pMessage = (CBofMessageEx *)m_cMessageQueue.RemoveItem()) != NULL) {
+	if ((pMessage = (CBofMessageEx *)m_cMessageQueue.RemoveItem()) != nullptr) {
 
 		switch (pMessage->m_lMessage) {
 
@@ -274,7 +274,7 @@ VOID CBofDisplayWindow::HandleMessages(VOID) {
 }
 
 
-ERROR_CODE CBofDisplayWindow::FlushMessages(VOID) {
+ERROR_CODE CBofDisplayWindow::FlushMessages() {
 	Assert(IsValidObject(this));
 
 	CQueue cTempQ;
@@ -282,7 +282,7 @@ ERROR_CODE CBofDisplayWindow::FlushMessages(VOID) {
 
 	// Remove all of my messages from the message queue
 	//
-	while ((pMessage = (CBofMessageEx *)m_cMessageQueue.RemoveItem()) != NULL) {
+	while ((pMessage = (CBofMessageEx *)m_cMessageQueue.RemoveItem()) != nullptr) {
 
 		// If this is one of my messages, then remove it
 		//
@@ -299,7 +299,7 @@ ERROR_CODE CBofDisplayWindow::FlushMessages(VOID) {
 
 	// Restore the original message queue (Minus the messages we removed)
 	//
-	while ((pMessage = (CBofMessageEx *)cTempQ.RemoveItem()) != NULL) {
+	while ((pMessage = (CBofMessageEx *)cTempQ.RemoveItem()) != nullptr) {
 
 		m_cMessageQueue.AddItem(pMessage);
 	}
@@ -316,7 +316,7 @@ VOID *BofDisplayWinTimerCallBack(INT nID, VOID *pParam2) {
 
 	pWindow->OnTimer(nID);
 
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -325,11 +325,11 @@ ERROR_CODE CBofDisplayWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCa
 
 	CBofTimer *pTimer;
 
-	if (pCallBack == NULL) {
+	if (pCallBack == nullptr) {
 		pCallBack = BofDisplayWinTimerCallBack;
 	}
 
-	if ((pTimer = new CBofTimer(nID, nInterval, this, pCallBack)) != NULL) {
+	if ((pTimer = new CBofTimer(nID, nInterval, this, pCallBack)) != nullptr) {
 
 		pTimer->Start();
 
@@ -348,7 +348,7 @@ ERROR_CODE CBofDisplayWindow::KillTimer(UINT nTimerID) {
 }
 
 
-ERROR_CODE CBofDisplayWindow::KillMyTimers(VOID) {
+ERROR_CODE CBofDisplayWindow::KillMyTimers() {
 	Assert(IsValidObject(this));
 
 	return m_errCode;
@@ -357,7 +357,7 @@ ERROR_CODE CBofDisplayWindow::KillMyTimers(VOID) {
 ERROR_CODE CBofDisplayWindow::SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh) {
 	Assert(IsValidObject(this));
 
-	Assert(pBitmap != NULL);
+	Assert(pBitmap != nullptr);
 
 	ReleaseImage();
 
@@ -383,7 +383,7 @@ ERROR_CODE CBofDisplayWindow::SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh)
 }
 
 
-ERROR_CODE CBofDisplayWindow::SetCapture(VOID) {
+ERROR_CODE CBofDisplayWindow::SetCapture() {
 	Assert(IsValidObject(this));
 
 	if (m_pCaptureWindow != this) {
@@ -397,7 +397,7 @@ ERROR_CODE CBofDisplayWindow::SetCapture(VOID) {
 }
 
 
-ERROR_CODE CBofDisplayWindow::ReleaseCapture(VOID) {
+ERROR_CODE CBofDisplayWindow::ReleaseCapture() {
 	Assert(IsValidObject(this));
 
 	if (m_pCaptureWindow == this) {
@@ -411,7 +411,7 @@ ERROR_CODE CBofDisplayWindow::ReleaseCapture(VOID) {
 VOID CBofDisplayWindow::OnBofButton(CBofObject *, INT)     {}
 VOID CBofDisplayWindow::OnBofScrollBar(CBofObject *, INT)  {}
 VOID CBofDisplayWindow::OnBofListBox(CBofObject *, INT)    {}
-VOID CBofDisplayWindow::OnMainLoop(VOID)                    {}
+VOID CBofDisplayWindow::OnMainLoop()                    {}
 VOID CBofDisplayWindow::OnSoundNotify(ULONG, ULONG)       {}
 VOID CBofDisplayWindow::OnMovieNotify(ULONG, ULONG)       {}
 VOID CBofDisplayWindow::OnMCINotify(ULONG, ULONG)         {}
@@ -429,15 +429,15 @@ VOID CBofDisplayWindow::OnRButtonDblClk(UINT, CBofPoint *) {}
 VOID CBofDisplayWindow::OnKeyHit(ULONG, ULONG)            {}
 
 VOID CBofDisplayWindow::OnReSize(CBofSize *)                {}
-VOID CBofDisplayWindow::OnClose(VOID)                       {}
+VOID CBofDisplayWindow::OnClose()                       {}
 
 VOID CBofDisplayWindow::OnUserMessage(ULONG, ULONG)       {}
 
-VOID CBofDisplayWindow::OnActivate(VOID)                    {}
+VOID CBofDisplayWindow::OnActivate()                    {}
 
 
 VOID CBofDisplayWindow::HandleKeyHit(ULONG lKeyCode, ULONG lRepCount) {
-	if (m_pActiveWindow != NULL) {
+	if (m_pActiveWindow != nullptr) {
 		m_pActiveWindow->OnKeyHit(lKeyCode, lRepCount);
 	}
 }
@@ -446,7 +446,7 @@ VOID CBofDisplayWindow::HandleKeyHit(ULONG lKeyCode, ULONG lRepCount) {
 VOID CBofDisplayWindow::HandleMouseMove(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -458,7 +458,7 @@ VOID CBofDisplayWindow::HandleMouseMove(UINT nFlags, const CBofPoint &cPoint) {
 VOID CBofDisplayWindow::HandleLButtonDown(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -469,7 +469,7 @@ VOID CBofDisplayWindow::HandleLButtonDown(UINT nFlags, const CBofPoint &cPoint) 
 VOID CBofDisplayWindow::HandleLButtonUp(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -479,7 +479,7 @@ VOID CBofDisplayWindow::HandleLButtonUp(UINT nFlags, const CBofPoint &cPoint) {
 VOID CBofDisplayWindow::HandleLButtonDblClk(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -489,7 +489,7 @@ VOID CBofDisplayWindow::HandleLButtonDblClk(UINT nFlags, const CBofPoint &cPoint
 VOID CBofDisplayWindow::HandleRButtonDown(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -499,7 +499,7 @@ VOID CBofDisplayWindow::HandleRButtonDown(UINT nFlags, const CBofPoint &cPoint) 
 VOID CBofDisplayWindow::HandleRButtonUp(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -509,7 +509,7 @@ VOID CBofDisplayWindow::HandleRButtonUp(UINT nFlags, const CBofPoint &cPoint) {
 VOID CBofDisplayWindow::HandleRButtonDblClk(UINT nFlags, const CBofPoint &cPoint) {
 	CBofDisplayWindow *pWindow;
 
-	if ((pWindow = FindWindowFromPoint(cPoint)) != NULL) {
+	if ((pWindow = FindWindowFromPoint(cPoint)) != nullptr) {
 		CBofPoint cLocalPoint;
 		cLocalPoint = pWindow->GlobalToLocal(cPoint);
 
@@ -524,7 +524,7 @@ CBofDisplayWindow *CBofDisplayWindow::FindWindowFromPoint(const CBofPoint &cPoin
 	// Find the top-most window that is under the specified point
 	//
 	pWindow = m_pCaptureWindow;
-	if (m_pCaptureWindow == NULL) {
+	if (m_pCaptureWindow == nullptr) {
 
 		pWindow = (CBofDisplayWindow *)m_pMainDisplay->GetChildFromPoint(cPoint);
 	}

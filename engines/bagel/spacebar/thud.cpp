@@ -32,7 +32,7 @@ int SBarThud::m_nThudCursor = -1;
 SBarThud::SBarThud(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
 	m_xSDevType = SDEV_WIELD;
-	m_xYouBmp = NULL;
+	m_xYouBmp = nullptr;
 	m_nObjects = 0;         // This should be changed on the attach
 }
 
@@ -57,7 +57,7 @@ ERROR_CODE SBarThud::Attach() {
 	//CBofBitmap *m_xYouBmp
 	m_xYouBmp = new CBofBitmap(GetBackgroundName());
 
-	if ((m_xYouBmp == NULL) || (m_xYouBmp->Height() <= 0) || (m_xYouBmp->Width() <= 0)) {
+	if ((m_xYouBmp == nullptr) || (m_xYouBmp->Height() <= 0) || (m_xYouBmp->Width() <= 0)) {
 		BofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
 		return ERR_FOPEN;
 	} else {
@@ -86,7 +86,7 @@ ERROR_CODE SBarThud::Attach() {
 ERROR_CODE SBarThud::Detach() {
 	if (m_xYouBmp) {
 		delete m_xYouBmp;
-		m_xYouBmp = NULL;
+		m_xYouBmp = nullptr;
 	}
 
 	// write one function in sdevbmp
@@ -128,7 +128,7 @@ ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString 
 
 
 ERROR_CODE SBarThud::ActivateLocalObject(CBagObject *pObj) {
-	if (pObj == NULL)
+	if (pObj == nullptr)
 		return ERR_UNKNOWN;
 
 	// Thud can only activate one object at a time
@@ -163,7 +163,7 @@ ERROR_CODE SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 	if (m_xYouBmp && GetBackground())
 		m_xYouBmp->Paint(GetBackground(), 0, 0);
 
-	CBagMenu::SetUniversalObjectList(NULL);
+	CBagMenu::SetUniversalObjectList(nullptr);
 	return CBagStorageDev::DeactivateLocalObject(pObj);
 }
 

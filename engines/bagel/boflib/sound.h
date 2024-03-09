@@ -278,7 +278,7 @@ private:
 	CBofWindow *m_pWnd = nullptr; // parent window for messages
 
 	static CHAR m_szDrivePath[MAX_DIRPATH]; // path spec to drive
-	static CBofSound *m_pSoundChain;        // first item in chain or NULL
+	static CBofSound *m_pSoundChain;        // first item in chain or nullptr
 	static INT m_nCount;                    // count of active sounds
 	static INT m_nWavCount;                 // number of wave sound devices
 	static INT m_nMidiCount;                // number of midi sound devices

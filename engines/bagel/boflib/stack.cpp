@@ -28,7 +28,7 @@ CStack::CStack() {
 
 CStack::CStack(VOID *pObject) {
 	// validate input
-	Assert(pObject != NULL);
+	Assert(pObject != nullptr);
 
 	// start stack with this object
 	Push(pObject);
@@ -38,10 +38,10 @@ CStack::CStack(CStack *pStack) {
 	CLList *pList;
 
 	// validate input stack
-	Assert(pStack != NULL);
+	Assert(pStack != nullptr);
 
 	pList = pStack->m_pStackList;
-	while (pList != NULL) {
+	while (pList != nullptr) {
 		Push(pList->GetData());
 		pList = pList->GetNext();
 	}
@@ -51,7 +51,7 @@ CStack::CStack(const CStack &cStack) {
 	CLList *pList;
 
 	pList = cStack.m_pStackList;
-	while (pList != NULL) {
+	while (pList != nullptr) {
 		Push(pList->GetData());
 		pList = pList->GetNext();
 	}
@@ -63,12 +63,12 @@ CStack::~CStack() {
 
 	// remove all items from the stack
 	//
-	while (Pop() != NULL) {
+	while (Pop() != nullptr) {
 	}
 
-	// Pop() must set m_pStackList to NULL when it removes the last item
+	// Pop() must set m_pStackList to nullptr when it removes the last item
 	// from the stack.
-	Assert(m_pStackList == NULL);
+	Assert(m_pStackList == nullptr);
 }
 
 VOID CStack::Push(VOID *pObject) {
@@ -77,9 +77,9 @@ VOID CStack::Push(VOID *pObject) {
 
 	CLList *pNewItem;
 
-	if ((pNewItem = new CLList(pObject)) != NULL) {
+	if ((pNewItem = new CLList(pObject)) != nullptr) {
 
-		if (m_pStackList != NULL) {
+		if (m_pStackList != nullptr) {
 			m_pStackList->AddToTail(pNewItem);
 		} else {
 			m_pStackList = pNewItem;
@@ -96,9 +96,9 @@ VOID *CStack::Pop() {
 	CLList *pTop;
 	VOID *pObject;
 
-	pObject = NULL;
+	pObject = nullptr;
 
-	if (m_pStackList != NULL) {
+	if (m_pStackList != nullptr) {
 		pTop = m_pStackList->GetTail();
 
 		// m_pStackList must always be the head of the linked list
@@ -107,7 +107,7 @@ VOID *CStack::Pop() {
 		pObject = pTop->GetData();
 
 		if (pTop == m_pStackList)
-			m_pStackList = NULL;
+			m_pStackList = nullptr;
 
 		delete pTop;
 	}

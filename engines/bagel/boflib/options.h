@@ -36,10 +36,10 @@ namespace Bagel {
 
 class COption : public CLList, public CBofObject {
 public:
-	COption(const CHAR *pszInit = NULL) {
+	COption(const CHAR *pszInit = nullptr) {
 		m_szBuf[0] = '\0';
 
-		if (pszInit != NULL) {
+		if (pszInit != nullptr) {
 			Assert(strlen(pszInit) < MAX_OPTION_LEN);
 			Common::strcpy_s(m_szBuf, pszInit);
 		}
@@ -83,7 +83,7 @@ public:
 	 * @brief       Loads specified .INI file which contains user options.
 	 * @param pszOptionsFile    Name of .INI settings file
 	**/
-	CBofOptions(const CHAR *pszOptionsFile = NULL);
+	CBofOptions(const CHAR *pszOptionsFile = nullptr);
 
 	/**
 	 * Destructor
