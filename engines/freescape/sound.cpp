@@ -129,7 +129,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						soundUnitZX soundUnit;
 						soundUnit.tStates = var5;
 						soundUnit.freqTimesSeconds = SFXtempStruct[3] | (SFXtempStruct[4] << 8);
-						soundUnit.multiplier = 1.8;
+						soundUnit.multiplier = 1.8f;
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						repetitions = repetitions - 1;
