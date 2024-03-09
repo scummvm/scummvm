@@ -528,6 +528,7 @@ protected:
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
 
 	BOOL m_bCaptured = FALSE;
+	Graphics::ManagedSurface *m_pWindow = nullptr;
 
 	static CBofWindow *m_pWindowList;
 	static CBofWindow *m_pActiveWindow;
