@@ -154,12 +154,8 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 			CloseMovie();
 		}
 
-		warning("STUB: CBofMovie::OpenMovie()");
-#if 0
-		m_pSmk = SmackOpen(filename.GetBuffer(), SMACKTRACKS, SMACKAUTOEXTRA);
-#endif
-
-		if (!m_pSmk) {
+		m_pSmk = new Video::SmackerDecoder();
+		if (!m_pSmk->loadFile(filename.GetBuffer())) {
 			// Opened failed
 #ifdef _DEBUG
 #if BOF_MAC || BOF_WINMAC
@@ -173,22 +169,19 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 		}
 
 		warning("STUB: CBofMovie::OpenMovie() con't");
-#if 0
+
 		// If supposed to stretch into specified window
 		//
 		if (m_bStretch) {
-			m_pSbuf = SmackBufferOpen(GetHandle(), SMACKAUTOBLIT, (WORD)m_pSmk->Width, (WORD)m_pSmk->Height, (WORD)Width(), (WORD)Height());
+			m_pSbuf = new Graphics::ManagedSurface(Width(), Height(), m_pSmk->getPixelFormat());
 
 		} else {
-			m_pSbuf = SmackBufferOpen(GetHandle(), SMACKAUTOBLIT, (WORD)m_pSmk->Width, (WORD)m_pSmk->Height, (WORD)m_pSmk->Width, (WORD)m_pSmk->Height);
+			m_pSbuf = new Graphics::ManagedSurface(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmk->getPixelFormat());
 		}
 
-		if (m_pSbuf)
-			SmackToBuffer(m_pSmk, (m_pSbuf->Width - m_pSmk->Width) / 2, (m_pSbuf->Height - m_pSmk->Height) / 2, m_pSbuf->Width, m_pSbuf->Height, m_pSbuf->Buffer, (u8)m_pSbuf->Reversed);
-
-		CBofRect    MovieBounds(0, 0, (WORD)m_pSbuf->Width - 1, (WORD)m_pSbuf->Height - 1);
+		CBofRect MovieBounds(0, 0, (WORD)m_pSbuf->w - 1, (WORD)m_pSbuf->h - 1);
 		ReSize(&MovieBounds, TRUE);
-#endif
+
 
 #if PALETTESHIFTFIX
 		CBofWindow::CheckPaletteShiftList();
@@ -215,30 +208,16 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 			SmackBufferSetPalette(m_pSbuf);
 #endif
 		}
+#endif
 
 		// Smack the current frame into the buffer
-		SmackDoFrame(m_pSmk);
-
-		// paint it to screen with dirty rectangles
-		while (SmackToBufferRect(m_pSmk, m_pSbuf->SurfaceType)) {
-#if BOF_MAC //  jwl 06.26.96 This smack routine doesn't take a
-			//  DC (Device Context) block
-			if (SmackBufferBlit(m_pSbuf,
-			                    m_pSmk->LastRectx,
-			                    m_pSmk->LastRecty,
-			                    (WORD)m_pSmk->LastRectx,
-			                    (WORD)m_pSmk->LastRecty,
-			                    (WORD)m_pSmk->LastRectw,
-			                    (WORD)m_pSmk->LastRecth))
-#else
-			if (SmackBufferBlit(m_pSbuf, GetDC(), 0, 0, (WORD)m_pSmk->LastRectx, (WORD)m_pSmk->LastRecty, (WORD)m_pSmk->LastRectw, (WORD)m_pSmk->LastRecth))
-#endif
-				break;
+		const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+		if (frame) {
+			m_pSbuf->copyFrom(*frame);
 		}
-		// BCW
-		// Get next frame, will loop to beginning
-		SmackNextFrame(m_pSmk);
-#endif
+		if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
+			m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
+		}
 
 		return TRUE;
 	} else if (m_eMovType == QT) {
@@ -324,42 +303,20 @@ VOID  CBofMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
 }
 
 VOID  CBofMovie::OnMainLoop(VOID) {
-	warning("STUB: CBofMovie::OnMainLoop()");
-
-#if 0
-
 	if (m_eMovType == SMACKER) {
-		if (!SmackWait(m_pSmk)) {
+		if (m_pSmk->needsUpdate()) {
 			if (m_eMovStatus != STOPPED) {
-				if (m_pSmk->NewPalette && m_bUseNewPalette) {
-					SmackBufferNewPalette(m_pSbuf, m_pSmk->Palette, 0);
-					SmackColorRemap(m_pSmk, m_pSbuf->Palette, m_pSbuf->MaxPalColors, m_pSbuf->PalType);
-#if BOF_MAC
-					//  jwl 10.04.96, get a hosed palette without this call.
-					SmackBufferSetPalette(m_pSbuf);
-#endif
+				if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
+					m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
 				}
 
 				// Smack the current frame into the buffer
-				SmackDoFrame(m_pSmk);
-
-				// paint it to screen with dirty rectangles
-				while (SmackToBufferRect(m_pSmk, m_pSbuf->SurfaceType)) {
-#if BOF_MAC         // jwl 06.26.96 This smack routine doesn't take a
-					// DC (Device Context) block, make sure that the 2nd and
-					// third params are non-zero, if they are, then yucky
-					// things happen to the movie (on the mac).
-					if (SmackBufferBlit(m_pSbuf,
-					                    m_pSmk->LastRectx,
-					                    m_pSmk->LastRecty,
-					                    m_pSmk->LastRectx,
-					                    m_pSmk->LastRecty,
-					                    m_pSmk->LastRectw,
-					                    m_pSmk->LastRecth))
-#else
-					if (SmackBufferBlit(m_pSbuf, GetDC(), 0, 0, (WORD)m_pSmk->LastRectx, (WORD)m_pSmk->LastRecty, (WORD)m_pSmk->LastRectw, (WORD)m_pSmk->LastRecth))
-#endif
-						break;
+				const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+				if (frame) {
+					m_pSbuf->copyFrom(*frame);
+				}
+				if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
+					m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
 				}
 
 				if (m_eMovStatus == FOREWARD) {
@@ -367,16 +324,14 @@ VOID  CBofMovie::OnMainLoop(VOID) {
 					// if (m_pMovTimer->IsActive())
 					//  m_pMovTimer->Stop();
 
-					if ((m_pSmk->FrameNum == (m_pSmk->Frames - 1)) && m_bLoop == FALSE)
+					if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
 						OnMovieDone();
-					else
-						SmackNextFrame(m_pSmk); // Get next frame, will loop to beginning
 				} else if (m_eMovStatus == REVERSE) {
 					// removed the need for the timer mdm 8/4
 					// if (!m_pMovTimer->IsActive())
 					//  m_pMovTimer->Start();
 
-					if ((m_pSmk->FrameNum == 0) || (m_pSmk->FrameNum == 1)) {
+					if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
 						if (m_bLoop == FALSE)
 							OnMovieDone();
 						else
@@ -385,7 +340,7 @@ VOID  CBofMovie::OnMainLoop(VOID) {
 						// removed the need for the timer mdm 8/4
 						//if (m_bReverseWait==FALSE)
 						//{
-						SetFrame(m_pSmk->FrameNum - 1); // Go back 1 frame
+						SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
 						// m_bReverseWait=TRUE;     // removed the need for the timer mdm 8/4
 						//}
 					}
@@ -393,7 +348,6 @@ VOID  CBofMovie::OnMainLoop(VOID) {
 			}// !STOPPED
 		}// !SMACKWAIT
 	}// SMACKER
-#endif
 }
 
 VOID  CBofMovie::OnPaint(CBofRect *) {
@@ -415,17 +369,14 @@ VOID  CBofMovie::OnPaint(CBofRect *) {
 }
 
 VOID  CBofMovie::CloseMovie(VOID) {
-	warning("STUB: CBofMovie::CloseMovie()");
-
-#if 0
 	if (m_eMovType == SMACKER) {
 		if (m_pSbuf) {
-			SmackBufferClose(m_pSbuf);
+			delete m_pSbuf;
 			m_pSbuf = NULL;
 		}
 
 		if (m_pSmk) {
-			SmackClose(m_pSmk);
+			delete m_pSmk;
 			m_pSmk = NULL;
 		}
 
@@ -448,7 +399,6 @@ VOID  CBofMovie::CloseMovie(VOID) {
 		}
 #endif
 	}
-#endif
 }
 
 VOID  CBofMovie::OnClose(VOID) {
@@ -570,6 +520,7 @@ BOOL CBofMovie::Play() {
 
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
+			m_pSmk->start();
 			m_eMovStatus = FOREWARD;
 			return TRUE;
 		}
@@ -625,6 +576,7 @@ BOOL CBofMovie::Reverse() {
 
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
+			m_pSmk->setReverse(true);
 			m_eMovStatus = REVERSE;
 			return TRUE;
 		}
@@ -662,6 +614,7 @@ BOOL CBofMovie::Stop(void) {
 
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
+			m_pSmk->stop();
 			m_eMovStatus = STOPPED;
 			return TRUE;
 		}
@@ -692,6 +645,7 @@ BOOL CBofMovie::Pause() {
 
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
+			m_pSmk->pauseVideo(true);
 			m_eMovStatus = PAUSED;
 			return TRUE;
 		} else
@@ -720,10 +674,8 @@ BOOL CBofMovie::Pause() {
 }
 
 BOOL CBofMovie::SeekToStart(void) {
-	warning("STUB: CBofMovie::SeekToStart()");
-#if 0
 	if (m_eMovType == SMACKER) {
-		SmackGoto(m_pSmk, 0);
+		m_pSmk->seekToFrame(0);
 		return FALSE;
 	} else if (m_eMovType == QT) {
 #if BOF_WINNT
@@ -745,18 +697,13 @@ BOOL CBofMovie::SeekToStart(void) {
 		}
 #endif
 	}
-
-#endif
 	return FALSE;
 
 }
 
 BOOL CBofMovie::SeekToEnd(void) {
-	warning("STUB: CBofMovie::SeekToEnd()");
-
-#if 0
 	if (m_eMovType == SMACKER) {
-		SmackGoto(m_pSmk, m_pSmk->Frames - 1);   // Goto last frame
+		m_pSmk->seekToFrame(m_pSmk->getCurFrame() - 1); // Goto last frame
 		return TRUE;
 	} else if (m_eMovType == QT) {
 #if BOF_WINNT
@@ -778,19 +725,14 @@ BOOL CBofMovie::SeekToEnd(void) {
 		}
 #endif
 	}
-#endif
-
 	return FALSE;
 
 }
 
 DWORD CBofMovie::GetFrame() {
-	warning("STUB: CBofMovie::GetFrame()");
-
-#if 0
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk)
-			return (m_pSmk->FrameNum);
+			return (m_pSmk->getCurFrame());
 	} else if (m_eMovType == QT) {
 #if BOF_WINNT
 		MCI_DGV_STATUS_PARMS    mciStatus;
@@ -812,20 +754,14 @@ DWORD CBofMovie::GetFrame() {
 		}
 #endif
 	}
-#endif
-
 	return ((DWORD) -1);
 }
 
 
 BOOL CBofMovie::SetFrame(DWORD dwFrameNum) {
-	warning("STUB: CBofMovie::SetFrame()");
-
-#if 0
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
-			SmackGoto(m_pSmk, dwFrameNum);
-			SmackNextFrame(m_pSmk); // This seems to be neccessary to increment frameNum etc.
+			m_pSmk->seekToFrame(dwFrameNum);
 			return TRUE;
 		} else
 			return FALSE;
@@ -853,7 +789,6 @@ BOOL CBofMovie::SetFrame(DWORD dwFrameNum) {
 			return FALSE;
 #endif
 	}
-#endif
 
 	return FALSE;
 }
@@ -904,13 +839,10 @@ BOOL CBofMovie::CenterRect() {
 	ClientWidth =   rcParentRect.right - rcParentRect.left;
 	ClientHeight =  rcParentRect.bottom - rcParentRect.top;
 
-	warning("STUB: CBofMovie::CenterRect()");
-
-#if 0
 	// Get Movies width and height
 	if (m_eMovType == SMACKER) {
-		MovieWidth =    m_pSmk->Width;
-		MovieHeight =   m_pSmk->Height;
+		MovieWidth =    m_pSmk->getWidth();
+		MovieHeight =   m_pSmk->getHeight();
 	} else if (m_eMovType == QT) {
 #if BOF_WINNT
 		MCI_DGV_RECT_PARMS  mciRect;
@@ -935,7 +867,6 @@ BOOL CBofMovie::CenterRect() {
 		}
 #endif
 	}
-#endif
 
 
 	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
