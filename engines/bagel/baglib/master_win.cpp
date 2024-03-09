@@ -150,8 +150,7 @@ CBagMasterWin::CBagMasterWin() {
 #endif
 	MACROREPLACE(cString);
 
-	if ((m_pWaitSound = new CBofSound(this, cString, SOUND_MIX)) != nullptr) {
-	}
+	m_pWaitSound = new CBofSound(this, cString, SOUND_MIX);
 }
 
 CBagMasterWin::~CBagMasterWin() {
