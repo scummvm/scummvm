@@ -82,7 +82,7 @@ ERROR_CODE CBofMovie::Initialize(CBofWindow *pParent) {
 	// Assert(m_pMovTimer!=NULL);
 
 	// Call dialog box creates
-	if (Create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
+	if (Create("MovieWin", 0, 0, 640, 480, pParent, 1) == ERR_NONE) {
 		SetCapture();
 	}
 
@@ -168,8 +168,6 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 			return (FALSE);
 		}
 
-		warning("STUB: CBofMovie::OpenMovie() con't");
-
 		// If supposed to stretch into specified window
 		//
 		if (m_bStretch) {
@@ -214,8 +212,6 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 		const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
 		if (frame) {
 			m_pSbuf->copyFrom(*frame);
-		}
-		if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
 			m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
 		}
 
@@ -306,16 +302,10 @@ VOID  CBofMovie::OnMainLoop(VOID) {
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk->needsUpdate()) {
 			if (m_eMovStatus != STOPPED) {
-				if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
-					m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
-				}
-
 				// Smack the current frame into the buffer
 				const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
 				if (frame) {
 					m_pSbuf->copyFrom(*frame);
-				}
-				if (m_pSmk->hasDirtyPalette() && m_bUseNewPalette) {
 					m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
 				}
 
@@ -351,21 +341,11 @@ VOID  CBofMovie::OnMainLoop(VOID) {
 }
 
 VOID  CBofMovie::OnPaint(CBofRect *) {
-	warning("STUB: CBofMovie::OnPaint()");
-
-#if 0
-	CHAR *pSmkData = NULL;
 	if (m_eMovType == SMACKER) {
-		if (m_pSbuf)
-#if BOF_MAC
-			//  jwl 06.26.96 This smack routine doesn't take a
-			//  DC (Device Context) block
-			SmackBufferBlit(m_pSbuf, 0, 0, 0, 0, (WORD)m_pSmk->Width, (WORD)m_pSmk->Height);
-#else
-			SmackBufferBlit(m_pSbuf, GetDC(), 0, 0, 0, 0, (WORD)m_pSmk->Width, (WORD)m_pSmk->Height);
-#endif
+		if (m_pSbuf) {
+			getSurface()->blitFrom(*m_pSbuf);
+		}
 	}
-#endif
 }
 
 VOID  CBofMovie::CloseMovie(VOID) {
