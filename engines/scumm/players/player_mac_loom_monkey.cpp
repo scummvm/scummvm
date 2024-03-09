@@ -82,8 +82,6 @@ protected:
 	byte _isMusic;
 	byte _sndRes9;
 	byte _sndRes10;
-	byte _sndRes11;
-	byte _sndRes12;
 	uint16 _chanSetup;
 	uint16 _timbre;
 	bool _loop;
@@ -161,7 +159,7 @@ MacSndLoader::Instrument::Instrument(uint32 id, Common::SeekableReadStream *&in,
 	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
 }
 
-MacSndLoader::MacSndLoader(bool useInstrTag) : _sndRes6(0), _isMusic(0), _sndRes9(0), _sndRes10(0), _sndRes11(0), _sndRes12(0), _chanSetup(0),
+MacSndLoader::MacSndLoader(bool useInstrTag) : _sndRes6(0), _isMusic(0), _sndRes9(0), _sndRes10(0), _chanSetup(0),
 	_timbre(0), _useInstrTag(useInstrTag), _synth(0), _loop(false) {
 	memset(_chanInstr, 0, sizeof(_chanInstr));
 	memset(_chanInstr2, 0, sizeof(_chanInstr2));
@@ -315,7 +313,7 @@ bool MonkeyMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
 	_isMusic = data[13];
 	_sndRes10 = data[10];
 	_chanSetup = data[11];
-	_sndRes12 = data[12];
+	_timbre = data[12];
 
 	for (int i = 0; i < 4; ++i) {
 		uint32 offs = READ_BE_UINT32(data + 16 + 4 * i);
