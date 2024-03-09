@@ -299,13 +299,13 @@ typedef struct {
 // time has run out... we need room in the structure for him also, although he won't be
 // doing any negotiating or meetings for us.
 static STAFFERITEM g_staffers[NUM_STAFFERS + 1] = {
-	"Norg-72",   "nor72bio.txt", "sanenorg.bmp",   TRUE, FALSE, mStafferMale,    1,  30,
-	"Pnurth-81", "Pnu81bio.txt", "sanepnur.bmp",   TRUE, FALSE, mStafferFemale,  3,  30,
-	"Zig-64",    "Zig64bio.txt", "sanezig.bmp",    TRUE, FALSE, mStafferFemale,  6,  18,
-	"Lentil-24", "Len24bio.txt", "sanelent.bmp",   TRUE, FALSE, mStafferFemale,  5,  15,
-	"Vargas-20", "Var20bio.txt", "sanevarg.bmp",   TRUE, FALSE, mStafferMale,   10,  25,
-	"Churg-53",  "Chu53bio.txt", "sanechur.bmp",   TRUE, FALSE, mStafferMale,    5,  22,
-	"Durteen-97", "DUR97bio.txt", "sanedurt.bmp",   TRUE, FALSE, mStafferMale,    0,  0
+	{ "Norg-72",   "nor72bio.txt", "sanenorg.bmp",   TRUE, FALSE, mStafferMale,    1,  30 },
+	{ "Pnurth-81", "Pnu81bio.txt", "sanepnur.bmp",   TRUE, FALSE, mStafferFemale,  3,  30 },
+	{ "Zig-64",    "Zig64bio.txt", "sanezig.bmp",    TRUE, FALSE, mStafferFemale,  6,  18 },
+	{ "Lentil-24", "Len24bio.txt", "sanelent.bmp",   TRUE, FALSE, mStafferFemale,  5,  15 },
+	{ "Vargas-20", "Var20bio.txt", "sanevarg.bmp",   TRUE, FALSE, mStafferMale,   10,  25 },
+	{ "Churg-53",  "Chu53bio.txt", "sanechur.bmp",   TRUE, FALSE, mStafferMale,    5,  22 },
+	{ "Durteen-97", "DUR97bio.txt", "sanedurt.bmp",   TRUE, FALSE, mStafferMale,    0,  0 },
 };
 
 static const CHAR *g_stMainItems[NUM_MAIN_ITEMS] = {
@@ -323,9 +323,9 @@ static const CHAR *g_stMainItems[NUM_MAIN_ITEMS] = {
 };
 
 static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
-	"Irk-4", -1, IRK4, "IRK4BIO.TXT", FALSE, TRUE, NOMEETING,
-	"Yeef-8", 38, YEEF8, "YEE8BIO.TXT", FALSE, TRUE, NOMEETING,
-	"Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", FALSE, TRUE, NOMEETING
+	{ "Irk-4", -1, IRK4, "IRK4BIO.TXT", FALSE, TRUE, NOMEETING },
+	{ "Yeef-8", 38, YEEF8, "YEE8BIO.TXT", FALSE, TRUE, NOMEETING },
+	{ "Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", FALSE, TRUE, NOMEETING },
 };
 
 // Yeef can be talked down!
@@ -357,54 +357,54 @@ static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
 // rest of them are non-negotiable. Only dork and gung are part of the
 // final solution.
 static BUYERBIDSREC g_stBuyerBids[NUM_BUYERS] = {
-	"Pylon-3", 0, 0, 0, 0, 0, 0, 7, 9, 2, 3, 4, 8, 0, 0, 33, FALSE, PYLON3, "PYL3BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Dippik-10", 0, 0, 0, 0, 0, 0, 5, 4, 0, 0, 0, 0, 6, 8, 23, FALSE, DIPPIK10, "DIP10BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Vebbil-18", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, FALSE, VEBBIL18, "VEB18BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Gung-14", 0, 4, 2, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 16, FALSE, GUNG14, "GUN14BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Reyes-24", 10, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, FALSE, REYES24, "REY24BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Gild-13", 6, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, FALSE, GILD13, "GIL13BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Hem-20", 0, 0, 3, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, FALSE, HEM20, "HEM20BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Dork-44", 0, 6, 0, 4, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 21, FALSE, DORK44, "DOR44BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Rawley-23", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, FALSE, RAWLEY23, "RAW23BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Jella-37", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 4, FALSE, JELLA37, "JEL37BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Sinjin-11", 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 5, 6, 23, FALSE, SINJIN11, "SIN11BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Hundey-42", 0, 0, 4, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 6, 13, FALSE, HUNDEY42, "HUN42BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Chandra-15", 0, 0, 0, 0, 0, 0, 0, 13, 0, 2, 4, 0, 0, 0, 19, FALSE, CHANDRA15, "CHA15BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING,
-	"Clang-2", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, FALSE, CLANG2, "CLA2BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING,
-	"Min. Mart", 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, FALSE, MINMARTZN, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING,
-	"Min. Mart", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, FALSE, MINMARTBA, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING,
-	"Min. Mart", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, FALSE, MINMARTRG, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING,
-	"Min. Mart", 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, FALSE, MINMARTUT, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING,
-	"Min. Mart", 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, FALSE, MINMARTPN, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING,
-	"Min. Mart", 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, FALSE, MINMARTSZ,  "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING
+	{ "Pylon-3",    { 0,  0, 0, 0, 0, 0,  7,  9, 2, 3, 4, 8, 0, 0 }, 33, FALSE, PYLON3, "PYL3BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Dippik-10",  { 0,  0, 0, 0, 0, 0,  5,  4, 0, 0, 0, 0, 6, 8 }, 23, FALSE, DIPPIK10, "DIP10BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Vebbil-18",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 7, 0, 0 }, 7, FALSE, VEBBIL18, "VEB18BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Gung-14",    { 0,  4, 2, 0, 0, 10, 0,  0, 0, 0, 0, 0, 0, 0 }, 16, FALSE, GUNG14, "GUN14BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Reyes-24",   { 10, 0, 0, 7, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 17, FALSE, REYES24, "REY24BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Gild-13",    { 6,  0, 0, 0, 4, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 10, FALSE, GILD13, "GIL13BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Hem-20",     { 0,  0, 3, 0, 5, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 8, FALSE, HEM20, "HEM20BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Dork-44",    { 0,  6, 0, 4, 0, 11, 0,  0, 0, 0, 0, 0, 0, 0 }, 21, FALSE, DORK44, "DOR44BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Rawley-23",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 8, 0, 0, 0 }, 8, FALSE, RAWLEY23, "RAW23BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Jella-37",   { 0,  0, 0, 0, 0, 0,  0,  0, 4, 0, 0, 0, 0, 0 }, 4, FALSE, JELLA37, "JEL37BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Sinjin-11",  { 0,  0, 0, 0, 0, 0,  12, 0, 0, 0, 0, 0, 5, 6 }, 23, FALSE, SINJIN11, "SIN11BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Hundey-42",  { 0,  0, 4, 0, 0, 0,  0,  0, 3, 0, 0, 0, 0, 6 }, 13, FALSE, HUNDEY42, "HUN42BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Chandra-15", { 0,  0, 0, 0, 0, 0,  0, 13, 0, 2, 4, 0, 0, 0 }, 19, FALSE, CHANDRA15, "CHA15BIO.TXT", FALSE, TRUE, mBuyerFemale, NOMEETING },
+	{ "Clang-2",    { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 9 }, 9, FALSE, CLANG2, "CLA2BIO.TXT", FALSE, TRUE, mBuyerMale, NOMEETING },
+	{ "Min. Mart",  { 4,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 4, FALSE, MINMARTZN, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  3, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTBA, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 1, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 1, FALSE, MINMARTRG, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 3, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTUT, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 3, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTPN, "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 0, 7,  0,  0, 0, 0, 0, 0, 0, 0 }, 7, FALSE, MINMARTSZ,  "MINBIO.TXT", FALSE, TRUE, 0, NOMEETING },
 };
 
 static MINERAL_NAMES g_stMinerals[NUM_MINERALS] = {
-	"Zinc Mining Rights", "Zn",
-	"Barium Mining Rights", "Ba",
-	"Rigellium Mining Rights", "Rg",
-	"Uptite Mining Rights", "Ut",
-	"Pandemonium Mining Rights", "Pn",
-	"Sanzium Mining Rights", "Sz",
-	"Oxygen Mining Rights", "O",
-	"Water Extraction Rights", "H2O",
-	"Lumber Harvesting Rights", "LH",
-	"Crop Harvesting Rights", "CH",
-	"Medicine Extraction Rights", "ME",
-	"Turf Extraction Rights", "TE",
-	"Artificial Structure Ownership and Removal Rights", "AS",
-	"Exclusive Pollution Dumping Rights", "PD"
+	{ "Zinc Mining Rights", "Zn" },
+	{ "Barium Mining Rights", "Ba" },
+	{ "Rigellium Mining Rights", "Rg" },
+	{ "Uptite Mining Rights", "Ut" },
+	{ "Pandemonium Mining Rights", "Pn" },
+	{ "Sanzium Mining Rights", "Sz" },
+	{ "Oxygen Mining Rights", "O" },
+	{ "Water Extraction Rights", "H2O" },
+	{ "Lumber Harvesting Rights", "LH" },
+	{ "Crop Harvesting Rights", "CH" },
+	{ "Medicine Extraction Rights", "ME" },
+	{ "Turf Extraction Rights", "TE" },
+	{ "Artificial Structure Ownership and Removal Rights", "AS" },
+	{ "Exclusive Pollution Dumping Rights", "PD" },
 };
 
 static EMAILITEM g_stEmailMessages[NUM_MAIL_MESSAGES] = {
-	"Armpit III",       "Irk-4",                "Deven-7",      "SRAMAIL1.TXT",
-	"Pool",             "Devo-185",             "Deven-7",      "SRAMAIL2.TXT",
-	"Rumor",            "Durteen-97",           "Deven-7",      "SRAMAIL3.TXT",
-	"Mona Lisa",        "Fezint-40",            "Deven-7",      "SRAMAIL4.TXT",
-	"A Special Offer",  "Acme Upholstery Corp", "Deven-7",      "SRAMAIL5.TXT",
-	"Swonza-5",         "Churg-53",             "Deven-7",      "SRAMAIL6.TXT",
-	"Pinna-6C",         "Chippik-9",            "Deven-7",      "SRAMAIL7.TXT",
-	"Armpit III",       "Yeef-8",               "Deven-7",      "SRAMAIL8.TXT"
+	{ "Armpit III",       "Irk-4",                "Deven-7",      "SRAMAIL1.TXT" },
+	{ "Pool",             "Devo-185",             "Deven-7",      "SRAMAIL2.TXT" },
+	{ "Rumor",            "Durteen-97",           "Deven-7",      "SRAMAIL3.TXT" },
+	{ "Mona Lisa",        "Fezint-40",            "Deven-7",      "SRAMAIL4.TXT" },
+	{ "A Special Offer",  "Acme Upholstery Corp", "Deven-7",      "SRAMAIL5.TXT" },
+	{ "Swonza-5",         "Churg-53",             "Deven-7",      "SRAMAIL6.TXT" },
+	{ "Pinna-6C",         "Chippik-9",            "Deven-7",      "SRAMAIL7.TXT" },
+	{ "Armpit III",       "Yeef-8",               "Deven-7",      "SRAMAIL8.TXT" },
 };
 
 enum OTHERPARTYS {
@@ -412,9 +412,9 @@ enum OTHERPARTYS {
 };
 
 static OTHERITEM g_stOtherPartys[NUM_OTHER_PARTYS] = {
-	"Swonza-5", "SWO5BIO.TXT", FALSE, TRUE, -1, NOMEETING,
-	"Politicians", "POLITBIO.TXT", FALSE, TRUE, -30, NOMEETING,
-	"Environmentalists", "ENVIRBIO.TXT", FALSE, TRUE, -1, NOMEETING
+	{ "Swonza-5", "SWO5BIO.TXT", FALSE, TRUE, -1, NOMEETING },
+	{ "Politicians", "POLITBIO.TXT", FALSE, TRUE, -30, NOMEETING },
+	{ "Environmentalists", "ENVIRBIO.TXT", FALSE, TRUE, -1, NOMEETING },
 };
 
 // Sraffin computer buttons
@@ -446,37 +446,37 @@ static ST_BUTTONS g_stButtons[NUM_SRAFCOMPBUTT] = {
 };
 
 static AUDIOITEM g_stAudioSetting[NUM_MUSICAL_SCORES] = {
-	"Harpsichord Invention #1", "J. S. Bach",     "Earth",      "SRAFFAN1.MID", nullptr,
-	"Jazz Theme #44981",        "Urgon-Thmo",     "Thelbia",    "SRAFFAN2.MID", nullptr,
-	"Bamboo Breeze",            "H. Fugimachi",   "Earth",      "SRAFFAN3.MID", nullptr,
-	"Power of Crystal, OP. 12", "Brak-44",        "H'poctyl",   "SRAFFAN4.MID", nullptr,
-	"String Quartet",           "J. Salesin",     "Earth",      "SRAFFAN5.MID", nullptr,
+	{ "Harpsichord Invention #1", "J. S. Bach",     "Earth",      "SRAFFAN1.MID", nullptr },
+	{ "Jazz Theme #44981",        "Urgon-Thmo",     "Thelbia",    "SRAFFAN2.MID", nullptr },
+	{ "Bamboo Breeze",            "H. Fugimachi",   "Earth",      "SRAFFAN3.MID", nullptr },
+	{ "Power of Crystal, OP. 12", "Brak-44",        "H'poctyl",   "SRAFFAN4.MID", nullptr },
+	{ "String Quartet",           "J. Salesin",     "Earth",      "SRAFFAN5.MID", nullptr },
 #if BOF_MAC
-	"Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr,
+	{ "Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr },
 #else
-	"The Womp Song",            "The Womps",      "Armpit IV",  "SRAFFAN6.MID", nullptr,
+	{ "The Womp Song",            "The Womps",      "Armpit IV",  "SRAFFAN6.MID", nullptr },
 #endif
-	"Mixed Selections",         " ",    " ",       nullptr,        nullptr
+	{ "Mixed Selections",         " ",    " ",       nullptr,        nullptr },
 };
 
 static OFFERINGITEM g_stOfferings[NUM_OFFERINGS] = {
-	"BEVERAGE:", "Distilled Fleeblunx Sap", "BEVDESC.TXT", "DRINKRCV.TXT",
-	"LIGHT SNACK:", "Br'thl'gian Centipede Legs", "SNKDESC.TXT", "SNACKRCV.TXT"
+	{ "BEVERAGE:", "Distilled Fleeblunx Sap", "BEVDESC.TXT", "DRINKRCV.TXT" },
+	{ "LIGHT SNACK:", "Br'thl'gian Centipede Legs", "SNKDESC.TXT", "SNACKRCV.TXT" }
 };
 
 // codewords
 
 static CODEWORDITEM g_stCodeWords[NUM_CODE_WORDS] = {
-	"ANGRY",     "LUCKY",      "BAGPIPE",    "MOSS",
-	"BRASS",     "MELTED",     "BANANA",     "MUFFIN",
-	"BURNT",     "MOIST",      "BANSHEE",    "PAJAMAS",
-	"DEAD",      "NOISY",      "BULLET",     "PUCK",
-	"ELVISH",    "POINTY",     "COOKIE",     "SHRUB",
-	"ENCRUSTED", "SIMPLE",     "FRISBEE",    "SWORD",
-	"FUZZY",     "SMOKY",      "GALOSHES",   "TORPEDO",
-	"GIGGLING",  "TWITCHING",  "GUITAR",     "TUNIC",
-	"HUNGRY",    "UNITED",     "HYENA",      "UMBRELLA",
-	"HURLING",   "VARNISHED",  "LANTERN",    "ZUCCHINI"
+	{ "ANGRY",     "LUCKY",      "BAGPIPE",    "MOSS" },
+	{ "BRASS",     "MELTED",     "BANANA",     "MUFFIN" },
+	{ "BURNT",     "MOIST",      "BANSHEE",    "PAJAMAS" },
+	{ "DEAD",      "NOISY",      "BULLET",     "PUCK" },
+	{ "ELVISH",    "POINTY",     "COOKIE",     "SHRUB" },
+	{ "ENCRUSTED", "SIMPLE",     "FRISBEE",    "SWORD" },
+	{ "FUZZY",     "SMOKY",      "GALOSHES",   "TORPEDO" },
+	{ "GIGGLING",  "TWITCHING",  "GUITAR",     "TUNIC" },
+	{ "HUNGRY",    "UNITED",     "HYENA",      "UMBRELLA" },
+	{ "HURLING",   "VARNISHED",  "LANTERN",    "ZUCCHINI" }
 };
 
 static CBofRect gCompDisplay(40, 40, 600, 440);
