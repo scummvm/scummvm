@@ -58,6 +58,7 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 ERROR_CODE SpaceBarEngine::Initialize() {
 	Assert(IsValidObject(this));
+	CBofBitmap *pBmp = nullptr;
 
 	CBagel::Initialize();
 
@@ -74,7 +75,6 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-			CBofBitmap *pBmp;
 			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != nullptr) {
 				pBmp->FillRect(nullptr, COLOR_BLACK);
 			} else {
@@ -143,7 +143,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 						}
 					}
 					if (shouldQuit())
-						return ERR_NONE;
+						goto exit;
 
 					cString = LOGOSMK2;
 					MACROREPLACE(cString);
@@ -154,7 +154,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 						}
 					}
 					if (shouldQuit())
-						return ERR_NONE;
+						goto exit;
 
 					// Use hi-res movie if user has a fast machine
 					cString = (GetMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
@@ -168,19 +168,20 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					}
 				}
 				if (shouldQuit())
-					return ERR_NONE;
+					goto exit;
 
 				// Start a new game (In entry vestible)
 				pGameWindow->NewGame();
 			}
 
-			if (pBmp != nullptr)
-				delete pBmp;
-
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
 		}
 	}
+
+exit:
+	if (pBmp != nullptr)
+		delete pBmp;
 
 	return m_errCode;
 }
