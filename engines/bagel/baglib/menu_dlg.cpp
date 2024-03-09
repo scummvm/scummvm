@@ -721,7 +721,7 @@ VOID CBagMenuDlg::OnPaint(CBofRect *pRect) {
 	CBagPanWindow::FlushInputEvents();
 }
 
-VOID CBagMenuDlg::OnDeActivate(VOID) {
+VOID CBagMenuDlg::OnDeActivate() {
 	Assert(IsValidObject(this));
 
 	Close();

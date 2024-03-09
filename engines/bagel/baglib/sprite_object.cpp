@@ -27,7 +27,7 @@ namespace Bagel {
 
 CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	m_xObjType = SPRITEOBJ;
-	m_xSprite = NULL;
+	m_xSprite = nullptr;
 	m_nCels = 1;
 	m_nWieldCursor = -1;
 
@@ -52,9 +52,9 @@ ERROR_CODE CBagSpriteObject::Attach() {
 	if (!IsAttached()) {
 
 		// Could not already have a sprite
-		Assert(m_xSprite == NULL);
+		Assert(m_xSprite == nullptr);
 
-		if ((m_xSprite = new CBofSprite()) != NULL) {
+		if ((m_xSprite = new CBofSprite()) != nullptr) {
 
 			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != false && (m_xSprite->Width() != 0) && (m_xSprite->Height() != 0)) {
 
@@ -80,7 +80,7 @@ ERROR_CODE CBagSpriteObject::Attach() {
 				// redrawn.
 				CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
-				if (pMainWin != NULL) {
+				if (pMainWin != nullptr) {
 					pMainWin->SetPreFilterPan(TRUE);
 				}
 			} else {
@@ -96,9 +96,9 @@ ERROR_CODE CBagSpriteObject::Attach() {
 }
 
 ERROR_CODE CBagSpriteObject::Detach() {
-	if (m_xSprite != NULL) {
+	if (m_xSprite != nullptr) {
 		delete m_xSprite;
-		m_xSprite = NULL;
+		m_xSprite = nullptr;
 	}
 	return CBagObject::Detach();
 }
@@ -115,7 +115,7 @@ VOID CBagSpriteObject::SetPosition(const CBofPoint &pos) {
 		m_xSprite->SetPosition(pos.x, pos.y);
 }
 
-CBofRect CBagSpriteObject::GetRect(VOID) {
+CBofRect CBagSpriteObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 	if (m_xSprite)

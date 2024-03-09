@@ -27,15 +27,15 @@ namespace Bagel {
 // static members
 //
 CBofRect CBofDisplayObject::m_cDirtyRect;
-CBofDisplayObject *CBofDisplayObject::m_pMainDisplay = NULL;
+CBofDisplayObject *CBofDisplayObject::m_pMainDisplay = nullptr;
 
 
 CBofDisplayObject::CBofDisplayObject() {
 	m_bPositioned = FALSE;
 	m_nMaskColor = NOT_TRANSPARENT;
-	m_pImage = NULL;
-	m_pParent = NULL;
-	m_pDisplayList = NULL;
+	m_pImage = nullptr;
+	m_pParent = nullptr;
+	m_pDisplayList = nullptr;
 	m_nZOrder = DISPLAYOBJ_TOPMOST;
 
 	m_lType = DISPTYPE_OBJECT;
@@ -57,7 +57,7 @@ ERROR_CODE CBofDisplayObject::CreateImage(INT dx, INT dy) {
 
 	// Create the bitmap
 	//
-	if ((m_pImage = new CBofBitmap(dx, dy, CBofApp::GetApp()->GetPalette())) != NULL) {
+	if ((m_pImage = new CBofBitmap(dx, dy, CBofApp::GetApp()->GetPalette())) != nullptr) {
 
 		m_cSize.cx = dx;
 		m_cSize.cy = dy;
@@ -78,7 +78,7 @@ ERROR_CODE CBofDisplayObject::LoadImage(const CHAR *pszFileName) {
 
 	// Load new bitmap
 	//
-	if ((m_pImage = new CBofBitmap(pszFileName)) != NULL) {
+	if ((m_pImage = new CBofBitmap(pszFileName)) != nullptr) {
 
 		m_cSize.cx = m_pImage->Width();
 		m_cSize.cy = m_pImage->Height();
@@ -91,12 +91,12 @@ ERROR_CODE CBofDisplayObject::LoadImage(const CHAR *pszFileName) {
 }
 
 
-ERROR_CODE CBofDisplayObject::ReleaseImage(VOID) {
+ERROR_CODE CBofDisplayObject::ReleaseImage() {
 	Assert(IsValidObject(this));
 
-	if (m_pImage != NULL) {
+	if (m_pImage != nullptr) {
 		delete m_pImage;
-		m_pImage = NULL;
+		m_pImage = nullptr;
 	}
 
 	return (m_errCode);
@@ -128,7 +128,7 @@ ERROR_CODE CBofDisplayObject::Paint(const INT x, const INT y) {
 }
 
 
-ERROR_CODE CBofDisplayObject::Erase(VOID) {
+ERROR_CODE CBofDisplayObject::Erase() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -142,7 +142,7 @@ ERROR_CODE CBofDisplayObject::Erase(VOID) {
 }
 
 
-ERROR_CODE CBofDisplayObject::BatchErase(VOID) {
+ERROR_CODE CBofDisplayObject::BatchErase() {
 	Assert(IsValidObject(this));
 
 	// If there is something to erase...
@@ -157,7 +157,7 @@ ERROR_CODE CBofDisplayObject::BatchErase(VOID) {
 		CBofRect cScreenArea;
 
 		cScreenPos = m_cPosition;
-		if (m_pParent != NULL)
+		if (m_pParent != nullptr)
 			cScreenPos = m_pParent->LocalToGlobal(m_cPosition);
 
 		cScreenArea.SetRect(cScreenPos.x, cScreenPos.y, cScreenPos.x + m_cSize.cx - 1, cScreenPos.y + m_cSize.cy - 1);
@@ -176,7 +176,7 @@ ERROR_CODE CBofDisplayObject::BatchPaint(const INT x, const INT y) {
 	CBofPoint cScreenPos, cLocalPos(x, y);
 
 	cScreenPos = cLocalPos;
-	if (m_pParent != NULL) {
+	if (m_pParent != nullptr) {
 		// Target position is relative to my parent
 		cScreenPos = m_pParent->LocalToGlobal(cLocalPos);
 	}
@@ -195,7 +195,7 @@ ERROR_CODE CBofDisplayObject::BatchPaint(const INT x, const INT y) {
 	if (m_bPositioned)  {
 
 		cScreenPos = m_cPosition;
-		if (m_pParent != NULL) {
+		if (m_pParent != nullptr) {
 			// Previous position is relative to my parent
 			cScreenPos = m_pParent->LocalToGlobal(m_cPosition);
 		}
@@ -220,7 +220,7 @@ CBofPoint CBofDisplayObject::LocalToGlobal(const CBofPoint &cPoint) {
 	cGlobalPos = cPoint;
 
 	pObj = this;
-	while (pObj != NULL) {
+	while (pObj != nullptr) {
 
 		cGlobalPos += pObj->m_cPosition;
 
@@ -240,7 +240,7 @@ CBofPoint CBofDisplayObject::GlobalToLocal(const CBofPoint &cPoint) {
 	cLocalPos = cPoint;
 
 	pObj = this;
-	while (pObj != NULL) {
+	while (pObj != nullptr) {
 
 		cLocalPos -= pObj->m_cPosition;
 
@@ -268,7 +268,7 @@ CBofRect CBofDisplayObject::GlobalToLocal(const CBofRect &cRect) {
 
 
 ERROR_CODE CBofDisplayObject::AddToDirtyRect(CBofRect *pRect) {
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	CBofRect cRect;
 
@@ -282,13 +282,13 @@ ERROR_CODE CBofDisplayObject::AddToDirtyRect(CBofRect *pRect) {
 	return (ERR_NONE);
 }
 
-ERROR_CODE CBofDisplayObject::UpdateDirtyRect(VOID) {
+ERROR_CODE CBofDisplayObject::UpdateDirtyRect() {
 	ERROR_CODE errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
 
-	Assert(m_pMainDisplay != NULL);
+	Assert(m_pMainDisplay != nullptr);
 
 	// We won't do anything unless we actually have an area to update
 	//
@@ -306,7 +306,7 @@ ERROR_CODE CBofDisplayObject::UpdateDirtyRect(VOID) {
 		// any of their areas that intersect my dirty area.
 		//
 		pDisplayObject = m_pMainDisplay->m_pDisplayList;
-		while (pDisplayObject != NULL) {
+		while (pDisplayObject != nullptr) {
 
 			// If this child intersects the dirty rectangle
 			//
@@ -332,7 +332,7 @@ ERROR_CODE CBofDisplayObject::UpdateDirtyRect(VOID) {
 
 ERROR_CODE CBofDisplayObject::OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
-	Assert(pDestBmp != NULL);
+	Assert(pDestBmp != nullptr);
 
 	// If no previous error
 	//
@@ -340,7 +340,7 @@ ERROR_CODE CBofDisplayObject::OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect
 
 		// We won't do anything unless we actually have an area to update
 		//
-		if (pDirtyRect != NULL && !pDirtyRect->IsRectEmpty()) {
+		if (pDirtyRect != nullptr && !pDirtyRect->IsRectEmpty()) {
 
 			// As long as this object is visible...
 			//
@@ -361,7 +361,7 @@ ERROR_CODE CBofDisplayObject::OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect
 
 				// Show my image as the background behind any of my children
 				//
-				if (m_pImage != NULL) {
+				if (m_pImage != nullptr) {
 					m_pImage->Paint(pDestBmp, &cGlobalRect, pDirtyRect, m_nMaskColor);
 				}
 
@@ -369,7 +369,7 @@ ERROR_CODE CBofDisplayObject::OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect
 				// any of their areas that intersect my dirty area.
 				//
 				pDisplayObject = m_pDisplayList;
-				while (pDisplayObject != NULL) {
+				while (pDisplayObject != nullptr) {
 
 					if (cMyDirtyRect.IntersectRect(*pDirtyRect, pDisplayObject->GetRect())) {
 						cMyDirtyRect -= pDisplayObject->GetRect().TopLeft();
@@ -392,11 +392,11 @@ ERROR_CODE CBofDisplayObject::SetZOrder(INT nValue) {
 	Assert(nValue >= DISPLAYOBJ_TOPMOST && nValue <= DISPLAYOBJ_HINDMOST);
 
 	// Cannot change the Z-Order of THE top level DisplayObject
-	Assert(m_pParent != NULL);
+	Assert(m_pParent != nullptr);
 
 	m_nZOrder = nValue;
 
-	if (m_pParent != NULL) {
+	if (m_pParent != nullptr) {
 		CBofDisplayObject *pParent;
 
 		pParent = m_pParent;
@@ -414,11 +414,11 @@ ERROR_CODE CBofDisplayObject::SetZOrder(INT nValue) {
 
 ERROR_CODE CBofDisplayObject::LinkChild(CBofDisplayObject *pChild) {
 	Assert(IsValidObject(this));
-	Assert(pChild != NULL);
+	Assert(pChild != nullptr);
 
-	if (pChild != NULL) {
+	if (pChild != nullptr) {
 
-		if (m_pDisplayList != NULL) {
+		if (m_pDisplayList != nullptr) {
 
 			CBofDisplayObject *pCurObj, *pLastObj;
 
@@ -437,7 +437,7 @@ ERROR_CODE CBofDisplayObject::LinkChild(CBofDisplayObject *pChild) {
 
 				pLastObj = pCurObj = m_pDisplayList;
 
-				while (pCurObj != NULL && pCurObj->m_nZOrder > m_nZOrder) {
+				while (pCurObj != nullptr && pCurObj->m_nZOrder > m_nZOrder) {
 					pLastObj = pCurObj;
 					pCurObj = pCurObj->GetNext();
 				}
@@ -461,15 +461,15 @@ ERROR_CODE CBofDisplayObject::LinkChild(CBofDisplayObject *pChild) {
 
 ERROR_CODE CBofDisplayObject::UnlinkChild(CBofDisplayObject *pChild) {
 	Assert(IsValidObject(this));
-	Assert(pChild != NULL);
+	Assert(pChild != nullptr);
 
-	if (pChild != NULL) {
+	if (pChild != nullptr) {
 
 		// I had better be my child's parent
 		Assert(pChild->m_pParent == this);
 
 		// Give child up for adoption
-		pChild->m_pParent = NULL;
+		pChild->m_pParent = nullptr;
 
 		// Keep track of my other children
 		//
@@ -484,7 +484,7 @@ ERROR_CODE CBofDisplayObject::UnlinkChild(CBofDisplayObject *pChild) {
 }
 
 
-ERROR_CODE CBofDisplayObject::Initialize(VOID) {
+ERROR_CODE CBofDisplayObject::Initialize() {
 	CBofApp *pApp;
 	INT dx, dy;
 	ERROR_CODE errCode;
@@ -492,14 +492,14 @@ ERROR_CODE CBofDisplayObject::Initialize(VOID) {
 	// assume no error
 	errCode = ERR_NONE;
 
-	if ((pApp = CBofApp::GetApp()) != NULL) {
+	if ((pApp = CBofApp::GetApp()) != nullptr) {
 		dx = pApp->GetActualWindow()->Width();
 		dy = pApp->GetActualWindow()->Height();
 
 		// Allocate the offscreen buffer we will be using for all
 		// display objects
 		//
-		if ((m_pMainDisplay = new CBofDisplayObject) != NULL) {
+		if ((m_pMainDisplay = new CBofDisplayObject) != nullptr) {
 			m_pMainDisplay->CreateImage(dx, dy);
 			m_pMainDisplay->SetPosition(0, 0);
 
@@ -512,12 +512,12 @@ ERROR_CODE CBofDisplayObject::Initialize(VOID) {
 }
 
 
-ERROR_CODE CBofDisplayObject::CleanUp(VOID) {
+ERROR_CODE CBofDisplayObject::CleanUp() {
 	// Destroy top-level object container
 	//
-	if (m_pMainDisplay != NULL) {
+	if (m_pMainDisplay != nullptr) {
 		delete m_pMainDisplay;
-		m_pMainDisplay = NULL;
+		m_pMainDisplay = nullptr;
 	}
 
 	return (ERR_NONE);
@@ -525,9 +525,9 @@ ERROR_CODE CBofDisplayObject::CleanUp(VOID) {
 
 
 ERROR_CODE CBofDisplayObject::ReMapPalette(CBofPalette *pPalette) {
-	Assert(pPalette != NULL);
+	Assert(pPalette != nullptr);
 
-	if (m_pMainDisplay != NULL && m_pMainDisplay->m_pImage != NULL) {
+	if (m_pMainDisplay != nullptr && m_pMainDisplay->m_pImage != nullptr) {
 
 		m_pMainDisplay->m_pImage->ReMapPalette(pPalette);
 	}
@@ -544,7 +544,7 @@ CBofDisplayObject *CBofDisplayObject::GetChildFromPoint(const CBofPoint &cPoint)
 	CBofDisplayObject *pObj;
 
 	// Assume no window found
-	pWindow = NULL;
+	pWindow = nullptr;
 
 	cRect = LocalToGlobal(GetRect());
 
@@ -555,11 +555,11 @@ CBofDisplayObject *CBofDisplayObject::GetChildFromPoint(const CBofPoint &cPoint)
 		}
 
 		pObj = m_pDisplayList;
-		while (pObj != NULL) {
+		while (pObj != nullptr) {
 
 			if (pObj->IsType(DISPTYPE_WINDOW)) {
 
-				if ((pNewWin = pObj->GetChildFromPoint(cPoint)) != NULL) {
+				if ((pNewWin = pObj->GetChildFromPoint(cPoint)) != nullptr) {
 					pWindow = pNewWin;
 				}
 			}

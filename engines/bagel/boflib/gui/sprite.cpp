@@ -28,14 +28,14 @@ namespace Bagel {
 
 
 CSprite::CSprite() {
-	m_pBackground = NULL;                               // no initial background mask
+	m_pBackground = nullptr;                               // no initial background mask
 
 	m_bOverlaps = FALSE;                                // does not yet overlap other sprites
 	m_bRetainBackground = TRUE;                         // retain background image for updates
 	m_nType = 0;                                        // no user defined information
 	m_nZPosition = SPRITE_TOPMOST;                      // default to top most in fore/back ground order
-	m_pZNext = NULL;                                    // it has not yet been Z-Order sorted
-	m_pZPrev = NULL;
+	m_pZNext = nullptr;                                    // it has not yet been Z-Order sorted
+	m_pZPrev = nullptr;
 }
 
 
@@ -46,13 +46,13 @@ CSprite::~CSprite() {
 }
 
 
-CSprite *CSprite::DuplicateSprite(VOID) {
+CSprite *CSprite::DuplicateSprite() {
 	Assert(IsValidObject(this));
 
 	CSprite *pSprite;
 
 	// create an object for the sprite
-	if ((pSprite = new CSprite) != NULL) {
+	if ((pSprite = new CSprite) != nullptr) {
 		DuplicateSprite(pSprite);
 	}
 
@@ -64,7 +64,7 @@ BOOL CSprite::DuplicateSprite(CSprite *pSprite) {
 	Assert(IsValidObject(this));
 
 	// we require a valid sprite to copy
-	Assert(pSprite != NULL);
+	Assert(pSprite != nullptr);
 
 	CBofSprite::DuplicateSprite(pSprite);
 
@@ -84,20 +84,20 @@ BOOL CSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
 
 	Assert(IsValidObject(this));
 
-	if (pWnd->GetBackdrop() != NULL) {
+	if (pWnd->GetBackdrop() != nullptr) {
 
 		bSuccess = CBofSprite::PaintSprite(pWnd, x, y);
 
 	} else {
 
 		CBofRect    overlapRect, dstRect;
-		CSprite    *pOverlap = NULL;
+		CSprite    *pOverlap = nullptr;
 		BOOL        bPosChanged, bFirstTime;
 
 		// can't paint to a non-existant device
-		Assert(pWnd != NULL);
+		Assert(pWnd != nullptr);
 
-		m_pTouchedSprite = NULL;                        // ... painting operation
+		m_pTouchedSprite = nullptr;                        // ... painting operation
 
 		// setup the initial location if not already specified
 		//
@@ -123,16 +123,16 @@ BOOL CSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
 		dstRect.SetRect(x, y, x + m_cSize.cx - 1, y + m_cSize.cy - 1); // calculate destination rectangle
 
 		pOverlap = (CSprite *)Interception(&m_cRect);              // see if the sprite will intercept another at new location
-		if (pOverlap == NULL) {
+		if (pOverlap == nullptr) {
 			pOverlap = (CSprite *)Interception(&dstRect);          // or if touching sprite at current location
 		}
-		if (pOverlap != NULL) {                         // ... and if so, record that fact
+		if (pOverlap != nullptr) {                         // ... and if so, record that fact
 			m_pTouchedSprite = pOverlap;                // here's what we touched
 		}
 
 		// how we do the painting depends on whether we intercept another sprite
 		//
-		if (!m_bLinked || (pOverlap == NULL)) {
+		if (!m_bLinked || (pOverlap == nullptr)) {
 
 			if (!bFirstTime && ((bPosChanged && overlapRect.IntersectRect(&m_cRect, &dstRect)) || (!bPosChanged && (m_nMaskColor != NOT_TRANSPARENT) && m_bAnimated))) {
 
@@ -175,7 +175,7 @@ BOOL CSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
 
 BOOL CSprite::UpdateSprite(CBofWindow *pWnd, BOOL bSaveBackground) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	CBofBitmap *pWork;
 	INT dx, dy;
@@ -186,7 +186,7 @@ BOOL CSprite::UpdateSprite(CBofWindow *pWnd, BOOL bSaveBackground) {
 	// if we don't have a backdrop bitmap, and if we move and are painting
 	// for the first time then save the background behind where the sprite will be painted
 	//
-	if (m_bRetainBackground && (m_pBackground == NULL || bSaveBackground)) {
+	if (m_bRetainBackground && (m_pBackground == nullptr || bSaveBackground)) {
 		bSuccess = SaveBackground(pWnd);
 	}
 
@@ -197,7 +197,7 @@ BOOL CSprite::UpdateSprite(CBofWindow *pWnd, BOOL bSaveBackground) {
 		dy = m_cImageRect.Height();
 
 		bTempWorkArea = FALSE;
-		if ((m_pWorkBmp == NULL) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
+		if ((m_pWorkBmp == nullptr) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
 
 			bTempWorkArea = TRUE;
 			pWork = new CBofBitmap(dx, dy, m_pSharedPalette);
@@ -242,7 +242,7 @@ BOOL CSprite::DoOptimizedPainting(CBofWindow *pWnd, CBofRect *pDstRect) {
 	INT     dx, dy;                                     // delta sizes of work area's bitmap
 	BOOL    bTempWorkArea;
 
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	// assume fixed work area
 	bTempWorkArea = FALSE;
@@ -250,7 +250,7 @@ BOOL CSprite::DoOptimizedPainting(CBofWindow *pWnd, CBofRect *pDstRect) {
 	// the work area is defined by our sprite
 	//
 	unionRect = m_cRect;
-	if (pDstRect != NULL)
+	if (pDstRect != nullptr)
 		unionRect.UnionRect(&unionRect, pDstRect);
 
 	// calculate the smallest enclosing rectangle that contains the bitmap
@@ -260,7 +260,7 @@ BOOL CSprite::DoOptimizedPainting(CBofWindow *pWnd, CBofRect *pDstRect) {
 	dy = unionRect.Height();
 
 	pWork = m_pWorkBmp;
-	if ((m_pWorkBmp == NULL) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
+	if ((m_pWorkBmp == nullptr) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
 
 		bTempWorkArea = TRUE;
 		pWork = new CBofBitmap(dx, dy, m_pSharedPalette);
@@ -305,7 +305,7 @@ BOOL CSprite::DoOptimizedPainting(CBofWindow *pWnd, CBofRect *pDstRect) {
 
 BOOL CSprite::DoOverlapPainting(CBofWindow *pWnd, CBofRect *pMyRect) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	BOOL        bSuccess = FALSE;
 
@@ -318,19 +318,19 @@ BOOL CSprite::DoOverlapPainting(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 BOOL CSprite::RefreshBackground(CBofWindow *pWnd) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	BOOL        bSuccess;
 
 	bSuccess = TRUE;
 
-	if (m_bPositioned && (m_pBackground != NULL)) {
+	if (m_bPositioned && (m_pBackground != nullptr)) {
 
 		// paint the background bitmap from all the sprites that overlap it
 		//
-		if (Interception(&m_cRect) != NULL) {
+		if (Interception(&m_cRect) != nullptr) {
 
-			bSuccess = ReconstructBackground(pWnd, NULL);
+			bSuccess = ReconstructBackground(pWnd, nullptr);
 
 		} else {
 
@@ -350,7 +350,7 @@ BOOL CSprite::RefreshBackground(CBofWindow *pWnd) {
 
 BOOL CSprite::SaveBackground(CBofWindow *pWnd) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	BOOL        bSuccess;
 
@@ -380,7 +380,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 	                overlapRect;                            // temporary rectangle information
 	CBofPoint       cPoint;                                 // temporary point information
 	CBofBitmap  *pWork;
-	CSprite  *pSprite = NULL,                         // various sprite pointers
+	CSprite  *pSprite = nullptr,                         // various sprite pointers
 	          *pTestSprite,
 	          *pZHead;
 	BOOL         bSuccess;                               // used to hold success/failure
@@ -392,16 +392,16 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 	bSuccess = TRUE;
 
 	unionRect = m_cRect;                                // the work area is defined by our sprite
-	if (pMyRect != NULL)                                // include the area of our new destination
+	if (pMyRect != nullptr)                                // include the area of our new destination
 		unionRect.UnionRect(&unionRect, pMyRect);        // ... if specified, and retain it for later
 	baseRect = unionRect;
 
 	pSprite = this;                                     // start processing from this sprite and make
-	pSprite->m_pZNext = NULL;                           // ... it be the first in the z order chain
-	pSprite->m_pZPrev = NULL;
+	pSprite->m_pZNext = nullptr;                           // ... it be the first in the z order chain
+	pSprite->m_pZPrev = nullptr;
 
 	pTestSprite = (CSprite *)m_pSpriteChain;                       // set all sprites to not having been tested
-	while (pTestSprite != NULL) {                       // ... for this reconstruction cycle
+	while (pTestSprite != nullptr) {                       // ... for this reconstruction cycle
 
 		pTestSprite->m_bOverlapTest = FALSE;
 		if (!pTestSprite->m_bPositioned)
@@ -415,13 +415,13 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 	m_bPaintOverlap = TRUE;
 
-	if (m_pBackground == NULL)
+	if (m_pBackground == nullptr)
 		m_bPaintOverlap = FALSE;
 
 	// look for sprites we overlap or which are
 	// ... overlapped by sprites that overlap us
 	//
-	while (pTestSprite != NULL) {
+	while (pTestSprite != nullptr) {
 
 		if (!pTestSprite->m_bOverlapTest && overlapRect.IntersectRect(&unionRect, &pTestSprite->m_cRect)) {
 
@@ -437,7 +437,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 			// won't paint sprites without a background
 			//
 			pTestSprite->m_bPaintOverlap = FALSE;
-			if ((pTestSprite->m_pBackground != NULL) && overlapRect.IntersectRect(&baseRect, &pTestSprite->m_cRect))
+			if ((pTestSprite->m_pBackground != nullptr) && overlapRect.IntersectRect(&baseRect, &pTestSprite->m_cRect))
 				pTestSprite->m_bPaintOverlap = TRUE;
 
 			// insert the sprite in the sorted z chain
@@ -450,11 +450,11 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 					// put it to the left of us (i.e. overlaps us)
 					//
-					if ((pSprite->m_pZPrev == NULL) || (pSprite->m_pZPrev->m_nZPosition < pTestSprite->m_nZPosition)) {
+					if ((pSprite->m_pZPrev == nullptr) || (pSprite->m_pZPrev->m_nZPosition < pTestSprite->m_nZPosition)) {
 						pTestSprite->m_pZPrev = pSprite->m_pZPrev;
 						pTestSprite->m_pZNext = pSprite;
 						pSprite->m_pZPrev = pTestSprite;
-						if (pTestSprite->m_pZPrev != NULL)
+						if (pTestSprite->m_pZPrev != nullptr)
 							pTestSprite->m_pZPrev->m_pZNext = pTestSprite;
 						break;
 					} else {
@@ -467,12 +467,12 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 					// put it to the right of us (we overlap it)
 					//
-					if ((pSprite->m_pZNext == NULL) || (pSprite->m_pZNext->m_nZPosition >= pTestSprite->m_nZPosition)) {
+					if ((pSprite->m_pZNext == nullptr) || (pSprite->m_pZNext->m_nZPosition >= pTestSprite->m_nZPosition)) {
 
 						pTestSprite->m_pZNext = pSprite->m_pZNext;
 						pTestSprite->m_pZPrev = pSprite;
 						pSprite->m_pZNext = pTestSprite;
-						if (pTestSprite->m_pZNext != NULL)
+						if (pTestSprite->m_pZNext != nullptr)
 							pTestSprite->m_pZNext->m_pZPrev = pTestSprite;
 						break;
 
@@ -493,7 +493,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 		}
 	}
 
-	while (pSprite->m_pZPrev != NULL)                 // find the head of the z order chain so that
+	while (pSprite->m_pZPrev != nullptr)                 // find the head of the z order chain so that
 		pSprite = pSprite->m_pZPrev;                  // ... we can begin background reconstruction
 
 	pZHead = pSprite;                                   // save head of z order chain
@@ -507,7 +507,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 		// so set to not paint others in z order chain
 		//
 		pTestSprite = pZHead->m_pZNext;
-		while (pTestSprite != NULL) {
+		while (pTestSprite != nullptr) {
 			pTestSprite->m_bPaintOverlap = FALSE;
 			pTestSprite = pTestSprite->m_pZNext;
 		}
@@ -522,9 +522,9 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 	bTempWork = FALSE;
 	pWork = m_pWorkBmp;
-	if (m_pWorkBmp == NULL || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
+	if (m_pWorkBmp == nullptr || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
 		bTempWork = TRUE;
-		if ((pWork = new CBofBitmap(dx, dy, m_pSharedPalette)) == NULL) {
+		if ((pWork = new CBofBitmap(dx, dy, m_pSharedPalette)) == nullptr) {
 			return (FALSE);
 		}
 	}
@@ -540,7 +540,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 		// once we have restored all backgrounds
 		//
-		if (pSprite->m_pZNext == NULL) {
+		if (pSprite->m_pZNext == nullptr) {
 
 			// then place us at the head of the z order chain if we
 			// are to be topmost
@@ -551,10 +551,10 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 					pSprite = m_pZPrev;             // ... backing up one if it is us
 				pTestSprite = m_pZPrev;             // ... since we're moving to the head
 				pTestSprite->m_pZNext = m_pZNext;
-				if (m_pZNext != NULL)
+				if (m_pZNext != nullptr)
 					m_pZNext->m_pZPrev = pTestSprite;
 				m_pZNext = pZHead;
-				m_pZPrev = NULL;
+				m_pZPrev = nullptr;
 				pZHead->m_pZPrev = this;
 				pZHead = this;
 				m_nZPosition = m_nZOrder;
@@ -567,7 +567,7 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 
 	pTestSprite = pZHead;                               // update z order relative positions
-	while (pTestSprite->m_pZNext != NULL) {            // ... to ensure increasing ordering
+	while (pTestSprite->m_pZNext != nullptr) {            // ... to ensure increasing ordering
 		if (pTestSprite->m_nZOrder == pTestSprite->m_pZNext->m_nZOrder)
 			pTestSprite->m_pZNext->m_nZPosition = pTestSprite->m_nZPosition + 1;
 		pTestSprite = pTestSprite->m_pZNext;
@@ -579,14 +579,14 @@ BOOL CSprite::ReconstructBackground(CBofWindow *pWnd, CBofRect *pMyRect) {
 
 		if (this == pSprite) {
 
-			if (pMyRect != NULL) {
+			if (pMyRect != nullptr) {
 
 				// but before we paint in the sprite's image, retain what that
 				// area looks like as the new saved background
 				//
 				if (m_bRetainBackground) {
 
-					if (m_pBackground == NULL) {
+					if (m_pBackground == nullptr) {
 
 						bSuccess = CreateBackground();
 						if (!bSuccess)
@@ -625,7 +625,7 @@ paint_sprite:
 			}
 		}
 
-		if (pSprite->m_pZPrev == NULL)                // see if done with image painting
+		if (pSprite->m_pZPrev == nullptr)                // see if done with image painting
 			break;
 		pSprite = pSprite->m_pZPrev;
 	}
@@ -640,13 +640,13 @@ paint_sprite:
 	pWork->Paint(pWnd, &baseRect, &cTempRect);
 
 	// do we still touch another sprite?
-	//m_bOverlaps = (Interception() != NULL);
+	//m_bOverlaps = (Interception() != nullptr);
 
 punt:
 
-	if (bTempWork && (pWork != NULL)) {
+	if (bTempWork && (pWork != nullptr)) {
 		delete pWork;
-		pWork = NULL;
+		pWork = nullptr;
 	}
 
 	return (bSuccess);
@@ -654,13 +654,13 @@ punt:
 
 
 BOOL CSprite::EraseSprites(CBofWindow *pWnd) {
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 	BOOL bSuccess;
 
 	// assume success
 	bSuccess = TRUE;
 
-	if (pWnd->GetBackdrop() != NULL) {
+	if (pWnd->GetBackdrop() != nullptr) {
 
 		bSuccess = CBofSprite::EraseSprites(pWnd);
 
@@ -671,7 +671,7 @@ BOOL CSprite::EraseSprites(CBofWindow *pWnd) {
 
 		pSprite = (CSprite *)m_pSpriteChain;
 
-		while (pSprite != NULL) {
+		while (pSprite != nullptr) {
 			if ((bSuccess = pSprite->EraseSprite(pWnd)) == FALSE)
 				break;
 			pSprite = (CSprite *)pSprite->m_pNext;
@@ -684,13 +684,13 @@ BOOL CSprite::EraseSprites(CBofWindow *pWnd) {
 
 BOOL CSprite::EraseSprite(CBofWindow *pWnd) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
+	Assert(pWnd != nullptr);
 
 	BOOL bSuccess;
 
 	bSuccess = TRUE;
 
-	if (pWnd->GetBackdrop() != NULL) {
+	if (pWnd->GetBackdrop() != nullptr) {
 
 		bSuccess = CBofSprite::EraseSprite(pWnd);
 
@@ -709,11 +709,11 @@ BOOL CSprite::EraseSprite(CBofWindow *pWnd) {
 
 BOOL CSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 	Assert(IsValidObject(this));
-	Assert(pWnd != NULL);
-	Assert(pRect != NULL);
-	Assert(m_pImage != NULL);
+	Assert(pWnd != nullptr);
+	Assert(pRect != nullptr);
+	Assert(m_pImage != nullptr);
 
-	if (pWnd->GetBackdrop() != NULL) {
+	if (pWnd->GetBackdrop() != nullptr) {
 		return (CBofSprite::CropImage(pWnd, pRect, bUpdateNow));
 
 	} else {
@@ -731,7 +731,7 @@ BOOL CSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 			m_pImage->FillRect(&myRect, (UBYTE)m_nMaskColor);
 
 			if (bUpdateNow) {
-				Assert(m_pBackground != NULL);
+				Assert(m_pBackground != nullptr);
 				m_pBackground->Paint(pWnd, &cDestRect, pRect);
 			}
 		}
@@ -741,14 +741,14 @@ BOOL CSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 }
 
 
-BOOL CSprite::CreateBackground(VOID) {
+BOOL CSprite::CreateBackground() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackground == NULL) {
+	if (m_pBackground == nullptr) {
 
 		// create an object to hold things
 
-		if ((m_pBackground = new CBofBitmap(m_cSize.cx, m_cSize.cy, m_pSharedPalette)) != NULL) {
+		if ((m_pBackground = new CBofBitmap(m_cSize.cx, m_cSize.cy, m_pSharedPalette)) != nullptr) {
 
 		} else {
 			ReportError(ERR_MEMORY, "Could not create sprite background (%d x %d)", m_cSize.cx, m_cSize.cy);
@@ -759,28 +759,28 @@ BOOL CSprite::CreateBackground(VOID) {
 }
 
 
-VOID CSprite::ClearBackgrounds(VOID) {
+VOID CSprite::ClearBackgrounds() {
 	CSprite *pSprite;
 
 	pSprite = (CSprite *)m_pSpriteChain;
 
-	while (pSprite != NULL) {
+	while (pSprite != nullptr) {
 		pSprite->ClearBackground();
 		pSprite = (CSprite *)pSprite->m_pNext;
 	}
 }
 
 
-VOID CSprite::ClearBackground(VOID) {
+VOID CSprite::ClearBackground() {
 	Assert(IsValidObject(this));
 
 	m_nZPosition = m_nZOrder;                       // reset z ordering
 	m_bOverlaps = FALSE;                            // no longer overlaps other sprites
 	m_bPositioned = FALSE;                          // no longer has a real position
 
-	if (m_pBackground != NULL) {                // destroy the backgrond bitmap object
+	if (m_pBackground != nullptr) {                // destroy the backgrond bitmap object
 		delete m_pBackground;
-		m_pBackground = NULL;
+		m_pBackground = nullptr;
 	}
 }
 

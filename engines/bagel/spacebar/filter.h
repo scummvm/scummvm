@@ -39,7 +39,7 @@ typedef BOOL(*FilterFxn)(const USHORT, CBofBitmap *, CBofRect *);
 
 VOID VilInitFilters(CBofBitmap *pBmp);
 VOID TriInitFilters(CBofBitmap *pBmp);
-VOID LightningInitFilters(VOID);
+VOID LightningInitFilters();
 VOID DestroyFilters();
 
 BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);

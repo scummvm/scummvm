@@ -49,16 +49,16 @@ SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated
 
 ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pBmp != NULL);
+	Assert(pBmp != nullptr);
 
 	// Paint the storage device
-	if (pBmp != NULL) {
+	if (pBmp != nullptr) {
 		BOOL bUpdate = FALSE;
 		// Only clear the background and paint the backdrop if we've
 		// been instructed to.
 
 		if (PreFilterPan()) {
-			PreFilter(pBmp, pRect, (m_xCurDisplay == NULL ? NULL : m_xCurDisplay->GetObjectList()));
+			PreFilter(pBmp, pRect, (m_xCurDisplay == nullptr ? nullptr : m_xCurDisplay->GetObjectList()));
 
 			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
@@ -66,18 +66,18 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				SetPreFilterPan(FALSE);
 			}
 
-			if (GetWorkBmp() != NULL) {
+			if (GetWorkBmp() != nullptr) {
 				GetWorkBmp()->Paint(pBmp, pRect, pRect);
 			}
 
 			bUpdate = TRUE;
 		}
 
-		PaintStorageDevice(NULL, pBmp, pRect);
+		PaintStorageDevice(nullptr, pBmp, pRect);
 
 		// Paint the inventory or Map to backdrop
 		if (bUpdate) {
-			if (m_xCurDisplay != NULL) {
+			if (m_xCurDisplay != nullptr) {
 				m_xCurDisplay->Update(pBmp, m_xCurDisplay->GetPosition(), pRect);
 			}
 		}
@@ -105,22 +105,22 @@ ERROR_CODE SBZoomPda::Detach() {
 	SetZoomed(FALSE);
 	if (m_xInvWnd) {
 		m_xInvWnd->Detach();
-		m_xInvWnd = NULL;
+		m_xInvWnd = nullptr;
 	}
 
 	if (m_xMooWnd) {
 		m_xMooWnd->Detach();
-		m_xMooWnd = NULL;
+		m_xMooWnd = nullptr;
 	}
 
 	if (m_xMapWnd) {
 		m_xMapWnd->Detach();
-		m_xMapWnd = NULL;
+		m_xMapWnd = nullptr;
 	}
 
 	if (m_xLogWnd) {
 		m_xLogWnd->Detach();
-		m_xLogWnd = NULL;
+		m_xLogWnd = nullptr;
 	}
 
 	// Since the regular PDA does not have a detach method (it doesn't get
@@ -145,7 +145,7 @@ ERROR_CODE SBZoomPda::Attach() {
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
 		if (!m_xMooWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD)) != NULL) {
+			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD)) != nullptr) {
 				m_xMooWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
 				m_xMooWnd->SetTransparent(FALSE);
@@ -158,7 +158,7 @@ ERROR_CODE SBZoomPda::Attach() {
 		}
 
 		if (!m_xInvWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD)) != NULL) {
+			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD)) != nullptr) {
 				m_xInvWnd = (CBagStorageDevBmp *)pSDev;
 				m_xInvWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -175,7 +175,7 @@ ERROR_CODE SBZoomPda::Attach() {
 		}
 
 		if (!m_xMapWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD)) != NULL) {
+			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD)) != nullptr) {
 				m_xMapWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMapWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -192,7 +192,7 @@ ERROR_CODE SBZoomPda::Attach() {
 		}
 
 		if (!m_xLogWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD)) != NULL) {
+			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD)) != nullptr) {
 				m_xLogWnd = (CBagStorageDevBmp *)pSDev;
 				m_xLogWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -214,7 +214,7 @@ ERROR_CODE SBZoomPda::Attach() {
 		}
 
 		Show();
-		InvalidateRect(NULL);
+		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
 
@@ -243,7 +243,7 @@ void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
-	if ((pObj = GetObject(xCursorLocation, TRUE)) != NULL) {
+	if ((pObj = GetObject(xCursorLocation, TRUE)) != nullptr) {
 		if (pObj->IsActive()) {
 			pObj->OnLButtonUp(nFlags, xPoint);
 			SetLActiveObject(pObj);
@@ -262,7 +262,7 @@ void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 			SetPreFilterPan(TRUE);
 			MakeListDirty(m_xCurDisplay->GetObjectList());
 
-			m_xCurDisplay->OnLButtonUp(nFlags, xPoint, NULL);
+			m_xCurDisplay->OnLButtonUp(nFlags, xPoint, nullptr);
 		} else {
 			// We have no mode yet, then pass it to the default method
 			if (m_ePdaMode == NOMODE) {
@@ -273,7 +273,7 @@ void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 
 	// This thing could get trashed by the underlying code...
 	if (IsCreated()) {
-		InvalidateRect(NULL);
+		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
 }

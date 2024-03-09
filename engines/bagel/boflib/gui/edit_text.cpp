@@ -29,7 +29,7 @@ namespace Bagel {
 CBofEditText::CBofEditText(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent)
 	: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
 #if BOF_MAC
-	m_hTE = NULL;
+	m_hTE = nullptr;
 #endif
 
 	Create(pszName, x, y, nWidth, nHeight, pParent);
@@ -38,7 +38,7 @@ CBofEditText::CBofEditText(const CHAR *pszName, INT x, INT y, INT nWidth, INT nH
 
 ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 
 	// remember who our parent is
 	m_pParentWnd = pParent;
@@ -47,7 +47,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow
 
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
 		nWidth = pRect->Width();
@@ -60,7 +60,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow
 
 ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 
 	// remember who our parent is
 	m_pParentWnd = pParent;
@@ -77,15 +77,15 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 	DWORD dwStyle;
 	HWND hParent;
 
-	hParent = NULL;
+	hParent = nullptr;
 	dwStyle = WS_POPUP;
-	if (pParent != NULL) {
+	if (pParent != nullptr) {
 		hParent = pParent->GetHandle();
 		dwStyle = WS_CHILD;
 	}
 	dwStyle |= ES_AUTOHSCROLL | ES_LEFT;
 
-	if ((m_hWnd = ::CreateWindow("EDIT", pszName, dwStyle, x, y, nWidth, nHeight, hParent, NULL, CBofApp::GetInstanceHandle(), NULL)) != NULL) {
+	if ((m_hWnd = ::CreateWindow("EDIT", pszName, dwStyle, x, y, nWidth, nHeight, hParent, nullptr, CBofApp::GetInstanceHandle(), nullptr)) != nullptr) {
 
 		RECT rect;
 		::GetWindowRect(m_hWnd, &rect);
@@ -106,15 +106,15 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 	strcpy((CHAR *)szBuf, m_szTitle);
 	StrCToPascal((CHAR *)szBuf);
 
-	if ((m_pWindow = NewCWindow(NULL, &stRect, szBuf, FALSE, 2, WindowPtr(-1), FALSE, 0)) != NULL) {
+	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, FALSE, 2, WindowPtr(-1), FALSE, 0)) != nullptr) {
 
 		SetPort(m_pWindow);
 
-		if (m_hTE != NULL) {
+		if (m_hTE != nullptr) {
 			TEDelete(m_hTE);
 		}
 
-		if ((m_hTE = TEStyleNew(&m_pWindow->portRect, &m_pWindow->portRect)) != NULL) {
+		if ((m_hTE = TEStyleNew(&m_pWindow->portRect, &m_pWindow->portRect)) != nullptr) {
 			TEAutoView(TRUE, m_hTE);
 			TECalText(m_hTE);
 		} else {
@@ -130,7 +130,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 	if (!ErrorOccurred()) {
 
 		CBofPalette *pPalette;
-		if ((pPalette = CBofApp::GetApp()->GetPalette()) != NULL) {
+		if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
 			SelectPalette(pPalette);
 		}
 
@@ -142,7 +142,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 }
 
 
-CBofString CBofEditText::GetText(VOID) {
+CBofString CBofEditText::GetText() {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -155,7 +155,7 @@ CBofString CBofEditText::GetText(VOID) {
 	if ((nLength = GetWindowTextLength(m_hWnd)) > 0) {
 		nLength++;
 
-		if ((pBuf = new CHAR[nLength]) != NULL) {
+		if ((pBuf = new CHAR[nLength]) != nullptr) {
 
 			GetWindowText(m_hWnd, pBuf, nLength);
 
@@ -195,7 +195,7 @@ CBofString CBofEditText::GetText(VOID) {
 VOID CBofEditText::SetText(const CHAR *pszString) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
-	Assert(pszString != NULL);
+	Assert(pszString != nullptr);
 
 #if BOF_WINDOWS
 	SetWindowText(m_hWnd, pszString);
@@ -232,10 +232,10 @@ VOID CBofEditText::Key(const CHAR key) {
 }
 
 
-VOID CBofEditText::Destroy(VOID) {
-	if (m_hTE != NULL) {
+VOID CBofEditText::Destroy() {
+	if (m_hTE != nullptr) {
 		TEDelete(m_hTE);
-		m_hTE = NULL;
+		m_hTE = nullptr;
 	}
 	CBofWindow::Destroy();
 }
@@ -243,9 +243,9 @@ VOID CBofEditText::Destroy(VOID) {
 
 VOID CBofEditText::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
-	if (m_hTE != NULL) {
+	if (m_hTE != nullptr) {
 		TextStyle stStyle;
 		Rect stRect = *pRect;
 
@@ -258,23 +258,23 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 	}
 }
 
-VOID CBofEditText::OnActivate(VOID) {
+VOID CBofEditText::OnActivate() {
 	Assert(IsValidObject(this));
 
-	if (m_hTE != NULL) {
+	if (m_hTE != nullptr) {
 		TEActivate(m_hTE);
 	}
 }
 
-VOID CBofEditText::OnDeActivate(VOID) {
+VOID CBofEditText::OnDeActivate() {
 	Assert(IsValidObject(this));
 
-	if (m_hTE != NULL) {
+	if (m_hTE != nullptr) {
 		TEDeactivate(m_hTE);
 	}
 }
 
-VOID CBofEditText::OnSelect(VOID) {
+VOID CBofEditText::OnSelect() {
 	//  select the entire range...
 
 	if (m_hTE) {

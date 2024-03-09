@@ -410,7 +410,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 }
 
 //  delete the foreground objects
-VOID CBagPanWindow::DeleteFGObjects(VOID) {
+VOID CBagPanWindow::DeleteFGObjects() {
 	m_pFGObjectList->RemoveAll();
 }
 
@@ -485,7 +485,7 @@ BOOL CBagPanWindow::CheckMessages() {
 }
 
 
-VOID CBagPanWindow::Enable(VOID) {
+VOID CBagPanWindow::Enable() {
 	ActivateView();
 
 #if BOF_MAC
@@ -494,7 +494,7 @@ VOID CBagPanWindow::Enable(VOID) {
 #endif
 }
 
-VOID CBagPanWindow::Disable(VOID) {
+VOID CBagPanWindow::Disable() {
 	FlushAllMessages();
 	DeActivateView();
 
@@ -504,11 +504,11 @@ VOID CBagPanWindow::Disable(VOID) {
 }
 
 #if BOF_MAC
-VOID CBagPanWindow::OnActivate(VOID) {
+VOID CBagPanWindow::OnActivate() {
 	Enable();
 }
 
-VOID CBagPanWindow::OnDeActivate(VOID) {
+VOID CBagPanWindow::OnDeActivate() {
 	Disable();
 }
 #endif

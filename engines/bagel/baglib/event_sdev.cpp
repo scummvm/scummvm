@@ -55,7 +55,7 @@ ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
 
-			if ((pObj = GetObjectByPos(i)) != NULL) {
+			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				// Find the local Expression objects
 				// This code says... only evaluate if we're in an if statement, this must be wrong.
 				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {
@@ -93,7 +93,7 @@ ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
 
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			if ((pObj = GetObjectByPos(i)) != NULL) {
+			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				// Find the local Expression objects
 				// This code says... only evaluate if we're in an if statement, this must be wrong.
 				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {

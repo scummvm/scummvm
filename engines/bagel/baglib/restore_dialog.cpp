@@ -347,7 +347,7 @@ VOID CBagRestoreDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-ERROR_CODE CBagRestoreDialog::RestoreAndClose(VOID) {
+ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -541,7 +541,7 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 }
 
 #if !USE_CBAGDIALOG
-VOID CBagRestoreDialog::OnInitDialog(VOID) {
+VOID CBagRestoreDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();

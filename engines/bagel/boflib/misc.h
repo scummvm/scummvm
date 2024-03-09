@@ -188,10 +188,10 @@ extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-VOID Encrypt(VOID *, LONG, const CHAR *pPassword = NULL);
+VOID Encrypt(VOID *, LONG, const CHAR *pPassword = nullptr);
 #define Decrypt Encrypt
 
-extern VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = NULL);
+extern VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = nullptr);
 #define DecryptPartial EncryptPartial
 
 #ifndef ABS

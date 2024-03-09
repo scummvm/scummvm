@@ -52,7 +52,7 @@ CBofMovie::~CBofMovie() {
 #if 0
 	if (m_pMovTimer) {
 		delete m_pMovTimer;
-		m_pMovTimer = NULL;
+		m_pMovTimer = nullptr;
 	}
 #endif
 
@@ -69,17 +69,17 @@ ERROR_CODE CBofMovie::Initialize(CBofWindow *pParent) {
 	m_wMCIDeviceID = 0;
 #endif
 	// Smacker Stuff
-	m_pSbuf = NULL;
-	m_pSmk = NULL;
+	m_pSbuf = nullptr;
+	m_pSmk = nullptr;
 	m_bLoop = FALSE;
 
 	// removed the need for the timer mdm 8/4
-	//  m_pMovTimer = NULL;
+	//  m_pMovTimer = nullptr;
 	//  m_bReverseWait=FALSE;
 
 	// Set the movie timer for movies in reverse to be 10 fps
 	///m_pMovTimer = new CBofTimer( MOVTIMEID, (UINT)100, (ULONG)this, fOnMovieTimer);
-	// Assert(m_pMovTimer!=NULL);
+	// Assert(m_pMovTimer!=nullptr);
 
 	// Call dialog box creates
 	if (Create("MovieWin", 0, 0, 640, 480, pParent, 1) == ERR_NONE) {
@@ -95,7 +95,7 @@ BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 
 	// no filename, so put up an open file box
 	//
-	if (sFilename == NULL) {
+	if (sFilename == nullptr) {
 
 		Success = FileOpenWin();
 		return (Success);
@@ -113,7 +113,7 @@ BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 #endif
 
 #if !BOF_MAC
-	if (pBounds != NULL) {
+	if (pBounds != nullptr) {
 		m_cRect = *pBounds;
 	}
 #endif
@@ -226,10 +226,10 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 		if (m_wMCIDeviceID) // Device already open
 			CloseMovie();    // Close device
 
-		mciOpen.dwCallback = NULL;
-		mciOpen.lpstrDeviceType = NULL;
+		mciOpen.dwCallback = nullptr;
+		mciOpen.lpstrDeviceType = nullptr;
 		mciOpen.lpstrElementName = filename.GetBuffer();
-		mciOpen.lpstrAlias = NULL;
+		mciOpen.lpstrAlias = nullptr;
 		mciOpen.hWndParent = GetHandle();
 
 		// This was changed to work with dialog boxes
@@ -276,7 +276,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 			ShowMovie();
 
 			// cause an update to occur
-			GetParent()->InvalidateRect(NULL);
+			GetParent()->InvalidateRect(nullptr);
 			GetParent()->UpdateWindow();
 
 			return TRUE;
@@ -298,7 +298,7 @@ VOID  CBofMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
 	}
 }
 
-VOID  CBofMovie::OnMainLoop(VOID) {
+VOID  CBofMovie::OnMainLoop() {
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk->needsUpdate()) {
 			if (m_eMovStatus != STOPPED) {
@@ -348,16 +348,16 @@ VOID  CBofMovie::OnPaint(CBofRect *) {
 	}
 }
 
-VOID  CBofMovie::CloseMovie(VOID) {
+VOID  CBofMovie::CloseMovie() {
 	if (m_eMovType == SMACKER) {
 		if (m_pSbuf) {
 			delete m_pSbuf;
-			m_pSbuf = NULL;
+			m_pSbuf = nullptr;
 		}
 
 		if (m_pSmk) {
 			delete m_pSmk;
-			m_pSmk = NULL;
+			m_pSmk = nullptr;
 		}
 
 	} else if (m_eMovType == QT) {
@@ -375,20 +375,20 @@ VOID  CBofMovie::CloseMovie(VOID) {
 				EvalMciError(mciError);
 			}
 
-			m_wMCIDeviceID = NULL;
+			m_wMCIDeviceID = nullptr;
 		}
 #endif
 	}
 }
 
-VOID  CBofMovie::OnClose(VOID) {
+VOID  CBofMovie::OnClose() {
 
 	CloseMovie();
 	CBofDialog::OnClose();
 
 }
 
-VOID CBofMovie::OnMovieDone(VOID) {
+VOID CBofMovie::OnMovieDone() {
 	if (!m_bLoop) {
 		if (m_bCaptured)
 			ReleaseCapture();
@@ -406,7 +406,7 @@ VOID CBofMovie::OnMCINotify(ULONG /*lParam1*/, ULONG /*lParam2*/) {
 }
 #endif
 
-BOOL CBofMovie::ShowMovie(void) {
+BOOL CBofMovie::ShowMovie() {
 	if (m_eMovType == QT) {
 #if BOF_WINNT
 		MCI_DGV_WINDOW_PARMS   mciWindow;
@@ -414,10 +414,10 @@ BOOL CBofMovie::ShowMovie(void) {
 
 		if (m_wMCIDeviceID) {
 			// show the playback window
-			mciWindow.dwCallback = NULL;
-			mciWindow.hWnd = NULL;
+			mciWindow.dwCallback = nullptr;
+			mciWindow.hWnd = nullptr;
 			mciWindow.nCmdShow = SW_SHOW;
-			mciWindow.lpstrText = (LPSTR)NULL;
+			mciWindow.lpstrText = (LPSTR)nullptr;
 
 			mciError = mciSendCommand(m_wMCIDeviceID, MCI_WINDOW,
 			                          MCI_DGV_WINDOW_STATE | MCI_WAIT,
@@ -435,7 +435,7 @@ BOOL CBofMovie::ShowMovie(void) {
 	return FALSE;
 }
 
-BOOL CBofMovie::HideMovie(void) {
+BOOL CBofMovie::HideMovie() {
 	if (m_eMovType == QT) {
 #if BOF_WINNT
 
@@ -444,10 +444,10 @@ BOOL CBofMovie::HideMovie(void) {
 
 		if (m_wMCIDeviceID) {
 			// hide the playback window
-			mciWindow.dwCallback = NULL;
-			mciWindow.hWnd = NULL;
+			mciWindow.dwCallback = nullptr;
+			mciWindow.hWnd = nullptr;
 			mciWindow.nCmdShow = SW_HIDE;
-			mciWindow.lpstrText = (LPSTR)NULL;
+			mciWindow.lpstrText = (LPSTR)nullptr;
 
 			mciError = mciSendCommand(m_wMCIDeviceID, MCI_WINDOW,
 			                          MCI_DGV_WINDOW_STATE | MCI_WAIT,
@@ -590,7 +590,7 @@ BOOL CBofMovie::Reverse() {
 
 }
 
-BOOL CBofMovie::Stop(void) {
+BOOL CBofMovie::Stop() {
 
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
@@ -653,7 +653,7 @@ BOOL CBofMovie::Pause() {
 
 }
 
-BOOL CBofMovie::SeekToStart(void) {
+BOOL CBofMovie::SeekToStart() {
 	if (m_eMovType == SMACKER) {
 		m_pSmk->seekToFrame(0);
 		return FALSE;
@@ -681,7 +681,7 @@ BOOL CBofMovie::SeekToStart(void) {
 
 }
 
-BOOL CBofMovie::SeekToEnd(void) {
+BOOL CBofMovie::SeekToEnd() {
 	if (m_eMovType == SMACKER) {
 		m_pSmk->seekToFrame(m_pSmk->getCurFrame() - 1); // Goto last frame
 		return TRUE;
@@ -926,8 +926,8 @@ void CBofMovie::EvalMciError(MCIERROR   mciError) {
 
 
 ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect) {
-	Assert(pParent != NULL);
-	Assert(pszMovieFile != NULL);
+	Assert(pParent != nullptr);
+	Assert(pszMovieFile != nullptr);
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
 	if (!cMovie.ErrorOccurred()) {
@@ -946,7 +946,7 @@ ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect 
 		if (pMacWindow && pSmkBuffer && pSmkMovie) {
 			while (!bDone) {
 				if (::OSEventAvail(everyEvent, &eRec)) {
-					::WaitNextEvent(everyEvent, &eRec, 0, NULL);
+					::WaitNextEvent(everyEvent, &eRec, 0, nullptr);
 					switch (eRec.what) {
 					case keyDown:
 						switch (eRec.message & charCodeMask) {

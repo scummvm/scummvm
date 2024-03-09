@@ -38,23 +38,23 @@ class CBofDisplayWindow: public CBofDisplayObject {
 
 public:
 	CBofDisplayWindow();
-	CBofDisplayWindow(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = DISPWIN_SIZE_DEF, INT nHeight = DISPWIN_SIZE_DEF, CBofDisplayWindow *pParent = NULL, INT nID = 0);
+	CBofDisplayWindow(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = DISPWIN_SIZE_DEF, INT nHeight = DISPWIN_SIZE_DEF, CBofDisplayWindow *pParent = nullptr, INT nID = 0);
 	virtual ~CBofDisplayWindow();
 
-	ERROR_CODE  Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = DISPWIN_SIZE_DEF, INT nHeight = DISPWIN_SIZE_DEF, CBofDisplayWindow *pParent = NULL, UINT nControlID = 0);
-	ERROR_CODE  Create(const CHAR *pszName, CBofRect *pRect = NULL, CBofDisplayWindow *pParent = NULL, UINT nControlID = 0);
+	ERROR_CODE  Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = DISPWIN_SIZE_DEF, INT nHeight = DISPWIN_SIZE_DEF, CBofDisplayWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE  Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofDisplayWindow *pParent = nullptr, UINT nControlID = 0);
 
-	virtual VOID Destroy(VOID)      {
+	virtual VOID Destroy()      {
 		Erase();
 	}
-	ERROR_CODE  Close(VOID)         {
+	ERROR_CODE  Close()         {
 		return (PostMessage(BWM_CLOSE, 0, 0));
 	}
 
-	ERROR_CODE  Show(VOID)          {
+	ERROR_CODE  Show()          {
 		return (Paint(m_cPosition));
 	}
-	ERROR_CODE  Hide(VOID)          {
+	ERROR_CODE  Hide()          {
 		return (Erase());
 	}
 
@@ -64,68 +64,68 @@ public:
 
 	ERROR_CODE  PostMessage(ULONG lMessage, ULONG lParam1, ULONG lParam2);
 	ERROR_CODE  PostUserMessage(ULONG lMessage, ULONG lExtraInfo);
-	static VOID HandleMessages(VOID);
-	ERROR_CODE  FlushMessages(VOID);
+	static VOID HandleMessages();
+	ERROR_CODE  FlushMessages();
 
-	ERROR_CODE  SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack = NULL);
+	ERROR_CODE  SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack = nullptr);
 	ERROR_CODE  KillTimer(UINT nTimerID);
-	ERROR_CODE  KillMyTimers(VOID);
+	ERROR_CODE  KillMyTimers();
 
-	CBofDisplayObject *GetParent(VOID)      {
+	CBofDisplayObject *GetParent()      {
 		return (m_pParent);
 	}
 
-	static CBofDisplayWindow *GetActiveWindow(VOID) {
+	static CBofDisplayWindow *GetActiveWindow() {
 		return (m_pActiveWindow);
 	}
 
-	VOID        SetActive(VOID)             {
+	VOID        SetActive()             {
 		m_pActiveWindow = this;
 		OnActivate();
 	}
-	BOOL        IsActiveWindow(VOID)        {
+	BOOL        IsActiveWindow()        {
 		return (m_pActiveWindow == this);
 	}
 
-	virtual VOID Enable(VOID)               {
+	virtual VOID Enable()               {
 		m_bDisabled = FALSE;
 	}
-	virtual VOID Disable(VOID)              {
+	virtual VOID Disable()              {
 		m_bDisabled = TRUE;
 	}
 
 	ERROR_CODE  SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh = FALSE);
 	ERROR_CODE  SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh = FALSE);
 
-	CBofBitmap *GetBackdrop(VOID)           {
+	CBofBitmap *GetBackdrop()           {
 		return (m_pImage);
 	}
 
-	BOOL        HasBackdrop(VOID)           {
-		return (m_pImage != NULL);
+	BOOL        HasBackdrop()           {
+		return (m_pImage != nullptr);
 	}
 
-	ERROR_CODE  KillBackdrop(VOID)          {
+	ERROR_CODE  KillBackdrop()          {
 		return (ReleaseImage());
 	}
 
 	VOID        SetControlID(UINT nID)      {
 		m_nID = nID;
 	}
-	UINT        GetControlID(VOID)          {
+	UINT        GetControlID()          {
 		return (m_nID);
 	}
 
-	ERROR_CODE  SetCapture(VOID);
-	ERROR_CODE  ReleaseCapture(VOID);
-	BOOL        HasCapture(VOID)            {
+	ERROR_CODE  SetCapture();
+	ERROR_CODE  ReleaseCapture();
+	BOOL        HasCapture()            {
 		return (m_pCaptureWindow == this);
 	}
 
 	static ERROR_CODE InvalidateRect(CBofRect *pRect) {
 		return (AddToDirtyRect(pRect));
 	}
-	ERROR_CODE  UpdateWindow(VOID)          {
+	ERROR_CODE  UpdateWindow()          {
 		return (UpdateDirtyRect());
 	}
 
@@ -145,7 +145,7 @@ public:
 	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo);
 	virtual VOID OnBofScrollBar(CBofObject *pButton, INT nNewPos);
 	virtual VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMainLoop();
 
 	virtual VOID OnSoundNotify(ULONG lParam1, ULONG lParam2);
 	virtual VOID OnMovieNotify(ULONG lParam1, ULONG lParam2);
@@ -167,11 +167,11 @@ public:
 	virtual VOID OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 
 	virtual VOID OnReSize(CBofSize *pSize);
-	virtual VOID OnClose(VOID);
+	virtual VOID OnClose();
 
 	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
 
-	virtual VOID OnActivate(VOID);
+	virtual VOID OnActivate();
 
 protected:
 

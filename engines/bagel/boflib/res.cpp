@@ -69,7 +69,7 @@ ERROR_CODE CBofStringTable::Load(const CHAR *pszFileName) {
 	return m_errCode;
 }
 
-VOID CBofStringTable::Release(VOID) {
+VOID CBofStringTable::Release() {
 	Assert(IsValidObject(this));
 
 	KillTable();
@@ -80,7 +80,7 @@ VOID CBofStringTable::Release(VOID) {
 	}
 }
 
-VOID CBofStringTable::KillTable(VOID) {
+VOID CBofStringTable::KillTable() {
 	Assert(IsValidObject(this));
 
 	CResString *pString, *pNextString;
@@ -97,7 +97,7 @@ VOID CBofStringTable::KillTable(VOID) {
 	m_pStringTable = nullptr;
 }
 
-ERROR_CODE CBofStringTable::BuildTable(VOID) {
+ERROR_CODE CBofStringTable::BuildTable() {
 	Assert(IsValidObject(this));
 
 	// Deallocate any previous table

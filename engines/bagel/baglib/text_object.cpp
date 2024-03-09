@@ -66,7 +66,7 @@ CBagTextObject::~CBagTextObject() {
 	Detach();
 }
 
-CBofRect CBagTextObject::GetRect(VOID) {
+CBofRect CBagTextObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);

@@ -69,17 +69,17 @@ protected:
 	INT m_nState;
 
 public:
-	CBofDisplayButton(VOID);
+	CBofDisplayButton();
 	CBofDisplayButton(ST_COLORSCHEME *pColorScheme);
 	virtual ~CBofDisplayButton();
 
 	VOID LoadColorScheme(ST_COLORSCHEME *pColorScheme);
 
-	virtual VOID Enable(VOID);
-	virtual VOID Disable(VOID);
+	virtual VOID Enable();
+	virtual VOID Disable();
 
 	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
-	INT GetState(VOID) {
+	INT GetState() {
 		return (m_nState);
 	}
 };

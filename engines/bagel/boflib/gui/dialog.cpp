@@ -36,10 +36,10 @@ LRESULT CALLBACK BofWindowProcedure(HWND hWnd, UINT nMessage, WPARAM wParam, LPA
 #endif
 
 
-CBofDialog::CBofDialog(VOID) {
+CBofDialog::CBofDialog() {
 	// Inits
 	//
-	m_pDlgBackground = NULL;
+	m_pDlgBackground = nullptr;
 	m_bFirstTime = TRUE;
 	m_bTempBitmap = FALSE;
 	m_lFlags = BOFDLG_DEFAULT;
@@ -49,14 +49,14 @@ CBofDialog::CBofDialog(VOID) {
 
 
 CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const ULONG lFlags) {
-	Assert(pszFileName != NULL);
-	Assert(pParent != NULL);
+	Assert(pszFileName != nullptr);
+	Assert(pParent != nullptr);
 
 	CBofRect cRect;
 
 	// Inits
 	//
-	m_pDlgBackground = NULL;
+	m_pDlgBackground = nullptr;
 	m_bFirstTime = TRUE;
 	m_bTempBitmap = FALSE;
 	m_lFlags = lFlags;
@@ -65,13 +65,13 @@ CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pPa
 
 	CBofBitmap *pBmp;
 
-	if ((pBmp = LoadBitmap(pszFileName)) != NULL) {
+	if ((pBmp = LoadBitmap(pszFileName)) != nullptr) {
 		// use specified bitmap as this dialog's image
 		SetBackdrop(pBmp);
 	}
 
-	if (pRect == NULL) {
-		Assert(m_pBackdrop != NULL);
+	if (pRect == nullptr) {
+		Assert(m_pBackdrop != nullptr);
 		cRect = m_pBackdrop->GetRect();
 		pRect = &cRect;
 	}
@@ -84,14 +84,14 @@ CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pPa
 
 
 CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const ULONG lFlags) {
-	Assert(pImage != NULL);
-	Assert(pParent != NULL);
+	Assert(pImage != nullptr);
+	Assert(pParent != nullptr);
 
 	CBofRect cRect;
 
 	// Inits
 	//
-	m_pDlgBackground = NULL;
+	m_pDlgBackground = nullptr;
 	m_bFirstTime = TRUE;
 	m_bTempBitmap = FALSE;
 	m_lFlags = lFlags;
@@ -100,8 +100,8 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 
 	SetBackdrop(pImage);
 
-	if (pRect == NULL) {
-		Assert(m_pBackdrop != NULL);
+	if (pRect == nullptr) {
+		Assert(m_pBackdrop != nullptr);
 		cRect = m_pBackdrop->GetRect();
 		pRect = &cRect;
 	}
@@ -114,9 +114,9 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 CBofDialog::~CBofDialog() {
 	Assert(IsValidObject(this));
 
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 		delete m_pDlgBackground;
-		m_pDlgBackground = NULL;
+		m_pDlgBackground = nullptr;
 	}
 
 	//
@@ -127,10 +127,10 @@ CBofDialog::~CBofDialog() {
 
 ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 
 	// dialog boxes must have parent windows
-	Assert(pParent != NULL);
+	Assert(pParent != nullptr);
 
 	// Inits
 	//
@@ -157,9 +157,9 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	DWORD dwStyle, dwExStyle;
 	HWND hParent;
 
-	hParent = NULL;
+	hParent = nullptr;
 	dwStyle = WS_POPUP;
-	if (pParent != NULL) {
+	if (pParent != nullptr) {
 		//pParent = pParent->GetAnscestor();
 		pParent->Disable();
 		hParent = pParent->GetHandle();
@@ -174,10 +174,10 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		wc.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW;
 		wc.hInstance = CBofApp::GetInstanceHandle();
 
-		if ((wc.hCursor = CBofApp::GetApp()->GetDefaultCursor().GetWinCursor()) == NULL) {
-			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		if ((wc.hCursor = CBofApp::GetApp()->GetDefaultCursor().GetWinCursor()) == nullptr) {
+			wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		}
-		wc.hbrBackground = NULL; //(HBRUSH)(COLOR_WINDOW + 1);
+		wc.hbrBackground = nullptr; //(HBRUSH)(COLOR_WINDOW + 1);
 		RegisterClass(&wc);
 		bInit = TRUE;
 	}
@@ -190,9 +190,9 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 #endif
 
 	// There must not already be a window (would cause bad resource leak)
-	Assert(m_hWnd == NULL);
+	Assert(m_hWnd == nullptr);
 
-	if ((m_hWnd = ::CreateWindowEx(dwExStyle, "BofDialog", m_szTitle, dwStyle, x, y, nWidth, nHeight, hParent, NULL, CBofApp::GetInstanceHandle(), NULL)) != NULL) {
+	if ((m_hWnd = ::CreateWindowEx(dwExStyle, "BofDialog", m_szTitle, dwStyle, x, y, nWidth, nHeight, hParent, nullptr, CBofApp::GetInstanceHandle(), nullptr)) != nullptr) {
 
 		RECT rect;
 		::GetWindowRect(m_hWnd, &rect);
@@ -219,7 +219,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 	// If this is a child window then convert it's area to global coordinates
 	//
-	if (pParent != NULL) {
+	if (pParent != nullptr) {
 
 		stRect.left += pParent->GetWindowRect().left;
 		stRect.right += pParent->GetWindowRect().left;
@@ -235,7 +235,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		winType = (16 * 1000) + 0;
 	}
 
-	if ((m_pWindow = NewCWindow(NULL, &stRect, szBuf, FALSE, winType, WindowPtr(-1), FALSE, 0)) != NULL) {
+	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, FALSE, winType, WindowPtr(-1), FALSE, 0)) != nullptr) {
 
 		SetPort(m_pWindow);
 
@@ -266,7 +266,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
-	Assert(pszName != NULL);
+	Assert(pszName != nullptr);
 
 	CBofRect cRect;
 	INT x, y, nWidth, nHeight;
@@ -274,14 +274,14 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
 
-	if (pRect == NULL) {
-		if (m_pBackdrop != NULL) {
+	if (pRect == nullptr) {
+		if (m_pBackdrop != nullptr) {
 			cRect = m_pBackdrop->GetRect();
 			pRect = &cRect;
 		}
 	}
 
-	if (pRect != NULL) {
+	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
 		nWidth = pRect->Width();
@@ -292,10 +292,10 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 }
 
 
-VOID CBofDialog::OnClose(VOID) {
+VOID CBofDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	if (m_pParentWnd != NULL) {
+	if (m_pParentWnd != nullptr) {
 		CBofWindow *pParent;
 		pParent = m_pParentWnd; //->GetAnscestor();
 		pParent->Enable();
@@ -316,8 +316,8 @@ VOID CBofDialog::OnClose(VOID) {
 		//
 	} else {
 
-		if (m_pParentWnd != NULL) {
-			m_pParentWnd->InvalidateRect(NULL);
+		if (m_pParentWnd != nullptr) {
+			m_pParentWnd->InvalidateRect(nullptr);
 		}
 	}
 
@@ -330,7 +330,7 @@ VOID CBofDialog::OnClose(VOID) {
 
 ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	// repaint the background behind the dialog
 	//
@@ -350,12 +350,12 @@ ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 }
 
 
-ERROR_CODE CBofDialog::PaintBackground(VOID) {
+ERROR_CODE CBofDialog::PaintBackground() {
 	Assert(IsValidObject(this));
 
 	// paint back the background
 	//
-	if (m_pDlgBackground != NULL) {
+	if (m_pDlgBackground != nullptr) {
 
 		m_errCode = m_pDlgBackground->Paint(this, 0, 0);
 	}
@@ -364,7 +364,7 @@ ERROR_CODE CBofDialog::PaintBackground(VOID) {
 }
 
 
-ERROR_CODE CBofDialog::SaveBackground(VOID) {
+ERROR_CODE CBofDialog::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	if (m_lFlags & BOFDLG_SAVEBACKGND) {
@@ -375,13 +375,13 @@ ERROR_CODE CBofDialog::SaveBackground(VOID) {
 
 		// Remove any previous background
 		//
-		if (m_pDlgBackground != NULL) {
+		if (m_pDlgBackground != nullptr) {
 			delete m_pDlgBackground;
 		}
 
 		// save a copy of the background
 		//
-		if ((m_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != NULL) {
+		if ((m_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != nullptr) {
 			m_pDlgBackground->CaptureScreen(this, &m_cRect);
 			m_pDlgBackground->SetReadOnly(TRUE);
 
@@ -395,10 +395,10 @@ ERROR_CODE CBofDialog::SaveBackground(VOID) {
 }
 
 
-ERROR_CODE CBofDialog::KillBackground(VOID) {
-	if (m_pDlgBackground != NULL) {
+ERROR_CODE CBofDialog::KillBackground() {
+	if (m_pDlgBackground != nullptr) {
 		delete m_pDlgBackground;
-		m_pDlgBackground = NULL;
+		m_pDlgBackground = nullptr;
 	}
 
 	return (m_errCode);
@@ -408,7 +408,7 @@ ERROR_CODE CBofDialog::KillBackground(VOID) {
 VOID CBofDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	Assert(pRect != NULL);
+	Assert(pRect != nullptr);
 
 	if (m_bFirstTime) {
 		SaveBackground();
@@ -420,7 +420,7 @@ VOID CBofDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-INT CBofDialog::DoModal(VOID) {
+INT CBofDialog::DoModal() {
 	Assert(IsValidObject(this));
 
 	// The dialog box must have been successfully created first
@@ -471,7 +471,7 @@ INT CBofDialog::DoModal(VOID) {
 
 		// if there is a message for our window, then process it
 		//
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
 			if (msg.message == WM_QUIT)
 				break;
@@ -520,10 +520,10 @@ INT CBofDialog::DoModal(VOID) {
 #if BOF_MAC || BOF_WINMAC
 	DisposeRgn(cursorRgn);          // jwl 07.09.96 get rid of cursor rgn
 #endif
-	if (pLastActive != NULL) {
+	if (pLastActive != nullptr) {
 		pLastActive->SetActive();
 	} else {
-		m_pActiveWindow = NULL;
+		m_pActiveWindow = nullptr;
 	}
 
 	return (m_nReturnValue);
@@ -583,6 +583,6 @@ BOOL CBofDialog::HandleMacEvent(EventRecord *pEvent) {
 // Virtual functions that the user can override if they want to
 ///////////////////////////////////////////////////////////////////
 
-VOID CBofDialog::OnInitDialog(VOID) {}
+VOID CBofDialog::OnInitDialog() {}
 
 } // namespace Bagel

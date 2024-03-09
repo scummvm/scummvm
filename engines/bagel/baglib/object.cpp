@@ -369,7 +369,7 @@ BOOL CBagObject::OnMouseMove(UINT /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return FALSE;
 }
 
-const CBofString &CBagObject::GetRefName(VOID) {
+const CBofString &CBagObject::GetRefName() {
 	if (m_psName) {
 		return *m_psName;
 	} else {

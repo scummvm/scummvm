@@ -69,7 +69,7 @@ CBagPanBitmap::CBagPanBitmap(const CHAR *pszFileName, CBofPalette *pPalette, con
 		} else
 			m_bPanorama = FALSE;
 
-		m_pCosineTable = NULL;
+		m_pCosineTable = nullptr;
 		m_bActiveScrolling = FALSE; // The scrolling is not active
 		m_xDirection = kDirNONE;        // Direction is not moving
 
@@ -129,7 +129,7 @@ CBagPanBitmap::CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRe
 		} else
 			m_bPanorama = FALSE;
 
-		m_pCosineTable = NULL;
+		m_pCosineTable = nullptr;
 		m_bActiveScrolling = FALSE; // The scrolling is not active
 		m_xDirection = kDirNONE;        // Direction is not moving
 
@@ -168,7 +168,7 @@ CBagPanBitmap::~CBagPanBitmap() {
 
 	if (m_pCosineTable) {
 		delete[] m_pCosineTable;
-		m_pCosineTable = NULL;
+		m_pCosineTable = nullptr;
 	}
 }
 
@@ -182,7 +182,7 @@ void CBagPanBitmap::GenerateCosineTable() {
 
 	if (m_pCosineTable) {
 		delete[] m_pCosineTable;
-		m_pCosineTable = NULL;
+		m_pCosineTable = nullptr;
 	}
 
 #if BOF_MAC

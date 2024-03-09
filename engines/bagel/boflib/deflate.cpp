@@ -258,10 +258,10 @@ VOID SFBuildCodes(struct CODETABLE *, struct CODELENS *, SHORT);
 LONG ComputeVar(SHORT, SHORT, LONG);
 struct HBINTREE *HuffBuildTree(struct CODELENS *, SHORT);
 INT CDECL SortCmp(struct CODELENS *, struct CODELENS *);
-ERROR_CODE HuffBuildFixedTrees(VOID);
-ERROR_CODE HuffBuildDynamicTrees(VOID);
-VOID HuffFreeDynamic(VOID);
-VOID HuffFreeFixed(VOID);
+ERROR_CODE HuffBuildFixedTrees();
+ERROR_CODE HuffBuildDynamicTrees();
+VOID HuffFreeDynamic();
+VOID HuffFreeFixed();
 VOID HuffDecode(struct HBINTREE *, USHORT *);
 
 ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT factor, ULONG *pCrc, ULONG *pCompressedSize) {
@@ -307,19 +307,19 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	errCode = ERR_NONE;
 
 	/* nothing allocated */
-	colTable = hashTable = NULL;
-	stack = NULL;
-	altStack = NULL;
-	lookBackBuf = NULL;
-	dlTable = NULL;
-	pkTable = NULL;
-	lenProbCount = NULL;
+	colTable = hashTable = nullptr;
+	stack = nullptr;
+	altStack = nullptr;
+	lookBackBuf = nullptr;
+	dlTable = nullptr;
+	pkTable = nullptr;
+	lenProbCount = nullptr;
 
 	// Init Zip info
 	//
 	memset(&zg.deflate, 0, sizeof(DFSTRUCT));
 	zg.zipFile = pDestFile;
-	zg.auxFile = NULL;
+	zg.auxFile = nullptr;
 	zg.fileSize = nSrcBufSize;
 	zg.dataSize = 0L;
 	zg.zfCrcValue = ~0UL;
@@ -327,12 +327,12 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	// these  were not initialized before
 	sSize = 0;
 	curRep = 0;
-	nextPtr = NULL;
+	nextPtr = nullptr;
 	offset = 0;
 	curOffset = 0;
-	curRepPtr = NULL;
+	curRepPtr = nullptr;
 	code = 0;
-	curNextPtr = NULL;
+	curNextPtr = nullptr;
 	rep = 0;
 	curCode = 0;
 
@@ -346,14 +346,14 @@ ERROR_CODE Deflate(CBofFile *pDestFile, UBYTE *pSrcBuf, INT nSrcBufSize, USHORT 
 	 * allocate the hash/collision tables, code stack and lookback
 	 * allocate the literal, distance, and bit length code tables
 	 */
-	if ((hashTable = (USHORT *)BofCAlloc(HASHSIZE, sizeof(USHORT))) == NULL ||
-	        (colTable = (USHORT *)BofCAlloc(bufSize, sizeof(USHORT))) == NULL ||
-	        (stack = (CODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct CODESTACK))) == NULL ||
-	        (altStack = (ALTCODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct ALTCODESTACK))) == NULL ||
-	        (lookBackBuf = (UBYTE *)BofAlloc(bufSize + (DF_MAXLENGTH - 1))) == NULL ||
-	        (dlTable = (CODETABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED + DF_BITCODES) * sizeof(struct CODETABLE))) == NULL ||
-	        (pkTable = (PACKTABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(struct PACKTABLE))) == NULL ||
-	        (lenProbCount = (SHORT *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(SHORT))) == NULL) {
+	if ((hashTable = (USHORT *)BofCAlloc(HASHSIZE, sizeof(USHORT))) == nullptr ||
+	        (colTable = (USHORT *)BofCAlloc(bufSize, sizeof(USHORT))) == nullptr ||
+	        (stack = (CODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct CODESTACK))) == nullptr ||
+	        (altStack = (ALTCODESTACK *)BofCAlloc(STACKSIZE, sizeof(struct ALTCODESTACK))) == nullptr ||
+	        (lookBackBuf = (UBYTE *)BofAlloc(bufSize + (DF_MAXLENGTH - 1))) == nullptr ||
+	        (dlTable = (CODETABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED + DF_BITCODES) * sizeof(struct CODETABLE))) == nullptr ||
+	        (pkTable = (PACKTABLE *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(struct PACKTABLE))) == nullptr ||
+	        (lenProbCount = (SHORT *)BofAlloc((DF_LITCODESUSED + DF_DISCODESUSED) * sizeof(SHORT))) == nullptr) {
 		errCode = ERR_MEMORY;
 
 		/*
@@ -1348,29 +1348,29 @@ skipliteral:
 	/*
 	 * free allocations
 	 */
-	if (lenProbCount != NULL)
+	if (lenProbCount != nullptr)
 		BofFree(lenProbCount);
-	if (pkTable != NULL)
+	if (pkTable != nullptr)
 		BofFree(pkTable);
-	if (dlTable != NULL)
+	if (dlTable != nullptr)
 		BofFree(dlTable);
-	if (lookBackBuf != NULL)
+	if (lookBackBuf != nullptr)
 		BofFree(lookBackBuf);
-	if (altStack != NULL)
+	if (altStack != nullptr)
 		BofFree((VOID *)altStack);
-	if (stack != NULL)
+	if (stack != nullptr)
 		BofFree((VOID *)stack);
-	if (colTable != NULL)
+	if (colTable != nullptr)
 		BofFree((VOID *)colTable);
-	if (hashTable != NULL)
+	if (hashTable != nullptr)
 		BofFree((VOID *)hashTable);
 
 	// return the CRC and compressed size back to the caller
 	//
-	if (pCrc != NULL)
+	if (pCrc != nullptr)
 		*pCrc = zg.zfCrcValue;
 
-	if (pCompressedSize != NULL)
+	if (pCompressedSize != nullptr)
 		*pCompressedSize = zg.dataSize;
 
 	debug(1, "compSize: %d altCompSize: %d", compSize, altCompSize);
@@ -1736,7 +1736,7 @@ ERROR_CODE HuffBuildCodes(struct CODETABLE *codeTable, SHORT *probCounts, SHORT 
 	/*
 	 * allocate memory for tree descriptor
 	 */
-	if ((codeLens = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * DF_MAXCODES)) == NULL)
+	if ((codeLens = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * DF_MAXCODES)) == nullptr)
 		errCode = ERR_MEMORY;
 
 	else {
@@ -1892,7 +1892,7 @@ struct HBINTREE *HuffBuildTree(struct CODELENS *codeLens, SHORT size) {
 	/*
 	 * allocate the huffman binary tree
 	 */
-	if ((binTree = (HBINTREE *)BofAlloc(bitLength = (sizeof(struct HBINTREE) * 2) * (size + 1))) != NULL) {
+	if ((binTree = (HBINTREE *)BofAlloc(bitLength = (sizeof(struct HBINTREE) * 2) * (size + 1))) != nullptr) {
 
 		/* set the entire tree to NULLs */
 		memset(binTree, 0, bitLength);
@@ -2049,8 +2049,8 @@ ERROR_CODE Inflate(UBYTE *pDstBuf, INT nDstBufSize, UBYTE *pSrcBuf, INT nSrcBufS
 
 	zg.dataSize = nSrcBufSize;
 	zg.fileSize = nDstBufSize;
-	zg.zipFile = NULL;
-	zg.auxFile = NULL;
+	zg.zipFile = nullptr;
+	zg.auxFile = nullptr;
 	zg.zfCrcValue = ~0UL;
 
 	memset(&zg.deflate, 0, sizeof(DFSTRUCT));
@@ -2065,7 +2065,7 @@ ERROR_CODE Inflate(UBYTE *pDstBuf, INT nDstBufSize, UBYTE *pSrcBuf, INT nSrcBufS
 		/*
 		 * allocate the Sliding Window (also known as the Look-Back Buffer)
 		 */
-		if ((lookBackBuf = (UBYTE *)BofAlloc(WINDSIZE)) != NULL) {
+		if ((lookBackBuf = (UBYTE *)BofAlloc(WINDSIZE)) != nullptr) {
 
 			BitReadInit(pSrcBuf, nSrcBufSize);
 
@@ -2381,7 +2381,7 @@ ERROR_CODE HuffBuildFixedTrees() {
 	/*
 	 * allocate tree descriptor
 	 */
-	if ((tempTree = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * DF_LITCODES)) == NULL)
+	if ((tempTree = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * DF_LITCODES)) == nullptr)
 		errCode = ERR_MEMORY;
 
 	else {
@@ -2421,7 +2421,7 @@ ERROR_CODE HuffBuildFixedTrees() {
 		/*
 		 * build the fixed huffman literal/length tree
 		 */
-		if ((zg.deflate.fhLitTree = HuffBuildTree(tempTree, DF_LITCODES)) == NULL)
+		if ((zg.deflate.fhLitTree = HuffBuildTree(tempTree, DF_LITCODES)) == nullptr)
 			errCode = ERR_MEMORY;
 
 		else {
@@ -2439,7 +2439,7 @@ ERROR_CODE HuffBuildFixedTrees() {
 			/*
 			 * build the fixed huffman distance tree
 			 */
-			if ((zg.deflate.fhDisTree = HuffBuildTree(tempTree, DF_DISCODES)) == NULL)
+			if ((zg.deflate.fhDisTree = HuffBuildTree(tempTree, DF_DISCODES)) == nullptr)
 				errCode = ERR_MEMORY;
 		}
 
@@ -2483,7 +2483,7 @@ ERROR_CODE HuffBuildDynamicTrees() {
 	/*
 	 * allocate tree descriptor
 	 */
-	if ((tree = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * (DF_LITCODES + DF_DISCODES))) != NULL) {
+	if ((tree = (CODELENS *)BofAlloc(sizeof(struct CODELENS) * (DF_LITCODES + DF_DISCODES))) != nullptr) {
 
 		/*
 		 * read 5 bits for # of literal codes
@@ -2518,7 +2518,7 @@ ERROR_CODE HuffBuildDynamicTrees() {
 		/*
 		 * build the bit length code tree to decode the lengths for the other trees
 		 */
-		if ((bitBinTree = HuffBuildTree(tree, nLenCodes)) == NULL) {
+		if ((bitBinTree = HuffBuildTree(tree, nLenCodes)) == nullptr) {
 			errCode = ERR_MEMORY;
 
 			/*
@@ -2646,7 +2646,7 @@ ERROR_CODE HuffBuildDynamicTrees() {
 			 * build the literal dynamic tree
 			 * and build the distance dynamic tree
 			 */
-			if ((zg.deflate.dhLitTree = HuffBuildTree(tree, nLitCodes)) == NULL || (zg.deflate.dhDisTree = HuffBuildTree(tree + nLitCodes, nDisCodes)) == NULL)
+			if ((zg.deflate.dhLitTree = HuffBuildTree(tree, nLitCodes)) == nullptr || (zg.deflate.dhDisTree = HuffBuildTree(tree + nLitCodes, nDisCodes)) == nullptr)
 				errCode = ERR_MEMORY;
 		}
 
@@ -2675,17 +2675,17 @@ VOID HuffFreeDynamic() {
 	/*
 	 * free the dynamic huffman distance tree
 	 */
-	if (zg.deflate.dhDisTree != NULL) {
+	if (zg.deflate.dhDisTree != nullptr) {
 		BofFree(zg.deflate.dhDisTree);
-		zg.deflate.dhDisTree = NULL;
+		zg.deflate.dhDisTree = nullptr;
 	}
 
 	/*
 	 * free the dynamic huffman literal/length tree
 	 */
-	if (zg.deflate.dhLitTree != NULL) {
+	if (zg.deflate.dhLitTree != nullptr) {
 		BofFree(zg.deflate.dhLitTree);
-		zg.deflate.dhLitTree = NULL;
+		zg.deflate.dhLitTree = nullptr;
 	}
 }
 
@@ -2704,17 +2704,17 @@ VOID HuffFreeFixed() {
 	/*
 	 * free the fixed huffman distance tree
 	 */
-	if (zg.deflate.fhDisTree != NULL) {
+	if (zg.deflate.fhDisTree != nullptr) {
 		BofFree(zg.deflate.fhDisTree);
-		zg.deflate.fhDisTree = NULL;
+		zg.deflate.fhDisTree = nullptr;
 	}
 
 	/*
 	 * free the fixed huffman literal/length tree
 	 */
-	if (zg.deflate.fhLitTree != NULL) {
+	if (zg.deflate.fhLitTree != nullptr) {
 		BofFree(zg.deflate.fhLitTree);
-		zg.deflate.fhLitTree = NULL;
+		zg.deflate.fhLitTree = nullptr;
 	}
 }
 
@@ -2747,7 +2747,7 @@ VOID HuffDecode(struct HBINTREE *binTree, USHORT *rValue) {
 		/*
 		 * note: 'right' must come after 'left'
 		 */
-		if ((binTree = *(&binTree->left + (bit ^ 1)))->left == NULL) {
+		if ((binTree = *(&binTree->left + (bit ^ 1)))->left == nullptr) {
 			*rValue = binTree->value;
 			break;
 		}

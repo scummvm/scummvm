@@ -28,8 +28,8 @@
 
 namespace Bagel {
 
-CBofDebugOptions *g_pDebugOptions = NULL;
-CBofLog *g_pDebugLog = NULL;
+CBofDebugOptions *g_pDebugOptions = nullptr;
+CBofLog *g_pDebugLog = nullptr;
 
 CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFileName) {
 	// Add programmer definable debug options here
@@ -62,15 +62,15 @@ VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHA
 			/* if this compiler supports the __TIMESTAMP__ macro, then show that also
 			 */
 			Common::sprintf_s(szBuf, "Internal error: File %s at line %d\n", pszSourceFile, nLine);
-			if (pszTimeStamp != NULL) {
+			if (pszTimeStamp != nullptr) {
 				Common::sprintf_s(szBuf, "Internal error: File %s at line %d (FileDate: %s)\n", pszSourceFile, nLine, pszTimeStamp);
 			}
 
 			/*
 			 * write this error to the log file
 			 */
-			if (g_pDebugLog != NULL) {
-				g_pDebugLog->WriteMessage(LOG_ERROR, szBuf, 0, NULL);
+			if (g_pDebugLog != nullptr) {
+				g_pDebugLog->WriteMessage(LOG_ERROR, szBuf, 0, nullptr);
 			}
 
 			bAlready = FALSE;
@@ -84,13 +84,13 @@ VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine) {
 	CHAR szBuf[200];
 
 	Common::strcpy_s(szBuf, "Unknown reason for Abort");
-	if (pszInfo != NULL) {
+	if (pszInfo != nullptr) {
 		Common::strcpy_s(szBuf, pszInfo);
 	}
 
 	// log this message to DEBUG.LOG and to output window
 	//
-	if (g_pDebugLog != NULL) {
+	if (g_pDebugLog != nullptr) {
 		g_pDebugLog->WriteMessage(LOG_FATAL, szBuf, 0, pszFile, nLine);
 	}
 
@@ -101,7 +101,7 @@ VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine) {
 	}
 
 	if (g_pDebugOptions->m_bAbortsOn) {
-		if (g_pDebugLog != NULL) {
+		if (g_pDebugLog != nullptr) {
 			g_pDebugLog->WriteMessage(LOG_FATAL, "Aborting!");
 		}
 

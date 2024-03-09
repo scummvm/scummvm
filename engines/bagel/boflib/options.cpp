@@ -61,7 +61,7 @@ ERROR_CODE CBofOptions::LoadOptionFile(const CHAR *pszOptionFile) {
 	return Load();
 }
 
-ERROR_CODE CBofOptions::Load(VOID) {
+ERROR_CODE CBofOptions::Load() {
 	Assert(IsValidObject(this));
 
 	COption *pNewOption;
@@ -126,7 +126,7 @@ VOID CBofOptions::Release() {
 	}
 }
 
-ERROR_CODE CBofOptions::Commit(VOID) {
+ERROR_CODE CBofOptions::Commit() {
 	Assert(IsValidObject(this));
 	ERROR_CODE errCode = ERR_NONE;
 

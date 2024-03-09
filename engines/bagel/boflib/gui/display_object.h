@@ -47,7 +47,7 @@ public:
 
 	ERROR_CODE LoadImage(const CHAR *pszFileName);
 	ERROR_CODE CreateImage(INT dx, INT dy);
-	ERROR_CODE ReleaseImage(VOID);
+	ERROR_CODE ReleaseImage();
 
 	ERROR_CODE Paint(const INT x, const INT y);
 	ERROR_CODE Paint(CBofPoint &cPoint)         {
@@ -59,50 +59,50 @@ public:
 		return (BatchPaint(cPoint.x, cPoint.y));
 	}
 
-	ERROR_CODE Erase(VOID);
-	ERROR_CODE BatchErase(VOID);
+	ERROR_CODE Erase();
+	ERROR_CODE BatchErase();
 
 	ERROR_CODE SetPosition(INT x, INT y);
 	ERROR_CODE SetPosition(const CBofPoint &cPoint) {
 		return (SetPosition(cPoint.x, cPoint.y));
 	}
-	CBofPoint  GetPosition(VOID)                {
+	CBofPoint  GetPosition()                {
 		return (m_cPosition);
 	}
 
 	ERROR_CODE SetZOrder(INT nValue);
-	INT        GetZOrder(VOID)                  {
+	INT        GetZOrder()                  {
 		return (m_nZOrder);
 	}
 
 	VOID       SetSize(const CBofSize &cSize)   {
 		m_cSize = cSize;
 	}
-	CBofSize   GetSize(VOID)                    {
+	CBofSize   GetSize()                    {
 		return (m_cSize);
 	}
 
-	INT        Width(VOID)                      {
+	INT        Width()                      {
 		return (m_cSize.cx);
 	}
-	INT        Height(VOID)                     {
+	INT        Height()                     {
 		return (m_cSize.cy);
 	}
 
-	CBofRect   GetRect(VOID)                    {
+	CBofRect   GetRect()                    {
 		return (CBofRect(m_cPosition, m_cSize));
 	}
 
 	ERROR_CODE LinkChild(CBofDisplayObject *pChild);
 	ERROR_CODE UnlinkChild(CBofDisplayObject *pChild);
 
-	BOOL       IsMasked(VOID)           {
+	BOOL       IsMasked()           {
 		return (m_nMaskColor != NOT_TRANSPARENT);
 	}
 	VOID       SetMaskColor(INT nColor) {
 		m_nMaskColor = nColor;
 	}
-	INT        GetMaskColor(VOID)       {
+	INT        GetMaskColor()       {
 		return (m_nMaskColor);
 	}
 
@@ -110,10 +110,10 @@ public:
 		return ((m_lType & lType) != 0);
 	}
 
-	CBofDisplayObject *GetNext(VOID)    {
+	CBofDisplayObject *GetNext()    {
 		return ((CBofDisplayObject *)m_pNext);
 	}
-	CBofDisplayObject *GetPrev(VOID)    {
+	CBofDisplayObject *GetPrev()    {
 		return ((CBofDisplayObject *)m_pPrev);
 	}
 
@@ -129,18 +129,18 @@ public:
 
 	virtual ERROR_CODE OnPaint(CBofBitmap *pDestBmp, CBofRect *pDirtyRect);
 
-	static ERROR_CODE Initialize(VOID);
-	static ERROR_CODE CleanUp(VOID);
+	static ERROR_CODE Initialize();
+	static ERROR_CODE CleanUp();
 
 	static ERROR_CODE ReMapPalette(CBofPalette *pPalette);
 
-	static CBofDisplayObject *GetMain(VOID) {
+	static CBofDisplayObject *GetMain() {
 		return (m_pMainDisplay);
 	}
 
 	static ERROR_CODE AddToDirtyRect(CBofRect *pRect);
-	static ERROR_CODE UpdateDirtyRect(VOID);
-	static VOID ClearDirtyRect(VOID)    {
+	static ERROR_CODE UpdateDirtyRect();
+	static VOID ClearDirtyRect()    {
 		m_cDirtyRect.SetRectEmpty();
 	}
 

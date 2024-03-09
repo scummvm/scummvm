@@ -142,20 +142,20 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 
 		// jwl 11.04.96 delineate cic's
 	} else if (!typestr.Find("CIC")) {
-		if ((pSDev = new GAMEWINDOW(namestr)) != NULL) {
+		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
 			pSDev->SetCloseup(TRUE);
 			pSDev->SetCIC(TRUE);
 			pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("CLOSEUP")) {
-		if ((pSDev = new GAMEWINDOW(namestr)) != NULL) {
+		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
 			pSDev->SetCloseup(TRUE);
 			pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("CHAT")) {
-		if ((pSDev = new CBagChatWnd()) != NULL) {
+		if ((pSDev = new CBagChatWnd()) != nullptr) {
 			pSDev->SetCloseup(TRUE);
 			//          pSDev->SetExitOnEdge(80);
 		}
@@ -182,7 +182,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 
 	CBagStorageDev *pSDev;
 
-	pSDev = NULL;
+	pSDev = nullptr;
 
 	switch (nType) {
 
@@ -233,7 +233,7 @@ VOID CSBarMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr) {
 	Assert(IsValidObject(this));
 
-	FilterFxn filterFunction = NULL;
+	FilterFxn filterFunction = nullptr;
 	int filterId = pSDev->GetFilterId();
 
 	if (filterId != 0) {
@@ -271,7 +271,7 @@ VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 	Assert(IsValidObject(this));
 
-	FilterFxn filterFunction = NULL;
+	FilterFxn filterFunction = nullptr;
 	int filterId = pSDev->GetFilterId();
 
 	if (filterId != 0) {

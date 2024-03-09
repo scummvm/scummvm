@@ -56,7 +56,7 @@ ERROR_CODE CBagVariableObject::Detach() {
 	return CBagObject::Detach();
 }
 
-CBofRect CBagVariableObject::GetRect(VOID) {
+CBofRect CBagVariableObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);
@@ -209,7 +209,7 @@ INT CBagVariableObject::MapWindowsPointSize(INT pointSize) {
 #if DEVELOPMENT
 		DebugStr("\pMapWindowsPointSize invalid size");
 #else
-		MacMessageBox("MapWindowsPointSize invalid size", NULL);
+		MacMessageBox("MapWindowsPointSize invalid size", nullptr);
 #endif
 		break;
 	}

@@ -65,7 +65,7 @@ protected:
 	virtual ERROR_CODE  Initialize(CBofWindow *pParent);   // Initialize
 
 	virtual BOOL    OpenMovie(const char *sFilename);  // MCI_OPEN
-	virtual VOID    CloseMovie(VOID);
+	virtual VOID    CloseMovie();
 
 	virtual BOOL    FileOpenWin();    // Display the File Open Dialog box
 
@@ -83,9 +83,9 @@ protected:
 	}
 	virtual VOID    OnButtonUp(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID    OnPaint(CBofRect *pRect);
-	virtual VOID    OnMovieDone(VOID);
-	virtual VOID    OnClose(VOID);
-	virtual VOID    OnMainLoop(VOID);
+	virtual VOID    OnMovieDone();
+	virtual VOID    OnClose();
+	virtual VOID    OnMainLoop();
 	virtual VOID    OnKeyHit(ULONG lKey, ULONG lRepCount);
 
 #if BOF_WINNT
@@ -95,40 +95,40 @@ protected:
 
 public:
 
-	CBofMovie(CBofWindow *pParent = NULL, const CHAR *pszFilename = NULL, CBofRect *pBounds = NULL, BOOL bStretch = FALSE, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	CBofMovie(CBofWindow *pParent = nullptr, const CHAR *pszFilename = nullptr, CBofRect *pBounds = nullptr, BOOL bStretch = FALSE, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
 	~CBofMovie();
 
-	virtual BOOL        Open(const char *sFilename = NULL, CBofRect *pBounds = NULL);
+	virtual BOOL        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
 	virtual BOOL        Play(BOOL bLoop,  BOOL bEscCanStop = TRUE);
 	virtual BOOL        Reverse(BOOL bLoop,  BOOL bEscCanStop = TRUE);
-	virtual BOOL        Pause(void);
-	virtual BOOL        Stop(void);
+	virtual BOOL        Pause();
+	virtual BOOL        Stop();
 
-	virtual MVSTATUS    Status(void) {
+	virtual MVSTATUS    Status() {
 		return m_eMovStatus;
 	}
 
-	virtual BOOL        SeekToStart(void);           // Seek to the start of the movie
-	virtual BOOL        SeekToEnd(void);                 // Seek to the start of the movie
+	virtual BOOL        SeekToStart();           // Seek to the start of the movie
+	virtual BOOL        SeekToEnd();                 // Seek to the start of the movie
 
-	virtual DWORD       GetFrame(void);
+	virtual DWORD       GetFrame();
 	virtual BOOL        SetFrame(DWORD dwFrameNum);
 
 	virtual BOOL        CenterRect();
 
-	virtual BOOL        ShowMovie(void);
-	virtual BOOL        HideMovie(void);
+	virtual BOOL        ShowMovie();
+	virtual BOOL        HideMovie();
 
-	Graphics::ManagedSurface *GetSmackBuffer(void)  {
+	Graphics::ManagedSurface *GetSmackBuffer()  {
 		return m_pSbuf;
 	}
-	Video::VideoDecoder *GetSmackMovie(void)   {
+	Video::VideoDecoder *GetSmackMovie()   {
 		return m_pSmk;
 	}
 };
 
-ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect = NULL);
+ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect = nullptr);
 
 } // namespace Bagel
 

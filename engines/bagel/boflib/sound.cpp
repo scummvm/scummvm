@@ -33,7 +33,7 @@ namespace Bagel {
 #define MEMORY_MARGIN       100000L
 
 CHAR    CBofSound::m_szDrivePath[MAX_DIRPATH];
-CBofSound  *CBofSound::m_pSoundChain = NULL;  // pointer to chain of linked Sounds
+CBofSound  *CBofSound::m_pSoundChain = nullptr;  // pointer to chain of linked Sounds
 INT     CBofSound::m_nCount = 0;           // count of currently active Sounds
 INT     CBofSound::m_nWavCount = 0;        // available wave sound devices
 INT     CBofSound::m_nMidiCount = 0;       // available midi sound devices
@@ -41,7 +41,7 @@ BOOL    CBofSound::m_bSoundAvailable = FALSE;  // whether wave sound is availabl
 BOOL    CBofSound::m_bMidiAvailable = FALSE;   // whether midi sound is available
 BOOL    CBofSound::m_bWaveVolume = FALSE;  // whether wave volume can be set
 BOOL    CBofSound::m_bMidiVolume = FALSE;  // whether midi volume can be set
-CBofWindow   *CBofSound::m_pMainWnd = NULL;         // window for message processing
+CBofWindow   *CBofSound::m_pMainWnd = nullptr;         // window for message processing
 
 BOOL    CBofSound::m_bInit = FALSE;
 
@@ -90,20 +90,20 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 
 	// validate input
 	//
-	Assert(pszPathName != NULL);
+	Assert(pszPathName != nullptr);
 	Assert(strlen(pszPathName) < MAX_FNAME);
 
 #if BOF_MAC || BOF_WINMAC
 	// strip out the QUEUE flag for Macintosh
 	// RMS no longer needed: wFlags &= ~SOUND_QUEUE;
-	m_pMacSndChan = NULL;               // ptr to sound channel allocated by this object
-	m_hMacSndRes = NULL;                // ptr to sound resource
-	m_pMacMidi = NULL;                  // ptr to Midi QT movie object
-	m_resRefNum = 0;                    // refernce number for resource file [NULL-->0 scg 01.10.97]
+	m_pMacSndChan = nullptr;               // ptr to sound channel allocated by this object
+	m_hMacSndRes = nullptr;                // ptr to sound resource
+	m_pMacMidi = nullptr;                  // ptr to Midi QT movie object
+	m_resRefNum = 0;                    // refernce number for resource file [nullptr-->0 scg 01.10.97]
 	m_bTempChannel = FALSE;
 
 #if PLAYWAVONMAC
-	m_pSoundInfo = NULL;
+	m_pSoundInfo = nullptr;
 #endif
 #endif
 
@@ -112,9 +112,9 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	//
 
 	m_pWnd = m_pMainWnd;
-	if (pWnd != NULL) {
+	if (pWnd != nullptr) {
 		m_pWnd = pWnd;
-		if (m_pMainWnd == NULL)
+		if (m_pMainWnd == nullptr)
 			m_pMainWnd = pWnd;
 	}
 
@@ -128,9 +128,9 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	m_szFileName[0] = '\0';
 
 #if BOF_WINDOWS
-	m_hSample = NULL;
-	m_hSequence = NULL;
-	m_pFileBuf = NULL;
+	m_hSample = nullptr;
+	m_hSequence = nullptr;
+	m_pFileBuf = nullptr;
 	m_nVol = VOLUME_INDEX_DEFAULT;
 	m_bInQueue = FALSE;
 	m_iQSlot = 0;
@@ -148,7 +148,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 		m_wFlags |= SOUND_ASYNCH;
 	}
 
-	if (pszPathName != NULL) {
+	if (pszPathName != nullptr) {
 
 #if BOF_MAC || BOF_WINMAC
 		// jwl 1.20.97 if our number of loops is zero, then this means keep playing it man...
@@ -213,7 +213,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 
 	// insert this sound into the sound list
 	//
-	if (m_pSoundChain != NULL) {
+	if (m_pSoundChain != nullptr) {
 		m_pSoundChain->Insert(this);
 
 		// m_pSoundchain must always be the head of the list
@@ -239,7 +239,7 @@ CBofSound::~CBofSound() {
 
 	// Close open res file
 	//
-	// [NULL --> 0 scg 01.10.97]
+	// [nullptr --> 0 scg 01.10.97]
 	if (m_resRefNum != 0) {
 		CloseResFile(m_resRefNum);
 		m_resRefNum = 0;
@@ -247,9 +247,9 @@ CBofSound::~CBofSound() {
 
 	// close the QuickTime midi stuff
 	//
-	if (m_pMacMidi != NULL) {
+	if (m_pMacMidi != nullptr) {
 		delete m_pMacMidi;
-		m_pMacMidi = NULL;
+		m_pMacMidi = nullptr;
 	}
 
 #else // PC
@@ -265,7 +265,7 @@ CBofSound::~CBofSound() {
 }
 
 
-VOID CBofSound::Initialize(VOID) {
+VOID CBofSound::Initialize() {
 #if BOF_MAC || BOF_WINMAC
 	OSErr sndErr = 0;
 	INT i;
@@ -290,7 +290,7 @@ VOID CBofSound::Initialize(VOID) {
 
 	for (i = 0; i < MAX_CHANNELS; i++) {
 
-		if (m_pSndChan[i] == NULL) {
+		if (m_pSndChan[i] == nullptr) {
 
 			// allocate a sound channel with associate completion callback
 			//
@@ -323,7 +323,7 @@ VOID CBofSound::Initialize(VOID) {
 }
 
 #if BOF_WINDOWS
-VOID CBofSound::ResetQVolumes(VOID) {
+VOID CBofSound::ResetQVolumes() {
 	INT i;
 
 	// Set Q Volumes to default
@@ -338,7 +338,7 @@ void CBofSound::ResetQVolumes() {
 #endif
 
 
-VOID CBofSound::UnInitialize(VOID) {
+VOID CBofSound::UnInitialize() {
 #if BOF_MAC || BOF_WINMAC
 	OSErr sndErr;
 	const int MAXTRIES = 64;
@@ -352,9 +352,9 @@ VOID CBofSound::UnInitialize(VOID) {
 
 	for (i = 0; i < MAX_CHANNELS; i++) {
 
-		if (m_pSndChan[i] != NULL) {
+		if (m_pSndChan[i] != nullptr) {
 			sndErr = SndDisposeChannel(m_pSndChan[i], kQuietNow);
-			m_pSndChan[i] = NULL;
+			m_pSndChan[i] = nullptr;
 		}
 	}
 #else
@@ -381,9 +381,9 @@ VOID CBofSound::SetVolume(INT nVolume) {
 	warning("STUB: CBofSound::SetVolume(INT nVolume)");
 
 #if 0
-	if (m_hSample != NULL) {
+	if (m_hSample != nullptr) {
 		AIL_set_sample_volume(m_hSample, m_nVol * 10);
-	} else if (m_hSequence != NULL) {
+	} else if (m_hSequence != nullptr) {
 		AIL_set_sequence_volume(m_hSequence, m_nVol * 10, 0);
 	}
 #endif
@@ -433,7 +433,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 	if (m_errCode == ERR_NONE) {
 
 		// we must be attached to a valid window
-		Assert((m_pWnd != NULL) || (m_pMainWnd != NULL));
+		Assert((m_pWnd != nullptr) || (m_pMainWnd != nullptr));
 
 		// if already playing, then stop and start again
 		//
@@ -469,7 +469,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 		}
 
 		// make sure this sound is still valid
-		Assert(m_pSoundChain != NULL);
+		Assert(m_pSoundChain != nullptr);
 
 #if BOF_MAC || BOF_WINMAC // MAC VERSION
 
@@ -489,7 +489,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 				// If not pre-loaded
 				//
 				bSuccess = TRUE;
-				if (m_hMacSndRes == NULL) {
+				if (m_hMacSndRes == nullptr) {
 
 					// try loading it now
 					bSuccess = LoadSound();
@@ -521,7 +521,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 		warning("STUB: CBofSound::Play()");
 
 #if 0
-		if (m_pFileBuf == NULL) {
+		if (m_pFileBuf == nullptr) {
 
 			if ((m_wFlags & (SOUND_MIX | SOUND_QUEUE)) == (SOUND_MIX | SOUND_QUEUE)) {
 
@@ -531,15 +531,15 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 				LoadSound();
 			}
 		}
-		//if (m_pFileBuf != NULL) {
+		//if (m_pFileBuf != nullptr) {
 
 		if (m_wFlags & SOUND_MIDI) {
 
 			HMDIDRIVER hMidiDriver;
 
-			if ((hMidiDriver = CBofApp::GetApp()->GetMidiDriver()) != NULL) {
+			if ((hMidiDriver = CBofApp::GetApp()->GetMidiDriver()) != nullptr) {
 
-				if ((m_hSequence = AIL_allocate_sequence_handle(hMidiDriver)) != NULL) {
+				if ((m_hSequence = AIL_allocate_sequence_handle(hMidiDriver)) != nullptr) {
 					INT nError;
 
 					nError = AIL_init_sequence(m_hSequence, m_pFileBuf, 0);
@@ -557,7 +557,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 
 			PlayMSS();
 
-			if (m_hSample != NULL) {
+			if (m_hSample != nullptr) {
 
 				if (!(m_wFlags & SOUND_ASYNCH)) {
 
@@ -565,7 +565,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 						;
 
 					AIL_release_sample_handle(m_hSample);
-					m_hSample = NULL;
+					m_hSample = nullptr;
 					m_bPlaying = FALSE;
 				}
 			}
@@ -612,7 +612,7 @@ BOOL CBofSound::MidiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBe
 }
 
 
-BOOL CBofSound::PauseSounds(VOID) {
+BOOL CBofSound::PauseSounds() {
 	BOOL    bSuccess = TRUE;
 	BOOL    bStatus;
 	CBofSound  *pSound;
@@ -620,7 +620,7 @@ BOOL CBofSound::PauseSounds(VOID) {
 	// thumb through all the sounds
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		// if one is playing and not paused try to suspend it
 		if (pSound->Playing() && (pSound->m_bPaused == FALSE)) {
@@ -637,7 +637,7 @@ BOOL CBofSound::PauseSounds(VOID) {
 }
 
 
-BOOL CBofSound::Pause(VOID) {
+BOOL CBofSound::Pause() {
 	Assert(IsValidObject(this));
 
 	BOOL bSuccess = FALSE;
@@ -668,11 +668,11 @@ BOOL CBofSound::Pause(VOID) {
 		warning("STUB: CBofSound::Pause()");
 
 #if 0
-		if (m_hSample != NULL) {
+		if (m_hSample != nullptr) {
 			bSuccess = TRUE;
 			AIL_stop_sample(m_hSample);
 
-		} else if (m_hSequence != NULL) {
+		} else if (m_hSequence != nullptr) {
 			bSuccess = TRUE;
 			AIL_stop_sequence(m_hSequence);
 		}
@@ -689,13 +689,13 @@ BOOL CBofSound::Pause(VOID) {
 }
 
 
-BOOL CBofSound::ResumeSounds(VOID) {
+BOOL CBofSound::ResumeSounds() {
 	BOOL    bSuccess = TRUE;
 	BOOL    bStatus;
 	CBofSound  *pSound;
 
 	pSound = m_pSoundChain;                 // thumb through all the sounds
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 		if (pSound->m_bPaused) {                  // if one is paused
 			bStatus = pSound->Resume();           // ... try to get it going again
 			if (bStatus)
@@ -710,7 +710,7 @@ BOOL CBofSound::ResumeSounds(VOID) {
 }
 
 
-BOOL CBofSound::Resume(VOID) {
+BOOL CBofSound::Resume() {
 	Assert(IsValidObject(this));
 
 	BOOL bSuccess = FALSE;
@@ -737,11 +737,11 @@ BOOL CBofSound::Resume(VOID) {
 		warning("STUB: CBofSound::Resume()");
 
 #if 0
-		if (m_hSample != NULL) {
+		if (m_hSample != nullptr) {
 			bSuccess = TRUE;
 			AIL_resume_sample(m_hSample);
 
-		} else if (m_hSequence != NULL) {
+		} else if (m_hSequence != nullptr) {
 			bSuccess = TRUE;
 			AIL_resume_sequence(m_hSequence);
 		}
@@ -758,13 +758,13 @@ BOOL CBofSound::Resume(VOID) {
 }
 
 
-BOOL CBofSound::StopSounds(VOID) {
+BOOL CBofSound::StopSounds() {
 	BOOL    bSuccess = TRUE;
 	BOOL    bStatus;
 	CBofSound  *pSound;
 
 	pSound = m_pSoundChain;                 // thumb through all the sounds
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		if (pSound->Playing()) {                 // if one is playing
 			pSound->m_bPaused = FALSE;            // ... its no longer paused
@@ -779,12 +779,12 @@ BOOL CBofSound::StopSounds(VOID) {
 }
 
 
-BOOL CBofSound::StopWaveSounds(VOID) {
+BOOL CBofSound::StopWaveSounds() {
 	BOOL    bSuccess = TRUE;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		pNextSound = (CBofSound *)pSound->GetNext();
 
@@ -802,12 +802,12 @@ BOOL CBofSound::StopWaveSounds(VOID) {
 }
 
 
-BOOL CBofSound::StopMidiSounds(VOID) {
+BOOL CBofSound::StopMidiSounds() {
 	BOOL    bSuccess = TRUE;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		pNextSound = (CBofSound *)pSound->GetNext();
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
@@ -824,7 +824,7 @@ BOOL CBofSound::StopMidiSounds(VOID) {
 }
 
 
-BOOL CBofSound::Stop(VOID) {
+BOOL CBofSound::Stop() {
 	Assert(IsValidObject(this));
 
 	BOOL        bSuccess;
@@ -858,16 +858,16 @@ BOOL CBofSound::Stop(VOID) {
 	warning("STUB: CBofSound::Stop()");
 
 #if 0
-	if (m_hSequence != NULL) {
+	if (m_hSequence != nullptr) {
 		AIL_stop_sequence(m_hSequence);
 		AIL_release_sequence_handle(m_hSequence);
-		m_hSequence = NULL;
+		m_hSequence = nullptr;
 	}
 
-	if (m_hSample != NULL) {
+	if (m_hSample != nullptr) {
 		AIL_stop_sample(m_hSample);
 		AIL_release_sample_handle(m_hSample);
-		m_hSample = NULL;
+		m_hSample = nullptr;
 	}
 
 	if (m_bInQueue) {
@@ -893,13 +893,13 @@ BOOL CBofSound::Stop(VOID) {
 }
 
 
-VOID CBofSound::ClearSounds(VOID) {
+VOID CBofSound::ClearSounds() {
 	StopSounds();                                   // stop all active sounds
 
 	CBofSound *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {                 // delete all sound entries
+	while (pSound != nullptr) {                 // delete all sound entries
 
 		pNextSound = pSound->GetNext();
 
@@ -908,15 +908,15 @@ VOID CBofSound::ClearSounds(VOID) {
 		pSound = pNextSound;
 	}
 
-	Assert(m_pSoundChain == NULL);
+	Assert(m_pSoundChain == nullptr);
 }
 
 
-VOID CBofSound::ClearWaveSounds(VOID) {
+VOID CBofSound::ClearWaveSounds() {
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound in the queue
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		pNextSound = pSound->GetNext();
 		if ((pSound->m_wFlags & SOUND_WAVE) || (pSound->m_wFlags & SOUND_MIX))
@@ -927,11 +927,11 @@ VOID CBofSound::ClearWaveSounds(VOID) {
 }
 
 
-VOID CBofSound::ClearMidiSounds(VOID) {
+VOID CBofSound::ClearMidiSounds() {
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		pNextSound = (CBofSound *)pSound->GetNext();
 		if (pSound->m_wFlags & SOUND_MIDI)
@@ -942,23 +942,23 @@ VOID CBofSound::ClearMidiSounds(VOID) {
 }
 
 
-BOOL CBofSound::SoundAvailable(VOID) {
+BOOL CBofSound::SoundAvailable() {
 	return (m_bSoundAvailable);                     // return requested info
 }
 
 
-BOOL CBofSound::MidiAvailable(VOID) {
+BOOL CBofSound::MidiAvailable() {
 	return (m_bMidiAvailable);                      // return requested info
 }
 
 
-VOID CBofSound::WaitSounds(VOID) {
+VOID CBofSound::WaitSounds() {
 	WaitWaveSounds();
 	WaitMidiSounds();
 }
 
 
-VOID CBofSound::WaitWaveSounds(VOID) {
+VOID CBofSound::WaitWaveSounds() {
 	uint32   dwTickCount = 0;
 	CBofSound  *pSound;
 
@@ -967,13 +967,13 @@ VOID CBofSound::WaitWaveSounds(VOID) {
 		AudioTask();
 
 		pSound = m_pSoundChain;
-		while (pSound != NULL) {
+		while (pSound != nullptr) {
 			if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 				break;
 			}
 			pSound = (CBofSound *)pSound->GetNext();
 		}
-		if (pSound == NULL)
+		if (pSound == nullptr)
 			break;
 
 		if (HandleMessages())
@@ -994,13 +994,13 @@ VOID CBofSound::WaitWaveSounds(VOID) {
 	}
 }
 
-BOOL CBofSound::SoundsPlaying(VOID) {
+BOOL CBofSound::SoundsPlaying() {
 	CBofSound  *pSound;
 
 	AudioTask();
 
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 			return TRUE;
 		}
@@ -1011,20 +1011,20 @@ BOOL CBofSound::SoundsPlaying(VOID) {
 }
 
 
-VOID CBofSound::WaitMidiSounds(VOID) {
+VOID CBofSound::WaitMidiSounds() {
 	UINT32   dwTickCount = 0;
 	CBofSound  *pSound;
 
 	for (;;) {
 
 		pSound = m_pSoundChain;
-		while (pSound != NULL) {
+		while (pSound != nullptr) {
 			if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
 				break;
 			}
 			pSound = (CBofSound *)pSound->GetNext();
 		}
-		if (pSound == NULL)
+		if (pSound == nullptr)
 			break;
 
 		if (HandleMessages())
@@ -1043,7 +1043,7 @@ VOID CBofSound::WaitMidiSounds(VOID) {
 }
 
 
-BOOL CBofSound::HandleMessages(VOID) {
+BOOL CBofSound::HandleMessages() {
 #if BOF_MAC || BOF_WINMAC
 	AudioTask();
 #else
@@ -1053,19 +1053,19 @@ BOOL CBofSound::HandleMessages(VOID) {
 #if 0
 	MSG     msg;
 
-	if (PeekMessage(&msg, NULL, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (PeekMessage(&msg, NULL, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if (PeekMessage(&msg, NULL, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
+	if (PeekMessage(&msg, nullptr, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
 			return (TRUE);
 		TranslateMessage(&msg);
@@ -1108,7 +1108,7 @@ BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot) {
 	// assume failure
 	bSuccess = FALSE;
 
-	if (pszSoundFile != NULL) {
+	if (pszSoundFile != nullptr) {
 
 		nFlags |= SOUND_AUTODELETE;
 
@@ -1126,7 +1126,7 @@ BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot) {
 //#endif
 		CBofSound::StopWaveSounds();
 
-		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != NULL) {
+		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -1150,7 +1150,7 @@ BOOL BofPlaySoundEx(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot, BOOL bWai
 	// assume failure
 	bSuccess = FALSE;
 
-	if (pszSoundFile != NULL) {
+	if (pszSoundFile != nullptr) {
 		if ((nFlags & SOUND_MIX) == 0) {
 			bWait = FALSE;
 		}
@@ -1170,7 +1170,7 @@ BOOL BofPlaySoundEx(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot, BOOL bWai
 		// take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 
-		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != NULL) {
+		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -1191,7 +1191,7 @@ BOOL BofPlaySoundEx(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot, BOOL bWai
 }
 
 
-BOOL CBofSound::LoadSound(VOID) {
+BOOL CBofSound::LoadSound() {
 	Assert(IsValidObject(this));
 	Assert(m_szFileName[0] != '\0');
 
@@ -1246,7 +1246,7 @@ BOOL CBofSound::LoadSound(VOID) {
 		// load the sound resource from file and check if successful
 		// get the first and only SND
 		//
-		if ((m_hMacSndRes = GetIndResource('snd ', 1)) != NULL) {
+		if ((m_hMacSndRes = GetIndResource('snd ', 1)) != nullptr) {
 
 			// move high in heap so you don't fragment
 			MoveHHi(m_hMacSndRes);
@@ -1267,7 +1267,7 @@ BOOL CBofSound::LoadSound(VOID) {
 #else
 
 	bSuccess = TRUE;
-	if (m_pFileBuf == NULL) {
+	if (m_pFileBuf == nullptr) {
 		bSuccess = FALSE;
 
 		Common::File in;
@@ -1287,7 +1287,7 @@ BOOL CBofSound::LoadSound(VOID) {
 }
 
 
-BOOL CBofSound::ReleaseSound(VOID) {
+BOOL CBofSound::ReleaseSound() {
 	Assert(IsValidObject(this));
 
 #if BOF_MAC || BOF_WINMAC
@@ -1305,9 +1305,9 @@ BOOL CBofSound::ReleaseSound(VOID) {
 	return (ReleaseSndResource());
 #else
 
-	if (m_pFileBuf != NULL) {
+	if (m_pFileBuf != nullptr) {
 		free(m_pFileBuf);
-		m_pFileBuf = NULL;
+		m_pFileBuf = nullptr;
 	}
 	return (TRUE);
 #endif
@@ -1327,7 +1327,7 @@ BOOL CBofSound::CreateMacSndChannel(BOOL) {
 
 		// get a new sound channel if neccessary
 		//
-		if (m_pMacSndChan == NULL) {
+		if (m_pMacSndChan == nullptr) {
 
 			if (!m_bInit) {
 				Initialize();
@@ -1342,13 +1342,13 @@ BOOL CBofSound::CreateMacSndChannel(BOOL) {
 
 				// if this one is unused
 				//
-				if (m_pSndChan[i] != NULL) {
+				if (m_pSndChan[i] != nullptr) {
 
 					// store it with our sound object
 					m_pMacSndChan = m_pSndChan[i];
 
 					// mark it as used
-					m_pSndChan[i] = NULL;
+					m_pSndChan[i] = nullptr;
 					bFound = TRUE;
 					break;
 				}
@@ -1382,14 +1382,14 @@ BOOL CBofSound::CreateMacSndChannel(BOOL) {
 }
 
 
-BOOL CBofSound::ReleaseMacSndChan(VOID) {
+BOOL CBofSound::ReleaseMacSndChan() {
 	Assert(IsValidObject(this));
 
 	OSErr sndErr;
 	INT i;
 	BOOL bSuccess = TRUE;
 
-	if (m_pMacSndChan != NULL) {
+	if (m_pMacSndChan != nullptr) {
 
 		sndErr = SendFlush(m_pMacSndChan);
 
@@ -1413,26 +1413,26 @@ BOOL CBofSound::ReleaseMacSndChan(VOID) {
 		} else {
 
 			for (i = 0; i < MAX_CHANNELS; i++) {
-				if (m_pSndChan[i] == NULL) {
+				if (m_pSndChan[i] == nullptr) {
 					m_pSndChan[i] = m_pMacSndChan;
 					break;
 				}
 			}
 		}
-		m_pMacSndChan = NULL;
+		m_pMacSndChan = nullptr;
 	}
 
 	return (bSuccess);
 }
 
 
-BOOL CBofSound::ReleaseSndResource(VOID) {
+BOOL CBofSound::ReleaseSndResource() {
 	Assert(IsValidObject(this));
 
 	OSErr   sndErr;
 	BOOL    bSuccess = TRUE;
 
-	if (m_hMacSndRes != NULL) {
+	if (m_hMacSndRes != nullptr) {
 
 #if PLAYWAVONMAC
 		sndErr = ReleaseSNDFromWAVFile(m_hMacSndRes);
@@ -1448,14 +1448,14 @@ BOOL CBofSound::ReleaseSndResource(VOID) {
 			bSuccess = FALSE;
 		}
 
-		m_hMacSndRes = NULL;
+		m_hMacSndRes = nullptr;
 	}
 
 	return (bSuccess);
 }
 
 
-BOOL CBofSound::PlayMacSnd(VOID) {
+BOOL CBofSound::PlayMacSnd() {
 	Assert(IsValidObject(this));
 
 	OSErr   sndErr;
@@ -1532,7 +1532,7 @@ BOOL CBofSound::PlayMacSnd(VOID) {
 }
 
 
-BOOL CBofSound::PlayMacSndFile(VOID) {
+BOOL CBofSound::PlayMacSndFile() {
 	Assert(IsValidObject(this));
 
 	BOOL    bSuccess = TRUE;
@@ -1666,7 +1666,7 @@ BOOL CBofSound::PlayMacSndFile(VOID) {
 		// our callbacks
 		// scg 01.09.97 change to use global UPP
 
-		sndErr = SndStartFilePlay(m_pMacSndChan, m_resRefNum, 0, kTotalSize, NULL, NULL, gFilePlayCompletionUPP,
+		sndErr = SndStartFilePlay(m_pMacSndChan, m_resRefNum, 0, kTotalSize, nullptr, nullptr, gFilePlayCompletionUPP,
 		                          (m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
 
 #endif
@@ -1721,7 +1721,7 @@ BOOL CBofSound::PlayMacMidi() {
 			// convert C string to Pascal String - IN PLACE
 			pStr = (UCHAR *)StrCToPascal(szFullFile);
 
-			if ((m_pMacMidi = new MacQT(pStr, 0, 0)) == NULL) {
+			if ((m_pMacMidi = new MacQT(pStr, 0, 0)) == nullptr) {
 
 				ReportError(ERR_MEMORY);
 
@@ -1756,7 +1756,7 @@ BOOL CBofSound::MacReplay(CBofSound *pSound) {
 	BOOL bSuccess = TRUE;
 	OSErr  sndErr;
 
-	Assert(pSound != NULL);
+	Assert(pSound != nullptr);
 
 	if (pSound->m_errCode == ERR_NONE) {
 
@@ -1814,7 +1814,7 @@ BOOL CBofSound::MacReplay(CBofSound *pSound) {
 					;
 			}
 #else
-			sndErr = SndStartFilePlay(pSound->m_pMacSndChan, pSound->m_resRefNum, 0, kTotalSize, NULL, NULL,
+			sndErr = SndStartFilePlay(pSound->m_pMacSndChan, pSound->m_resRefNum, 0, kTotalSize, nullptr, nullptr,
 			                          gFilePlayCompletionUPP, (pSound->m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
 #endif
 			if (sndErr) {
@@ -1878,7 +1878,7 @@ pascal VOID CBofSound::OnMacFileCallback(SndChannelPtr SndChan) {
 CBofSound *CBofSound::OnMacSndStopped(CBofSound *pSound) {
 	BOOL        bSuccess = FALSE;                         // success/failure status
 
-	if (pSound != NULL) {                                 // release the data structures
+	if (pSound != nullptr) {                                 // release the data structures
 		if (pSound->Playing()) {
 
 			pSound->m_bPlaying = FALSE;                   // mark sound as no longer playing
@@ -1919,16 +1919,16 @@ CBofSound *CBofSound::OnMacSndStopped(CBofSound *pSound) {
 		// Close open res file
 		if (pSound->m_resRefNum) {
 			CloseResFile(pSound->m_resRefNum);
-			pSound->m_resRefNum = 0;                // NULL --> 0 scg 01.10.97
+			pSound->m_resRefNum = 0;                // nullptr --> 0 scg 01.10.97
 		}
 #endif
 
 		if (pSound->m_wFlags & SOUND_AUTODELETE) {    // scrag it if marked for deletion
 			delete pSound;
-			pSound = NULL;
+			pSound = nullptr;
 
 		} else if (!(pSound->m_wFlags & SOUND_NOTIFY))       // return sound pointer on notify
-			pSound = NULL;
+			pSound = nullptr;
 	}
 
 	return (pSound);
@@ -1965,7 +1965,7 @@ BOOL CBofSound::PauseMacFile() {
 
 BOOL CBofSound::PauseMacMidi() {
 	Assert(IsValidObject(this));
-	Assert(m_pMacMidi != NULL);
+	Assert(m_pMacMidi != nullptr);
 
 	m_pMacMidi->Stop();
 
@@ -2047,7 +2047,7 @@ BOOL CBofSound::StopMacFile() {
 BOOL CBofSound::StopMacMidi() {
 	Assert(IsValidObject(this));
 
-	Assert(m_pMacMidi != NULL);
+	Assert(m_pMacMidi != nullptr);
 
 	m_pMacMidi->Stop();
 
@@ -2132,13 +2132,13 @@ OSErr CBofSound::SendFlush(SndChannelPtr aSndChan) {
 
 VOID CBofSound::SetDrivePath(const CHAR *pszDrivePath) {
 	m_szDrivePath[0] = '\0';
-	if (pszDrivePath != NULL) {
+	if (pszDrivePath != nullptr) {
 		Common::strlcpy(m_szDrivePath, pszDrivePath, MAX_DIRPATH);
 	}
 }
 
 VOID CBofSound::GetDrivePath(CHAR *pszDrivePath) {
-	Assert(pszDrivePath != NULL);
+	Assert(pszDrivePath != nullptr);
 
 	*pszDrivePath = '\0';
 	if (m_szDrivePath[0] != '\0') {
@@ -2146,7 +2146,7 @@ VOID CBofSound::GetDrivePath(CHAR *pszDrivePath) {
 	}
 }
 
-BOOL CBofSound::SoundsPlayingNotOver(VOID) {
+BOOL CBofSound::SoundsPlayingNotOver() {
 	CSound *pSound;
 	BOOL bPlaying;
 
@@ -2160,7 +2160,7 @@ BOOL CBofSound::SoundsPlayingNotOver(VOID) {
 	// walk through sound list, and check for sounds that need attention
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		if (pSound->Playing() &&
 		        (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX) &&
@@ -2176,7 +2176,7 @@ BOOL CBofSound::SoundsPlayingNotOver(VOID) {
 }
 
 
-BOOL CBofSound::WaveSoundPlaying(VOID) {
+BOOL CBofSound::WaveSoundPlaying() {
 	CSound *pSound;
 	BOOL bPlaying;
 
@@ -2190,7 +2190,7 @@ BOOL CBofSound::WaveSoundPlaying(VOID) {
 	// walk through sound list, and check for sounds that need attention
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 			bPlaying = TRUE;
@@ -2204,7 +2204,7 @@ BOOL CBofSound::WaveSoundPlaying(VOID) {
 }
 
 
-BOOL CBofSound::MidiSoundPlaying(VOID) {
+BOOL CBofSound::MidiSoundPlaying() {
 	CSound *pSound;
 	BOOL bPlaying;
 
@@ -2218,7 +2218,7 @@ BOOL CBofSound::MidiSoundPlaying(VOID) {
 	// walk through sound list, and check for sounds that need attention
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
 			bPlaying = TRUE;
@@ -2249,7 +2249,7 @@ VOID CBofSound::AudioTask() {
 	// walk through sound list, and check for sounds that need attention
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 #if BOF_MAC || BOF_WINMAC
 
@@ -2259,7 +2259,7 @@ VOID CBofSound::AudioTask() {
 
 			// if it is playing and it has a valid sound channel
 			//
-			if (pSound->Playing() && (pSound->m_pMacSndChan != NULL)) {
+			if (pSound->Playing() && (pSound->m_pMacSndChan != nullptr)) {
 
 				// if the channel flag has been set to FALSE, it's finished playing
 				//
@@ -2308,7 +2308,7 @@ VOID CBofSound::AudioTask() {
 
 				// Has this sound been played?
 				//
-				if (pSound->m_hSample != NULL) {
+				if (pSound->m_hSample != nullptr) {
 
 					// And, Is it done?
 					//
@@ -2336,7 +2336,7 @@ VOID CBofSound::AudioTask() {
 
 			} else if (pSound->m_wFlags & SOUND_MIDI) {
 
-				if (pSound->m_hSequence != NULL) {
+				if (pSound->m_hSequence != nullptr) {
 
 					// And, Is it done?
 					//
@@ -2359,20 +2359,20 @@ VOID CBofSound::AudioTask() {
 }
 
 #if BOF_WINDOWS && !BOF_WINMAC
-ERROR_CODE CBofSound::PlayMSS(VOID) {
+ERROR_CODE CBofSound::PlayMSS() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
 
 		// If it's not yet loaded, then load it now
 		//
-		if (m_pFileBuf == NULL) {
+		if (m_pFileBuf == nullptr) {
 			LoadSound();
 		}
 
-		Assert(m_pFileBuf != NULL);
+		Assert(m_pFileBuf != nullptr);
 
-		if (m_pFileBuf != NULL) {
+		if (m_pFileBuf != nullptr) {
 
 			if (m_bInQueue) {
 				SetVolume(m_nSlotVol[m_iQSlot]);
@@ -2381,9 +2381,9 @@ ERROR_CODE CBofSound::PlayMSS(VOID) {
 			// Then, Play it
 			//
 			HDIGDRIVER hDriver;
-			if ((hDriver = CBofApp::GetApp()->GetDriver()) != NULL) {
+			if ((hDriver = CBofApp::GetApp()->GetDriver()) != nullptr) {
 
-				if ((m_hSample = AIL_allocate_sample_handle(hDriver)) != NULL) {
+				if ((m_hSample = AIL_allocate_sample_handle(hDriver)) != nullptr) {
 					AIL_init_sample(m_hSample);
 					AIL_set_sample_file(m_hSample, m_pFileBuf, 0);
 					AIL_set_sample_loop_count(m_hSample, m_wLoops);
@@ -2418,7 +2418,7 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 	// Including any that are currently playing
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 
 		// Prefetch next sound in case Stop() deletes this one
 		pNextSound = pSound->GetNext();
@@ -2440,13 +2440,13 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 
 #endif
 /*
-BOOL CBofSound::Playing(VOID)
+BOOL CBofSound::Playing()
 {
     BOOL bPlaying;
 
     bPlaying = FALSE;
 
-    if (m_hSample != NULL && (AIL_sample_status(m_hSample) == SMP_PLAYING)) {
+    if (m_hSample != nullptr && (AIL_sample_status(m_hSample) == SMP_PLAYING)) {
         bPlaying = TRUE;
     }
 
@@ -2467,7 +2467,7 @@ VOID CBofSound::SetQVol(INT nSlot, INT nVol) {
 	// Set all Queued sounds in specified slot to this volume
 	//
 	pSound = m_pSoundChain;
-	while (pSound != NULL) {
+	while (pSound != nullptr) {
 		if (pSound->m_bInQueue && pSound->m_iQSlot == nSlot) {
 			pSound->SetVolume(nVol);
 		}

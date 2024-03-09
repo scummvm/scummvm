@@ -61,7 +61,7 @@ CBagMovieObject::CBagMovieObject() {
 	SetOnBlack(FALSE);
 
 	// jwl 1.2.96 default is no associated sound.
-	SetAssociatedSound(NULL);
+	SetAssociatedSound(nullptr);
 }
 
 CBagMovieObject::~CBagMovieObject() {
@@ -76,7 +76,7 @@ CBagMovieObject::~CBagMovieObject() {
 	// jwl 1.2.96 if there's a sound with this guy, then trash it here.
 	if (GetAssociatedSound()) {
 		delete GetAssociatedSound();
-		SetAssociatedSound(NULL);
+		SetAssociatedSound(nullptr);
 	}
 }
 
@@ -92,7 +92,7 @@ ERROR_CODE CBagMovieObject::Detach()
 }
 
 
-CBofRect CBagMovieObject::GetRect(VOID)
+CBofRect CBagMovieObject::GetRect()
 {
     CBofPoint p = GetPosition();
     CBofSize  s = GetSize();
@@ -107,10 +107,10 @@ CBofRect CBagMovieObject::GetRect(VOID)
 #endif
 BOOL CBagMovieObject::RunObject() {
 	BOOL rc;
-	CBagPDA *pPDA = NULL;
-	CBofWindow *pNewWin = NULL;
+	CBagPDA *pPDA = nullptr;
+	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	BOOL bZoomed = (pPDAz == NULL ? FALSE : pPDAz->GetZoomed());
+	BOOL bZoomed = (pPDAz == nullptr ? FALSE : pPDAz->GetZoomed());
 
 	// MDM 7/22
 	// Get a pointer to the current game window
@@ -208,13 +208,13 @@ BOOL CBagMovieObject::RunObject() {
 
 			BOOL isFiltered = FALSE;
 			CBagMasterWin *pWnd = CBagel::GetBagApp()->GetMasterWnd();
-			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : NULL);
+			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
-			if (pPDA == NULL) {
+			if (pPDA == nullptr) {
 				pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 			}
-			Assert(pPDA != NULL);
+			Assert(pPDA != nullptr);
 
 			// jwl 11.29.96 If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
@@ -230,9 +230,9 @@ BOOL CBagMovieObject::RunObject() {
 				// BCW 08/27/96 04:29 pm
 				// Hide the cursor by causing 1 more paint (and specifying no cursor)
 				//
-				if (pWnd != NULL) {
-					if (pSDevWnd != NULL) {
-						pSDevWnd->PaintScreen(NULL, FALSE);
+				if (pWnd != nullptr) {
+					if (pSDevWnd != nullptr) {
+						pSDevWnd->PaintScreen(nullptr, FALSE);
 						isFiltered = pSDevWnd->IsFiltered();
 					}
 				}
@@ -288,7 +288,7 @@ BOOL CBagMovieObject::RunObject() {
 #if BOF_MAC
 				if (pNewWin) {
 					delete pNewWin;
-					pNewWin = NULL;
+					pNewWin = nullptr;
 				}
 #endif
 			} else {
@@ -354,7 +354,7 @@ BOOL CBagMovieObject::RunObject() {
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
 
-					if (pMovie != NULL && pMovie->ErrorOccurred() == FALSE) {
+					if (pMovie != nullptr && pMovie->ErrorOccurred() == FALSE) {
 						pMovie->Show();
 						CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 						pWnd->FlushAllMessages();
@@ -367,7 +367,7 @@ BOOL CBagMovieObject::RunObject() {
 
 					if (pNewWin) {
 						delete pNewWin;
-						pNewWin = NULL;
+						pNewWin = nullptr;
 					}
 				} else {
 
@@ -443,7 +443,7 @@ BOOL CBagMovieObject::RunObject() {
 						// jwl 12.24.96 if we put a black window up, then
 						if (pNewWin) {
 							delete pNewWin;
-							pNewWin = NULL;
+							pNewWin = nullptr;
 						}
 					}
 				}
@@ -693,8 +693,8 @@ BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
 	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 
 	// jwl 11.29.96 queue this message if any one of a variety of things is happening.
-	Assert(pPDA != NULL);
-	Assert(pPDAz != NULL);
+	Assert(pPDA != nullptr);
+	Assert(pPDAz != nullptr);
 
 	if (pPDA && pPDAz) {
 		if ((pPDAz && pPDAz->GetZoomed()) ||              // we're zoomed

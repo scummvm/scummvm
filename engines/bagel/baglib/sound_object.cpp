@@ -78,7 +78,7 @@ ERROR_CODE CBagSoundObject::NewSound(CBofWindow *pWin) {
 	return errCode;
 }
 
-VOID CBagSoundObject::KillSound(VOID) {
+VOID CBagSoundObject::KillSound() {
 	if (m_pSound != nullptr) {
 		delete m_pSound;
 		m_pSound = nullptr;

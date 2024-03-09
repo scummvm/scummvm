@@ -93,7 +93,7 @@ public:
 	SBarSlotWnd();
 
 	virtual VOID        OnBofButton(CBofObject *pButton, INT nState);
-	virtual VOID        OnMainLoop(VOID);
+	virtual VOID        OnMainLoop();
 
 	virtual ERROR_CODE  Attach();   // This function attachs the background and nessasary bitmaps
 	virtual ERROR_CODE  Detach();   // This function detachs the background and nessasary bitmaps

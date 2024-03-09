@@ -46,30 +46,30 @@ class CBofDialog : public CBofWindow {
 
 	// Construction
 public:
-	CBofDialog(VOID);
-	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = NULL, CBofWindow *pParent = NULL, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
-	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = NULL, CBofWindow *pParent = NULL, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+	CBofDialog();
+	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
 	virtual ~CBofDialog();
 
-	ERROR_CODE  Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = NULL, UINT nControlID = 0);
-	ERROR_CODE  Create(const CHAR *pszName, CBofRect *pRect = NULL, CBofWindow *pParent = NULL, UINT nControlID = 0);
+	ERROR_CODE  Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE  Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 
 	VOID        SetFlags(ULONG lFlags)      {
 		m_lFlags = lFlags;
 	}
-	ULONG       GetFlags(VOID)              {
+	ULONG       GetFlags()              {
 		return (m_lFlags);
 	}
 
-	INT         DoModal(VOID);
-	VOID        EndModal(VOID)              {
+	INT         DoModal();
+	VOID        EndModal()              {
 		m_bEndDialog = TRUE;
 	}
 
 	VOID        SetReturnValue(INT nValue)  {
 		m_nReturnValue = nValue;
 	}
-	INT         GetReturnValue(VOID)        {
+	INT         GetReturnValue()        {
 		return (m_nReturnValue);
 	}
 #if BOF_MAC
@@ -78,13 +78,13 @@ public:
 
 protected:
 	virtual ERROR_CODE Paint(CBofRect *pRect);
-	virtual ERROR_CODE PaintBackground(VOID);
-	virtual ERROR_CODE SaveBackground(VOID);
-	virtual ERROR_CODE KillBackground(VOID);
+	virtual ERROR_CODE PaintBackground();
+	virtual ERROR_CODE SaveBackground();
+	virtual ERROR_CODE KillBackground();
 
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose(VOID);
-	virtual VOID OnInitDialog(VOID);
+	virtual VOID OnClose();
+	virtual VOID OnInitDialog();
 
 	CBofBitmap *m_pDlgBackground;
 	ULONG       m_lFlags;

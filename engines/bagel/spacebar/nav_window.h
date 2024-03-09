@@ -72,48 +72,48 @@ protected:
 	//virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
 	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	virtual VOID OnTimer(UINT tId);
-	//virtual VOID OnClose(VOID) { Quit(); }
+	//virtual VOID OnClose() { Quit(); }
 	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMainLoop(VOID);
+	virtual VOID OnMainLoop();
 
 	// jwl 07.25.96 split up the onmousedown method
-	VOID RefreshData(VOID);     // bar 10/27/96 added func to just paint text
+	VOID RefreshData();     // bar 10/27/96 added func to just paint text
 
-	VOID OnPinna(VOID);
-	VOID OnHpoctyl(VOID);
-	VOID OnArmpit(VOID);
-	VOID OnYzore(VOID);
-	VOID OnBulbus(VOID);
-	VOID OnDingle(VOID);
-	VOID OnKarkas(VOID);
-	VOID OnFruufnia(VOID);
-	VOID OnWilbur(VOID);
-	VOID OnMcKelvey(VOID);
-	VOID OnMedge(VOID);
-	VOID OnWall(VOID);
-	VOID OnWoo(VOID);
-	VOID OnRoman(VOID);
-	VOID OnWeed(VOID);
-	VOID OnBok(VOID);
-	VOID OnPizer(VOID);
-	VOID OnBackwater(VOID);
-	VOID OnUranus(VOID);
-	VOID OnToejam(VOID);
-	VOID OnHellhole(VOID);
-	VOID OnPustule(VOID);
-	VOID OnSwamprock(VOID);
-	VOID OnSlug(VOID);
-	VOID OnMaggotsnest(VOID);
-	VOID OnPeggleboz(VOID);
-	VOID OnArcheroids(VOID);
-	VOID OnPackRat(VOID);
-	VOID OnBeacon(VOID);
-	VOID OnMankala(VOID);
-	VOID OnLife(VOID);
-	VOID OnFuge(VOID);
-	VOID OnGarfunkel(VOID);
-	VOID OnBattlefish(VOID);
-	VOID OnNoVacancy(VOID);
+	VOID OnPinna();
+	VOID OnHpoctyl();
+	VOID OnArmpit();
+	VOID OnYzore();
+	VOID OnBulbus();
+	VOID OnDingle();
+	VOID OnKarkas();
+	VOID OnFruufnia();
+	VOID OnWilbur();
+	VOID OnMcKelvey();
+	VOID OnMedge();
+	VOID OnWall();
+	VOID OnWoo();
+	VOID OnRoman();
+	VOID OnWeed();
+	VOID OnBok();
+	VOID OnPizer();
+	VOID OnBackwater();
+	VOID OnUranus();
+	VOID OnToejam();
+	VOID OnHellhole();
+	VOID OnPustule();
+	VOID OnSwamprock();
+	VOID OnSlug();
+	VOID OnMaggotsnest();
+	VOID OnPeggleboz();
+	VOID OnArcheroids();
+	VOID OnPackRat();
+	VOID OnBeacon();
+	VOID OnMankala();
+	VOID OnLife();
+	VOID OnFuge();
+	VOID OnGarfunkel();
+	VOID OnBattlefish();
+	VOID OnNoVacancy();
 
 	// Data
 	//

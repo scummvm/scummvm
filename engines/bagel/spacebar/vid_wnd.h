@@ -66,7 +66,7 @@ public:
 		m_fTimerDiff = fDiff;
 	}
 
-	BOOL                HasDisc(VOID);
+	BOOL                HasDisc();
 	INT                 GetFrame(DOUBLE fTime, INT nUseDisc);
 
 	virtual ERROR_CODE  Attach();

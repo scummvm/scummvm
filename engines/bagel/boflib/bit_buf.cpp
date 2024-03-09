@@ -278,7 +278,7 @@ ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize) {
 	/*
 	 * amount read
 	 */
-	if (rSize != NULL)
+	if (rSize != nullptr)
 		*rSize = saveSize - size;
 
 	return (ERR_NONE);
@@ -314,7 +314,7 @@ ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen) {
 	else {
 		memcpy(data, zg.bufVar.bufPtr, len);
 		zg.bufVar.bufPtr += len;
-		if (rLen != NULL)
+		if (rLen != nullptr)
 			*rLen = len;
 	}
 
@@ -599,7 +599,7 @@ ERROR_CODE BitWriteFlush(LONG *rFileSize) {
 		 * update file size
 		 */
 		zg.bitVar.fileSize += used;
-		if (rFileSize != NULL)
+		if (rFileSize != nullptr)
 			*rFileSize = zg.bitVar.fileSize;
 	} else {
 		errCode = ERR_FWRITE;

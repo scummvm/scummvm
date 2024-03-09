@@ -26,7 +26,7 @@ namespace Bagel {
 
 CBagBmpObject::CBagBmpObject() : CBagObject() {
 	m_xObjType = BMPOBJ;
-	m_xBmp = NULL;
+	m_xBmp = nullptr;
 	SetOverCursor(1);
 	SetTimeless(TRUE);
 }
@@ -36,7 +36,7 @@ CBagBmpObject::~CBagBmpObject() {
 }
 
 ERROR_CODE CBagBmpObject::Attach(CBofPalette *pPalette) {
-	if ((m_xBmp = new CBofBitmap(GetFileName(), pPalette)) == NULL) {
+	if ((m_xBmp = new CBofBitmap(GetFileName(), pPalette)) == nullptr) {
 		BofMessageBox(m_xBmp->GetFileName(), __FILE__);
 	}
 	return CBagObject::Attach();
@@ -45,13 +45,13 @@ ERROR_CODE CBagBmpObject::Attach(CBofPalette *pPalette) {
 ERROR_CODE CBagBmpObject::Detach() {
 	if (m_xBmp) {
 		delete m_xBmp;
-		m_xBmp = NULL;
+		m_xBmp = nullptr;
 	}
 	return CBagObject::Detach();
 }
 
 CBofRect
-CBagBmpObject::GetRect(VOID) {
+CBagBmpObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 	if (m_xBmp)

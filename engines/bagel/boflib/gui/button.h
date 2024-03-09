@@ -53,19 +53,19 @@ typedef struct {
 
 class CBofButton : public CBofWindow {
 public:
-	CBofButton(VOID);
+	CBofButton();
 	CBofButton(ST_COLORSCHEME *pColorScheme);
 	virtual ~CBofButton();
 
 	VOID LoadColorScheme(ST_COLORSCHEME *pColorScheme);
 
-	virtual ERROR_CODE Paint(CBofRect *pRect = NULL);
+	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	virtual VOID Enable(VOID);
-	virtual VOID Disable(VOID);
+	virtual VOID Enable();
+	virtual VOID Disable();
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
-	INT GetState(VOID) {
+	INT GetState() {
 		return (m_nState);
 	}
 
@@ -86,7 +86,7 @@ protected:
 
 class CBofRadioButton : public CBofButton {
 public:
-	virtual ERROR_CODE Paint(CBofRect *pRect = NULL);
+	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -96,11 +96,11 @@ protected:
 class CBofCheckButton : public CBofButton {
 public:
 	ERROR_CODE SetCheck(BOOL bChecked);
-	BOOL GetCheck(VOID) {
+	BOOL GetCheck() {
 		return (m_nState == BUTTON_CHECKED);
 	}
 
-	virtual ERROR_CODE Paint(CBofRect *pRect = NULL);
+	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -110,7 +110,7 @@ protected:
 class CBofBmpButton : public CBofWindow {
 public:
 	// Constructors
-	CBofBmpButton(VOID);
+	CBofBmpButton();
 
 	virtual ~CBofBmpButton();
 
@@ -118,16 +118,16 @@ public:
 	// them after you give them to LoadBitmaps.
 	//
 	ERROR_CODE LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, INT nMaskColor = NOT_TRANSPARENT);
-	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, const CHAR *pszDown = NULL, const CHAR *pszFocus = NULL, const CHAR *pszDisabled = NULL, INT nMaskColor = NOT_TRANSPARENT);
+	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, const CHAR *pszDown = nullptr, const CHAR *pszFocus = nullptr, const CHAR *pszDisabled = nullptr, INT nMaskColor = NOT_TRANSPARENT);
 
-	ERROR_CODE Paint(CBofRect *pRect = NULL);
+	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
-	INT GetState(VOID) {
+	INT GetState() {
 		return (m_nState);
 	}
 
-	CBofBitmap *GetButtonBmp(VOID) {
+	CBofBitmap *GetButtonBmp() {
 		return m_pButtonUp;
 	}
 

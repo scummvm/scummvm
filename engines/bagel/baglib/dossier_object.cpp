@@ -299,7 +299,7 @@ ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, n);
 }
 
-CBofRect CBagDossierObject::GetRect(VOID) {
+CBofRect CBagDossierObject::GetRect() {
 	CBofRect r;
 	CBofPoint p = GetPosition();
 

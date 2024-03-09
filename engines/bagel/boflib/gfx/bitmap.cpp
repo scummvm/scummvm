@@ -142,7 +142,7 @@ CBofBitmap::~CBofBitmap() {
 
 ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 	Assert(IsValidObject(this));
-	Assert(pPalette != NULL);
+	Assert(pPalette != nullptr);
 
 	if (m_errCode == ERR_NONE) {
 
@@ -157,9 +157,9 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		HPALETTE hPal;
 		HDC hDC;
 
-		if ((hDC = ::GetDC(NULL)) != NULL) {
+		if ((hDC = ::GetDC(nullptr)) != nullptr) {
 
-			if ((hPal = ::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), FALSE)) == NULL) {
+			if ((hPal = ::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), FALSE)) == nullptr) {
 				LogError("::SelectPalette() failed");
 			}
 
@@ -173,10 +173,10 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 			// Can't already have a bitmap handle
 			// jwl 12.06.96 unless we already have a private bmp.
-			Assert(m_hBitmap == NULL);
-			Assert(m_pBits == NULL);
+			Assert(m_hBitmap == nullptr);
+			Assert(m_pBits == nullptr);
 
-			if ((m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO *)&m_cBitmapInfo.m_cInfoHeader, DIB_RGB_COLORS, (VOID **)&m_pBits, NULL, NULL)) != NULL) {
+			if ((m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO *)&m_cBitmapInfo.m_cInfoHeader, DIB_RGB_COLORS, (VOID **)&m_pBits, nullptr, nullptr)) != nullptr) {
 
 				m_nDX = m_cBitmapInfo.m_cInfoHeader.biWidth;
 				m_nDY = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
@@ -184,21 +184,21 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 				m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 
 				// Can't already have a device context for this bitmap
-				Assert(m_hDC == NULL);
+				Assert(m_hDC == nullptr);
 
-				if ((m_hDC = ::CreateCompatibleDC(NULL)) != NULL) {
+				if ((m_hDC = ::CreateCompatibleDC(nullptr)) != nullptr) {
 
-					if ((m_hOldBmp = (HBITMAP)::SelectObject(m_hDC, m_hBitmap)) == NULL) {
+					if ((m_hOldBmp = (HBITMAP)::SelectObject(m_hDC, m_hBitmap)) == nullptr) {
 						LogError("::SelectObject() failed");
 					}
 
-					Assert(m_pPalette != NULL);
+					Assert(m_pPalette != nullptr);
 
 					// BCW - 01/19/97 07:56 pm
 					// Commented out because this was the cause of the MASSIVE
 					// GDI resource leak.
 					//
-					/*if ((m_hPalOld = ::SelectPalette(m_hDC, m_pPalette->GetPalette(), FALSE)) == NULL) {
+					/*if ((m_hPalOld = ::SelectPalette(m_hDC, m_pPalette->GetPalette(), FALSE)) == nullptr) {
 					    LogError("::SelectPalette() failed");
 					}
 					if (::RealizePalette(m_hDC) == GDI_ERROR) {
@@ -213,11 +213,11 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 				ReportError(ERR_MEMORY, "CreateDIBSection failed");
 			}
 
-			if (::SelectPalette(hDC, hPal, FALSE) == NULL) {
+			if (::SelectPalette(hDC, hPal, FALSE) == nullptr) {
 				LogError("::SelectPalette() failed");
 			}
 
-			::ReleaseDC(NULL, hDC);
+			::ReleaseDC(nullptr, hDC);
 		}
 
 #elif BOF_MAC || BOF_WINMAC || BOF_WIN16
@@ -230,12 +230,12 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 		if (m_bPrivateBmp == FALSE) {
-			if ((m_pBits = (UBYTE *)BofAlloc((LONG)m_nScanDX * m_nDY)) != NULL) {
+			if ((m_pBits = (UBYTE *)BofAlloc((LONG)m_nScanDX * m_nDY)) != nullptr) {
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (LONG)m_nScanDX * m_nDY);
 			}
 		} else {
-			Assert(m_pBits != NULL);
+			Assert(m_pBits != nullptr);
 		}
 
 #endif // BOF_MAC
