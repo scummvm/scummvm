@@ -237,27 +237,27 @@ private:
 
 private:
 	CHAR m_szFileName[MAX_FNAME]; // path spec for sound file
-	CHAR m_chType;                // type of sound commands used
+	int8 m_chType = 0;            // type of sound commands used
 
-	WORD m_wLoops;   // number of times to loop the sound (0xFFFF means infinite)
-	WORD m_wFlags;   // flags for playing
-	BOOL m_bPaused;  // whether its paused
-	BOOL m_bPlaying; // whether its playing
+	WORD m_wLoops = 0;   // number of times to loop the sound (0xFFFF means infinite)
+	WORD m_wFlags = 0;   // flags for playing
+	BOOL m_bPaused = FALSE;  // whether its paused
+	BOOL m_bPlaying = FALSE; // whether its playing
 
-	BOOL m_bExtensionsUsed;
-	DWORD m_dwPlayStart;
-	DWORD m_dwRePlayStart;
-	DWORD m_dwRePlayEnd;
+	BOOL m_bExtensionsUsed = FALSE;
+	DWORD m_dwPlayStart = 0;
+	DWORD m_dwRePlayStart = 0;
+	DWORD m_dwRePlayEnd = 0;
 #if BOF_WINDOWS
 	HSAMPLE m_hSample;
 	HSEQUENCE m_hSequence;
 #endif
-	UBYTE *m_pFileBuf;
+	UBYTE *m_pFileBuf = nullptr;
 
-	INT m_iQSlot;
-	BOOL m_bInQueue;
-	BOOL m_bStarted;
-	INT m_nVol;
+	INT m_iQSlot = 0;
+	BOOL m_bInQueue = FALSE;
+	BOOL m_bStarted = FALSE;
+	INT m_nVol = 0;
 
 #if BOF_MAC || BOF_WINMAC
 
@@ -275,7 +275,7 @@ private:
 #endif
 #endif
 
-	CBofWindow *m_pWnd; // parent window for messages
+	CBofWindow *m_pWnd = nullptr; // parent window for messages
 
 	static CHAR m_szDrivePath[MAX_DIRPATH]; // path spec to drive
 	static CBofSound *m_pSoundChain;        // first item in chain or NULL
