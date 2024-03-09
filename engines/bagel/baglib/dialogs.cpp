@@ -52,7 +52,7 @@ static BOOL g_b1 = FALSE;
 
 CBagQuitDialog::CBagQuitDialog() {
 	// Inits
-	m_nReturnValue = -1;
+	_nReturnValue = -1;
 	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
 	}
@@ -119,7 +119,7 @@ VOID CBagQuitDialog::OnClose() {
 		}
 	}
 
-	if (m_nReturnValue == QUIT_BTN || m_nReturnValue == SAVE_BTN)
+	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
 		KillBackground();
 
 	CBofDialog::OnClose();
@@ -191,9 +191,9 @@ VOID CBagQuitDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 
 CBagNextCDDialog::CBagNextCDDialog() {
 	// Inits
-	m_nReturnValue = -1;
+	_nReturnValue = -1;
 	m_pButton = nullptr;
-	m_lFlags = 0;
+	_lFlags = 0;
 }
 
 
@@ -254,7 +254,7 @@ VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	m_bFirstTime = FALSE;
+	_bFirstTime = FALSE;
 
 	// Paint the dialog
 	if (m_pBackdrop != nullptr) {
@@ -266,7 +266,7 @@ VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	m_pButton->Paint();
 #endif
 
-	m_bHavePainted = TRUE;
+	_bHavePainted = TRUE;
 
 	ValidateAnscestors();
 }

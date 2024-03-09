@@ -2258,9 +2258,9 @@ VOID CBagStorageDevDlg::OnClose() {
 
 	// KillBackground();
 	//
-	if (m_pDlgBackground != nullptr) {
-		delete m_pDlgBackground;
-		m_pDlgBackground = nullptr;
+	if (_pDlgBackground != nullptr) {
+		delete _pDlgBackground;
+		_pDlgBackground = nullptr;
 	}
 
 	// since our sdevdlg doesn't have a detach active objects

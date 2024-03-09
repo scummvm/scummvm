@@ -39,12 +39,12 @@ LRESULT CALLBACK BofWindowProcedure(HWND hWnd, UINT nMessage, WPARAM wParam, LPA
 CBofDialog::CBofDialog() {
 	// Inits
 	//
-	m_pDlgBackground = nullptr;
-	m_bFirstTime = TRUE;
-	m_bTempBitmap = FALSE;
-	m_lFlags = BOFDLG_DEFAULT;
-	m_bEndDialog = FALSE;
-	m_bHavePainted = FALSE;
+	_pDlgBackground = nullptr;
+	_bFirstTime = TRUE;
+	_bTempBitmap = FALSE;
+	_lFlags = BOFDLG_DEFAULT;
+	_bEndDialog = FALSE;
+	_bHavePainted = FALSE;
 }
 
 
@@ -56,12 +56,12 @@ CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pPa
 
 	// Inits
 	//
-	m_pDlgBackground = nullptr;
-	m_bFirstTime = TRUE;
-	m_bTempBitmap = FALSE;
-	m_lFlags = lFlags;
-	m_bEndDialog = FALSE;
-	m_bHavePainted = FALSE;
+	_pDlgBackground = nullptr;
+	_bFirstTime = TRUE;
+	_bTempBitmap = FALSE;
+	_lFlags = lFlags;
+	_bEndDialog = FALSE;
+	_bHavePainted = FALSE;
 
 	CBofBitmap *pBmp;
 
@@ -91,12 +91,12 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 
 	// Inits
 	//
-	m_pDlgBackground = nullptr;
-	m_bFirstTime = TRUE;
-	m_bTempBitmap = FALSE;
-	m_lFlags = lFlags;
-	m_bEndDialog = FALSE;
-	m_bHavePainted = FALSE;
+	_pDlgBackground = nullptr;
+	_bFirstTime = TRUE;
+	_bTempBitmap = FALSE;
+	_lFlags = lFlags;
+	_bEndDialog = FALSE;
+	_bHavePainted = FALSE;
 
 	SetBackdrop(pImage);
 
@@ -114,9 +114,9 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 CBofDialog::~CBofDialog() {
 	Assert(IsValidObject(this));
 
-	if (m_pDlgBackground != nullptr) {
-		delete m_pDlgBackground;
-		m_pDlgBackground = nullptr;
+	if (_pDlgBackground != nullptr) {
+		delete _pDlgBackground;
+		_pDlgBackground = nullptr;
 	}
 
 	//
@@ -306,7 +306,7 @@ VOID CBofDialog::OnClose() {
 
 	// if we saved the background, then paint it
 	//
-	if (m_lFlags & BOFDLG_SAVEBACKGND) {
+	if (_lFlags & BOFDLG_SAVEBACKGND) {
 		PaintBackground();
 
 		// need to validate the portion of the parent window that we obscured (but that we also have already repainted)
@@ -324,7 +324,7 @@ VOID CBofDialog::OnClose() {
 	CBofWindow::OnClose();
 
 	// stop our personal message loop
-	m_bEndDialog = TRUE;
+	_bEndDialog = TRUE;
 }
 
 
@@ -334,10 +334,10 @@ ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 
 	// repaint the background behind the dialog
 	//
-	if (!m_bFirstTime) {
+	if (!_bFirstTime) {
 		PaintBackground();
 	}
-	m_bFirstTime = FALSE;
+	_bFirstTime = FALSE;
 
 	// paint the dialog (uses bitmap instead of standard windows dialog)
 	//
@@ -355,9 +355,9 @@ ERROR_CODE CBofDialog::PaintBackground() {
 
 	// paint back the background
 	//
-	if (m_pDlgBackground != nullptr) {
+	if (_pDlgBackground != nullptr) {
 
-		m_errCode = m_pDlgBackground->Paint(this, 0, 0);
+		m_errCode = _pDlgBackground->Paint(this, 0, 0);
 	}
 
 	return (m_errCode);
@@ -367,7 +367,7 @@ ERROR_CODE CBofDialog::PaintBackground() {
 ERROR_CODE CBofDialog::SaveBackground() {
 	Assert(IsValidObject(this));
 
-	if (m_lFlags & BOFDLG_SAVEBACKGND) {
+	if (_lFlags & BOFDLG_SAVEBACKGND) {
 
 		CBofPalette *pPalette;
 
@@ -375,30 +375,30 @@ ERROR_CODE CBofDialog::SaveBackground() {
 
 		// Remove any previous background
 		//
-		if (m_pDlgBackground != nullptr) {
-			delete m_pDlgBackground;
+		if (_pDlgBackground != nullptr) {
+			delete _pDlgBackground;
 		}
 
 		// save a copy of the background
 		//
-		if ((m_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != nullptr) {
-			m_pDlgBackground->CaptureScreen(this, &m_cRect);
-			m_pDlgBackground->SetReadOnly(TRUE);
+		if ((_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != nullptr) {
+			_pDlgBackground->CaptureScreen(this, &m_cRect);
+			_pDlgBackground->SetReadOnly(TRUE);
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", Width(), Height());
 		}
 	}
-	m_bFirstTime = FALSE;
+	_bFirstTime = FALSE;
 
 	return (m_errCode);
 }
 
 
 ERROR_CODE CBofDialog::KillBackground() {
-	if (m_pDlgBackground != nullptr) {
-		delete m_pDlgBackground;
-		m_pDlgBackground = nullptr;
+	if (_pDlgBackground != nullptr) {
+		delete _pDlgBackground;
+		_pDlgBackground = nullptr;
 	}
 
 	return (m_errCode);
@@ -410,13 +410,13 @@ VOID CBofDialog::OnPaint(CBofRect *pRect) {
 
 	Assert(pRect != nullptr);
 
-	if (m_bFirstTime) {
+	if (_bFirstTime) {
 		SaveBackground();
 	}
 
 	Paint(pRect);
 
-	m_bHavePainted = TRUE;
+	_bHavePainted = TRUE;
 }
 
 
@@ -456,13 +456,13 @@ INT CBofDialog::DoModal() {
 
 	// Start our own message loop (simulate Modal)
 	//
-	m_bEndDialog = FALSE;
+	_bEndDialog = FALSE;
 
 	// Acquire and dispatch messages until a WM_QUIT message is received,
 	// or until there are too many errors.
 	//
 	Common::Event evt;
-	while (!m_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
+	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
 		while (g_system->getEventManager()->pollEvent(evt)) {
 //			TranslateMessage(evt);
 //			DispatchMessage(evt);
@@ -526,7 +526,7 @@ INT CBofDialog::DoModal() {
 		m_pActiveWindow = nullptr;
 	}
 
-	return (m_nReturnValue);
+	return (_nReturnValue);
 }
 
 #if BOF_MAC

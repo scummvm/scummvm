@@ -121,11 +121,11 @@ CBagOptWindow::CBagOptWindow() {
 
 	// CBofDialog Inits
 	//
-	m_pDlgBackground = nullptr;
-	m_bFirstTime = TRUE;
-	m_bTempBitmap = FALSE;
-	m_lFlags = BOFDLG_DEFAULT;
-	m_bEndDialog = FALSE;
+	_pDlgBackground = nullptr;
+	_bFirstTime = TRUE;
+	_bTempBitmap = FALSE;
+	_lFlags = BOFDLG_DEFAULT;
+	_bEndDialog = FALSE;
 
 	m_cSystemData.m_bPanimations = TRUE;
 	m_cSystemData.m_bFlythroughs = TRUE;
@@ -142,8 +142,8 @@ CBagOptWindow::CBagOptWindow() {
 	m_cColorScheme.m_cOutline = RGB(123, 156, 206);
 
 	// Don't need to save the background behind this dialog
-	m_lFlags &= ~BOFDLG_SAVEBACKGND;
-	m_nReturnValue = -1;
+	_lFlags &= ~BOFDLG_SAVEBACKGND;
+	_nReturnValue = -1;
 
 	for (INT i = 0; i < NUM_SYS_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
@@ -470,7 +470,7 @@ VOID CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
 			if ((pApp = CBagel::GetBagApp()) != nullptr) {
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 					if (pWin->ShowQuitDialog(this)) {
-						m_nReturnValue = 0;
+						_nReturnValue = 0;
 						KillBackground();
 						Close();
 					}
@@ -766,7 +766,7 @@ VOID CBagOptWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 				if (pWin->ShowQuitDialog(this)) {
-					m_nReturnValue = 0;
+					_nReturnValue = 0;
 					KillBackground();
 					Close();
 				}
