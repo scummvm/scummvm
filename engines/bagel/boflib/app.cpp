@@ -82,10 +82,10 @@ CBofApp::~CBofApp() {
 
 
 VOID CBofApp::StartupCode() {
-	BOOL bRand;
+	m_pBofApp = this;
 
 	// Open the Boffo debug options file (BOFFO.INI)
-	bRand = TRUE;
+	BOOL bRand = TRUE;
 	if ((g_pDebugOptions = new CBofDebugOptions(DEBUG_INI)) != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
 		bRand = g_pDebugOptions->m_bRandomOn;
