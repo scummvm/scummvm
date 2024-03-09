@@ -273,9 +273,6 @@ static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject 
 			}
 		}
 	}
-
-	if (sqrawexists(actor->_table, "postLoad"))
-		sqcall(actor->_table, "postLoad");
 }
 
 static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &json) {
@@ -423,6 +420,12 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 
 	HSQUIRRELVM v = g_twp->getVm();
 	sqsetf(sqrootTbl(v), "SAVEBUILD", static_cast<int>(json["savebuild"]->asIntegerNumber()));
+
+	for(auto a : g_twp->_actors) {
+		if (sqrawexists(a->_table, "postLoad")) {
+			sqcall(a->_table, "postLoad");
+		}
+	}
 
 	sqcall("postLoad");
 
@@ -694,14 +697,46 @@ Common::String toString(const Math::Vector2d &pos) {
 	return Common::String::format("{%d,%d}", (int)pos.getX(), (int)pos.getY());
 }
 
+// static Common::String getCustomAnim(Common::SharedPtr<Object> actor, const Common::String &name) {
+// 	return actor->_animNames.contains(name) ? actor->_animNames[name] : name;
+// }
+
+// static Common::JSONValue *getCustomAnims(Common::SharedPtr<Object> actor) {
+// 	Common::JSONArray jAnims;
+// 	// add head anims
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, HEAD_ANIMNAME)));
+// 	for (int i = 1; i < 7; i++) {
+// 		jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%d", HEAD_ANIMNAME, i))));
+// 	}
+// 	// add stand anims
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", STAND_ANIMNAME, "_front"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", STAND_ANIMNAME, "_back"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", STAND_ANIMNAME, "_left"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", STAND_ANIMNAME, "_right"))));
+// 	// add walk anims
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", WALK_ANIMNAME, "_front"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", WALK_ANIMNAME, "_back"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", WALK_ANIMNAME, "_right"))));
+// 	jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s", WALK_ANIMNAME, "_right"))));
+// 	// add reach anims
+// 	const char *dirs[] = {"_front", "_back", "_right", "_right"};
+// 	for (int i = 0; i < ARRAYSIZE(dirs); i++) {
+// 		const char *dir = dirs[i];
+// 		jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s%s", REACH_ANIMNAME, "_low", dir))));
+// 		jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s%s", REACH_ANIMNAME, "_med", dir))));
+// 		jAnims.push_back(new Common::JSONValue(getCustomAnim(actor, Common::String::format("%s%s%s", REACH_ANIMNAME, "_high", dir))));
+// 	}
+// 	return new Common::JSONValue(jAnims);
+// }
+
 static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
 	Common::JSONValue *jActorValue = tojson(actor->_table, false);
 	Common::JSONObject jActor(jActorValue->asObject());
 	int color = actor->_node->getComputedColor().toInt();
 	if (color != Color().toInt())
 		jActor["_color"] = new Common::JSONValue((long long int)color);
-	//   if (actor->hasCustomAnim())
-	//     jActor["_animations"] = actor->getCustomAnims();
+	// if (!actor->_animNames.empty())
+	// 	jActor["_animations"] = getCustomAnims(actor);
 	jActor["_costume"] = new Common::JSONValue(removeFileExt(actor->_costumeName));
 	jActor["_dir"] = new Common::JSONValue((long long int)actor->_facing);
 	jActor["_lockFacing"] = new Common::JSONValue((long long int)actor->_facingLockValue);

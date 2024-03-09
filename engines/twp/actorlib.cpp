@@ -372,6 +372,11 @@ static SQInteger actorShowHideLayer(HSQUIRRELVM v, bool visible) {
 	if (SQ_FAILED(sqget(v, 3, layer)))
 		return sq_throwerror(v, "failed to get layer");
 	actor->showLayer(layer, visible);
+	if(!visible) {
+		for (int i = 1; i <= 6; i++) {
+			actor->showLayer(Common::String::format("%s%d", layer.c_str(), i), false);
+		}
+	}
 	return 0;
 }
 

@@ -510,16 +510,18 @@ void Object::stopWalking() {
 }
 
 void Object::setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach) {
-	if (head.size() > 0)
-		setHeadIndex(0);
-	_animNames[HEAD_ANIMNAME] = head;
-	showLayer(_animNames[HEAD_ANIMNAME], true);
-	setHeadIndex(1);
-	if (stand.size() > 0)
+	if (!head.empty()) {
+		for (int i = 1; i <= 6; i++) {
+			showLayer(Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), i), true);
+		}
+		_animNames[HEAD_ANIMNAME] = head;
+		setHeadIndex(1);
+	}
+	if (!stand.empty())
 		_animNames[STAND_ANIMNAME] = stand;
-	if (walk.size() > 0)
+	if (!walk.empty())
 		_animNames[WALK_ANIMNAME] = walk;
-	if (reach.size() > 0)
+	if (!reach.empty())
 		_animNames[REACH_ANIMNAME] = reach;
 	if (isWalking())
 		play(getAnimName(WALK_ANIMNAME), true);
