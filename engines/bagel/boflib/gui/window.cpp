@@ -23,6 +23,7 @@
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -155,6 +156,9 @@ CBofWindow::CBofWindow(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeigh
 CBofWindow::~CBofWindow() {
 	Assert(IsValidObject(this));
 
+	delete m_pWindow;
+	m_pWindow = nullptr;
+
 #if BOF_MAC
 	if (IsInActiveList()) {
 		RemoveFromActiveList();
@@ -276,6 +280,15 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	// retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
+	// Calculate effective bounds
+	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
+	if (pParent != nullptr)
+		stRect.translate(pParent->GetWindowRect().left,
+			pParent->GetWindowRect().top);
+		
+	delete m_pWindow;
+	m_pWindow = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
+
 #if BOF_WINDOWS
 
 	STATIC BOOL bInit = FALSE;
@@ -391,13 +404,12 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 #endif
 
 	if (!ErrorOccurred()) {
-
 		CBofPalette *pPalette;
 		if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
 			SelectPalette(pPalette);
 		}
 
-		// retain local coordinates (based on own window)
+		// Retain local coordinates (based on own window)
 		m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 	}
 
