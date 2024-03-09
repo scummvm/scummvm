@@ -105,9 +105,11 @@ bool Thread::update(float elapsed) {
 			resume();
 		}
 	} else if (_numFrames > 0) {
-		_numFrames -= 1;
-		_numFrames = 0;
-		resume();
+		_numFrames--;
+		if (_numFrames <= 0) {
+			_numFrames = 0;
+			resume();
+		}
 	}
 	return isDead();
 }
@@ -211,9 +213,11 @@ bool Cutscene::update(float elapsed) {
 			resume();
 		}
 	} else if (_numFrames > 0) {
-		_numFrames -= 1;
-		_numFrames = 0;
-		resume();
+		_numFrames--;
+		if (_numFrames <= 0) {
+			_numFrames = 0;
+			resume();
+		}
 	}
 
 	switch (_state) {
