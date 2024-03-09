@@ -185,7 +185,7 @@ extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, co
 #define Assert(f) BofAssert(f, __LINE__, __FILE__, NULL)
 #endif /* __TIMESTAMP__ */
 
-#endif
+#endif /* _DEBUG */
 
 #define Abort(p) BofAbort(p, __FILE__, __LINE__);
 

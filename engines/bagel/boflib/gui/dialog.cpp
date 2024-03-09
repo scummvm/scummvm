@@ -19,10 +19,13 @@
  *
  */
 
+#include "common/system.h"
+#include "common/events.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/timer.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -136,6 +139,15 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 	// remember the name of this window
 	strncpy(m_szTitle, pszName, MAX_TITLE);
+
+	// Calculate effective bounds
+	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
+	if (pParent != nullptr)
+		stRect.translate(pParent->GetWindowRect().left,
+						 pParent->GetWindowRect().top);
+
+	delete m_pWindow;
+	m_pWindow = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
 #if BOF_WINDOWS
 
@@ -448,8 +460,12 @@ INT CBofDialog::DoModal(VOID) {
 	// Acquire and dispatch messages until a WM_QUIT message is received,
 	// or until there are too many errors.
 	//
-	while (!m_bEndDialog && (CBofError::GetErrorCount() < MAX_ERRORS)) {
-
+	Common::Event evt;
+	while (!m_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
+		while (g_system->getEventManager()->pollEvent(evt)) {
+//			TranslateMessage(evt);
+//			DispatchMessage(evt);
+		}
 #if BOF_WINDOWS
 
 		// if there is a message for our window, then process it
@@ -493,6 +509,11 @@ INT CBofDialog::DoModal(VOID) {
 #endif
 			OnMainLoop();
 		}
+
+		// HACK: Painting here just to see the output, supposed to be handled by WM_PAINT
+		OnPaint(&m_cRect);
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
 	}
 
 #if BOF_MAC || BOF_WINMAC
