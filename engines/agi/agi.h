@@ -454,7 +454,7 @@ struct AgiGame {
 	bool mouseHidden;               /**< if mouse is currently hidden */
 
 	// IF condition handling
-	int testResult;
+	bool testResult;
 
 	int max_logics;
 	int logic_list[256];
@@ -555,7 +555,7 @@ struct AgiGame {
 		mouseEnabled = false;
 		mouseHidden = false;
 
-		testResult = 0;
+		testResult = false;
 
 		max_logics = 0;
 		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
@@ -947,13 +947,13 @@ public:
 	// Some submethods of testIfCode
 	void skipInstruction(byte op);
 	void skipInstructionsUntil(byte v);
-	uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testSaid(uint8 nwords, uint8 *cc);
-	uint8 testController(uint8 cont);
-	uint8 testCompareStrings(uint8 s1, uint8 s2);
+	bool testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testSaid(uint8 nwords, uint8 *cc);
+	bool testController(uint8 cont);
+	bool testCompareStrings(uint8 s1, uint8 s2);
 
 	// View
 private:
