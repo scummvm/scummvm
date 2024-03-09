@@ -157,7 +157,7 @@ VOID CBofString::Copy(const CHAR *pszBuf) {
 			AllocBuffer(n + 1);
 		}
 
-		Common::strcpy_s(m_pszData, n, pszBuf);
+		Common::strcpy_s(m_pszData, n + 1, pszBuf);
 
 		if (m_pszData != nullptr) {
 			m_nLength = (USHORT)strlen(m_pszData);
