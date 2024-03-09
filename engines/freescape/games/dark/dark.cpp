@@ -383,6 +383,9 @@ bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		int index = _gameStateVars[kVariableDarkECD] - 1;
 		bool destroyed = tryDestroyECD(index);
+		if (isSpectrum())
+			playSound(7, false);
+
 		if (destroyed) {
 			_gameStateVars[kVariableActiveECDs] -= 4;
 			_gameStateVars[k8bitVariableScore] += 52750;
@@ -390,7 +393,10 @@ bool DarkEngine::checkIfGameEnded() {
 		} else {
 			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
-			playSound(19, true);
+			if (isSpectrum())
+				playSound(30, false);
+			else 
+				playSound(19, true);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 	}

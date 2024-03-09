@@ -28,8 +28,13 @@
 namespace Freescape {
 
 void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData) {
-	for (int i = 1; i < 34; i++) {
-		//debug("Reading sound table entry: %d ", i);
+	int numberSounds = 25;
+
+	if (isDark())
+		numberSounds = 34;
+
+	for (int i = 1; i < numberSounds; i++) {
+		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
 		_soundsSpeakerFxZX[i] = new Common::Array<soundUnitZX>();
 		int soundIdx = (i - 1) * 4;
 		file->seek(sfxTable + soundIdx);
@@ -48,7 +53,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 		int sound_ptr = original_sound_ptr;
 		uint8 soundSize = 0;
 		int16 repetitions = 0;
-		//debug("dataIndex: %x, value: %x, SFXtempStruct[0]: %x, type: %x", dataIndex, soundValue, SFXtempStruct[0], soundType);
+		debugC(1, kFreescapeDebugParser, "dataIndex: %x, value: %x, SFXtempStruct[0]: %x, type: %x", dataIndex, soundValue, SFXtempStruct[0], soundType);
 
 		if ((soundType & 0x80) == 0) {
 			SFXtempStruct[6] = 0;
@@ -78,7 +83,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						soundUnitZX soundUnit;
 						soundUnit.freqTimesSeconds = (var10 & 0xffff) + 1;
 						soundUnit.tStates = var5;
-						soundUnit.multiplier = 400;
+						soundUnit.multiplier = 200;
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						int16 var4 = 0;
@@ -124,7 +129,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						soundUnitZX soundUnit;
 						soundUnit.tStates = var5;
 						soundUnit.freqTimesSeconds = SFXtempStruct[3] | (SFXtempStruct[4] << 8);
-						soundUnit.multiplier = 400;
+						soundUnit.multiplier = 1.8;
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						repetitions = repetitions - 1;
@@ -144,7 +149,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 				soundUnit.multiplier = 2 * size;
 				_soundsSpeakerFxZX[i]->push_back(soundUnit);
 			} else {
-				debug("Unknown sound type: %x", soundType);
+				debugC(1, kFreescapeDebugParser, "Unknown sound type: %x", soundType);
 			}
 		}
 		free(SFXtempStruct);

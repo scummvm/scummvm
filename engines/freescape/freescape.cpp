@@ -757,6 +757,8 @@ bool FreescapeEngine::checkIfGameEnded() {
 			insertTemporaryMessage(_crushedMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_forceEndGame) {
+		if (isSpectrum())
+			playSound(8, true);
 		_forceEndGame = false;
 		if (!_forceEndGameMessage.empty())
 			insertTemporaryMessage(_forceEndGameMessage, _countdown - 4);

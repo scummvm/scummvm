@@ -60,6 +60,7 @@ void EclipseEngine::loadAssetsZXDemo() {
 		loadFonts(&file, 0x5f7b);
 		load8bitBinary(&file, 0x6173, 4);
 	} else if (_variant & GF_ZX_DEMO_CRASH) {
+		loadSpeakerFxZX(&file, 0x65c, 0x6b0);
 		loadMessagesFixedSize(&file, 0x364, 16, 9);
 		loadMessagesFixedSize(&file, 0x5901, 264, 5);
 		loadFonts(&file, 0x6589);

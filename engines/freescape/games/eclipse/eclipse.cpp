@@ -119,6 +119,8 @@ void EclipseEngine::endGame() {
 	}
 
 	if (_endGameKeyPressed && _countdown == 0) {
+		if (isSpectrum())
+			playSound(5, true);
 		_gameStateControl = kFreescapeGameStateRestart;
 	}
 	_endGameKeyPressed = false;
@@ -142,13 +144,20 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	_lastPosition = _position;
 
-	if (areaID == _startArea && entranceID == _startEntrance)
-		playSound(9, true);
-	if (areaID == _endArea && entranceID == _endEntrance) {
+	if (areaID == _startArea && entranceID == _startEntrance) {
+		if (isSpectrum())
+			playSound(7, true);
+		else
+			playSound(9, true);
+	} if (areaID == _endArea && entranceID == _endEntrance) {
 		_flyMode = true;
 		_pitch = 20;
-	} else
-		playSound(5, false);
+	} else {
+		if (isSpectrum())
+			playSound(7, false);
+		else
+			playSound(5, false);
+	}
 
 	_gfx->_keyColor = 0;
 	swapPalette(areaID);
@@ -193,8 +202,11 @@ void EclipseEngine::borderScreen() {
 				drawFullscreenMessageAndWait(_messagesList[23]);
 			} else if (_variant & GF_ZX_DEMO_CRASH) {
 				drawFullscreenMessageAndWait(_messagesList[9]);
+				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[10]);
+				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[11]);
+				playSound(3, true);
 			}
 		} else {
 			FreescapeEngine::borderScreen();
