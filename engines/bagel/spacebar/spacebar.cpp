@@ -67,67 +67,15 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 
 		bShowLogo = TRUE;
 
-		if ((pGameWindow = new CSBarMasterWin()) != NULL) {
-
+		if ((pGameWindow = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
 			SetMainWindow(pGameWindow);
 
 			// Init Miles Sound System for Mono, 22kHz, 8bit
-			// NOTE: This cannot be called until after the 1st Window has been
-			// created.
-			//
 			InitializeSoundSystem(1, 22050, 8);
 
-
-			// Use DirectDraw
-			//
-#if BOF_WINDOWS && BOF_DIRECTDRAW
-
-			BOOL bUseDirectDraw;
-
-			GetOption("UserOptions", "UseDirectDraw", &bUseDirectDraw, TRUE);
-
-			if (bUseDirectDraw) {
-				HRESULT ddrval;
-
-				if ((ddrval = DirectDrawCreate(NULL, &g_pDD, NULL)) == DD_OK) {
-
-					if ((ddrval = g_pDD->SetCooperativeLevel(pGameWindow->GetHandle(), DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX)) == DD_OK) {
-
-						// Set specified screen resolution (DirectDraw)
-						//
-						if (g_pDD->SetDisplayMode(m_pGameReg->m_nRequiredWidth, m_pGameReg->m_nRequiredHeight, m_pGameReg->m_nRequiredDepth) == DD_OK) {
-
-							// Reset screen info
-							//
-							m_nScreenDX = m_pGameReg->m_nRequiredWidth;
-							m_nScreenDY = m_pGameReg->m_nRequiredHeight;
-							m_nColorDepth = m_pGameReg->m_nRequiredDepth;
-						}
-
-					} else {
-
-						ReportError(ERR_UNKNOWN, "SetCooperativeLevel() failed with error code %ld", ddrval);
-					}
-
-				} else {
-
-					ReportError(ERR_UNKNOWN, "Could not create a DirectDraw Session: %ld", ddrval);
-
-					if (g_pDD != NULL) {
-						g_pDD->Release();
-						g_pDD = NULL;
-					}
-				}
-			}
-#endif
-
-
-			// BCW - 12/11/96 07:05 pm
-			// Hack to fix our in-ability to change the volume of the 1st midi
-			// file played.
-			//
-#if !BOF_MAC
+#if SCUMMVM_UNNEEDED
+			// Hack to fix in-ability to change the volume of the 1st midi file played.
 			{
 				CBofSound cSound(pGameWindow, BuildSysDir("1.MID"), SOUND_MIDI);
 				cSound.SetVolume(0);
@@ -136,28 +84,24 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			}
 #endif
 			CBofBitmap *pBmp;
-
-			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != NULL) {
-				pBmp->FillRect(NULL, COLOR_BLACK);
+			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != nullptr) {
+				pBmp->FillRect(nullptr, COLOR_BLACK);
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 			}
 
 			pGameWindow->Show();
-			pGameWindow->ValidateRect(NULL);
+			pGameWindow->ValidateRect(nullptr);
 
 			// Paint the screen black
-			//
-			if (pBmp != NULL) {
+			if (pBmp != nullptr)
 				pBmp->Paint(pGameWindow, 0, 0);
-			}
-			BOOL bRestart;
 
-			bRestart = TRUE;
+			BOOL bRestart = TRUE;
 			if (HaveSavedGames()) {
 				bRestart = FALSE;
 
-				CBagStartDialog cDlg(BuildSysDir("START.BMP"), NULL, pGameWindow);
+				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, pGameWindow);
 				INT nRetVal;
 
 				CBofWindow *pLastWin = g_pHackWindow;
@@ -175,16 +119,14 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					bRestart = TRUE;
 
 					// Hide that dialog
-					//
-					if (pBmp != NULL) {
+					if (pBmp != nullptr) {
 						pBmp->Paint(pGameWindow, 0, 0);
 					}
 					break;
 
 				case QUIT_BTN:
 					// Hide that dialog
-					//
-					if (pBmp != NULL) {
+					if (pBmp != nullptr) {
 						pBmp->Paint(pGameWindow, 0, 0);
 					}
 					pGameWindow->Close();
@@ -193,23 +135,20 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			}
 
 			if (bRestart) {
-
 				// Should we show the intro movies?
 				GetOption("Startup", "ShowLogo", &bShowLogo, TRUE);
 
 				// Play intro movies, logo screens, etc...
 				// (Unless user holds down the shift key, or ShowLogo=0 in SPACEBAR.INI)
-				//
 				if (bShowLogo && !IsKeyDown(BKEY_SHIFT)) {
 
 					CBofString cString(LOGOSMK1);
 					MACROREPLACE(cString);
 
 					// Play the movie only if it exists
-					//
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(pGameWindow, cString.GetBuffer());
-						if (pBmp != NULL) {
+						if (pBmp != nullptr) {
 							pBmp->Paint(pGameWindow, 0, 0);
 						}
 					}
@@ -218,13 +157,12 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					MACROREPLACE(cString);
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(pGameWindow, cString.GetBuffer());
-						if (pBmp != NULL) {
+						if (pBmp != nullptr) {
 							pBmp->Paint(pGameWindow, 0, 0);
 						}
 					}
 
 					// Use hi-res movie if user has a fast machine
-					//
 					cString = LOGOSMK3;
 					if (GetMachineSpeed() < 100) {
 						cString = LOGOSMK3EX;
@@ -232,7 +170,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					MACROREPLACE(cString);
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(pGameWindow, cString.GetBuffer());
-						if (pBmp != NULL) {
+						if (pBmp != nullptr) {
 							pBmp->Paint(pGameWindow, 0, 0);
 						}
 					}
@@ -242,33 +180,22 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 				pGameWindow->NewGame();
 			}
 
-			if (pBmp != NULL) {
+			if (pBmp != nullptr)
 				delete pBmp;
-			}
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
 		}
 	}
 
-	return(m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE SpaceBarEngine::ShutDown() {
 	CBagel::ShutDown();
 
-	// No more Miles Sound System
-	//
+	// No more Sound System
 	ShutDownSoundSystem();
-
-#if BOF_WINDOWS && BOF_DIRECTDRAW
-	// Get rid of the direct draw object
-	//
-	if (g_pDD != NULL) {
-		g_pDD->Release();
-		g_pDD = NULL;
-	}
-#endif
 
 	return m_errCode;
 }
