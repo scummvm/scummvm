@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/debug.h"
@@ -250,56 +251,53 @@ ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszVar, CHAR *pszValue, const CHAR *pszDefault, UINT nMaxLen) {
-	//  can't acess nullptr pointers
-	//
+ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nMaxLen) {
+	//  Can't acess nullptr pointers
 	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
+	Assert(pszOption != nullptr);
 	Assert(pszValue != nullptr);
 	Assert(pszDefault != nullptr);
+
+	// If ConfMan has a key of a given name, no matter the section,
+	// than it takes precedence over any INI file value
+	if (ConfMan.hasKey(pszOption)) {
+		Common::String str = ConfMan.get(pszOption);
+		Common::strcpy_s(pszValue, nMaxLen, str.c_str());
+		return ERR_NONE;
+	}
 
 	CHAR szBuf[MAX_OPTION_LEN];
 	CHAR *p;
 	COption *pOption;
 	ERROR_CODE errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
-	// assume we will need to use the default setting
-	//
-	strncpy(pszValue, pszDefault, nMaxLen - 1);
+	// Assume we will need to use the default setting
+	Common::strcpy_s(pszValue, nMaxLen, pszDefault);
 
-	// jwl 08.07.96 don't zero out beyond the end of the array/char buff!!!!!
-	// pszValue[nMaxLen] = '\0';
-	pszValue[nMaxLen - 1] = '\0';
-
-	// try to find this option
-	//
-	if ((pOption = FindOption(pszSection, pszVar)) != nullptr) {
+	// Try to find this option
+	if ((pOption = FindOption(pszSection, pszOption)) != nullptr) {
 		Assert(strlen(pOption->m_szBuf) < MAX_OPTION_LEN);
 
 		Common::strcpy_s(szBuf, pOption->m_szBuf);
 
-		// strip out any comments
+		// Strip out any comments
 		StrReplaceChar(szBuf, ';', '\0');
 
-		// find 1st equal sign
+		// Find 1st equal sign
 		p = strchr(szBuf, '=');
 
-		// error in .INI file if we can't find the equal sign
-		//
+		// Error in .INI file if we can't find the equal sign
 		if (p != nullptr) {
-
 			p++;
 
-			if (strlen(p) > 0) {
-				strncpy(pszValue, p, nMaxLen - 1);
-				// jwl 08.07.96 don't zero out beyond the end of the array/char buff!!!!!
-				pszValue[nMaxLen - 1] = '\0';
-			}
+			if (strlen(p) > 0)
+				Common::strcpy_s(pszValue, nMaxLen, p);
+
 		} else {
-			LogError(BuildString("Error in %s, section: %s, entry: %s", m_szFileName, pszSection, pszVar));
+			LogError(BuildString("Error in %s, section: %s, entry: %s", m_szFileName, pszSection, pszOption));
 			errCode = ERR_FTYPE;
 		}
 	}
@@ -307,23 +305,46 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszVar, 
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszVar, INT *pValue, INT nDefault) {
-	// can't acess nullptr pointers
-	//
+ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, INT *pValue, INT nDefault) {
 	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
+	Assert(pszOption != nullptr);
 	Assert(pValue != nullptr);
+
+	// If ConfMan has a key of a given name, no matter the section,
+	// than it takes precedence over any INI file value
+	if (ConfMan.hasKey(pszOption)) {
+		*pValue = ConfMan.getInt(pszOption);
+		return ERR_NONE;
+	}
 
 	CHAR szDefault[20], szBuf[20];
 	ERROR_CODE errCode;
 
 	Common::sprintf_s(szDefault, "%d", nDefault);
 
-	errCode = ReadSetting(pszSection, pszVar, szBuf, szDefault, 20);
+	errCode = ReadSetting(pszSection, pszOption, szBuf, szDefault, 20);
 
 	if (pValue != nullptr)
 		*pValue = atoi(szBuf);
 
+	return errCode;
+}
+
+ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault) {
+	Assert(pszSection != nullptr);
+	Assert(pszOption != nullptr);
+	Assert(nValue != nullptr);
+
+	// If ConfMan has a key of a given name, no matter the section,
+	// than it takes precedence over any INI file value
+	if (ConfMan.hasKey(pszOption)) {
+		*nValue = ConfMan.getBool(pszOption);
+		return ERR_NONE;
+	}
+
+	INT v;
+	ERROR_CODE errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
+	*nValue = v != 0;
 	return errCode;
 }
 

@@ -155,12 +155,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault) {
-		INT v;
-		ERROR_CODE errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
-		*nValue = v != 0;
-		return errCode;
-	}
+	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault);
 
 	/**
 	 * Loads current .INI options file
