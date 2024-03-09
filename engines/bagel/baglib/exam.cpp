@@ -88,7 +88,7 @@ BOOL CBagExam::SetRotationRects() {
 
 BOOL CBagExam::MarkBegEnd() {
 	if (m_eMovType == SMACKER) {
-		m_dwEnd = m_pSmk->Frames - 1;
+		m_dwEnd = m_pSmk->getFrameCount() - 1;
 		m_dwStart = 0;
 	} else if (m_eMovType == QT) {
 #if BOF_WINDOWS

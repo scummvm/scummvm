@@ -25,13 +25,14 @@
 
 #include "bagel/boflib/boffo.h"
 
+#include "graphics/managed_surface.h"
+#include "video/smk_decoder.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/timer.h"
-#include "bagel/api/smacker.h"
 
 namespace Bagel {
 
@@ -48,8 +49,8 @@ protected:
 	UINT            m_wMCIDeviceID;         // MCI Device ID for the QT file
 #endif
 
-	SmackBuf *m_pSbuf;
-	Smack *m_pSmk;
+	Graphics::ManagedSurface *m_pSbuf;
+	Video::VideoDecoder *m_pSmk;
 	MVTYPE m_eMovType;
 	BOOL m_bEscCanStop;
 	BOOL m_bLoop;
@@ -119,10 +120,10 @@ public:
 	virtual BOOL        ShowMovie(void);
 	virtual BOOL        HideMovie(void);
 
-	SmackBuf            *GetSmackBuffer(void)  {
+	Graphics::ManagedSurface *GetSmackBuffer(void)  {
 		return m_pSbuf;
 	}
-	Smack               *GetSmackMovie(void)   {
+	Video::VideoDecoder *GetSmackMovie(void)   {
 		return m_pSmk;
 	}
 };
