@@ -52,7 +52,7 @@ typedef struct {
 } NPLANET;
 
 
-class CNavWindow :public CBagStorageDevWnd {
+class CNavWindow : public CBagStorageDevWnd {
 public:
 	CNavWindow();
 
@@ -60,7 +60,7 @@ public:
 	virtual ~CNavWindow();
 #endif
 
-	virtual	ERROR_CODE  Attach();
+	virtual ERROR_CODE  Attach();
 	virtual ERROR_CODE  Detach();
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
@@ -77,7 +77,7 @@ protected:
 	virtual VOID OnMainLoop(VOID);
 
 	// jwl 07.25.96 split up the onmousedown method
-	VOID RefreshData(VOID);		// bar 10/27/96 added func to just paint text
+	VOID RefreshData(VOID);     // bar 10/27/96 added func to just paint text
 
 	VOID OnPinna(VOID);
 	VOID OnHpoctyl(VOID);
@@ -134,7 +134,7 @@ protected:
 	CBofPalette *m_pOldPal;
 	CBofSprite *m_pMap;
 	CBofSprite *m_pCurLoc;
-	//		CBofSprite *m_pLevelDone;
+	//      CBofSprite *m_pLevelDone;
 	CBofBitmap *m_pNewMap;
 	CBofBitmap *bmptwo;
 	CBofRect *m_pCurPos;

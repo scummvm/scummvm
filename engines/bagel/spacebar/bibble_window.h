@@ -72,7 +72,7 @@ public:
 	virtual ~CBibbleWindow();
 #endif
 
-	virtual	ERROR_CODE Attach();
+	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
@@ -100,7 +100,7 @@ protected:
 
 	// Data
 	//
-	CBofSound *m_pBkgSnd;				// Added for casino background sounds BFW 12/24/96
+	CBofSound *m_pBkgSnd;               // Added for casino background sounds BFW 12/24/96
 	CBofBmpButton *m_pButtons[BIBBLE_NUM_BUTTONS];
 	CBofText *m_pCreditsText;
 	CBofSprite *m_pMasterBibble;

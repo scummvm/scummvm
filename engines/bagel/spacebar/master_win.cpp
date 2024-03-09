@@ -42,7 +42,7 @@
 #include "bagel/baglib/event_sdev.h"
 #include "bagel/spacebar/filter.h"
 
-#undef	 BAGAPPCPPFIEL
+#undef   BAGAPPCPPFIEL
 
 namespace Bagel {
 namespace SpaceBar {
@@ -67,10 +67,10 @@ CSBarMasterWin::CSBarMasterWin() {
 *
 *
 *  SAMPLE USAGE:
-*  		OnNewStorageDev();
+*       OnNewStorageDev();
 *
 *  RETURNS:
-*		True on success
+*       True on success
 *
 *****************************************************************************/
 CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) {
@@ -157,13 +157,13 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 	} else if (!typestr.Find("CHAT")) {
 		if ((pSDev = new CBagChatWnd()) != NULL) {
 			pSDev->SetCloseup(TRUE);
-			//	    	pSDev->SetExitOnEdge(80);
+			//          pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("EVENT")) {        // MDM EVT STUFF
 		pSDev = new CBagEventSDev();
 
-	} else if (!typestr.Find("TURNEVENT")) {	// jwl 12.27.96 turn based storage device
+	} else if (!typestr.Find("TURNEVENT")) {    // jwl 12.27.96 turn based storage device
 		pSDev = new CBagTurnEventSDev();
 
 	} else if (!typestr.Find("LOG")) {          // MDM PDA LOG STUFF
@@ -173,7 +173,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 		pSDev = new GAMEWINDOW(namestr);
 	}
 
-	return(pSDev);
+	return (pSDev);
 }
 
 
@@ -216,7 +216,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 		break;
 	};
 
-	return(pSDev);
+	return (pSDev);
 }
 
 
@@ -236,8 +236,7 @@ VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	FilterFxn filterFunction = NULL;
 	int filterId = pSDev->GetFilterId();
 
-	if (filterId != 0)
-	{
+	if (filterId != 0) {
 		filterFunction = &DoFilters;
 	}
 
@@ -275,8 +274,7 @@ VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 	FilterFxn filterFunction = NULL;
 	int filterId = pSDev->GetFilterId();
 
-	if (filterId != 0)
-	{
+	if (filterId != 0) {
 		filterFunction = &DoFilters;
 	}
 

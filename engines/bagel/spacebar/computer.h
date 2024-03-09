@@ -35,18 +35,18 @@ namespace SpaceBar {
 #define NUM_COMPBUTT 12
 
 // ID's and INDEX of buttons
-#define OFFBUT 	0
-#define ONBUT 	1
-#define DRINKS 	2
-#define INGRED 	3
-#define LISTD 	4
-#define LISTI 	5
-#define ORDER 	6
-#define PGUP 	7
-#define PGDOWN 	8
-#define BCBACK	9
-#define BCHELP	10
-#define BCQUIT	11
+#define OFFBUT  0
+#define ONBUT   1
+#define DRINKS  2
+#define INGRED  3
+#define LISTD   4
+#define LISTI   5
+#define ORDER   6
+#define PGUP    7
+#define PGDOWN  8
+#define BCBACK  9
+#define BCHELP  10
+#define BCQUIT  11
 
 enum COMPMODE {
 	OFFMODE, DRINKMODE, INGMODE, LISTMODE
@@ -61,9 +61,9 @@ public:
 
 class SBarComputer : public CBagStorageDevWnd {
 protected:
-	CBofListBox *m_pDrinkBox; 	// Used for list of Drinks
-	CBofListBox *m_pIngBox; 	// Used for list of Ingredients
-	CBofTextBox *m_pTBox;   	// Used to display the list
+	CBofListBox *m_pDrinkBox;   // Used for list of Drinks
+	CBofListBox *m_pIngBox;     // Used for list of Ingredients
+	CBofTextBox *m_pTBox;       // Used to display the list
 	char *m_pDrinkBuff;
 	char *m_pIngBuff;
 	CBofList<SBarCompItem> *m_pDrinkList;
@@ -81,12 +81,12 @@ public:
 	VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
-	virtual	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
+	virtual VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
 
 	/**
 	 * This function attachs the background and nessasary bitmaps
 	 */
-	virtual	ERROR_CODE Attach();
+	virtual ERROR_CODE Attach();
 
 	/**
 	 * This function detachs the background and nessasary bitmaps

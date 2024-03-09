@@ -28,23 +28,23 @@ namespace Bagel {
 namespace SpaceBar {
 
 #define MAP_BMP       "nebsim1.bmp"
-#define CUR_LOC		  "curloc.bmp"
-#define LEVEL_DONE	  "levdone.bmp"
-#define WELCOME_SND		"evnaawel.wav"
+#define CUR_LOC       "curloc.bmp"
+#define LEVEL_DONE    "levdone.bmp"
+#define WELCOME_SND     "evnaawel.wav"
 #define QUIT 111
 #define HELP 112
 #define MASK_COLOR 1
 #define HIGHLIGHT_COLOR     13
 
 #if BOF_MAC || BOF_WINMAC
-#define NAVDIR 		"$SBARDIR:NEBLITZ:CLOSEUP:NAV:"
-#define NEBSIM2BMP 	"$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim2.bmp"
-#define NEBSIM3BMP 	"$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim3.bmp"
-#define NEBSIM4BMP 	"$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim4.bmp"
+#define NAVDIR      "$SBARDIR:NEBLITZ:CLOSEUP:NAV:"
+#define NEBSIM2BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim2.bmp"
+#define NEBSIM3BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim3.bmp"
+#define NEBSIM4BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim4.bmp"
 #else
-#define NAVDIR 		"$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\"
-#define NEBSIM2BMP 	"$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim2.bmp"
-#define NEBSIM3BMP 	"$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim3.bmp"
+#define NAVDIR      "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\"
+#define NEBSIM2BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim2.bmp"
+#define NEBSIM3BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim3.bmp"
 #define NEBSIM4BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim4.bmp"
 #endif
 
@@ -74,57 +74,57 @@ typedef struct {
 
 
 NPLANET g_Level[9] = {
-	{ "Pinna",36,54,45,63, {nullptr,0, TRUE} },
-	{ "H'poctyl",181,19,190,28,{ "Mattresses",72, TRUE} },
-	{ "Armpit",108,251,117,260,{ "Spam",56, TRUE} },
-	{ "Yzore",251,271,260,280,{nullptr,0, TRUE} },
-	{ "Bulbus",323,197,332,206,{nullptr,0, TRUE} },
-	{ "Dingle",394,143,403,154,{nullptr,0, TRUE} },
-	{ "Karkas",163,394,172,403,{nullptr,0, TRUE} },
-	{ "Fruufnia",306,393,315,402,{ "Swizzle Sticks",86, TRUE} },
-	{ nullptr,0,0,0,0,{nullptr,0, TRUE} }
+	{ "Pinna", 36, 54, 45, 63, {nullptr, 0, TRUE} },
+	{ "H'poctyl", 181, 19, 190, 28, { "Mattresses", 72, TRUE} },
+	{ "Armpit", 108, 251, 117, 260, { "Spam", 56, TRUE} },
+	{ "Yzore", 251, 271, 260, 280, {nullptr, 0, TRUE} },
+	{ "Bulbus", 323, 197, 332, 206, {nullptr, 0, TRUE} },
+	{ "Dingle", 394, 143, 403, 154, {nullptr, 0, TRUE} },
+	{ "Karkas", 163, 394, 172, 403, {nullptr, 0, TRUE} },
+	{ "Fruufnia", 306, 393, 315, 402, { "Swizzle Sticks", 86, TRUE} },
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE} }
 };
 
 NPLANET g_LevelOne[10] = {
-	{ "Wilbur",108,38,116,49,{nullptr,0, TRUE} },
-	{ "McKelvey",394,37,403,46,{nullptr,0, TRUE} },
-	{ "Medge",19,90,28,99,{ "Memory Chips",127, TRUE} },
-	{ "Wall",234,90,243,99,{nullptr,0, TRUE} },
-	{ "Woo",108,306,119,315,{nullptr,0, TRUE} },
-	{ "Roman",198,270,207,279,{ "Motorcycles",20, TRUE} },
-	{ "Weed",322,252,331,261,{nullptr,0, TRUE} },
-	{ "Bok",55,395,64,404,{ "Frisbees",119, TRUE} },
-	{ "Pizer",339,412,348,421,{ "Bird Seed",54, TRUE} },
-	{nullptr,0,0,0,0,{nullptr,0, TRUE}}
+	{ "Wilbur", 108, 38, 116, 49, {nullptr, 0, TRUE} },
+	{ "McKelvey", 394, 37, 403, 46, {nullptr, 0, TRUE} },
+	{ "Medge", 19, 90, 28, 99, { "Memory Chips", 127, TRUE} },
+	{ "Wall", 234, 90, 243, 99, {nullptr, 0, TRUE} },
+	{ "Woo", 108, 306, 119, 315, {nullptr, 0, TRUE} },
+	{ "Roman", 198, 270, 207, 279, { "Motorcycles", 20, TRUE} },
+	{ "Weed", 322, 252, 331, 261, {nullptr, 0, TRUE} },
+	{ "Bok", 55, 395, 64, 404, { "Frisbees", 119, TRUE} },
+	{ "Pizer", 339, 412, 348, 421, { "Bird Seed", 54, TRUE} },
+	{nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE}}
 };
 NPLANET g_LevelTwo[9] = {
-	{ "Backwater",108,18,117,27,{ "Kayaks",28, TRUE} },
-	{ "Uranus",161,126,170,135,{ "Toilet Paper",14, TRUE} },
-	{ "Toe Jam",252,126,261,135,{ "Peanutbutter",45, TRUE} },
-	{ "Hellhole",412,108,421,117,{ "Pitchforks",100, TRUE} },
-	{ "Pustule",180,269,189,278,{nullptr,0, TRUE} },
-	{ "Swamp Rock",340,234,349,243,{nullptr,0, TRUE} },
-	{ "Slug",36,341,45,350,{ "Slime Remover",75, TRUE} },
-	{ "Maggot's Nest",251,376,260,385,{nullptr,0, TRUE} },
-	{ nullptr,0,0,0,0,{nullptr,0}}
+	{ "Backwater", 108, 18, 117, 27, { "Kayaks", 28, TRUE} },
+	{ "Uranus", 161, 126, 170, 135, { "Toilet Paper", 14, TRUE} },
+	{ "Toe Jam", 252, 126, 261, 135, { "Peanutbutter", 45, TRUE} },
+	{ "Hellhole", 412, 108, 421, 117, { "Pitchforks", 100, TRUE} },
+	{ "Pustule", 180, 269, 189, 278, {nullptr, 0, TRUE} },
+	{ "Swamp Rock", 340, 234, 349, 243, {nullptr, 0, TRUE} },
+	{ "Slug", 36, 341, 45, 350, { "Slime Remover", 75, TRUE} },
+	{ "Maggot's Nest", 251, 376, 260, 385, {nullptr, 0, TRUE} },
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0}}
 };
 NPLANET g_LevelThree[11] = {
-	{ "Peggleboz",90,20,99,29,{ "Shot Glasses",99, TRUE} },
-	{ "Archeroids",144,89,153,98,{ "Arrows",8, TRUE} },
-	{ "Pack-Rat",324,55,333,64,{ "Turtle Food",24, TRUE} },
-	{ "Beacon",270,144,279,155,{ "Fog Horns",125, TRUE} },
-	{ "Mankala",72,251,81,260,{nullptr,0, TRUE} },
-	{ "Life",394,234,403,243,{nullptr,0, TRUE} },
-	{ "Fuge",270,324,279,333,{ "Cotton Candy",10, TRUE} },
-	{ "Garfunkel",90,377,99,386,{nullptr,0, TRUE} },
-	{ "Battlefish",359,359,368,368,{ "Harpoons",17, TRUE} },
-	{ "No Vacancy",18,107,117,116,{nullptr,0, TRUE} },
-	{ nullptr,0,0,0,0,{nullptr,0, TRUE} }
+	{ "Peggleboz", 90, 20, 99, 29, { "Shot Glasses", 99, TRUE} },
+	{ "Archeroids", 144, 89, 153, 98, { "Arrows", 8, TRUE} },
+	{ "Pack-Rat", 324, 55, 333, 64, { "Turtle Food", 24, TRUE} },
+	{ "Beacon", 270, 144, 279, 155, { "Fog Horns", 125, TRUE} },
+	{ "Mankala", 72, 251, 81, 260, {nullptr, 0, TRUE} },
+	{ "Life", 394, 234, 403, 243, {nullptr, 0, TRUE} },
+	{ "Fuge", 270, 324, 279, 333, { "Cotton Candy", 10, TRUE} },
+	{ "Garfunkel", 90, 377, 99, 386, {nullptr, 0, TRUE} },
+	{ "Battlefish", 359, 359, 368, 368, { "Harpoons", 17, TRUE} },
+	{ "No Vacancy", 18, 107, 117, 116, {nullptr, 0, TRUE} },
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE} }
 };
 
 ST_BUTTONS g_NavButtons[2] = {
-	{ "Quit", "QUP.bmp", "QDOWN.bmp", "QDIS.bmp", "QDIS.bmp", 432,443,200,30, QUIT },
-	{ "Instructions", "HUP.bmp", "HDOWN.bmp", "HDIS.bmp", "HDIS.bmp",4,443,200,30, HELP },
+	{ "Quit", "QUP.bmp", "QDOWN.bmp", "QDIS.bmp", "QDIS.bmp", 432, 443, 200, 30, QUIT },
+	{ "Instructions", "HUP.bmp", "HDOWN.bmp", "HDIS.bmp", "HDIS.bmp", 4, 443, 200, 30, HELP },
 };
 
 CBofString g_LevelTitle[4] = {
@@ -146,7 +146,7 @@ const CHAR *MakeDir(const CHAR *pszFile) {
 	CBofString cStr(szBuf, MAX_DIRPATH);
 	MACROREPLACE(cStr);
 
-	return(&szBuf[0]);
+	return (&szBuf[0]);
 }
 
 CNavWindow::CNavWindow() {
@@ -167,7 +167,7 @@ CNavWindow::CNavWindow() {
 	m_pOldPal = nullptr;
 	m_pMap = nullptr;
 	m_pCurLoc = nullptr;
-	//	m_pLevelDone = nullptr;
+	//  m_pLevelDone = nullptr;
 	m_pNewMap = nullptr;
 	m_pCurPos = nullptr;
 	m_pPortName = nullptr;
@@ -219,7 +219,7 @@ ERROR_CODE CNavWindow::Attach() {
 
 	m_level = 0;
 
-	m_pPortName = new CBofString("Yzore");		// always starts at Yzore
+	m_pPortName = new CBofString("Yzore");      // always starts at Yzore
 	m_ship = 120;
 	m_cargo = 86 + 72 + 56;
 	m_fuel = 40;
@@ -303,15 +303,15 @@ ERROR_CODE CNavWindow::Attach() {
 		ReportError(ERR_MEMORY);
 	}
 	// sign goes up between levels
-/*	if ((m_pLevelDone = new CBofSprite) != nullptr) {
-		m_pLevelDone->LoadSprite(MakeDir(LEVEL_DONE),1);
-		m_pLevelDone->SetZOrder(SPRITE_FOREGROUND);
-		m_pLevelDone->SetAnimated(FALSE);
-		m_pLevelDone->LinkSprite();
-	} else {
-		ReportError(ERR_MEMORY);
-	}
-*/
+	/*  if ((m_pLevelDone = new CBofSprite) != nullptr) {
+	        m_pLevelDone->LoadSprite(MakeDir(LEVEL_DONE),1);
+	        m_pLevelDone->SetZOrder(SPRITE_FOREGROUND);
+	        m_pLevelDone->SetAnimated(FALSE);
+	        m_pLevelDone->LinkSprite();
+	    } else {
+	        ReportError(ERR_MEMORY);
+	    }
+	*/
 // Build all our buttons
 //
 	for (i = 0; i < 2; i++) {
@@ -345,7 +345,7 @@ ERROR_CODE CNavWindow::Attach() {
 
 	m_bNavAttached = TRUE;
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -581,7 +581,7 @@ ERROR_CODE CNavWindow::Detach() {
 
 	CBagStorageDevWnd::Detach();
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -615,8 +615,8 @@ VOID CNavWindow::RefreshData() {
 
 	CBofBitmap *pBmp;
 	CBofRect cRect(440, 0, 639, 439);
-	CHAR 	szBuf[100];
-	INT		i = 0;
+	CHAR    szBuf[100];
+	INT     i = 0;
 
 	// Render offscreen
 	//
@@ -626,18 +626,18 @@ VOID CNavWindow::RefreshData() {
 
 		cRect.SetRect(0, 10, 199, 25);
 		PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;		// indent this section
+		cRect.left += 10;       // indent this section
 		cRect.top += 15;
 		cRect.bottom += 15;
 		PaintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;		// un-indent
+		cRect.left -= 10;       // un-indent
 		// leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
 
 		PaintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 
-		cRect.left += 10;		// indent this section
+		cRect.left += 10;       // indent this section
 		while (m_pLevel[i].Name != nullptr) {
 
 			if (m_pLevel[i].cargo.m_pszCargo != nullptr && m_pLevel[i].cargo.m_bUsed) {
@@ -656,20 +656,20 @@ VOID CNavWindow::RefreshData() {
 			};
 			i++;
 		};
-		cRect.left -= 10;		// un-indent
+		cRect.left -= 10;       // un-indent
 		// leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
 
 		PaintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;		// indent this section
+		cRect.left += 10;       // indent this section
 		cRect.top += 15;
 		cRect.bottom += 15;
 		if (m_fuel != 1)
 			PaintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		else
 			PaintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;		// un-indent
+		cRect.left -= 10;       // un-indent
 		// leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
@@ -678,7 +678,7 @@ VOID CNavWindow::RefreshData() {
 		cRect.top += 15;
 		cRect.bottom += 15;
 
-		cRect.left += 10;		// indent this section
+		cRect.left += 10;       // indent this section
 		if (m_cargo != 1)
 			Common::sprintf_s(szBuf, "%3d tons Cargo", m_cargo);
 		else
@@ -702,18 +702,18 @@ VOID CNavWindow::RefreshData() {
 		cRect.bottom += 15;
 		Common::sprintf_s(szBuf, "%3d tons TOTAL", (m_ship + m_fuel + m_cargo));
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;		// un-indent
+		cRect.left -= 10;       // un-indent
 
 		cRect.top += 30;
 		cRect.bottom += 30;
 		Common::sprintf_s(szBuf, "Simulation Level:", g_LevelTitle[m_level].GetBuffer());
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;		// indent
+		cRect.left += 10;       // indent
 		cRect.top += 15;
 		cRect.bottom += 15;
 		Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level].GetBuffer());
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;		// un-indent
+		cRect.left -= 10;       // un-indent
 		cBmp.Paint(this, 443, 0);
 	}
 }
@@ -732,15 +732,13 @@ VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 		nBet = 0;
 		switch (pButton->GetControlID()) {
 
-		case QUIT:
-		{
+		case QUIT: {
 			LogInfo("\tClicked Quit");
 			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
 			Close();
 			break;
 		}
-		case HELP:
-		{
+		case HELP: {
 			LogInfo("\tClicked Help");
 
 			CBagel *pApp;
@@ -769,8 +767,7 @@ VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(pPoint != nullptr);
 
 	switch (m_level) {
-	case 0:
-	{
+	case 0: {
 		if (m_pPinna->PtInRect(*pPoint))
 			OnPinna();
 
@@ -797,8 +794,7 @@ VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 		break;
 	}//close case
 
-	case 1:
-	{
+	case 1: {
 		if (m_pWilbur->PtInRect(*pPoint))
 			OnWilbur();
 
@@ -829,8 +825,7 @@ VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 		break;
 	}//close case
 
-	case 2:
-	{
+	case 2: {
 		if (m_pBackwater->PtInRect(*pPoint))
 			OnBackwater();
 
@@ -857,8 +852,7 @@ VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 
 		break;
 	}
-	case 3:
-	{
+	case 3: {
 		if (m_pPeggleboz->PtInRect(*pPoint))
 			OnPeggleboz();
 
@@ -914,8 +908,7 @@ VOID CNavWindow::OnTimer(UINT tId) {
 }
 
 VOID CNavWindow::OnPinna() {
-	if ((*m_pCurPos == *m_pPinna))
-	{
+	if ((*m_pCurPos == *m_pPinna)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPinna);
@@ -1017,8 +1010,7 @@ VOID CNavWindow::OnArmpit() {
 			m_cargo -= 56;
 		}
 		CalcFuel(3.2);
-	} else if ((*m_pCurPos == *m_pPinna))
-	{
+	} else if ((*m_pCurPos == *m_pPinna)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -1028,8 +1020,7 @@ VOID CNavWindow::OnArmpit() {
 			m_cargo -= 56;
 		}
 		CalcFuel(1.5);
-	} else if ((*m_pCurPos == *m_pKarkas))
-	{
+	} else if ((*m_pCurPos == *m_pKarkas)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -1045,28 +1036,24 @@ VOID CNavWindow::OnArmpit() {
 }
 
 VOID CNavWindow::OnYzore() {
-	if ((*m_pCurPos == *m_pYzore))
-	{
+	if ((*m_pCurPos == *m_pYzore)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Yzore";
 		m_pCurPos = new CBofRect(*m_pYzore);
-	} else if ((*m_pCurPos == *m_pKarkas))
-	{
+	} else if ((*m_pCurPos == *m_pKarkas)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
 		*m_pPortName = "Yzore";
 		CalcFuel(2.6);
-	} else if ((*m_pCurPos == *m_pFruufnia))
-	{
+	} else if ((*m_pCurPos == *m_pFruufnia)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
 		*m_pPortName = "Yzore";
 		CalcFuel(4.0);
-	} else if ((*m_pCurPos == *m_pBulbus))
-	{
+	} else if ((*m_pCurPos == *m_pBulbus)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
@@ -1078,35 +1065,30 @@ VOID CNavWindow::OnYzore() {
 }
 
 VOID CNavWindow::OnBulbus() {
-	if (*m_pCurPos == *m_pBulbus)
-	{
+	if (*m_pCurPos == *m_pBulbus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Bulbus";
 		m_pCurPos = new CBofRect(*m_pBulbus);
-	} else if ((*m_pCurPos == *m_pHpoctyl))
-	{
+	} else if ((*m_pCurPos == *m_pHpoctyl)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(2.8);
-	} else if ((*m_pCurPos == *m_pYzore))
-	{
+	} else if ((*m_pCurPos == *m_pYzore)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(1.2);
-	} else if ((*m_pCurPos == *m_pDingle))
-	{
+	} else if ((*m_pCurPos == *m_pDingle)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(1.9);
-	} else if ((*m_pCurPos == *m_pFruufnia))
-	{
+	} else if ((*m_pCurPos == *m_pFruufnia)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
@@ -1118,21 +1100,18 @@ VOID CNavWindow::OnBulbus() {
 }
 
 VOID CNavWindow::OnDingle() {
-	if (*m_pCurPos == *m_pDingle)
-	{
+	if (*m_pCurPos == *m_pDingle) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Dingle";
 		m_pCurPos = new CBofRect(*m_pDingle);
-	} else if ((*m_pCurPos == *m_pHpoctyl))
-	{
+	} else if ((*m_pCurPos == *m_pHpoctyl)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pDingle);
 		*m_pPortName = "Dingle";
 		CalcFuel(2.4);
-	} else if ((*m_pCurPos == *m_pBulbus))
-	{
+	} else if ((*m_pCurPos == *m_pBulbus)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pDingle);
@@ -1144,28 +1123,24 @@ VOID CNavWindow::OnDingle() {
 }
 
 VOID CNavWindow::OnKarkas() {
-	if ((*m_pCurPos == *m_pKarkas))
-	{
+	if ((*m_pCurPos == *m_pKarkas)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Karkas";
 		m_pCurPos = new CBofRect(*m_pKarkas);
-	} else if (*m_pCurPos == *m_pArmpit)
-	{
+	} else if (*m_pCurPos == *m_pArmpit) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pKarkas);
 		*m_pPortName = "Karkas";
 		CalcFuel(2.3);
-	} else if (*m_pCurPos == *m_pYzore)
-	{
+	} else if (*m_pCurPos == *m_pYzore) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pKarkas);
 		*m_pPortName = "Karkas";
 		CalcFuel(2.6);
-	} else if (*m_pCurPos == *m_pFruufnia)
-	{
+	} else if (*m_pCurPos == *m_pFruufnia) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pKarkas);
@@ -1177,8 +1152,7 @@ VOID CNavWindow::OnKarkas() {
 }
 
 VOID CNavWindow::OnFruufnia() {
-	if (*m_pCurPos == *m_pFruufnia)
-	{
+	if (*m_pCurPos == *m_pFruufnia) {
 		delete m_pCurPos;
 		*m_pPortName = "Fruufnia";
 		m_pCurPos = nullptr;
@@ -1187,8 +1161,7 @@ VOID CNavWindow::OnFruufnia() {
 			g_Level[7].cargo.m_bUsed = FALSE;
 			m_cargo -= 86;
 		}
-	} else if (*m_pCurPos == *m_pKarkas)
-	{
+	} else if (*m_pCurPos == *m_pKarkas) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFruufnia);
@@ -1198,8 +1171,7 @@ VOID CNavWindow::OnFruufnia() {
 			m_cargo -= 86;
 		}
 		CalcFuel(1.7);
-	} else if (*m_pCurPos == *m_pYzore)
-	{
+	} else if (*m_pCurPos == *m_pYzore) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFruufnia);
@@ -1209,8 +1181,7 @@ VOID CNavWindow::OnFruufnia() {
 			m_cargo -= 86;
 		}
 		CalcFuel(4.0);
-	} else if (*m_pCurPos == *m_pBulbus)
-	{
+	} else if (*m_pCurPos == *m_pBulbus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFruufnia);
@@ -1226,28 +1197,24 @@ VOID CNavWindow::OnFruufnia() {
 }
 
 VOID CNavWindow::OnWilbur() {
-	if (*m_pCurPos == *m_pWilbur)
-	{
+	if (*m_pCurPos == *m_pWilbur) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Wilbur";
 		m_pCurPos = new CBofRect(*m_pWilbur);
-	} else if (*m_pCurPos == *m_pWall)
-	{
+	} else if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWilbur);
 		*m_pPortName = "Wilbur";
 		CalcFuel(1.6);
-	} else if (*m_pCurPos == *m_pMcKelvey)
-	{
+	} else if (*m_pCurPos == *m_pMcKelvey) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWilbur);
 		*m_pPortName = "Wilbur";
 		CalcFuel(3.6);
-	} else if (*m_pCurPos == *m_pMedge)
-	{
+	} else if (*m_pCurPos == *m_pMedge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWilbur);
@@ -1260,28 +1227,24 @@ VOID CNavWindow::OnWilbur() {
 }
 
 VOID CNavWindow::OnMcKelvey() {
-	if ((*m_pCurPos == *m_pMcKelvey))
-	{
+	if ((*m_pCurPos == *m_pMcKelvey)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "McKelvey";
 		m_pCurPos = new CBofRect(*m_pMcKelvey);
-	} else if (*m_pCurPos == *m_pWilbur)
-	{
+	} else if (*m_pCurPos == *m_pWilbur) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMcKelvey);
 		*m_pPortName = "McKelvey";
 		CalcFuel(3.6);
-	} else if (*m_pCurPos == *m_pWall)
-	{
+	} else if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMcKelvey);
 		*m_pPortName = "McKelvey";
 		CalcFuel(5.3);
-	} else if (*m_pCurPos == *m_pWeed)
-	{
+	} else if (*m_pCurPos == *m_pWeed) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMcKelvey);
@@ -1293,8 +1256,7 @@ VOID CNavWindow::OnMcKelvey() {
 }
 
 VOID CNavWindow::OnMedge() {
-	if ((*m_pCurPos == *m_pMedge))
-	{
+	if ((*m_pCurPos == *m_pMedge)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMedge);
@@ -1303,8 +1265,7 @@ VOID CNavWindow::OnMedge() {
 			g_LevelOne[2].cargo.m_bUsed = FALSE;
 			m_cargo -= 127;
 		}
-	} else if (*m_pCurPos == *m_pWilbur)
-	{
+	} else if (*m_pCurPos == *m_pWilbur) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMedge);
@@ -1314,8 +1275,7 @@ VOID CNavWindow::OnMedge() {
 			m_cargo -= 127;
 		}
 		CalcFuel(2.1);
-	} else if (*m_pCurPos == *m_pWall)
-	{
+	} else if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMedge);
@@ -1331,42 +1291,36 @@ VOID CNavWindow::OnMedge() {
 }
 
 VOID CNavWindow::OnWall() {
-	if ((*m_pCurPos == *m_pWall))
-	{
+	if ((*m_pCurPos == *m_pWall)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Wall";
 		m_pCurPos = new CBofRect(*m_pWall);
-	} else if (*m_pCurPos == *m_pMcKelvey)
-	{
+	} else if (*m_pCurPos == *m_pMcKelvey) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWall);
 		*m_pPortName = "Wall";
 		CalcFuel(5.3);
-	} else if (*m_pCurPos == *m_pWeed)
-	{
+	} else if (*m_pCurPos == *m_pWeed) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWall);
 		*m_pPortName = "Wall";
 		CalcFuel(1.4);
-	} else if (*m_pCurPos == *m_pWilbur)
-	{
+	} else if (*m_pCurPos == *m_pWilbur) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWall);
 		*m_pPortName = "Wall";
 		CalcFuel(1.6);
-	} else if (*m_pCurPos == *m_pMedge)
-	{
+	} else if (*m_pCurPos == *m_pMedge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWall);
 		*m_pPortName = "Wall";
 		CalcFuel(1.2);
-	} else if (*m_pCurPos == *m_pRoman)
-	{
+	} else if (*m_pCurPos == *m_pRoman) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Wall";
@@ -1378,28 +1332,24 @@ VOID CNavWindow::OnWall() {
 }
 
 VOID CNavWindow::OnWoo() {
-	if ((*m_pCurPos == *m_pWoo))
-	{
+	if ((*m_pCurPos == *m_pWoo)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Woo";
 		m_pCurPos = new CBofRect(*m_pWoo);
-	} else if (*m_pCurPos == *m_pRoman)
-	{
+	} else if (*m_pCurPos == *m_pRoman) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWoo);
 		*m_pPortName = "Woo";
 		CalcFuel(2.7);
-	} else if (*m_pCurPos == *m_pBok)
-	{
+	} else if (*m_pCurPos == *m_pBok) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWoo);
 		*m_pPortName = "Woo";
 		CalcFuel(3.9);
-	} else if (*m_pCurPos == *m_pPizer)
-	{
+	} else if (*m_pCurPos == *m_pPizer) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWoo);
@@ -1411,8 +1361,7 @@ VOID CNavWindow::OnWoo() {
 }
 
 VOID CNavWindow::OnRoman() {
-	if ((*m_pCurPos == *m_pRoman))
-	{
+	if ((*m_pCurPos == *m_pRoman)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Roman";
@@ -1421,8 +1370,7 @@ VOID CNavWindow::OnRoman() {
 			g_LevelOne[5].cargo.m_bUsed = FALSE;
 			m_cargo -= 20;
 		}
-	} else if (*m_pCurPos == *m_pWall)
-	{
+	} else if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pRoman);
@@ -1432,8 +1380,7 @@ VOID CNavWindow::OnRoman() {
 			m_cargo -= 20;
 		}
 		CalcFuel(1.9);
-	} else if (*m_pCurPos == *m_pWoo)
-	{
+	} else if (*m_pCurPos == *m_pWoo) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pRoman);
@@ -1443,8 +1390,7 @@ VOID CNavWindow::OnRoman() {
 			m_cargo -= 20;
 		}
 		CalcFuel(2.7);
-	} else if (*m_pCurPos == *m_pPizer)
-	{
+	} else if (*m_pCurPos == *m_pPizer) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pRoman);
@@ -1482,7 +1428,7 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 		}
 
 		if (m_level == 2) {
-			//			m_pLevelDone->PaintSprite(this,70,83);
+			//          m_pLevelDone->PaintSprite(this,70,83);
 			Sleep(4000);
 			CBofString sNebDir(NEBSIM4BMP);
 			MACROREPLACE(sNebDir);
@@ -1499,9 +1445,8 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 			m_pLevel = g_LevelThree;
 			*m_pPortName = "Mankala";
 		}
-		if (m_level == 1)
-		{
-			//			m_pLevelDone->PaintSprite(this,70,83);
+		if (m_level == 1) {
+			//          m_pLevelDone->PaintSprite(this,70,83);
 			Sleep(4000);
 			CBofString sNebDir(NEBSIM3BMP);
 			MACROREPLACE(sNebDir);
@@ -1518,9 +1463,8 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 			m_pLevel = g_LevelTwo;
 			*m_pPortName = "Maggot's Nest";
 		}
-		if (m_level == 0)
-		{
-			//			m_pLevelDone->PaintSprite(this,70,83);
+		if (m_level == 0) {
+			//          m_pLevelDone->PaintSprite(this,70,83);
 			Sleep(4000);
 			CBofString sNebDir(NEBSIM2BMP);
 			MACROREPLACE(sNebDir);
@@ -1552,28 +1496,24 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 }
 
 VOID CNavWindow::OnWeed() {
-	if ((*m_pCurPos == *m_pWeed))
-	{
+	if ((*m_pCurPos == *m_pWeed)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Weed";
 		m_pCurPos = new CBofRect(*m_pWeed);
-	} else if (*m_pCurPos == *m_pMcKelvey)
-	{
+	} else if (*m_pCurPos == *m_pMcKelvey) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWeed);
 		*m_pPortName = "Weed";
 		CalcFuel(2.7);
-	} else if (*m_pCurPos == *m_pWall)
-	{
+	} else if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWeed);
 		*m_pPortName = "Weed";
 		CalcFuel(1.4);
-	} else if (*m_pCurPos == *m_pPizer)
-	{
+	} else if (*m_pCurPos == *m_pPizer) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pWeed);
@@ -1585,8 +1525,7 @@ VOID CNavWindow::OnWeed() {
 }
 
 VOID CNavWindow::OnBok() {
-	if ((*m_pCurPos == *m_pBok))
-	{
+	if ((*m_pCurPos == *m_pBok)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBok);
@@ -1595,8 +1534,7 @@ VOID CNavWindow::OnBok() {
 			g_LevelOne[7].cargo.m_bUsed = FALSE;
 			m_cargo -= 119;
 		}
-	} else if (*m_pCurPos == *m_pWoo)
-	{
+	} else if (*m_pCurPos == *m_pWoo) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBok);
@@ -1612,8 +1550,7 @@ VOID CNavWindow::OnBok() {
 }
 
 VOID CNavWindow::OnPizer() {
-	if ((*m_pCurPos == *m_pPizer))
-	{
+	if ((*m_pCurPos == *m_pPizer)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPizer);
@@ -1622,8 +1559,7 @@ VOID CNavWindow::OnPizer() {
 			g_LevelOne[8].cargo.m_bUsed = FALSE;
 			m_cargo -= 54;
 		}
-	} else if (*m_pCurPos == *m_pWoo)
-	{
+	} else if (*m_pCurPos == *m_pWoo) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPizer);
@@ -1633,8 +1569,7 @@ VOID CNavWindow::OnPizer() {
 			m_cargo -= 54;
 		}
 		CalcFuel(1.7);
-	} else if (*m_pCurPos == *m_pRoman)
-	{
+	} else if (*m_pCurPos == *m_pRoman) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPizer);
@@ -1644,8 +1579,7 @@ VOID CNavWindow::OnPizer() {
 			m_cargo -= 54;
 		}
 		CalcFuel(4.6);
-	} else if (*m_pCurPos == *m_pWeed)
-	{
+	} else if (*m_pCurPos == *m_pWeed) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPizer);
@@ -1661,8 +1595,7 @@ VOID CNavWindow::OnPizer() {
 }
 
 VOID CNavWindow::OnBackwater() {
-	if (*m_pCurPos == *m_pBackwater)
-	{
+	if (*m_pCurPos == *m_pBackwater) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBackwater);
@@ -1672,8 +1605,7 @@ VOID CNavWindow::OnBackwater() {
 			m_cargo -= 28;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pUranus)
-	{
+	} else if (*m_pCurPos == *m_pUranus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBackwater);
@@ -1689,8 +1621,7 @@ VOID CNavWindow::OnBackwater() {
 }
 
 VOID CNavWindow::OnUranus() {
-	if (*m_pCurPos == *m_pUranus)
-	{
+	if (*m_pCurPos == *m_pUranus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pUranus);
@@ -1700,8 +1631,7 @@ VOID CNavWindow::OnUranus() {
 			m_cargo -= 14;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pBackwater)
-	{
+	} else if (*m_pCurPos == *m_pBackwater) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pUranus);
@@ -1711,8 +1641,7 @@ VOID CNavWindow::OnUranus() {
 			m_cargo -= 14;
 		}
 		CalcFuel(4.5);
-	} else if (*m_pCurPos == *m_pToejam)
-	{
+	} else if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pUranus);
@@ -1722,8 +1651,7 @@ VOID CNavWindow::OnUranus() {
 			m_cargo -= 14;
 		}
 		CalcFuel(2.6);
-	} else if (*m_pCurPos == *m_pPustule)
-	{
+	} else if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pUranus);
@@ -1739,8 +1667,7 @@ VOID CNavWindow::OnUranus() {
 }
 
 VOID CNavWindow::OnToejam() {
-	if (*m_pCurPos == *m_pToejam)
-	{
+	if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pToejam);
@@ -1750,8 +1677,7 @@ VOID CNavWindow::OnToejam() {
 			m_cargo -= 45;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pUranus)
-	{
+	} else if (*m_pCurPos == *m_pUranus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pToejam);
@@ -1761,8 +1687,7 @@ VOID CNavWindow::OnToejam() {
 			m_cargo -= 45;
 		}
 		CalcFuel(2.6);
-	} else if (*m_pCurPos == *m_pHellhole)
-	{
+	} else if (*m_pCurPos == *m_pHellhole) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pToejam);
@@ -1772,8 +1697,7 @@ VOID CNavWindow::OnToejam() {
 			m_cargo -= 45;
 		}
 		CalcFuel(2.0);
-	} else if (*m_pCurPos == *m_pPustule)
-	{
+	} else if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pToejam);
@@ -1783,8 +1707,7 @@ VOID CNavWindow::OnToejam() {
 			m_cargo -= 45;
 		}
 		CalcFuel(1.1);
-	} else if (*m_pCurPos == *m_pSwamprock)
-	{
+	} else if (*m_pCurPos == *m_pSwamprock) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pToejam);
@@ -1800,8 +1723,7 @@ VOID CNavWindow::OnToejam() {
 }
 
 VOID CNavWindow::OnHellhole() {
-	if (*m_pCurPos == *m_pHellhole)
-	{
+	if (*m_pCurPos == *m_pHellhole) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pHellhole);
@@ -1811,8 +1733,7 @@ VOID CNavWindow::OnHellhole() {
 			m_cargo -= 100;
 		}
 		CalcFuel(1.8);
-	} else if (*m_pCurPos == *m_pToejam)
-	{
+	} else if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pHellhole);
@@ -1822,8 +1743,7 @@ VOID CNavWindow::OnHellhole() {
 			m_cargo -= 100;
 		}
 		CalcFuel(2.0);
-	} else if (*m_pCurPos == *m_pSwamprock)
-	{
+	} else if (*m_pCurPos == *m_pSwamprock) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pHellhole);
@@ -1839,36 +1759,31 @@ VOID CNavWindow::OnHellhole() {
 }
 
 VOID CNavWindow::OnPustule() {
-	if (*m_pCurPos == *m_pPustule)
-	{
+	if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPustule);
 		*m_pPortName = "Pustule";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pUranus)
-	{
+	} else if (*m_pCurPos == *m_pUranus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPustule);
 		*m_pPortName = "Pustule";
 		CalcFuel(2.9);
-	} else if (*m_pCurPos == *m_pToejam)
-	{
+	} else if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPustule);
 		*m_pPortName = "Pustule";
 		CalcFuel(1.1);
-	} else if (*m_pCurPos == *m_pSlug)
-	{
+	} else if (*m_pCurPos == *m_pSlug) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPustule);
 		*m_pPortName = "Pustule";
 		CalcFuel(3.4);
-	} else if (*m_pCurPos == *m_pMaggotsnest)
-	{
+	} else if (*m_pCurPos == *m_pMaggotsnest) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPustule);
@@ -1880,29 +1795,25 @@ VOID CNavWindow::OnPustule() {
 }
 
 VOID CNavWindow::OnSwamprock() {
-	if (*m_pCurPos == *m_pSwamprock)
-	{
+	if (*m_pCurPos == *m_pSwamprock) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSwamprock);
 		*m_pPortName = "Swamp Rock";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pToejam)
-	{
+	} else if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSwamprock);
 		*m_pPortName = "Swamp Rock";
 		CalcFuel(1.8);
-	} else if (*m_pCurPos == *m_pHellhole)
-	{
+	} else if (*m_pCurPos == *m_pHellhole) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Swamp Rock";
 		m_pCurPos = new CBofRect(*m_pSwamprock);
 		CalcFuel(1.3);
-	} else if (*m_pCurPos == *m_pMaggotsnest)
-	{
+	} else if (*m_pCurPos == *m_pMaggotsnest) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSwamprock);
@@ -1915,8 +1826,7 @@ VOID CNavWindow::OnSwamprock() {
 }
 
 VOID CNavWindow::OnSlug() {
-	if (*m_pCurPos == *m_pSlug)
-	{
+	if (*m_pCurPos == *m_pSlug) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSlug);
@@ -1926,8 +1836,7 @@ VOID CNavWindow::OnSlug() {
 			m_cargo -= 75;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pPustule)
-	{
+	} else if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSlug);
@@ -1937,8 +1846,7 @@ VOID CNavWindow::OnSlug() {
 			m_cargo -= 75;
 		}
 		CalcFuel(3.4);
-	} else if (*m_pCurPos == *m_pMaggotsnest)
-	{
+	} else if (*m_pCurPos == *m_pMaggotsnest) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pSlug);
@@ -1954,29 +1862,25 @@ VOID CNavWindow::OnSlug() {
 }
 
 VOID CNavWindow::OnMaggotsnest() {
-	if (*m_pCurPos == *m_pMaggotsnest)
-	{
+	if (*m_pCurPos == *m_pMaggotsnest) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMaggotsnest);
 		*m_pPortName = "Maggot's Nest";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pPustule)
-	{
+	} else if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMaggotsnest);
 		*m_pPortName = "Maggot's Nest";
 		CalcFuel(2.3);
-	} else if (*m_pCurPos == *m_pSwamprock)
-	{
+	} else if (*m_pCurPos == *m_pSwamprock) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMaggotsnest);
 		*m_pPortName = "Maggot's Nest";
 		CalcFuel(1.9);
-	} else if (*m_pCurPos == *m_pSlug)
-	{
+	} else if (*m_pCurPos == *m_pSlug) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMaggotsnest);
@@ -1989,8 +1893,7 @@ VOID CNavWindow::OnMaggotsnest() {
 }
 
 VOID CNavWindow::OnPeggleboz() {
-	if (*m_pCurPos == *m_pPeggleboz)
-	{
+	if (*m_pCurPos == *m_pPeggleboz) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPeggleboz);
@@ -2000,8 +1903,7 @@ VOID CNavWindow::OnPeggleboz() {
 			m_cargo -= 99;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pArcheroids)
-	{
+	} else if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPeggleboz);
@@ -2011,8 +1913,7 @@ VOID CNavWindow::OnPeggleboz() {
 			m_cargo -= 99;
 		}
 		CalcFuel(4.7);
-	} else if (*m_pCurPos == *m_pNoVacancy)
-	{
+	} else if (*m_pCurPos == *m_pNoVacancy) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPeggleboz);
@@ -2028,8 +1929,7 @@ VOID CNavWindow::OnPeggleboz() {
 }
 
 VOID CNavWindow::OnArcheroids() {
-	if (*m_pCurPos == *m_pArcheroids)
-	{
+	if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArcheroids);
@@ -2039,8 +1939,7 @@ VOID CNavWindow::OnArcheroids() {
 			m_cargo -= 8;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pPeggleboz)
-	{
+	} else if (*m_pCurPos == *m_pPeggleboz) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArcheroids);
@@ -2050,8 +1949,7 @@ VOID CNavWindow::OnArcheroids() {
 			m_cargo -= 8;
 		}
 		CalcFuel(4.7);
-	} else if (*m_pCurPos == *m_pPackRat)
-	{
+	} else if (*m_pCurPos == *m_pPackRat) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArcheroids);
@@ -2061,8 +1959,7 @@ VOID CNavWindow::OnArcheroids() {
 			m_cargo -= 8;
 		}
 		CalcFuel(3.3);
-	} else if (*m_pCurPos == *m_pMankala)
-	{
+	} else if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArcheroids);
@@ -2072,8 +1969,7 @@ VOID CNavWindow::OnArcheroids() {
 			m_cargo -= 8;
 		}
 		CalcFuel(2.6);
-	} else if (*m_pCurPos == *m_pBeacon)
-	{
+	} else if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArcheroids);
@@ -2089,8 +1985,7 @@ VOID CNavWindow::OnArcheroids() {
 }
 
 VOID CNavWindow::OnPackRat() {
-	if (*m_pCurPos == *m_pPackRat)
-	{
+	if (*m_pCurPos == *m_pPackRat) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPackRat);
@@ -2100,8 +1995,7 @@ VOID CNavWindow::OnPackRat() {
 			m_cargo -= 24;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pArcheroids)
-	{
+	} else if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPackRat);
@@ -2111,8 +2005,7 @@ VOID CNavWindow::OnPackRat() {
 			m_cargo -= 24;
 		}
 		CalcFuel(3.3);
-	} else if (*m_pCurPos == *m_pBeacon)
-	{
+	} else if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPackRat);
@@ -2128,8 +2021,7 @@ VOID CNavWindow::OnPackRat() {
 }
 
 VOID CNavWindow::OnBeacon() {
-	if (*m_pCurPos == *m_pBeacon)
-	{
+	if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2139,8 +2031,7 @@ VOID CNavWindow::OnBeacon() {
 			m_cargo -= 125;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pArcheroids)
-	{
+	} else if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2150,8 +2041,7 @@ VOID CNavWindow::OnBeacon() {
 			m_cargo -= 125;
 		}
 		CalcFuel(1.2);
-	} else if (*m_pCurPos == *m_pPackRat)
-	{
+	} else if (*m_pCurPos == *m_pPackRat) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2161,8 +2051,7 @@ VOID CNavWindow::OnBeacon() {
 			m_cargo -= 125;
 		}
 		CalcFuel(5.2);
-	} else if (*m_pCurPos == *m_pMankala)
-	{
+	} else if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2172,8 +2061,7 @@ VOID CNavWindow::OnBeacon() {
 			m_cargo -= 125;
 		}
 		CalcFuel(3.8);
-	} else if (*m_pCurPos == *m_pLife)
-	{
+	} else if (*m_pCurPos == *m_pLife) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2183,8 +2071,7 @@ VOID CNavWindow::OnBeacon() {
 			m_cargo -= 125;
 		}
 		CalcFuel(3.1);
-	} else if (*m_pCurPos == *m_pFuge)
-	{
+	} else if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBeacon);
@@ -2200,36 +2087,31 @@ VOID CNavWindow::OnBeacon() {
 }
 
 VOID CNavWindow::OnMankala() {
-	if (*m_pCurPos == *m_pMankala)
-	{
+	if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMankala);
 		*m_pPortName = "Mankala";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pArcheroids)
-	{
+	} else if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMankala);
 		*m_pPortName = "Mankala";
 		CalcFuel(2.6);
-	} else if (*m_pCurPos == *m_pNoVacancy)
-	{
+	} else if (*m_pCurPos == *m_pNoVacancy) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMankala);
 		*m_pPortName = "Mankala";
 		CalcFuel(1.6);
-	} else if (*m_pCurPos == *m_pBeacon)
-	{
+	} else if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMankala);
 		*m_pPortName = "Mankala";
 		CalcFuel(3.8);
-	} else if (*m_pCurPos == *m_pGarfunkel)
-	{
+	} else if (*m_pCurPos == *m_pGarfunkel) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMankala);
@@ -2241,29 +2123,25 @@ VOID CNavWindow::OnMankala() {
 }
 
 VOID CNavWindow::OnLife() {
-	if (*m_pCurPos == *m_pLife)
-	{
+	if (*m_pCurPos == *m_pLife) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pLife);
 		*m_pPortName = "Life";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pFuge)
-	{
+	} else if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pLife);
 		*m_pPortName = "Life";
 		CalcFuel(2.9);
-	} else if (*m_pCurPos == *m_pBeacon)
-	{
+	} else if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pLife);
 		*m_pPortName = "Life";
 		CalcFuel(3.1);
-	} else if (*m_pCurPos == *m_pBattlefish)
-	{
+	} else if (*m_pCurPos == *m_pBattlefish) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pLife);
@@ -2275,8 +2153,7 @@ VOID CNavWindow::OnLife() {
 }
 
 VOID CNavWindow::OnFuge() {
-	if (*m_pCurPos == *m_pFuge)
-	{
+	if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFuge);
@@ -2286,8 +2163,7 @@ VOID CNavWindow::OnFuge() {
 			m_cargo -= 10;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pGarfunkel)
-	{
+	} else if (*m_pCurPos == *m_pGarfunkel) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFuge);
@@ -2297,8 +2173,7 @@ VOID CNavWindow::OnFuge() {
 			m_cargo -= 10;
 		}
 		CalcFuel(1.5);
-	} else if (*m_pCurPos == *m_pBeacon)
-	{
+	} else if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFuge);
@@ -2308,8 +2183,7 @@ VOID CNavWindow::OnFuge() {
 			m_cargo -= 10;
 		}
 		CalcFuel(1.8);
-	} else if (*m_pCurPos == *m_pLife)
-	{
+	} else if (*m_pCurPos == *m_pLife) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFuge);
@@ -2319,8 +2193,7 @@ VOID CNavWindow::OnFuge() {
 			m_cargo -= 10;
 		}
 		CalcFuel(2.9);
-	} else if (*m_pCurPos == *m_pBattlefish)
-	{
+	} else if (*m_pCurPos == *m_pBattlefish) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pFuge);
@@ -2336,22 +2209,19 @@ VOID CNavWindow::OnFuge() {
 }
 
 VOID CNavWindow::OnGarfunkel() {
-	if (*m_pCurPos == *m_pGarfunkel)
-	{
+	if (*m_pCurPos == *m_pGarfunkel) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pGarfunkel);
 		*m_pPortName = "Garfunkel";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pMankala)
-	{
+	} else if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pGarfunkel);
 		*m_pPortName = "Garfunkel";
 		CalcFuel(1.7);
-	} else if (*m_pCurPos == *m_pFuge)
-	{
+	} else if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pGarfunkel);
@@ -2363,8 +2233,7 @@ VOID CNavWindow::OnGarfunkel() {
 }
 
 VOID CNavWindow::OnBattlefish() {
-	if (*m_pCurPos == *m_pBattlefish)
-	{
+	if (*m_pCurPos == *m_pBattlefish) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBattlefish);
@@ -2374,8 +2243,7 @@ VOID CNavWindow::OnBattlefish() {
 			m_cargo -= 17;
 		}
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pFuge)
-	{
+	} else if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBattlefish);
@@ -2403,22 +2271,19 @@ VOID CNavWindow::OnBattlefish() {
 }
 
 VOID CNavWindow::OnNoVacancy() {
-	if (*m_pCurPos == *m_pNoVacancy)
-	{
+	if (*m_pCurPos == *m_pNoVacancy) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pNoVacancy);
 		*m_pPortName = "No Vacancy";
 		CalcFuel(0);
-	} else if (*m_pCurPos == *m_pMankala)
-	{
+	} else if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pNoVacancy);
 		*m_pPortName = "No Vacancy";
 		CalcFuel(1.6);
-	} else if (*m_pCurPos == *m_pPeggleboz)
-	{
+	} else if (*m_pCurPos == *m_pPeggleboz) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pNoVacancy);

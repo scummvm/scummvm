@@ -68,21 +68,21 @@ public:
 	const char *m_pBuyerName;
 };
 
-#define mOtherParty 	0x0001
-#define mBuyer			0x0002
-#define mSeller 		0x0004
+#define mOtherParty     0x0001
+#define mBuyer          0x0002
+#define mSeller         0x0004
 
 // The ordering of these flags must match the ordering of these same
 // characters in the array in which they are defined.
-#define mNorg72			0x0008
-#define mPnurth81		0x0010
-#define mZig64			0x0020
-#define mLentil24		0x0040
-#define mVargas20		0x0080
-#define mChurg53		0x0100
+#define mNorg72         0x0008
+#define mPnurth81       0x0010
+#define mZig64          0x0020
+#define mLentil24       0x0040
+#define mVargas20       0x0080
+#define mChurg53        0x0100
 
-#define mStafferMale		0x0200
-#define mStafferFemale		0x0400
+#define mStafferMale        0x0200
+#define mStafferFemale      0x0400
 
 class DispatchedTeamItem {
 public:
@@ -97,54 +97,54 @@ class SrafTextScreen :
 #if BOF_MAC
 	public CBofWindow {
 #else
-	public CBofDialog{
-	#endif
-	  public:
-							SrafTextScreen();
-							SrafTextScreen(CBofString &);
-		virtual            ~SrafTextScreen();
-		INT					CreateTextScreen(CBofWindow *pParent = NULL);
-		VOID				DisplayTextScreen();
+	public CBofDialog {
+#endif
+public:
+	SrafTextScreen();
+	SrafTextScreen(CBofString &);
+	virtual            ~SrafTextScreen();
+	INT                 CreateTextScreen(CBofWindow *pParent = NULL);
+	VOID                DisplayTextScreen();
 
-		VOID 				OnBofButton(CBofObject *, INT);
-		VOID 				OnClose(VOID);
+	VOID                OnBofButton(CBofObject *, INT);
+	VOID                OnClose(VOID);
 
-	#if BOF_WINDOWS
-		VOID                OnPaint(CBofRect *pRect);
-	#endif
+#if BOF_WINDOWS
+	VOID                OnPaint(CBofRect * pRect);
+#endif
 
-	 private:
-		CBofTextBox *m_pTextBox = nullptr; 			// Bof text box for all kinds of cool info
-		CBofBmpButton *m_pOKButton = nullptr;
-		CBofFile *m_pTextFile = nullptr;
-		CBofString *m_pszFileName = nullptr;
-		CBofBitmap *m_pSaveBackground = nullptr;
-		static CBofWindow *m_pSaveActiveWin;
+private:
+	CBofTextBox *m_pTextBox = nullptr;          // Bof text box for all kinds of cool info
+	CBofBmpButton *m_pOKButton = nullptr;
+	CBofFile *m_pTextFile = nullptr;
+	CBofString *m_pszFileName = nullptr;
+	CBofBitmap *m_pSaveBackground = nullptr;
+	static CBofWindow *m_pSaveActiveWin;
 
-	#if BOF_MAC
-		GrafPtr				m_pSavePort = nullptr;
-	#endif
+#if BOF_MAC
+	GrafPtr             m_pSavePort = nullptr;
+#endif
 };
 
 // Number of constants...
 #define NUM_MAIL_MESSAGES    8
-#define NUM_MINERALS		14
-#define NUM_STAFFERS		6
-#define NUM_MAIN_ITEMS 		11
-#define NUM_SELLERS 		3
-#define NUM_BUYERS 			20
-#define NUM_OTHER_PARTYS	3
+#define NUM_MINERALS        14
+#define NUM_STAFFERS        6
+#define NUM_MAIN_ITEMS      11
+#define NUM_SELLERS         3
+#define NUM_BUYERS          20
+#define NUM_OTHER_PARTYS    3
 #define NUM_MUSICAL_SCORES  7
-#define NUM_CODE_WORDS		10
+#define NUM_CODE_WORDS      10
 #define NUM_SRAFCOMPBUTT    11
 #define NUM_OFFERINGS       2
 
 // Constants for get meet member
 
-#define kOthersList		1
-#define kSellersList	2
-#define kBuyersList		3
-#define kStaffersList	4
+#define kOthersList     1
+#define kSellersList    2
+#define kBuyersList     3
+#define kStaffersList   4
 
 //	Sraffin text only screens (for stuff like biographies)
 
@@ -153,8 +153,8 @@ class SrafComputer : public CBagStorageDevWnd {
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
-	virtual	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
-	virtual	ERROR_CODE Attach();
+	virtual VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
+	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
@@ -245,7 +245,7 @@ public:
 
 	BOOL OnButtonSubmitOffer(VOID);
 
-	//	support routines to return info about a list
+	//  support routines to return info about a list
 	INT GetMeetMember(INT);
 	INT GetAdjustedIndex(INT, INT, BOOL);
 
@@ -300,13 +300,13 @@ protected:
 	RGBCOLOR m_cTextHiliteColor;
 	RGBCOLOR m_cTextLineColor;
 
-	CBofListBox *m_pLBox; 				// Main screen list
+	CBofListBox *m_pLBox;               // Main screen list
 	CBofList<SrafCompItem> *m_pMainList;
 	CBofList<DealSummarySellerItem> *m_pSellerSummaryList;
 	CBofList<DealSummaryBuyerItem> *m_pBuyerSummaryList;
 	CBofList<DispatchedTeamItem> *m_pTeamList;
 
-	CBofBitmap *m_pStafferBmp[NUM_STAFFERS + 1];	//  (one extra staffer, durteen)
+	CBofBitmap *m_pStafferBmp[NUM_STAFFERS + 1];    //  (one extra staffer, durteen)
 
 	int m_nSelection;
 	INT m_nListPointSize;
@@ -322,7 +322,7 @@ protected:
 	static BOOL m_bSwonzaEnlightened;
 	static INT m_nStartingTime;
 
-	static SrafComputer *m_pHead;  				// Unique pointer to head of list
+	static SrafComputer *m_pHead;               // Unique pointer to head of list
 
 	static BOOL m_bRandomAudio;
 	static INT m_nRandomTime;

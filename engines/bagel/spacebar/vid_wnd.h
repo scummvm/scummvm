@@ -31,10 +31,10 @@ namespace Bagel {
 namespace SpaceBar {
 
 // ID's and INDEX of buttons
-#define VID_PLAY_BUT 		0
-#define VID_STOP_BUT 		100
-#define VID_REW_BUT 		2
-#define VID_FF_BUT 			3
+#define VID_PLAY_BUT        0
+#define VID_STOP_BUT        100
+#define VID_REW_BUT         2
+#define VID_FF_BUT          3
 
 class SBarVidBut : public CBagButtonObject {
 public:
@@ -69,8 +69,8 @@ public:
 	BOOL                HasDisc(VOID);
 	INT                 GetFrame(DOUBLE fTime, INT nUseDisc);
 
-	virtual	ERROR_CODE  Attach();
-	virtual	ERROR_CODE  Detach();
+	virtual ERROR_CODE  Attach();
+	virtual ERROR_CODE  Detach();
 
 	ERROR_CODE          OnRender(CBofBitmap *pBmp, CBofRect *pRect);
 

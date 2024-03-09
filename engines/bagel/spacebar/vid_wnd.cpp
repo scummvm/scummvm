@@ -35,9 +35,9 @@ namespace SpaceBar {
 #define END_TIME1   225000
 
 #if BOF_MAC || BOF_WINMAC
-#define CLOSEUPVIDEODIR  	"$SBARDIR:BAR:CLOSEUP:BRCC2:"
+#define CLOSEUPVIDEODIR     "$SBARDIR:BAR:CLOSEUP:BRCC2:"
 #else
-#define CLOSEUPVIDEODIR		"$SBARDIR\\BAR\\CLOSEUP\\BRCC2\\"
+#define CLOSEUPVIDEODIR     "$SBARDIR\\BAR\\CLOSEUP\\BRCC2\\"
 #endif
 
 #define NUM_FRAME_TYPES 11
@@ -149,7 +149,7 @@ ERROR_CODE SBarVidWnd::Attach() {
 
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -174,7 +174,7 @@ ERROR_CODE SBarVidWnd::Detach() {
 
 	CMainWindow::Detach();
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -216,7 +216,7 @@ BOOL SBarVidWnd::HasDisc(VOID) {
 		}
 	}
 
-	return(bHaveDisc);
+	return (bHaveDisc);
 }
 
 
@@ -243,7 +243,7 @@ INT SBarVidWnd::GetFrame(DOUBLE fTime, INT nUseDisc) {
 			}
 		}
 	}
-	return(nFrame);
+	return (nFrame);
 }
 
 
@@ -313,7 +313,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		PaintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
@@ -323,7 +323,7 @@ CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
 
 	pVidButtObj = new SBarVidBut();
 
-	return(pVidButtObj);
+	return (pVidButtObj);
 }
 
 
@@ -337,7 +337,7 @@ const CHAR *BuildVidDir(const CHAR *pszFile) {
 	CBofString cStr(szBuf, MAX_DIRPATH);
 	MACROREPLACE(cStr);
 
-	return(&szBuf[0]);
+	return (&szBuf[0]);
 }
 
 

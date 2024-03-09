@@ -52,7 +52,7 @@ ERROR_CODE SBarFullWnd::Attach() {
 		UpdateWindow();
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 ERROR_CODE SBarFullWnd::Detach() {

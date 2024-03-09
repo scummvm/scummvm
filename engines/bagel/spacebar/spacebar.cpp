@@ -34,10 +34,10 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define LOGOSMK1 		"$SBARDIR\\INTRO\\LOGO1.SMK"
-#define LOGOSMK2 		"$SBARDIR\\INTRO\\LOGO2.SMK"
-#define LOGOSMK3   		"$SBARDIR\\INTRO\\LOGO3.SMK"
-#define LOGOSMK3EX 		"$SBARDIR\\INTRO\\LOGO3EX.SMK"
+#define LOGOSMK1        "$SBARDIR\\INTRO\\LOGO1.SMK"
+#define LOGOSMK2        "$SBARDIR\\INTRO\\LOGO2.SMK"
+#define LOGOSMK3        "$SBARDIR\\INTRO\\LOGO3.SMK"
+#define LOGOSMK3EX      "$SBARDIR\\INTRO\\LOGO3EX.SMK"
 
 static const BagelReg SPACEBAR_REG = {
 	"The Space Bar",
@@ -52,7 +52,7 @@ static const BagelReg SPACEBAR_REG = {
 };
 
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
 	SBarBibOddsWnd::initStatics();
 }
 

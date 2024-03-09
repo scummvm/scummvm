@@ -28,7 +28,7 @@ namespace SpaceBar {
 
 // Messages for "submit offer" button on the deal summary
 
-#define kszOfferAccepted 	"Your offer has been accepted!  You must now select a secure code name for this deal."
+#define kszOfferAccepted    "Your offer has been accepted!  You must now select a secure code name for this deal."
 #define kszUnresolvedSeller "%s's terms have not yet been resolved.  You must chat with this seller first."
 #define kszMiningConflict   "You have committed %s to %s and %s.  Please resolve this conflict."
 #define kszOfferNotEnough   "Your offer is short by %dgZ.  Please raise additional funds."
