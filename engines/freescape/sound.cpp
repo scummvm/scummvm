@@ -135,7 +135,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						repetitions = repetitions - 1;
 						var5 = var5 + (SFXtempStruct[5] | (SFXtempStruct[6] << 8)); 
 
-					} while ((byte)((byte)repetitions | (byte)((ushort)repetitions >> 8)) != 0);
+					} while ((byte)((byte)repetitions | (byte)((uint16)repetitions >> 8)) != 0);
 					soundSize = soundSize - 1;
 					repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
 					var5 = soundValue;
