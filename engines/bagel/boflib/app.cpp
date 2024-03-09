@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/framelimiter.h"
 #include "graphics/palette.h"
 
 #include "bagel/boflib/boffo.h"
@@ -165,6 +166,7 @@ ERROR_CODE CBofApp::RunApp() {
 
 	// Acquire and dispatch messages until we need to quit, or too many errors
 
+	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
 		while (g_system->getEventManager()->pollEvent(evt)) {
 //			TranslateMessage(evt);
@@ -196,7 +198,9 @@ ERROR_CODE CBofApp::RunApp() {
 			nCount = m_nIterations;
 		}
 
-		g_system->delayMillis(10);
+		limiter.delayBeforeSwap();
+		g_engine->_screen->update();
+		limiter.startFrame();
 	}
 
 	return m_errCode;
