@@ -175,11 +175,17 @@ typedef bool BOOLEAN;
  */
 extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
 
+#ifdef _DEBUG
+#define Assert(f) assert(f)
+#else
+
 #ifdef __TIMESTAMP__
 #define Assert(f) BofAssert(f, __LINE__, __FILE__, __TIMESTAMP__)
 #else
 #define Assert(f) BofAssert(f, __LINE__, __FILE__, NULL)
 #endif /* __TIMESTAMP__ */
+
+#endif
 
 #define Abort(p) BofAbort(p, __FILE__, __LINE__);
 
