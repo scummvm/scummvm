@@ -142,6 +142,8 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 							pBmp->Paint(pGameWindow, 0, 0);
 						}
 					}
+					if (shouldQuit())
+						return ERR_NONE;
 
 					cString = LOGOSMK2;
 					MACROREPLACE(cString);
@@ -151,6 +153,8 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 							pBmp->Paint(pGameWindow, 0, 0);
 						}
 					}
+					if (shouldQuit())
+						return ERR_NONE;
 
 					// Use hi-res movie if user has a fast machine
 					cString = (GetMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
@@ -163,6 +167,8 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 						}
 					}
 				}
+				if (shouldQuit())
+					return ERR_NONE;
 
 				// Start a new game (In entry vestible)
 				pGameWindow->NewGame();
@@ -216,7 +222,7 @@ Common::Error SpaceBarEngine::run() {
 	Initialize();
 
 	// Run the app
-	if (!ErrorOccurred())
+	if (!ErrorOccurred() && !shouldQuit())
 		RunApp();
 
 	// Shutdown
