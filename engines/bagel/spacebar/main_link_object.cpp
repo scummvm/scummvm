@@ -35,9 +35,7 @@ CMainLinkObject::CMainLinkObject()
 
 void CMainLinkObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	CMainWindow *pWnd = (CMainWindow *)info;
-	BOOL bActivated;
 
-	bActivated = FALSE;
 	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {
 		if (CBagMasterWin::GetFlyThru()) {
 			pWnd->RotateTo(GetSrcLoc(), 12);

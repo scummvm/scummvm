@@ -292,7 +292,6 @@ BOOL CBagMovieObject::RunObject() {
 				}
 #endif
 			} else {
-				BOOL bDeActivated = FALSE;
 				BOOL bActivated = FALSE;
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 
@@ -330,7 +329,7 @@ BOOL CBagMovieObject::RunObject() {
 					// Pull down the PDA (if it exists)
 					//
 					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
-						bDeActivated = ((CBagPanWindow *)pMainWin)->DeactivatePDA();
+						((CBagPanWindow *)pMainWin)->DeactivatePDA();
 						((CBagPanWindow *)pMainWin)->WaitForPDA();
 					}
 				}

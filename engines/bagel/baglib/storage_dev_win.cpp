@@ -1353,7 +1353,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 			pPalette = pBmp->GetPalette();
 			CBofApp::GetApp()->SetPalette(pPalette);
 			// CBagel::GetBagApp()->GetMasterWnd()->SelectPalette(pPalette);
-			CBofRect  ScreenRect =  CBofApp::GetApp()->GetMainWindow()->GetRect();
+			//CBofRect  ScreenRect =  CBofApp::GetApp()->GetMainWindow()->GetRect();
 			//ReSize(&ScreenRect);
 			CBofSprite::OpenLibrary(pPalette);
 

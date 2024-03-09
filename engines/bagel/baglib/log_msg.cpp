@@ -370,9 +370,9 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 	if (nCount) {
 
 		CBagStorageDev *pPda = nullptr;
-		CBagPDA *pPDAReally = nullptr;
+		//CBagPDA *pPDAReally = nullptr;
 		pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
-		pPDAReally = (CBagPDA *)pPda;
+		//pPDAReally = (CBagPDA *)pPda;
 
 		// If we're in a closeup, then don't play the message!
 		CBagStorageDev *pSDev;
@@ -385,7 +385,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 				CBofString mStr(szLocalBuff, 256);
 
 				// Global coordinates of pda view rect
-				CBofRect r = pPDAReally->GetViewRect() + pPDAReally->GetRect().TopLeft();
+				//CBofRect r = pPDAReally->GetViewRect() + pPDAReally->GetRect().TopLeft();
 
 				mStr = OVERRIDESMK;
 				MACROREPLACE(mStr);

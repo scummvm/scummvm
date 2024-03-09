@@ -138,14 +138,12 @@ VOID SBarComputer::EraseBackdrop() {
 }
 
 VOID  SBarComputer::OnPaint(CBofRect *pRect) {
-	ERROR_CODE errCode = ERR_NONE;
-
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != NULL);
 		// erase everything from the background
 		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
 		// paint all the objects to the background
-		errCode = PaintStorageDevice(NULL, GetBackdrop(), pRect);
+		PaintStorageDevice(NULL, GetBackdrop(), pRect);
 	}
 
 	if (m_pTBox != NULL)
@@ -954,7 +952,6 @@ VOID SBarComputer::Order() {
 				saveBackground.Paint(this, &gCompTextWindow);
 			} else {
 				CBagStorageDev *pSoldierSDev = NULL;
-				CBagObject *pDrinkObj = NULL;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
 
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)NULL, FALSE);
@@ -963,19 +960,19 @@ VOID SBarComputer::Order() {
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
 					BOOL bRefuse = FALSE;
-					if (pDrinkObj = pSoldierSDev->GetObject("DRINK1", TRUE))
+					if (pSoldierSDev->GetObject("DRINK1", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK2", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK2", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK3", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK3", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK4", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK4", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK5", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK5", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK6", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK6", TRUE))
 						bRefuse = TRUE;
-					else if (pDrinkObj = pSoldierSDev->GetObject("DRINK7", TRUE))
+					else if (pSoldierSDev->GetObject("DRINK7", TRUE))
 						bRefuse = TRUE;
 					else if (nHaveDrink > 0)
 						bRefuse = TRUE;

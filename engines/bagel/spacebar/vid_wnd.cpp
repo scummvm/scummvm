@@ -342,8 +342,6 @@ const CHAR *BuildVidDir(const CHAR *pszFile) {
 
 
 void SBarVidBut::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *pInfo) {
-	static BOOL bPlayState = FALSE;
-
 	switch (GetRefId()) {
 
 	case VID_PLAY_BUT:

@@ -56,7 +56,7 @@ ERROR_CODE CBagSpriteObject::Attach() {
 
 		if ((m_xSprite = new CBofSprite()) != NULL) {
 
-			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != NULL && (m_xSprite->Width() != 0) && (m_xSprite->Height() != 0)) {
+			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != false && (m_xSprite->Width() != 0) && (m_xSprite->Height() != 0)) {
 
 				if (IsTransparent()) {
 					int nMaskColor = CBagel::GetBagApp()->GetChromaColor();
