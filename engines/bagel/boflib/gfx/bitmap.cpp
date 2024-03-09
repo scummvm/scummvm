@@ -146,6 +146,12 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 	if (m_errCode == ERR_NONE) {
 
+		_bitmap.create(m_nDX, m_nDY, Graphics::PixelFormat::createFormatCLUT8());
+		m_pBits = (UBYTE *)_bitmap.getBasePtr(0, 0);
+
+		// set this bitmap's palette
+		SetPalette(pPalette, m_bOwnPalette);
+
 #if BOF_WINNT && !BOF_WINMAC
 
 		HPALETTE hPal;
@@ -288,6 +294,11 @@ ERROR_CODE CBofBitmap::LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette
 			// TODO: I think the bitmap's palette is used to remap the bitmap
 			// to the globally active palette
 			_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
+
+			m_nDX = _bitmap.w;
+			m_nDY = _bitmap.h;
+			m_nScanDX = _bitmap.pitch;
+			m_pBits = (UBYTE*)_bitmap.getBasePtr(0, 0);
 
 			// Close bitmap-file
 			delete pFile;
@@ -741,6 +752,8 @@ VOID CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 
 			m_bOwnPalette = bOwnPalette;
 			m_pPalette = pBofPalette;
+
+			_bitmap.setPalette(m_pPalette->GetPalette()._data, 0, PALETTE_COUNT);
 
 #if BOF_WINDOWS
 
