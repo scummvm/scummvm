@@ -108,7 +108,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 				soundSize = SFXtempStruct[0];
 				SFXtempStruct[0] = soundSize - 1;
 				sound_ptr = original_sound_ptr;
-				if ((soundSize - 1) == 0) 
+				if ((soundSize - 1) == 0)
 					break;
 				SFXtempStruct[5] = 0;
 			}
@@ -133,14 +133,14 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 						repetitions = repetitions - 1;
-						var5 = var5 + (SFXtempStruct[5] | (SFXtempStruct[6] << 8)); 
+						var5 = var5 + (SFXtempStruct[5] | (SFXtempStruct[6] << 8));
 
 					} while ((byte)((byte)repetitions | (byte)((uint16)repetitions >> 8)) != 0);
 					soundSize = soundSize - 1;
 					repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
 					var5 = soundValue;
 				} while (soundSize != 0);
-			} else if ((soundType & 0x7f) == 2) { 
+			} else if ((soundType & 0x7f) == 2) {
 				int size = 2 * (SFXtempStruct[1] + SFXtempStruct[2]);
 
 				soundUnitZX soundUnit;
