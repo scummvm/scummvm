@@ -346,6 +346,13 @@ ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSr
 			cSourceRect = *pSrcRect;
 		}
 
+		if (_bitmap.format.bytesPerPixel == 1) {
+			// Bitmap is paletted, so ensure it's palette is updated
+			const HPALETTE &pal = m_pPalette->GetPalette();
+			_bitmap.setPalette(pal._data, 0, pal._numColors);
+		}
+
+		// Handle the blitting
 		if (nMaskColor == NOT_TRANSPARENT) {
 			dstSurf->blitFrom(_bitmap, cSourceRect, cDestRect);
 		} else {
@@ -1720,7 +1727,6 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
 	errCode = ERR_NONE;
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
-
 		CBofRect cRect;
 
 		cRect = pBmp->GetRect();
