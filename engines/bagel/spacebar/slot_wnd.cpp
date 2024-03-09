@@ -145,7 +145,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 
 	SetHelpFilename(BuildSlotDir("SLOT.TXT"));
 
-	// jwl 1.13.97 call this thing a closeup so that time won't go 
+	// jwl 1.13.97 call this thing a closeup so that time won't go
 	// by when entering the closeup
 	SetCloseup(TRUE);
 }
@@ -270,8 +270,8 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 				m_pSlotButs[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
 #if BOF_MAC
-				// jwl 1.17.97 this will be a mac custom window thus not having the 
-				// black frame drawn around it. 
+				// jwl 1.17.97 this will be a mac custom window thus not having the
+				// black frame drawn around it.
 				m_pSlotButs[i]->SetCustomWindow(TRUE);
 #endif
 				m_pSlotButs[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
@@ -769,7 +769,7 @@ VOID SBarSlotWnd::QuadPays(int nSlotIdx) {
 	case 2: // circle
 		SetPayOff(75, 1);
 		break;
-	case 3: // sun 
+	case 3: // sun
 		SetPayOff(100, 1);
 		break;
 	case 4: // star
@@ -800,7 +800,7 @@ VOID SBarSlotWnd::TripPays(int nSlotIdx) {
 	case 2: // circle
 		SetPayOff(3, 1);
 		break;
-	case 3: // sun 
+	case 3: // sun
 	case 4: // star
 	case 5: // moon
 		SetPayOff(4, 1);
@@ -808,7 +808,7 @@ VOID SBarSlotWnd::TripPays(int nSlotIdx) {
 	case 6: // eye
 		SetPayOff(5, 1);
 		break;
-	case 7: // atom			   
+	case 7: // atom
 		SetPayOff(7, 1);
 		break;
 	case 8: // shoe

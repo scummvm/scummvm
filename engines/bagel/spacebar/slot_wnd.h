@@ -46,12 +46,12 @@ namespace SpaceBar {
 #define SHNDRD 		8
 #define OTHSND 		9
 #define RTHSND 		10
-#define STHSND		11		
-#define CLRBET		12		
+#define STHSND		11
+#define CLRBET		12
 #define BETALL		13
-#define GO			14		
+#define GO			14
 #define SLOTHELP	15
-#define SLOTQUIT	16		
+#define SLOTQUIT	16
 
 #define SLOT_NUM		4
 #define SLOT_BMP_NUM	9

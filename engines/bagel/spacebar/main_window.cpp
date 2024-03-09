@@ -74,9 +74,9 @@ CMainWindow::CMainWindow(const char *sCommandLine) {
 	//	if (sCommLine.Find("-b")!=-1 || sCommLine.Find("-B")!=-1)
 	//		m_nGameMode = VRBUILDMODE;
 	//	else if (sCommLine.Find("-v")!=-1 || sCommLine.Find("-V")!=-1)
-	//		m_nGameMode = VRPANMODE;	
-	//	else 
-	//		m_nGameMode = VRPLAYMODE;	
+	//		m_nGameMode = VRPANMODE;
+	//	else
+	//		m_nGameMode = VRPLAYMODE;
 	//#endif
 
 }
@@ -119,7 +119,7 @@ ERROR_CODE CMainWindow::Attach() {
 	chipdisp = FALSE;
 	pause = 0;
 
-	// jwl 10.29.96 have to know if we're being activated from a zoom... if so, then 
+	// jwl 10.29.96 have to know if we're being activated from a zoom... if so, then
 	// we don't want any foreground objects.
 	BOOL bForegroundObj = TRUE;
 
@@ -277,7 +277,7 @@ ERROR_CODE CMainWindow::Attach() {
 		}
 
 		// Create the PDA for the game
-		// This needs to be changed to look for a pda in the master list first 
+		// This needs to be changed to look for a pda in the master list first
 		if (!m_pPDABmp) {
 
 			if ((pSDev = SDEVMNGR->GetStorageDevice(PDAWLD)) != nullptr) {
@@ -533,7 +533,7 @@ VOID CMainWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 
 VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
-	// jwl 1.16.97 don't correct this boy if he's inside the PDA. 
+	// jwl 1.16.97 don't correct this boy if he's inside the PDA.
 	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->IsInside(*p)) {
 		return;
@@ -607,7 +607,7 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	//		p->x = m_xFilterRect.left + (p->x-r.left)*3;
 	//		p->y = m_xFilterRect.top  + (p->y-r.top)*3;
 	//		break;
-	//	} 
+	//	}
 	// attempt to make all squares active in zzazzlvision -- bar 01-06-97
 	int i, j;
 	for (i = 0; i < 3; ++i) {

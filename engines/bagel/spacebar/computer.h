@@ -44,9 +44,9 @@ namespace SpaceBar {
 #define ORDER 	6
 #define PGUP 	7
 #define PGDOWN 	8
-#define BCBACK	9		
-#define BCHELP	10		
-#define BCQUIT	11		
+#define BCBACK	9
+#define BCHELP	10
+#define BCQUIT	11
 
 enum COMPMODE {
 	OFFMODE, DRINKMODE, INGMODE, LISTMODE
