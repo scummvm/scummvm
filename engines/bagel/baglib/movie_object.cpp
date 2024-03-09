@@ -48,7 +48,7 @@ namespace Bagel {
 CBagMovieObject::CBagMovieObject() {
 	m_xObjType = MOVIEOBJ;
 	SetVisible(TRUE);
-	m_xDisplayType = MOVIE;
+	m_xDisplayType = DISP_TYPE::MOVIE;
 	m_bFlyThru = FALSE;
 
 	// jwl 12.02.96 initialize asynch flags to be off by default.
@@ -69,7 +69,7 @@ CBagMovieObject::~CBagMovieObject() {
 
 	// jwl 11.30.96 could still by lying around in the pda movie queue,
 	// make sure it has been removed.
-	if (m_xDisplayType == ASYNCH_PDAMSG) {
+	if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 		CBagPDA::RemoveFromMovieQueue(this);
 	}
 
@@ -137,7 +137,7 @@ BOOL CBagMovieObject::RunObject() {
 		// This would be much cooler if it were a cast to another object type and
 		// then a run.  But this is a quicker fix.
 		//
-		enum MOVFILETYPE { NONE = 0,
+		enum class MOVFILETYPE { NONE = 0,
 		                   TEXT = 1,
 		                   SOUND = 2,
 		                   MOVIE = 3
@@ -163,13 +163,13 @@ BOOL CBagMovieObject::RunObject() {
 		// We shouldn't need this, but you never know what a QA person is going to type
 		//
 		if (sFileName.Find(".smk") > 0 || sFileName.Find(".SMK") > 0) {
-			nMovFileType = MOVIE;
+			nMovFileType = MOVFILETYPE::MOVIE;
 		} else if (sFileName.Find(SOUNDFILEEXTLOWER) > 0 || sFileName.Find(SOUNDFILEEXTUPPER) > 0) {
-			nMovFileType = SOUND;
+			nMovFileType = MOVFILETYPE::SOUND;
 		} else if (sFileName.Find(".txt") > 0 || sFileName.Find(".TXT") > 0) {
-			nMovFileType = TEXT;
+			nMovFileType = MOVFILETYPE::TEXT;
 		} else {
-			nMovFileType = NONE;
+			nMovFileType = MOVFILETYPE::NONE;
 		}
 
 		// Look for .SMK then .WAV, then .TXT
@@ -178,32 +178,32 @@ BOOL CBagMovieObject::RunObject() {
 
 			switch (nMovFileType) {
 
-			case MOVIE:
+			case MOVFILETYPE::MOVIE:
 				sFileName = sBaseStr + SOUNDFILEEXTLOWER;
-				nMovFileType = SOUND;
+				nMovFileType = MOVFILETYPE::SOUND;
 				break;
 
-			case SOUND:
+			case MOVFILETYPE::SOUND:
 				sFileName = sBaseStr + ".txt";
-				nMovFileType = TEXT;
+				nMovFileType = MOVFILETYPE::TEXT;
 				break;
 
-			case TEXT:
+			case MOVFILETYPE::TEXT:
 				// sFileName = sBaseStr + ".ARF"
 				BofMessageBox(sFileName.GetBuffer(), "Could not find asset");
-				nMovFileType = NONE;
+				nMovFileType = MOVFILETYPE::NONE;
 				break;
 
 			// We should never get here
 			//
-			case NONE:
+			case MOVFILETYPE::NONE:
 			default:
 				LogError(BuildString("Movie does not have a correct file name: %s.", sFileName.GetBuffer()));
 				return (rc);
 			}
 		}
 
-		if (nMovFileType == MOVIE) {
+		if (nMovFileType == MOVFILETYPE::MOVIE) {
 #endif
 
 			BOOL isFiltered = FALSE;
@@ -218,7 +218,7 @@ BOOL CBagMovieObject::RunObject() {
 
 			// jwl 11.29.96 If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
-			if (m_xDisplayType == ASYNCH_PDAMSG) {
+			if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 				if (AsynchPDAMovieCanPlay() == FALSE) {
 					pPDA->AddToMovieQueue(this);
 					return rc;
@@ -238,7 +238,7 @@ BOOL CBagMovieObject::RunObject() {
 				}
 			}
 
-			if (m_xDisplayType == EXAMINE) {
+			if (m_xDisplayType == DISP_TYPE::EXAMINE) {
 				CBofRect r(160, 60, 480, 300);
 
 				// Offset the rect for the movies to compensate for all screen sizes
@@ -298,12 +298,12 @@ BOOL CBagMovieObject::RunObject() {
 				// Offset the rect for the movies to compensate for all screen sizes
 				r.OffsetRect(((CBofWindow *)pMainWin)->GetWindowRect().TopLeft());
 
-				if (m_xDisplayType == PDAMSG || m_xDisplayType == ASYNCH_PDAMSG) {
+				if (m_xDisplayType == DISP_TYPE::PDAMSG || m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 
 					// Pull up the PDA (if it exists)
 					//
 					// jwl 11.21.96 only pull up the PDA if we're not playing an asynch movie
-					if (m_xDisplayType == PDAMSG) {
+					if (m_xDisplayType == DISP_TYPE::PDAMSG) {
 
 						// jwl 10.23.96 increment timer one, pda message counts as one turn
 						// jwl 12.05.96 allow scripter to override timer increment
@@ -373,7 +373,7 @@ BOOL CBagMovieObject::RunObject() {
 
 					// jwl 12.13.96 temp fix... maybe, allow script to override some
 					// other movies.
-					if ((m_xDisplayType == PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == FALSE) {
+					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == FALSE) {
 
 						CHAR szLocalBuff[256];
 						CBofString cStr(szLocalBuff, 256);
@@ -385,7 +385,7 @@ BOOL CBagMovieObject::RunObject() {
 						sFileName = cStr;
 					}
 
-					if (m_xDisplayType == ASYNCH_PDAMSG) {
+					if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
 						// jwl 11.29.96
 						if (pPDA) {
@@ -398,7 +398,7 @@ BOOL CBagMovieObject::RunObject() {
 					} else {
 						CBofMovie *pMovie;
 
-						if (bZoomed && m_xDisplayType != ASYNCH_PDAMSG && m_xDisplayType != PDAMSG) {
+						if (bZoomed && m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && m_xDisplayType != DISP_TYPE::PDAMSG) {
 							pNewWin = new CBofWindow();
 							if (pNewWin) {
 								pNewWin->Create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
@@ -409,7 +409,7 @@ BOOL CBagMovieObject::RunObject() {
 
 						// If playing a PDA message while the PDA is zoomed
 						//
-						if (m_xDisplayType == PDAMSG && bZoomed) {
+						if (m_xDisplayType == DISP_TYPE::PDAMSG && bZoomed) {
 
 							// Then stretch it to fit into the PDA's viewscreen
 							// r.SetRect(24, 47, 24 + 600 - 1, 47 + 302 - 1);
@@ -449,7 +449,7 @@ BOOL CBagMovieObject::RunObject() {
 				}
 
 				// jwl 12.30.96 put the pda down if we brought it up. (8638)
-				if (m_xDisplayType != ASYNCH_PDAMSG && bActivated) {
+				if (m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
 #if BOF_MAC
 					// jwl 10.14.96 make sure the window is up before we drop the pda
 					((CBagPanWindow *)pMainWin)->Show();
@@ -460,7 +460,7 @@ BOOL CBagMovieObject::RunObject() {
 
 				// jwl 12.30.96 if we're asynch, then let it know to deactivate when
 				// done playing.
-				if (m_xDisplayType == ASYNCH_PDAMSG) {
+				if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					pPDA->SetDeactivate(bActivated);
 				}
 			}
@@ -472,7 +472,7 @@ BOOL CBagMovieObject::RunObject() {
 				pMainWin->SetPreFilterPan(TRUE);
 			}
 #ifndef BOF_FINAL_RELEASE
-		} else if (nMovFileType == SOUND) {
+		} else if (nMovFileType == MOVFILETYPE::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::GetApp()->GetMainWindow(), sFileName, SOUND_WAVE);
 			if (pSound) {
 				pSound->Play();
@@ -481,7 +481,7 @@ BOOL CBagMovieObject::RunObject() {
 			} else {
 				LogError(BuildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.GetBuffer()));
 			}
-		} else if (nMovFileType == TEXT) {
+		} else if (nMovFileType == MOVFILETYPE::TEXT) {
 #if BOF_MAC
 			BOOL isOpen = FALSE;
 			if (FileExists(sFileName)) {
@@ -551,17 +551,17 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("EXAMINE")) {
-					m_xDisplayType = EXAMINE;
+					m_xDisplayType = DISP_TYPE::EXAMINE;
 				} else if (!sStr.Find("MOVIE")) {
-					m_xDisplayType = MOVIE;
+					m_xDisplayType = DISP_TYPE::MOVIE;
 
 				} else if (!sStr.Find("FLYTHRU")) {
-					m_xDisplayType = MOVIE;
+					m_xDisplayType = DISP_TYPE::MOVIE;
 					m_bFlyThru = TRUE;
 				} else if (!sStr.Find("PDAMSG")) {
-					m_xDisplayType = PDAMSG;
+					m_xDisplayType = DISP_TYPE::PDAMSG;
 				} else if (!sStr.Find("ASYNCH_PDAMSG")) {
-					m_xDisplayType = ASYNCH_PDAMSG;
+					m_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
 
 					// jwl 12.13.96 see if this improves performance any...
 					SetPreload(TRUE);

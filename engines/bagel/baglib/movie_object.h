@@ -37,7 +37,7 @@ namespace Bagel {
  */
 class CBagMovieObject : public CBagObject {
 public:
-	enum DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
+	enum class DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
 
 private:
 	// CBofSize          m_xSize;
