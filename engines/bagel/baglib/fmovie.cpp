@@ -433,7 +433,7 @@ VOID CBagFMovie::OnMovieDone() {
 		// m_pMovTimer->Stop();
 
 		GetParent()->Enable();
-		m_bEndDialog = TRUE;
+		_bEndDialog = TRUE;
 	}
 }
 

@@ -52,7 +52,7 @@ CBagStartDialog::CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofW
 	: CBofDialog(pszFileName, pRect, pWin) {
 	// Inits
 	m_pSavePalette = nullptr;
-	m_lFlags &= ~BOFDLG_SAVEBACKGND;
+	_lFlags &= ~BOFDLG_SAVEBACKGND;
 
 	for (INT i = 0; i < NUM_START_BTNS; i++) {
 		m_pButtons[i] = nullptr;

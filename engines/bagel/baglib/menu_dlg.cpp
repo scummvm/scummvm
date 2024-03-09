@@ -609,7 +609,7 @@ ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRe
 
 	m_bMultipleDialogs = FALSE;
 	m_bAcceptInput = TRUE;
-	m_nReturnValue = 0;
+	_nReturnValue = 0;
 
 	if (!pRect) {
 		r = pWnd->GetWindowRect();
@@ -661,7 +661,7 @@ VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 			}
 		}
 
-		m_nReturnValue = (m_pSelectedObject != nullptr);
+		_nReturnValue = (m_pSelectedObject != nullptr);
 	}
 }
 

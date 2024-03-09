@@ -57,7 +57,7 @@ CBagRestartDialog::CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, C
 	: CBofDialog(pszFileName, pRect, pWin) {
 	// Inits
 	m_pSavePalette = nullptr;
-	m_nReturnValue = -1;
+	_nReturnValue = -1;
 
 	for (INT i = 0; i < NUM_RESTART_BTNS; i++) {
 		m_pButtons[i] = nullptr;
@@ -144,7 +144,7 @@ VOID CBagRestartDialog::OnClose() {
 
 	CBofDialog::OnClose();
 
-	if (m_nReturnValue != RESTART_BTN) {
+	if (_nReturnValue != RESTART_BTN) {
 		CBofApp::GetApp()->SetPalette(m_pSavePalette);
 	} else {
 		CBofApp::GetApp()->SetPalette(nullptr);
@@ -200,7 +200,7 @@ VOID CBagRestartDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 
 				KillBackground();
 
-				m_nReturnValue = RESTART_BTN;
+				_nReturnValue = RESTART_BTN;
 				OnClose();
 			}
 		}
@@ -261,7 +261,7 @@ VOID CBagRestartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 
 					KillBackground();
 
-					m_nReturnValue = RESTART_BTN;
+					_nReturnValue = RESTART_BTN;
 					OnClose();
 				}
 			}

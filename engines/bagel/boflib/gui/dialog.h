@@ -36,45 +36,18 @@ namespace Bagel {
 #define BOFDLG_TRANSPARENT  0x00000001
 #define BOFDLG_SAVEBACKGND  0x00000002
 
-#if BOF_MAC
-#define BOFDLG_DEFAULT (BOFDLG_TRANSPARENT | BOFDLG_SAVEBACKGND)
-#else
 #define BOFDLG_DEFAULT (BOFDLG_TRANSPARENT /* | BOFDLG_SAVEBACKGND*/)
-#endif
 
 class CBofDialog : public CBofWindow {
+protected:
+	CBofBitmap *_pDlgBackground = nullptr;
+	ULONG _lFlags = 0;
+	INT _nReturnValue = 0;
 
-	// Construction
-public:
-	CBofDialog();
-	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
-	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
-	virtual ~CBofDialog();
-
-	ERROR_CODE  Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
-	ERROR_CODE  Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
-
-	VOID        SetFlags(ULONG lFlags)      {
-		m_lFlags = lFlags;
-	}
-	ULONG       GetFlags()              {
-		return (m_lFlags);
-	}
-
-	INT         DoModal();
-	VOID        EndModal()              {
-		m_bEndDialog = TRUE;
-	}
-
-	VOID        SetReturnValue(INT nValue)  {
-		m_nReturnValue = nValue;
-	}
-	INT         GetReturnValue()        {
-		return (m_nReturnValue);
-	}
-#if BOF_MAC
-	BOOL        HandleMacEvent(EventRecord *pEvent);
-#endif
+	BOOL _bFirstTime = FALSE;
+	BOOL _bTempBitmap = FALSE;
+	BOOL _bEndDialog = FALSE;
+	BOOL _bHavePainted = FALSE;
 
 protected:
 	virtual ERROR_CODE Paint(CBofRect *pRect);
@@ -86,14 +59,93 @@ protected:
 	virtual VOID OnClose();
 	virtual VOID OnInitDialog();
 
-	CBofBitmap *m_pDlgBackground;
-	ULONG       m_lFlags;
-	INT         m_nReturnValue;
+public:
+	/**
+	 * Constructor
+	 */
+	CBofDialog();
 
-	BOOL        m_bFirstTime;
-	BOOL        m_bTempBitmap;
-	BOOL        m_bEndDialog;
-	BOOL        m_bHavePainted;
+	/**
+	 * Constructor
+	 */
+	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+
+	/**
+	 * Constructor
+	 */
+	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~CBofDialog();
+
+	/**
+	 * Creates the dialog
+	 * @param pszName		Dialog name
+	 * @param x				Top-left X position
+	 * @param y				Top-left Y position
+	 * @param nWidth		Width
+	 * @param nHeight		Height
+	 * @param pParent		Parent window
+	 * @param nControlID	Control Id
+	 * @return				Error return code
+	 */
+	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+
+	/**
+	 * Creates the dialog
+	 * @param pszName		Dialog name
+	 * @param pRect			Dialog bounds
+	 * @param pParent		Parent window
+	 * @param nControlID	Control Id
+	 * @return				Error return code
+	 */
+	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+
+	/**
+	 * Set the dialog flags
+	 */
+	VOID SetFlags(ULONG lFlags) {
+		_lFlags = lFlags;
+	}
+
+	/**
+	 * Return the dialog's flags
+	 */
+	ULONG GetFlags() const {
+		return _lFlags;
+	}
+
+	/**
+	 * Show the dialog as a modal
+	 */
+	INT DoModal();
+
+	/**
+	 * End the dialog modal display
+	 */
+	VOID EndModal() {
+		_bEndDialog = TRUE;
+	}
+
+	/**
+	 * Set the dialog's return value
+	 */
+	VOID SetReturnValue(INT nValue) {
+		_nReturnValue = nValue;
+	}
+
+	/**
+	 * Get the dialog's return value
+	 * @return 
+	 */
+	INT GetReturnValue() const {
+		return _nReturnValue;
+	}
+#if BOF_MAC
+	BOOL        HandleMacEvent(EventRecord *pEvent);
+#endif
 };
 
 } // namespace Bagel
