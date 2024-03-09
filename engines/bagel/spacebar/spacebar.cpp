@@ -56,6 +56,11 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	SBarBibOddsWnd::initStatics();
 }
 
+void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
+	BagelEngine::initializePath(gamePath);
+	SearchMan.addDirectory("spacebar", gamePath.getChild("spacebar"), 0, 3);
+}
+
 ERROR_CODE SpaceBarEngine::Initialize() {
 	Assert(IsValidObject(this));
 	CBofBitmap *pBmp = nullptr;
@@ -64,9 +69,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 
 	if (!ErrorOccurred()) {
 		CSBarMasterWin *pGameWindow;
-		BOOL bShowLogo;
-
-		bShowLogo = TRUE;
+		BOOL bShowLogo = TRUE;
 
 		if ((pGameWindow = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
