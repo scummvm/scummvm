@@ -82,34 +82,23 @@ static BOOL initDone = FALSE;
 static BOOL triinitDone = FALSE;
 static BOOL lightninginitDone = FALSE;
 static char *buff = NULL;
-static CBofRect srcTipRect;
 static const char *kPrecipString = "Chance Of Precipitation: ";
 static const char *kDustString = "Dust Level: ";
 static const char *kRadioOnString = "Internal Radio Receiver: On";
 static const char *kRadioOffString = "Internal Radio Receiver: Off";
-static const char *kVoiceUnknownString = "Voice ID: None";
-static const char *kVoiceCoachString = "Voice ID: Veeblecoach";
-static const char *kVoicePictureguarderString = "Voice ID: Pictureguarder";
-static const char *kVoiceCommentmakerString = "Voice ID: Commentmaker";
-static const char *kVoiceHairtrimmerString = "Voice ID: Hairtrimmer";
-static const char *kVoicePresidentString = "Voice ID: President";
-static const char *kVoicePAAnnouncerString = "Voice ID: P.A. Announcer";
-static const char *kVoicePlayDescriberString = "Voice ID: Playdescriber and Coloradder";
-static const char *kVoiceTooManyString = "Voice ID: Unable to process multiple signals.";
-static const char *kVoiceBlankString = "Voice ID:";
 static DWORD dwTimeOfNextBolt = 0;
 static CBofSound *pThunder = NULL;
 static const char *voiceNameArray[] = {
-	kVoiceUnknownString,
-	kVoiceCoachString,
-	kVoicePictureguarderString,
-	kVoiceCommentmakerString,
-	kVoiceHairtrimmerString,
-	kVoicePresidentString,
-	kVoicePAAnnouncerString,
-	kVoicePlayDescriberString,
-	kVoiceTooManyString,
-	kVoiceBlankString
+	"Voice ID: None",
+	"Voice ID: Veeblecoach",
+	"Voice ID: Pictureguarder",
+	"Voice ID: Commentmaker",
+	"Voice ID: Hairtrimmer",
+	"Voice ID: President",
+	"Voice ID: P.A. Announcer",
+	"Voice ID: Playdescriber and Coloradder",
+	"Voice ID: Unable to process multiple signals.",
+	"Voice ID:"
 };
 static const CBofRect viewPortRect(80, 10, 559, 369);
 static CBofRect viewRect;
@@ -386,6 +375,8 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		rect.top += 20;
 		rect.bottom += 20;
 		PaintText(pBmp, &rect, pVoiceIdString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(255, 193, 0), JUSTIFY_LEFT, FORMAT_DEFAULT);
+
+		CBofRect srcTipRect;
 
 		srcTipRect.left = 0;
 		srcTipRect.right = viewRect.right - viewRect.left;
