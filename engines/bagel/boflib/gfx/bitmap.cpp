@@ -240,7 +240,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 #endif // BOF_MAC
 	}
-	return (m_errCode);
+	return m_errCode;
 }
 
 BOOL CBofBitmap::Alloc() {
@@ -249,7 +249,8 @@ BOOL CBofBitmap::Alloc() {
 	} else {
 		BuildBitmap(m_pPalette);
 	}
-	return (!ErrorOccurred());
+
+	return !ErrorOccurred();
 }
 
 VOID CBofBitmap::Free() {
@@ -421,7 +422,7 @@ ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, INT x, INT y, CBofRect *pSrcRect,
 		cRect.SetRect(x, y, x + pSrcRect->Width() - 1, y + pSrcRect->Height() - 1);
 	}
 
-	return (Paint(pBmp, &cRect, pSrcRect, nMaskColor));
+	return Paint(pBmp, &cRect, pSrcRect, nMaskColor);
 }
 
 ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, INT nMaskColor) {
@@ -902,7 +903,7 @@ UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	}
 	Assert(lOffset >= 0);
 
-	return (m_pBits + lOffset);
+	return m_pBits + lOffset;
 }
 
 UBYTE CBofBitmap::ReadPixel(CBofPoint *pPoint) {
@@ -1316,7 +1317,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 		}
 	}
 
-	return (pNewBmp);
+	return pNewBmp;
 }
 
 ERROR_CODE CBofBitmap::ScrollRight(INT nPixels, CBofRect * /*pRect*/) {
@@ -1672,7 +1673,7 @@ DOUBLE CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
 	fFPS = (DOUBLE)1000000 / TimerStop();
 	LogInfo(BuildString("CBofBitmap::FPSTest: %f FPS", fFPS));
 
-	return (fFPS);
+	return fFPS;
 }
 
 DOUBLE CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
@@ -1691,7 +1692,7 @@ DOUBLE CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 	fFPS = (DOUBLE)1000000 / TimerStop();
 	LogInfo(BuildString("CBofBitmap::OffScreenFPSTest: %f FPS", fFPS));
 
-	return (fFPS);
+	return fFPS;
 }
 #endif
 
@@ -1705,7 +1706,7 @@ CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, BOOL bUse
 	CBofPalette *pUsePal = pPalette;
 	CBofBitmap *pBmp;
 
-	// jwl 10.07.96 if no palette was passed in and a shared palette was requested, then
+	// If no palette was passed in and a shared palette was requested, then
 	// use our default one established by "SHAREDPAL=" in the script
 	if (bUseShared && pPalette == nullptr) {
 		pUsePal = CBofPalette::GetSharedPalette();
@@ -1713,7 +1714,7 @@ CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, BOOL bUse
 
 	pBmp = new CBofBitmap(pszFileName, pUsePal);
 
-	return (pBmp);
+	return pBmp;
 }
 
 ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
@@ -1767,7 +1768,7 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const CHAR *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
@@ -1800,7 +1801,7 @@ ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const CHAR *pszFileName, CBofRect *p
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 CBofPalette *LoadPalette(const CHAR *pszFileName) {
@@ -1853,7 +1854,7 @@ CBofSize GetBitmapSize(const CHAR *pszFileName) {
 		LogError(BuildString("Could not allocate a CBofFile for %s", pszFileName));
 	}
 
-	return (cSize);
+	return cSize;
 }
 
 
