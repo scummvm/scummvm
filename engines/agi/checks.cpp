@@ -159,6 +159,15 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 	if (screenObj->objectNr == 0) {
 		setFlag(VM_FLAG_EGO_TOUCHED_P2, touchedTrigger);
 		setFlag(VM_FLAG_EGO_WATER, touchedWater);
+
+		// WORKAROUND: KQ3 infinite falling, bug #13379
+		// Falling off of the ladder in room 22 or the stairs in room 64 can
+		// cause ego to fall forever in place. In both rooms, and possibly
+		// others, an unrelated black priority line overlaps with fall paths.
+		// This also occurs in the original. Ignore these lines when falling.
+		if (!touchedControl && getGameID() == GID_KQ3 && screenObj->currentViewNr == 11) {
+			touchedControl = true;
+		}
 	}
 
 	return touchedControl;
