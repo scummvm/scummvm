@@ -1382,13 +1382,13 @@ void Wiz::TRLEFLIP_Rotate90_DecompressImage(
 			wizFlags |= kWRFRemap;
 		}
 	} else {
-		if (kWRFRemap & wizFlags) {
+		if (_vm->_game.heversion < 100 || wizFlags & kWRFRemap) {
 			extraTable = nullptr;
 			wizFlags &= ~(kWRFUseShadow | kWRFRemap);
 		}
 	}
 
-	if (_uses16BitColor) {
+	if (_vm->_game.heversion > 99 && _uses16BitColor) {
 		// Check for new "special" rendering modes
 		if (wizFlags & kWRFSpecialRenderBitMask) {
 			if (wizFlags & kWRFAdditiveBlend) {
