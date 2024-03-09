@@ -106,7 +106,7 @@ NPLANET g_LevelTwo[9] = {
 	{ "Swamp Rock", 340, 234, 349, 243, {nullptr, 0, TRUE} },
 	{ "Slug", 36, 341, 45, 350, { "Slime Remover", 75, TRUE} },
 	{ "Maggot's Nest", 251, 376, 260, 385, {nullptr, 0, TRUE} },
-	{ nullptr, 0, 0, 0, 0, {nullptr, 0}}
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0, FALSE}}
 };
 NPLANET g_LevelThree[11] = {
 	{ "Peggleboz", 90, 20, 99, 29, { "Shot Glasses", 99, TRUE} },
@@ -127,7 +127,7 @@ ST_BUTTONS g_NavButtons[2] = {
 	{ "Instructions", "HUP.bmp", "HDOWN.bmp", "HDIS.bmp", "HDIS.bmp", 4, 443, 200, 30, HELP },
 };
 
-CBofString g_LevelTitle[4] = {
+const char *g_LevelTitle[4] = {
 	"Novice",
 	"Moderate",
 	"Hard",
@@ -645,9 +645,9 @@ VOID CNavWindow::RefreshData() {
 				cRect.top += 15;
 				cRect.bottom += 15;
 				if (m_pLevel[i].cargo.Weight != 1)
-					Common::sprintf_s(szBuf, "%3d tons of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo, m_pLevel[i].Name);
+					Common::sprintf_s(szBuf, "%3d tons of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
 				else
-					Common::sprintf_s(szBuf, "%3d ton of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo, m_pLevel[i].Name);
+					Common::sprintf_s(szBuf, "%3d ton of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
 				PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 				cRect.top += 15;
 				cRect.bottom += 15;
@@ -706,12 +706,12 @@ VOID CNavWindow::RefreshData() {
 
 		cRect.top += 30;
 		cRect.bottom += 30;
-		Common::sprintf_s(szBuf, "Simulation Level:", g_LevelTitle[m_level].GetBuffer());
+		Common::sprintf_s(szBuf, "Simulation Level:"/*, g_LevelTitle[m_level]*/);
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		cRect.left += 10;       // indent
 		cRect.top += 15;
 		cRect.bottom += 15;
-		Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level].GetBuffer());
+		Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		cRect.left -= 10;       // un-indent
 		cBmp.Paint(this, 443, 0);
@@ -723,13 +723,11 @@ VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(pObject != nullptr);
 
 	CBofButton *pButton;
-	INT nBet;
 
 	pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED) {
 
-		nBet = 0;
 		switch (pButton->GetControlID()) {
 
 		case QUIT: {

@@ -425,6 +425,8 @@ VOID SBBasePda::SetPDAState() {
 		case PDADOWN:
 			pVar->SetValue("DOWN");
 			break;
+		default:
+			break;
 		}
 	}
 }

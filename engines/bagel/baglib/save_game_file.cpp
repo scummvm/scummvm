@@ -205,9 +205,8 @@ BOOL CBagSaveGameFile::AnySavedGames(VOID) {
 	Assert(IsValidObject(this));
 
 	ST_SAVEDGAME_HEADER stGameInfo;
-	LONG i, lNumRecs, lNumSaves;
+	LONG i, lNumRecs;
 
-	lNumSaves = 0;
 	lNumRecs = GetNumSavedGames();
 	for (i = 0; i < lNumRecs; i++) {
 		if (ReadTitle(i, &stGameInfo) == ERR_NONE) {

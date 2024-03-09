@@ -930,8 +930,6 @@ VOID SrafComputer::OnMainLoop() {
 //
 
 VOID SrafComputer::OnPaint(CBofRect *pRect) {
-	ERROR_CODE errCode = ERR_NONE;
-
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
@@ -939,7 +937,7 @@ VOID SrafComputer::OnPaint(CBofRect *pRect) {
 		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
 
 		// paint all the objects to the background
-		errCode = PaintStorageDevice(nullptr, GetBackdrop(), pRect);
+		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
 	}
 
 	// Paint the backdrop
@@ -4228,15 +4226,12 @@ VOID SrafComputer::ActivateMainScreen(VOID) {
 VOID SrafComputer::AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt) {
 //	INT nStartLen = sStr.GetLength();
 	INT nAppendLen = strlen(szRightText);
-	const CHAR *p;
 
 	while (sStr.GetLength() < nAlignAt) {
 		sStr += " ";
 	}
 
 	// now right justify and get rid of any zeros
-
-	p = szRightText;
 
 	if (nAppendLen == 2 && *szRightText == '0') {
 		if (szRightText[1] == '0') {
