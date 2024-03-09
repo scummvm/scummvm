@@ -935,6 +935,24 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool optionKeysEnabled = !isUsingOriginalGUI();
 	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 	bool isNES = _game.platform == Common::kPlatformNES;
+	bool inSaveRoom = false;
+
+	// The following check is used by v3 games which have writable savegame names
+	// and also support some key combinations which in our case are mapped to SHIFT-<letter>
+	// The originals don't do this, because they use either CTRL or ALT as their key modifier,
+	// and those key modifiers serve other functions within the ScummVM backend.
+	if (_game.version == 3) {
+		int saveRoom = -1;
+		if (_game.id == GID_ZAK) {
+			saveRoom = 50;
+		} else if (_game.id == GID_INDY3) {
+			saveRoom = 14;
+		} else if (_game.id == GID_LOOM) {
+			saveRoom = 70;
+		}
+
+		inSaveRoom = _currentRoom == saveRoom;
+	}
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -1264,7 +1282,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			}
 
 			if ((_game.version > 2 && _game.version < 5)) {
-				if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT) && !inSaveRoom) {
 					_internalSpeakerSoundsAreOn ^= 1;
 
 					if (_internalSpeakerSoundsAreOn) {
