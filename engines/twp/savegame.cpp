@@ -510,9 +510,9 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 		const Common::JSONArray &jCallbacks = json["callbacks"]->asArray();
 		for (size_t i = 0; i < jCallbacks.size(); i++) {
 			const Common::JSONObject &jCallBackHash = jCallbacks[i]->asObject();
-			int id = jCallBackHash["guid"]->asIntegerNumber();
-			float time = ((float)jCallBackHash["time"]->asIntegerNumber()) / 1000.f;
-			Common::String name = jCallBackHash["function"]->asString();
+			const int id = jCallBackHash["guid"]->asIntegerNumber();
+			const float time = jCallBackHash["time"]->isIntegerNumber() ? (float)jCallBackHash["time"]->asIntegerNumber() : 0.f;
+			const Common::String name = jCallBackHash["function"]->asString();
 			Common::Array<HSQOBJECT> args;
 			if (jCallBackHash.contains("param")) {
 				HSQOBJECT arg;
@@ -742,7 +742,7 @@ static Common::JSONValue *createJCallback(const Callback &callback) {
 	Common::JSONObject result;
 	result["function"] = new Common::JSONValue(callback.getName());
 	result["guid"] = new Common::JSONValue((long long int)callback.getId());
-	result["time"] = new Common::JSONValue(MAX(0.0, (double)(callback.getDuration() - callback.getElapsed())));
+	result["time"] = new Common::JSONValue((long long int)MAX(0.f, (callback.getDuration() - callback.getElapsed())));
 	Common::JSONArray jArgs;
 	const Common::Array<HSQOBJECT> &args = callback.getArgs();
 	for (size_t i = 0; i < args.size(); i++) {
