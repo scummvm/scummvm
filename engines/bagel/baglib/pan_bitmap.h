@@ -43,13 +43,13 @@ class CBagPanBitmap :
 #endif
 {
 public:
-	enum DIRECTION {
-		NONE = 0x0,
-		UP = 0x01,
-		DOWN = 0x02,
-		LEFT = 0x04,
-		RIGHT = 0x08,
-		VIEW = 0x10
+	enum Direction {
+		kDirNONE = 0x0,
+		kDirUP = 0x01,
+		kDirDOWN = 0x02,
+		kDirLEFT = 0x04,
+		kDirRIGHT = 0x08,
+		kDirVIEW = 0x10
 	};
 
 private:
@@ -58,7 +58,7 @@ private:
 	CBofPoint m_xRotateRate;   // Rate of rotation on increment left, right ...
 	BOOL m_bActiveScrolling;   // True when there should be screen updates
 	BOOL m_bPanorama;          // True when the bitmap is a 360 panorama
-	DIRECTION m_xDirection;    // Set direction for next update
+	Direction m_xDirection;    // Set direction for next update
 	int m_nCorrWidth;          // Size of each correction band
 	CBofFixed *m_pCosineTable; // Lookup table for cosine values
 	int m_nNumDegrees;         // Number of lookups in the cosine table
@@ -105,14 +105,14 @@ public:
 	const CBofPoint GetRotateRate() {
 		return m_xRotateRate;
 	}
-	DIRECTION GetDirection() {
+	Direction GetDirection() {
 		return m_xDirection;
 	}
 
 	void SetRotateRate(const CBofPoint &xRotRate) {
 		m_xRotateRate = xRotRate;
 	}
-	void SetDirection(const DIRECTION xDirection) {
+	void SetDirection(const Direction xDirection) {
 		m_xDirection = xDirection;
 	}
 	void SetCurrView(const CBofRect &xCurrView) {
@@ -162,7 +162,7 @@ public:
 	void RotateUp(int nYRotRate = 0);
 	void RotateDown(int nYRotRate = 0);
 
-	DIRECTION UpdateView();
+	Direction UpdateView();
 
 	void ActivateScrolling(BOOL val = TRUE) {
 		m_bActiveScrolling = val;
