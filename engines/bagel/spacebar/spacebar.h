@@ -44,6 +44,7 @@ public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~SpaceBarEngine() override {
 	}
+	void initializePath(const Common::FSNode &gamePath) override;
 };
 
 } // namespace SpaceBar
