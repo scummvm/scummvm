@@ -856,7 +856,7 @@ public:
 	TextMgr *_text;
 	InventoryMgr *_inventory;
 	PictureMgr *_picture;
-	AgiLoader *_loader; // loader
+	AgiLoader *_loader;
 	GfxMenu *_menu;
 	SystemUI *_systemUI;
 	Common::DumpFile *_logFile; // File used for the log() agi command.

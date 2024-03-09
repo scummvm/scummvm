@@ -260,15 +260,12 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 }
 
 void TextMgr::displayTextInsideWindow(const char *textPtr, int16 windowRow, int16 windowColumn) {
-	int16 textRow = 0;
-	int16 textColumn = 0;
-
 	if (!_messageState.window_Active)
 		return;
 
 	charPos_Push();
-	textRow = _messageState.textPos.row + windowRow;
-	textColumn = _messageState.textPos.column + windowColumn;
+	int16 textRow = _messageState.textPos.row + windowRow;
+	int16 textColumn = _messageState.textPos.column + windowColumn;
 	charPos_Set(textRow, textColumn);
 	displayText(textPtr);
 	charPos_Pop();

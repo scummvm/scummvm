@@ -26,15 +26,13 @@
 namespace Agi {
 
 void AgiEngine::updateView(ScreenObjEntry *screenObj) {
-	int16 celNr, lastCelNr;
-
 	if (screenObj->flags & fDontUpdate) {
 		screenObj->flags &= ~fDontUpdate;
 		return;
 	}
 
-	celNr = screenObj->currentCelNr;
-	lastCelNr = screenObj->celCount - 1;
+	int16 celNr = screenObj->currentCelNr;
+	int16 lastCelNr = screenObj->celCount - 1;
 
 	switch (screenObj->cycle) {
 	case kCycleNormal:
@@ -347,7 +345,6 @@ void AgiEngine::unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedDat
 	byte *rawBitmap = new byte[celData->width * celData->height];
 	int16 remainingHeight = celData->height;
 	int16 remainingWidth = celData->width;
-	byte curByte;
 
 	celData->rawBitmap = rawBitmap;
 
@@ -355,7 +352,7 @@ void AgiEngine::unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedDat
 		if (!compressedSize)
 			error("unexpected end of data, while unpacking AGI256 view");
 
-		curByte = *compressedData++;
+		byte curByte = *compressedData++;
 		compressedSize--;
 
 		if (curByte == 0) {

@@ -144,18 +144,15 @@ void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 
 void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	int egoX, egoY;
-	int objX, objY;
-	int dir;
 
-	egoX = screenObjEgo->xPos + screenObjEgo->xSize / 2;
-	egoY = screenObjEgo->yPos;
+	int egoX = screenObjEgo->xPos + screenObjEgo->xSize / 2;
+	int egoY = screenObjEgo->yPos;
 
-	objX = screenObj->xPos + screenObj->xSize / 2;
-	objY = screenObj->yPos;
+	int objX = screenObj->xPos + screenObj->xSize / 2;
+	int objY = screenObj->yPos;
 
 	// Get direction to reach ego
-	dir = getDirection(objX, objY, egoX, egoY, screenObj->follow_stepSize);
+	int dir = getDirection(objX, objY, egoX, egoY, screenObj->follow_stepSize);
 
 	// Already at ego coordinates
 	if (dir == 0) {
@@ -186,15 +183,13 @@ void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 	}
 
 	if (screenObj->follow_count != 0) {
-		int k;
-
 		// DF: this is ugly and I dont know why this works, but
 		// other line does not! (watcom complained about lvalue)
 		//
 		// if (((int8)v->parm3 -= v->step_size) < 0)
 		//      v->parm3 = 0;
 
-		k = screenObj->follow_count;
+		int k = screenObj->follow_count;
 		k -= screenObj->stepSize;
 		screenObj->follow_count = k;
 
@@ -242,9 +237,6 @@ void AgiEngine::checkMotion(ScreenObjEntry *screenObj) {
  * Public functions
  */
 
-/**
- *
- */
 void AgiEngine::checkAllMotions() {
 	ScreenObjEntry *screenObj;
 

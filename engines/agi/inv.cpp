@@ -43,14 +43,13 @@ InventoryMgr::~InventoryMgr() {
 void InventoryMgr::getPlayerInventory() {
 	AgiGame game = _vm->_game;
 	int16 selectedInventoryItem = _vm->getVar(VM_VAR_SELECTED_INVENTORY_ITEM);
-	uint16 objectNr = 0;
 	int16 curRow = 2; // starting at position 2,1
 	int16 curColumn = 1;
 
 	_array.clear();
 	_activeItemNr = 0;
 
-	for (objectNr = 0; objectNr < game.numObjects; objectNr++) {
+	for (uint16 objectNr = 0; objectNr < game.numObjects; objectNr++) {
 		if (_vm->objectGetLocation(objectNr) == EGO_OWNED) {
 			// item is in the possession of ego, so add it to our internal list
 			if (objectNr == selectedInventoryItem) {
@@ -107,12 +106,11 @@ void InventoryMgr::getPlayerInventory() {
 
 void InventoryMgr::drawAll() {
 	int16 inventoryCount = _array.size();
-	int16 inventoryNr = 0;
 
 	_text->charPos_Set(0, 11);
 	_text->displayText(_systemUI->getInventoryTextYouAreCarrying());
 
-	for (inventoryNr = 0; inventoryNr < inventoryCount; inventoryNr++) {
+	for (int16 inventoryNr = 0; inventoryNr < inventoryCount; inventoryNr++) {
 		drawItem(inventoryNr);
 	}
 }
