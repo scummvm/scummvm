@@ -37,25 +37,25 @@ CBofRect BetRect(15, 410, 131, 432);
 CBofRect OddRect(401, 125, 443, 166);
 CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 
-#define FIXBMP     	"BGNDDN.BMP"
+#define FIXBMP      "BGNDDN.BMP"
 #define MAX_CREDITS     200000
 // Added for casino background sounds BFW 12/24/96
-#define CASINO_AUDIO			"CASINO.WAV"
+#define CASINO_AUDIO            "CASINO.WAV"
 
 #if BOF_MAC || BOF_WINMAC
-#define BGCBDIR 		"$SBARDIR:BAR:CLOSEUP:BGCB:"
+#define BGCBDIR         "$SBARDIR:BAR:CLOSEUP:BGCB:"
 // scg 01.07.97 added PLAYWAVONMAC conditional
 #if !PLAYWAVONMAC
-#define WINAUDIO     	"BGNWIN.SND"
-#define SLOTAUDIO     	"BGNSLOT.SND"
+#define WINAUDIO        "BGNWIN.SND"
+#define SLOTAUDIO       "BGNSLOT.SND"
 #else
-#define WINAUDIO     	"BGNWIN.WAV"
-#define SLOTAUDIO     	"BGNSLOT.WAV"
+#define WINAUDIO        "BGNWIN.WAV"
+#define SLOTAUDIO       "BGNSLOT.WAV"
 #endif
 #else
-#define BGCBDIR 		"$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
-#define WINAUDIO     	"BGNWIN.WAV"
-#define SLOTAUDIO     	"BGNSLOT.WAV"
+#define BGCBDIR         "$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
+#define WINAUDIO        "BGNWIN.WAV"
+#define SLOTAUDIO       "BGNSLOT.WAV"
 #endif
 
 typedef struct {
@@ -96,10 +96,10 @@ typedef struct {
 } ST_SLOTBMPS;
 
 static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
-	{"bgnst1.bmp","bgnsq1.bmp","bgnsc1.bmp","bgnsn1.bmp","bgnss1.bmp","bgnsm1.bmp","bgnse1.bmp","bgnsa1.bmp","bgnsh1.bmp" },
-	{"bgnst3.bmp","bgnsq3.bmp","bgnsc3.bmp","bgnsn3.bmp","bgnss3.bmp","bgnsm3.bmp","bgnse3.bmp","bgnsa3.bmp","bgnsh3.bmp" },
-	{"bgnst4.bmp","bgnsq4.bmp","bgnsc4.bmp","bgnsn4.bmp","bgnss4.bmp","bgnsm4.bmp","bgnse4.bmp","bgnsa4.bmp","bgnsh4.bmp" },
-	{"bgnst2.bmp","bgnsq2.bmp","bgnsc2.bmp","bgnsn2.bmp","bgnss2.bmp","bgnsm2.bmp","bgnse2.bmp","bgnsa2.bmp","bgnsh2.bmp" }
+	{"bgnst1.bmp", "bgnsq1.bmp", "bgnsc1.bmp", "bgnsn1.bmp", "bgnss1.bmp", "bgnsm1.bmp", "bgnse1.bmp", "bgnsa1.bmp", "bgnsh1.bmp" },
+	{"bgnst3.bmp", "bgnsq3.bmp", "bgnsc3.bmp", "bgnsn3.bmp", "bgnss3.bmp", "bgnsm3.bmp", "bgnse3.bmp", "bgnsa3.bmp", "bgnsh3.bmp" },
+	{"bgnst4.bmp", "bgnsq4.bmp", "bgnsc4.bmp", "bgnsn4.bmp", "bgnss4.bmp", "bgnsm4.bmp", "bgnse4.bmp", "bgnsa4.bmp", "bgnsh4.bmp" },
+	{"bgnst2.bmp", "bgnsq2.bmp", "bgnsc2.bmp", "bgnsn2.bmp", "bgnss2.bmp", "bgnsm2.bmp", "bgnse2.bmp", "bgnsa2.bmp", "bgnsh2.bmp" }
 };
 
 // Local functions
@@ -199,20 +199,20 @@ VOID SBarSlotWnd::OnPaint(CBofRect *pRect) {
 #endif
 
 		/*
-			// Update credits
-			if (m_pCredText != NULL){
-				m_pCredText->Display(this);
-			}
+		    // Update credits
+		    if (m_pCredText != NULL){
+		        m_pCredText->Display(this);
+		    }
 
-			// Update bet
-			if (m_pBetText != NULL){
-				m_pBetText->Display(this);
-			}
+		    // Update bet
+		    if (m_pBetText != NULL){
+		        m_pBetText->Display(this);
+		    }
 
-			// Update Odds
-			if (m_pOddsText != NULL){
-				m_pOddsText->Display(this);
-			}
+		    // Update Odds
+		    if (m_pOddsText != NULL){
+		        m_pOddsText->Display(this);
+		    }
 		*/
 	}
 }
@@ -226,11 +226,11 @@ VOID SBarSlotWnd::OnMainLoop(VOID) {
 *  Attach -
 *
 *  DESCRIPTION:
-*	This is where we allocate storage, load bitmaps, etc.
+*   This is where we allocate storage, load bitmaps, etc.
 *
 *
 *  RETURNS:
-*		ERROR_CODE
+*       ERROR_CODE
 *
 *****************************************************************************/
 ERROR_CODE  SBarSlotWnd::Attach() {
@@ -317,7 +317,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pCredText = new CBofText) != NULL) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
 			m_pCredText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC		// jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
 			m_pCredText->SetColor(RGB(0, 0, 0));
 #else
 			m_pCredText->SetColor(RGB(255, 255, 255));
@@ -337,7 +337,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pBetText = new CBofText) != NULL) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
 			m_pBetText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC		// jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
 			m_pBetText->SetColor(RGB(0, 0, 0));
 #else
 			m_pBetText->SetColor(RGB(255, 255, 255));
@@ -357,7 +357,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pOddsText = new CBofText) != NULL) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
 			m_pOddsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC		// jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
 			m_pOddsText->SetColor(RGB(0, 0, 0));
 #else
 			m_pOddsText->SetColor(RGB(255, 255, 255));
@@ -393,7 +393,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 
 	CBofCursor::Show();
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -407,7 +407,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 *
 *
 *  RETURNS:
-*		ERROR_CODE
+*       ERROR_CODE
 *
 *****************************************************************************/
 ERROR_CODE SBarSlotWnd::Detach() {
@@ -496,7 +496,7 @@ ERROR_CODE SBarSlotWnd::Detach() {
 	// One turn has gone by
 	VARMNGR->IncrementTimers();
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -579,8 +579,7 @@ VOID SBarSlotWnd::ClrBet() {
 VOID SBarSlotWnd::FixBet() {
 	m_bFixBet = !m_bFixBet;
 
-	if (!m_bFixBet)
-	{
+	if (!m_bFixBet) {
 		m_bAutoDecrement = FALSE;
 	}
 }
@@ -592,10 +591,10 @@ VOID SBarSlotWnd::Go() {
 	//
 	/*if (m_bAutoDecrement) {
 
-		m_nCredit -= m_nBet;
+	    m_nCredit -= m_nBet;
 
-		 // Update credits
-		UpdateText();
+	     // Update credits
+	    UpdateText();
 	}*/
 
 	for (i = 0; i < SLOT_NUM; i++) {
@@ -642,31 +641,26 @@ VOID SBarSlotWnd::CalcOutcome() {
 	m_nPayOff2 = 0;
 
 	// Get number of matching slots
-	for (i = 0; i < SLOT_NUM; i++)
-	{
-		for (j = i + 1; j < SLOT_NUM; j++)
-		{
-			if (m_cSlots[i].m_nIdx == m_cSlots[j].m_nIdx)
-			{
+	for (i = 0; i < SLOT_NUM; i++) {
+		for (j = i + 1; j < SLOT_NUM; j++) {
+			if (m_cSlots[i].m_nIdx == m_cSlots[j].m_nIdx) {
 				nMatch++;
 				nMatchVal = m_cSlots[i].m_nIdx;
 			}
 		}
 	}
 	// see if we are already a winner
-	if (nMatch > 3)				// Quad
+	if (nMatch > 3)             // Quad
 		QuadPays(nMatchVal);
-	else if (nMatch == 3) 		// Trio
+	else if (nMatch == 3)       // Trio
 		TripPays(nMatchVal);
-	else if (nMatch == 2) 		// Two Pair
+	else if (nMatch == 2)       // Two Pair
 		SetPayOff(5, 2);
-	else if (nMatch == 1)		// Pair
+	else if (nMatch == 1)       // Pair
 		PairPays(nMatchVal);
-	else
-	{
+	else {
 		// check for special trio
-		for (i = 0; i < SLOT_NUM; i++)
-		{
+		for (i = 0; i < SLOT_NUM; i++) {
 			if (m_cSlots[i].m_nIdx < 3) // Geometric Trio
 				nGeo++;
 			if (m_cSlots[i].m_nIdx >= 3 && m_cSlots[i].m_nIdx < 6) // Celestrial Trio
@@ -675,16 +669,13 @@ VOID SBarSlotWnd::CalcOutcome() {
 				nLuck++;
 		}
 
-		if (nGeo == 3)
-		{
+		if (nGeo == 3) {
 			m_nPayOff1 = 1;
 			m_nPayOff2 = 1;
-		} else if (nCelest == 3)
-		{
+		} else if (nCelest == 3) {
 			m_nPayOff1 = 3;
 			m_nPayOff2 = 2;
-		} else if (nLuck == 3)
-		{
+		} else if (nLuck == 3) {
 			m_nPayOff1 = 2;
 			m_nPayOff2 = 1;
 		}
@@ -696,10 +687,9 @@ VOID SBarSlotWnd::CalcOutcome() {
 	int TrioPay2 = 0;
 
 	// Calculate which pays better, the special trio or the other outcome
-	if (TrioPay2 && m_nPayOff2)
-	{  // although this isn't the most percise evaluation, it works fine for this
-		if ((TrioPay1 / TrioPay2) > (m_nPayOff1 / m_nPayOff2))
-		{
+	if (TrioPay2 && m_nPayOff2) {
+		// although this isn't the most percise evaluation, it works fine for this
+		if ((TrioPay1 / TrioPay2) > (m_nPayOff1 / m_nPayOff2)) {
 			m_nPayOff1 = TrioPay1;
 			m_nPayOff2 = TrioPay2;
 		}
@@ -707,9 +697,8 @@ VOID SBarSlotWnd::CalcOutcome() {
 	// }
 #endif
 
-   // Do we have a winner ?
-	if (m_nPayOff1 > 0)
-	{
+	// Do we have a winner ?
+	if (m_nPayOff1 > 0) {
 		// Play winning audio
 
 		if ((m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1)) != NULL) {
@@ -859,9 +848,9 @@ VOID SBarSlotWnd::SlideSlots() {
 		INT nIncrement = 30; // number of pixels to move
 		INT nMaskClr = CBagel::GetBagApp()->GetChromaColor();
 		CBofBitmap *pCurBmp;
-		CBofRect 		BmpRect;
-		CBofRect 		SrcRect;
-		CBofRect		DestRect;
+		CBofRect        BmpRect;
+		CBofRect        SrcRect;
+		CBofRect        DestRect;
 
 		// Erase Previous game
 		//
@@ -1021,24 +1010,23 @@ VOID SBarSlotWnd::OnTimer(UINT /*nTimerId*/) {
 	// If the time has elapsed and there is a bet
 	//
 	/*if (nTimerId == SHOWGO) {
-		if (!m_bPaused) {
+	    if (!m_bPaused) {
 
-			SetPayOff(0, 0);
-			//m_pSlotButs[LOSE]->Hide();
+	        SetPayOff(0, 0);
+	        //m_pSlotButs[LOSE]->Hide();
 
-			// Check and see if we need to show the GO button
-			if (m_nBet && !(m_pSlotButs[GO]->IsVisible()))
-				m_pSlotButs[GO]->Show();
+	        // Check and see if we need to show the GO button
+	        if (m_nBet && !(m_pSlotButs[GO]->IsVisible()))
+	            m_pSlotButs[GO]->Show();
 
-			KillTimer(nTimerId);
-		}
+	        KillTimer(nTimerId);
+	    }
 	}*/
 }
 
 
 VOID SBarSlotWnd::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
-	if (FixRect.PtInRect(*pPoint))
-	{
+	if (FixRect.PtInRect(*pPoint)) {
 		FixBet();
 		InvalidateRect(&FixRect);
 	}
@@ -1138,7 +1126,7 @@ const CHAR *BuildSlotDir(const CHAR *pszFile) {
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
 	MACROREPLACE(sSlotDir);
 
-	return(&szBuf[0]);
+	return (&szBuf[0]);
 }
 
 } // namespace SpaceBar

@@ -31,9 +31,9 @@ namespace SpaceBar {
 class SBarThud : public CBagStorageDevBmp {
 private:
 	CBagObject *pCurrObj;
-	int m_nObjects;			// The number of currently active objects
+	int m_nObjects;         // The number of currently active objects
 	CBofBitmap *m_xYouBmp;
-	static int 	m_nThudCursor;
+	static int  m_nThudCursor;
 public:
 	SBarThud(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
 	virtual ~SBarThud();
@@ -45,10 +45,10 @@ public:
 		return pCurrObj = pObj;
 	}
 
-	static int		GetThudCursor() {
+	static int      GetThudCursor() {
 		return m_nThudCursor;
 	}
-	static VOID		SetThudCursor(int n) {
+	static VOID     SetThudCursor(int n) {
 		m_nThudCursor = n;
 	}
 
@@ -56,14 +56,14 @@ public:
 	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach);
 	virtual BOOL       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
-	virtual	ERROR_CODE  Attach();
+	virtual ERROR_CODE  Attach();
 	virtual ERROR_CODE  Detach();
 
 	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
 	virtual ERROR_CODE DeactivateLocalObject(CBagObject *pObj);
 
-	virtual ERROR_CODE	ActivateLocalObject(const CBofString &sName);
-	virtual ERROR_CODE	DeactivateLocalObject(const CBofString &sName);
+	virtual ERROR_CODE  ActivateLocalObject(const CBofString &sName);
+	virtual ERROR_CODE  DeactivateLocalObject(const CBofString &sName);
 };
 
 } // namespace SpaceBar

@@ -26,19 +26,19 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define GAMEWINDOW			CMainWindow
+#define GAMEWINDOW          CMainWindow
 
-#define TOKEN_GAME_SDEV		"<default>"
-#define CLASS_GAME_SDEV		CMainWindow
+#define TOKEN_GAME_SDEV     "<default>"
+#define CLASS_GAME_SDEV     CMainWindow
 
-#define TOKEN_SDEV_1		"INV"
-#define CLASS_SDEV_1		CBagInv
-#define TOKEN_SDEV_2		"PDA"
-#define CLASS_SDEV_2		CBagPDA
-#define TOKEN_SDEV_3		"STASH"
-#define CLASS_SDEV_3		CBagStash
-#define TOKEN_SDEV_4		"MAP"
-#define CLASS_SDEV_4		CBagMap
+#define TOKEN_SDEV_1        "INV"
+#define CLASS_SDEV_1        CBagInv
+#define TOKEN_SDEV_2        "PDA"
+#define CLASS_SDEV_2        CBagPDA
+#define TOKEN_SDEV_3        "STASH"
+#define CLASS_SDEV_3        CBagStash
+#define TOKEN_SDEV_4        "MAP"
+#define CLASS_SDEV_4        CBagMap
 
 } // namespace SpaceBar
 } // namespace Bagel

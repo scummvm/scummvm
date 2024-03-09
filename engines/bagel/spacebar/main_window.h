@@ -36,29 +36,29 @@ namespace Bagel {
 namespace SpaceBar {
 
 #if BOF_MAC || BOF_WINMAC
-#  define VRFILES				".:*.bmp"
-#  define VRDIR					".:"
-#  define BMPFILES				":BMP:*.bmp"
-#  define BMPDIR				":BMP:"
-#  define SPRITEFILES			":SPRITE:*.bmp"
-#  define SPRITEDIR				":SPRITE:"
-#  define SOUNDFILES			":SPRITE:*.bmp"
-#  define SOUNDDIR				":SPRITE:"
-#  define SOUNDFILES			":SPRITE:*.bmp"
-#  define SOUNDDIR				":SPRITE:"
-#  define LINKFILES				".:*.wld"
-#  define LINKDIR				".:"
+#  define VRFILES               ".:*.bmp"
+#  define VRDIR                 ".:"
+#  define BMPFILES              ":BMP:*.bmp"
+#  define BMPDIR                ":BMP:"
+#  define SPRITEFILES           ":SPRITE:*.bmp"
+#  define SPRITEDIR             ":SPRITE:"
+#  define SOUNDFILES            ":SPRITE:*.bmp"
+#  define SOUNDDIR              ":SPRITE:"
+#  define SOUNDFILES            ":SPRITE:*.bmp"
+#  define SOUNDDIR              ":SPRITE:"
+#  define LINKFILES             ".:*.wld"
+#  define LINKDIR               ".:"
 #else
-#  define VRFILES				".\\*.bmp"
-#  define VRDIR					".\\"
-#  define BMPFILES				".\\BMP\\*.bmp"
-#  define BMPDIR				".\\BMP\\"
-#  define SPRITEFILES			".\\SPRITE\\*.bmp"
-#  define SPRITEDIR				".\\SPRITE\\"
-#  define SOUNDFILES			".\\SPRITE\\*.bmp"
-#  define SOUNDDIR				".\\SPRITE\\"
-#  define LINKFILES				".\\*.wld"
-#  define LINKDIR				".\\"
+#  define VRFILES               ".\\*.bmp"
+#  define VRDIR                 ".\\"
+#  define BMPFILES              ".\\BMP\\*.bmp"
+#  define BMPDIR                ".\\BMP\\"
+#  define SPRITEFILES           ".\\SPRITE\\*.bmp"
+#  define SPRITEDIR             ".\\SPRITE\\"
+#  define SOUNDFILES            ".\\SPRITE\\*.bmp"
+#  define SOUNDDIR              ".\\SPRITE\\"
+#  define LINKFILES             ".\\*.wld"
+#  define LINKDIR               ".\\"
 
 #endif
 
@@ -67,12 +67,12 @@ namespace SpaceBar {
 // CMainWindow
 //
 class CMainWindow : public CBagPanWindow {
-public:  								// This must be changed
-	static SBarThud *m_pThudBmp;	// Pointer to the THUD object
+public:                                 // This must be changed
+	static SBarThud *m_pThudBmp;    // Pointer to the THUD object
 
 private:
-	static int m_nInstances;	// Number of space bar windows
-	static BOOL m_bZzazzlVision;		// if Zzazzl vision is on/off
+	static int m_nInstances;    // Number of space bar windows
+	static BOOL m_bZzazzlVision;        // if Zzazzl vision is on/off
 
 	CBagMenu *m_pMenu;
 	CBofPalette *m_pGamePalette;
@@ -107,7 +107,8 @@ public:
 		return m_xFilterRect;
 	}
 	static CBofRect &SetFilterRect(CBofRect &newValue) {
-		m_xFilterRect = newValue; return m_xFilterRect;
+		m_xFilterRect = newValue;
+		return m_xFilterRect;
 	}
 
 	CBagMenu *GetMenuPtr() {

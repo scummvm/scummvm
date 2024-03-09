@@ -29,26 +29,26 @@ namespace Bagel {
 namespace SpaceBar {
 
 #if BOF_MAC || BOF_WINMAC
-#define DRINKFILE		"$SBARDIR:BAR:CLOSEUP:BDCA:DRINKS.TXT"
-#define INGRDFILE		"$SBARDIR:BAR:CLOSEUP:BDCA:ING.TXT"
+#define DRINKFILE       "$SBARDIR:BAR:CLOSEUP:BDCA:DRINKS.TXT"
+#define INGRDFILE       "$SBARDIR:BAR:CLOSEUP:BDCA:ING.TXT"
 #define BDCADIR         "$SBARDIR:BAR:CLOSEUP:BDCA:"
 // scg 01.07.97
 #if !PLAYWAVONMAC
-#define ORDERAUDIO     	"BDNDPSC1.SND"
-#define REFUSEAUDIO    	"BDTOORC1.SND"
-#define ONAUDIO     	"ON.SND"
+#define ORDERAUDIO      "BDNDPSC1.SND"
+#define REFUSEAUDIO     "BDTOORC1.SND"
+#define ONAUDIO         "ON.SND"
 #else
-#define ORDERAUDIO     	"BDNDPSC1.WAV"
-#define REFUSEAUDIO    	"BDTOORC1.WAV"
-#define ONAUDIO     	"ON.WAV"
+#define ORDERAUDIO      "BDNDPSC1.WAV"
+#define REFUSEAUDIO     "BDTOORC1.WAV"
+#define ONAUDIO         "ON.WAV"
 #endif
 #else
-#define DRINKFILE		"$SBARDIR\\BAR\\CLOSEUP\\BDCA\\DRINKS.TXT"
-#define INGRDFILE		"$SBARDIR\\BAR\\CLOSEUP\\BDCA\\ING.TXT"
+#define DRINKFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\DRINKS.TXT"
+#define INGRDFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\ING.TXT"
 #define BDCADIR         "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\"
-#define ORDERAUDIO     	"BDNDPSC1.WAV"
-#define REFUSEAUDIO    	"BDTOORC1.WAV"
-#define ONAUDIO     	"ON.WAV"
+#define ORDERAUDIO      "BDNDPSC1.WAV"
+#define REFUSEAUDIO     "BDTOORC1.WAV"
+#define ONAUDIO         "ON.WAV"
 #endif
 
 #define szBroke "You have insufficient funds for that purchase."
@@ -103,7 +103,7 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 	m_pTBox = NULL;
 	m_pDrinkList = NULL;
 	m_pIngList = NULL;
-	//	m_nSelection = -1;
+	//  m_nSelection = -1;
 	m_nDrinkSelect = -1;
 	m_nIngSelect = -1;
 	m_eMode = OFFMODE;
@@ -169,7 +169,7 @@ ERROR_CODE SBarComputer::Attach() {
 	LogInfo("Attaching SBarComputer...");
 
 	CBofPalette *pPal;
-	ERROR_CODE 			rc = ERR_NONE;
+	ERROR_CODE          rc = ERR_NONE;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
 		g_bWaitOK = FALSE;
@@ -335,11 +335,9 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 
 	// Get pointers indexing into Drink buffers
 	pPosInBuff = m_pDrinkBuff;
-	while (pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength())
-	{
+	while (pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength()) {
 		pCompItem = new SBarCompItem();
-		if (pCompItem)
-		{
+		if (pCompItem) {
 			pCompItem->m_pItem = NULL;
 			pCompItem->m_pList = NULL;
 			pCompItem->m_pDrink = NULL;
@@ -350,7 +348,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 		// get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
 
-		// search for @	- field delimeter
+		// search for @ - field delimeter
 		while (*pPosInBuff != '@')
 			pPosInBuff++;
 		*pPosInBuff = '\0'; // replace with \0
@@ -359,7 +357,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 		// Get the list item pointing to list
 		pCompItem->m_pList = pPosInBuff;
 
-		// search for @	- field delimeter
+		// search for @ - field delimeter
 		while (*pPosInBuff != '@')
 			pPosInBuff++;
 		*pPosInBuff = '\0'; // replace with \0
@@ -372,13 +370,13 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
 		*pPosInBuff = '\0'; // replace with \0
-		pPosInBuff++;	// Increment past it
+		pPosInBuff++;   // Increment past it
 
 		// search record delimeter from beginning of next
 		while ((pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
-		pPosInBuff++;	// Increment past it
+		pPosInBuff++;   // Increment past it
 
 		m_pDrinkList->AddToTail(*pCompItem);
 		delete pCompItem;
@@ -402,8 +400,7 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 		return fpIngFile.GetErrorCode();
 
 	// Check that buffers are null
-	if (m_pIngBuff)
-	{
+	if (m_pIngBuff) {
 		delete m_pIngBuff;
 		m_pIngBuff = NULL;
 	}
@@ -418,11 +415,9 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 
 	// Get pointers indexing into Ingredient buffers
 	pPosInBuff = m_pIngBuff;
-	while (pPosInBuff < m_pIngBuff + fpIngFile.GetLength())
-	{
+	while (pPosInBuff < m_pIngBuff + fpIngFile.GetLength()) {
 		pCompItem = new SBarCompItem();
-		if (pCompItem)
-		{
+		if (pCompItem) {
 			pCompItem->m_pItem = NULL;
 			pCompItem->m_pList = NULL;
 			pCompItem->m_pDrink = NULL;
@@ -431,7 +426,7 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 		// get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
 
-		// search for @	- field delimeter
+		// search for @ - field delimeter
 		while (*pPosInBuff != '@')
 			pPosInBuff++;
 		*pPosInBuff = '\0'; // replace with /0
@@ -444,13 +439,13 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
 		*pPosInBuff = '\0'; // replace with /0
-		pPosInBuff++;	// Increment past it
+		pPosInBuff++;   // Increment past it
 
 		// search record delimeter from beginning of next
 		while ((pPosInBuff < m_pIngBuff + fpIngFile.GetLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
-		pPosInBuff++;	// Increment past it
+		pPosInBuff++;   // Increment past it
 
 		m_pIngList->AddToTail(*pCompItem);
 		delete pCompItem;
@@ -461,42 +456,36 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 }
 
 VOID SBarComputer::CreateTextBox(CBofString &newText) {
-	if (m_pTBox == NULL)
-	{
+	if (m_pTBox == NULL) {
 		m_pTBox = new CBofTextBox(GetBackdrop(), &CompDisplay, newText);
 		Assert(m_pTBox != NULL);
 		m_pTBox->SetTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
-	} else
-	{
+	} else {
 		EraseBackdrop();
 		m_pTBox->Erase();
 		m_pTBox->FlushBackground();
 		m_pTBox->SetText(newText);
 	}
 
-	if (m_pButtons[ONBUT])
-	{
+	if (m_pButtons[ONBUT]) {
 		m_pButtons[ONBUT]->Show();
 		m_pButtons[ONBUT]->InvalidateRect(NULL);
 	}
 }
 
 VOID SBarComputer::DeleteTextBox() {
-	if (m_pTBox)
-	{
+	if (m_pTBox) {
 		delete m_pTBox;
 		m_pTBox = NULL;
 	}
 }
 
 VOID SBarComputer::DeleteListBox() {
-	if (m_pDrinkBox)
-	{
+	if (m_pDrinkBox) {
 		delete m_pDrinkBox;
 		m_pDrinkBox = NULL;
 	}
-	if (m_pIngBox)
-	{
+	if (m_pIngBox) {
 		delete m_pIngBox;
 		m_pIngBox = NULL;
 	}
@@ -506,8 +495,7 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 	ERROR_CODE error = ERR_NONE;
 	CBofPalette *pPal;
 
-	if (m_pDrinkBox == NULL) // We need to create one
-	{
+	if (m_pDrinkBox == NULL) { // We need to create one
 		if ((m_pDrinkBox = new CBofListBox) != NULL) {
 #if BOF_MAC
 			// jwl 08.21.96 make this our own custom window such that no frame is drawn
@@ -532,8 +520,7 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 
 			int numItems = m_pDrinkList->GetCount();
 
-			for (int i = 0; i < numItems; ++i)
-			{
+			for (int i = 0; i < numItems; ++i) {
 				CompItem = m_pDrinkList->GetNodeItem(i);
 				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
 			}
@@ -662,8 +649,7 @@ VOID SBarComputer::SetOn() {
 }
 
 VOID SBarComputer::SetOff() {
-	if (m_eMode != OFFMODE)
-	{
+	if (m_eMode != OFFMODE) {
 
 		// Fix drink already selected bug
 		// copied here from Attach bar 12-06-96
@@ -698,11 +684,9 @@ VOID SBarComputer::SetOff() {
 		// paint the new bitmap.
 		m_pButtons[OFFBUT]->Paint(NULL);
 #endif
-		for (int i = 1; i < NUM_COMPBUTT; i++)
-		{
+		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
-			if ((i != BCHELP) && (i != BCQUIT))
-			{
+			if ((i != BCHELP) && (i != BCQUIT)) {
 				m_pButtons[i]->Hide();
 			}
 		}
@@ -727,8 +711,7 @@ VOID SBarComputer::SetDrink() {
 		numItems = m_pDrinkList->GetCount();
 
 		// populate listbox
-		for (int i = 0; i < numItems; ++i)
-		{
+		for (int i = 0; i < numItems; ++i) {
 			CompItem = m_pDrinkList->GetNodeItem(i);
 			//CBofString cText(CompItem.m_pItem);
 			// m_pLBox->AddToTail( cText, TRUE);
@@ -964,7 +947,7 @@ VOID SBarComputer::Order() {
 #if BOF_MAC
 				while (!::Button())
 					;
-				::FlushEvents(everyEvent, 0);		// swallow the mousedown, don't want it processed
+				::FlushEvents(everyEvent, 0);       // swallow the mousedown, don't want it processed
 #else
 				WaitForInput();
 #endif
@@ -1007,7 +990,7 @@ VOID SBarComputer::Order() {
 #if BOF_MAC
 						while (!::Button())
 							;
-						::FlushEvents(everyEvent, 0);		// swallow the mousedown, don't want it processed
+						::FlushEvents(everyEvent, 0);       // swallow the mousedown, don't want it processed
 #else
 						WaitForInput();
 #endif
@@ -1022,21 +1005,17 @@ VOID SBarComputer::Order() {
 
 VOID SBarComputer::PageUp() {
 #if TWOLISTS
-	if (m_eMode == DRINKMODE)
-	{
-		if (m_pDrinkBox)
-		{
+	if (m_eMode == DRINKMODE) {
+		if (m_pDrinkBox) {
 			m_pDrinkBox->PageUp();
 		}
 	} else {
-		if (m_pIngBox)
-		{
+		if (m_pIngBox) {
 			m_pIngBox->PageUp();
 		}
 	}
 #else
-	if (m_pLBox)
-	{
+	if (m_pLBox) {
 		m_pLBox->PageUp();
 	}
 #endif
@@ -1044,21 +1023,17 @@ VOID SBarComputer::PageUp() {
 
 VOID SBarComputer::PageDown() {
 #if TWOLISTS
-	if (m_eMode == DRINKMODE)
-	{
-		if (m_pDrinkBox)
-		{
+	if (m_eMode == DRINKMODE) {
+		if (m_pDrinkBox) {
 			m_pDrinkBox->PageDown();
 		}
 	} else {
-		if (m_pIngBox)
-		{
+		if (m_pIngBox) {
 			m_pIngBox->PageDown();
 		}
 	}
 #else
-	if (m_pLBox)
-	{
+	if (m_pLBox) {
 		m_pLBox->PageDown();
 	}
 #endif

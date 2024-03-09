@@ -33,7 +33,7 @@ SBarThud::SBarThud(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
 	m_xSDevType = SDEV_WIELD;
 	m_xYouBmp = NULL;
-	m_nObjects = 0;			// This should be changed on the attach
+	m_nObjects = 0;         // This should be changed on the attach
 }
 
 SBarThud::~SBarThud() {
@@ -122,7 +122,7 @@ ERROR_CODE SBarThud::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName,
 //
 // This functionality now only allows 1 object to be active in the Thud sdev
 // at a time.  If the default functionality should be to transfer the object to
-// your stash and Thud the new object then a transfer command must be issued 
+// your stash and Thud the new object then a transfer command must be issued
 // here.
 //
 
@@ -136,13 +136,13 @@ ERROR_CODE SBarThud::ActivateLocalObject(CBagObject *pObj) {
 		return ERR_UNKNOWN;
 
 	/*
-		CBagMenu::SetUniversalObjectList(pObj->GetMenuPtr()->GetObjectList());
+	    CBagMenu::SetUniversalObjectList(pObj->GetMenuPtr()->GetObjectList());
 
-		if (pObj->GetType()==BOFSPRITEOBJ || pObj->GetType()==SPRITEOBJ) {
-			m_nObjects++;
-			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
-			SetThudCursor(pSpObj->GetWeildCursor());
-		}
+	    if (pObj->GetType()==BOFSPRITEOBJ || pObj->GetType()==SPRITEOBJ) {
+	        m_nObjects++;
+	        CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
+	        SetThudCursor(pSpObj->GetWeildCursor());
+	    }
 	*/
 	return CBagStorageDev::ActivateLocalObject(pObj);
 }

@@ -27,13 +27,13 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define PLAYMODEONLY	1
-#define PDAWLD			"BPDA_WLD"
-#define WIELDWLD		"BWIELD_WLD"
-#define THUDWLD			"THUD_WLD"
+#define PLAYMODEONLY    1
+#define PDAWLD          "BPDA_WLD"
+#define WIELDWLD        "BWIELD_WLD"
+#define THUDWLD         "THUD_WLD"
 
-SBarThud *CMainWindow::m_pThudBmp = nullptr;	// Pointer to the WEILD object
-int CMainWindow::m_nInstances = 0;		// Numver of space bar windows
+SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
+int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
 BOOL CMainWindow::m_bZzazzlVision = FALSE;
 CBofRect CMainWindow::m_xFilterRect;
 BOOL CMainWindow::chipdisp;
@@ -71,12 +71,12 @@ CMainWindow::CMainWindow(const char *sCommandLine) {
 #endif
 
 	//#if 0
-	//	if (sCommLine.Find("-b")!=-1 || sCommLine.Find("-B")!=-1)
-	//		m_nGameMode = VRBUILDMODE;
-	//	else if (sCommLine.Find("-v")!=-1 || sCommLine.Find("-V")!=-1)
-	//		m_nGameMode = VRPANMODE;
-	//	else
-	//		m_nGameMode = VRPLAYMODE;
+	//  if (sCommLine.Find("-b")!=-1 || sCommLine.Find("-B")!=-1)
+	//      m_nGameMode = VRBUILDMODE;
+	//  else if (sCommLine.Find("-v")!=-1 || sCommLine.Find("-V")!=-1)
+	//      m_nGameMode = VRPANMODE;
+	//  else
+	//      m_nGameMode = VRPLAYMODE;
 	//#endif
 
 }
@@ -113,8 +113,8 @@ CMainWindow::~CMainWindow() {
 #define PAN_HEIGHT 480
 
 ERROR_CODE CMainWindow::Attach() {
-	CBofRect       	tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
-	CBofRect		rView;
+	CBofRect        tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
+	CBofRect        rView;
 	CBagStorageDev *pSDev;
 	chipdisp = FALSE;
 	pause = 0;
@@ -160,7 +160,7 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// This should actually be moved to sbarapp, but the load file will then
 	// need to be removed from the constructor.
-	 //CBofApp::GetApp()->SetMainWindow(this);
+	//CBofApp::GetApp()->SetMainWindow(this);
 
 	// Associtate this window with callbacks so that any public member function can
 	// be accessed by objects inserted into this class.
@@ -189,11 +189,11 @@ ERROR_CODE CMainWindow::Attach() {
 
 	g_pLastWindow = this;
 
-#if	PDALOC
+#if PDALOC
 	OnSize(0, tmpRect.Width(), tmpRect.Height());
 
 	/*if (GetExitOnEdge()) {
-		SetExitOnEdge(GetViewPortPos().x);
+	    SetExitOnEdge(GetViewPortPos().x);
 	}*/
 
 	//CBagPanWindow::Attach();
@@ -212,7 +212,7 @@ ERROR_CODE CMainWindow::Attach() {
 	if (m_nGameMode == VRPLAYMODE && bForegroundObj == TRUE) {
 
 		//else {
-		//	CBagStorageDev *pSDev;
+		//  CBagStorageDev *pSDev;
 		//    pSDev = nullptr;
 		//}
 		if (!m_pThudBmp) {
@@ -348,7 +348,7 @@ ERROR_CODE CMainWindow::Attach() {
 					m_pEvtSDev->Attach();
 
 #if BOF_MAC
-				SetTimer(EVAL_EXPR, 1000);	// nullptr for now, will not play music.
+				SetTimer(EVAL_EXPR, 1000);  // nullptr for now, will not play music.
 #else
 				SetTimer(EVAL_EXPR, 1000);
 #endif
@@ -363,7 +363,7 @@ ERROR_CODE CMainWindow::Attach() {
 				m_pEvtSDev->SetAssociateWnd(this);
 
 #if BOF_MAC
-				SetTimer(EVAL_EXPR, 1000);	// nullptr for now, will not play music.
+				SetTimer(EVAL_EXPR, 1000);  // nullptr for now, will not play music.
 #else
 				SetTimer(EVAL_EXPR, 1000);
 #endif
@@ -385,11 +385,11 @@ ERROR_CODE CMainWindow::Attach() {
 
 	}
 
-#if	!PDALOC
+#if !PDALOC
 	OnSize(0, tmpRect.Width() - 1, tmpRect.Height() - 1);
 
 	/*if (GetExitOnEdge()) {
-		SetExitOnEdge(GetViewPortPos().x);
+	    SetExitOnEdge(GetViewPortPos().x);
 	}*/
 
 	//CBagPanWindow::Attach();
@@ -436,13 +436,13 @@ ERROR_CODE CMainWindow::Attach() {
 	m_pBackdrop->Paint(this, 0, 0);
 
 	/*    TimerStart();
-		for (INT ii = 0; ii < 1000; ii++) {
-			OnTimer(EVAL_EXPR);
-		}
-		LogInfo(BuildString("OnTimer * 1000: %ld ms", TimerStop()));*/
+	    for (INT ii = 0; ii < 1000; ii++) {
+	        OnTimer(EVAL_EXPR);
+	    }
+	    LogInfo(BuildString("OnTimer * 1000: %ld ms", TimerStop()));*/
 
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -469,7 +469,7 @@ ERROR_CODE CMainWindow::Detach() {
 
 	DeleteFGObjects();
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 
@@ -491,19 +491,19 @@ ERROR_CODE CMainWindow::OnCursorUpdate(INT nCurrObj) {
 	ERROR_CODE errCode = ERR_NONE;
 
 	/*
-		if (m_pWieldBmp)
-		if (nCurrObj>=0) {
-			CBagObject *pObj = GetObjectByPos(nCurrObj);
-			if (pObj) {
-				int nCur  = (int)pObj->GetType();
-				m_pCursors[nCur]->Set();
-				return errCode;
-			}
-		}
+	    if (m_pWieldBmp)
+	    if (nCurrObj>=0) {
+	        CBagObject *pObj = GetObjectByPos(nCurrObj);
+	        if (pObj) {
+	            int nCur  = (int)pObj->GetType();
+	            m_pCursors[nCur]->Set();
+	            return errCode;
+	        }
+	    }
 	*/
 	errCode = CBagPanWindow::OnCursorUpdate(nCurrObj);
 
-	return(errCode);
+	return (errCode);
 }
 
 
@@ -515,9 +515,9 @@ VOID CMainWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		Close();
 
 	}
-	if (lKey == BKEY_SCRL_LOCK) {				// get a scroll lock hit
-		if (GetFilterId() == 0x08) {			// if we're in zzazzl filter
-			m_bZzazzlVision = !m_bZzazzlVision;	// toggle the paint zzazzl flag
+	if (lKey == BKEY_SCRL_LOCK) {               // get a scroll lock hit
+		if (GetFilterId() == 0x08) {            // if we're in zzazzl filter
+			m_bZzazzlVision = !m_bZzazzlVision; // toggle the paint zzazzl flag
 			CBagVar *pVar;
 
 			if ((pVar = VARMNGR->GetVariable("ZZAZZLVISION")) != nullptr) {
@@ -603,11 +603,11 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	CBofRect r(x + dx, y + dy, x + dx + dx, y + dy + dy);
 
 	// Only the center box is active:
-	//	if (r.PtInRect(*p)) {
-	//		p->x = m_xFilterRect.left + (p->x-r.left)*3;
-	//		p->y = m_xFilterRect.top  + (p->y-r.top)*3;
-	//		break;
-	//	}
+	//  if (r.PtInRect(*p)) {
+	//      p->x = m_xFilterRect.left + (p->x-r.left)*3;
+	//      p->y = m_xFilterRect.top  + (p->y-r.top)*3;
+	//      break;
+	//  }
 	// attempt to make all squares active in zzazzlvision -- bar 01-06-97
 	int i, j;
 	for (i = 0; i < 3; ++i) {
@@ -644,7 +644,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 		m_cLastPos = *pPoint;
 
 		if (GetFilterId() & 0x08) {
-			if (m_bZzazzlVision)				// if zzazzl paint is toggled on
+			if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 				CorrectZzazzlePoint(pPoint);
 		}
 
@@ -656,7 +656,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 
 VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
-		if (m_bZzazzlVision)				// if zzazzl paint is toggled on
+		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
 	}
 
@@ -666,7 +666,7 @@ VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 
 VOID CMainWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
-		if (m_bZzazzlVision)				// if zzazzl paint is toggled on
+		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
 	}
 
@@ -674,7 +674,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 }
 
 VOID CMainWindow::OnClose() {
-	CBagPanWindow::OnClose();		// Destruct the main window
+	CBagPanWindow::OnClose();       // Destruct the main window
 }
 
 
@@ -689,7 +689,7 @@ ERROR_CODE CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 		//g_cInitLoc = dstLoc;
 	}
 
-	return(m_errCode);
+	return (m_errCode);
 }
 
 

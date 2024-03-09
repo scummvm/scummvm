@@ -43,7 +43,7 @@ namespace SpaceBar {
 #define VILDROIDSTATSTEXTSIZE 12
 #define VILDROIDTIPSTEXTSIZE 16
 #define VILDROIDCHIPTEXTWIDTH 480
-#define VILDROIDTIPSCROLLSPEED	5
+#define VILDROIDTIPSCROLLSPEED  5
 #define GREENCHIPFILE "$SBARDIR:VILDROID:GCHIP.TXT"
 #define BLUECHIPFILE "$SBARDIR:VILDROID:BUCHIP.TXT"
 #define DISCEJECTSOUND "$SBARDIR:VILDROID:AUDIO:OBJECTS:DDTCPIC1.WAV"
@@ -56,7 +56,7 @@ namespace SpaceBar {
 #define VILDROIDSTATSTEXTSIZE 18
 #define VILDROIDTIPSTEXTSIZE 18
 #define VILDROIDCHIPTEXTWIDTH 480
-#define VILDROIDTIPSCROLLSPEED	5
+#define VILDROIDTIPSCROLLSPEED  5
 #define GREENCHIPFILE "$SBARDIR\\VILDROID\\GCHIP.TXT"
 #define BLUECHIPFILE "$SBARDIR\\VILDROID\\BUCHIP.TXT"
 #define BLUECHIPFILE "$SBARDIR\\VILDROID\\BUCHIP.TXT"
@@ -123,9 +123,8 @@ static CBofRect viewRect;
 // Filter initialization code.
 //
 VOID VilInitFilters(CBofBitmap *pBmp) {
-	if (!initDone)
-	{
-		CHAR szCString[256]; 				// jwl 09.25.96 performance improvement
+	if (!initDone) {
+		CHAR szCString[256];                // jwl 09.25.96 performance improvement
 		CBofString cString(szCString, 256);
 		cString = VILDROIDTIPFILE;
 
@@ -147,7 +146,7 @@ VOID VilInitFilters(CBofBitmap *pBmp) {
 
 		// Grafitti bitmap.
 		//
-		CHAR szBString[256]; 				// jwl 09.25.96 performance improvement
+		CHAR szBString[256];                // jwl 09.25.96 performance improvement
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
 		MACROREPLACE(cBString);
@@ -177,8 +176,7 @@ VOID TriInitFilters(CBofBitmap *pBmp) {
 }
 
 VOID LightningInitFilters(VOID) {
-	if (!lightninginitDone)
-	{
+	if (!lightninginitDone) {
 		CHAR szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
 		cThunderFileName = THUNDERSOUND;
@@ -189,35 +187,30 @@ VOID LightningInitFilters(VOID) {
 }
 
 VOID DestroyFilters() {
-	if (pTipBmp)
-	{
+	if (pTipBmp) {
 		delete pTipBmp;
 		pTipBmp = NULL;
 	}
-	if (pGrafittiBmp)
-	{
+	if (pGrafittiBmp) {
 		delete pGrafittiBmp;
 		pGrafittiBmp = NULL;
 	}
 	// clean up trisecks bmp
-	if (pTriBmp)
-	{
+	if (pTriBmp) {
 		delete pTriBmp;
 		pTriBmp = NULL;
 	}
 	// Chip bitmap is destroyed here is the cleanup function because
 	// presumably we're being called when the game is ending.
 	//
-	if (pChipBmp)
-	{
+	if (pChipBmp) {
 		delete pChipBmp;
 		pChipBmp = NULL;
 	}
 
 	// Clean up the lightning filter.
 	//
-	if (pThunder)
-	{
+	if (pThunder) {
 		delete pThunder;
 		pThunder = NULL;
 	}
@@ -235,28 +228,23 @@ VOID DestroyFilters() {
 BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	BOOL bReturnValue = FALSE;
 
-	if ((nFilterId & kTriFilter) != 0)
-	{
+	if ((nFilterId & kTriFilter) != 0) {
 		bReturnValue = (TriFilter(pBmp, pRect) || bReturnValue);
 	}
 
-	if ((nFilterId & kHalucinateFilter) != 0)
-	{
+	if ((nFilterId & kHalucinateFilter) != 0) {
 		bReturnValue = (HalucinateFilter(pBmp, pRect) || bReturnValue);
 	}
 
-	if ((nFilterId & kVildroidFilter) != 0)
-	{
+	if ((nFilterId & kVildroidFilter) != 0) {
 		bReturnValue = (VildroidFilter(pBmp, pRect) || bReturnValue);
 	}
 
-	if ((nFilterId & kZzazzlFilter) != 0)
-	{
+	if ((nFilterId & kZzazzlFilter) != 0) {
 		bReturnValue = (ZzazzlFilter(pBmp, pRect) || bReturnValue);
 	}
 
-	if ((nFilterId & kLightningFilter) != 0)
-	{
+	if ((nFilterId & kLightningFilter) != 0) {
 		bReturnValue = (LightningFilter(pBmp, pRect) || bReturnValue);
 	}
 
@@ -373,16 +361,14 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// Display internal radio setting.
 		//
 
-		if (g_pDRadio->GetNumValue())
-		{
+		if (g_pDRadio->GetNumValue()) {
 			PaintText(pBmp, &rect, kRadioOnString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_LEFT, FORMAT_DEFAULT);
-		} else
-		{
+		} else {
 			PaintText(pBmp, &rect, kRadioOffString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		}
 
 		// Display chance of precipitation.
-		//	
+		//
 		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->GetNumValue(), g_pPrecDecimal->GetNumValue());
 		CBofRect cleanRect((viewRect.right - 250), viewRect.top, viewRect.right - 5, viewRect.top + 20);
 		PaintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
@@ -418,16 +404,14 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		if (CMainWindow::chipdisp == FALSE) {
 			switch (chipID) {
-			case 0:
-			{
+			case 0: {
 				break;
 			};
-			case 1:
-			{
+			case 1: {
 				if (pChipBmp != NULL)
 					delete pChipBmp;
 
-				CHAR szCString[256]; 				// jwl 09.25.96 performance improvement
+				CHAR szCString[256];                // jwl 09.25.96 performance improvement
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
@@ -466,12 +450,11 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				delete buff;
 				break;
 			};
-			case 2:
-			{
+			case 2: {
 				if (pChipBmp != NULL)
 					delete pChipBmp;
 
-				CHAR szCString[256]; 				// jwl 09.25.96 performance improvement
+				CHAR szCString[256];                // jwl 09.25.96 performance improvement
 				CBofString cString(szCString, 256);
 				cString = BLUECHIPFILE;
 
@@ -510,8 +493,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				delete buff;
 				break;
 			};
-			case 3:
-			{
+			case 3: {
 				if (pChipBmp != NULL) {
 					delete pChipBmp;
 					pChipBmp = NULL;
@@ -601,17 +583,15 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				case 26:
 				case 27:
 				case 28:
-				case 29:
-				{
+				case 29: {
 
 					PaintText(pBmp, &txtRect, BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d", g_pTDig1->GetNumValue(),
-						g_pTDig2->GetNumValue(), g_pTDig3->GetNumValue(),
-						g_pTDig4->GetNumValue()), VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+					                                      g_pTDig2->GetNumValue(), g_pTDig3->GetNumValue(),
+					                                      g_pTDig4->GetNumValue()), VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
 					break;
 				}
 
-				default:
-				{
+				default: {
 					CMainWindow::chipdisp = FALSE;
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
@@ -625,7 +605,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != NULL) {
 					int rdef = viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
 					int tdef = viewRect.Height() - 300;
-					CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);				   // (tdef/2)
+					CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
 					pChipBmp->Paint(pBmp, ((rdef / 2) + viewRect.left), (tdef + viewRect.top), &tmprct, 0);
 				}
@@ -638,7 +618,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
 
-					CHAR szCString[256]; 				// jwl 09.25.96 performance improvement
+					CHAR szCString[256];                // jwl 09.25.96 performance improvement
 					CBofString cString(szCString, 256);
 					cString = DISCEJECTSOUND;
 					MACROREPLACE(cString);
@@ -691,15 +671,13 @@ static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar;
 
-	CHAR szZBuff[256]; 					// jwl 09.25.96 performance improvement
+	CHAR szZBuff[256];                  // jwl 09.25.96 performance improvement
 	CBofString zStr(szZBuff, 256);
 	BOOL bZzazzlVision = FALSE;
 
-	if (pRect != NULL)
-	{
+	if (pRect != NULL) {
 		viewRect = *pRect;
-	} else
-	{
+	} else {
 		// A null rectangle implies that we're going to filter the
 		// entire screen.  Take the bitmap's rectangle and intersect
 		// that with the rectangle for the viewport. Filter the resulting
@@ -710,12 +688,12 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
-	zStr = "ZZAZZLVISION"; 		// jwl 09.25.96 performance improvement
+	zStr = "ZZAZZLVISION";      // jwl 09.25.96 performance improvement
 	if ((pVar = VARMNGR->GetVariable(zStr)) != NULL) {
 
 		bZzazzlVision = TRUE;
 		if (pVar->GetNumValue() > 0) {
-			CMainWindow::SetZzazzlVision(TRUE);				// zzazzl paint is on in the script
+			CMainWindow::SetZzazzlVision(TRUE);             // zzazzl paint is on in the script
 			int dx = viewRect.Width() / 3;  // + 1;
 			int dy = viewRect.Height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
@@ -734,9 +712,11 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				int i, j, x, y = viewRect.top;
 				for (i = 0; i < 3; ++i) {
 					if (i == 1) {
-						j = 1; x = viewRect.left;
+						j = 1;
+						x = viewRect.left;
 					} else {
-						j = 0; x = viewRect.left - (dx >> 1);
+						j = 0;
+						x = viewRect.left - (dx >> 1);
 					}
 					for (; j < 4; ++j) {
 						pMiniBitmap->Paint(pBmp, x, y);
@@ -749,9 +729,11 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				int i, j, x, y = viewRect.top;
 				for (i = 0; i < 3; ++i) {
 					if (i == 1) {
-						j = 0; x = viewRect.left;
+						j = 0;
+						x = viewRect.left;
 					} else {
-						j = 1; x = viewRect.left + (dx >> 1);
+						j = 1;
+						x = viewRect.left + (dx >> 1);
 					}
 					for (; j < 3; ++j) {
 						pMiniBitmap->Paint(pBmp, x, y);
@@ -771,15 +753,13 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 // Halucination filter.
 //
 static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	CHAR szHBuff[256]; 					// jwl 09.25.96 performance improvement
+	CHAR szHBuff[256];                  // jwl 09.25.96 performance improvement
 	CBofString hStr(szHBuff, 256);
 	BOOL bHallucinating = FALSE;
 
-	if (pRect != NULL)
-	{
+	if (pRect != NULL) {
 		viewRect = *pRect;
-	} else
-	{
+	} else {
 		// A null rectangle implies that we're going to filter the
 		// entire screen.  Take the bitmap's rectangle and intersect
 		// that with the rectangle for the viewport. Filter the resulting
@@ -800,17 +780,17 @@ static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect tempRect = pTempBitmap->GetRect();
 		CBofRect srcRect(viewRect);
 		CBofRect dstRect = tempRect;
-		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);	// Copy the Screen's Bmp into Temp
-		INT	nShiftAmount = 0;
-		INT	y;							// Step through strips of bmp
+		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
+		INT nShiftAmount = 0;
+		INT y;                          // Step through strips of bmp
 		for (y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
 			dstRect.SetRect(viewRect.left + nShiftAmount, viewRect.top + y,
-				viewRect.right, (viewRect.top + y) + 4);
+			                viewRect.right, (viewRect.top + y) + 4);
 			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
 			srcRect.SetRect(tempRect.right - nShiftAmount, y, tempRect.right, y + 4);
 			dstRect.SetRect(viewRect.left, viewRect.top + y,
-				viewRect.left + nShiftAmount, (viewRect.top + y) + 4);
+			                viewRect.left + nShiftAmount, (viewRect.top + y) + 4);
 			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
 			// I'm sure there's some nerdy math formula that does
 			//...this all pretty-like -- will fix it if it comes to me
@@ -847,31 +827,25 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar = VARMNGR->GetVariable(vStr);
 	INT nLightningDelay = 0;
 
-	if (pVar != NULL)
-	{
+	if (pVar != NULL) {
 		nLightningDelay = pVar->GetNumValue();
 	}
 
-	if (nLightningDelay > 0)
-	{
-		if (!lightninginitDone)
-		{
+	if (nLightningDelay > 0) {
+		if (!lightninginitDone) {
 			LightningInitFilters();
 		}
 
 		// Check to see if it's time to "flash" a bolt of lightning.
 		//
-		if (dwTimeOfNextBolt < GetTimer())
-		{
+		if (dwTimeOfNextBolt < GetTimer()) {
 			// Time to paint the effect of a lightning bolt
 			// flash and play the sound of a thunderbolt.
 			//
 
-			if (pRect != NULL)
-			{
+			if (pRect != NULL) {
 				viewRect = *pRect;
-			} else
-			{
+			} else {
 				// A null rectangle implies that we're going to filter the
 				// entire screen.  Take the bitmap's rectangle and intersect
 				// that with the rectangle for the viewport. Filter the resulting
@@ -898,7 +872,7 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			for (i = 0; i < nHeight; i++) {
 				UBYTE *pPixel = pBmp->GetPixelAddress(viewRect.left, viewRect.top + i);
 
-				// jwl 1.24.97 Fix this such that it uses predefined constants, makes for much 
+				// jwl 1.24.97 Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.
 				for (j = 0; j < nWidth; j++, pPixel++) {
 					if (*pPixel == COLOR_BLACK) {
