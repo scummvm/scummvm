@@ -92,11 +92,11 @@ ERROR_CODE CBagStorageDevBmp::KillWorkBmp() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevBmp::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+ERROR_CODE CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
 	SetFileName(sWldName);
 	SetRefName(sWldName);
 
-	return CBagStorageDev::LoadFile(fpInput, sWldName, bAttach);
+	return CBagStorageDev::LoadFileFromStream(fpInput, sWldName, bAttach);
 }
 
 CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {

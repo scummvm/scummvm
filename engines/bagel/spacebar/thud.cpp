@@ -114,8 +114,8 @@ BOOL SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 
 
 
-ERROR_CODE SBarThud::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
-	return CBagStorageDevBmp::LoadFile(fpInput, sWldName, bAttach);
+ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+	return CBagStorageDevBmp::LoadFileFromStream(fpInput, sWldName, bAttach);
 }
 
 

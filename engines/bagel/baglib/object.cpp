@@ -209,7 +209,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
 			CBofString s(szBuff, 256);
 
-			m_pMenu->LoadFile(istr, s, FALSE);
+			m_pMenu->LoadFileFromStream(istr, s, FALSE);
 		}
 		break;
 		//

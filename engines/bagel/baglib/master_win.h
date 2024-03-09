@@ -148,7 +148,7 @@ public:
 	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart = FALSE, BOOL bSetStart = TRUE);
 
 	ERROR_CODE SaveFile(const CBofString &sWldName);
-	ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = FALSE);
+	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = FALSE);
 	ERROR_CODE LoadGlobalVars(const CBofString &sWldName);
 
 	ERROR_CODE SetCurrFadeIn(int nFade) {

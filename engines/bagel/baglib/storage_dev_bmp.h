@@ -77,7 +77,7 @@ public:
 		return (GetBitmap());
 	}
 
-	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
 	virtual BOOL IsAttached() {
 		return CBagBmpObject::IsAttached();

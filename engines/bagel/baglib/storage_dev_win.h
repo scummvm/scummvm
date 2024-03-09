@@ -339,7 +339,7 @@ public:
 
 	// virtual ERROR_CODE   SaveFile(ostream& fpOutput);
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
 	virtual void OnMouseMove(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);

@@ -608,7 +608,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 			// Tell IOS that this is my buffer, and don't touch it
 			// fpInput.delbuf(0);
 
-			CBagMasterWin::LoadFile(fpInput, sStartWldName, TRUE);
+			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName, TRUE);
 
 			BofFree(pBuf);
 		}
@@ -854,7 +854,7 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
  *      True on success
  *
  *****************************************************************************/
-ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWldName, BOOL /*bAttach*/) {
+ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL /*bAttach*/) {
 	CHAR szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBagStorageDev *pSDev;
@@ -940,7 +940,7 @@ ERROR_CODE CBagMasterWin::LoadFile(bof_ifstream &fpInput, const CBofString &sWld
 			if (rRect.Width() && rRect.Height())
 				pSDev->SetRect(rRect);
 
-			pSDev->LoadFile(fpInput, namestr, FALSE);
+			pSDev->LoadFileFromStream(fpInput, namestr, FALSE);
 			if (nFilter) {
 				pSDev->SetFilterId((USHORT)nFilter);
 
