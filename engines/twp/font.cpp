@@ -300,7 +300,7 @@ void Text::update() {
 		// create quads for all characters
 		float maxW = 0.f;
 		float lineHeight = _font->getLineHeight();
-		float y = -lineHeight;
+		float y = 0.f;
 		for (size_t i = 0; i < lines.size(); i++) {
 			Line &line = lines[i];
 			CodePoint prevChar = 0;
@@ -362,7 +362,18 @@ void Text::update() {
 }
 
 void Text::draw(Gfx &gfx, Math::Matrix4 trsf) {
-	if (_font && _txt.size() > 0) {
+	switch(_vAlign) {
+		case tvTop:
+		trsf.translate(Math::Vector3d(0.f, 0.f, 0.f));
+		break;
+		case tvCenter:
+		trsf.translate(Math::Vector3d(0.f, _bnds.getY()/2.f, 0.f));
+		break;
+		case tvBottom:
+		trsf.translate(Math::Vector3d(0.f, _bnds.getY(), 0.f));
+		break;
+	}
+	if (_font && !_txt.empty()) {
 		update();
 		gfx.drawPrimitives(GL_TRIANGLES, _vertices.begin(), _vertices.size(), trsf, _texture);
 	}

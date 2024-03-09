@@ -461,19 +461,19 @@ void Talking::say(const Common::String &text) {
 	}
 
 	if (ConfMan.getBool("subtitles")) {
-		Text text2("sayline", txt, thCenter, tvCenter, SCREEN_WIDTH * 3.f / 4.f, _color);
+		Text text2("sayline", txt, thCenter, tvTop, SCREEN_WIDTH * 3.f / 4.f, _color);
 		_obj->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
 		_obj->_sayNode->setText(text2);
 		_obj->_sayNode->setColor(_color);
 		_node = _obj->_sayNode;
-		Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + Math::Vector2d(_obj->_talkOffset.getX(), _obj->_talkOffset.getY()));
+		Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + _obj->_talkOffset);
 
 		// clamp position to keep it on screen
 		pos.setX(CLIP(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
 		pos.setY(CLIP(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
 
 		_obj->_sayNode->setPos(pos);
-		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.5f));
+		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.0f));
 		g_twp->_screenScene->addChild(_obj->_sayNode.get());
 	}
 

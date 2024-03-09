@@ -451,7 +451,7 @@ TextNode::~TextNode() {}
 
 void TextNode::setText(Text text) {
 	_text = text;
-	setSize(text.getBounds());
+	updateBounds();
 }
 
 void TextNode::updateBounds() {
@@ -755,13 +755,13 @@ void SentenceNode::drawCore(Math::Matrix4 trsf) {
 	float x, y;
 	if (ConfMan.getBool("hudSentence")) {
 		x = (SCREEN_WIDTH - text.getBounds().getX()) / 2.f;
-		y = 208.f;
+		y = 152.f;
 	} else {
 		x = MAX(_pos.getX() - text.getBounds().getX() / 2.f, MARGIN);
 		x = MIN(x, SCREEN_WIDTH - text.getBounds().getX() - MARGIN);
-		y = _pos.getY() + 2.f * 38.f;
-		if (y >= SCREEN_HEIGHT)
-			y = _pos.getY() - 38.f;
+		y = _pos.getY() + 16.f;
+		if (y >= (SCREEN_HEIGHT - 32.f))
+			y = _pos.getY() - 92.f;
 	}
 	Math::Matrix4 t;
 	t.translate(Math::Vector3d(x, y, 0.f));

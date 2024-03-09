@@ -150,31 +150,31 @@ public:
 		_txt = text;
 		_dirty = true;
 	}
-	Common::String getText() { return _txt; }
+	Common::String getText() const { return _txt; }
 
 	void setColor(Color c) {
 		_col = c;
 		_dirty = true;
 	}
-	Color getColor() { return _col; }
+	Color getColor() const { return _col; }
 
 	void setMaxWidth(float maxW) {
 		_maxW = maxW;
 		_dirty = true;
 	}
-	float getMaxWidth() { return _maxW; }
+	float getMaxWidth() const { return _maxW; }
 
 	void setHAlign(TextHAlignment align) {
 		_hAlign = align;
 		_dirty = true;
 	}
-	TextHAlignment getHAlign() { return _hAlign; }
+	TextHAlignment getHAlign() const { return _hAlign; }
 
 	void setVAlign(TextVAlignment align) {
 		_vAlign = align;
 		_dirty = true;
 	}
-	TextVAlignment getVAlign() { return _vAlign; }
+	TextVAlignment getVAlign() const { return _vAlign; }
 
 	void setFont(const Common::String &fontName);
 	Common::SharedPtr<Font> getFont() { return _font; }

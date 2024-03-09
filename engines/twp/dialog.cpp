@@ -245,7 +245,7 @@ void Dialog::update(float dt) {
 		for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
 			DialogSlot *slot = &_slots[i];
 			if (slot->_isValid) {
-				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, slot->_text.getBounds().getY()), slot->_text.getBounds());
+				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->_text.getBounds().getY()/2.f), slot->_text.getBounds());
 				bool over = slot && rect.contains(_mousePos);
 				if (rect.r.w > (SCREEN_WIDTH - SLOTMARGIN)) {
 					if (over) {
