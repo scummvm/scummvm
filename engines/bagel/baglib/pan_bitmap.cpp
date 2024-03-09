@@ -71,7 +71,7 @@ CBagPanBitmap::CBagPanBitmap(const CHAR *pszFileName, CBofPalette *pPalette, con
 
 		m_pCosineTable = NULL;
 		m_bActiveScrolling = FALSE; // The scrolling is not active
-		m_xDirection = NONE;        // Direction is not moving
+		m_xDirection = kDirNONE;        // Direction is not moving
 
 		pPalette = GetPalette();
 
@@ -131,7 +131,7 @@ CBagPanBitmap::CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRe
 
 		m_pCosineTable = NULL;
 		m_bActiveScrolling = FALSE; // The scrolling is not active
-		m_xDirection = NONE;        // Direction is not moving
+		m_xDirection = kDirNONE;        // Direction is not moving
 
 		pPalette = GetPalette();
 
@@ -399,23 +399,23 @@ ERROR_CODE CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	return m_errCode;
 }
 
-CBagPanBitmap::DIRECTION CBagPanBitmap::UpdateView() {
+CBagPanBitmap::Direction CBagPanBitmap::UpdateView() {
 	if (m_bActiveScrolling) {
 
-		if (m_xDirection & LEFT)
+		if (m_xDirection & kDirLEFT)
 			RotateRight();
-		else if (m_xDirection & RIGHT)
+		else if (m_xDirection & kDirRIGHT)
 			RotateLeft();
 
-		if (m_xDirection & UP)
+		if (m_xDirection & kDirUP)
 			RotateUp();
-		else if (m_xDirection & DOWN)
+		else if (m_xDirection & kDirDOWN)
 			RotateDown();
 
 		return m_xDirection;
 	}
 
-	return NONE;
+	return kDirNONE;
 }
 
 VOID CBagPanBitmap::SetCorrWidth(int nWidth, BOOL bUpdate) {

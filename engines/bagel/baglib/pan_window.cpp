@@ -554,22 +554,22 @@ VOID CBagPanWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 		case BKEY_LEFT:
 			m_pSlideBitmap->SetRotateRate(CBofPoint(16, 8));
-			m_pSlideBitmap->SetDirection(CBagPanBitmap::RIGHT);
+			m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirRIGHT);
 			break;
 
 		case BKEY_RIGHT:
 			m_pSlideBitmap->SetRotateRate(CBofPoint(16, 8));
-			m_pSlideBitmap->SetDirection(CBagPanBitmap::LEFT);
+			m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirLEFT);
 			break;
 
 		case BKEY_UP:
 			m_pSlideBitmap->SetRotateRate(CBofPoint(16, 8));
-			m_pSlideBitmap->SetDirection(CBagPanBitmap::DOWN);
+			m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirDOWN);
 			break;
 
 		case BKEY_DOWN:
 			m_pSlideBitmap->SetRotateRate(CBofPoint(16, 8));
-			m_pSlideBitmap->SetDirection(CBagPanBitmap::UP);
+			m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirUP);
 			break;
 		}
 	}
@@ -596,30 +596,30 @@ VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p, void *) {
 		if (m_pSlideBitmap != nullptr) {
 			if (m_cRightRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(((xPoint.x - m_xMovementRect.right) * (m_nPanSpeed + 1)) / 2, 0));
-				m_pSlideBitmap->SetDirection(CBagPanBitmap::LEFT);
+				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirLEFT);
 				CBagMasterWin::SetActiveCursor(BOFRTCURSOR);
 
 			} else if (m_cLeftRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(((m_xMovementRect.left - xPoint.x) * (m_nPanSpeed + 1)) / 2, 0));
-				m_pSlideBitmap->SetDirection(CBagPanBitmap::RIGHT);
+				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirRIGHT);
 				CBagMasterWin::SetActiveCursor(BOFLTCURSOR);
 
 			} else if (m_cBottomRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(0, (xPoint.y - m_xMovementRect.bottom)));
-				m_pSlideBitmap->SetDirection(CBagPanBitmap::UP);
+				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirUP);
 				CBagMasterWin::SetActiveCursor(BOFDNCURSOR);
 
 			} else if (m_cTopRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(0, (m_xMovementRect.top - xPoint.y)));
-				m_pSlideBitmap->SetDirection(CBagPanBitmap::DOWN);
+				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirDOWN);
 				CBagMasterWin::SetActiveCursor(BOFUPCURSOR);
 
 			} else {
-				m_pSlideBitmap->SetDirection(CBagPanBitmap::NONE);
+				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirNONE);
 			}
 
 			if (GetLActiveObject() && GetLActivity()) {
-				m_pSlideBitmap->SetDirection((CBagPanBitmap::DIRECTION)(m_pSlideBitmap->GetDirection() | CBagPanBitmap::VIEW));
+				m_pSlideBitmap->SetDirection((CBagPanBitmap::Direction)(m_pSlideBitmap->GetDirection() | CBagPanBitmap::kDirVIEW));
 			}
 		}
 	}
@@ -955,7 +955,7 @@ DWORD CBagPanWindow::Benchmark() {
 	m_pSlideBitmap->ActivateScrolling();
 
 	m_pSlideBitmap->SetRotateRate(CBofPoint(8, 0));
-	m_pSlideBitmap->SetDirection(CBagPanBitmap::LEFT);
+	m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirLEFT);
 
 	TimerStart();
 	for (int i = 0; i < 50; i++)
