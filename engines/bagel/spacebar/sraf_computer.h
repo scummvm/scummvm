@@ -72,8 +72,8 @@ public:
 #define mBuyer			0x0002
 #define mSeller 		0x0004
 
-// The ordering of these flags must match the ordering of these same 
-// characters in the array in which they are defined. 
+// The ordering of these flags must match the ordering of these same
+// characters in the array in which they are defined.
 #define mNorg72			0x0008
 #define mPnurth81		0x0010
 #define mZig64			0x0020
@@ -126,7 +126,7 @@ class SrafTextScreen :
 	#endif
 };
 
-// Number of constants... 
+// Number of constants...
 #define NUM_MAIL_MESSAGES    8
 #define NUM_MINERALS		14
 #define NUM_STAFFERS		6

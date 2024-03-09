@@ -701,7 +701,7 @@ VOID CBibbleWindow::OnPaint(CBofRect *pRect) {
 		}
 
 #if BOF_MAC
-		// out here in mac land, we need to layer out windows appropriately, 
+		// out here in mac land, we need to layer out windows appropriately,
 		// so make sure our buttons are on top.
 		for (INT i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 			if (m_pButtons[i] != NULL) {

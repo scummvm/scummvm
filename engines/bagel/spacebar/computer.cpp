@@ -32,7 +32,7 @@ namespace SpaceBar {
 #define DRINKFILE		"$SBARDIR:BAR:CLOSEUP:BDCA:DRINKS.TXT"
 #define INGRDFILE		"$SBARDIR:BAR:CLOSEUP:BDCA:ING.TXT"
 #define BDCADIR         "$SBARDIR:BAR:CLOSEUP:BDCA:"
-// scg 01.07.97 
+// scg 01.07.97
 #if !PLAYWAVONMAC
 #define ORDERAUDIO     	"BDNDPSC1.SND"
 #define REFUSEAUDIO    	"BDTOORC1.SND"
@@ -371,7 +371,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 		// search for $ - record delimeter
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with \0		
+		*pPosInBuff = '\0'; // replace with \0
 		pPosInBuff++;	// Increment past it
 
 		// search record delimeter from beginning of next
@@ -443,7 +443,7 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 		// search for $ - record delimeter
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with /0		
+		*pPosInBuff = '\0'; // replace with /0
 		pPosInBuff++;	// Increment past it
 
 		// search record delimeter from beginning of next
@@ -597,8 +597,8 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 		m_pButtons[ORDER]->Show();
 		m_pButtons[LISTD]->Show();
 
-		// Paint to this button immediately, this minimizes the white 
-		// flash of bringing the window frontmost. 
+		// Paint to this button immediately, this minimizes the white
+		// flash of bringing the window frontmost.
 #if BOF_MAC
 		m_pButtons[ORDER]->Paint(NULL);
 		m_pButtons[LISTD]->Paint(NULL);
@@ -611,8 +611,8 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 		m_pButtons[LISTI]->Select();
 
 		m_pButtons[LISTI]->Show();
-		// Paint to this button immediately, this minimizes the white 
-		// flash of bringing the window frontmost. 
+		// Paint to this button immediately, this minimizes the white
+		// flash of bringing the window frontmost.
 #if BOF_MAC
 		m_pButtons[LISTI]->Paint(NULL);
 #endif
@@ -651,7 +651,7 @@ VOID SBarComputer::SetOn() {
 	m_pButtons[ONBUT]->Show();
 
 #if BOF_MAC
-	// Whenever dealing with the on/off button, make sure to 
+	// Whenever dealing with the on/off button, make sure to
 	// paint the new bitmap.
 	m_pButtons[ONBUT]->Paint(NULL);
 #endif
@@ -681,7 +681,7 @@ VOID SBarComputer::SetOff() {
 		m_pIngBox->Hide();
 #else
 		DeleteListBox();
-#endif		
+#endif
 
 		DeleteTextBox();
 
@@ -694,8 +694,8 @@ VOID SBarComputer::SetOff() {
 		// bar 11/27/96 added switching-off sound
 		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 #if BOF_MAC
-		// Whenever dealing with the on/off button, make sure to 
-		// paint the new bitmap. 
+		// Whenever dealing with the on/off button, make sure to
+		// paint the new bitmap.
 		m_pButtons[OFFBUT]->Paint(NULL);
 #endif
 		for (int i = 1; i < NUM_COMPBUTT; i++)
@@ -736,7 +736,7 @@ VOID SBarComputer::SetDrink() {
 		}
 		// show list box
 		m_nSelection = -1;
-#endif		
+#endif
 
 		DeleteTextBox();
 
@@ -770,8 +770,8 @@ VOID SBarComputer::SetDrink() {
 			m_pButtons[LISTD]->Select();
 
 			m_pButtons[LISTD]->Show();
-			// Paint to this button immediately, this minimizes the white 
-			// flash of bringing the window frontmost. 
+			// Paint to this button immediately, this minimizes the white
+			// flash of bringing the window frontmost.
 #if BOF_MAC
 			m_pButtons[LISTD]->Paint(NULL);
 #endif
@@ -821,8 +821,8 @@ VOID SBarComputer::SetIng() {
 		m_pButtons[INGRED]->Hide();
 		m_pButtons[DRINKS]->Show();
 
-		// Paint to this button immediately, this minimizes the white 
-		// flash of bringing the window frontmost. 
+		// Paint to this button immediately, this minimizes the white
+		// flash of bringing the window frontmost.
 #if BOF_MAC
 		m_pButtons[DRINKS]->Paint(NULL);
 #endif
@@ -839,8 +839,8 @@ VOID SBarComputer::SetIng() {
 		m_pButtons[PGDOWN]->Show();
 		m_pButtons[BCBACK]->Hide();
 
-		// Paint to this button immediately, this minimizes the white 
-		// flash of bringing the window frontmost. 
+		// Paint to this button immediately, this minimizes the white
+		// flash of bringing the window frontmost.
 #if BOF_MAC
 		m_pButtons[PGUP]->Paint(NULL);
 		m_pButtons[PGDOWN]->Paint(NULL);
@@ -850,8 +850,8 @@ VOID SBarComputer::SetIng() {
 			// Prevents the white flash when the show window is performed
 			m_pButtons[LISTI]->Select();
 			m_pButtons[LISTI]->Show();
-			// Paint to this button immediately, this minimizes the white 
-			// flash of bringing the window frontmost. 
+			// Paint to this button immediately, this minimizes the white
+			// flash of bringing the window frontmost.
 #if BOF_MAC
 			m_pButtons[LISTI]->Paint(NULL);
 #endif
@@ -906,8 +906,8 @@ VOID SBarComputer::SetList() {
 		m_pButtons[PGDOWN]->Hide();
 		m_pButtons[BCBACK]->Show();
 
-		// Paint to this button immediately, this minimizes the white 
-		// flash of bringing the window frontmost. 
+		// Paint to this button immediately, this minimizes the white
+		// flash of bringing the window frontmost.
 #if BOF_MAC
 		m_pButtons[BCBACK]->Paint(NULL);
 #endif
@@ -955,8 +955,8 @@ VOID SBarComputer::Order() {
 		if (pVar) {
 			int nCredits = pVar->GetNumValue();
 			int nHaveDrink = pVar2->GetNumValue();
-			// If the player is out of nuggets, then put up a 
-			// text message.    
+			// If the player is out of nuggets, then put up a
+			// text message.
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)NULL, FALSE);
 				saveBackground.CaptureScreen(this, &gCompTextWindow);
