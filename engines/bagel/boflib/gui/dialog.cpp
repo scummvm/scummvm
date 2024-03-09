@@ -146,8 +146,9 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		stRect.translate(pParent->GetWindowRect().left,
 						 pParent->GetWindowRect().top);
 
-	delete m_pWindow;
-	m_pWindow = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
+	m_cRect = stRect;
+	delete _surface;
+	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
 #if BOF_WINDOWS
 
@@ -259,7 +260,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 #endif
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
