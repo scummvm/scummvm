@@ -562,10 +562,11 @@ VOID CBofWindow::Show() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-
 		Assert(IsCreated());
 
 		if (IsCreated()) {
+			// ScummVM redraw window
+			InvalidateRect(&m_cRect);
 
 #if BOF_MAC || BOF_WINMAC
 			LMSetPaintWhite(FALSE);
@@ -975,32 +976,7 @@ VOID CBofWindow::ValidateRect(CBofRect *pRect) {
 }
 
 VOID CBofWindow::InvalidateRect(CBofRect *pRect) {
-#if BOF_WINDOWS
-	RECT stRect;
-
-	if (pRect == nullptr) {
-		::InvalidateRect(m_hWnd, nullptr, FALSE);
-
-	} else {
-		stRect = *pRect;
-
-		/*stRect.left = pRect->left;
-		stRect.top = pRect->top;
-		stRect.right = pRect->right;
-		stRect.bottom = pRect->bottom;*/
-
-		::InvalidateRect(m_hWnd, &stRect, FALSE);
-	}
-#elif BOF_MAC
-	STBofPort stSavePort(GetMacWindow());
-
-	if (pRect == nullptr)
-		pRect = &m_cRect;
-
-	Rect stRect = {pRect->left, pRect->top, pRect->right + 1, pRect->bottom + 1};
-
-	::InvalRect(&stRect);
-#endif
+	OnPaint(pRect);
 }
 
 ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {

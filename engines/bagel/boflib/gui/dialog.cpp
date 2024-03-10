@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/framelimiter.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/timer.h"
@@ -428,19 +429,10 @@ INT CBofDialog::DoModal() {
 
 	CBofWindow *pLastActive = GetActiveWindow();
 	SetActive();
-
-#if BOF_MAC
-	// jwl 09.24.96 because of layering problems, we must show our parent window
-	// first.
-	Show();
-#endif
-
 	OnInitDialog();
 
-#if !BOF_MAC
 	// display the window
 	Show();
-#endif
 
 	UpdateWindow();
 
@@ -458,10 +450,11 @@ INT CBofDialog::DoModal() {
 	//
 	_bEndDialog = FALSE;
 
-	// Acquire and dispatch messages until a WM_QUIT message is received,
+	// Acquire and dispatch messages until quit message is received,
 	// or until there are too many errors.
-	//
+	Graphics::FrameLimiter limiter(g_system, 60);
 	Common::Event evt;
+
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
 		while (g_system->getEventManager()->pollEvent(evt)) {
 //			TranslateMessage(evt);
@@ -512,9 +505,9 @@ INT CBofDialog::DoModal() {
 		}
 
 		// HACK: Painting here just to see the output, supposed to be handled by WM_PAINT
-		OnPaint(&m_cRect);
+		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
-		g_system->delayMillis(10);
+		limiter.startFrame();
 	}
 
 #if BOF_MAC || BOF_WINMAC
