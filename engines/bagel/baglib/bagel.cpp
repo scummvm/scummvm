@@ -341,7 +341,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 
 		// If the disk is not in drive, then inform the user
 		i = 0;
-		while (!FileExists(cString.GetBuffer())) {
+		while (!shouldQuit() && !FileExists(cString.GetBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
 			LogInfo(BuildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
