@@ -809,14 +809,13 @@ void Object::jiggle(float amount) {
 }
 
 void Object::inventoryScrollUp() {
-	_inventoryOffset -= 1;
-	if (_inventoryOffset < 0)
-		_inventoryOffset = CLIP(_inventoryOffset, 0, ((int)_inventory.size() - 5) / 4);
+	if(_inventoryOffset == 0) return;
+	_inventoryOffset--;
 }
 
 void Object::inventoryScrollDown() {
 	_inventoryOffset++;
-	_inventoryOffset = CLIP(_inventoryOffset, 0, ((int)_inventory.size() - 5) / 4);
+	_inventoryOffset = CLIP(_inventoryOffset, 0,  MAX(0, ((int)_inventory.size() - 5) / 4));
 }
 
 void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Object> obj) {
