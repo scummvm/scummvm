@@ -39,6 +39,9 @@ protected:
 
 	ERROR_CODE Initialize() override;
 	ERROR_CODE ShutDown() override;
+	bool shouldQuit() const override {
+		return BagelEngine::shouldQuit();
+	}
 
 public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
