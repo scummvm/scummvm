@@ -475,10 +475,12 @@ ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSr
 
 		// Do the actual painting.
 		// Since we are copying from bitmap to bitmap, using the
-		// blit bitmap routine is a kosher thing to do, there is no screen
-		// drawing
-		assert(nMaskColor != NOT_TRANSPARENT);  // TODO: use ManagedSurface::blitFrom if this ever happens
-		pBmp->_bitmap.transBlitFrom(_bitmap, cSourceRect, cDestRect, nMaskColor);
+		// blit bitmap routine is a kosher thing to do, there is no screen drawing
+		if (nMaskColor == NOT_TRANSPARENT) {
+			pBmp->_bitmap.blitFrom(_bitmap, cSourceRect, cDestRect);
+		} else {
+			pBmp->_bitmap.transBlitFrom(_bitmap, cSourceRect, cDestRect, nMaskColor);
+		}
 
 		// don't need a lock on these guys anymore
 		pBmp->UnLock();

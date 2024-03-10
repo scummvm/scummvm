@@ -368,7 +368,7 @@ public:
 		warning("STUB: CBofWindow::UpdateWindow()");
 	}
 	VOID UpdateWindow() {
-		warning("STUB: CBofWindow::UpdateWindow()");
+		OnPaint(&m_cRect);
 	}
 
 #if BOF_WINDOWS
