@@ -37,6 +37,9 @@ namespace Bagel {
 #define kReallySlowPPC 200
 
 class CBofApp : public CBofError {
+private:
+	CBofWindow *m_pWindow = nullptr;
+
 protected:
 	VOID StartupCode();
 	VOID ShutDownCode();
@@ -56,8 +59,7 @@ protected:
 
 	static CBofApp *m_pBofApp;
 
-private:
-	CBofWindow *m_pWindow = nullptr;
+	virtual bool shouldQuit() const = 0;
 
 public:
 	CBofApp();
