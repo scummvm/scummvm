@@ -191,7 +191,9 @@ WalkTo::WalkTo(Common::SharedPtr<Object> obj, Math::Vector2d dest, int facing)
 		_path = {obj->_node->getAbsPos(), dest};
 	}
 
-	_wsd = sqrt(obj->_walkSpeed.getX() * obj->_walkSpeed.getX() + obj->_walkSpeed.getY() * obj->_walkSpeed.getY());
+	// don't know yet why walkspeed is so slow, so I cheat
+	Math::Vector2d walkSpeed = obj->_walkSpeed * 2;
+	_wsd = sqrt(walkSpeed.getX() * walkSpeed.getX() + walkSpeed.getY() * walkSpeed.getY());
 	if (sqrawexists(obj->_table, "preWalking"))
 		sqcall(obj->_table, "preWalking");
 }
