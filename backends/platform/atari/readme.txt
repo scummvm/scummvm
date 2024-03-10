@@ -1,4 +1,4 @@
-ScummVM 2.8.0
+ScummVM 2.8.1
 =============
 
 This is a port of ScummVM (https://www.scummvm.org), a program which allows you
@@ -35,7 +35,7 @@ Differences between the versions
 --------------------------------
 
 After talking to Keith we have decided to provide three flavours of ScummVM.
-Please refer to https://docs.scummvm.org/en/v2.8.0/other_platforms/atari.html
+Please refer to https://docs.scummvm.org/en/v2.8.1/other_platforms/atari.html
 for more details (TBD).
 
 Atari Full package
@@ -537,7 +537,7 @@ Closing words
 Many optimisations and improvements wouldn't be possible without help of Eero
 Tamminen, so thank you for all the help with profiling in Hatari.
 
-Miro Kropacek aka MiKRO / Mystic Bytes, 19.12.2023
+Miro Kropacek aka MiKRO / Mystic Bytes, 10.03.2024
 Kosice / Slovakia
 miro.kropacek@gmail.com
 http://mikro.atari.org
