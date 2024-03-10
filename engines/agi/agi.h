@@ -752,7 +752,6 @@ public:
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
 	void initFeatures();
-	void setFeature(uint32 feature);
 	void initVersion();
 
 	const char *getDiskName(uint16 id);

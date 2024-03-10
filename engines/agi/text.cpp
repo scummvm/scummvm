@@ -293,10 +293,9 @@ void TextMgr::displayText(const char *textPtr, bool disabledLook) {
 	}
 
 	const char *curTextPtr = textPtr;
-	byte  curCharacter = 0;
 
 	while (1) {
-		curCharacter = *curTextPtr;
+		byte curCharacter = *curTextPtr;
 		if (!curCharacter)
 			break;
 
@@ -1082,10 +1081,8 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 	int16 lineWidthLeft = maxWidth; // width left of current line
 
 	int16 wordStartPos = 0;
-	int16 wordLen = 0;
 	int16 curReadPos = 0;
 	int16 curWritePos = 0;
-	byte  wordEndChar = 0;
 
 	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
@@ -1108,10 +1105,10 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 				break;
 			curReadPos++;
 		}
-		wordEndChar = originalText[curReadPos];
+		byte wordEndChar = originalText[curReadPos];
 
 		// Calculate word length
-		wordLen = curReadPos - wordStartPos;
+		int16 wordLen = curReadPos - wordStartPos;
 
 		if (wordLen >= lineWidthLeft) {
 			// Not enough space left

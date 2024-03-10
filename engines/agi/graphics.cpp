@@ -39,10 +39,11 @@ namespace Agi {
 #include "agi/font.h"
 
 GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
-	_agipalFileNum = 0;
-
 	memset(&_paletteGfxMode, 0, sizeof(_paletteGfxMode));
 	memset(&_paletteTextMode, 0, sizeof(_paletteTextMode));
+
+	memset(&_agipalPalette, 0, sizeof(_agipalPalette));
+	_agipalFileNum = 0;
 
 	memset(&_mouseCursor, 0, sizeof(_mouseCursor));
 	memset(&_mouseCursorBusy, 0, sizeof(_mouseCursorBusy));
@@ -104,7 +105,7 @@ void GfxMgr::initVideo() {
 				initPalette(_paletteGfxMode, PALETTE_AMIGA_V1, 16, 4);
 			else if (_vm->getVersion() == 0x2936)
 				initPalette(_paletteGfxMode, PALETTE_AMIGA_V2, 16, 4);
-			else if (_vm->getVersion() > 0x2936)
+			else
 				initPalette(_paletteGfxMode, PALETTE_AMIGA_V3, 16, 4);
 		} else {
 			// Set the old common alternative Amiga palette
@@ -585,13 +586,12 @@ bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 
 void GfxMgr::render_BlockEGA(int16 x, int16 y, int16 width, int16 height) {
 	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
 	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
-	int16 remainingWidth = width;
 	int16 remainingHeight = height;
 	byte curColor = 0;
 	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
 
 	while (remainingHeight) {
-		remainingWidth = width;
+		int16 remainingWidth = width;
 
 		switch (_upscaledHires) {
 		case DISPLAY_UPSCALED_DISABLED:
@@ -634,13 +634,12 @@ void GfxMgr::render_BlockEGA(int16 x, int16 y, int16 width, int16 height) {
 void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height) {
 	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
 	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
-	int16 remainingWidth = width;
 	int16 remainingHeight = height;
 	byte curColor = 0;
 	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
 
 	while (remainingHeight) {
-		remainingWidth = width;
+		int16 remainingWidth = width;
 
 		switch (_upscaledHires) {
 		case DISPLAY_UPSCALED_DISABLED:
@@ -709,7 +708,6 @@ static const uint8 herculesColorMapping[] = {
 void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height) {
 	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
 	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
-	int16 remainingWidth = width;
 	int16 remainingHeight = height;
 	byte curColor = 0;
 	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
@@ -723,7 +721,7 @@ void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height) {
 	byte   herculesColors2 = 0;
 
 	while (remainingHeight) {
-		remainingWidth = width;
+		int16 remainingWidth = width;
 
 		lookupOffset1 = (lookupOffset1 + 0) & 0x07;
 		lookupOffset2 = (lookupOffset1 + 1) & 0x07;
@@ -1080,7 +1078,6 @@ void GfxMgr::drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byt
 void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byte color) {
 	uint32 offsetDisplay = (y * _displayScreenWidth) + x;
 	int16 remainingHeight = height;
-	int16 remainingWidth = width;
 	byte CGAMixtureColor = getCGAMixtureColor(color);
 	byte *displayScreen = nullptr;
 
@@ -1088,7 +1085,7 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 	assert((width & 1) == 0);
 
 	while (remainingHeight) {
-		remainingWidth = width;
+		int16 remainingWidth = width;
 
 		// set up pointer
 		displayScreen = _displayScreen + offsetDisplay;

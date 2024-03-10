@@ -181,8 +181,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 				if ((curChar == 'V') || (curChar == 'v')) {
 					// "V" gefunden, ggf. beginning of version?
 					const char *wordStartPtr = wordScanPtr;
-					bool wordFound = false;
-
+					
 					do {
 						curChar = *wordScanPtr;
 						if (curChar == ' ') {
@@ -193,8 +192,8 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 
 					if (curChar) {
 						// end of "version" found
+						bool wordFound = false;
 						int wordLen = wordScanPtr - wordStartPtr;
-
 						if (wordLen >= 3) {
 							if (strncmp(wordStartPtr, "ver", wordLen) == 0)
 								wordFound = true;
@@ -527,8 +526,6 @@ bool Console::Cmd_VmVars(int argc, const char **argv) {
 	}
 
 	int varNr = 0;
-	int newValue = 0;
-
 	if (!parseInteger(argv[1], varNr))
 		return true;
 
@@ -541,6 +538,7 @@ bool Console::Cmd_VmVars(int argc, const char **argv) {
 		// show contents
 		debugPrintf("variable %d == %d\n", varNr, _vm->getVar(varNr));
 	} else {
+		int newValue = 0;
 		if (!parseInteger(argv[2], newValue))
 			return true;
 
@@ -559,7 +557,6 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 	}
 
 	int flagNr = 0;
-	int newFlagState = 0;
 
 	if (!parseInteger(argv[1], flagNr))
 		return true;
@@ -577,6 +574,7 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 			debugPrintf("flag %d == not set\n", flagNr);
 		}
 	} else {
+		int newFlagState = 0;
 		if (!parseInteger(argv[2], newFlagState))
 			return true;
 

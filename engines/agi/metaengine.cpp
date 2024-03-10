@@ -83,10 +83,6 @@ void AgiBase::initFeatures() {
 	_gameFeatures = _gameDescription->features;
 }
 
-void AgiBase::setFeature(uint32 feature) {
-	_gameFeatures |= feature;
-}
-
 void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }

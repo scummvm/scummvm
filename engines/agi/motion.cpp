@@ -39,14 +39,12 @@ bool AgiEngine::checkBlock(int16 x, int16 y) {
 }
 
 void AgiEngine::changePos(ScreenObjEntry *screenObj) {
-	bool insideBlock;
-	int16 x, y;
-	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
-	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
+	const int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
+	const int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 
-	x = screenObj->xPos;
-	y = screenObj->yPos;
-	insideBlock = checkBlock(x, y);
+	int16 x = screenObj->xPos;
+	int16 y = screenObj->yPos;
+	bool insideBlock = checkBlock(x, y);
 
 	x += screenObj->stepSize * dx[screenObj->direction];
 	y += screenObj->stepSize * dy[screenObj->direction];
@@ -301,7 +299,7 @@ void AgiEngine::moveObj(ScreenObjEntry *screenObj) {
  * @param  s   step size
  */
 int AgiEngine::getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize) {
-	int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
+	const int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
 	return dirTable[checkStep(destX - objX, stepSize) + 3 * checkStep(destY - objY, stepSize)];
 }
 

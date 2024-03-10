@@ -209,8 +209,8 @@ void AgiEngine::updatePosition() {
 
 		// If object has moved, update its position
 		if (!(screenObj->flags & fUpdatePos)) {
-			int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
-			int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
+			const int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
+			const int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 			x += screenObj->stepSize * dx[screenObj->direction];
 			y += screenObj->stepSize * dy[screenObj->direction];
 		}

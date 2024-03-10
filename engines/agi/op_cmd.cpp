@@ -1921,15 +1921,15 @@ void cmdDistance(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 objectNr1 = parameter[0];
 	uint16 objectNr2 = parameter[1];
 	uint16 destVarNr = parameter[2];
-	int16 x1, y1, x2, y2, d;
 	ScreenObjEntry *screenObj1 = &state->screenObjTable[objectNr1];
 	ScreenObjEntry *screenObj2 = &state->screenObjTable[objectNr2];
 
+	int d;
 	if (screenObj1->flags & fDrawn && screenObj2->flags & fDrawn) {
-		x1 = screenObj1->xPos + screenObj1->xSize / 2;
-		y1 = screenObj1->yPos;
-		x2 = screenObj2->xPos + screenObj2->xSize / 2;
-		y2 = screenObj2->yPos;
+		int16 x1 = screenObj1->xPos + screenObj1->xSize / 2;
+		int16 y1 = screenObj1->yPos;
+		int16 x2 = screenObj2->xPos + screenObj2->xSize / 2;
+		int16 y2 = screenObj2->yPos;
 		d = ABS(x1 - x2) + ABS(y1 - y2);
 		if (d > 0xfe)
 			d = 0xfe;

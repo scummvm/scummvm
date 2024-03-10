@@ -610,12 +610,10 @@ uint16 AgiEngine::artificialDelay_SearchTable(AgiArtificialDelayTriggerType trig
 }
 
 void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
-	uint16 millisecondsDelay = 0;
-
 	//warning("artificial delay trigger: room %d -> new room %d", _artificialDelayCurrentRoom, newRoomNr);
 
 	if (!_game.automaticRestoreGame) {
-		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
+		uint16 millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
 
 		if (_game.nonBlockingTextShown) {
 			if (newRoomNr != _artificialDelayCurrentRoom) {
@@ -636,12 +634,10 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 }
 
 void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
-	uint16 millisecondsDelay = 0;
-
 	//warning("artificial delay trigger: picture %d -> new picture %d", _artificialDelayCurrentPicture, newPictureNr);
 
 	if (!_game.automaticRestoreGame) {
-		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
+		uint16 millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
 
 		if (_game.nonBlockingTextShown) {
 			if (newPictureNr != _artificialDelayCurrentPicture) {

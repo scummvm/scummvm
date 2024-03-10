@@ -164,13 +164,6 @@ void GfxMenu::addMenuItem(const char *menuItemText, uint16 controllerSlot) {
 }
 
 void GfxMenu::submit() {
-	GuiMenuEntry *menuEntry = nullptr;
-	GuiMenuItemEntry *menuItemEntry = nullptr;
-	int16 menuCount = _array.size();
-	int16 menuNr = 0;
-	int16 menuItemNr = 0;
-	int16 menuItemLastNr = 0;
-
 	if ((_array.size() == 0) || (_itemArray.size() == 0))
 		return;
 
@@ -204,15 +197,16 @@ void GfxMenu::submit() {
 	// Atari ST SQ1 had one bad menu entry as well, we fix that too.
 	switch (_vm->getPlatform()) {
 	case Common::kPlatformApple2GS:
-	case Common::kPlatformAtariST:
+	case Common::kPlatformAtariST: {
 		// Go through all menus
-		for (menuNr = 0; menuNr < menuCount; menuNr++) {
-			menuEntry = _array[menuNr];
-			menuItemLastNr = menuEntry->firstItemNr + menuEntry->itemCount;
+		int16 menuCount = _array.size();
+		for (int16 menuNr = 0; menuNr < menuCount; menuNr++) {
+			GuiMenuEntry *menuEntry = _array[menuNr];
+			int16 menuItemLastNr = menuEntry->firstItemNr + menuEntry->itemCount;
 
 			// Go through all items of current menu
-			for (menuItemNr = menuEntry->firstItemNr; menuItemNr < menuItemLastNr; menuItemNr++) {
-				menuItemEntry = _itemArray[menuItemNr];
+			for (int16 menuItemNr = menuEntry->firstItemNr; menuItemNr < menuItemLastNr; menuItemNr++) {
+				GuiMenuItemEntry *menuItemEntry = _itemArray[menuItemNr];
 
 				if (menuItemEntry->textLen < menuEntry->maxItemTextLen) {
 					// current item text is shorter than the maximum?
@@ -270,6 +264,7 @@ void GfxMenu::submit() {
 			}
 		}
 		break;
+	}
 	default:
 		break;
 	}
@@ -284,32 +279,28 @@ void GfxMenu::itemDisable(uint16 controllerSlot) {
 }
 
 void GfxMenu::itemEnableDisable(uint16 controllerSlot, bool enabled) {
-	GuiMenuItemArray::iterator listIterator;
+	GuiMenuItemArray::iterator listIterator = _itemArray.begin();
 	GuiMenuItemArray::iterator listEnd = _itemArray.end();
-	GuiMenuItemEntry *menuItemEntry;
 
-	listIterator = _itemArray.begin();
 	while (listIterator != listEnd) {
-		menuItemEntry = *listIterator;
+		GuiMenuItemEntry *menuItemEntry = *listIterator;
 		if (menuItemEntry->controllerSlot == controllerSlot) {
 			menuItemEntry->enabled = enabled;
 		}
 
-		listIterator++;
+		++listIterator;
 	}
 }
 
 void GfxMenu::itemEnableAll() {
-	GuiMenuItemArray::iterator listIterator;
+	GuiMenuItemArray::iterator listIterator = _itemArray.begin();
 	GuiMenuItemArray::iterator listEnd = _itemArray.end();
-	GuiMenuItemEntry *menuItemEntry;
 
-	listIterator = _itemArray.begin();
 	while (listIterator != listEnd) {
-		menuItemEntry = *listIterator;
+		GuiMenuItemEntry *menuItemEntry = *listIterator;
 		menuItemEntry->enabled = true;
 
-		listIterator++;
+		++listIterator;
 	}
 }
 
@@ -336,7 +327,7 @@ void GfxMenu::delayedExecuteViaMouse() {
 }
 
 bool GfxMenu::delayedExecuteActive() {
-	return _delayedExecuteViaKeyboard | _delayedExecuteViaMouse;
+	return _delayedExecuteViaKeyboard || _delayedExecuteViaMouse;
 }
 
 void GfxMenu::execute() {

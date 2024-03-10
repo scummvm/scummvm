@@ -226,12 +226,10 @@ uint16 AgiEngine::processAGIEvents() {
 
 		if (key) {
 			if (!handleController(key)) {
-				if (key) {
-					// Only set VAR_KEY, when no controller/direction was detected
-					setVar(VM_VAR_KEY, key & 0xFF);
-					if (_text->promptIsEnabled()) {
-						_text->promptKeyPress(key);
-					}
+				// Only set VAR_KEY, when no controller/direction was detected
+				setVar(VM_VAR_KEY, key & 0xFF);
+				if (_text->promptIsEnabled()) {
+					_text->promptKeyPress(key);
 				}
 			}
 		}
