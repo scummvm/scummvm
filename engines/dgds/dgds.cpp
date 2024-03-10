@@ -67,7 +67,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
-	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false) {
+	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false),
+	_textSpeed(1) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -231,7 +232,9 @@ Common::Error DgdsEngine::run() {
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
 
 		//_scene->load("S101.SDS", _resource, _decompressor);
-		_adsInterp->load("TITLE.ADS");
+		//_adsInterp->load("TITLE.ADS");
+		_gdsScene->runStartGameOps();
+
 		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
 		_gameGlobals = new Globals();
@@ -318,6 +321,7 @@ Common::Error DgdsEngine::run() {
 			//	_gdsScene->runPostTickOps();
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
+			_scene->checkDialogActive();
 		} else if (getGameId() == GID_BEAMISH) {
 			if (!_adsInterp->run())
 				return Common::kNoError;

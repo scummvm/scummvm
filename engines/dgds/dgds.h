@@ -92,7 +92,10 @@ private:
 	FontManager *_fontManager;
 	Common::Array<Common::SharedPtr<Image>> _corners;
 	Common::Array<Common::SharedPtr<Image>> _icons;
+
+	// Settings which we should integrate with ScummVM settings UI
 	DgdsDetailLevel _detailLevel;
+	int _textSpeed;
 
 	// Clock is shown if both are true;
 	bool _showClockUser;
@@ -121,6 +124,7 @@ public:
 	Globals *getGameGlobals() { return _gameGlobals; }
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
+	int getTextSpeed() const { return _textSpeed; }
 	void setShowClock(bool val) { _showClockScript = val; }
 	ADSInterpreter *adsInterpreter() { return _adsInterp; }
 

@@ -123,6 +123,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
 	case kSceneOpHideMouse:		return "sceneOpHideMouse";
 	case kSceneOpMeanwhile:   	return "meanwhile";
+	case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
 	}
@@ -467,7 +468,7 @@ Common::String Dialogue::dump(const Common::String &indent) const {
 			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize,
 			_flags, _frameType, _time, _nextDialogNum, _field15_0x22, _field18_0x28);
-	str += _dumpStructList(indent, "subStrings", _subStrings);
+	str += _dumpStructList(indent, "actions", _action);
 	str += "\n";
 	str += indent + "  str='" + _str + "'>";
 	return str;
@@ -640,9 +641,9 @@ bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialog
 		} else {
 			dst._str.clear();
 		}
-		readDialogSubstringList(s, dst._subStrings);
+		readDialogActionList(s, dst._action);
 
-		if (isVersionUnder(" 1.209") && !dst._subStrings.empty()) {
+		if (isVersionUnder(" 1.209") && !dst._action.empty()) {
 			if (dst._fontColor == 0)
 				dst._field8_0x10 = 4;
 			else if (dst._fontColor == 0xff)
@@ -669,7 +670,7 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 }
 
 
-bool Scene::readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const {
+bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const {
 	list.resize(s->readUint16LE());
 
 	if (!list.empty())
@@ -786,7 +787,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 		case kSceneOp10:
 			warning("TODO: Implement scene op 10 (find SDS hot spot?)");
 			break;
-		case kSceneOp107:
+		case kSceneOpOpenPlaySkipIntroMenu:
 			warning("TODO: Implement scene op 107 (inject key code 0xfc, open menu to play intro or not)");
 			break;
 		default:
@@ -965,8 +966,18 @@ void SDSScene::checkTriggers() {
 void SDSScene::showDialog(uint16 num) {
 	for (auto &dialog : _dialogs) {
 		if (dialog._num == num) {
+			dialog.clearFlag(kDlgFlagHi2);
+			dialog.clearFlag(kDlgFlagHi8);
+			dialog.clearFlag(kDlgFlagHi10);
+			dialog.clearFlag(kDlgFlagHi20);
+			dialog.clearFlag(kDlgFlagHi40);
+			dialog.addFlag(kDlgFlagHi20);
 			dialog.addFlag(kDlgFlagVisible);
+			dialog.addFlag(kDlgFlagHi100);
 			// hide time gets set the first time it's drawn.
+			if (dialog.hasFlag(kDlgFlagLo8)) {
+				// do something with some global dlg flags here.
+			}
 		}
 	}
 }
@@ -974,22 +985,29 @@ void SDSScene::showDialog(uint16 num) {
 bool SDSScene::checkDialogActive() {
 	uint32 timeNow = g_engine->getTotalPlayTime();
 	bool retval = false;
-	for (auto &dialog : _dialogs) {
-		if (dialog.hasFlag(kDlgFlagVisible)) {
-			if (dialog._hideTime > 0 && dialog._hideTime < timeNow) {
-				dialog.clearFlag(kDlgFlagVisible);
-				for (auto &action : dialog._subStrings) {
-					if (action.strStart == action.strEnd)
-						runOps(action.sceneOpList);
-				}
-				dialog._hideTime = 0;
-				if (dialog._nextDialogNum) {
-					showDialog(dialog._nextDialogNum);
-					retval = true;
-				}
-			} else {
+	for (auto &dlg : _dialogs) {
+		if (!dlg.hasFlag(kDlgFlagVisible))
+			continue;
+
+		if (dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40)) {
+			// TODO
+		}
+
+		if (dlg._hideTime > 0 && dlg._hideTime < timeNow) {
+			dlg.clearFlag(kDlgFlagVisible);
+			for (auto &action : dlg._action) {
+				if (action.strStart == action.strEnd)
+					runOps(action.sceneOpList);
+			}
+			dlg._hideTime = 0;
+			dlg.addFlag(kDlgFlagHiFinished);
+			if (dlg._nextDialogNum) {
+				showDialog(dlg._nextDialogNum);
+
 				retval = true;
 			}
+		} else {
+			retval = true;
 		}
 	}
 	return retval;
@@ -997,11 +1015,12 @@ bool SDSScene::checkDialogActive() {
 
 bool SDSScene::drawActiveDialog(Graphics::Surface *dst, int mode) {
 	bool retval = false;
+	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
 	for (auto &dialog : _dialogs) {
 		if (dialog.hasFlag(kDlgFlagVisible)) {
 			if (dialog._hideTime == 0 && dialog._time > 0) {
-				// TOOD: This should be (9 - text-speed-slider-setting)
-				dialog._hideTime = g_engine->getTotalPlayTime() + dialog._time * 9;
+				dialog._hideTime = g_engine->getTotalPlayTime() +
+							dialog._time * (9 - engine->getTextSpeed());
 			}
 			dialog.draw(dst, mode);
 			retval = true;

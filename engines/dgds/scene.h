@@ -95,6 +95,8 @@ enum SceneOpCode {
 	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
 	kSceneOpShowMouse = 18,		// args: none.
 	kSceneOpHideMouse = 19,		// args: none.
+
+	// From here on might be game-specific?
 	kSceneOp100 = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOp102 = 102,			// args: none.
@@ -102,7 +104,7 @@ enum SceneOpCode {
 	kSceneOp104 = 104,			// args: none.
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
 	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
-	kSceneOp107 = 107,			// args: none.
+	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  Show the "Play Introduction" / "Skip Introduction" menu.  Dragon only??
 	kSceneOp108 = 108,			// args: none.
 };
 
@@ -144,10 +146,21 @@ struct SceneStruct4 {
 };
 
 enum DialogueFlags {
-	kDlgFlagNone = 0,
-	kDlgFlagFlatBg = 1,
-	kDlgFlagLeftJust = 2,
-	kDlgFlagVisible = 0x8000,
+	kDlgFlagNone     =         0,
+	kDlgFlagFlatBg   =         1,
+	kDlgFlagLeftJust =         2,
+	kDlgFlagLo4      =         4,
+	kDlgFlagLo8      =         8,
+	kDlgFlagLo80     =      0x80,
+	kDlgFlagHiFinished = 0x10000,
+	kDlgFlagHi2      =   0x20000,
+	kDlgFlagHi4      =   0x40000,
+	kDlgFlagHi8      =   0x80000,
+	kDlgFlagHi10     =  0x100000,
+	kDlgFlagHi20     =  0x200000,
+	kDlgFlagHi40     =  0x400000,
+	kDlgFlagVisible  =  0x800000,
+	kDlgFlagHi100    = 0x1000000,
 };
 
 enum DialogueFrameType {
@@ -171,7 +184,7 @@ public:
 	DialogueFrameType _frameType;
 	uint16 _time;
 	uint16 _nextDialogNum;
-	Common::Array<struct DialogueAction> _subStrings;
+	Common::Array<struct DialogueAction> _action;
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
@@ -259,7 +272,7 @@ protected:
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
 	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
-	bool readDialogSubstringList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
+	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
 
 	void runOps(const Common::Array<SceneOp> &ops);
 	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
