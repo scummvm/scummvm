@@ -230,7 +230,6 @@ VOID CBagNextCDDialog::OnInitDialog() {
 
 	// Show System cursor
 	CBofCursor::Show();
-	CBofCursor::Show();
 }
 
 
