@@ -80,7 +80,7 @@ bool AudioSystem::playing(int id) const {
 	}
 	// sound definition ID ?
 	for (const auto &_slot : _slots) {
-		if (_slot.busy && _slot.sndDef->getId() == id) {
+		if (_slot.busy && ((_slot.id == id) || (_slot.sndDef->getId() == id))) {
 			return g_twp->_mixer->isSoundHandleActive(_slot.handle);
 		}
 	}
@@ -102,8 +102,8 @@ void AudioSystem::fadeOut(int id, float fadeTime) {
 		stop(id);
 	} else {
 		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
-			if (_slots[i].busy && _slots[i].id == id) {
-				_slots[i].fadeOutTimeMs = fadeTime;
+			if (_slots[i].busy && ((_slots[i].id == id) || (_slots[i].sndDef->getId() == id))) {
+				_slots[i].fadeOutTimeMs = fadeTime * 1000.f;
 			}
 		}
 	}
@@ -114,17 +114,19 @@ void AudioSystem::stop(int id) {
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
 		if (!_slots[id].busy)
 			return;
-		id = g_twp->_mixer->getSoundID(_slots[id].handle);
+		_slots[id].loopTimes = 0;
+		_slots[id].busy = false;
+		g_twp->_mixer->stopHandle(_slots[id].handle);
+		return;
 	}
-	// sound definition ID ?
-	for (auto &_slot : _slots) {
-		if (_slot.busy && _slot.sndDef->getId() == id) {
-			_slot.loopTimes = 0;
-			g_twp->_mixer->stopHandle(_slot.handle);
+	// sound ID or sound definition ID ?
+	for (auto &slot : _slots) {
+		if (slot.busy && ((slot.id == id) || (slot.sndDef->getId() == id))) {
+			slot.loopTimes = 0;
+			slot.busy = false;
+			g_twp->_mixer->stopHandle(slot.handle);
 		}
 	}
-	// sound ID ?
-	g_twp->_mixer->stopID(id);
 }
 
 void AudioSystem::setMasterVolume(float vol) {
@@ -155,6 +157,7 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 		}
 		if (progress > 1.0f) {
 			slot->loopTimes = 0;
+			slot->busy = false;
 			g_twp->_mixer->stopHandle(slot->handle);
 			return;
 		}
