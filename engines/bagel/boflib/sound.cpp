@@ -855,7 +855,7 @@ BOOL CBofSound::Stop() {
 	}
 
 #else //PC
-	warning("STUB: CBofSound::Stop()");
+//	warning("STUB: CBofSound::Stop()");
 
 #if 0
 	if (m_hSequence != nullptr) {
