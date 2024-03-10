@@ -161,7 +161,7 @@ struct WordWrapper {
 };
 
 template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, uint32 mode, bool *wordSplit = nullptr, int *shouldAddSpace = nullptr) {
+int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, uint32 mode) {
 	WordWrapper<StringType> wrapper(lines);
 	StringType line;
 	StringType tmpStr;
@@ -277,14 +277,9 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 				// cause the line to overflow: start a new line
 				if (((mode & kWordWrapOnExplicitNewLines) && c == '\n') || wouldExceedWidth) {
 					wrapper.add(line, lineWidth);
-
-					if (shouldAddSpace != nullptr)
-						*shouldAddSpace = lines.size();
-
 					continue;
 				}
-
-			} 
+			}
 
 			// If the max line width would be exceeded by adding this char,
 			// insert a line break.
@@ -311,8 +306,6 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 						continue;
 					}
 				} else {
-					if (wordSplit != nullptr)
-						*wordSplit = true;
 					wrapper.add(tmpStr, tmpWidth);
 				}
 			}
@@ -496,12 +489,12 @@ void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, 
 	}
 }
 
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, uint32 mode, bool *wordSplit, int *shouldAddSpace) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode, wordSplit, shouldAddSpace);
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, uint32 mode) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
 }
 
-int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, uint32 mode, bool *wordSplit, int *shouldAddSpace) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode, wordSplit, shouldAddSpace);
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, uint32 mode) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
 }
 
 TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {
