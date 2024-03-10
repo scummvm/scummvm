@@ -1355,6 +1355,7 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 			for (auto it = layer->_objects.begin(); it != layer->_objects.end();) {
 				Common::SharedPtr<Object> obj(*it);
 				if (obj->_temporary) {
+					obj->_node->remove();
 					it = layer->_objects.erase(it);
 					continue;
 				} else if (g_twp->_resManager->isActor(obj->getId()) && _actor != obj) {
