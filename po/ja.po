@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-08 13:55+0000\n"
+"POT-Creation-Date: 2024-03-09 08:08+0000\n"
 "PO-Revision-Date: 2024-02-20 07:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -9576,19 +9576,19 @@ msgstr "右へ飛ぶ"
 msgid "Fly to lower right"
 msgstr "右へ降下"
 
-#: engines/scumm/input.cpp:1348
+#: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
 msgstr "スナップスクロールをオン"
 
-#: engines/scumm/input.cpp:1350
+#: engines/scumm/input.cpp:1368
 msgid "Snap scroll off"
 msgstr "スナップスクロールをオフ"
 
-#: engines/scumm/input.cpp:1363
+#: engines/scumm/input.cpp:1381
 msgid "Music volume: "
 msgstr "音楽の音量： "
 
-#: engines/scumm/input.cpp:1380
+#: engines/scumm/input.cpp:1398
 msgid "Subtitle speed: "
 msgstr "字幕の速度： "
 

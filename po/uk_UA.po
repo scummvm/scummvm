@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-08 13:55+0000\n"
+"POT-Creation-Date: 2024-03-09 08:08+0000\n"
 "PO-Revision-Date: 2024-01-25 19:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -9807,19 +9807,19 @@ msgstr "Летіти направо"
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
-#: engines/scumm/input.cpp:1348
+#: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
 msgstr "Прокрутка стрибками"
 
-#: engines/scumm/input.cpp:1350
+#: engines/scumm/input.cpp:1368
 msgid "Snap scroll off"
 msgstr "Вмикає прокрутку стрибками"
 
-#: engines/scumm/input.cpp:1363
+#: engines/scumm/input.cpp:1381
 msgid "Music volume: "
 msgstr "Гучність музики: "
 
-#: engines/scumm/input.cpp:1380
+#: engines/scumm/input.cpp:1398
 msgid "Subtitle speed: "
 msgstr "Швид. субтитрів: "
 

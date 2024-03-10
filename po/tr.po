@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-08 13:55+0000\n"
+"POT-Creation-Date: 2024-03-09 08:08+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -9258,20 +9258,20 @@ msgstr ""
 msgid "Fly to lower right"
 msgstr ""
 
-#: engines/scumm/input.cpp:1348
+#: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
 msgstr ""
 
-#: engines/scumm/input.cpp:1350
+#: engines/scumm/input.cpp:1368
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:1363
+#: engines/scumm/input.cpp:1381
 #, fuzzy
 msgid "Music volume: "
 msgstr "Müzik cihazı:"
 
-#: engines/scumm/input.cpp:1380
+#: engines/scumm/input.cpp:1398
 #, fuzzy
 msgid "Subtitle speed: "
 msgstr "İmleç hızı:"
