@@ -72,6 +72,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Android port:
    - Fixed crash in built-in help with German language.
 
+ Atari port:
+   - Fixed crash when exiting ScummVM.
+   - Fixed BBVS (and possibly others) gameplay by using more precise math model.
+
  macOS port:
    - Fixed a problem where some Mac games would not load resources correctly.
    - Updated application icon to conform with modern standards.
