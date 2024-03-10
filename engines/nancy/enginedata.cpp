@@ -434,92 +434,93 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	readFilename(s, _imageName);
+	if (s.getVersion() <= kGameTypeNancy7) {
+		// v1
+		readFilename(s, _image1Name);
 
-	s.skip(0x1F, kGameTypeVampire, kGameTypeVampire);
-	s.skip(0x23, kGameTypeNancy1);
-	s.skip(4);
+		s.skip(0x1F, kGameTypeVampire, kGameTypeVampire);
+		s.skip(0x23, kGameTypeNancy1);
+		s.skip(4);
 
-	s.syncAsSint16LE(_mainFontID);
-	s.syncAsSint16LE(_highlightFontID, kGameTypeNancy2);
-	s.syncAsSint16LE(_disabledFontID, kGameTypeNancy2);
-	s.syncAsSint16LE(_fontXOffset);
-	s.syncAsSint16LE(_fontYOffset);
+		s.syncAsSint16LE(_mainFontID);
+		s.syncAsSint16LE(_highlightFontID, kGameTypeNancy2);
+		s.syncAsSint16LE(_disabledFontID, kGameTypeNancy2);
+		s.syncAsSint16LE(_fontXOffset);
+		s.syncAsSint16LE(_fontYOffset);
 
-	s.skip(16);
+		s.skip(16);
 
-	if (s.getVersion() <= kGameTypeNancy1) {
-		readRectArray16(s, _saveButtonDests, 7);
-		readRectArray16(s, _loadButtonDests, 7);
-		readRectArray16(s, _textboxBounds, 7);
-		readRect16(s, _doneButtonDest);
-		readRectArray16(s, _saveButtonDownSrcs, 7);
-		readRectArray16(s, _loadButtonDownSrcs, 7);
-		s.skip(8 * 7);
-		readRect16(s, _doneButtonDownSrc);
-		readRect(s, _blinkingCursorSrc);
-		s.syncAsUint16LE(_blinkingTimeDelay, kGameTypeNancy1);
-		readRectArray(s, _cancelButtonSrcs, 7);
-		readRectArray(s, _cancelButtonDests, 7);
-		readRect(s, _cancelButtonDownSrc);
+		if (s.getVersion() <= kGameTypeNancy1) {
+			readRectArray16(s, _saveButtonDests, 7);
+			readRectArray16(s, _loadButtonDests, 7);
+			readRectArray16(s, _textboxBounds, 7);
+			readRect16(s, _doneButtonDest);
+			readRectArray16(s, _saveButtonDownSrcs, 7);
+			readRectArray16(s, _loadButtonDownSrcs, 7);
+			s.skip(8 * 7);
+			readRect16(s, _doneButtonDownSrc);
+			readRect(s, _blinkingCursorSrc);
+			s.syncAsUint16LE(_blinkingTimeDelay, kGameTypeNancy1);
+			readRectArray(s, _cancelButtonSrcs, 7);
+			readRectArray(s, _cancelButtonDests, 7);
+			readRect(s, _cancelButtonDownSrc);
+		} else {
+			readRectArray(s, _saveButtonDests, 7);
+			readRectArray(s, _loadButtonDests, 7);
+			readRectArray(s, _textboxBounds, 7);
+			readRect(s, _doneButtonDest);
+			readRectArray(s, _saveButtonDownSrcs, 7);
+			readRectArray(s, _loadButtonDownSrcs, 7);
+			s.skip(16 * 7);
+			readRect(s, _doneButtonDownSrc);
+			readRectArray(s, _saveButtonHighlightSrcs, 7);
+			readRectArray(s, _loadButtonHighlightSrcs, 7);
+			s.skip(16 * 7);
+			readRect(s, _doneButtonHighlightSrc);
+			readRectArray(s, _saveButtonDisabledSrcs, 7);
+			readRectArray(s, _loadButtonDisabledSrcs, 7);
+			s.skip(16 * 7);
+			readRect(s, _doneButtonDisabledSrc);
+			readRect(s, _blinkingCursorSrc);
+			s.syncAsUint16LE(_blinkingTimeDelay);
+			readRectArray(s, _cancelButtonSrcs, 7);
+			readRectArray(s, _cancelButtonDests, 7);
+			readRect(s, _cancelButtonDownSrc);
+			readRect(s, _cancelButtonHighlightSrc);
+			readRect(s, _cancelButtonDisabledSrc);
+
+			readFilename(s, _gameSavedPopup, kGameTypeNancy3);
+			readFilename(s, _emptySaveText, kGameTypeNancy7);
+			readFilename(s, _defaultSaveNamePrefix, kGameTypeNancy7);
+			s.skip(16, kGameTypeNancy3);
+		}
 	} else {
-		readRectArray(s, _saveButtonDests, 7);
-		readRectArray(s, _loadButtonDests, 7);
-		readRectArray(s, _textboxBounds, 7);
-		readRect(s, _doneButtonDest);
-		readRectArray(s, _saveButtonDownSrcs, 7);
-		readRectArray(s, _loadButtonDownSrcs, 7);
-		s.skip(16 * 7);
-		readRect(s, _doneButtonDownSrc);
-		readRectArray(s, _saveButtonHighlightSrcs, 7);
-		readRectArray(s, _loadButtonHighlightSrcs, 7);
-		s.skip(16 * 7);
-		readRect(s, _doneButtonHighlightSrc);
-		readRectArray(s, _saveButtonDisabledSrcs, 7);
-		readRectArray(s, _loadButtonDisabledSrcs, 7);
-		s.skip(16 * 7);
-		readRect(s, _doneButtonDisabledSrc);
-		readRect(s, _blinkingCursorSrc);
-		s.syncAsUint16LE(_blinkingTimeDelay);
-		readRectArray(s, _cancelButtonSrcs, 7);
-		readRectArray(s, _cancelButtonDests, 7);
-		readRect(s, _cancelButtonDownSrc);
-		readRect(s, _cancelButtonHighlightSrc);
-		readRect(s, _cancelButtonDisabledSrc);
+		// v2
+		readFilename(*chunkStream, _image1Name);
+		readFilename(*chunkStream, _image2Name);
+		readFilename(*chunkStream, _imageButtonsName);
 
-		readFilename(s, _gameSavedPopup, kGameTypeNancy3);
-		readFilename(s, _emptySaveText, kGameTypeNancy7);
-		readFilename(s, _defaultSaveNamePrefix, kGameTypeNancy7);
-		s.skip(16, kGameTypeNancy3);
+		readRectArray(*chunkStream, _unpressedButtonSrcs, 5);
+		readRectArray(*chunkStream, _pressedButtonSrcs, 5);
+		readRectArray(*chunkStream, _highlightedButtonSrcs, 5);
+		readRectArray(*chunkStream, _disabledButtonSrcs, 5);
+
+		readRectArray(*chunkStream, _buttonDests, 5);
+		readRectArray(*chunkStream, _textboxBounds, 10);
+
+		chunkStream->skip(25); // prefixes and suffixes for filenames
+
+		_mainFontID = chunkStream->readSint16LE();
+		_highlightFontID = chunkStream->readSint16LE();
+		_fontXOffset = chunkStream->readSint16LE();
+		_fontYOffset = chunkStream->readSint16LE();
+
+		chunkStream->skip(16); // src rect for dash in font
+		_blinkingTimeDelay = chunkStream->readUint16LE();
+
+		readFilename(*chunkStream, _gameSavedPopup);
+		readFilename(*chunkStream, _emptySaveText);
 	}
-}
-
-LOAD_v2::LOAD_v2(Common::SeekableReadStream *chunkStream) :
-		EngineData(chunkStream) {
-	readFilename(*chunkStream, _firstPageimageName);
-	readFilename(*chunkStream, _otherPageimageName);
-	readFilename(*chunkStream, _buttonsImageName);
-
-	readRectArray(*chunkStream, _unpressedButtonSrcs, 5);
-	readRectArray(*chunkStream, _pressedButtonSrcs, 5);
-	readRectArray(*chunkStream, _highlightedButtonSrcs, 5);
-	readRectArray(*chunkStream, _disabledButtonSrcs, 5);
-
-	readRectArray(*chunkStream, _buttonDests, 5);
-	readRectArray(*chunkStream, _textboxBounds, 10);
-
-	chunkStream->skip(25); // prefixes and suffixes for filenames
-
-	_mainFontID = chunkStream->readSint16LE();
-	_highlightFontID = chunkStream->readSint16LE();
-	_fontXOffset = chunkStream->readSint16LE();
-	_fontYOffset = chunkStream->readSint16LE();
-
-	chunkStream->skip(16); // src rect for dash in font
-	_blinkingTimeDelay = chunkStream->readUint16LE();
-
-	readFilename(*chunkStream, _gameSavedPopup);
-	readFilename(*chunkStream, _emptySaveText);
 }
 
 SDLG::SDLG(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

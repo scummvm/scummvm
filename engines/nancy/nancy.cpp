@@ -450,6 +450,7 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(HELP)
 	LOAD_BOOT(CRED)
 	LOAD_BOOT(MENU)
+	LOAD_BOOT(LOAD)
 	LOAD_BOOT(SET)
 	LOAD_BOOT(SDLG)
 	LOAD_BOOT(MAP)
@@ -461,13 +462,6 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(RCLB)
 	LOAD_BOOT(TABL)
 	LOAD_BOOT(MARK)
-
-	if (g_nancy->getGameType() <= kGameTypeNancy7) {
-		LOAD_BOOT(LOAD)
-	} else {
-		// nancy8 has a completely new save/load screen
-		LOAD_BOOT_L(LOAD_v2, "LOAD")
-	}
 
 	_cursor->init(iff->getChunkStream("CURS"));
 

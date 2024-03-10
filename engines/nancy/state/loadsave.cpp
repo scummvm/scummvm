@@ -148,7 +148,7 @@ void LoadSaveMenu::init() {
 	_loadSaveData = GetEngineData(LOAD);
 	assert(_loadSaveData);
 
-	_background.init(_loadSaveData->_imageName);
+	_background.init(_loadSaveData->_image1Name);
 
 	_baseFont = g_nancy->_graphics->getFont(_loadSaveData->_mainFontID);
 
