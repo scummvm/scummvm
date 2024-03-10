@@ -109,7 +109,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
 	// handles lipsync within Digital iMUSE.
-	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		startSpeechTimer();
 	}
 }
@@ -120,7 +120,7 @@ Sound::~Sound() {
 	free(_offsetTable);
 	delete _loomSteamCDAudioHandle;
 	delete _talkChannelHandle;
-	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		stopSpeechTimer();
 	}
 }
@@ -639,7 +639,8 @@ void Sound::processSfxQueues() {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
 		}
 
-		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
+		if (_vm->_game.heversion == 0 &&
+			((uint)act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim)))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
 				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
