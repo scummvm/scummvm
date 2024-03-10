@@ -189,9 +189,9 @@ void FreescapeEngine::shoot() {
 			playSound(15, false);
 		else if (isEclipse())
 			playSound(5, false);
-		else 
+		else
 			playSound(8, false);
-	} else 
+	} else
 		playSound(8, false);
 
 	g_system->delayMillis(2);
@@ -388,7 +388,10 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 		if (!executed)
 			setGameBit(31);
-		playSound(2, false);
+		if (isSpectrum())
+			playSound(10, false);
+		else
+			playSound(2, false);
 	}
 
 	lastPosition = newPosition;
