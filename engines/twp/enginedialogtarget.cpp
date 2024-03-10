@@ -59,7 +59,7 @@ static Common::SharedPtr<Object> actor(const Common::String &name) {
 	HSQOBJECT obj;
 	sq_resetobject(&obj);
 	sqgetf(name, obj);
-	return sqactor(obj);
+	return sqobj(obj);
 }
 
 static Common::SharedPtr<Object> actorOrCurrent(const Common::String &name) {
