@@ -145,7 +145,7 @@ struct SceneStruct4 {
 	Common::String dump(const Common::String &indent) const;
 };
 
-enum DialogueFlags {
+enum DialogFlags {
 	kDlgFlagNone     =         0,
 	kDlgFlagFlatBg   =         1,
 	kDlgFlagLeftJust =         2,
@@ -160,19 +160,19 @@ enum DialogueFlags {
 	kDlgFlagHi20     =  0x200000,
 	kDlgFlagHi40     =  0x400000,
 	kDlgFlagVisible  =  0x800000,
-	kDlgFlagHi100    = 0x1000000,
+	kDlgFlagOpening  = 0x1000000,
 };
 
-enum DialogueFrameType {
+enum DialogFrameType {
 	kDlgFramePlain = 1,
 	kDlgFrameBorder = 2,
 	kDlgFrameThought = 3,
 	kDlgFrameRounded = 4
 };
 
-class Dialogue {
+class Dialog {
 public:
-	Dialogue();
+	Dialog();
 	uint16 _num;
 	Rect _rect;
 	uint16 _bgColor;
@@ -180,11 +180,11 @@ public:
 	uint16 _field7_0xe;
 	uint16 _field8_0x10;
 	uint16 _fontSize;
-	DialogueFlags _flags;
-	DialogueFrameType _frameType;
+	DialogFlags _flags;
+	DialogFrameType _frameType;
 	uint16 _time;
 	uint16 _nextDialogNum;
-	Common::Array<struct DialogueAction> _action;
+	Common::Array<struct DialogAction> _action;
 	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
@@ -192,9 +192,9 @@ public:
 	uint _hideTime;
 
  	void draw(Graphics::Surface *dst, int mode);
- 	void addFlag(DialogueFlags flg);
- 	void clearFlag(DialogueFlags flg);
- 	bool hasFlag(DialogueFlags flg) const;
+	void addFlag(DialogFlags flg);
+	void clearFlag(DialogFlags flg);
+	bool hasFlag(DialogFlags flg) const;
 
 	Common::String dump(const Common::String &indent) const;
 
@@ -220,7 +220,7 @@ struct SceneTrigger {
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct DialogueAction {
+struct DialogAction {
 	// The game initializes str offsets to pointers, but let's be a bit nicer.
 	uint16 strStart; /// The start of the clickable text for this action
 	uint16 strEnd;	 /// End of clickable text for this action
@@ -245,7 +245,7 @@ struct PerSceneGlobal {
 
 /**
  * A scene is described by an SDS file, which points to the ADS script to load
- * and holds the dialogue info.
+ * and holds the dialog info.
  */
 class Scene {
 public:
@@ -270,9 +270,9 @@ protected:
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
-	bool readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const;
+	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
-	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const;
+	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 
 	void runOps(const Common::Array<SceneOp> &ops);
 	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
@@ -363,7 +363,7 @@ private:
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;
 	//uint _field12_0x2b;
-	Common::Array<class Dialogue> _dialogs;
+	Common::Array<class Dialog> _dialogs;
 	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
 };
