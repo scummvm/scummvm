@@ -33,7 +33,7 @@ public:
 	SerialMotors(const std::initializer_list<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
 	explicit SerialMotors(const Common::Array<Common::SharedPtr<Motor> > &motors) : _motors(motors) {}
 
-	void update(float elapsed) override {
+	void onUpdate(float elapsed) override {
 		if (!_motors.empty()) {
 			_motors[0]->update(elapsed);
 			if (!_motors[0]->isEnabled()) {
@@ -56,7 +56,7 @@ public:
 		: _dlg(dlg), _line(line), _name(name) {
 	}
 
-	void update(float elapsed) override {
+	void onUpdate(float elapsed) override {
 		_dlg->selectLabel(_line, _name);
 		disable();
 	}

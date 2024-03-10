@@ -53,7 +53,7 @@ public:
 		_duration = g_twp->getRandom(min, max);
 	}
 
-	virtual void update(float elapsed) override {
+	virtual void onUpdate(float elapsed) override {
 		if (_state == BlinkState::Closed) {
 			// wait to blink
 			_elapsed += elapsed;

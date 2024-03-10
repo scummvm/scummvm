@@ -31,6 +31,11 @@
 
 namespace Twp {
 
+void Motor::update(float elapsed) {
+	if(!isEnabled()) return;
+	onUpdate(elapsed);
+}
+
 OffsetTo::~OffsetTo() = default;
 
 OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im)
@@ -38,7 +43,7 @@ OffsetTo::OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Ve
 	  _tween(obj->_node->getOffset(), pos, duration, im) {
 }
 
-void OffsetTo::update(float elapsed) {
+void OffsetTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	_obj->_node->setOffset(_tween.current());
 	if (!_tween.running())
@@ -52,7 +57,7 @@ MoveTo::MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector
 	  _tween(obj->_node->getPos(), pos, duration, im) {
 }
 
-void MoveTo::update(float elapsed) {
+void MoveTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	_obj->_node->setPos(_tween.current());
 	if (!_tween.running())
@@ -66,7 +71,7 @@ AlphaTo::AlphaTo(float duration, Common::SharedPtr<Object> obj, float to, Interp
 	  _tween(obj->_node->getAlpha(), to, duration, im) {
 }
 
-void AlphaTo::update(float elapsed) {
+void AlphaTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	float alpha = _tween.current();
 	_obj->_node->setAlpha(alpha);
@@ -81,7 +86,7 @@ RotateTo::RotateTo(float duration, Node *node, float to, InterpolationMethod im)
 	  _tween(node->getRotation(), to, duration, im) {
 }
 
-void RotateTo::update(float elapsed) {
+void RotateTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	_node->setRotation(_tween.current());
 	if (!_tween.running())
@@ -95,7 +100,7 @@ RoomRotateTo::RoomRotateTo(Common::SharedPtr<Room> room, float to)
 	  _tween(room->_rotation, to, 0.200f, intToInterpolationMethod(0)) {
 }
 
-void RoomRotateTo::update(float elapsed) {
+void RoomRotateTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	_room->_rotation = _tween.current();
 	if (!_tween.running())
@@ -109,7 +114,7 @@ ScaleTo::ScaleTo(float duration, Node *node, float to, InterpolationMethod im)
 	  _tween(node->getScale().getX(), to, duration, im) {
 }
 
-void ScaleTo::update(float elapsed) {
+void ScaleTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	float x = _tween.current();
 	_node->setScale(Math::Vector2d(x, x));
@@ -124,7 +129,7 @@ Shake::Shake(Node *node, float amount)
 	  _amount(amount) {
 }
 
-void Shake::update(float elapsed) {
+void Shake::onUpdate(float elapsed) {
 	_shakeTime += 40.f * elapsed;
 	_elapsed += elapsed;
 	_node->setShakeOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
@@ -138,7 +143,7 @@ OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, Color to)
 
 OverlayTo::~OverlayTo() = default;
 
-void OverlayTo::update(float elapsed) {
+void OverlayTo::onUpdate(float elapsed) {
 	_tween.update(elapsed);
 	_room->setOverlay(_tween.current());
 	if (!_tween.running())
@@ -156,7 +161,7 @@ void ReachAnim::playReachAnim() {
 	_actor->play(anim);
 }
 
-void ReachAnim::update(float elapsed) {
+void ReachAnim::onUpdate(float elapsed) {
 	switch (_state) {
 	case 0:
 		playReachAnim();
@@ -247,7 +252,7 @@ void WalkTo::actorArrived() {
 	}
 }
 
-void WalkTo::update(float elapsed) {
+void WalkTo::onUpdate(float elapsed) {
 	if (!_enabled)
 		return;
 	if (_state == kWalking && !_path.empty()) {
@@ -336,7 +341,7 @@ static int letterToIndex(char c) {
 	}
 }
 
-void Talking::update(float elapsed) {
+void Talking::onUpdate(float elapsed) {
 	if (!isEnabled())
 		return;
 
@@ -527,7 +532,7 @@ Jiggle::Jiggle(Node *node, float amount) : _amount(amount), _node(node) {
 
 Jiggle::~Jiggle() = default;
 
-void Jiggle::update(float elapsed) {
+void Jiggle::onUpdate(float elapsed) {
 	_jiggleTime += 20.f * elapsed;
 	_node->setRotationOffset(_amount * sin(_jiggleTime));
 }

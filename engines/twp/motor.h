@@ -85,7 +85,10 @@ public:
 		_enabled = false;
 	}
 	virtual bool isEnabled() const { return _enabled; }
-	virtual void update(float elapsed) = 0;
+	void update(float elapsed);
+
+protected:
+	virtual void onUpdate(float elapsed) = 0;
 
 protected:
 	bool _enabled = true;
@@ -98,7 +101,7 @@ public:
 	OffsetTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Common::SharedPtr<Object> _obj;
@@ -111,7 +114,7 @@ public:
 	MoveTo(float duration, Common::SharedPtr<Object> obj, const Math::Vector2d &pos, InterpolationMethod im);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Common::SharedPtr<Object> _obj;
@@ -124,7 +127,7 @@ public:
 	AlphaTo(float duration, Common::SharedPtr<Object> obj, float to, InterpolationMethod im);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Common::SharedPtr<Object> _obj;
@@ -138,7 +141,7 @@ public:
 	RotateTo(float duration, Node *obj, float to, InterpolationMethod im);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Node *_node = nullptr;
@@ -151,7 +154,7 @@ public:
 	RoomRotateTo(Common::SharedPtr<Room> room, float to);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Common::SharedPtr<Room> _room;
@@ -164,7 +167,7 @@ public:
 	ScaleTo(float duration, Node *node, float to, InterpolationMethod im);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Node *_node = nullptr;
@@ -177,7 +180,7 @@ public:
 	Shake(Node *node, float amount);
 
 private:
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	Node *_node = nullptr;
@@ -191,7 +194,7 @@ public:
 	virtual ~OverlayTo();
 	OverlayTo(float duration, Common::SharedPtr<Room> room, Color to);
 
-	virtual void update(float elapsed) override;
+	virtual void onUpdate(float elapsed) override;
 
 private:
 	Common::SharedPtr<Room> _room;
@@ -204,7 +207,7 @@ public:
 	virtual ~ReachAnim();
 	ReachAnim(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
-	virtual void update(float elasped) override;
+	virtual void onUpdate(float elasped) override;
 
 private:
 	void playReachAnim();
@@ -231,7 +234,7 @@ public:
 
 private:
 	void actorArrived();
-	void update(float elapsed) override;
+	void onUpdate(float elapsed) override;
 
 private:
 	Common::SharedPtr<Object> _obj;
@@ -250,7 +253,7 @@ public:
 
 	void append(const Common::StringArray &texts);
 
-	virtual void update(float elapsed) override;
+	virtual void onUpdate(float elapsed) override;
 	virtual void disable() override;
 
 private:
@@ -276,7 +279,7 @@ public:
 	virtual ~Jiggle();
 
 private:
-	virtual void update(float elapsed) override;
+	virtual void onUpdate(float elapsed) override;
 
 private:
 	Node *_node = nullptr;

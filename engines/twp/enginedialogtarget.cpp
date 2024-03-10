@@ -31,7 +31,7 @@ class Pause : public Motor {
 public:
 	explicit Pause(float time) : _time(time) {}
 
-	void update(float elapsed) override {
+	void onUpdate(float elapsed) override {
 		_time -= elapsed;
 		if (_time <= 0)
 			disable();
@@ -45,7 +45,7 @@ class WaitWhile : public Motor {
 public:
 	WaitWhile(EngineDialogTarget *target, const Common::String &cond) : _target(target), _cond(cond) {}
 
-	void update(float elapsed) override {
+	void onUpdate(float elapsed) override {
 		if (!_target->execCond(_cond))
 			disable();
 	}
