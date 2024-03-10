@@ -40,27 +40,8 @@ protected:
 public:
 	CBofCursor() {}
 	CBofCursor(SHORT nResID);
-
 	~CBofCursor();
-
-#if 0
-	CBofCursor(HCURSOR hCurs);
-	HCURSOR operator=(HCURSOR hCurs);
-
-	static HCURSOR GetCurrent() {
-		return (m_hCurrentCurs);
-	}
-	static VOID SetCurrent(HCURSOR h) {
-		m_hCurrentCurs = h;
-	}
-
-	HCURSOR GetWinCursor() {
-		return (m_hCurs);
-	}
-	VOID SetWinCursor(HCURSOR hCursor) {
-		m_hCurs = hCursor;
-	}
-#endif
+	static void initStatics();
 
 	ERROR_CODE Load(SHORT nResId);
 	ERROR_CODE UnLoad();

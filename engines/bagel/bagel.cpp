@@ -47,6 +47,7 @@
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
+#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
 
@@ -83,6 +84,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	// boflib/ class statics initializations
 	CCache::initStatics();
+	CBofCursor::initStatics();
 	CBofError::initStatics();
 	CBofPalette::initStatics();
 	CBofWindow::initStatics();
