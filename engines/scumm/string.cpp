@@ -726,6 +726,124 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) co
 	free(stack);
 }
 
+void ScummEngine::wrapSegaCDText() {
+	// MI1 Sega CD appears to be doing its own thing in here when
+	// the string x coordinate is on the right side of the screen:
+	// - Applies some tentative line breaks;
+	// - Go line by line and check if the string still overflows
+	//   on the last 16 pixels of the right side of the screen;
+	// - If so, take the original string and apply a stricter final wrapping;
+	// - Finally, clip the string final position to 16 pixels from the right
+	//   and from the left sides of the screen.
+	//
+	// I agree that this is very convoluted :-) , but it's the only way
+	// to display pixel accurate text on both ENG and JAP editions of this
+	// version.
+	int predictionMaxWidth = _charset->_right - _string[0].xpos;
+	int predictionNextLeft = _nextLeft;
+
+	bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
+
+	// Predict if a stricter wrapping is going to be necessary
+	if (!useStricterWrapping) {
+		if (predictionMaxWidth > predictionNextLeft)
+			predictionMaxWidth = predictionNextLeft;
+			predictionMaxWidth *= 2;
+
+		byte predictionString[512];
+
+		memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
+
+		// Impose a tentative max string width for the wrapping
+		_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
+
+		int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
+		predictionNextLeft -= predictionStringWidth / 2;
+
+		if (predictionNextLeft < 16)
+			predictionNextLeft = 16;
+
+		byte *ptrToCurLine = predictionString + _charsetBufPos;
+		byte curChar = *ptrToCurLine;
+
+		// Go line by line and check if the string overflows
+		// on the last 16 pixels on the right side of the screen...
+		while (curChar) {
+			predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
+			predictionNextLeft -= predictionStringWidth / 2;
+
+			if (predictionNextLeft < 16)
+				predictionNextLeft = 16;
+
+			useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
+
+			if (useStricterWrapping)
+				break;
+
+			// Advance to next line, if any...
+			do {
+				// Control code handling...
+				if (curChar == 0xFE || curChar == 0xFF) {
+					// Advance to the control code and
+					// check if it's a new line instruction...
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+
+					// Gotcha!
+					if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
+						ptrToCurLine++;
+						curChar = *ptrToCurLine;
+						break;
+					}
+
+					// If we're here, we don't need this control code,
+					// let's just skip it...
+					ptrToCurLine++;
+				} else if (_useCJKMode && curChar & 0x80) { // CJK char
+					ptrToCurLine++;
+				}
+
+				// Line breaks and string termination
+				if (curChar == '\r' || curChar == '\n') {
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+					break;
+				} else if (curChar == '\0') {
+					curChar = *ptrToCurLine;
+					break;
+				}
+
+				ptrToCurLine++;
+				curChar = *ptrToCurLine;
+			} while (true);
+		}
+	}
+
+	// Impose the final line breaks with the correct max string width;
+	// this part is practically the default v5 text centering code...
+	int finalMaxWidth = _charset->_right - _string[0].xpos;
+	finalMaxWidth -= useStricterWrapping ? 16 : 0;
+	if (finalMaxWidth > _nextLeft)
+		finalMaxWidth = _nextLeft;
+	finalMaxWidth *= 2;
+
+	_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
+
+	int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
+	_nextLeft -= finalStringWidth / 2;
+
+	// Final additional clippings (these will also be repeated on newLine()):
+	// Clip 16 pixels away from the right
+	if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
+		_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
+	}
+
+	// Clip 16 pixels away from the left
+	if (_nextLeft < 16) {
+		_nextLeft = 16;
+	}
+}
+
 void ScummEngine_v2::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
@@ -960,126 +1078,8 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (_charset->_center) {
-		// MI1 Sega CD appears to be doing its own thing in here when
-		// the string x coordinate is on the right side of the screen:
-		// - Applies some tentative line breaks;
-		// - Go line by line and check if the string still overflows
-		//   on the last 16 pixels of the right side of the screen;
-		// - If so, take the original string and apply a stricter final wrapping;
-		// - Finally, clip the string final position to 16 pixels from the right
-		//   and from the left sides of the screen.
-		//
-		// I agree that this is very convoluted :-) , but it's the only way
-		// to display pixel accurate text on both ENG and JAP editions of this
-		// version.
-
 		if (_game.platform == Common::kPlatformSegaCD) {
-			int predictionMaxWidth = _charset->_right - _string[0].xpos;
-			int predictionNextLeft = _nextLeft;
-
-			bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
-
-			// Predict if a stricter wrapping is going to be necessary
-			if (!useStricterWrapping) {
-				if (predictionMaxWidth > predictionNextLeft)
-					predictionMaxWidth = predictionNextLeft;
-				predictionMaxWidth *= 2;
-
-				byte predictionString[512];
-
-				memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
-
-				// Impose a tentative max string width for the wrapping
-				_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
-
-				int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
-				predictionNextLeft -= predictionStringWidth / 2;
-
-				if (predictionNextLeft < 16)
-					predictionNextLeft = 16;
-
-				byte *ptrToCurLine = predictionString + _charsetBufPos;
-				byte curChar = *ptrToCurLine;
-
-				// Go line by line and check if the string overflows
-				// on the last 16 pixels on the right side of the screen...
-				while (curChar) {
-					predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
-					predictionNextLeft -= predictionStringWidth / 2;
-
-					if (predictionNextLeft < 16)
-						predictionNextLeft = 16;
-
-					useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
-
-					if (useStricterWrapping)
-						break;
-
-					// Advance to next line, if any...
-					do {
-						// Control code handling...
-						if (curChar == 0xFE || curChar == 0xFF) {
-							// Advance to the control code and
-							// check if it's a new line instruction...
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-
-							// Gotcha!
-							if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
-								ptrToCurLine++;
-								curChar = *ptrToCurLine;
-								break;
-							}
-
-							// If we're here, we don't need this control code,
-							// let's just skip it...
-							ptrToCurLine++;
-						} else if (_useCJKMode && curChar & 0x80) { // CJK char
-							ptrToCurLine++;
-						}
-
-						// Line breaks and string termination
-						if (curChar == '\r' || curChar == '\n') {
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-							break;
-						} else if (curChar == '\0') {
-							curChar = *ptrToCurLine;
-							break;
-						}
-
-						ptrToCurLine++;
-						curChar = *ptrToCurLine;
-					} while (true);
-				}
-			}
-
-
-			// Impose the final line breaks with the correct max string width;
-			// this part is practically the default v5 text centering code...
-			int finalMaxWidth = _charset->_right - _string[0].xpos;
-			finalMaxWidth -= useStricterWrapping ? 16 : 0;
-
-			if (finalMaxWidth > _nextLeft)
-				finalMaxWidth = _nextLeft;
-			finalMaxWidth *= 2;
-
-			_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
-
-			int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
-			_nextLeft -= finalStringWidth / 2;
-
-			// Final additional clippings (these will also be repeated on newLine()):
-
-			// Clip 16 pixels away from the right
-			if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
-				_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
-			}
-
-			// Clip 16 pixels away from the left
-			if (_nextLeft < 16) {
-				_nextLeft = 16;
-			}
+			wrapSegaCDText();
 		} else {
 			int stringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 			_nextLeft -= stringWidth / 2;
