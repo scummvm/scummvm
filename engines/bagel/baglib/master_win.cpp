@@ -617,7 +617,8 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 		//
 		CBagel *pBagApp;
 		if ((pBagApp = CBagel::GetBagApp()) != nullptr) {
-			if ((m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer())) != ERR_NONE) {
+			if ((m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer())) != ERR_NONE ||
+					g_engine->shouldQuit()) {
 				Close();
 				return m_errCode;
 			}
