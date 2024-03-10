@@ -190,13 +190,13 @@ Common::String SceneTrigger::dump(const Common::String &indent) const {
 }
 
 
-Dialogue::Dialogue() : _num(0), _bgColor(0), _fontColor(0), _field7_0xe(0), _field8_0x10(0),
+Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _field7_0xe(0), _field8_0x10(0),
 	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0),
 	_field15_0x22(0), _field18_0x28(0), _hideTime(0)
 {}
 
 
-void Dialogue::draw(Graphics::Surface *dst, int stage) {
+void Dialog::draw(Graphics::Surface *dst, int stage) {
 	switch (_frameType) {
 	case kDlgFramePlain: 	return drawType1(dst, stage);
 	case kDlgFrameBorder: 	return drawType2(dst, stage);
@@ -215,7 +215,7 @@ static void _drawPixel(int x, int y, int color, void *data) {
 
 
 //  box with simple frame
-void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
+void Dialog::drawType1(Graphics::Surface *dst, int stage) {
 	//if (!_field15_0x22)
 	//	return;
 	int x = _rect.x;
@@ -237,7 +237,7 @@ void Dialogue::drawType1(Graphics::Surface *dst, int stage) {
 }
 
 // box with fancy frame and optional title (everything before ":")
-void Dialogue::drawType2(Graphics::Surface *dst, int stage) {
+void Dialog::drawType2(Graphics::Surface *dst, int stage) {
 	Common::String title;
 	Common::String txt;
 	uint32 colonpos = _str.find(':');
@@ -283,7 +283,7 @@ static void _filledCircle(int x, int y, int xr, int yr, Graphics::Surface *dst, 
 
 // Comic tought box made up of circles with 2 circles going up to it.
 // Draw circles with 5/4 more pixels in x because the pixels are not square.
-void Dialogue::drawType3(Graphics::Surface *dst, int stage) {
+void Dialog::drawType3(Graphics::Surface *dst, int stage) {
 	if (stage == 1) {
 		uint16 xradius = 9999;
 		uint16 yradius = 40;
@@ -370,7 +370,7 @@ void Dialogue::drawType3(Graphics::Surface *dst, int stage) {
 }
 
 // ellipse
-void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
+void Dialog::drawType4(Graphics::Surface *dst, int stage) {
 	int x = _rect.x;
 	int y = _rect.y;
 	int w = _rect.width;
@@ -404,15 +404,15 @@ void Dialogue::drawType4(Graphics::Surface *dst, int stage) {
 	}
 }
 
-void Dialogue::drawStage2(Graphics::Surface *dst) {
+void Dialog::drawStage2(Graphics::Surface *dst) {
 	// TODO: various text wrapping and alignment calculations happen here.
 }
 
-void Dialogue::drawStage3(Graphics::Surface *dst) {
+void Dialog::drawStage3(Graphics::Surface *dst) {
 	// TODO: various text wrapping and alignment calculations happen here.
 }
 
-void Dialogue::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
+void Dialog::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();
 	FontManager::FontType fontType = FontManager::kGameDlgFont;
@@ -451,19 +451,19 @@ void Dialogue::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::
 
 }
 
-void Dialogue::addFlag(DialogueFlags flg) {
-	_flags = static_cast<DialogueFlags>(_flags | flg);
+void Dialog::addFlag(DialogFlags flg) {
+	_flags = static_cast<DialogFlags>(_flags | flg);
 }
 
-void Dialogue::clearFlag(DialogueFlags flg) {
-	_flags = static_cast<DialogueFlags>(_flags & ~flg);
+void Dialog::clearFlag(DialogFlags flg) {
+	_flags = static_cast<DialogFlags>(_flags & ~flg);
 }
 
-bool Dialogue::hasFlag(DialogueFlags flg) const {
+bool Dialog::hasFlag(DialogFlags flg) const {
 	return _flags & flg;
 }
 
-Common::String Dialogue::dump(const Common::String &indent) const {
+Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
 			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize,
@@ -474,7 +474,7 @@ Common::String Dialogue::dump(const Common::String &indent) const {
 	return str;
 }
 
-Common::String DialogueAction::dump(const Common::String &indent) const {
+Common::String DialogAction::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sDialogueAction<%d span: %d-%d", indent.c_str(), val, strStart, strEnd);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	if (!sceneOpList.empty()) {
@@ -601,11 +601,11 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 }
 
 
-bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialogue> &list) const {
+bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const {
 	// Some data on this format here https://www.oldgamesitalia.net/forum/index.php?showtopic=24055&st=25&p=359214&#entry359214
 
 	list.resize(s->readUint16LE());
-	for (Dialogue &dst : list) {
+	for (Dialog &dst : list) {
 		dst._num = s->readUint16LE();
 		dst._rect.x = s->readUint16LE();
 		dst._rect.y = s->readUint16LE();
@@ -622,14 +622,14 @@ bool Scene::readDialogueList(Common::SeekableReadStream *s, Common::Array<Dialog
 		}
 		dst._fontSize = s->readUint16LE(); // 01 = 8x8, 02 = 6x6, 03 = 4x5
 		if (isVersionUnder(" 1.210")) {
-			dst._flags = static_cast<DialogueFlags>(s->readUint16LE());
+			dst._flags = static_cast<DialogFlags>(s->readUint16LE());
 		} else {
 			// Game reads a 32 bit int but then truncates anyway..
 			// probably never used the full thing.
-			dst._flags = static_cast<DialogueFlags>(s->readUint32LE() & 0xffff);
+			dst._flags = static_cast<DialogFlags>(s->readUint32LE() & 0xffff);
 		}
 
-		dst._frameType = static_cast<DialogueFrameType>(s->readUint16LE());
+		dst._frameType = static_cast<DialogFrameType>(s->readUint16LE());
 		dst._time = s->readUint16LE();
 		if (isVersionOver(" 1.207")) {
 			dst._nextDialogNum = s->readUint16LE();
@@ -670,13 +670,13 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 }
 
 
-bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogueAction> &list) const {
+bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const {
 	list.resize(s->readUint16LE());
 
 	if (!list.empty())
 		list[0].val = 1;
 
-	for (DialogueAction &dst : list) {
+	for (DialogAction &dst : list) {
 		dst.strStart = s->readUint16LE();
 		dst.strEnd = s->readUint16LE();
 		readOpList(s, dst.sceneOpList);
@@ -901,7 +901,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	if (isVersionOver(" 1.205")) {
 		readStruct4List(stream, _struct4List2);
 	}
-	readDialogueList(stream, _dialogs);
+	readDialogList(stream, _dialogs);
 	if (isVersionOver(" 1.203")) {
 		readTriggerList(stream, _triggers);
 	}
@@ -973,7 +973,7 @@ void SDSScene::showDialog(uint16 num) {
 			dialog.clearFlag(kDlgFlagHi40);
 			dialog.addFlag(kDlgFlagHi20);
 			dialog.addFlag(kDlgFlagVisible);
-			dialog.addFlag(kDlgFlagHi100);
+			dialog.addFlag(kDlgFlagOpening);
 			// hide time gets set the first time it's drawn.
 			if (dialog.hasFlag(kDlgFlagLo8)) {
 				// do something with some global dlg flags here.
