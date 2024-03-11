@@ -311,7 +311,7 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height
 	x = CLIP<int16>(x, 0, _displayScreenWidth-width);
 	y = CLIP<int16>(y, 0, _displayScreenHeight-height);
 
-	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+	_vm->_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {
 	switch (_upscaledHires) {
@@ -327,18 +327,18 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, i
 	}
 	x += adjX; y += adjY;
 	width += adjWidth; height += adjHeight;
-	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+	_vm->_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayRectToScreenUsingGamePos(int16 x, int16 y, int16 width, int16 height) {
 	translateGameRectToDisplayScreen(x, y, width, height);
-	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+	_vm->_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayRectToScreenUsingVisualPos(int16 x, int16 y, int16 width, int16 height) {
 	translateVisualRectToDisplayScreen(x, y, width, height);
-	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+	_vm->_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayToScreen() {
-	g_system->copyRectToScreen(_displayScreen, _displayScreenWidth, 0, 0, _displayScreenWidth, _displayScreenHeight);
+	_vm->_system->copyRectToScreen(_displayScreen, _displayScreenWidth, 0, 0, _displayScreenWidth, _displayScreenHeight);
 }
 
 void GfxMgr::translateFontPosToDisplayScreen(int16 &x, int16 &y) {
@@ -815,14 +815,14 @@ void GfxMgr::transition_Amiga() {
 			case DISPLAY_UPSCALED_DISABLED:
 				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
 					screenStepPos = (posY * _displayScreenWidth) + posX;
-					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 1);
+					_vm->_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 1);
 					posY += 42;
 				}
 				break;
 			case DISPLAY_UPSCALED_640x400:
 				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
 					screenStepPos = (posY * _displayScreenWidth) + posX;
-					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 4, 2);
+					_vm->_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 4, 2);
 					posY += 42 * 2;
 				}
 				break;
@@ -834,8 +834,8 @@ void GfxMgr::transition_Amiga() {
 			stepCount++;
 			if (stepCount == 220) {
 				// 30 times for the whole transition, so should take around 0.5 seconds
-				g_system->updateScreen();
-				g_system->delayMillis(16);
+				_vm->_system->updateScreen();
+				_vm->_system->delayMillis(16);
 				stepCount = 0;
 			}
 		}
@@ -846,7 +846,7 @@ void GfxMgr::transition_Amiga() {
 		CursorMan.showMouse(true);
 	}
 
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 }
 
 // This transition code was not reverse engineered, but created based on the Amiga transition code
@@ -880,7 +880,7 @@ void GfxMgr::transition_AtariSt() {
 				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
 				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
 					screenStepPos = (posY * _displayScreenWidth) + posX;
-					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 1, 1);
+					_vm->_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 1, 1);
 					posY += 21;
 				}
 				break;
@@ -889,7 +889,7 @@ void GfxMgr::transition_AtariSt() {
 				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
 				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
 					screenStepPos = (posY * _displayScreenWidth) + posX;
-					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 2);
+					_vm->_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 2);
 					posY += 21 * 2;
 				}
 				break;
@@ -902,8 +902,8 @@ void GfxMgr::transition_AtariSt() {
 				// 40 times for the whole transition, so should take around 0.7 seconds
 				// When using an Atari ST emulator, the transition seems to be even slower than this
 				// TODO: should get checked on real hardware
-				g_system->updateScreen();
-				g_system->delayMillis(16);
+				_vm->_system->updateScreen();
+				_vm->_system->delayMillis(16);
 				stepCount = 0;
 			}
 		}
@@ -914,7 +914,7 @@ void GfxMgr::transition_AtariSt() {
 		CursorMan.showMouse(true);
 	}
 
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 }
 
 // Attention: y coordinate is here supposed to be the upper one!
@@ -1208,17 +1208,17 @@ void GfxMgr::shakeScreen(int16 repeatCount) {
 	for (int shakeNr = 0; shakeNr < shakeCount; shakeNr++) {
 		if (shakeNr & 1) {
 			// move back
-			g_system->setShakePos(0, 0);
+			_vm->_system->setShakePos(0, 0);
 		} else {
-			g_system->setShakePos(shakeHorizontalPixels, shakeVerticalPixels);
+			_vm->_system->setShakePos(shakeHorizontalPixels, shakeVerticalPixels);
 		}
-		g_system->updateScreen();
-		g_system->delayMillis(66); // Sierra waited for 4 V'Syncs, which is around 66 milliseconds
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(66); // Sierra waited for 4 V'Syncs, which is around 66 milliseconds
 	}
 }
 
 void GfxMgr::updateScreen() {
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 }
 
 void GfxMgr::initPriorityTable() {
@@ -1357,9 +1357,9 @@ void GfxMgr::initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, 
 
 void GfxMgr::setPalette(bool gfxModePalette) {
 	if (gfxModePalette) {
-		g_system->getPaletteManager()->setPalette(_paletteGfxMode, 0, 256);
+		_vm->_system->getPaletteManager()->setPalette(_paletteGfxMode, 0, 256);
 	} else {
-		g_system->getPaletteManager()->setPalette(_paletteTextMode, 0, 256);
+		_vm->_system->getPaletteManager()->setPalette(_paletteTextMode, 0, 256);
 	}
 }
 

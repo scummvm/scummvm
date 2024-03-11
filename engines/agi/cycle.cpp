@@ -438,7 +438,7 @@ int AgiEngine::playGame() {
 		if (_passedPlayTimeCycles >= timeDelay) {
 			// code to check for executed cycles
 			// TimeDate time;
-			// g_system->getTimeAndDate(time);
+			// _system->getTimeAndDate(time);
 			// warning("cycle %d", time.tm_sec);
 			inGameTimerResetPassedCycles();
 

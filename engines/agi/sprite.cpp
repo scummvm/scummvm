@@ -377,8 +377,8 @@ void SpritesMgr::showSprites(SpriteList &spriteList) {
 			}
 		}
 	}
-	g_system->updateScreen();
-	//g_system->delayMillis(20);
+	_vm->_system->updateScreen();
+	//_vm->_system->delayMillis(20);
 }
 
 void SpritesMgr::showRegularSpriteList() {

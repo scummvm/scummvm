@@ -116,7 +116,7 @@ void AgiEngine::processScummVMEvents() {
 					if (_mouse.pos.y > _game.mouseFence.bottom)
 						_mouse.pos.y = _game.mouseFence.bottom;
 
-					g_system->warpMouse(_mouse.pos.x, _mouse.pos.y);
+					_system->warpMouse(_mouse.pos.x, _mouse.pos.y);
 				}
 			}
 
