@@ -47,7 +47,7 @@ bool NuvieFileList::open(const Common::Path &directory, const char *search, uint
 
 	Common::ArchiveMemberList children;
 
-	arcMember->listChildren(children);
+	arcMember->listChildren(children, search);
 	if (children.empty()) {
 		ConsoleAddWarning(Std::string("Failed to get children of ") + directory.toString());
 		return false;
