@@ -46,7 +46,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Fix screen corruption (and sometimes even crashes) in Mac Loom and
-     Indiana Jones and the Last Crusade when using menu shortcut keys.
+     Indiana Jones and the Last Crusade, most noticeably when using menu
+     shortcut keys.
    - Fix enabling/disabling of Open and Save in Mac Indiana Jones and the Last
      Crusade.
 
