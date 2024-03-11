@@ -263,6 +263,8 @@ void MacWindow::updateOuterDims() {
 }
 
 void MacWindow::drawBorder() {
+	resizeBorderSurface();
+
 	_borderIsDirty = false;
 
 	ManagedSurface *g = &_borderSurface;
@@ -365,8 +367,11 @@ void MacWindow::setBorder(Graphics::ManagedSurface *surface, uint32 flags, Borde
 
 void MacWindow::resizeBorderSurface() {
 	updateOuterDims();
-	_borderSurface.free();
-	_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
+
+	if (_borderSurface.w != _dims.width() || _borderSurface.h != _dims.height()) {
+		_borderSurface.free();
+		_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
+	}
 }
 
 void MacWindow::setCloseable(bool closeable) {
