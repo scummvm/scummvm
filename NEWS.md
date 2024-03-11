@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Space Quest 1 version 1.0X freezing in the skimmer.
    - Fixed Mixed-Up Mother Goose message boxes during nursery rhymes.
    - Fixed Mixed-Up Mother Goose graphics in Amiga version.
+   - Fixed Gold Rush clock time at Fast and Fastest speeds.
    - Fixed Atari ST version of Manhunter 1 not starting.
    - Fixed Tandy CoCo3 version of Leisure Suit Larry 1 not starting.
    - Fixed Tandy CoCo3 unofficial ports not starting.
