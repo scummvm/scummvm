@@ -263,6 +263,8 @@ void MacWindow::updateOuterDims() {
 }
 
 void MacWindow::drawBorder() {
+	resizeBorderSurface();
+
 	_borderIsDirty = false;
 
 	ManagedSurface *g = &_borderSurface;
