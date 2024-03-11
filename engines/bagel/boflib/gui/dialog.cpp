@@ -456,10 +456,9 @@ INT CBofDialog::DoModal() {
 	Common::Event evt;
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
-		while (g_system->getEventManager()->pollEvent(evt)) {
-//			TranslateMessage(evt);
-//			DispatchMessage(evt);
-		}
+		while (g_system->getEventManager()->pollEvent(evt))
+			handleEvent(evt);
+
 #if BOF_WINDOWS
 
 		// if there is a message for our window, then process it

@@ -168,10 +168,8 @@ ERROR_CODE CBofApp::RunApp() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
-		while (g_system->getEventManager()->pollEvent(evt)) {
-//			TranslateMessage(evt);
-//			DispatchMessage(evt);
-		}
+		while (g_system->getEventManager()->pollEvent(evt))
+			CBofWindow::GetActiveWindow()->handleEvent(evt);
 
 		// Handle sounds and timers
 		CBofSound::AudioTask();
