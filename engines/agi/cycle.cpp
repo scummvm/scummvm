@@ -122,6 +122,23 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		if (getGameID() == GID_LSL1) {
 			setFlag(36, 0); // clear "ignore special" flag on every room change
 		}
+		// WORKAROUND: Gold Rush runs a speed test to calculate how fast the in-game
+		// clock should advance at Fast and Fastest settings, based on CPU speed.
+		// The goal was to produce a real-time clock, even though it's really driven
+		// by game cycles. This test is incompatible with our speed throttling because
+		// it runs in Fastest mode and the results are based on running unthrottled.
+		// This causes in an artificially poor test result, resulting in the clock
+		// running much too fast at Fast and Fastest speeds. We fix this by overriding
+		// the test result with speeds that match ours. Fixes bugs #4147, #13910
+		if (getGameID() == GID_GOLDRUSH && newRoomNr == 1) {
+			setVar(165, 20); // Fast:	 20 game cycles => 1 Gold Rush second
+			setVar(167, 40); // Fastest: 40 game cycles => 1 Gold Rush second
+			// Gold Rush 3.0 (1998) disables Fastest if the speed test indicates
+			// a fast machine. That shouldn't happen, but make sure it doesn't.
+			if (getPlatform() == Common::kPlatformDOS) {
+				setFlag(172, 0); // Allow Fastest
+			}
+		}
 	}
 }
 
