@@ -388,7 +388,7 @@ private:
  */
 class HENetworkGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String gameid);
+	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String &&gameid);
 	~HENetworkGameOptionsWidget() override {};
 
 	void load() override;

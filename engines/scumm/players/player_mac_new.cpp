@@ -563,6 +563,10 @@ void MacSndChannel::flush() {
 }
 
 void MacSndChannel::loadWaveTable(const byte *data, uint16 dataSize) {
+	if (!data) {
+		warning("MacSndChannel::loadWaveTable(): nullptr wavetable argument");
+		return;
+	}
 	assert(dataSize == _len);
 	int8 *buff = new int8[dataSize]();
 	const int8 *s = reinterpret_cast<const int8*>(data);
@@ -572,6 +576,10 @@ void MacSndChannel::loadWaveTable(const byte *data, uint16 dataSize) {
 }
 
 void MacSndChannel::loadInstrument(const MacLowLevelPCMDriver::PCMSound *snd) {
+	if (!snd) {
+		warning("MacSndChannel::loadInstrument(): nullptr sound argument");
+		return;
+	}
 	setupSound(snd);
 	setupRateConv(_drv->getStatus().deviceRate, 0x10000, snd->rate, false);
 }
@@ -617,7 +625,7 @@ void MacSndChannel::enqueueSndCmd(uint8 c, uint16 p1, uint32 p2, byte mode) {
 }
 
 void MacSndChannel::enqueueSndCmd(uint8 c, uint16 p1, const void *p2, byte ptrType, byte mode) {
-	if (mode == MacLowLevelPCMDriver::kImmediate && (c == 60 || c == 80)) {
+	if (mode == MacLowLevelPCMDriver::kImmediate && (c == 13 || c == 60 || c == 80)) {
 		if (c == 60)
 			loadWaveTable(reinterpret_cast<const byte*>(p2), p1);
 		else if (c == 80)
@@ -958,7 +966,7 @@ uint32 MacSndChannel::calcRate(uint32 outRate, uint32 factor, uint32 dataRate) {
 		} else {
 			c = dataRate % (outRate >> 16);
 			dataRate /= (outRate >> 16);
-			t = ((c << 16) | (factor >> 16)) - (dataRate * (outRate & 0xffff));
+			t = ((c << 16) | (factor >> 16)) - ((dataRate & 0xffff) * (outRate & 0xffff));
 			factor = (factor << 16) | dataRate;
 			dataRate =  t & (uint32)-1;;
 			altpth = (int64)t < 0;

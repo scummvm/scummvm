@@ -140,7 +140,7 @@ private:
 	const byte _numInstrumentsMax;
 };
 
-MacSndLoader::Instrument::Instrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name) : _id(id), _name(name) {
+MacSndLoader::Instrument::Instrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name) : _id(id), _name(Common::move(name)) {
 	in->seek(2);
 	uint16 numTypes = in->readUint16BE();
 	in->seek(numTypes * 6 + 4);

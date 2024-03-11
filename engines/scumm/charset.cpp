@@ -336,7 +336,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _bitsPerPixel(0), _fontHeight(0), _numChars(0) {
+	: CharsetRenderer(vm), _fontPtr(nullptr), _bitsPerPixel(0), _fontHeight(0), _numChars(0) {
 	_enableShadow = false;
 	_shadowColor = 0;
 }
@@ -744,7 +744,8 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 	if (_vm->_isIndy4Jap) {
 		// Characters allow shadows only if this is the main virtual screen, and we are not drawing
 		// a message on a GUI banner. The main menu is fine though, and allows shadows as well.
-		bool canDrawShadow = _vm->findVirtScreen(_top)->number == kMainVirtScreen && !_vm->isMessageBannerActive();
+		VirtScreen *vs = _vm->findVirtScreen(_top);
+		bool canDrawShadow = vs != nullptr && vs->number == kMainVirtScreen && !_vm->isMessageBannerActive();
 		enableShadow(canDrawShadow);
 	}
 
@@ -1604,7 +1605,7 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 #endif
 
 CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::Path &fontFile)
-	 : CharsetRendererCommon(vm) {
+	 : CharsetRendererCommon(vm), _lastTop(0) {
 
 	// The original Macintosh interpreter didn't use the correct spacing
 	// between characters for some of the text, e.g. the Grail Diary. This

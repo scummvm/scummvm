@@ -1661,8 +1661,8 @@ void MI1CdGameOptionsWidget::updateOutlookAdjustmentValue() {
 #ifdef USE_ENET
 // HE Network Play Adjustment settings
 
-HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, Common::String gameid) :
-		ScummOptionsContainerWidget(boss, name, "HENetworkGameOptionsDialog", domain), _gameid(gameid) {
+HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String &&gameid) :
+	ScummOptionsContainerWidget(boss, name, "HENetworkGameOptionsDialog", domain), _gameid(Common::move(gameid)) {
 	Common::String extra = ConfMan.get("extra", domain);
 
 	// Add back the "Load modded audio" option.

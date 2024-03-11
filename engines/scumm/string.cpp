@@ -2016,35 +2016,35 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff, int trans
 	if (_game.id == GID_DIG) {
 		// Based on the second release of The Dig
 		// Only applies to the subtitles and not speech
-		if (!strcmp((const char *)text, "faint light"))
+		if (!strncmp((const char *)text, "faint light", 11))
 			text = (const byte *)"/NEW.007/faint light";
-		else if (!strcmp((const char *)text, "glowing crystal"))
+		else if (!strncmp((const char *)text, "glowing crystal", 15))
 			text = (const byte *)"/NEW.008/glowing crystal";
-		else if (!strcmp((const char *)text, "glowing crystals"))
+		else if (!strncmp((const char *)text, "glowing crystals", 16))
 			text = (const byte *)"/NEW.009/glowing crystals";
-		else if (!strcmp((const char *)text, "pit"))
+		else if (!strncmp((const char *)text, "pit", 3))
 			text = (const byte *)"/NEW.010/pit";
-		else if (!strcmp((const char *)text, "You wish."))
+		else if (!strncmp((const char *)text, "You wish.", 9))
 			text = (const byte *)"/NEW.011/You wish.";
-		else if (!strcmp((const char *)text, "In your dreams."))
+		else if (!strncmp((const char *)text, "In your dreams.", 15))
 			text = (const byte *)"/NEW.012/In your dreams";
-		else if (!strcmp((const char *)text, "left"))
+		else if (!strncmp((const char *)text, "left", 4))
 			text = (const byte *)"/CATHPLAT.068/left";
-		else if (!strcmp((const char *)text, "right"))
+		else if (!strncmp((const char *)text, "right", 5))
 			text = (const byte *)"/CATHPLAT.070/right";
-		else if (!strcmp((const char *)text, "top"))
+		else if (!strncmp((const char *)text, "top", 3))
 			text = (const byte *)"/CATHPLAT.067/top";
-		else if (!strcmp((const char *)text, "exit"))
+		else if (!strncmp((const char *)text, "exit", 4))
 			text = (const byte *)"/SKY.008/exit";
-		else if (!strcmp((const char *)text, "unattached lens"))
+		else if (!strncmp((const char *)text, "unattached lens", 15))
 			text = (const byte *)"/NEW.013/unattached lens";
-		else if (!strcmp((const char *)text, "lens slot"))
+		else if (!strncmp((const char *)text, "lens slot", 9))
 			text = (const byte *)"/NEW.014/lens slot";
-		else if (!strcmp((const char *)text, "Jonathon Jackson"))
+		else if (!strncmp((const char *)text, "Jonathon Jackson", 16))
 			text = (const byte *)"Aram Gutowski";
-		else if (!strcmp((const char *)text, "Brink"))
+		else if (!strncmp((const char *)text, "Brink", 5))
 			text = (const byte *)"/CREVICE.049/Brink";
-		else if (!strcmp((const char *)text, "Robbins"))
+		else if (!strncmp((const char *)text, "Robbins", 7))
 			text = (const byte *)"/NEST.061/Robbins";
 	}
 

@@ -179,7 +179,7 @@ Common::Path ScummEngine_v70he::generateFilename(const int room) const {
 				// For mac they're stored in game binary.
 				result = _filenamePattern.pattern;
 			} else {
-				Common::String pattern = id == 'b' ? bPattern : _filenamePattern.pattern;
+				Common::String pattern = id == 'b' ? Common::move(bPattern) : _filenamePattern.pattern;
 				if (_filenamePattern.genMethod == kGenHEMac)
 					result = Common::String::format("%s (%c)", pattern.c_str(), id);
 				else
@@ -618,7 +618,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 #ifdef USE_ENET
 	else if (gameid == "football" || gameid == "baseball2001" || gameid == "football2002" ||
 		gameid == "moonbase")
-		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, gameid);
+		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, Common::move(gameid));
 #endif
 
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);

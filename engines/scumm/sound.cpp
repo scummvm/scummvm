@@ -2105,6 +2105,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, Re
 		int  current_note[3];
 		int track_time[3];
 		byte *track_data[3];
+		memset(current_instr, 0, sizeof(current_instr));
 
 		int track_ctr = 0;
 		byte chunk_type = 0;
