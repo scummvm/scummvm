@@ -1209,6 +1209,80 @@ VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
 #endif
 }
 
+void CBofWindow::handleEvent(const Common::Event &event) {
+	Assert(IsValidObject(this));
+	CPoint mousePos(event.mouse.x, event.mouse.y);
+
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		OnMouseMove(0, &mousePos);
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+		OnLButtonDown(1, &mousePos);
+		break;
+
+	case Common::EVENT_LBUTTONUP:
+		OnLButtonUp(0, &mousePos);
+		break;
+
+	case Common::EVENT_RBUTTONDOWN:
+		OnRButtonDown(2, &mousePos);
+		break;
+
+	case Common::EVENT_RBUTTONUP:
+		OnRButtonUp(0, &mousePos);
+		break;
+
+	/*
+	case WM_LBUTTONDBLCLK:
+		OnLButtonDblClk(0, &mousePos);
+		break;
+
+	case WM_RBUTTONDBLCLK:
+		OnRButtonDblClk(wParam, &mousePos);
+		break;
+	*/
+
+	case Common::EVENT_KEYDOWN:
+		ULONG lNewKey;
+
+		if ((lNewKey = TranslateKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags)) != BKEY_UNKNOWN) {
+			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
+		}
+		break;
+
+	/*
+	case WM_TIMER:
+		BOFCALLBACK pCallBack;
+
+		if ((pCallBack = (BOFCALLBACK)lParam) != nullptr) {
+			(*pCallBack)(wParam, this);
+
+		} else {
+			OnTimer(wParam);
+		}
+		break;
+
+	case WM_COMMAND:
+		OnCommand(wParam, lParam);
+		break;
+
+	case WM_USER:
+		OnUserMessage(wParam, lParam);
+		break;
+	*/
+
+	case Common::EVENT_QUIT:
+		OnClose();
+		break;
+
+	default:
+		break;
+	}
+}
+
+
 #if BOF_WINDOWS
 
 CBofWindow *CBofWindow::FromHandle(HWND hWnd) {
@@ -1279,232 +1353,6 @@ BOOL CBofWindow ::IsParentOf(CBofWindow *pWin) {
 		bIsParent = pWin->IsChildOf(this);
 	}
 	return bIsParent;
-}
-
-LONG CBofWindow::WindowProcedure(UINT nMessage, WPARAM wParam, LPARAM lParam) {
-	Assert(IsValidObject(this));
-
-	switch (nMessage) {
-
-	case WM_ACTIVATE: {
-		USHORT nFlags;
-
-		nFlags = LOWORD(wParam);
-
-		if (nFlags == WA_ACTIVE || nFlags == WA_CLICKACTIVE) {
-			OnActivate();
-		} else {
-			OnDeActivate();
-		}
-		break;
-	}
-
-	case MM_MCINOTIFY:
-		OnMCINotify(wParam, lParam);
-		break;
-
-#if BOF_WINNT
-
-	case WM_CTLCOLOREDIT: {
-		CBofWindow *pWnd;
-		LOGBRUSH stBrush;
-
-		if ((pWnd = FromHandle((HWND)lParam)) != nullptr) {
-
-			stBrush.lbStyle = BS_SOLID;
-			stBrush.lbColor = pWnd->GetBkColor();
-			stBrush.lbHatch = 0; // This member will be ignored
-
-			if (m_hBrush != nullptr) {
-				if (::DeleteObject(m_hBrush) == FALSE) {
-					LogError("DeleteObject() failed");
-				}
-			}
-			m_hBrush = ::CreateBrushIndirect(&stBrush);
-
-			::SetTextColor((HDC)wParam, pWnd->GetFgColor());
-			::SetBkColor((HDC)wParam, pWnd->GetBkColor());
-		}
-
-		return (LONG)m_hBrush;
-	}
-
-#elif BOF_WIN16
-
-	case WM_CTLCOLOR: {
-
-		if (HIWORD(lParam) == CTLCOLOR_EDIT) {
-			CBofWindow *pWnd;
-			LOGBRUSH stBrush;
-
-			if ((pWnd = FromHandle((HWND)LOWORD(lParam))) != nullptr) {
-
-				stBrush.lbStyle = BS_SOLID;
-				stBrush.lbColor = pWnd->GetBkColor();
-				stBrush.lbHatch = 0; // This member will be ignored
-
-				if (m_hBrush != nullptr) {
-					if (::DeleteObject(m_hBrush) == FALSE) {
-						LogError("DeleteObject() failed");
-					}
-				}
-				m_hBrush = ::CreateBrushIndirect(&stBrush);
-
-				::SetTextColor((HDC)wParam, pWnd->GetFgColor());
-				::SetBkColor((HDC)wParam, pWnd->GetBkColor());
-			}
-
-			return (LONG)m_hBrush;
-
-		} else {
-			return nullptr;
-		}
-	}
-
-#endif
-
-	case WM_ERASEBKGND: {
-		// just return non-zero to pretend that we erased the background
-		return 1;
-	}
-
-	case WM_MOUSEMOVE: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-		::SetCursor(CBofCursor::GetCurrent());
-
-		OnMouseMove(wParam, &cPoint);
-		break;
-	}
-	case WM_LBUTTONDOWN: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnLButtonDown(wParam, &cPoint);
-		break;
-	}
-
-	case WM_LBUTTONUP: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnLButtonUp(wParam, &cPoint);
-		break;
-	}
-
-	case WM_LBUTTONDBLCLK: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnLButtonDblClk(wParam, &cPoint);
-		break;
-	}
-
-	case WM_RBUTTONDOWN: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnRButtonDown(wParam, &cPoint);
-		break;
-	}
-
-	case WM_RBUTTONUP: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnRButtonUp(wParam, &cPoint);
-		break;
-	}
-
-	case WM_RBUTTONDBLCLK: {
-		CBofPoint cPoint((SHORT)LOWORD(lParam), (SHORT)HIWORD(lParam));
-
-		OnRButtonDblClk(wParam, &cPoint);
-		break;
-	}
-
-	case WM_SYSCHAR:
-	case WM_CHAR: {
-		ULONG lNewKey;
-
-		if ((lNewKey = TranslateChar(wParam, lParam & 0x0000FFFF, lParam >> 16)) != BKEY_UNKNOWN) {
-			OnKeyHit(lNewKey, lParam & 0x0000FFFF);
-		}
-		break;
-	}
-
-	case WM_SYSKEYDOWN:
-	case WM_KEYDOWN: {
-		ULONG lNewKey;
-
-		if ((lNewKey = TranslateKey(wParam, lParam & 0x0000FFFF, lParam >> 16)) != BKEY_UNKNOWN) {
-			OnKeyHit(lNewKey, lParam & 0x0000FFFF);
-		}
-		break;
-	}
-
-	case WM_SYSKEYUP:
-	case WM_KEYUP:
-		break;
-
-	case WM_SETCURSOR:
-		return TRUE;
-		break;
-
-	case WM_SIZE: {
-		CBofSize cSize(LOWORD(lParam), HIWORD(lParam));
-
-		OnReSize(&cSize);
-		break;
-	}
-
-	case WM_PAINT: {
-		PAINTSTRUCT ps;
-
-		Assert(m_hWnd != nullptr);
-
-		BeginPaint(m_hWnd, &ps);
-
-		// Hack to work around incompatibility with Microsoft RECT
-		//
-		CBofRect cRect(&ps.rcPaint);
-
-		if ((cRect.Width() != 0) && (cRect.Height() != 0)) {
-			OnPaint(&cRect);
-		}
-
-		// Make sure the Window still exists
-		//
-		if (m_hWnd != nullptr) {
-			EndPaint(m_hWnd, &ps);
-		}
-		break;
-	}
-
-	case WM_TIMER: {
-		BOFCALLBACK pCallBack;
-
-		if ((pCallBack = (BOFCALLBACK)lParam) != nullptr) {
-			(*pCallBack)(wParam, this);
-
-		} else {
-			OnTimer(wParam);
-		}
-		break;
-	}
-
-	case WM_COMMAND: {
-		OnCommand(wParam, lParam);
-		break;
-	}
-
-	case WM_CLOSE: {
-		OnClose();
-		break;
-	}
-	case WM_USER: {
-		OnUserMessage(wParam, lParam);
-		break;
-	}
-
-	default:
-		return OnDefWinProc(nMessage, wParam, lParam);
-	}
-	return 0;
 }
 
 #elif BOF_MAC

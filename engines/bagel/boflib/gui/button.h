@@ -70,9 +70,9 @@ public:
 	}
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	VOID OnPaint(CBofRect *pRect) override;
+	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
 	RGBCOLOR m_cFaceColor;
 	RGBCOLOR m_cHighlightColor;

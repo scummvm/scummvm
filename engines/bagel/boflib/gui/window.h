@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_GUI_WINDOW_H
 #define BAGEL_BOFLIB_GUI_WINDOW_H
 
+#include "common/events.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/array.h"
 #include "bagel/boflib/stdinc.h"
@@ -363,12 +364,14 @@ public:
 	}
 
 	VOID SetFocus() {
-		warning("STUB: CBofWindow::UpdateWindow()");
+		warning("STUB: CBofWindow::SetFocus()");
 	}
 
 	VOID UpdateWindow();
 
 	void setParent(CBofWindow *parent);
+
+	void handleEvent(const Common::Event &event);
 
 #if BOF_WINDOWS
 
