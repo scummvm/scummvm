@@ -91,8 +91,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
-
+	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
 		UBYTE iHighlight, iShadow, iTemp;
@@ -226,12 +225,12 @@ ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
 	}
 
 	// I MUST have a valid parent
-	Assert(m_pParentWnd != nullptr);
+	Assert(_parent != nullptr);
 
 	// tell parent the new state of this button
 	//
-	if (m_pParentWnd != nullptr) {
-		m_pParentWnd->OnBofButton(this, m_nState);
+	if (_parent != nullptr) {
+		_parent->OnBofButton(this, m_nState);
 	}
 
 	return (m_errCode);
@@ -270,8 +269,8 @@ VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 
 		SetState(BUTTON_UP, TRUE);
 
-		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != nullptr)) {
-			m_pParentWnd->OnBofButton(this, BUTTON_CLICKED);
+		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
+			_parent->OnBofButton(this, BUTTON_CLICKED);
 		}
 	}
 }
@@ -303,7 +302,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -415,7 +414,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -543,7 +542,7 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 
 	// only continue if this button is visible
 	//
-	if (IsVisible() && (m_pParentWnd != nullptr) && m_pParentWnd->IsVisible()) {
+	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
 		CBofBitmap *pBitmap;
 		CBofPalette *pPalette;
@@ -666,12 +665,12 @@ ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
 	}
 
 	// I MUST have a valid parent
-	Assert(m_pParentWnd != nullptr);
+	Assert(_parent != nullptr);
 
 	// tell parent the new state of this button
 	//
-	if (m_pParentWnd != nullptr) {
-		m_pParentWnd->OnBofButton(this, m_nState);
+	if (_parent != nullptr) {
+		_parent->OnBofButton(this, m_nState);
 	}
 
 	return (m_errCode);
@@ -710,8 +709,8 @@ VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 
 		SetState(BUTTON_UP, TRUE);
 
-		if (m_cRect.PtInRect(*pPoint) && (m_pParentWnd != nullptr)) {
-			m_pParentWnd->OnBofButton(this, BUTTON_CLICKED);
+		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
+			_parent->OnBofButton(this, BUTTON_CLICKED);
 		}
 	}
 }

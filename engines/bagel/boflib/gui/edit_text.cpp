@@ -41,7 +41,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow
 	Assert(pszName != nullptr);
 
 	// remember who our parent is
-	m_pParentWnd = pParent;
+	_parent = pParent;
 
 	INT x, y, nWidth, nHeight;
 
@@ -63,7 +63,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 	Assert(pszName != nullptr);
 
 	// remember who our parent is
-	m_pParentWnd = pParent;
+	_parent = pParent;
 	m_nID = nControlID;
 
 	// remember the name of this window

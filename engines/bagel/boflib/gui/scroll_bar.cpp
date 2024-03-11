@@ -106,7 +106,7 @@ ERROR_CODE CBofScrollBar::SetText(const CHAR *pszText, INT nJustify) {
 
 	m_szScrollText[0] = '\0';
 
-	if ((pszText != nullptr) && (m_pParentWnd != nullptr)) {
+	if ((pszText != nullptr) && (_parent != nullptr)) {
 
 		Common::strlcpy(m_szScrollText, pszText, MAX_TEXT);
 
@@ -115,7 +115,7 @@ ERROR_CODE CBofScrollBar::SetText(const CHAR *pszText, INT nJustify) {
 			CBofRect cTempRect;
 			CBofPoint cPoint;
 
-			cPoint = m_pParentWnd->GetWindowRect().TopLeft();
+			cPoint = _parent->GetWindowRect().TopLeft();
 
 			cTempRect = m_cWindowRect - cPoint;
 
@@ -130,7 +130,7 @@ ERROR_CODE CBofScrollBar::SetText(const CHAR *pszText, INT nJustify) {
 			}
 		}
 		if (m_pScrollText != nullptr) {
-			m_pScrollText->Display(m_pParentWnd, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
+			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
 		}
 	}
 
@@ -182,7 +182,7 @@ ERROR_CODE CBofScrollBar::SetPos(const INT nPos, BOOL bRepaint) {
 	// if the thumb actually moved, then tell our parent about it
 	//
 	if (m_nPos != nOriginalPos) {
-		m_pParentWnd->OnBofScrollBar(this, m_nPos);
+		_parent->OnBofScrollBar(this, m_nPos);
 	}
 
 	return (m_errCode);
@@ -388,9 +388,9 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 			}
 		}
 
-		if ((m_pScrollText != nullptr) && (m_pParentWnd != nullptr)) {
+		if ((m_pScrollText != nullptr) && (_parent != nullptr)) {
 
-			m_pScrollText->Display(m_pParentWnd, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
+			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
 		}
 	}
 

@@ -96,20 +96,6 @@ void CBofWindow::initStatics() {
 
 
 CBofWindow::CBofWindow() {
-#if BOF_WINDOWS
-	m_hWnd = nullptr;
-	m_hLastCapture = nullptr;
-
-#elif BOF_MAC
-	m_pWindow = nullptr;
-	m_bEnabled = FALSE;
-	m_bVisible = FALSE;
-	m_pLastCapture = nullptr;
-	m_bCustomMacWindow = FALSE;
-	m_pPrevActiveWindow = nullptr;
-	InstallPalettePatch();
-#endif
-
 	if (m_pActiveWindow == nullptr)
 		m_pActiveWindow = this;
 
@@ -121,29 +107,6 @@ CBofWindow::CBofWindow() {
 }
 
 CBofWindow::CBofWindow(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent) {
-	m_pBackdrop = nullptr;
-	m_pParentWnd = nullptr;
-	m_bCaptured = FALSE;
-	m_nID = 0;
-	// jwl 07.16.96 don't initialize a static in a constructor
-	// m_pTimerList = nullptr;
-	m_cBkColor = RGB(255, 255, 255);
-	m_cFgColor = RGB(0, 0, 0);
-
-#if BOF_WINDOWS
-	m_hWnd = nullptr;
-	m_hLastCapture = nullptr;
-
-#elif BOF_MAC
-	m_pWindow = nullptr;
-	m_bEnabled = FALSE;
-	m_bVisible = FALSE;
-	m_pLastCapture = nullptr;
-	m_bCustomMacWindow = FALSE;
-	m_pPrevActiveWindow = nullptr;
-	InstallPalettePatch();
-#endif
-
 	if (m_pWindowList == nullptr) {
 		m_pWindowList = this;
 	} else {
@@ -159,13 +122,11 @@ CBofWindow::~CBofWindow() {
 	delete _surface;
 	_surface = nullptr;
 
-#if BOF_MAC
-	if (IsInActiveList()) {
-		RemoveFromActiveList();
-	}
-#endif
-
 	KillMyTimers();
+
+	// Remove it from any parent
+	if (_parent != nullptr)
+		setParent(nullptr);
 
 	// Remove this window from the list
 	if (m_pWindowList == this) {
@@ -246,7 +207,7 @@ VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 
 	// Validate all anscestors
 	//
-	pParent = m_pParentWnd;
+	pParent = _parent;
 	while (pParent != nullptr) {
 #if BOF_MAC || BOF_WINMAC
 		//  jwl 07.02.96 On the mac, we have to make sure that
@@ -270,7 +231,8 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	Assert(pParent != this);
 
 	// remember who our parent is
-	m_pParentWnd = pParent;
+	if (pParent != nullptr)
+		setParent(pParent);
 
 	m_nID = nControlID;
 
@@ -416,6 +378,23 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	return m_errCode;
 }
 
+VOID CBofWindow::UpdateWindow() {
+	OnPaint(&m_cRect);
+
+	for (uint i = 0; i < _children.size(); ++i)
+		_children[i]->UpdateWindow();
+}
+
+void CBofWindow::setParent(CBofWindow *parent) {
+	if (_parent != nullptr)
+		_parent->_children.remove(this);
+
+	_parent = parent;
+	if (parent)
+		parent->_children.push_back(this);
+}
+
+
 ERROR_CODE CBofWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
@@ -489,7 +468,7 @@ VOID CBofWindow::Center() {
 	CBofWindow *pParent;
 	INT x, y;
 
-	if ((pParent = m_pParentWnd) != nullptr) {
+	if ((pParent = _parent) != nullptr) {
 		CBofRect cWindowRect;
 
 		cWindowRect = pParent->GetWindowRect();
@@ -565,7 +544,6 @@ VOID CBofWindow::Show() {
 		Assert(IsCreated());
 
 		if (IsCreated()) {
-			// ScummVM redraw window
 			InvalidateRect(&m_cRect);
 
 #if BOF_MAC || BOF_WINMAC
@@ -890,12 +868,12 @@ CBofWindow *CBofWindow::GetAnscestor() {
 	CBofWindow *pCurWnd, *pLastWnd;
 
 	pLastWnd = this;
-	pCurWnd = m_pParentWnd;
+	pCurWnd = _parent;
 
 	while (pCurWnd != nullptr) {
 		pLastWnd = pCurWnd;
 
-		pCurWnd = pCurWnd->m_pParentWnd;
+		pCurWnd = pCurWnd->_parent;
 	}
 
 	return pLastWnd;
@@ -976,7 +954,6 @@ VOID CBofWindow::ValidateRect(CBofRect *pRect) {
 }
 
 VOID CBofWindow::InvalidateRect(CBofRect *pRect) {
-	OnPaint(pRect);
 }
 
 ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {
