@@ -219,6 +219,19 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::Path &name) const {
 	return node;
 }
 
+int UltimaDataArchiveProxy::listMatchingMembers(Common::ArchiveMemberList &list,
+		const Common::Path &pattern, bool matchPathComponents) const {
+	// Let FSDirectory adjust the filenames for us by using its prefix feature.
+	// Note: dir is intentionally constructed again on each call to prevent stale entries due to caching:
+	// Since this proxy class is intended for use during development, picking up modifications while the
+	// game is running might be useful.
+	const int maxDepth = 255; // chosen arbitrarily
+	Common::FSDirectory dir(_publicFolder, _folder, maxDepth, false, false, true);
+	if (matchPathComponents && pattern == "*")
+		return dir.listMembers(list);
+	else
+		return dir.listMatchingMembers(list, pattern, matchPathComponents);
+}
 #endif
 
 } // End of namespace Shared
