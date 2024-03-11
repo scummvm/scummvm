@@ -56,7 +56,7 @@ public:
 		return _member->getDisplayName();
 	}
 	
-	Common::String getFileName() const override { return getFileName(); }
+	Common::String getFileName() const override { return _member->getFileName(); }
 	Common::String getName() const override { return getPathInArchive().toString('/'); }
 };
 
