@@ -132,23 +132,24 @@ bool UltimaDataArchive::hasFile(const Common::Path &path) const {
 }
 
 int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
-	Common::Path patt(pattern);
-	if (patt.isRelativeTo(_publicFolder))
-		patt = innerToPublic(patt);
-
-	// Get any matching files
 	Common::ArchiveMemberList innerList;
-	int result = _zip->listMatchingMembers(innerList, patt);
+	int numMatches = 0;
+	// Test whether we can skip filtering.
+	bool matchAll = matchPathComponents && pattern == "*";
 
-	// Modify the results to change the filename
-	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-			it != innerList.end(); ++it) {
+	// First, get all zip members relevant to the current game
+	_zip->listMatchingMembers(innerList, _innerfolder.appendComponent("*"), true);
+
+	// Modify the results to change the filename, then filter with pattern
+	for (const auto &innerMember : innerList) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);
+			new UltimaDataArchiveMember(innerMember, _innerfolder));
+		if (matchAll || member->getPathInArchive().toString().matchString(pattern.toString(), true, matchPathComponents ? nullptr : "/")) {
+			list.push_back(member);
+			++numMatches;
+		}
 	}
-
-	return result;
+	return numMatches;
 }
 
 int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
