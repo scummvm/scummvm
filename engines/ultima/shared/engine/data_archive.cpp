@@ -153,18 +153,7 @@ int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, cons
 }
 
 int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
-	Common::ArchiveMemberList innerList;
-	int result = _zip->listMembers(innerList);
-
-	// Modify the results to change the filename
-	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-		it != innerList.end(); ++it) {
-		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);
-	}
-
-	return result;
+	return listMatchingMembers(list, "*", true);
 }
 
 const Common::ArchiveMemberPtr UltimaDataArchive::getMember(const Common::Path &path) const {
