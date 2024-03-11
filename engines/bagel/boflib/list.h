@@ -66,7 +66,7 @@ private:
 		}
 
 		if (m_nNumItems != 0) {
-			m_pItemList = (uint32 *)BofAlloc(m_nNumItems * sizeof(uint32));
+			m_pItemList = (void **)BofAlloc(m_nNumItems * sizeof(void *));
 		}
 	}
 
@@ -98,7 +98,7 @@ private:
 				if (m_nItemsAllocated == 0)
 					m_nItemsAllocated = MIN_NODES;
 
-				m_pItemList = (void **)BofAlloc(m_nItemsAllocated * sizeof(uint32));
+				m_pItemList = (void **)BofAlloc(m_nItemsAllocated * sizeof(void *));
 			}
 		}
 
