@@ -58,6 +58,8 @@ public:
 	
 	Common::String getFileName() const override { return _member->getFileName(); }
 	Common::String getName() const override { return getPathInArchive().toString('/'); }
+
+	bool isDirectory() const override { return _member->isDirectory(); }
 };
 
 /*-------------------------------------------------------------------*/
