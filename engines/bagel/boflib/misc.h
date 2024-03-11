@@ -115,18 +115,6 @@ extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 #define BofReAlloc(p, n) BofMemReAlloc((p), (n), __FILE__, __LINE__)
 #define BofFree(p) BofMemFree((p), __FILE__, __LINE__)
 
-#if BOF_DEBUG
-extern VOID BofMemDefrag();
-extern VOID MarkMemBlocks();
-extern VOID VerifyMemoryBlocks();
-extern VOID VerifyAllBlocksDeleted();
-extern VOID VerifyPointer(UBYTE *pPtr);
-extern BOOL IsValidPointer(UBYTE *pPtr);
-#if BOF_MEMTEST
-extern VOID BofMemTest();
-#endif
-#endif
-
 #define BofMemSet memset
 #define BofMemCopy memcpy
 #define BofMemMove memmove
