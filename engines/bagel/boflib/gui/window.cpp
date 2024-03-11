@@ -1212,6 +1212,28 @@ VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
 void CBofWindow::handleEvent(const Common::Event &event) {
 	Assert(IsValidObject(this));
 	CPoint mousePos(event.mouse.x, event.mouse.y);
+	CPoint winPos(event.mouse.x - m_cWindowRect.left,
+		event.mouse.y - m_cWindowRect.top);
+
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP: {
+		// Check if the mouse is within the area of a child control
+		for (uint i = 0; i < _children.size(); ++i) {
+			if (_children[i]->GetWindowRect().PtInRect(winPos)) {
+				_children[i]->handleEvent(event);
+				return;
+			}
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
