@@ -237,7 +237,6 @@ VOID CBagNextCDDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBofCursor::Hide();
-	CBofCursor::Hide();
 
 	// Destroy my buttons
 	if (m_pButton != nullptr) {

@@ -207,9 +207,9 @@ VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
 		m_nState = LISTBOX_SELECT;
 
-		if (m_pParentWnd != nullptr) {
-			m_pParentWnd->SetPrevMouseDown(*pPoint);
-			m_pParentWnd->OnBofListBox(this, nIndex);
+		if (_parent != nullptr) {
+			_parent->SetPrevMouseDown(*pPoint);
+			_parent->OnBofListBox(this, nIndex);
 		}
 	}
 
@@ -229,9 +229,9 @@ VOID CBofListBox::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
 		m_nState = LISTBOX_USENOW;
 
-		if (m_pParentWnd != nullptr) {
-			m_pParentWnd->SetPrevMouseDown(*pPoint);
-			m_pParentWnd->OnBofListBox(this, nIndex);
+		if (_parent != nullptr) {
+			_parent->SetPrevMouseDown(*pPoint);
+			_parent->OnBofListBox(this, nIndex);
 		}
 	}
 
@@ -362,12 +362,12 @@ ERROR_CODE CBofListBox::SaveBackground() {
 
 	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 
-		if ((m_pParentWnd != nullptr) && (m_pParentWnd->GetBackdrop() != nullptr)) {
+		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
 			CBofRect cDstRect, cRect;
 
 			cRect = m_pBackdrop->GetRect();
 
-			m_pParentWnd->GetBackdrop()->Paint(m_pBackdrop, &cRect, &m_cWindowRect);
+			_parent->GetBackdrop()->Paint(m_pBackdrop, &cRect, &m_cWindowRect);
 
 		} else {
 

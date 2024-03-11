@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_GUI_WINDOW_H
 
 #include "bagel/boflib/boffo.h"
+#include "bagel/boflib/array.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
@@ -181,8 +182,11 @@ public:
 	 */
 	BOOL IsParentOf(CBofWindow *pWin);
 
-	CBofWindow *GetParent() {
-		return m_pParentWnd;
+	/**
+	 * Returns the parent window element, if any
+	*/
+	CBofWindow *GetParent() const {
+		return _parent;
 	}
 	CBofWindow *GetAnscestor();
 
@@ -195,16 +199,10 @@ public:
 	static CBofWindow *GetActiveWindow() {
 		return m_pActiveWindow;
 	}
-#if BOF_MAC
-	// jwl 08.23.96 mac stuff is in cbofwin.cpp
-	BOOL IsInActiveList();
-	VOID SetActive();
-	VOID RemoveFromActiveList();
-#else
+
 	VOID SetActive() {
 		m_pActiveWindow = this;
 	}
-#endif
 
 	static void initStatics();
 	static CBofWindow *GetWindowList() {
@@ -367,9 +365,10 @@ public:
 	VOID SetFocus() {
 		warning("STUB: CBofWindow::UpdateWindow()");
 	}
-	VOID UpdateWindow() {
-		OnPaint(&m_cRect);
-	}
+
+	VOID UpdateWindow();
+
+	void setParent(CBofWindow *parent);
 
 #if BOF_WINDOWS
 
@@ -469,6 +468,9 @@ public:
 	VOID FillRect(CBofRect *pRect, UBYTE iColor);
 
 protected:
+	CBofWindow *_parent = nullptr;	// Pointer to parent window
+	Array<CBofWindow *> _children;	// Child element pointers
+
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -521,7 +523,6 @@ protected:
 	CBofRect m_cWindowRect;     // Screen based area of this window
 	CBofRect m_cRect;           // Window-based area of this window
 	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap
-	CBofWindow *m_pParentWnd = nullptr; // Pointer to parent window
 	UINT m_nID = 0;             // ID of this window
 
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);

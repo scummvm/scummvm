@@ -135,7 +135,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 	// Inits
 	//
-	m_pParentWnd = pParent;
+	_parent = pParent;
 	m_nID = nControlID;
 
 	// remember the name of this window
@@ -296,9 +296,9 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 VOID CBofDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	if (m_pParentWnd != nullptr) {
+	if (_parent != nullptr) {
 		CBofWindow *pParent;
-		pParent = m_pParentWnd; //->GetAnscestor();
+		pParent = _parent; //->GetAnscestor();
 		pParent->Enable();
 
 		// the parent window MUST now be enabled
@@ -317,8 +317,8 @@ VOID CBofDialog::OnClose() {
 		//
 	} else {
 
-		if (m_pParentWnd != nullptr) {
-			m_pParentWnd->InvalidateRect(nullptr);
+		if (_parent != nullptr) {
+			_parent->InvalidateRect(nullptr);
 		}
 	}
 
