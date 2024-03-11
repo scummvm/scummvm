@@ -1247,7 +1247,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		ULONG lNewKey;
 
-		if ((lNewKey = TranslateKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags)) != BKEY_UNKNOWN) {
+		if ((lNewKey = TranslateKey(event.kbd.ascii, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
@@ -1282,6 +1282,93 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	}
 }
 
+
+ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
+	ULONG nCode = nChar;
+
+	switch (nChar) {
+	case Common::KEYCODE_F1: nCode = BKEY_F1; break;
+	case Common::KEYCODE_F2: nCode = BKEY_F2; break;
+	case Common::KEYCODE_F3: nCode = BKEY_F3; break;
+	case Common::KEYCODE_F4: nCode = BKEY_F4; break;
+	case Common::KEYCODE_F5: nCode = BKEY_F5; break;
+	case Common::KEYCODE_F6: nCode = BKEY_F6; break;
+	case Common::KEYCODE_F7: nCode = BKEY_F7; break;
+	case Common::KEYCODE_F8: nCode = BKEY_F8; break;
+	case Common::KEYCODE_F9: nCode = BKEY_F9; break;
+	case Common::KEYCODE_F10: nCode = BKEY_F10; break;
+	case Common::KEYCODE_F11: nCode = BKEY_F11; break;
+	case Common::KEYCODE_F12: nCode = BKEY_F12; break;
+
+	case Common::KEYCODE_END: nCode = BKEY_END; break;
+	case Common::KEYCODE_HOME: nCode = BKEY_HOME; break;
+	case Common::KEYCODE_LEFT: nCode = BKEY_LEFT; break;
+	case Common::KEYCODE_RIGHT: nCode = BKEY_RIGHT; break;
+	case Common::KEYCODE_UP: nCode = BKEY_UP; break;
+	case Common::KEYCODE_DOWN: nCode = BKEY_DOWN; break;
+	case Common::KEYCODE_INSERT: nCode = BKEY_INS; break;
+	case Common::KEYCODE_DELETE: nCode = BKEY_DEL; break;
+	case Common::KEYCODE_SCROLLOCK: nCode = BKEY_SCRL_LOCK; break;
+	case Common::KEYCODE_PAGEUP: nCode = BKEY_PAGEUP; break;
+	case Common::KEYCODE_PAGEDOWN: nCode = BKEY_PAGEDOWN; break;
+
+	default:
+		// No translation for this key
+		nCode = BKEY_UNKNOWN;
+		break;
+	}
+
+	if (nCode != BKEY_UNKNOWN) {
+		if (nFlags & Common::KBD_ALT) {
+			nCode |= BKF_ALT;
+		}
+	}
+
+	switch (nCode) {
+	case Common::KEYCODE_HOME: nCode = BKEY_HOME; break;
+	case Common::KEYCODE_END: nCode = BKEY_END; break;
+	case Common::KEYCODE_ESCAPE: nCode = BKEY_ESC; break;
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		nCode = BKEY_ENTER;
+		break;
+	case Common::KEYCODE_DELETE: nCode = BKEY_DEL; break;
+	case Common::KEYCODE_BACKSPACE: nCode = BKEY_BACK; break;
+
+	// Ctrl-Z will give us pzzazzl vision.
+	case Common::KEYCODE_z:
+		if (nFlags & Common::KBD_CTRL)
+			return BKEY_SCRL_LOCK;
+		break;
+
+	case Common::KEYCODE_o:
+		if (nFlags & Common::KBD_CTRL)
+			return BKEY_F4;
+		break;
+
+	// Ctrl-S will save a game for us...
+	case Common::KEYCODE_s:
+		if (nFlags & Common::KBD_CTRL)
+			return BKEY_F2;
+		break;
+
+	// Ctrl-R will restore a game for us...
+	case Common::KEYCODE_r:
+		if (nFlags & Common::KBD_CTRL)
+			return BKEY_F3;
+		break;
+
+	// No translation for this key
+	default:
+		nCode = nChar;
+		break;
+	}
+
+	if (nFlags & Common::KBD_CTRL)
+		nCode |= BKF_CMD;
+
+	return nCode;
+}
 
 #if BOF_WINDOWS
 
@@ -1729,235 +1816,6 @@ ULONG TranslateChar(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
 #endif
 
 	// LogInfo(BuildString("TranslateChar(%04x, %d, %04x) = %d", nChar, nRepCount, nFlags, nCode));
-
-	return nCode;
-}
-
-ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
-	ULONG nCode = 0;
-
-#if BOF_WINDOWS
-
-	nCode = nChar;
-
-	switch (nChar) {
-
-	case VK_F1:
-		nCode = BKEY_F1;
-		break;
-
-	case VK_F2:
-		nCode = BKEY_F2;
-		break;
-
-	case VK_F3:
-		nCode = BKEY_F3;
-		break;
-
-	case VK_F4:
-		nCode = BKEY_F4;
-		break;
-
-	case VK_F5:
-		nCode = BKEY_F5;
-		break;
-
-	case VK_F6:
-		nCode = BKEY_F6;
-		break;
-
-	case VK_F7:
-		nCode = BKEY_F7;
-		break;
-
-	case VK_F8:
-		nCode = BKEY_F8;
-		break;
-
-	case VK_F9:
-		nCode = BKEY_F9;
-		break;
-
-	case VK_F10:
-		nCode = BKEY_F10;
-		break;
-
-	case VK_F11:
-		nCode = BKEY_F11;
-		break;
-
-	case VK_F12:
-		nCode = BKEY_F12;
-		break;
-
-	case VK_END:
-		nCode = BKEY_END;
-		break;
-
-	case VK_HOME:
-		nCode = BKEY_HOME;
-		break;
-
-	case VK_LEFT:
-		nCode = BKEY_LEFT;
-		break;
-
-	case VK_RIGHT:
-		nCode = BKEY_RIGHT;
-		break;
-
-	case VK_UP:
-		nCode = BKEY_UP;
-		break;
-
-	case VK_DOWN:
-		nCode = BKEY_DOWN;
-		break;
-
-	case VK_INSERT:
-		nCode = BKEY_INS;
-		break;
-
-	case VK_DELETE:
-		nCode = BKEY_DEL;
-		break;
-
-	case VK_SCROLL:
-		nCode = BKEY_SCRL_LOCK;
-		break;
-
-	case VK_PRIOR:
-		nCode = BKEY_PAGEUP;
-		break;
-
-	case VK_NEXT:
-		nCode = BKEY_PAGEDOWN;
-		break;
-
-	// no translation for this key
-	//
-	default:
-		nCode = BKEY_UNKNOWN;
-		break;
-	}
-
-	if (nCode != BKEY_UNKNOWN) {
-
-		if (nFlags & KF_ALTDOWN) {
-			nCode |= BKF_ALT;
-		}
-	}
-
-#elif BOF_MAC
-	// jwl 10.23.96 only want the bottom two nibbles
-	nCode = nChar & 0xff;
-	switch (nChar & charCodeMask) {
-
-	case 0x1C:
-		nCode = BKEY_LEFT;
-		break;
-
-	case 0x1D:
-		nCode = BKEY_RIGHT;
-		break;
-
-	case 0x1E:
-		nCode = BKEY_UP;
-		break;
-
-	case 0x1F:
-		nCode = BKEY_DOWN;
-		break;
-
-	case 0x0B:
-		nCode = BKEY_PAGEUP;
-		break;
-
-	case 0x0C:
-		nCode = BKEY_PAGEDOWN;
-		break;
-
-	case 0x01:
-		nCode = BKEY_HOME;
-		break;
-
-	case 0x04:
-		nCode = BKEY_END;
-		break;
-
-	case 0x1B:
-		nCode = BKEY_ESC;
-		break;
-
-	case 0x03:
-	case 0x0D:
-		nCode = BKEY_ENTER;
-		break;
-
-	case 0x7F:
-		nCode = BKEY_DEL;
-		break;
-
-	case 0x08:
-		nCode = BKEY_BACK;
-		break;
-
-	case 0x10:
-		nCode = BKEY_F1;
-		break;
-
-	// command z will give us pzzazzl vision.
-	case BKEY_z:
-	case BKEY_Z:
-		if (nFlags & cmdKey) {
-			nCode = BKEY_SCRL_LOCK;
-			return nCode;
-		}
-		break;
-
-	// command-s will save a game for us...
-	case BKEY_o:
-	case BKEY_O:
-		if (nFlags & cmdKey) {
-			nCode = BKEY_F4;
-			return nCode;
-		}
-		break;
-
-	// command-s will save a game for us...
-	case BKEY_s:
-	case BKEY_S:
-		if (nFlags & cmdKey) {
-			nCode = BKEY_F2;
-			return nCode;
-		}
-		break;
-
-	// command-r will restore a game for us...
-	case BKEY_r:
-	case BKEY_R:
-		if (nFlags & cmdKey) {
-			nCode = BKEY_F3;
-			return nCode;
-		}
-		break;
-
-	// no translation for this key
-	//
-	default:
-		nCode = nChar & charCodeMask;
-		break;
-	}
-
-	// Check for Command key down STDKEYS.H
-	//
-	if (nFlags & cmdKey) {
-		nCode |= BKF_CMD;
-	}
-
-#endif
-
-	// LogInfo(BuildString("TranslateKey(%04x, %d, %04x) = %08lx", nChar, nRepCount, nFlags, nCode));
 
 	return nCode;
 }
