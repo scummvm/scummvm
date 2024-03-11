@@ -200,6 +200,8 @@ void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int tit
 }
 
 void MacWindowBorder::setBorderType(int type) {
+	setOffsets(_window->_wm->getBorderOffsets(type));
+
 	_useInternalBorder = true;
 	_borderType = type;
 }
