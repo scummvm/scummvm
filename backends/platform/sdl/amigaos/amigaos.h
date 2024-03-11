@@ -27,7 +27,7 @@
 class OSystem_AmigaOS : public OSystem_SDL {
 public:
 	OSystem_AmigaOS() {}
-	virtual ~OSystem_AmigaOS() {}
+	virtual ~OSystem_AmigaOS();
 
 	bool hasFeature(Feature f) override;
 
