@@ -269,6 +269,8 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 	/** @overload */
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
+	// Overload to keep track of lines splitted into different lines
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, Common::Array<bool> &lineContinuation, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 
 	/**
 	 * Scales the single gylph at @p chr the given the @p scale and the pointer @p grayScaleMap to the grayscale array. It fills @p scaleSurface surface 
