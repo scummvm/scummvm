@@ -236,6 +236,10 @@ int UltimaDataArchiveProxy::listMatchingMembers(Common::ArchiveMemberList &list,
 	else
 		return dir.listMatchingMembers(list, pattern, matchPathComponents);
 }
+
+bool UltimaDataArchiveProxy::isPathDirectory(const Common::Path &path) const {
+	return getNode(path).isDirectory();
+}
 #endif
 
 } // End of namespace Shared
