@@ -11,6 +11,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz in Space Quest 1 Version 1.0X behoben.
    - Nachrichten-Boxen in Mixed-Up Mother Goose korrigiert.
    - Grafik-Darstellung in der Amiga-Version von Miged-Up Mother Goose korrigiert.
+   - Die Uhrzeit und die beiden höchsten Geschwindigkeitsstufen funktionieren nun auch in Gold Rush korrekt.
    - Fehler behoben, der dafür sorgt, dass die Atari ST-Version von Manhunter 1 nicht startet.
    - Fehler behoben, der dafür sorgt, dass die CoCo3-Version von Leisure Suit Larry 1 nicht startet.
    - Fehler behoben, der dafür sorgt, dass die CoCo3-Version einiger inoffizieller Ports nicht starten.
