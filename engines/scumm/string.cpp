@@ -748,7 +748,7 @@ void ScummEngine::wrapSegaCDText() {
 	if (!useStricterWrapping) {
 		if (predictionMaxWidth > predictionNextLeft)
 			predictionMaxWidth = predictionNextLeft;
-			predictionMaxWidth *= 2;
+		predictionMaxWidth *= 2;
 
 		byte predictionString[512];
 
