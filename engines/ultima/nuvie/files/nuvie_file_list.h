@@ -56,10 +56,9 @@ class NuvieFileList {
 protected:
 	Std::list<NuvieFileDesc> file_list;
 
-	Std::string search_prefix;
 	uint8 sort_mode;
 protected:
-	bool add_filename(const Common::FSNode &file);
+	bool add_filename(const Common::String &fileName);
 public:
 
 	NuvieFileList();
