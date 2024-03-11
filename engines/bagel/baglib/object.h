@@ -406,8 +406,8 @@ public:
 		return FALSE;
 	}
 
-	virtual void OnLButtonDown(UINT /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr) {}
-	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr); //{ } run menu if availible
+	virtual void OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
+	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
 	// virtual BOOL        OnLButtonDblClk(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return FALSE; }
 	virtual BOOL OnMouseMove(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; }
 	virtual BOOL OnMouseOver(UINT /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
