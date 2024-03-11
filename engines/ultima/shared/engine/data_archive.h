@@ -169,6 +169,8 @@ public:
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
 		const Common::Path &path) const override;
+
+	bool isPathDirectory(const Common::Path &path) const override;
 };
 
 #endif
