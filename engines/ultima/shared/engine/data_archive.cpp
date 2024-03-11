@@ -180,6 +180,9 @@ Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const C
 	return nullptr;
 }
 
+bool UltimaDataArchive::isPathDirectory(const Common::Path &path) const {
+	return _zip->isPathDirectory(innerToPublic(path));
+}
 /*-------------------------------------------------------------------*/
 
 #ifndef RELEASE_BUILD
