@@ -479,20 +479,33 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &patter
 	ensureCached();
 
 	int matches = 0;
-	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		if (it->_key.matchPattern(pattern)) {
-			list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
-			matches++;
-		}
-	}
-	if (_includeDirectories) {
-		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
-			if (it->_key.matchPattern(pattern)) {
+	const char pathSep = getPathSeparator();
+	const char pathSepStr[] = {pathSep, '\0'};
+	const char *wildCardExclusions = matchPathComponents ? nullptr : pathSepStr;
+	Common::String patternStr;
+	if (matchPathComponents)
+		patternStr = pattern.toString(pathSep);
+
+	auto addMatchingToList = [&](const NodeCache &nodeCache) {
+		for (NodeCache::const_iterator it = nodeCache.begin(); it != nodeCache.end(); ++it) {
+			bool isMatch;
+			if (matchPathComponents) {
+				Common::String keyStr = it->_key.toString(pathSep);
+				isMatch = keyStr.matchString(patternStr, true, wildCardExclusions);
+			} else
+				isMatch = it->_key.matchPattern(pattern);
+
+			if (isMatch) {
 				list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
-				matches++;
+				++matches;
 			}
 		}
-	}
+	};
+
+	addMatchingToList(_fileCache);
+
+	if (_includeDirectories)
+			addMatchingToList(_subDirCache);
 
 	return matches;
 }
