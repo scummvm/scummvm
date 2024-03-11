@@ -154,9 +154,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	int listMembers(Common::ArchiveMemberList &list) const override {
-		return 0;
-	}
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.

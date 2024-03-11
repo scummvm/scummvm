@@ -219,6 +219,10 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::Path &name) const {
 	return node;
 }
 
+int UltimaDataArchiveProxy::listMembers(Common::ArchiveMemberList &list) const {
+	return listMatchingMembers(list, "*", true);
+}
+
 int UltimaDataArchiveProxy::listMatchingMembers(Common::ArchiveMemberList &list,
 		const Common::Path &pattern, bool matchPathComponents) const {
 	// Let FSDirectory adjust the filenames for us by using its prefix feature.
