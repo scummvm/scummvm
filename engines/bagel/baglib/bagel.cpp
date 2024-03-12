@@ -303,11 +303,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 	return m_errCode;
 }
 
-#if BOF_MAC || BOF_WINMAC
-#define LOADINGBMP          "$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
-#else
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
-#endif
 
 ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 	Assert(IsValidObject(this));

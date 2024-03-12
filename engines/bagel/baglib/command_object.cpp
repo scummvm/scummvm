@@ -387,11 +387,7 @@ BOOL CBagCommandObject::RunObject() {
 				cBmp.Paint(pMainWin, 0, 0);
 				g_bAllowPaint = FALSE;
 
-#if BOF_WINDOWS
 				CBofString cString("$SBARDIR\\BAR\\EVGAMWIN.SMK");
-#else
-				CBofString cString("$SBARDIR:BAR:EVGAMWIN.SMK");
-#endif
 				MACROREPLACE(cString);
 
 				// Play the movie only if it exists

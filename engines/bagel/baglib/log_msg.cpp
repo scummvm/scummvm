@@ -36,11 +36,7 @@ CBagLog *CBagLog::m_bLastFloatPage;
 #define LOGBORDER (42)
 #define LOGZBORDER (84)
 
-#if BOF_MAC || BOF_WINMAC
-#define OVERRIDESMK             "$SBARDIR:BAR:LOG:OVERRIDE.SMK"
-#else
 #define OVERRIDESMK             "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
-#endif
 #define OVERRIDEMOVIE           "OVERRIDE_MOVIE"
 
 CBagLog::CBagLog() : CBagStorageDevBmp() {

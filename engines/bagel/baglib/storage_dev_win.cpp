@@ -1304,11 +1304,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 
 	// Set a default help file for when there is not one specified
 	//
-#if BOF_MAC
-	m_sHelpFileName = "$SBARDIR:GENERAL:RULES:DEFAULT.TXT";
-#else
 	m_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-#endif
 	MACROREPLACE(m_sHelpFileName);
 
 	m_xSDevType = SDEV_WND;
@@ -1994,11 +1990,7 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 
 	// Set a default help file for when there is not one specified
 	//
-#if BOF_MAC
-	m_sHelpFileName = "$SBARDIR:GENERAL:RULES:DEFAULT.TXT";
-#else
 	m_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-#endif
 	MACROREPLACE(m_sHelpFileName);
 }
 

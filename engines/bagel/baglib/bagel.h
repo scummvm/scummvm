@@ -46,11 +46,7 @@ namespace Bagel {
 
 #define MAX_APPNAME 128
 
-#if BOF_MAC || BOF_WINMAC
-#define PATH_DELIMETER ":"
-#else
 #define PATH_DELIMETER "\\"
-#endif
 
 #define DISK_1 1
 #define DISK_2 2
@@ -69,11 +65,7 @@ namespace Bagel {
 #define CURRSDEV_TOKEN "$CURRENT_SDEV"
 #define PREVSDEV_TOKEN "$PREVIOUS_SDEV"
 
-#if BOF_MAC || BOF_WINMAC
-#define HOMEDIR_DFLT ""
-#else
 #define HOMEDIR_DFLT "."
-#endif
 
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1

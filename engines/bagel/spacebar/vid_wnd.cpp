@@ -34,11 +34,7 @@ namespace SpaceBar {
 #define START_TIME1 174000
 #define END_TIME1   225000
 
-#if BOF_MAC || BOF_WINMAC
-#define CLOSEUPVIDEODIR     "$SBARDIR:BAR:CLOSEUP:BRCC2:"
-#else
 #define CLOSEUPVIDEODIR     "$SBARDIR\\BAR\\CLOSEUP\\BRCC2\\"
-#endif
 
 #define NUM_FRAME_TYPES 11
 

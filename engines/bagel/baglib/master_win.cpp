@@ -49,15 +49,9 @@ namespace Bagel {
 
 #define BAGAPPCPPFIEL
 
-#if BOF_MAC || BOF_WINMAC
-#define STARTWORLD "$SBARDIR:WLD:BAR.WLD"
-#define GLOBALWORLD "$SBARDIR:WLD:GLOBAL.WLD"
-#define LOADINGBMP "$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
-#else
 #define STARTWORLD "$SBARDIR\\WLD\\BAR.WLD"
 #define GLOBALWORLD "$SBARDIR\\WLD\\GLOBAL.WLD"
 #define LOADINGBMP "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
-#endif
 
 #define USER_OPTIONS "UserOptions"
 #if BOF_MAC || BOF_WINMAC
@@ -133,21 +127,13 @@ CBagMasterWin::CBagMasterWin() {
 #endif
 
 	// Assume default system sceen
-#if BOF_MAC || BOF_WINMAC
-	m_cSysScreen = "$SBARDIR:GENERAL:SYSTEM:GAMBHALL.BMP";
-#else
 	m_cSysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
-#endif
 	MACROREPLACE(m_cSysScreen);
 
 	// Load wait sound for when user hits the spacebar
 	//
 
-#if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
-	CBofString cString("$SBARDIR\\GENERAL\\WAIT.SND");
-#else
 	CBofString cString("$SBARDIR\\GENERAL\\WAIT.WAV");
-#endif
 	MACROREPLACE(cString);
 
 	m_pWaitSound = new CBofSound(this, cString, SOUND_MIX);
@@ -461,11 +447,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 	szLocalBuff[0] = '\0';
 
-#if BOF_MAC
-	Common::strcpy_s(szLocalBuff, "$SBARDIR:GENERAL:SYSTEM:LEGAL.BMP");
-#else
 	Common::strcpy_s(szLocalBuff, "$SBARDIR\\GENERAL\\SYSTEM\\LEGAL.BMP");
-#endif
 	CBofString sWldFileName(szLocalBuff, 256);
 
 	static BOOL bPainted = FALSE;
@@ -1128,14 +1110,6 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 				fpInput.EatWhite();
 
 				GetAlphaNumFromStream(fpInput, m_cCDChangeAudio);
-
-				// scg 01.07.97 added !PLAYWAVONMAC conditional
-
-#if BOF_MAC && !PLAYWAVONMAC
-				m_cCDChangeAudio.ReplaceStr(".WAV", ".SND");
-				m_cCDChangeAudio.ReplaceStr(".wav", ".snd");
-#endif
-
 				MACROREPLACE(m_cCDChangeAudio);
 
 				LogInfo(BuildString("DISKAUDIO = %s", m_cCDChangeAudio.GetBuffer()));

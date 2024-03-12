@@ -40,11 +40,7 @@ INT CBagMenu::m_nDefaultDelay;
 BOOL g_bPauseTimer = FALSE;
 extern BOOL g_bAAOk;
 
-#if BOF_MAC || BOF_WINMAC
-#define EXAMINEBMP          "$SBARDIR:GENERAL:MENUS:EXAMINE.BMP"
-#else
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
-#endif
 
 void CBagMenuDlg::initStatics() {
 	m_pSelectedObject = nullptr;

@@ -28,32 +28,6 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
-#define kGSM1SraMaleStr     "GSM1.SND"
-#define kGSM1SraFemStr      "GSF1.SND"
-#define kGSM2SraMaleStr     "GSM2.SND"
-#define kGSM2SraFemStr      "GSF2.SND"
-#define kGSM3SraMaleStr     "GSM3.SND"
-#define kGSM3SraFemStr      "GSF3.SND"
-#define kGSM4SraMaleStr     "GSM4.SND"
-#define kGSM4SraFemStr      "GSF4.SND"
-#define kGSM5SraMaleStr     "GSM5.SND"
-#define kGSM5SraFemStr      "GSF5.SND"
-#define kGSM6SraMaleStr     "GSM6.SND"
-#define kGSM6SraFemStr      "GSF6.SND"
-#define kGSM7SraMaleStr     "GSM7.SND"
-#define kGSM7SraFemStr      "GSF7.SND"
-#define kGSM8SraMaleStr     "GSM8.SND"
-#define kGSM8SraFemStr      "GSF8.SND"
-#define kGSM9SraMaleStr     "GSM9.SND"
-#define kGSM9SraFemStr      "GSF9.SND"
-#define kGSM10SraMaleStr    "GSM10.SND"
-#define kGSM10SraFemStr     "GSF10.SND"
-#define kGSM11SraMaleStr    "GSM11.SND"
-#define kGSM11SraFemStr     "GSF11.SND"
-#define kGSM12SraMaleStr    "GSM12.SND"
-#define kGSM12SraFemStr     "GSF12.SND"
-#else
 #define kGSM1SraMaleStr     "GSM1.WAV"
 #define kGSM1SraFemStr      "GSF1.WAV"
 #define kGSM2SraMaleStr     "GSM2.WAV"
@@ -78,7 +52,6 @@ namespace SpaceBar {
 #define kGSM11SraFemStr     "GSF11.WAV"
 #define kGSM12SraMaleStr    "GSM12.WAV"
 #define kGSM12SraFemStr     "GSF12.WAV"
-#endif
 
 // Not voice recorded yet
 #define kGSM13SraMaleStr    "GSM13.TXT"

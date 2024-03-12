@@ -28,28 +28,12 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#if BOF_MAC || BOF_WINMAC
-#define DRINKFILE       "$SBARDIR:BAR:CLOSEUP:BDCA:DRINKS.TXT"
-#define INGRDFILE       "$SBARDIR:BAR:CLOSEUP:BDCA:ING.TXT"
-#define BDCADIR         "$SBARDIR:BAR:CLOSEUP:BDCA:"
-// scg 01.07.97
-#if !PLAYWAVONMAC
-#define ORDERAUDIO      "BDNDPSC1.SND"
-#define REFUSEAUDIO     "BDTOORC1.SND"
-#define ONAUDIO         "ON.SND"
-#else
-#define ORDERAUDIO      "BDNDPSC1.WAV"
-#define REFUSEAUDIO     "BDTOORC1.WAV"
-#define ONAUDIO         "ON.WAV"
-#endif
-#else
 #define DRINKFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\DRINKS.TXT"
 #define INGRDFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\ING.TXT"
 #define BDCADIR         "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\"
 #define ORDERAUDIO      "BDNDPSC1.WAV"
 #define REFUSEAUDIO     "BDTOORC1.WAV"
 #define ONAUDIO         "ON.WAV"
-#endif
 
 #define szBroke "You have insufficient funds for that purchase."
 #define szRefuse "The computer politely informs you that the House has a policy against two-fisted drinking."

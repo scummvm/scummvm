@@ -42,21 +42,9 @@ CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 // Added for casino background sounds BFW 12/24/96
 #define CASINO_AUDIO            "CASINO.WAV"
 
-#if BOF_MAC || BOF_WINMAC
-#define BGCBDIR         "$SBARDIR:BAR:CLOSEUP:BGCB:"
-// scg 01.07.97 added PLAYWAVONMAC conditional
-#if !PLAYWAVONMAC
-#define WINAUDIO        "BGNWIN.SND"
-#define SLOTAUDIO       "BGNSLOT.SND"
-#else
-#define WINAUDIO        "BGNWIN.WAV"
-#define SLOTAUDIO       "BGNSLOT.WAV"
-#endif
-#else
 #define BGCBDIR         "$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
 #define WINAUDIO        "BGNWIN.WAV"
 #define SLOTAUDIO       "BGNSLOT.WAV"
-#endif
 
 typedef struct {
 	const CHAR *m_pszName;

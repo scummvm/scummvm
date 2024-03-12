@@ -28,11 +28,7 @@
 
 namespace Bagel {
 
-#if BOF_MAC || BOF_WINMAC
-#define LOADINGBMP          "$SBARDIR:GENERAL:SYSTEM:LOADING.BMP"
-#else
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
-#endif
 
 struct ST_BUTTONS {
 	const CHAR *m_pszName;
