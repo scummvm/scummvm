@@ -35,14 +35,31 @@ private:
 	CBofSize m_xSize;
 
 public:
-	CBagAreaObject();
-	virtual ~CBagAreaObject();
+	CBagAreaObject() {
+		m_xObjType = AREAOBJ;
+		SetVisible(FALSE);
+		SetOverCursor(4);
+	}
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	~CBagAreaObject() {
+		Detach();
+	}
 
-	CBofRect GetRect();
+	ERROR_CODE Attach() {
+		return CBagObject::Attach();
+	}
+
+	ERROR_CODE Detach() {
+		return CBagObject::Detach();
+	}
+
+	CBofRect GetRect() {
+		CBofPoint p = GetPosition();
+		CBofSize s = GetSize();
+		CBofRect r = CBofRect(p, s);
+		return r;
+	}
+
 	CBofSize GetSize() const {
 		return m_xSize;
 	}
