@@ -162,6 +162,7 @@ _vpx=auto
 _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
+_sonivox=auto
 _opengl_mode=auto
 _opengl_game_classic=auto
 _opengl_game_shaders=auto
@@ -169,6 +170,7 @@ _tinygl=yes
 _readline=auto
 _freetype2=auto
 _libmikmod=auto
+_libopenmpt=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
@@ -196,6 +198,8 @@ _enable_tsan=no
 _enable_ubsan=no
 _bink=yes
 _cloud=auto
+_dlc=no
+_scummvmdlc=no
 _pandoc=no
 _curl=yes
 _lld=no
@@ -224,6 +228,9 @@ _builtin_resources=yes
 _windows_console=yes
 _windows_unicode=yes
 _cygwin_build=no
+_ext_sse2=auto
+_ext_avx2=auto
+_ext_neon=auto
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -248,6 +255,7 @@ _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
 _libmikmodpath="$PATH"
+_libopenmptpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -264,6 +272,7 @@ _posix=no
 _has_posix_spawn=no
 _has_fseeko_offt_64=no
 _has_fseeko64=no
+_has_fopen64=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
@@ -844,8 +853,8 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, atari, android, dc, dingux, ds, gcw0,
-                          gph, iphone, ios7, ios7-arm64, maemo, n64, null, opendingux,
-                          openpandora, psp, psp2, samsungtv, sdl, switch, wii) [sdl]
+                          gph, ios7, maemo, n64, null, opendingux, openpandora,
+                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -885,7 +894,6 @@ Special configuration feature:
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
-                                           iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            kos32 for Kolibri OS
@@ -955,6 +963,8 @@ Optional Features:
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
+  --enable-dlc             build scummvm dlc downloading support
+  --enable-scummvmdlc      build scummvm dlc downloading support using ScummVM Cloud
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
@@ -979,6 +989,9 @@ Optional Features:
   --disable-windows-console do not show console output on Windows
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
+  --enable-ext-sse2         allow code to use sse2 extensions on x86/amd64
+  --enable-ext-avx2         allow code to use avx2 extensions on x86/amd64
+  --enable-ext-neon         allow code to use neon extensions on ARM
 
 Optional Documentation Options:
   --with-manual-version=VERSION version to use when generating the manual (optional)
@@ -1015,6 +1028,9 @@ Optional Libraries:
   --with-mikmod-prefix=DIR    Prefix where libmikmod is installed (optional)
   --enable-mikmod             enable mikmod module for playing various sound formats like impulsetracker [autodetect]
 
+  --with-openmpt-prefix=DIR    Prefix where libopenmpt is installed (optional)
+  --enable-openmpt             enable openmpt module for playing various sound formats like impulsetracker [autodetect]
+
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
@@ -1048,6 +1064,10 @@ Optional Libraries:
   --with-fluidlite-prefix=DIR prefix where libfluidlite is
                            installed (optional)
   --disable-fluidlite      disable fluidlite MIDI driver [autodetect]
+
+  --with-sonivox-prefix=DIR prefix where libsonivox is
+                           installed (optional)
+  --disable-sonivox        disable EAS MIDI driver [autodetect]
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
@@ -1149,6 +1169,7 @@ for ac_option in $@; do
 	--includedir=*)                                      ;;
 	--libexecdir=*)                                      ;;
 	--localstatedir=*)                                   ;;
+	--runstatedir=*)                                     ;;
 	--sharedstatedir=*)                                  ;;
 	--infodir=*)                                         ;;
 	--disable-dependency-tracking)                       ;;
@@ -1205,6 +1226,8 @@ for ac_option in $@; do
 	--disable-mpeg2)              _mpeg2=no              ;;
 	--enable-mikmod)              _libmikmod=yes         ;;
 	--disable-mikmod)             _libmikmod=no          ;;
+	--enable-openmpt)             _libopenmpt=yes        ;;
+	--disable-openmpt)            _libopenmpt=no         ;;
 	--enable-a52)                 _a52=yes               ;;
 	--disable-a52)                _a52=no                ;;
 	--disable-jpeg)               _jpeg=no               ;;
@@ -1223,6 +1246,8 @@ for ac_option in $@; do
 	--enable-fluidsynth)          _fluidsynth=yes        ;;
 	--disable-fluidlite)          _fluidlite=no          ;;
 	--enable-fluidlite)           _fluidlite=yes         ;;
+	--disable-sonivox)            _sonivox=no            ;;
+	--enable-sonivox)             _sonivox=yes           ;;
 	--enable-readline)            _readline=yes          ;;
 	--disable-readline)           _readline=no           ;;
 	--enable-freetype2)           _freetype2=yes         ;;
@@ -1239,6 +1264,10 @@ for ac_option in $@; do
 	--disable-enet)               _enet=no               ;;
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
+	--enable-dlc)                 _dlc=yes               ;;
+	--disable-dlc)                _dlc=no                ;;
+	--enable-scummvmdlc)          _scummvmdlc=yes        ;;
+	--disable-scummvmdlc)         _scummvmdlc=no         ;;
 	--enable-lld)                 _lld=yes               ;;
 	--disable-lld)                _lld=no                ;;
 	--enable-mold)                _mold=yes              ;;
@@ -1286,6 +1315,12 @@ for ac_option in $@; do
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
+	--enable-ext-sse2)           _ext_sse2=yes           ;;
+	--disable-ext-sse2)          _ext_sse2=no            ;;
+	--enable-ext-avx2)           _ext_avx2=yes           ;;
+	--disable-ext-avx2)          _ext_avx2=no            ;;
+	--enable-ext-neon)           _ext_neon=yes           ;;
+	--disable-ext-neon)          _ext_neon=no            ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1295,6 +1330,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDLITE_CFLAGS="-I$arg/include"
 		FLUIDLITE_LIBS="-L$arg/lib"
+		;;
+	--with-sonivox-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SONIVOX_CFLAGS="-I$arg/include"
+		SONIVOX_LIBS="-L$arg/lib"
 		;;
 	--with-mpeg2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1502,6 +1542,10 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_libmikmodpath="$arg:$arg/bin"
 		;;
+	--with-openmpt-prefix=*)
+		arg=`echo $ac_option | cur -d '=' -f 2`
+		_libopenmptpath="$arg:$arg/bin"
+		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
@@ -1690,18 +1734,13 @@ i586-mingw32msvc)
 	_host_os=mingw32msvc
 	_host_cpu=i586
 	;;
-iphone)
-	_host_os=iphone
-	_host_cpu=arm
-	_host_alias=arm-apple-darwin9
-	;;
 ios7)
-	_host_os=iphone
+	_host_os=iphoneos
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin11
 	;;
 ios7-arm64)
-	_host_os=iphone
+	_host_os=iphoneos
 	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
@@ -1711,10 +1750,10 @@ kos32)
 	_host_cpu=i686
 	_host_alias=kos32
 	;;
-m68k-atari-mint)
+m68k-atari-mint*)
 	_host_os=mint
 	_host_cpu=m68k
-	_host_alias=m68k-atari-mint
+	_host_alias=$_host
 	;;
 maemo)
 	_host_os=maemo
@@ -1818,7 +1857,7 @@ switch)
 	docdir='${prefix}/doc'
 	;;
 tvos)
-	_host_os=iphone
+	_host_os=iphoneos
 	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
@@ -2087,6 +2126,14 @@ if test "$_host_os" = android; then
 		append_var CXXFLAGS "-target ${_android_target}"
 		append_var LDFLAGS "-target ${_android_target}"
 	fi
+
+	case $_host_cpu in
+	aarch64)
+		;;
+	arm|i686|x86_64)
+		add_line_to_config_mk 'NEED_ANDROID_CPUFEATURES = 1'
+		;;
+	esac
 
 	# These values can get overriden below by environments variables
 	_ar="$_android_toolchain/bin/$_ar"
@@ -2385,6 +2432,25 @@ else
 	define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
 fi
 
+# Check if alignas and alignof are available
+echo_n "Checking if C++11 alignas and alignof keywords are available... "
+cat > $TMPC << EOF
+#include <stddef.h>
+struct test {
+	char c;
+	alignas(max_align_t) size_t _size;
+};
+static const size_t LENGTH = alignof(max_align_t);
+int main(int argc, char *argv[]) { return 0; }
+EOF
+cc_check
+if test "$TMPR" -eq 0; then
+	echo yes
+else
+	echo no
+	define_in_config_if_yes yes 'NO_CXX11_ALIGNAS'
+fi
+
 #
 # Determine extra build flags for debug and/or release builds
 #
@@ -2401,8 +2467,15 @@ if test "$_debug_build" != no; then
 	echo_n -- "$debug_mode"
 
 	echo "int main() { return 0; }" > $TMPC
-	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
-		append_var CXXFLAGS "-gsplit-dwarf"
+
+	# HACK: The default DWARF version "for most targets" is 5. However,
+	#       that version causes dwp to segfault. According to
+	#       https://sourceware.org/bugzilla/show_bug.cgi?id=26219 it just
+	#       isn't implemented, and there's no fix in sight. So we force
+	#       DWARF version 4 and hope that works for, well... "most targets".
+
+	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
 		if test "$_lld" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=lld -Wl,--gdb-index; then
@@ -2519,7 +2592,7 @@ elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; th
 	_endian=little
 fi
 echo $_endian;
-cc_check_clean tmp_endianness_check.cpp tmp_endianness_check.dwo
+cc_check_clean tmp_endianness_check.cpp $TMPO-tmp_endianness_check.dwo
 
 case $_endian in
 	big)
@@ -2764,14 +2837,9 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# Leave out resources by default to save binary size
-		_builtin_resources=no
 		# AmigaOS (PPC) target
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		add_line_to_config_mk 'AMIGAOS = 1'
-		append_var CXXFLAGS "-mlongcall"
-		# Dependencies might also be compiled with stack protection
-		append_var LDFLAGS "-fstack-protector"
 		# Enable full optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O3
@@ -2779,19 +2847,25 @@ case $_host_os in
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
 			append_var CXXFLAGS "-fno-strict-aliasing"
+			append_var CXXFLAGS "-fstack-protector"
+			# Dependencies might also be compiled with stack protection
+			append_var LDFLAGS "-fstack-protector"
 			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
 		fi
 		# When building dynamic, add everything possible as plugin
-		# except detection_features (see bug #13603)
+		# and leave out resources by default to save binary size
 		if test "$_dynamic_modules" = yes ; then
-			_detection_features_static=yes
+			_builtin_resources=no
+			_detection_features_static=no
 			_plugins_default=dynamic
+		else
+			_static_build=yes
 		fi
 		# Use 'long' for ScummVM's 4 byte typedef, because AmigaOS
 		# already typedefs (u)int32 as (unsigned) long and suppress
 		# those noisy format warnings caused by the 'long' 4 byte
-		type_4_byte='long'
 		append_var CXXFLAGS "-Wno-format"
+		type_4_byte='long'
 		;;
 	android)
 		case $_host in
@@ -2800,6 +2874,8 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				# This is really old CPU but might be still used with android 4.1, it slightly increases code size and decreases performance.
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
+				# Allow NEON optimized code after runtime detection
+				_ext_neon=yes
 				ABI="armeabi-v7a"
 				;;
 			android-arm64-v8a)
@@ -3096,11 +3172,12 @@ EOF
 		append_var LIBS "-lnds9"
 		;;
 	emscripten)
-		# mandatory emscripten flags
-		append_var LDFLAGS "-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1"
-
 		append_var DEFINES "-DEMSCRIPTEN"
 		add_line_to_config_mk 'EMSCRIPTEN = 1'
+		_port_mk="backends/platform/sdl/emscripten/emscripten.mk"
+		append_var LDFLAGS "-s FORCE_FILESYSTEM"
+		append_var LDFLAGS "-s INITIAL_MEMORY=128MB -s TOTAL_STACK=32MB -s ALLOW_MEMORY_GROWTH=1"
+		append_var LDFLAGS "-s ASYNCIFY=1 -s ASYNCIFY_STACK_SIZE=1048576"
 
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O2
@@ -3111,32 +3188,50 @@ EOF
 		fi
 
 		# activate emscripten-ports
-		if test "$_freetype2" != no; then
-			append_var LDFLAGS "-s USE_FREETYPE=1 -s SUPPORT_LONGJMP=1" # freetype requires setjmp
-			# neither pkg-config nor freetype-config work, so we setup freetype manually
-			_freetypepath="$EMSCRIPTEN/cache/ports-builds/freetype/"
-			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
-			_freetype_found="true"
-		else
-			#use link time optimization to further reduce exe size (this can't be used with setjmp which freetype requires)
-			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
-			append_var CXXFLAGS "-flto"
-			append_var LDFLAGS "-flto"
-		fi
-		if test "$_jpeg" != no; then
-			append_var LDFLAGS "-s USE_LIBJPEG=1"
-		fi
-		if test "$_png" != no; then
-			append_var LDFLAGS "-s USE_LIBPNG=1"
-		fi
-		if test "$_sdl" != no; then
+		if test "$_sdl" != no; then # we enable SDL2 by default 
 			append_var LDFLAGS "-s USE_SDL=2 "
 		fi
-		if test "$_vorbis" != no; then
-			append_var LDFLAGS "-s USE_OGG=1" # vorbis needs to be linked against OGG (even if we use an external vorbis lib)
+
+		# We explicitly disable optional libraries if not enabled. "auto" would depend
+		# on whether the port has been used before (and is detected) which is unpredictable.
+		if test "$_freetype2" = yes; then
+			# neither pkg-config nor freetype-config work, so we setup freetype manually
+			append_var LDFLAGS "-s USE_FREETYPE=1"
+			_freetype_found="true"
+			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
+			FREETYPE2_CFLAGS="-I$_freetypepath"
+		else
+			_freetype2=no 
 		fi
-		if test "$_zlib" != no; then
+		if test "$_gif" = yes; then
+		 	append_var LDFLAGS "-s USE_GIFLIB=1"
+		else
+			_gif=no 
+		fi
+		if test "$_jpeg" = yes; then
+			append_var LDFLAGS "-s USE_LIBJPEG=1"
+		else
+			_jpeg=no 
+		fi
+		if test "$_ogg" = yes; then
+			append_var LDFLAGS "-s USE_OGG=1" 
+		else
+			_ogg=no 
+		fi
+		if test "$_png" = yes; then
+			append_var LDFLAGS "-s USE_LIBPNG=1"
+		else
+			_png=no 
+		fi
+		if test "$_vorbis" = yes; then
+			append_var LDFLAGS "-s USE_VORBIS=1" 
+		else
+			_vorbis=no 
+		fi
+		if test "$_zlib" = yes; then
 			append_var LDFLAGS "-s USE_ZLIB=1"
+		else
+			_zlib=no 
 		fi
 	;;
 	freebsd* | dragonfly*)
@@ -3296,7 +3391,7 @@ EOF
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
-		append_var CXXFLAGS "-G0"
+		append_var CXXFLAGS "-mno-gpopt"
 		add_line_to_config_mk 'PSP = 1'
 		;;
 	riscos)
@@ -3372,7 +3467,9 @@ if test -n "$_host"; then
 			_backend="3ds"
 			_build_scalers=no
 			_vkeybd=yes
+			_seq_midi=no
 			_mt32emu=no
+			_timidity=no
 			# Should use Tremor instead of Vorbis
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
@@ -3477,6 +3574,7 @@ if test -n "$_host"; then
 			_sdlnet=no
 			_libcurl=no
 			_curl=no
+			_enet=no
 			_ar="emar cr"
 			_ranlib="emranlib"
 			;;
@@ -3563,6 +3661,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB_NETWORK */"
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
 		gcw0)
@@ -3610,23 +3709,13 @@ if test -n "$_host"; then
 			_timidity=no
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
-		iphone)
-			add_line_to_config_mk 'IPHONE = 1'
-			append_var DEFINES "-DIPHONE"
-			append_var ASFLAGS "-arch armv6"
-			_backend="iphone"
-			_build_scalers=no
-			_build_aspect=no
-			_mt32emu=no
-			_seq_midi=no
-			_timidity=no
-			;;
 		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE -DIPHONE_IOS7"
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no
+			_ext_neon=yes
 			;;
 		kos32)
 			# neither pkg-config nor *-config work, so we setup everything manually
@@ -3657,26 +3746,26 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'KOS32_SDK_DIR = '"${KOS32_SDK_DIR}"
 			_port_mk="backends/platform/sdl/kolibrios/kolibrios.mk"
 			;;
-		m68k-atari-mint)
+		m68k-atari-mint*)
 			# auto -> yes (overriden by $_release_build = yes)
-			if test "$_debug_build" = "no"; then
-				# --disable-debug
-				append_var LDFLAGS "-s"
-			fi
+			#if test "$_debug_build" = "no"; then
+			#	# --disable-debug
+			#	append_var LDFLAGS "-s"
+			#fi
 
 			# auto -> no
 			if test "$_optimizations" = "yes"; then
 				# --enable-release, --enable-optimizations
 				append_var CXXFLAGS "-fomit-frame-pointer"
+				append_var CXXFLAGS "-fno-exceptions"
+				append_var CXXFLAGS "-ffast-math -fno-unsafe-math-optimizations"
 			fi
 
 			# auto -> no
 			if test "$_release_build" = "yes"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
-				append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
-				append_var CXXFLAGS "-I$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/include"
-				append_var LDFLAGS  "-L$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/lib/m68020-60"
+				#append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
 			fi
 
 			_seq_midi=no
@@ -3804,8 +3893,8 @@ if test -n "$_host"; then
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
 			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS"
-			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt"
-			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt"
+			append_var CXXFLAGS "-fdata-sections -ffunction-sections -mplt"
+			append_var LDFLAGS  "-fdata-sections -ffunction-sections -mplt"
 			append_var LDFLAGS  "-O3 -Wl,--as-needed,--gc-sections"
 			if [ x"$_dynamic_modules" != xyes ]; then
 				append_var CXXFLAGS "-mno-shared"
@@ -3926,12 +4015,17 @@ if test -n "$_host"; then
 			# This might be related to a known crash on OpenGL de-init due
 			# to the OpenGL implementation on this platform.
 			_vkeybd=yes
+			_seq_midi=no
+			_timidity=no
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
 		wii)
 			_backend="wii"
 			_build_scalers=no
 			_build_aspect=no
+			_tinygl=no
+			_nuked_opl=no
+			_mt32emu=no
 			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
@@ -3939,6 +4033,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB_NETWORK */"
 			add_line_to_config_h "#define USE_WII_DI"
 			add_line_to_config_h "#define USE_WII_SMB"
 			add_line_to_config_h "#define USE_WII_KBD"
@@ -3970,10 +4065,11 @@ case $_backend in
 		;;
 	atari)
 		define_in_config_if_yes yes "ATARI"
-		append_var DEFINES  "-DDISABLE_LAUNCHERDISPLAY_GRID"
-		append_var DEFINES  "-DDISABLE_SID"
-		append_var DEFINES  "-DDISABLE_NES_APU"
-		#append_var DEFINES  "-DDISABLE_DOSBOX_OPL"
+		append_var DEFINES "-DDISABLE_LAUNCHERDISPLAY_GRID"
+		append_var DEFINES "-DDISABLE_SID"
+		append_var DEFINES "-DDISABLE_NES_APU"
+		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
+		append_var LIBS "-lgem"
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
@@ -4010,16 +4106,11 @@ case $_backend in
 		_sdlconfig=sdl-config
 		_sdl=auto
 		;;
-	iphone)
-		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
-		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
-		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
-		;;
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
-		append_var LIBS "-framework GameController -framework Accelerate"
+		append_var LIBS "-framework GameController"
 		if test "$_host" = 'tvos'; then
 			append_var LDFLAGS "-mtvos-version-min=9 -arch arm64"
 			append_var CFLAGS "-mtvos-version-min=9 -arch arm64"
@@ -4472,7 +4563,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | ds | gph | iphone | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dingux | dc | ds | gph | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4548,7 +4639,7 @@ case $_host_os in
 	amigaos* | dreamcast | ds | gamecube | kolibrios | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphoneos | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | redox* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4655,6 +4746,18 @@ EOF
 				if test "$_has_fseeko64" = yes ; then
 					append_var DEFINES "-DHAS_FSEEKO64"
 					append_var CXXFLAGS "-D_LARGEFILE64_SOURCE"
+
+					# On some platforms, fopen64 is required in addition to fseeko64/ftello64
+					echo_n "Checking if fopen64 is supported... "
+					cat > $TMPC << EOF
+#include <stdio.h>
+int main() { FILE *f = fopen64("file", "rb"); return (f != NULL); }
+EOF
+					cc_check_no_clean && _has_fopen64=yes
+					echo $_has_fopen64
+					if test "$_has_fopen64" = yes ; then
+						append_var DEFINES "-DHAS_FOPEN64"
+					fi
 				fi
 			fi
 		fi
@@ -4715,7 +4818,6 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k 
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
 		append_var LIBS "-lauto"
-		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
@@ -4783,7 +4885,7 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb -mthumb
 		append_var LIBS ""
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += $(LDFLAGS) -s SIDE_MODULE=1 -s ASYNCIFY_IMPORTS=["*"] -s EXPORT_ALL=1
+PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s ASYNCIFY=1 -s ASYNCIFY_IMPORTS=["*"] -s EXPORT_ALL=1
 PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
 POST_OBJS_FLAGS :=
 '
@@ -4892,6 +4994,7 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE) backends/plugins/psp2/plugin.o
+PLUGIN_OBJ_FILES    += backends/plugins/psp2/plugin.o
 PLUGIN_LDFLAGS		+= -nostartfiles -nodefaultlibs backends/plugins/psp2/plugin.o -Wl,-q -Xlinker --just-symbols -Xlinker $(EXECUTABLE) -lgcc
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
@@ -4905,6 +5008,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	+= backends/plugins/riscos/plugin.o
+PLUGIN_OBJ_FILES    += backends/plugins/riscos/plugin.o
 PLUGIN_LDFLAGS		+= -static -Wl,-T$(srcdir)/backends/plugins/riscos/plugin.ld backends/plugins/riscos/plugin.o -Wl,--wrap=__rt_stkovf_split_small -Wl,--wrap=__rt_stkovf_split_big
 '
 		;;
@@ -4942,6 +5046,15 @@ if test "$_dynamic_modules" = yes ; then
 	add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
 	add_line_to_config_mk "PLUGIN_PREFIX := $_plugin_prefix"
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
+fi
+
+if test "$_detection_features_static" = no ; then
+	if test "$_dynamic_modules" = no ; then
+		echo "Inconsistency detected: dynamic detection plugin enabled while static plugins are requested."
+		echo "   ...forcing detection plugin to be static too. Add --enable-plugins if you really want it"
+
+		_detection_features_static=yes
+	fi
 fi
 
 #
@@ -5070,6 +5183,10 @@ echo "$_tts"
 # Check for Vorbis
 #
 echocheck "Vorbis"
+VORBISFILE=-lvorbisfile
+if test "$_host_os" = kolibrios ; then
+    VORBISFILE=
+fi
 if test "$_vorbis" = auto ; then
 	_vorbis=no
 	cat > $TMPC << EOF
@@ -5078,14 +5195,14 @@ int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	if test "$_ogg" = yes ; then
 		cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-			-lvorbisfile -lvorbis -logg && _vorbis=yes
+			$VORBISFILE -lvorbis -logg && _vorbis=yes
 	else
 		cc_check $VORBIS_CFLAGS $VORBIS_LIBS \
-			-lvorbisfile -lvorbis && _vorbis=yes
+			$VORBISFILE -lvorbis && _vorbis=yes
 	fi
 fi
 if test "$_vorbis" = yes ; then
-	append_var LIBS "$VORBIS_LIBS -lvorbisfile -lvorbis"
+	append_var LIBS "$VORBIS_LIBS $VORBISFILE -lvorbis"
 	append_var INCLUDES "$VORBIS_CFLAGS"
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
@@ -5728,10 +5845,50 @@ echo "$_libcurl"
 define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 
 #
+# Check for libopenmpt to be present
+#
+echocheck "libopenmpt"
+
+if test "$_libopenmpt" != "no"; then
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libopenmpt; then
+		append_var LIBOPENMPT_LIBS "`$_pkgconfig --libs libopenmpt`"
+		append_var LIBOPENMPT_CFLAGS "`$_pkgconfig --cflags libopenmpt`"
+	else
+		append_var LIBOPENMPT_LIBS "-lopenmpt"
+	fi
+
+	if test "$_libopenmpt" = "auto"; then
+		_libopenmpt=no
+		cat > $TMPC << EOF
+		#include <libopenmpt/libopenmpt.h>
+		#include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+		int main(void) {
+			openmpt_module *mod = 0;
+			FILE *file = 0;
+
+			file = fopen("abc", "rb");
+			mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+
+			fclose(file);
+			return 0;
+		}
+EOF
+		cc_check $LIBOPENMPT_CFLAGS $LIBOPENMPT_LIBS && _libopenmpt=yes
+	fi
+
+	if test "$_libopenmpt" = "yes"; then
+		append_var LIBS "$LIBOPENMPT_LIBS"
+		append_var INCLUDES "$LIBOPENMPT_CFLAGS"
+	fi
+fi
+
+define_in_config_if_yes "$_libopenmpt" "USE_OPENMPT"
+echo "$_libopenmpt"
+
+#
 # Check for libmikmod to be present
 #
-if test "$_libmikmod" != "no"; then
-
+if test "$_libmikmod" != no && test "$_libopenmpt" = no; then
 	# Look for the mikmod-config script
 	find_libmikmodconfig
 
@@ -5761,13 +5918,15 @@ EOF
 			append_var LIBS "$LIBMIKMOD_LIBS"
 			append_var INCLUDES "$LIBMIKMOD_CFLAGS"
 		fi
-
-		echo "$_libmikmod"
-
 	fi
+else
+	echocheck "libmikmod"
 
+	# Skip mikmod detection if openmpt is detected
+	_libmikmod="no (OpenMPT/MikMod support is mutually exclusive)"
 fi
 
+echo "$_libmikmod"
 define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
 
 #
@@ -5793,6 +5952,15 @@ else
 	echo  # newline
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
+
+if test "$_scummvmdlc" = "yes"; then
+	if test "$_libcurl" = "yes"; then
+		_dlc=yes
+	fi
+fi
+
+define_in_config_if_yes $_dlc 'USE_DLC'
+define_in_config_if_yes $_scummvmdlc 'USE_SCUMMVMDLC'
 
 #
 # Check is NSDockTilePlugIn protocol is supported
@@ -5834,7 +6002,7 @@ case $_host_os in
 		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreServices -framework CoreMIDI -framework CoreAudio -framework AudioToolbox -lglib-2.0 -lintl -liconv -lreadline"
 	;;
 
-	iphone)
+	iphoneos)
 		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
 	;;
 
@@ -5906,6 +6074,36 @@ else
 	add_line_to_config_h '#undef USE_FLUIDLITE'
 fi
 echo "$_fluidlite"
+
+#
+# Check for Sonivox
+#
+echocheck "Sonivox"
+
+append_var SONIVOX_LIBS "-lsonivox"
+if test "$_sonivox" = auto; then
+	_sonivox=no
+	cat > $TMPC << EOF
+#include <sonivox/eas.h>
+int main(void) { /* delete_fluid_settings(new_fluid_settings()); */ return 0; }
+EOF
+	cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox; then
+		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox`"
+		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	fi
+	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox-static; then
+		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox-static`"
+		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	fi
+	cc_check_clean
+fi
+if test "$_sonivox" = yes; then
+	append_var LIBS "$SONIVOX_LIBS"
+	append_var INCLUDES "$SONIVOX_CFLAGS"
+fi
+define_in_config_if_yes "$_sonivox" 'USE_SONIVOX'
+echo "$_sonivox"
 
 #
 # Check for readline if text_console is enabled
@@ -6144,6 +6342,10 @@ if test "$_opengl_mode" != none ; then
 			_opengl_mode=gles2
 			_opengl_glad=yes
 			;;
+		ios7)
+			_opengl_mode=gles2
+			_opengl_glad=yes
+			;;
 		openpandora)
 			# Enable GLES only if user explicitely requested it
 			# Backend is SDL based so GLAD is supported
@@ -6153,6 +6355,7 @@ if test "$_opengl_mode" != none ; then
 		sdl)
 			# This case is for pure SDL backend. Many platforms overload it and create a new backend
 			# They still make use of SDL but it's handled below in the default case
+			_opengl_glad=yes
 			case $_sdlversion in
 				1.2.*)
 					# Stock SDL 1.2 only supports OpenGL contexts.
@@ -6169,8 +6372,8 @@ if test "$_opengl_mode" != none ; then
 							;;
 						emscripten)
 							_opengl_mode=gles2
-							_opengl_glad=no
-							append_var LDFLAGS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
+							_opengl_glad=no # https://github.com/Dav1dde/glad-web/issues/12
+							append_var OPENGL_LIBS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
 							;;
 						*)
 							# As SDL2 supports everything, let the user choose if he wants to
@@ -6179,7 +6382,6 @@ if test "$_opengl_mode" != none ; then
 					esac
 					;;
 			esac
-			_opengl_glad=yes
 			;;
 		switch)
 			_opengl_mode=gles2
@@ -6262,6 +6464,9 @@ EOF
 				;;
 			mingw*)
 				OPENGL_LIBS="-lopengl32"
+				;;
+			serenity*)
+				OPENGL_LIBS="-lgl"
 				;;
 			*)
 				OPENGL_LIBS="-lGL"
@@ -6750,6 +6955,9 @@ case $_host in
 		;;
 	ds)
 		;;
+	*-emscripten)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
 	openpandora)
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"../plugins\\\""
@@ -6808,6 +7016,75 @@ if test "$_enable_ubsan" = yes ; then
 	append_var PLUGIN_LDFLAGS "-fsanitize=undefined"
 fi
 echo "$_enable_ubsan"
+
+#
+# Whether to add compiler options and preprocessor defines for SIMD extensions
+#
+
+# Automatically detect if SSE2, NEON, AVX2 can be compiled (not if they can
+# be run at runtime)
+case $_host_cpu in
+	x86_64 | amd64)
+		if test "$_ext_sse2" = auto ; then
+			_ext_sse2=yes
+		fi
+		if test "$_ext_avx2" = auto ; then
+			_ext_avx2=yes
+		fi
+		_ext_neon=no
+		;;
+	i[3-6]86)
+		if test "$_ext_sse2" = auto ; then
+			_ext_sse2=yes
+		fi
+		if test "$_ext_avx2" = auto ; then
+			_ext_avx2=no
+		fi
+		_ext_neon=no
+		;;
+	aarch64)
+		if test "$_ext_neon" = auto ; then
+			_ext_neon=yes
+		fi
+		_ext_sse2=no
+		_ext_avx2=no
+		;;
+	arm*)
+		if test "$_ext_neon" = auto ; then
+			_ext_neon=no
+		fi
+		if test "$_ext_neon" = yes ; then
+			# -mfpu=neon doesn't work with aarch64 but neon is available
+			add_line_to_config_mk 'NEON_CXXFLAGS = -mfpu=neon'
+		fi
+		_ext_sse2=no
+		_ext_avx2=no
+		;;
+	*)
+		_ext_sse2=no
+		_ext_avx2=no
+		_ext_neon=no
+		;;
+esac
+
+if test "$have_gcc" = yes; then
+	# Need 4.9 for pragma target
+	if (test $_cxx_major -lt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -lt 9); then
+		_ext_sse2=no
+		_ext_avx2=no
+		_ext_neon=no
+	fi
+fi
+
+define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
+echo_n "Enabling x86/amd64 SSE2... "
+echo "$_ext_sse2"
+define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
+echo_n "Enabling x86/amd64 AVX2... "
+echo "$_ext_avx2"
+define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
+echo_n "Enabling ARM NEON... "
+echo "$_ext_neon"
 
 echo_n "Backend... "
 echo_n "$_backend"
@@ -6898,6 +7175,15 @@ fi
 if test "$_cloud" = yes ; then
 	echo_n ", cloud"
 fi
+
+if test "$_dlc" = yes ; then
+	echo_n ", dlc"
+fi
+
+if test "$_scummvmdlc" = yes ; then
+	echo_n ", scummvmdlc"
+fi
+
 if test "$_enet" = yes ; then
 	echo ", ENet"
 else
@@ -6930,7 +7216,6 @@ case $_host_os in
 		# and dead code elimination to reduce binary size
 		if test "$_release_build" = yes; then
 			append_var CXXFLAGS "-flto"
-			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 			append_var PLUGIN_LDFLAGS "-flto=jobserver"
 		fi
 		;;
@@ -6979,14 +7264,21 @@ case $_host_os in
 	emscripten)
 		append_var LDFLAGS "--pre-js ./dists/emscripten/custom_shell-pre.js --post-js ./dists/emscripten/custom_shell-post.js --shell-file ./dists/emscripten/custom_shell.html"
 		# we remove some linker flags for libs which will be added by emscripten from emscripten-ports to avoid duplicate symbols
+		if test "${LDFLAGS#*-s USE_GIFLIB=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lgif//g'`
+		fi
 		if test "${LDFLAGS#*-s USE_LIBJPEG=1}" != "$LDFLAGS"; then
     		LIBS=`echo ${LIBS} | sed 's/-ljpeg//g'`
+		fi
+		if test "${LDFLAGS#*-s USE_OGG=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-logg//g'`
 		fi
 		if test "${LDFLAGS#*-s USE_LIBPNG=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lpng -lz//g'`
 		fi
-		if test "${LDFLAGS#*-s USE_OGG=1}" != "$LDFLAGS"; then
-			LIBS=`echo ${LIBS} | sed 's/-logg//g'`
+		if test "${LDFLAGS#*-s USE_VORBIS=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lvorbisfile//g;'`
+			LIBS=`echo ${LIBS} | sed 's/-lvorbis//g'`
 		fi
 		if test "${LDFLAGS#*-s USE_ZLIB=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lz//g'`
