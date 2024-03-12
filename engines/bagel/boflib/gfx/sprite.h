@@ -235,7 +235,7 @@ public:
 	static BOOL SetupWorkArea(INT dx, INT dy);
 	static VOID TearDownWorkArea();
 
-	// jwl 10.24.96 add a method for allowing callers of this object to block
+	// add a method for allowing callers of this object to block
 	// next cell advancement
 
 	VOID SetBlockAdvance(BOOL b = TRUE) {
@@ -249,7 +249,7 @@ private:
 	VOID ClearImage();
 
 	BOOL SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
-	BOOL m_bBlockAdvance; // jwl 10.24.96 allow block next cell.
+	BOOL m_bBlockAdvance; // allow block next cell.
 public:
 	CBofBitmap *m_pImage; // bitmap for the sprite
 

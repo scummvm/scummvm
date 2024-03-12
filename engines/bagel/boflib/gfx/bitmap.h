@@ -130,10 +130,10 @@ protected:
 
 #elif BOF_MAC || BOF_WINMAC
 
-	STATIC PixMapHandle m_stPixMap; // jwl 07.10.96 bit map to pixel map
+	STATIC PixMapHandle m_stPixMap; // bit map to pixel map
 #if SYNCPALETTES
-	GrafPtr m_oldGrafPort;          // jwl 07.01.96 original grafport
-	GrafPtr m_newGrafPort;          // jwl 07.01.96 original grafport
+	GrafPtr m_oldGrafPort;          // original grafport
+	GrafPtr m_newGrafPort;          // original grafport
 #endif
 #endif
 	Graphics::ManagedSurface _bitmap;

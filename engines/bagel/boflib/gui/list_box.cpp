@@ -166,7 +166,7 @@ ERROR_CODE CBofListBox::DelItem(INT nIndex, BOOL bRepaint) {
 		RepaintAll();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
@@ -191,7 +191,7 @@ ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
 	if (bRepaint && IsCreated() && IsVisible()) {
 		RepaintAll();
 	}
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -289,7 +289,7 @@ ERROR_CODE CBofListBox::ScrollUp(const INT nLines) {
 	// a no-op.  GJJ 11-8-96.
 	//
 	if (m_nNumItems <= m_nPageSize) {
-		return (ScrollTo(m_n1stVisible));
+		return ScrollTo(m_n1stVisible);
 	}
 
 	nNewLine = m_n1stVisible - nLines;
@@ -303,7 +303,7 @@ ERROR_CODE CBofListBox::ScrollUp(const INT nLines) {
 		//
 		nNewLine = (m_nNumItems - m_nPageSize);
 	}
-	return (ScrollTo(nNewLine));
+	return ScrollTo(nNewLine);
 }
 
 
@@ -326,7 +326,7 @@ ERROR_CODE CBofListBox::ScrollTo(const INT nLine) {
 		RepaintAll();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -380,7 +380,7 @@ ERROR_CODE CBofListBox::SaveBackground() {
 		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -400,7 +400,7 @@ ERROR_CODE CBofListBox::CreateWorkArea() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -486,7 +486,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 		SetFont(nCurFont);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -565,7 +565,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 		SetFont(nCurFont);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -582,7 +582,7 @@ VOID CBofListBox::SetSelectedItem(INT nItem, BOOL bRepaint) {
 
 
 CBofString CBofListBox::GetText(INT nIndex) {
-	return (*(m_cTextItems.GetNodeItem(nIndex).m_pTextStr));
+	return *(m_cTextItems.GetNodeItem(nIndex).m_pTextStr);
 }
 
 

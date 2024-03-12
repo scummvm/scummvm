@@ -289,7 +289,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 		nHeight = pRect->Height();
 	}
 
-	return (Create(pszName, x, y, nWidth, nHeight, pParent, nControlID));
+	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
 
@@ -347,7 +347,7 @@ ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 		PaintBackdrop(pRect, COLOR_WHITE);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -361,7 +361,7 @@ ERROR_CODE CBofDialog::PaintBackground() {
 		m_errCode = _pDlgBackground->Paint(this, 0, 0);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -392,7 +392,7 @@ ERROR_CODE CBofDialog::SaveBackground() {
 	}
 	_bFirstTime = FALSE;
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -402,7 +402,7 @@ ERROR_CODE CBofDialog::KillBackground() {
 		_pDlgBackground = nullptr;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -516,7 +516,7 @@ INT CBofDialog::DoModal() {
 		m_pActiveWindow = nullptr;
 	}
 
-	return (_nReturnValue);
+	return _nReturnValue;
 }
 
 #if BOF_MAC
@@ -565,7 +565,7 @@ BOOL CBofDialog::HandleMacEvent(EventRecord *pEvent) {
 		break;
 	}
 
-	return (CBofWindow::HandleMacEvent(pEvent));
+	return CBofWindow::HandleMacEvent(pEvent);
 }
 #endif
 

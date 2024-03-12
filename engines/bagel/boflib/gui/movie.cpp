@@ -98,7 +98,7 @@ BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
 
 		Success = FileOpenWin();
-		return (Success);
+		return Success;
 	}
 
 	// do the resize or center before we open the movie
@@ -165,7 +165,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 #endif
 			FileOpenWin(); // Put up to open file message box
 #endif
-			return (FALSE);
+			return FALSE;
 		}
 
 		// If supposed to stretch into specified window
@@ -492,7 +492,7 @@ BOOL CBofMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	CBofCursor::Show();
 #endif
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -712,7 +712,7 @@ BOOL CBofMovie::SeekToEnd() {
 DWORD CBofMovie::GetFrame() {
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk)
-			return (m_pSmk->getCurFrame());
+			return m_pSmk->getCurFrame();
 	} else if (m_eMovType == QT) {
 #if BOF_WINNT
 		MCI_DGV_STATUS_PARMS    mciStatus;
@@ -727,14 +727,14 @@ DWORD CBofMovie::GetFrame() {
 
 			if (mciError) {
 				EvalMciError(mciError);
-				return ((DWORD) -1);
+				return (DWORD) -1;
 			}
 
 			return mciStatus.dwReturn;
 		}
 #endif
 	}
-	return ((DWORD) -1);
+	return (DWORD) -1;
 }
 
 
@@ -897,7 +897,7 @@ BOOL CBofMovie::FileOpenWin() {
 
 #endif
 
-	return (FALSE);
+	return FALSE;
 }
 
 #if 0  // removed the need for the timer
@@ -1014,7 +1014,7 @@ ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect 
 #endif
 	}
 
-	return (cMovie.GetErrorCode());
+	return cMovie.GetErrorCode();
 }
 
 } // namespace Bagel
