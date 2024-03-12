@@ -143,7 +143,7 @@ ERROR_CODE CBofStringTable::BuildTable() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 const CHAR *CBofStringTable::GetString(INT nId) {

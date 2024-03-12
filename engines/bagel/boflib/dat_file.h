@@ -117,7 +117,7 @@ public:
 	 */
 	LONG GetRecSize(LONG lRecNum);
 	LONG GetNumberOfRecs() const {
-		return (m_lNumRecs);
+		return m_lNumRecs;
 	}
 
 	/**

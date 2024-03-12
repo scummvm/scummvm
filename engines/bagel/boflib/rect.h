@@ -80,7 +80,7 @@ public:
 	}
 
 	operator const RECT() {
-		return (GetWinRect());
+		return GetWinRect();
 	}
 
 	VOID OffsetRect(INT x, INT y);
@@ -145,49 +145,49 @@ INLINE INT CBofRect::Width() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (right - left + 1);
+	return right - left + 1;
 }
 
 INLINE INT CBofRect::Height() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (bottom - top + 1);
+	return bottom - top + 1;
 }
 
 INLINE CBofSize CBofRect::Size() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofSize(Width(), Height()));
+	return CBofSize(Width(), Height());
 }
 
 INLINE CBofPoint CBofRect::TopLeft() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(left, top));
+	return CBofPoint(left, top);
 }
 
 INLINE CBofPoint CBofRect::BottomRight() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(right, bottom));
+	return CBofPoint(right, bottom);
 }
 
 INLINE CBofPoint CBofRect::TopRight() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(right, top));
+	return CBofPoint(right, top);
 }
 
 INLINE CBofPoint CBofRect::BottomLeft() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(left, bottom));
+	return CBofPoint(left, bottom);
 }
 
 INLINE BOOL CBofRect::IsRectEmpty() const {
@@ -263,7 +263,7 @@ INLINE RECT CBofRect::GetWinRect() {
 	stRect.right = right + 1;
 	stRect.bottom = bottom + 1;
 
-	return (stRect);
+	return stRect;
 }
 
 INLINE VOID CBofRect::SetWinRect(const RECT *pRect) {
@@ -327,7 +327,7 @@ INLINE BOOL CBofRect::IntersectRect(const CBofRect &cRect1, const CBofRect &cRec
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (IntersectRect(&cRect1, &cRect2));
+	return IntersectRect(&cRect1, &cRect2);
 }
 
 INLINE BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) {
@@ -343,7 +343,7 @@ INLINE BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) 
 	right = max(pRect1->right, pRect2->right);
 	bottom = max(pRect1->bottom, pRect2->bottom);
 
-	return (IsRectEmpty());
+	return IsRectEmpty();
 }
 
 INLINE VOID CBofRect::operator=(const CBofRect &srcRect) {
@@ -408,7 +408,7 @@ INLINE CBofRect CBofRect::operator+(const CBofPoint &pt) {
 
 	rect.OffsetRect(pt.x, pt.y);
 
-	return (rect);
+	return rect;
 }
 
 INLINE CBofRect CBofRect::operator-(const CBofPoint &pt) {
@@ -419,7 +419,7 @@ INLINE CBofRect CBofRect::operator-(const CBofPoint &pt) {
 
 	rect.OffsetRect(-pt.x, -pt.y);
 
-	return (rect);
+	return rect;
 }
 
 INLINE CBofRect CBofRect::operator&(const CBofRect &rect2) {
@@ -430,7 +430,7 @@ INLINE CBofRect CBofRect::operator&(const CBofRect &rect2) {
 
 	rect.IntersectRect(this, &rect2);
 
-	return (rect);
+	return rect;
 }
 
 INLINE CBofRect CBofRect::operator|(const CBofRect &rect2) {
@@ -441,7 +441,7 @@ INLINE CBofRect CBofRect::operator|(const CBofRect &rect2) {
 
 	rect.UnionRect(this, &rect2);
 
-	return (rect);
+	return rect;
 }
 
 #define CRect CBofRect

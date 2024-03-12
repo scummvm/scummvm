@@ -121,7 +121,7 @@ ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt) {
 		bitPtr++;
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 /**
@@ -176,7 +176,7 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
 		size--;
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 /**
@@ -218,7 +218,7 @@ ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize) {
 #endif
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE BitReadQuick1(USHORT *bitPtr) {
@@ -243,7 +243,7 @@ ERROR_CODE BitReadQuick1(USHORT *bitPtr) {
 #endif
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 VOID BufReadInit(UBYTE *pInBuf, INT nBufSize) {
@@ -281,7 +281,7 @@ ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize) {
 	if (rSize != nullptr)
 		*rSize = saveSize - size;
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 /**
@@ -300,7 +300,7 @@ ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize) {
 ERROR_CODE BufReadQuick(UBYTE *data) {
 	*data = *zg.bufVar.bufPtr++;
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen) {
@@ -318,7 +318,7 @@ ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen) {
 			*rLen = len;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /************************ Bit Writing routines ***************************/
@@ -362,7 +362,7 @@ ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize) {
 			errCode = BitAltFlush();
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**
@@ -422,7 +422,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size) {
 		size--;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**
@@ -462,7 +462,7 @@ LONG BitWriteSize() {
 	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		fileSize++;
 
-	return (fileSize);
+	return fileSize;
 }
 
 /**
@@ -520,7 +520,7 @@ ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
 		bitPtr++;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**
@@ -559,7 +559,7 @@ ERROR_CODE BitAltFlush() {
 		errCode = ERR_FWRITE;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**
@@ -605,7 +605,7 @@ ERROR_CODE BitWriteFlush(LONG *rFileSize) {
 		errCode = ERR_FWRITE;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 #if 0
@@ -647,7 +647,7 @@ LONG BitWriteSize(UBYTE *pOutBuf, INT nBufSize) {
 	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
 		fileSize++;
 
-	return (fileSize);
+	return fileSize;
 }
 
 
@@ -700,7 +700,7 @@ ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
 		bitPtr++;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**
@@ -750,7 +750,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size, UBYTE *pOutBuf, INT nBufSize
 		size--;
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 /**
@@ -780,7 +780,7 @@ ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize) {
 		*(USHORT *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 #endif
 

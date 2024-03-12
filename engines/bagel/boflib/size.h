@@ -114,21 +114,21 @@ INLINE CBofSize CBofSize::operator+(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofSize(cx + size.cx, cy + size.cy));
+	return CBofSize(cx + size.cx, cy + size.cy);
 }
 
 INLINE CBofSize CBofSize::operator-(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofSize(cx - size.cx, cy - size.cy));
+	return CBofSize(cx - size.cx, cy - size.cy);
 }
 
 INLINE CBofSize CBofSize::operator-() {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofSize(-cx, -cy));
+	return CBofSize(-cx, -cy);
 }
 
 #define CSize CBofSize

@@ -94,7 +94,7 @@ DOUBLE CVector::Length() {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (sqrt(x * x + y * y));
+	return sqrt(x * x + y * y);
 }
 
 DOUBLE CVector::AngleBetween(const VECTOR &vector) {
@@ -122,7 +122,7 @@ DOUBLE CVector::AngleBetween(const VECTOR &vector) {
 	//
 	// Assert((angle >= (DOUBLE)0.0) && (angle <= PI));
 
-	return (angle);
+	return angle;
 }
 
 DOUBLE CVector::DotProduct(const VECTOR &vector) {
@@ -220,7 +220,7 @@ DOUBLE CVector::Angle() {
 
 	Assert((fAngle >= Deg2Rad(0)) && fAngle < Deg2Rad(360));
 
-	return (fAngle);
+	return fAngle;
 }
 
 CVector CVector::operator+(VECTOR vector) {
@@ -229,7 +229,7 @@ CVector CVector::operator+(VECTOR vector) {
 
 	CVector vSum(this->x + vector.x, this->y + vector.y, this->z + vector.z);
 
-	return (vSum);
+	return vSum;
 }
 
 CVector CVector::operator+(DOUBLE offset) {
@@ -238,7 +238,7 @@ CVector CVector::operator+(DOUBLE offset) {
 
 	CVector vSum(this->x + offset, this->y + offset, this->z + offset);
 
-	return (vSum);
+	return vSum;
 }
 
 CVector CVector::operator-(VECTOR vector) {
@@ -247,7 +247,7 @@ CVector CVector::operator-(VECTOR vector) {
 
 	CVector vDif(this->x - vector.x, this->y - vector.y, this->z - vector.z);
 
-	return (vDif);
+	return vDif;
 }
 
 CVector CVector::operator-(DOUBLE offset) {
@@ -256,7 +256,7 @@ CVector CVector::operator-(DOUBLE offset) {
 
 	CVector vDif(this->x - offset, this->y - offset, this->z - offset);
 
-	return (vDif);
+	return vDif;
 }
 
 VOID CVector::operator+=(VECTOR vector) {
@@ -283,7 +283,7 @@ CVector CVector::operator*(DOUBLE scalar) {
 
 	CVector vProduct(this->x * scalar, this->y * scalar, this->z * scalar);
 
-	return (vProduct);
+	return vProduct;
 }
 
 CVector CVector::operator/(DOUBLE scalar) {
@@ -301,7 +301,7 @@ CVector CVector::operator/(DOUBLE scalar) {
 		vDividend.z = this->z / scalar;
 	}
 
-	return (vDividend);
+	return vDividend;
 }
 
 VOID CVector::operator*=(DOUBLE scalar) {
@@ -338,7 +338,7 @@ BOOL CVector::operator==(VECTOR v) {
 	if ((this->x == v.x) && (this->y == v.y))
 		bReturn = TRUE;
 
-	return (bReturn);
+	return bReturn;
 }
 
 DOUBLE DistanceBetweenPoints(VECTOR v1, VECTOR v2) {

@@ -46,7 +46,7 @@ public:
 	}
 
 	T GetNodeItem() {
-		return (m_cItem);
+		return m_cItem;
 	}
 	void SetNodeItem(T cItem) {
 		m_cItem = cItem;

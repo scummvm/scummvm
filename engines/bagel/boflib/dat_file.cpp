@@ -196,7 +196,7 @@ ERROR_CODE CBofDataFile::Create() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::Open() {
@@ -231,7 +231,7 @@ ERROR_CODE CBofDataFile::Open() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::Close() {
@@ -245,7 +245,7 @@ ERROR_CODE CBofDataFile::Close() {
 		CBofFile::Close();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::ReadHeader() {
@@ -296,7 +296,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 
 						// allocate buffer to hold header
 						//
-						// jwl 09.19.96, watch out!  Could be the metrowerks allocation bug
+						// watch out!  Could be the metrowerks allocation bug
 						// here! ???
 						if ((m_pHeader = new HEADER_REC[(int)m_lNumRecs]) != nullptr) {
 
@@ -339,7 +339,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::WriteHeader() {
@@ -369,7 +369,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 			stHeaderInfo.m_lAddress = m_lHeaderStart;
 			stHeaderInfo.m_lFlags = m_lFlags;
 #if BOF_WINMAC || BOF_MAC
-			// jwl 09.19.96 Swap all the header recs before going to disk...
+			// Swap all the header recs before going to disk...
 			SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
 			stHeaderInfo.m_lFootCrc = CalculateCRC(m_pHeader, (INT)(sizeof(HEADER_REC) * m_lNumRecs));
@@ -378,7 +378,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 			SeekToBeginning();
 
 #if BOF_WINMAC || BOF_MAC
-			// jwl 09.19.96 before going to disk, swap!
+			// before going to disk, swap!
 			SwapHeadInfo(&stHeaderInfo);
 #endif
 			if (Write(&stHeaderInfo, sizeof(HEAD_INFO)) == ERR_NONE) {
@@ -403,13 +403,13 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 				m_errCode = ERR_FWRITE;
 			}
 #if BOF_WINMAC || BOF_MAC
-			// jwl 09.19.96 Swap all the header recs before going to disk...
+			// Swap all the header recs before going to disk...
 			SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
@@ -474,7 +474,7 @@ ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
@@ -513,7 +513,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
 			//
 			Seek(pRecInfo->m_lOffset);
 
-			// jwl 1.6.97 read in the requested bytes...
+			// read in the requested bytes...
 			//
 			if (Read(pBuf, lBytes) == ERR_NONE) {
 
@@ -532,7 +532,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL bUpdateHeader, ULONG lKey) {
@@ -724,7 +724,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
@@ -750,7 +750,7 @@ ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::VerifyAllRecords() {
@@ -769,7 +769,7 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader, ULONG lKey) {
@@ -800,7 +800,7 @@ ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader,
 				m_lNumRecs++;
 
 #if BOF_MAC && DEVELOPMENT && !__POWERPC__
-				// jwl 07.29.96 there is a metrowerks code generation bug in the new
+				// there is a metrowerks code generation bug in the new
 				// [] operator.  Just put a debug statement here so we're sure to examine
 				// it next time we run this code.
 
@@ -839,7 +839,7 @@ ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader,
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
@@ -909,7 +909,7 @@ ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 LONG CBofDataFile::FindRecord(ULONG lKey) {
@@ -938,7 +938,7 @@ LONG CBofDataFile::FindRecord(ULONG lKey) {
 		}
 	}
 
-	return (lRecNum);
+	return lRecNum;
 }
 
 LONG CBofDataFile::GetRecSize(LONG lRecNum) {
@@ -958,7 +958,7 @@ LONG CBofDataFile::GetRecSize(LONG lRecNum) {
 		lSize = m_pHeader[lRecNum].m_lLength;
 	}
 
-	return (lSize);
+	return lSize;
 }
 
 LONG CBofDataFile::GetMaxRecSize() const {
@@ -981,7 +981,7 @@ LONG CBofDataFile::GetMaxRecSize() const {
 		}
 	}
 
-	return (lLargest);
+	return lLargest;
 }
 
 VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
