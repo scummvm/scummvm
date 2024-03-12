@@ -64,10 +64,6 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-static BuiltinProto xlibTopLevel[] = {
-	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
-};
-
 ScrnUtilXtraObject::ScrnUtilXtraObject(ObjectType ObjectType) :Object<ScrnUtilXtraObject>("ScrnUtilXtra") {
 	_objType = ObjectType;
 }
