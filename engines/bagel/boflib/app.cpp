@@ -20,7 +20,7 @@
  */
 
 #include "graphics/framelimiter.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/debug.h"
