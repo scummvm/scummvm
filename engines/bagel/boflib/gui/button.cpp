@@ -169,7 +169,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 		cBmp.Paint(this, 0, 0);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -233,7 +233,7 @@ ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
 		_parent->OnBofButton(this, m_nState);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -373,7 +373,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 		cBmp.Paint(this, 0, 0);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -476,7 +476,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 		cBmp.Paint(this, 0, 0);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -485,7 +485,7 @@ ERROR_CODE CBofCheckButton::SetCheck(BOOL bChecked) {
 
 	SetState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, FALSE);
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -592,7 +592,7 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 		cOffScreen.Paint(this, 0, 0);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -611,7 +611,7 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBi
 	// remember the transparent color for these bitmaps
 	m_nMaskColor = nMaskColor;
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -642,7 +642,7 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, 
 		m_pButtonDisabled->SetReadOnly(TRUE);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -672,7 +672,7 @@ ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
 		_parent->OnBofButton(this, m_nState);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 

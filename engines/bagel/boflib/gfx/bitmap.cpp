@@ -60,7 +60,7 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
 	m_pPalette = nullptr;
 	m_bInitialized = TRUE;
 
-	// jwl 12.06.96 allow privatization of the bitmap (used only on mac from displaytextex).;
+	// allow privatization of the bitmap (used only on mac from displaytextex).;
 	m_bPrivateBmp = (pPrivateBuff != nullptr);
 	if (m_bPrivateBmp == TRUE) {
 		m_pBits = pPrivateBuff;
@@ -95,7 +95,7 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
 
 #elif BOF_MAC || BOF_WINMAC
 #if COPYBITS
-	FlipVerticalFast();         // jwl 07.11.96 mac bitmaps are read in top down
+	FlipVerticalFast();         // mac bitmaps are read in top down
 #endif
 #endif
 
@@ -172,7 +172,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 			// m_cBitmapInfo.m_cInfoHeader.biHeight = -ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
 
 			// Can't already have a bitmap handle
-			// jwl 12.06.96 unless we already have a private bmp.
+			// unless we already have a private bmp.
 			Assert(m_hBitmap == nullptr);
 			Assert(m_pBits == nullptr);
 
@@ -194,7 +194,6 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 					Assert(m_pPalette != nullptr);
 
-					// BCW - 01/19/97 07:56 pm
 					// Commented out because this was the cause of the MASSIVE
 					// GDI resource leak.
 					//
@@ -771,7 +770,7 @@ VOID CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 
 			if ((hPalette = pBofPalette->GetPalette()) != nullptr) {
 
-				// BCW - 01/27/97 08:56 pm - Another GDI Resource leak
+				// Another GDI Resource leak
 				//
 #if 0 //!BOF_WINMAC
 				if (m_hDC != nullptr) {
@@ -1041,7 +1040,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 		// if entire bitmap
 		//
 		if (pRect == nullptr) {
-			Assert(m_pBits != nullptr);         // jwl 06.27.96 Have seen this nullptr
+			Assert(m_pBits != nullptr);
 			BofMemSet(m_pBits, iColor, (LONG)m_nScanDX * m_nDY);
 
 		} else {
@@ -1077,7 +1076,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 		}
 		UnLock();
 
-		// jwl 08.01.96 Make our bitmaps top down!!!!!!!!!!!!!!!!!!
+		// Make our bitmaps top down!!!!!!!!!!!!!!!!!!
 #if BOF_MAC && COPYBITS
 		Assert(m_bTopDown == true);
 #endif
@@ -1740,7 +1739,7 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		// jwl 1.14.97 for this one draw, make sure that the right palette is
+		// for this one draw, make sure that the right palette is
 		// in place.
 #if BOF_MAC
 		CBofPalette *pPal = (pPalette == nullptr ? pBmp->GetPalette() : pPalette);
@@ -1759,7 +1758,7 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
 
 		delete pBmp;
 
-		// jwl 1.14.97 restore the previous palette
+		// restore the previous palette
 #if BOF_MAC
 		if (pSavePalette) {
 			pApp->SetPalette(pSavePalette);
@@ -1862,7 +1861,7 @@ CBofSize GetBitmapSize(const CHAR *pszFileName) {
 
 //	Routine that takes a palette and a grafport and synchronizes
 //	their color definitions.  Makes the current grafport the
-//  exact same as the palette passed.  jwl 07.02.96 not currently
+//  exact same as the palette passed. not currently
 //  used.
 #if BOF_MAC || BOF_WINMAC
 #if SYNCPALETTES
@@ -1957,7 +1956,7 @@ VOID BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, 
 	Assert((srcRect->right - srcRect->left) == (trgRect->right - trgRect->left));
 	Assert((srcRect->bottom - srcRect->top) == (trgRect->bottom - trgRect->top));
 
-	// jwl 08.13.96 don't need to set the foreground and background in spacebar.
+	// don't need to set the foreground and background in spacebar.
 	if (nMaskColor == NOT_TRANSPARENT) {
 		//GetPort (&(GrafPtr) curCPort);
 

@@ -54,7 +54,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow
 		nHeight = pRect->Height();
 	}
 
-	return (Create(pszName, x, y, nWidth, nHeight, pParent, nControlID));
+	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
 
@@ -138,7 +138,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, I
 		m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -188,7 +188,7 @@ CBofString CBofEditText::GetText() {
 
 #endif
 
-	return (cString);
+	return cString;
 }
 
 

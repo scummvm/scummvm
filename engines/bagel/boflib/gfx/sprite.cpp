@@ -184,7 +184,7 @@ BOOL CBofSprite::SetupWorkArea(INT dx, INT dy) {
 		bSuccess = TRUE;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -206,7 +206,7 @@ CBofSprite *CBofSprite::DuplicateSprite() {
 		DuplicateSprite(pSprite);
 	}
 
-	return (pSprite);
+	return pSprite;
 }
 
 
@@ -232,10 +232,10 @@ BOOL CBofSprite::DuplicateSprite(CBofSprite *pSprite) {
 
 		pSprite->m_bDuplicated = TRUE;                    // mark it as a sprite with shared resources
 
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -244,7 +244,7 @@ BOOL CBofSprite::LoadSprite(const CHAR *pszPathName, INT nCels) {
 	Assert(pszPathName != nullptr);
 	Assert(nCels >= 1);
 
-	// BCW - 01/16/97 03:12 pm might not be needed anymore
+	// might not be needed anymore
 	// a shared palette must be set up before we an start loading sprites
 	//Assert(m_pSharedPalette != nullptr);
 
@@ -253,10 +253,10 @@ BOOL CBofSprite::LoadSprite(const CHAR *pszPathName, INT nCels) {
 	// create an object for the sprite's image
 	if ((pBitmap = new CBofBitmap(pszPathName, m_pSharedPalette)) != nullptr) {
 
-		return (LoadSprite(pBitmap, nCels));
+		return LoadSprite(pBitmap, nCels);
 	}
 
-	return (FALSE);                                     // return failure
+	return FALSE;                                     // return failure
 }
 
 
@@ -288,7 +288,7 @@ BOOL CBofSprite::LoadSprite(CBofBitmap *pBitmap, INT nCels) {
 		m_bAnimated = TRUE;
 	}
 
-	return (TRUE);                                     // return success
+	return TRUE;                                     // return success
 }
 
 
@@ -307,10 +307,10 @@ BOOL CBofSprite::SetupCels(const INT nCels) {
 		m_cRect.right = m_cRect.left + m_cSize.cx;              // reset sprite rectangular bounds
 		m_cRect.bottom = m_cRect.top + m_cSize.cy;              // ... based on cel dimensions
 		m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);        // set bounds for first cel in strip
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -355,7 +355,7 @@ BOOL CBofSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
 
 	UpdateDirtyRect(pWnd, this);
 
-	return (!ErrorOccurred());
+	return !ErrorOccurred();
 }
 
 
@@ -369,19 +369,19 @@ BOOL CBofSprite::PaintSprite(CBofBitmap *pBmp, const INT x, const INT y) {
 
 	UpdateDirtyRect(pBmp, this);
 
-	return (!ErrorOccurred());
+	return !ErrorOccurred();
 }
 
 
 BOOL CBofSprite::PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y) {
 	SetCel(nCelId - 1);
-	return (PaintSprite(pWnd, x, y));
+	return PaintSprite(pWnd, x, y);
 }
 
 
 BOOL CBofSprite::PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y) {
 	SetCel(nCelId - 1);
-	return (PaintSprite(pBmp, x, y));
+	return PaintSprite(pBmp, x, y);
 }
 
 
@@ -512,7 +512,7 @@ BOOL CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 
 	ClearDirtyRect();
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -555,7 +555,7 @@ BOOL CBofSprite::UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 
 	ClearDirtyRect();
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -608,7 +608,7 @@ BOOL CBofSprite::EraseSprites(CBofWindow *pWnd) {
 	}
 	UpdateDirtyRect(pWnd);
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -619,7 +619,7 @@ BOOL CBofSprite::EraseSprite(CBofWindow *pWnd) {
 	BatchErase();
 	UpdateDirtyRect(pWnd);
 
-	return (!ErrorOccurred());
+	return !ErrorOccurred();
 }
 
 
@@ -654,13 +654,13 @@ BOOL CBofSprite::TestInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
 				// ... have image masks that overlap
 				//
 				if ((m_nMaskColor == NOT_TRANSPARENT) || (pTestSprite->m_nMaskColor == NOT_TRANSPARENT) || SpritesOverlap(pTestSprite, pPoint)) {
-					return (TRUE);
+					return TRUE;
 				}
 			}
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -690,14 +690,14 @@ CBofSprite *CBofSprite::Interception(CBofRect *pNewRect, CBofSprite *pTestSprite
 			if (overlapRect.IntersectRect(pNewRect, &pSprite->m_cRect))
 
 				// ... if so return a pointer to it
-				return (pSprite);
+				return pSprite;
 		}
 
 		// fetch next sprite in chain for testing
 		pSprite = (CBofSprite *)pSprite->m_pNext;
 	}
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -711,12 +711,12 @@ CBofSprite *CBofSprite::Interception(CBofSprite *pTestSprite) {
 	while (pSprite != nullptr) {               // thumb through the entire sprite collection
 
 		if (TestInterception(pSprite, nullptr))       // ... testing against each sprite in turn
-			return (pSprite);                           // found an interception
+			return pSprite;                           // found an interception
 
 		pSprite = (CBofSprite *)pSprite->m_pNext;                     // fetch next sprite in chain for testing
 	}
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -796,7 +796,7 @@ endroutine:
 	pSprite->m_pImage->UnLock();
 	m_pImage->UnLock();
 
-	return (bHit);
+	return bHit;
 }
 
 
@@ -806,21 +806,21 @@ BOOL CBofSprite::Touching(CBofPoint myPoint) {
 	// ignoring sprites that don't intercept
 	//
 	if (m_cRect.PtInRect(myPoint))     // see if the point is in the sprite's rectangle
-		return (TRUE);                 // ... and if so, return success
+		return TRUE;                 // ... and if so, return success
 
-	return (FALSE);
+	return FALSE;
 }
 
 
 CBofSprite *CBofSprite::Touched(CBofPoint myPoint, CBofSprite *pSprite) {
 	while (pSprite != nullptr) {                       // thumb through the entire sprite collection
 		if (pSprite->m_cRect.PtInRect(myPoint))     // See if the point is in the sprite's rectangle
-			return (pSprite);                       // ... and if so, return a pointer to it
+			return pSprite;                       // ... and if so, return a pointer to it
 
 		pSprite = (CBofSprite *)pSprite->m_pNext;                 // fetch next sprite for testing
 	}
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -864,7 +864,7 @@ BOOL CBofSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 		}
 	}
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -922,10 +922,10 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	Assert(pSprite != nullptr);
 
 	if (pSprite == this)
-		return (TRUE);
+		return TRUE;
 
 	if (!cUnionRect.UnionRect(&m_cRect, &pSprite->m_cRect))
-		return (FALSE);
+		return FALSE;
 
 	bFound = TRUE;
 
@@ -1024,7 +1024,7 @@ endroutine:
 	pSprite->m_pImage->UnLock();
 	m_pImage->UnLock();
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1155,7 +1155,7 @@ BOOL CBofSprite::IsSpriteHidden() {
 		BofFree(pBuf);
 	}
 
-	return (bHidden);
+	return bHidden;
 }
 
 
@@ -1171,7 +1171,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 	if (m_cRect.PtInRect(cTestPoint)) {
 
 		if (m_nMaskColor == NOT_TRANSPARENT)
-			return (TRUE);
+			return TRUE;
 
 		x = cTestPoint.x - m_cPosition.x;
 		y = cTestPoint.y - m_cPosition.y;
@@ -1200,7 +1200,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 		m_pImage->UnLock();
 	}
 
-	return (bTouch);
+	return bTouch;
 }
 
 
@@ -1218,7 +1218,7 @@ BOOL CBofSprite::TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite)
 
 	m_cRect = cOldRect;
 
-	return (bTouched);
+	return bTouched;
 }
 
 

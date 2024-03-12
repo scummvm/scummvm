@@ -196,7 +196,7 @@ ERROR_CODE CBofText::Display(CBofWindow *pWnd) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
-	return (Display(pWnd, m_cCurString, m_nCurSize, m_nCurWeight, m_cTextColor));
+	return Display(pWnd, m_cCurString, m_nCurSize, m_nCurWeight, m_cTextColor);
 }
 
 ERROR_CODE CBofText::Display(CBofBitmap *pBmp) {
@@ -212,7 +212,7 @@ ERROR_CODE CBofText::Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nS
 
 	m_cTextColor = cColor;
 
-	return (DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, FALSE, nFont));
+	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, FALSE, nFont);
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const INT nDX, const INT nDY, INT nFont) {
@@ -224,7 +224,7 @@ ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, cons
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 
-	return (DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, TRUE, nFont));
+	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, TRUE, nFont);
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const INT nDX, const INT nDY, INT nFont) {
@@ -443,7 +443,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	GetPort(&pOldPort);
 
 	OpenCPort(&stPort);
-	Assert(MemError() == noErr);        // jwl 07.17.96 opencport can fail due to memory restraints
+	Assert(MemError() == noErr);        // opencport can fail due to memory restraints
 
 	::SetPalette((WindowPtr) &stPort, pmh, false);
 	SetPort((GrafPtr)(&stPort));
@@ -452,7 +452,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 
 	// create an offscreen work area to print the text to
 	//
-	// jwl 12.06.96 if possible, use a local buffer.
+	// if possible, use a local buffer.
 	if ((pRect->Width() * pRect->Height()) < TEXTBMPSIZE) {
 		pPrivateTextBuff = privateTextBuff;
 	} else {
@@ -470,11 +470,11 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	SetPortPix(pPixMap);
 
 	// Set text point size, and style
-	// jwl 07.02.96 sometimes the size comes in negative, absolute
+	// sometimes the size comes in negative, absolute
 	// it.  This is a 'windows thing'.
 
 	::TextSize((SHORT)ABS(nSize));
-	if (bShadowed)                  // jwl 06.27.96 account for shadowing
+	if (bShadowed)                  // account for shadowing
 		::TextFace(shadow);
 	else
 		::TextFace((SHORT)nWeight);
@@ -688,7 +688,7 @@ ERROR_CODE CBofText::ShutDown() {
 
 	m_bInitialized = FALSE;
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
@@ -696,7 +696,7 @@ ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, c
 	Assert(pRect != nullptr);
 
 	CBofText cText(pRect, nJustify, nFormatFlags);
-	return (cText.Display(pWnd, pszString, nSize, nWeight, cColor, nFont));
+	return cText.Display(pWnd, pszString, nSize, nWeight, cColor, nFont);
 }
 
 ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
@@ -708,7 +708,7 @@ ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, c
 
 	cText.SetColor(cColor);
 
-	return (cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, FALSE, nFont));
+	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, FALSE, nFont);
 }
 
 ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT /*nFont*/) {
@@ -716,7 +716,7 @@ ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszS
 	Assert(pRect != nullptr);
 
 	CBofText cText(pRect, nJustify, nFormatFlags);
-	return (cText.DisplayShadowed(pWnd, pszString, nSize, nWeight, cColor));
+	return cText.DisplayShadowed(pWnd, pszString, nSize, nWeight, cColor);
 }
 
 ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {

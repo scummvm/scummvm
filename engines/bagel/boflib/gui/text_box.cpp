@@ -123,7 +123,7 @@ ERROR_CODE CBofTextBox::SetBox(CBofRect *pRect) {
 		ReportError(ERR_MEMORY, "Could not allocate a CBofText");
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -205,7 +205,7 @@ INT CBofTextBox::GetIndex(const INT nLine) {
 		m_nCurrentLine--;
 	}
 
-	return (nChars);
+	return nChars;
 }
 
 
@@ -230,7 +230,7 @@ ERROR_CODE CBofTextBox::ScrollUp(const INT nLines) {
 		//
 		nNewLine = (m_nNumLines - m_nPageSize);
 	}
-	return (ScrollTo(nNewLine));
+	return ScrollTo(nNewLine);
 }
 
 
@@ -244,7 +244,7 @@ ERROR_CODE CBofTextBox::ScrollTo(const INT nLine) {
 	// Show the text box
 	Display();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -270,7 +270,7 @@ ERROR_CODE CBofTextBox::Display() {
 		m_pTextField->Display(m_pDestBitmap, m_cBuffer.Mid(m_nCurrentIndex), m_nPointSize, m_nWeight, m_cTextColor, m_nTextFont);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -288,7 +288,7 @@ ERROR_CODE CBofTextBox::Erase() {
 		m_errCode = m_pTextField->Erase(m_pDestBitmap);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
