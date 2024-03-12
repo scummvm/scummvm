@@ -609,7 +609,7 @@ BOOL IsKeyDown(ULONG lKeyCode) {
 
 #if BOF_MAC
 //	Takes a fully qualified directory specification and returns the
-//  FSSpec record.  jwl 07.03.96
+//  FSSpec record.
 VOID FSSpecFromPath(CHAR *pszPath, FSSpec *fspec) {
 	OSErr oserr = noErr;
 	Str255 szFullPath;

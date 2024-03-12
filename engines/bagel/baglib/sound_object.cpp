@@ -185,7 +185,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 
 	while (!istr.eof()) {
 		nChanged = 0;
-		istr.EatWhite(); // Eat any white space between script elements MDM 7/16
+		istr.EatWhite(); // Eat any white space between script elements
 		switch (ch = (char)istr.peek()) {
 
 		// VOLUME

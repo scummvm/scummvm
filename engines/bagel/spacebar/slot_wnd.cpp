@@ -39,7 +39,7 @@ CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 
 #define FIXBMP      "BGNDDN.BMP"
 #define MAX_CREDITS     200000
-// Added for casino background sounds BFW 12/24/96
+// return $1; for casino background sounds
 #define CASINO_AUDIO            "CASINO.WAV"
 
 #define BGCBDIR         "$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
@@ -133,7 +133,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 
 	SetHelpFilename(BuildSlotDir("SLOT.TXT"));
 
-	// jwl 1.13.97 call this thing a closeup so that time won't go
+	// call this thing a closeup so that time won't go
 	// by when entering the closeup
 	SetCloseup(TRUE);
 }
@@ -177,7 +177,7 @@ VOID SBarSlotWnd::OnPaint(CBofRect *pRect) {
 
 		UpdateText();
 
-		// jwl 1.17.97 must show buttons after bringing the window frontmost
+		// must show buttons after bringing the window frontmost
 #if BOF_MAC
 		for (INT i = 0; i < NUM_SLOTBUTT; i++) {
 			if (m_pSlotButs[i] != nullptr) {
@@ -209,18 +209,6 @@ VOID SBarSlotWnd::OnMainLoop() {
 	// Do nothing
 }
 
-/*****************************************************************************
-*
-*  Attach -
-*
-*  DESCRIPTION:
-*   This is where we allocate storage, load bitmaps, etc.
-*
-*
-*  RETURNS:
-*       ERROR_CODE
-*
-*****************************************************************************/
 ERROR_CODE  SBarSlotWnd::Attach() {
 	CBofPalette *pPal;
 	INT i;
@@ -258,7 +246,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 				m_pSlotButs[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
 #if BOF_MAC
-				// jwl 1.17.97 this will be a mac custom window thus not having the
+				// this will be a mac custom window thus not having the
 				// black frame drawn around it.
 				m_pSlotButs[i]->SetCustomWindow(TRUE);
 #endif
@@ -305,7 +293,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pCredText = new CBofText) != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
 			m_pCredText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC
 			m_pCredText->SetColor(RGB(0, 0, 0));
 #else
 			m_pCredText->SetColor(RGB(255, 255, 255));
@@ -325,7 +313,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pBetText = new CBofText) != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
 			m_pBetText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC
 			m_pBetText->SetColor(RGB(0, 0, 0));
 #else
 			m_pBetText->SetColor(RGB(255, 255, 255));
@@ -345,7 +333,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 		if ((m_pOddsText = new CBofText) != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
 			m_pOddsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC       // jwl 08.01.96
+#if BOF_MAC || BOF_WINMAC
 			m_pOddsText->SetColor(RGB(0, 0, 0));
 #else
 			m_pOddsText->SetColor(RGB(255, 255, 255));
@@ -359,7 +347,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 
 		Show();
 
-		// jwl 1.17.97 must show buttons after bringing the window frontmost
+		// must show buttons after bringing the window frontmost
 #if BOF_MAC
 		for (i = 0; i < NUM_SLOTBUTT; i++) {
 			if (m_pSlotButs[i] != nullptr) {
@@ -372,7 +360,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 	}
 
 
-	// Added for casino background sounds BFW 12/24/96
+	// return $1; for casino background sounds BFW 12/24/96
 	if ((m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
 		m_pBkgSnd->Play();
 	} else {
@@ -381,30 +369,16 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 
 	CBofCursor::Show();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
-/*****************************************************************************
-*
-*  Detach -
-*
-*  DESCRIPTION:
-*
-*  SAMPLE USAGE:
-*
-*
-*  RETURNS:
-*       ERROR_CODE
-*
-*****************************************************************************/
 ERROR_CODE SBarSlotWnd::Detach() {
 	CBagVar *pVar;
 	INT i, j;
 
 	CBofCursor::Hide();
 
-	// BCW - 12/16/96 10:01 pm
 	// Put any credits left in machine back into you credit chip.
 	//
 	if (m_nBet > 0) {
@@ -416,7 +390,7 @@ ERROR_CODE SBarSlotWnd::Detach() {
 	if (pVar)
 		pVar->SetValue(m_nCredit);
 
-	// Added for casino background sounds BFW 12/24/96
+	// return $1; for casino background sounds BFW 12/24/96
 	if (m_pBkgSnd->IsPlaying()) {
 		m_pBkgSnd->Stop();
 	}
@@ -484,7 +458,7 @@ ERROR_CODE SBarSlotWnd::Detach() {
 	// One turn has gone by
 	VARMNGR->IncrementTimers();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1114,7 +1088,7 @@ const CHAR *BuildSlotDir(const CHAR *pszFile) {
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
 	MACROREPLACE(sSlotDir);
 
-	return (&szBuf[0]);
+	return &szBuf[0];
 }
 
 } // namespace SpaceBar

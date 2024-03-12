@@ -226,7 +226,7 @@ VOID CBofEditText::Key(const CHAR key) {
 	Assert(IsCreated());
 
 	SetPort(m_pWindow);
-	::TECut(m_hTE);         // jwl 09.19.96 trash selection range if there is one
+	::TECut(m_hTE);         // trash selection range if there is one
 	::TEKey(key, m_hTE);
 	::TEUpdate(&m_pWindow->portRect, m_hTE);
 }

@@ -172,8 +172,8 @@ ERROR_CODE SBarComputer::Attach() {
 		pPal = m_pBackdrop->GetPalette();
 
 #if BOF_MAC
-		Show(); // scg 02.02.97
-		ForcePaint(); // scg 02.02.97
+		Show();
+		ForcePaint();
 #endif
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
@@ -480,7 +480,7 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 	if (m_pDrinkBox == nullptr) { // We need to create one
 		if ((m_pDrinkBox = new CBofListBox) != nullptr) {
 #if BOF_MAC
-			// jwl 08.21.96 make this our own custom window such that no frame is drawn
+			// make this our own custom window such that no frame is drawn
 			// around the window/button
 			m_pDrinkBox->SetCustomWindow(true);
 #endif
@@ -521,7 +521,7 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 		// We need to create one
 		if ((m_pIngBox = new CBofListBox) != nullptr) {
 #if BOF_MAC
-			// jwl 08.21.96 make this our own custom window such that no frame is drawn
+			// make this our own custom window such that no frame is drawn
 			// around the window/button
 			m_pIngBox->SetCustomWindow(true);
 #endif

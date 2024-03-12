@@ -130,7 +130,7 @@ ERROR_CODE CBofScrollBar::SetText(const CHAR *pszText, INT nJustify) {
 			}
 		}
 		if (m_pScrollText != nullptr) {
-			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
+			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE);
 		}
 	}
 
@@ -390,7 +390,7 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 
 		if ((m_pScrollText != nullptr) && (_parent != nullptr)) {
 
-			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE); // jwl 07.02.96
+			m_pScrollText->Display(_parent, m_szScrollText, FONT_DEFAULT_SIZE, TEXT_DEFAULT_FACE);
 		}
 	}
 

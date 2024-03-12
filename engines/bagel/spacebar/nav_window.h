@@ -76,8 +76,8 @@ protected:
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnMainLoop();
 
-	// jwl 07.25.96 split up the onmousedown method
-	VOID RefreshData();     // bar 10/27/96 added func to just paint text
+	// split up the onmousedown method
+	VOID RefreshData();     // added func to just paint text
 
 	VOID OnPinna();
 	VOID OnHpoctyl();

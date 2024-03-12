@@ -877,7 +877,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			if (nFilter) {
 				pSDev->SetFilterId((USHORT)nFilter);
 
-				// Set the filter on the window.  GJJ 9-7-96
+				// Set the filter on the window.
 				//
 				OnNewFilter(pSDev, typestr);
 			}

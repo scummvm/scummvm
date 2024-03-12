@@ -148,7 +148,7 @@ public:
 	virtual BOOL HideMovie();
 	virtual HPALETTE WinPalFromSmkPal();
 
-	// jwl 1.24.97 need to access members from outside of class for
+	// need to access members from outside of class for
 	// performance optimization.
 	SmackBuf *GetSmackBuffer() {
 		return m_pSbuf;

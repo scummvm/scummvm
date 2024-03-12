@@ -59,20 +59,6 @@ CSBarMasterWin::CSBarMasterWin() {
 #endif
 
 
-/*****************************************************************************
-*
-*  OnNewStorageDev -
-*
-*  DESCRIPTION:
-*
-*
-*  SAMPLE USAGE:
-*       OnNewStorageDev();
-*
-*  RETURNS:
-*       True on success
-*
-*****************************************************************************/
 CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) {
 	Assert(IsValidObject(this));
 
@@ -140,7 +126,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 	} else if (!typestr.Find("PLAYNAV")) {
 		pSDev = new CNavWindow();
 
-		// jwl 11.04.96 delineate cic's
+		// delineate cic's
 	} else if (!typestr.Find("CIC")) {
 		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
 			pSDev->SetCloseup(TRUE);
@@ -160,20 +146,20 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 			//          pSDev->SetExitOnEdge(80);
 		}
 
-	} else if (!typestr.Find("EVENT")) {        // MDM EVT STUFF
+	} else if (!typestr.Find("EVENT")) {        // EVT STUFF
 		pSDev = new CBagEventSDev();
 
-	} else if (!typestr.Find("TURNEVENT")) {    // jwl 12.27.96 turn based storage device
+	} else if (!typestr.Find("TURNEVENT")) {    // turn based storage device
 		pSDev = new CBagTurnEventSDev();
 
-	} else if (!typestr.Find("LOG")) {          // MDM PDA LOG STUFF
+	} else if (!typestr.Find("LOG")) {          // PDA LOG STUFF
 		pSDev = new CBagLog();
 
 	} else {
 		pSDev = new GAMEWINDOW(namestr);
 	}
 
-	return (pSDev);
+	return pSDev;
 }
 
 
@@ -216,7 +202,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 		break;
 	};
 
-	return (pSDev);
+	return pSDev;
 }
 
 

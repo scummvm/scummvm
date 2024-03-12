@@ -167,7 +167,7 @@ public:
 	INT FindNumOccurrences(const CHAR *pszSub);
 
 	// Search and replace routines
-	VOID ReplaceCharAt(INT, CHAR); // jwl 09.03.96
+	VOID ReplaceCharAt(INT, CHAR);
 	VOID ReplaceChar(CHAR chOld, CHAR chNew);
 	VOID ReplaceStr(const CHAR *pszOld, const CHAR *pszNew);
 

@@ -30,7 +30,7 @@ BOOL CBagExam::Exam() {
 	PaintBitmap(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &r);
 
 #if BOF_MAC
-	// jwl 07.22.96 mac has a call to do this for us.
+	// mac has a call to do this for us.
 	::FlushEvents(everyEvent, 0);
 #elif BOF_WINDOWS
 

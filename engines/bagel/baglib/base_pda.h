@@ -68,7 +68,7 @@ protected:
 	BOOL m_bZoomed;
 	BOOL m_bDeactivate; // should we deactivate when done w/movie?
 
-	// jwl 1.3.97 hold this info for restore method
+	// hold this info for restore method
 	CBagStorageDevBmp *m_xHoldDisplay;
 	static PDAMODE m_eHoldMode;
 

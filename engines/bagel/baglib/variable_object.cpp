@@ -32,7 +32,6 @@ namespace Bagel {
 
 CBagVariableObject::CBagVariableObject() : CBagObject() {
 	m_xObjType = VAROBJ;
-	// MDM 9/4/96
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
 	SetVisible(TRUE);

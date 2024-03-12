@@ -114,7 +114,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		m_pBmpBuf->Lock();
 
 #if BOF_MAC || BOF_WINMAC
-		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(0, 0, 0)));         // jwl 08.01.96
+		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(0, 0, 0)));
 #else
 		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(255, 255, 255))/*RGB(0,0,0)*/);
 #endif
@@ -499,7 +499,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		case 'K': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);       // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -543,7 +543,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);       // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 

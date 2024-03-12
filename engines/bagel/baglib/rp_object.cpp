@@ -639,7 +639,7 @@ INT CBagRPObject::RunRPQueue() {
 
 			// Find out if there are any events worth reporting.
 			//
-			// jwl 11.20.96 remove the addition of 20, that's already been added in the script.
+			// remove the addition of 20, that's already been added in the script.
 			if (pRPObj->m_bRPReported == FALSE && pRPObj->m_nRPTime != 0 && nCurSBTime >= pRPObj->m_nRPTime) {
 				AddToMsgQueue(pRPObj);
 			}
@@ -752,7 +752,7 @@ BOOL CBagRPObject::RunObject() {
 	BOOL bMoviePlayed = FALSE;
 
 	// If we have a movie, which we should, run it!
-	// jwl 12.24.96 only play the movie the first time through!
+	//only play the movie the first time through!
 	BOOL bLocalMoviePlayed = FALSE;
 	if (m_pMovieObj && m_bMoviePlayed == FALSE) {
 		bMoviePlayed = m_pMovieObj->RunObject();
@@ -778,10 +778,10 @@ BOOL CBagRPObject::RunObject() {
 	// user, then go to the residue print results.  Be a good guy and
 	// go to the page that this guy will show up on.
 	//
-	// jwl 11.25.96 results waiting will only return 1 if there are two in
+	// results waiting will only return 1 if there are two in
 	// the queue (because this one has already been marked as read).
 	//
-	// jwl 1.16.97 only want to remove everything waiting if this movie
+	// only want to remove everything waiting if this movie
 	// was actually played.
 	if (bLocalMoviePlayed == TRUE && !Zoomed() && RPResultsWaiting() >= 1) {
 
@@ -1055,7 +1055,7 @@ VOID CBagRPObject::EvaluateDossiers() {
 			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(FALSE);
 		}
 
-		// jwl  12.18.96 if we are displaying this dossier and the suspect var is
+		// if we are displaying this dossier and the suspect var is
 		// there, then lookup the suspect var and let the voice printing code know
 		// that this guy's DNA has shown up on some object.
 		if (pDosLObj->m_bDisplayDossier &&
@@ -1634,7 +1634,7 @@ VOID CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
 	CBagLog *pLogWld;
 	CBagObject *pObj;
 
-	// jwl 12.10.96 only synchronize in the bar
+	// only synchronize in the bar
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 	if (pVar == nullptr) {
 		return;

@@ -777,7 +777,7 @@ VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
 	// cause the boundary rectangle to extend farther from the viewport edge.
 	// A value of zero will cause the boundary rectangles to be at the edge
 	// of the viewport.  If nRange has a negative value, the boundary
-	// rectangle will start outside the viewport rectangle.  GJJ 10-31-96
+	// rectangle will start outside the viewport rectangle.
 	//
 	const int nRange = 16;
 	CBofRect xMaxPanBmpRect;
@@ -1006,7 +1006,7 @@ const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint &xPoint) {
 			p.x -= m_pSlideBitmap->Width();
 
 		// If this view is being painted with a correction, we need
-		// to correct the point to the warped view space. GJJ 10-30-96.
+		// to correct the point to the warped view space.
 		if (m_nCorrection != 0) {
 			p = m_pSlideBitmap->WarpedPoint(p);
 		}

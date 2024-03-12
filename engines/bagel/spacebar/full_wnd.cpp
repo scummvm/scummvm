@@ -35,7 +35,7 @@ SBarFullWnd::SBarFullWnd() {
 ERROR_CODE SBarFullWnd::Attach() {
 	Assert(IsValidObject(this));
 
-	// jwl 12.27.96 if we have something wielded, put it on hold for now.
+	// if we have something wielded, put it on hold for now.
 	if (CBagPanWindow::m_pWieldBmp != nullptr) {
 		if ((m_pWieldedObject = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
 			SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
@@ -52,7 +52,7 @@ ERROR_CODE SBarFullWnd::Attach() {
 		UpdateWindow();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE SBarFullWnd::Detach() {

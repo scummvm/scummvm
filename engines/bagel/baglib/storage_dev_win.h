@@ -123,7 +123,7 @@ protected:
 	static CBofPoint m_xCursorLocation; // Current cursor location in bmp.
 	static BOOL m_bHandledUpEvent;      // Hack to stop
 	static BOOL m_bHidePDA;
-	FilterFunction m_pBitmapFilter; // Pointer to the bitmap filter.  GJJ 9-11-96.
+	FilterFunction m_pBitmapFilter; // Pointer to the bitmap filter.
 
 	BOOL m_bForiegnList : 1;   // True if SetObjectList has been called
 	BOOL m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened

@@ -35,7 +35,6 @@ CBagButtonObject::CBagButtonObject() {
 	m_bActiveDown = FALSE;
 	m_bActiveUp = FALSE;
 
-	// mdm 5/20
 	m_nNumPos = 0;
 	m_bDragging = FALSE;
 	SetCallBack(nullptr, nullptr);
@@ -59,7 +58,7 @@ ERROR_CODE CBagButtonObject::Attach() {
 		m_MidPoint.x = GetRect().TopLeft().x + (GetRect().Width() / 2);
 		m_MidPoint.y = GetRect().TopLeft().y + (GetRect().Height() / 2);
 	}
-	// mdm 5/20
+
 	if (GetSprite()->GetCelCount() == 1 && m_xButtonType != SLIDER) { // Only given down state
 		SetVisible(FALSE);
 	}
@@ -270,13 +269,13 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 			if (m_bActive) { // If the button is doing something
 				if (m_bActiveDown) {
 					GetSprite()->NextCel(); //  increment frame
-					// jwl 10.30.96, If this is animated, the bring it back up immediately
+					// If this is animated, the bring it back up immediately
 					if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1 || GetSprite()->GetAnimated()) {
 						m_bActiveDown = FALSE;
 					}
 				} else if (m_bActiveUp) {   // else (going back up)
 					GetSprite()->PrevCel(); //  decrement frame
-					// jwl 10.30.96, If this is animated, the let it go immediately
+					// If this is animated, the let it go immediately
 					if (GetSprite()->GetCelIndex() == 0 || GetSprite()->GetAnimated()) {
 						m_bActiveUp = FALSE;
 						m_bActive = FALSE;
@@ -299,7 +298,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 				}
 			}
 		}
-		// jwl 10.22.96 for checkboxes, we have to make sure that they are always
+		// for checkboxes, we have to make sure that they are always
 		// redrawn as they will otherwise return to their state on the pan (in the
 		// background of the closeup).
 		bDirty = TRUE;
@@ -395,7 +394,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		case 'A': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {

@@ -506,7 +506,7 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 
 		if (m_pSaveGameFile != nullptr) {
 			// Only getting the title causes a crash when the user tries
-			// to restore an empty record, so I undid jwl changes.
+			// to restore an empty record, so I undid previous changes.
 
 			// Read entire header for this record, so we can see
 			// if this record is a valid saved game or not.

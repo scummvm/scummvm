@@ -189,7 +189,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 			SmackToBuffer(m_pSmk, 0, 0, m_pBmpBuf->Width(), m_pBmpBuf->Height(), m_pBufferStart, m_nReversed);
 
 #if BOF_MAC
-			// jwl if we were opened without being positioned, do that here.
+			// if we were opened without being positioned, do that here.
 			if (m_bPositioned == false) {
 				CenterRect();
 			}
@@ -423,7 +423,7 @@ BOOL CBagFMovie::HideMovie() {
 
 
 #if BOF_MAC
-#pragma profile off     // jwl 08.12.96 movies are skewing our profiling
+#pragma profile off     // movies are skewing our profiling
 // data, since we don't have control over it, don't
 // include it.
 #endif
@@ -602,7 +602,7 @@ BOOL CBagFMovie::CenterRect() {
 	int                 MovieWidth = 0;
 	int                 MovieHeight = 0;
 
-#if BOF_MAC     // jwl 06.26.96 Use the windows port rect
+#if BOF_MAC     // Use the windows port rect
 	rcParentRect = m_pParentWnd->GetRect();
 	m_bPositioned = TRUE;
 #else
@@ -652,7 +652,7 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 
 
 #if BOF_MAC
-	//  jwl 10.01.96 get a new palette and seed it from the palette
+	//  get a new palette and seed it from the palette
 	USHORT nIndex;
 
 	returnValue = ::NewPalette(kNumColors, 0, pmExplicit | pmAnimated, 0);

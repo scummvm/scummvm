@@ -219,7 +219,7 @@ ERROR_CODE CBofDataFile::Open() {
 
 			// Open data-file
 			//
-			// jwl 07.14.96 pass the filename only, not the full path,
+			// pass the filename only, not the full path,
 			// otherwise our m_szFileName buffer will get expanded
 			// prematurely.
 #if BOF_MAC
