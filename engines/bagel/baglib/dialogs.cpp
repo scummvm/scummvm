@@ -448,7 +448,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 INT CBagCreditsDialog::LinesPerPage() {
@@ -457,7 +457,7 @@ INT CBagCreditsDialog::LinesPerPage() {
 	INT n;
 	n = (g_cScreen[m_iScreen].m_nBottom - g_cScreen[m_iScreen].m_nTop) / (LINE_HEIGHT + 2) + 1;
 
-	return (n);
+	return n;
 }
 
 

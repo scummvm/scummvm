@@ -379,17 +379,14 @@ public:
 	}
 
 	// Correctly set the filter function for the storage device.
-	// GJJ 9-1-96
 	//
 	VOID OnSetFilter(BOOL (*FilterFxn)(const USHORT nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
-	// GJJ 9-11-96
 	//
 	FilterFunction GetFilter();
 
 	// Predicate to test if this storage device is filtered.
-	// GJJ 9-11-96
 	//
 	BOOL IsFiltered() {
 		return m_nFilterId != 0;

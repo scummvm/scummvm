@@ -37,7 +37,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	SetAnimated();
 	SetTimeless(TRUE);
 
-	// jwl 10.24.96 implement sprite framerates
+	// implement sprite framerates
 	SetFrameRate(0);
 	m_nLastUpdate = 0;
 }
@@ -64,19 +64,19 @@ ERROR_CODE CBagSpriteObject::Attach() {
 					m_xSprite->SetMaskColor(nMaskColor);
 				}
 
-				// jwl 11.01.96 set animated of the sprite to be the same as it's parent
+				// set animated of the sprite to be the same as it's parent
 				m_xSprite->SetAnimated(IsAnimated());
 
 				CBofPoint p = CBagObject::GetPosition();
 
-				if (p.x == -1 && p.y == -1) // MDM 7/17 - Fixed to allow for [0,0] positioning
+				if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
 					SetFloating();
 				else
 					m_xSprite->SetPosition(p.x, p.y);
 
 				SetProperty("CURR_CEL", GetState());
 
-				// jwl 12.09.96 this might add something to the PDA, make sure it gets
+				// this might add something to the PDA, make sure it gets
 				// redrawn.
 				CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
@@ -92,7 +92,7 @@ ERROR_CODE CBagSpriteObject::Attach() {
 		}
 	}
 
-	return (CBagObject::Attach());
+	return CBagObject::Attach();
 }
 
 ERROR_CODE CBagSpriteObject::Detach() {
@@ -120,7 +120,7 @@ CBofRect CBagSpriteObject::GetRect() {
 	CBofSize s;
 	if (m_xSprite)
 		s = m_xSprite->GetSize();
-	return (CBofRect(p, s));
+	return CBofRect(p, s);
 }
 
 //
@@ -135,7 +135,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	while (!istr.eof()) {
 		nChanged = 0;
 
-		istr.EatWhite(); // jwl 10.24.96 not sure why this WAS NOT here.
+		istr.EatWhite(); // not sure why this WAS NOT here.
 
 		switch (ch = (char)istr.peek()) {
 		//
@@ -162,7 +162,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 		case 'N': { // NOANIM
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("NOANIM")) {
@@ -176,7 +176,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 		}
 		break;
 
-		// jwl 10.24.96 handle a maximum framerate...
+		// handle a maximum framerate...
 		case 'F': { // NOANIM
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -252,13 +252,13 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 
 		b = m_xSprite->PaintSprite(pBmp, pt.x, pt.y);
 
-		// jwl 10.11.96 don't have to redraw this item...
+		// don't have to redraw this item...
 		// SetDirty (FALSE);
 
 		if (!b)
-			return (ERR_UNKNOWN);
+			return ERR_UNKNOWN;
 	}
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, INT) {
@@ -266,12 +266,12 @@ ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, 
 		BOOL b;
 		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
 
-		// jwl 10.11.96 don't have to redraw this item...
+		// don't have to redraw this item...
 		// SetDirty (FALSE);
 		if (!b)
-			return (ERR_UNKNOWN);
+			return ERR_UNKNOWN;
 	}
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 BOOL CBagSpriteObject::IsInside(const CBofPoint &xPoint) {

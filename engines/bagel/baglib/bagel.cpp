@@ -111,27 +111,27 @@ VOID CBagel::RegisterGame(const BagelReg *pGameReg) {
 
 ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue) {
 	Assert(IsValidObject(this));
-	return (WriteSetting(pszSection, pszOption, pszValue));
+	return WriteSetting(pszSection, pszOption, pszValue);
 }
 
 ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue) {
 	Assert(IsValidObject(this));
-	return (WriteSetting(pszSection, pszOption, nValue));
+	return WriteSetting(pszSection, pszOption, nValue);
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize) {
 	Assert(IsValidObject(this));
-	return (ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize));
+	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
-	return (ReadSetting(pszSection, pszOption, pValue, nDefault));
+	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
 ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
-	return (ReadSetting(pszSection, pszOption, pValue, nDefault));
+	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
 ERROR_CODE CBagel::Initialize() {
@@ -203,7 +203,7 @@ ERROR_CODE CBagel::SetActiveCursor(INT nCurs) {
 
 	CBagMasterWin::SetActiveCursor(nCurs);
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE CBagel::InitLocalFilePaths() {

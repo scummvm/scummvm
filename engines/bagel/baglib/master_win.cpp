@@ -96,7 +96,7 @@ CBagMasterWin::CBagMasterWin() {
 		pAppName = pApp->GetAppName();
 	}
 
-	// Put game into upper left corner always (BCW 10/08/96 12:39 pm)
+	// Put game into upper left corner always
 	//
 	// #ifdef _DEBUG
 	cRect.SetRect(0, 0, 640 - 1, 480 - 1);
@@ -382,8 +382,6 @@ ERROR_CODE CBagMasterWin::NewGame() {
 	CHAR sWorkStr[256];
 	CHAR szCInit[256];
 
-	// BCW - 09/26/96 04:52 pm
-	//
 	sWorkStr[0] = '\0';
 	szCInit[0] = '\0';
 
@@ -427,20 +425,6 @@ ERROR_CODE CBagMasterWin::NewGame() {
 	return m_errCode;
 }
 
-/*****************************************************************************
- *
- *  LoadFile -
- *
- *  DESCRIPTION:
- *      Called to load script file containing objects from a file named sFile
- *
- *  SAMPLE USAGE:
- *          errCode = LoadFile();
- *
- *  RETURNS:
- *      True on success
- *
- *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart, BOOL bSetStart) {
 	CHAR szLocalBuff[256];
 	BOOL bRestore;
@@ -452,7 +436,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 	static BOOL bPainted = FALSE;
 
-	// BCW - 01/09/97 02:59 am
 	// Make sure we get a new set of vildroid filter variables
 	g_bGetVilVars = TRUE;
 
@@ -479,7 +462,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 	// Keep track of what script we are in
 	m_cWldScript = sWldName;
 
-	// 08/22/96 02:00 pm BCW
 	// This palette will be deleted so don't let anyone use it, until it is
 	// replaced with a new one.
 	//
@@ -557,7 +539,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 	MACROREPLACE(sWldFileName);
 
-	// BCW - 11/19/96 06:23 pm
 	// Defrag our memory pool to speed script loads
 	//
 #if BOF_DEBUG
@@ -585,7 +566,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 			// fpInput.setbuf(pBuf, nLength);
 
-			// BCW - 09/04/96 09:44 pm
 			// Fix Visual C++ 4.1 bug
 			// Tell IOS that this is my buffer, and don't touch it
 			// fpInput.delbuf(0);
@@ -664,7 +644,6 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 VOID CBagMasterWin::SaveSDevStack() {
 	Assert(IsValidObject(this));
 
-	// BCW - 12/01/96 02:49 pm
 	// Save our SDEV location, so we can restore it from Kerpupu
 	//
 	CBagStorageDevWnd *pSDevWin;
@@ -719,20 +698,6 @@ VOID CBagMasterWin::SaveSDevStack() {
 	}
 }
 
-/*****************************************************************************
- *
- *  LoadGlobalVars -
- *
- *  DESCRIPTION:
- *      Called to load script file containing variable objects from a file named sWldName
- *
- *  SAMPLE USAGE:
- *          errCode = LoadFile();
- *
- *  RETURNS:
- *      True on success
- *
- *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	Assert(IsValidObject(this));
 
@@ -768,7 +733,6 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 				// fpInput.setbuf(pBuf, nLength);
 
-				// BCW - 09/04/96 09:44 pm
 				// Fix Visual C++ 4.1 bug
 				// Tell IOS that this is my buffer, and don't touch it
 				// fpInput.delbuf(0);
@@ -823,20 +787,6 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return m_errCode;
 }
 
-/*****************************************************************************
- *
- *  LoadFile -
- *
- *  DESCRIPTION:
- *      Called to load script file containing objects from a file named sFile
- *
- *  SAMPLE USAGE:
- *          errCode = LoadFile();
- *
- *  RETURNS:
- *      True on success
- *
- *****************************************************************************/
 ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL /*bAttach*/) {
 	CHAR szLocalStr[256];
 	szLocalStr[0] = 0;
@@ -1502,8 +1452,6 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		if (m_pGameWindow) {
 			m_pGameWindow->Detach();
 
-			// MDM 6/3
-			// MDM 6/10
 			//  if the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  if the current game window did not have a previous win
@@ -1514,14 +1462,12 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 			}
 		}
 
-		// BCW - 11/07/96 07:02 pm
 		// Don't allow recursion
 		//
 		if (!pSDev->GetPrevSDev().IsEmpty() && pSDev->GetPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
 			pSDev->SetPrevSDev("");
 		}
 
-		// BCW - 01/23/97 03:41 pm - Not used
 		// Might have to switch CDs (based on Storage Dev)
 		//
 		// CBagel *pBagApp;
@@ -1618,7 +1564,7 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 	//
 	case WM_DIE: {
 
-		// BCW - 11-01-96 - this was causing a hang if you die while
+		// this was causing a hang if you die while
 		// there is a background audio looping.  So, I am going
 		// to kill all audio.  This will probably break when you die
 		// with audio only (i.e. no smacker),  but that can be fixed in
@@ -1678,10 +1624,6 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 		CHAR szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString sWldScript(szLocalBuff, 256);
-
-		//
-		// BCW - 12/11/96 01:21 am
-		//
 
 		// User info is an index into an array of tempory string buffers
 		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
@@ -1799,7 +1741,6 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 
 					if ((pVar = pVarManager->GetVariable(i)) != nullptr) {
 
-						// BCW - 11/18/96 01:50 pm
 						// Need to save local variables in flashbacks.
 						// Let me know if this breaks anything.
 						//
@@ -1870,7 +1811,7 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 						BofMemCopy(&pSaveBuf->m_stObjListEx[0], m_pObjList, sizeof(ST_OBJ) * MAX_OBJS);
 						pSaveBuf->m_bUseEx = 1;
 
-						// BCW - 10/11/96 11:42 am - Can't delete the object list.
+						// Can't delete the object list.
 						// We need it if we will go back into the Bar
 						//
 						// restore complete, all done with this list
@@ -1898,19 +1839,6 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 }
 
-/*****************************************************************************
- *
- *  ShowSaveDialog   - Displays the modal Save Game dialog
- *
- *  DESCRIPTION:
- *
- *
- *  SAMPLE USAGE:
- *  bRestored = ShowSaveDialog();
- *
- *  RETURNS:  BOOL = TRUE if successfully saved a game, FALSE otherwise
- *
- *****************************************************************************/
 BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	Assert(IsValidObject(this));
 
@@ -2088,7 +2016,6 @@ VOID CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 				if ((m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ))) != nullptr) {
 
-					// BCW - 12/23/96 01:22 pm
 					// Init to nullptr (might not use all slots)
 					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
@@ -2125,19 +2052,6 @@ VOID CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 }
 
-/*****************************************************************************
- *
- *  ShowRestoreDialog - Displays the modal Restore Game dialog
- *
- *  DESCRIPTION:
- *
- *
- *  SAMPLE USAGE:
- *  bRestored = ShowRestoreDialog();
- *
- *  RETURNS:  BOOL = TRUE if successfully restored a saved game, FALSE otherwise
- *
- *****************************************************************************/
 BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	Assert(IsValidObject(this));
 	BOOL bRestored;

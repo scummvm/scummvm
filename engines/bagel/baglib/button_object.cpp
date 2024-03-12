@@ -328,7 +328,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 		return err;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 VOID CBagButtonObject::SetSize(const CBofSize &xSize) {

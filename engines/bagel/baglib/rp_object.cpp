@@ -1689,7 +1689,7 @@ VOID CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
 CBagDossierObject *CBagRPObject::GetActiveDossier() {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 
-	return (pDosList->GetNodeItem(m_nCurDossier)->m_pDossier);
+	return pDosList->GetNodeItem(m_nCurDossier)->m_pDossier;
 }
 
 // Used to set the currently active dossier when one is displayed to the user.

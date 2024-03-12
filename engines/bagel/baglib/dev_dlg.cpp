@@ -111,7 +111,7 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 	Center();
 	SetBackdrop(pBmp);
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -477,7 +477,7 @@ ERROR_CODE CDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		m_pTitleText->Display(GetBackdrop());
 	}
 
-	return (err);
+	return err;
 }
 
 } // namespace Bagel

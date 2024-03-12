@@ -129,19 +129,6 @@ BOOL SBBasePda::HideMovie() {
 	return FALSE;
 }
 
-/*****************************************************************************
-*
-*  ShowMovie
-*
-*  DESCRIPTION:
-*
-*       Show the movie window and set the current display to the movie window
-*
-*  FORMAL PARAMETERS:
-*
-*  RETURNS:   Success/Failure
-*
-*****************************************************************************/
 BOOL SBBasePda::ShowMovie() {
 	CBofRect CurRect;
 
@@ -174,19 +161,6 @@ BOOL SBBasePda::ShowMovie() {
 	}
 	return FALSE;
 }
-/*****************************************************************************
-*
-*  StopMovie
-*
-*  DESCRIPTION:
-*
-*       Show the movie window and set the current display to the movie window
-*
-*  FORMAL PARAMETERS:
-*
-*  RETURNS:   Success/Failure
-*
-*****************************************************************************/
 
 VOID SBBasePda::StopMovie(BOOL bResetPDA) {
 	if (m_xMooWnd && m_xMooWnd == m_xCurDisplay) {

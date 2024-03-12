@@ -70,7 +70,7 @@ CBofRect CBagTextObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);
-	return (r);
+	return r;
 }
 
 ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT) {
@@ -137,7 +137,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CBagTextObject::Attach() {
@@ -500,7 +500,6 @@ BOOL CBagTextObject::RunObject() {
 
 	if (m_bCaption && IsImmediateRun()) {
 
-		// BCW - 12/17/96 02:01 pm
 		// Re-Attach this object to get any change in a variable
 		// (Must be using the VAR token).
 		//
@@ -567,7 +566,7 @@ BOOL CBagTextObject::RunObject() {
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 INT MapFont(INT nFont) {
@@ -650,7 +649,6 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 
 	if (bTextFromFile) {
 
-		// BCW - 11/29/96 12:43 pm
 		// Add fudge factor to make sure that all the text will fit, and not
 		// get cut off.  This may cause an extra blank line of text in some
 		// captions, but tough diddles, it's still better than truncating

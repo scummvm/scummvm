@@ -121,13 +121,13 @@ CBagStorageDev::CBagStorageDev() {
 	SetFilterId(0);
 	SetFadeId(0);
 
-	// jwl 1.13.97 default is this thing is not a customized sdev.
+	// default is this thing is not a customized sdev.
 	SetCustom(FALSE);
 
-	// jwl 10.21.96 make sure all objects that are prefiltered are dirty
+	// make sure all objects that are prefiltered are dirty
 	SetDirtyAllObjects(TRUE);
 
-	// jwl 07.23.96 not sure what the hell is going on here...
+	// not sure what the hell is going on here...
 #if !BOF_MAC
 	SetLActivity(kMouseNONE);
 #endif
@@ -195,7 +195,7 @@ ERROR_CODE CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
 
 	m_pObjectList->AddToTail(pObj);
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -207,12 +207,12 @@ ERROR_CODE CBagStorageDev::RemoveObject(CBagObject *pRObj) {
 		for (int i = 0; i < nCount; ++i) {
 			if (pRObj == GetObjectByPos(i)) {
 				m_pObjectList->Remove(i);
-				return (errCode);
+				return errCode;
 			}
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -235,7 +235,7 @@ ERROR_CODE CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 		errCode = ERR_FFIND;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -259,7 +259,7 @@ ERROR_CODE CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
 		errCode = ERR_FFIND;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -290,7 +290,7 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		}
 		pObj->SetPosition(NextPos);
 
-		// jwl 11.07.96 always round this figure up...
+		// always round this figure up...
 
 		nPageNum = ((NextPos.y + nObjHeight) / nBackHeight);
 		if (((NextPos.y + nObjHeight) % nBackHeight) != 0) {
@@ -360,7 +360,7 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 
 	CBagLog::ArrangePages();
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CBagStorageDev::DetachActiveObjects() {
@@ -374,7 +374,7 @@ ERROR_CODE CBagStorageDev::DetachActiveObjects() {
 
 			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				if (pObj->IsAttached()) {
-					// jwl 10.11.96 if this object is not removed from memory, then
+					// if this object is not removed from memory, then
 					// make sure it is drawn next time it is activated.
 					pObj->SetDirty(TRUE);
 					pObj->Detach();
@@ -383,12 +383,12 @@ ERROR_CODE CBagStorageDev::DetachActiveObjects() {
 				errCode = ERR_FFIND;
 		}
 	}
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CBagStorageDev::LoadObjects() {
 	ERROR_CODE errCode = ERR_NONE;
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CBagStorageDev::ReleaseObjects() {
@@ -406,7 +406,7 @@ ERROR_CODE CBagStorageDev::ReleaseObjects() {
 
 		m_pObjectList->RemoveAll();
 	}
-	return (errCode);
+	return errCode;
 }
 
 
@@ -442,7 +442,7 @@ ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap 
 
 				if (pObj->IsVisible()) {
 					if (pBmp) {
-						// jwl 10.11.96 only update dirty objects...
+						// only update dirty objects...
 						if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
 							pObj->Update(pBmp, pt, &xBmpRect);
 						}
@@ -463,18 +463,18 @@ ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap 
 	if (!bMouseOverObj)
 		NoObjectsUnderMouse();
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE CBagStorageDev::OnLActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
 ERROR_CODE CBagStorageDev::NoObjectsUnderMouse() {
 	//::SetCursor(::LoadCursor(nullptr,IDC_ARROW));
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 void CBagStorageDev::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
@@ -493,7 +493,7 @@ void CBagStorageDev::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *vpInfo) {
 
 
 ERROR_CODE CBagStorageDev::OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
@@ -597,7 +597,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	MACROREPLACE(sWldFileName);
 
 #if BOF_MAC
-	// jwl 07.23.96 ios::nocreate does not appear to be defined in the mac
+	// ios::nocreate does not appear to be defined in the mac
 	// cw8 iostreams environment, so make sure that the file exists before
 	// opening it, otherwise it will create the file.
 
@@ -627,7 +627,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	}
 
 	// Add everything to the window
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
@@ -768,14 +768,14 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 //LOGINFO(str);
 			}
 		} else if (!sWorkStr.Find("IF")) {
-			// MDM added a bPrevNeg to keep track of nested else-if's
+			// added a bPrevNeg to keep track of nested else-if's
 			BOOL bPrevNeg = FALSE;
 			if (bElseExprList.GetHead())
 				bPrevNeg = bElseExprList.GetHead()->GetNodeItem();
 
 			bElseExprList.AddToHead((BOOL) FALSE);
 
-			// MDM added a bPrevNeg to keep track of nested else-if's
+			// added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
 			// CBagExpression *pExp = new CBagExpression(pActiveExpr);
 
@@ -809,7 +809,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 			GetStringFromStream(fpInput, sWorkStr, "=", TRUE);
 			pObj = OnNewLinkObject(sWorkStr);
 
-			// jwl 11.07.96 allow residue printing objects
+			// allow residue printing objects
 		} else if (!sWorkStr.Find("RPO")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", TRUE);
 			pObj = OnNewRPObject(sWorkStr);
@@ -935,10 +935,10 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 
 INT CBagStorageDev::GetObjectCount() {
 	if (m_pObjectList != nullptr) {
-		return (m_pObjectList->GetCount());
+		return m_pObjectList->GetCount();
 
 	} else {
-		return (0);
+		return 0;
 	}
 }
 
@@ -947,7 +947,7 @@ CBagObject *CBagStorageDev::GetObjectByPos(INT nIndex) {
 	Assert(m_pObjectList != nullptr);
 	Assert((nIndex >= 0) && (nIndex < m_pObjectList->GetCount()));
 
-	return (m_pObjectList->GetNodeItem(nIndex));
+	return m_pObjectList->GetNodeItem(nIndex);
 }
 
 
@@ -990,7 +990,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, BOOL bActiveOnly)
 	if (bActiveOnly && (pObjFound != nullptr) && !pObjFound->IsActive())
 		pObjFound = nullptr;
 
-	return (pObjFound);
+	return pObjFound;
 
 #else
 	CBagObject *pObj;
@@ -1070,7 +1070,7 @@ VOID CBagStorageDev::HandleError(ERROR_CODE errCode) {
 PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
 	CHAR                szStr[256];
 	szStr[0] = 0;
-	CBofString          str(szStr, 256);                // jwl 08.28.96 perf improvement
+	CBofString          str(szStr, 256);
 	char ch;
 
 	fpInput.EatWhite();
@@ -1114,7 +1114,7 @@ ERROR_CODE CBagStorageDev::Attach() {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1122,13 +1122,12 @@ ERROR_CODE CBagStorageDev::Detach() {
 	//if (GetBackground())
 	//  delete GetBackground();
 
-	// BCW 08/30/96 08:41 pm
 	// Must force people to not use a bad App's palette
 	//
 	CBofApp::GetApp()->SetPalette(nullptr);
 	SetBackground(nullptr);
 
-	// jwl 10.11.96 Notify the main window that we need to redraw the background filter.
+	// Notify the main window that we need to redraw the background filter.
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 	if (pMainWin != nullptr) {
 		((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
@@ -1139,7 +1138,7 @@ ERROR_CODE CBagStorageDev::Detach() {
 
 
 ERROR_CODE CBagStorageDev::Close() {
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
@@ -1271,7 +1270,7 @@ ERROR_CODE CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList
 		SetDirtyAllObjects(TRUE);
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
@@ -1364,7 +1363,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 				Create(s.GetBuffer(), nullptr, CBagel::GetBagApp()->GetMasterWnd());
 			}
 
-			// BCW - 12/11/96 09:51 pm - Fix for bug #7638
+			// Fix for bug #7638
 			Show();
 
 			AttachActiveObjects();
@@ -1411,7 +1410,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 VOID CBagStorageDevWnd::OnTimer(UINT nEventID) {
@@ -1442,7 +1441,7 @@ VOID CBagStorageDevWnd::OnTimer(UINT nEventID) {
 				if (m_pEvtSDev != nullptr) {
 					m_pEvtSDev->EvaluateExpressions();
 
-					// jwl 12.27.96 If our turncount was updated, then execute the event world
+					// If our turncount was updated, then execute the event world
 					// for the turncount dependent storage device.
 					if (CBagEventSDev::GetEvalTurnEvents() == TRUE) {
 						CBagEventSDev::SetEvalTurnEvents(FALSE);
@@ -1478,13 +1477,13 @@ ERROR_CODE CBagStorageDevWnd::Detach() {
 
 	Destroy();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagStorageDevWnd::Close() {
 	CBagel::GetBagApp()->GetMasterWnd()->SetStorageDev(GetPrevSDev(), FALSE);
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1496,7 +1495,7 @@ ERROR_CODE CBagStorageDevWnd::SetBackground(CBofBitmap *pBmp) {
 		KillBackdrop();
 		KillWorkBmp();
 	}
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1510,7 +1509,7 @@ ERROR_CODE CBagStorageDevWnd::SetWorkBmp() {
 		pBmp->Paint(m_pWorkBmp);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1520,7 +1519,7 @@ ERROR_CODE CBagStorageDevWnd::KillWorkBmp() {
 		m_pWorkBmp = nullptr;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1584,7 +1583,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 
 			GetCurrentCursPos(pCursor, &x, &y);
 
-			// jwl 10.11.96 save what was there so we can later paint it back to the screen
+			// save what was there so we can later paint it back to the screen
 			gRepaintRect.SetRect(x, y, x + pCursorBmp->Width() - 1, y + pCursorBmp->Height() - 1);
 			CBofRect cDstRect(0, 0, pCursorBmp->Width() - 1, pCursorBmp->Height() - 1);
 
@@ -1595,7 +1594,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
@@ -1660,7 +1659,7 @@ ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 		AttachActiveObjects();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1691,7 +1690,7 @@ ERROR_CODE CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 #endif
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1718,19 +1717,19 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 		}
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
 
 ERROR_CODE CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, BOOL /*tempVar*/) {
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	CHAR        szWldFile[256];
 	szWldFile[0] = 0;
-	CBofString sWldFile(szWldFile, 256);        // jwl 08.28.96 performance improvement
+	CBofString sWldFile(szWldFile, 256);        // performance improvement
 
 	if (sFile.IsEmpty())
 		sWldFile = "StoreDev.Wld";
@@ -1779,7 +1778,7 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 
 	// Add everything to the window
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -1808,7 +1807,7 @@ void CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 
 	} else {
 
-		// BCW 08/19/96 01:04 pm Added wield cursors
+		// Added wield cursors
 		BOOL bWield;
 
 		bWield = FALSE;
@@ -2022,7 +2021,7 @@ ERROR_CODE CBagStorageDevDlg::Attach() {
 
 	Destroy();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -2031,7 +2030,7 @@ ERROR_CODE CBagStorageDevDlg::Close() {
 
 	CBofDialog::Close();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -2052,7 +2051,7 @@ ERROR_CODE CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 #endif
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -2167,12 +2166,12 @@ ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 		AttachActiveObjects();
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
 ERROR_CODE CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, BOOL /*tempVar*/) {
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -2225,7 +2224,7 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	}
 
 	// Add everything to the window
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -2330,7 +2329,7 @@ ERROR_CODE CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 
 	m_xStorageDeviceList.AddToTail(pSDev);
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 
@@ -2349,7 +2348,7 @@ ERROR_CODE CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 
 		pList = pList->m_pNext;
 	}
-	return (ERR_NONE);
+	return ERR_NONE;
 
 #else
 	int i, n;

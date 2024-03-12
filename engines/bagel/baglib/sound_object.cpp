@@ -216,7 +216,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		case 'A': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
@@ -247,8 +247,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 					nChanged++;
 					nObjectUpdated = TRUE;
 
-					// BCW - 11/27/96 06:39 pm
-					// Added Mix and Wait
+					// Mix and Wait
 					//
 				} else if (!sStr.Find("WAITMIX")) {
 
@@ -257,8 +256,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 					nChanged++;
 					nObjectUpdated = TRUE;
 
-					// BCW - 11/27/96 06:39 pm
-					// Added Queue and Wait
+					// Queue and Wait
 					//
 				} else if (!sStr.Find("WAITQUEUE")) {
 
@@ -290,11 +288,11 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		}
 		break;
 
-		// MDM 7/17 - ADDED LOOP PROPERTY TO SOUNDS
+		// LOOP PROPERTY FOR SOUNDS
 		case 'L': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256); // performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -308,11 +306,11 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
-		// jwl 12.02.96 added oversound attribute to sound object
+		// oversound attribute for sound object
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256); // performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 

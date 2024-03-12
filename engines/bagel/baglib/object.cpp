@@ -35,35 +35,35 @@ extern CBofString BofEmptyString;
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
 	switch (n) {
 	case BASEOBJ:
-		return ("UKN");
+		return "UKN";
 	case BMPOBJ:
-		return ("BMP");
+		return "BMP";
 	case SPRITEOBJ:
-		return ("SPR");
+		return "SPR";
 	case BUTTONOBJ:
-		return ("BUT");
+		return "BUT";
 	case SOUNDOBJ:
-		return ("SND");
+		return "SND";
 	case LINKOBJ:
-		return ("LNK");
+		return "LNK";
 	case RESPRNTOBJ:
-		return ("RPO");
+		return "RPO";
 	case DOSSIEROBJ:
-		return ("DOS");
+		return "DOS";
 	case CHAROBJ:
-		return ("CHR");
+		return "CHR";
 	case AREAOBJ:
-		return ("ARE");
+		return "ARE";
 	case MOVIEOBJ:
-		return ("MOVIE");
+		return "MOVIE";
 	case VAROBJ:
-		return ("VAR");
+		return "VAR";
 	case COMMANDOBJ:
-		return ("COMMAND");
+		return "COMMAND";
 	case THNGOBJ:
-		return ("TNG");
+		return "TNG";
 	default:
-		return ("UKN");
+		return "UKN";
 	};
 }
 
@@ -122,7 +122,7 @@ ERROR_CODE CBagObject::Detach() {
 }
 
 ERROR_CODE CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, INT /*nMaskColor*/) {
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 INT CBagObject::GetProperty(const CBofString &sProp) {

@@ -101,7 +101,7 @@ VOID CBagRestartDialog::OnInitDialog() {
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
 #if BOF_MAC
-			// jwl 09.23.96 make this our own custom window such that no frame is drawn
+			// make this our own custom window such that no frame is drawn
 			// around the window/button
 			m_pButtons[i]->SetCustomWindow(true);
 #endif

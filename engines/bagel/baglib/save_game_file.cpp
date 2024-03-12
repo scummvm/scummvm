@@ -68,7 +68,7 @@ ERROR_CODE CBagSaveGameFile::WriteSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSa
 		ReportError(ERR_MEMORY, "Could not allocate %ld bytes for saved game", lSize);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagSaveGameFile::ReadSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame, VOID *pDataBuf, LONG lDataSize) {
@@ -113,7 +113,7 @@ ERROR_CODE CBagSaveGameFile::ReadSavedGame(LONG lSlot, ST_SAVEDGAME_HEADER *pSav
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagSaveGameFile::ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGame) {
@@ -147,7 +147,7 @@ ERROR_CODE CBagSaveGameFile::ReadTitle(LONG lSlot, ST_SAVEDGAME_HEADER *pSavedGa
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagSaveGameFile::ReadTitleOnly(LONG lSlot, CHAR *pGameTitle) {
@@ -171,7 +171,7 @@ ERROR_CODE CBagSaveGameFile::ReadTitleOnly(LONG lSlot, CHAR *pGameTitle) {
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 LONG CBagSaveGameFile::GetActualNumSaves() {

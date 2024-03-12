@@ -60,15 +60,13 @@ CBofRect CBagVariableObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);
-	return (r);
+	return r;
 }
 
 //
 //   SetInfo(bof_ifstream& istr)
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
-//
-//      MDM 9/4/96
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	BOOL nObjectUpdated = FALSE;
@@ -87,7 +85,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -115,7 +113,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		case 'C': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -221,10 +219,10 @@ ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
-		// MDM 9/4/96
+
 		rc = PaintText(pBmp, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
-		// jwl 10.14.96 Don't need to redraw!
+		// Don't need to redraw!
 		SetDirty(FALSE);
 	}
 	return rc;
@@ -235,11 +233,11 @@ ERROR_CODE CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
-		// MDM 9/4/96
+
 		rc = PaintText(pWnd, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 		// rc = PaintText(pWnd, &r, xVar->GetValue(), 20, TEXT_NORMAL);
 
-		// jwl 10.14.96 Don't need to redraw!
+		// Don't need to redraw!
 		SetDirty(FALSE);
 	}
 	return rc;
