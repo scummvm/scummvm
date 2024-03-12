@@ -24,11 +24,7 @@
 
 namespace Bagel {
 
-#if BOF_MAC || BOF_WINMAC
-#define WORLDDIR "$SBARDIR:WLD:%s"
-#else
 #define WORLDDIR "$SBARDIR\\WLD\\%s"
-#endif
 
 CBagSaveGameFile::CBagSaveGameFile(const CHAR *pszFileName) {
 	SetFile(pszFileName, (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE));

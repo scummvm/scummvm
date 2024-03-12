@@ -31,24 +31,11 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#if BOF_MAC || BOF_WINMAC
-#define SRAFDIR         "$SBARDIR:SRAFFA:CLOSEUP:COMPUTER:"
-#define SRAFMALEDIR     "$SBARDIR:SRAFFA:CHAR:GMALE:"
-#define SRAFFEMALEDIR   "$SBARDIR:SRAFFA:CHAR:GFEMALE:"
-#define SRAFAUDIODIR    "$SBARDIR:SRAFFA:AUDIO:EVENTS:"
-
-#if !PLAYWAVONMAC
-#define SRAFTIMEOUT     "SFTIMOUT.SND"
-#else
-#define SRAFTIMEOUT     "SFTIMOUT.WAV"
-#endif
-#else
 #define SRAFDIR         "$SBARDIR\\SRAFFA\\CLOSEUP\\COMPUTER\\"
 #define SRAFMALEDIR     "$SBARDIR\\SRAFFA\\CHAR\\GMALE\\"
 #define SRAFFEMALEDIR   "$SBARDIR\\SRAFFA\\CHAR\\GFEMALE\\"
 #define SRAFAUDIODIR    "$SBARDIR\\SRAFFA\\AUDIO\\EVENTS\\"
 #define SRAFTIMEOUT     "SFTIMOUT.WAV"
-#endif
 
 #define USETEXTWIDTHS       TRUE
 
@@ -4707,14 +4694,8 @@ VOID SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         
 	// Play the voice file... Depends on if we have a voice file or a text file...
 	// the last three will tell us.
 
-	// scg 01.07.97 PLAYWAVONMAC added
-#if BOF_MAC && !PLAYWAVONMAC
-	if (sSoundFile.Find(".SND") != -1 ||
-	        sSoundFile.Find(".snd") != -1) {
-#else
 	if (sSoundFile.Find(".WAV") != -1 ||
 	        sSoundFile.Find(".wav") != -1) {
-#endif
 		BofPlaySound(sSoundFile.GetBuffer(), SOUND_WAVE);
 	} else {
 		if (sSoundFile.Find(".TXT") ||

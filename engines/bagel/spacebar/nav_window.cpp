@@ -36,17 +36,10 @@ namespace SpaceBar {
 #define MASK_COLOR 1
 #define HIGHLIGHT_COLOR     13
 
-#if BOF_MAC || BOF_WINMAC
-#define NAVDIR      "$SBARDIR:NEBLITZ:CLOSEUP:NAV:"
-#define NEBSIM2BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim2.bmp"
-#define NEBSIM3BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim3.bmp"
-#define NEBSIM4BMP  "$SBARDIR:NEBLITZ:CLOSEUP:NAV:nebsim4.bmp"
-#else
 #define NAVDIR      "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\"
 #define NEBSIM2BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim2.bmp"
 #define NEBSIM3BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim3.bmp"
 #define NEBSIM4BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim4.bmp"
-#endif
 
 // New background bmps are black, so text will be white
 #define NAVTEXT_COLOR         RGB(255,255,255)

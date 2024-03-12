@@ -30,16 +30,9 @@
 
 namespace Bagel {
 
-// Don't play sound files on mac if we're using wave conversion
-#if (BOF_MAC || BOF_WINMAC) && !PLAYWAVONMAC
-#define SOUNDFILEEXTLOWER ".snd"
-#define SOUNDFILEEXTUPPER ".SND"
-#define OVERRIDESMK "$SBARDIR:BAR:LOG:OVERRIDE.SMK"
-#else
 #define SOUNDFILEEXTLOWER ".wav"
 #define SOUNDFILEEXTUPPER ".WAV"
 #define OVERRIDESMK "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
-#endif
 
 //
 // CBagMovieObject -

@@ -35,32 +35,16 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#if BOF_MAC || BOF_WINMAC
-#  define VRFILES               ".:*.bmp"
-#  define VRDIR                 ".:"
-#  define BMPFILES              ":BMP:*.bmp"
-#  define BMPDIR                ":BMP:"
-#  define SPRITEFILES           ":SPRITE:*.bmp"
-#  define SPRITEDIR             ":SPRITE:"
-#  define SOUNDFILES            ":SPRITE:*.bmp"
-#  define SOUNDDIR              ":SPRITE:"
-#  define SOUNDFILES            ":SPRITE:*.bmp"
-#  define SOUNDDIR              ":SPRITE:"
-#  define LINKFILES             ".:*.wld"
-#  define LINKDIR               ".:"
-#else
-#  define VRFILES               ".\\*.bmp"
-#  define VRDIR                 ".\\"
-#  define BMPFILES              ".\\BMP\\*.bmp"
-#  define BMPDIR                ".\\BMP\\"
-#  define SPRITEFILES           ".\\SPRITE\\*.bmp"
-#  define SPRITEDIR             ".\\SPRITE\\"
-#  define SOUNDFILES            ".\\SPRITE\\*.bmp"
-#  define SOUNDDIR              ".\\SPRITE\\"
-#  define LINKFILES             ".\\*.wld"
-#  define LINKDIR               ".\\"
-
-#endif
+#define VRFILES               ".\\*.bmp"
+#define VRDIR                 ".\\"
+#define BMPFILES              ".\\BMP\\*.bmp"
+#define BMPDIR                ".\\BMP\\"
+#define SPRITEFILES           ".\\SPRITE\\*.bmp"
+#define SPRITEDIR             ".\\SPRITE\\"
+#define SOUNDFILES            ".\\SPRITE\\*.bmp"
+#define SOUNDDIR              ".\\SPRITE\\"
+#define LINKFILES             ".\\*.wld"
+#define LINKDIR               ".\\"
 
 //
 //
