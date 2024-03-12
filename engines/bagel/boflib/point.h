@@ -53,7 +53,7 @@ public:
 	}
 
 	operator const POINT() {
-		return (GetWinPoint());
+		return GetWinPoint();
 	}
 
 
@@ -213,35 +213,35 @@ INLINE CBofPoint CBofPoint::operator+(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(x + size.cx, y + size.cy));
+	return CBofPoint(x + size.cx, y + size.cy);
 }
 
 INLINE CBofPoint CBofPoint::operator+(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(x + point.x, y + point.y));
+	return CBofPoint(x + point.x, y + point.y);
 }
 
 INLINE CBofPoint CBofPoint::operator-(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(x - size.cx, y - size.cy));
+	return CBofPoint(x - size.cx, y - size.cy);
 }
 
 INLINE CBofPoint CBofPoint::operator-(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(x - point.x, y - point.y));
+	return CBofPoint(x - point.x, y - point.y);
 }
 
 INLINE CBofPoint CBofPoint::operator-() {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (CBofPoint(-x, -y));
+	return CBofPoint(-x, -y);
 }
 
 #define CPoint CBofPoint

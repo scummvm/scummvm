@@ -103,7 +103,7 @@ VOID *CQueue::RemoveItem() {
 		delete pList;
 	}
 
-	return (pObject);
+	return pObject;
 }
 
 VOID CQueue::DeleteItem(VOID *pItem) {

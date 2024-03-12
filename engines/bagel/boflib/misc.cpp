@@ -287,7 +287,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 
 	SetCurrentDir(szOldDir);
 
-	return (errCode);
+	return errCode;
 #endif
 }
 
@@ -396,7 +396,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 	Common::sprintf_s(szBuf, "%d", nNewValue);
 	errCode = WriteIniSetting(pszFileName, pszSection, pszVar, szBuf);
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, INT *pValue, INT nDefault) {
@@ -604,7 +604,7 @@ BOOL IsKeyDown(ULONG lKeyCode) {
 		break;
 	}
 
-	return (bIsDown);
+	return bIsDown;
 }
 
 #if BOF_MAC

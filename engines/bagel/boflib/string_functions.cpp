@@ -183,7 +183,7 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
 		p++;
 	}
 
-	return (bMatch);
+	return bMatch;
 }
 
 INT StrCharCount(const CHAR *str, CHAR c) {

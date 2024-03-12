@@ -209,7 +209,7 @@ ERROR_CODE CBofFile::Write(const VOID *pSrcBuf, LONG lBytes) {
 		LogWarning("Attempt to write to a file that is not open");
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBofFile::SetPosition(ULONG lPos) {
