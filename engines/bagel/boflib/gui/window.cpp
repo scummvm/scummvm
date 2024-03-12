@@ -1153,6 +1153,9 @@ void CBofWindow::handleEvents() {
 			focus->handleEvent(e);
 		else
 			handleEvent(e);
+
+		if (e.type != Common::EVENT_MOUSEMOVE)
+			break;
 	}
 }
 

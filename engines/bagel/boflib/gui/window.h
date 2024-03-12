@@ -142,7 +142,9 @@ public:
 	 */
 	VOID ReSize(CBofRect *pRect, BOOL bRepaint = FALSE);
 
-	VOID Close() { /*PostMessage(BM_CLOSE, 0, 0);*/ }
+	VOID Close() {
+		OnClose();
+	}
 
 	/**
 	 * Posts a message
