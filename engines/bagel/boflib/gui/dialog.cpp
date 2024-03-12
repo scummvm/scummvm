@@ -298,7 +298,7 @@ VOID CBofDialog::OnClose() {
 
 	if (_parent != nullptr) {
 		CBofWindow *pParent;
-		pParent = _parent; //->GetAnscestor();
+		pParent = _parent;
 		pParent->Enable();
 
 		// the parent window MUST now be enabled
