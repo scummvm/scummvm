@@ -592,7 +592,7 @@ private:
 	Rect m_screenRect;
 };
 
-// jwl 08.07.96 preserve the mac port.
+// preserve the mac port.
 
 class STBofPort {
 public:

@@ -25,7 +25,7 @@ namespace Bagel {
 
 #define DEFAULT_PAGE_SIZE   10
 #define DEFAULT_WEIGHT      TEXT_NORMAL
-#define DEFAULT_POINT_SIZE  FONT_12POINT        // jwl 1.6.97
+#define DEFAULT_POINT_SIZE  FONT_12POINT
 #define DEFAULT_COLOR       CTEXT_COLOR
 
 
@@ -157,17 +157,17 @@ VOID CBofTextBox::SetTextAttribs(const INT nSize, const INT nWeight, const RGBCO
 
 VOID CBofTextBox::SetText(const CBofString &cString) {
 	m_cBuffer = cString;
-	Assert(m_cBuffer.GetLength() != 0);         // jwl 06.28.96
+	Assert(m_cBuffer.GetLength() != 0);
 
 #if BOF_MAC || BOF_WINMAC
-	m_cBuffer.ReplaceStr("\r\n", "\r");         // jwl 06.28.96 (\r\n instead of \n\r)
-	m_cBuffer.ReplaceStr("\n", "\r");           // jwl 06.28.96 (\r instead of \n)
+	m_cBuffer.ReplaceStr("\r\n", "\r");         // (\r\n instead of \n\r)
+	m_cBuffer.ReplaceStr("\n", "\r");           // (\r instead of \n)
 #endif
 
 	m_nCurrentLine = 0;
 	m_nCurrentIndex = 0;
 
-	//  jwl 06.28.96 count number of carriage returns for mac
+	//  count number of carriage returns for mac
 	//  scrolling
 
 #if BOF_MAC || BOF_WINMAC
@@ -190,7 +190,7 @@ INT CBofTextBox::GetIndex(const INT nLine) {
 	for (i = 0; i < nLine; i++) {
 		pszLast = pszCur;
 #if BOF_MAC || BOF_WINMAC
-		pszCur = strstr(pszCur, "\r");      // jwl 06.28.96 look for cr's
+		pszCur = strstr(pszCur, "\r");      // look for cr's
 #else
 		pszCur = strstr(pszCur, "\n");
 #endif
@@ -213,7 +213,7 @@ ERROR_CODE CBofTextBox::ScrollUp(const INT nLines) {
 	INT nNewLine;
 
 	// Make scroll a no-op if all the lines in the box appear on
-	// one screen.  GJJ 11-8-96.
+	// one screen.
 	//
 	if (m_nNumLines <= m_nPageSize) {
 		return ScrollTo(m_nCurrentLine);
@@ -227,7 +227,6 @@ ERROR_CODE CBofTextBox::ScrollUp(const INT nLines) {
 		// If the line requested to be the top of the page
 		// would cause fewer than m_nPageSize lines to be displayed,
 		// snap nNewLine to be the top of the last full page.
-		// GJJ 11-8-96
 		//
 		nNewLine = (m_nNumLines - m_nPageSize);
 	}

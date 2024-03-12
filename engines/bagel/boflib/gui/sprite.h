@@ -29,17 +29,9 @@ namespace Bagel {
 
 class CSprite : public CBofSprite {
 public:
-	/**
-	 * Constructor
-	 */
 	CSprite();
-
-	/**
-	 * Destructor
-	 */
 	virtual ~CSprite();
 
-	// Implementation
 	CSprite *DuplicateSprite();
 	BOOL DuplicateSprite(CSprite *pSprite);
 

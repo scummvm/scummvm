@@ -122,7 +122,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 			iHighlight = iTemp;
 		}
 
-		// jwl 07.10.96 If we're doing a copybits compatible version, then
+		// If we're doing a copybits compatible version, then
 		// we have to draw our buttons as they appear on the screen, i.e. they
 		// will not be inverted when drawn (they've "top down").
 #if COPYBITS
