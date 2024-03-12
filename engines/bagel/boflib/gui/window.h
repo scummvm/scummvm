@@ -47,6 +47,13 @@ class CBofBitmap;
 class CBofTimerPacket;
 
 class CBofWindow : public CLList, public CBofObject, public CBofError {
+private:
+	/**
+	 * Handles a pending ScummVM event
+	 * @param event		Event to process
+	 */
+	void handleEvent(const Common::Event &event);
+
 public:
 	/**
 	 * Default constructor
@@ -371,7 +378,10 @@ public:
 
 	void setParent(CBofWindow *parent);
 
-	void handleEvent(const Common::Event &event);
+	/**
+	 * Handle all pending ScummVM events
+	 */
+	void handleEvents();
 
 #if BOF_WINDOWS
 

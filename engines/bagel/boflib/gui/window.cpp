@@ -1182,6 +1182,13 @@ VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
 #endif
 }
 
+void CBofWindow::handleEvents() {
+	Common::Event e;
+
+	while (g_system->getEventManager()->pollEvent(e))
+		handleEvent(e);
+}
+
 void CBofWindow::handleEvent(const Common::Event &event) {
 	Assert(IsValidObject(this));
 	CPoint mousePos(event.mouse.x, event.mouse.y);

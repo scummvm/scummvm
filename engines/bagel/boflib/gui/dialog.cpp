@@ -456,8 +456,7 @@ INT CBofDialog::DoModal() {
 	Common::Event evt;
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
-		while (g_system->getEventManager()->pollEvent(evt))
-			handleEvent(evt);
+		handleEvents();
 
 #if BOF_WINDOWS
 
