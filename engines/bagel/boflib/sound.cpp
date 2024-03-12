@@ -99,7 +99,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	m_pMacSndChan = nullptr;               // ptr to sound channel allocated by this object
 	m_hMacSndRes = nullptr;                // ptr to sound resource
 	m_pMacMidi = nullptr;                  // ptr to Midi QT movie object
-	m_resRefNum = 0;                    // refernce number for resource file [nullptr-->0 scg 01.10.97]
+	m_resRefNum = 0;                    // refernce number for resource file
 	m_bTempChannel = FALSE;
 
 #if PLAYWAVONMAC
@@ -151,7 +151,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	if (pszPathName != nullptr) {
 
 #if BOF_MAC || BOF_WINMAC
-		// jwl 1.20.97 if our number of loops is zero, then this means keep playing it man...
+		// if our number of loops is zero, then this means keep playing it man...
 		if (nLoops == 0) {
 			m_wFlags |= SOUND_LOOP;
 		}
@@ -238,8 +238,6 @@ CBofSound::~CBofSound() {
 	ReleaseSound();
 
 	// Close open res file
-	//
-	// [nullptr --> 0 scg 01.10.97]
 	if (m_resRefNum != 0) {
 		CloseResFile(m_resRefNum);
 		m_resRefNum = 0;
@@ -1255,7 +1253,7 @@ BOOL CBofSound::LoadSound() {
 		} else {
 
 			// force BUFFERED mode since the file was too big to load here
-			m_wFlags |= SOUND_BUFFERED; // scg 01.10.97 changed from "&=" to "|="
+			m_wFlags |= SOUND_BUFFERED;
 		}
 
 	} else {
@@ -1663,7 +1661,6 @@ BOOL CBofSound::PlayMacSndFile() {
 
 		// for the PPC, make sure that we use Universal proc ptrs to
 		// our callbacks
-		// scg 01.09.97 change to use global UPP
 
 		sndErr = SndStartFilePlay(m_pMacSndChan, m_resRefNum, 0, kTotalSize, nullptr, nullptr, gFilePlayCompletionUPP,
 		                          (m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
@@ -1761,7 +1758,7 @@ BOOL CBofSound::MacReplay(CBofSound *pSound) {
 
 		if (pSound->m_chType == SOUND_TYPE_MAC_SND) {
 
-			// jwl 06.26.96 use universal callback procs (upp's)
+			// use universal callback procs (upp's)
 			sndErr = SndPlay(pSound->m_pMacSndChan, (SndListHandle) pSound->m_hMacSndRes,
 			                 (pSound->m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
 
@@ -1793,18 +1790,17 @@ BOOL CBofSound::MacReplay(CBofSound *pSound) {
 			pSound->m_nCount += 1;                              // bump count of active Sounds
 			pSound->m_bPlaying = TRUE;                          // mark that it's now playing
 			pSound->m_bPaused = FALSE;
-			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // jwl 1.20.97 loops indefinitely without this
+			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // loops indefinitely without this
 
 		} else if (pSound->m_chType == SOUND_TYPE_MAC_FILE) {
 
-			// jwl 07.25.96 for the PPC, make sure that we use Universal proc ptrs to
+			// for the PPC, make sure that we use Universal proc ptrs to
 			// our callbacks
-			// scg 01.09.97 change to use static UPPs
 
 #if PLAYWAVONMAC
 			Assert(ASoundIsDone(pSound->m_pSoundInfo));
 
-			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // jwl 1.20.97 loops indefinitely without this
+			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // loops indefinitely without this
 
 			sndErr = ASoundPlay(pSound->m_pSoundInfo);
 
@@ -1854,7 +1850,7 @@ BOOL CBofSound::MacReplay(CBofSound *pSound) {
 
 
 pascal VOID CBofSound::OnMacSndCallback(SndChannelPtr SndChan, SndCommand theCmd) {
-	// jwl 10.07.96 just need to store a nonzero value here, and set it to zero
+	// just need to store a nonzero value here, and set it to zero
 	// to let the ::audiotask code know when this thing is really done playing.
 	CSound      *pSnd = (CSound *) SndChan->userInfo;
 
@@ -1885,7 +1881,7 @@ CBofSound *CBofSound::OnMacSndStopped(CBofSound *pSound) {
 
 			m_nCount -= 1;                                // decrement active sound count
 
-			// jwl 1.20.97 if the loop var is non-zero, then keep looping and decrement it.
+			// if the loop var is non-zero, then keep looping and decrement it.
 			// if (pSound->m_wFlags & SOUND_LOOP) {
 			if (pSound->m_wLoops > 0) {
 				pSound->m_wLoops--;
@@ -1918,7 +1914,7 @@ CBofSound *CBofSound::OnMacSndStopped(CBofSound *pSound) {
 		// Close open res file
 		if (pSound->m_resRefNum) {
 			CloseResFile(pSound->m_resRefNum);
-			pSound->m_resRefNum = 0;                // nullptr --> 0 scg 01.10.97
+			pSound->m_resRefNum = 0;
 		}
 #endif
 
@@ -2073,7 +2069,7 @@ OSErr CBofSound::InstallCallBack(SndChannelPtr aSndChan) {
 	mySndCmd.param1 = 0x1234;   // mark this with our unique value
 	mySndCmd.param2 = SetCurrentA5();   // pass the callback the A5
 
-	// jwl 1.20.97 the final parameter to do command is true if you
+	// the final parameter to do command is true if you
 	// want the sound manager to return a queue full error immediately.
 	//
 	// cbErr = SndDoCommand (aSndChan, &mySndCmd, kWaitIfFull);

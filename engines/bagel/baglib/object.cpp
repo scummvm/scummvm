@@ -195,7 +195,6 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			if (!m_pMenu) {
 				if ((m_pMenu = new CBagMenu) != nullptr) {
 
-					// BCW - 09/27/96 02:59 pm
 					// Try to cut down the number of Storage Devices by
 					// removing these unused ones from the list.
 					//

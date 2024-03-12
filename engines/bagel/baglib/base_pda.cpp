@@ -85,7 +85,7 @@ BOOL SBBasePda::HideCurDisplay() {
 		// If we have an inventory window
 		m_xCurDisplay->SetVisible(FALSE);
 
-		// jwl 1.3.97 hold this info.
+		// hold this info.
 		m_xHoldDisplay = m_xCurDisplay;
 		m_eHoldMode = SBBasePda::m_ePdaMode;
 
@@ -134,7 +134,7 @@ BOOL SBBasePda::ShowMovie() {
 
 	SynchronizePDAState();
 
-	// jwl 11.22.96 if we're already playing a movie, then return FALSE
+	// if we're already playing a movie, then return FALSE
 	if (m_ePdaMode == MOOMODE) {
 		return FALSE;
 	}

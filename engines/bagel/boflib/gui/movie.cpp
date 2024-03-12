@@ -48,7 +48,7 @@ CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBo
 
 CBofMovie::~CBofMovie() {
 	CloseMovie();
-	// removed the need for the timer mdm 8/4
+	// removed the need for the timer
 #if 0
 	if (m_pMovTimer) {
 		delete m_pMovTimer;
@@ -73,7 +73,7 @@ ERROR_CODE CBofMovie::Initialize(CBofWindow *pParent) {
 	m_pSmk = nullptr;
 	m_bLoop = FALSE;
 
-	// removed the need for the timer mdm 8/4
+	// removed the need for the timer
 	//  m_pMovTimer = nullptr;
 	//  m_bReverseWait=FALSE;
 
@@ -186,7 +186,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 #endif
 
 #if 0
-		// mdm black frame fix
+		// black frame fix
 		// Paint first frame
 		if (m_pSmk->NewPalette && m_bUseNewPalette) {
 
@@ -310,14 +310,14 @@ VOID  CBofMovie::OnMainLoop() {
 				}
 
 				if (m_eMovStatus == FOREWARD) {
-					// removed the need for the timer mdm 8/4
+					// removed the need for the timer
 					// if (m_pMovTimer->IsActive())
 					//  m_pMovTimer->Stop();
 
 					if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
 						OnMovieDone();
 				} else if (m_eMovStatus == REVERSE) {
-					// removed the need for the timer mdm 8/4
+					// removed the need for the timer
 					// if (!m_pMovTimer->IsActive())
 					//  m_pMovTimer->Start();
 
@@ -327,11 +327,11 @@ VOID  CBofMovie::OnMainLoop() {
 						else
 							SeekToEnd();
 					} else {
-						// removed the need for the timer mdm 8/4
+						// removed the need for the timer
 						//if (m_bReverseWait==FALSE)
 						//{
 						SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
-						// m_bReverseWait=TRUE;     // removed the need for the timer mdm 8/4
+						// m_bReverseWait=TRUE;     // removed the need for the timer
 						//}
 					}
 				}// REVERSE

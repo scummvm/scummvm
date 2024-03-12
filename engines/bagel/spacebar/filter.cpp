@@ -98,7 +98,7 @@ static CBofRect viewRect;
 //
 VOID VilInitFilters(CBofBitmap *pBmp) {
 	if (!initDone) {
-		CHAR szCString[256];                // jwl 09.25.96 performance improvement
+		CHAR szCString[256];
 		CBofString cString(szCString, 256);
 		cString = VILDROIDTIPFILE;
 
@@ -120,7 +120,7 @@ VOID VilInitFilters(CBofBitmap *pBmp) {
 
 		// Grafitti bitmap.
 		//
-		CHAR szBString[256];                // jwl 09.25.96 performance improvement
+		CHAR szBString[256];
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
 		MACROREPLACE(cBString);
@@ -241,7 +241,6 @@ static CBagVar *g_pTDig4 = nullptr;
 
 BOOL g_bGetVilVars = TRUE;
 
-// BCW - 01-09-97
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
 static VOID GetVilVars() {
@@ -375,7 +374,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		rect.bottom = viewRect.bottom;
 		pTipBmp->Paint(pBmp, &rect, &srcTipRect, 0);
 
-		// moved up here to use chipID later on bar 12-21-96
+		// moved up here to use chipID later on bar
 		int chipID = g_pDChipID->GetNumValue();
 
 		if (CMainWindow::chipdisp == FALSE) {
@@ -387,7 +386,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
-				CHAR szCString[256];                // jwl 09.25.96 performance improvement
+				CHAR szCString[256];                // performance improvement
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
@@ -430,7 +429,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
-				CHAR szCString[256];                // jwl 09.25.96 performance improvement
+				CHAR szCString[256];
 				CBofString cString(szCString, 256);
 				cString = BLUECHIPFILE;
 
@@ -594,7 +593,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
 
-					CHAR szCString[256];                // jwl 09.25.96 performance improvement
+					CHAR szCString[256];
 					CBofString cString(szCString, 256);
 					cString = DISCEJECTSOUND;
 					MACROREPLACE(cString);
@@ -647,7 +646,7 @@ static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar;
 
-	CHAR szZBuff[256];                  // jwl 09.25.96 performance improvement
+	CHAR szZBuff[256];
 	CBofString zStr(szZBuff, 256);
 	BOOL bZzazzlVision = FALSE;
 
@@ -664,7 +663,7 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
-	zStr = "ZZAZZLVISION";      // jwl 09.25.96 performance improvement
+	zStr = "ZZAZZLVISION";
 	if ((pVar = VARMNGR->GetVariable(zStr)) != nullptr) {
 
 		bZzazzlVision = TRUE;
@@ -729,7 +728,7 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 // Halucination filter.
 //
 static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	CHAR szHBuff[256];                  // jwl 09.25.96 performance improvement
+	CHAR szHBuff[256];
 	CBofString hStr(szHBuff, 256);
 	BOOL bHallucinating = FALSE;
 
@@ -848,7 +847,7 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			for (i = 0; i < nHeight; i++) {
 				UBYTE *pPixel = pBmp->GetPixelAddress(viewRect.left, viewRect.top + i);
 
-				// jwl 1.24.97 Fix this such that it uses predefined constants, makes for much
+				// Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.
 				for (j = 0; j < nWidth; j++, pPixel++) {
 					if (*pPixel == COLOR_BLACK) {

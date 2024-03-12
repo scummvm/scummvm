@@ -119,7 +119,7 @@ ERROR_CODE CMainWindow::Attach() {
 	chipdisp = FALSE;
 	pause = 0;
 
-	// jwl 10.29.96 have to know if we're being activated from a zoom... if so, then
+	// have to know if we're being activated from a zoom... if so, then
 	// we don't want any foreground objects.
 	BOOL bForegroundObj = TRUE;
 
@@ -130,11 +130,9 @@ ERROR_CODE CMainWindow::Attach() {
 		bForegroundObj = FALSE;
 	}
 
-	// BCW - 10/05/96 03:06 pm
 	// Ket rid of any extra mouse button clicks
 	FlushInputEvents();
 
-	// BCW - 09/06/96 01:11 am
 	// Always put game into upper left corner
 	//
 #if 0 //ndef _DEBUG
@@ -200,7 +198,6 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
-	// mdm 7/30/96
 	m_bFirstPaint = TRUE;
 	AttachActiveObjects();
 
@@ -289,7 +286,7 @@ ERROR_CODE CMainWindow::Attach() {
 				if (!m_pPDABmp->IsAttached())
 					m_pPDABmp->Attach();
 
-				// jwl 12.04.96 allow the script to specify the increment height.
+				//allow the script to specify the increment height.
 				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
@@ -328,14 +325,13 @@ ERROR_CODE CMainWindow::Attach() {
 		if ((CBagObject *)nullptr == GetFGObjects(CBofString(PDAWLD))) {
 			CBofRect r(0, 0, 300, 200);
 			m_pPDABmp->SetAssociateWnd(this);
-			// To fix pda not updating problem mdm 4/24
+			// To fix pda not updating problem
 			InsertFGObjects(m_pPDABmp);
 
 		}
 
 		m_pPDABmp->AttachActiveObjects();
 
-		// mdm 7/17
 		// If this world file contains an evt_wld
 		if ((pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD")) != nullptr) {
 
@@ -371,7 +367,7 @@ ERROR_CODE CMainWindow::Attach() {
 			}
 		}
 
-		// jwl 10.29.96 If anyone can tell me why we redo a InsertFG here I'd
+		// If anyone can tell me why we redo a InsertFG here I'd
 		// be interested in knowing since we already did one above...
 		//
 		// only do it if we're coming from somewhere other than the zoom
@@ -396,7 +392,6 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
-	// mdm 7/30/96
 	m_bFirstPaint = TRUE;
 
 	AttachActiveObjects();
@@ -442,7 +437,7 @@ ERROR_CODE CMainWindow::Attach() {
 	    LogInfo(BuildString("OnTimer * 1000: %ld ms", TimerStop()));*/
 
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -464,12 +459,12 @@ ERROR_CODE CMainWindow::Detach() {
 
 	Destroy();
 
-	// jwl 09.30.96 when we move from room to room, we should delete
+	// when we move from room to room, we should delete
 	// all our foreground objects (remove from memory).
 
 	DeleteFGObjects();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -503,7 +498,7 @@ ERROR_CODE CMainWindow::OnCursorUpdate(INT nCurrObj) {
 	*/
 	errCode = CBagPanWindow::OnCursorUpdate(nCurrObj);
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -533,7 +528,7 @@ VOID CMainWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 
 VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
-	// jwl 1.16.97 don't correct this boy if he's inside the PDA.
+	// don't correct this boy if he's inside the PDA.
 	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->IsInside(*p)) {
 		return;
@@ -608,7 +603,7 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	//      p->y = m_xFilterRect.top  + (p->y-r.top)*3;
 	//      break;
 	//  }
-	// attempt to make all squares active in zzazzlvision -- bar 01-06-97
+	// attempt to make all squares active in zzazzlvision
 	int i, j;
 	for (i = 0; i < 3; ++i) {
 		if (i == 1) {
@@ -689,7 +684,7 @@ ERROR_CODE CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 		//g_cInitLoc = dstLoc;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 

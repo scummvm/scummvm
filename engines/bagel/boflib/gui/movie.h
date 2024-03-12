@@ -42,9 +42,9 @@ class CBofMovie : public CBofDialog {
 public:
 	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE};
 	enum MVTYPE { QT, SMACKER };
-	// BOOL             m_bReverseWait;     // removed the need for the timer mdm 8/4
+	// BOOL             m_bReverseWait;     // removed the need for the timer
 protected:
-	// CBofTimer    *   m_pMovTimer;        // removed the need for the timer mdm 8/4
+	// CBofTimer    *   m_pMovTimer;        // removed the need for the timer
 #if BOF_WINDOWS
 	UINT            m_wMCIDeviceID;         // MCI Device ID for the QT file
 #endif

@@ -30,7 +30,7 @@ namespace SpaceBar {
 #define MAP_BMP       "nebsim1.bmp"
 #define CUR_LOC       "curloc.bmp"
 #define LEVEL_DONE    "levdone.bmp"
-#define WELCOME_SND     "evnaawel.wav"
+#define WELCOME_SND   "evnaawel.wav"
 #define QUIT 111
 #define HELP 112
 #define MASK_COLOR 1
@@ -139,7 +139,7 @@ const CHAR *MakeDir(const CHAR *pszFile) {
 	CBofString cStr(szBuf, MAX_DIRPATH);
 	MACROREPLACE(cStr);
 
-	return (&szBuf[0]);
+	return &szBuf[0];
 }
 
 CNavWindow::CNavWindow() {
@@ -260,7 +260,6 @@ ERROR_CODE CNavWindow::Attach() {
 	m_pBattlefish = new CBofRect(359, 359, 368, 368);
 	m_pNoVacancy = new CBofRect(18, 107, 117, 116);
 
-	// BCW - 11/20/96 05:04 pm
 	// Reset all levels
 	//
 	INT i;
@@ -338,7 +337,7 @@ ERROR_CODE CNavWindow::Attach() {
 
 	m_bNavAttached = TRUE;
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -574,7 +573,7 @@ ERROR_CODE CNavWindow::Detach() {
 
 	CBagStorageDevWnd::Detach();
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 
@@ -599,7 +598,7 @@ VOID CNavWindow::OnPaint(CBofRect *pRect) {
 
 	SetTimer(777, 200, nullptr);
 
-	// bar 10/27/96 separated repainting of text
+	// separated repainting of text
 	RefreshData();
 }
 

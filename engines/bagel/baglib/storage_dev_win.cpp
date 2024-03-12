@@ -78,7 +78,7 @@ BOOL        CBagStorageDev::m_bPanPreFiltered = FALSE;
 BOOL        CBagStorageDev::m_bDirtyAllObjects = FALSE;
 BOOL        CBagStorageDev::m_bPreFilter = FALSE;
 
-// jwl 10.11.96 to handle drawing of cursor backdrop
+// to handle drawing of cursor backdrop
 CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
 BOOL        CBagStorageDev::m_bDrawCursorBackdrop = TRUE;
 
@@ -107,7 +107,7 @@ CBagStorageDev::CBagStorageDev() {
 	m_bCloseup = FALSE;
 	m_bCIC = FALSE;
 
-	// run object stuff - mdm 7/26/96
+	// run object stuff
 	m_bFirstPaint = TRUE;
 
 	m_nFloatPages = 0;
@@ -1424,7 +1424,7 @@ VOID CBagStorageDevWnd::OnTimer(UINT nEventID) {
 		if (!bAlready) {
 			bAlready = TRUE;
 
-			// mdm 7/17 - evaluate the event storage device IF MOVIE NOT PLAYING
+			// evaluate the event storage device IF MOVIE NOT PLAYING
 			if ((CBofApp::GetApp()->GetMainWindow())->IsEnabled() && nEventID == EVAL_EXPR) {
 
 #if 0
@@ -1707,7 +1707,7 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 			STBofPort stSavePort(GetMacWindow());
 #endif
 			while (!pObj->IsModalDone()) {
-				// jwl 11.14.96 make sure we redraw each and every frame!
+				// make sure we redraw each and every frame!
 				SetPreFilterPan(TRUE);
 				OnRender(pBmp, nullptr);
 				if (g_bAllowPaint) {
@@ -2160,7 +2160,6 @@ ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 
 	// Set the firstpaint flag and attach objects
 	// to allow for immediate run objects to run
-	// mdm 7.30.96
 	if (m_bFirstPaint) {
 		m_bFirstPaint = FALSE;
 		AttachActiveObjects();
@@ -2545,7 +2544,7 @@ VOID CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 					Assert(strlen(pSDev->GetName()) < MAX_SDEV_NAME);
 					strncpy((pObjList + k)->m_szSDev, pSDev->GetName(), MAX_SDEV_NAME);
 
-					// jwl 11.01.96 save if this guy is waiting to play
+					// save if this guy is waiting to play
 					(pObjList + k)->m_nFlags = (USHORT)(pObj->IsMsgWaiting() ? mIsMsgWaiting : 0);
 					(pObjList + k)->m_lState = pObj->GetState();
 					(pObjList + k)->m_lProperties = pObj->GetProperties();
@@ -2555,7 +2554,7 @@ VOID CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 					k++;
 					Assert(k < nNumEntries);
 
-					// jwl 11.01.96 This is pretty dangerous, put up an error
+					// This is pretty dangerous, put up an error
 					if (k >= nNumEntries) {
 						BofMessageBox("SaveObjList encountered too many objects", "Internal Error");
 						break;

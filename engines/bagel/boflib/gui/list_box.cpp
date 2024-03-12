@@ -286,7 +286,7 @@ ERROR_CODE CBofListBox::ScrollUp(const INT nLines) {
 	INT nNewLine;
 
 	// If all the items fit on a single page, make this operation
-	// a no-op.  GJJ 11-8-96.
+	// a no-op.
 	//
 	if (m_nNumItems <= m_nPageSize) {
 		return ScrollTo(m_n1stVisible);
@@ -436,7 +436,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 
 				if (i + m_n1stVisible < m_nNumItems) {
 
-					// If this item is currently selected and we have a high color mdm 5/2
+					// If this item is currently selected and we have a high color
 					if ((i + m_n1stVisible == m_nSelectedItem) && (m_cHighColor != m_cTextColor)) {
 						// display text highlighted
 						PaintText(m_pWork,
@@ -519,7 +519,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 			Assert(m_pBackdrop != nullptr);
 			m_pBackdrop->Paint(m_pWork, &cRect, &cRect);
 
-			// If this item is currently selected and we have a high color mdm 5/2
+			// If this item is currently selected and we have a high color
 			//
 			if ((nIndex == m_nSelectedItem) && (m_cHighColor != m_cTextColor)) {
 

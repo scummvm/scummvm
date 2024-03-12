@@ -306,7 +306,7 @@ BOOL CBagExpression::EvalLeftToRight(BOOL bNeg, CBagVar &xResult) {
 				xOper = m_cOperList.GetNodeItem(nECount++);
 				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
 
-				// jwl 11.22.96 or this don't not it!!!
+				// or this don't not it!!!
 				bRClocal |= bVal;
 				break;
 

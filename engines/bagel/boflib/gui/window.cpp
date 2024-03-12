@@ -1635,11 +1635,11 @@ VOID CBofWindow::HandleOSEvt(EventRecord *pEvent) {
 					// Have to adjust the mouse coordinates from
 					// global to local coordinates
 					//
-					// GlobalToLocal(&pEvent->where); // jwl 07.03.96
+					// GlobalToLocal(&pEvent->where);
 
 					CBofPoint cPoint(pEvent->where.h, pEvent->where.v);
 
-					cPoint -= pWindow->m_cWindowRect.TopLeft(); // jwl 07.03.96
+					cPoint -= pWindow->m_cWindowRect.TopLeft();
 
 					pWindow->OnMouseMove(0, &cPoint);
 				}

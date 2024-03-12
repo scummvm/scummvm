@@ -236,7 +236,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 #if BOF_MAC
-		// jwl 09.19.96 make this our own custom window such that no frame is drawn
+		// make this our own custom window such that no frame is drawn
 		// around the window/button
 		m_pListBox->SetCustomWindow(true);
 #endif

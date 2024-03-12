@@ -351,7 +351,6 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//
 		//  AS [CAPTION]  - how to run the link
 		//
-		//  MDM 6/12
 		case 'A': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;

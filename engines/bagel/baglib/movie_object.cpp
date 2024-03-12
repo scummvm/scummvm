@@ -94,7 +94,7 @@ CBofRect CBagMovieObject::GetRect()
 }*/
 
 #if BOF_MAC
-#pragma profile off // jwl 08.13.96 movies are skewing our profiling
+#pragma profile off // movies are skewing our profiling
 // data, since we don't have control over it, don't
 // include it.
 #endif
@@ -219,7 +219,6 @@ BOOL CBagMovieObject::RunObject() {
 				// don't need to redraw for asynch pda messages, this just
 				// messes things up in the PDA redraw code (trust me)
 				//
-				// BCW 08/27/96 04:29 pm
 				// Hide the cursor by causing 1 more paint (and specifying no cursor)
 				//
 				if (pWnd != nullptr) {
