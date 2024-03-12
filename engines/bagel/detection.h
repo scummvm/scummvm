@@ -54,11 +54,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Bagel";
+		return "BAGEL"; // the Boffo Adventure Game Engine and Libraries
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Bagel (C)";
+		return "Copyright(C) 1996 Boffo Games, Inc.";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
