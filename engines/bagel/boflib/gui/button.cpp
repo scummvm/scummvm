@@ -264,7 +264,6 @@ VOID CBofButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(pPoint != nullptr);
 
 	if (m_bCaptured) {
-
 		ReleaseCapture();
 
 		SetState(BUTTON_UP, TRUE);
@@ -691,7 +690,6 @@ VOID CBofBmpButton::OnLButtonDown(UINT, CBofPoint *pPoint, void *) {
 	Assert(pPoint != nullptr);
 
 	if (!m_bCaptured && m_nState != BUTTON_DISABLED) {
-
 		SetCapture();
 
 		SetState(BUTTON_DOWN, TRUE);
@@ -704,7 +702,6 @@ VOID CBofBmpButton::OnLButtonUp(UINT, CBofPoint *pPoint, void *) {
 	Assert(pPoint != nullptr);
 
 	if (m_bCaptured) {
-
 		ReleaseCapture();
 
 		SetState(BUTTON_UP, TRUE);

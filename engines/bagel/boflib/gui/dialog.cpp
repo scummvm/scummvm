@@ -453,7 +453,6 @@ INT CBofDialog::DoModal() {
 	// Acquire and dispatch messages until quit message is received,
 	// or until there are too many errors.
 	Graphics::FrameLimiter limiter(g_system, 60);
-	Common::Event evt;
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
 		handleEvents();

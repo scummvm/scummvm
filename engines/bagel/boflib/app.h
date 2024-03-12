@@ -39,6 +39,7 @@ namespace Bagel {
 class CBofApp : public CBofError {
 private:
 	CBofWindow *m_pWindow = nullptr;
+	CBofWindow *_focusControl = nullptr;
 
 protected:
 	VOID StartupCode();
@@ -127,10 +128,16 @@ public:
 		return m_cCursorList.GetCount();
 	}
 
+	void setFocusControl(CBofWindow *ctl) {
+		_focusControl = ctl;
+	}
+	CBofWindow *getFocusControl() const {
+		return _focusControl;
+	}
+
 	static ULONG GetMachineSpeed() {
 		return kReallyFastPPC;
 	}
-
 
 	static CBofApp *GetApp() {
 		return m_pBofApp;
